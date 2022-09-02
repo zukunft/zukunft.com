@@ -37,6 +37,11 @@ use html\formula_dsp;
 class formula_api extends user_sandbox_named_api
 {
 
+    // formulas for stand-alone unit tests
+    // for database based test formulas see model/formula/formula.php
+    const TF_SECTOR = '= "Country" "differentiator" "Canton" / "Total"';
+    const TF_SECTOR_REF = '= {t1} {v1} {t2} / {t3}';
+
     // the formula expression as shown to the user
     private string $usr_text;
 

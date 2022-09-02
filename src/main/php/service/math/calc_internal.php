@@ -80,7 +80,7 @@ class math
         $result = $formula;
 
         if ($result <> "") {
-            if ($result[0] == ZUP_CHAR_CALC) {
+            if ($result[0] == expression::CHAR_CALC) {
                 $result = substr($result, 1);
             }
 

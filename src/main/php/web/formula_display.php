@@ -49,7 +49,7 @@ class formula_dsp_old extends formula
     }
 
     // create the HTML code to display the formula name with the HTML link
-    function name_linked(string $back = ''): string
+    function name_linked(?string $back = ''): string
     {
         if ($back) {
             return '<a href="/http/formula_edit.php?id=' . $this->id . '">' . $this->name . '</a>';

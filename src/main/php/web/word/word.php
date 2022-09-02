@@ -54,11 +54,11 @@ class word_dsp extends word_api
 
     /**
      * display a word with a link to the main page for the word
-     * @param string $back the back trace url for the undo functionality
+     * @param string|null $back the back trace url for the undo functionality
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
-    function dsp_link(string $back = '', string $style = ''): string
+    function dsp_link(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
         $url = $html->url(api::VIEW, $this->id, $back, api::PAR_VIEW_WORDS);

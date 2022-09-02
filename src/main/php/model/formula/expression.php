@@ -61,6 +61,26 @@ class expression
     const RANGE = ':';    //
     const CONCAT = '&';    //
 
+    // math calc (probably not needed any more if r-project.org is used)
+    const CHAR_CALC = '=';    //
+    const OPER_ADD = '+';    //
+    const OPER_SUB = '-';    //
+    const OPER_MUL = '*';    //
+    const OPER_DIV = '/';    //
+
+    const OPER_AND = '&';    //
+    const OPER_OR = '|';    //
+
+    // fixed functions
+    const FUNC_IF = 'if';    //
+    const FUNC_SUM = 'sum';    //
+    const FUNC_ISNUM = 'is.numeric';    //
+
+    // text conversion const (used to convert word, formula or verbs text to a reference)
+    const CHAR_BRAKET_OPEN = '(';    //
+    const CHAR_BRAKET_CLOSE = ')';    //
+    const CHAR_TXT_FIELD = '"';    // don't look for math symbols in text that is a high quotes
+
     /*
      * object vars
      */
@@ -70,7 +90,7 @@ class expression
     public ?string $err_text = null;   // description of the problems that appeared during the conversion from the human-readable to the database reference format
     public user $usr;                  // to get the user settings for the conversion
     public ?phrase_list $fv_phr_lst = null;  // list object of the words that should be added to the formula result
-    public ?phrase_list $phr_lst = null;     // list of the word ids that are used for the formula result
+    public ?phrase_list $phr_lst = null;     // list of the phrase ids that are used for the formula result
 
     function __construct(user $usr)
     {
@@ -82,6 +102,42 @@ class expression
      */
 
     /**
+     * @returns phrase_list with the word and triple ids from a given formula text and without loading the objects from the database
+     */
+    function phr_id_lst(): ?phrase_list
+    {
+        $phr_lst = new phrase_list($this->usr);
+        $wrd_ids = array();
+
+        // create a local copy of the reference text not to modify the original text
+        $ref_text = $this->r_part();
+
+        if ($ref_text <> "") {
+            // add words to selection
+            $new_phr_id = $this->get_phr_id($ref_text);
+            while ($new_phr_id != 0) {
+                $phr_lst->add_id($new_phr_id);
+                $ref_text = zu_str_right_of($ref_text, self::WORD_START . $new_phr_id . self::WORD_END);
+                $new_phr_id = $this->get_phr_id($ref_text);
+            }
+        }
+
+        $this->phr_lst = $phr_lst;
+        return $phr_lst;
+    }
+
+    /**
+     * @returns phrase_list with the phrases from a given formula text and load the phrases
+     */
+    function phr_lst(): ?phrase_list
+    {
+        $phr_lst = $this->phr_id_lst();
+        $phr_lst->load_by_ids();
+
+        return $phr_lst;
+    }
+
+    /**
      * convert the user text to the database reference format
      * @returns string the expression in the database reference format
      */
@@ -90,13 +146,13 @@ class expression
         $result = '';
 
         // check the formula indicator "=" and convert the left and right part separately
-        $pos = strpos($this->usr_text, ZUP_CHAR_CALC);
+        $pos = strpos($this->usr_text, self::CHAR_CALC);
         if ($pos >= 0) {
             $left_part = $this->fv_part_usr();
             $right_part = $this->r_part_usr();
             $left_part = $this->get_ref_part($left_part);
             $right_part = $this->get_ref_part($right_part);
-            $result = $left_part . ZUP_CHAR_CALC . $right_part;
+            $result = $left_part . self::CHAR_CALC . $right_part;
         }
 
         // remove all spaces because they are not relevant for calculation and to avoid too much recalculation
@@ -118,7 +174,6 @@ class expression
      */
     private function get_ref_id(string $ref_text, string $start_maker, string $end_maker): int
     {
-        log_debug('expression->get_ref_id >' . $ref_text . '<');
         $result = 0;
 
         $pos_start = strpos($ref_text, $start_maker);
@@ -127,28 +182,24 @@ class expression
             $l_part = zu_str_left_of($r_part, $end_maker);
             if (is_numeric($l_part)) {
                 $result = $l_part;
-                log_debug('expression->get_ref_id -> part "' . $result . '"');
             }
         }
 
-        log_debug('expression->get_ref_id -> "' . $result . '"');
         return $result;
     }
 
     /**
-     * returns a positive word id if the formula string in the database format contains a word link
+     * returns a phrase id if the formula string in the database format contains a phrase link
      * @param string $ref_text with the formula reference text e.g. ={f203}
-     * @return int the word id found in the reference text or zero if no word id is found
+     * @return int the phrase id found in the reference text or zero if no phrase id is found
      */
-    private function get_wrd_id(string $ref_text): int
+    private function get_phr_id(string $ref_text): int
     {
-        log_debug('expression->get_wrd_id "' . $ref_text . '"');
         return $this->get_ref_id($ref_text, self::WORD_START, self::WORD_END);
     }
 
     private function get_frm_id(string $ref_text): int
     {
-        log_debug('expression->get_wrd_id "' . $ref_text . '"');
         return $this->get_ref_id($ref_text, self::FORMULA_START, self::FORMULA_END);
     }
 
@@ -158,25 +209,25 @@ class expression
      */
     function fv_part(): string
     {
-        $result = zu_str_left_of($this->ref_text, ZUP_CHAR_CALC);
+        $result = zu_str_left_of($this->ref_text, self::CHAR_CALC);
         return trim($result);
     }
 
     function fv_part_usr(): string
     {
-        $result = zu_str_left_of($this->usr_text, ZUP_CHAR_CALC);
+        $result = zu_str_left_of($this->usr_text, self::CHAR_CALC);
         return trim($result);
     }
 
     function r_part(): string
     {
-        $result = zu_str_right_of($this->ref_text, ZUP_CHAR_CALC);
+        $result = zu_str_right_of($this->ref_text, self::CHAR_CALC);
         return trim($result);
     }
 
     function r_part_usr(): string
     {
-        $result = zu_str_right_of($this->usr_text, ZUP_CHAR_CALC);
+        $result = zu_str_right_of($this->usr_text, self::CHAR_CALC);
         return trim($result);
     }
 
@@ -196,17 +247,17 @@ class expression
 
         if ($ref_text <> "") {
             // add words to selection
-            $new_wrd_id = $this->get_wrd_id($ref_text);
+            $new_wrd_id = $this->get_phr_id($ref_text);
             while ($new_wrd_id > 0) {
                 if (!in_array($new_wrd_id, $wrd_ids)) {
                     $wrd_ids[] = $new_wrd_id;
                 }
                 $ref_text = zu_str_right_of($ref_text, self::WORD_START . $new_wrd_id . self::WORD_END);
-                $new_wrd_id = $this->get_wrd_id($ref_text);
+                $new_wrd_id = $this->get_phr_id($ref_text);
             }
             $phr_lst = new phrase_list($this->usr);
             if (count($wrd_ids) > 0) {
-                $phr_lst->load_by_ids((new phr_ids($wrd_ids)));
+                $phr_lst->load_by_given_ids((new phr_ids($wrd_ids)));
             }
             //$phr_lst->ids = $wrd_ids;
             //$phr_lst->load();
@@ -219,50 +270,12 @@ class expression
     }
 
     /**
-     * extracts an array with the words from a given formula text and load the words
-     */
-    function phr_lst(): ?phrase_list
-    {
-        log_debug('expression->phr_lst "' . $this->ref_text . ',u' . $this->usr->name . '"');
-        $phr_lst = null;
-        $wrd_ids = array();
-
-        // create a local copy of the reference text not to modify the original text
-        $ref_text = $this->r_part();
-
-        if ($ref_text <> "") {
-            // add words to selection
-            $new_wrd_id = $this->get_wrd_id($ref_text);
-            while ($new_wrd_id > 0) {
-                if (!in_array($new_wrd_id, $wrd_ids)) {
-                    $wrd_ids[] = $new_wrd_id;
-                }
-                $ref_text = zu_str_right_of($ref_text, self::WORD_START . $new_wrd_id . self::WORD_END);
-                log_debug('remaining: ' . $ref_text);
-                $new_wrd_id = $this->get_wrd_id($ref_text);
-            }
-
-            // load the word parameters
-            $phr_lst = new phrase_list($this->usr);
-            if (!empty($wrd_ids)) {
-                $phr_lst->load_by_ids((new phr_ids($wrd_ids)));
-            }
-        }
-
-        if ($phr_lst != null) {
-            log_debug('expression->phr_lst -> ' . $phr_lst->dsp_name());
-        }
-        $this->phr_lst = $phr_lst;
-        return $phr_lst;
-    }
-
-    /**
      * create a list of all formula elements
      * with the $type parameter the result list can be filtered
      * the filter is done within this function, because e.g. a verb can increase the number of words to return
      * if group it is true, element groups instead of single elements are returned
      */
-    private function element_lst_all(string $type = self::SELECT_ALL, bool $group_it = false, string $back = ''): formula_element_list|formula_element_group_list
+    private function element_lst_all(string $type = self::SELECT_ALL, bool $group_it = false): formula_element_list|formula_element_group_list
     {
         log_debug('expression->element_lst_all get ' . $type . ' out of "' . $this->ref_text . '" for user ' . $this->usr->name);
 
@@ -352,7 +365,6 @@ class expression
                 if ($elm->obj != null) {
                     if ($elm->obj->id > 0) {
                         $elm->usr = $this->usr;
-                        $elm->back = $back;
                         $elm->load($elm->obj->id);
 
                         // update work text
@@ -445,18 +457,18 @@ class expression
     /**
      * get a list of all formula elements (don't use for number retrieval, use element_grp_lst instead, because )
      */
-    function element_lst($back)
+    function element_lst(): formula_element_list|formula_element_group_list
     {
-        return $this->element_lst_all(expression::SELECT_ALL, FALSE, $back);
+        return $this->element_lst_all(expression::SELECT_ALL, FALSE);
     }
 
     /**
      * a formula element group is a group of words, verbs, phrases or formula that retrieve a value or a list of values
      * e.g. with "Sector" "differentiator" all
      */
-    function element_grp_lst(string $back = '')
+    function element_grp_lst(): formula_element_list|formula_element_group_list
     {
-        return $this->element_lst_all(expression::SELECT_ALL, TRUE, $back);
+        return $this->element_lst_all(expression::SELECT_ALL, TRUE);
     }
 
     /**
@@ -464,10 +476,10 @@ class expression
      * e.g. for "Sales" "differentiator" "Country" all "Country" words should be included
      * TODO should also include the words implied by the verbs
      */
-    function phr_verb_lst(string $back = ''): phrase_list
+    function phr_verb_lst(): phrase_list
     {
         log_debug('expression->phr_verb_lst');
-        $elm_lst = $this->element_lst_all(expression::SELECT_PHRASE, FALSE, $back);
+        $elm_lst = $this->element_lst_all(expression::SELECT_PHRASE, FALSE);
         log_debug('expression->phr_verb_lst -> got ' . dsp_count($elm_lst->lst) . ' formula elements');
         $phr_lst = new phrase_list($this->usr);
         foreach ($elm_lst->lst as $elm) {
@@ -492,10 +504,10 @@ class expression
     /**
      * list of elements (in this case only formulas) that are of the predefined type "following", e.g. "this", "next" and "prior"
      */
-    function element_special_following(string $back = ''): phrase_list
+    function element_special_following(): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
-        $elm_lst = $this->element_lst_all(expression::SELECT_ALL, FALSE, $back);
+        $elm_lst = $this->element_lst_all(expression::SELECT_ALL, FALSE);
         if (!empty($elm_lst->lst)) {
             foreach ($elm_lst->lst as $elm) {
                 if ($elm->frm_type == formula::THIS
@@ -518,10 +530,10 @@ class expression
     /**
      * similar to element_special_following, but returns the formula and not the word
      */
-    function element_special_following_frm(string $back = ''): formula_list
+    function element_special_following_frm(): formula_list
     {
         $frm_lst = new formula_list($this->usr);
-        $elm_lst = $this->element_lst_all(expression::SELECT_ALL, FALSE, $back);
+        $elm_lst = $this->element_lst_all(expression::SELECT_ALL, FALSE);
         if (!empty($elm_lst->lst)) {
             foreach ($elm_lst->lst as $elm) {
                 if ($elm->frm_type == formula::THIS
@@ -599,14 +611,14 @@ class expression
         $result = '';
 
         // check the formula indicator "=" and convert the left and right part separately
-        $pos = strpos($this->ref_text, ZUP_CHAR_CALC);
+        $pos = strpos($this->ref_text, self::CHAR_CALC);
         if ($pos > 0) {
             $left_part = $this->fv_part();
             $right_part = $this->r_part();
             log_debug('expression->get_usr_text -> (l:' . $left_part . ',r:' . $right_part . '"');
             $left_part = $this->get_usr_part($left_part);
             $right_part = $this->get_usr_part($right_part);
-            $result = $left_part . ZUP_CHAR_CALC . $right_part;
+            $result = $left_part . self::CHAR_CALC . $right_part;
         }
 
         log_debug('expression->get_usr_text ... done "' . $result . '"');
@@ -703,7 +715,7 @@ class expression
         log_debug('expression->has_ref ' . $this->dsp_id());
         $result = false;
 
-        if ($this->get_wrd_id($this->ref_text) > 0
+        if ($this->get_phr_id($this->ref_text) > 0
             or $this->get_frm_id($this->ref_text) > 0
             or $this->get_ref_id($this->ref_text, self::WORD_START, self::WORD_END) > 0
             or $this->get_ref_id($this->ref_text, self::FORMULA_START, self::FORMULA_END) > 0) {

@@ -30,9 +30,13 @@
 */
 
 use api\formula_list_api;
+use html\formula_list_dsp;
 
 class formula_list
 {
+    // the number of formulas that should be updated with one commit if no dependency calculations are expected
+    const UPDATE_BLOCK_SIZE = 100;
+
     // array of the loaded formula objects
     public array $lst;
     public user $usr;            // if 0 (not NULL) for standard formulas, otherwise for a user specific formulas
@@ -309,6 +313,40 @@ class formula_list
         return $this->load_int($qp);
     }
 
+    /**
+     * @param sql_db $db_con the active database connection
+     * @return int the total number of formulas (without user specific changes)
+     */
+    function count(sql_db $db_con): int
+    {
+        return $db_con->count(DB_TYPE_FORMULA);
+    }
+
+    /*
+     * upgrade functions
+     */
+
+    function db_ref_refresh(sql_db $db_con): bool
+    {
+        $result = true;
+
+        $total = $this->count($db_con);
+        $page = 1;
+        $pages = ceil($total / self::UPDATE_BLOCK_SIZE);
+        while ($page <= $pages and $result) {
+            $this->load_all(self::UPDATE_BLOCK_SIZE, $page);
+            foreach ($this->lst as $frm) {
+                $frm->set_ref_text();
+            }
+            $msg = $this->save();
+            if ($msg != '') {
+                $result = false;
+            }
+        }
+
+        return $result;
+    }
+
     /*
      * display functions
      */
@@ -399,6 +437,21 @@ class formula_list
         $avg_calc_time = cfg_get(CFG_AVG_CALC_TIME, $db_con);
         $total_expected_time = $total_formulas * $avg_calc_time;
         return max(1, round($total_expected_time / (UI_MIN_RESPONSE_TIME * 1000)));
+    }
+
+    /**
+     * save all formulas of this list
+     * TODO create one SQL and commit statement for faster execution
+     *
+     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     */
+    function save(): string
+    {
+        $result = '';
+        foreach ($this->lst as $frm) {
+            $result .= $frm->save();
+        }
+        return $result;
     }
 
 }

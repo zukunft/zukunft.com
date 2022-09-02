@@ -537,7 +537,6 @@ const DEFAULT_PERCENT_DECIMALS = 2;
 const ZUC_MAX_CALC_LAYERS = '10000';    // max number of calculation layers
 
 // math calc (probably not needed any more if r-project.org is used)
-const ZUP_CHAR_CALC = '=';    //
 const ZUP_OPER_ADD = '+';    //
 const ZUP_OPER_SUB = '-';    //
 const ZUP_OPER_MUL = '*';    //
@@ -1173,7 +1172,7 @@ function zu_trim($text): string
 }
 
 // 
-function zu_str_left_of($text, $maker)
+function zu_str_left_of(string $text, string $maker): string
 {
     $result = "";
     $pos = strpos($text, $maker);
@@ -1183,12 +1182,16 @@ function zu_str_left_of($text, $maker)
     return $result;
 }
 
-function zu_str_right_of($text, $maker)
+function zu_str_right_of(?string $text, ?string $maker): string
 {
     $result = "";
-    if ($text === $maker) {
-        $result = "";
-    } else {
+    if ($text == null) {
+        $text = "";
+    }
+    if ($maker == null) {
+        $maker = "";
+    }
+    if ($text !== $maker) {
         if (substr($text, strpos($text, $maker), strlen($maker)) === $maker) {
             $result = substr($text, strpos($text, $maker) + strlen($maker));
         }

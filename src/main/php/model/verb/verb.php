@@ -32,6 +32,7 @@
 */
 
 use export\exp_obj;
+use html\html_selector;
 
 class verb
 {
@@ -292,7 +293,7 @@ class verb
     }
 
     // create the HTML code to display the formula name with the HTML link
-    function display(string $back = ''): string
+    function display(?string $back = ''): string
     {
         return '<a href="/http/verb_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
     }

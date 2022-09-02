@@ -247,10 +247,21 @@ function db_upgrade_0_0_3(sql_db $db_con): string
         }
     }
 
+    // prepare the high level upgrade
+    $sys_usr = new user();
+    $sys_usr->name = user::SYSTEM;
+    $sys_usr->load($db_con);
+
+    // refresh the formula ref_text, because the coding has changed (use "{p" instead of "{t")
+    $frm_lst = new formula_list($sys_usr);
+    $frm_lst->db_ref_refresh($db_con);
+
     // Change code_id in verbs from contains to is_part_of
 
     // update the database version number in the config
     cfg_set(CFG_VERSION_DB, PRG_VERSION, $db_con);
+
+
 
 
     // TODO create table user_value_time_series
@@ -262,6 +273,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
 
     return $result;
 }
+
 
 /**
  * upgrade the database from any version prior of 0.0.4

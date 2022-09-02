@@ -487,7 +487,7 @@ class formula_value
                         // ... or based on the phrase ids
                     } elseif (!empty($this->phr_ids())) {
                         $phr_lst = new phrase_list($this->usr);
-                        $phr_lst->load_by_ids(new phr_ids($this->phr_ids()));
+                        $phr_lst->load_by_given_ids(new phr_ids($this->phr_ids()));
                         // ... or to get the most interesting result for this word
                     } elseif (isset($this->wrd) and isset($this->frm)) {
                         if ($this->wrd->id > 0 and $this->frm->id > 0 and isset($this->frm->name_wrd)) {

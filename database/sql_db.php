@@ -437,12 +437,33 @@ class sql_db
     }
 
     /**
+     * convert an array of int values to a sql string that can be used for an IN condition
+     * @param array $int_array
+     * @return string
+     */
+    private function int_array_to_sql_string(array $int_array): string
+    {
+        return "{" . implode(",", $int_array) . "}";
+    }
+
+    /**
+     * convert an array of string values to an sql string that can be used for an IN condition
+     * @param array $str_array
+     * @return string
+     */
+    private function str_array_to_sql_string(array $str_array): string
+    {
+        // TODO check how to escape ","
+        return "{" . implode(",", $str_array) . "}";
+    }
+
+    /**
      * interface function to add a "IN" parameter for a prepared query
      * @param array $ids with the int id values for the WHERE IN SQL statement part
      */
     function add_par_in_int(array $ids, bool $named = false, bool $use_link = false): void
     {
-        $this->add_par(sql_db::PAR_INT_LIST, "{" . implode(",", $ids) . "}", $named, $use_link);
+        $this->add_par(sql_db::PAR_INT_LIST, $this->int_array_to_sql_string($ids), $named, $use_link);
     }
 
     /**
@@ -453,7 +474,7 @@ class sql_db
     {
         // TODO check how to escape ","
         //$this->add_par(sql_db::PAR_TEXT_LIST, "{'" . implode("','", $names) . "'}");
-        $this->add_par(sql_db::PAR_TEXT_LIST, "{" . implode(",", $names) . "}");
+        $this->add_par(sql_db::PAR_TEXT_LIST,  $this->str_array_to_sql_string($names));
     }
 
     /**

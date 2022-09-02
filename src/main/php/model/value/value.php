@@ -710,7 +710,7 @@ class value extends user_sandbox_display
                 if (!empty($this->ids)) {
                     log_debug('value->set_phr_lst_by_ids for "' . implode(",", $ids) . '" and "' . $this->usr->name . '"');
                     $phr_lst = new phrase_list($this->usr);
-                    if (!$phr_lst->load_by_ids((new phr_ids($ids)))) {
+                    if (!$phr_lst->load_by_given_ids((new phr_ids($ids)))) {
                         $result = 'Cannot load phrases by id';
                     }
                     $this->phr_lst = $phr_lst;
@@ -849,8 +849,8 @@ class value extends user_sandbox_display
                                 $formula_text = $frm->ref_text;
                                 log_debug('value->scale -> scaling formula "' . $frm->name . '" (' . $frm->id . '): ' . $formula_text);
                                 if ($formula_text <> "") {
-                                    $l_part = zu_str_left_of($formula_text, ZUP_CHAR_CALC);
-                                    $r_part = zu_str_right_of($formula_text, ZUP_CHAR_CALC);
+                                    $l_part = zu_str_left_of($formula_text, expression::CHAR_CALC);
+                                    $r_part = zu_str_right_of($formula_text, expression::CHAR_CALC);
                                     $exp = new expression($this->usr);
                                     $exp->ref_text = $frm->ref_text;
                                     $fv_phr_lst = $exp->fv_phr_lst();

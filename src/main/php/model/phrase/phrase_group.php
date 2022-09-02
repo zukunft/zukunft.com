@@ -205,7 +205,7 @@ class phrase_group
     function load_by_ids(phr_ids $ids): bool
     {
         $phr_lst = new phrase_list($this->usr);
-        $phr_lst->load_by_ids($ids);
+        $phr_lst->load_by_given_ids($ids);
         return $this->load_by_lst($phr_lst);
     }
 
@@ -229,7 +229,7 @@ class phrase_group
     {
         if (!$this->phr_lst->loaded()) {
             $ids = $this->phr_lst->ids();
-            $this->phr_lst->load_by_ids($ids);
+            $this->phr_lst->load_by_given_ids($ids);
         }
     }
 

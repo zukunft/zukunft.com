@@ -219,14 +219,14 @@ class html_base
      *
      * @param string $obj_name the object that is requested e.g. a view
      * @param int $id the id of the parameter e.g. 1 for math const
-     * @param string $back the back trace calls to return to the original url and for undo
+     * @param string|null $back the back trace calls to return to the original url and for undo
      * @param string $par_name the parameter objects e.g. a phrase
      * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
      * @return string the created url
      */
     function url(string $obj_name,
                  int $id = 0,
-                 string $back = '',
+                 ?string $back = '',
                  string $par_name = '',
                  string $id_ext = ''): string
     {
@@ -346,14 +346,11 @@ class html_base
      */
     function tbl(string $tbl_rows, string $tbl_style = self::SIZE_FULL): string
     {
-        switch ($tbl_style) {
-            case self::SIZE_FULL:
-                return $this->tbl_start() . $tbl_rows . $this->tbl_end();
-            case self::SIZE_HALF:
-                return $this->tbl_start_half() . $tbl_rows . $this->tbl_end();
-            case self::STYLE_BORDERLESS:
-                return $this->tbl_start_hist() . $tbl_rows . $this->tbl_end();
-        }
+        return match ($tbl_style) {
+            self::SIZE_HALF => $this->tbl_start_half() . $tbl_rows . $this->tbl_end(),
+            self::STYLE_BORDERLESS => $this->tbl_start_hist() . $tbl_rows . $this->tbl_end(),
+            default => $this->tbl_start() . $tbl_rows . $this->tbl_end(),
+        };
     }
 
     private function tbl_start(): string

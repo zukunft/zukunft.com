@@ -643,7 +643,7 @@ class formula extends user_sandbox_description
 
             if (count($phr_ids->lst) > 0) {
                 $phr_lst = new phrase_list($this->usr);
-                $phr_lst->load_by_ids($phr_ids);
+                $phr_lst->load_by_given_ids($phr_ids);
                 log_debug("formula->assign_phr_glst_direct -> number of words " . dsp_count($phr_lst->lst));
             }
         } else {
@@ -691,7 +691,7 @@ class formula extends user_sandbox_description
                     $phr_ids = array_merge($direct_phr_lst->id_lst(), $indirect_phr_lst->id_lst());
                     $phr_ids = array_unique($phr_ids);
 
-                    $phr_lst->load_by_ids((new phr_ids($phr_ids)));
+                    $phr_lst->load_by_given_ids((new phr_ids($phr_ids)));
                     log_debug(self::class . '->assign_phr_glst -> number of words and triples ' . dsp_count($phr_lst->lst));
                 } else {
                     log_debug(self::class . '->assign_phr_glst -> no words are assigned to ' . $this->dsp_id());
@@ -759,7 +759,7 @@ class formula extends user_sandbox_description
         if ($this->ref_text_r == '' and $this->ref_text <> '') {
             $exp = new expression($this->usr);
             $exp->ref_text = $this->ref_text;
-            $this->ref_text_r = ZUP_CHAR_CALC . $exp->r_part();
+            $this->ref_text_r = expression::CHAR_CALC . $exp->r_part();
         }
 
         // guess the time if needed and exclude the time for consistent word groups
@@ -1057,7 +1057,7 @@ class formula extends user_sandbox_description
                 $has_result_phrases = true;
             }
             // use only the part right of the equation sign for the result calculation
-            $this->ref_text_r = ZUP_CHAR_CALC . $exp->r_part();
+            $this->ref_text_r = expression::CHAR_CALC . $exp->r_part();
             log_debug(self::class . '->calc got result words of ' . $this->ref_text_r);
 
             // get the list of the numeric results
@@ -2176,6 +2176,8 @@ class formula extends user_sandbox_description
     /**
      * add or update a formula in the database or create a user formula
      * overwrite the user_sandbox function to create the formula ref text; maybe combine later
+     *
+     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
      */
     function save(): string
     {

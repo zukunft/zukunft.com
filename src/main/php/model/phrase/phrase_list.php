@@ -32,6 +32,7 @@
 */
 
 use cfg\phrase_type;
+use html\word_dsp;
 
 class phrase_list
 {
@@ -118,12 +119,87 @@ class phrase_list
     }
 
     /**
+     * load the phrases selected by the id of the list entries
+     *
+     * @return bool true if at least one phrase has been loaded
+     */
+    function load_by_ids(): bool
+    {
+        global $db_con;
+        $result = false;
+
+        // split the ids by type
+        $wrd_ids = [];
+        $lnk_ids = [];
+        foreach ($this->ids()->lst as $id) {
+            if ($id > 0) {
+                $wrd_ids[] = $id;
+            } elseif ($id < 0) {
+                $lnk_ids[] = $id;
+            }
+        }
+
+        // clear list before loading
+        $this->lst = array();
+
+        if (count($wrd_ids) > 0) {
+            if (!$db_con->connected()) {
+                // add the words just with the id for unit testing
+                foreach ($wrd_ids as $id) {
+                    $wrd = new word($this->usr);
+                    $wrd->id = $id;
+                    $this->lst[] = $wrd->phrase();
+                    $result = true;
+                }
+            } else {
+                $qp = $this->load_by_wrd_ids_sql($db_con, $wrd_ids);
+                $db_con->usr_id = $this->usr->id;
+                $db_wrd_lst = $db_con->get($qp);
+                foreach ($db_wrd_lst as $db_wrd) {
+                    if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
+                        $wrd = new word($this->usr);
+                        $wrd->row_mapper($db_wrd);
+                        $this->lst[] = $wrd->phrase();
+                        $result = true;
+                    }
+                }
+            }
+        }
+
+        if (count($lnk_ids) > 0) {
+            if (!$db_con->connected()) {
+                // add the triple just with the id for unit testing
+                foreach ($lnk_ids as $id) {
+                    $trp = new word_link($this->usr);
+                    $trp->id = $id;
+                    $this->lst[] = $trp->phrase();
+                    $result = true;
+                }
+            } else {
+                $qp = $this->load_by_trp_ids_sql($db_con, $lnk_ids);
+                $db_con->usr_id = $this->usr->id;
+                $db_trp_lst = $db_con->get($qp);
+                foreach ($db_trp_lst as $db_trp) {
+                    if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
+                        $trp = new word_link($this->usr);
+                        $trp->row_mapper($db_trp);
+                        $this->lst[] = $trp->phrase();
+                        $result = true;
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * load the phrases selected by the id
      *
      * @param phr_ids $ids of phrase ids that should be loaded
      * @return bool true if at least one phrase has been loaded
      */
-    function load_by_ids(phr_ids $ids): bool
+    function load_by_given_ids(phr_ids $ids): bool
     {
         global $db_con;
         $result = false;
@@ -358,8 +434,7 @@ class phrase_list
           ORDER BY p.name;';
         log_debug('phrase->sql_list -> ' . $sql);
 
-        $qp->sql = $sql
-        ;
+        $qp->sql = $sql;
         /*
         // select the related words
         $db_con->set_type(DB_TYPE_WORD);
@@ -437,11 +512,11 @@ class phrase_list
 
         $wrd_lst = new word_list($this->usr);
         $wrd_lst->load_linked_words($vrb->id, $direction);
-        $wrd_added =  $this->add_wrd_lst($wrd_lst);
+        $wrd_added = $this->add_wrd_lst($wrd_lst);
 
         $trp_lst = new word_link_list($this->usr);
         $trp_lst->load_by_phr($phr, $vrb, $direction);
-        $trp_added =  $this->add_trp_lst($trp_lst);
+        $trp_added = $this->add_trp_lst($trp_lst);
 
         if ($wrd_added or $trp_added) {
             return true;
@@ -460,10 +535,10 @@ class phrase_list
      *         or "past years" to show the last years
      */
     function load_by_phr_vrb_and_type(
-        phrase $phr,
-        ?verb $vrb = null,
+        phrase         $phr,
+        ?verb          $vrb = null,
         word_type_list $wrd_types,
-        string $direction = word_link_list::DIRECTION_BOTH): phrase_list
+        string         $direction = word_link_list::DIRECTION_BOTH): phrase_list
     {
         $result = new phrase_list($this->usr);
         /*
@@ -1223,15 +1298,16 @@ class phrase_list
 
     /**
      * add one phrase by the id to the phrase list, but only if it is not yet part of the phrase list
+     * the new phrases are not loaded from the database, which should be done later if required
+     * @param int $phr_id_to_add the id that should be added
      */
-    function add_id($phr_id_to_add)
+    function add_id(int $phr_id_to_add)
     {
         log_debug('phrase_list->add_id (' . $phr_id_to_add . ')');
-        if (!in_array($phr_id_to_add, $this->id_lst())) {
-            if ($phr_id_to_add <> 0) {
+        if ($phr_id_to_add <> 0) {
+            if (!in_array($phr_id_to_add, $this->id_lst())) {
                 $phr_to_add = new phrase($this->usr);
                 $phr_to_add->id = $phr_id_to_add;
-                $phr_to_add->load();
 
                 $this->add($phr_to_add);
             }

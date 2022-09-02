@@ -205,8 +205,8 @@ function zuv_scale($user_value, $value_words, $user_id)
             if ($formula_id > 0) {
                 $formula_text = zuf_text($formula_id, $user_id);
                 if ($formula_text <> "") {
-                    $l_part = zu_str_left_of($formula_text, ZUP_CHAR_CALC);
-                    $r_part = zu_str_right_of($formula_text, ZUP_CHAR_CALC);
+                    $l_part = zu_str_left_of($formula_text, expression::CHAR_CALC);
+                    $r_part = zu_str_right_of($formula_text, expression::CHAR_CALC);
                     $l_part_wrd_id = zuf_2num_get_word($l_part);
                     $r_part_wrd_id = zuf_2num_get_word($r_part);
 
