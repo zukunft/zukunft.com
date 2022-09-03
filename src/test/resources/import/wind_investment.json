@@ -1,0 +1,532 @@
+{
+  "version": "0.0.3",
+  "time": "2022-09-02 19:15:41",
+  "user": "timon",
+  "selection": [
+    "wind power investment"
+  ],
+  "words": [
+    {
+      "name": "2022",
+      "type": "time"
+    },
+    {
+      "name": "Wind",
+      "refs": [
+        {
+          "name": "Wind",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Power"
+    },
+    {
+      "name": "Turbine",
+      "refs": [
+        {
+          "name": "Turbine",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Power rating",
+      "refs": [
+        {
+          "name": "Power_rating",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Top Seller",
+      "description": "The most often sold product type"
+    },
+    {
+      "name": "Watt"
+    },
+    {
+      "name": "Kilo"
+    },
+    {
+      "name": "Mega"
+    },
+    {
+      "name": "Giga"
+    },
+    {
+      "name": "Terra"
+    },
+    {
+      "name": "Diameter",
+      "refs": [
+        {
+          "name": "Diameter",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "meter"
+    },
+    {
+      "name": "surface"
+    },
+    {
+      "name": "m²",
+      "refs": [
+        {
+          "name": "Square metre",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cP,Betz",
+      "refs": [
+        {
+          "name": "Betz's_law",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Germany"
+    },
+    {
+      "name": "North Sea"
+    },
+    {
+      "name": "Coast"
+    },
+    {
+      "name": "median"
+    },
+    {
+      "name": "speed"
+    },
+    {
+      "name": "second"
+    },
+    {
+      "name": "Power density"
+    },
+    {
+      "name": "Vestas"
+    },
+    {
+      "name": "Company"
+    },
+    {
+      "name": "Power Plant"
+    },
+    {
+      "name": "hour"
+    },
+    {
+      "name": "full load"
+    },
+    {
+      "name": "electricity"
+    },
+    {
+      "name": "costs"
+    },
+    {
+      "name": "production"
+    },
+    {
+      "name": "year"
+    }
+  ],
+  "triples": [
+    {
+      "name": "Wind Turbine",
+      "from": "Turbine",
+      "verb": "can use",
+      "to": "Wind"
+    },
+    {
+      "name": "Wind Turbine (Power Plant)",
+      "from": "Wind Turbine",
+      "verb": "is a",
+      "to": "Power Plant"
+    },
+    {
+      "name": "kW",
+      "from": "Watt",
+      "verb": "scaled by",
+      "to": "Kilo"
+    },
+    {
+      "name": "MW",
+      "from": "Watt",
+      "verb": "scaled by",
+      "to": "Mega"
+    },
+    {
+      "name": "North Sea Coast",
+      "from": "North Sea",
+      "verb": "has a",
+      "to": "Coast"
+    },
+    {
+      "name": "German North Sea Coast",
+      "from": "Germany",
+      "verb": "has a",
+      "to": "North Sea Coast"
+    },
+    {
+      "name": "m/s",
+      "from": "meter",
+      "verb": "per",
+      "to": "second"
+    },
+    {
+      "name": "W/m²",
+      "from": "Watt",
+      "verb": "per",
+      "to": "m²"
+    },
+    {
+      "name": "Power per Wind Turbine",
+      "from": "Power",
+      "verb": "per",
+      "to": "Wind Turbine"
+    },
+    {
+      "name": "Full load hours",
+      "from": "hour",
+      "verb": "of",
+      "to": "full load"
+    },
+    {
+      "name": "Gigawatt",
+      "from": "Watt",
+      "verb": "scaled by",
+      "to": "Giga"
+    },
+    {
+      "name": "GWh",
+      "from": "Gigawatt",
+      "verb": "per",
+      "to": "hour"
+    },
+    {
+      "name": "GWh/a",
+      "from": "GWh",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "h/a",
+      "from": "hour",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "product",
+      "from": "energy ",
+      "verb": "is a",
+      "to": "product"
+    },
+    {
+      "name": "production",
+      "from": "product",
+      "verb": "per",
+      "to": "time variable"
+    },
+    {
+      "name": "production",
+      "from": "product",
+      "verb": "per",
+      "to": "time constant"
+    },
+    {
+      "name": "lifetime",
+      "from": "lifetime",
+      "verb": "is a",
+      "to": "time variable"
+    },
+    {
+      "name": "time variable",
+      "from": "time variable",
+      "verb": "scaled by",
+      "to": "time constant"
+    },
+    {
+      "name": "savings",
+      "from": "savings",
+      "verb": "scaled by",
+      "to": "production"
+    },
+    {
+      "name": "savings",
+      "from": "savings ",
+      "verb": "is a",
+      "to": ""
+    },
+    {
+      "name": "second",
+      "from": "second ",
+      "verb": "is a",
+      "to": "time constant"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "lifetime energy production",
+      "expression": "'\"energy production per year\" * \"lifetime in years\"",
+      "assigned_word": "Power Plant"
+    },
+    {
+      "name": "CO2 reduction based on replacement mix",
+      "expression": "'\"CO2-eq\" \"replacement mix\" / \"CO2-eq\" \"production climate emissions per kWh\"",
+      "assigned_word": "Power Plant"
+    },
+    {
+      "name": "CO2 über Laufzeit",
+      "expression": "'\"CO2-eq\" \"climate gas emissions\" * \"lifetime\"",
+      "assigned_word": "Power Plant"
+    },
+    {
+      "name": "Euro pro tonne",
+      "expression": "'\"CO2-eq\" \"climate gas emissions\" * \"lifetime\" /  \"investment\"",
+      "assigned_word": "Power Plant"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Windertrag Rechner Volker Quaschning",
+      "url": "https://www.volker-quaschning.de/software/windertrag/index.php"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "Wind Turbine",
+        "Top Seller",
+        "Power rating",
+        "kW"
+      ],
+      "time": "2022",
+      "number": "3000",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "Wind Turbine",
+        "Top Seller",
+        "Diameter",
+        "meter"
+      ],
+      "time": "2022",
+      "number": "115",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "Wind Turbine",
+        "Top Seller",
+        "Turbine",
+        "surface",
+        "m²"
+      ],
+      "time": "2022",
+      "number": "10386.9",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "Wind Turbine",
+        "Top Seller",
+        "cP,Betz"
+      ],
+      "time": "2022",
+      "number": "0.476",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "German North Sea Coast",
+        "median",
+        "Wind",
+        "speed",
+        "m/s"
+      ],
+      "number": "6.9",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "German North Sea Coast",
+        "median",
+        "Wind",
+        "Power density",
+        "W/m²"
+      ],
+      "number": "384.3",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "German North Sea Coast",
+        "median",
+        "Wind",
+        "Power per Wind Turbine",
+        "MW"
+      ],
+      "number": "1.1",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "German North Sea Coast",
+        "median",
+        "Wind Turbine",
+        "electricity",
+        "production",
+        "GWh/a"
+      ],
+      "number": "9.633",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "German North Sea Coast",
+        "median",
+        "Wind Turbine",
+        "full load",
+        "h/a"
+      ],
+      "number": "3211",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "Wind Turbine",
+        "Top Seller",
+        "investment",
+        "costs",
+        "2022"
+      ],
+      "number": "3.6",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "Wind Turbine",
+        "Top Seller",
+        "maintanance",
+        "costs",
+        "per year",
+        "million",
+        "Euro"
+      ],
+      "number": "0.108",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "Wind Turbine",
+        "German North Sea Coast",
+        "electricity"
+      ],
+      "number": "4.38",
+      "source": "Windertrag Rechner Volker Quaschning"
+    },
+    {
+      "words": [
+        "Wind",
+        "Turbine",
+        "lifetime",
+        "years"
+      ],
+      "number": "20"
+    },
+    {
+      "words": [
+        "electricity",
+        "replacement mix",
+        "North Germany",
+        "CO2-eq",
+        "gramm",
+        "kilowatthour"
+      ],
+      "number": "600"
+    },
+    {
+      "words": [
+        "production",
+        "climate gas",
+        "emissions",
+        "per kWh",
+        "Wind",
+        "Turbine",
+        "CO2-eq",
+        "gramm"
+      ],
+      "number": "15"
+    },
+    {
+      "words": [
+        "investor",
+        "energy",
+        "production",
+        "plant",
+        "proportion",
+        "percent"
+      ],
+      "number": "0.85"
+    },
+    {
+      "words": [
+        "Vestas",
+        "Equity ",
+        "Price",
+        "DKK"
+      ],
+      "number": "168.5"
+    },
+    {
+      "words": [
+        "Vestas",
+        "Outstanding ",
+        "Share"
+      ],
+      "number": "3.03"
+    },
+    {
+      "words": [
+        "Investment duration"
+      ],
+      "number": "18"
+    },
+    {
+      "words": [
+        "Vestas",
+        "Production per year",
+        "MW",
+        "Power rating"
+      ],
+      "number": "12000"
+    }
+  ],
+  "views": [
+    {
+      "name": "Personal Travel Score",
+      "comment": "view the personal travel score",
+      "type": "detail view",
+      "view_components": [
+        {
+          "pos": "0",
+          "name": "Name",
+          "code_id": "word_name"
+        }
+      ]
+    }
+  ]
+}
+
