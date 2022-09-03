@@ -170,7 +170,6 @@ include_once $root_path . 'src/main/php/service/test/zu_lib_value.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_word.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_word_db.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_calc.php';
-include_once $root_path . 'src/main/php/service/test/zu_lib_value_dsp.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_user.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_html.php';
 
@@ -1535,9 +1534,9 @@ function zu_test_time_setup(testing $t): string
     global $usr, $db_con;
 
     $result = '';
-    $this_year = date('Y');
+    $this_year = intval(date('Y'));
     $prev_year = '';
-    $test_years = cfg_get('test_years', $db_con);
+    $test_years = intval(cfg_get('test_years', $db_con));
     if ($test_years == '') {
         log_warning('Configuration of test years is missing', 'test_base->zu_test_time_setup');
     } else {

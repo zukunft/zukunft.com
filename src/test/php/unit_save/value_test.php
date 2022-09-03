@@ -210,7 +210,7 @@ function run_value_test(testing $t)
     $t->dsp(', value->figure->display_linked for word list ' . $phr_lst->dsp_id() . '', $target, $result);
 
     // test the HTML code creation
-    $result = $mio_val->display(0);
+    $result = $mio_val->display();
     $target = number_format(value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, DEFAULT_DEC_POINT, DEFAULT_THOUSAND_SEP);
     $t->dsp(', value->display', $target, $result);
 

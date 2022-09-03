@@ -31,6 +31,7 @@
 */
 
 use html\api;
+use html\word_dsp;
 
 class value_dsp_old extends value
 {
@@ -47,13 +48,14 @@ class value_dsp_old extends value
     }
 
     /*
-    display functions
-    -------
-  */
+     * display functions
+     */
 
-    // return the html code to display a value
-    // this is the opposite of the convert function
-    function display(string $back = ''): string
+    /**
+     * @return string the html code to display a value
+     * this is the opposite of the convert function
+     */
+    function display(): string
     {
         $result = '';
         if (!is_null($this->number)) {
@@ -69,8 +71,10 @@ class value_dsp_old extends value
         return $result;
     }
 
-    // html code to show the value with the possibility to click for the result explanation
-    function display_linked($back)
+    /**
+     * @return string html code to show the value with the possibility to click for the result explanation
+     */
+    function display_linked($back): string
     {
         $result = '';
 
@@ -96,7 +100,7 @@ class value_dsp_old extends value
      * possible future parameters:
      * $fixed_words - words that the user is not suggested to change this time
      * $select_word - suggested words which the user can change
-     * $type_word   - word to preselect the suggested words e.g. "Country" to list all ther countries first for the suggested word
+     * $type_word   - word to preselect the suggested words e.g. "Country" to list all their countries first for the suggested word
      *
      * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
      * @returns string the HTML code for a button to add a value related to this value
@@ -123,10 +127,13 @@ class value_dsp_old extends value
         return $result;
     }
 
-    // depending on the word list format the numeric value
-    // format the value for on screen display
-    // similar to the corresponding function in the "formula_value" class
-    function val_formatted()
+    /**
+     * depending on the word list format the numeric value
+     * format the value for on screen display
+     * similar to the corresponding function in the "formula_value" class
+     * @returns string the HTML code to display this value
+     */
+    function val_formatted(): string
     {
         $result = '';
 
@@ -152,14 +159,13 @@ class value_dsp_old extends value
     }
 
     // the same as \html\btn_del_value, but with another icon
-    function btn_undo_add_value($back)
+    function btn_undo_add_value($back): string
     {
-        $result = btn_undo('delete this value', '/http/value_del.php?id=' . $this->id . '&back=' . $back . '');
-        return $result;
+        return \html\btn_undo('delete this value', '/http/value_del.php?id=' . $this->id . '&back=' . $back . '');
     }
 
     // display a value, means create the HTML code that allows to edit the value
-    function dsp_tbl_std($back)
+    function dsp_tbl_std($back): string
     {
         log_debug('value->dsp_tbl_std ');
         $result = '';
@@ -170,7 +176,7 @@ class value_dsp_old extends value
     }
 
     // same as dsp_tbl_std, but in the user specific color
-    function dsp_tbl_usr($back)
+    function dsp_tbl_usr($back): string
     {
         log_debug('value->dsp_tbl_usr');
         $result = '';
@@ -180,7 +186,7 @@ class value_dsp_old extends value
         return $result;
     }
 
-    function dsp_tbl($back)
+    function dsp_tbl($back): string
     {
         log_debug('value->dsp_tbl_std ');
         $result = '';
@@ -194,7 +200,7 @@ class value_dsp_old extends value
     }
 
     // display the history of a value
-    function dsp_hist($page, $size, $call, $back)
+    function dsp_hist($page, $size, $call, $back): string
     {
         log_debug("value->dsp_hist for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
@@ -214,7 +220,7 @@ class value_dsp_old extends value
     }
 
     // display the history of a value
-    function dsp_hist_links($page, $size, $call, $back)
+    function dsp_hist_links($page, $size, $call, $back): string
     {
         log_debug("value->dsp_hist_links (" . $this->id . ",size" . $size . ",b" . $size . ")");
         $result = ''; // reset the html code var
@@ -232,10 +238,16 @@ class value_dsp_old extends value
         return $result;
     }
 
+    // lists all words related to a given value except the given word
+    // and offer to add a formula to the value as an alternative
+    // $wrd_add is only optional to display the last added word at the end
+    // TODO: take user unlink of words into account
+    // save data to the database only if "save" is pressed add and remove the word links "on the fly", which means that after the first call the edit view is more or less the same as the add view
+
     // display some value samples related to the wrd_id
     // with a preference of the start_word_ids
     // TODO use value_phrase_link_list as a base
-    function dsp_samples($wrd_id, $start_wrd_ids, $size, $back)
+    function dsp_samples($wrd_id, $start_wrd_ids, $size, $back): string
     {
         log_debug("value->dsp_samples (" . $wrd_id . ",rt" . implode(",", $start_wrd_ids) . ",size" . $size . ")");
 
@@ -280,7 +292,7 @@ class value_dsp_old extends value
 
             $new_value_id = $db_row["value_id"];
             $wrd = new word_dsp();
-            $wrd->id = $db_row["word_id"];
+            $wrd->set_id($db_row["word_id"]);
             $wrd->set_name($db_row["word_name"]);
             if ($value_id <> $new_value_id) {
                 if ($word_names <> "") {
@@ -313,7 +325,7 @@ class value_dsp_old extends value
     }
 
     // simple modal box to add a value
-    function dsp_add_fast($back)
+    function dsp_add_fast($back): string
     {
         $result = '';
 
@@ -398,7 +410,7 @@ class value_dsp_old extends value
                     if ($phr->id == $this->ids[$pos]) {
                         $phr->is_wrd_id = $type_ids[$pos];
                         $is_wrd = new word_dsp();
-                        $is_wrd->id = $phr->is_wrd_id;
+                        $is_wrd->set_id($phr->is_wrd_id);
                         $phr->is_wrd = $is_wrd;
                         $phr->dsp_pos = $pos;
                     }
@@ -432,7 +444,9 @@ class value_dsp_old extends value
                 }
             }
 
-            // show the phrases that the user can change: first the non specific ones, that the phrases of a selective type and new phrases at the end
+            // show the phrases that the user can change:
+            // first the non-specific ones, that the phrases of a selective type
+            // and new phrases at the end
             log_debug('value->dsp_edit -> show phrases');
             for ($dsp_type = 0; $dsp_type <= 1; $dsp_type++) {
                 foreach ($phr_lst->lst as $phr) {
