@@ -265,8 +265,9 @@
     {
       "name": "savings",
       "from": "savings ",
-      "verb": "is a",
-      "to": ""
+      "verb": "scaled by",
+      "to": "production"
+
     },
     {
       "name": "second",
