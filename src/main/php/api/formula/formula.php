@@ -39,6 +39,9 @@ class formula_api extends user_sandbox_named_api
 
     // formulas for stand-alone unit tests
     // for database based test formulas see model/formula/formula.php
+    const TN_SCALE_MIO = 'scale millions to one';
+    const TF_SCALE_MIO = '"one" = "millions" * 1000000';
+    const TF_SCALE_MIO_REF = '{t1} = {t2} * 1000000';
     const TF_SECTOR = '= "Country" "differentiator" "Canton" / "Total"';
     const TF_SECTOR_REF = '= {t1} {v1} {t2} / {t3}';
 

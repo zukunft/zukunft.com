@@ -41,12 +41,21 @@ class expression_unit_tests
 
         $t->header('Unit tests of the formula expression class (src/main/php/model/formula/expression.php)');
 
-        $exp = new expression($usr);
-        $exp->ref_text =  formula_api::TF_SECTOR_REF;
-        $phr_lst = $exp->phr_id_lst();
+        $test_name = 'expression->source phrase list with id from the reference text';
+        $exp_sector = new expression($usr);
+        $exp_sector->ref_text =  formula_api::TF_SECTOR_REF;
+        $phr_lst = $exp_sector->phr_id_lst($exp_sector->r_part());
         $result = $phr_lst->dsp_id();
         $target = '"","","" (1,2,3)';
-        $t->assert('expression->is_std if formula is changed by the user', $result, $target);
+        $t->assert($test_name, $result, $target);
+
+        $test_name = 'expression->result phrase list with id from the reference text';
+        $exp_scale = new expression($usr);
+        $exp_scale->ref_text =  formula_api::TF_SCALE_MIO_REF;
+        $phr_lst = $exp_scale->phr_id_lst($exp_scale->fv_part());
+        $result = $phr_lst->dsp_id();
+        $target = '1';
+        $t->assert($test_name, $result, $target);
 
         /*
         $frm = new formula($usr);

@@ -33,7 +33,7 @@ class expression
 {
 
     /*
-     *  code links
+     * code links
      */
 
     // predefined type selectors potentially used also in other classes
@@ -102,18 +102,58 @@ class expression
      */
 
     /**
+     * @returns phrase_list with the phrases from a given formula text and load the phrases
+     */
+    function phr_lst(): phrase_list
+    {
+        $phr_lst = $this->phr_id_lst($this->r_part());
+        $phr_lst->load_by_ids();
+
+        return $phr_lst;
+    }
+
+    /**
+     * @returns phrase_list with the phrases that should be added to the result of a formula
+     * e.g. for >"percent" = ( "this" - "prior" ) / "prior"< a list with the phrase "percent" will be returned
+     */
+    function fv_phr_lst(): phrase_list
+    {
+        $phr_lst = $this->phr_id_lst($this->fv_part());
+        $phr_lst->load_by_ids();
+
+        return $phr_lst;
+    }
+
+    /**
+     * get a list of all formula elements (don't use for number retrieval, use element_grp_lst instead, because )
+     */
+    function element_lst(): formula_element_list|formula_element_group_list
+    {
+        return $this->element_lst_all(expression::SELECT_ALL, FALSE);
+    }
+
+    /**
+     * a formula element group is a group of words, verbs, phrases or formula that retrieve a value or a list of values
+     * e.g. with "Sector" "differentiator" all
+     */
+    function element_grp_lst(): formula_element_list|formula_element_group_list
+    {
+        return $this->element_lst_all(expression::SELECT_ALL, TRUE);
+    }
+
+    /*
+     * functions public just for testing
+     */
+
+    /**
      * @returns phrase_list with the word and triple ids from a given formula text and without loading the objects from the database
      */
-    function phr_id_lst(): ?phrase_list
+    function phr_id_lst(string $ref_text): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
-        $wrd_ids = array();
-
-        // create a local copy of the reference text not to modify the original text
-        $ref_text = $this->r_part();
 
         if ($ref_text <> "") {
-            // add words to selection
+            // add phrases to selection
             $new_phr_id = $this->get_phr_id($ref_text);
             while ($new_phr_id != 0) {
                 $phr_lst->add_id($new_phr_id);
@@ -123,17 +163,6 @@ class expression
         }
 
         $this->phr_lst = $phr_lst;
-        return $phr_lst;
-    }
-
-    /**
-     * @returns phrase_list with the phrases from a given formula text and load the phrases
-     */
-    function phr_lst(): ?phrase_list
-    {
-        $phr_lst = $this->phr_id_lst();
-        $phr_lst->load_by_ids();
-
         return $phr_lst;
     }
 
@@ -159,55 +188,11 @@ class expression
         return str_replace(" ", "", $result);
     }
 
-    /*
-     * internal functions
-     */
-
-    /**
-     * returns a positive reference (word, verb or formula) id if the formula string in the database format contains a database reference link
-     * uses the $ref_text as a parameter because to ref_text is in many cases only a part of the complete reference text
-     *
-     * @param string $ref_text with the formula reference text e.g. ={f203}
-     * @param string $start_maker the definition of the start of the reference
-     * @param string $end_maker the definition of the end of the reference
-     * @return int the id found in the reference text or zero if no id is found
-     */
-    private function get_ref_id(string $ref_text, string $start_maker, string $end_maker): int
-    {
-        $result = 0;
-
-        $pos_start = strpos($ref_text, $start_maker);
-        if ($pos_start !== false) {
-            $r_part = zu_str_right_of($ref_text, $start_maker);
-            $l_part = zu_str_left_of($r_part, $end_maker);
-            if (is_numeric($l_part)) {
-                $result = $l_part;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * returns a phrase id if the formula string in the database format contains a phrase link
-     * @param string $ref_text with the formula reference text e.g. ={f203}
-     * @return int the phrase id found in the reference text or zero if no phrase id is found
-     */
-    private function get_phr_id(string $ref_text): int
-    {
-        return $this->get_ref_id($ref_text, self::WORD_START, self::WORD_END);
-    }
-
-    private function get_frm_id(string $ref_text): int
-    {
-        return $this->get_ref_id($ref_text, self::FORMULA_START, self::FORMULA_END);
-    }
-
     /**
      * find the position of the formula indicator "="
      * use the part left of it to add the words to the result
      */
-    function fv_part(): string
+    public function fv_part(): string
     {
         $result = zu_str_left_of($this->ref_text, self::CHAR_CALC);
         return trim($result);
@@ -232,41 +217,86 @@ class expression
     }
 
     /**
-     * get the phrases that should be added to the result of a formula
-     * e.g. for >"percent" = ( "this" - "prior" ) / "prior"< a list with the phrase "percent" will be returned
-     * @return phrase_list|null with the phrase that should be added to the result
+     * @returns bool true if the formula contains a word, verb or formula link
      */
-    function fv_phr_lst(): ?phrase_list
+    function has_ref(): bool
     {
-        log_debug('expression->fv_phr_lst >' . $this->ref_text . '< and user ' . $this->usr->name . '"');
-        $phr_lst = null;
-        $wrd_ids = array();
+        log_debug('expression->has_ref ' . $this->dsp_id());
+        $result = false;
 
-        // create a local copy of the reference text not to modify the original text
-        $ref_text = $this->fv_part();
-
-        if ($ref_text <> "") {
-            // add words to selection
-            $new_wrd_id = $this->get_phr_id($ref_text);
-            while ($new_wrd_id > 0) {
-                if (!in_array($new_wrd_id, $wrd_ids)) {
-                    $wrd_ids[] = $new_wrd_id;
-                }
-                $ref_text = zu_str_right_of($ref_text, self::WORD_START . $new_wrd_id . self::WORD_END);
-                $new_wrd_id = $this->get_phr_id($ref_text);
-            }
-            $phr_lst = new phrase_list($this->usr);
-            if (count($wrd_ids) > 0) {
-                $phr_lst->load_by_given_ids((new phr_ids($wrd_ids)));
-            }
-            //$phr_lst->ids = $wrd_ids;
-            //$phr_lst->load();
-            log_debug('expression->fv_phr_lst -> ' . $phr_lst->dsp_name());
+        if ($this->get_phr_id($this->ref_text) > 0
+            or $this->get_frm_id($this->ref_text) > 0
+            or $this->get_ref_id($this->ref_text, self::WORD_START, self::WORD_END) > 0
+            or $this->get_ref_id($this->ref_text, self::FORMULA_START, self::FORMULA_END) > 0) {
+            $result = true;
         }
 
-        log_debug('expression->fv_phr_lst -> done');
-        $this->fv_phr_lst = $phr_lst;
-        return $phr_lst;
+        log_debug('expression->has_ref -> done ' . zu_dsp_bool($result));
+        return $result;
+    }
+
+    /*
+     * display functions
+     */
+
+    /**
+     * format the expression name to use it for debugging
+     */
+    function dsp_id(): string
+    {
+        // $result = '"' . $this->usr_text . '" (' . $this->ref_text . ')';
+        // the user is no most cases no extra info
+        // $result .= ' for user '.$this->usr->name.'';
+        return '"' . $this->usr_text . '" (' . $this->ref_text . ')';
+    }
+
+    function name(): string
+    {
+        return $this->usr_text;
+    }
+
+    /*
+     * internal functions
+     */
+
+    /**
+     * returns a phrase id if the formula string in the database format contains a phrase link
+     * @param string $ref_text with the formula reference text e.g. ={f203}
+     * @return int the phrase id found in the reference text or zero if no phrase id is found
+     */
+    private function get_phr_id(string $ref_text): int
+    {
+        return $this->get_ref_id($ref_text, self::WORD_START, self::WORD_END);
+    }
+
+    private function get_frm_id(string $ref_text): int
+    {
+        return $this->get_ref_id($ref_text, self::FORMULA_START, self::FORMULA_END);
+    }
+
+    /**
+     * returns a positive reference (word, verb or formula) id if the formula string in the database format contains a database reference link
+     * uses the $ref_text as a parameter because to ref_text is in many cases only a part of the complete reference text
+     *
+     * @param string $ref_text with the formula reference text e.g. ={f203}
+     * @param string $start_maker the definition of the start of the reference
+     * @param string $end_maker the definition of the end of the reference
+     * @return int the id found in the reference text or zero if no id is found
+     */
+    private function get_ref_id(string $ref_text, string $start_maker, string $end_maker): int
+    {
+        $result = 0;
+
+        $pos_start = strpos($ref_text, $start_maker);
+        if ($pos_start !== false) {
+            $r_part = zu_str_right_of($ref_text, $start_maker);
+            $l_part = zu_str_left_of($r_part, $end_maker);
+            if (is_numeric($l_part)) {
+                $result = $l_part;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -452,23 +482,6 @@ class expression
 
         log_debug('expression->element_lst_all got -> ' . dsp_count($result->lst) . ' elements');
         return $result;
-    }
-
-    /**
-     * get a list of all formula elements (don't use for number retrieval, use element_grp_lst instead, because )
-     */
-    function element_lst(): formula_element_list|formula_element_group_list
-    {
-        return $this->element_lst_all(expression::SELECT_ALL, FALSE);
-    }
-
-    /**
-     * a formula element group is a group of words, verbs, phrases or formula that retrieve a value or a list of values
-     * e.g. with "Sector" "differentiator" all
-     */
-    function element_grp_lst(): formula_element_list|formula_element_group_list
-    {
-        return $this->element_lst_all(expression::SELECT_ALL, TRUE);
     }
 
     /**
@@ -705,45 +718,6 @@ class expression
             log_debug('expression->get_ref_part -> done "' . $result . '"');
         }
         return $result;
-    }
-
-    /**
-     * returns true if the formula contains a word, verb or formula link
-     */
-    function has_ref(): bool
-    {
-        log_debug('expression->has_ref ' . $this->dsp_id());
-        $result = false;
-
-        if ($this->get_phr_id($this->ref_text) > 0
-            or $this->get_frm_id($this->ref_text) > 0
-            or $this->get_ref_id($this->ref_text, self::WORD_START, self::WORD_END) > 0
-            or $this->get_ref_id($this->ref_text, self::FORMULA_START, self::FORMULA_END) > 0) {
-            $result = true;
-        }
-
-        log_debug('expression->has_ref -> done ' . zu_dsp_bool($result));
-        return $result;
-    }
-
-    /*
-     * display functions
-     */
-
-    /**
-     * format the expression name to use it for debugging
-     */
-    function dsp_id(): string
-    {
-        // $result = '"' . $this->usr_text . '" (' . $this->ref_text . ')';
-        // the user is no most cases no extra info
-        // $result .= ' for user '.$this->usr->name.'';
-        return '"' . $this->usr_text . '" (' . $this->ref_text . ')';
-    }
-
-    function name(): string
-    {
-        return $this->usr_text;
     }
 
 }

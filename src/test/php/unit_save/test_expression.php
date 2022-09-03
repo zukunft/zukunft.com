@@ -84,12 +84,6 @@ function run_expression_test(testing $t)
     // test the expression processing of the database reference
     $exp_db = new expression($usr);
     $exp_db->ref_text = '{t' . $wrd_percent->id . '} = ( is.numeric( {f' . $frm_this->id . '} ) & is.numeric( {f' . $frm_prior->id . '} ) ) ( {f' . $frm_this->id . '} - {f' . $frm_prior->id . '} ) / {f' . $frm_prior->id . '}';
-    $target = '{t' . $wrd_percent->id . '}';
-    $result = $exp_db->fv_part();
-    $t->dsp('expression->fv_part_usr for "' . $exp_db->ref_text . '"', $target, $result);
-    $target = '( is.numeric( {f' . $frm_this->id . '} ) & is.numeric( {f' . $frm_prior->id . '} ) ) ( {f' . $frm_this->id . '} - {f' . $frm_prior->id . '} ) / {f' . $frm_prior->id . '}';
-    $result = $exp_db->r_part();
-    $t->dsp('expression->r_part_usr for "' . $exp_db->ref_text . '"', $target, $result);
     $target = '"percent"=( is.numeric( "this" ) & is.numeric( "prior" ) ) ( "this" - "prior" ) / "prior"';
     $result = $exp_db->get_usr_text();
     $t->dsp('expression->get_usr_text for "' . $exp_db->ref_text . '"', $target, $result);
