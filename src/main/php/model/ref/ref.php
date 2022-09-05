@@ -148,11 +148,11 @@ class ref
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return bool an empty string if the import has been successfully saved to the database or the message that should be shown to the user
+     * @return string an empty string if the import has been successfully saved to the database or the message that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): bool
+    function import_obj(array $json_obj, bool $do_save = true): string
     {
-        $result = false;
+        $result = '';
 
         // reset of object not needed, because the calling function has just created the object
         foreach ($json_obj as $key => $value) {
@@ -162,21 +162,18 @@ class ref
             if ($key == self::FLD_EX_TYPE) {
                 $this->ref_type = get_ref_type($value);
 
-                if (!isset($this->ref_type)) {
-                    log_err('Reference type for ' . $value . ' not found', 'ref->import_obj');
+                if ($this->ref_type == null) {
+                    $result .= 'Reference type for ' . $value . ' not found';
                 } else {
                     $this->ref_type = get_ref_type($value);
+                    log_debug('ref->import_obj -> ref_type set based on ' . $value . ' (' . $this->ref_type->name . ')');
                 }
-                log_debug('ref->import_obj -> ref_type set based on ' . $value . ' (' . $this->ref_type->name . ')');
             }
         }
         // to be able to log the object names
         if ($this->load_objects()) {
-            if ($do_save) {
-                if ($this->save() == '') {
-                    log_debug('ref->import_obj -> ' . $this->dsp_id());
-                    $result = true;
-                }
+            if ($result == '' and $do_save) {
+                $result .= $this->save();
             }
         }
 

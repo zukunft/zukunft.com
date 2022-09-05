@@ -126,9 +126,9 @@ class ref_type_list extends user_type_list
     /**
      * overwrite the user_type_list get function to be able to return the correct object
      * @param int $id the database id of the expected type
-     * @return ref_type the type object
+     * @return ref_type|null the type object
      */
-    function get_by_id(int $id): ref_type
+    function get_by_id(int $id): ?ref_type
     {
         global $ref_types;
         $result = null;
@@ -148,9 +148,9 @@ class ref_type_list extends user_type_list
 /**
  * exception to get_type that returns an extended user_type object
  * @param string $code_id the code id that must be unique within the given type
- * @return ref_type the loaded ref type object
+ * @return ref_type|null the loaded ref type object
  */
-function get_ref_type(string $code_id): ref_type
+function get_ref_type(string $code_id): ?ref_type
 {
     global $ref_types;
     $id = $ref_types->id($code_id);

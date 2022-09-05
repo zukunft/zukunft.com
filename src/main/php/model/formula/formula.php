@@ -1168,7 +1168,8 @@ class formula extends user_sandbox_description
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return string an empty string if the import has been successfully saved to the database or the message that should be shown to the user
+     * @return string an empty string if the import has been successfully saved to the database
+     *                or the message that should be shown to the user
      */
     function import_obj(array $json_obj, bool $do_save = true): string
     {
@@ -1219,27 +1220,40 @@ class formula extends user_sandbox_description
         }
 
         // assign the formula to the words and triple
-        if ($result == '' or !$do_save) {
+        if ($result == '') {
             log_debug('formula->import_obj -> saved ' . $this->dsp_id());
             foreach ($json_obj as $key => $value) {
-                if ($result or !$do_save) {
+                if ($result == '') {
                     if ($key == self::FLD_ASSIGN) {
-                        foreach ($value as $lnk_phr_name) {
-                            $phr = new phrase($usr);
-                            $phr->name = $lnk_phr_name;
-                            $phr->load();
-                            if ($this->id > 0 and $phr->id <> 0) {
-                                $frm_lnk = new formula_link($usr);
-                                $frm_lnk->fob = $this;
-                                $frm_lnk->tob = $phr;
-                                $frm_lnk->save();
+                        if (is_array($value)) {
+                            foreach ($value as $lnk_phr_name) {
+                                $result .= $this->assign_phrase($lnk_phr_name, $do_save);
                             }
+                        } else {
+                            $result .= $this->assign_phrase($value, $do_save);
                         }
                     }
                 }
             }
         }
 
+        return $result;
+    }
+
+    private function assign_phrase(string $phr_name, bool $do_save = true): string
+    {
+        $result = '';
+        $phr = new phrase($this->usr);
+        $phr->name = $phr_name;
+        if ($do_save) {
+            $phr->load();
+            if ($this->id > 0 and $phr->id <> 0) {
+                $frm_lnk = new formula_link($this->usr);
+                $frm_lnk->fob = $this;
+                $frm_lnk->tob = $phr;
+                $result .= $frm_lnk->save();
+            }
+        }
         return $result;
     }
 
@@ -2031,7 +2045,8 @@ class formula extends user_sandbox_description
         return $result;
     }
 
-    private function is_term_the_same(term $trm): bool
+    private
+    function is_term_the_same(term $trm): bool
     {
         $result = false;
         if ($trm->type == formula::class) {
@@ -2266,7 +2281,7 @@ class formula extends user_sandbox_description
 
     }
 
-    // TODO user specific???
+// TODO user specific???
     function del_links(): user_message
     {
         $result = new user_message();

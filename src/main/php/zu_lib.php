@@ -608,6 +608,7 @@ define("BASE_CONFIG_FILES", serialize(array(
 const PATH_TEST_FILES = ROOT_PATH . 'src/test/resources/';
 const PATH_TEST_IMPORT_FILES = ROOT_PATH . 'src/test/resources/import/';
 define("TEST_IMPORT_FILE_LIST", serialize(array(
+    'wind_investment.json',
     'companies.json',
     'ABB_2013.json',
     'ABB_2017.json',
@@ -620,6 +621,7 @@ define("TEST_IMPORT_FILE_LIST", serialize(array(
     'personal_climate_gas_emissions_timon.json',
     'THOMY_test.json')));
 define("TEST_IMPORT_FILE_LIST_ALL", serialize(array(
+    'wind_investment.json',
     'companies.json',
     'ABB_2013.json',
     'ABB_2017.json',

@@ -646,16 +646,24 @@ class word_link extends user_sandbox_link_description
                 $this->type_id = $word_types->id($value);
             }
             if ($key == self::FLD_EX_FROM) {
-                $this->from = $this->import_phrase($value, $do_save);
+                if ($value == "") {
+                    $result .= ' from name should not be empty at ' . dsp_array($json_obj);
+                } else {
+                    $this->from = $this->import_phrase($value, $do_save);
+                }
             }
             if ($key == self::FLD_EX_TO) {
-                $this->to = $this->import_phrase($value, $do_save);
+                if ($value == "") {
+                    $result .= ' to name should not be empty at ' . dsp_array($json_obj);
+                } else {
+                    $this->to = $this->import_phrase($value, $do_save);
+                }
             }
             if ($key == self::FLD_EX_VERB) {
                 $vrb = new verb;
                 $vrb->name = $value;
                 $vrb->usr = $this->usr;
-                if ($do_save) {
+                if ($result == '' and $do_save) {
                     $vrb->load();
                     if ($vrb->id <= 0) {
                         // TODO add an error message
@@ -675,10 +683,7 @@ class word_link extends user_sandbox_link_description
             }
         }
         if ($result == '' and $do_save) {
-            $this->save();
-            log_debug('word_link->import_obj -> ' . $this->dsp_id());
-        } else {
-            log_debug('word_link->import_obj -> ' . $result);
+            $result .= $this->save();
         }
 
         return $result;

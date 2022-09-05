@@ -304,11 +304,8 @@ class source extends user_sandbox_named
             */
         }
 
-        $result .= $this->save();
-        if ($result == '') {
-            log_debug('source->import_obj -> ' . $this->dsp_id());
-        } else {
-            log_debug('source->import_obj -> save failed');
+        if ($result == '' and $do_save) {
+            $result .= $this->save();
         }
 
         return $result;

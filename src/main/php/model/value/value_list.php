@@ -428,7 +428,7 @@ class value_list
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return bool true if the import has been successfully saved to the database
+     * @return string true if the import has been successfully saved to the database
      */
     function import_obj(array $json_obj, bool $do_save = true): string
     {
@@ -460,7 +460,7 @@ class value_list
             if ($key == 'time') {
                 $phr = new phrase($this->usr);
                 if (!$phr->import_obj($value, $do_save)) {
-                    $result = 'Failed to import time ' . $value;
+                    $result .= 'Failed to import time ' . $value;
                 }
                 $val->time_phr = $phr;
             }
@@ -476,10 +476,10 @@ class value_list
             if ($key == source_exp::FLD_REF) {
                 $src = new source($this->usr);
                 $src->name = $value;
-                if ($do_save) {
+                if ($result == '' and $do_save) {
                     $src->load();
                     if ($src->id == 0) {
-                        $src->save();
+                        $result .= $src->save();
                     }
                 }
                 $val->source = $src;
@@ -497,7 +497,7 @@ class value_list
                         $val_to_add->number = $val_number;
                         if ($do_save) {
                             $val_to_add->grp = $phr_lst->get_grp();
-                            $val_to_add->save();
+                            $result .= $val_to_add->save();
                         }
                         $this->lst[] = $val_to_add;
                     }

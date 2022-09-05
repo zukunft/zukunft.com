@@ -656,23 +656,23 @@ class word extends user_sandbox_description
         // save the word in the database
         if ($do_save) {
             // TODO should save not return the error reason that should be shown to the user if it fails?
-            $result = $this->save();
+            $result .= $this->save();
         }
 
         // add related parameters to the word object
-        if ($result or !$do_save) {
+        if ($result == '') {
             log_debug('word->import_obj -> saved ' . $this->dsp_id());
 
             if ($this->id <= 0 and $do_save) {
                 log_err('Word ' . $this->dsp_id() . ' cannot be saved', 'word->import_obj');
             } else {
                 foreach ($json_obj as $key => $value) {
-                    if ($result or !$do_save) {
+                    if ($result == '') {
                         if ($key == self::FLD_REFS) {
                             foreach ($value as $ref_data) {
                                 $ref_obj = new ref($this->usr);
                                 $ref_obj->phr = $this->phrase();
-                                $result = $ref_obj->import_obj($ref_data, $do_save);
+                                $result .= $ref_obj->import_obj($ref_data, $do_save);
                                 $this->ref_lst[] = $ref_obj;
                             }
                         }

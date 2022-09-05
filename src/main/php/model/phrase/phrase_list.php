@@ -976,7 +976,7 @@ class phrase_list
             if ($value != '') {
                 $phr = new phrase($this->usr);
                 $phr->name = $value;
-                if ($do_save) {
+                if ($result == '' and $do_save) {
                     $phr->load();
                     if ($phr->id == 0) {
                         $wrd = new word($this->usr);
@@ -1000,7 +1000,7 @@ class phrase_list
 
         // save the word in the database
         // TODO check why this is needed
-        if ($do_save) {
+        if ($result == '' and $do_save) {
             $result .= $this->save();
         }
 

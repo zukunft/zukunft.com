@@ -36,6 +36,9 @@ use html\user_type_list_dsp;
 class user_type_list
 {
 
+    // error return codes
+    const CODE_ID_NOT_FOUND = -1;
+
     // persevered type name and code id for unit and integration tests
     const TEST_NAME = 'System Test Type Name';
     const TEST_TYPE = 'System Test Type Code ID';
@@ -177,7 +180,8 @@ class user_type_list
             if (array_key_exists($code_id, $this->hash)) {
                 $result = $this->hash[$code_id];
             } else {
-                log_err('Type id not found for "' . $code_id . '" in ' . dsp_array_keys($this->hash));
+                $result = self::CODE_ID_NOT_FOUND;
+                log_debug('Type id not found for "' . $code_id . '" in ' . dsp_array_keys($this->hash));
             }
         } else {
             log_debug('Type code id not not set');
@@ -209,9 +213,9 @@ class user_type_list
     /**
      * pick a type from the preloaded object list
      * @param int $id the database id of the expected type
-     * @return user_type the type object
+     * @return user_type|null the type object
      */
-    function get_by_id(int $id): user_type
+    function get_by_id(int $id): ?user_type
     {
         $result = null;
         if ($id > 0) {

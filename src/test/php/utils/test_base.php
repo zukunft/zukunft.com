@@ -1366,7 +1366,7 @@ class test_base
             // TODO: create a ticket
         }
 
-// explain the check
+    // explain the check
         if (is_array($target)) {
             if ($test_type == 'contains') {
                 $txt .= " should contain \"" . dsp_array($target) . "\"";
@@ -1388,7 +1388,7 @@ class test_base
             }
         } else {
             if ($test_type == 'contains') {
-                $txt .= ", but does not contain ";
+                $txt .= ", but ";
             } else {
                 $txt .= ", but it is ";
             }

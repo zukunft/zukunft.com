@@ -786,19 +786,19 @@ class formula_value
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return bool true if the import has been successfully saved to the database
+     * @return string an empty string if the import has been successfully saved to the database
      */
-    function import_obj(array $json_obj, bool $do_save = true): bool
+    function import_obj(array $json_obj, bool $do_save = true): string
     {
         log_debug(formula_value::class . '->import_obj');
-        $result = false;
+        $result = '';
 
         foreach ($json_obj as $key => $fv) {
 
             if ($key == 'words') {
                 $phr_lst = new phrase_list($this->usr);
                 $result .= $phr_lst->import_lst($fv, $do_save);
-                if ($do_save) {
+                if ($result == '' and $do_save) {
                     $phr_grp = $phr_lst->get_grp();
                     log_debug(formula_value::class . '->import_obj got word group ' . $phr_grp->dsp_id());
                     $this->grp = $phr_grp;
@@ -820,7 +820,7 @@ class formula_value
             if ($key == 'time') {
                 $phr = new phrase($this->usr);
                 if (!$phr->import_obj($fv, $do_save)) {
-                    $result = 'Failed to import time ' . $fv;
+                    $result .= 'Failed to import time ' . $fv;
                 }
                 $this->time_phr = $phr;
             }
@@ -831,7 +831,7 @@ class formula_value
 
         }
 
-        if ($result == true and $do_save) {
+        if ($result == '' and $do_save) {
             $this->save();
             log_debug(formula_value::class . '->import_obj -> ' . $this->dsp_id());
         } else {

@@ -475,15 +475,16 @@ class view extends user_sandbox_named
      * add a new component to this view
      * @param view_cmp $cmp the view component that should be added
      * @param int|null $pos is set the position, where the
-     * @return bool true if the new component link has been saved to the database
+     * @return string an empty string if the new component link has been saved to the database
+     *                or the message that should be shown to the user
      */
-    function add_cmp(view_cmp $cmp, ?int $pos = null, bool $do_save = true): bool
+    function add_cmp(view_cmp $cmp, ?int $pos = null, bool $do_save = true): string
     {
-        $result = false;
+        $result = '';
         if ($pos != null) {
             $this->cmp_lst[] = $cmp;
             if (count($this->cmp_lst) != $cmp->order_nbr) {
-                log_err('View component "' . $cmp->name . '" has been expected to be at position ' . $cmp->order_nbr . ' in ' . $this->name . ', but it is at position ' . dsp_count($this->cmp_lst));
+                $result .= 'view component "' . $cmp->name . '" has been expected to be at position ' . $cmp->order_nbr . ' in ' . $this->name . ', but it is at position ' . dsp_count($this->cmp_lst);
             } else {
                 if ($do_save) {
                     $cmp->save();
@@ -600,7 +601,8 @@ class view extends user_sandbox_named
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return string an empty string if the import has been successfully saved to the database or the message that should be shown to the user
+     * @return string an empty string if the import has been successfully saved to the database
+     *                or the message that should be shown to the user
      */
     function import_obj(array $json_obj, bool $do_save = true): string
     {
@@ -620,7 +622,15 @@ class view extends user_sandbox_named
             }
             if ($key == exp_obj::FLD_TYPE) {
                 if ($value != '') {
-                    $this->type_id = $this->type_id_by_code_id($value);
+                    $type_id = $this->type_id_by_code_id($value);
+                    if ($type_id == user_type_list::CODE_ID_NOT_FOUND) {
+                        if ($result != '') {
+                            $result .= ', ';
+                        }
+                        $result .= 'view type "' . $value . '" not found';
+                    } else {
+                        $this->type_id = $type_id;
+                    }
                 }
             }
             if ($key == exp_obj::FLD_DESCRIPTION) {
@@ -635,7 +645,10 @@ class view extends user_sandbox_named
 
         if ($do_save) {
             if ($this->name == '') {
-                log_err("Name in view missing");
+                if ($result != '') {
+                    $result .= ', ';
+                }
+                $result .= 'name in view missing';
             } else {
                 $result .= $this->save();
 
@@ -658,10 +671,14 @@ class view extends user_sandbox_named
                     $cmp = new view_cmp($usr);
                     $cmp->import_obj($json_cmp, $do_save);
                     // on import first add all view components to the view object and save them all at once
-                    $this->add_cmp($cmp, $cmp_pos, $do_save);
+                    $result .= $this->add_cmp($cmp, $cmp_pos, $do_save);
                     $cmp_pos++;
                 }
             }
+        }
+
+        if ($result != '') {
+            $result .= ' when importing ' . dsp_array($json_obj);
         }
 
         return $result;
