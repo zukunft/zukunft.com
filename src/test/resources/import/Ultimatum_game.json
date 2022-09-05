@@ -16,13 +16,7 @@
       ]
     },
     {
-      "name": "Ultimatum Game average offer",
-      "refs": [
-        {
-          "name": "12805551",
-          "type": "pubmed"
-        }
-      ]
+      "name": "Ultimatum Game average offer"
     }
   ],
   "triples": [
@@ -30,6 +24,10 @@
   "formulas": [
   ],
   "sources": [
+    {
+      "name": "The neural basis of economic decision-making in the Ultimatum Game ",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/12805551/"
+    }
   ],
   "values": [
   ],
