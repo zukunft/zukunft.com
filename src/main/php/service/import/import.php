@@ -84,10 +84,10 @@ class file_import
     /**
      * import zukunft.com data as object for creating e.g. a json message
      */
-    function put(): string
+    function put(): user_message
     {
         log_debug('import->put');
-        $result = '';
+        $result = new user_message();
         $this->last_display_time = microtime(true);
 
         $json_array = json_decode($this->json_str, true);
@@ -99,7 +99,7 @@ class file_import
                 $pos++;
                 if ($key == 'version') {
                     if (prg_version_is_newer($json_obj)) {
-                        $result .= 'Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION . ' ';
+                        $result->add_message('Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION);
                     }
                 } elseif ($key == 'pod') {
                     // TODO set the source pod
@@ -110,120 +110,120 @@ class file_import
                 } elseif ($key == 'user') {
                     // TODO set the user that has created the export
                 } elseif ($key == 'users') {
-                    $import_result = '';
+                    $import_result = new user_message();
                     foreach ($json_obj as $user) {
                         // TODO check if the constructor is always used
                         $usr = new user;
-                        $import_result .= $usr->import_obj($user, $this->usr->profile_id);
-                        if ($import_result == '') {
+                        $import_result = $usr->import_obj($user, $this->usr->profile_id);
+                        if ($import_result->is_ok()) {
                             $this->users_done++;
                         } else {
                             $this->users_failed++;
                         }
                     }
-                    $result .= $import_result;
+                    $result->add($import_result);
                 } elseif ($key == 'verbs') {
-                    $import_result = '';
+                    $import_result = new user_message();
                     foreach ($json_obj as $verb) {
                         $vrb = new verb;
                         $vrb->usr = $this->usr;
-                        $import_result .= $vrb->import_obj($verb);
-                        if ($import_result == '') {
+                        $import_result = $vrb->import_obj($verb);
+                        if ($import_result->is_ok()) {
                             $this->verbs_done++;
                         } else {
                             $this->verbs_failed++;
                         }
                     }
-                    $result .= $import_result;
+                    $result->add($import_result);
                 } elseif ($key == 'words') {
                     foreach ($json_obj as $word) {
                         $wrd = new word($this->usr);
                         $import_result = $wrd->import_obj($word);
-                        if ($import_result == '') {
+                        if ($import_result->is_ok()) {
                             $this->words_done++;
                         } else {
                             $this->words_failed++;
                         }
-                        $result .= $import_result;
+                        $result->add($import_result);
                     }
                 } elseif ($key == 'triples') {
                     foreach ($json_obj as $triple) {
                         $wrd_lnk = new word_link($this->usr);
                         $import_result = $wrd_lnk->import_obj($triple);
-                        if ($import_result == '') {
+                        if ($import_result->is_ok()) {
                             $this->triples_done++;
                         } else {
                             $this->triples_failed++;
                         }
-                        $result .= $import_result;
+                        $result->add($import_result);
                     }
                 } elseif ($key == 'formulas') {
                     foreach ($json_obj as $formula) {
                         $frm = new formula($this->usr);
                         $import_result = $frm->import_obj($formula);
-                        if ($import_result == '') {
+                        if ($import_result->is_ok()) {
                             $this->formulas_done++;
                         } else {
                             $this->formulas_failed++;
                         }
-                        $result .= $import_result;
+                        $result->add($import_result);
                     }
                 } elseif ($key == 'sources') {
                     foreach ($json_obj as $value) {
                         $src = new source($this->usr);
                         $import_result = $src->import_obj($value);
-                        if ($import_result == '') {
+                        if ($import_result->is_ok()) {
                             $this->sources_done++;
                         } else {
                             $this->sources_failed++;
                         }
-                        $result .= $import_result;
+                        $result->add($import_result);
                     }
                 } elseif ($key == 'values') {
                     foreach ($json_obj as $value) {
                         $val = new value($this->usr);
                         $import_result = $val->import_obj($value);
-                        if ($import_result == '') {
+                        if ($import_result->is_ok()) {
                             $this->values_done++;
                         } else {
                             $this->values_failed++;
                         }
-                        $result .= $import_result;
+                        $result->add($import_result);
                     }
                 } elseif ($key == 'value-list') {
                     // TODO add a unit test
                     foreach ($json_obj as $value) {
                         $val = new value_list($this->usr);
                         $import_result = $val->import_obj($value);
-                        if ($import_result == '') {
+                        if ($import_result->is_ok()) {
                             $this->list_values_done++;
                         } else {
                             $this->list_values_failed++;
                         }
-                        $result .= $import_result;
+                        $result->add($import_result);
                     }
                 } elseif ($key == 'views') {
                     foreach ($json_obj as $view) {
                         $view_obj = new view($this->usr);
                         $import_result = $view_obj->import_obj($view);
-                        if ($import_result == '') {
+                        if ($import_result->is_ok()) {
                             $this->views_done++;
                         } else {
                             $this->views_failed++;
                         }
-                        $result .= $import_result;
+                        $result->add($import_result);
                     }
                 } elseif ($key == 'calc-validation') {
                     // TODO add a unit test
                     foreach ($json_obj as $value) {
                         $fv = new formula_value($this->usr);
                         $import_result = $fv->import_obj($value);
-                        if ($import_result == '') {
+                        if ($import_result->is_ok()) {
                             $this->calc_validations_done++;
                         } else {
                             $this->calc_validations_failed++;
                         }
-                        $result .= $import_result;
+                        $result->add($import_result);
                     }
                 } elseif ($key == 'view-validation') {
                     // TODO switch to view result
@@ -231,27 +231,27 @@ class file_import
                     foreach ($json_obj as $value) {
                         $fv = new view($this->usr);
                         $import_result = $fv->import_obj($value);
-                        if ($import_result == '') {
+                        if ($import_result->is_ok()) {
                             $this->view_validations_done++;
                         } else {
                             $this->view_validations_failed++;
                         }
-                        $result .= $import_result;
+                        $result->add($import_result);
                     }
                 } elseif ($key == 'ip-blacklist') {
                     foreach ($json_obj as $ip_range) {
                         $ip_obj = new ip_range;
                         $ip_obj->usr = $this->usr;
                         $import_result = $ip_obj->import_obj($ip_range);
-                        if ($import_result == '') {
+                        if ($import_result->is_ok()) {
                             $this->system_done++;
                         } else {
                             $this->system_failed++;
                         }
-                        $result .= $import_result;
+                        $result->add($import_result);
                     }
                 } else {
-                    $result .= 'Unknown element ' . $key . ' ';
+                    $result->add_message('Unknown element ' . $key);
                 }
             }
         }

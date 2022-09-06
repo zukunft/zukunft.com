@@ -900,23 +900,23 @@ class value extends user_sandbox_display
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return string true if the import has been successfully saved to the database
+     * @return user_message true if the import has been successfully saved to the database
      */
-    function import_obj(array $json_obj, bool $do_save = true): string
+    function import_obj(array $json_obj, bool $do_save = true): user_message
     {
         global $share_types;
         global $protection_types;
 
         log_debug('value->import_obj');
-        $result = '';
+        $result = new user_message();
 
         $get_ownership = false;
         foreach ($json_obj as $key => $value) {
 
             if ($key == 'words') {
                 $phr_lst = new phrase_list($this->usr);
-                $result .= $phr_lst->import_lst($value, $do_save);
-                if ($result == '' and $do_save) {
+                $result->add($phr_lst->import_lst($value, $do_save));
+                if ($result->is_ok() and $do_save) {
                     $phr_grp = $phr_lst->get_grp();
                     log_debug('value->import_obj got word group ' . $phr_grp->dsp_id());
                     $this->grp = $phr_grp;
@@ -936,7 +936,7 @@ class value extends user_sandbox_display
             if ($key == 'time') {
                 $phr = new phrase($this->usr);
                 if (!$phr->import_obj($value, $do_save)) {
-                    $result .= 'Failed to import time ' . $value;
+                    $result->add_message('Failed to import time ' . $value);
                 }
                 $this->time_phr = $phr;
             }
@@ -963,7 +963,7 @@ class value extends user_sandbox_display
             if ($key == source_exp::FLD_REF) {
                 $src = new source($this->usr);
                 $src->name = $value;
-                if ($result == '' and $do_save) {
+                if ($result->is_ok() and $do_save) {
                     $src->load();
                     if ($src->id == 0) {
                         $src->save();
@@ -975,8 +975,8 @@ class value extends user_sandbox_display
 
         }
 
-        if ($result == '' and $do_save) {
-            $result .= $this->save();
+        if ($result->is_ok() and $do_save) {
+            $result->add_message($this->save());
         }
 
         // try to get the ownership if requested

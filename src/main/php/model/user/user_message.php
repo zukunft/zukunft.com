@@ -48,9 +48,17 @@ class user_message
     //const CONFIRM_CANCEL = 4;
 
     private int $msg_status;
+
+    // array of the messages that should be shown to the user to explain the result of a process
     private array $msg_text;
+
     //private user_actions $actions;
 
+    /**
+     * assumes that normally everything is fine
+     * @param string $msg_text an initial message text
+     *                         if this text is not empty it is assumed that something went wrong
+     */
     function __construct(string $msg_text = '')
     {
         $this->msg_text = [];
@@ -61,6 +69,10 @@ class user_message
             $this->msg_status = self::NOK;
         }
     }
+
+    /*
+     * get interface functions
+     */
 
     /**
      * @return bool true if user does not need to be informed
@@ -75,34 +87,12 @@ class user_message
     }
 
     /**
-     * to offer the user to see more details without retry
-     * more than one message text can be added to a user message result
-     *
-     * @param string $msg_text the message text to add
-     * @return void is never expected to fail
+     * return the message text with all messages
+     * @return string simple the message text
      */
-    function add_message(string $msg_text)
+    function all_message_text(): string
     {
-        if ($msg_text != '') {
-            $this->msg_text[] = $msg_text;
-            // if a message text is added it is expected that the result was not ok, but other stati are not changed
-            if ($this->is_ok()) {
-                $this->msg_status = self::NOK;
-            }
-        }
-    }
-
-    /**
-     * combine the given message with this message
-     *
-     * @param user_message $msg_to_add a message of which all parameter should be added to this message
-     * @return void is never expected to fail
-     */
-    function add(user_message $msg_to_add)
-    {
-        foreach ($msg_to_add->get_all_messages() as $msg_text) {
-            $this->add_message($msg_text);
-        }
+        return implode(", ", $this->msg_text);
     }
 
     /**
@@ -129,6 +119,63 @@ class user_message
         return $this->get_message(count($this->msg_text));
     }
 
+    /*
+     * set interface functions
+     */
+
+    /**
+     * set the status to not ok
+     * @return void
+     */
+    function set_not_ok(): void
+    {
+        $this->msg_status = self::NOK;
+
+    }
+
+    /*
+     * other interface functions
+     */
+
+    /**
+     * to offer the user to see more details without retry
+     * more than one message text can be added to a user message result
+     *
+     * @param string $msg_text the message text to add
+     * @return void is never expected to fail
+     */
+    function add_message(string $msg_text): void
+    {
+        if ($msg_text != '') {
+            // do not repeat the same text more than once
+            if (!in_array($msg_text, $this->msg_text)) {
+                $this->msg_text[] = $msg_text;
+            }
+            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            if ($this->is_ok()) {
+                $this->set_not_ok();
+            }
+        }
+    }
+
+    /**
+     * combine the given message with this message
+     *
+     * @param user_message $msg_to_add a message of which all parameter should be added to this message
+     * @return void is never expected to fail
+     */
+    function add(user_message $msg_to_add): void
+    {
+        foreach ($msg_to_add->get_all_messages() as $msg_text) {
+            $this->add_message($msg_text);
+        }
+        $this->combine_status($msg_to_add);
+    }
+
+    /*
+     * internal functions
+     */
+
     /**
      * @return array with all the text messages
      */
@@ -137,4 +184,15 @@ class user_message
         return $this->msg_text;
     }
 
+    /**
+     * combine the status of two user messages and assume the worse
+     * @param user_message $msg_to_add the user messages that should be combined with this user message
+     * @return void
+     */
+    private function combine_status(user_message $msg_to_add): void
+    {
+        if (!$msg_to_add->is_ok()) {
+            $this->msg_status = self::NOK;
+        }
+    }
 }

@@ -112,7 +112,7 @@ if ($usr->id > 0) {
                 $import->usr = $usr;
                 $import->json_str = $json_str;
                 $import_result = $import->put();
-                if ($import_result == '') {
+                if ($import_result->is_ok()) {
                     $msg .= ' done ('
                         . $import->words_done . ' words, '
                         . $import->verbs_done . ' verbs, '
@@ -131,7 +131,7 @@ if ($usr->id > 0) {
                         $msg .= ' ... and ' . $import->system_done . ' $system objects';
                     }
                 } else {
-                    $msg .= ' failed because ' . $import_result . '.';
+                    $msg .= ' failed because ' . $import_result->all_message_text() . '.';
                 }
             } else {
                 if ($msg == '') {

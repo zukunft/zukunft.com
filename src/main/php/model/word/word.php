@@ -595,17 +595,17 @@ class word extends user_sandbox_description
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return string an empty string if the import has been successfully saved to the database
-     *                or the message that should be shown to the user
+     * @return user_message an empty string if the import has been successfully saved to the database
+     *                      or the message that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): string
+    function import_obj(array $json_obj, bool $do_save = true): user_message
     {
         global $word_types;
         global $share_types;
         global $protection_types;
 
         log_debug();
-        $result = '';
+        $result = new user_message();
 
         // reset all parameters for the word object but keep the user
         $usr = $this->usr;
@@ -656,23 +656,23 @@ class word extends user_sandbox_description
         // save the word in the database
         if ($do_save) {
             // TODO should save not return the error reason that should be shown to the user if it fails?
-            $result .= $this->save();
+            $result->add_message($this->save());
         }
 
         // add related parameters to the word object
-        if ($result == '') {
+        if ($result->is_ok()) {
             log_debug('word->import_obj -> saved ' . $this->dsp_id());
 
             if ($this->id <= 0 and $do_save) {
                 log_err('Word ' . $this->dsp_id() . ' cannot be saved', 'word->import_obj');
             } else {
                 foreach ($json_obj as $key => $value) {
-                    if ($result == '') {
+                    if ($result->is_ok()) {
                         if ($key == self::FLD_REFS) {
                             foreach ($value as $ref_data) {
                                 $ref_obj = new ref($this->usr);
                                 $ref_obj->phr = $this->phrase();
-                                $result .= $ref_obj->import_obj($ref_data, $do_save);
+                                $result->add($ref_obj->import_obj($ref_data, $do_save));
                                 $this->ref_lst[] = $ref_obj;
                             }
                         }

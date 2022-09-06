@@ -281,10 +281,10 @@ class source extends user_sandbox_named
     }
 
     // import a source from an object
-    function import_obj(array $json_obj, bool $do_save = true): string
+    function import_obj(array $json_obj, bool $do_save = true): user_message
     {
         log_debug('source->import_obj');
-        $result = '';
+        $result = new user_message();
 
         foreach ($json_obj as $key => $value) {
 
@@ -304,8 +304,8 @@ class source extends user_sandbox_named
             */
         }
 
-        if ($result == '' and $do_save) {
-            $result .= $this->save();
+        if ($result->is_ok() and $do_save) {
+            $result->add_message($this->save());
         }
 
         return $result;

@@ -148,11 +148,12 @@ class ref
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return string an empty string if the import has been successfully saved to the database or the message that should be shown to the user
+     * @return user_message an empty string if the import has been successfully saved to the database
+     *                      or the message that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): string
+    function import_obj(array $json_obj, bool $do_save = true): user_message
     {
-        $result = '';
+        $result = new user_message();
 
         // reset of object not needed, because the calling function has just created the object
         foreach ($json_obj as $key => $value) {
@@ -163,7 +164,7 @@ class ref
                 $this->ref_type = get_ref_type($value);
 
                 if ($this->ref_type == null) {
-                    $result .= 'Reference type for ' . $value . ' not found';
+                    $result->add_message('Reference type for ' . $value . ' not found');
                 } else {
                     $this->ref_type = get_ref_type($value);
                     log_debug('ref->import_obj -> ref_type set based on ' . $value . ' (' . $this->ref_type->name . ')');
@@ -173,7 +174,7 @@ class ref
         // to be able to log the object names
         if ($this->load_objects()) {
             if ($result == '' and $do_save) {
-                $result .= $this->save();
+                $result->add_message($this->save());
             }
         }
 

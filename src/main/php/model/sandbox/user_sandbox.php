@@ -638,12 +638,12 @@ class user_sandbox
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return string an empty string if the import has been successfully saved to the database
-     *                or the message that should be shown to the user
+     * @return user_message an empty string if the import has been successfully saved to the database
+     *                      or the message that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): string
+    function import_obj(array $json_obj, bool $do_save = true): user_message
     {
-        return '';
+        return new user_message();
     }
 
     /**
@@ -1603,13 +1603,13 @@ class user_sandbox
     /*
      * the save used cases are
      *
-     * 1. a source is supposed to be saved with without id and         a name  and no source                with the same name already exists -> add the source
-     * 2. a source is supposed to be saved with without id and         a name, but  a source                with the same name already exists -> ask the user to confirm the changes or use another name (at the moment simply update)
-     * 3. a word   is supposed to be saved with without id and         a name  and no word, verb or formula with the same name already exists -> add the word
-     * 4. a word   is supposed to be saved with without id and         a name, but  a word                  with the same name already exists -> ask the user to confirm the changes or use another name (at the moment simply update)
-     * 5. a word   is supposed to be saved with without id and         a name, but  a verb or formula       with the same name already exists -> ask the user to use another name (or rename the formula)
-     * 6. a source is supposed to be saved with with    id and a changed name -> the source is supposed to be renamed -> check if the new name is already used -> (6a.) if yes,            ask to merge, change the name or cancel the update -> (6b.) if the new name does not exist, ask the user to confirm the changes
-     * 7. a word   is supposed to be saved with with    id and a changed name -> the word   is supposed to be renamed -> check if the new name is already used -> (7a.) if yes for a word, ask to merge, change the name or cancel the update -> (7b.) if the new name does not exist, ask the user to confirm the changes
+     * 1. a source is supposed to be saved without id and         a name  and no source                with the same name already exists -> add the source
+     * 2. a source is supposed to be saved without id and         a name, but  a source                with the same name already exists -> ask the user to confirm the changes or use another name (at the moment simply update)
+     * 3. a word   is supposed to be saved without id and         a name  and no word, verb or formula with the same name already exists -> add the word
+     * 4. a word   is supposed to be saved without id and         a name, but  a word                  with the same name already exists -> ask the user to confirm the changes or use another name (at the moment simply update)
+     * 5. a word   is supposed to be saved without id and         a name, but  a verb or formula       with the same name already exists -> ask the user to use another name (or rename the formula)
+     * 6. a source is supposed to be saved with    id and a changed name -> the source is supposed to be renamed -> check if the new name is already used -> (6a.) if yes,            ask to merge, change the name or cancel the update -> (6b.) if the new name does not exist, ask the user to confirm the changes
+     * 7. a word   is supposed to be saved with    id and a changed name -> the word   is supposed to be renamed -> check if the new name is already used -> (7a.) if yes for a word, ask to merge, change the name or cancel the update -> (7b.) if the new name does not exist, ask the user to confirm the changes
      *                                                                                                                                                         -> (7c.) if yes for a verb, ask to        change the name or cancel the update
      *
      * TODO add wizards to handle the update chains

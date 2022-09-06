@@ -504,11 +504,11 @@ class view_cmp extends user_sandbox_named
      * import a view component from a JSON object
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return string true if the import has been successfully saved to the database
+     * @return user_message true if the import has been successfully saved to the database
      */
-    function import_obj(array $json_obj, bool $do_save = true): string
+    function import_obj(array $json_obj, bool $do_save = true): user_message
     {
-        $result = false;
+        $result = new user_message();
 
         foreach ($json_obj as $key => $value) {
 
@@ -528,13 +528,10 @@ class view_cmp extends user_sandbox_named
             }
         }
 
-        if ($result == '' and $do_save) {
-            if ($this->save()) {
-                $result = true;
-                log_debug('view_component->import_obj -> ' . $this->dsp_id());
-            }
+        if ($result->is_ok() and $do_save) {
+            $result->add_message($this->save());
         } else {
-            log_debug('view_component->import_obj -> ' . $result);
+            log_debug('view_component->import_obj -> not saved');
         }
 
         return $result;

@@ -601,13 +601,13 @@ class view extends user_sandbox_named
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return string an empty string if the import has been successfully saved to the database
-     *                or the message that should be shown to the user
+     * @return user_message an empty string if the import has been successfully saved to the database
+     *                      or the message that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): string
+    function import_obj(array $json_obj, bool $do_save = true): user_message
     {
         log_debug();
-        $result = '';
+        $result = new user_message;
 
         // reset the all parameters for the word object but keep the user
         $usr = $this->usr;
@@ -624,10 +624,7 @@ class view extends user_sandbox_named
                 if ($value != '') {
                     $type_id = $this->type_id_by_code_id($value);
                     if ($type_id == user_type_list::CODE_ID_NOT_FOUND) {
-                        if ($result != '') {
-                            $result .= ', ';
-                        }
-                        $result .= 'view type "' . $value . '" not found';
+                        $result->add_message('view type "' . $value . '" not found');
                     } else {
                         $this->type_id = $type_id;
                     }
@@ -645,21 +642,18 @@ class view extends user_sandbox_named
 
         if ($do_save) {
             if ($this->name == '') {
-                if ($result != '') {
-                    $result .= ', ';
-                }
-                $result .= 'name in view missing';
+                $result->add_message('name in view missing');
             } else {
-                $result .= $this->save();
+                $result->add_message($this->save());
 
-                if ($result == '') {
+                if ($result->is_ok()) {
                     // TODO save also the links
                     //$dsp_lnk = new view_component_link();
                     log_debug($this->dsp_id());
                 }
             }
         } else {
-            log_debug($result);
+            log_debug($result->all_message_text());
         }
 
         // after saving (or remembering) add the view components
@@ -671,14 +665,14 @@ class view extends user_sandbox_named
                     $cmp = new view_cmp($usr);
                     $cmp->import_obj($json_cmp, $do_save);
                     // on import first add all view components to the view object and save them all at once
-                    $result .= $this->add_cmp($cmp, $cmp_pos, $do_save);
+                    $result->add_message($this->add_cmp($cmp, $cmp_pos, $do_save));
                     $cmp_pos++;
                 }
             }
         }
 
-        if ($result != '') {
-            $result .= ' when importing ' . dsp_array($json_obj);
+        if (!$result->is_ok()) {
+            $result->add_message(' when importing ' . dsp_array($json_obj));
         }
 
         return $result;

@@ -1168,17 +1168,17 @@ class formula extends user_sandbox_description
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return string an empty string if the import has been successfully saved to the database
-     *                or the message that should be shown to the user
+     * @return user_message an empty string if the import has been successfully saved to the database
+     *                      or the message that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): string
+    function import_obj(array $json_obj, bool $do_save = true): user_message
     {
         global $formula_types;
         global $share_types;
         global $protection_types;
 
         log_debug(self::class . '->import_obj');
-        $result = '';
+        $result = new user_message;
 
         // reset the all parameters for the formula object but keep the user
         $usr = $this->usr;
@@ -1216,21 +1216,21 @@ class formula extends user_sandbox_description
 
         // save the formula in the database
         if ($do_save) {
-            $result .= $this->save();
+            $result->add_message($this->save());
         }
 
         // assign the formula to the words and triple
-        if ($result == '') {
+        if ($result->is_ok()) {
             log_debug('formula->import_obj -> saved ' . $this->dsp_id());
             foreach ($json_obj as $key => $value) {
-                if ($result == '') {
+                if ($result->is_ok()) {
                     if ($key == self::FLD_ASSIGN) {
                         if (is_array($value)) {
                             foreach ($value as $lnk_phr_name) {
-                                $result .= $this->assign_phrase($lnk_phr_name, $do_save);
+                                $result->add_message($this->assign_phrase($lnk_phr_name, $do_save));
                             }
                         } else {
-                            $result .= $this->assign_phrase($value, $do_save);
+                            $result->add_message($this->assign_phrase($value, $do_save));
                         }
                     }
                 }

@@ -391,17 +391,17 @@ class user
      * import a user from a json data user object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user_profile $profile the profile of the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param int $profile_id the profile of the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param bool $do_save can be set to false for unit testing
-     * @return string an empty string if the import has been successfully saved to the database
-     *                or an error message that should be shown to the user
+     * @return user_message an empty string if the import has been successfully saved to the database
+     *                      or an error message that should be shown to the user
      */
-    function import_obj(array $json_obj, int $profile_id, bool $do_save = true): string
+    function import_obj(array $json_obj, int $profile_id, bool $do_save = true): user_message
     {
         global $user_profiles;
 
         log_debug('user->import_obj');
-        $result = '';
+        $result = new user_message();
 
         // reset all parameters of this user object
         $this->reset();
@@ -418,13 +418,13 @@ class user
         }
 
         // save the word in the database
-        if ($result == '' and $do_save) {
+        if ($result->is_ok() and $do_save) {
             // check the importing profile and make sure that gaining additional privileges is impossible
             // the user profiles must always be in the order that the lower ID has same or less rights
             // TODO use the right level of the profile
             if ($profile_id >= $this->profile_id) {
                 global $db_con;
-                $result .= $this->save($db_con);
+                $result->add_message($this->save($db_con));
             }
         }
 

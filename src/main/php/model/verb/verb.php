@@ -219,12 +219,12 @@ class verb
         return $result;
     }
 
-    function import_obj(array $json_obj, bool $do_save = true): string
+    function import_obj(array $json_obj, bool $do_save = true): user_message
     {
         global $verbs;
 
         log_debug('verb->import_obj');
-        $result = '';
+        $result = new user_message();
 
         // reset all parameters of this verb object but keep the user
         $usr = $this->usr;
@@ -256,7 +256,7 @@ class verb
 
         // save the word in the database
         if ($do_save) {
-            $result = $this->save();
+            $result->add_message($this->save());
         }
 
 

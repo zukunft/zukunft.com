@@ -626,14 +626,14 @@ class word_link extends user_sandbox_link_description
     /**
      * import a view from an object
      */
-    function import_obj(array $json_obj, bool $do_save = true): string
+    function import_obj(array $json_obj, bool $do_save = true): user_message
     {
         global $word_types;
         global $share_types;
         global $protection_types;
 
         log_debug('word_link->import_obj');
-        $result = '';
+        $result = new user_message();
 
         foreach ($json_obj as $key => $value) {
             if ($key == self::FLD_EX_NAME) {
@@ -647,14 +647,14 @@ class word_link extends user_sandbox_link_description
             }
             if ($key == self::FLD_EX_FROM) {
                 if ($value == "") {
-                    $result .= ' from name should not be empty at ' . dsp_array($json_obj);
+                    $result->add_message('from name should not be empty at ' . dsp_array($json_obj));
                 } else {
                     $this->from = $this->import_phrase($value, $do_save);
                 }
             }
             if ($key == self::FLD_EX_TO) {
                 if ($value == "") {
-                    $result .= ' to name should not be empty at ' . dsp_array($json_obj);
+                    $result->add_message('to name should not be empty at ' . dsp_array($json_obj));
                 } else {
                     $this->to = $this->import_phrase($value, $do_save);
                 }
@@ -663,13 +663,13 @@ class word_link extends user_sandbox_link_description
                 $vrb = new verb;
                 $vrb->name = $value;
                 $vrb->usr = $this->usr;
-                if ($result == '' and $do_save) {
+                if ($result->is_ok() and $do_save) {
                     $vrb->load();
                     if ($vrb->id <= 0) {
                         // TODO add an error message
-                        $result .= ' verb "' . $value . '" not found';
+                        $result->add_message('verb "' . $value . '" not found');
                         if ($this->name <> '') {
-                            $result .= ' for triple "' . $this->name . '"';
+                            $result->add_message('for triple "' . $this->name . '"');
                         }
                     }
                 }
@@ -683,7 +683,7 @@ class word_link extends user_sandbox_link_description
             }
         }
         if ($result == '' and $do_save) {
-            $result .= $this->save();
+            $result->add_message($this->save());
         }
 
         return $result;

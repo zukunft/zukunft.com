@@ -59,7 +59,7 @@ class ip_range
     // in memory only fields
     public ?user $usr = null;             // just needed for logging the changes
 
-    function reset()
+    function reset(): void
     {
         $this->id = null;
         $this->from = '';
@@ -70,8 +70,9 @@ class ip_range
         $this->usr = null;
     }
 
-    function row_mapper(array $db_row)
+    function row_mapper(array $db_row): bool
     {
+        $result = true;
         if ($db_row != null) {
             if ($db_row[self::FLD_ID] > 0) {
                 $this->id = $db_row[self::FLD_ID];
@@ -80,11 +81,14 @@ class ip_range
                 $this->reason = $db_row[self::FLD_REASON];
                 $this->active = $db_row[self::FLD_ACTIVE];
             } else {
+                $result = false;
                 $this->id = 0;
             }
         } else {
+            $result = false;
             $this->id = 0;
         }
+        return $result;
     }
 
     /**
@@ -142,7 +146,7 @@ class ip_range
 
         if ($sql <> '') {
             $db_row = $db_con->get1_old($sql);
-            $this->row_mapper($db_row);
+            $result = $this->row_mapper($db_row);
         }
 
         return $result;
@@ -153,11 +157,12 @@ class ip_range
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return string an empty string if the import has been successfully saved to the database or the message that should be shown to the user
+     * @return user_message an empty string if the import has been successfully saved to the database
+     *                      or the message that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): string
+    function import_obj(array $json_obj, bool $do_save = true): user_message
     {
-        $result = '';
+        $result = new user_message();
 
         // reset of object not needed, because the calling function has just created the object
         foreach ($json_obj as $key => $value) {
@@ -174,8 +179,8 @@ class ip_range
                 $this->active = $value;
             }
         }
-        if ($result == '' and $do_save) {
-            $result .= $this->save();
+        if ($result->is_ok() and $do_save) {
+            $result->add_message($this->save());
         }
 
         return $result;
