@@ -63,7 +63,7 @@ if ($usr->id > 0) {
         $time_word_id = zut_get_max_time($word_names[0], $word_names);
       }
       zu_debug("-> time word (".$time_word_id.")"); */
-    log_debug("get_csv -> other words (" . implode(",", $word_names) . ")");
+    log_debug("other words (" . implode(",", $word_names) . ")");
 
     // get formula
     $frm = new formula($usr);
@@ -74,14 +74,14 @@ if ($usr->id > 0) {
         $frm->load();
         //$word_names = zu_lst_not_in($word_names, $formula_name);
         $word_names = array_diff($word_names, array($formula_name));
-        log_debug("get_csv -> word names used (" . implode(",", $word_names) . ")");
+        log_debug("word names used (" . implode(",", $word_names) . ")");
         $formula_id = $frm->id;
         $formula_text = $frm->ref_text;
-        log_debug("get_csv -> formula used (" . $formula_text . ")");
+        log_debug("formula used (" . $formula_text . ")");
     }
 
     $word_lst = array_keys(zut_names_to_lst($word_names, $usr->id));
-    log_debug("get_csv -> words used (" . implode(",", $word_lst) . ")");
+    log_debug("words used (" . implode(",", $word_lst) . ")");
 
     if ($formula_text <> '') {
         $in_result = $frm->to_num($word_lst, 0);

@@ -221,7 +221,7 @@ class expression
      */
     function has_ref(): bool
     {
-        log_debug('expression->has_ref ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         $result = false;
 
         if ($this->get_phr_id($this->ref_text) > 0
@@ -231,7 +231,7 @@ class expression
             $result = true;
         }
 
-        log_debug('expression->has_ref -> done ' . zu_dsp_bool($result));
+        log_debug('done ' . zu_dsp_bool($result));
         return $result;
     }
 

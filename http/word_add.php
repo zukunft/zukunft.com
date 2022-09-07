@@ -125,7 +125,7 @@ if ($usr->id > 0) {
                 } else {
                 */
                 $msg .= $trm->id_used_msg();
-                log_debug('word_add -> ');
+                log_debug();
                 //}
             }
 
@@ -138,7 +138,7 @@ if ($usr->id > 0) {
             $lnk_test->load();
             if ($lnk_test->id > 0) {
                 $lnk_test->load_objects();
-                log_debug('word_add -> check forward link ' . $wrd_id . ' ' . $vrb_id . ' ' . $wrd_to . '');
+                log_debug('check forward link ' . $wrd_id . ' ' . $vrb_id . ' ' . $wrd_to . '');
                 $msg .= '"' . $lnk_test->from_name . ' ' . $lnk_test->verb->name . ' ' . $lnk_test->to_name . '" already exists. ';
             }
             $lnk_rev = new word_link($usr);
@@ -154,7 +154,7 @@ if ($usr->id > 0) {
 
         // if the parameters are fine ...
         if ($msg == '') {
-            log_debug('word_add -> no msg');
+            log_debug('no msg');
             $add_result = '';
             // ... add the new word to the database
             if ($wrd->name <> "") {
@@ -163,10 +163,10 @@ if ($usr->id > 0) {
                 $wrd->id = $wrd_id;
                 $wrd->load();
             }
-            log_debug('word_add -> test word');
+            log_debug('test word');
             if ($wrd->id > 0 and $vrb_id <> 0 and $wrd_to > 0) {
                 // ... and link it to an existing word
-                log_debug('word_add -> word ' . $wrd->id . ' linked via ' . $vrb_id . ' to ' . $wrd_to . ': ' . $add_result);
+                log_debug('word ' . $wrd->id . ' linked via ' . $vrb_id . ' to ' . $wrd_to . ': ' . $add_result);
                 $lnk = new word_link($usr);
                 $lnk->from->id = $wrd->id;
                 $lnk->verb->id = $vrb_id;

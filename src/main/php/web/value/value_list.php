@@ -121,7 +121,7 @@ class value_list_dsp extends value_list_api
         // to avoid repeating the same words in each line and to offer a useful "add new value"
         $last_phr_lst = array();
 
-        log_debug('value_list->html add new button');
+        log_debug('add new button');
         foreach ($this->lst as $val) {
             //$this->usr->id  = $val->usr->id;
 
@@ -131,15 +131,15 @@ class value_list_dsp extends value_list_api
                 $val_phr_lst = $val->phr_lst;
 
                 // remove the main word from the list, because it should not be shown on each line
-                log_debug('value_list->html -> remove main ' . $val->id);
+                log_debug('remove main ' . $val->id);
                 $dsp_phr_lst = $val_phr_lst->dsp_obj();
-                log_debug('value_list->html -> cloned ' . $val->id);
+                log_debug('cloned ' . $val->id);
                 if (isset($this->phr)) {
                     if (isset($this->phr->id)) {
                         $dsp_phr_lst->diff_by_ids(array($this->phr->id));
                     }
                 }
-                log_debug('value_list->html -> removed ' . $this->phr->id);
+                log_debug('removed ' . $this->phr->id);
                 $dsp_phr_lst->diff_by_ids($common_phr_ids);
                 // remove the words of the previous row, because it should not be shown on each line
                 if (isset($last_phr_lst->ids)) {
@@ -147,7 +147,7 @@ class value_list_dsp extends value_list_api
                 }
 
                 //if (isset($val->time_phr)) {
-                log_debug('value_list->html -> add time ' . $val->id);
+                log_debug('add time ' . $val->id);
                 if ($val->time_phr != null) {
                     if ($val->time_phr->id > 0) {
                         $time_phr = new phrase($val->usr);
@@ -155,22 +155,22 @@ class value_list_dsp extends value_list_api
                         $time_phr->load();
                         $val->time_phr = $time_phr;
                         $dsp_phr_lst->add($time_phr);
-                        log_debug('value_list->html -> add time word ' . $val->time_phr->name);
+                        log_debug('add time word ' . $val->time_phr->name);
                     }
                 }
 
                 $result .= '  <tr>';
                 $result .= '    <td>';
-                log_debug('value_list->html -> linked words ' . $val->id);
+                log_debug('words ' . $val->id);
                 $result .= '      ' . $dsp_phr_lst->name_linked() . ' <a href="/http/value_edit.php?id=' . $val->id . '&back=' . $this->phr->id . '">' . $val->dsp_obj()->val_formatted() . '</a>';
-                log_debug('value_list->html -> linked words ' . $val->id . ' done');
+                log_debug('linked words ' . $val->id . ' done');
                 // to review
                 // list the related formula values
                 $fv_lst = new formula_value_list($this->usr);
                 $fv_lst->load_by_val($val);
                 $result .= $fv_lst->frm_links_html();
                 $result .= '    </td>';
-                log_debug('value_list->html -> formula results ' . $val->id . ' loaded');
+                log_debug('formula results ' . $val->id . ' loaded');
 
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
@@ -188,12 +188,12 @@ class value_list_dsp extends value_list_api
                 $result .= '  </tr>';
             }
         }
-        log_debug('value_list->html add new button done');
+        log_debug('add new button done');
 
         $result .= dsp_tbl_end();
 
         // allow the user to add a completely new value
-        log_debug('value_list->html new');
+        log_debug('new');
         if (empty($common_phr_ids)) {
             $common_phr_lst = new word_list($this->usr);
             $common_phr_ids[] = $this->phr->id;
@@ -216,7 +216,7 @@ class value_list_dsp extends value_list_api
             }
         }
 
-        log_debug("value_list->html ... done");
+        log_debug("done");
 
         return $result;
     }

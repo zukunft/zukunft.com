@@ -97,7 +97,7 @@ class view_cmp_dsp_old extends view_cmp
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::VALUES_RELATED)) {
-            log_debug('view_component_dsp->table of view component ' . $this->dsp_id() . ' for "' . $phr->name . '" with columns "' . $this->wrd_row->name . '" and user "' . $this->usr->name . '"');
+            log_debug('of view component ' . $this->dsp_id() . ' for "' . $phr->name . '" with columns "' . $this->wrd_row->name . '" and user "' . $this->usr->name . '"');
             $val_lst = new value_list_dsp_old($this->usr);
             $val_lst->phr = $phr;
             $result .= $val_lst->dsp_table($this->wrd_row, $phr->id);
@@ -113,7 +113,7 @@ class view_cmp_dsp_old extends view_cmp
         $result = '';
 
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::WORD_VALUE)) {
-            log_debug('view_component_dsp->num_list in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
+            log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
 
             // check the parameters
             if (get_class($wrd) <> word_dsp::class) {
@@ -144,7 +144,7 @@ class view_cmp_dsp_old extends view_cmp
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::FORMULAS)) {
-            log_debug('view_component_dsp->formulas in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
+            log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= dsp_text_h2('Formulas');
 
             $frm_lst = $this->formula_list($wrd);
@@ -152,7 +152,7 @@ class view_cmp_dsp_old extends view_cmp
 
             $parent_word_lst = $wrd->parents();
             foreach ($parent_word_lst->lst as $parent_wrd) {
-                log_debug('view_component_dsp->formulas -> parent (' . $parent_wrd->name . ')');
+                log_debug('parent (' . $parent_wrd->name . ')');
                 $result .= dsp_text_h3('Formulas inherent by ' . $parent_wrd->name);
 
                 $frm_lst = $this->formula_list($parent_wrd);
@@ -200,7 +200,7 @@ class view_cmp_dsp_old extends view_cmp
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::WORDS_DOWN)) {
-            log_debug('view_component_dsp->word_parents in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
+            log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= $wrd->dsp_graph(word_select_direction::UP);
         }
         return $result;
@@ -211,7 +211,7 @@ class view_cmp_dsp_old extends view_cmp
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::JSON_EXPORT)) {
-            log_debug('view_component_dsp->json_export in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
+            log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= '<br>';
             $result .= $wrd->config_json_export($back);
             $result .= '<br>';
@@ -224,7 +224,7 @@ class view_cmp_dsp_old extends view_cmp
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::XML_EXPORT)) {
-            log_debug('view_component_dsp->xml_export in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
+            log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= '<br>';
             $result .= $wrd->config_xml_export($back);
             $result .= '<br>';
@@ -237,7 +237,7 @@ class view_cmp_dsp_old extends view_cmp
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::CSV_EXPORT)) {
-            log_debug('view_component_dsp->csv_export in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
+            log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= '<br>';
             $result .= $wrd->config_csv_export($back);
             $result .= '<br>';
@@ -253,10 +253,10 @@ class view_cmp_dsp_old extends view_cmp
      */
     function all(phrase $phr, string $back = ''): string
     {
-        log_debug('view_component_dsp->all for word ' . $phr->name);
+        log_debug('for word ' . $phr->name);
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::VALUES_ALL)) {
-            log_debug('view_component_dsp->all in view ' . $this->dsp_id() . ' for word ' . $phr->name . ' and user ' . $this->usr->name);
+            log_debug('in view ' . $this->dsp_id() . ' for word ' . $phr->name . ' and user ' . $this->usr->name);
             $result .= '<br>';
             $phrases_down = $phr->dsp_graph(word_select_direction::DOWN);
             $phrases_up = $phr->dsp_graph(word_select_direction::UP,);
@@ -270,7 +270,7 @@ class view_cmp_dsp_old extends view_cmp
             $result .= '<br><br>values<br>';
             $val_lst = new value_list($this->usr);;
             $val_lst->phr = $phr;
-            log_debug('view_component_dsp->all load values for word "' . $phr->name . '" and user "' . $this->usr->name . '"');
+            log_debug('load values for word "' . $phr->name . '" and user "' . $this->usr->name . '"');
             $val_lst->load();
             $val_lst_dsp = $val_lst->api_obj()->dsp_obj();
             $result .= $val_lst_dsp->table(null, $back);
@@ -286,7 +286,7 @@ class view_cmp_dsp_old extends view_cmp
     // allow the user to unlink a view
     function btn_unlink($view_id, $wrd, $back)
     {
-        log_debug('view_component_dsp->btn_unlink(me' . $this->id . ',m' . $view_id . ',t' . $wrd->id . ')');
+        log_debug('me' . $this->id . ',m' . $view_id . ',t' . $wrd->id . ')');
         $result = '    <td>' . "\n";
         $result .= \html\btn_del("unlink view", "/http/view_component_edit.php?id=" . $this->id . "&unlink_view=" . $view_id . "&word=" . $wrd->id . "&back=" . $back);
         $result .= '    </td>' . "\n";
@@ -296,7 +296,7 @@ class view_cmp_dsp_old extends view_cmp
     // lists of all views where a view component is used
     private function linked_views($add_link, $wrd, $back)
     {
-        log_debug("view_component_dsp->linked_view component id " . $this->id . " and user " . $this->usr->id . " (word " . $wrd->id . ", add " . $add_link . ").");
+        log_debug("id " . $this->id . " and user " . $this->usr->id . " (word " . $wrd->id . ", add " . $add_link . ").");
 
         global $db_con;
         $result = '';
@@ -410,7 +410,7 @@ class view_cmp_dsp_old extends view_cmp
     // display the history of a view component
     function dsp_hist($page, $size, $call, $back)
     {
-        log_debug("view_component_dsp->dsp_hist for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($this->usr);
@@ -423,14 +423,14 @@ class view_cmp_dsp_old extends view_cmp
         $log_dsp->back = $back;
         $result .= $log_dsp->dsp_hist();
 
-        log_debug("view_component_dsp->dsp_hist -> done");
+        log_debug("done");
         return $result;
     }
 
     // display the link history of a view component
     function dsp_hist_links($page, $size, $call, $back)
     {
-        log_debug("view_component_dsp->dsp_hist_links for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($this->usr);
@@ -455,7 +455,7 @@ class view_cmp_dsp_old extends view_cmp
     // HTML code to edit all word fields
     function dsp_edit($add_link, $wrd, $back)
     {
-        log_debug('view_component_dsp->dsp_edit ' . $this->dsp_id() . ' for user ' . $this->usr->name . ' (called from ' . $back . ')');
+        log_debug($this->dsp_id() . ' for user ' . $this->usr->name . ' (called from ' . $back . ')');
         $result = '';
 
         // show the view component name

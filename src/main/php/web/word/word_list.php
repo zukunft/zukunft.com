@@ -98,7 +98,7 @@ class word_list_dsp extends word_list_api
     // display a list of words that match to the given pattern
     function dsp_like($word_pattern, $user_id): string
     {
-        log_debug('word_dsp->dsp_like (' . $word_pattern . ',u' . $user_id . ')');
+        log_debug($word_pattern . ',u' . $user_id);
 
         global $db_con;
         $result = '';

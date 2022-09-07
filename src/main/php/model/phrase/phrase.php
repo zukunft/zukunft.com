@@ -496,33 +496,29 @@ class phrase
      *
      * @param string $json_value an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return bool true if the import has been successfully saved to the database
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(string $json_value, bool $do_save = true): bool
+    function import_obj(string $json_value, bool $do_save = true): user_message
     {
-        $result = false;
+        $result = new user_message();
         $this->name = $json_value;
         if ($do_save) {
-            $result = $this->load();
+            $this->load();
             if ($this->id == 0) {
                 $wrd = new word($this->usr);
                 $wrd->name = $json_value;
-                $result = $wrd->load();
+                $wrd->load();
                 if ($wrd->id == 0) {
                     $wrd->name = $json_value;
                     $wrd->type_id = cl(db_cl::WORD_TYPE, phrase_type::TIME);
-                    if ($wrd->save() == '') {
-                        $result = true;
-                    }
+                    $result->add_message($wrd->save());
                 }
                 if ($wrd->id == 0) {
-                    log_err('Cannot add time word "' . $json_value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
+                    $result->add_message('Cannot add time word "' . $json_value . '" when importing ' . $this->dsp_id());
                 } else {
                     $this->id = $wrd->id;
                 }
             }
-        } else {
-            $result = true;
         }
 
         return $result;
@@ -836,7 +832,7 @@ class phrase
               FROM ( ' . $sql_words . ' UNION ' . $sql_triples . ' ) AS p
              WHERE excluded = 0
           ORDER BY p.name;';
-        log_debug('phrase->sql_list -> ' . $sql);
+        log_debug($sql);
         return $sql;
     }
 
@@ -850,7 +846,7 @@ class phrase
     function dsp_selector($type, $form_name, $pos, $class, $back): string
     {
         if ($type != null) {
-            log_debug('phrase->dsp_selector -> type "' . $type->dsp_id() . ' selected for form ' . $form_name . $pos);
+            log_debug('type "' . $type->dsp_id() . ' selected for form ' . $form_name . $pos);
         }
         $result = '';
 
@@ -879,7 +875,7 @@ class phrase
         $sel->dummy_text = '... please select';
         $result .= $sel->display();
 
-        log_debug('phrase->dsp_selector -> done ');
+        log_debug('done ');
         return $result;
     }
 
@@ -897,7 +893,7 @@ class phrase
         $is_wrd_lst = $this->is();
         if (count($is_wrd_lst->lst) >= 1) {
             $result = $is_wrd_lst->lst[0];
-            log_debug('phrase->is_mainly -> (' . $this->dsp_id() . ' is a ' . $result->name . ')');
+            log_debug($this->dsp_id() . ' is a ' . $result->name);
         }
         return $result;
     }
@@ -982,7 +978,7 @@ class phrase
      */
     function del(): user_message
     {
-        log_debug('phrase->del ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         $result = new user_message();
 
         // direct delete if the object is loaded

@@ -907,45 +907,41 @@ class value extends user_sandbox_display
         global $share_types;
         global $protection_types;
 
-        log_debug('value->import_obj');
+        log_debug();
         $result = new user_message();
 
         $get_ownership = false;
         foreach ($json_obj as $key => $value) {
 
-            if ($key == 'words') {
+            if ($key == exp_obj::WORDS) {
                 $phr_lst = new phrase_list($this->usr);
                 $result->add($phr_lst->import_lst($value, $do_save));
                 if ($result->is_ok() and $do_save) {
                     $phr_grp = $phr_lst->get_grp();
-                    log_debug('value->import_obj got word group ' . $phr_grp->dsp_id());
                     $this->grp = $phr_grp;
-                    log_debug('value->import_obj set grp id to ' . $this->grp->id);
                 }
                 $this->phr_lst = $phr_lst;
             }
 
-            if ($key == 'timestamp') {
+            if ($key == exp_obj::FLD_TIMESTAMP) {
                 if (strtotime($value)) {
                     $this->time_stamp = get_datetime($value, $this->dsp_id(), 'JSON import');
                 } else {
-                    log_err('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
+                    $result->add_message('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
                 }
             }
 
-            if ($key == 'time') {
+            if ($key == exp_obj::FLD_TIME) {
                 $phr = new phrase($this->usr);
-                if (!$phr->import_obj($value, $do_save)) {
-                    $result->add_message('Failed to import time ' . $value);
-                }
+                $result->add($phr->import_obj($value, $do_save));
                 $this->time_phr = $phr;
             }
 
-            if ($key == 'number') {
+            if ($key == exp_obj::FLD_NUMBER) {
                 if (is_numeric($value)) {
                     $this->number = $value;
                 } else {
-                    log_warning('Import value: "' . $value . '" is expected to be a number (' . $this->phr_lst->dsp_id() .')');
+                    $result->add_message('Import value: "' . $value . '" is expected to be a number (' . $this->phr_lst->dsp_id() .')');
                 }
             }
 
@@ -992,18 +988,18 @@ class value extends user_sandbox_display
      */
     function export_obj(bool $do_load = true): exp_obj
     {
-        log_debug('value->export_obj');
+        log_debug();
         $result = new value_exp();
 
         // reload the value parameters
         if ($do_load) {
             $this->load();
-            log_debug('value->export_obj load phrases');
+            log_debug('load phrases');
             $this->load_phrases();
         }
 
         // add the phrases
-        log_debug('value->export_obj get phrases');
+        log_debug('get phrases');
         $phr_lst = array();
         // TODO use either word and triple export_obj function or phrase
         if ($this->phr_lst != null) {
@@ -1018,7 +1014,7 @@ class value extends user_sandbox_display
         }
 
         // add the words
-        log_debug('value->export_obj get words');
+        log_debug('get words');
         $wrd_lst = array();
         // TODO use the triple export_obj function
         if ($this->wrd_lst != null) {
@@ -1049,31 +1045,28 @@ class value extends user_sandbox_display
         // add the time
         if (isset($this->time_phr)) {
             $result->time = $this->time_phr->name;
-            log_debug('value->export_obj got time ' . $this->time_phr->dsp_id());
+            log_debug('got time ' . $this->time_phr->dsp_id());
         }
 
         // add the value itself
         $result->number = $this->number;
 
         // add the share type
-        log_debug('value->export_obj get share');
         if ($this->share_id > 0 and $this->share_id <> cl(db_cl::SHARE_TYPE, share_type::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        log_debug('value->export_obj get protection');
         if ($this->protection_id > 0 and $this->protection_id <> cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 
         // add the source
-        log_debug('value->export_obj get source');
         if ($this->source != null) {
             $result->source = $this->source->name;
         }
 
-        log_debug('value->export_obj -> ' . json_encode($result));
+        log_debug(json_encode($result));
         return $result;
     }
 

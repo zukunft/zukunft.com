@@ -137,7 +137,7 @@ class figure
      */
     function display(string $back = ''): string
     {
-        log_debug('figure->display');
+        log_debug();
         $result = '';
 
         if ($this->type == 'value') {
@@ -159,13 +159,13 @@ class figure
         log_debug('figure->display_linked');
         $result = '';
 
-        log_debug('figure->display_linked -> type ' . $this->type);
+        log_debug('type ' . $this->type);
         if ($this->type == 'value') {
-            log_debug('figure->display_linked -> value ' . $this->number);
+            log_debug('value ' . $this->number);
             $val_dsp = $this->obj->dsp_obj();
             $result .= $val_dsp->display_linked($back);
         } elseif ($this->type == 'result') {
-            log_debug('figure->display_linked -> result ' . $this->number);
+            log_debug('result ' . $this->number);
             $result .= $this->obj->display_linked($back);
         }
 

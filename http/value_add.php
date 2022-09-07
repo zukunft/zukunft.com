@@ -73,15 +73,15 @@ if ($usr->id > 0) {
             }
             $phr_pos++;
         }
-        log_debug("value_add -> phrases " . implode(",", $phr_ids) . ".");
-        log_debug("value_add -> types " . implode(",", $type_ids) . ".");
+        log_debug("phrases " . implode(",", $phr_ids) . ".");
+        log_debug("types " . implode(",", $type_ids) . ".");
         $val->ids = $phr_ids;
     } elseif (isset($_GET['phrases'])) {
         $phr_ids = array();
         if ($_GET['phrases'] <> '') {
             $phr_ids = explode(",", $_GET['phrases']);
         }
-        log_debug("value_add -> phrases " . implode(",", $phr_ids) . ".");
+        log_debug("phrases " . implode(",", $phr_ids) . ".");
         $val->ids = $phr_ids;
     }
 
@@ -100,23 +100,23 @@ if ($usr->id > 0) {
 
         // if update was successful ...
         if ($val->id > 0 and str_replace('1', '', $upd_result) == '') {
-            log_debug("value_add -> save value done.");
+            log_debug("save value done.");
             // update the parameters on the object, so that the object save can update the database
             // save the source id as changed by the user
             if (isset($_GET['source'])) {
                 $val->set_source_id($_GET['source']);
                 if ($val->get_source_id() > 0) {
-                    log_debug("value_add -> save source" . $val->get_source_id() . ".");
+                    log_debug("save source" . $val->get_source_id() . ".");
                     $usr->set_source($val->get_source_id());
                     $upd_result = $val->save();
-                    log_debug("value_add -> save source done.");
+                    log_debug("save source done.");
                 }
             }
         } else {
             $result .= log_err("Adding " . $new_val . " for words " . implode(",", $val->ids) . " failed (" . $upd_result . ").", "value_add");
         }
 
-        log_debug("value_add -> go back to " . $back . ".");
+        log_debug("go back to " . $back . ".");
         $result .= dsp_go_back($back, $usr);
     }
 

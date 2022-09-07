@@ -483,7 +483,7 @@ class formula_value
                     if (!empty($this->phr_lst->lst)) {
                         $phr_lst = clone $this->phr_lst;
                         $phr_lst->ex_time();
-                        log_debug('formula_value->load -> get group by ' . $phr_lst->dsp_name());
+                        log_debug('get group by ' . $phr_lst->dsp_name());
                         // ... or based on the phrase ids
                     } elseif (!empty($this->phr_ids())) {
                         $phr_lst = new phrase_list($this->usr);
@@ -495,12 +495,12 @@ class formula_value
                             $phr_lst = new phrase_list($this->usr);
                             $phr_lst->add($this->wrd->phrase());
                             $phr_lst->add($this->frm->name_wrd->phrase());
-                            log_debug('formula_value->load -> get group by words ' . $phr_lst->dsp_name());
+                            log_debug('get group by words ' . $phr_lst->dsp_name());
                         }
                     }
                     if (isset($phr_lst)) {
                         $this->phr_lst = $phr_lst;
-                        log_debug('formula_value->load get group for ' . $phr_lst->dsp_name() . ' (including formula name)');
+                        log_debug('get group for ' . $phr_lst->dsp_name() . ' (including formula name)');
                         $phr_grp = $phr_lst->get_grp();
                         if (isset($phr_grp)) {
                             if ($phr_grp->id > 0) {
@@ -510,7 +510,7 @@ class formula_value
                     }
                 }
                 if ($this->phr_grp_id <= 0) {
-                    log_debug('formula_value->load group not found!');
+                    log_debug('group not found!');
                 }
 
                 $sql_order = '';
@@ -584,12 +584,12 @@ class formula_value
                 // if no general value can be found, test if a more specific value can be found in the database
                 // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
                 // similar to the selection in value->load: maybe combine?
-                log_debug('formula_value->load check best guess');
+                log_debug('check best guess');
                 if ($this->id <= 0) {
                     if (!isset($phr_lst)) {
-                        log_debug('formula_value->no formula value found for ' . $sql_where . ', but phrase list is also not set');
+                        log_debug('no formula value found for ' . $sql_where . ', but phrase list is also not set');
                     } else {
-                        log_debug('formula_value->load try best guess');
+                        log_debug('try best guess');
                         if (count($phr_lst->lst) > 0) {
                             // the phrase groups with the least number of additional words that have at least one formula value
                             $sql_grp_from = '';
@@ -621,7 +621,7 @@ class formula_value
                             $sql_val = "SELECT formula_value_id 
                             FROM formula_values
                           WHERE phrase_group_id IN (" . $sql_grp . ") " . $sql_time . ";";
-                            log_debug('formula_value->load sql val "' . $sql_val . '"');
+                            log_debug('sql val "' . $sql_val . '"');
                             //$db_con = new mysql;
                             $db_con->usr_id = $this->usr->id;
                             $val_ids_rows = $db_con->get_old($sql_val);
@@ -632,7 +632,7 @@ class formula_value
                                     if ($this->id > 0) {
                                         $sql_where = "formula_value_id = " . $this->id;
                                         $this->load_rec($sql_where);
-                                        log_debug('formula_value->load best guess id (' . $this->id . ')');
+                                        log_debug('best guess id (' . $this->id . ')');
                                     }
                                 }
                             }
@@ -640,10 +640,10 @@ class formula_value
                     }
                 }
 
-                log_debug('formula_value->load words');
+                log_debug('words');
                 $this->load_phrases();
             }
-            log_debug('formula_value->load got id ' . $this->id . ': ' . $this->value);
+            log_debug('got id ' . $this->id . ': ' . $this->value);
         }
         return $result;
     }
@@ -660,15 +660,15 @@ class formula_value
     {
         if ($this->src_phr_grp_id > 0) {
             if ($this->src_phr_lst == null or $force_reload) {
-                log_debug('formula_value->load_phr_lst_src for source group "' . $this->src_phr_grp_id . '"');
+                log_debug('for source group "' . $this->src_phr_grp_id . '"');
                 $phr_grp = new phrase_group($this->usr);
                 $phr_grp->id = $this->src_phr_grp_id;
                 $phr_grp->load();
                 if (!$phr_grp->phr_lst->empty()) {
                     $this->src_phr_lst = $phr_grp->phr_lst;
-                    log_debug('formula_value->load_phr_lst_src source phrases ' . $this->src_phr_lst->dsp_name() . ' loaded');
+                    log_debug('source phrases ' . $this->src_phr_lst->dsp_name() . ' loaded');
                 } else {
-                    log_debug('formula_value->load_phr_lst_src no source words found for ' . $this->dsp_id());
+                    log_debug('no source words found for ' . $this->dsp_id());
                 }
             }
         }
@@ -685,15 +685,15 @@ class formula_value
     {
         if ($this->phr_grp_id > 0) {
             if ($this->phr_lst == null or $force_reload) {
-                log_debug('formula_value->load_phr_lst for group "' . $this->phr_grp_id . '"');
+                log_debug('for group "' . $this->phr_grp_id . '"');
                 $phr_grp = new phrase_group($this->usr);
                 $phr_grp->id = $this->phr_grp_id;
                 $phr_grp->load();
                 if (!$phr_grp->phr_lst->empty()) {
                     $this->phr_lst = $phr_grp->phr_lst;
-                    log_debug('formula_value->load_phr_lst phrases ' . $this->phr_lst->dsp_name() . ' loaded');
+                    log_debug('phrases ' . $this->phr_lst->dsp_name() . ' loaded');
                 } else {
-                    log_debug('formula_value->load_phr_lst no result phrases found for ' . $this->dsp_id());
+                    log_debug('no result phrases found for ' . $this->dsp_id());
                 }
             }
         }
@@ -819,9 +819,7 @@ class formula_value
 
             if ($key == 'time') {
                 $phr = new phrase($this->usr);
-                if (!$phr->import_obj($fv, $do_save)) {
-                    $result->add_message('Failed to import time ' . $fv);
-                }
+                $result->add($phr->import_obj($fv, $do_save));
                 $this->time_phr = $phr;
             }
 

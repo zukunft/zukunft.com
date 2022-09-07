@@ -1177,7 +1177,7 @@ class formula extends user_sandbox_description
         global $share_types;
         global $protection_types;
 
-        log_debug(self::class . '->import_obj');
+        log_debug();
         $result = new user_message;
 
         // reset the all parameters for the formula object but keep the user
@@ -1221,7 +1221,7 @@ class formula extends user_sandbox_description
 
         // assign the formula to the words and triple
         if ($result->is_ok()) {
-            log_debug('formula->import_obj -> saved ' . $this->dsp_id());
+            log_debug('saved ' . $this->dsp_id());
             foreach ($json_obj as $key => $value) {
                 if ($result->is_ok()) {
                     if ($key == self::FLD_ASSIGN) {

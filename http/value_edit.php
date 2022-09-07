@@ -89,8 +89,8 @@ if ($usr->id > 0) {
                 }
                 $phr_pos++;
             }
-            log_debug("value_edit -> phrases " . implode(",", $phr_ids) . ".");
-            log_debug("value_edit -> types " . implode(",", $type_ids) . ".");
+            log_debug("phrases " . implode(",", $phr_ids) . ".");
+            log_debug("types " . implode(",", $type_ids) . ".");
 
             $val->ids = $phr_ids;
         }

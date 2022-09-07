@@ -57,7 +57,7 @@ $dsp_usr = $usr->dsp_user();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
-    log_debug("user -> (" . $usr->id . ")");
+    log_debug($usr->id);
 
     load_usr_data();
 

@@ -87,7 +87,7 @@ if ($usr->id > 0) {
 
     // if the user has requested to add a new formula
     if ($_GET['confirm'] > 0) {
-        log_debug('formula_add->check ');
+        log_debug();
 
         // check parameters
         if (!isset($wrd)) {
@@ -103,18 +103,18 @@ if ($usr->id > 0) {
         }
 
         // check if a word, verb or formula with the same name already exists
-        log_debug('formula_add->check word ');
+        log_debug('word');
         $trm = $frm->term();
         if (isset($trm)) {
             if ($trm->id > 0) {
                 $msg .= $trm->id_used_msg();
             }
         }
-        log_debug('formula_add->checked ');
+        log_debug('checked');
 
         // if the parameters are fine
         if ($msg == '') {
-            log_debug('formula_add->do ');
+            log_debug('do');
 
             // add to db
             $add_result = $frm->save();

@@ -1608,7 +1608,7 @@ function zu_lst_all_ids($val_lst, $sub_array_pos)
         }
     }
 
-    log_debug("zu_lst_all_ids -> (" . dsp_array($result) . ")");
+    log_debug(dsp_array($result));
     return $result;
 }
 
@@ -1652,10 +1652,10 @@ function zu_lst_to_flat_lst($complex_lst): array
         $lst_entry = $complex_lst[$lst_key];
         if (is_array($lst_entry)) {
             $result[$lst_key] = $lst_entry[0];
-            //zu_debug("zu_lst_to_array -> ".$lst_entry[0]." (first)");
+            //zu_debug("".$lst_entry[0]." (first)");
         } else {
             $result[$lst_key] = $lst_entry;
-            //zu_debug("zu_lst_to_array -> ".$lst_entry);
+            //zu_debug("".$lst_entry);
         }
     }
     return $result;

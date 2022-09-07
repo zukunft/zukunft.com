@@ -462,15 +462,15 @@ class word extends user_sandbox_description
     function main_wrd_from_txt($id_txt)
     {
         if ($id_txt <> '') {
-            log_debug('word->main_wrd_from_txt from "' . $id_txt . '"');
+            log_debug('from "' . $id_txt . '"');
             $wrd_ids = explode(",", $id_txt);
-            log_debug('word->main_wrd_from_txt check if "' . $wrd_ids[0] . '" is a number');
+            log_debug('check if "' . $wrd_ids[0] . '" is a number');
             if (is_numeric($wrd_ids[0])) {
                 $this->id = $wrd_ids[0];
-                log_debug('word->main_wrd_from_txt from "' . $id_txt . '" got id ' . $this->id);
+                log_debug('from "' . $id_txt . '" got id ' . $this->id);
             } else {
                 $this->name = $wrd_ids[0];
-                log_debug('word->main_wrd_from_txt from "' . $id_txt . '" got name ' . $this->name);
+                log_debug('from "' . $id_txt . '" got name ' . $this->name);
             }
             $this->load();
         }
@@ -505,12 +505,12 @@ class word extends user_sandbox_description
             $result = $this->view;
         } else {
             if ($this->view_id > 0) {
-                log_debug('word->view got id ' . $this->view_id);
+                log_debug('got id ' . $this->view_id);
                 $result = new view($this->usr);
                 $result->id = $this->view_id;
                 if ($result->load()) {
                     $this->view = $result;
-                    log_debug('word->view for ' . $this->dsp_id() . ' is ' . $result->dsp_id());
+                    log_debug('for ' . $this->dsp_id() . ' is ' . $result->dsp_id());
                 }
             }
         }
@@ -526,7 +526,7 @@ class word extends user_sandbox_description
      */
     function view_id(): int
     {
-        log_debug('word->view_id for ' . $this->dsp_id());
+        log_debug('for ' . $this->dsp_id());
 
         global $db_con;
 
@@ -545,7 +545,7 @@ class word extends user_sandbox_description
             $view_id = $db_row[self::FLD_VIEW];
         }
 
-        log_debug('word->view_id for ' . $this->dsp_id() . ' got ' . $view_id);
+        log_debug('for ' . $this->dsp_id() . ' got ' . $view_id);
         return $view_id;
     }
 

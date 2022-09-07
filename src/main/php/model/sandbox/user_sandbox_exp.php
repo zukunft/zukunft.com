@@ -35,10 +35,16 @@ namespace export;
 class exp_obj
 {
 
+    // the section names for the im- and export in the json or yaml format
+    const WORDS = 'words';
+
     // the field names used for the im- and export in the json or yaml format
     const FLD_NAME = 'name';
     const FLD_TYPE = 'type';
     const FLD_DESCRIPTION = 'description';
     const FLD_VIEW = 'view';
+    const FLD_TIMESTAMP = 'timestamp';
+    const FLD_TIME = 'time';
+    const FLD_NUMBER = 'number';
 
 }

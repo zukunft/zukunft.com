@@ -459,9 +459,7 @@ class value_list
 
             if ($key == 'time') {
                 $phr = new phrase($this->usr);
-                if (!$phr->import_obj($value, $do_save)) {
-                    $result->add_message('Failed to import time ' . $value);
-                }
+                $result->add($phr->import_obj($value, $do_save));
                 $val->time_phr = $phr;
             }
 
@@ -614,7 +612,7 @@ class value_list
             $phr_lst->merge($val->phr_lst);
         }
 
-        log_debug('value_list->phr_lst (' . dsp_count($phr_lst->lst) . ')');
+        log_debug(dsp_count($phr_lst->lst));
         return $phr_lst;
     }
 
@@ -623,12 +621,12 @@ class value_list
      */
     function phr_lst_all(): phrase_list
     {
-        log_debug('value_list->phr_lst_all');
+        log_debug();
 
         $phr_lst = $this->phr_lst();
         $phr_lst->merge($this->time_lst());
 
-        log_debug('value_list->phr_lst_all -> done');
+        log_debug('done');
         return $phr_lst;
     }
 
@@ -637,19 +635,19 @@ class value_list
      */
     function wrd_lst(): word_list
     {
-        log_debug('value_list->wrd_lst');
+        log_debug();
 
         $phr_lst = $this->phr_lst_all();
         $wrd_lst = $phr_lst->wrd_lst_all();
 
-        log_debug('value_list->wrd_lst -> done');
+        log_debug('done');
         return $wrd_lst;
     }
 
     // get a list of all words used for the value list
     function source_lst()
     {
-        log_debug('value_list->source_lst');
+        log_debug();
         $result = array();
         $src_ids = array();
 
@@ -689,7 +687,7 @@ class value_list
      */
     function filter_by_time($time_lst): value_list
     {
-        log_debug('value_list->filter_by_time');
+        log_debug();
         $val_lst = array();
         foreach ($this->lst as $val) {
             // only include time specific value
@@ -697,42 +695,42 @@ class value_list
                 // only include values within the specific time periods
                 if (in_array($val->time_id, $time_lst->ids)) {
                     $val_lst[] = $val;
-                    log_debug('value_list->filter_by_time include ' . $val->name());
+                    log_debug('include ' . $val->name());
                 } else {
-                    log_debug('value_list->filter_by_time excluded ' . $val->name() . ' because outside the specified time periods');
+                    log_debug('excluded ' . $val->name() . ' because outside the specified time periods');
                 }
             } else {
-                log_debug('value_list->filter_by_time excluded ' . $val->name() . ' because this is not time specific');
+                log_debug('excluded ' . $val->name() . ' because this is not time specific');
             }
         }
         $result = clone $this;
         $result->lst = $val_lst;
 
-        log_debug('value_list->filter_by_time (' . dsp_count($result->lst) . ')');
+        log_debug(dsp_count($result->lst));
         return $result;
     }
 
     // return a value list object that contains only values that match at least one phrase from the phrase list
     function filter_by_phrase_lst($phr_lst)
     {
-        log_debug('value_list->filter_by_phrase_lst ' . dsp_count($this->lst) . ' values by ' . $phr_lst->name());
+        log_debug(dsp_count($this->lst) . ' values by ' . $phr_lst->name());
         $result = array();
         foreach ($this->lst as $val) {
             //$val->load_phrases();
             $val_phr_lst = $val->phr_lst;
             if (isset($val_phr_lst)) {
-                log_debug('value_list->filter_by_phrase_lst val phrase list ' . $val_phr_lst->name());
+                log_debug('val phrase list ' . $val_phr_lst->name());
             } else {
-                log_debug('value_list->filter_by_phrase_lst val no value phrase list');
+                log_debug('val no value phrase list');
             }
             $found = false;
             foreach ($val_phr_lst->lst as $phr) {
                 //zu_debug('value_list->filter_by_phrase_lst val is '.$phr->name.' in '.$phr_lst->name());
                 if (in_array($phr->name, $phr_lst->names())) {
                     if (isset($val_phr_lst)) {
-                        log_debug('value_list->filter_by_phrase_lst val phrase list ' . $val_phr_lst->name() . ' is found in ' . $phr_lst->name());
+                        log_debug('val phrase list ' . $val_phr_lst->name() . ' is found in ' . $phr_lst->name());
                     } else {
-                        log_debug('value_list->filter_by_phrase_lst val found, but no value phrase list');
+                        log_debug('val found, but no value phrase list');
                     }
                     $found = true; // to make sure that each value is only added once; an improvement could be to stop searching after a phrase is found
                 }
@@ -743,7 +741,7 @@ class value_list
         }
         $this->lst = $result;
 
-        log_debug('value_list->filter_by_phrase_lst (' . dsp_count($this->lst) . ')');
+        log_debug(dsp_count($this->lst));
         return $this;
     }
 
@@ -753,25 +751,25 @@ class value_list
     function get_from_lst($word_ids)
     {
         asort($word_ids);
-        log_debug("value_list->get_from_lst ids " . implode(",", $word_ids) . ".");
+        log_debug("ids " . implode(",", $word_ids) . ".");
 
         $found = false;
         $result = null;
         foreach ($this->lst as $val) {
             if (!$found) {
-                log_debug("value_list->get_from_lst -> check " . implode(",", $word_ids) . " with (" . implode(",", $val->ids) . ")");
+                log_debug("check " . implode(",", $word_ids) . " with (" . implode(",", $val->ids) . ")");
                 $wrd_missing = zu_lst_not_in_no_key($word_ids, $val->ids);
                 if (empty($wrd_missing)) {
                     // potential result candidate, because the value has all needed words
-                    log_debug("value_list->get_from_lst -> can (" . $val->number . ")");
+                    log_debug("can (" . $val->number . ")");
                     $wrd_extra = zu_lst_not_in_no_key($val->ids, $word_ids);
                     if (empty($wrd_extra)) {
                         // if there is no extra word, it is the correct value
-                        log_debug("value_list->get_from_lst -> is (" . $val->number . ")");
+                        log_debug("is (" . $val->number . ")");
                         $found = true;
                         $result = $val;
                     } else {
-                        log_debug("value_list->get_from_lst -> is not, because (" . implode(",", $wrd_extra) . ")");
+                        log_debug("is not, because (" . implode(",", $wrd_extra) . ")");
                     }
                 }
             }
@@ -808,11 +806,11 @@ class value_list
                     }
                     if (isset($val->grp)) {
                         if ($row < 6) {
-                            log_debug('value_list->get_by_grp -> check if all of ' . $grp->name() . ' are in ' . $val->grp->name() . ' and value should be used');
+                            log_debug('check if all of ' . $grp->name() . ' are in ' . $val->grp->name() . ' and value should be used');
                         }
                         if ($val->grp->has_all_phrases_of($grp)
                             and $val->time_id == $time->id) {
-                            log_debug('value_list->get_by_grp -> all of ' . $grp->name() . ' are in ' . $val->grp->name() . ' so value is used');
+                            log_debug('all of ' . $grp->name() . ' are in ' . $val->grp->name() . ' so value is used');
                             $found = true;
                             $result = $val;
                         }
@@ -848,7 +846,7 @@ class value_list
      */
     function phrase_groups()
     {
-        log_debug('value_list->phrase_groups');
+        log_debug();
         $grp_lst = new phrase_group_list($this->usr);
         foreach ($this->lst as $val) {
             if (!isset($val->grp)) {
@@ -861,7 +859,7 @@ class value_list
             }
         }
 
-        log_debug('value_list->phrase_groups (' . dsp_count($grp_lst->lst) . ')');
+        log_debug(dsp_count($grp_lst->lst));
         return $grp_lst;
     }
 
@@ -871,7 +869,7 @@ class value_list
     {
         $grp_lst = $this->phrase_groups();
         $phr_lst = $grp_lst->common_phrases();
-        log_debug('value_list->common_phrases (' . dsp_count($phr_lst->lst) . ')');
+        log_debug(dsp_count($phr_lst->lst));
         return $phr_lst;
     }
 
@@ -901,9 +899,9 @@ class value_list
             if (!$val->check()) {
                 $result = false;
             }
-            log_debug('value_list->load_by_phr (' . dsp_count($this->lst) . ')');
+            log_debug(dsp_count($this->lst));
         }
-        log_debug('value_list->check_all (' . dsp_count($this->lst) . ')');
+        log_debug(dsp_count($this->lst));
         return $result;
     }
 
@@ -1026,7 +1024,7 @@ class value_list
     // TODO add back
     function html($back)
     {
-        log_debug('value_list->html (' . dsp_count($this->lst) . ')');
+        log_debug(dsp_count($this->lst));
         $result = '';
 
         $html = new html_base();
@@ -1042,7 +1040,7 @@ class value_list
             $val_phr_lst = $val->phr_lst;
             if ($val_phr_lst->lst != null) {
                 if (count($val_phr_lst->lst) > 0) {
-                    log_debug('value_list->html -> get words ' . $val->phr_lst->dsp_id() . ' for "' . $val->number . '" (' . $val->id . ')');
+                    log_debug('get words ' . $val->phr_lst->dsp_id() . ' for "' . $val->number . '" (' . $val->id . ')');
                     if (empty($common_phr_ids)) {
                         $common_phr_ids = $val_phr_lst->id_lst();
                     } else {
@@ -1052,12 +1050,12 @@ class value_list
             }
         }
 
-        log_debug('value_list->html common ');
+        log_debug('common ');
         $common_phr_ids = array_diff($common_phr_ids, array($this->phr->id));  // exclude the list word
         $common_phr_ids = array_values($common_phr_ids);            // cleanup the array
 
         // display the common words
-        log_debug('value_list->html common dsp');
+        log_debug('common dsp');
         if (!empty($common_phr_ids)) {
             $common_phr_lst = new word_list_dsp($this->usr);
             $common_phr_lst->load_by_ids($common_phr_ids);
@@ -1065,7 +1063,7 @@ class value_list
         }
 
         // instead of the saved result maybe display the calculated result based on formulas that matches the word pattern
-        log_debug('value_list->html tbl_start');
+        log_debug('tbl_start');
         $result .= dsp_tbl_start();
 
         // the reused button object
@@ -1074,7 +1072,7 @@ class value_list
         // to avoid repeating the same words in each line and to offer a useful "add new value"
         $last_phr_lst = array();
 
-        log_debug('value_list->html add new button');
+        log_debug('add new button');
         foreach ($this->lst as $val) {
             //$this->usr->id  = $val->usr->id;
 
@@ -1084,15 +1082,15 @@ class value_list
                 $val_phr_lst = $val->phr_lst;
 
                 // remove the main word from the list, because it should not be shown on each line
-                log_debug('value_list->html -> remove main ' . $val->id);
+                log_debug('remove main ' . $val->id);
                 $dsp_phr_lst = $val_phr_lst->dsp_obj();
-                log_debug('value_list->html -> cloned ' . $val->id);
+                log_debug('cloned ' . $val->id);
                 if (isset($this->phr)) {
                     if (isset($this->phr->id)) {
                         $dsp_phr_lst->diff_by_ids(array($this->phr->id));
                     }
                 }
-                log_debug('value_list->html -> removed ' . $this->phr->id);
+                log_debug('removed ' . $this->phr->id);
                 $dsp_phr_lst->diff_by_ids($common_phr_ids);
                 // remove the words of the previous row, because it should not be shown on each line
                 if (isset($last_phr_lst->ids)) {
@@ -1100,7 +1098,7 @@ class value_list
                 }
 
                 //if (isset($val->time_phr)) {
-                log_debug('value_list->html -> add time ' . $val->id);
+                log_debug('add time ' . $val->id);
                 if ($val->time_phr != null) {
                     if ($val->time_phr->id > 0) {
                         $time_phr = new phrase($val->usr);
@@ -1108,23 +1106,23 @@ class value_list
                         $time_phr->load();
                         $val->time_phr = $time_phr;
                         $dsp_phr_lst->add($time_phr);
-                        log_debug('value_list->html -> add time word ' . $val->time_phr->name);
+                        log_debug('add time word ' . $val->time_phr->name);
                     }
                 }
 
                 $result .= '  <tr>';
                 $result .= '    <td>';
-                log_debug('value_list->html -> linked words ' . $val->id);
+                log_debug('linked words ' . $val->id);
                 $ref_edit = $val->dsp_obj()->ref_edit();
                 $result .= '      ' . $dsp_phr_lst->name_linked() . $ref_edit;
-                log_debug('value_list->html -> linked words ' . $val->id . ' done');
+                log_debug('linked words ' . $val->id . ' done');
                 // to review
                 // list the related formula values
                 $fv_lst = new formula_value_list($this->usr);
                 $fv_lst->load_by_val($val);
                 $result .= $fv_lst->frm_links_html();
                 $result .= '    </td>';
-                log_debug('value_list->html -> formula results ' . $val->id . ' loaded');
+                log_debug('formula results ' . $val->id . ' loaded');
 
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
@@ -1142,12 +1140,12 @@ class value_list
                 $result .= '  </tr>';
             }
         }
-        log_debug('value_list->html add new button done');
+        log_debug('add new button done');
 
         $result .= dsp_tbl_end();
 
         // allow the user to add a completely new value
-        log_debug('value_list->html new');
+        log_debug('new');
         if (empty($common_phr_ids)) {
             $common_phr_lst = new word_list($this->usr);
             $common_phr_ids[] = $this->phr->id;

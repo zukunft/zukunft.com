@@ -316,7 +316,7 @@ class sql_db
      */
     function open()
     {
-        log_debug("db->open");
+        log_debug();
 
         if ($this->db_type == sql_db::POSTGRES) {
             $this->postgres_link = pg_connect('host=localhost dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
@@ -326,7 +326,7 @@ class sql_db
             log_err('Database type ' . $this->db_type . ' not yet implemented');
         }
 
-        log_debug("sql_db->open -> done");
+        log_debug("done");
         return true;
     }
 
@@ -348,7 +348,7 @@ class sql_db
         }
 
 
-        log_debug("db->close -> done");
+        log_debug("done");
     }
 
     /**
@@ -1134,7 +1134,7 @@ class sql_db
         } else {
             $this->table = $this->get_table_name($this->type);
         }
-        log_debug("sql_db->set_table to (" . $this->table . ")");
+        log_debug("to (" . $this->table . ")");
     }
 
     public function get_id_field_name($type): string
@@ -1228,7 +1228,7 @@ class sql_db
         if ($result == 'triple_name') {
             $result = 'name';
         }
-        log_debug("sql_db->set_name_field to (" . $result . ")");
+        log_debug("to (" . $result . ")");
         $this->name_field = $result;
     }
 
@@ -1280,7 +1280,7 @@ class sql_db
      */
     function exe(string $sql, string $sql_name = '', array $sql_array = array(), int $log_level = sys_log_level::ERROR)
     {
-        log_debug("sql_db->exe (" . $sql . " named " . $sql_name . " for  user " . $this->usr_id . ")");
+        log_debug("(" . $sql . " named " . $sql_name . " for  user " . $this->usr_id . ")");
 
         // PostgreSQL part
         if ($this->db_type == sql_db::POSTGRES) {
@@ -1649,7 +1649,7 @@ class sql_db
     function get_value($field_name, $id_name, $id)
     {
         $result = '';
-        log_debug('sql_db->get_value ' . $field_name . ' from ' . $this->type . ' where ' . $id_name . ' = ' . $this->sf($id));
+        log_debug($field_name . ' from ' . $this->type . ' where ' . $id_name . ' = ' . $this->sf($id));
 
         if ($this->type <> '') {
             $this->set_table();
@@ -1690,7 +1690,7 @@ class sql_db
     function get_value_2key($field_name, $id1_name, $id1, $id2_name, $id2)
     {
         $result = '';
-        log_debug('sql_db->get_value_2key ' . $field_name . ' from ' . $this->type . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2);
+        log_debug($field_name . ' from ' . $this->type . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2);
 
         $this->set_table();
         $sql = "SELECT " . $this->name_sql_esc($field_name) .
@@ -1724,14 +1724,14 @@ class sql_db
     function get_id($name): string
     {
         $result = '';
-        log_debug('sql_db->get_id for "' . $name . '" of the db object "' . $this->type . '"');
+        log_debug('for "' . $name . '" of the db object "' . $this->type . '"');
 
         $this->set_table();
         $this->set_id_field();
         $this->set_name_field();
         $result .= $this->get_value($this->id_field, $this->name_field, $name);
 
-        log_debug('sql_db->get_id is "' . $result . '"');
+        log_debug('is "' . $result . '"');
         return $result;
     }
 
@@ -1741,13 +1741,13 @@ class sql_db
     function get_id_from_code($code_id): string
     {
         $result = '';
-        log_debug('sql_db->get_id_from_code for "' . $code_id . '" of the db object "' . $this->type . '"');
+        log_debug('for "' . $code_id . '" of the db object "' . $this->type . '"');
 
         $this->set_table();
         $this->set_id_field();
         $result .= $this->get_value($this->id_field, self::FLD_CODE_ID, $code_id);
 
-        log_debug('sql_db->get_id_from_code is "' . $result . '"');
+        log_debug('is "' . $result . '"');
         return $result;
     }
 
@@ -1757,14 +1757,14 @@ class sql_db
     function get_name($id)
     {
         $result = '';
-        log_debug('sql_db->get_name for "' . $id . '" of the db object "' . $this->type . '"');
+        log_debug('for "' . $id . '" of the db object "' . $this->type . '"');
 
         $this->set_table();
         $this->set_id_field();
         $this->set_name_field();
         $result = $this->get_value($this->name_field, $this->id_field, $id);
 
-        log_debug('sql_db->get_name is "' . $result . '"');
+        log_debug('is "' . $result . '"');
         return $result;
     }
 
@@ -1774,14 +1774,14 @@ class sql_db
     function get_id_2key($name, $field2_name, $field2_value)
     {
         $result = '';
-        log_debug('sql_db->get_id_2key for "' . $name . ',' . $field2_name . ',' . $field2_value . '" of the db object "' . $this->type . '"');
+        log_debug('for "' . $name . ',' . $field2_name . ',' . $field2_value . '" of the db object "' . $this->type . '"');
 
         $this->set_table();
         $this->set_id_field();
         $this->set_name_field();
         $result = $this->get_value_2key($this->id_field, $this->name_field, $name, $field2_name, $field2_value);
 
-        log_debug('sql_db->get_id_2key is "' . $result . '"');
+        log_debug('is "' . $result . '"');
         return $result;
     }
 
@@ -1790,7 +1790,7 @@ class sql_db
      */
     function sql_std_lst_usr(): string
     {
-        log_debug("sql_db->sql_std_lst_usr (" . $this->type . ")");
+        log_debug($this->type);
 
         $this->set_table();
         $this->set_id_field();
@@ -2775,10 +2775,10 @@ class sql_db
                         $stmt->execute();
                         $this->link->commit();
                         $result = $this->link->lastInsertId();
-                        log_debug('sql_db->insert -> done "' . $result . '"');
+                        log_debug('done "' . $result . '"');
                     } catch (PDOException $e) {
                         $this->link->rollback();
-                        log_debug('sql_db->insert -> failed (' . $sql . ')');
+                        log_debug('failed (' . $sql . ')');
                     }
                     */
                     //$sql_result = $this->exe($sql);
@@ -2827,10 +2827,10 @@ class sql_db
                                 $result = $values;
                             }
                         }
-                        log_debug('sql_db->insert -> done "' . $result . '"');
+                        log_debug('done "' . $result . '"');
                     } else {
                         $result = -1;
-                        log_debug('sql_db->insert -> failed (' . $sql . ')');
+                        log_debug('failed (' . $sql . ')');
                     }
                 } catch (Exception $e) {
                     $trace_link = log_err('Cannot insert with "' . $sql . '" because: ' . $e->getMessage());
@@ -2842,7 +2842,7 @@ class sql_db
             }
         } else {
             $result = -1;
-            log_debug('sql_db->insert -> failed (' . $sql . ')');
+            log_debug('failed (' . $sql . ')');
         }
 
         if ($result == null) {
@@ -2859,13 +2859,13 @@ class sql_db
      */
     function add_id($name): int
     {
-        log_debug('sql_db->add_id ' . $name . ' to ' . $this->type);
+        log_debug($name . ' to ' . $this->type);
 
         $this->set_table();
         $this->set_name_field();
         $result = $this->insert($this->name_field, $name);
 
-        log_debug('sql_db->add_id is "' . $result . '"');
+        log_debug('is "' . $result . '"');
         return $result;
     }
 
@@ -2874,14 +2874,14 @@ class sql_db
      */
     function add_id_2key($name, $field2_name, $field2_value): int
     {
-        log_debug('sql_db->add_id_2key ' . $name . ',' . $field2_name . ',' . $field2_value . ' to ' . $this->type);
+        log_debug($name . ',' . $field2_name . ',' . $field2_value . ' to ' . $this->type);
 
         $this->set_table();
         $this->set_name_field();
         //zu_debug('sql_db->add_id_2key add "'.$this->name_field.','.$field2_name.'" "'.$name.','.$field2_value.'"');
         $result = $this->insert(array($this->name_field, $field2_name), array($name, $field2_value));
 
-        log_debug('sql_db->add_id_2key is "' . $result . '"');
+        log_debug('is "' . $result . '"');
         return $result;
     }
 
@@ -2894,7 +2894,7 @@ class sql_db
     {
         global $debug;
 
-        log_debug('sql_db->update of ' . $this->type . ' row ' . dsp_var($id) . ' ' . dsp_var($fields) . ' with "' . dsp_var($values) . '" for user ' . $this->usr_id);
+        log_debug('of ' . $this->type . ' row ' . dsp_var($id) . ' ' . dsp_var($fields) . ' with "' . dsp_var($values) . '" for user ' . $this->usr_id);
 
         $result = true;
 
@@ -2937,7 +2937,7 @@ class sql_db
                 $sql_set .= ' SET ' . $fields . ' = ' . $this->sf($values);
             }
             $sql = $sql_upd . $sql_set . $sql_where . ';';
-            log_debug('sql_db->update sql "' . $sql . '"');
+            log_debug('sql "' . $sql . '"');
             //$result = $this->exe($sql, 'update_' . $this->name_sql_esc($this->table), array(), sys_log_level::FATAL);
             try {
                 $sql_result = $this->exe($sql, '', array(), sys_log_level::FATAL);
@@ -2951,7 +2951,7 @@ class sql_db
             }
         }
 
-        log_debug('sql_db->update -> done (' . $result . ')');
+        log_debug('done (' . $result . ')');
         return $result;
     }
 
@@ -2974,9 +2974,9 @@ class sql_db
     function delete($id_fields, $id_values): string
     {
         if (is_array($id_fields)) {
-            log_debug('sql_db->delete in "' . $this->type . '" WHERE "' . dsp_array($id_fields) . '" IS "' . dsp_array($id_values) . '" for user ' . $this->usr_id);
+            log_debug('in "' . $this->type . '" WHERE "' . dsp_array($id_fields) . '" IS "' . dsp_array($id_values) . '" for user ' . $this->usr_id);
         } else {
-            log_debug('sql_db->delete in "' . $this->type . '" WHERE "' . $id_fields . '" IS "' . $id_values . '" for user ' . $this->usr_id);
+            log_debug('in "' . $this->type . '" WHERE "' . $id_fields . '" IS "' . $id_values . '" for user ' . $this->usr_id);
 
         }
 
@@ -3003,7 +3003,7 @@ class sql_db
             $sql = 'DELETE FROM ' . $this->name_sql_esc($this->table) . ' WHERE ' . $id_fields . ' = ' . $this->sf($id_values) . ';';
         }
 
-        log_debug('sql_db->delete sql "' . $sql . '"');
+        log_debug('sql "' . $sql . '"');
         return $this->exe_try('Deleting of ' . $this->type, $sql, '', array(), sys_log_level::FATAL);
     }
 

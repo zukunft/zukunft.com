@@ -1012,14 +1012,14 @@ class phrase_list
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return bool true if the import has been successfully saved to the database
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): bool
+    function import_obj(array $json_obj, bool $do_save = true): user_message
     {
-        $result = false;
+        $result = new user_message();
         foreach ($json_obj as $key => $value) {
             if ($key == 'words') {
-                $result = $this->import_lst($value, $do_save);
+                $result->add($this->import_lst($value, $do_save));
             }
         }
 
