@@ -5,6 +5,7 @@
     exp_obj.php - the superclass for the export objects
     -----------
 
+    is used in service/export/json.php
 
     This file is part of zukunft.com - calc with words
 
@@ -34,10 +35,6 @@ namespace export;
 
 class exp_obj
 {
-
-    // the section names for the im- and export in the json or yaml format
-    const WORDS = 'words';
-
     // the field names used for the im- and export in the json or yaml format
     const FLD_NAME = 'name';
     const FLD_TYPE = 'type';

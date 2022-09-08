@@ -36,6 +36,8 @@
   
 */
 
+use export\exp_obj;
+
 class file_import
 {
 
@@ -82,11 +84,11 @@ class file_import
     }
 
     /**
-     * import zukunft.com data as object for creating e.g. a json message
+     * drop a zukunft.com json object to the database
      */
     function put(): user_message
     {
-        log_debug('import->put');
+        log_debug();
         $result = new user_message();
         $this->last_display_time = microtime(true);
 
@@ -97,19 +99,19 @@ class file_import
             $this->display_progress($pos, $total);
             foreach ($json_array as $key => $json_obj) {
                 $pos++;
-                if ($key == 'version') {
+                if ($key == export::VERSION) {
                     if (prg_version_is_newer($json_obj)) {
                         $result->add_message('Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION);
                     }
-                } elseif ($key == 'pod') {
+                } elseif ($key == export::POD) {
                     // TODO set the source pod
-                } elseif ($key == 'time') {
+                } elseif ($key == export::TIME) {
                     // TODO set the time of the export
-                } elseif ($key == 'selection') {
+                } elseif ($key == export::SELECTION) {
                     // TODO set the selection as context
-                } elseif ($key == 'user') {
+                } elseif ($key == export::USER) {
                     // TODO set the user that has created the export
-                } elseif ($key == 'users') {
+                } elseif ($key == export::USERS) {
                     $import_result = new user_message();
                     foreach ($json_obj as $user) {
                         // TODO check if the constructor is always used
@@ -122,7 +124,7 @@ class file_import
                         }
                     }
                     $result->add($import_result);
-                } elseif ($key == 'verbs') {
+                } elseif ($key == export::VERBS) {
                     $import_result = new user_message();
                     foreach ($json_obj as $verb) {
                         $vrb = new verb;
@@ -135,7 +137,7 @@ class file_import
                         }
                     }
                     $result->add($import_result);
-                } elseif ($key == 'words') {
+                } elseif ($key == export::WORDS) {
                     foreach ($json_obj as $word) {
                         $wrd = new word($this->usr);
                         $import_result = $wrd->import_obj($word);
@@ -146,7 +148,7 @@ class file_import
                         }
                         $result->add($import_result);
                     }
-                } elseif ($key == 'triples') {
+                } elseif ($key == export::TRIPLES) {
                     foreach ($json_obj as $triple) {
                         $wrd_lnk = new word_link($this->usr);
                         $import_result = $wrd_lnk->import_obj($triple);
@@ -157,7 +159,7 @@ class file_import
                         }
                         $result->add($import_result);
                     }
-                } elseif ($key == 'formulas') {
+                } elseif ($key == export::FORMULAS) {
                     foreach ($json_obj as $formula) {
                         $frm = new formula($this->usr);
                         $import_result = $frm->import_obj($formula);
@@ -168,7 +170,7 @@ class file_import
                         }
                         $result->add($import_result);
                     }
-                } elseif ($key == 'sources') {
+                } elseif ($key == export::SOURCES) {
                     foreach ($json_obj as $value) {
                         $src = new source($this->usr);
                         $import_result = $src->import_obj($value);
@@ -179,7 +181,7 @@ class file_import
                         }
                         $result->add($import_result);
                     }
-                } elseif ($key == 'values') {
+                } elseif ($key == export::VALUES) {
                     foreach ($json_obj as $value) {
                         $val = new value($this->usr);
                         $import_result = $val->import_obj($value);
@@ -190,7 +192,7 @@ class file_import
                         }
                         $result->add($import_result);
                     }
-                } elseif ($key == 'value-list') {
+                } elseif ($key == export::VALUE_LIST) {
                     // TODO add a unit test
                     foreach ($json_obj as $value) {
                         $val = new value_list($this->usr);
@@ -202,7 +204,7 @@ class file_import
                         }
                         $result->add($import_result);
                     }
-                } elseif ($key == 'views') {
+                } elseif ($key == export::VIEWS) {
                     foreach ($json_obj as $view) {
                         $view_obj = new view($this->usr);
                         $import_result = $view_obj->import_obj($view);
@@ -213,7 +215,7 @@ class file_import
                         }
                         $result->add($import_result);
                     }
-                } elseif ($key == 'calc-validation') {
+                } elseif ($key == export::CALC_VALIDATION) {
                     // TODO add a unit test
                     foreach ($json_obj as $value) {
                         $fv = new formula_value($this->usr);
@@ -225,7 +227,7 @@ class file_import
                         }
                         $result->add($import_result);
                     }
-                } elseif ($key == 'view-validation') {
+                } elseif ($key == export::VIEW_VALIDATION) {
                     // TODO switch to view result
                     // TODO add a unit test
                     foreach ($json_obj as $value) {
@@ -238,7 +240,7 @@ class file_import
                         }
                         $result->add($import_result);
                     }
-                } elseif ($key == 'ip-blacklist') {
+                } elseif ($key == export::IP_BLACKLIST) {
                     foreach ($json_obj as $ip_range) {
                         $ip_obj = new ip_range;
                         $ip_obj->usr = $this->usr;

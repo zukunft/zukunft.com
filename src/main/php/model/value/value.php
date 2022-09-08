@@ -913,7 +913,7 @@ class value extends user_sandbox_display
         $get_ownership = false;
         foreach ($json_obj as $key => $value) {
 
-            if ($key == exp_obj::WORDS) {
+            if ($key == export::WORDS) {
                 $phr_lst = new phrase_list($this->usr);
                 $result->add($phr_lst->import_lst($value, $do_save));
                 if ($result->is_ok() and $do_save) {

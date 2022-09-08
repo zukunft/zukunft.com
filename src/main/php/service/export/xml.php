@@ -97,9 +97,7 @@ class xml_io
 
         // get the export object
         $export_instance = new export;
-        $export_instance->usr = $this->usr;
-        $export_instance->phr_lst = $this->phr_lst;
-        $export_obj = $export_instance->get();
+        $export_obj = $export_instance->get($this->usr, $this->phr_lst);
 
         log_debug('xml_io->export xml string from ' . json_encode($export_obj));
 

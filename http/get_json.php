@@ -30,6 +30,8 @@
 
 */
 
+use export\json_io;
+
 $debug = $_GET['debug'] ?? 0;
 include_once '../src/main/php/zu_lib.php';
 
@@ -66,9 +68,7 @@ if ($usr->id > 0) {
         $phr_lst = $phr_lst->are();
 
         log_debug("get_json.php ... phrase loaded.");
-        $json_export = new json_io;
-        $json_export->usr = $usr;
-        $json_export->phr_lst = $phr_lst;
+        $json_export = new json_io($usr, $phr_lst);
         $result = $json_export->export();
     } else {
         $result .= log_info('No JSON can be created, because no word or triple is given.', '', (new Exception)->getTraceAsString(), $this->usr);

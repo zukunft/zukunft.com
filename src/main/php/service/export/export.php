@@ -2,54 +2,74 @@
 
 /*
 
-  export.php - create an object to export data - the object can be converted to a json, yaml or XML message
-  ----------
-  
-  offer the user the long or the short version
-  the short version is using one time id for words, triples and groups
-  
-  add the instance id, user id and time stamp to the export file
-    
-  TODO
-  - offer to export the change log
-  - export only the user view
-  - ... or include the standard value
-  - ... or include all user values in the export object
-    
-  
-  This file is part of zukunft.com - calc with words
+    export.php - create an object to export data - the object can be converted to a json, yaml or XML message
+    ----------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    offer the user the long or the short version
+    the short version is using one time id for words, triples and groups
+
+    add the instance id, user id and time stamp to the export file
+
+    TODO
+    - offer to export the change log
+    - export only the user view
+    - ... or include the standard value
+    - ... or include all user values in the export object
+
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
 class export
 {
 
-    // parameters to filter the export
-    public ?user $usr = null;            // the user who wants to im- or export
-    public ?phrase_list $phr_lst = null; // to export all values related to this phrase
+    // the json header
+    const VERSION = 'version';
+    const POD = 'pod';
+    const TIME = 'time';
+    const SELECTION = 'selection';
+    const USER = 'user';
+    const USERS = 'users';
+    const VERBS = 'verbs';
+    const WORDS = 'words';
+    const TRIPLES = 'triples';
+    const FORMULAS = 'formulas';
+    const SOURCES = 'sources';
+    const VALUES = 'values';
+    const VALUE_LIST = 'value-list';
+    const VIEWS = 'views';
+    const CALC_VALIDATION = 'calc-validation';
+    const VIEW_VALIDATION = 'view-validation';
+    const IP_BLACKLIST = 'ip-blacklist';
 
-    // export zukunft.com data as object for creating e.g. a json message
-    function get(): object
+    /**
+     * export zukunft.com data as object for creating e.g. a json message
+     * @param user|null $usr the user who wants to im- or export
+     * @param phrase_list|null $phr_lst to export all values related to this phrase
+     * @return object
+     */
+    function get(?user $usr = null, ?phrase_list $phr_lst = null): object
     {
 
         global $db_con;
@@ -57,8 +77,8 @@ class export
         log_debug('export->get');
         $export_obj = (object)[];
 
-        if ($this->phr_lst != null) {
-            if (count($this->phr_lst->lst) <= 0) {
+        if ($phr_lst != null) {
+            if (count($phr_lst->lst) <= 0) {
                 log_warning("No words to filter the export are defined.", "export->get");
             } else {
 
@@ -66,8 +86,8 @@ class export
                 $export_obj->version = PRG_VERSION;
                 $export_obj->pod = cfg_get(CFG_SITE_NAME, $db_con);
                 $export_obj->time = date("Y-m-d H:i:s");
-                $export_obj->user = $this->usr->name;
-                $phr_lst_dsp = $this->phr_lst->dsp_obj();
+                $export_obj->user = $usr->name;
+                $phr_lst_dsp = $phr_lst->dsp_obj();
                 $export_obj->selection = $phr_lst_dsp->names(); // must be set by before the call TODO not nice better use the $phr_lst->object_exp_lst()
 
                 // 1.1. collect all personal values - value that cannot be seen by other user
@@ -75,13 +95,13 @@ class export
                 // 2. collect values linked to the user selected words
                 //    e.g. if carrots are selected get the climate gas emissions per weight percent
                 log_debug('export->get values');
-                $val_lst = $this->phr_lst->val_lst();
+                $val_lst = $phr_lst->val_lst();
 
                 // 3. get all words and triples needed for the values that should be exported
                 //    e.g. carrots, climate gas emission (CO2, methane), weight, percent
                 log_debug('export->get words and triples');
-                $this->phr_lst->merge($val_lst->phr_lst_all());
-                $wrd_lst = $this->phr_lst->wrd_lst_all();
+                $phr_lst->merge($val_lst->phr_lst_all());
+                $wrd_lst = $phr_lst->wrd_lst_all();
 
                 // 4. export all words that have a special type or any other non default setting (standard words are created automatically on import with just the name)
                 log_debug('export->get typed words');
@@ -94,7 +114,7 @@ class export
 
                 // 5. export all word relations
                 log_debug('export->get triples');
-                $lnk_lst = $this->phr_lst->trp_lst();
+                $lnk_lst = $phr_lst->trp_lst();
                 $exp_triples = array();
                 foreach ($lnk_lst->lst as $lnk) {
                     $exp_lnk = $lnk->export_obj();
@@ -108,7 +128,7 @@ class export
 
                 // 6. export all used formula relations to reproduce the results
                 log_debug('export->get formulas');
-                $frm_lst = $this->phr_lst->frm_lst();
+                $frm_lst = $phr_lst->frm_lst();
                 $exp_formulas = array();
                 if ($frm_lst->lst != null) {
                     foreach ($frm_lst->lst as $frm) {
@@ -166,7 +186,7 @@ class export
                 // 10. just for validating the import: add all formula results to the export
                 log_debug('export->get formula results');
                 $exp_formula_values = array();
-                $frm_lst = $this->phr_lst->frm_lst();
+                $frm_lst = $phr_lst->frm_lst();
                 if ($frm_lst->lst != null) {
                     foreach ($frm_lst->lst as $frm) {
                         $fv_lst = $frm->get_fv_lst();

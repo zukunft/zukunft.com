@@ -30,6 +30,8 @@
 
 */
 
+use export\json_io;
+
 function run_export_test(testing $t)
 {
 
@@ -48,9 +50,7 @@ function run_export_test(testing $t)
 
     $t->header('Test the json export class (classes/json.php)');
 
-    $json_export = new json_io;
-    $json_export->usr = $usr;
-    $json_export->phr_lst = $phr_lst;
+    $json_export = new json_io($usr, $phr_lst);
     $result = $json_export->export();
     $target = 'Mathematical constant';
     $t->dsp_contains(', json->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, TIMEOUT_LIMIT_PAGE);
