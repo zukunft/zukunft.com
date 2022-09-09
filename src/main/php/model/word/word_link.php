@@ -93,9 +93,6 @@ class word_link extends user_sandbox_link_description
      */
 
     // the field names used for the im- and export in the json or yaml format
-    const FLD_EX_NAME = 'triple_name';
-    const FLD_EX_DESCRIPTION = 'description';
-    const FLD_EX_TYPE = 'type';
     const FLD_EX_FROM = 'from';
     const FLD_EX_TO = 'to';
     const FLD_EX_VERB = 'verb';
@@ -624,7 +621,11 @@ class word_link extends user_sandbox_link_description
     }
 
     /**
-     * import a view from an object
+     * import a triple from a json object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(array $json_obj, bool $do_save = true): user_message
     {
@@ -632,17 +633,17 @@ class word_link extends user_sandbox_link_description
         global $share_types;
         global $protection_types;
 
-        log_debug('word_link->import_obj');
+        log_debug();
         $result = new user_message();
 
         foreach ($json_obj as $key => $value) {
-            if ($key == self::FLD_EX_NAME) {
+            if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == self::FLD_EX_DESCRIPTION) {
+            if ($key == exp_obj::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == self::FLD_EX_TYPE) {
+            if ($key == exp_obj::FLD_TYPE) {
                 $this->type_id = $word_types->id($value);
             }
             if ($key == self::FLD_EX_FROM) {
@@ -666,7 +667,6 @@ class word_link extends user_sandbox_link_description
                 if ($result->is_ok() and $do_save) {
                     $vrb->load();
                     if ($vrb->id <= 0) {
-                        // TODO add an error message
                         $result->add_message('verb "' . $value . '" not found');
                         if ($this->name <> '') {
                             $result->add_message('for triple "' . $this->name . '"');
@@ -682,7 +682,7 @@ class word_link extends user_sandbox_link_description
                 $this->protection_id = $protection_types->id($value);
             }
         }
-        if ($result == '' and $do_save) {
+        if ($result->is_ok() and $do_save) {
             $result->add_message($this->save());
         }
 
@@ -1431,6 +1431,8 @@ class word_link extends user_sandbox_link_description
             $db_chk_rev->from->id = $this->to->id;
             $db_chk_rev->to = $this->from;
             $db_chk_rev->to->id = $this->from->id;
+            // remove the name in the object to prevent loading by name
+            $db_chk_rev->name = '';
             $db_chk_rev->load_standard();
             if ($db_chk_rev->id > 0) {
                 $this->id = $db_chk_rev->id;

@@ -514,7 +514,7 @@ class phrase
                     $result->add_message($wrd->save());
                 }
                 if ($wrd->id == 0) {
-                    $result->add_message('Cannot add time word "' . $json_value . '" when importing ' . $this->dsp_id());
+                    $result->add_message('Cannot add word "' . $json_value . '" when importing ' . $this->dsp_id());
                 } else {
                     $this->id = $wrd->id;
                 }

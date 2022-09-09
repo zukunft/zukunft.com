@@ -219,11 +219,18 @@ class verb
         return $result;
     }
 
+    /**
+     * add a verb in the database from an imported json object of external database from
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
     function import_obj(array $json_obj, bool $do_save = true): user_message
     {
         global $verbs;
 
-        log_debug('verb->import_obj');
+        log_debug();
         $result = new user_message();
 
         // reset all parameters of this verb object but keep the user
@@ -234,22 +241,22 @@ class verb
             if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == 'code_id') {
+            if ($key == exp_obj::FLD_CODE_ID) {
                 $this->code_id = $value;
             }
-            if ($key == 'description') {
+            if ($key == exp_obj::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == 'name_plural_reverse') {
+            if ($key == self::FLD_PLURAL_REVERSE) {
                 $this->rev_plural = $value;
             }
-            if ($key == 'name_plural') {
+            if ($key == self::FLD_PLURAL) {
                 $this->plural = $value;
             }
-            if ($key == 'name_reverse') {
+            if ($key == self::FLD_REVERSE) {
                 $this->reverse = $value;
             }
-            if ($key == 'formula_name') {
+            if ($key == self::FLD_FORMULA) {
                 $this->frm_name = $value;
             }
         }

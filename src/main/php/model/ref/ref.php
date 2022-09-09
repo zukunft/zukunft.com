@@ -32,6 +32,7 @@
    
 */
 
+use export\exp_obj;
 use export\ref_exp;
 
 class ref
@@ -148,8 +149,7 @@ class ref
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return user_message an empty string if the import has been successfully saved to the database
-     *                      or the message that should be shown to the user
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(array $json_obj, bool $do_save = true): user_message
     {
@@ -157,17 +157,17 @@ class ref
 
         // reset of object not needed, because the calling function has just created the object
         foreach ($json_obj as $key => $value) {
-            if ($key == self::FLD_EX_NAME) {
+            if ($key == exp_obj::FLD_NAME) {
                 $this->external_key = $value;
             }
-            if ($key == self::FLD_EX_TYPE) {
+            if ($key == exp_obj::FLD_TYPE) {
                 $this->ref_type = get_ref_type($value);
 
                 if ($this->ref_type == null) {
                     $result->add_message('Reference type for ' . $value . ' not found');
                 } else {
                     $this->ref_type = get_ref_type($value);
-                    log_debug('ref->import_obj -> ref_type set based on ' . $value . ' (' . $this->ref_type->name . ')');
+                    log_debug('ref_type set based on ' . $value . ' (' . $this->ref_type->name . ')');
                 }
             }
         }

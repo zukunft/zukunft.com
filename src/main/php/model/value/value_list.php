@@ -52,6 +52,14 @@ class value_list
     public int $page = 0;                    // start to display with this page
 
     /*
+     * im- and export link
+     */
+
+    // the field names used for the im- and export in the json or yaml format
+    const FLD_EX_CONTEXT = 'context';
+    const FLD_EX_VALUES = 'values';
+
+    /*
      * construct and map
      */
 
@@ -428,7 +436,7 @@ class value_list
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return user_message true if the import has been successfully saved to the database
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(array $json_obj, bool $do_save = true): user_message
     {
@@ -443,21 +451,21 @@ class value_list
 
         foreach ($json_obj as $key => $value) {
 
-            if ($key == 'context') {
+            if ($key == self::FLD_EX_CONTEXT) {
                 $phr_lst = new phrase_list($this->usr);
                 $result->add($phr_lst->import_lst($value, $do_save));
                 $val->phr_lst = clone $phr_lst;
             }
 
-            if ($key == 'timestamp') {
+            if ($key == exp_obj::FLD_TIMESTAMP) {
                 if (strtotime($value)) {
                     $val->time_stamp = get_datetime($value, $val->dsp_id(), 'JSON import');
                 } else {
-                    log_err('Cannot add timestamp "' . $value . '" when importing ' . $val->dsp_id(), 'value_list->import_obj');
+                    $result->add_message('Cannot add timestamp "' . $value . '" when importing ' . $val->dsp_id());
                 }
             }
 
-            if ($key == 'time') {
+            if ($key == exp_obj::FLD_TIME) {
                 $phr = new phrase($this->usr);
                 $result->add($phr->import_obj($value, $do_save));
                 $val->time_phr = $phr;
@@ -483,7 +491,7 @@ class value_list
                 $val->source = $src;
             }
 
-            if ($key == 'values') {
+            if ($key == self::FLD_EX_VALUES) {
                 foreach ($value as $val_entry) {
                     foreach ($val_entry as $val_key => $val_number) {
                         $val_to_add = clone $val;

@@ -56,6 +56,13 @@ class user
     const FLD_ID = 'user_id';
 
     /*
+     * im- and export link
+     */
+
+    // the field names used for the im- and export in the json or yaml format
+    const FLD_EX_PROFILE = 'profile';
+
+    /*
      * predefined user linked to the program code
      */
 
@@ -393,14 +400,13 @@ class user
      * @param array $json_obj an array with the data of the json object
      * @param int $profile_id the profile of the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param bool $do_save can be set to false for unit testing
-     * @return user_message an empty string if the import has been successfully saved to the database
-     *                      or an error message that should be shown to the user
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(array $json_obj, int $profile_id, bool $do_save = true): user_message
     {
         global $user_profiles;
 
-        log_debug('user->import_obj');
+        log_debug();
         $result = new user_message();
 
         // reset all parameters of this user object
@@ -409,10 +415,10 @@ class user
             if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == 'description') {
+            if ($key == exp_obj::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == 'profile') {
+            if ($key == self::FLD_EX_PROFILE) {
                 $this->profile_id = $user_profiles->id($value);
             }
         }

@@ -638,8 +638,7 @@ class user_sandbox
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return user_message an empty string if the import has been successfully saved to the database
-     *                      or the message that should be shown to the user
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(array $json_obj, bool $do_save = true): user_message
     {

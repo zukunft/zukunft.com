@@ -447,7 +447,7 @@ class word extends user_sandbox_description
                         // additional user sandbox fields
                         $this->type_name();
                     }
-                    log_debug('word->loaded ' . $this->dsp_id());
+                    log_debug($this->dsp_id());
                     $result = true;
                 }
             }
@@ -554,12 +554,12 @@ class word extends user_sandbox_description
      */
     function val_lst(): value_list
     {
-        log_debug('word->val_lst for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
+        log_debug('for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
         $val_lst = new value_list($this->usr);
         $val_lst->phr = $this->phrase();
         $val_lst->page_size = SQL_ROW_MAX;
         $val_lst->load();
-        log_debug('word->val_lst -> got ' . dsp_count($val_lst->lst));
+        log_debug('got ' . dsp_count($val_lst->lst));
         return $val_lst;
     }
 
@@ -570,7 +570,7 @@ class word extends user_sandbox_description
      */
     function formula(): formula
     {
-        log_debug('word->formula for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
+        log_debug('for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
 
         global $db_con;
 
@@ -595,8 +595,7 @@ class word extends user_sandbox_description
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return user_message an empty string if the import has been successfully saved to the database
-     *                      or the message that should be shown to the user
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(array $json_obj, bool $do_save = true): user_message
     {
@@ -640,7 +639,7 @@ class word extends user_sandbox_description
                 if ($do_save) {
                     $wrd_view->load();
                     if ($wrd_view->id == 0) {
-                        log_err('Cannot find view "' . $value . '" when importing ' . $this->dsp_id(), 'word->import_obj');
+                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     } else {
                         $this->view_id = $wrd_view->id;
                     }
@@ -661,10 +660,10 @@ class word extends user_sandbox_description
 
         // add related parameters to the word object
         if ($result->is_ok()) {
-            log_debug('word->import_obj -> saved ' . $this->dsp_id());
+            log_debug('saved ' . $this->dsp_id());
 
             if ($this->id <= 0 and $do_save) {
-                log_err('Word ' . $this->dsp_id() . ' cannot be saved', 'word->import_obj');
+                $result->add_message('Word ' . $this->dsp_id() . ' cannot be saved');
             } else {
                 foreach ($json_obj as $key => $value) {
                     if ($result->is_ok()) {
@@ -692,7 +691,7 @@ class word extends user_sandbox_description
     {
         global $word_types;
 
-        log_debug('word->export_obj');
+        log_debug();
         $result = new word_exp();
 
         if ($this->name <> '') {
@@ -735,7 +734,7 @@ class word extends user_sandbox_description
         }
 
 
-        log_debug('word->export_obj -> ' . json_encode($result));
+        log_debug(json_encode($result));
         return $result;
     }
 
@@ -1142,12 +1141,12 @@ class word extends user_sandbox_description
     {
         global $word_types;
 
-        log_debug('word->is_type (' . $this->dsp_id() . ' is ' . $type . ')');
+        log_debug($this->dsp_id() . ' is ' . $type);
 
         $result = false;
         if ($this->type_id == $word_types->id($type)) {
             $result = true;
-            log_debug('word->is_type (' . $this->dsp_id() . ' is ' . $type . ')');
+            log_debug($this->dsp_id() . ' is ' . $type);
         }
         return $result;
     }
@@ -1253,10 +1252,10 @@ class word extends user_sandbox_description
      */
     function parents(): phrase_list
     {
-        log_debug('word->parents for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
+        log_debug('for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
         $phr_lst = $this->lst();
         $parent_phr_lst = $phr_lst->foaf_parents(cl(db_cl::VERB, verb::IS_A));
-        log_debug('word->parents are ' . $parent_phr_lst->dsp_name() . ' for ' . $this->dsp_id());
+        log_debug('are ' . $parent_phr_lst->dsp_name() . ' for ' . $this->dsp_id());
         return $parent_phr_lst;
     }
 
@@ -1270,7 +1269,7 @@ class word extends user_sandbox_description
     {
         $phr_lst = $this->parents();
         $phr_lst->add($this->phrase());
-        log_debug('word->is -> ' . $this->dsp_id() . ' is a ' . $phr_lst->dsp_name());
+        log_debug($this->dsp_id() . ' is a ' . $phr_lst->dsp_name());
         return $phr_lst;
     }
 
@@ -1284,7 +1283,7 @@ class word extends user_sandbox_description
         if (count($is_phr_lst->lst) >= 1) {
             $result = $is_phr_lst->lst[0];
         }
-        log_debug('word->is_mainly -> (' . $this->dsp_id() . ' is a ' . $result->name . ')');
+        log_debug($this->dsp_id() . ' is a ' . $result->name);
         return $result;
     }
 
@@ -1318,10 +1317,10 @@ class word extends user_sandbox_description
      */
     function children(): phrase_list
     {
-        log_debug('word->children for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
+        log_debug('for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
         $phr_lst = $this->lst();
         $child_phr_lst = $phr_lst->foaf_children(cl(db_cl::VERB, verb::IS_A));
-        log_debug('word->children are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
+        log_debug('are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
         return $child_phr_lst;
     }
 
@@ -1343,7 +1342,7 @@ class word extends user_sandbox_description
      */
     function are_and_contains(): phrase_list
     {
-        log_debug('word->are_and_contains for ' . $this->dsp_id());
+        log_debug('for ' . $this->dsp_id());
 
         // this first time get all related items
         $phr_lst = $this->lst();
@@ -1353,20 +1352,20 @@ class word extends user_sandbox_description
         // ... and after that get only for the new
         if ($added_lst->count() > 0) {
             $loops = 0;
-            log_debug('word->are_and_contains -> added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->dsp_id());
+            log_debug('added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->dsp_id());
             do {
                 $next_lst = clone $added_lst;
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
                 $added_lst->diff($phr_lst);
                 if (count($added_lst->lst) > 0) {
-                    log_debug('word->are_and_contains -> add ' . $added_lst->dsp_id() . ' to ' . $phr_lst->dsp_id());
+                    log_debug('add ' . $added_lst->dsp_id() . ' to ' . $phr_lst->dsp_id());
                 }
                 $phr_lst->merge($added_lst);
                 $loops++;
             } while (count($added_lst->lst) > 0 and $loops < MAX_LOOP);
         }
-        log_debug('word->are_and_contains -> ' . $this->dsp_id() . ' are_and_contains ' . $phr_lst->dsp_id());
+        log_debug($this->dsp_id() . ' are_and_contains ' . $phr_lst->dsp_id());
         return $phr_lst;
     }
 
@@ -1375,7 +1374,7 @@ class word extends user_sandbox_description
      */
     function next(): word
     {
-        log_debug('word->next ' . $this->dsp_id() . ' and user ' . $this->usr->name);
+        log_debug($this->dsp_id() . ' and user ' . $this->usr->name);
 
         global $db_con;
         $result = new word($this->usr);
@@ -1399,7 +1398,7 @@ class word extends user_sandbox_description
      */
     function prior(): word
     {
-        log_debug('word->prior(' . $this->dsp_id() . ',u' . $this->usr->id . ')');
+        log_debug($this->dsp_id() . ',u' . $this->usr->id);
 
         global $db_con;
         $result = new word($this->usr);
@@ -1442,11 +1441,11 @@ class word extends user_sandbox_description
      */
     function is_part(): phrase_list
     {
-        log_debug('word->is(' . $this->dsp_id() . ', user ' . $this->usr->id . ')');
+        log_debug($this->dsp_id() . ', user ' . $this->usr->id);
         $phr_lst = $this->lst();
         $is_phr_lst = $phr_lst->foaf_parents(cl(db_cl::VERB, verb::IS_PART_OF));
 
-        log_debug('word->is -> (' . $this->dsp_id() . ' is a ' . $is_phr_lst->dsp_name() . ')');
+        log_debug($this->dsp_id() . ' is a ' . $is_phr_lst->dsp_name());
         return $is_phr_lst;
     }
 
@@ -1460,7 +1459,7 @@ class word extends user_sandbox_description
      */
     function link_types(string $direction): verb_list
     {
-        log_debug('word->link_types ' . $this->dsp_id() . ' and user ' . $this->usr->id);
+        log_debug($this->dsp_id() . ' and user ' . $this->usr->id);
 
         global $db_con;
 
@@ -1548,7 +1547,7 @@ class word extends user_sandbox_description
         $phr->id = $this->id;
         $phr->name = $this->name;
         $phr->obj = $this;
-        log_debug('word->phrase of ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         return $phr;
     }
 
@@ -1589,7 +1588,7 @@ class word extends user_sandbox_description
 
     function not_used(): bool
     {
-        log_debug('word->not_used (' . $this->id . ')');
+        log_debug($this->id);
 
         if (parent::not_used()) {
             $result = true;
@@ -1622,7 +1621,7 @@ class word extends user_sandbox_description
      */
     function not_changed(): bool
     {
-        log_debug('word->not_changed (' . $this->id . ') by someone else than the owner (' . $this->owner_id . ')');
+        log_debug($this->id . ') by someone else than the owner (' . $this->owner_id);
 
         global $db_con;
         $result = true;
@@ -1646,7 +1645,7 @@ class word extends user_sandbox_description
         if ($change_user_id > 0) {
             $result = false;
         }
-        log_debug('word->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result));
+        log_debug('for ' . $this->id . ' is ' . zu_dsp_bool($result));
         return $result;
     }
 
@@ -1657,7 +1656,7 @@ class word extends user_sandbox_description
      */
     function changer(): int
     {
-        log_debug('word->changer (' . $this->id . ')');
+        log_debug($this->id);
 
         global $db_con;
         $user_id = 0;
@@ -1681,7 +1680,7 @@ class word extends user_sandbox_description
      */
     function can_change(): bool
     {
-        log_debug('word->can_change (' . $this->id . ',u' . $this->usr->id . ')');
+        log_debug($this->id . ',u' . $this->usr->id);
         $can_change = false;
         if ($this->owner_id == $this->usr->id or $this->owner_id <= 0) {
             $wrd_user = $this->changer();
@@ -1690,7 +1689,7 @@ class word extends user_sandbox_description
             }
         }
 
-        log_debug('word->can_change -> (' . zu_dsp_bool($can_change) . ')');
+        log_debug(zu_dsp_bool($can_change));
         return $can_change;
     }
 
@@ -1738,11 +1737,11 @@ class word extends user_sandbox_description
         $sql = $db_con->select_by_id();
         $usr_wrd_cfg = $db_con->get1_old($sql);
         if ($usr_wrd_cfg != null) {
-            log_debug('word->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
+            log_debug('for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
             if ($usr_wrd_cfg[self::FLD_ID] > 0) {
                 if ($this->no_usr_fld_used($usr_wrd_cfg)) {
                     // delete the entry in the user sandbox
-                    log_debug('word->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                    log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                     $result = $this->del_usr_cfg_exe($db_con);
                 }
             }
@@ -1757,7 +1756,7 @@ class word extends user_sandbox_description
     private
     function log_upd_view($view_id): user_log_named
     {
-        log_debug('word->log_upd ' . $this->dsp_id() . ' for user ' . $this->usr->name);
+        log_debug($this->dsp_id() . ' for user ' . $this->usr->name);
         $dsp_new = new view_dsp_old($this->usr);
         $dsp_new->id = $view_id;
         $dsp_new->load();
@@ -1796,7 +1795,7 @@ class word extends user_sandbox_description
         $result = '';
 
         if ($this->id > 0 and $view_id > 0 and $view_id <> $this->view_id) {
-            log_debug('word->save_view ' . $view_id . ' for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
+            log_debug($view_id . ' for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
             if ($this->log_upd_view($view_id) > 0) {
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->usr->id;
@@ -1861,13 +1860,13 @@ class word extends user_sandbox_description
      */
     function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
-        log_debug('word->save_fields');
+        log_debug();
         $result = $this->save_field_plural($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_description($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_view($db_rec);
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        log_debug('word->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
+        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }
 

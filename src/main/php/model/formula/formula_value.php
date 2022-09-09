@@ -41,6 +41,8 @@
 */
 
 use api\formula_value_api;
+use export\exp_obj;
+use export\formula_value_exp;
 
 class formula_value
 {
@@ -656,7 +658,7 @@ class formula_value
      * update the source phrase list based on the source phrase group id
      * @param bool $force_reload set to true if a loaded phrase list should refresh with database values
      */
-    private function load_phr_lst_src(bool $force_reload = false)
+    private function load_phr_lst_src(bool $force_reload = false): void
     {
         if ($this->src_phr_grp_id > 0) {
             if ($this->src_phr_lst == null or $force_reload) {
@@ -681,7 +683,7 @@ class formula_value
      * update the phrase list based on the word group id
      * @param bool $force_reload set to true if a loaded phrase list should refresh with database values
      */
-    private function load_phr_lst(bool $force_reload = false)
+    private function load_phr_lst(bool $force_reload = false): void
     {
         if ($this->phr_grp_id > 0) {
             if ($this->phr_lst == null or $force_reload) {
@@ -706,7 +708,7 @@ class formula_value
      * update the source time word object based on the source time word id
      * @param bool $force_reload set to true if a loaded source time phrase should be reloaded from database
      */
-    private function load_time_wrd_src(bool $force_reload = false)
+    private function load_time_wrd_src(bool $force_reload = false): void
     {
         if ($this->src_time_id <> 0) {
             if ($this->src_time_phr == null or $force_reload) {
@@ -729,7 +731,7 @@ class formula_value
      * update the time word object based on the time word id
      * @param bool $force_reload set to true if a loaded time phrase should be reloaded from database
      */
-    private function load_time_wrd(bool $force_reload = false)
+    private function load_time_wrd(bool $force_reload = false): void
     {
         if ($this->time_id <> 0) {
             if ($this->time_phr == null or $force_reload) {
@@ -752,10 +754,10 @@ class formula_value
      * update the phrase objects based on the phrase group ids
      * (usually done after loading the formula result from the database)
      */
-    function load_phrases(bool $force_reload = false)
+    function load_phrases(bool $force_reload = false): void
     {
         if ($this->id > 0) {
-            log_debug('formula_value->load_phrases for user ' . $this->usr->name);
+            log_debug('for user ' . $this->usr->name);
             $this->load_phr_lst_src($force_reload);
             $this->load_phr_lst($force_reload);
             $this->load_time_wrd_src($force_reload);
@@ -766,10 +768,10 @@ class formula_value
     /**
      * update the formulas objects based on the id
      */
-    private function load_formula()
+    private function load_formula(): void
     {
         if ($this->frm->id > 0) {
-            log_debug('formula_value->load_formula for user ' . $this->usr->name);
+            log_debug('for user ' . $this->usr->name);
             $frm = new formula($this->usr);
             $frm->id = $this->frm->id;
             $frm->load();
@@ -786,29 +788,29 @@ class formula_value
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return user_message an empty string if the import has been successfully saved to the database
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(array $json_obj, bool $do_save = true): user_message
     {
-        log_debug(formula_value::class . '->import_obj');
+        log_debug();
         $result = new user_message;
 
         foreach ($json_obj as $key => $fv) {
 
-            if ($key == 'words') {
+            if ($key == export::WORDS) {
                 $phr_lst = new phrase_list($this->usr);
                 $result->add($phr_lst->import_lst($fv, $do_save));
                 if ($result->is_ok() and $do_save) {
                     $phr_grp = $phr_lst->get_grp();
-                    log_debug(formula_value::class . '->import_obj got word group ' . $phr_grp->dsp_id());
+                    log_debug('got word group ' . $phr_grp->dsp_id());
                     $this->grp = $phr_grp;
-                    log_debug(formula_value::class . '->import_obj set grp id to ' . $this->grp->id);
+                    log_debug('set grp id to ' . $this->grp->id);
                 }
                 $this->phr_lst = $phr_lst;
             }
 
             /*
-            if ($key == 'timestamp') {
+            if ($key == exp_obj::FLD_TIMESTAMP) {
                 if (strtotime($fv)) {
                     $this->time_stamp = get_datetime($fv, $this->dsp_id(), 'JSON import');
                 } else {
@@ -817,13 +819,13 @@ class formula_value
             }
             */
 
-            if ($key == 'time') {
+            if ($key == exp_obj::FLD_TIME) {
                 $phr = new phrase($this->usr);
                 $result->add($phr->import_obj($fv, $do_save));
                 $this->time_phr = $phr;
             }
 
-            if ($key == 'number') {
+            if ($key == exp_obj::FLD_NUMBER) {
                 $this->value = $fv;
             }
 
@@ -831,9 +833,9 @@ class formula_value
 
         if ($result->is_ok() and $do_save) {
             $this->save();
-            log_debug(formula_value::class . '->import_obj -> ' . $this->dsp_id());
+            log_debug($this->dsp_id());
         } else {
-            log_debug(formula_value::class . '->import_obj -> ' . $result->all_message_text());
+            log_debug($result->all_message_text());
         }
 
         return $result;
@@ -845,11 +847,11 @@ class formula_value
      *
      * @param bool $do_load true if the formula value should be validated again before export
      *                      use false for a faster export
-     * @return user_sandbox_exp the filled formula validation object used for JSON creation
+     * @return formula_value_exp the filled formula validation object used for JSON creation
      */
-    function export_obj(bool $do_load = true): user_sandbox_exp
+    function export_obj(bool $do_load = true): formula_value_exp
     {
-        log_debug(formula_value::class . '->export_obj');
+        log_debug();
         $result = new formula_value_exp();
 
         // reload the value parameters
@@ -887,7 +889,7 @@ class formula_value
     */
 
     // update the source word group id based on the word list ($this->phr_lst)
-    private function save_prepare_phr_lst_src()
+    private function save_prepare_phr_lst_src(): void
     {
         if (isset($this->src_phr_lst)) {
             // TODO check if the phrases are already loaded
@@ -923,7 +925,7 @@ class formula_value
     }
 
     // update the word group id based on the word list ($this->phr_lst)
-    private function save_prepare_phr_lst()
+    private function save_prepare_phr_lst(): void
     {
         if (isset($this->phr_lst)) {
             // remember the time if needed (but don't assume the time, because a value can be saved without timestamp)
@@ -1465,9 +1467,11 @@ class formula_value
         return $result;
     }
 
-    // save the formula result to the database
-    // for the word selection the id list is the lead, not the object list and not the group
-    // return the id of the saved record
+    /**
+     * save the formula result to the database
+     * for the word selection the id list is the lead, not the object list and not the group
+     * @return int the id of the saved record
+     */
     function save(): int
     {
 
@@ -1552,7 +1556,7 @@ class formula_value
             }
         }
 
-        log_debug("formula_value->save -> id (" . $result . ")");
+        log_debug("id (" . $result . ")");
         return $result;
 
     }

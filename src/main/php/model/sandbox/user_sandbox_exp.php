@@ -39,6 +39,7 @@ class exp_obj
     const FLD_NAME = 'name';
     const FLD_TYPE = 'type';
     const FLD_DESCRIPTION = 'description';
+    const FLD_CODE_ID = 'code_id';
     const FLD_VIEW = 'view';
     const FLD_TIMESTAMP = 'timestamp';
     const FLD_TIME = 'time';

@@ -31,6 +31,7 @@
 
 use export\source_exp;
 use export\exp_obj;
+use html\html_selector;
 
 class source extends user_sandbox_named
 {
@@ -45,6 +46,8 @@ class source extends user_sandbox_named
     const FLD_TYPE = 'source_type_id';
     const FLD_URL = 'url';
     const FLD_COMMENT = 'comment';
+
+    const FLD_EX_URL = 'url';
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
@@ -280,10 +283,16 @@ class source extends user_sandbox_named
         return $this->type_name;
     }
 
-    // import a source from an object
+    /**
+     * import a source from an object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
     function import_obj(array $json_obj, bool $do_save = true): user_message
     {
-        log_debug('source->import_obj');
+        log_debug();
         $result = new user_message();
 
         foreach ($json_obj as $key => $value) {
@@ -291,7 +300,7 @@ class source extends user_sandbox_named
             if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == 'url') {
+            if ($key == self::FLD_EX_URL) {
                 $this->url = $value;
             }
             if ($key == exp_obj::FLD_DESCRIPTION) {
@@ -314,7 +323,7 @@ class source extends user_sandbox_named
     // create an object for the export
     function export_obj(bool $do_load = true): exp_obj
     {
-        log_debug('source->export_obj');
+        log_debug();
         $result = new source_exp();
 
         // add the source parameters
@@ -332,7 +341,7 @@ class source extends user_sandbox_named
             $result->code_id = $this->code_id;
         }
 
-        log_debug('source->export_obj -> ' . json_encode($result));
+        log_debug(json_encode($result));
         return $result;
     }
 
@@ -400,7 +409,7 @@ class source extends user_sandbox_named
     // display a selector for the value source
     function dsp_select($form_name, $back): string
     {
-        log_debug('source->dsp_select ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         $result = ''; // reset the html code var
 
         // for new values assume the last source used, but not for existing values to enable only changing the value, but not setting the source
