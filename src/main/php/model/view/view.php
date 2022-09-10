@@ -286,6 +286,36 @@ class view extends user_sandbox_named
         return $qp;
     }
 
+    // TODO review and add a unit test
+    function load_by_phrase_sql(sql_db $db_con, phrase $phr): sql_par
+    {
+        $qp = parent::load_sql($db_con, self::class);
+
+        // sql to get the id of the most often used view
+        $db_con_tmp = new sql_db();
+        $db_con_tmp->set_type(DB_TYPE_VIEW);
+        $db_con_tmp->set_usr($this->usr->id);
+        $db_con_tmp->set_where_std($phr->id);
+        $sql = "SELECT u.view_id, count(u.user_id) AS users
+                       FROM words w 
+                  LEFT JOIN user_words u ON u.word_id = w.word_id 
+                      WHERE w.word_id = " . $db_con_tmp->par_name() . "
+                   GROUP BY u.view_id
+                      LIMIT 1";
+
+        // load all parameters of the view with one sql statement
+        $db_con->set_type(DB_TYPE_VIEW);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        //$db_con->set_from($sql);
+        //$qp->sql = $db_con->select_by_sub_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
     /**
      * load the missing view parameters from the database
      * based either on the id or the view name
@@ -315,6 +345,20 @@ class view extends user_sandbox_named
             }
         }
         return $result;
+    }
+
+    /**
+     * load the suggested view for a phrase
+     * @param phrase $phr the phrase for which the most often used view should be loaded
+     * @return bool true if at least one view is found
+     */
+    function load_by_phrase(phrase $phr): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_by_phrase_sql($db_con, $phr);
+        $db_view = $db_con->get1($qp);
+        return $this->row_mapper($db_view);
     }
 
     /**

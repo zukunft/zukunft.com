@@ -148,7 +148,6 @@ class word extends user_sandbox_description
     const TN_PRIOR = 'System Test Word Prior';
     const TN_INHABITANT = 'System Test Word Unit e.g. inhabitant';
     const TN_CONST = 'System Test Word Math Const e.g. Pi';
-    const TN_CONST_DSP = 'Pi';
     const TN_TIME_JUMP = 'System Test Word Time Jump e.g. yearly';
     const TN_LATEST = 'System Test Word Latest';
     const TN_SCALING_PCT = 'System Test Word Scaling Percent';
@@ -197,7 +196,14 @@ class word extends user_sandbox_description
         self::TN_INCREASE,
         self::TN_THIS,
         self::TN_PRIOR,
-        self::TN_INHABITANT
+        self::TN_INHABITANT,
+        self::TN_CONST,
+        self::TN_TIME_JUMP,
+        self::TN_LATEST,
+        self::TN_SCALING_PCT,
+        self::TN_SCALING_MEASURE,
+        self::TN_CALC,
+        self::TN_LAYER
     );
     const TEST_WORDS_STANDARD = array(
         self::TN_PARENT,
@@ -311,7 +317,7 @@ class word extends user_sandbox_description
     /**
      * @return word_api the word frontend api object
      */
-    function api_obj(): object
+    function api_obj(): word_api
     {
         $api_obj = new word_api();
         if (!$this->excluded) {
@@ -323,7 +329,7 @@ class word extends user_sandbox_description
     /**
      * @return word_dsp the word object with the display interface functions
      */
-    function dsp_obj(): object
+    function dsp_obj(): word_dsp
     {
         $dsp_obj = new word_dsp();
 
@@ -358,7 +364,7 @@ class word extends user_sandbox_description
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(DB_TYPE_WORD);
         $db_con->set_fields(array_merge(
@@ -547,6 +553,17 @@ class word extends user_sandbox_description
 
         log_debug('for ' . $this->dsp_id() . ' got ' . $view_id);
         return $view_id;
+    }
+
+    /**
+     * get the view used by most other users
+     * @return view the view of the most often used view
+     */
+    function suggested_view(): view
+    {
+        $dsp = new view($this->usr);
+        $dsp->load_by_phrase($this->phrase());
+        return $dsp;
     }
 
     /**
@@ -1032,14 +1049,12 @@ class word extends user_sandbox_description
      */
     function dsp_edit(string $back = ''): string
     {
-        $vrb_lst_up = $this->verb_list_up();
-        $vrb_lst_down = $this->verb_list_down();
-        $phr_lst_up = new phrase_list($this->usr);
-        $phr_lst_down = new phrase_list($this->usr);
+        $phr_lst_up = $this->parents();
+        $phr_lst_down = $this->children();
         $phr_lst_up_dsp = $phr_lst_up->dsp_obj();
         $phr_lst_down_dsp = $phr_lst_down->dsp_obj();
-        $dsp_graph = $phr_lst_up_dsp->dsp_graph(word_select_direction::UP, $vrb_lst_up, $back);
-        $dsp_graph .= $phr_lst_down_dsp->dsp_graph(word_select_direction::DOWN, $vrb_lst_down, $back);
+        $dsp_graph = $phr_lst_up_dsp->dsp_graph($this->phrase(), $back);
+        $dsp_graph .= $phr_lst_down_dsp->dsp_graph($this->phrase(), $back);
         $wrd_dsp = $this->dsp_obj();
         // collect the display code for the user changes
         $dsp_log = '';
@@ -1484,6 +1499,18 @@ class word extends user_sandbox_description
     private function verb_list_down(): verb_list
     {
         return $this->link_types(word_select_direction::DOWN);
+    }
+
+    private function phrase_list_up(): phrase_list
+    {
+        $phr_lst = new phrase_list($this->usr);
+        return $phr_lst->parents();
+    }
+
+    private function phrase_list_down(): phrase_list
+    {
+        $phr_lst = new phrase_list($this->usr);
+        return $phr_lst->children();
     }
 
     /*

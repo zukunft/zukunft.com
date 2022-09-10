@@ -525,6 +525,11 @@ class phrase_list
         }
     }
 
+    function load_by_phr_and_vrb_lst(phrase_list $phr_lst, verb_list $vrb_lst, string $direction = word_link_list::DIRECTION_UP): bool
+    {
+        return false;
+    }
+
     /**
      * load the related phrases of a given type
      *
@@ -764,14 +769,17 @@ class phrase_list
         return $added_phr_lst;
     }
 
-    // similar to foaf_parents, but for only one level
-    // $level is the number of levels that should be looked into
-    // ex foaf_parent_step
-    function parents($verb_id, $level)
+    /**
+     * similar to foaf_parents, but for only one level
+     * ex foaf_parent_step
+     * @param verb|null $vrb if not null the verbs to filter the parents
+     * @param int $level is the number of levels that should be looked into and 0 (zero) loads unlimited levels
+     */
+    function parents(?verb $vrb= null, int $level = 0): phrase_list
     {
-        log_debug('phrase_list->parents(' . $verb_id . ')');
+        log_debug($vrb->dsp_id());
         $wrd_lst = $this->wrd_lst_all();
-        $added_wrd_lst = $wrd_lst->parents($verb_id, $level);
+        $added_wrd_lst = $wrd_lst->parents($vrb->id, $level);
         $added_phr_lst = $added_wrd_lst->phrase_lst();
 
         log_debug('phrase_list->parents -> (' . $added_phr_lst->name() . ')');
@@ -798,11 +806,11 @@ class phrase_list
     // similar to foaf_child, but for only one level
     // $level is the number of levels that should be looked into
     // ex foaf_child_step
-    function children($verb_id, $level)
+    function children(?verb $vrb= null, int $level = 0): phrase_list
     {
-        log_debug('phrase_list->children type ' . $verb_id);
+        log_debug('phrase_list->children type ' . $vrb->id);
         $wrd_lst = $this->wrd_lst_all();
-        $added_wrd_lst = $wrd_lst->children($verb_id, $level);
+        $added_wrd_lst = $wrd_lst->children($vrb->id, $level);
         $added_phr_lst = $added_wrd_lst->phrase_lst();
 
         log_debug('phrase_list->children -> (' . $added_phr_lst->name() . ')');

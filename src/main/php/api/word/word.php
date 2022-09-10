@@ -49,6 +49,7 @@ class word_api extends user_sandbox_named_api
     const TN_ONE = 'one';
     const TN_MIO = 'mio';
     const TN_PCT = 'percent';
+    const TN_CONST = 'Pi';
 
     // the mouse over tooltip for the word
     protected ?string $description = null;
