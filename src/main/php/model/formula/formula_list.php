@@ -131,10 +131,10 @@ class formula_list
      */
     function load_sql(sql_db $db_con): sql_par
     {
-        $qp = new sql_par(self::class);
         $db_con->set_type(DB_TYPE_FORMULA);
-        $db_con->set_usr($this->usr->id);
+        $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $db_con->set_usr($this->usr->id);
         $db_con->set_usr_fields(formula::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(formula::FLD_NAMES_NUM_USR);
         return $qp;
@@ -224,8 +224,8 @@ class formula_list
      */
     function load_sql_all(sql_db $db_con, int $limit, int $page): sql_par
     {
-        $qp = new sql_par(self::class);
         $db_con->set_type(DB_TYPE_FORMULA);
+        $qp = new sql_par(self::class);
         $db_con->set_usr($this->usr->id);
         $db_con->set_all();
         $qp->name = formula_list::class . '_all';

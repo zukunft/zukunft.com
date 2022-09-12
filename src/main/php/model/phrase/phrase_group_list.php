@@ -62,11 +62,11 @@ class phrase_group_list
      */
     function load_sql(sql_db $db_con, bool $get_name = false): sql_par
     {
+        $db_con->set_type(DB_TYPE_PHRASE_GROUP);
         $qp = new sql_par(self::class);
         $qp->name = self::class . '_by_';
         $sql_where = '';
 
-        $db_con->set_type(DB_TYPE_PHRASE_GROUP);
 
         if ($this->phr != null) {
             if ($this->phr->id <> 0) {

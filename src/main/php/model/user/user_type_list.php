@@ -93,11 +93,11 @@ class user_type_list
 
     function load_sql(sql_db $db_con, string $db_type): sql_par
     {
+        $db_con->set_type($db_type);
         $qp = new sql_par($db_type);
         $qp->name = $db_type . '_all';
-
-        $db_con->set_type($db_type);
         $db_con->set_name($qp->name);
+        //TODO check if $db_con->set_usr($this->usr->id); is needed
         $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
         $db_con->set_page_par(SQL_ROW_MAX, 0);
         $qp->sql = $db_con->select_all();

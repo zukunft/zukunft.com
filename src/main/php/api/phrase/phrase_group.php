@@ -33,7 +33,7 @@
 namespace api;
 
 use html\phrase_group_dsp;
-use phrase_list_dsp;
+use html\phrase_list_dsp;
 
 class phrase_group_api extends user_sandbox_named_api
 {
@@ -80,17 +80,18 @@ class phrase_group_api extends user_sandbox_named_api
     function set_lst($lst): void
     {
         $this->lst = $lst;
-        $this->set_lst_dirty();
-        $this->set_name_dirty();
+        $this->set_dirty();
     }
 
-    function set_lst_dirty(): void
+    function reset_lst(): void
+    {
+        $this->lst = array();
+        $this->set_dirty();
+    }
+
+    function set_dirty(): void
     {
         $this->lst_dirty = true;
-    }
-
-    function set_name_dirty(): void
-    {
         $this->name_dirty = true;
     }
 
@@ -140,8 +141,7 @@ class phrase_group_api extends user_sandbox_named_api
         $result = false;
         if (!in_array($phr->id, $this->id_lst())) {
             $this->lst[] = $phr;
-            $this->set_lst_dirty();
-            $this->set_name_dirty();
+            $this->set_dirty();
             $result = true;
         }
         return $result;

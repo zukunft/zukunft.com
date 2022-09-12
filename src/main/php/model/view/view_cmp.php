@@ -260,7 +260,7 @@ class view_cmp extends user_sandbox_named
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
         $db_con->set_fields(array_merge(
@@ -301,7 +301,7 @@ class view_cmp extends user_sandbox_named
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($db_con, self::class);
         if ($this->id != 0) {
@@ -713,11 +713,15 @@ class view_cmp extends user_sandbox_named
 
             // check again if there ist not yet a record
             $db_con->set_type(DB_TYPE_VIEW_COMPONENT, true);
+            $qp = new sql_par(self::class);
+            $qp->name = 'view_cmp_del_usr_cfg_if';
+            $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(array('view_component_id'));
             $db_con->set_where_std($this->id);
-            $sql = $db_con->select_by_id();
-            $db_row = $db_con->get1_old($sql);
+            $qp->sql = $db_con->select_by_id();
+            $qp->par = $db_con->get_par();
+            $db_row = $db_con->get1($qp);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row['view_component_id'];
             }

@@ -43,6 +43,8 @@ class formula_link_unit_tests
         $t->resource_path = 'db/formula/';
         $usr->id = 1;
 
+        // TODO use assert_load_sql idf possible
+
         $t->header('Unit tests of the formula link class (src/main/php/model/formula/formula_link.php)');
 
         $t->subheader('SQL statement tests');
@@ -81,7 +83,7 @@ class formula_link_unit_tests
 
         // sql to load the user formula link by id
         $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $lnk->load_user_sql($db_con);
+        $created_sql = $lnk->load_user_sql($db_con)->sql;
         $expected_sql = $t->file('db/formula/formula_link_by_id_e_user.sql');
         $t->assert('formula_link->load_user_sql by formula link id', $t->trim($created_sql), $t->trim($expected_sql));
 

@@ -86,14 +86,14 @@ function run_formula_link_test(testing $t)
         $result = $frm_lnk2->fob->dsp_obj()->name();
     }
     $target = $frm->dsp_obj()->name();
-    $t->dsp('formula_link->load by formula id and link id "' . $frm->dsp_obj()->name() . '', $target, $result);
+    $t->dsp('formula_link->load by formula id and link id "' . $frm->dsp_obj()->name(), $target, $result);
 
     $result = '';
     if ($frm_lnk2->tob != null) {
         $result = $frm_lnk2->tob->name();
     }
     $target = $phr->name();
-    $t->dsp('formula_link->load by phrase id and link id "' . $phr->name() . '', $target, $result);
+    $t->dsp('formula_link->load by phrase id and link id "' . $phr->name(), $target, $result);
 
     // ... check if the link is shown correctly
     $frm = $t->load_formula(formula::TN_RENAMED);

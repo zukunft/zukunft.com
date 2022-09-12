@@ -64,10 +64,10 @@ class view_cmp_link_list extends link_list
      */
     function load_sql(sql_db $db_con, ?view $dsp = null, ?view_cmp $cmp = null): sql_par
     {
+        $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
         $qp = new sql_par(self::class);
         $sql_by = '';
 
-        $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
         if ($dsp != null) {
             if ($dsp->id > 0) {
                 $sql_by = view::FLD_ID;

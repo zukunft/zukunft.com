@@ -110,10 +110,10 @@ class value_phrase_link
      */
     function load_sql(sql_db $db_con): sql_par
     {
+        $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
         $qp = new sql_par(self::class);
         $sql_where = '';
 
-        $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
 
         if ($this->id > 0) {
             $qp->name .= 'id';
@@ -137,6 +137,7 @@ class value_phrase_link
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_where_text($sql_where);
             $qp->sql = $db_con->select_by_id();
+            $qp->par = $db_con->get_par();
 
         }
         return $qp;

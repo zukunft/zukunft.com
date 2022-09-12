@@ -35,7 +35,9 @@ use cfg\share_type;
 use export\source_exp;
 use export\exp_obj;
 use export\value_list_exp;
+use html\button;
 use html\html_base;
+use html\word_list_dsp;
 
 class value_list
 {
@@ -108,12 +110,12 @@ class value_list
     // TODO review the VAR and LIMIT definitions
     function load_sql(sql_db $db_con): sql_par
     {
+        $db_con->set_type(DB_TYPE_VALUE);
         $qp = new sql_par(self::class);
         $sql_name = self::class . '_by_';
         $sql_name_ext = '';
         $sql_where = '';
 
-        $db_con->set_type(DB_TYPE_VALUE);
 
         if ($this->phr != null) {
             if ($this->phr->id <> 0) {
@@ -219,10 +221,10 @@ class value_list
      */
     function load_by_phr_sql(sql_db $db_con, phrase $phr): sql_par
     {
+        $db_con->set_type(DB_TYPE_VALUE);
         $qp = new sql_par(self::class);
         $qp->name .= 'phrase_id';
 
-        $db_con->set_type(DB_TYPE_VALUE);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(value::FLD_NAMES);
@@ -1065,9 +1067,10 @@ class value_list
         // display the common words
         log_debug('common dsp');
         if (!empty($common_phr_ids)) {
-            $common_phr_lst = new word_list_dsp($this->usr);
+            $common_phr_lst = new word_list($this->usr);
             $common_phr_lst->load_by_ids($common_phr_ids);
-            $result .= ' in (' . implode(",", $common_phr_lst->names_linked()) . ')<br>';
+            $common_phr_lst_dsp = $common_phr_lst->dsp_obj();
+            $result .= ' in (' . implode(",", $common_phr_lst_dsp->names_linked()) . ')<br>';
         }
 
         // instead of the saved result maybe display the calculated result based on formulas that matches the word pattern
@@ -1155,9 +1158,9 @@ class value_list
         // allow the user to add a completely new value
         log_debug('new');
         if (empty($common_phr_ids)) {
-            $common_phr_lst = new word_list($this->usr);
+            $common_phr_lst_new = new word_list($this->usr);
             $common_phr_ids[] = $this->phr->id;
-            $common_phr_lst->load_by_ids($common_phr_ids);
+            $common_phr_lst_new->load_by_ids($common_phr_ids);
         }
 
         $common_phr_lst = $common_phr_lst->phrase_lst();
@@ -1168,7 +1171,7 @@ class value_list
             $this->phr = $this->phr->phrase();
         }
         */
-        if (isset($common_phr_lst)) {
+        if ($common_phr_lst->is_valid()) {
             if (!empty($common_phr_lst->lst)) {
                 $common_phr_lst->add($this->phr);
                 $phr_lst_dsp = $common_phr_lst->dsp_obj();

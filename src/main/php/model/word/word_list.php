@@ -101,10 +101,10 @@ class word_list
      */
     function load_sql(sql_db $db_con): sql_par
     {
-        $qp = new sql_par(self::class);
         $db_con->set_type(DB_TYPE_WORD);
-        $db_con->set_usr($this->usr->id);
+        $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $db_con->set_usr($this->usr->id);
         $db_con->set_fields(word::FLD_NAMES);
         $db_con->set_usr_fields(word::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);

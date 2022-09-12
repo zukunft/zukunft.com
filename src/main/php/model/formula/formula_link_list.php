@@ -77,10 +77,10 @@ class formula_link_list
      */
     function load_sql(sql_db $db_con): sql_par
     {
-        $qp = new sql_par(self::class);
         $db_con->set_type(DB_TYPE_FORMULA_LINK);
-        $db_con->set_usr($this->usr->id);
+        $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_usr_num_fields(formula_link::FLD_NAMES_NUM_USR);
         // also load the linked user specific phrase with the same SQL statement

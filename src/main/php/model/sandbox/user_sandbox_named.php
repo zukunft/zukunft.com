@@ -100,7 +100,7 @@ class user_sandbox_named extends user_sandbox
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class): sql_par
+    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $qp = new sql_par($class, true);
         if ($this->id != 0) {

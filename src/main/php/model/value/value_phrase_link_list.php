@@ -45,10 +45,10 @@ class value_phrase_link_list extends link_list
      */
     function load_sql(sql_db $db_con, ?phrase $phr = null, ?value $val = null): sql_par
     {
+        $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
         $qp = new sql_par(self::class);
         $sql_by = '';
 
-        $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
         if ($val != null) {
             if ($val->id > 0) {
                 $sql_by = value::FLD_ID;

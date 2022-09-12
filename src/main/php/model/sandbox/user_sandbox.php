@@ -164,7 +164,7 @@ class user_sandbox
      * set and get
      */
 
-    public function set_id(int $id): void
+    public function set_id(?int $id): void
     {
         $this->id = $id;
     }
@@ -305,7 +305,7 @@ class user_sandbox
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class): sql_par
+    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $qp = new sql_par($class, true);
         $qp->name .= 'id';
@@ -941,10 +941,14 @@ class user_sandbox
 
             // check again if there ist not yet a record
             $db_con->set_type($this->obj_name, true);
+            $qp = new sql_par(self::class);
+            $qp->name = 'add_usr_cfg';
+            $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where_std($this->id);
-            $sql = $db_con->select_by_id();
-            $db_row = $db_con->get1_old($sql);
+            $qp->sql = $db_con->select_by_id();
+            $qp->par = $db_con->get_par();
+            $db_row = $db_con->get1($qp);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[$db_con->get_id_field()];
             }

@@ -113,23 +113,21 @@ class formula_link extends user_sandbox_link
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
-     * @return string the SQL statement base on the parameters set in $this
+     * @return sql_par the SQL statement base on the parameters set in $this
      */
-    function load_user_sql(sql_db $db_con, bool $get_name = false): string
+    function load_user_sql(sql_db $db_con, bool $get_name = false): sql_par
     {
-        $sql_name = self::class . '_user_sandbox';
         $db_con->set_type(DB_TYPE_FORMULA_LINK, true);
+        $qp = new sql_par(self::class);
+        $sql_name = self::class . '_add_usr_cfg';
+        $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(formula_link::FLD_NAMES_NUM_USR);
         $db_con->set_where_std($this->id);
-        $sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_id();
+        $qp->par = $db_con->get_par();
 
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
+        return $qp;
     }
 
     /*
@@ -207,11 +205,12 @@ class formula_link extends user_sandbox_link
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
+        $db_con->set_type(DB_TYPE_FORMULA_LINK);
         $qp = new sql_par($class, true);
         $qp->name .= $this->load_sql_name_extension();
-        $db_con->set_type(DB_TYPE_FORMULA_LINK);
+        $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_fields(array(sql_db::FLD_USER_ID, formula_link::FLD_TYPE, self::FLD_EXCLUDED));
@@ -236,10 +235,10 @@ class formula_link extends user_sandbox_link
         $result = false;
 
         if ($this->is_unique()) {
-            $sql = $this->load_standard_sql($db_con)->sql;
+            $qp = $this->load_standard_sql($db_con);
 
             if ($db_con->get_where() <> '') {
-                $db_frm = $db_con->get1_old($sql);
+                $db_frm = $db_con->get1($qp);
                 $this->row_mapper($db_frm, false);
                 $result = $this->load_owner();
             }
@@ -254,16 +253,18 @@ class formula_link extends user_sandbox_link
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($db_con, self::class);
         $qp->name .= $this->load_sql_name_extension();
         $db_con->set_type(DB_TYPE_FORMULA_LINK);
+        $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_usr_num_fields(array(formula_link::FLD_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_SHARE, user_sandbox::FLD_PROTECT));
         $db_con->set_where_link($this->id, $this->formula_id(), $this->phrase_id());
         $qp->sql = $db_con->select_by_id();
+        $qp->par = $db_con->get_par();
 
         return $qp;
     }
@@ -284,11 +285,13 @@ class formula_link extends user_sandbox_link
             log_err("The user id must be set to load a formula link.", "formula_link->load");
         } else {
 
-            if ($this->is_unique()) {
-                $sql = $this->load_sql($db_con)->sql;
+            if (!$this->is_unique()) {
+                log_warning("The formula link " . $this->dsp_id() . " is not unique", "formula_link->load");
+            } else {
+                $qp = $this->load_sql($db_con);
 
-                if ($db_con->get_where() <> '') {
-                    $db_row = $db_con->get1_old($sql);
+                if ($qp->has_par()) {
+                    $db_row = $db_con->get1($qp);
                     $this->row_mapper($db_row);
                     if ($this->id > 0) {
                         log_debug('formula_link->load (' . $this->id . ')');
@@ -510,8 +513,8 @@ class formula_link extends user_sandbox_link
 
         if (!$this->has_usr_cfg()) {
             // check again if there ist not yet a record
-            $sql = $this->load_user_sql($db_con);
-            $db_row = $db_con->get1_old($sql);
+            $qp = $this->load_user_sql($db_con);
+            $db_row = $db_con->get1($qp);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[formula_link::FLD_ID];
             }
@@ -540,9 +543,9 @@ class formula_link extends user_sandbox_link
         $result = true;
 
         // check again if there ist not yet a record
-        $sql = $this->load_user_sql($db_con);
+        $qp = $this->load_user_sql($db_con);
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
+        $db_row = $db_con->get1($qp);
         if ($db_row) {
             if ($db_row[formula_link::FLD_ID] > 0) {
                 // check if all fields are null

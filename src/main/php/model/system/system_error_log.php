@@ -135,6 +135,7 @@ class system_error_log
             $sql_name .= 'id';
 
             $db_con->set_type(DB_TYPE_SYS_LOG);
+            $db_con->set_name($sql_name);
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_join_fields(array(self::FLD_FUNCTION_NAME), DB_TYPE_SYS_LOG_FUNCTION);
             $db_con->set_join_fields(array(user_type::FLD_NAME), DB_TYPE_SYS_LOG_STATUS);

@@ -76,10 +76,10 @@ class phrase_list
      */
     function load_by_wrd_ids_sql(sql_db $db_con, array $ids): sql_par
     {
+        $db_con->set_type(DB_TYPE_WORD);
         $qp = new sql_par(self::class);
         $qp->name .= count($ids) . 'ids_word_part';
 
-        $db_con->set_type(DB_TYPE_WORD);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(word::FLD_NAMES);
@@ -101,10 +101,10 @@ class phrase_list
      */
     function load_by_trp_ids_sql(sql_db $db_con, array $ids): sql_par
     {
+        $db_con->set_type(DB_TYPE_TRIPLE);
         $qp = new sql_par(self::class);
         $qp->name .= count($ids) . 'ids_triple_part';
 
-        $db_con->set_type(DB_TYPE_TRIPLE);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(word_link::FLD_FROM, word_link::FLD_TO, verb::FLD_ID);

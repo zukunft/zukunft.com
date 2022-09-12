@@ -164,6 +164,7 @@ class verb
     {
         global $usr;
 
+        $db_con->set_type(DB_TYPE_VERB);
         $qp = new sql_par($class);
         if ($this->id != 0) {
             $qp->name .= 'id';
@@ -176,7 +177,6 @@ class verb
             $qp->name = '';
         }
 
-        $db_con->set_type(DB_TYPE_VERB);
         $db_con->set_name($qp->name);
         $db_con->set_usr($usr->id);
         $db_con->set_fields(self::FLD_NAMES);

@@ -260,7 +260,7 @@ class value extends user_sandbox_display
      * create the SQL to load the single default value always by the id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(DB_TYPE_VALUE);
         $db_con->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(sql_db::FLD_USER_ID)));
@@ -287,7 +287,7 @@ class value extends user_sandbox_display
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($db_con, self::class);
         $sql_where = '';

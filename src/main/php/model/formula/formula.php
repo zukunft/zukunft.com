@@ -35,6 +35,7 @@ use cfg\protection_type;
 use cfg\share_type;
 use export\formula_exp;
 use export\exp_obj;
+use html\word_dsp;
 
 class formula extends user_sandbox_description
 {
@@ -284,7 +285,7 @@ class formula extends user_sandbox_description
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(DB_TYPE_FORMULA);
         $db_con->set_fields(array_merge(
@@ -322,7 +323,7 @@ class formula extends user_sandbox_description
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_sql(sql_db $db_con, string $class = self::class): sql_par
     {
 
         $qp = parent::load_sql($db_con, self::class);
@@ -402,11 +403,11 @@ class formula extends user_sandbox_description
      */
     function load_user_sql(sql_db $db_con): sql_par
     {
-        $qp = new sql_par(self::class);
         $db_con->set_type(DB_TYPE_FORMULA, true);
-        $db_con->set_usr($this->usr->id);
+        $qp = new sql_par(self::class);
         $qp->name = self::class . '_user_sandbox';
         $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
         $db_con->set_fields(array_merge(array(user_sandbox::FLD_USER), self::FLD_NAMES_USR, self::FLD_NAMES_NUM_USR));
         $db_con->add_par(sql_db::PAR_INT, strval($this->id));
         $qp->sql = $db_con->select_by_field(self::FLD_ID);
@@ -1697,10 +1698,14 @@ class formula extends user_sandbox_description
 
             // check again if there ist not yet a record
             $db_con->set_type(DB_TYPE_FORMULA, true);
+            $qp = new sql_par(self::class);
+            $qp->name = 'formula_add_usr_cfg';
+            $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where_std($this->id);
-            $sql = $db_con->select_by_id();
-            $db_row = $db_con->get1_old($sql);
+            $qp->sql = $db_con->select_by_id();
+            $qp->par = $db_con->get_par();
+            $db_row = $db_con->get1($qp);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[$this->fld_id()];
             }

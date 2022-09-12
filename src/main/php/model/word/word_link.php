@@ -232,11 +232,11 @@ class word_link extends user_sandbox_link_description
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
+        $db_con->set_type(DB_TYPE_TRIPLE);
         $qp = new sql_par($class, true);
         $qp->name .= $this->load_sql_name_ext();
-        $db_con->set_type(DB_TYPE_TRIPLE);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(array_merge(
@@ -295,13 +295,13 @@ class word_link extends user_sandbox_link_description
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_sql(sql_db $db_con, string $class = self::class): sql_par
     {
+        $db_con->set_type(DB_TYPE_TRIPLE);
         $qp = new sql_par(self::class);
         $qp->name .= $this->load_sql_name_ext();
 
         // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
-        $db_con->set_type(DB_TYPE_TRIPLE);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(self::FLD_FROM, self::FLD_TO, verb::FLD_ID);
@@ -1058,10 +1058,14 @@ class word_link extends user_sandbox_link_description
 
             // check again if there ist not yet a record
             $db_con->set_type(DB_TYPE_TRIPLE, true);
+            $qp = new sql_par(self::class);
+            $qp->name = 'word_link_add_usr_cfg';
+            $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where_std($this->id);
-            $sql = $db_con->select_by_id();
-            $db_row = $db_con->get1_old($sql);
+            $qp->sql = $db_con->select_by_id();
+            $qp->par = $db_con->get_par();
+            $db_row = $db_con->get1($qp);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[self::FLD_ID];
             }

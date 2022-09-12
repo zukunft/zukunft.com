@@ -169,19 +169,22 @@ class user_sandbox_unit_tests
         // test a simple SQL user select query for PostgreSQL by name
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(DB_TYPE_USER);
+        $db_con->set_name('formula_link_std_by_id');
         $db_con->set_usr(SYSTEM_USER_ID);
         $db_con->set_where_std(null, 'Test User');
         $created_sql = $db_con->select_by_id();
-        $expected_sql = "SELECT user_id, user_name FROM users WHERE user_name = 'Test User';";
+        $expected_sql = $t->file('db/formula/formula_link_by_id.sql');
+        $expected_sql = "PREPARE formula_link_std_by_id (text) AS SELECT user_id, user_name FROM users WHERE user_name = $1;";
         $t->dsp('PostgreSQL select max', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
         $db_con->set_type(DB_TYPE_USER);
+        $db_con->set_name('formula_link_std_by_id_mysql');
         $db_con->set_usr(SYSTEM_USER_ID);
         $db_con->set_where_std(null, 'Test User');
         $created_sql = $db_con->select_by_id();
-        $expected_sql = "SELECT user_id, user_name FROM users WHERE user_name = 'Test User';";
+        $expected_sql = "PREPARE formula_link_std_by_id_mysql FROM 'SELECT user_id,  user_name FROM users WHERE user_name = ?';";
         $t->dsp('MySQL select max', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test a simple SQL max select creation for PostgreSQL without where
@@ -222,21 +225,25 @@ class user_sandbox_unit_tests
         // test a simple SQL select creation for PostgreSQL with the standard id and name identification
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(DB_TYPE_SOURCE_TYPE);
+        $db_con->set_name('source_type_by_id');
         $db_con->set_where_std(2);
         $created_sql = $db_con->select_by_id();
-        $expected_sql = "SELECT source_type_id, source_type_name
+        $expected_sql = "PREPARE source_type_by_id (int) AS 
+              SELECT source_type_id,  source_type_name 
                 FROM source_types
-               WHERE source_type_id = 2;";
+               WHERE source_type_id = $1;";
         $t->dsp('PostgreSQL select based on id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
         $db_con->set_type(DB_TYPE_SOURCE_TYPE);
+        $db_con->set_name('source_type_by_id');
         $db_con->set_where_std(2);
         $created_sql = $db_con->select_by_id();
-        $expected_sql = "SELECT source_type_id, source_type_name
+        $expected_sql = "PREPARE source_type_by_id FROM
+             'SELECT source_type_id, source_type_name
                 FROM source_types
-               WHERE source_type_id = 2;";
+               WHERE source_type_id = ?';";
         $t->dsp('MySQL select based on id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test a simple SQL select of the user defined word for PostgreSQL by the id
@@ -253,8 +260,8 @@ class user_sandbox_unit_tests
                      word_type_id,
                      view_id
                 FROM user_words
-               WHERE word_id = 1 
-                 AND user_id = 1;';
+               WHERE word_id = $1 
+                 AND user_id = $2;';
         $t->dsp('PostgreSQL user word select based on id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for MySQL
@@ -271,8 +278,8 @@ class user_sandbox_unit_tests
                      word_type_id,
                      view_id
                 FROM user_words
-               WHERE word_id = 1 
-                 AND user_id = 1;';
+               WHERE word_id = ? 
+                 AND user_id = ?;';
         $t->dsp('MySQL user word select based on id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test a very simple SQL select of the user defined word for PostgreSQL by the id
@@ -284,8 +291,8 @@ class user_sandbox_unit_tests
         $expected_sql = 'SELECT word_id,
                      word_name
                 FROM user_words
-               WHERE word_id = 1 
-                 AND user_id = 1;';
+               WHERE word_id = $1 
+                 AND user_id = $2;';
         $t->dsp('PostgreSQL user word id select based on id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for MySQL
@@ -297,36 +304,36 @@ class user_sandbox_unit_tests
         $expected_sql = 'SELECT word_id,
                      word_name
                 FROM user_words
-               WHERE word_id = 1 
-                 AND user_id = 1;';
+               WHERE word_id = ? 
+                 AND user_id = ?;';
         $t->dsp('MySQL user word id select based on id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test a simple SQL select the formulas linked to a phrase
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(DB_TYPE_FORMULA_LINK);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_where_link(null, null, 1);
+        $db_con->set_where_link(0, 0, 1);
         $created_sql = $db_con->select_by_id();
         $expected_sql = 'SELECT 
                         formula_link_id,  
                         formula_id,  
                         phrase_id
                    FROM formula_links
-                  WHERE phrase_id = 1;';
+                  WHERE phrase_id = $1;';
         $t->dsp('PostgreSQL formulas linked to a phrase select based on phrase id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
         $db_con->set_type(DB_TYPE_FORMULA_LINK);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_where_link(null, null, 1);
+        $db_con->set_where_link(0, 0, 1);
         $created_sql = $db_con->select_by_id();
         $expected_sql = 'SELECT 
                     formula_link_id,  
                     formula_id,  
                     phrase_id
                FROM formula_links
-              WHERE phrase_id = 1;';
+              WHERE phrase_id = ?;';
         $t->dsp('MySQL formulas linked to a phrase select based on phrase id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test a list of links SQL select creation for PostgreSQL selected by a linked object
@@ -376,7 +383,7 @@ class user_sandbox_unit_tests
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
-                  WHERE s.source_id = 1;";
+                  WHERE s.source_id = $1;";
         $t->dsp('PostgreSQL user sandbox select', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for search by name
@@ -398,8 +405,8 @@ class user_sandbox_unit_tests
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
-                  WHERE (u.source_name = 'wikidata' 
-                     OR (s.source_name = 'wikidata' AND u.source_name IS NULL));";
+                  WHERE (u.source_name = $1 
+                     OR (s.source_name = $1 AND u.source_name IS NULL));";
         $t->dsp('PostgreSQL user sandbox select by name', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for search by code_id
@@ -421,7 +428,7 @@ class user_sandbox_unit_tests
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
-                  WHERE s.code_id = 'wikidata' AND s.code_id != NULL;";
+                  WHERE s.code_id = $1 AND s.code_id IS NOT NULL;";
         $t->dsp('PostgreSQL user sandbox select by code_id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for all users by id
@@ -437,7 +444,7 @@ class user_sandbox_unit_tests
                         comment,
                         source_type_id
                    FROM sources 
-                  WHERE source_id = 1;";
+                  WHERE source_id = $1;";
         $t->dsp('PostgreSQL all user select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... similar with joined fields
@@ -459,7 +466,7 @@ class user_sandbox_unit_tests
                      l.code_id 
                 FROM formulas s
            LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
-               WHERE s.formula_id = 1;";
+               WHERE s.formula_id = $1;";
         $t->dsp('PostgreSQL all user join select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for user sandbox data (should match with the parameters in formula->load)
@@ -483,7 +490,7 @@ class user_sandbox_unit_tests
                   FROM formulas s
              LEFT JOIN user_formulas u ON s.formula_id = u.formula_id 
                                       AND u.user_id = 1 
-               WHERE s.formula_id = 1;";
+               WHERE s.formula_id = $1;";
         $t->dsp('PostgreSQL user sandbox join select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for the special case of a table without name e.g. the value table
@@ -545,7 +552,7 @@ class user_sandbox_unit_tests
                      view_type_id,
                      excluded
                 FROM views
-               WHERE view_id = 1;";
+               WHERE view_id = $1;";
         $t->dsp('PostgreSQL view load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test the view load SQL creation
@@ -565,7 +572,7 @@ class user_sandbox_unit_tests
                    FROM views s 
               LEFT JOIN user_views u ON s.view_id = u.view_id 
                                     AND u.user_id = 1 
-                  WHERE s.view_id = 1;";
+                  WHERE s.view_id = $1;";
         $t->dsp('PostgreSQL view load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test the view_component_link load_standard SQL creation
@@ -581,7 +588,7 @@ class user_sandbox_unit_tests
                      position_type,
                      excluded
                 FROM view_component_links 
-               WHERE view_component_link_id = 1;";
+               WHERE view_component_link_id = $1;";
         $t->dsp('PostgreSQL view_component_link load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same but select by the link ids
@@ -597,7 +604,7 @@ class user_sandbox_unit_tests
                      position_type,
                      excluded
                 FROM view_component_links 
-               WHERE view_id = 2 AND view_component_id = 3;";
+               WHERE view_id = $1 AND view_component_id = $2;";
         $t->dsp('PostgreSQL view_component_link load_standard select by link ids', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test the view_component_link load SQL creation
@@ -618,7 +625,7 @@ class user_sandbox_unit_tests
                    FROM view_component_links s 
               LEFT JOIN user_view_component_links u ON s.view_component_link_id = u.view_component_link_id 
                                                    AND u.user_id = 1 
-                  WHERE s.view_component_link_id = 1;";
+                  WHERE s.view_component_link_id = $1;";
         $t->dsp('PostgreSQL view_component_link load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test the formula_link load_standard SQL creation
@@ -633,7 +640,7 @@ class user_sandbox_unit_tests
                      link_type_id,
                      excluded
                 FROM formula_links 
-               WHERE formula_link_id = 1;";
+               WHERE formula_link_id = $1;";
         $t->dsp('PostgreSQL formula_link load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test the formula_link load SQL creation
@@ -653,7 +660,7 @@ class user_sandbox_unit_tests
                    FROM formula_links s 
               LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id 
                                             AND u.user_id = 1 
-                  WHERE s.formula_link_id = 1;";
+                  WHERE s.formula_link_id = $1;";
         $t->dsp('PostgreSQL formula_link load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test the view_component load_standard SQL creation
@@ -672,7 +679,7 @@ class user_sandbox_unit_tests
                      word_id_col2,
                      excluded
                 FROM view_components
-               WHERE view_component_id = 1;";
+               WHERE view_component_id = $1;";
         $t->dsp('PostgreSQL view_component load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test the view_component load SQL creation
@@ -697,7 +704,7 @@ class user_sandbox_unit_tests
                    FROM view_components s 
               LEFT JOIN user_view_components u ON s.view_component_id = u.view_component_id 
                                               AND u.user_id = 1 
-                  WHERE s.view_component_id = 1;";
+                  WHERE s.view_component_id = $1;";
         $t->dsp('PostgreSQL view_component load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test the word_link load_standard SQL creation
@@ -797,7 +804,7 @@ class user_sandbox_unit_tests
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
-                  WHERE s.source_id = 1;";
+                  WHERE s.source_id = ?;";
         $t->dsp('MySQL user sandbox select', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for search by name
@@ -820,8 +827,8 @@ class user_sandbox_unit_tests
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
-                  WHERE (u.source_name = 'wikidata' 
-                     OR (s.source_name = 'wikidata' AND u.source_name IS NULL));";
+                  WHERE (u.source_name = ? 
+                     OR (s.source_name = ? AND u.source_name IS NULL));";
         $t->dsp('MySQL user sandbox select by name', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for search by code_id
@@ -844,7 +851,7 @@ class user_sandbox_unit_tests
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
-                  WHERE s.code_id = 'wikidata';";
+                  WHERE s.code_id = ?;";
         $t->dsp('MySQL user sandbox select by code_id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for all users by id
@@ -860,7 +867,7 @@ class user_sandbox_unit_tests
                         comment,
                         source_type_id
                    FROM sources 
-                  WHERE source_id = 1;";
+                  WHERE source_id = ?;";
         $t->dsp('MySQL all user select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... similar with joined fields
@@ -882,7 +889,7 @@ class user_sandbox_unit_tests
                      l.code_id
                 FROM formulas s
            LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
-               WHERE s.formula_id = 1;";
+               WHERE s.formula_id = ?;";
         $t->dsp('MySQL all user join select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for user sandbox data
@@ -907,7 +914,7 @@ class user_sandbox_unit_tests
                    FROM formulas s 
               LEFT JOIN user_formulas u ON s.formula_id = u.formula_id 
                                        AND u.user_id = 1 
-                  WHERE s.formula_id = 1;";
+                  WHERE s.formula_id = ?;";
         $t->dsp('MySQL all user join select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... same for the special case of a table without name e.g. the value table
@@ -973,7 +980,7 @@ class user_sandbox_unit_tests
                         position_type,
                         excluded
                    FROM view_component_links 
-                  WHERE view_component_link_id = 1;";
+                  WHERE view_component_link_id = ?;";
         $t->dsp('MySQL view_component_link load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test the view_component_link load SQL creation
@@ -993,7 +1000,7 @@ class user_sandbox_unit_tests
                    FROM view_component_links s 
               LEFT JOIN user_view_component_links u ON s.view_component_link_id = u.view_component_link_id 
                                                    AND u.user_id = 1 
-                  WHERE s.view_component_link_id = 1;";
+                  WHERE s.view_component_link_id = ?;";
         $t->dsp('MySQL view_component_link load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test the formula_link load_standard SQL creation
@@ -1008,7 +1015,7 @@ class user_sandbox_unit_tests
                      link_type_id,
                      excluded
                 FROM formula_links 
-               WHERE formula_link_id = 1;";
+               WHERE formula_link_id = ?;";
         $t->dsp('MySQL formula_link load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test the formula_link load SQL creation
@@ -1029,7 +1036,7 @@ class user_sandbox_unit_tests
                    FROM formula_links s 
               LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id 
                                             AND u.user_id = 1
-                  WHERE s.formula_link_id = 1;";
+                  WHERE s.formula_link_id = ?;";
         $t->dsp('MySQL formula_link load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test the view_component load_standard SQL creation
@@ -1048,7 +1055,7 @@ class user_sandbox_unit_tests
                      word_id_col2,
                      excluded
                 FROM view_components
-               WHERE view_component_id = 1;";
+               WHERE view_component_id = ?;";
         $t->dsp('MySQL view_component load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test the view_component load SQL creation
@@ -1073,7 +1080,7 @@ class user_sandbox_unit_tests
                   FROM view_components s
              LEFT JOIN user_view_components u ON s.view_component_id = u.view_component_id 
                                              AND u.user_id = 1 
-                 WHERE s.view_component_id = 1;";
+                 WHERE s.view_component_id = ?;";
         $t->dsp('MySQL view_component load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // test the word_link load_standard SQL creation

@@ -77,10 +77,10 @@ class word_link_list
      */
     function load_sql_new(sql_db $db_con): sql_par
     {
-        $qp = new sql_par(self::class);
         $db_con->set_type(DB_TYPE_TRIPLE);
-        $db_con->set_usr($this->usr->id);
+        $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(word_link::FLD_FROM, word_link::FLD_TO, verb::FLD_ID);
         $db_con->set_fields(word_link::FLD_NAMES);
         $db_con->set_usr_fields(word_link::FLD_NAMES_USR);

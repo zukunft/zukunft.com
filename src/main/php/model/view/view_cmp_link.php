@@ -155,14 +155,33 @@ class view_cmp_link extends user_sandbox_link
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $qp = new sql_par(self::class);
-        $qp->name = 'id';
+        // try to get the search values from the objects
+        if ($this->id <= 0) {
+            if (isset($this->fob) and $this->dsp->id <= 0) {
+                $this->dsp->id = $this->fob->id;
+            }
+            if (isset($this->tob) and $this->cmp->id <= 0) {
+                $this->cmp->id = $this->tob->id;
+            }
+            $this->id = 0;
+        }
+
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
+        $qp = new sql_par(self::class);
+        if ($this->id != 0) {
+            $qp->name .= 'std_id';
+        } else {
+            $qp->name .= 'std_link_ids';
+        }
+        $db_con->set_name($qp->name);
+        //TODO check if $db_con->set_usr($this->usr->id); is needed
         $db_con->set_fields(array(sql_db::FLD_USER_ID));
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
-        $db_con->set_fields(array(self::FLD_ORDER_NBR, self::FLD_POS_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_USER));
+        $db_con->set_fields(array_merge(
+            self::FLD_NAMES_NUM_USR,
+            array(sql_db::FLD_USER_ID)));
         $db_con->set_where_link($this->id, $this->dsp->id, $this->cmp->id);
         $qp->sql = $db_con->select_by_id();
         $qp->par = $db_con->get_par();
@@ -182,27 +201,10 @@ class view_cmp_link extends user_sandbox_link
         global $db_con;
         $result = false;
 
-        // try to get the search values from the objects
-        if ($this->id <= 0) {
-            if (isset($this->fob) and $this->dsp->id <= 0) {
-                $this->dsp->id = $this->fob->id;
-            }
-            if (isset($this->tob) and $this->cmp->id <= 0) {
-                $this->cmp->id = $this->tob->id;
-            }
-        }
+        $qp = $this->load_standard_sql($db_con, $class);
 
-        $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
-        $db_con->set_fields(array(sql_db::FLD_USER_ID));
-        $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
-        $db_con->set_fields(array_merge(
-            self::FLD_NAMES_NUM_USR,
-            array(sql_db::FLD_USER_ID)));
-        $db_con->set_where_link($this->id, $this->dsp->id, $this->cmp->id);
-        $sql = $db_con->select_by_id();
-
-        if ($db_con->get_where() <> '') {
-            $db_dsl = $db_con->get1_old($sql);
+        if ($qp->has_par()) {
+            $db_dsl = $db_con->get1($qp);
             $result = $this->row_mapper($db_dsl, false);
             if ($result) {
                 $result = $this->load_owner();
@@ -218,7 +220,7 @@ class view_cmp_link extends user_sandbox_link
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($db_con, self::class);
         if ($this->id > 0) {
@@ -534,10 +536,14 @@ class view_cmp_link extends user_sandbox_link
 
             // check again if there is not yet a record
             $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK, true);
+            $qp = new sql_par(self::class);
+            $qp->name = 'view_cmp_link_add_usr_cfg';
+            $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where_std($this->id);
-            $sql = $db_con->select_by_id();
-            $db_row = $db_con->get1_old($sql);
+            $qp->sql = $db_con->select_by_id();
+            $qp->par = $db_con->get_par();
+            $db_row = $db_con->get1($qp);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[self::FLD_ID];
             }

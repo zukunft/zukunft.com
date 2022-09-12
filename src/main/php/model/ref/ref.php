@@ -95,14 +95,22 @@ class ref
         } else {
 
             $db_con->set_type(DB_TYPE_REF);
+            $qp = new sql_par(self::class);
+            if ($this->id != 0) {
+                $qp->name = 'ref_by_id';
+            } else {
+                $qp->name = 'ref_by_link_ids';
+            }
+            $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_link_fields(phrase::FLD_ID, 'ref_type_id');
             $db_con->set_fields(array('external_key'));
             $db_con->set_where_link($this->id, $this->phr->id, $this->ref_type->id);
-            $sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_id();
+            $qp->par = $db_con->get_par();
 
             if ($db_con->get_where() <> '') {
-                $db_ref = $db_con->get1_old($sql);
+                $db_ref = $db_con->get1($qp);
                 if ($db_ref != null) {
                     if ($db_ref['ref_id'] > 0) {
                         $this->id = $db_ref['ref_id'];

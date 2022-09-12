@@ -40,7 +40,7 @@
 
 */
 
-use phrase\phrase_group_min;
+use api\phrase_group_api;
 
 class phrase_group
 {
@@ -106,7 +106,7 @@ class phrase_group
         $this->reset();
     }
 
-    private function reset()
+    private function reset(): void
     {
         $this->id = null;
         $this->grp_name = null;
@@ -122,12 +122,12 @@ class phrase_group
      */
     function api_obj(): object
     {
-        $min_obj = new phrase_group_min();
-        $min_obj->lst = array();
+        $min_obj = new phrase_group_api();
+        $min_obj->reset_lst();
         foreach ($this->phr_lst->lst as $phr) {
-            $min_obj->lst[] = $phr->get_obj->api_obj();
+            $min_obj->add($phr->get_obj->api_obj());
         }
-        $min_obj->id = $this->id;
+        $min_obj->set_id($this->id);
         return $min_obj;
     }
 
@@ -163,10 +163,9 @@ class phrase_group
      */
     function load_sql(sql_db $db_con): sql_par
     {
+        $db_con->set_type(DB_TYPE_PHRASE_GROUP);
         $qp = new sql_par(self::class);
         $qp->name .= $this->load_sql_name_ext();
-
-        $db_con->set_type(DB_TYPE_PHRASE_GROUP);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
@@ -225,7 +224,7 @@ class phrase_group
     /**
      * load the word and triple objects based on the ids load from the database if needed
      */
-    private function load_lst()
+    private function load_lst():void
     {
         if (!$this->phr_lst->loaded()) {
             $ids = $this->phr_lst->ids();

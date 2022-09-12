@@ -56,10 +56,10 @@ class formula_element_list
      */
     private function load_sql(sql_db $db_con): sql_par
     {
-        $qp = new sql_par(self::class);
         $db_con->set_type(DB_TYPE_FORMULA_ELEMENT);
-        $db_con->set_usr($this->usr->id);
+        $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $db_con->set_usr($this->usr->id);
         $db_con->set_fields(formula_element::FLD_NAMES);
         return $qp;
     }

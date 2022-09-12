@@ -64,6 +64,18 @@ class sql_par
         }
         $this->par = array();
     }
+
+    /**
+     * @return bool true if the query has at least one parameter set
+     */
+    public function has_par(): bool
+    {
+        if (count($this->par) > 0 ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 class sql_db
@@ -1984,18 +1996,20 @@ class sql_db
                 or $this->join2_type <> '') {
                 $result .= sql_db::STD_TBL . '.';
             }
-            $result .= $this->id_field . " = " . $id;
+            $this->add_par(sql_db::PAR_INT, $id);
+            $result .= $this->id_field . " = " . $this->par_name();
         } elseif ($code_id <> '' and !is_null($this->usr_id)) {
             if ($this->usr_query or $this->join <> '') {
                 $result .= sql_db::STD_TBL . '.';
             }
-            $result .= sql_db::FLD_CODE_ID . " = " . $this->sf($code_id);
+            $this->add_par(sql_db::PAR_TEXT, $code_id);
+            $result .= sql_db::FLD_CODE_ID . " = " . $this->par_name();
             if ($this->db_type == sql_db::POSTGRES) {
                 $result .= ' AND ';
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
                 }
-                $result .= sql_db::FLD_CODE_ID . ' != NULL';
+                $result .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
             }
         } elseif ($name <> '' and !is_null($this->usr_id)) {
             /*
@@ -2003,20 +2017,25 @@ class sql_db
              * don't use the standard name for the selection e.g. s.view_name
              * use instead the user specific name e.g. view_name
              */
+            $this->add_par(sql_db::PAR_TEXT, $name);
             if ($this->usr_query or $this->join <> '') {
                 $result .= '(' . sql_db::USR_TBL . '.';
-                $result .= $this->name_field . " = " . $this->sf($name, sql_db::FLD_FORMAT_TEXT);
+                $result .= $this->name_field . " = " . $this->par_name();
                 $result .= ' OR (' . sql_db::STD_TBL . '.';
-                $result .= $this->name_field . " = " . $this->sf($name, sql_db::FLD_FORMAT_TEXT);
+                if (SQL_DB_TYPE != sql_db::POSTGRES) {
+                    $this->add_par(sql_db::PAR_TEXT, $name);
+                }
+                $result .= $this->name_field . " = " . $this->par_name();
                 $result .= ' AND ' . sql_db::USR_TBL . '.';
                 $result .= $this->name_field . " IS NULL))";
             } else {
-                $result .= $this->name_field . " = " . $this->sf($name, sql_db::FLD_FORMAT_TEXT);
+                $result .= $this->name_field . " = " . $this->par_name();
             }
         }
         if ($this->usr_only_query) {
             if (!$this->all_query) {
-                $result .= ' AND ' . sql_db::FLD_USER_ID . ' = ' . $this->usr_view_id;
+                $this->add_par(sql_db::PAR_INT, $this->usr_view_id);
+                $result .= ' AND ' . sql_db::FLD_USER_ID . ' = ' . $this->par_name();
             }
         }
 
@@ -2034,7 +2053,7 @@ class sql_db
      * @param array $id_fields the name of the primary id field that should be used or the list of link fields
      * @return void
      */
-    private function set_where(array $id_fields)
+    private function set_where(array $id_fields): void
     {
         // if nothing is defined assume to load the row by the main if
         if ($this->where == '') {
@@ -2091,8 +2110,9 @@ class sql_db
      *    e.g. if for formula_links just the phrase id is set, all formulas linked to the given phrase are returned
      * TODO allow also to retrieve a list of linked objects
      * TODO get the user specific list of linked objects
+     * TODO use always parameterized values
      */
-    function set_where_link($id, $id_from = 0, $id_to = 0, $id_type = 0): string
+    function set_where_link(?int $id = 0, ?int $id_from = 0, ?int $id_to = 0, ?int $id_type = 0): string
     {
         $result = '';
 
@@ -2101,7 +2121,8 @@ class sql_db
             if ($this->usr_query or $this->join <> '') {
                 $result .= sql_db::STD_TBL . '.';
             }
-            $result .= $this->id_field . " = " . $id;
+            $this->add_par(sql_db::PAR_INT, $id);
+            $result .= $this->id_field . " = " . $this->par_name();
             // select one link by the from and to id
         } elseif ($id_from <> 0 and $id_to <> 0) {
             if ($this->id_from_field == '' or $this->id_to_field == '') {
@@ -2110,11 +2131,13 @@ class sql_db
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
                 }
-                $result .= $this->id_from_field . " = " . $id_from . " AND ";
+                $this->add_par(sql_db::PAR_INT, $id_from);
+                $result .= $this->id_from_field . " = " . $this->par_name() . " AND ";
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
                 }
-                $result .= $this->id_to_field . " = " . $id_to;
+                $this->add_par(sql_db::PAR_INT, $id_to);
+                $result .= $this->id_to_field . " = " . $this->par_name();
                 if ($id_type <> 0) {
                     if ($this->id_link_field == '') {
                         log_err('Internal error: to find a ' . $this->type . ' the link type field must be defined', 'sql->set_where_link');
@@ -2123,7 +2146,8 @@ class sql_db
                         if ($this->usr_query or $this->join <> '') {
                             $result .= sql_db::STD_TBL . '.';
                         }
-                        $result .= $this->id_link_field . " = " . $id_type;
+                        $this->add_par(sql_db::PAR_INT, $id_type);
+                        $result .= $this->id_link_field . " = " . $this->par_name();
                     }
 
                 }
@@ -2135,7 +2159,8 @@ class sql_db
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
                 }
-                $result .= $this->id_from_field . ' = ' . $id_from;
+                $this->add_par(sql_db::PAR_INT, $id_from);
+                $result .= $this->id_from_field . ' = ' . $this->par_name();
             }
         } elseif ($id_to <> 0) {
             if ($this->id_to_field == '') {
@@ -2144,7 +2169,8 @@ class sql_db
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
                 }
-                $result .= $this->id_to_field . ' = ' . $id_to;
+                $this->add_par(sql_db::PAR_INT, $id_to);
+                $result .= $this->id_to_field . ' = ' . $this->par_name();
             }
         } else {
             log_err('Internal error: to find a ' . $this->type . ' the a field must be defined', 'sql->set_where_link');
@@ -2173,7 +2199,7 @@ class sql_db
      * mainly used to overwrite the for special cases, where the set_where function cannot be used
      * TODO prevent code injections e.g. by using only predefined queries
      */
-    function set_where_text($where_text)
+    function set_where_text($where_text): void
     {
         if ($where_text != '') {
             $this->where = ' WHERE ' . $where_text;
@@ -3042,7 +3068,7 @@ class sql_db
 
     /**
      * Sql Format: format a value for a SQL statement
-     * TODO define where to prevent code injections: here?
+     * TODO deprecate to prevent sql code injections
      *
      * $field_value is the value that should be formatted
      * $force_type can be set to force the formatting e.g. for the time word 2021 to use '2021'

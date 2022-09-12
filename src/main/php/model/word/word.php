@@ -402,7 +402,7 @@ class word extends user_sandbox_description
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($db_con, self::class);
         if ($this->id != 0) {
@@ -414,6 +414,7 @@ class word extends user_sandbox_description
         }
 
         $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
@@ -442,11 +443,11 @@ class word extends user_sandbox_description
             log_err("Either the database ID (" . $this->id . ") or the word name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
         } else {
 
-            $sql = $this->load_sql($db_con)->sql;
+            $qp = $this->load_sql($db_con);
 
             if ($db_con->get_where() <> '') {
                 // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
-                $db_wrd = $db_con->get1_old($sql);
+                $db_wrd = $db_con->get1($qp);
                 $this->row_mapper($db_wrd);
                 if ($this->id <> 0) {
                     if (is_null($db_wrd[self::FLD_EXCLUDED]) or $db_wrd[self::FLD_EXCLUDED] == 0) {
@@ -582,6 +583,7 @@ class word extends user_sandbox_description
 
     /**
      * if there is just one formula linked to the word, get it
+     * TODO separate the query parameter creation and add a unit test
      * TODO allow also to retrieve a list of formulas
      * TODO get the user specific list of formulas
      */
@@ -592,10 +594,14 @@ class word extends user_sandbox_description
         global $db_con;
 
         $db_con->set_type(DB_TYPE_FORMULA_LINK);
+        $qp = new sql_par(self::class);
+        $qp->name = 'word_formula_by_id';
+        $db_con->set_name($qp->name);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_where_link(null, null, $this->id);
-        $sql = $db_con->select_by_id();
-        $db_row = $db_con->get1_old($sql);
+        $qp->sql = $db_con->select_by_id();
+        $qp->par = $db_con->get_par();
+        $db_row = $db_con->get1($qp);
         $frm = new formula($this->usr);
         if ($db_row !== false) {
             if ($db_row[formula::FLD_ID] > 0) {
@@ -1745,6 +1751,7 @@ class word extends user_sandbox_description
 
     /**
      * check if the database record for the user specific settings can be removed
+     * TODO separate the query parameter creation and add a unit test
      * @return bool true if the checking and the potential removing has been successful, which does not mean, that the user sandbox database row has actually been removed
      */
     function del_usr_cfg_if_not_needed(): bool
@@ -1758,13 +1765,17 @@ class word extends user_sandbox_description
         // check again if there ist not yet a record
         // TODO add user id to where
         $db_con->set_type(DB_TYPE_WORD);
+        $qp = new sql_par(self::class);
+        $qp->name = 'word_del_usr_cfg_if';
+        $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::ALL_FLD_NAMES);
         $db_con->set_where_std($this->id);
-        $sql = $db_con->select_by_id();
-        $usr_wrd_cfg = $db_con->get1_old($sql);
+        $qp->sql = $db_con->select_by_id();
+        $qp->par = $db_con->get_par();
+        $usr_wrd_cfg = $db_con->get1($qp);
         if ($usr_wrd_cfg != null) {
-            log_debug('for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
+            log_debug('for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
             if ($usr_wrd_cfg[self::FLD_ID] > 0) {
                 if ($this->no_usr_fld_used($usr_wrd_cfg)) {
                     // delete the entry in the user sandbox

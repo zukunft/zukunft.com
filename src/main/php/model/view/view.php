@@ -222,7 +222,7 @@ class view extends user_sandbox_named
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(DB_TYPE_VIEW);
         $db_con->set_fields(array_merge(
@@ -261,7 +261,7 @@ class view extends user_sandbox_named
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = ''): sql_par
+    function load_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($db_con, self::class);
         if ($this->id != 0) {
@@ -275,6 +275,7 @@ class view extends user_sandbox_named
         }
 
         $db_con->set_type(DB_TYPE_VIEW);
+        $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
@@ -294,6 +295,7 @@ class view extends user_sandbox_named
         // sql to get the id of the most often used view
         $db_con_tmp = new sql_db();
         $db_con_tmp->set_type(DB_TYPE_VIEW);
+        $db_con->set_name($qp->name);
         $db_con_tmp->set_usr($this->usr->id);
         $db_con_tmp->set_where_std($phr->id);
         $sql = "SELECT u.view_id, count(u.user_id) AS users
@@ -333,10 +335,10 @@ class view extends user_sandbox_named
             log_err("Either the database ID (" . $this->id . "), the name (" . $this->name . ") or the code_id (" . $this->code_id . ") and the user (" . $this->usr->id . ") must be set to load a view.", "view->load");
         } else {
 
-            $sql = $this->load_sql($db_con)->sql;
+            $qp = $this->load_sql($db_con);
 
             if ($db_con->get_where() <> '') {
-                $db_view = $db_con->get1_old($sql);
+                $db_view = $db_con->get1($qp);
                 $this->row_mapper($db_view);
                 if ($this->id > 0) {
                     log_debug($this->dsp_id());
@@ -371,7 +373,7 @@ class view extends user_sandbox_named
      */
     function load_components_sql(sql_db $db_con): sql_par
     {
-        $qp = parent::load_sql($db_con, 'view_components');
+        $qp = parent::load_sql($db_con, view_cmp::class);
         if ($this->id != 0) {
             $qp->name .= 'view_id';
         } elseif ($this->name != '') {
@@ -787,10 +789,14 @@ class view extends user_sandbox_named
 
             // check again if there ist not yet a record
             $db_con->set_type(DB_TYPE_VIEW, true);
+            $qp = new sql_par(self::class);
+            $qp->name = 'view_add_usr_cfg';
+            $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where_std($this->id);
-            $sql = $db_con->select_by_id();
-            $db_row = $db_con->get1_old($sql);
+            $qp->sql = $db_con->select_by_id();
+            $qp->par = $db_con->get_par();
+            $db_row = $db_con->get1($qp);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[self::FLD_ID];
             }
