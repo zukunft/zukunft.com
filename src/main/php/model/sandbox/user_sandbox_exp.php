@@ -7,6 +7,8 @@
 
     is used in service/export/json.php
 
+    similar to the api objects, but the export objects does not contain any
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

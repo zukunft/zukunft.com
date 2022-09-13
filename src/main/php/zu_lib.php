@@ -463,7 +463,6 @@ include_once $root_path.'lib/test/config.php';             if ($debug > 9) { ech
 
 // libraries that can be dismissed, but still used for regression testing (using test.php)
 /*
-include_once $root_path.'lib/test/zu_lib_word_dsp.php';           if ($debug > 9) { echo 'lib word display loaded<br>'; }
 include_once $root_path.'lib/test/zu_lib_sql.php';                if ($debug > 9) { echo 'lib sql loaded<br>'; }
 include_once $root_path.'lib/test/zu_lib_link.php';               if ($debug > 9) { echo 'lib link loaded<br>'; }
 include_once $root_path.'lib/test/zu_lib_sql_naming.php';         if ($debug > 9) { echo 'lib sql naming loaded<br>'; }

@@ -89,21 +89,6 @@ define("TIME_MIN_COLS", 3); // minimun number of same time type word to display 
 define("TIME_MAX_COLS", 10); // maximun number of same time type word to display in a table e.g. if more the 10 years exist, by default show only the lst 10 years
 define("TIME_FUT_PCT", 20); // the default number of future outlook e.g. if there are 10 years of hist and 3 years of outlook display 8 years of hist and 2 years outlook
 
-// return the word description for a comma seperated word id list like 1,2,3; the word list is used in the URL and this funktion can be used to display the words
-function zut_names($word_list, $user_id)
-{
-    log_debug('zut_names(' . $word_list . ')');
-    $word_description = "";
-    $word_array = explode(",", $word_list);
-    foreach ($word_array as $word_id) {
-        if ($word_description == "") {
-            $word_description = zut_name($word_id, $user_id);
-        } else {
-            $word_description = $word_description . " " . zut_name($word_id, $user_id);
-        }
-    }
-    return $word_description;
-}
 
 // return the word type
 function zut_type($wrd_id, $user_id)
@@ -219,45 +204,6 @@ function zut_is_a($word_id, $related_word_id)
   ----------------------------
 */
 
-// return the word group (and create a new group if needed)
-// based on a string with the word ids
-function zut_group_id($word_ids, $user_id)
-{
-    log_debug('zut_group_id (' . $word_ids . ',u' . $user_id . ')');
-    $phrase_group = zu_sql_get_value("phrase_groups", "phrase_group_id", "word_ids", $word_ids);
-
-    // create the word group if it is missing
-    if ($phrase_group <= 0 or trim($phrase_group) == '') {
-        //echo 'create new group for '.$word_ids.'->';
-        $phrase_group = zut_group_create($word_ids, $user_id);
-    }
-
-    return $phrase_group;
-}
-
-// create a new word group
-function zut_group_create($word_ids, $user_id)
-{
-    log_debug('zut_group_create ... ');
-
-    $group_name = zut_names($word_ids, $user_id);
-    log_debug('zut_group_create ... group name ' . $group_name);
-
-    // write new group
-    $sql_result = zutg_db_add($word_ids, $group_name);
-
-    // get the id
-    $phrase_group = zu_sql_get_value("phrase_groups", "phrase_group_id", "word_ids", $word_ids);
-
-    // assign the new group to the value
-
-    // loop over the word word_ids
-    // select  all value that matches
-    $query = "SELECT value_id FROM `value_phrase_links` WHERE phrase_group_id = " . $phrase_group . ";";
-
-
-    return $phrase_group;
-}
 
 // if there is just one formula linked to the word, get it
 function zut_formula($word_id, $user_id)

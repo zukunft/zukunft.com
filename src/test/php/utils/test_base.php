@@ -162,7 +162,6 @@ include_once $path_it . 'test_import.php';
 include_once $path_it . 'test_export.php';
 
 // libraries that can be dismissed, but still used to compare the result with the result of the legacy function
-include_once $root_path . 'src/main/php/service/test/zu_lib_word_dsp.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_sql.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_link.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_sql_naming.php';
