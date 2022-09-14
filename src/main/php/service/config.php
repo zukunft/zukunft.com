@@ -31,6 +31,31 @@
 
 */
 
+/*
+ * expose the config class functions as simple functions for simple coding
+ */
+
+
+
+class config
+{
+    function get_sql(sql_db $db_con, string $code_id): sql_par
+    {
+        $db_con->set_type(DB_TYPE_CONFIG);
+        $qp = new sql_par(self::class);
+        $qp->name .= 'get';
+        $db_con->set_name($qp->name);
+        $db_con->set_fields(array(sql_db::FLD_CODE_ID, sql_db::FLD_VALUE));
+        $db_con->add_par(sql_db::PAR_TEXT, $code_id);
+        $qp->sql = $db_con->select_by_code_id();
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+}
+
+
+
 /**
  * get a config value from the database table
  * including $db_con because this is call also from the start, where the global $db_con is not yet set

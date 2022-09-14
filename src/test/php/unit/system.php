@@ -124,6 +124,20 @@ class system_unit_tests
         $sys_log_stati = new sys_log_status();
         $t->assert_load_sql($db_con, $sys_log_stati);
 
+
+        $t->subheader('system config sql tests');
+
+        $db_con->db_type = sql_db::POSTGRES;
+        $cfg = new config();
+        $created_sql = $cfg->get_sql($db_con, CFG_VERSION_DB)->sql;
+        $expected_sql = $t->file('db/system/cfg_get.sql');
+        $t->assert('config->get_sql', $t->trim($created_sql), $t->trim($expected_sql));
+
+        $db_con->db_type = sql_db::MYSQL;
+        $created_sql = $cfg->get_sql($db_con, CFG_VERSION_DB)->sql;
+        $expected_sql = $t->file('db/system/cfg_get_mysql.sql');
+        $t->assert('config->get_sql for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
+
         /*
          * these tests are probably not needed because not problem is expected
          * activate if nevertheless an issue occurs
