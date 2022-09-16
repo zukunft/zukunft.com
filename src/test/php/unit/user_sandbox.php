@@ -208,7 +208,7 @@ class user_sandbox_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(DB_TYPE_CONFIG);
         $db_con->set_fields(array('value'));
-        $db_con->where(array(sql_db::FLD_CODE_ID), array(CFG_VERSION_DB));
+        $db_con->where(array(sql_db::FLD_CODE_ID), array(config::VERSION_DB));
         $created_sql = $db_con->select_by_id(false);
         $expected_sql = "SELECT value FROM config WHERE code_id = 'version_database';";
         $t->dsp('non id PostgreSQL select', $t->trim($expected_sql), $t->trim($created_sql));
@@ -217,7 +217,7 @@ class user_sandbox_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $db_con->set_type(DB_TYPE_CONFIG);
         $db_con->set_fields(array('value'));
-        $db_con->where(array(sql_db::FLD_CODE_ID), array(CFG_VERSION_DB));
+        $db_con->where(array(sql_db::FLD_CODE_ID), array(config::VERSION_DB));
         $created_sql = $db_con->select_by_id(false);
         $expected_sql = "SELECT `value` FROM config WHERE code_id = 'version_database';";
         $t->dsp('non id MySQL select', $t->trim($expected_sql), $t->trim($created_sql));

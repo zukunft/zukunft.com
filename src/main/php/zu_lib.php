@@ -514,12 +514,6 @@ const UI_CAN_CHANGE_FORMULA_NAME = TRUE; // dito for formulas
 const UI_CAN_CHANGE_VERB_NAME = TRUE; // dito for verbs
 const UI_CAN_CHANGE_SOURCE_NAME = TRUE; // dito for sources
 
-// program configuration names
-const CFG_SITE_NAME = 'site_name';                           // the name of the pod
-const CFG_VERSION_DB = 'version_database';                   // the version of the database at the moment to trigger an update script if needed
-const CFG_LAST_CONSISTENCY_CHECK = 'last_consistency_check'; // datetime of the last database consistency check
-const CFG_AVG_CALC_TIME = 'average_calculation_time';        // the average time to calculate and update all results of one formula in milliseconds
-
 // data retrieval settings
 const SQL_ROW_LIMIT = 20; // default number of rows per page/query if not defined
 const SQL_ROW_MAX = 2000; // the max number of rows per query to avoid long response times

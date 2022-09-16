@@ -129,12 +129,12 @@ class system_unit_tests
 
         $db_con->db_type = sql_db::POSTGRES;
         $cfg = new config();
-        $created_sql = $cfg->get_sql($db_con, CFG_VERSION_DB)->sql;
+        $created_sql = $cfg->get_sql($db_con, config::VERSION_DB)->sql;
         $expected_sql = $t->file('db/system/cfg_get.sql');
         $t->assert('config->get_sql', $t->trim($created_sql), $t->trim($expected_sql));
 
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $cfg->get_sql($db_con, CFG_VERSION_DB)->sql;
+        $created_sql = $cfg->get_sql($db_con, config::VERSION_DB)->sql;
         $expected_sql = $t->file('db/system/cfg_get_mysql.sql');
         $t->assert('config->get_sql for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 

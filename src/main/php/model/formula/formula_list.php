@@ -434,7 +434,7 @@ class formula_list
         if ($total_formulas == 0) {
             $total_formulas = $db_con->count(DB_TYPE_FORMULA);
         }
-        $avg_calc_time = cfg_get(CFG_AVG_CALC_TIME, $db_con);
+        $avg_calc_time = cfg_get(config::AVG_CALC_TIME, $db_con);
         $total_expected_time = $total_formulas * $avg_calc_time;
         return max(1, round($total_expected_time / (UI_MIN_RESPONSE_TIME * 1000)));
     }
