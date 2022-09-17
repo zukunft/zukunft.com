@@ -55,6 +55,7 @@ class word_unit_tests
         $wrd->id = 2;
         $t->assert_load_sql($db_con, $wrd);
         $t->assert_load_standard_sql($db_con, $wrd);
+        $t->assert_not_changed_sql($db_con, $wrd);
 
         // sql to load the word by name
         $wrd = new word($usr);

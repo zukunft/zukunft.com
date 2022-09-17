@@ -977,6 +977,10 @@ class word_link extends user_sandbox_link_description
         return $this->not_changed();
     }
 
+    /**
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 to check if the triple has been changed
+     */
     function not_changed_sql(sql_db $db_con): sql_par
     {
         $db_con->set_type(DB_TYPE_TRIPLE);
@@ -994,7 +998,7 @@ class word_link extends user_sandbox_link_description
         $result = true;
 
         if ($this->id == 0) {
-            log_err('The id must be set to detect if the link has been changed');
+            log_err('The id must be set to check if the triple has been changed');
         } else {
             $qp = $this->not_changed_sql($db_con);
             $db_row = $db_con->get1($qp);

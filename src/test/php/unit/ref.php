@@ -73,6 +73,8 @@ class ref_unit_tests
         $src->name = source::TN_READ;
         $t->assert_load_sql($db_con, $src);
         $t->assert_load_standard_sql($db_con, $src);
+        $src->id = 5;
+        $t->assert_not_changed_sql($db_con, $src);
 
         // sql to load the ref types
         $ref_type_list = new ref_type_list();

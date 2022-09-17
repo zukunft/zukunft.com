@@ -1623,6 +1623,16 @@ class formula extends user_sandbox_description
     }
 
     /**
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 to check if the formula has been changed
+     */
+    function not_changed_sql(sql_db $db_con): sql_par
+    {
+        $db_con->set_type(DB_TYPE_FORMULA);
+        return $db_con->not_changed_sql($this->id, $this->owner_id);
+    }
+
+    /**
      * true if no other user has modified the formula
      * assuming that in this case not confirmation from the other users for a formula rename is needed
      */
@@ -1633,22 +1643,11 @@ class formula extends user_sandbox_description
         global $db_con;
         $result = true;
 
-        if ($this->owner_id > 0) {
-            $sql = "SELECT user_id 
-                FROM user_formulas 
-              WHERE formula_id = " . $this->id . "
-                AND user_id <> " . $this->owner_id . "
-                AND (excluded <> 1 OR excluded is NULL)";
+        if ($this->id == 0) {
+            log_err('The id must be set to check if the formula has been changed');
         } else {
-            $sql = "SELECT user_id 
-                FROM user_formulas 
-              WHERE formula_id = " . $this->id . "
-                AND (excluded <> 1 OR excluded is NULL)";
-        }
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
-        if ($db_row != null) {
+            $qp = $this->not_changed_sql($db_con);
+            $db_row = $db_con->get1($qp);
             if ($db_row[self::FLD_USER] > 0) {
                 $result = false;
             }

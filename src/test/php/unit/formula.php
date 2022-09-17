@@ -53,6 +53,7 @@ class formula_unit_tests
         $frm->id = 2;
         $t->assert_load_sql($db_con, $frm);
         $t->assert_load_standard_sql($db_con, $frm);
+        $t->assert_not_changed_sql($db_con, $frm);
 
         // sql to load the formula by name
         $frm = new formula($usr);

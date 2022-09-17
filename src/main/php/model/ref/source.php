@@ -477,12 +477,12 @@ class source extends user_sandbox_named
     }
 
     /*
+     * save functions
+     */
 
-    save functions
-
-    */
-
-    // true if no one has used this source
+    /**
+     * @return bool true if no one has used this source
+     */
     public function not_used(): bool
     {
         log_debug('source->not_used (' . $this->id . ')');
@@ -491,34 +491,37 @@ class source extends user_sandbox_named
         return $this->not_changed();
     }
 
-    // true if no other user has modified the source
+    /**
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 to check if the source has been changed
+     */
+    function not_changed_sql(sql_db $db_con): sql_par
+    {
+        $db_con->set_type(DB_TYPE_SOURCE);
+        return $db_con->not_changed_sql($this->id, $this->owner_id);
+    }
+
+    /**
+     * @return bool true if no other user has modified the source
+     */
     function not_changed(): bool
     {
-        log_debug('source->not_changed (' . $this->id . ') by someone else than the owner (' . $this->owner_id . ')');
+        log_debug($this->id . ' by someone else than the owner (' . $this->owner_id . ')');
 
         global $db_con;
-
         $result = true;
 
-        if ($this->owner_id > 0) {
-            $sql = "SELECT user_id 
-                FROM user_sources 
-               WHERE source_id = " . $this->id . "
-                 AND user_id <> " . $this->owner_id . "
-                 AND (excluded <> 1 OR excluded is NULL)";
+        if ($this->id == 0) {
+            log_err('The id must be set to detect if the link has been changed');
         } else {
-            $sql = "SELECT user_id 
-                FROM user_sources 
-               WHERE source_id = " . $this->id . "
-                 AND (excluded <> 1 OR excluded is NULL)";
+            $qp = $this->not_changed_sql($db_con);
+            $db_row = $db_con->get1($qp);
+            $change_user_id = $db_row[self::FLD_USER];
+            if ($change_user_id > 0) {
+                $result = false;
+            }
         }
-        $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
-        $change_user_id = $db_row[self::FLD_USER];
-        if ($change_user_id > 0) {
-            $result = false;
-        }
-        log_debug('source->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result));
+        log_debug('for ' . $this->id . ' is ' . zu_dsp_bool($result));
         return $result;
     }
 
