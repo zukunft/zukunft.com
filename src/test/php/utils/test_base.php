@@ -1218,6 +1218,46 @@ class test_base
     }
 
     /**
+     * check the not changed SQL statements of a unser sandbox object e.g. word, triple, value or formulas
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param user_sandbox $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_not_changed_sql(sql_db $db_con, user_sandbox $usr_obj): bool
+    {
+        // check the PostgreSQL query syntax
+        $usr_obj->owner_id = 0;
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->not_changed_sql($db_con);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check with owner
+        if ($result) {
+            $usr_obj->owner_id = 1;
+            $qp = $usr_obj->not_changed_sql($db_con);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $usr_obj->owner_id = 0;
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->not_changed_sql($db_con);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+
+        // ... and check with owner
+        if ($result) {
+            $usr_obj->owner_id = 1;
+            $qp = $usr_obj->not_changed_sql($db_con);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+
+        return $result;
+    }
+
+    /**
      * test the SQL statement creation for a value
      *
      * @param sql_par $qp the query parameters that should be tested

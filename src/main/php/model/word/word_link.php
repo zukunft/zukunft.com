@@ -977,8 +977,14 @@ class word_link extends user_sandbox_link_description
         return $this->not_changed();
     }
 
+    function not_changed_sql(sql_db $db_con): sql_par
+    {
+        $db_con->set_type(DB_TYPE_TRIPLE);
+        return $db_con->not_changed_sql($this->id, $this->owner_id);
+    }
+
     /**
-     * true if no other user has modified the triple
+     * @returns bool true if no other user has modified the triple
      */
     function not_changed(): bool
     {
@@ -990,22 +996,8 @@ class word_link extends user_sandbox_link_description
         if ($this->id == 0) {
             log_err('The id must be set to detect if the link has been changed');
         } else {
-            if ($this->owner_id > 0) {
-                $sql = "SELECT user_id 
-                FROM user_word_links 
-               WHERE word_link_id = " . $this->id . "
-                 AND user_id <> " . $this->owner_id . "
-                 AND (excluded <> 1 OR excluded is NULL)";
-            } else {
-                $sql = "SELECT user_id 
-                FROM user_word_links 
-               WHERE word_link_id = " . $this->id . "
-                 AND (excluded <> 1 OR excluded is NULL)";
-            }
-
-            //$db_con = new mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_row = $db_con->get1_old($sql);
+            $qp = $this->not_changed_sql($db_con);
+            $db_row = $db_con->get1($qp);
             if ($db_row[self::FLD_USER] > 0) {
                 $result = false;
             }

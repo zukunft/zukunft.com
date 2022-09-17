@@ -70,7 +70,7 @@ class sql_par
      */
     public function has_par(): bool
     {
-        if (count($this->par) > 0 ) {
+        if (count($this->par) > 0) {
             return true;
         } else {
             return false;
@@ -236,6 +236,7 @@ class sql_db
     private ?string $where = '';                  // the WHERE condition as an SQL statement that is used for the next select query
     private ?string $order = '';                  // the ORDER                 SQL statement that is used for the next select query
     private ?string $page = '';                   // the LIMIT and OFFSET      SQL statement that is used for the next select query
+    private ?string $end = '';                    // the closing               SQL statement that is used for the next select query
 
     private ?array $prepared_sql_names = [];      // list of all SQL queries that have already been prepared during the open connection
     private ?array $prepared_stmt = [];           // list of the MySQL stmt
@@ -317,6 +318,7 @@ class sql_db
         $this->where = '';
         $this->order = '';
         $this->page = '';
+        $this->end = '';
     }
 
     /*
@@ -486,7 +488,7 @@ class sql_db
     {
         // TODO check how to escape ","
         //$this->add_par(sql_db::PAR_TEXT_LIST, "{'" . implode("','", $names) . "'}");
-        $this->add_par(sql_db::PAR_TEXT_LIST,  $this->str_array_to_sql_string($names));
+        $this->add_par(sql_db::PAR_TEXT_LIST, $this->str_array_to_sql_string($names));
     }
 
     /**
@@ -1154,7 +1156,7 @@ class sql_db
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
         if (zu_str_is_left($type, DB_TYPE_USER_PREFIX)
-        and $type != DB_TYPE_USER_TYPE) {
+            and $type != DB_TYPE_USER_TYPE) {
             $type = zu_str_right_of($type, DB_TYPE_USER_PREFIX);
         }
         $result = $type . '_id';
@@ -2627,6 +2629,42 @@ class sql_db
     }
 
     /**
+     * @return string with the SQL prepare statement for the current query
+     */
+    private function prepare_sql(): string
+    {
+        $sql = '';
+        if (count($this->par_types) > 0) {
+            if ($this->db_type == sql_db::POSTGRES) {
+                $this->par_types_to_postgres();
+                $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $this->par_types) . ') AS SELECT';
+            } elseif ($this->db_type == sql_db::MYSQL) {
+                $sql = "PREPARE " . $this->query_name . " FROM 'SELECT";
+                $this->end = "';";
+            } else {
+                log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
+            }
+        } else {
+            log_err('Query name is given, but parameters types are missing for ' . $this->query_name);
+        }
+        return $sql;
+    }
+
+    /**
+     * @return string with the SQL closing statement for the current query
+     */
+    private function end_sql(string $sql): string
+    {
+        if ($this->end == '') {
+            $this->end = ';';
+        }
+        if (substr($sql, -1) != ";") {
+            $sql .= $this->end;
+        }
+        return $sql;
+    }
+
+    /**
      * create a SQL select statement for the connected database
      * @param array $id_fields the name of the primary id field that should be used or the list of link fields
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
@@ -2643,31 +2681,53 @@ class sql_db
 
         // create a prepare SQL statement if possible
         if ($this->query_name != '') {
-            if (count($this->par_types) > 0) {
-                if ($this->db_type == sql_db::POSTGRES) {
-                    $this->par_types_to_postgres();
-                    $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $this->par_types) . ') AS SELECT';
-                } elseif ($this->db_type == sql_db::MYSQL) {
-                    $sql = "PREPARE " . $this->query_name . " FROM 'SELECT";
-                    $sql_end = "';";
-                } else {
-                    log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
-                }
-            } else {
-                log_err('Query name is given, but parameters types are missing for ' . $this->query_name);
-            }
+            $sql = $this->prepare_sql();
         } else {
             $sql = 'SELECT';
             //log_info('SQL statement ' . $sql . $this->fields . $this->from . $this->join . $this->where . ' is not yet named, please consider using a prepared SQL statement');
         }
 
-        $sql .= $this->fields . $this->from . $this->join . $this->where . $this->order . $this->page . $sql_end;
+        $sql .= $this->fields . $this->from . $this->join . $this->where . $this->order . $this->page;
 
-        if (substr($sql, -1) != ";") {
-            $sql .= $sql_end;
+        return $this->end_sql($sql);
+    }
+
+    /**
+     * create a SQL select statement for the connected database
+     * to detect if someone else has used the object
+     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
+     * @return string the created SQL statement in the previous set dialect
+     */
+    function not_changed_sql(int $id, int $owner_id = 0): sql_par
+    {
+        $qp = new sql_par($this->type);
+        $qp->name .= 'not_changed';
+        if ($owner_id > 0) {
+            $qp->name .= '_not_owned';
         }
+        $this->set_name($qp->name);
+        $this->set_usr($this->usr_id);
+        $this->set_table();
+        $this->set_id_field();
+        $this->set_fields(array(sql_db::FLD_USER_ID));
+        if ($id == 0) {
+            log_err('The id must be set to detect if the link has been changed');
+        } else {
+            $this->add_par(sql_db::PAR_INT, $id);
+            $sql_mid = " user_id 
+                FROM " . $this->name_sql_esc($this->table) . " 
+               WHERE " . $this->id_field . " = " . $this->par_name() . "
+                 AND (excluded <> 1 OR excluded is NULL)";
+            if ($owner_id > 0) {
+                $this->add_par(sql_db::PAR_INT, $owner_id);
+                $sql_mid .= " AND user_id <> " . $this->par_name();
+            }
+            $qp->sql = $this->prepare_sql() . $sql_mid;
+            $qp->sql = $this->end_sql($qp->sql);
+        }
+        $qp->par = $this->get_par();
 
-        return $sql;
+        return $qp;
     }
 
     /**
