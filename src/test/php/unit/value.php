@@ -74,6 +74,9 @@ class value_unit_tests
         // ... and the related default value
         $t->assert_load_standard_sql($db_con, $val);
 
+        // ... and to check if any user has uses another than the default value
+        $val->id = 1;
+        $t->assert_not_changed_sql($db_con, $val);
 
         $t->subheader('Im- and Export tests');
 

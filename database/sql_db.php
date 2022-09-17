@@ -2715,7 +2715,7 @@ class sql_db
         } else {
             $this->add_par(sql_db::PAR_INT, $id);
             $sql_mid = " user_id 
-                FROM " . $this->name_sql_esc($this->table) . " 
+                FROM " . $this->name_sql_esc(DB_TYPE_USER_PREFIX . $this->table) . " 
                WHERE " . $this->id_field . " = " . $this->par_name() . "
                  AND (excluded <> 1 OR excluded is NULL)";
             if ($owner_id > 0) {

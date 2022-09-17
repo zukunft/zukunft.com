@@ -941,7 +941,7 @@ class value extends user_sandbox_display
                 if (is_numeric($value)) {
                     $this->number = $value;
                 } else {
-                    $result->add_message('Import value: "' . $value . '" is expected to be a number (' . $this->phr_lst->dsp_id() .')');
+                    $result->add_message('Import value: "' . $value . '" is expected to be a number (' . $this->phr_lst->dsp_id() . ')');
                 }
             }
 
@@ -1218,6 +1218,16 @@ class value extends user_sandbox_display
     }
 
     /**
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 to check if the value has been changed
+     */
+    function not_changed_sql(sql_db $db_con): sql_par
+    {
+        $db_con->set_type(DB_TYPE_VALUE);
+        return $db_con->not_changed_sql($this->id, $this->owner_id);
+    }
+
+    /**
      * true if no other user has modified the value
      */
     function not_changed(): bool
@@ -1227,25 +1237,14 @@ class value extends user_sandbox_display
         global $db_con;
         $result = true;
 
-        $change_user_id = 0;
-        if ($this->owner_id > 0) {
-            $sql = "SELECT user_id 
-                FROM user_values 
-               WHERE value_id = " . $this->id . "
-                 AND user_id <> " . $this->owner_id . "
-                 AND (excluded <> 1 OR excluded is NULL)";
+        if ($this->id == 0) {
+            log_err('The id must be set to check if the formula has been changed');
         } else {
-            $sql = "SELECT user_id 
-                FROM user_values 
-               WHERE value_id = " . $this->id . "
-                 AND (excluded <> 1 OR excluded is NULL)";
-        }
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
-        $change_user_id = $db_row[self::FLD_USER];
-        if ($change_user_id > 0) {
-            $result = false;
+            $qp = $this->not_changed_sql($db_con);
+            $db_row = $db_con->get1($qp);
+            if ($db_row[self::FLD_USER] > 0) {
+                $result = false;
+            }
         }
         log_debug('value->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result));
         return $result;
