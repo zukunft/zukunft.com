@@ -1080,6 +1080,22 @@ class word_link extends user_sandbox_link_description
         return $result;
     }
 
+    function usr_cfg_needed_sql(sql_db $db_con): sql_par
+    {
+        $db_con->set_type(DB_TYPE_TRIPLE);
+        $qp = new sql_par(self::class);
+        $qp->name .= 'usr_cfg';
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(array_merge(
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR
+        ));
+        $qp->sql = $db_con->select_by_id_and_user($this->id, $this->usr->id);
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
     /**
      * check if the database record for the user specific settings can be removed
      */
@@ -1094,16 +1110,10 @@ class word_link extends user_sandbox_link_description
         if ($this->id == 0) {
             log_err('cannot delete user sandbox if id is missing');
         } else {
-            $sql = "SELECT word_link_id,
-                     name_given,
-                     description,
-                     excluded
-                FROM user_word_links
-               WHERE word_link_id = " . $this->id . " 
-                 AND user_id = " . $this->usr->id . ";";
+            $qp = $this->usr_cfg_needed_sql($db_con);
             $db_con->usr_id = $this->usr->id;
-            $usr_cfg = $db_con->get1_old($sql);
-            log_debug('word_link->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
+            $usr_cfg = $db_con->get1($qp);
+            log_debug('word_link->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
             if ($usr_cfg) {
                 if ($usr_cfg[self::FLD_ID] > 0) {
                     // TODO use the FLD_NAMES array with all relevant field names

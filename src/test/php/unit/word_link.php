@@ -76,6 +76,7 @@ class word_link_unit_tests
         $t->assert_load_standard_sql($db_con, $trp);
         $trp->id = 5;
         $t->assert_not_changed_sql($db_con, $trp);
+        $t->assert_user_config_sql($db_con, $trp);
 
         // sql to check the usage of a triple
 

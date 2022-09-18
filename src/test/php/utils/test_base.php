@@ -1218,7 +1218,7 @@ class test_base
     }
 
     /**
-     * check the not changed SQL statements of a unser sandbox object e.g. word, triple, value or formulas
+     * check the not changed SQL statements of a user sandbox object e.g. word, triple, value or formulas
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param user_sandbox $usr_obj the user sandbox object e.g. a word
@@ -1251,6 +1251,31 @@ class test_base
         if ($result) {
             $usr_obj->owner_id = 1;
             $qp = $usr_obj->not_changed_sql($db_con);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+
+        return $result;
+    }
+
+    /**
+     * check the SQL statements to get the user sandbox changes
+     * e.g. the value a user has changed of word, triple, value or formulas
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param user_sandbox $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_user_config_sql(sql_db $db_con, user_sandbox $usr_obj): bool
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->usr_cfg_needed_sql($db_con);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->usr_cfg_needed_sql($db_con);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
 

@@ -2484,6 +2484,14 @@ class sql_db
     }
 
     /**
+     * create the "FROM" SQL statement based on the type for the user sandbox values
+     */
+    private function set_from_user()
+    {
+        $this->from = ' FROM ' . $this->name_sql_esc(DB_TYPE_USER_PREFIX . $this->table);
+    }
+
+    /**
      * @return array with the parameter values in the same order as the given SQL parameter placeholders
      */
     function get_par(): array
@@ -2554,6 +2562,26 @@ class sql_db
     function select_by_field_list(array $id_fields, bool $has_id = true): string
     {
         return $this->select_by($id_fields, $has_id);
+    }
+
+    /**
+     * @return string the SQL statement to for the user specific data
+     */
+    function select_by_id_and_user(int $id, int $usr_id): string
+    {
+        $this->add_par(self::PAR_INT, $id);
+        $this->add_par(self::PAR_INT, $usr_id);
+
+        $this->set_field_statement(true);
+        $this->set_from_user();
+        $this->set_where(array($this->id_field, self::FLD_USER_ID));
+
+        // create a prepare SQL statement if possible
+        $sql = $this->prepare_sql();
+
+        $sql .= $this->fields . $this->from . $this->where . $this->order . $this->page;
+
+        return $this->end_sql($sql);
     }
 
     /**
