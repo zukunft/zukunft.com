@@ -576,8 +576,26 @@ class source extends user_sandbox_named
         return $result;
     }
 
-    // check if the database record for the user specific settings can be removed
-    // returns false if the deletion has failed and true if it was successful or not needed
+    function usr_cfg_needed_sql(sql_db $db_con): sql_par
+    {
+        $db_con->set_type(DB_TYPE_SOURCE);
+        $qp = new sql_par(self::class);
+        $qp->name .= 'usr_cfg';
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(array_merge(
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR
+        ));
+        $qp->sql = $db_con->select_by_id_and_user($this->id, $this->usr->id);
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
+     * check if the database record for the user specific settings can be removed
+     * @returns bool false if the deletion has failed and true if it was successful or not needed
+     */
     function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('source->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
@@ -588,25 +606,18 @@ class source extends user_sandbox_named
         //if ($this->has_usr_cfg) {
 
         // check again if there ist not yet a record
-        $sql = "SELECT source_id,
-                     source_name,
-                     url,
-                     comment,
-                     source_type_id, excluded
-                FROM user_sources
-               WHERE source_id = " . $this->id . " 
-                 AND user_id = " . $this->usr->id . ";";
+        $qp = $this->usr_cfg_needed_sql($db_con);
         $db_con->usr_id = $this->usr->id;
-        $usr_wrd_cfg = $db_con->get1_old($sql);
-        log_debug('source->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
-        if ($usr_wrd_cfg['source_id'] > 0) {
+        $usr_src_cfg = $db_con->get1($qp);
+        log_debug('source->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
+        if ($usr_src_cfg['source_id'] > 0) {
             // TODO check that this converts all fields for all types
             // TODO define for each user sandbox object a list with all user fields and loop here over this array
-            if ($usr_wrd_cfg['source_name'] == ''
-                and $usr_wrd_cfg['url'] == ''
-                and $usr_wrd_cfg['comment'] == ''
-                and $usr_wrd_cfg['source_type_id'] == Null
-                and $usr_wrd_cfg[self::FLD_EXCLUDED] == Null) {
+            if ($usr_src_cfg['source_name'] == ''
+                and $usr_src_cfg['url'] == ''
+                and $usr_src_cfg['comment'] == ''
+                and $usr_src_cfg['source_type_id'] == Null
+                and $usr_src_cfg[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
                 log_debug('source->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE);

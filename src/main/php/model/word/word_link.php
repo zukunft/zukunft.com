@@ -1098,6 +1098,7 @@ class word_link extends user_sandbox_link_description
 
     /**
      * check if the database record for the user specific settings can be removed
+     * @returns bool true if the unneeded user sandbox record has been deleted
      */
     function del_usr_cfg_if_not_needed(): bool
     {
