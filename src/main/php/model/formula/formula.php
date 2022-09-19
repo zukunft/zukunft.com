@@ -1724,6 +1724,23 @@ class formula extends user_sandbox_description
     }
 
     /**
+     * create an SQL statement to retrieve the user changes of the current formula
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
+    {
+        $db_con->set_type(DB_TYPE_FORMULA);
+        $db_con->set_fields(array_merge(
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR
+        ));
+        return parent::usr_cfg_sql($db_con, $class);
+    }
+
+    /**
      * check if the database record for the user specific settings can be removed
      */
     function del_usr_cfg_if_not_needed(): bool
@@ -1735,19 +1752,9 @@ class formula extends user_sandbox_description
 
 
         // check again if the user config is still needed (don't use $this->has_usr_cfg to include all updated)
-        $sql = "SELECT formula_id,
-                   formula_name,
-                   formula_text,
-                   resolved_text,
-                   description,
-                   formula_type_id,
-                   all_values_needed,
-                   excluded
-              FROM user_formulas
-             WHERE formula_id = " . $this->id . " 
-               AND user_id = " . $this->usr->id . ";";
+        $qp = $this->usr_cfg_sql($db_con);
         $db_con->usr_id = $this->usr->id;
-        $usr_cfg = $db_con->get1_old($sql);
+        $usr_cfg = $db_con->get1($qp);
         log_debug(self::class . '->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_cfg[$this->fld_id()] > 0) {
             if ($usr_cfg[self::FLD_NAME] == ''

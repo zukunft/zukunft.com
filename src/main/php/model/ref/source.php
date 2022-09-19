@@ -599,7 +599,7 @@ class source extends user_sandbox_named
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('source->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
         $result = true;
@@ -610,7 +610,7 @@ class source extends user_sandbox_named
         $qp = $this->usr_cfg_sql($db_con);
         $db_con->usr_id = $this->usr->id;
         $usr_src_cfg = $db_con->get1($qp);
-        log_debug('source->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
+        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
         if ($usr_src_cfg['source_id'] > 0) {
             // TODO check that this converts all fields for all types
             // TODO define for each user sandbox object a list with all user fields and loop here over this array
@@ -620,7 +620,7 @@ class source extends user_sandbox_named
                 and $usr_src_cfg['source_type_id'] == Null
                 and $usr_src_cfg[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
-                log_debug('source->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE);
                 $del_result = $db_con->delete(array('source_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($del_result != '') {
