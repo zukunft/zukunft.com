@@ -1348,35 +1348,43 @@ class value extends user_sandbox_display
     }
 
     /**
+     * create an SQL statement to retrieve the user changes of the current value
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
+    {
+        $db_con->set_type(DB_TYPE_VALUE);
+        $db_con->set_fields(self::FLD_NAMES_NUM_USR);
+        return parent::usr_cfg_sql($db_con, $class);
+    }
+
+    /**
      * check if the database record for the user specific settings can be removed
      * exposed at the moment to user_display.php for consistency check, but this should not be needed
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('value->del_usr_cfg_if_not_needed pre check for "' . $this->id . ' und user ' . $this->usr->name);
+        log_debug('pre check for "' . $this->id . ' und user ' . $this->usr->name);
 
         global $db_con;
         $result = true;
 
         // check again if the user config is still needed (don't use $this->has_usr_cfg to include all updated)
-        $sql = "SELECT value_id,
-                   word_value,
-                   source_id,
-                   excluded
-              FROM user_values
-             WHERE value_id = " . $this->id . " 
-               AND user_id = " . $this->usr->id . ";";
-        //$db_con = New mysql;
+        $qp = $this->usr_cfg_sql($db_con);
         $db_con->usr_id = $this->usr->id;
-        $usr_cfg = $db_con->get1_old($sql);
-        log_debug('value->del_usr_cfg_if_not_needed check for "' . $this->id . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
+        $usr_cfg = $db_con->get1($qp);
+
+        log_debug('check for "' . $this->id . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
         if ($usr_cfg != false) {
             if ($usr_cfg[self::FLD_ID] > 0) {
                 if ($usr_cfg['word_value'] == Null
                     and $usr_cfg[source::FLD_ID] == Null
                     and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                     // delete the entry in the user sandbox
-                    log_debug('value->del_usr_cfg_if_not_needed any more for "' . $this->id . ' und user ' . $this->usr->name);
+                    log_debug('any more for "' . $this->id . ' und user ' . $this->usr->name);
                     $result = $this->del_usr_cfg_exe($db_con);
                 }
             }
