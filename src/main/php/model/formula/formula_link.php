@@ -433,26 +433,13 @@ class formula_link extends user_sandbox_link
     }
 
     /**
-     * @return string the SQL statement to check if no one else has changed the formula link
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 to check if no one else has changed the formula link
      */
-    function not_changed_sql(bool $get_name = false): string
+    function not_changed_sql(sql_db $db_con): sql_par
     {
-        $sql_name = self::class . '_not_changed';
-        $sql = "SELECT user_id 
-                FROM user_formula_links 
-               WHERE formula_link_id = " . $this->id;
-        if ($this->owner_id > 0) {
-            $sql .= " AND user_id <> " . $this->owner_id;
-            $sql_name .= self::class . '_by_owner';
-        }
-        $sql .= " AND (excluded <> 1 OR excluded is NULL);";
-
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
+        $db_con->set_type(DB_TYPE_FORMULA_LINK);
+        return $db_con->not_changed_sql($this->id, $this->owner_id);
     }
 
     /**
@@ -460,19 +447,19 @@ class formula_link extends user_sandbox_link
      */
     function not_changed(): bool
     {
-        log_debug('formula_link->not_changed (' . $this->id . ') by someone else than the owner (' . $this->owner_id . ')');
+        log_debug($this->id . ' by someone else than the owner (' . $this->owner_id . ')');
 
         global $db_con;
         $result = true;
-        $sql = $this->not_changed_sql();
+        $qp = $this->not_changed_sql($db_con);
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
+        $db_row = $db_con->get1($qp);
         if ($db_row != null) {
             if ($db_row[self::FLD_USER] > 0) {
                 $result = false;
             }
         }
-        log_debug('formula_link->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result));
+        log_debug('for ' . $this->id . ' is ' . zu_dsp_bool($result));
         return $result;
     }
 

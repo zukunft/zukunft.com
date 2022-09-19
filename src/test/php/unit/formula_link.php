@@ -92,12 +92,12 @@ class formula_link_unit_tests
         $lnk->id = 2;
         $lnk->owner_id = 3;
         $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $lnk->not_changed_sql();
+        $created_sql = $lnk->not_changed_sql($db_con)->sql;
         $expected_sql = $t->file('db/formula/formula_link_by_id_other_user.sql');
         $t->assert('formula_link->not_changed_sql by owner id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($lnk->not_changed_sql(true));
+        $t->assert_sql_name_unique($lnk->not_changed_sql($db_con)->name);
 
         // MySQL check not needed, because it is the same as for PostgreSQL
 
