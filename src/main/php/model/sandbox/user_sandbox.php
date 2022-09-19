@@ -403,6 +403,24 @@ class user_sandbox
     }
 
     /**
+     * create an SQL statement to retrieve the user changes of the current object
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
+    {
+        $qp = new sql_par($class);
+        $qp->name .= 'usr_cfg';
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $qp->sql = $db_con->select_by_id_and_user($this->id, $this->usr->id);
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
      * @returns string best possible identification for this object mainly used for debugging
      */
     function dsp_id(): string

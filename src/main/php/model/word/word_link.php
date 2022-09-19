@@ -1080,20 +1080,21 @@ class word_link extends user_sandbox_link_description
         return $result;
     }
 
-    function usr_cfg_needed_sql(sql_db $db_con): sql_par
+    /**
+     * create an SQL statement to retrieve the user changes of the current triple
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(DB_TYPE_TRIPLE);
-        $qp = new sql_par(self::class);
-        $qp->name .= 'usr_cfg';
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
         ));
-        $qp->sql = $db_con->select_by_id_and_user($this->id, $this->usr->id);
-        $qp->par = $db_con->get_par();
-        return $qp;
+        return parent::usr_cfg_sql($db_con, $class);
     }
 
     /**
@@ -1111,7 +1112,7 @@ class word_link extends user_sandbox_link_description
         if ($this->id == 0) {
             log_err('cannot delete user sandbox if id is missing');
         } else {
-            $qp = $this->usr_cfg_needed_sql($db_con);
+            $qp = $this->usr_cfg_sql($db_con);
             $db_con->usr_id = $this->usr->id;
             $usr_cfg = $db_con->get1($qp);
             log_debug('word_link->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
