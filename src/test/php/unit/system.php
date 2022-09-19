@@ -73,13 +73,13 @@ class system_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $ip_range->id = 1;
         $ip_range->usr = $usr;
-        $created_sql = $ip_range->load_sql($db_con);
+        $created_sql = $ip_range->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/ip_blocked.sql');
         $t->assert('ip_range->load_sql by id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $result = false;
-        $sql_name = $ip_range->load_sql($db_con, true);
+        $sql_name = $ip_range->load_sql($db_con)->name;
         if (!in_array($sql_name, $sql_names)) {
             $result = true;
             $sql_names[] = $sql_name;
@@ -88,7 +88,7 @@ class system_unit_tests
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $ip_range->load_sql($db_con);
+        $created_sql = $ip_range->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/ip_blocked_mysql.sql');
         $t->assert('ip_range->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
@@ -98,13 +98,13 @@ class system_unit_tests
         $ip_range->from = '66.249.64.95';
         $ip_range->to = '66.249.64.95';
         $ip_range->usr = $usr;
-        $created_sql = $ip_range->load_sql($db_con);
+        $created_sql = $ip_range->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/ip_range.sql');
         $t->assert('ip_range->load_sql by ip range', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $result = false;
-        $sql_name = $ip_range->load_sql($db_con, true);
+        $sql_name = $ip_range->load_sql($db_con)->name;
         if (!in_array($sql_name, $sql_names)) {
             $result = true;
             $sql_names[] = $sql_name;
@@ -113,7 +113,7 @@ class system_unit_tests
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $ip_range->load_sql($db_con);
+        $created_sql = $ip_range->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/ip_range_mysql.sql');
         $t->assert('ip_range->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 

@@ -96,40 +96,42 @@ class ip_range
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
-     * @return string the SQL statement base on the parameters set in $this
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, bool $get_name = false): string
+    function load_sql(sql_db $db_con): sql_par
     {
-        $sql_name = self::class . '_by_';
+        $db_con->set_type(DB_TYPE_IP);
+        $qp = new sql_par(self::class);
+        $qp->name = self::class . '_by_';
         $sql_where = '';
         if ($this->id != 0) {
-            $sql_name .= 'id';
-            $sql_where .= self::FLD_ID . ' = ' . $this->id;
+            $qp->name .= 'id';
+            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $sql_where .= self::FLD_ID . ' = ' . $db_con->par_name();
         } elseif ($this->from != '' and $this->to != '') {
-            $sql_name .= 'range';
-            $sql_where .= self::FLD_FROM . " = '" . $this->from . "' and " . self::FLD_TO . " = '" . $this->to . "'";
+            $qp->name .= 'range';
+            $db_con->add_par(sql_db::PAR_TEXT, $this->from);
+            $sql_where .= self::FLD_FROM . " = " . $db_con->par_name();
+            $db_con->add_par(sql_db::PAR_TEXT, $this->to);
+            $sql_where .= " and " . self::FLD_TO . " = " . $db_con->par_name();
         } else {
-            $sql_name = '';
+            $qp->name = '';
             log_err("Either the database ID (" . $this->id .
                 ") or the ip range (" . $this->dsp_id() .
                 ") must be set to load an ip range.", self::class . '->load_sql');
         }
 
         $sql = '';
-        if ($sql_name != '') {
-            $db_con->set_type(DB_TYPE_IP);
+        if ($qp->name != '') {
+            $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_where_text($sql_where);
-            $sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_id();
+            $qp->par = $db_con->get_par();
         }
 
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
+        return $qp;
     }
 
     /**
@@ -142,10 +144,10 @@ class ip_range
         global $db_con;
         $result = false;
 
-        $sql = $this->load_sql($db_con);
+        $qp = $this->load_sql($db_con);
 
-        if ($sql <> '') {
-            $db_row = $db_con->get1_old($sql);
+        if ($qp->sql <> '') {
+            $db_row = $db_con->get1($qp);
             $result = $this->row_mapper($db_row);
         }
 
