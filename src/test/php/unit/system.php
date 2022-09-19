@@ -245,13 +245,13 @@ class system_unit_tests
         // sql to load by id
         $db_con->db_type = sql_db::POSTGRES;
         $log->id = 1;
-        $created_sql = $log->load_sql($db_con);
+        $created_sql = $log->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/error_log.sql');
         $t->assert('system_error_log->load_sql by id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $result = false;
-        $sql_name = $log->load_sql($db_con, true);
+        $sql_name = $log->load_sql($db_con)->name;
         if (!in_array($sql_name, $sql_names)) {
             $result = true;
             $sql_names[] = $sql_name;
@@ -260,7 +260,7 @@ class system_unit_tests
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $log->load_sql($db_con);
+        $created_sql = $log->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/error_log_mysql.sql');
         $t->assert('system_error_log->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 

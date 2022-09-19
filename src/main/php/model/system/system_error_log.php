@@ -124,35 +124,31 @@ class system_error_log
     /**
      * create the SQL statement to load one system log entry
      * @param sql_db $db_con the database link as parameter to be able to simulate the different SQL database in the unit tests
-     * @param bool $get_name to receive the unique name to be able to precompile the statement to prevent code injections
-     * @return string the database depending on sql statement to load a system error from the log table
-     *                or the unique name for the query
+     * @return sql_par the database depending on sql statement to load a system error from the log table
+     *                 and the unique name for the query
      */
-    function load_sql(sql_db $db_con, bool $get_name = false): string
+    function load_sql(sql_db $db_con): sql_par
     {
-        $sql_name = self::class . '_by_';
+        $qp = new sql_par(self::class);
         if ($this->id > 0) {
-            $sql_name .= 'id';
+            $qp->name .= 'id';
 
             $db_con->set_type(DB_TYPE_SYS_LOG);
-            $db_con->set_name($sql_name);
+            $db_con->set_name($qp->name);
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_join_fields(array(self::FLD_FUNCTION_NAME), DB_TYPE_SYS_LOG_FUNCTION);
             $db_con->set_join_fields(array(user_type::FLD_NAME), DB_TYPE_SYS_LOG_STATUS);
             $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), DB_TYPE_USER);
             $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), DB_TYPE_USER, self::FLD_SOLVER);
             $db_con->set_where_std($this->id);
-            $sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_id();
+            $qp->par = $db_con->get_par();
 
-            if ($get_name) {
-                return $sql_name;
-            } else {
-                return $sql;
-            }
         } else {
             log_err("The database ID (" . $this->id . ") must be set to load a log message.", "system_error_log->load_sql");
-            return '';
+            $qp->sql = '';
         }
+        return $qp;
     }
 
     /**
@@ -166,10 +162,10 @@ class system_error_log
         global $db_con;
 
         // at the moment it is only possible to select the error by the id
-        $sql = $this->load_sql($db_con);
-        if ($sql != '') {
+        $qp = $this->load_sql($db_con);
+        if ($qp->sql != '') {
             $db_con->usr_id = $this->id;
-            return $this->row_mapper($db_con->get1_old($sql));
+            return $this->row_mapper($db_con->get1($qp));
         } else {
             return false;
         }

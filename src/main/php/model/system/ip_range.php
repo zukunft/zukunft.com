@@ -95,7 +95,6 @@ class ip_range
      * create an SQL statement to retrieve the ip range from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql(sql_db $db_con): sql_par
