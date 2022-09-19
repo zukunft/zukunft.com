@@ -565,12 +565,26 @@ class view_cmp_link extends user_sandbox_link
     // check if the database record for the user specific settings can be removed
 
     /**
+     * create an SQL statement to retrieve the user changes of the current view component link
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
+    {
+        $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
+        $db_con->set_fields(self::FLD_NAMES_NUM_USR);
+        return parent::usr_cfg_sql($db_con, $class);
+    }
+
+    /**
      * check if the database record for the user specific settings can be removed
      * @return bool true if the checking and the potential removing has been successful, which does not mean, that the user sandbox database row has actually been removed
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('view_component_link->del_usr_cfg_if_not_needed pre check for ' . $this->dsp_id());
+        log_debug('pre check for ' . $this->dsp_id());
 
         global $db_con;
         $result = true;
@@ -578,17 +592,10 @@ class view_cmp_link extends user_sandbox_link
         //if ($this->has_usr_cfg) {
 
         // check again if there ist not yet a record
-        $sql = 'SELECT view_component_link_id,
-                     order_nbr,
-                     position_type,
-                     excluded
-                FROM user_view_component_links
-               WHERE view_component_link_id = ' . $this->id . ' 
-                 AND user_id = ' . $this->usr->id . ';';
-        //$db_con = New mysql;
+        $qp = $this->usr_cfg_sql($db_con);
         $db_con->usr_id = $this->usr->id;
-        $usr_cfg = $db_con->get1_old($sql);
-        if ($usr_cfg != false) {
+        $usr_cfg = $db_con->get1($qp);
+        if ($usr_cfg) {
             if ($usr_cfg[self::FLD_ID] > 0) {
                 if ($usr_cfg[self::FLD_ORDER_NBR] == Null
                     and $usr_cfg[self::FLD_POS_TYPE] == Null

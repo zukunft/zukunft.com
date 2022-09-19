@@ -53,6 +53,7 @@ class view_component_link_unit_tests
         $lnk = new view_cmp_link($usr);
         $lnk->id = 1;
         $t->assert_load_sql($db_con, $lnk);
+        $t->assert_user_config_sql($db_con, $lnk);
 
         // sql to load a list of value by the phrase ids
         $lnk = new view_cmp_link($usr);
