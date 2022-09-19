@@ -54,6 +54,7 @@ class view_unit_tests
         $dsp->id = 2;
         $t->assert_load_sql($db_con, $dsp);
         $t->assert_load_standard_sql($db_con, $dsp);
+        $t->assert_user_config_sql($db_con, $dsp);
 
         // sql to load the view by name
         $dsp = new view($usr);

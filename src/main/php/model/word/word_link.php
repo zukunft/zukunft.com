@@ -1103,7 +1103,7 @@ class word_link extends user_sandbox_link_description
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('word_link->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
         $result = false;
@@ -1115,7 +1115,7 @@ class word_link extends user_sandbox_link_description
             $qp = $this->usr_cfg_sql($db_con);
             $db_con->usr_id = $this->usr->id;
             $usr_cfg = $db_con->get1($qp);
-            log_debug('word_link->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
+            log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
             if ($usr_cfg) {
                 if ($usr_cfg[self::FLD_ID] > 0) {
                     // TODO use the FLD_NAMES array with all relevant field names
@@ -1123,7 +1123,7 @@ class word_link extends user_sandbox_link_description
                         and $usr_cfg[sql_db::FLD_DESCRIPTION] == Null
                         and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                         // delete the entry in the user sandbox
-                        log_debug('word_link->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                        log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                         $result = $this->del_usr_cfg_exe($db_con);
                     }
                 }
