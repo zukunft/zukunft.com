@@ -268,16 +268,18 @@ class source extends user_sandbox_named
 
     // read the source type name from the database
     // TODO integrate this into the load
-    private function type_name(): string
+    private function type_name(): sql_par
     {
         global $db_con;
 
         if ($this->type_id > 0) {
+            $qp = new sql_par($this->type);
             $db_con->set_type(DB_TYPE_SOURCE_TYPE);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where_std($this->type_id);
-            $sql = $db_con->select_by_id();
-            $db_type = $db_con->get1_old($sql);
+            $qp->sql = $db_con->select_by_id();
+            $qp->par = $this->get_par();
+            $db_type = $db_con->get1($qp);
             $this->type_name = $db_type['source_type_name'];
         }
         return $this->type_name;
