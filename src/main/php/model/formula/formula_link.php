@@ -537,7 +537,7 @@ class formula_link extends user_sandbox_link
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('formula_link->del_usr_cfg_if_not_needed for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+        log_debug('for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
         $result = true;

@@ -1745,7 +1745,7 @@ class formula extends user_sandbox_description
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug(self::class . '->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
         $result = true;
@@ -1755,7 +1755,7 @@ class formula extends user_sandbox_description
         $qp = $this->usr_cfg_sql($db_con);
         $db_con->usr_id = $this->usr->id;
         $usr_cfg = $db_con->get1($qp);
-        log_debug(self::class . '->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
+        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
         if ($usr_cfg[$this->fld_id()] > 0) {
             if ($usr_cfg[self::FLD_NAME] == ''
                 and $usr_cfg[self::FLD_FORMULA_TEXT] == ''
@@ -1765,10 +1765,10 @@ class formula extends user_sandbox_description
                 and $usr_cfg[self::FLD_ALL_NEEDED] == Null
                 and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
-                log_debug(self::class . '->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                 $result = $this->del_usr_cfg_exe($db_con);
             } else {
-                log_debug(self::class . '->del_usr_cfg_if_not_needed not true for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                log_debug('not true for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
             }
         }
 
@@ -1850,7 +1850,7 @@ class formula extends user_sandbox_description
     /**
      * update the time stamp to trigger an update of the depending on results
      */
-    function save_field_trigger_update($db_con): string
+    function save_field_trigger_update(sql_db $db_con): string
     {
         $result = '';
         $this->last_update = new DateTime();

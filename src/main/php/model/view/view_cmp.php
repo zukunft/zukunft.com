@@ -242,6 +242,8 @@ class view_cmp extends user_sandbox_named
 
     /**
      * set the view component type
+     *
+     * @param string $type_code_id the code id that should be added to this view component
      * @return void
      */
     function set_type(string $type_code_id): void
@@ -371,14 +373,14 @@ class view_cmp extends user_sandbox_named
         $this->load_wrd_col();
         $this->load_wrd_col2();
         $this->load_formula();
-        log_debug('view_component->load_phrases done for ' . $this->dsp_id());
+        log_debug('done for ' . $this->dsp_id());
         return $result;
     }
 
     //
-    function load_wrd_row()
+    function load_wrd_row(): string
     {
-        $result = false;
+        $result = '';
         if ($this->word_id_row > 0) {
             $wrd_row = new word($this->usr);
             $wrd_row->id = $this->word_id_row;
@@ -647,7 +649,7 @@ class view_cmp extends user_sandbox_named
         $log->row_id = $this->id;
         $result = $log->add_link_ref();
 
-        log_debug('view_component -> link logged ' . $log->id . '');
+        log_debug('view_component -> link logged ' . $log->id);
         return $result;
     }
 
@@ -742,10 +744,30 @@ class view_cmp extends user_sandbox_named
         return $result;
     }
 
-// check if the database record for the user specific settings can be removed
+    /**
+     * create an SQL statement to retrieve the user changes of the current view component
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
+    {
+        $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
+        $db_con->set_fields(array_merge(
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR
+        ));
+        return parent::usr_cfg_sql($db_con, $class);
+    }
+
+    /**
+     * check if the database record for the user specific settings can be removed
+     * @returns bool true if a user specific view component has been removed
+     */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('view_component->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
         $result = true;
@@ -753,23 +775,11 @@ class view_cmp extends user_sandbox_named
         //if ($this->has_usr_cfg) {
 
         // check again if there is not yet a record
-        $sql = "SELECT view_component_id,
-                     view_component_name,
-                     comment,
-                     view_component_type_id,
-                     word_id_row,
-                     link_type_id,
-                     formula_id,
-                     word_id_col,
-                     word_id_col2,
-                     excluded
-                FROM user_view_components
-               WHERE view_component_id = " . $this->id . " 
-                 AND user_id = " . $this->usr->id . ";";
-        //$db_con = New mysql;
+        $qp = $this->usr_cfg_sql($db_con);
         $db_con->usr_id = $this->usr->id;
-        $usr_cfg = $db_con->get1_old($sql);
-        log_debug('view_component->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
+        $usr_cfg = $db_con->get1($qp);
+
+        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
         if ($usr_cfg != null) {
             if ($usr_cfg['view_component_id'] > 0) {
                 if ($usr_cfg[self::FLD_NAME] == ''
@@ -782,16 +792,22 @@ class view_cmp extends user_sandbox_named
                     and $usr_cfg[self::FLD_COL2_PHRASE] == Null
                     and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                     // delete the entry in the user sandbox
-                    log_debug('view_component->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                    log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                     $result = $this->del_usr_cfg_exe($db_con);
                 }
             }
         }
-        //}
         return $result;
     }
 
-// set the update parameters for the view component comment
+    /**
+     * save the comment field for the view component comment
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param user_sandbox $db_rec the view component as saved in the database before the update
+     * @param user_sandbox $std_rec the default parameter used for this view component
+     * @returns string any message that should be shown to the user or a empty string if everting is fine
+     */
     function save_field_comment(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
@@ -807,7 +823,14 @@ class view_cmp extends user_sandbox_named
         return $result;
     }
 
-// set the update parameters for the word type
+    /**
+     * set the update parameters for the word type
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param user_sandbox $db_rec the view component as saved in the database before the update
+     * @param user_sandbox $std_rec the default parameter used for this view component
+     * @returns string any message that should be shown to the user or a empty string if everting is fine
+     */
     function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
@@ -826,7 +849,14 @@ class view_cmp extends user_sandbox_named
         return $result;
     }
 
-// set the update parameters for the word row
+    /**
+     * set the update parameters for the word row
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param user_sandbox $db_rec the view component as saved in the database before the update
+     * @param user_sandbox $std_rec the default parameter used for this view component
+     * @returns string any message that should be shown to the user or a empty string if everting is fine
+     */
     function save_field_wrd_row(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
@@ -845,7 +875,14 @@ class view_cmp extends user_sandbox_named
         return $result;
     }
 
-// set the update parameters for the word col
+    /**
+     * set the update parameters for the word col
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param user_sandbox $db_rec the view component as saved in the database before the update
+     * @param user_sandbox $std_rec the default parameter used for this view component
+     * @returns string any message that should be shown to the user or a empty string if everting is fine
+     */
     function save_field_wrd_col(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
@@ -864,7 +901,14 @@ class view_cmp extends user_sandbox_named
         return $result;
     }
 
-// set the update parameters for the word col2
+    /**
+     * set the update parameters for the word col2
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param user_sandbox $db_rec the view component as saved in the database before the update
+     * @param user_sandbox $std_rec the default parameter used for this view component
+     * @returns string any message that should be shown to the user or a empty string if everting is fine
+     */
     function save_field_wrd_col2(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
@@ -883,7 +927,14 @@ class view_cmp extends user_sandbox_named
         return $result;
     }
 
-// set the update parameters for the formula
+    /**
+     * set the update parameters for the formula
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param user_sandbox $db_rec the view component as saved in the database before the update
+     * @param user_sandbox $std_rec the default parameter used for this view component
+     * @returns string any message that should be shown to the user or a empty string if everting is fine
+     */
     function save_field_formula(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
@@ -902,7 +953,14 @@ class view_cmp extends user_sandbox_named
         return $result;
     }
 
-// save all updated view_component fields excluding the name, because already done when adding a view_component
+    /**
+     * save all updated view_component fields excluding the name, because already done when adding a view_component
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param user_sandbox $db_rec the view component as saved in the database before the update
+     * @param user_sandbox $std_rec the default parameter used for this view component
+     * @returns string any message that should be shown to the user or a empty string if everting is fine
+     */
     function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = $this->save_field_comment($db_con, $db_rec, $std_rec);
