@@ -1322,15 +1322,11 @@ class value extends user_sandbox_display
             log_debug('value->add_usr_cfg for "' . $this->id . ' und user ' . $this->usr->name);
 
             // check again if there ist not yet a record
-            $sql = 'SELECT user_id 
-                FROM user_values
-               WHERE value_id = ' . $this->id . ' 
-                 AND user_id = ' . $this->usr->id . ';';
-            //$db_con = New mysql;
+            $qp = $this->usr_cfg_sql($db_con);
             $db_con->usr_id = $this->usr->id;
-            $db_row = $db_con->get1_old($sql);
+            $db_row = $db_con->get1($qp);
             if ($db_row != null) {
-                $this->usr_cfg_id = $db_row[self::FLD_USER];
+                $this->usr_cfg_id = $this->usr->id;
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
