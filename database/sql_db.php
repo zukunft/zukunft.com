@@ -160,86 +160,90 @@ class sql_db
      * object variables
      */
 
-    public ?string $db_type = null;               // the database type which should be used for this connection e.g. postgreSQL or MYSQL
+    public ?string $db_type = null;                 // the database type which should be used for this connection e.g. postgreSQL or MYSQL
     // TODO change type to PgSql\Connection with php 8.1
-    public $postgres_link;                        // the link object to the database
-    public mysqli $mysql;                         // the MySQL object to the database
-    public ?int $usr_id = null;                   // the user id of the person who request the database changes
-    private ?int $usr_view_id = null;             // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
+    public $postgres_link;                          // the link object to the database
+    public mysqli $mysql;                           // the MySQL object to the database
+    public ?int $usr_id = null;                     // the user id of the person who request the database changes
+    private ?int $usr_view_id = null;               // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
 
-    private ?string $type = '';                   // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
-    private ?string $table = '';                  // name of the table that is used for the next query
-    private ?string $id_field = '';               // primary key field of the table used
-    private ?string $id_from_field = '';          // only for link objects the id field of the source object
-    private ?string $id_to_field = '';            // only for link objects the id field of the destination object
-    private ?string $id_link_field = '';          // only for link objects the id field of the link type object
-    private ?string $name_field = '';             // unique text key field of the table used
-    private ?string $query_name = '';             // unique name of the query to precompile and use the query
-    private ?array $par_types = [];               // list of the parameter types, which also defines a precompiled query
-    private ?array $par_values = [];              // list of the parameter value to make sure they are in the same order as the parameter
-    private ?array $par_use_link = [];            // array of bool, true if the parameter should be used on the linked table
-    private array $par_named = [];                // array of bool, true if the parameter placeholder is already used in the SQL statement
-    private ?array $field_lst = [];               // list of fields that should be returned to the next select query
-    private ?array $usr_field_lst = [];           // list of user specific fields that should be returned to the next select query
-    private ?array $usr_num_field_lst = [];       // list of user specific numeric fields that should be returned to the next select query
-    private ?array $usr_bool_field_lst = [];      // list of user specific boolean / tinyint fields that should be returned to the next select query
-    private ?array $usr_only_field_lst = [];      // list of fields that are only in the user sandbox
-    private ?array $join_field_lst = [];          // list of fields that should be returned to the next select query that are taken from a joined table
-    private ?array $join2_field_lst = [];         // same as $join_field_lst but for the second join
-    private ?array $join3_field_lst = [];         // same as $join_field_lst but for the third join
-    private ?array $join4_field_lst = [];         // same as $join_field_lst but for the fourth join
-    private string $join_field = '';              // if set the field name in the main table that should be used for the join; only needed, if the field name differs from the first target field
-    private string $join2_field = '';             // same as $join_field but for the second join
-    private string $join3_field = '';             // same as $join_field but for the third join
-    private string $join4_field = '';             // same as $join_field but for the fourth join
-    private string $join_to_field = '';           // if set the field name in the joined table that should be used for the join; only needed, if the joined field name differ from the type id field
-    private string $join2_to_field = '';          // same as $join_field but for the second join
-    private string $join3_to_field = '';          // same as $join_field but for the third join
-    private string $join4_to_field = '';          // same as $join_field but for the fourth join
-    private bool $join_force_rename = false;      // if true force the fields to be renamed to create unique fields e.g. if a similar object is linked
-    private bool $join2_force_rename = false;     // same as $join_force_rename but for the second join
-    private bool $join3_force_rename = false;     // same as $join_force_rename but for the third join
-    private bool $join4_force_rename = false;     // same as $join_force_rename but for the fourth join
-    private string $join_select_field = '';       // if set the field name in the joined table that should be used for a where selection
-    private string $join2_select_field = '';      // same as $join_select_field but for the second join
-    private string $join3_select_field = '';      // same as $join_select_field but for the third join
-    private string $join4_select_field = '';      // same as $join_select_field but for the fourth join
-    private int $join_select_id = 0;              // if $join_select_field is set the id (int) used for the selection
-    private int $join2_select_id = 0;             // same as $join_select_id but for the second join
-    private int $join3_select_id = 0;             // same as $join_select_id but for the third join
-    private int $join4_select_id = 0;             // same as $join_select_id but for the fourth join
-    private string $join_usr_par_name = '';       // the parameter name for the user id
-    private ?array $join_usr_field_lst = [];      // list of fields that should be returned to the next select query that are taken from a joined table
-    private ?array $join2_usr_field_lst = [];     // same as $join_usr_field_lst but for the second join
-    private ?array $join3_usr_field_lst = [];     // same as $join_usr_field_lst but for the third join
-    private ?array $join4_usr_field_lst = [];     // same as $join_usr_field_lst but for the fourth join
-    private ?array $join_usr_num_field_lst = [];  // list of fields that should be returned to the next select query that are taken from a joined table
-    private ?array $join2_usr_num_field_lst = []; // same as $join_usr_num_field_lst but for the second join
-    private ?array $join3_usr_num_field_lst = []; // same as $join_usr_num_field_lst but for the third join
-    private ?array $join4_usr_num_field_lst = []; // same as $join_usr_num_field_lst but for the fourth join
-    private ?string $join_type = '';              // the type name of the table to join
-    private ?string $join2_type = '';             // the type name of the second table to join (maybe later switch to join n tables)
-    private ?string $join3_type = '';             // the type name of the third table to join (maybe later switch to join n tables)
-    private ?string $join4_type = '';             // the type name of the fourth table to join (maybe later switch to join n tables)
-    private bool $all_query = false;              // true, if the query is expected to retrieve the standard and the user specific data
-    private bool $usr_query = false;              // true, if the query is expected to retrieve user specific data
-    private bool $join_usr_query = false;         // true, if the joined query is also expected to retrieve user specific data
-    private bool $join2_usr_query = false;        // same as $usr_join_query but for the second join
-    private bool $join3_usr_query = false;        // same as $usr_join_query but for the third join
-    private bool $join4_usr_query = false;        // same as $usr_join_query but for the fourth join
-    private bool $join_usr_added = false;         // true, if the user join statement has been created
-    private bool $usr_only_query = false;         // true, if the query is expected to retrieve ONLY the user specific data without the standard values
+    private ?string $type = '';                     // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
+    private ?string $table = '';                    // name of the table that is used for the next query
+    private ?string $id_field = '';                 // primary key field of the table used
+    private ?string $id_from_field = '';            // only for link objects the id field of the source object
+    private ?string $id_to_field = '';              // only for link objects the id field of the destination object
+    private ?string $id_link_field = '';            // only for link objects the id field of the link type object
+    private ?string $name_field = '';               // unique text key field of the table used
+    private ?string $query_name = '';               // unique name of the query to precompile and use the query
+    private ?array $par_types = [];                 // list of the parameter types, which also defines a precompiled query
+    private ?array $par_values = [];                // list of the parameter value to make sure they are in the same order as the parameter
+    private ?array $par_use_link = [];              // array of bool, true if the parameter should be used on the linked table
+    private array $par_named = [];                  // array of bool, true if the parameter placeholder is already used in the SQL statement
+    private ?array $field_lst = [];                 // list of fields that should be returned to the next select query
+    private ?array $usr_field_lst = [];             // list of user specific fields that should be returned to the next select query
+    private ?array $usr_num_field_lst = [];         // list of user specific numeric fields that should be returned to the next select query
+    private ?array $usr_bool_field_lst = [];        // list of user specific boolean / tinyint fields that should be returned to the next select query
+    private ?array $usr_only_field_lst = [];        // list of fields that are only in the user sandbox
+    private ?array $join_field_lst = [];            // list of fields that should be returned to the next select query that are taken from a joined table
+    private ?array $join2_field_lst = [];           // same as $join_field_lst but for the second join
+    private ?array $join3_field_lst = [];           // same as $join_field_lst but for the third join
+    private ?array $join4_field_lst = [];           // same as $join_field_lst but for the fourth join
+    private string $join_field = '';                // if set the field name in the main table that should be used for the join; only needed, if the field name differs from the first target field
+    private string $join2_field = '';               // same as $join_field but for the second join
+    private string $join3_field = '';               // same as $join_field but for the third join
+    private string $join4_field = '';               // same as $join_field but for the fourth join
+    private string $join_to_field = '';             // if set the field name in the joined table that should be used for the join; only needed, if the joined field name differ from the type id field
+    private string $join2_to_field = '';            // same as $join_field but for the second join
+    private string $join3_to_field = '';            // same as $join_field but for the third join
+    private string $join4_to_field = '';            // same as $join_field but for the fourth join
+    private bool $join_force_rename = false;        // if true force the fields to be renamed to create unique fields e.g. if a similar object is linked
+    private bool $join2_force_rename = false;       // same as $join_force_rename but for the second join
+    private bool $join3_force_rename = false;       // same as $join_force_rename but for the third join
+    private bool $join4_force_rename = false;       // same as $join_force_rename but for the fourth join
+    private string $join_select_field = '';         // if set the field name in the joined table that should be used for a where selection
+    private string $join2_select_field = '';        // same as $join_select_field but for the second join
+    private string $join3_select_field = '';        // same as $join_select_field but for the third join
+    private string $join4_select_field = '';        // same as $join_select_field but for the fourth join
+    private int $join_select_id = 0;                // if $join_select_field is set the id (int) used for the selection
+    private int $join2_select_id = 0;               // same as $join_select_id but for the second join
+    private int $join3_select_id = 0;               // same as $join_select_id but for the third join
+    private int $join4_select_id = 0;               // same as $join_select_id but for the fourth join
+    private string $join_usr_par_name = '';         // the parameter name for the user id
+    private ?array $join_usr_field_lst = [];        // list of fields that should be returned to the next select query that are taken from a joined table
+    private ?array $join2_usr_field_lst = [];       // same as $join_usr_field_lst but for the second join
+    private ?array $join3_usr_field_lst = [];       // same as $join_usr_field_lst but for the third join
+    private ?array $join4_usr_field_lst = [];       // same as $join_usr_field_lst but for the fourth join
+    private ?array $join_usr_num_field_lst = [];    // list of fields that should be returned to the next select query that are taken from a joined table
+    private ?array $join2_usr_num_field_lst = [];   // same as $join_usr_num_field_lst but for the second join
+    private ?array $join3_usr_num_field_lst = [];   // same as $join_usr_num_field_lst but for the third join
+    private ?array $join4_usr_num_field_lst = [];   // same as $join_usr_num_field_lst but for the fourth join
+    private ?array $join_usr_count_field_lst = [];  // list of fields that should be returned to the next select query where the count are taken from a joined table
+    private ?array $join2_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the second join
+    private ?array $join3_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the third join
+    private ?array $join4_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the fourth join
+    private ?string $join_type = '';                // the type name of the table to join
+    private ?string $join2_type = '';               // the type name of the second table to join (maybe later switch to join n tables)
+    private ?string $join3_type = '';               // the type name of the third table to join (maybe later switch to join n tables)
+    private ?string $join4_type = '';               // the type name of the fourth table to join (maybe later switch to join n tables)
+    private bool $all_query = false;                // true, if the query is expected to retrieve the standard and the user specific data
+    private bool $usr_query = false;                // true, if the query is expected to retrieve user specific data
+    private bool $join_usr_query = false;           // true, if the joined query is also expected to retrieve user specific data
+    private bool $join2_usr_query = false;          // same as $usr_join_query but for the second join
+    private bool $join3_usr_query = false;          // same as $usr_join_query but for the third join
+    private bool $join4_usr_query = false;          // same as $usr_join_query but for the fourth join
+    private bool $join_usr_added = false;           // true, if the user join statement has been created
+    private bool $usr_only_query = false;           // true, if the query is expected to retrieve ONLY the user specific data without the standard values
 
-    private ?string $fields = '';                 // the fields                SQL statement that is used for the next select query
-    private ?string $from = '';                   // the FROM                  SQL statement that is used for the next select query
-    private ?string $join = '';                   // the JOIN                  SQL statement that is used for the next select query
-    private ?string $where = '';                  // the WHERE condition as an SQL statement that is used for the next select query
-    private ?string $order = '';                  // the ORDER                 SQL statement that is used for the next select query
-    private ?string $page = '';                   // the LIMIT and OFFSET      SQL statement that is used for the next select query
-    private ?string $end = '';                    // the closing               SQL statement that is used for the next select query
+    private ?string $fields = '';                   // the fields                SQL statement that is used for the next select query
+    private ?string $from = '';                     // the FROM                  SQL statement that is used for the next select query
+    private ?string $join = '';                     // the JOIN                  SQL statement that is used for the next select query
+    private ?string $where = '';                    // the WHERE condition as an SQL statement that is used for the next select query
+    private ?string $order = '';                    // the ORDER                 SQL statement that is used for the next select query
+    private ?string $page = '';                     // the LIMIT and OFFSET      SQL statement that is used for the next select query
+    private ?string $end = '';                      // the closing               SQL statement that is used for the next select query
 
-    private ?array $prepared_sql_names = [];      // list of all SQL queries that have already been prepared during the open connection
-    private ?array $prepared_stmt = [];           // list of the MySQL stmt
+    private ?array $prepared_sql_names = [];        // list of all SQL queries that have already been prepared during the open connection
+    private ?array $prepared_stmt = [];             // list of the MySQL stmt
 
     /*
      * set up the environment
@@ -300,6 +304,10 @@ class sql_db
         $this->join2_usr_num_field_lst = [];
         $this->join3_usr_num_field_lst = [];
         $this->join4_usr_num_field_lst = [];
+        $this->join_usr_count_field_lst = [];
+        $this->join2_usr_count_field_lst = [];
+        $this->join3_usr_count_field_lst = [];
+        $this->join4_usr_count_field_lst = [];
         $this->join_type = '';
         $this->join2_type = '';
         $this->join3_type = '';
@@ -713,6 +721,30 @@ class sql_db
         }
     }
 
+    function set_join_usr_count_fields(array  $join_field_lst,
+                                       string $join_type): void
+    {
+        if ($this->join_type == '') {
+            $this->join_type = $join_type;
+            $this->join_usr_count_field_lst = $join_field_lst;
+            $this->join_usr_query = true;
+        } elseif ($this->join2_type == '') {
+            $this->join2_type = $join_type;
+            $this->join2_usr_count_field_lst = $join_field_lst;
+            $this->join2_usr_query = true;
+        } elseif ($this->join3_type == '') {
+            $this->join3_type = $join_type;
+            $this->join3_usr_count_field_lst = $join_field_lst;
+            $this->join3_usr_query = true;
+        } elseif ($this->join4_type == '') {
+            $this->join4_type = $join_type;
+            $this->join4_usr_count_field_lst = $join_field_lst;
+            $this->join4_usr_query = true;
+        } else {
+            log_err('Max four table count joins expected in version ' . PRG_VERSION);
+        }
+    }
+
     /**
      * define that the SQL statement should return the standard value and the user specific changes of all users
      */
@@ -733,6 +765,14 @@ class sql_db
     }
 
     function set_usr_num_fields($usr_field_lst): void
+    {
+        $this->usr_query = true;
+        $this->join_usr_query = true;
+        $this->usr_num_field_lst = $usr_field_lst;
+        $this->set_user_join();
+    }
+
+    function set_usr_count_fields($usr_field_lst): void
     {
         $this->usr_query = true;
         $this->join_usr_query = true;
@@ -785,6 +825,14 @@ class sql_db
     private function set_field_usr_num($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL, $as = ''): void
     {
         $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_VAL, $stb_tbl, $usr_tbl, $as);
+    }
+
+    /**
+     * internal interface function for sql_usr_field using the class db type settings and number fields
+     */
+    private function set_field_usr_count($field, $stb_tbl = sql_db::LNK_TBL, $as = ''): void
+    {
+        $this->from = ' FROM ( SELECT ' . $this->fields . ', count(' . $stb_tbl . '.' . $field . ') AS ' . $as;
     }
 
     /**
@@ -1054,6 +1102,12 @@ class sql_db
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_num($field_esc, sql_db::LNK4_TBL, sql_db::ULK4_TBL, $this->name_sql_esc($field . '4'));
+        }
+
+        // add user specific count join fields
+        foreach ($this->join_usr_count_field_lst as $field) {
+            $field_esc = $this->name_sql_esc($field);
+            $this->set_field_usr_count($field_esc, sql_db::LNK_TBL, $this->name_sql_esc($field . '_count'));
         }
 
         foreach ($this->usr_only_field_lst as $field) {
@@ -2332,32 +2386,74 @@ class sql_db
             if ($this->join_to_field != '') {
                 $join_id_field = $this->join_to_field;
             }
-            $this->join .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::LNK_TBL;
-            $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . sql_db::LNK_TBL . '.' . $join_id_field;
-            if ($this->usr_query and $this->join_usr_query) {
-                $this->join .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join_table_name . ' ' . sql_db::ULK_TBL;
-                $this->join .= ' ON ' . sql_db::LNK_TBL . '.' . $join_id_field . ' = ' . sql_db::ULK_TBL . '.' . $join_id_field;
-                if (!$this->all_query) {
-                    $this->join .= ' AND ' . sql_db::ULK_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
-                    if ($this->query_name == '') {
-                        $this->join .= $this->usr_view_id;
-                    } else {
-                        // for MySQL the parameter needs to be repeated
-                        if ($this->db_type == self::MYSQL) {
-                            $this->add_par(self::PAR_INT, $this->usr_id, true);
+            if (count($this->join_usr_count_field_lst) > 0) {
+                $field_sql = '';
+                foreach ($this->field_lst as $field_name) {
+                    if ($field_sql != '') {
+                        $field_sql .= ', ';
+                    }
+                    $field_sql .= sql_db::LNK_TBL . '.' . $field_name;
+                }
+                $field_count_sql = '';
+                $field_order_sql = '';
+                foreach ($this->join_usr_count_field_lst as $field_name) {
+                    if ($field_count_sql != '') {
+                        $field_count_sql .= ', ';
+                    }
+                    if ($field_order_sql != '') {
+                        $field_order_sql .= ', ';
+                    }
+                    $field_name_as = $field_name . '_count';
+                    $field_count_sql .= 'count(' . sql_db::LNK_TBL . '.' . $field_name . ') AS ' . $field_name_as;
+                    $field_order_sql .= $field_name_as;
+                }
+                if (count($this->join_usr_count_field_lst) > 0) {
+                    $this->from .= ' FROM ' . $this->name_sql_esc($this->table) . ' ' . sql_db::STD_TBL;
+                    $this->from .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join_table_name . ' ' . sql_db::LNK_TBL;
+                    $this->from .= ' ON ' . sql_db::LNK_TBL . '.' . $join_from_id_field . ' = ' . sql_db::STD_TBL . '.' . $join_id_field;
+                    $this->add_par(self::PAR_INT, $this->usr_id);
+                    $this->from .= ' WHERE ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . $this->par_name() . ' ';
+                    $this->from .= ' GROUP BY ' . $this->fields . ' ';
+                    $this->from .= ' ) AS ' . sql_db::STD_TBL;
+                    $this->order = ' ORDER BY ' . $field_order_sql . ' DESC';
+                } else {
+                    $this->from = ' FROM ( SELECT ' . $this->name_sql_esc($this->table);
+                    $this->from .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::LNK_TBL;
+                    $this->from .= ' ON ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . sql_db::LNK_TBL . '.' . $join_id_field;
+                    $this->add_par(self::PAR_INT, $this->usr_id);
+                    $this->from .= ' WHERE ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . $this->par_name() . ' ';
+                    $this->from .= ' GROUP BY ' . $field_sql . ' ';
+                    $this->from .= ' ) AS c1';
+                    $this->order = $field_order_sql . ' DESC';
+                }
+            } else {
+                $this->join .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::LNK_TBL;
+                $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . sql_db::LNK_TBL . '.' . $join_id_field;
+                if ($this->usr_query and $this->join_usr_query) {
+                    $this->join .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join_table_name . ' ' . sql_db::ULK_TBL;
+                    $this->join .= ' ON ' . sql_db::LNK_TBL . '.' . $join_id_field . ' = ' . sql_db::ULK_TBL . '.' . $join_id_field;
+                    if (!$this->all_query) {
+                        $this->join .= ' AND ' . sql_db::ULK_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                        if ($this->query_name == '') {
+                            $this->join .= $this->usr_view_id;
+                        } else {
+                            // for MySQL the parameter needs to be repeated
+                            if ($this->db_type == self::MYSQL) {
+                                $this->add_par(self::PAR_INT, $this->usr_id, true);
+                            }
+                            $this->join .= $this->join_usr_par_name;
                         }
-                        $this->join .= $this->join_usr_par_name;
                     }
                 }
-            }
-            if ($this->join_select_field != '') {
-                if ($this->where == '') {
-                    $this->where = ' WHERE ';
-                } else {
-                    $this->where .= ' AND ';
+                if ($this->join_select_field != '') {
+                    if ($this->where == '') {
+                        $this->where = ' WHERE ';
+                    } else {
+                        $this->where .= ' AND ';
+                    }
+                    $this->add_par(self::PAR_INT, $this->join_select_id);
+                    $this->where .= sql_db::LNK_TBL . '.' . $this->join_select_field . ' = ' . $this->par_name();
                 }
-                $this->add_par(self::PAR_INT, $this->join_select_id);
-                $this->where .= sql_db::LNK_TBL . '.' . $this->join_select_field . ' = ' . $this->par_name();
             }
         }
         if ($this->join2_type <> '') {
@@ -2477,16 +2573,19 @@ class sql_db
                 $this->where .= sql_db::LNK4_TBL . '.' . $this->join4_select_field . ' = ' . $this->par_name();
             }
         }
-        $this->from = ' FROM ' . $this->name_sql_esc($this->table);
-        if ($this->join <> '') {
-            $this->from .= ' ' . sql_db::STD_TBL;
+        if ($this->from == '') {
+            $this->from = ' FROM ' . $this->name_sql_esc($this->table);
+            if ($this->join <> '') {
+                $this->from .= ' ' . sql_db::STD_TBL;
+            }
         }
     }
 
     /**
      * create the "FROM" SQL statement based on the type for the user sandbox values
      */
-    private function set_from_user()
+    private
+    function set_from_user()
     {
         $this->from = ' FROM ' . $this->name_sql_esc(DB_TYPE_USER_PREFIX . $this->table);
     }
@@ -2635,7 +2734,8 @@ class sql_db
      * convert the parameter type list to make valid for postgres
      * @return void
      */
-    private function par_types_to_postgres()
+    private
+    function par_types_to_postgres()
     {
         $in_types = $this->par_types;
         $this->par_types = array();
@@ -2659,7 +2759,8 @@ class sql_db
     /**
      * @return string with the SQL prepare statement for the current query
      */
-    private function prepare_sql(): string
+    private
+    function prepare_sql(): string
     {
         $sql = '';
         if (count($this->par_types) > 0) {
@@ -2681,7 +2782,8 @@ class sql_db
     /**
      * @return string with the SQL closing statement for the current query
      */
-    private function end_sql(string $sql): string
+    private
+    function end_sql(string $sql): string
     {
         if ($this->end == '') {
             $this->end = ';';
@@ -2698,7 +2800,8 @@ class sql_db
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @return string the created SQL statement in the previous set dialect
      */
-    private function select_by(array $id_fields, bool $has_id = true): string
+    private
+    function select_by(array $id_fields, bool $has_id = true): string
     {
         $sql = '';
         $sql_end = ';';
@@ -3253,7 +3356,8 @@ class sql_db
     /**
      * fallback SQL string escape function if there is no database connection
      */
-    private function sql_escape($param)
+    private
+    function sql_escape($param)
     {
         if (is_array($param))
             return array_map(__METHOD__, $param);
@@ -3265,7 +3369,7 @@ class sql_db
         return $param;
     }
 
-    // reset the seq number
+// reset the seq number
     function seq_reset($type): string
     {
         $msg = '';

@@ -63,6 +63,15 @@ class word_unit_tests
         $wrd->name = word::TN_READ;
         $t->assert_load_sql($db_con, $wrd);
 
+        // get the most often used view
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $wrd->view_sql($db_con);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $wrd->view_sql($db_con);
+        $t->assert_qp($qp, $db_con->db_type);
+
 
         $t->subheader('Im- and Export tests');
 

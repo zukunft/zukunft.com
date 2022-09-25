@@ -268,7 +268,7 @@ class source extends user_sandbox_named
 
     // read the source type name from the database
     // TODO integrate this into the load
-    private function type_name(): sql_par
+    private function type_name(): string
     {
         global $db_con;
 

@@ -527,6 +527,21 @@ class word extends user_sandbox_description
 
     // TODO review, because is it needed? get the view used by most users for this word
 
+    function view_sql(sql_db $db_con): sql_par
+    {
+        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(array(self::FLD_VIEW));
+        $db_con->set_join_usr_count_fields(array(sql_db::FLD_USER_ID), DB_TYPE_WORD);
+        $qp = new sql_par(self::class);
+        $qp->name = 'word_view_most_used';
+        $db_con->set_name($qp->name);
+        $qp->sql = $db_con->select_by_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
     /**
      * get the suggested view
      * @return int the view of the most often used view
@@ -538,16 +553,8 @@ class word extends user_sandbox_description
         global $db_con;
 
         $view_id = 0;
-        $sql = "SELECT view_id
-              FROM ( SELECT u.view_id, count(u.user_id) AS users
-                       FROM words w 
-                  LEFT JOIN user_words u ON u.word_id = w.word_id 
-                      WHERE w.word_id = " . $this->id . "
-                   GROUP BY u.view_id ) as v
-          ORDER BY users DESC;";
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
+        $qp = $this->view_sql($db_con);
+        $db_row = $db_con->get1($qp);
         if (isset($db_row)) {
             $view_id = $db_row[self::FLD_VIEW];
         }
