@@ -451,22 +451,13 @@ class view extends user_sandbox_named
     object display functions
     */
 
-    // TODO review (get the object instead)
-    private function type_name()
+    /**
+     * @return string the name of the view type
+     */
+    private function type_name(): string
     {
-
-        global $db_con;
-
-        if ($this->type_id > 0) {
-            $sql = "SELECT type_name, description, code_id
-                FROM view_types
-               WHERE view_type_id = " . $this->type_id . ";";
-            //$db_con = new mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_type = $db_con->get1_old($sql);
-            $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
-        }
-        return $this->type_name;
+        global $view_types;
+        return $view_types->name($this->type_id);
     }
 
     /**
