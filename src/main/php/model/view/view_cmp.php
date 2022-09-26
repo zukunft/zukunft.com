@@ -476,24 +476,13 @@ class view_cmp extends user_sandbox_named
         return '<a href="/http/view_component_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
     }
 
-    //
-    function type_name()
+    /**
+     * @return string the name of the view type
+     */
+    function type_name(): string
     {
-        log_debug('view_component->type_name do');
-
-        global $db_con;
-
-        if ($this->type_id > 0) {
-            $sql = "SELECT type_name, description
-                FROM view_component_types
-               WHERE view_component_type_id = " . $this->type_id . ";";
-            //$db_con = new mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_type = $db_con->get1_old($sql);
-            $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
-        }
-        log_debug('view_component->type_name done');
-        return $this->type_name;
+        global $view_component_types;
+        return $view_component_types->name($this->type_id);
     }
 
     /*
