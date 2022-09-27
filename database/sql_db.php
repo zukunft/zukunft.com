@@ -1262,6 +1262,9 @@ class sql_db
         if ($result == 'view_component_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
+        if ($result == 'view_component_position_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
         if ($result == 'formula_element_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }

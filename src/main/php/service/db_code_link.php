@@ -43,6 +43,7 @@ class db_cl
     const VIEW = "view";
     const VIEW_TYPE = "view_type";
     const VIEW_COMPONENT_TYPE = "view_component_type";
+    const VIEW_COMPONENT_POS_TYPE = "view_component_position_type";
     const REF_TYPE = "ref_type";
     const SHARE_TYPE = "share_type";
     const PROTECTION_TYPE = "protection_type";
@@ -122,6 +123,12 @@ class db_cl
     {
         global $view_component_types;
         return $view_component_types->id($code_id);
+    }
+
+    function view_component_pos_type_id(string $code_id): int
+    {
+        global $view_component_position_types;
+        return $view_component_position_types->id($code_id);
     }
 
     function ref_type_id(string $code_id): int
@@ -206,6 +213,12 @@ class db_cl
     {
         global $view_component_types;
         return $view_component_types->get_by_id($id);
+    }
+
+    function view_component_pos_type(int $id)
+    {
+        global $view_component_position_types;
+        return $view_component_position_types->get_by_id($id);
     }
 
     function share_type(int $id)
@@ -304,6 +317,12 @@ class db_cl
         return $view_component_types->name($id);
     }
 
+    function view_component_pos_type_name(int $id): string
+    {
+        global $view_component_position_types;
+        return $view_component_position_types->name($id);
+    }
+
     function ref_type_name(int $id): string
     {
         global $ref_types;
@@ -384,6 +403,9 @@ function cl(string $type, string $code_id): int
         case db_cl::VIEW_COMPONENT_TYPE:
             $result = $db_code_link->view_component_type_id($code_id);
             break;
+        case db_cl::VIEW_COMPONENT_POS_TYPE:
+            $result = $db_code_link->view_component_pos_type_id($code_id);
+            break;
         case db_cl::REF_TYPE:
             $result = $db_code_link->ref_type_id($code_id);
             break;
@@ -449,6 +471,9 @@ function cl_name(string $type, int $id): string
         case db_cl::VIEW_COMPONENT_TYPE:
             $result = $db_code_link->view_component_type_name($id);
             break;
+        case db_cl::VIEW_COMPONENT_POS_TYPE:
+            $result = $db_code_link->view_component_pos_type_name($id);
+            break;
         case db_cl::REF_TYPE:
             $result = $db_code_link->ref_type_name($id);
             break;
@@ -511,6 +536,9 @@ function get_type(string $type, string $code_id): user_type
             break;
         case db_cl::VIEW_COMPONENT_TYPE:
             $result = $db_code_link->view_component_type($db_code_link->view_component_type_id($code_id));
+            break;
+        case db_cl::VIEW_COMPONENT_POS_TYPE:
+            $result = $db_code_link->view_component_pos_type($db_code_link->view_component_pos_type_id($code_id));
             break;
         // db_cl::REF_TYPE is excluded here because it returns an extended object
         case db_cl::SHARE_TYPE:

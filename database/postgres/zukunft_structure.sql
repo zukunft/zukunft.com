@@ -1290,7 +1290,8 @@ CREATE TABLE IF NOT EXISTS view_component_position_types
 (
     view_component_position_type_id BIGSERIAL PRIMARY KEY,
     type_name                       varchar(100) NOT NULL,
-    description                     text         NOT NULL
+    description                     text         NOT NULL,
+    code_id                         varchar(50)  NOT NULL
 );
 
 COMMENT ON TABLE view_component_position_types is 'sideways or down';

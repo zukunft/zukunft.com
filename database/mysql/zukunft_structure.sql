@@ -1279,7 +1279,8 @@ CREATE TABLE IF NOT EXISTS `view_component_position_types`
 (
     `view_component_position_type_id` int(11)      NOT NULL,
     `type_name`                       varchar(100) NOT NULL,
-    `description`                     text         NOT NULL
+    `description`                     text         NOT NULL,
+    `code_id`                         varchar(50)  NOT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 3
   DEFAULT CHARSET = utf8 COMMENT ='sideways or down';
@@ -1499,14 +1500,14 @@ DROP TABLE IF EXISTS `user_phrases`;
 
 CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
     SECURITY DEFINER VIEW `user_phrases` AS
-select `words`.`word_id`       AS `phrase_id`,
-       `words`.`user_id`       AS `user_id`,
-       `words`.`word_name`     AS `name_used`,
-       `words`.`description`   AS `description`,
-       `words`.`values`        AS `values`,
-       `words`.`excluded`      AS `excluded`,
-       `words`.`share_type_id` AS `share_type_id`,
-       `words`.`protect_id`    AS `protect_id`
+select `user_words`.`word_id`       AS `phrase_id`,
+       `user_words`.`user_id`       AS `user_id`,
+       `user_words`.`word_name`     AS `name_used`,
+       `user_words`.`description`   AS `description`,
+       `user_words`.`values`        AS `values`,
+       `user_words`.`excluded`      AS `excluded`,
+       `user_words`.`share_type_id` AS `share_type_id`,
+       `user_words`.`protect_id`    AS `protect_id`
 from `user_words`
 union
 select (`word_links`.`word_link_id` * -(1)) AS `phrase_id`,

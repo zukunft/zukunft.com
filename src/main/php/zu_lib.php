@@ -192,6 +192,7 @@ const DB_TYPE_VIEW_COMPONENT = 'view_component';
 const DB_TYPE_VIEW_COMPONENT_LINK = 'view_component_link';
 const DB_TYPE_VIEW_COMPONENT_TYPE = 'view_component_type';
 const DB_TYPE_VIEW_COMPONENT_LINK_TYPE = 'view_component_link_type';
+const DB_TYPE_VIEW_COMPONENT_POS_TYPE = 'view_component_position_type';
 
 const DB_TYPE_CHANGE = 'change';
 const DB_TYPE_CHANGE_TABLE = 'change_table';
@@ -366,6 +367,8 @@ include_once $path_php . 'model/view/view_cmp_exp.php';
 include_once $path_php . 'model/view/view_cmp_dsp.php';
 include_once $path_php . 'model/view/view_cmp_type.php';
 include_once $path_php . 'model/view/view_cmp_type_list.php';
+include_once $path_php . 'model/view/view_cmp_pos_type.php';
+include_once $path_php . 'model/view/view_cmp_pos_type_list.php';
 include_once $path_php . 'model/view/view_cmp_link.php';
 include_once $path_php . 'model/view/view_cmp_link_list.php';
 include_once $path_php . 'model/view/view_cmp_link_types.php';
@@ -897,6 +900,7 @@ function prg_restart(string $code_name): sql_db
     global $view_types;
     global $view_component_types;
     global $view_component_link_types;
+    global $view_component_position_types;
     global $ref_types;
     global $share_types;
     global $protection_types;
@@ -947,6 +951,8 @@ function prg_restart(string $code_name): sql_db
     // not yet needed?
     //$view_component_link_types = new view_component_link_type_list();
     //$view_component_link_types->load($db_con);
+    $view_component_position_types = new view_cmp_pos_type_list();
+    $view_component_position_types->load($db_con);
     $ref_types = new ref_type_list();
     $ref_types->load($db_con);
     $share_types = new share_type_list();

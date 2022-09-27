@@ -74,6 +74,7 @@ class test_unit extends testing
         $this->init_view_types();
         $this->init_view_component_types();
         $this->init_view_component_link_types();
+        $this->init_view_component_pos_types();
         $this->init_ref_types();
         $this->init_share_types();
         $this->init_protection_types();
@@ -250,6 +251,18 @@ class test_unit extends testing
 
         $view_component_types = new view_cmp_type_list();
         $view_component_types->load_dummy();
+
+    }
+
+    /**
+     * create view component position type array for the unit tests without database connection
+     */
+    function init_view_component_pos_types()
+    {
+        global $view_component_position_types;
+
+        $view_component_position_types = new view_cmp_pos_type_list();
+        $view_component_position_types->load_dummy();
 
     }
 
