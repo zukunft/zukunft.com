@@ -44,6 +44,7 @@
 */
 
 use export\exp_obj;
+use html\word_dsp;
 
 class user
 {
@@ -110,7 +111,7 @@ class user
 
     }
 
-    function reset()
+    function reset(): void
     {
         $this->id = null;
         $this->name = null;
@@ -500,7 +501,7 @@ class user
         $wrd->id = $this->wrd_id;
         $wrd->load();
         $this->wrd = $wrd;
-        return $wrd;
+        return $wrd->dsp_obj();
     }
 
     // set the parameters for the virtual user that represents the standard view for all users

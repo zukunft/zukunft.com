@@ -358,24 +358,13 @@ class view_cmp_link extends user_sandbox_link
         return $result;
     }
 
-    //
-    private function pos_type_name()
+    /**
+     * @return string the name of the preloaded view component position type
+     */
+    private function pos_type_name(): string
     {
-        log_debug('view_component_link->pos_type_name do');
-
-        global $db_con;
-
-        if ($this->type_id > 0) {
-            $sql = "SELECT type_name, description
-                FROM view_component_position_types
-               WHERE view_component_position_type_id = " . $this->type_id . ";";
-            //$db_con = new mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_type = $db_con->get1_old($sql);
-            $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
-        }
-        log_debug('view_component_link->pos_type_name done');
-        return $this->type_name;
+        global $view_component_position_types;
+        return $view_component_position_types->name($this->type_id);
     }
 
     // remember the move of a display component

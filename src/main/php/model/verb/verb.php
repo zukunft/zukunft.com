@@ -414,7 +414,9 @@ class verb
     save functions
     */
 
-    // true if no one has used this verb
+    /**
+     * @returns bool true if no one has used this verb
+     */
     private function not_used(): bool
     {
         log_debug('verb->not_used (' . $this->id . ')');
