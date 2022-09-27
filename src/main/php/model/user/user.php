@@ -55,6 +55,26 @@ class user
 
     // database fields only used for user
     const FLD_ID = 'user_id';
+    const FLD_NAME= 'user_name';
+    const FLD_IP_ADDRESS = 'ip_address';
+    const FLD_EMAIL = 'email';
+    const FLD_FIRST_NAME = 'first_name';
+    const FLD_LAST_NAME = 'last_name';
+    const FLD_LAST_WORD = 'last_word_id';
+    const FLD_SOURCE = 'source_id';
+    const FLD_USER_PROFILE = 'user_profile_id';
+
+    // all database field names excluding the id
+    const FLD_NAMES = array(
+        sql_db::FLD_CODE_ID,
+        self::FLD_IP_ADDRESS,
+        self::FLD_EMAIL,
+        self::FLD_FIRST_NAME,
+        self::FLD_LAST_NAME,
+        self::FLD_LAST_WORD,
+        self::FLD_SOURCE,
+        self::FLD_USER_PROFILE
+    );
 
     /*
      * im- and export link
@@ -100,6 +120,8 @@ class user
     // in memory only fields
     public ?word $wrd = null;             // the last word viewed by the user
     public ?user_profile $profile = null; //
+    public ?user $viewer = null;          // the user who wants to access this user
+                                          // e.g. only admin are allowed to see other user parameters
 
     function __construct()
     {
@@ -166,68 +188,94 @@ class user
     function row_mapper(array $db_usr): bool
     {
         $result = false;
-        if ($db_usr == false) {
+        if (!$db_usr) {
             $this->id = 0;
         } else {
             if ($db_usr[user::FLD_ID] <= 0) {
                 $this->id = 0;
             } else {
-                $this->id = $db_usr[user::FLD_ID];
+                $this->id = $db_usr[self::FLD_ID];
                 $this->code_id = $db_usr[sql_db::FLD_CODE_ID];
-                $this->name = $db_usr['user_name'];
-                $this->ip_addr = $db_usr['ip_address'];
-                $this->email = $db_usr['email'];
-                $this->first_name = $db_usr['first_name'];
-                $this->last_name = $db_usr['last_name'];
-                $this->wrd_id = $db_usr['last_word_id'];
-                $this->source_id = $db_usr['source_id'];
-                $this->profile_id = $db_usr['user_profile_id'];
+                $this->name = $db_usr[self::FLD_NAME];
+                $this->ip_addr = $db_usr[self::FLD_IP_ADDRESS];
+                $this->email = $db_usr[self::FLD_EMAIL];
+                $this->first_name = $db_usr[self::FLD_FIRST_NAME];
+                $this->last_name = $db_usr[self::FLD_LAST_NAME];
+                $this->wrd_id = $db_usr[self::FLD_LAST_WORD];
+                $this->source_id = $db_usr[self::FLD_SOURCE];
+                $this->profile_id = $db_usr[self::FLD_USER_PROFILE];
                 $this->dec_point = DEFAULT_DEC_POINT;
                 $this->thousand_sep = DEFAULT_THOUSAND_SEP;
                 $this->percent_decimals = DEFAULT_PERCENT_DECIMALS;
                 $result = true;
-                log_debug('user->row_mapper (' . $this->name . ')');
+                log_debug($this->name);
             }
         }
         return $result;
     }
 
+    /**
+     * create an SQL statement to retrieve the parameters of an user from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    {
+        $qp = new sql_par($class);
+        $db_con->set_type(DB_TYPE_USER);
+        if ($this->viewer == null) {
+            if ($this->id == null) {
+                $db_con->set_usr(0);
+            } else {
+                $db_con->set_usr($this->id);
+            }
+        } else {
+            $db_con->set_usr($this->viewer->id);
+        }
+        $db_con->set_fields(self::FLD_NAMES);
+        if ($this->id > 0) {
+            $qp->name .= 'id';
+            $db_con->set_name($qp->name);
+            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $qp->sql = $db_con->select_by_id();
+        } elseif ($this->code_id > 0) {
+            $qp->name .= 'code_id';
+            $db_con->set_name($qp->name);
+            $db_con->add_par(sql_db::PAR_TEXT, $this->code_id);
+            $qp->sql = $db_con->select_by_code_id();
+        } elseif ($this->name <> '') {
+            $qp->name .= 'name';
+            $db_con->set_name($qp->name);
+            $db_con->add_par(sql_db::PAR_TEXT, $this->name);
+            $qp->sql = $db_con->select_by_name();
+        } elseif ($this->ip_addr <> '') {
+            $qp->name .= 'ip_address';
+            $db_con->set_name($qp->name);
+            $db_con->add_par(sql_db::PAR_TEXT, $this->ip_addr);
+            $qp->sql = $db_con->select_by_field(self::FLD_IP_ADDRESS);
+        } else {
+            log_err('Either the id, code_id, name or ip address must be set to get a user');
+        }
+
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+
     //
-    private function load_db(sql_db $db_con)
+    private function load_db(sql_db $db_con): array
     {
 
         $db_usr = null;
         // select the user either by id, code_id, name or ip
-        $sql_where = '';
-        if ($this->id > 0) {
-            $sql_where = "u.user_id = " . $this->id;
-            log_debug('user->load user id ' . $this->id);
-        } elseif ($this->code_id > 0) {
-            $sql_where = "u.code_id = " . $this->code_id;
-        } elseif ($this->name <> '') {
-            $sql_where = "u.user_name = " . $db_con->sf($this->name);
-        } elseif ($this->ip_addr <> '') {
-            $sql_where = "u.ip_address = " . $db_con->sf($this->ip_addr);
-        }
-
-        log_debug('user->load search by "' . $sql_where . '"');
-        if ($sql_where == '') {
+        $qp = $this->load_sql($db_con);
+        if (!$qp->has_par()) {
             log_err("Either the database ID, the user name, the ip address or the code_id must be set for loading a user.", "user->load", '', (new Exception)->getTraceAsString(), $this);
         } else {
-            $sql = "SELECT u.user_id,
-                     u.code_id,
-                     u.user_name,
-                     u.ip_address,
-                     u.email,
-                     u.first_name,
-                     u.last_name,
-                     u.last_word_id,
-                     u.source_id,
-                     u.user_profile_id
-                FROM users u 
-              WHERE " . $sql_where . ";";
-            $db_con->usr_id = $this->id;
-            $db_usr = $db_con->get1_old($sql);
+            $db_usr = $db_con->get1($qp);
         }
         return $db_usr;
     }

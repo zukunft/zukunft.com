@@ -413,7 +413,11 @@ class sql_db
         if ($usr == null) {
             $this->set_usr(SYSTEM_USER_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
-            $this->set_usr($usr->id); // by default use the session user id
+            if ($usr->id == null) {
+                $this->set_usr(0); // fallback for special cases
+            } else {
+                $this->set_usr($usr->id); // by default use the session user id
+            }
         }
         $this->set_table($usr_table);
         $this->set_id_field();

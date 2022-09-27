@@ -120,9 +120,27 @@ class system_unit_tests
 
         $t->subheader('user list loading sql tests');
 
-        // checl if the sql to load the complete list of all .. types is created as expected
+        // check if the sql to load the complete list of all .. types is created as expected
         $sys_log_stati = new sys_log_status();
         $t->assert_load_sql($db_con, $sys_log_stati);
+
+
+        $t->subheader('user loading sql tests');
+
+        // check if the sql to load a user by different ids is created correctly
+        $test_usr = new user();
+        $test_usr->viewer = $usr;
+        $test_usr->id = 1;
+        $t->assert_load_sql($db_con, $test_usr);
+        $test_usr->reset();
+        $test_usr->name = user::NAME_SYSTEM_TEST;
+        $t->assert_load_sql($db_con, $test_usr);
+        $test_usr->reset();
+        $test_usr->code_id = user::NAME_SYSTEM_TEST;
+        $t->assert_load_sql($db_con, $test_usr);
+        $test_usr->reset();
+        $test_usr->ip_addr = user::NAME_SYSTEM_TEST;
+        $t->assert_load_sql($db_con, $test_usr);
 
 
         $t->subheader('system config sql tests');
