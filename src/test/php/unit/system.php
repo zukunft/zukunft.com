@@ -141,6 +141,10 @@ class system_unit_tests
         $test_usr->reset();
         $test_usr->ip_addr = user::NAME_SYSTEM_TEST;
         $t->assert_load_sql($db_con, $test_usr);
+        $test_usr->reset();
+        $test_usr->profile_id = 2;
+        $t->assert_load_sql($db_con, $test_usr);
+
 
 
         $t->subheader('system config sql tests');

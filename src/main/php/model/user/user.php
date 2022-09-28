@@ -255,6 +255,11 @@ class user
             $db_con->set_name($qp->name);
             $db_con->add_par(sql_db::PAR_TEXT, $this->ip_addr);
             $qp->sql = $db_con->select_by_field(self::FLD_IP_ADDRESS);
+        } elseif ($this->profile_id > 0) {
+            $qp->name .= 'profile_id';
+            $db_con->set_name($qp->name);
+            $db_con->add_par(sql_db::PAR_INT, $this->profile_id);
+            $qp->sql = $db_con->select_by_field(self::FLD_USER_PROFILE);
         } else {
             log_err('Either the id, code_id, name or ip address must be set to get a user');
         }
@@ -302,8 +307,10 @@ class user
     {
         $profile_id = cl(db_cl::USER_PROFILE, $profile_code_id);
 
-        $sql = "SELECT * FROM users WHERE user_profile_id = " . $profile_id . ";";
-        $db_usr = $db_con->get1_old($sql);
+        $this->reset();
+        $this->profile_id = $profile_id;
+        $qp = $this->load_sql($db_con);
+        $db_usr = $db_con->get1($qp);
         return $this->row_mapper($db_usr);
     }
 
