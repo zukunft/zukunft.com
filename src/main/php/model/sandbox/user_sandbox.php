@@ -644,23 +644,41 @@ class user_sandbox
     }
 
 
-    // get the user id of the most often used link (position) beside the standard (position)
-    //
-    // TODO review, because the median is not taking into account the number of standard used values
-    function median_user()
+    /**
+     * @param sql_db $db_con
+     * @return sql_par sql parameter to get the user id of the most often used link (position) beside the standard (position)
+     */
+    function median_user_sql(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par($this->obj_name);
+        $qp->name .= 'median_user';
+        if ($this->owner_id > 0) {
+            $qp->name .= '_ex_owner';
+        }
+        $db_con->set_type($this->obj_name, true);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(array(sql_db::FLD_USER_ID));
+        $qp->sql = $db_con->select_by_id_not_owner($this->id);
+
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * @returns int the user id of the most often used link (position) beside the standard (position)
+     * TODO review, because the median is not taking into account the number of standard used values
+     */
+    function median_user(): int
     {
         log_debug($this->obj_name . '->median_user ' . $this->dsp_id() . ' beside the owner (' . $this->owner_id . ')');
 
         global $db_con;
         $result = 0;
 
-        $sql = 'SELECT user_id 
-              FROM user_' . $this->obj_name . 's 
-              WHERE ' . $this->obj_name . '_id = ' . $this->id . '
-                AND (excluded <> 1 OR excluded is NULL)';
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
+        $qp = $this->median_user_sql($db_con);
+        $db_row = $db_con->get1($qp);
         if ($db_row[self::FLD_USER] > 0) {
             $result = $db_row[self::FLD_USER];
         } else {
