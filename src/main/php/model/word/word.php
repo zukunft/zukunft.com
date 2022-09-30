@@ -1690,31 +1690,6 @@ class word extends user_sandbox_description
     }
 
     /**
-     * to be dismissed!
-     * if the value has been changed by someone else than the owner the user id is returned
-     * but only return the user id if the user has not also excluded it
-     */
-    function changer(): int
-    {
-        log_debug($this->id);
-
-        global $db_con;
-        $user_id = 0;
-
-        $sql = "SELECT user_id 
-              FROM user_words 
-             WHERE word_id = " . $this->id . "
-               AND (excluded <> 1 OR excluded is NULL)";
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
-        if ($db_row != null) {
-            $user_id = $db_row[self::FLD_USER];
-        }
-        return $user_id;
-    }
-
-    /**
      * true if the user is the owner and no one else has changed the word
      * because if another user has changed the word and the original value is changed, maybe the user word also needs to be updated
      */
