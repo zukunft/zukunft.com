@@ -198,7 +198,7 @@ class value_phrase_link
         log_debug('val_lnk->log_add for "' . $this->phr->id . ' to ' . $this->val->id);
         $log = new user_log_link;
         $log->usr = $this->usr;
-        $log->action = 'add';
+        $log->action = user_log::ACTION_ADD;
         $log->table = 'value_phrase_links';
         $log->new_from = $this->val;
         $log->new_to = $this->phr;

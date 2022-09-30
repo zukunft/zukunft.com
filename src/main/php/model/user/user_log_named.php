@@ -38,14 +38,13 @@ class user_log_named extends user_log
     public ?int $new_id = null;        // the reference id after the user change e.g. for fields using a sub table such as status
     public ?string $std_value = null;  // the standard field value for all users that does not have changed it
     public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
-    public ?int $row_id = null;        // the reference id of the row in the database table
 
     /**
      * display the last change related to one object (word, formula, value, verb, ...)
      * mainly used for testing
      * TODO if changes on table values are requested include also the table "user_values"
      */
-    function dsp_last($ex_time): string
+    function dsp_last(bool $ex_time): string
     {
 
         global $db_con;

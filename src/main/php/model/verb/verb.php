@@ -498,7 +498,7 @@ class verb
         log_debug('verb->log_add ' . $this->dsp_id());
         $log = new user_log_named;
         $log->usr = $this->usr;
-        $log->action = 'add';
+        $log->action = user_log::ACTION_ADD;
         $log->table = 'verbs';
         $log->field = self::FLD_NAME;
         $log->old_value = '';
@@ -527,7 +527,7 @@ class verb
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->usr->name);
         $log = new user_log_named;
         $log->usr = $this->usr;
-        $log->action = 'del';
+        $log->action = user_log::ACTION_DELETE;
         $log->table = 'verbs';
         $log->field = self::FLD_NAME;
         $log->old_value = $this->name;

@@ -1413,7 +1413,7 @@ class value extends user_sandbox_display
     zu_debug('value->log_del "'.$this->id.'" for user '.$this->usr->name);
     $log = New user_log_named;
     $log->usr       = $this->usr;
-    $log->action    = 'del';
+    $log->action    = user_log::ACTION_DELETE;
     $log->table     = $db_type;
     $log->field     = 'word_value';
     $log->old_value = $this->number;
@@ -1545,7 +1545,7 @@ class value extends user_sandbox_display
     zu_debug('value->log_add_link word "'.$wrd_id.'" to value '.$this->id);
     $log = New user_log_link;
     $log->usr       = $this->usr;
-    $log->action    = 'add';
+    $log->action    = user_log::ACTION_ADD;
     $log->table     = 'value_phrase_links';
     $log->new_from  = $this->id;
     $log->new_to    = $wrd_id;
@@ -1561,7 +1561,7 @@ class value extends user_sandbox_display
     zu_debug('value->log_del_link word "'.$wrd_id.'" from value '.$this->id);
     $log = New user_log_link;
     $log->usr       = $this->usr;
-    $log->action    = 'del';
+    $log->action    = user_log::ACTION_DELETE;
     $log->table     = 'value_phrase_links';
     $log->old_from  = $this->id;
     $log->old_to    = $wrd_id;

@@ -121,6 +121,7 @@ class sql_db
         DB_TYPE_PHRASE_GROUP_TRIPLE_LINK,
         DB_TYPE_REF,
         DB_TYPE_IP,
+        DB_TYPE_CHANGE,
         DB_TYPE_SYS_LOG
     ];
     // tables that link two named tables
@@ -2307,7 +2308,7 @@ class sql_db
     /**
      * set the order SQL statement based on the given field name
      */
-    function set_order(string $order_field, string $direction = '')
+    function set_order(string $order_field, string $direction = ''): void
     {
         if ($direction <> self::ORDER_DESC) {
             $direction = '';

@@ -1147,7 +1147,7 @@ class word_link extends user_sandbox_link_description
         log_debug('word_link->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->usr->name . '"');
         $log = new user_log_link;
         $log->usr = $this->usr;
-        $log->action = 'add';
+        $log->action = user_log::ACTION_ADD;
         $log->table = 'word_links';
         $log->new_from = $this->from;
         $log->new_link = $this->verb;
@@ -1184,7 +1184,7 @@ class word_link extends user_sandbox_link_description
         log_debug('word_link->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->usr->name . '"');
         $log = new user_log_link;
         $log->usr = $this->usr;
-        $log->action = 'del';
+        $log->action = user_log::ACTION_DELETE;
         $log->table = 'word_links';
         $log->old_from = $this->from;
         $log->old_link = $this->verb;

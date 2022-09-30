@@ -268,7 +268,7 @@ class ref
 
         $log = new user_log_link;
         $log->usr = $this->usr;
-        $log->action = 'add';
+        $log->action = user_log::ACTION_ADD;
         $log->table = 'refs';
         // TODO review in log_link
         // TODO object must be loaded before it can be logged
@@ -316,7 +316,7 @@ class ref
 
         $log = new user_log_link;
         $log->usr = $this->usr;
-        $log->action = 'del';
+        $log->action = user_log::ACTION_DELETE;
         $log->table = 'refs';
         $log->old_from = $this->phr;
         $log->old_link = $this->ref_type;

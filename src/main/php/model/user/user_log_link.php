@@ -107,7 +107,7 @@ class user_log_link extends user_log
     }
 
     // identical to the functions in user_log (maybe move to a common object??)
-    protected function set_table()
+    protected function set_table(): void
     {
         log_debug('user_log_link->set_table "' . $this->table . '" for ' . $this->usr->dsp_id());
 
@@ -141,7 +141,7 @@ class user_log_link extends user_log
         $db_con->set_type($db_type);
     }
 
-    protected function set_action()
+    protected function set_action(): void
     {
         log_debug('user_log_link->set_action "' . $this->action . '" for ' . $this->usr->dsp_id());
 

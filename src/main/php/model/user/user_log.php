@@ -54,19 +54,83 @@ class user_log
     // the basic change types that are logged
     const ACTION_ADD = 'add';
     const ACTION_UPDATE = 'update';
-    const ACTION_DELETE = 'delete';
+    const ACTION_DELETE = 'del';
+
+    /*
+     * database link
+     */
+
+    // user log database and JSON object field names
+    const FLD_ID = 'change_id';
+    const FLD_FIELD_ID = 'change_field_id';
+    const FLD_ROW_ID = 'row_id';
+    const FLD_CHANGE_TIME = 'change_time';
+    const FLD_USER_NAME = 'user_name';
+    const FLD_OLD_VALUE = 'old_value';
+    const FLD_OLD_ID = 'old_id';
+    const FLD_NEW_VALUE = 'new_value';
+    const FLD_NEW_ID = 'new_id';
+
+    // all database field names
+    const FLD_NAMES = array(
+        user::FLD_ID,
+        self::FLD_FIELD_ID,
+        self::FLD_ROW_ID,
+        self::FLD_CHANGE_TIME,
+        self::FLD_OLD_VALUE,
+        self::FLD_OLD_ID,
+        self::FLD_NEW_VALUE,
+        self::FLD_NEW_ID
+    );
+
+    /*
+     * object vars
+     */
 
     public ?int $id = null;            // the database id of the log entry (used to update a log entry in case of an insert where the ref id is not yet know at insert)
     public ?user $usr = null;          // the user who has done the change
     public ?string $action = null;     // text for the user action e.g. "add", "update" or "delete"
-    protected ?int $action_id = null;    // database id for the action text
+    protected ?int $action_id = null;  // database id for the action text
     public ?string $table = null;      // name of the table that has been updated
     private ?int $table_id = null;     // database id for the table text
     public ?string $field = null;      // name of the field that has been updated
-    protected ?int $field_id = null;     // database id for the field text
+    protected ?int $field_id = null;   // database id for the field text
+    public ?int $row_id = null;        // the reference id of the row in the database table
 
-    // to save database space the table name is saved as a reference id in the log table
-    protected function set_table()
+
+    protected ?string $user_name = null;   //
+    protected ?string $change_time = null; //
+    protected ?string $old_value = null;   //
+    protected ?int $old_id = null;         //
+    protected ?string $new_value = null;   //
+    protected ?int $new_id = null;         //
+
+    /**
+     * @return bool true if a row is found
+     */
+    function row_mapper(array $db_row): bool
+    {
+        if ($db_row[self::FLD_ID] > 0) {
+            $this->id = $db_row[self::FLD_ID];
+            $this->field_id = $db_row[self::FLD_FIELD_ID];
+            $this->row_id = $db_row[self::FLD_ROW_ID];
+            $this->change_time = $db_row[self::FLD_CHANGE_TIME];
+            $this->old_value = $db_row[self::FLD_OLD_VALUE];
+            $this->old_id = $db_row[self::FLD_OLD_ID];
+            $this->new_value = $db_row[self::FLD_NEW_VALUE];
+            $this->new_id = $db_row[self::FLD_NEW_ID];
+            $this->user_name = $db_row[user::FLD_NAME];
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
+     * to save database space the table name is saved as a reference id in the log table
+     */
+    protected function set_table(): void
     {
         if ($this->usr == null) {
             log_warning('user_log->set_table "' . $this->table . '" but user is missing');
@@ -110,7 +174,10 @@ class user_log
         $db_con->set_type($db_type);
     }
 
-    protected function set_field()
+    /**
+     * save the field name as a reference id in the log table
+     */
+    protected function set_field(): void
     {
         if ($this->usr == null) {
             log_warning('user_log->set_field "' . $this->table . '" but user is missing');
@@ -150,7 +217,7 @@ class user_log
         $db_con->set_type($db_type);
     }
 
-    protected function set_action()
+    protected function set_action(): void
     {
         log_debug('user_log->set_action "' . $this->action . '" for ' . $this->usr->id);
 
@@ -184,10 +251,30 @@ class user_log
         $db_con->set_type($db_type);
     }
 
-    // display the last change related to one object (word, formula, value, verb, ...)
-    // mainly used for testing
-    // TODO if changes on table values are requested include also the table "user_values"
-    function dsp_last($ex_time): string
+    function load_sql(sql_db $db_con, int $field_id, int $row_id): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $qp->name .= 'field_row';
+        $db_con->set_type(DB_TYPE_CHANGE);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_join_fields(array(user::FLD_NAME),DB_TYPE_USER);
+        $db_con->set_where_text($db_con->where_par(array(self::FLD_FIELD_ID, self::FLD_ROW_ID), array($field_id, $row_id)));
+        $db_con->set_order(self::FLD_ID, sql_db::ORDER_DESC);
+        $qp->sql = $db_con->select_by_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+
+    /**
+     * display the last change related to one object (word, formula, value, verb, ...)
+     * mainly used for testing
+     * TODO if changes on table values are requested include also the table "user_values"
+     */
+    function dsp_last(bool $ex_time): string
     {
 
         global $db_con;
@@ -196,38 +283,25 @@ class user_log
         $this->set_table();
         $this->set_field();
 
-        $sql = "SELECT c.change_time,
-                   u.user_name,
-                   c.old_value,
-                   c.old_id,
-                   c.new_value,
-                   c.new_id
-              FROM changes c, users u
-             WHERE c.change_field_id = " . $this->field_id . "
-               AND c.row_id = " . $this->row_id . "
-               AND c.user_id = u.user_id
-          ORDER BY c.change_id DESC;";
-        log_debug("user_log->dsp_last get sql (" . $sql . ")");
-        //$db_con = new mysql;
         $db_type = $db_con->get_type();
-        $db_con->set_type(DB_TYPE_CHANGE);
-        $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
-        if ($db_row != false) {
+        $qp = $this->load_sql($db_con, $this->field_id, $this->row_id);
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper($db_row);
+        if ($db_row) {
             if (!$ex_time) {
-                $result .= $db_row['change_time'] . ' ';
+                $result .= $this->change_time . ' ';
             }
-            if ($db_row['user_name'] <> '') {
-                $result .= $db_row['user_name'] . ' ';
+            if ($this->user_name <> '') {
+                $result .= $this->user_name . ' ';
             }
-            if ($db_row['old_value'] <> '') {
-                if ($db_row['new_value'] <> '') {
-                    $result .= 'changed ' . $db_row['old_value'] . ' to ' . $db_row['new_value'];
+            if ($this->old_value <> '') {
+                if ($this->new_value <> '') {
+                    $result .= 'changed ' . $this->old_value . ' to ' . $this->new_value;
                 } else {
-                    $result .= 'deleted ' . $db_row['old_value'];
+                    $result .= 'deleted ' . $this->old_value;
                 }
             } else {
-                $result .= 'added ' . $db_row['new_value'];
+                $result .= 'added ' . $this->new_value;
             }
         }
         // restore the type before saving the log

@@ -41,7 +41,11 @@ class user_log_unit_tests
 
         $t->subheader('SQL statement tests');
 
+        // init
         $db_con = new sql_db();
+        $t->name = 'word->';
+        $t->resource_path = 'db/user/';
+        $usr->id = 1;
 
         // sql to load the word by id
         $log_dsp = new user_log_display($usr);
@@ -54,6 +58,18 @@ class user_log_unit_tests
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));
+
+        // sql to load a log entry by field and row id
+        $log = new user_log();
+        $log->usr = $usr;
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $log->load_sql($db_con, 1, 2);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $log->load_sql($db_con, 1, 2);
+        $t->assert_qp($qp, $db_con->db_type);
 
     }
 

@@ -180,7 +180,7 @@ class user_sandbox_named extends user_sandbox
         $log->new_value = $this->name;
 
         $log->usr = $this->usr;
-        $log->action = 'add';
+        $log->action = user_log::ACTION_ADD;
         // TODO add the table exceptions from sql_db
         $log->table = $this->obj_name . 's';
         $log->row_id = 0;
@@ -203,7 +203,7 @@ class user_sandbox_named extends user_sandbox
         $log->new_value = '';
 
         $log->usr = $this->usr;
-        $log->action = 'del';
+        $log->action = user_log::ACTION_DELETE;
         $log->table = $this->obj_name . 's';
         $log->row_id = $this->id;
         $log->add();

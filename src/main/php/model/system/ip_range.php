@@ -298,7 +298,7 @@ class ip_range
 
         $log = new user_log_named;
         $log->usr = $this->usr;
-        $log->action = 'add';
+        $log->action = user_log::ACTION_ADD;
         $log->table = DB_TYPE_IP;
         $log->field = $this->name();
         $log->row_id = 0;

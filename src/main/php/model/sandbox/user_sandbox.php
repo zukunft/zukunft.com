@@ -991,7 +991,7 @@ class user_sandbox
         $log = new user_log_named;
 
         $log->usr = $this->usr;
-        $log->action = 'add';
+        $log->action = user_log::ACTION_ADD;
         // TODO add the table exceptions from sql_db
         $log->table = $this->obj_name . 's';
         $log->row_id = 0;
