@@ -497,45 +497,34 @@ class user_sandbox
     }
 
     /*
-     *  type loading functions TODO load type lists upfront
+     *  type loading functions
      */
 
-    // load the share type and return the share code id
+    /**
+     * @returns string the share type code id based on the database share type id
+     */
     function share_type_code_id(): string
     {
         global $share_types;
         return $share_types->code_id($this->share_id);
     }
 
-    // load the share type and return the share code id
-    function share_type_name()
+    /**
+     * @returns string the share type name based on the database share type id
+     */
+    function share_type_name(): string
     {
-        log_debug('value->share_type_name for ' . $this->dsp_id());
-
-        global $db_con;
-        $result = '';
-
         // use the default share type if not set
         if ($this->share_id <= 0) {
             $this->share_id = cl(db_cl::SHARE_TYPE, share_type::PUBLIC);
         }
 
-        $sql = "SELECT type_name 
-              FROM share_types 
-             WHERE share_type_id = " . $this->share_id . ";";
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
-        if (isset($db_row)) {
-            $result = $db_row['type_name'];
-        }
-
-        log_debug('value->share_type_name for ' . $this->dsp_id() . ' got ' . $result);
-        return $result;
+        global $share_types;
+        return $share_types->name($this->share_id);
     }
 
     /**
-     * return the protection type code id
+     * @return string the protection type code id based on the database id
      */
     function protection_type_code_id(): string
     {
@@ -543,31 +532,18 @@ class user_sandbox
         return $protection_types->code_id($this->protection_id);
     }
 
-    // load the protection type and return the protection code id
-    function protection_type_name()
+    /**
+     * @return string the protection type name based on the database id
+     */
+    function protection_type_name(): string
     {
-        log_debug('value->protection_type_name for ' . $this->dsp_id());
-
-        global $db_con;
-        $result = '';
-
         // use the default share type if not set
         if ($this->protection_id <= 0) {
             $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT);
         }
 
-        $sql = "SELECT type_name
-              FROM protection_types 
-             WHERE protection_type_id = " . $this->protection_id . ";";
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
-        if (isset($db_row)) {
-            $result = $db_row['type_name'];
-        }
-
-        log_debug('value->protection_type_name for ' . $this->dsp_id() . ' got ' . $result);
-        return $result;
+        global $protection_types;
+        return $protection_types->name($this->protection_id);
     }
 
     /*
