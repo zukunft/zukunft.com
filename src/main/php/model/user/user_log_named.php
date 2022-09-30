@@ -33,6 +33,8 @@ class user_log_named extends user_log
 {
 
     // user log database and JSON object field names for named user sandbox objects
+    const FLD_FIELD_ID = 'change_field_id';
+    const FLD_ROW_ID = 'row_id';
     const FLD_OLD_VALUE = 'old_value';
     const FLD_OLD_ID = 'old_id';
     const FLD_NEW_VALUE = 'new_value';

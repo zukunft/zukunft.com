@@ -71,6 +71,18 @@ class user_log_unit_tests
         $qp = $log->load_sql($db_con, 1, 2);
         $t->assert_qp($qp, $db_con->db_type);
 
+        // sql to load a log entry by field and row id
+        $log = new user_log_link();
+        $log->usr = $usr;
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $log->load_sql($db_con, 1);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $log->load_sql($db_con, 1);
+        $t->assert_qp($qp, $db_con->db_type);
+
     }
 
 }

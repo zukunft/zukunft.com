@@ -62,8 +62,6 @@ class user_log
 
     // user log database and JSON object field names
     const FLD_ID = 'change_id';
-    const FLD_FIELD_ID = 'change_field_id';
-    const FLD_ROW_ID = 'row_id';
     const FLD_CHANGE_TIME = 'change_time';
 
     /*
@@ -75,7 +73,7 @@ class user_log
     public ?string $action = null;     // text for the user action e.g. "add", "update" or "delete"
     protected ?int $action_id = null;  // database id for the action text
     public ?string $table = null;      // name of the table that has been updated
-    private ?int $table_id = null;     // database id for the table text
+    public ?int $table_id = null;     // database id for the table text
     public ?string $field = null;      // name of the field that has been updated
     protected ?int $field_id = null;   // database id for the field text
     public ?int $row_id = null;        // the reference id of the row in the database table

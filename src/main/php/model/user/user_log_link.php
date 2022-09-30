@@ -48,6 +48,41 @@
 class user_log_link extends user_log
 {
 
+    // user log database and JSON object field names for link user sandbox objects
+    const FLD_ID = 'change_link_id';
+    const FLD_TABLE_ID = 'change_table_id';
+    const FLD_OLD_FROM_TEXT = 'old_text_from';
+    const FLD_OLD_FROM_ID = 'old_from_id';
+    const FLD_OLD_LINK_TEXT = 'old_text_link';
+    const FLD_OLD_LINK_ID = 'old_link_id';
+    const FLD_OLD_TO_TEXT = 'old_text_to';
+    const FLD_OLD_TO_ID = 'old_to_id';
+    const FLD_NEW_FROM_TEXT = 'new_text_from';
+    const FLD_NEW_FROM_ID = 'new_from_id';
+    const FLD_NEW_LINK_TEXT = 'new_text_link';
+    const FLD_NEW_LINK_ID = 'new_link_id';
+    const FLD_NEW_TO_TEXT = 'new_text_to';
+    const FLD_NEW_TO_ID = 'new_to_id';
+
+    // all database field names
+    const FLD_NAMES = array(
+        user::FLD_ID,
+        self::FLD_TABLE_ID,
+        self::FLD_CHANGE_TIME,
+        self::FLD_OLD_FROM_TEXT,
+        self::FLD_OLD_FROM_ID,
+        self::FLD_OLD_LINK_TEXT,
+        self::FLD_OLD_LINK_ID,
+        self::FLD_OLD_TO_TEXT,
+        self::FLD_OLD_TO_ID,
+        self::FLD_NEW_FROM_TEXT,
+        self::FLD_NEW_FROM_ID,
+        self::FLD_NEW_LINK_TEXT,
+        self::FLD_NEW_LINK_ID,
+        self::FLD_NEW_TO_TEXT,
+        self::FLD_NEW_TO_ID
+    );
+
     // object set by the calling function
     public ?object $old_from = null;       // the from reference before the user change; should be the object, but is sometimes still the id
     public ?object $old_link = null;       // the reference type before the user change
@@ -74,6 +109,79 @@ class user_log_link extends user_log
     public ?string $new_text_to = null;    // fixed description for new_to
     // to be replaced with new_text_link
     public ?string $link_text = null;      // is used for fixed links such as the source for values
+
+    /**
+     * @return bool true if a row is found
+     */
+    function row_mapper(array $db_row): bool
+    {
+        if ($db_row[self::FLD_ID] > 0) {
+            $this->id = $db_row[self::FLD_ID];
+            $this->table_id = $db_row[self::FLD_TABLE_ID];
+            $this->change_time = $db_row[self::FLD_CHANGE_TIME];
+            $this->old_text_from = $db_row[self::FLD_OLD_FROM_TEXT];
+            $this->old_from_id = $db_row[self::FLD_OLD_FROM_ID];
+            $this->old_text_link = $db_row[self::FLD_OLD_LINK_TEXT];
+            $this->old_link_id = $db_row[self::FLD_OLD_LINK_ID];
+            $this->old_text_to = $db_row[self::FLD_OLD_TO_TEXT];
+            $this->old_to_id = $db_row[self::FLD_OLD_TO_ID];
+            $this->new_text_from = $db_row[self::FLD_NEW_FROM_TEXT];
+            $this->new_from_id = $db_row[self::FLD_NEW_FROM_ID];
+            $this->new_text_link = $db_row[self::FLD_NEW_LINK_TEXT];
+            $this->new_link_id = $db_row[self::FLD_NEW_LINK_ID];
+            $this->new_text_to = $db_row[self::FLD_NEW_TO_TEXT];
+            $this->new_to_id = $db_row[self::FLD_NEW_TO_ID];
+            $this->user_name = $db_row[user::FLD_NAME];
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function load_sql(sql_db $db_con, int $table_id): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $qp->name .= 'table';
+        $db_con->set_type(DB_TYPE_CHANGE_LINK);
+
+        $fields = [];
+        $values = [];
+        $fields[] = self::FLD_TABLE_ID;
+        $values[] = $table_id;
+
+        if ($this->old_from_id > 0) {
+            $qp->name .= '_old_from';
+            $fields[] = self::FLD_OLD_FROM_ID;
+            $values[] = $this->old_from_id;
+        }
+        if ($this->old_to_id > 0) {
+            $qp->name .= '_old_to';
+            $fields[] = self::FLD_OLD_TO_ID;
+            $values[] = $this->old_to_id;
+        }
+        if ($this->new_from_id > 0) {
+            $qp->name .= '_old_to';
+            $fields[] = self::FLD_NEW_FROM_ID;
+            $values[] = $this->new_from_id;
+        }
+        if ($this->new_to_id > 0) {
+            $qp->name .= '_new_to';
+            $fields[] = self::FLD_NEW_TO_ID;
+            $values[] = $this->new_to_id;
+        }
+
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_join_fields(array(user::FLD_NAME),DB_TYPE_USER);
+
+        $db_con->set_where_text($db_con->where_par($fields, $values));
+        $db_con->set_order(self::FLD_ID, sql_db::ORDER_DESC);
+        $qp->sql = $db_con->select_by_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
 
     private function dsp_id(): string
     {
@@ -188,7 +296,7 @@ class user_log_link extends user_log
         }
     }
 
-    private function word_name($id)
+    private function word_name($id): string
     {
         log_debug('user_log_link->word_name for ' . $id);
         $result = '';
@@ -295,46 +403,10 @@ class user_log_link extends user_log
 
         $this->set_table();
 
-        $sql_where = '';
-        if ($this->old_from_id > 0) {
-            $sql_where .= ' AND c.old_from_id = ' . $this->old_from_id;
-        }
-        if ($this->old_from_id > 0) {
-            $sql_where .= ' AND c.old_to_id = ' . $this->old_to_id;
-        }
-        if ($this->new_from_id > 0) {
-            $sql_where .= ' AND c.new_from_id = ' . $this->new_from_id;
-        }
-        if ($this->new_from_id > 0) {
-            $sql_where .= ' AND c.new_to_id = ' . $this->new_to_id;
-        }
-
-        $sql = "SELECT c.change_time,
-                   u.user_name,
-                   c.old_text_from,
-                   c.old_from_id,
-                   c.old_text_link,
-                   c.old_link_id,
-                   c.old_text_to,
-                   c.old_to_id,
-                   c.new_text_from,
-                   c.new_from_id,
-                   c.new_text_link,
-                   c.new_link_id,
-                   c.new_text_to,
-                   c.new_to_id
-              FROM change_links c, users u
-             WHERE c.change_table_id = " . $this->table_id . "
-               AND c.user_id = u.user_id
-               AND u.user_id = " . $this->usr->id . "
-                   " . $sql_where . "
-          ORDER BY c.change_link_id DESC;";
-        log_debug("user_log->dsp_last get sql (" . $sql . ")");
-        //$db_con = new mysql;
         $db_type = $db_con->get_type();
-        $db_con->set_type(DB_TYPE_CHANGE_LINK);
-        $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
+        $qp = $this->load_sql($db_con, $this->table_id);
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper($db_row);
         if ($db_row != null) {
             if (!$ex_time) {
                 $result .= $db_row['change_time'] . ' ';

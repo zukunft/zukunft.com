@@ -122,6 +122,7 @@ class sql_db
         DB_TYPE_REF,
         DB_TYPE_IP,
         DB_TYPE_CHANGE,
+        DB_TYPE_CHANGE_LINK,
         DB_TYPE_SYS_LOG
     ];
     // tables that link two named tables
