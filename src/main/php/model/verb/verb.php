@@ -414,6 +414,23 @@ class verb
     save functions
     */
 
+    // TODO to review: additional check the database foreign keys
+    function not_used_sql(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par(verb::class);
+
+        $qp->name .= 'usage';
+        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_where_std($this->id);
+        $qp->sql = $db_con->select_by_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
     /**
      * @returns bool true if no one has used this verb
      */
@@ -425,12 +442,9 @@ class verb
         $result = true;
 
         // to review: additional check the database foreign keys
-        $sql = "SELECT words 
-              FROM verbs 
-             WHERE verb_id = " . $this->id . ";";
-        $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
-        $used_by_words = $db_row['words'];
+        $qp = $this->not_used_sql($db_con);
+        $db_row = $db_con->get1($qp);
+        $used_by_words = $db_row[self::FLD_WORDS];
         if ($used_by_words > 0) {
             $result = false;
         }
