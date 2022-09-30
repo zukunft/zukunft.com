@@ -1,4 +1,4 @@
-PREPARE user_log_by_field_row FROM
+PREPARE user_log_named_by_field_row FROM
    'SELECT s.change_id,
            s.user_id,
            s.change_field_id,

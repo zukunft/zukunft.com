@@ -60,7 +60,7 @@ class user_log_unit_tests
         $t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));
 
         // sql to load a log entry by field and row id
-        $log = new user_log();
+        $log = new user_log_named();
         $log->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $log->load_sql($db_con, 1, 2);

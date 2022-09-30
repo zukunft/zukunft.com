@@ -32,12 +32,69 @@
 class user_log_named extends user_log
 {
 
-    public ?string $old_value = null;  // the field value before the user change
-    public ?int $old_id = null;        // the reference id before the user change e.g. for fields using a sub table such as status
-    public ?string $new_value = null;  // the field value after the user change
-    public ?int $new_id = null;        // the reference id after the user change e.g. for fields using a sub table such as status
+    // user log database and JSON object field names for named user sandbox objects
+    const FLD_OLD_VALUE = 'old_value';
+    const FLD_OLD_ID = 'old_id';
+    const FLD_NEW_VALUE = 'new_value';
+    const FLD_NEW_ID = 'new_id';
+
+    // all database field names
+    const FLD_NAMES = array(
+        user::FLD_ID,
+        self::FLD_FIELD_ID,
+        self::FLD_ROW_ID,
+        self::FLD_CHANGE_TIME,
+        self::FLD_OLD_VALUE,
+        self::FLD_OLD_ID,
+        self::FLD_NEW_VALUE,
+        self::FLD_NEW_ID
+    );
+
+    // additional
+    public ?string $old_value = null;      // the field value before the user change
+    public ?int $old_id = null;            // the reference id before the user change e.g. for fields using a sub table such as status
+    public ?string $new_value = null;      // the field value after the user change
+    public ?int $new_id = null;            // the reference id after the user change e.g. for fields using a sub table such as status
     public ?string $std_value = null;  // the standard field value for all users that does not have changed it
     public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
+
+    /**
+     * @return bool true if a row is found
+     */
+    function row_mapper(array $db_row): bool
+    {
+        if ($db_row[self::FLD_ID] > 0) {
+            $this->id = $db_row[self::FLD_ID];
+            $this->field_id = $db_row[self::FLD_FIELD_ID];
+            $this->row_id = $db_row[self::FLD_ROW_ID];
+            $this->change_time = $db_row[self::FLD_CHANGE_TIME];
+            $this->old_value = $db_row[self::FLD_OLD_VALUE];
+            $this->old_id = $db_row[self::FLD_OLD_ID];
+            $this->new_value = $db_row[self::FLD_NEW_VALUE];
+            $this->new_id = $db_row[self::FLD_NEW_ID];
+            $this->user_name = $db_row[user::FLD_NAME];
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function load_sql(sql_db $db_con, int $field_id, int $row_id): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $qp->name .= 'field_row';
+        $db_con->set_type(DB_TYPE_CHANGE);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_join_fields(array(user::FLD_NAME),DB_TYPE_USER);
+        $db_con->set_where_text($db_con->where_par(array(self::FLD_FIELD_ID, self::FLD_ROW_ID), array($field_id, $row_id)));
+        $db_con->set_order(self::FLD_ID, sql_db::ORDER_DESC);
+        $qp->sql = $db_con->select_by_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
 
     /**
      * display the last change related to one object (word, formula, value, verb, ...)
@@ -53,38 +110,25 @@ class user_log_named extends user_log
         parent::set_table();
         parent::set_field();
 
-        $sql = "SELECT c.change_time,
-                   u.user_name,
-                   c.old_value,
-                   c.old_id,
-                   c.new_value,
-                   c.new_id
-              FROM changes c, users u
-             WHERE c.change_field_id = " . $this->field_id . "
-               AND c.row_id = " . $this->row_id . "
-               AND c.user_id = u.user_id
-          ORDER BY c.change_id DESC;";
-        log_debug("user_log->dsp_last get sql (" . $sql . ")");
-        //$db_con = new mysql;
         $db_type = $db_con->get_type();
-        $db_con->set_type(DB_TYPE_CHANGE);
-        $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
-        if ($db_row != false) {
+        $qp = $this->load_sql($db_con, $this->field_id, $this->row_id);
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper($db_row);
+        if ($db_row) {
             if (!$ex_time) {
-                $result .= $db_row['change_time'] . ' ';
+                $result .= $this->change_time . ' ';
             }
-            if ($db_row['user_name'] <> '') {
-                $result .= $db_row['user_name'] . ' ';
+            if ($this->user_name <> '') {
+                $result .= $this->user_name . ' ';
             }
-            if ($db_row['old_value'] <> '') {
-                if ($db_row['new_value'] <> '') {
-                    $result .= 'changed ' . $db_row['old_value'] . ' to ' . $db_row['new_value'];
+            if ($this->old_value <> '') {
+                if ($this->new_value <> '') {
+                    $result .= 'changed ' . $this->old_value . ' to ' . $this->new_value;
                 } else {
-                    $result .= 'deleted ' . $db_row['old_value'];
+                    $result .= 'deleted ' . $this->old_value;
                 }
             } else {
-                $result .= 'added ' . $db_row['new_value'];
+                $result .= 'added ' . $this->new_value;
             }
         }
         // restore the type before saving the log

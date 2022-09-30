@@ -496,7 +496,7 @@ class verb
     private function log_add(): user_log_named
     {
         log_debug('verb->log_add ' . $this->dsp_id());
-        $log = new user_log_named;
+        $log = new user_log_named();
         $log->usr = $this->usr;
         $log->action = user_log::ACTION_ADD;
         $log->table = 'verbs';

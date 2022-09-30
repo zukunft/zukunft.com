@@ -65,23 +65,6 @@ class user_log
     const FLD_FIELD_ID = 'change_field_id';
     const FLD_ROW_ID = 'row_id';
     const FLD_CHANGE_TIME = 'change_time';
-    const FLD_USER_NAME = 'user_name';
-    const FLD_OLD_VALUE = 'old_value';
-    const FLD_OLD_ID = 'old_id';
-    const FLD_NEW_VALUE = 'new_value';
-    const FLD_NEW_ID = 'new_id';
-
-    // all database field names
-    const FLD_NAMES = array(
-        user::FLD_ID,
-        self::FLD_FIELD_ID,
-        self::FLD_ROW_ID,
-        self::FLD_CHANGE_TIME,
-        self::FLD_OLD_VALUE,
-        self::FLD_OLD_ID,
-        self::FLD_NEW_VALUE,
-        self::FLD_NEW_ID
-    );
 
     /*
      * object vars
@@ -97,34 +80,8 @@ class user_log
     protected ?int $field_id = null;   // database id for the field text
     public ?int $row_id = null;        // the reference id of the row in the database table
 
-
     protected ?string $user_name = null;   //
     protected ?string $change_time = null; //
-    protected ?string $old_value = null;   //
-    protected ?int $old_id = null;         //
-    protected ?string $new_value = null;   //
-    protected ?int $new_id = null;         //
-
-    /**
-     * @return bool true if a row is found
-     */
-    function row_mapper(array $db_row): bool
-    {
-        if ($db_row[self::FLD_ID] > 0) {
-            $this->id = $db_row[self::FLD_ID];
-            $this->field_id = $db_row[self::FLD_FIELD_ID];
-            $this->row_id = $db_row[self::FLD_ROW_ID];
-            $this->change_time = $db_row[self::FLD_CHANGE_TIME];
-            $this->old_value = $db_row[self::FLD_OLD_VALUE];
-            $this->old_id = $db_row[self::FLD_OLD_ID];
-            $this->new_value = $db_row[self::FLD_NEW_VALUE];
-            $this->new_id = $db_row[self::FLD_NEW_ID];
-            $this->user_name = $db_row[user::FLD_NAME];
-            return true;
-        } else {
-            return false;
-        }
-    }
 
 
     /**
@@ -251,23 +208,6 @@ class user_log
         $db_con->set_type($db_type);
     }
 
-    function load_sql(sql_db $db_con, int $field_id, int $row_id): sql_par
-    {
-        $qp = new sql_par(self::class);
-        $qp->name .= 'field_row';
-        $db_con->set_type(DB_TYPE_CHANGE);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_join_fields(array(user::FLD_NAME),DB_TYPE_USER);
-        $db_con->set_where_text($db_con->where_par(array(self::FLD_FIELD_ID, self::FLD_ROW_ID), array($field_id, $row_id)));
-        $db_con->set_order(self::FLD_ID, sql_db::ORDER_DESC);
-        $qp->sql = $db_con->select_by_id();
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
 
     /**
      * display the last change related to one object (word, formula, value, verb, ...)
@@ -276,37 +216,7 @@ class user_log
      */
     function dsp_last(bool $ex_time): string
     {
-
-        global $db_con;
-        $result = '';
-
-        $this->set_table();
-        $this->set_field();
-
-        $db_type = $db_con->get_type();
-        $qp = $this->load_sql($db_con, $this->field_id, $this->row_id);
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper($db_row);
-        if ($db_row) {
-            if (!$ex_time) {
-                $result .= $this->change_time . ' ';
-            }
-            if ($this->user_name <> '') {
-                $result .= $this->user_name . ' ';
-            }
-            if ($this->old_value <> '') {
-                if ($this->new_value <> '') {
-                    $result .= 'changed ' . $this->old_value . ' to ' . $this->new_value;
-                } else {
-                    $result .= 'deleted ' . $this->old_value;
-                }
-            } else {
-                $result .= 'added ' . $this->new_value;
-            }
-        }
-        // restore the type before saving the log
-        $db_con->set_type($db_type);
-        return $result;
+        return 'Error: either the named or link user log function should be used';
     }
 
     /**
