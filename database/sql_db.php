@@ -87,10 +87,12 @@ class sql_db
 
     // the parameter types for prepared queries independent of the SQL dialect
     const PAR_INT = 'int';
+    const PAR_INT_NOT = 'int_not';
     const PAR_INT_LIST = 'int_list';
     const PAR_TEXT = 'text';
     const PAR_TEXT_LIST = 'text_list';
     const PAR_LIKE = 'like';
+    const PAR_CONST = 'const';
 
     // reserved words that are automatically escaped
 
@@ -148,8 +150,9 @@ class sql_db
     const FLD_CODE_ID = "code_id";                // field name for the code link
     const FLD_USER_ID = "user_id";                // field name for the user table foreign key field
     const FLD_VALUE = "value";                    // field name e.g. for the configuration value
-    const FLD_DESCRIPTION = "description";        // field name for the any description
+    const FLD_DESCRIPTION = "description";        // field name for any description
     const FLD_TYPE_NAME = "type_name";            // field name for the user specific name of a type; types are used to assign code to a db row
+    const FLD_EXCLUDED = "excluded";              // field name used to delete the object only for one user
 
     // formats to force the formatting of a value for an SQL statement e.g. convert true to 1 when using tinyint to save boolean values
     const FLD_FORMAT_TEXT = "text";               // to force the text formatting of a value for the SQL statement formatting
@@ -536,6 +539,22 @@ class sql_db
         } else {
             return '?';
         }
+    }
+
+    /**
+     * get the SQL parameter value of a parameter position
+     *
+     * @param int $pos to get the placeholder of another position than the last
+     * @return string the SQL var const
+     */
+    function par_value(int $pos = 0): string
+    {
+        // if the position is not given use the last parameter added
+        if ($pos == 0) {
+            $pos = count($this->par_types);
+        }
+
+        return $this->par_values[$pos - 1];
     }
 
     function set_name(string $query_name): void
@@ -2156,7 +2175,15 @@ class sql_db
                             if ($par_type == self::PAR_LIKE) {
                                 $this->where .= $id_fields[$used_fields] . ' like ' . $this->par_name($i + 1);
                             } else {
-                                $this->where .= $id_fields[$used_fields] . ' = ' . $this->par_name($i + 1);
+                                if ($par_type == self::PAR_CONST) {
+                                    $this->where .= $this->par_value($i + 1);
+                                } else {
+                                    if ($par_type == self::PAR_INT_NOT) {
+                                        $this->where .= $id_fields[$used_fields] . ' <> ' . $this->par_name($i + 1);
+                                    } else {
+                                        $this->where .= $id_fields[$used_fields] . ' = ' . $this->par_name($i + 1);
+                                    }
+                                }
                             }
                         }
                         $used_fields++;
@@ -2602,7 +2629,15 @@ class sql_db
      */
     function get_par(): array
     {
-        return $this->par_values;
+        $used_par_values = [];
+        $i = 0; // the position in the SQL parameter array
+        foreach ($this->par_types as $par_type) {
+            if ($par_type != self::PAR_CONST) {
+                $used_par_values[] = $this->par_value($i + 1);;
+            }
+            $i++;
+        }
+        return $used_par_values;
     }
 
     /**
@@ -2691,6 +2726,33 @@ class sql_db
     }
 
     /**
+     * @return string the SQL statement to for the user specific data
+     */
+    function select_by_id_not_owner(int $id, ?int $owner_id = 0): string
+    {
+        $this->add_par(self::PAR_INT, $id);
+        if ($owner_id > 0) {
+            $this->add_par(self::PAR_INT_NOT, $owner_id);
+        }
+        $this->add_par(self::PAR_CONST, '(excluded <> 1 OR excluded is NULL)');
+
+        $this->set_field_statement(true);
+        $this->set_from();
+        if ($owner_id > 0) {
+            $this->set_where(array($this->id_field, self::FLD_USER_ID));
+        } else {
+            $this->set_where(array($this->id_field));
+        }
+
+        // create a prepare SQL statement if possible
+        $sql = $this->prepare_sql();
+
+        $sql .= $this->fields . $this->from . $this->where . $this->order . $this->page;
+
+        return $this->end_sql($sql);
+    }
+
+    /**
      * create the SQL parameters to count the number of rows related to a database table type
      * @return ?int the number of rows or null if something went wrong
      */
@@ -2751,11 +2813,16 @@ class sql_db
                 case self::PAR_INT_LIST:
                     $this->par_types[] = 'int[]';
                     break;
+                case self::PAR_INT_NOT:
+                    $this->par_types[] = 'int';
+                    break;
                 case self::PAR_TEXT_LIST:
                     $this->par_types[] = 'text[]';
                     break;
                 case self::PAR_LIKE:
                     $this->par_types[] = 'text';
+                    break;
+                case self::PAR_CONST:
                     break;
                 default:
                     $this->par_types[] = $type;

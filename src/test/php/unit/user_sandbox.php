@@ -154,6 +154,7 @@ class user_sandbox_unit_tests
         $result = $db_con->sf($text);
         $t->dsp(", sf: " . $text . "", $target, $result);
 
+
         $t->subheader('Test the version control');
 
         prg_version_is_newer_test($t);
@@ -1802,50 +1803,35 @@ class user_sandbox_unit_tests
           ORDER BY p.phrase_name;";
         $t->dsp('general phrase list query by type', $t->trim($expected_sql), $t->trim($created_sql));
 
+
+        $t->subheader('Test the user sandbox sql creation functions');
+
+        // init
+        $t->name = 'user_sandbox->';
+        $t->resource_path = 'db/user_sandbox/';
+
         // the word changer query (used in user_sandbox->changer_sql)
-        $db_con->db_type = sql_db::POSTGRES;
         $wrd = new word($usr);
         $wrd->id = 1;
-        $created_sql = $wrd->changer_sql($db_con);
-        $expected_sql = "SELECT user_id 
-                FROM user_words 
-               WHERE word_id = 1
-                 AND (excluded <> 1 OR excluded is NULL)";
-        $t->dsp('word changer query', $t->trim($expected_sql), $t->trim($created_sql));
-
-        // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $wrd->changer_sql($db_con, true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('user_sandbox->word_changer_sql check sql name', $result, $target);
-
-        // the word changer ex owner query (used in user_sandbox->changer_sql)
         $db_con->db_type = sql_db::POSTGRES;
-        $wrd = new word($usr);
-        $wrd->id = 1;
+        $qp = $wrd->changer_sql($db_con);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and for MySQL
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $wrd->changer_sql($db_con);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and the word changer ex owner query (used in user_sandbox->changer_sql)
         $wrd->owner_id = 2;
-        $created_sql = $wrd->changer_sql($db_con);
-        $expected_sql = "SELECT user_id 
-                FROM user_words 
-               WHERE word_id = 1
-                 AND user_id <> 2
-                 AND (excluded <> 1 OR excluded is NULL)";
-        $t->dsp('word changer ex owner query', $t->trim($expected_sql), $t->trim($created_sql));
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $wrd->changer_sql($db_con);
+        $t->assert_qp($qp, $db_con->db_type);
 
-        // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $wrd->changer_sql($db_con, true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('user_sandbox->word_changer_sql ex owner check sql name', $result, $target);
-
+        // ... and for MySQL
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $wrd->changer_sql($db_con);
+        $t->assert_qp($qp, $db_con->db_type);
     }
 
 }

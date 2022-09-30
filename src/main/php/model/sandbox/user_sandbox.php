@@ -574,48 +574,40 @@ class user_sandbox
     save functions
     */
 
-    function changer_sql(sql_db $db_con, bool $get_name = false): string
+    function changer_sql(sql_db $db_con): sql_par
     {
-        $sql_name = $this->obj_name . '_changer';
+        $qp = new sql_par($this->obj_name);
+        $qp->name .= 'changer';
         if ($this->owner_id > 0) {
-            $sql_name .= '_ex_owner';
+            $qp->name .= '_ex_owner';
         }
+        $db_con->set_type($this->obj_name, true);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(array(sql_db::FLD_USER_ID));
+        $qp->sql = $db_con->select_by_id_not_owner($this->id, $this->owner_id);
 
-        $sql_avoid_code_check_prefix = "SELECT";
-        if ($this->owner_id > 0) {
-            $sql = $sql_avoid_code_check_prefix . ' user_id 
-                FROM user_' . $this->obj_name . 's 
-               WHERE ' . $this->obj_name . '_id = ' . $this->id . '
-                 AND user_id <> ' . $this->owner_id . '
-                 AND (excluded <> 1 OR excluded is NULL)';
-        } else {
-            $sql = $sql_avoid_code_check_prefix . ' user_id 
-                FROM user_' . $this->obj_name . 's 
-               WHERE ' . $this->obj_name . '_id = ' . $this->id . '
-                 AND (excluded <> 1 OR excluded is NULL)';
-        }
+        $qp->par = $db_con->get_par();
 
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
+        return $qp;
     }
 
-    // if the object has been changed by someone else than the owner the user id is returned
-    // but only return the user id if the user has not also excluded it
+    /**
+     * if the object has been changed by someone else than the owner the user id is returned
+     * but only return the user id if the user has not also excluded it
+     * @returns int the user id of someone who has changed the object, but is not owner
+     */
     function changer(): int
     {
-        log_debug($this->obj_name . '->changer ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         global $db_con;
 
         $user_id = 0;
         $db_con->set_type($this->obj_name);
         $db_con->set_usr($this->usr->id);
-        $sql = $this->changer_sql($db_con);
-        $db_row = $db_con->get1_old($sql);
+        $qp = $this->changer_sql($db_con);
+        $db_row = $db_con->get1($qp);
         if ($db_row != false) {
             $user_id = $db_row[self::FLD_USER];
         }
