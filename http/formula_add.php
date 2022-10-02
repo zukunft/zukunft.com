@@ -104,7 +104,7 @@ if ($usr->id > 0) {
 
         // check if a word, verb or formula with the same name already exists
         log_debug('word');
-        $trm = $frm->term();
+        $trm = $frm->get_term();
         if (isset($trm)) {
             if ($trm->id > 0) {
                 $msg .= $trm->id_used_msg();

@@ -398,7 +398,7 @@ class formula_list
                     // formatting should be moved
                     //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
                     //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($this->back));
-                    $frm_dsp = $frm->dsp_obj();
+                    $frm_dsp = $frm->dsp_obj_old();
                     $formula_value = '';
                     if ($frm->name_wrd != null) {
                         $formula_value = $frm_dsp->dsp_result($frm->name_wrd, $this->back);

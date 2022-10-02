@@ -2,10 +2,10 @@
 
 /*
 
-    web\formula\formula.php - the display extension of the api formula object
+    web\phrase_list_dsp.php - the display extension of the api phrase list object
     -----------------------
 
-    to creat the HTML code to display a formula
+    mainly links to the word and triple display functions
 
 
     This file is part of zukunft.com - calc with words
@@ -34,29 +34,38 @@
 
 namespace html;
 
-use api\formula_api;
-use formula_value;
+use api\term_list_api;
 
-class formula_dsp extends formula_api
+class term_list_dsp extends term_list_api
 {
 
-    /*
-     * casting
+    /**
+     * @returns string the html code to display the phrases with the most useful link
      */
-
-    function term(): term_dsp
+    public function dsp(): string
     {
-        return new term_dsp($this->id, $this->name);
+        $result = '';
+        foreach ($this->lst as $trm) {
+            if ($result != '' and $trm->dsp_link() != '') {
+                $result .= ', ';
+            }
+            $result .= $trm->dsp_link();
+        }
+        return $result;
     }
 
-    // create the HTML code to display the formula name with the HTML link
-    function name_linked(?string $back = ''): string
+    /**
+     * @returns string the html code to select a phrase out of this list
+     */
+    public function selector(string $name = '', string $form = '', int $selected = 0): string
     {
-        if ($back) {
-            return '<a href="/http/formula_edit.php?id=' . $this->id . '">' . $this->name . '</a>';
-        } else {
-            return '<a href="/http/formula_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
-        }
+        $sel = new html_selector;
+        $sel->name = $name;
+        $sel->form = $form;
+        $sel->lst = $this->lst_key();
+        $sel->selected = $selected;
+
+        return $sel->dsp();
     }
 
 }

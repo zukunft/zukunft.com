@@ -31,8 +31,10 @@
   
 */
 
+use api\verb_api;
 use export\exp_obj;
 use html\html_selector;
+use html\verb_dsp;
 
 class verb
 {
@@ -149,6 +151,32 @@ class verb
     /*
      * set and get
      */
+
+    /*
+     * casting objects
+     */
+
+    /**
+     * @return verb_api the verb frontend api object
+     */
+    function api_obj(): verb_api
+    {
+        $api_obj = new verb_api();
+        $api_obj->set_id($this->id);
+        $api_obj->set_name($this->name);
+        return $api_obj;
+    }
+
+    /**
+     * @return verb_dsp the verb frontend api object
+     */
+    function dsp_obj(): verb_dsp
+    {
+        $dsp_obj = new verb_dsp();
+        $dsp_obj->set_id($this->id);
+        $dsp_obj->set_name($this->name);
+        return $dsp_obj;
+    }
 
     /*
      * loading
@@ -401,7 +429,7 @@ class verb
      * get the term corresponding to this verb name
      * so in this case, if a word or formula with the same name already exists, get it
      */
-    private function term(): term
+    private function get_term(): term
     {
         $trm = new term;
         $trm->name = $this->name;
@@ -795,7 +823,7 @@ class verb
         // check if a new word is supposed to be added
         if ($this->id <= 0) {
             // check if a word, formula or verb with the same name is already in the database
-            $trm = $this->term();
+            $trm = $this->get_term();
             if ($trm->id > 0 and $trm->type <> 'verb') {
                 $result .= $trm->id_used_msg();
             } else {
@@ -820,7 +848,7 @@ class verb
             // if the name has changed, check if verb, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
             if ($db_rec->name <> $this->name) {
                 // check if a verb, formula or verb with the same name is already in the database
-                $trm = $this->term();
+                $trm = $this->get_term();
                 if ($trm->id > 0 and $trm->type <> 'verb') {
                     $result .= $trm->id_used_msg();
                 } else {

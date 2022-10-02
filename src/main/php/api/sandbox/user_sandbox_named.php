@@ -32,6 +32,9 @@
 
 namespace api;
 
+use html\phrase_dsp;
+use html\term_dsp;
+
 class user_sandbox_named_api extends user_sandbox_api
 {
 
@@ -72,6 +75,20 @@ class user_sandbox_named_api extends user_sandbox_api
     public function name(): string
     {
         return $this->name;
+    }
+
+    /*
+     * casting objects
+     */
+
+    function phrase(): phrase_api|phrase_dsp
+    {
+        return new phrase_api($this->id, $this->name);
+    }
+
+    function term(): term_api|term_dsp
+    {
+        return new term_api($this->id, $this->name);
     }
 
     /*

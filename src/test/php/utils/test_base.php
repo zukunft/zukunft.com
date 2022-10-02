@@ -81,6 +81,7 @@ include_once $path_unit . 'word_link_list.php';
 include_once $path_unit . 'phrase.php';
 include_once $path_unit . 'phrase_list.php';
 include_once $path_unit . 'phrase_group.php';
+include_once $path_unit . 'term_list.php';
 include_once $path_unit . 'value.php';
 include_once $path_unit . 'value_phrase_link.php';
 include_once $path_unit . 'value_list.php';
@@ -369,7 +370,7 @@ class test_base
      * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
      * @return word the created word object
      */
-    function create_word(string $wrd_name, string $wrd_type_code_id = null, ?user $test_usr = null): word
+    function new_word(int $id, string $wrd_name, string $wrd_type_code_id = null, ?user $test_usr = null): word
     {
         global $usr;
 
@@ -378,6 +379,7 @@ class test_base
         }
 
         $wrd = new word($test_usr);
+        $wrd->id = $id;
         $wrd->name = $wrd_name;
 
         if ($wrd_type_code_id != null) {
@@ -388,7 +390,7 @@ class test_base
 
     function load_word(string $wrd_name, ?user $test_usr = null): word
     {
-        $wrd = $this->create_word($wrd_name, null, $test_usr);
+        $wrd = $this->new_word(0, $wrd_name, null, $test_usr);
         $wrd->load();
         return $wrd;
     }

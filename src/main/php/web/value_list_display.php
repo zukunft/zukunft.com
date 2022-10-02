@@ -177,7 +177,7 @@ class value_list_dsp_old extends value_list
                 // check if row is empty
                 $row_has_value = false;
                 $grp = new phrase_group($this->usr);
-                $grp->load_by_ids(new phr_ids($wrd_ids));
+                $grp->load_by_ids(new trm_ids($wrd_ids));
                 foreach ($time_lst->lst as $time_wrd) {
                     $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                     if ($tbl_value->number <> "") {
@@ -201,7 +201,7 @@ class value_list_dsp_old extends value_list
                         // get the phrase group for the value row
                         // to be done for the list at once
                         $grp = new phrase_group($this->usr);
-                        $grp->load_by_ids(new phr_ids($val_wrd_ids));
+                        $grp->load_by_ids(new trm_ids($val_wrd_ids));
                         log_debug("val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
 
                         $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
@@ -302,7 +302,7 @@ class value_list_dsp_old extends value_list
                                 // get the phrase group for the value row
                                 // to be done for the list at once
                                 $grp = new phrase_group($this->usr);
-                                $grp->load_by_ids(new phr_ids($val_wrd_ids));
+                                $grp->load_by_ids(new trm_ids($val_wrd_ids));
                                 log_debug("val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
 
                                 $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);

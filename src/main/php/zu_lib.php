@@ -20,7 +20,7 @@
     after that this should be done while keeping step 1. to 4. for each commit:
     TODO check that all queries are parameterized by setting $db_con->set_name
     TODO check that all load function have an API and are added in the OpenAPI document
-    TODO use the api functions and the html frondend function
+    TODO use the api functions and the html frontend function
     TODO create a vue.js based frontend
     TODO capsule (change from public to private or protected) all class vars that have dependencies e.g lst of user_type_list
     TODO split frontend and backend an connect them using api objects
@@ -323,9 +323,10 @@ include_once $path_php . 'model/phrase/phrase_group_link.php';
 include_once $path_php . 'model/phrase/phrase_group_word_link.php';
 include_once $path_php . 'model/phrase/phrase_group_triple_link.php';
 include_once $path_php . 'model/phrase/phrase_type.php';
+include_once $path_php . 'model/phrase/term.php';
+include_once $path_php . 'model/phrase/term_list.php';
 include_once $path_php . 'model/verb/verb.php';
 include_once $path_php . 'model/verb/verb_list.php';
-include_once $path_php . 'model/phrase/term.php';
 include_once $path_php . 'model/value/value.php';
 include_once $path_php . 'model/value/value_dsp.php';
 include_once $path_php . 'model/value/value_exp.php';
@@ -393,6 +394,8 @@ include_once $path_php . 'api/word/triple.php';
 include_once $path_php . 'api/phrase/phrase.php';
 include_once $path_php . 'api/phrase/phrase_list.php';
 include_once $path_php . 'api/phrase/phrase_group.php';
+include_once $path_php . 'api/phrase/term.php';
+include_once $path_php . 'api/phrase/term_list.php';
 include_once $path_php . 'api/verb/verb.php';
 include_once $path_php . 'api/value/value.php';
 include_once $path_php . 'api/value/value_list.php';
@@ -421,6 +424,8 @@ include_once $path_php . 'web/word/triple.php';
 include_once $path_php . 'web/phrase/phrase.php';
 include_once $path_php . 'web/phrase/phrase_list.php';
 include_once $path_php . 'web/phrase/phrase_group.php';
+include_once $path_php . 'web/phrase/term.php';
+include_once $path_php . 'web/phrase/term_list.php';
 include_once $path_php . 'web/verb/verb.php';
 include_once $path_php . 'web/value/value.php';
 include_once $path_php . 'web/value/value_list.php';

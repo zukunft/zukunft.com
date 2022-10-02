@@ -207,7 +207,7 @@ function run_formula_test(testing $t)
 
     // test the formula display functions
     $frm = $t->load_formula(formula::TN_INCREASE);
-    $frm_dsp = $frm->dsp_obj();
+    $frm_dsp = $frm->dsp_obj_old();
     $exp = $frm->expression();
     $result = $exp->dsp_id();
     $target = '""percent" = ( "this" - "prior" ) / "prior"" ({t'.$wrd_percent->id.'}=({f'.$frm_this->id.'}-{f'.$frm_prior->id.'})/{f'.$frm_prior->id.'})';

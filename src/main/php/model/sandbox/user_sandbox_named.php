@@ -435,8 +435,10 @@ class user_sandbox_named extends user_sandbox
         // check potential duplicate by name
         // for words and formulas it needs to be checked if a term (word, verb or formula) with the same name already exist
         // for verbs the check is inside the verbs class because verbs are not part of the user sandbox
-        if ($this->obj_name == DB_TYPE_WORD or $this->obj_name == DB_TYPE_FORMULA) {
-            $similar_trm = $this->term();
+        if ($this->obj_name == DB_TYPE_WORD
+            or $this->obj_name == DB_TYPE_TRIPLE
+            or $this->obj_name == DB_TYPE_FORMULA) {
+            $similar_trm = $this->get_term();
             if ($similar_trm != null) {
                 if ($similar_trm->obj != null) {
                     $result = $similar_trm->obj;

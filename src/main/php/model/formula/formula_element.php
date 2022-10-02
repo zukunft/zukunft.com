@@ -128,7 +128,7 @@ class formula_element
                 $frm->id = $ref_id;
                 $frm->load();
                 $this->name = $frm->name;
-                $this->dsp_name = $frm->dsp_obj()->name_linked($this->back);
+                $this->dsp_name = $frm->dsp_obj_old()->name_linked($this->back);
                 $this->symbol = expression::FORMULA_START . $frm->id . expression::FORMULA_END;
                 $this->obj = $frm;
                 // in case of a formula load also the corresponding word

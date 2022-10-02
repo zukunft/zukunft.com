@@ -85,8 +85,8 @@ function run_formula_link_test(testing $t)
     if ($frm_lnk2->fob != null) {
         $result = $frm_lnk2->fob->dsp_obj()->name();
     }
-    $target = $frm->dsp_obj()->name();
-    $t->dsp('formula_link->load by formula id and link id "' . $frm->dsp_obj()->name(), $target, $result);
+    $target = $frm->dsp_obj_old()->name();
+    $t->dsp('formula_link->load by formula id and link id "' . $frm->dsp_obj_old()->name(), $target, $result);
 
     $result = '';
     if ($frm_lnk2->tob != null) {

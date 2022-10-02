@@ -146,11 +146,6 @@ class word_api extends user_sandbox_named_api
         return $wrd_dsp;
     }
 
-    function phrase(): phrase_api
-    {
-        return new phrase_api($this->id, $this->name);
-    }
-
     /*
      * type functions
      */

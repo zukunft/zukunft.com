@@ -44,7 +44,7 @@ class phrase_list_unit_tests
      * TODO create a common test result object to return
      * TODO capsule all unit tests in a class like this example
      */
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         $t->header('Unit tests of the phrase list class (src/main/php/model/phrase/phrase_list.php)');

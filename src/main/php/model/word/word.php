@@ -1032,7 +1032,7 @@ class word extends user_sandbox_description
             $result .= dsp_form_hidden("name", $this->name);
             $result .= '  to change the name of "' . $this->name . '" rename the ';
             $frm = $this->formula();
-            $result .= $frm->dsp_obj()->name_linked($back);
+            $result .= $frm->dsp_obj_old()->name_linked($back);
             $result .= '.<br> ';
         } else {
             $result .= dsp_form_text("name", $this->name, "Name:", "col-sm-4");
@@ -1579,7 +1579,7 @@ class word extends user_sandbox_description
      */
 
     /**
-     * convert the word object into a phrase object
+     * @returns phrase the word object cast into a phrase object
      */
     function phrase(): phrase
     {
@@ -1589,6 +1589,19 @@ class word extends user_sandbox_description
         $phr->obj = $this;
         log_debug($this->dsp_id());
         return $phr;
+    }
+
+    /**
+     * @returns term the word object cast into a term object
+     */
+    function term(): term
+    {
+        $trm = new term($this->usr);
+        $trm->id = $this->id;
+        $trm->name = $this->name;
+        $trm->obj = $this;
+        log_debug($this->dsp_id());
+        return $trm;
     }
 
     /*

@@ -70,4 +70,9 @@ class triple_dsp extends triple_api
         return new phrase_dsp($this->id(), $this->name());
     }
 
+    function term(): term_dsp
+    {
+        return new term_dsp($this->id, $this->name);
+    }
+
 }

@@ -165,7 +165,7 @@ class formula_link_list
     /**
      * get an array with all phrases linked of this list e.g. linked to one formula
      */
-    function phrase_ids($sbx): phr_ids
+    function phrase_ids($sbx): trm_ids
     {
         log_debug('formula_link_list->ids');
         $result = array();
@@ -183,7 +183,7 @@ class formula_link_list
         }
 
         log_debug('formula_link_list->ids -> got ' . dsp_count($result));
-        return (new phr_ids($result));
+        return (new trm_ids($result));
     }
 
     /**

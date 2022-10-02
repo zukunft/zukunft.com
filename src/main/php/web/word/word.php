@@ -31,6 +31,7 @@
 
 namespace html;
 
+use api\term_api;
 use api\word_api;
 use api\phrase_api;
 use html\phrase_dsp;
@@ -221,6 +222,11 @@ class word_dsp extends word_api
     function phrase_dsp(): phrase_dsp
     {
         return new phrase_dsp($this->id(), $this->name());
+    }
+
+    function term(): term_dsp
+    {
+        return new term_dsp($this->id, $this->name);
     }
 
 }

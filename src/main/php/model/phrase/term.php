@@ -43,7 +43,10 @@
 
 */
 
+use api\term_api;
 use cfg\phrase_type;
+use html\term_dsp;
+use html\word_dsp;
 
 class term
 {
@@ -53,6 +56,206 @@ class term
     public ?string $type = null; // either "word", "verb" or "formula"
     public ?string $name = null; // the name used (must be unique for words, verbs and formulas)
     public ?object $obj = null;  // the word, verb or formula object
+
+    /*
+     * get, set and debug functions
+     */
+
+    /**
+     * display the unique id fields
+     */
+    function dsp_id(): string
+    {
+        $result = '';
+
+        if ($this->name <> '') {
+            $result .= '"' . $this->name . '"';
+            if ($this->id > 0) {
+                $result .= ' (' . $this->id . ')';
+            }
+        } else {
+            $result .= $this->id;
+        }
+        if (isset($this->usr)) {
+            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        }
+        return $result;
+    }
+
+    /*
+     * classification
+     */
+
+    /**
+     * @return bool true if this term is a word or supposed to be a word
+     */
+    function is_word(): bool
+    {
+        $result = false;
+        if (isset($this->obj)) {
+            if (get_class($this->obj) == word::class or get_class($this->obj) == word_dsp::class) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if this term is a triple or supposed to be a triple
+     */
+    private function is_triple(): bool
+    {
+        $result = false;
+        if (isset($this->obj)) {
+            if (get_class($this->obj) == word_link::class) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if this term is a formula or supposed to be a triple
+     */
+    private function is_formula(): bool
+    {
+        $result = false;
+        if (isset($this->obj)) {
+            if (get_class($this->obj) == formula::class) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if this term is a verb or supposed to be a triple
+     */
+    private function is_verb(): bool
+    {
+        $result = false;
+        if (isset($this->obj)) {
+            if (get_class($this->obj) == formula::class) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /*
+     * conversion
+     */
+
+    private function get_word(): word
+    {
+        $wrd = new word($this->usr);
+        if (get_class($this->obj) == word::class) {
+            $wrd->id = $this->obj->id;
+            $wrd->usr_cfg_id = $this->obj->usr_cfg_id;
+            $wrd->owner_id = $this->obj->owner_id;
+            $wrd->share_id = $this->obj->share_id;
+            $wrd->protection_id = $this->obj->protection_id;
+            $wrd->excluded = $this->obj->excluded;
+            $wrd->name = $this->obj->name;
+            $wrd->description = $this->obj->description;
+            $wrd->plural = $this->obj->plural;
+            $wrd->type_id = $this->obj->type_id;
+            $wrd->view_id = $this->obj->view_id;
+            $wrd->values = $this->obj->values;
+        }
+        return $wrd;
+    }
+
+    private function get_triple(): word_link
+    {
+        $lnk = new word_link($this->usr);
+        if (get_class($this->obj) == word_link::class) {
+            $lnk->id = $this->obj->id;
+            $lnk->fob = $this->obj->fob;
+            $lnk->tob = $this->obj->tob;
+            $lnk->usr_cfg_id = $this->obj->usr_cfg_id;
+            $lnk->owner_id = $this->obj->owner_id;
+            $lnk->share_id = $this->obj->share_id;
+            $lnk->protection_id = $this->obj->protection_id;
+            $lnk->excluded = $this->obj->excluded;
+            $lnk->description = $this->obj->description;
+            $lnk->type_id = $this->obj->type_id;
+            $lnk->values = $this->obj->values;
+        }
+        return $lnk;
+    }
+
+    private function get_formula(): formula
+    {
+        $frm = new formula($this->usr);
+        if (get_class($this->obj) == formula::class) {
+            $frm->id = $this->obj->id;
+            $frm->usr_cfg_id = $this->obj->usr_cfg_id;
+            $frm->owner_id = $this->obj->owner_id;
+            $frm->share_id = $this->obj->share_id;
+            $frm->protection_id = $this->obj->protection_id;
+            $frm->excluded = $this->obj->excluded;
+            $frm->description = $this->obj->description;
+            $frm->type_id = $this->obj->type_id;
+        }
+        return $frm;
+    }
+
+    private function get_verb(): verb
+    {
+        $vrb = new verb();
+        if (get_class($this->obj) == verb::class) {
+            $vrb->id = $this->obj->id;
+            $vrb->description = $this->obj->description;
+        }
+        return $vrb;
+    }
+
+    /*
+     * casting objects
+     */
+
+    /**
+     * @return term_api the term frontend api object
+     */
+    function api_obj(): term_api
+    {
+        if ($this->is_word()) {
+            return $this->get_word()->api_obj()->term();
+        } elseif ($this->is_triple()) {
+            return $this->get_triple()->api_obj()->term();
+        } elseif ($this->is_formula()) {
+            return $this->get_formula()->api_obj()->term();
+        } elseif ($this->is_verb()) {
+            return $this->get_verb()->api_obj()->term();
+        } else {
+            log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
+            return (new term_api());
+        }
+    }
+
+    /**
+     * @return term_dsp the phrase object with the display interface functions
+     */
+    function dsp_obj(): term_dsp
+    {
+        if ($this->is_word()) {
+            return $this->get_word()->dsp_obj()->term();
+        } elseif ($this->is_triple()) {
+            return $this->get_triple()->dsp_obj()->term();
+        } elseif ($this->is_formula()) {
+            return $this->get_formula()->dsp_obj()->term();
+        } elseif ($this->is_verb()) {
+            return $this->get_verb()->dsp_obj()->term();
+        } else {
+            log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
+            return (new term_dsp());
+        }
+    }
+
+    /*
+     * load functions
+     */
 
     /**
      * test if the name is used already and load the object
@@ -156,6 +359,10 @@ class term
         }
         return $result;
     }
+
+    /*
+    * user interface language specific functions
+    */
 
     /**
      * create a message text that the name is already used

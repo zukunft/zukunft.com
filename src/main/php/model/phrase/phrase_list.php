@@ -196,10 +196,10 @@ class phrase_list
     /**
      * load the phrases selected by the id
      *
-     * @param phr_ids $ids of phrase ids that should be loaded
+     * @param trm_ids $ids of phrase ids that should be loaded
      * @return bool true if at least one phrase has been loaded
      */
-    function load_by_given_ids(phr_ids $ids): bool
+    function load_by_given_ids(trm_ids $ids): bool
     {
         global $db_con;
         $result = false;
@@ -1076,9 +1076,9 @@ class phrase_list
     }
 
     /**
-     * @return phr_ids with the sorted phrase ids where a triple has a negative id
+     * @return trm_ids with the sorted phrase ids where a triple has a negative id
      */
-    function ids(): phr_ids
+    function ids(): trm_ids
     {
         $lst = array();
         if (count($this->lst) > 0) {
@@ -1090,7 +1090,7 @@ class phrase_list
             }
         }
         asort($lst);
-        return (new phr_ids($lst));
+        return (new trm_ids($lst));
     }
 
     /**
@@ -1992,7 +1992,7 @@ class phrase_list
 /**
  * helper class to make sure that a triple id list is never mixed with a phrase id list
  */
-class phr_ids
+class trm_ids
 {
     public ?array $lst = null;
 

@@ -91,6 +91,7 @@ class test_unit extends testing
         (new phrase_unit_tests)->run($this);
         (new phrase_list_unit_tests)->run($this);
         (new phrase_group_unit_tests)->run($this);
+        (new term_list_unit_tests)->run($this);
         (new view_unit_tests)->run($this);
         (new view_component_unit_tests())->run($this);
         (new view_component_link_unit_tests)->run($this);

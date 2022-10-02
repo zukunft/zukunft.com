@@ -35,6 +35,7 @@ use cfg\protection_type;
 use cfg\share_type;
 use export\formula_exp;
 use export\exp_obj;
+use html\formula_dsp;
 use html\word_dsp;
 
 class formula extends user_sandbox_description
@@ -212,9 +213,35 @@ class formula extends user_sandbox_description
     /**
      * @return formula_dsp_old the formula object with the display interface functions
      */
-    function dsp_obj(): object
+    function dsp_obj_old(): object
     {
         $dsp_obj = new formula_dsp_old($this->usr);
+
+        $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+
+        $dsp_obj->ref_text = $this->ref_text;
+        $dsp_obj->usr_text = $this->usr_text;
+        $dsp_obj->description = $this->description;
+        $dsp_obj->type_id = $this->type_id;
+        $dsp_obj->need_all_val = $this->need_all_val;
+        $dsp_obj->last_update = $this->last_update;
+
+        $dsp_obj->type_cl = $this->type_cl;
+        $dsp_obj->type_name = $this->type_name;
+        $dsp_obj->name_wrd = $this->name_wrd;
+
+        $dsp_obj->needs_fv_upd = $this->needs_fv_upd;
+        $dsp_obj->ref_text_r = $this->ref_text_r;
+
+        return $dsp_obj;
+    }
+
+    /**
+     * @return formula_dsp the formula object with the display interface functions
+     */
+    function dsp_obj(): object
+    {
+        $dsp_obj = new formula_dsp();
 
         $dsp_obj = parent::fill_dsp_obj($dsp_obj);
 
@@ -692,7 +719,7 @@ class formula extends user_sandbox_description
                     $phr_ids = array_merge($direct_phr_lst->id_lst(), $indirect_phr_lst->id_lst());
                     $phr_ids = array_unique($phr_ids);
 
-                    $phr_lst->load_by_given_ids((new phr_ids($phr_ids)));
+                    $phr_lst->load_by_given_ids((new trm_ids($phr_ids)));
                     log_debug(self::class . '->assign_phr_glst -> number of words and triples ' . dsp_count($phr_lst->lst));
                 } else {
                     log_debug(self::class . '->assign_phr_glst -> no words are assigned to ' . $this->dsp_id());
@@ -2087,7 +2114,7 @@ class formula extends user_sandbox_description
         // if the name has changed, check if word, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
         if ($db_rec->name <> $this->name) {
             // check if a verb or word with the same name is already in the database
-            $trm = $this->term();
+            $trm = $this->get_term();
             if ($trm->id > 0 and !$this->is_term_the_same($trm)) {
                 $result .= $trm->id_used_msg();
                 log_debug(self::class . '->save_id_if_updated name "' . $trm->name . '" used already as "' . $trm->type . '"');
@@ -2223,7 +2250,7 @@ class formula extends user_sandbox_description
             if ($this->id <= 0) {
                 // check if a verb, formula or word with the same name is already in the database
                 log_debug(self::class . '->save -> add ' . $this->dsp_id());
-                $trm = $this->term();
+                $trm = $this->get_term();
                 if ($trm->id > 0) {
                     if ($trm->type <> 'formula') {
                         $result .= $trm->id_used_msg();

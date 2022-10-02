@@ -29,6 +29,8 @@
   
 */
 
+use html\word_dsp;
+
 class formula_value_list
 {
 
@@ -458,7 +460,7 @@ class formula_value_list
             $calc_row['frm_id'] = $frm_row[formula::FLD_ID];
             $calc_row['frm_name'] = $frm_row['formula_name'];
             $calc_row['frm_text'] = $frm_row['formula_text'];
-            $calc_row['phr_ids'] = $phr_ids;
+            $calc_row['trm_ids'] = $phr_ids;
             $result[] = $calc_row;
         }
 
