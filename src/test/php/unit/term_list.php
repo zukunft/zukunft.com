@@ -64,7 +64,7 @@ class term_list_unit_tests
         global $usr;
 
         $lst = new term_list($usr);
-        $lst->add($this->t->new_word(1,word::TN_READ)->term());
+        $lst->add($this->t->new_word(word::TN_READ)->term());
         // TODO add triple, verb, formula
         return $lst;
     }

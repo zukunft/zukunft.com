@@ -317,6 +317,8 @@ class test_base
     public string $name;
     public string $resource_path;
 
+    private int $seq_nbr;
+
     function __construct()
     {
         // init the times to be able to detect potential timeouts
@@ -328,11 +330,13 @@ class test_base
         $this->timeout_counter = 0;
         $this->total_tests = 0;
 
+        $this->seq_nbr = 0;
+
         $this->name = '';
         $this->resource_path = '';
     }
 
-    function set_users()
+    function set_users(): void
     {
 
         // create the system test user to simulate the user sandbox
@@ -362,18 +366,26 @@ class test_base
      *
      */
 
+    /*
+     * word test creation
+     */
+
     /**
      * create a new word e.g. for unit testing with a given type
      *
+     * @param int $id t force setting the id for unit testing
      * @param string $wrd_name the name of the word that should be created
      * @param string|null $wrd_type_code_id the id of the predefined word type which the new word should have
      * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
      * @return word the created word object
      */
-    function new_word(int $id, string $wrd_name, string $wrd_type_code_id = null, ?user $test_usr = null): word
+    function new_word(string $wrd_name, ?int $id = null, ?string $wrd_type_code_id = null, ?user $test_usr = null): word
     {
         global $usr;
 
+        if ($id == null) {
+            $id = $this->next_seq_nbr();
+        }
         if ($test_usr == null) {
             $test_usr = $usr;
         }
@@ -388,14 +400,34 @@ class test_base
         return $wrd;
     }
 
+    /**
+     * load a word from the database
+     *
+     * @param string $wrd_name the name of the word which should be loaded
+     * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
+     * @return word the word loaded from the database by name
+     */
     function load_word(string $wrd_name, ?user $test_usr = null): word
     {
-        $wrd = $this->new_word(0, $wrd_name, null, $test_usr);
+        global $usr;
+        if ($test_usr == null) {
+            $test_usr = $usr;
+        }
+        $wrd = new word($test_usr);
+        $wrd->name = $wrd_name;
         $wrd->load();
         return $wrd;
     }
 
-    function add_word(string $wrd_name, string $wrd_type_code_id = null, ?user $test_usr = null): word
+    /**
+     * save the just created word object in the database
+     *
+     * @param string $wrd_name the name of the word which should be loaded
+     * @param string|null $wrd_type_code_id the id of the predefined word type which the new word should have
+     * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
+     * @return word the word that is saved in the database by name
+     */
+    function add_word(string $wrd_name, ?string $wrd_type_code_id = null, ?user $test_usr = null): word
     {
         $wrd = $this->load_word($wrd_name, $test_usr);
         if ($wrd->id == 0) {
@@ -409,12 +441,190 @@ class test_base
         return $wrd;
     }
 
-    function test_word(string $wrd_name, $wrd_type_code_id = null, ?user $test_usr = null): word
+    /**
+     * check if a word object could have been added to the database
+     *
+     * @param string $wrd_name the name of the word which should be loaded
+     * @param string|null $wrd_type_code_id the id of the predefined word type which the new word should have
+     * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
+     * @return word the word that is saved in the database by name
+     */
+    function test_word(string $wrd_name, ?string $wrd_type_code_id = null, ?user $test_usr = null): word
     {
         $wrd = $this->add_word($wrd_name, $wrd_type_code_id, $test_usr);
         $target = $wrd_name;
         $this->dsp('testing->add_word', $target, $wrd->name);
         return $wrd;
+    }
+
+    /*
+     * triple test creation
+     */
+
+    /**
+     * create a new word e.g. for unit testing with a given type
+     *
+     * @param int $id t force setting the id for unit testing
+     * @param string $wrd_name the name of the word that should be created
+     * @param string|null $wrd_type_code_id the id of the predefined word type which the new word should have
+     * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
+     * @return word_link the created triple object
+     */
+    function new_triple(int     $id,
+                        string  $wrd_name,
+                        string  $from_name,
+                        string  $verb_code_id,
+                        string  $to_name,
+                        ?string $wrd_type_code_id = null,
+                        ?user   $test_usr = null): word_link
+    {
+        global $usr;
+        global $verbs;
+
+        if ($id == null) {
+            $id = $this->next_seq_nbr();
+        }
+        if ($test_usr == null) {
+            $test_usr = $usr;
+        }
+
+        $trp = new word_link($test_usr);
+        $trp->id = $id;
+        $trp->from = $this->new_word($from_name)->phrase();
+        $trp->verb = $verbs->get_verb($verb_code_id);
+        $trp->to = $this->new_word($to_name)->phrase();
+        $trp->name = $wrd_name;
+
+        if ($wrd_type_code_id != null) {
+            $trp->type_id = cl(db_cl::WORD_TYPE, $wrd_type_code_id);
+        }
+        return $trp;
+    }
+
+    function load_word_link(string $from_name,
+                            string $verb_code_id,
+                            string $to_name): word_link
+    {
+        global $usr;
+        global $verbs;
+
+        $wrd_from = $this->load_word($from_name);
+        $wrd_to = $this->load_word($to_name);
+        $from = $wrd_from->phrase();
+        $to = $wrd_to->phrase();
+
+        $vrb = $verbs->get_verb($verb_code_id);
+
+        $lnk_test = new word_link($usr);
+        if ($from->id > 0 or $to->id > 0) {
+            // check if the forward link exists
+            $lnk_test->from = $from;
+            $lnk_test->verb = $vrb;
+            $lnk_test->to = $to;
+            $lnk_test->load();
+        }
+        return $lnk_test;
+    }
+
+    /**
+     * check if a word link exists and if not and requested create it
+     * $phrase_name should be set if the standard name for the link should not be used
+     */
+    function test_word_link(string $from_name,
+                            string $verb_code_id,
+                            string $to_name,
+                            string $target = '',
+                            string $phrase_name = '',
+                            bool   $autocreate = true)
+    {
+        global $usr;
+        global $verbs;
+
+        $result = '';
+
+        // create the words if needed
+        $wrd_from = $this->load_word($from_name);
+        if ($wrd_from->id <= 0 and $autocreate) {
+            $wrd_from->name = $from_name;
+            $wrd_from->save();
+            $wrd_from->load();
+        }
+        $wrd_to = $this->load_word($to_name);
+        if ($wrd_to->id <= 0 and $autocreate) {
+            $wrd_to->name = $to_name;
+            $wrd_to->save();
+            $wrd_to->load();
+        }
+        $from = $wrd_from->phrase();
+        $to = $wrd_to->phrase();
+
+        $vrb = $verbs->get_verb($verb_code_id);
+
+        $lnk_test = new word_link($usr);
+        if ($from->id == 0 or $to->id == 0) {
+            log_err("Words " . $from_name . " and " . $to_name . " cannot be created");
+        } else {
+            // check if the forward link exists
+            $lnk_test->from = $from;
+            $lnk_test->verb = $vrb;
+            $lnk_test->to = $to;
+            $lnk_test->load();
+            if ($lnk_test->id > 0) {
+                // refresh the given name if needed
+                if ($phrase_name <> '' and $lnk_test->description() <> $phrase_name) {
+                    $lnk_test->description = $phrase_name;
+                    $lnk_test->save();
+                    $lnk_test->load();
+                }
+                $result = $lnk_test;
+            } else {
+                // check if the backward link exists
+                $lnk_test->from = $to;
+                $lnk_test->verb = $vrb;
+                $lnk_test->to = $from;
+                $lnk_test->usr = $usr;
+                $lnk_test->load();
+                $result = $lnk_test;
+                // create the link if requested
+                if ($lnk_test->id <= 0 and $autocreate) {
+                    $lnk_test->from = $from;
+                    $lnk_test->verb = $vrb;
+                    $lnk_test->to = $to;
+                    $lnk_test->save();
+                    $lnk_test->load();
+                    // refresh the given name if needed
+                    if ($lnk_test->id <> 0 and $phrase_name <> '' and $lnk_test->description() <> $phrase_name) {
+                        $lnk_test->description = $phrase_name;
+                        $lnk_test->save();
+                        $lnk_test->load();
+                    }
+                    $result = $lnk_test;
+                }
+            }
+        }
+        // fallback setting of target f
+        $result_text = '';
+        if ($lnk_test->id > 0) {
+            $result_text = $lnk_test->description();
+            if ($target == '') {
+                $target = $lnk_test->name();
+            }
+        }
+        $this->dsp('word link', $target, $result_text, TIMEOUT_LIMIT_DB);
+        return $result;
+    }
+
+    function del_word_link(string $from_name,
+                           string $verb_code_id,
+                           string $to_name): bool
+    {
+        $trp = $this->load_word_link($from_name, $verb_code_id, $to_name);
+        if ($trp->id <> 0) {
+            $trp->del();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function load_ref(string $wrd_name, string $type_name): ref
@@ -810,132 +1020,6 @@ class test_base
             }
         }
         return $result;
-    }
-
-    function load_word_link(string $from_name,
-                            string $verb_code_id,
-                            string $to_name): word_link
-    {
-        global $usr;
-        global $verbs;
-
-        $wrd_from = $this->load_word($from_name);
-        $wrd_to = $this->load_word($to_name);
-        $from = $wrd_from->phrase();
-        $to = $wrd_to->phrase();
-
-        $vrb = $verbs->get_verb($verb_code_id);
-
-        $lnk_test = new word_link($usr);
-        if ($from->id > 0 or $to->id > 0) {
-            // check if the forward link exists
-            $lnk_test->from = $from;
-            $lnk_test->verb = $vrb;
-            $lnk_test->to = $to;
-            $lnk_test->load();
-        }
-        return $lnk_test;
-    }
-
-    /**
-     * check if a word link exists and if not and requested create it
-     * $phrase_name should be set if the standard name for the link should not be used
-     */
-    function test_word_link(string $from_name,
-                            string $verb_code_id,
-                            string $to_name,
-                            string $target = '',
-                            string $phrase_name = '',
-                            bool   $autocreate = true)
-    {
-        global $usr;
-        global $verbs;
-
-        $result = '';
-
-        // create the words if needed
-        $wrd_from = $this->load_word($from_name);
-        if ($wrd_from->id <= 0 and $autocreate) {
-            $wrd_from->name = $from_name;
-            $wrd_from->save();
-            $wrd_from->load();
-        }
-        $wrd_to = $this->load_word($to_name);
-        if ($wrd_to->id <= 0 and $autocreate) {
-            $wrd_to->name = $to_name;
-            $wrd_to->save();
-            $wrd_to->load();
-        }
-        $from = $wrd_from->phrase();
-        $to = $wrd_to->phrase();
-
-        $vrb = $verbs->get_verb($verb_code_id);
-
-        $lnk_test = new word_link($usr);
-        if ($from->id == 0 or $to->id == 0) {
-            log_err("Words " . $from_name . " and " . $to_name . " cannot be created");
-        } else {
-            // check if the forward link exists
-            $lnk_test->from = $from;
-            $lnk_test->verb = $vrb;
-            $lnk_test->to = $to;
-            $lnk_test->load();
-            if ($lnk_test->id > 0) {
-                // refresh the given name if needed
-                if ($phrase_name <> '' and $lnk_test->description() <> $phrase_name) {
-                    $lnk_test->description = $phrase_name;
-                    $lnk_test->save();
-                    $lnk_test->load();
-                }
-                $result = $lnk_test;
-            } else {
-                // check if the backward link exists
-                $lnk_test->from = $to;
-                $lnk_test->verb = $vrb;
-                $lnk_test->to = $from;
-                $lnk_test->usr = $usr;
-                $lnk_test->load();
-                $result = $lnk_test;
-                // create the link if requested
-                if ($lnk_test->id <= 0 and $autocreate) {
-                    $lnk_test->from = $from;
-                    $lnk_test->verb = $vrb;
-                    $lnk_test->to = $to;
-                    $lnk_test->save();
-                    $lnk_test->load();
-                    // refresh the given name if needed
-                    if ($lnk_test->id <> 0 and $phrase_name <> '' and $lnk_test->description() <> $phrase_name) {
-                        $lnk_test->description = $phrase_name;
-                        $lnk_test->save();
-                        $lnk_test->load();
-                    }
-                    $result = $lnk_test;
-                }
-            }
-        }
-        // fallback setting of target f
-        $result_text = '';
-        if ($lnk_test->id > 0) {
-            $result_text = $lnk_test->description();
-            if ($target == '') {
-                $target = $lnk_test->name();
-            }
-        }
-        $this->dsp('word link', $target, $result_text, TIMEOUT_LIMIT_DB);
-        return $result;
-    }
-
-    function del_word_link(string $from_name,
-                           string $verb_code_id,
-                           string $to_name): bool
-    {
-        $trp = $this->load_word_link($from_name, $verb_code_id, $to_name);
-        if ($trp->id <> 0) {
-            $trp->del();
-            return true;
-        } else {
-            return false;
-        }
     }
 
     function test_formula_link(string $formula_name, string $word_name, bool $autocreate = true): string
@@ -1432,7 +1516,7 @@ class test_base
             // TODO: create a ticket
         }
 
-    // explain the check
+        // explain the check
         if (is_array($target)) {
             if ($test_type == 'contains') {
                 $txt .= " should contain \"" . dsp_array($target) . "\"";
@@ -1574,7 +1658,7 @@ class test_base
     /**
      * display the test results in pure test format
      */
-    function dsp_result()
+    function dsp_result(): void
     {
 
         echo "\n";
@@ -1586,6 +1670,15 @@ class test_base
         echo $this->timeout_counter . ' timeouts';
         echo "\n";
         echo $this->error_counter . ' errors';
+    }
+
+    /**
+     * @return int the next sequence number to simulate database auto increase for unit testing
+     */
+    private function next_seq_nbr(): int
+    {
+        $this->seq_nbr++;
+        return $this->seq_nbr;
     }
 
 }

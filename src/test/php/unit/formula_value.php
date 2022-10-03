@@ -88,7 +88,7 @@ class formula_value_unit_tests
 
         // test phrase based default formatter
         // ... for big values
-        $wrd_const = $t->new_word(0,word::TN_READ);
+        $wrd_const = $t->new_word(word::TN_READ);
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_const->phrase());
         $fv->phr_lst = $phr_lst;
@@ -101,7 +101,7 @@ class formula_value_unit_tests
 
         // ... for percent values
         $fv = new formula_value($usr);
-        $wrd_pct = $t->new_word(0, word::TN_PCT, phrase_type::PERCENT);
+        $wrd_pct = $t->new_word(word::TN_PCT, 0, phrase_type::PERCENT);
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_pct->phrase());
         $fv->phr_lst = $phr_lst;
