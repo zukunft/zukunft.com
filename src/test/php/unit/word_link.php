@@ -32,7 +32,7 @@
 
 class word_link_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;

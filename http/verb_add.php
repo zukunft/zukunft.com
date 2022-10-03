@@ -85,9 +85,8 @@ if ($usr->id > 0) {
             } else {
 
                 // check if a verb, formula or word with the same name is already in the database
-                $trm = new term;
+                $trm = new term($usr);
                 $trm->name = $vrb->name;
-                $trm->usr = $usr;
                 $trm->load();
                 if ($trm->id > 0) {
                     $msg .= $trm->id_used_msg();

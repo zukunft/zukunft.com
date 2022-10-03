@@ -489,9 +489,8 @@ class user_sandbox
      */
     function get_term(): term
     {
-        $trm = new term;
+        $trm = new term($this->usr);
         $trm->name = $this->name;
-        $trm->usr = $this->usr;
         $trm->load();
         return $trm;
     }

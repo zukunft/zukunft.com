@@ -57,6 +57,15 @@ class term
     public ?string $name = null; // the name used (must be unique for words, verbs and formulas)
     public ?object $obj = null;  // the word, verb or formula object
 
+    /**
+     * always set the user because a term is always user specific
+     * @param user $usr the user who requested to see this term
+     */
+    function __construct(user $usr)
+    {
+        $this->usr = $usr;
+    }
+
     /*
      * get, set and debug functions
      */

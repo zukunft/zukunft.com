@@ -945,8 +945,8 @@ class word_link extends user_sandbox_link_description
     }
 
     /*
-    convert functions
-    */
+     * convert functions
+     */
 
     /**
      * convert the word object into a phrase object
@@ -962,9 +962,22 @@ class word_link extends user_sandbox_link_description
         return $phr;
     }
 
+    /**
+     * @returns term the triple object cast into a term object
+     */
+    function term(): term
+    {
+        $trm = new term($this->usr);
+        $trm->id = $this->id;
+        $trm->name = $this->name;
+        $trm->obj = $this;
+        log_debug($this->dsp_id());
+        return $trm;
+    }
+
     /*
-    save functions
-    */
+     * save functions
+     */
 
     /**
      * true if no one has used this triple

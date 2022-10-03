@@ -53,6 +53,7 @@ use api\phrase_api;
 use cfg\phrase_type;
 use html\html_selector;
 use html\phrase_dsp;
+use html\triple_dsp;
 use html\word_dsp;
 
 class phrase
@@ -231,7 +232,7 @@ class phrase
             log_debug('word ' . $this->dsp_id());
         } elseif ($this->name <> '') {
             // load via term if the type is not yet known
-            $trm = new term;
+            $trm = new term($this->usr);
             $trm->name = $this->name;
             $trm->usr = $this->usr;
             $result = $trm->load();
@@ -444,8 +445,8 @@ class phrase
 
     protected function get_triple_dsp(): word_link
     {
-        $lnk_dsp = new word_link_dsp($this->usr);
-        if (get_class($this->obj) == word_link_dsp::class) {
+        $lnk_dsp = new triple_dsp();
+        if (get_class($this->obj) == triple_dsp::class) {
             $lnk_dsp = $this->obj;
         } elseif (get_class($this->obj) == word_link::class) {
             $lnk_dsp = $this->get_triple()->dsp_obj();

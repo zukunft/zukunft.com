@@ -110,8 +110,7 @@ if ($usr->id > 0) {
 
         // check if a word, verb or formula with the same name already exists
         if ($wrd->name <> "") {
-            $trm = new term;
-            $trm->usr = $usr;
+            $trm = new term($usr);
             $trm->name = $wrd->name;
             $trm->load();
             if ($trm->id > 0) {

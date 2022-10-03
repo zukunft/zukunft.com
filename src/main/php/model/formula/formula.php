@@ -1557,6 +1557,22 @@ class formula extends user_sandbox_description
     }
 
     /*
+     * convert functions
+     */
+
+    /**
+     * @returns term the formula object cast into a term object
+     */
+    function term(): term
+    {
+        $trm = new term($this->usr);
+        $trm->id = $this->id;
+        $trm->name = $this->name;
+        $trm->obj = $this;
+        return $trm;
+    }
+
+    /*
      * link functions - add or remove a link to a word (this is user specific, so use the user sandbox)
      */
 

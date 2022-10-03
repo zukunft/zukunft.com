@@ -373,8 +373,8 @@ class test_base
     /**
      * create a new word e.g. for unit testing with a given type
      *
-     * @param int $id t force setting the id for unit testing
      * @param string $wrd_name the name of the word that should be created
+     * @param int|null $id to force setting the id for unit testing
      * @param string|null $wrd_type_code_id the id of the predefined word type which the new word should have
      * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
      * @return word the created word object
@@ -464,17 +464,20 @@ class test_base
     /**
      * create a new word e.g. for unit testing with a given type
      *
-     * @param int $id t force setting the id for unit testing
-     * @param string $wrd_name the name of the word that should be created
+     * @param string $wrd_name the given name of the triple that should be created
+     * @param string $from_name the name of the child word e.g. zurich
+     * @param string $verb_code_id the code id of the child to parent relation e.g. is a
+     * @param string $to_name the name of the parent word e.g. city
+     * @param int|null $id t force setting the id for unit testing
      * @param string|null $wrd_type_code_id the id of the predefined word type which the new word should have
      * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
      * @return word_link the created triple object
      */
-    function new_triple(int     $id,
-                        string  $wrd_name,
+    function new_triple(string  $wrd_name,
                         string  $from_name,
                         string  $verb_code_id,
                         string  $to_name,
+                        ?int $id = null,
                         ?string $wrd_type_code_id = null,
                         ?user   $test_usr = null): word_link
     {
@@ -535,7 +538,7 @@ class test_base
                             string $to_name,
                             string $target = '',
                             string $phrase_name = '',
-                            bool   $autocreate = true)
+                            bool   $autocreate = true): word_link
     {
         global $usr;
         global $verbs;
@@ -627,36 +630,38 @@ class test_base
         }
     }
 
-    function load_ref(string $wrd_name, string $type_name): ref
+    /*
+     * formula test creation
+     */
+
+    /**
+     * create a new formula e.g. for unit testing with a given type
+     *
+     * @param string $frm_name the name of the formula that should be created
+     * @param int|null $id to force setting the id for unit testing
+     * @param string|null $frm_type_code_id the id of the predefined formula type which the new formula should have
+     * @param user|null $test_usr if not null the user for whom the formula should be created to test the user sandbox
+     * @return formula the created formula object
+     */
+    function new_formula(string $frm_name, ?int $id = null, ?string $frm_type_code_id = null, ?user $test_usr = null): formula
     {
         global $usr;
 
-        $wrd = $this->load_word($wrd_name);
-        $phr = $wrd->phrase();
-
-        $ref = new ref($usr);
-        $ref->phr = $phr;
-        $ref->ref_type = get_ref_type($type_name);
-        if ($phr->id != 0) {
-            $ref->load();
+        if ($id == null) {
+            $id = $this->next_seq_nbr();
         }
-        return $ref;
-    }
-
-    function test_ref(string $wrd_name, string $external_key, string $type_name): ref
-    {
-        $wrd = $this->test_word($wrd_name);
-        $phr = $wrd->phrase();
-        $ref = $this->load_ref($wrd->name, $type_name);
-        if ($ref->id == 0) {
-            $ref->phr = $phr;
-            $ref->ref_type = get_ref_type($type_name);
-            $ref->external_key = $external_key;
-            $ref->save();
+        if ($test_usr == null) {
+            $test_usr = $usr;
         }
-        $target = $external_key;
-        $this->dsp('ref', $target, $ref->external_key);
-        return $ref;
+
+        $frm = new formula($test_usr);
+        $frm->id = $id;
+        $frm->name = $frm_name;
+
+        if ($frm_type_code_id != null) {
+            $frm->type_id = cl(db_cl::FORMULA_TYPE, $frm_type_code_id);
+        }
+        return $frm;
     }
 
     function load_formula(string $frm_name): formula
@@ -688,6 +693,42 @@ class test_base
         $frm = $this->add_formula($frm_name, $frm_text);
         $this->dsp('formula', $frm_name, $frm->name);
         return $frm;
+    }
+
+    /*
+     * reference test creation
+     */
+
+    function load_ref(string $wrd_name, string $type_name): ref
+    {
+        global $usr;
+
+        $wrd = $this->load_word($wrd_name);
+        $phr = $wrd->phrase();
+
+        $ref = new ref($usr);
+        $ref->phr = $phr;
+        $ref->ref_type = get_ref_type($type_name);
+        if ($phr->id != 0) {
+            $ref->load();
+        }
+        return $ref;
+    }
+
+    function test_ref(string $wrd_name, string $external_key, string $type_name): ref
+    {
+        $wrd = $this->test_word($wrd_name);
+        $phr = $wrd->phrase();
+        $ref = $this->load_ref($wrd->name, $type_name);
+        if ($ref->id == 0) {
+            $ref->phr = $phr;
+            $ref->ref_type = get_ref_type($type_name);
+            $ref->external_key = $external_key;
+            $ref->save();
+        }
+        $target = $external_key;
+        $this->dsp('ref', $target, $ref->external_key);
+        return $ref;
     }
 
     function load_phrase(string $phr_name): phrase
@@ -883,6 +924,28 @@ class test_base
         $result = $val->number;
         $this->dsp(', value->load for ' . $val->name(), $target, $result);
         return $val;
+    }
+
+    /**
+     * create a new verb e.g. for unit testing with a given type
+     *
+     * @param string $vrb_name the name of the verb that should be created
+     * @param int|null $id to force setting the id for unit testing
+     * @return verb the created verb object
+     */
+    function new_verb(string $vrb_name, ?int $id = null): verb
+    {
+        global $usr;
+        if ($id == null) {
+            $id = $this->next_seq_nbr();
+        }
+
+        $vrb = new verb();
+        $vrb->id = $id;
+        $vrb->name = $vrb_name;
+        $vrb->usr = $usr;
+
+        return $vrb;
     }
 
     function load_source(string $src_name): source
@@ -1132,7 +1195,7 @@ class test_base
     /**
      * the HTML code to display the header text
      */
-    function header($header_text)
+    function header($header_text): void
     {
         echo '<br><br><h2>' . $header_text . '</h2><br>';
     }
@@ -1140,7 +1203,7 @@ class test_base
     /**
      * the HTML code to display the subheader text
      */
-    function subheader($header_text)
+    function subheader($header_text): void
     {
         echo '<br><h3>' . $header_text . '</h3><br>';
     }

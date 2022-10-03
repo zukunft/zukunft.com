@@ -425,16 +425,31 @@ class verb
         return $result;
     }
 
+    /*
+     * convert functions
+     */
+
     /**
      * get the term corresponding to this verb name
      * so in this case, if a word or formula with the same name already exists, get it
      */
     private function get_term(): term
     {
-        $trm = new term;
+        $trm = new term($this->usr);
         $trm->name = $this->name;
-        $trm->usr = $this->usr;
         $trm->load(false);
+        return $trm;
+    }
+
+    /**
+     * @returns term the formula object cast into a term object
+     */
+    function term(): term
+    {
+        $trm = new term($this->usr);
+        $trm->id = $this->id;
+        $trm->name = $this->name;
+        $trm->obj = $this;
         return $trm;
     }
 
