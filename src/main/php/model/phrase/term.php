@@ -159,18 +159,7 @@ class term
     {
         $wrd = new word($this->usr);
         if (get_class($this->obj) == word::class) {
-            $wrd->id = $this->obj->id;
-            $wrd->usr_cfg_id = $this->obj->usr_cfg_id;
-            $wrd->owner_id = $this->obj->owner_id;
-            $wrd->share_id = $this->obj->share_id;
-            $wrd->protection_id = $this->obj->protection_id;
-            $wrd->excluded = $this->obj->excluded;
-            $wrd->name = $this->obj->name;
-            $wrd->description = $this->obj->description;
-            $wrd->plural = $this->obj->plural;
-            $wrd->type_id = $this->obj->type_id;
-            $wrd->view_id = $this->obj->view_id;
-            $wrd->values = $this->obj->values;
+            $wrd = $this->obj;
         }
         return $wrd;
     }
@@ -179,17 +168,7 @@ class term
     {
         $lnk = new word_link($this->usr);
         if (get_class($this->obj) == word_link::class) {
-            $lnk->id = $this->obj->id;
-            $lnk->fob = $this->obj->fob;
-            $lnk->tob = $this->obj->tob;
-            $lnk->usr_cfg_id = $this->obj->usr_cfg_id;
-            $lnk->owner_id = $this->obj->owner_id;
-            $lnk->share_id = $this->obj->share_id;
-            $lnk->protection_id = $this->obj->protection_id;
-            $lnk->excluded = $this->obj->excluded;
-            $lnk->description = $this->obj->description;
-            $lnk->type_id = $this->obj->type_id;
-            $lnk->values = $this->obj->values;
+            $lnk = $this->obj;
         }
         return $lnk;
     }
@@ -198,14 +177,7 @@ class term
     {
         $frm = new formula($this->usr);
         if (get_class($this->obj) == formula::class) {
-            $frm->id = $this->obj->id;
-            $frm->usr_cfg_id = $this->obj->usr_cfg_id;
-            $frm->owner_id = $this->obj->owner_id;
-            $frm->share_id = $this->obj->share_id;
-            $frm->protection_id = $this->obj->protection_id;
-            $frm->excluded = $this->obj->excluded;
-            $frm->description = $this->obj->description;
-            $frm->type_id = $this->obj->type_id;
+            $frm = $this->obj;
         }
         return $frm;
     }
@@ -214,8 +186,7 @@ class term
     {
         $vrb = new verb();
         if (get_class($this->obj) == verb::class) {
-            $vrb->id = $this->obj->id;
-            $vrb->description = $this->obj->description;
+            $vrb = $this->obj;
         }
         return $vrb;
     }

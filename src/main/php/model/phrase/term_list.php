@@ -54,7 +54,7 @@ class term_list
     }
 
     /**
-     * @return phrase_list_dsp_old the word object with the display interface functions
+     * @return term_list_dsp the word object with the display interface functions
      */
     function dsp_obj(): object
     {
