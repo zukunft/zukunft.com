@@ -88,7 +88,7 @@ if ($usr->id > 0) {
                 $trm = new term($usr);
                 $trm->name = $vrb->name;
                 $trm->load();
-                if ($trm->id > 0) {
+                if ($trm->id_obj() > 0) {
                     $msg .= $trm->id_used_msg();
                 }
 

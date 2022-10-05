@@ -36,4 +36,13 @@ use api\verb_api;
 class verb_dsp extends verb_api
 {
 
+    /*
+     * casting
+     */
+
+    function term(): term_dsp
+    {
+        return new term_dsp($this->id, $this->name);
+    }
+
 }

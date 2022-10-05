@@ -51,7 +51,7 @@ use html\word_dsp;
 class term
 {
 
-    public ?int $id = null;      // the database id of the word, verb or formula
+    private int $id;             // the database id of the word, verb or formula
     public ?user $usr = null;    // the person who wants to add a term (word, verb or formula)
     public ?string $type = null; // either "word", "verb" or "formula"
     public ?string $name = null; // the name used (must be unique for words, verbs and formulas)
@@ -63,12 +63,66 @@ class term
      */
     function __construct(user $usr)
     {
+        $this->reset();
         $this->usr = $usr;
+    }
+
+    function reset(): void
+    {
+        $this->id = 0;
     }
 
     /*
      * get, set and debug functions
      */
+
+    /**
+     * @return int the id of the term witch is  (corresponding to id_obj())
+     * e.g 1 for a word, -1 for a phrase, 2 for a formula and -2 for a verb
+     */
+    function id(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return int the id of the containing object witch is (corresponding to id())
+     * e.g 1 for a word, 1 for a phrase, 1 for a formula and 1 for a verb
+     */
+    function id_obj(): int
+    {
+        if ($this->id % 2 == 0) {
+            return abs($this->id / 2);
+        } else {
+            return abs(($this->id + 1) / 2);
+        }
+    }
+
+    /**
+     * @param int $id the term (not the object!) id
+     * @return void
+     */
+    function set_id(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @param int $id the object id that is converted to the term id
+     * @return void
+     */
+    function set_obj_id(int $id, string $class): void
+    {
+        if ($class == word::class) {
+            $this->id = ($id * 2) - 1;
+        } elseif ($class == word_link::class) {
+            $this->id = ($id * -2) - 1;
+        } elseif ($class == formula::class) {
+            $this->id = ($id * 2);
+        } elseif ($class == verb::class) {
+            $this->id = ($id * -2);
+        }
+    }
 
     /**
      * display the unique id fields
@@ -79,11 +133,11 @@ class term
 
         if ($this->name <> '') {
             $result .= '"' . $this->name . '"';
-            if ($this->id > 0) {
-                $result .= ' (' . $this->id . ')';
+            if ($this->id() > 0) {
+                $result .= ' (' . $this->id() . ')';
             }
         } else {
-            $result .= $this->id;
+            $result .= $this->id();
         }
         if (isset($this->usr)) {
             $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
@@ -144,7 +198,7 @@ class term
     {
         $result = false;
         if (isset($this->obj)) {
-            if (get_class($this->obj) == formula::class) {
+            if (get_class($this->obj) == verb::class) {
                 $result = true;
             }
         }
@@ -256,7 +310,7 @@ class term
         } elseif ($this->load_verb()) {
             $result = $this->obj->id;
         }
-        log_debug('term->load loaded id "' . $this->id . '" for ' . $this->name);
+        log_debug('term->load loaded id "' . $this->id() . '" for ' . $this->name);
 
         return $result;
     }
@@ -275,7 +329,7 @@ class term
             if ($wrd->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
                 $result = $this->load_formula();
             } else {
-                $this->id = $wrd->id;
+                $this->set_obj_id($wrd->id, word::class);
                 $this->type = word::class;
                 $this->obj = $wrd;
                 $result = true;
@@ -294,7 +348,7 @@ class term
             $lnk = new word_link($this->usr);
             $lnk->name = $this->name;
             if ($lnk->load()) {
-                $this->id = $lnk->id;
+                $this->set_obj_id($lnk->id, word_link::class);
                 //$this->type = word_link::class;
                 $this->type = 'triple';
                 $this->obj = $lnk;
@@ -314,7 +368,7 @@ class term
         $frm = new formula($this->usr);
         $frm->name = $this->name;
         if ($frm->load(false)) {
-            $this->id = $frm->id;
+            $this->set_obj_id($frm->id, formula::class);
             $this->type = formula::class;
             $this->obj = $frm;
             $result = true;
@@ -332,7 +386,7 @@ class term
         $vrb->name = $this->name;
         $vrb->usr = $this->usr;
         if ($vrb->load()) {
-            $this->id = $vrb->id;
+            $this->set_obj_id($vrb->id, verb::class);
             $this->type = verb::class;
             $this->obj = $vrb;
             $result = true;
@@ -351,7 +405,7 @@ class term
     {
         $result = "";
 
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $result = dsp_err('A ' . $this->type . ' with the name "' . $this->name . '" already exists. Please use another name.');
         }
 

@@ -238,11 +238,11 @@ class phrase
             $result = $trm->load();
             if ($trm->type == word::class) {
                 $this->obj = $trm->obj;
-                $this->id = $trm->id;
+                $this->id = $trm->id_obj();
                 log_debug('word ' . $this->dsp_id() . ' by name');
             } elseif ($trm->type == 'triple') {
                 $this->obj = $trm->obj;
-                $this->id = $trm->id * -1;
+                $this->id = $trm->id_obj() * -1;
                 log_debug('triple ' . $this->dsp_id() . ' by name');
             } elseif ($trm->type == formula::class) {
                 // for the phrase load the related word instead of the formula

@@ -16,7 +16,7 @@ FROM (SELECT DISTINCT id, name, excluded
                                        LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id
                                   AND u.user_id = 1
                               WHERE l.to_phrase_id = 2
-                                AND l.verb_id = 2) AS a
+                                AND l.verb_id = 1) AS a
                      WHERE excluded = 0) a,
                     words w
                         LEFT JOIN user_words u ON u.word_id = w.word_id
@@ -32,7 +32,7 @@ FROM (SELECT DISTINCT id, name, excluded
                                                          LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id
                                                     AND u.user_id = 1
                                                 WHERE l.to_phrase_id <> 2
-                                                  AND l.verb_id = 2
+                                                  AND l.verb_id = 1
                                                   AND l.from_phrase_id IN (SELECT from_phrase_id AS id
                                                                            FROM (
                                                                                     SELECT DISTINCT l.from_phrase_id,
@@ -47,7 +47,7 @@ FROM (SELECT DISTINCT id, name, excluded
                                                                                                            AND
                                                                                                           u.user_id = 1
                                                                                     WHERE l.to_phrase_id = 2
-                                                                                      AND l.verb_id = 2) AS a
+                                                                                      AND l.verb_id = 1) AS a
                                                                            WHERE excluded = 0)) AS o
                                        WHERE excluded = 0)
                  AND w.word_id = a.id) AS w
@@ -77,7 +77,7 @@ FROM (SELECT DISTINCT id, name, excluded
                                                                       ON u.word_link_id = l.word_link_id
                                                                           AND u.user_id = 1
                                                    WHERE l.to_phrase_id <> 2
-                                                     AND l.verb_id = 2
+                                                     AND l.verb_id = 1
                                                      AND l.from_phrase_id IN (SELECT from_phrase_id AS id
                                                                               FROM (
                                                                                        SELECT DISTINCT l.from_phrase_id,
@@ -93,10 +93,10 @@ FROM (SELECT DISTINCT id, name, excluded
                                                                                                              u.user_id =
                                                                                                              1
                                                                                        WHERE l.to_phrase_id = 2
-                                                                                         AND l.verb_id = 2) AS a
+                                                                                         AND l.verb_id = 1) AS a
                                                                               WHERE excluded = 0)) AS o
                                           WHERE excluded = 0)
-                 AND l.verb_id = 2
+                 AND l.verb_id = 1
                  AND l.to_phrase_id = 2) AS t
       WHERE excluded = 0) AS p
 WHERE excluded = 0

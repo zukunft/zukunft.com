@@ -1566,7 +1566,7 @@ class formula extends user_sandbox_description
     function term(): term
     {
         $trm = new term($this->usr);
-        $trm->id = $this->id;
+        $trm->set_obj_id($this->id, self::class);
         $trm->name = $this->name;
         $trm->obj = $this;
         return $trm;
@@ -2131,7 +2131,7 @@ class formula extends user_sandbox_description
         if ($db_rec->name <> $this->name) {
             // check if a verb or word with the same name is already in the database
             $trm = $this->get_term();
-            if ($trm->id > 0 and !$this->is_term_the_same($trm)) {
+            if ($trm->id_obj() > 0 and !$this->is_term_the_same($trm)) {
                 $result .= $trm->id_used_msg();
                 log_debug(self::class . '->save_id_if_updated name "' . $trm->name . '" used already as "' . $trm->type . '"');
             } else {
@@ -2267,11 +2267,11 @@ class formula extends user_sandbox_description
                 // check if a verb, formula or word with the same name is already in the database
                 log_debug(self::class . '->save -> add ' . $this->dsp_id());
                 $trm = $this->get_term();
-                if ($trm->id > 0) {
+                if ($trm->id_obj() > 0) {
                     if ($trm->type <> 'formula') {
                         $result .= $trm->id_used_msg();
                     } else {
-                        $this->id = $trm->id;
+                        $this->id = $trm->id_obj();
                         log_debug(self::class . '->save adding formula name ' . $this->dsp_id() . ' is OK');
                     }
                 }

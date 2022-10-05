@@ -219,12 +219,18 @@ class verb_list extends user_type_list
      */
     function load_dummy(): void
     {
-        parent::load_dummy();
         $type = new verb();
+        $type->id = 1;
         $type->name = verb::IS_A;
         $type->code_id = verb::IS_A;
+        $this->lst[1] = $type;
+        $this->hash[verb::IS_A] = 1;
+        $type = new verb();
+        $type->id = 2;
+        $type->name = verb::FOLLOW;
+        $type->code_id = verb::FOLLOW;
         $this->lst[2] = $type;
-        $this->hash[verb::IS_A] = 2;
+        $this->hash[verb::FOLLOW] = 2;
     }
 
     /**

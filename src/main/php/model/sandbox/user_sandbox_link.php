@@ -59,8 +59,12 @@ class user_sandbox_link extends user_sandbox
     {
         parent::fill_dsp_obj($dsp_obj);
 
-        $dsp_obj->fob = $this->fob;
-        $dsp_obj->tob = $this->tob;
+        if ($this->fob != null) {
+            $dsp_obj->fob = $this->fob->dsp_obj();
+        }
+        if ($this->fob != null) {
+            $dsp_obj->tob = $this->tob->dsp_obj();
+        }
 
         return $dsp_obj;
     }
@@ -156,7 +160,8 @@ class user_sandbox_link extends user_sandbox
      * create a new link object
      * @returns int the id of the creates object
      */
-    function add_insert(): int {
+    function add_insert(): int
+    {
         global $db_con;
         return $db_con->insert(
             array($this->from_name . '_id', $this->to_name . '_id', "user_id"),

@@ -56,7 +56,7 @@ class term_list
     /**
      * @return term_list_dsp the word object with the display interface functions
      */
-    function dsp_obj(): object
+    function dsp_obj(): term_list_dsp
     {
         $dsp_obj = new term_list_dsp();
         foreach ($this->lst as $trm) {
@@ -104,9 +104,9 @@ class term_list
         }
         if ($trm_to_add != null) {
             log_debug($trm_to_add->dsp_id());
-            if ($trm_to_add->id <> 0 or $trm_to_add->name != '') {
+            if ($trm_to_add->id() <> 0 or $trm_to_add->name != '') {
                 if (count($this->id_lst()) > 0) {
-                    if (!in_array($trm_to_add->id, $this->id_lst())) {
+                    if (!in_array($trm_to_add->id(), $this->id_lst())) {
                         $this->lst[] = $trm_to_add;
                         $result = true;
                     }
@@ -137,8 +137,8 @@ class term_list
         if (count($this->lst) > 0) {
             foreach ($this->lst as $trm) {
                 // use only valid ids
-                if ($trm->id <> 0) {
-                    $lst[] = $trm->id;
+                if ($trm->id_obj() <> 0) {
+                    $lst[] = $trm->id();
                 }
             }
         }

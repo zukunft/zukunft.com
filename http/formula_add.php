@@ -106,7 +106,7 @@ if ($usr->id > 0) {
         log_debug('word');
         $trm = $frm->get_term();
         if (isset($trm)) {
-            if ($trm->id > 0) {
+            if ($trm->id_obj() > 0) {
                 $msg .= $trm->id_used_msg();
             }
         }

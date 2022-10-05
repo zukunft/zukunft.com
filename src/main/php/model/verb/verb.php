@@ -447,7 +447,7 @@ class verb
     function term(): term
     {
         $trm = new term($this->usr);
-        $trm->id = $this->id;
+        $trm->set_obj_id($this->id, self::class);
         $trm->name = $this->name;
         $trm->obj = $this;
         return $trm;
@@ -839,10 +839,10 @@ class verb
         if ($this->id <= 0) {
             // check if a word, formula or verb with the same name is already in the database
             $trm = $this->get_term();
-            if ($trm->id > 0 and $trm->type <> 'verb') {
+            if ($trm->id_obj() > 0 and $trm->type <> 'verb') {
                 $result .= $trm->id_used_msg();
             } else {
-                $this->id = $trm->id;
+                $this->id = $trm->id_obj();
                 log_debug('verb->save adding verb name ' . $this->dsp_id() . ' is OK');
             }
         }
@@ -864,7 +864,7 @@ class verb
             if ($db_rec->name <> $this->name) {
                 // check if a verb, formula or verb with the same name is already in the database
                 $trm = $this->get_term();
-                if ($trm->id > 0 and $trm->type <> 'verb') {
+                if ($trm->id_obj() > 0 and $trm->type <> 'verb') {
                     $result .= $trm->id_used_msg();
                 } else {
                     if ($this->can_change()) {

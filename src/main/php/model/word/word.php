@@ -1597,7 +1597,7 @@ class word extends user_sandbox_description
     function term(): term
     {
         $trm = new term($this->usr);
-        $trm->id = $this->id;
+        $trm->set_obj_id($this->id, self::class);
         $trm->name = $this->name;
         $trm->obj = $this;
         log_debug($this->dsp_id());

@@ -212,6 +212,9 @@ class word_link extends user_sandbox_link_description
 
         $dsp_obj = parent::fill_dsp_obj($dsp_obj);
 
+        $dsp_obj->set_name($this->name);
+        $dsp_obj->verb = $this->verb->dsp_obj();
+
         $dsp_obj->share_id = $this->share_id;
         $dsp_obj->protection_id = $this->protection_id;
 
@@ -968,7 +971,7 @@ class word_link extends user_sandbox_link_description
     function term(): term
     {
         $trm = new term($this->usr);
-        $trm->id = $this->id;
+        $trm->set_obj_id($this->id, self::class);
         $trm->name = $this->name;
         $trm->obj = $this;
         log_debug($this->dsp_id());
