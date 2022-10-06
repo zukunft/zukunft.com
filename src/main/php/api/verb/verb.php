@@ -32,6 +32,19 @@
 
 namespace api;
 
+use html\formula_dsp;
+use html\term_dsp;
+use verb;
+
 class verb_api extends user_sandbox_named_api
 {
+    /*
+     * casting objects
+     */
+
+    function term(): term_api|term_dsp
+    {
+        return new term_api($this->id, $this->name, verb::class);
+    }
+
 }

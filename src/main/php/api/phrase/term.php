@@ -32,9 +32,15 @@
 namespace api;
 
 use cfg\phrase_type;
+use formula;
+use html\formula_dsp;
 use html\phrase_dsp;
 use html\triple_dsp;
+use html\verb_dsp;
 use html\word_dsp;
+use verb;
+use word;
+use word_link;
 
 class term_api extends user_sandbox_named_api
 {
@@ -57,7 +63,8 @@ class term_api extends user_sandbox_named_api
         string $name = '',
         string $obj = null)
     {
-        parent::__construct($id, $name);
+        $this->set_obj_id($id, $obj);
+        $this->name = $name;
         // TODO set type
         // $this->type = phrase_type::NORMAL;
     }
@@ -84,6 +91,23 @@ class term_api extends user_sandbox_named_api
         return $this->description;
     }
 
+    /**
+     * @param int $id the object id that is converted to the term id
+     * @return void
+     */
+    function set_obj_id(int $id, string $class): void
+    {
+        if ($class == word::class) {
+            $this->id = ($id * 2) - 1;
+        } elseif ($class == word_link::class) {
+            $this->id = ($id * -2) + 1;
+        } elseif ($class == formula::class) {
+            $this->id = ($id * 2);
+        } elseif ($class == verb::class) {
+            $this->id = ($id * -2);
+        }
+    }
+
     /*
      * casting objects
      */
@@ -108,19 +132,82 @@ class term_api extends user_sandbox_named_api
         return new triple_dsp($this->id, $this->name);
     }
 
+    protected function frm_dsp(): formula_dsp
+    {
+        return new formula_dsp($this->id, $this->name);
+    }
+
+    protected function vrb_dsp(): verb_dsp
+    {
+        return new verb_dsp($this->id, $this->name);
+    }
+
     /*
      * classifications
      */
 
     /**
-     * @return bool true if this phrase is a word or supposed to be a word
+     * @return bool true if this term is a word or supposed to be a word
      */
     function is_word(): bool
     {
-        if ($this->id > 0) {
+        if ($this->class_from_id() == word::class) {
             return true;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * @return bool true if this term is a triple
+     */
+    function is_triple(): bool
+    {
+        if ($this->class_from_id() == word_link::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if this term is a formula
+     */
+    function is_formula(): bool
+    {
+        if ($this->class_from_id() == formula::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if this term is a verb
+     */
+    function is_verb(): bool
+    {
+        if ($this->class_from_id() == verb::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function class_from_id(): string
+    {
+        if ($this->id % 2 != 0) {
+            if ($this->id > 0) {
+                return word::class;
+            } else {
+                return word_link::class;
+            }
+        } else {
+            if ($this->id > 0) {
+                return formula::class;
+            } else {
+                return verb::class;
+            }
         }
     }
 

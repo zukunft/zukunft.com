@@ -33,7 +33,9 @@
 namespace api;
 
 use cfg\phrase_type;
+use html\term_dsp;
 use html\word_dsp;
+use word;
 use word_type;
 
 class word_api extends user_sandbox_named_api
@@ -131,6 +133,11 @@ class word_api extends user_sandbox_named_api
     /*
      * casting objects
      */
+
+    function term(): term_api|term_dsp
+    {
+        return new term_api($this->id, $this->name, word::class);
+    }
 
     /**
      * @returns word_dsp the cast object with the HTML code generating functions

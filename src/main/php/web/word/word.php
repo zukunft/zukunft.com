@@ -35,6 +35,7 @@ use api\term_api;
 use api\word_api;
 use api\phrase_api;
 use html\phrase_dsp;
+use word;
 
 class word_dsp extends word_api
 {
@@ -226,7 +227,7 @@ class word_dsp extends word_api
 
     function term(): term_dsp
     {
-        return new term_dsp($this->id, $this->name);
+        return new term_dsp($this->id, $this->name, word::class);
     }
 
 }

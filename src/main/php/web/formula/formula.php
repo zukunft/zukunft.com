@@ -35,6 +35,7 @@
 namespace html;
 
 use api\formula_api;
+use formula;
 use formula_value;
 
 class formula_dsp extends formula_api
@@ -46,7 +47,20 @@ class formula_dsp extends formula_api
 
     function term(): term_dsp
     {
-        return new term_dsp($this->id, $this->name);
+        return new term_dsp($this->id, $this->name, formula::class);
+    }
+
+    /**
+     * display the formula with a link to the main page for the formula
+     * @param string|null $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @returns string the html code
+     */
+    function dsp_link(?string $back = '', string $style = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url(api::FORMULA, $this->id, $back, api::PAR_VIEW_FORMULAS);
+        return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
     // create the HTML code to display the formula name with the HTML link

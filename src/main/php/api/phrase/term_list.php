@@ -47,8 +47,8 @@ class term_list_api extends list_api
     }
 
     /**
-     * add a phrase to the list
-     * @returns bool true if the phrase has been added
+     * add a term to the list
+     * @returns bool true if the term has been added
      */
     function add(term_api $trm): bool
     {
@@ -86,7 +86,7 @@ class term_list_api extends list_api
      */
 
     /**
-     * @returns int the number of phrases of the protected list
+     * @returns int the number of terms of the protected list
      */
     function count(): int
     {
@@ -94,7 +94,7 @@ class term_list_api extends list_api
     }
 
     /**
-     * @returns true if the list does not contain any phrase
+     * @returns true if the list does not contain any term
      */
     function is_empty(): bool
     {
@@ -110,7 +110,7 @@ class term_list_api extends list_api
      */
 
     /**
-     * @returns term_list_api with the phrases of this list and the new list
+     * @returns term_list_api with the terms of this list and the new list
      */
     function intersect(term_list_api $new_lst): term_list_api
     {

@@ -116,7 +116,7 @@ class term
         if ($class == word::class) {
             $this->id = ($id * 2) - 1;
         } elseif ($class == word_link::class) {
-            $this->id = ($id * -2) - 1;
+            $this->id = ($id * -2) + 1;
         } elseif ($class == formula::class) {
             $this->id = ($id * 2);
         } elseif ($class == verb::class) {

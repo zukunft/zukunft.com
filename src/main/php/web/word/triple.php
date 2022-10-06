@@ -33,6 +33,7 @@ namespace html;
 
 use api\phrase_api;
 use api\triple_api;
+use word_link;
 
 class triple_dsp extends triple_api
 {
@@ -43,6 +44,19 @@ class triple_dsp extends triple_api
     function dsp(): string
     {
         return $this->name();
+    }
+
+    /**
+     * display a triple with a link to the main page for the triple
+     * @param string|null $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @returns string the html code
+     */
+    function dsp_link(?string $back = '', string $style = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url(api::TRIPLE, $this->id, $back, api::PAR_VIEW_TRILES);
+        return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
     /**
@@ -72,7 +86,7 @@ class triple_dsp extends triple_api
 
     function term(): term_dsp
     {
-        return new term_dsp($this->id, $this->name);
+        return new term_dsp($this->id, $this->name, word_link::class);
     }
 
 }

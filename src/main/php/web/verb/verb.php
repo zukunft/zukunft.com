@@ -32,6 +32,7 @@
 namespace html;
 
 use api\verb_api;
+use verb;
 
 class verb_dsp extends verb_api
 {
@@ -42,7 +43,20 @@ class verb_dsp extends verb_api
 
     function term(): term_dsp
     {
-        return new term_dsp($this->id, $this->name);
+        return new term_dsp($this->id, $this->name, verb::class);
+    }
+
+    /**
+     * display the verb with a link to the main page for the verb
+     * @param string|null $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @returns string the html code
+     */
+    function dsp_link(?string $back = '', string $style = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url(api::VERB, $this->id, $back, api::PAR_VIEW_VERBS);
+        return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
 }

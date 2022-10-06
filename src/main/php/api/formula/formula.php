@@ -32,7 +32,9 @@
 
 namespace api;
 
+use formula;
 use html\formula_dsp;
+use html\term_dsp;
 
 class formula_api extends user_sandbox_named_api
 {
@@ -84,6 +86,11 @@ class formula_api extends user_sandbox_named_api
         $dsp_obj = new formula_dsp($this->id, $this->name);
         $dsp_obj->set_usr_text($this->usr_text());
         return $dsp_obj;
+    }
+
+    function term(): term_api|term_dsp
+    {
+        return new term_api($this->id, $this->name, formula::class);
     }
 
 }

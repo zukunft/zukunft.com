@@ -48,9 +48,12 @@ class api
     const LIST = '';
     const SEARCH = 'find';
 
-    // classes used to allow renaming independent of the class name
+    // classes used to allow renaming of the API name independent of the class name
     const WORD = 'word';
+    const VERB = 'verb';
+    const TRIPLE = 'triple';
     const VALUE = 'value';
+    const FORMULA = 'formula';
     const VIEW = 'view';
     const LINK = 'link';
 
@@ -59,7 +62,10 @@ class api
     const ERROR_UPDATE = 'error_update';
 
     // view parameter names
-    const PAR_VIEW_WORDS = 'words';  // to select the phrases that should be display
+    const PAR_VIEW_WORDS = 'words';  // to select the words that should be display
+    const PAR_VIEW_TRILES = 'triples';  // to select the triple that should be display
+    const PAR_VIEW_FORMULAS = 'formulas';  // to select the formulas that should be display
+    const PAR_VIEW_VERBS = 'verbs';  // to select the verbs that should be display
     const PAR_LOG_STATUS = 'status'; // to set the status of a log entry
 
     // styles used

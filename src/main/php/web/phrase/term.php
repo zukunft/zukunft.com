@@ -54,7 +54,19 @@ class term_dsp extends term_api
      */
     function dsp_link(): string
     {
-        return $this->name;
+        if ($this->is_word()) {
+            return $this->wrd_dsp()->dsp_link();
+        } elseif ($this->is_triple()) {
+            return $this->trp_dsp()->dsp_link();
+        } elseif ($this->is_formula()) {
+            return $this->frm_dsp()->dsp_link();
+        } elseif ($this->is_verb()) {
+            return $this->vrb_dsp()->dsp_link();
+        } else {
+            $msg = 'Unexpected term type ' . $this->dsp_id();
+            log_err($msg);
+            return $msg;
+        }
     }
 
     /**

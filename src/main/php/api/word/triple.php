@@ -32,7 +32,8 @@
 
 namespace api;
 
-use html\phrase_dsp;
+use html\term_dsp;
+use word_link;
 
 class triple_api extends user_sandbox_named_api
 {
@@ -58,6 +59,15 @@ class triple_api extends user_sandbox_named_api
         $this->from = new phrase_api(0, $from);
         $this->verb= new verb_api(0, $verb);
         $this->to = new phrase_api(0, $to);
+    }
+
+    /*
+     * casting objects
+     */
+
+    function term(): term_api|term_dsp
+    {
+        return new term_api($this->id, $this->name, word_link::class);
     }
 
 }
