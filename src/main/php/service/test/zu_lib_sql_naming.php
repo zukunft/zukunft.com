@@ -61,8 +61,8 @@ function zu_sql_std_id_field ($type) {
   log_debug("zu_sql_std_id_field (".$type.")");
 
   // exceptions for user overwrite tables
-  if (zu_str_is_left($type, DB_TYPE_USER_PREFIX)) {
-    $type = zu_str_right_of($type, DB_TYPE_USER_PREFIX);
+  if (zu_str_is_left($type, sql_db::TBL_USER_PREFIX)) {
+    $type = zu_str_right_of($type, sql_db::TBL_USER_PREFIX);
   }
   $result = $type.'_id';
   // exceptions for nice english
@@ -78,8 +78,8 @@ function zu_sql_std_name_field ($type) {
   log_debug("zu_sql_std_name_field (".$type.")");
 
   // exceptions for user overwrite tables
-  if (zu_str_is_left($type, DB_TYPE_USER_PREFIX)) {
-    $type = zu_str_right_of($type, DB_TYPE_USER_PREFIX);
+  if (zu_str_is_left($type, sql_db::TBL_USER_PREFIX)) {
+    $type = zu_str_right_of($type, sql_db::TBL_USER_PREFIX);
   }
   $result = $type.'_name';
   // exceptions to be adjusted

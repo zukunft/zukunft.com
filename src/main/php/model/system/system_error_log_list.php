@@ -112,16 +112,16 @@ class system_error_log_list
         }
 
         if ($sql_where <> '') {
-            $db_con->set_type(DB_TYPE_SYS_LOG);
+            $db_con->set_type(sql_db::TBL_SYS_LOG);
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(system_error_log::FLD_NAMES);
-            $db_con->set_join_fields(array(system_error_log::FLD_FUNCTION_NAME), DB_TYPE_SYS_LOG_FUNCTION);
-            $db_con->set_join_fields(array(user_type::FLD_NAME), DB_TYPE_SYS_LOG_STATUS);
-            $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), DB_TYPE_USER);
+            $db_con->set_join_fields(array(system_error_log::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
+            $db_con->set_join_fields(array(user_type::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
+            $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), sql_db::TBL_USER);
             $db_con->set_join_fields(array(
                 user_sandbox::FLD_USER_NAME . ' AS ' . system_error_log::FLD_SOLVER_NAME),
-                DB_TYPE_USER, system_error_log::FLD_SOLVER);
+                sql_db::TBL_USER, system_error_log::FLD_SOLVER);
             $db_con->set_where_text($sql_where);
             $db_con->set_order(system_error_log::FLD_TIME, sql_db::ORDER_DESC);
             $db_con->set_page_par($this->size, $this->page);

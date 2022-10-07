@@ -168,7 +168,7 @@ class value extends user_sandbox_display
     {
         parent::__construct($usr);
         $this->obj_type = user_sandbox::TYPE_VALUE;
-        $this->obj_name = DB_TYPE_VALUE;
+        $this->obj_name = sql_db::TBL_VALUE;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
 
@@ -262,7 +262,7 @@ class value extends user_sandbox_display
      */
     function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(DB_TYPE_VALUE);
+        $db_con->set_type(sql_db::TBL_VALUE);
         $db_con->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(sql_db::FLD_USER_ID)));
 
         return parent::load_standard_sql($db_con, self::class);
@@ -293,7 +293,7 @@ class value extends user_sandbox_display
         $sql_where = '';
         $sql_grp = '';
 
-        $db_con->set_type(DB_TYPE_VALUE);
+        $db_con->set_type(sql_db::TBL_VALUE);
 
         if ($this->id > 0) {
             $qp->name .= 'id';
@@ -1223,7 +1223,7 @@ class value extends user_sandbox_display
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(DB_TYPE_VALUE);
+        $db_con->set_type(sql_db::TBL_VALUE);
         return $db_con->not_changed_sql($this->id, $this->owner_id);
     }
 
@@ -1330,7 +1330,7 @@ class value extends user_sandbox_display
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE);
+                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE);
                 $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_value failed.');
@@ -1352,7 +1352,7 @@ class value extends user_sandbox_display
      */
     function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(DB_TYPE_VALUE);
+        $db_con->set_type(sql_db::TBL_VALUE);
         $db_con->set_fields(self::FLD_NAMES_NUM_USR);
         return parent::usr_cfg_sql($db_con, $class);
     }
@@ -1473,7 +1473,7 @@ class value extends user_sandbox_display
             // create the db link object for all actions
             $db_con->usr_id = $this->usr->id;
 
-            $table_name = $db_con->get_table_name(DB_TYPE_VALUE_PHRASE_LINK);
+            $table_name = $db_con->get_table_name(sql_db::TBL_VALUE_PHRASE_LINK);
             $field_name = phrase::FLD_ID;
 
             // add the missing links
@@ -1584,7 +1584,7 @@ class value extends user_sandbox_display
         // insert the link
         $db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
+        $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
         $val_wrd_id = $db_con->insert(array("value_id","phrase_id"), array($this->id,$phr_id));
         if ($val_wrd_id > 0) {
           // get the link id, but updating the reference in the log should not be done, because the row id should be the ref to the original value
@@ -1609,7 +1609,7 @@ class value extends user_sandbox_display
         // remove the link
         $db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
+        $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
         $result = $db_con->delete(array("value_id","phrase_id"), array($this->id,$wrd->id));
         //$result = str_replace ('1','',$result);
       }
@@ -1628,7 +1628,7 @@ class value extends user_sandbox_display
         $result = '';
 
         $this->last_update = new DateTime();
-        $db_con->set_type(DB_TYPE_VALUE);
+        $db_con->set_type(sql_db::TBL_VALUE);
         if (!$db_con->update($this->id, 'last_update', 'Now()')) {
             $result = 'setting of value update trigger failed';
         }
@@ -1733,7 +1733,7 @@ class value extends user_sandbox_display
             $log->row_id = $this->id;
             $log->field = 'phrase_group_id';
             if ($log->add()) {
-                $db_con->set_type(DB_TYPE_VALUE);
+                $db_con->set_type(sql_db::TBL_VALUE);
                 $result = $db_con->update($this->id,
                     array(phrase_group::FLD_ID),
                     array($this->grp->id));
@@ -1754,7 +1754,7 @@ class value extends user_sandbox_display
                 $log->row_id = $this->id;
                 $log->field = 'time_word_id';
                 if ($log->add()) {
-                    $db_con->set_type(DB_TYPE_VALUE);
+                    $db_con->set_type(sql_db::TBL_VALUE);
                     if (!$db_con->update(
                         $this->id,
                         array("time_word_id"),
@@ -1864,7 +1864,7 @@ class value extends user_sandbox_display
         $log = $this->log_add();
         if ($log->id > 0) {
             // insert the value
-            $db_con->set_type(DB_TYPE_VALUE);
+            $db_con->set_type(sql_db::TBL_VALUE);
             $this->id = $db_con->insert(
                 array(phrase_group::FLD_ID, "time_word_id", "user_id", self::FLD_VALUE, self::FLD_LAST_UPDATE),
                 array($this->grp->id, $this->get_time_id(), $this->usr->id, $this->number, "Now()"));
@@ -1910,7 +1910,7 @@ class value extends user_sandbox_display
         $result = '';
 
         // build the database object because the is anyway needed
-        $db_con->set_type(DB_TYPE_VALUE);
+        $db_con->set_type(sql_db::TBL_VALUE);
         $db_con->set_usr($this->usr->id);
 
         // rebuild the value ids if needed e.g. if the front end function has just set a list of phrase ids get the responding group

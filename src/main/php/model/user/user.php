@@ -224,7 +224,7 @@ class user
     function load_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
-        $db_con->set_type(DB_TYPE_USER);
+        $db_con->set_type(sql_db::TBL_USER);
         if ($this->viewer == null) {
             if ($this->id == null) {
                 $db_con->set_usr(0);
@@ -596,7 +596,7 @@ class user
         global $db_con;
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $db_con->set_type(DB_TYPE_USER);
+        $db_con->set_type(sql_db::TBL_USER);
         return $db_con->update($this->id, 'source_id', $source_id);
     }
 
@@ -608,7 +608,7 @@ class user
         global $db_con;
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $result = $db_con->set_type(DB_TYPE_USER);
+        $result = $db_con->set_type(sql_db::TBL_USER);
         //$result = $db_con->update($this->id, verb::FLD_ID, $vrb_id);
         return $result;
     }
@@ -644,7 +644,7 @@ class user
             $log->row_id = $this->id;
             $log->field = $fld_name;
             if ($log->add()) {
-                $db_con->set_type(DB_TYPE_USER);
+                $db_con->set_type(sql_db::TBL_USER);
                 $result = $db_con->update($this->id, $log->field, $log->new_value);
             }
         }
@@ -663,7 +663,7 @@ class user
 
         // build the database object because the is anyway needed
         $db_con->usr_id = $this->id;
-        $db_con->set_type(DB_TYPE_USER);
+        $db_con->set_type(sql_db::TBL_USER);
 
         $db_usr = new user;
         $db_usr->id = $this->id;
@@ -697,7 +697,7 @@ class user
         // build the database object because the is anyway needed
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $db_con->set_type(DB_TYPE_USER);
+        $db_con->set_type(sql_db::TBL_USER);
 
         if ($this->id <= 0) {
             log_debug("user->save add (" . $this->name . ")");

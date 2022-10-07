@@ -133,13 +133,13 @@ class system_error_log
         if ($this->id > 0) {
             $qp->name .= 'id';
 
-            $db_con->set_type(DB_TYPE_SYS_LOG);
+            $db_con->set_type(sql_db::TBL_SYS_LOG);
             $db_con->set_name($qp->name);
             $db_con->set_fields(self::FLD_NAMES);
-            $db_con->set_join_fields(array(self::FLD_FUNCTION_NAME), DB_TYPE_SYS_LOG_FUNCTION);
-            $db_con->set_join_fields(array(user_type::FLD_NAME), DB_TYPE_SYS_LOG_STATUS);
-            $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), DB_TYPE_USER);
-            $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), DB_TYPE_USER, self::FLD_SOLVER);
+            $db_con->set_join_fields(array(self::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
+            $db_con->set_join_fields(array(user_type::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
+            $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), sql_db::TBL_USER);
+            $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), sql_db::TBL_USER, self::FLD_SOLVER);
             $db_con->set_where_std($this->id);
             $qp->sql = $db_con->select_by_id();
             $qp->par = $db_con->get_par();
@@ -181,7 +181,7 @@ class system_error_log
         $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = user_log::ACTION_UPDATE;
-        $log->table = DB_TYPE_SYS_LOG;
+        $log->table = sql_db::TBL_SYS_LOG;
 
         return $log;
     }
@@ -197,7 +197,7 @@ class system_error_log
         log_debug('system_error_log->save_field_do');
         $result = true;
         if ($log->add()) {
-            $db_con->set_type(DB_TYPE_SYS_LOG);
+            $db_con->set_type(sql_db::TBL_SYS_LOG);
             $result = $db_con->update($this->id, $log->field, $log->new_id);
         }
         return $result;
@@ -238,7 +238,7 @@ class system_error_log
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->usr->id);
-        $db_con->set_type(DB_TYPE_SYS_LOG);
+        $db_con->set_type(sql_db::TBL_SYS_LOG);
 
         if ($this->id > 0) {
             $db_rec = new system_error_log;

@@ -81,11 +81,11 @@ class verb_list extends user_type_list
         }
 
         if ($qp->name != '') {
-            $db_con->set_type(DB_TYPE_TRIPLE);
+            $db_con->set_type(sql_db::TBL_TRIPLE);
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_usr_num_fields(array(user_sandbox::FLD_EXCLUDED));
-            $db_con->set_join_fields(array_merge(verb::FLD_NAMES, array(verb::FLD_NAME)), DB_TYPE_VERB);
+            $db_con->set_join_fields(array_merge(verb::FLD_NAMES, array(verb::FLD_NAME)), sql_db::TBL_VERB);
             $db_con->set_fields(array(verb::FLD_ID));
             // set the where clause depending on the values given
             // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
@@ -158,7 +158,7 @@ class verb_list extends user_type_list
      */
     function load_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(DB_TYPE_VERB);
+        $db_con->set_type(sql_db::TBL_VERB);
         $qp = new sql_par($class);
         $qp->name = $class . '_all';
 
@@ -202,7 +202,7 @@ class verb_list extends user_type_list
      * @param string $db_type the database name e.g. the table name without s
      * @return bool true if at least one verb has been loaded
      */
-    function load(sql_db $db_con, string $db_type = DB_TYPE_VERB): bool
+    function load(sql_db $db_con, string $db_type = sql_db::TBL_VERB): bool
     {
         $result = false;
         $this->lst = $this->load_list($db_con, $db_type);

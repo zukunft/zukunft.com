@@ -69,7 +69,7 @@ function run_system_unit_db_tests(testing $t)
 
     $t->subheader('SQL database read tests');
 
-    $t->assert_greater_zero('sql_db->count', $db_con->count(DB_TYPE_FORMULA));
+    $t->assert_greater_zero('sql_db->count', $db_con->count(sql_db::TBL_FORMULA));
 
     /*
      * SQL database consistency tests

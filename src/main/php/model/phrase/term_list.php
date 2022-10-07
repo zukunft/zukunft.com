@@ -79,7 +79,7 @@ class term_list
     {
         $qp = new sql_par(self::class);
 
-        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_type(sql_db::TBL_WORD);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(word::FLD_NAMES);

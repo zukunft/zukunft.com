@@ -163,7 +163,7 @@ class phrase_group
      */
     function load_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(DB_TYPE_PHRASE_GROUP);
+        $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
         $qp = new sql_par(self::class);
         $qp->name .= $this->load_sql_name_ext();
         $db_con->set_name($qp->name);
@@ -614,7 +614,7 @@ class phrase_group
             if ($this->id > 0) {
                 // update the generic name in the database
                 $db_con->usr_id = $this->usr->id;
-                $db_con->set_type(DB_TYPE_PHRASE_GROUP);
+                $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
                 if ($db_con->update($this->id, self::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
                 }
@@ -683,7 +683,7 @@ class phrase_group
                     $trp_id_txt = zu_str_left($trp_id_txt, 255);
                 }
 
-                $db_con->set_type(DB_TYPE_PHRASE_GROUP);
+                $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
                 $this->id = $db_con->insert(array(self::FLD_WORD_IDS, self::FLD_TRIPLE_IDS, self::FLD_DESCRIPTION),
                     array($wrd_id_txt, $trp_id_txt, $this->auto_name));
             } else {
@@ -699,8 +699,8 @@ class phrase_group
      */
     private function save_links(): string
     {
-        $result = $this->save_phr_links(DB_TYPE_WORD);
-        $result .= $this->save_phr_links(DB_TYPE_TRIPLE);
+        $result = $this->save_phr_links(sql_db::TBL_WORD);
+        $result .= $this->save_phr_links(sql_db::TBL_TRIPLE);
         return $result;
     }
 
@@ -719,15 +719,15 @@ class phrase_group
         $db_con->usr_id = $this->usr->id;
 
         // switch between the word and triple settings
-        if ($type == DB_TYPE_WORD) {
+        if ($type == sql_db::TBL_WORD) {
             $lnk = new phrase_group_word_link();
             $qp = $lnk->load_by_group_id_sql($db_con, $this);
-            $table_name = $db_con->get_table_name(DB_TYPE_PHRASE_GROUP_WORD_LINK);
+            $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
             $field_name = word::FLD_ID;
         } else {
             $lnk = new phrase_group_triple_link();
             $qp = $lnk->load_by_group_id_sql($db_con, $this);
-            $table_name = $db_con->get_table_name(DB_TYPE_PHRASE_GROUP_TRIPLE_LINK);
+            $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
             $field_name = 'triple_id';
         }
 
@@ -742,7 +742,7 @@ class phrase_group
         }
 
         // switch between the word and triple settings
-        if ($type == DB_TYPE_WORD) {
+        if ($type == sql_db::TBL_WORD) {
             $add_ids = array_diff($this->phr_lst->wrd_ids(), $db_ids);
             $del_ids = array_diff($db_ids, $this->phr_lst->wrd_ids());
         } else {
@@ -800,12 +800,12 @@ class phrase_group
         global $db_con;
         $result = new user_message();
 
-        $db_con->set_type(DB_TYPE_PHRASE_GROUP_WORD_LINK);
+        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
         $db_con->usr_id = $this->usr->id;
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
-        $db_con->set_type(DB_TYPE_PHRASE_GROUP_TRIPLE_LINK);
+        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
         $db_con->usr_id = $this->usr->id;
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
@@ -834,7 +834,7 @@ class phrase_group
         global $db_con;
         $result = $this->del_phr_links();
 
-        $db_con->set_type(DB_TYPE_PHRASE_GROUP);
+        $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
         $db_con->usr_id = $this->usr->id;
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);

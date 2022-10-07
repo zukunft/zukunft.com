@@ -89,9 +89,9 @@ class view_cmp_link extends user_sandbox_link
     {
         parent::__construct($usr);
         $this->obj_type = user_sandbox::TYPE_LINK;
-        $this->obj_name = DB_TYPE_VIEW_COMPONENT_LINK;
-        $this->from_name = DB_TYPE_VIEW;
-        $this->to_name = DB_TYPE_VIEW_COMPONENT;
+        $this->obj_name = sql_db::TBL_VIEW_COMPONENT_LINK;
+        $this->from_name = sql_db::TBL_VIEW;
+        $this->to_name = sql_db::TBL_VIEW_COMPONENT;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_LINK;
 
@@ -168,7 +168,7 @@ class view_cmp_link extends user_sandbox_link
             $this->id = 0;
         }
 
-        $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
+        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
         $qp = new sql_par(self::class);
         if ($this->id != 0) {
             $qp->name .= 'std_id';
@@ -232,7 +232,7 @@ class view_cmp_link extends user_sandbox_link
                 'to load a ' . self::class, self::class . '->load_sql');
         }
 
-        $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
+        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
@@ -524,7 +524,7 @@ class view_cmp_link extends user_sandbox_link
             }
 
             // check again if there is not yet a record
-            $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK, true);
+            $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK, true);
             $qp = new sql_par(self::class);
             $qp->name = 'view_cmp_link_add_usr_cfg';
             $db_con->set_name($qp->name);
@@ -538,7 +538,7 @@ class view_cmp_link extends user_sandbox_link
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW_COMPONENT_LINK);
+                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT_LINK);
                 $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view_component_link failed.');
@@ -562,7 +562,7 @@ class view_cmp_link extends user_sandbox_link
      */
     function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
+        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
         $db_con->set_fields(self::FLD_NAMES_NUM_USR);
         return parent::usr_cfg_sql($db_con, $class);
     }

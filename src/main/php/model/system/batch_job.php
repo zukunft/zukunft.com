@@ -121,7 +121,7 @@ class batch_job
                     log_debug('batch_job->add connect');
                     //$db_con = New mysql;
                     $db_type = $db_con->get_type();
-                    $db_con->set_type(DB_TYPE_TASK);
+                    $db_con->set_type(sql_db::TBL_TASK);
                     $db_con->set_usr($this->usr->id);
                     $job_id = $db_con->insert(array(user::FLD_ID, 'request_time', 'calc_and_cleanup_task_type_id', 'row_id'),
                         array($this->usr->id, 'Now()', $this->type, $this->row_id));
@@ -165,7 +165,7 @@ class batch_job
 
         //$db_con = New mysql;
         $db_type = $db_con->get_type();
-        $db_con->set_type(DB_TYPE_TASK);
+        $db_con->set_type(sql_db::TBL_TASK);
         $db_con->usr_id = $this->usr->id;
         $result = $db_con->update($this->id, 'end_time', 'Now()');
         $db_con->set_type($db_type);
@@ -180,7 +180,7 @@ class batch_job
         //$db_con = New mysql;
         $db_type = $db_con->get_type();
         $db_con->usr_id = $this->usr->id;
-        $db_con->set_type(DB_TYPE_TASK);
+        $db_con->set_type(sql_db::TBL_TASK);
         $result = $db_con->update($this->id, 'start_time', 'Now()');
 
         log_debug('batch_job->exe -> ' . $this->type . ' with ' . $result);

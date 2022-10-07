@@ -131,7 +131,7 @@ class formula_list
      */
     function load_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(DB_TYPE_FORMULA);
+        $db_con->set_type(sql_db::TBL_FORMULA);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $db_con->set_usr($this->usr->id);
@@ -175,7 +175,7 @@ class formula_list
             $db_con->set_name($qp->name);
             $db_con->set_join_fields(
                 array(phrase::FLD_ID),
-                DB_TYPE_FORMULA_LINK,
+                sql_db::TBL_FORMULA_LINK,
                 formula::FLD_ID,
                 formula::FLD_ID
             );
@@ -202,7 +202,7 @@ class formula_list
             $db_con->set_name($qp->name);
             $db_con->set_join_fields(
                 array(phrase::FLD_ID),
-                DB_TYPE_FORMULA_LINK,
+                sql_db::TBL_FORMULA_LINK,
                 formula::FLD_ID,
                 formula::FLD_ID
             );
@@ -224,7 +224,7 @@ class formula_list
      */
     function load_sql_all(sql_db $db_con, int $limit, int $page): sql_par
     {
-        $db_con->set_type(DB_TYPE_FORMULA);
+        $db_con->set_type(sql_db::TBL_FORMULA);
         $qp = new sql_par(self::class);
         $db_con->set_usr($this->usr->id);
         $db_con->set_all();
@@ -319,7 +319,7 @@ class formula_list
      */
     function count(sql_db $db_con): int
     {
-        return $db_con->count(DB_TYPE_FORMULA);
+        return $db_con->count(sql_db::TBL_FORMULA);
     }
 
     /*
@@ -432,7 +432,7 @@ class formula_list
     function calc_blocks(sql_db $db_con, int $total_formulas = 0): int
     {
         if ($total_formulas == 0) {
-            $total_formulas = $db_con->count(DB_TYPE_FORMULA);
+            $total_formulas = $db_con->count(sql_db::TBL_FORMULA);
         }
         $avg_calc_time = cfg_get(config::AVG_CALC_TIME, $db_con);
         $total_expected_time = $total_formulas * $avg_calc_time;

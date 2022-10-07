@@ -55,7 +55,7 @@ class triple_dsp extends triple_api
     function dsp_link(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(api::TRIPLE, $this->id, $back, api::PAR_VIEW_TRILES);
+        $url = $html->url(api::TRIPLE, $this->id, $back, api::PAR_VIEW_TRIPLES);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 

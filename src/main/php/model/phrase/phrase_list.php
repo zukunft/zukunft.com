@@ -76,7 +76,7 @@ class phrase_list
      */
     function load_by_wrd_ids_sql(sql_db $db_con, array $ids): sql_par
     {
-        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_type(sql_db::TBL_WORD);
         $qp = new sql_par(self::class);
         $qp->name .= count($ids) . 'ids_word_part';
 
@@ -101,7 +101,7 @@ class phrase_list
      */
     function load_by_trp_ids_sql(sql_db $db_con, array $ids): sql_par
     {
-        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_type(sql_db::TBL_TRIPLE);
         $qp = new sql_par(self::class);
         $qp->name .= count($ids) . 'ids_triple_part';
 
@@ -331,8 +331,8 @@ class phrase_list
         $sql_words = 'SELECT DISTINCT w.' . word::FLD_ID . ' AS id, 
                              ' . $db_con->get_usr_field(word::FLD_NAME, "w", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                              ' . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, "w", "u", sql_db::FLD_FORMAT_BOOL) . '
-                        FROM ' . $db_con->get_table_name(DB_TYPE_WORD) . ' w   
-                   LEFT JOIN user_' . $db_con->get_table_name(DB_TYPE_WORD) . ' u ON u.' . word::FLD_ID . ' = w.' . word::FLD_ID . ' 
+                        FROM ' . $db_con->get_table_name(sql_db::TBL_WORD) . ' w   
+                   LEFT JOIN user_' . $db_con->get_table_name(sql_db::TBL_WORD) . ' u ON u.' . word::FLD_ID . ' = w.' . word::FLD_ID . ' 
                                          AND u.user_id = ' . $this->usr->id . ' ';
         $sql_triples = 'SELECT DISTINCT l.word_link_id * -1 AS id, 
                                ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
@@ -437,7 +437,7 @@ class phrase_list
         $qp->sql = $sql;
         /*
         // select the related words
-        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_type(sql_db::TBL_WORD);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(word_link::FLD_NAMES);
@@ -449,7 +449,7 @@ class phrase_list
 
 
         // select the related triple
-        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_type(sql_db::TBL_TRIPLE);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(word_link::FLD_FROM, word_link::FLD_TO, verb::FLD_ID);
@@ -660,7 +660,7 @@ class phrase_list
                     // TODO check if old can ge removed: if ($phr->id > 0) {
                     if (get_class($phr->obj) == word::class or get_class($phr->obj) == word_dsp::class) {
                         $wrd_lst->add($phr->obj);
-                    } elseif (get_class($phr->obj) == DB_TYPE_TRIPLE) {
+                    } elseif (get_class($phr->obj) == sql_db::TBL_TRIPLE) {
                         // use the recursive triple function to include the foaf words
                         $sub_wrd_lst = $phr->obj->wrd_lst();
                         foreach ($sub_wrd_lst->lst as $wrd) {

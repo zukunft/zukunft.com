@@ -153,7 +153,7 @@ class view extends user_sandbox_named
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->obj_name = DB_TYPE_VIEW;
+        $this->obj_name = sql_db::TBL_VIEW;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_NAME;
     }
@@ -224,7 +224,7 @@ class view extends user_sandbox_named
      */
     function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(DB_TYPE_VIEW);
+        $db_con->set_type(sql_db::TBL_VIEW);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -274,7 +274,7 @@ class view extends user_sandbox_named
             log_err('Either the id, code_id or name must be set to get a view');
         }
 
-        $db_con->set_type(DB_TYPE_VIEW);
+        $db_con->set_type(sql_db::TBL_VIEW);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
@@ -294,7 +294,7 @@ class view extends user_sandbox_named
 
         // sql to get the id of the most often used view
         $db_con_tmp = new sql_db();
-        $db_con_tmp->set_type(DB_TYPE_VIEW);
+        $db_con_tmp->set_type(sql_db::TBL_VIEW);
         $db_con->set_name($qp->name);
         $db_con_tmp->set_usr($this->usr->id);
         $db_con_tmp->set_where_std($phr->id);
@@ -306,7 +306,7 @@ class view extends user_sandbox_named
                       LIMIT 1";
 
         // load all parameters of the view with one sql statement
-        $db_con->set_type(DB_TYPE_VIEW);
+        $db_con->set_type(sql_db::TBL_VIEW);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
@@ -382,20 +382,20 @@ class view extends user_sandbox_named
             log_err("Either the database ID (" . $this->id . "), the view name (" . $this->name . ") or the code_id (" . $this->code_id . ")  must be set to load the components of a view.", "view->load_components_sql");
         }
 
-        $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
+        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
         $db_con->set_usr($this->usr->id);
         $db_con->set_name($qp->name);
         $db_con->set_fields(view_cmp_link::FLD_NAMES);
         $db_con->set_usr_num_fields(view_cmp_link::FLD_NAMES_NUM_USR);
         $db_con->set_join_fields(
             view_cmp::FLD_NAMES,
-            DB_TYPE_VIEW_COMPONENT);
+            sql_db::TBL_VIEW_COMPONENT);
         $db_con->set_join_usr_fields(
             array_merge(view_cmp::FLD_NAMES_USR, array(view_cmp::FLD_NAME)),
-            DB_TYPE_VIEW_COMPONENT);
+            sql_db::TBL_VIEW_COMPONENT);
         $db_con->set_join_usr_num_fields(
             view_cmp::FLD_NAMES_NUM_USR,
-            DB_TYPE_VIEW_COMPONENT);
+            sql_db::TBL_VIEW_COMPONENT);
         $db_con->add_par(sql_db::PAR_INT, $this->id);
         $db_con->set_order(view_cmp_link::FLD_ORDER_NBR);
         $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID));
@@ -779,7 +779,7 @@ class view extends user_sandbox_named
         if (!$this->has_usr_cfg()) {
 
             // check again if there ist not yet a record
-            $db_con->set_type(DB_TYPE_VIEW, true);
+            $db_con->set_type(sql_db::TBL_VIEW, true);
             $qp = new sql_par(self::class);
             $qp->name = 'view_add_usr_cfg';
             $db_con->set_name($qp->name);
@@ -793,7 +793,7 @@ class view extends user_sandbox_named
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW);
+                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW);
                 $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view failed.');
@@ -815,7 +815,7 @@ class view extends user_sandbox_named
      */
     function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(DB_TYPE_VIEW);
+        $db_con->set_type(sql_db::TBL_VIEW);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR

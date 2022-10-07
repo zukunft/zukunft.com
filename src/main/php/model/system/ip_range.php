@@ -99,7 +99,7 @@ class ip_range
      */
     function load_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(DB_TYPE_IP);
+        $db_con->set_type(sql_db::TBL_IP);
         $qp = new sql_par(self::class);
         $qp->name = self::class . '_by_';
         $sql_where = '';
@@ -236,7 +236,7 @@ class ip_range
     {
         $result = '';
         if ($log->add()) {
-            $db_con->set_type(DB_TYPE_IP);
+            $db_con->set_type(sql_db::TBL_IP);
             if (!$db_con->update($this->id, $log->field, $log->new_value)) {
                 $result .= 'updating ' . $log->field . ' to ' . $log->new_value . ' for ' . self::OBJ_NAME . ' ' . $this->dsp_id() . ' failed';
             }
@@ -299,7 +299,7 @@ class ip_range
         $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = user_log::ACTION_ADD;
-        $log->table = DB_TYPE_IP;
+        $log->table = sql_db::TBL_IP;
         $log->field = $this->name();
         $log->row_id = 0;
         $log->add();
@@ -314,7 +314,7 @@ class ip_range
         $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = user_log::ACTION_UPDATE;
-        $log->table = DB_TYPE_IP;
+        $log->table = sql_db::TBL_IP;
 
         return $log;
     }
@@ -341,7 +341,7 @@ class ip_range
         $log = $this->log_add();
         if ($log->id > 0) {
             // insert the new ip range
-            $db_con->set_type(DB_TYPE_IP);
+            $db_con->set_type(sql_db::TBL_IP);
             $db_con->set_usr($this->usr->id);
 
             $this->id = $db_con->insert(
@@ -399,7 +399,7 @@ class ip_range
 
         // build the database object because this is needed anyway
         $db_con->set_usr($this->usr->id);
-        $db_con->set_type(DB_TYPE_IP);
+        $db_con->set_type(sql_db::TBL_IP);
 
         // check if the external reference is supposed to be added
         if ($this->id <= 0) {

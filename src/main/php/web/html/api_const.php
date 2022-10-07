@@ -63,7 +63,7 @@ class api
 
     // view parameter names
     const PAR_VIEW_WORDS = 'words';  // to select the words that should be display
-    const PAR_VIEW_TRILES = 'triples';  // to select the triple that should be display
+    const PAR_VIEW_TRIPLES = 'triples';  // to select the triple that should be display
     const PAR_VIEW_FORMULAS = 'formulas';  // to select the formulas that should be display
     const PAR_VIEW_VERBS = 'verbs';  // to select the verbs that should be display
     const PAR_LOG_STATUS = 'status'; // to set the status of a log entry

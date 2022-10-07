@@ -133,7 +133,7 @@ class word_link extends user_sandbox_link_description
         parent::__construct($usr);
         $this->reset();
         $this->obj_type = user_sandbox::TYPE_LINK;
-        $this->obj_name = DB_TYPE_TRIPLE;
+        $this->obj_name = sql_db::TBL_TRIPLE;
 
         $this->name = $name;
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_LINK_NAME;
@@ -237,7 +237,7 @@ class word_link extends user_sandbox_link_description
      */
     function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_type(sql_db::TBL_TRIPLE);
         $qp = new sql_par($class, true);
         $qp->name .= $this->load_sql_name_ext();
         $db_con->set_name($qp->name);
@@ -280,7 +280,7 @@ class word_link extends user_sandbox_link_description
                 $new_name = $this->name();
                 log_debug('word_link->load_standard check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
                 if ($new_name <> $this->name) {
-                    $db_con->set_type(DB_TYPE_TRIPLE);
+                    $db_con->set_type(sql_db::TBL_TRIPLE);
                     $result = $db_con->update($this->id, self::FLD_NAME, $new_name);
                     $this->name = $new_name;
                 }
@@ -300,7 +300,7 @@ class word_link extends user_sandbox_link_description
      */
     function load_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_type(sql_db::TBL_TRIPLE);
         $qp = new sql_par(self::class);
         $qp->name .= $this->load_sql_name_ext();
 
@@ -343,7 +343,7 @@ class word_link extends user_sandbox_link_description
                 $new_name = $this->name();
                 log_debug('word_link->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
                 if ($new_name <> $this->name) {
-                    $db_con->set_type(DB_TYPE_TRIPLE);
+                    $db_con->set_type(sql_db::TBL_TRIPLE);
                     $db_con->update($this->id, self::FLD_NAME, $new_name);
                     $this->name = $new_name;
                 }
@@ -999,7 +999,7 @@ class word_link extends user_sandbox_link_description
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_type(sql_db::TBL_TRIPLE);
         return $db_con->not_changed_sql($this->id, $this->owner_id);
     }
 
@@ -1069,7 +1069,7 @@ class word_link extends user_sandbox_link_description
             }
 
             // check again if there ist not yet a record
-            $db_con->set_type(DB_TYPE_TRIPLE, true);
+            $db_con->set_type(sql_db::TBL_TRIPLE, true);
             $qp = new sql_par(self::class);
             $qp->name = 'word_link_add_usr_cfg';
             $db_con->set_name($qp->name);
@@ -1083,7 +1083,7 @@ class word_link extends user_sandbox_link_description
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE);
+                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE);
                 $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_word_link failed.');
@@ -1105,7 +1105,7 @@ class word_link extends user_sandbox_link_description
      */
     function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_type(sql_db::TBL_TRIPLE);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
@@ -1307,7 +1307,7 @@ class word_link extends user_sandbox_link_description
             $log->row_id = $this->id;
             //$log->field    = self::FLD_FROM;
             if ($log->add()) {
-                $db_con->set_type(DB_TYPE_TRIPLE);
+                $db_con->set_type(sql_db::TBL_TRIPLE);
                 if (!$db_con->update($this->id,
                     array("from_phrase_id", "verb_id", "to_phrase_id"),
                     array($this->from->id, $this->verb->id, $this->to->id))) {
@@ -1402,7 +1402,7 @@ class word_link extends user_sandbox_link_description
         $log = $this->log_link_add();
         if ($log->id > 0) {
             // insert the new word_link
-            $db_con->set_type(DB_TYPE_TRIPLE);
+            $db_con->set_type(sql_db::TBL_TRIPLE);
             $this->id = $db_con->insert(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
                 array($this->from->id, $this->verb->id, $this->to->id, $this->usr->id));
             // TODO make sure on all add functions that the database object is always set
@@ -1448,7 +1448,7 @@ class word_link extends user_sandbox_link_description
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->usr->id);
-        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_type(sql_db::TBL_TRIPLE);
 
         // check if the opposite triple already exists and if yes, ask for confirmation
         if ($this->id <= 0) {

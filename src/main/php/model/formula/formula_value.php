@@ -183,7 +183,7 @@ class formula_value
      */
     function load_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(DB_TYPE_FORMULA_VALUE);
+        $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
@@ -458,7 +458,7 @@ class formula_value
                 log_debug('group not found!');
             }
 
-            $db_con->set_type(DB_TYPE_FORMULA_VALUE);
+            $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
             $qp = new sql_par(self::class);
             $qp->name = 'fv_by_';
 
@@ -1543,7 +1543,7 @@ class formula_value
             // build the database object because the is anyway needed
             //$db_con = new mysql;
             $db_con->set_usr($this->usr->id);
-            $db_con->set_type(DB_TYPE_FORMULA_VALUE);
+            $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
 
             // build the word list if needed to separate the time word from the word list
             $this->save_prepare_wrds();
@@ -1558,7 +1558,7 @@ class formula_value
             // if value exists, check it an update is needed
             if ($row_id > 0) {
                 if ($db_con->sf($db_val) <> $db_con->sf($this->value)) {
-                    $db_con->set_type(DB_TYPE_FORMULA_VALUE);
+                    $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
                     if ($db_con->update($row_id, array('formula_value', 'last_update'), array($this->value, 'Now()'))) {
                         $this->id = $row_id;
                         $result = $row_id;
@@ -1591,7 +1591,7 @@ class formula_value
                 $field_names[] = 'last_update';
                 //$field_values[] = 'Now()'; // replaced with time of last change that has been included in the calculation
                 $field_values[] = $this->last_val_update->format('Y-m-d H:i:s');
-                $db_con->set_type(DB_TYPE_FORMULA_VALUE);
+                $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
                 $id = $db_con->insert($field_names, $field_values);
                 $this->id = $id;
                 $result = $id;

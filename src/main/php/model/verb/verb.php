@@ -193,7 +193,7 @@ class verb
     {
         global $usr;
 
-        $db_con->set_type(DB_TYPE_VERB);
+        $db_con->set_type(sql_db::TBL_VERB);
         $qp = new sql_par($class);
         if ($this->id != 0) {
             $qp->name .= 'id';
@@ -464,7 +464,7 @@ class verb
         $qp = new sql_par(verb::class);
 
         $qp->name .= 'usage';
-        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_type(sql_db::TBL_WORD);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
@@ -595,7 +595,7 @@ class verb
         }
         if ($log->add()) {
             if ($this->can_change()) {
-                $db_con->set_type(DB_TYPE_VERB);
+                $db_con->set_type(sql_db::TBL_VERB);
                 if (!$db_con->update($this->id, $log->field, $new_value)) {
                     $result .= 'updating ' . $log->field . ' to ' . $new_value . ' for verb ' . $this->dsp_id() . ' failed';
                 }
@@ -799,7 +799,7 @@ class verb
         $log = $this->log_add();
         if ($log->id > 0) {
             // insert the new verb
-            $db_con->set_type(DB_TYPE_VERB);
+            $db_con->set_type(sql_db::TBL_VERB);
             $this->id = $db_con->insert(self::FLD_NAME, $this->name);
             if ($this->id > 0) {
                 // update the id in the log
@@ -834,7 +834,7 @@ class verb
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->usr->id);
-        $db_con->set_type(DB_TYPE_VERB);
+        $db_con->set_type(sql_db::TBL_VERB);
 
         // check if a new word is supposed to be added
         if ($this->id <= 0) {
@@ -914,7 +914,7 @@ class verb
                     if ($log->id > 0) {
                         //$db_con = new mysql;
                         $db_con->usr_id = $this->usr->id;
-                        $db_con->set_type(DB_TYPE_VERB);
+                        $db_con->set_type(sql_db::TBL_VERB);
                         $result = $db_con->delete(self::FLD_ID, $this->id);
                     }
                 } else {

@@ -93,7 +93,7 @@ function import_system_users(): bool
         if (!$check_usr->has_any_user_this_profile(user_profile::SYSTEM, $db_con)) {
             // if the system users are missing always reset all users as a double line of defence to prevent system
             // TODO ask for final confirmation before deleting all users !!!
-            run_table_truncate(DB_TYPE_USER);
+            run_table_truncate(sql_db::TBL_USER);
             run_seq_reset('users_user_id_seq');
             $usr->set_profile(user_profile::SYSTEM);
             $import_result = import_json_file(SYSTEM_USER_CONFIG_FILE, $usr);

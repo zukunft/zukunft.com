@@ -100,102 +100,102 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
     $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
     // TODO check if change has been successful
-    $result .= $db_con->add_column(DB_TYPE_USER_PROFILE, 'right_level', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'values', 'bigint');
-    $result .= $db_con->add_column(DB_TYPE_WORD, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_TRIPLE, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_TRIPLE, 'word_type_id', 'bigint');
-    $result .= $db_con->add_column(DB_TYPE_FORMULA, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_FORMULA, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_FORMULA_LINK, 'order_nbr', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_FORMULA_LINK, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_FORMULA_LINK, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA_LINK, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA_LINK, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_VIEW, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_VIEW, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_VIEW_COMPONENT, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_VIEW_COMPONENT, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW_COMPONENT, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW_COMPONENT, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_VIEW_COMPONENT_LINK, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_VIEW_COMPONENT_LINK, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW_COMPONENT_LINK, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW_COMPONENT_LINK, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_VALUE_TIME_SERIES, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_VALUE_TIME_SERIES, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE_TIME_SERIES, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE_TIME_SERIES, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_VIEW_COMPONENT_POS_TYPE, 'code_id', 'varchar(50)');
-    $result .= $db_con->change_table_name('languages_forms', DB_TYPE_LANGUAGE_FORM);
-    $result .= $db_con->change_column_name(DB_TYPE_LANGUAGE_FORM, 'lanuages_id', 'language_id');
-    $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'user_value', 'word_value');
-    $result .= $db_con->change_column_name(DB_TYPE_VALUE_TIME_SERIES, 'value_time_serie_id', 'value_time_series_id');
-    $result .= $db_con->change_column_name(DB_TYPE_IP, 'isactive', 'is_active');
-    $result .= $db_con->change_column_name(DB_TYPE_USER, 'isactive', 'is_active');
-    $result .= $db_con->change_column_name(DB_TYPE_USER, 'email_alternativ', 'email_alternative');
-    $result .= $db_con->change_column_name(DB_TYPE_FORMULA_ELEMENT_TYPE, 'formula_element_type_name', 'type_name');
-    $result .= $db_con->change_column_name(DB_TYPE_VIEW_COMPONENT_TYPE, 'view_component_type_name', 'type_name');
-    $result .= $db_con->change_column_name(DB_TYPE_FORMULA_TYPE, 'name', 'type_name');
-    $result .= $db_con->change_column_name(DB_TYPE_REF_TYPE, 'ref_type_name', 'type_name');
-    $result .= $db_con->change_column_name(DB_TYPE_SHARE, 'share_type_name', 'type_name');
-    $result .= $db_con->change_column_name(DB_TYPE_PROTECTION, 'protection_type_name', 'type_name');
-    $result .= $db_con->change_column_name(DB_TYPE_USER_PROFILE, 'user_profile_name', 'type_name');
-    $result .= $db_con->change_column_name(DB_TYPE_USER_PROFILE, 'commen', 'description');
-    $result .= $db_con->change_column_name(DB_TYPE_SYS_LOG_STATUS, 'comment', 'description');
-    $result .= $db_con->change_column_name(DB_TYPE_SYS_LOG_STATUS, 'sys_log_status_name', 'type_name');
-    $result .= $db_con->change_column_name(DB_TYPE_TASK_TYPE, 'calc_and_cleanup_task_type_name', 'type_name');
-    $result .= $db_con->change_column_name(DB_TYPE_USER_PROFILE, 'comment', 'description');
-    $result .= $db_con->change_column_name(DB_TYPE_FORMULA, 'protection_type_id', 'protect_id');
-    $result .= $db_con->change_column_name(DB_TYPE_VALUE, 'protection_type_id', 'protect_id');
-    $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'protection_type_id', 'protect_id');
-    $result .= $db_con->change_column_name(DB_TYPE_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
-    $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
-    $result .= $db_con->change_column_name(DB_TYPE_FORMULA_VALUE, 'source_time_word_id', 'source_time_id');
-    if (!$db_con->has_column($db_con->get_table_name(DB_TYPE_TRIPLE), 'name_generated')) {
-        $result .= $db_con->change_column_name(DB_TYPE_TRIPLE, 'name', 'name_generated');
-        $result .= $db_con->change_column_name(DB_TYPE_TRIPLE, 'description', 'name_given');
-        $result .= $db_con->add_column(DB_TYPE_TRIPLE, 'description', 'text');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PROFILE, 'right_level', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'values', 'bigint');
+    $result .= $db_con->add_column(sql_db::TBL_WORD, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_TRIPLE, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_TRIPLE, 'word_type_id', 'bigint');
+    $result .= $db_con->add_column(sql_db::TBL_FORMULA, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_FORMULA, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_FORMULA_LINK, 'order_nbr', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_FORMULA_LINK, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_FORMULA_LINK, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_VIEW, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_VIEW, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_VIEW_COMPONENT, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_VIEW_COMPONENT, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_VIEW_COMPONENT_LINK, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_VIEW_COMPONENT_LINK, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT_LINK, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT_LINK, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_VALUE_TIME_SERIES, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_VALUE_TIME_SERIES, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE_TIME_SERIES, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE_TIME_SERIES, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_VIEW_COMPONENT_POS_TYPE, 'code_id', 'varchar(50)');
+    $result .= $db_con->change_table_name('languages_forms', sql_db::TBL_LANGUAGE_FORM);
+    $result .= $db_con->change_column_name(sql_db::TBL_LANGUAGE_FORM, 'lanuages_id', 'language_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'user_value', 'word_value');
+    $result .= $db_con->change_column_name(sql_db::TBL_VALUE_TIME_SERIES, 'value_time_serie_id', 'value_time_series_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_IP, 'isactive', 'is_active');
+    $result .= $db_con->change_column_name(sql_db::TBL_USER, 'isactive', 'is_active');
+    $result .= $db_con->change_column_name(sql_db::TBL_USER, 'email_alternativ', 'email_alternative');
+    $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_ELEMENT_TYPE, 'formula_element_type_name', 'type_name');
+    $result .= $db_con->change_column_name(sql_db::TBL_VIEW_COMPONENT_TYPE, 'view_component_type_name', 'type_name');
+    $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_TYPE, 'name', 'type_name');
+    $result .= $db_con->change_column_name(sql_db::TBL_REF_TYPE, 'ref_type_name', 'type_name');
+    $result .= $db_con->change_column_name(sql_db::TBL_SHARE, 'share_type_name', 'type_name');
+    $result .= $db_con->change_column_name(sql_db::TBL_PROTECTION, 'protection_type_name', 'type_name');
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PROFILE, 'user_profile_name', 'type_name');
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PROFILE, 'commen', 'description');
+    $result .= $db_con->change_column_name(sql_db::TBL_SYS_LOG_STATUS, 'comment', 'description');
+    $result .= $db_con->change_column_name(sql_db::TBL_SYS_LOG_STATUS, 'sys_log_status_name', 'type_name');
+    $result .= $db_con->change_column_name(sql_db::TBL_TASK_TYPE, 'calc_and_cleanup_task_type_name', 'type_name');
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PROFILE, 'comment', 'description');
+    $result .= $db_con->change_column_name(sql_db::TBL_FORMULA, 'protection_type_id', 'protect_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_VALUE, 'protection_type_id', 'protect_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'protection_type_id', 'protect_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_VALUE, 'source_time_word_id', 'source_time_id');
+    if (!$db_con->has_column($db_con->get_table_name(sql_db::TBL_TRIPLE), 'name_generated')) {
+        $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'name', 'name_generated');
+        $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'description', 'name_given');
+        $result .= $db_con->add_column(sql_db::TBL_TRIPLE, 'description', 'text');
     }
-    $result .= $db_con->add_column(DB_TYPE_TRIPLE, 'values', 'bigint');
-    if (!$db_con->has_column($db_con->get_table_name(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE), 'name_generated')) {
-        $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'name', 'name_generated');
-        $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'description', 'name_given');
-        $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'description', 'text');
+    $result .= $db_con->add_column(sql_db::TBL_TRIPLE, 'values', 'bigint');
+    if (!$db_con->has_column($db_con->get_table_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE), 'name_generated')) {
+        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'name', 'name_generated');
+        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'description', 'name_given');
+        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'description', 'text');
     }
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'values', 'bigint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'values', 'bigint');
-    $result .= $db_con->remove_prefix(DB_TYPE_USER_PROFILE, 'code_id', 'usr_role_');
-    $result .= $db_con->remove_prefix(DB_TYPE_SYS_LOG_STATUS, 'code_id', 'log_status_');
-    $result .= $db_con->remove_prefix(DB_TYPE_TASK_TYPE, 'code_id', 'job_');
-    $result .= $db_con->remove_prefix(DB_TYPE_VIEW, 'code_id', 'dsp_');
-    $result .= $db_con->remove_prefix(DB_TYPE_VIEW_COMPONENT_TYPE, 'code_id', 'dsp_comp_type_');
-    $result .= $db_con->remove_prefix(DB_TYPE_VERB, 'code_id', 'vrb_');
-    $result .= $db_con->change_code_id(DB_TYPE_VERB, 'vrb_contains', 'is_part_of');
-    $result .= $db_con->column_allow_null(DB_TYPE_WORD, 'plural');
-    $result .= $db_con->column_allow_null(DB_TYPE_WORD_TYPE, 'word_symbol');
-    $result .= $db_con->column_allow_null(DB_TYPE_CHANGE_TABLE, 'description');
-    $result .= $db_con->column_allow_null(DB_TYPE_CHANGE_FIELD, 'code_id');
-    $result .= $db_con->column_allow_null(DB_TYPE_VIEW, 'comment');
-    $result .= $db_con->column_allow_null(DB_TYPE_VIEW_COMPONENT_TYPE, 'description');
-    $result .= $db_con->column_allow_null(DB_TYPE_VALUE, user_sandbox::FLD_EXCLUDED);
-    $result .= $db_con->column_allow_null(DB_TYPE_VALUE, 'protect_id');
-    $result .= $db_con->column_allow_null(DB_TYPE_FORMULA_LINK, 'link_type_id');
-    $result .= $db_con->column_allow_null(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'protect_id');
-    $result .= $db_con->column_allow_null(DB_TYPE_VALUE_TIME_SERIES, 'protect_id');
-    $result .= $db_con->column_allow_null(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE, 'source_name');
-    $result .= $db_con->column_allow_null(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE, 'url');
-    $result .= $db_con->column_allow_null(DB_TYPE_SYS_LOG_FUNCTION, 'sys_log_function_name');
-    $result .= $db_con->column_allow_null(DB_TYPE_TASK, 'start_time');
-    $result .= $db_con->column_allow_null(DB_TYPE_TASK, 'end_time');
-    $result .= $db_con->column_force_not_null(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE, 'user_id');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'values', 'bigint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'values', 'bigint');
+    $result .= $db_con->remove_prefix(sql_db::TBL_USER_PROFILE, 'code_id', 'usr_role_');
+    $result .= $db_con->remove_prefix(sql_db::TBL_SYS_LOG_STATUS, 'code_id', 'log_status_');
+    $result .= $db_con->remove_prefix(sql_db::TBL_TASK_TYPE, 'code_id', 'job_');
+    $result .= $db_con->remove_prefix(sql_db::TBL_VIEW, 'code_id', 'dsp_');
+    $result .= $db_con->remove_prefix(sql_db::TBL_VIEW_COMPONENT_TYPE, 'code_id', 'dsp_comp_type_');
+    $result .= $db_con->remove_prefix(sql_db::TBL_VERB, 'code_id', 'vrb_');
+    $result .= $db_con->change_code_id(sql_db::TBL_VERB, 'vrb_contains', 'is_part_of');
+    $result .= $db_con->column_allow_null(sql_db::TBL_WORD, 'plural');
+    $result .= $db_con->column_allow_null(sql_db::TBL_WORD_TYPE, 'word_symbol');
+    $result .= $db_con->column_allow_null(sql_db::TBL_CHANGE_TABLE, 'description');
+    $result .= $db_con->column_allow_null(sql_db::TBL_CHANGE_FIELD, 'code_id');
+    $result .= $db_con->column_allow_null(sql_db::TBL_VIEW, 'comment');
+    $result .= $db_con->column_allow_null(sql_db::TBL_VIEW_COMPONENT_TYPE, 'description');
+    $result .= $db_con->column_allow_null(sql_db::TBL_VALUE, user_sandbox::FLD_EXCLUDED);
+    $result .= $db_con->column_allow_null(sql_db::TBL_VALUE, 'protect_id');
+    $result .= $db_con->column_allow_null(sql_db::TBL_FORMULA_LINK, 'link_type_id');
+    $result .= $db_con->column_allow_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'protect_id');
+    $result .= $db_con->column_allow_null(sql_db::TBL_VALUE_TIME_SERIES, 'protect_id');
+    $result .= $db_con->column_allow_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, 'source_name');
+    $result .= $db_con->column_allow_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, 'url');
+    $result .= $db_con->column_allow_null(sql_db::TBL_SYS_LOG_FUNCTION, 'sys_log_function_name');
+    $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'start_time');
+    $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'end_time');
+    $result .= $db_con->column_force_not_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, 'user_id');
     // TODO set default profile_id in users to 1
     if ($db_con->db_type == sql_db::MYSQL) {
         $sql = 'UPDATE' . ' `users` SET `user_profile_id` = 1 WHERE `user_profile_id`= NULL';
@@ -215,7 +215,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
         //src/main/resources/db/upgrade/v0.0.3/upgrade_postgres.sql
         //$result .= $db_con->exe_try('Finally add the new views', $sql);
     }
-    $result .= $db_con->add_foreign_key('users_fk_2', DB_TYPE_USER, 'user_profile_id', DB_TYPE_USER_PROFILE, 'profile_id');
+    $result .= $db_con->add_foreign_key('users_fk_2', sql_db::TBL_USER, 'user_profile_id', sql_db::TBL_USER_PROFILE, 'profile_id');
     // TODO change prime key for postgres user_sources, user_values, user_view, user_view_components and user_view_component_links
 
     if ($db_con->db_type == sql_db::MYSQL) {
@@ -382,6 +382,6 @@ function db_fill_code_links(sql_db $db_con)
     }
 
     // set the seq number if needed
-    $db_con->seq_reset(DB_TYPE_CHANGE_TABLE);
-    $db_con->seq_reset(DB_TYPE_CHANGE_ACTION);
+    $db_con->seq_reset(sql_db::TBL_CHANGE_TABLE);
+    $db_con->seq_reset(sql_db::TBL_CHANGE_ACTION);
 }

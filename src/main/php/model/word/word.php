@@ -259,7 +259,7 @@ class word extends user_sandbox_description
     {
         parent::__construct($usr);
         $this->reset();
-        $this->obj_name = DB_TYPE_WORD;
+        $this->obj_name = sql_db::TBL_WORD;
 
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_NAME;
 
@@ -366,7 +366,7 @@ class word extends user_sandbox_description
      */
     function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_type(sql_db::TBL_WORD);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -413,7 +413,7 @@ class word extends user_sandbox_description
             log_err("Either the database ID (" . $this->id . ") or the word name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
         }
 
-        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_type(sql_db::TBL_WORD);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
@@ -529,10 +529,10 @@ class word extends user_sandbox_description
 
     function view_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_type(sql_db::TBL_WORD);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(array(self::FLD_VIEW));
-        $db_con->set_join_usr_count_fields(array(sql_db::FLD_USER_ID), DB_TYPE_WORD);
+        $db_con->set_join_usr_count_fields(array(sql_db::FLD_USER_ID), sql_db::TBL_WORD);
         $qp = new sql_par(self::class);
         $qp->name = 'word_view_most_used';
         $db_con->set_name($qp->name);
@@ -600,7 +600,7 @@ class word extends user_sandbox_description
 
         global $db_con;
 
-        $db_con->set_type(DB_TYPE_FORMULA_LINK);
+        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
         $qp = new sql_par(self::class);
         $qp->name = 'word_formula_by_id';
         $db_con->set_name($qp->name);
@@ -1410,7 +1410,7 @@ class word extends user_sandbox_description
         $link_id = cl(db_cl::VERB, verb::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_type(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $result->id = intval($key_result);
@@ -1434,7 +1434,7 @@ class word extends user_sandbox_description
         $link_id = cl(db_cl::VERB, verb::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_type(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $result->id = intval($key_result);
@@ -1674,7 +1674,7 @@ class word extends user_sandbox_description
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_type(sql_db::TBL_WORD);
         return $db_con->not_changed_sql($this->id, $this->owner_id);
     }
 
@@ -1759,7 +1759,7 @@ class word extends user_sandbox_description
 
         // check again if there ist not yet a record
         // TODO add user id to where
-        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_type(sql_db::TBL_WORD);
         $qp = new sql_par(self::class);
         $qp->name = 'word_del_usr_cfg_if';
         $db_con->set_name($qp->name);
@@ -1833,7 +1833,7 @@ class word extends user_sandbox_description
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->usr->id;
                 if ($this->can_change()) {
-                    $db_con->set_type(DB_TYPE_WORD);
+                    $db_con->set_type(sql_db::TBL_WORD);
                     if (!$db_con->update($this->id, "view_id", $view_id)) {
                         $result = 'setting of view failed';
                     }
@@ -1844,7 +1844,7 @@ class word extends user_sandbox_description
                         }
                     }
                     if ($result == '') {
-                        $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_WORD);
+                        $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD);
                         if (!$db_con->update($this->id, "view_id", $view_id)) {
                             $result = 'setting of view for user failed';
                         }

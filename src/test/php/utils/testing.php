@@ -361,16 +361,16 @@ class testing extends test_base
         }
 
         // TODO better use a info system log message
-        echo $db_con->seq_reset(DB_TYPE_VALUE) . '<br>';
-        echo $db_con->seq_reset(DB_TYPE_WORD) . '<br>';
-        echo $db_con->seq_reset(DB_TYPE_PHRASE_GROUP_WORD_LINK) . '<br>';
-        echo $db_con->seq_reset(DB_TYPE_PHRASE_GROUP_TRIPLE_LINK) . '<br>';
-        echo $db_con->seq_reset(DB_TYPE_FORMULA) . '<br>';
-        echo $db_con->seq_reset(DB_TYPE_FORMULA_LINK) . '<br>';
-        echo $db_con->seq_reset(DB_TYPE_VIEW) . '<br>';
-        echo $db_con->seq_reset(DB_TYPE_VIEW_COMPONENT) . '<br>';
-        echo $db_con->seq_reset(DB_TYPE_VIEW_COMPONENT_LINK) . '<br>';
-        echo $db_con->seq_reset(DB_TYPE_SOURCE) . '<br>';
+        echo $db_con->seq_reset(sql_db::TBL_VALUE) . '<br>';
+        echo $db_con->seq_reset(sql_db::TBL_WORD) . '<br>';
+        echo $db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_WORD_LINK) . '<br>';
+        echo $db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK) . '<br>';
+        echo $db_con->seq_reset(sql_db::TBL_FORMULA) . '<br>';
+        echo $db_con->seq_reset(sql_db::TBL_FORMULA_LINK) . '<br>';
+        echo $db_con->seq_reset(sql_db::TBL_VIEW) . '<br>';
+        echo $db_con->seq_reset(sql_db::TBL_VIEW_COMPONENT) . '<br>';
+        echo $db_con->seq_reset(sql_db::TBL_VIEW_COMPONENT_LINK) . '<br>';
+        echo $db_con->seq_reset(sql_db::TBL_SOURCE) . '<br>';
 
         if ($result == '') {
             return true;

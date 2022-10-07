@@ -77,7 +77,7 @@ class word_link_list
      */
     function load_sql_new(sql_db $db_con): sql_par
     {
-        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_type(sql_db::TBL_TRIPLE);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $db_con->set_usr($this->usr->id);
@@ -88,13 +88,13 @@ class word_link_list
         // also load the linked user specific phrase with the same SQL statement (word until now)
         $db_con->set_join_fields(
             phrase::FLD_NAMES,
-            DB_TYPE_PHRASE,
+            sql_db::TBL_PHRASE,
             word_link::FLD_FROM,
             phrase::FLD_ID
         );
         $db_con->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
-            DB_TYPE_PHRASE,
+            sql_db::TBL_PHRASE,
             word_link::FLD_FROM,
             phrase::FLD_ID
         );
@@ -102,20 +102,20 @@ class word_link_list
             array_merge(
                 phrase::FLD_NAMES_NUM_USR,
                 user_sandbox::FLD_NAMES_NUM_USR),
-            DB_TYPE_PHRASE,
+            sql_db::TBL_PHRASE,
             word_link::FLD_FROM,
             phrase::FLD_ID,
             true
         );
         $db_con->set_join_fields(
             phrase::FLD_NAMES,
-            DB_TYPE_PHRASE,
+            sql_db::TBL_PHRASE,
             word_link::FLD_TO,
             phrase::FLD_ID
         );
         $db_con->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
-            DB_TYPE_PHRASE,
+            sql_db::TBL_PHRASE,
             word_link::FLD_TO,
             phrase::FLD_ID
         );
@@ -123,7 +123,7 @@ class word_link_list
             array_merge(
                 phrase::FLD_NAMES_NUM_USR,
                 user_sandbox::FLD_NAMES_NUM_USR),
-            DB_TYPE_PHRASE,
+            sql_db::TBL_PHRASE,
             word_link::FLD_TO,
             phrase::FLD_ID,
             true
@@ -279,7 +279,7 @@ class word_link_list
                 " . $db_con->get_usr_field('word_type_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'word_type_id' . $pos) . ",
                 " . $db_con->get_usr_field(view::FLD_ID, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, view::FLD_ID . $pos) . ",
                 " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'excluded' . $pos) . ",
-                  t" . $pos . "." . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " AS values" . $pos;
+                  t" . $pos . "." . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " AS values" . $pos;
     }
 
     private function load_wrd_from($pos): string

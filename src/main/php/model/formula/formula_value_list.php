@@ -117,7 +117,7 @@ class formula_value_list
                 ') must be set to load a ' . self::class, self::class . '->load_sql');
             $qp->name = '';
         } else {
-            $db_con->set_type(DB_TYPE_FORMULA_VALUE);
+            $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
             $qp->name .= $sql_by;
             $db_con->set_name(substr($qp->name, 0, 62));
             $db_con->set_fields(formula_value::FLD_NAMES);
@@ -152,7 +152,7 @@ class formula_value_list
                     $db_con->add_par(sql_db::PAR_INT, $obj->id, false, true);
                     $db_con->set_join_fields(
                         array(formula_value::FLD_GRP),
-                        DB_TYPE_PHRASE_GROUP_WORD_LINK,
+                        sql_db::TBL_PHRASE_GROUP_WORD_LINK,
                         formula_value::FLD_GRP,
                         formula_value::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(word::FLD_ID));
@@ -161,7 +161,7 @@ class formula_value_list
                     $db_con->add_par(sql_db::PAR_INT, $obj->id, false, true);
                     $db_con->set_join_fields(
                         array(formula_value::FLD_GRP),
-                        DB_TYPE_PHRASE_GROUP_TRIPLE_LINK,
+                        sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
                         formula_value::FLD_GRP,
                         formula_value::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(word_link::FLD_ID_NEW));

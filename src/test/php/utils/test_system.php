@@ -55,7 +55,7 @@ function run_system_test(testing $t)
 
     // check if the owner is always setting
     //$sbx = New user_sandbox;
-    //$chk_txt = $sbx->chk_owner(DB_TYPE_TRIPLE, False); if ($chk_txt <> '') { echo $chk_txt."<br>"; }
+    //$chk_txt = $sbx->chk_owner(sql_db::TBL_TRIPLE, False); if ($chk_txt <> '') { echo $chk_txt."<br>"; }
 
     $t->header('Test the blocked IP addresses');
 

@@ -86,7 +86,7 @@ class value_time_series extends user_sandbox_display
     {
         parent::__construct($usr);
         $this->obj_type = user_sandbox::TYPE_VALUE;
-        $this->obj_name = DB_TYPE_VALUE_TIME_SERIES;
+        $this->obj_name = sql_db::TBL_VALUE_TIME_SERIES;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
 
@@ -135,7 +135,7 @@ class value_time_series extends user_sandbox_display
      */
     function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(DB_TYPE_VALUE_TIME_SERIES);
+        $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
         $db_con->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(sql_db::FLD_USER_ID)));
 
         return parent::load_standard_sql($db_con, self::class);
@@ -162,7 +162,7 @@ class value_time_series extends user_sandbox_display
      */
     function load_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(DB_TYPE_VALUE_TIME_SERIES);
+        $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
         $qp = new sql_par(self::class);
         $sql_where = '';
 
@@ -233,7 +233,7 @@ class value_time_series extends user_sandbox_display
         // log the insert attempt first
         $log = $this->log_add();
         if ($log->id > 0) {
-            $db_con->set_type(DB_TYPE_VALUE_TIME_SERIES);
+            $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
             $this->id = $db_con->insert(
                 array(phrase_group::FLD_ID, self::FLD_USER, self::FLD_LAST_UPDATE),
                 array($this->grp->id, $this->usr->id, "Now()"));
@@ -273,7 +273,7 @@ class value_time_series extends user_sandbox_display
         $result = '';
 
         // build the database object because the is anyway needed
-        $db_con->set_type(DB_TYPE_VALUE_TIME_SERIES);
+        $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
         $db_con->set_usr($this->usr->id);
 
         // check if a new time series is supposed to be added

@@ -64,7 +64,7 @@ class view_cmp_link_list extends link_list
      */
     function load_sql(sql_db $db_con, ?view $dsp = null, ?view_cmp $cmp = null): sql_par
     {
-        $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
+        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
         $qp = new sql_par(self::class);
         $sql_by = '';
 
@@ -88,9 +88,9 @@ class view_cmp_link_list extends link_list
             $db_con->set_fields(view_cmp_link::FLD_NAMES);
             $db_con->set_usr_num_fields(view_cmp_link::FLD_NAMES_NUM_USR);
             if ($dsp != null) {
-                $db_con->set_join_fields(array(view::FLD_ID), DB_TYPE_VIEW);
+                $db_con->set_join_fields(array(view::FLD_ID), sql_db::TBL_VIEW);
             } else {
-                $db_con->set_join_fields(array(view_cmp::FLD_ID), DB_TYPE_VIEW_COMPONENT);
+                $db_con->set_join_fields(array(view_cmp::FLD_ID), sql_db::TBL_VIEW_COMPONENT);
             }
             if ($dsp != null) {
                 if ($dsp->id > 0) {

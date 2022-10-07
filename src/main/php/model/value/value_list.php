@@ -110,7 +110,7 @@ class value_list
     // TODO review the VAR and LIMIT definitions
     function load_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(DB_TYPE_VALUE);
+        $db_con->set_type(sql_db::TBL_VALUE);
         $qp = new sql_par(self::class);
         $sql_name = self::class . '_by_';
         $sql_name_ext = '';
@@ -137,11 +137,11 @@ class value_list
             $db_con->set_fields(value::FLD_NAMES);
             $db_con->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
             $db_con->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
-            $db_con->set_join_fields(array(phrase_group::FLD_ID), DB_TYPE_PHRASE_GROUP);
+            $db_con->set_join_fields(array(phrase_group::FLD_ID), sql_db::TBL_PHRASE_GROUP);
             if ($this->phr->is_word()) {
-                $db_con->set_join_fields(array(word::FLD_ID), DB_TYPE_PHRASE_GROUP_WORD_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
+                $db_con->set_join_fields(array(word::FLD_ID), sql_db::TBL_PHRASE_GROUP_WORD_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
             } else {
-                $db_con->set_join_fields(array('triple_id'), DB_TYPE_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
+                $db_con->set_join_fields(array('triple_id'), sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
             }
             if ($this->phr != null) {
                 if ($this->phr->id <> 0) {
@@ -221,7 +221,7 @@ class value_list
      */
     function load_by_phr_sql(sql_db $db_con, phrase $phr): sql_par
     {
-        $db_con->set_type(DB_TYPE_VALUE);
+        $db_con->set_type(sql_db::TBL_VALUE);
         $qp = new sql_par(self::class);
         $qp->name .= 'phrase_id';
 
@@ -231,7 +231,7 @@ class value_list
         $db_con->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
         $db_con->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
         $db_con->set_join_fields(
-            array(value::FLD_ID), DB_TYPE_VALUE_PHRASE_LINK,
+            array(value::FLD_ID), sql_db::TBL_VALUE_PHRASE_LINK,
             value::FLD_ID, value::FLD_ID,
             phrase::FLD_ID, $phr->id);
         $qp->sql = $db_con->select_by_id();
@@ -283,7 +283,7 @@ class value_list
                     " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                       v.phrase_group_id,
                       v.time_word_id
-                  FROM " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v 
+                  FROM " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
             LEFT JOIN user_values u ON u.value_id = v.value_id 
                                     AND u.user_id = " . $this->usr->id . " 
                 WHERE v.value_id IN ( SELECT value_id 
@@ -368,12 +368,12 @@ class value_list
                        v.user_id,
                        v.phrase_group_id,
                        v.time_word_id
-                  FROM " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v 
+                  FROM " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
              LEFT JOIN user_values u ON u.value_id = v.value_id 
                                     AND u.user_id = " . $this->usr->id . " 
                  WHERE v.value_id IN ( SELECT DISTINCT v.value_id 
                                          FROM " . $sql_from . "
-                                              " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v
+                                              " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v
                                               " . $sql_where . " )
               ORDER BY v.phrase_group_id, v.time_word_id;";
         }
@@ -898,7 +898,7 @@ class value_list
         $result = true;
 
         // the id and the user must be set
-        $db_con->set_type(DB_TYPE_VALUE);
+        $db_con->set_type(sql_db::TBL_VALUE);
         $db_con->set_usr($this->usr->id);
         $sql = $db_con->select_by_id();
         $db_val_lst = $db_con->get_old($sql);
@@ -962,7 +962,7 @@ class value_list
                     v.excluded, 
                     u.excluded AS user_excluded 
                 FROM value_phrase_links l,
-                    " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v 
+                    " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
           LEFT JOIN user_values u ON v.value_id = u.value_id AND u.user_id = " . $user_id . " 
               WHERE l.value_id = v.value_id
                 AND l.phrase_id NOT IN (" . implode(",", $phr_ids) . ")

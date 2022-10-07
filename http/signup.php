@@ -30,6 +30,8 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use html\html_base;
+
 $debug = $_GET['debug'] ?? 0;
 include_once '../src/main/php/zu_lib.php';
 
@@ -83,7 +85,7 @@ if (isset($_POST['submit'])) {
         $usr_email = $_POST['email'];
         $pw_hash = hash('sha256', mysqli_real_escape_string($db_con->mysql, $_POST['password']));
         //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
-        $db_con->set_type(DB_TYPE_USER);
+        $db_con->set_type(sql_db::TBL_USER);
         $db_con->set_usr(SYSTEM_USER_ID);
         $log_id = $db_con->insert(array('user_name', 'email', 'password'), array($usr_name, $usr_email, $pw_hash));
         if ($log_id <= 0) {
@@ -98,7 +100,7 @@ if (isset($_POST['submit'])) {
         $sql_result = mysqli_query($sql);
         */
         // get user id
-        $db_con->set_type(DB_TYPE_USER);
+        $db_con->set_type(sql_db::TBL_USER);
         $db_con->set_usr(SYSTEM_USER_ID);
         $db_con->set_where_std(null,$usr_name);
         $sql = $db_con->select_by_id();

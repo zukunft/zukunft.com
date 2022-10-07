@@ -57,7 +57,7 @@ if ($usr->id > 0) {
     log_debug("create the calculation queue ... ");
 
     // estimate the block size for useful UI updates
-    $total_formulas = $db_con->count(DB_TYPE_FORMULA);
+    $total_formulas = $db_con->count(sql_db::TBL_FORMULA);
     $calc_blocks = (new formula_list($usr))->calc_blocks($db_con, $total_formulas);
     $block_size = max(1, round($total_formulas / $calc_blocks, 0));
 

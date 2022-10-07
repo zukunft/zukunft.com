@@ -107,7 +107,7 @@ class source extends user_sandbox_named
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->obj_name = DB_TYPE_SOURCE;
+        $this->obj_name = sql_db::TBL_SOURCE;
 
         $this->rename_can_switch = UI_CAN_CHANGE_SOURCE_NAME;
     }
@@ -164,7 +164,7 @@ class source extends user_sandbox_named
      */
     function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(DB_TYPE_SOURCE);
+        $db_con->set_type(sql_db::TBL_SOURCE);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -215,7 +215,7 @@ class source extends user_sandbox_named
                 $class, $class . '->load');
         }
 
-        $db_con->set_type(DB_TYPE_SOURCE);
+        $db_con->set_type(sql_db::TBL_SOURCE);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
@@ -273,12 +273,12 @@ class source extends user_sandbox_named
         global $db_con;
 
         if ($this->type_id > 0) {
-            $qp = new sql_par($this->type);
-            $db_con->set_type(DB_TYPE_SOURCE_TYPE);
+            $qp = new sql_par(self::class);
+            $db_con->set_type(sql_db::TBL_SOURCE_TYPE);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where_std($this->type_id);
             $qp->sql = $db_con->select_by_id();
-            $qp->par = $this->get_par();
+            $qp->par = $db_con->get_par();
             $db_type = $db_con->get1($qp);
             $this->type_name = $db_type['source_type_name'];
         }
@@ -499,7 +499,7 @@ class source extends user_sandbox_named
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(DB_TYPE_SOURCE);
+        $db_con->set_type(sql_db::TBL_SOURCE);
         return $db_con->not_changed_sql($this->id, $this->owner_id);
     }
 
@@ -551,7 +551,7 @@ class source extends user_sandbox_named
             log_debug('source->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
             // check again if there ist not yet a record
-            $db_con->set_type(DB_TYPE_SOURCE, true);
+            $db_con->set_type(sql_db::TBL_SOURCE, true);
             $qp = new sql_par(self::class);
             $qp->name = 'source_add_usr_cfg';
             $db_con->set_name($qp->name);
@@ -565,7 +565,7 @@ class source extends user_sandbox_named
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE);
+                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE);
                 $log_id = $db_con->insert(array('source_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_source failed.');
@@ -587,7 +587,7 @@ class source extends user_sandbox_named
      */
     function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(DB_TYPE_SOURCE);
+        $db_con->set_type(sql_db::TBL_SOURCE);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
@@ -623,7 +623,7 @@ class source extends user_sandbox_named
                 and $usr_src_cfg[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
                 log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
-                $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE);
+                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE);
                 $del_result = $db_con->delete(array('source_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($del_result != '') {
                     $result = false;

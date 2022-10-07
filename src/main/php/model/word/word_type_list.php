@@ -59,7 +59,7 @@ class word_type_list extends user_type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con, string $db_type = DB_TYPE_WORD_TYPE): bool
+    function load(sql_db $db_con, string $db_type = sql_db::TBL_WORD_TYPE): bool
     {
         return parent::load($db_con, $db_type);
     }

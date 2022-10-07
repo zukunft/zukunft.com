@@ -77,7 +77,7 @@ class formula_link_list
      */
     function load_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(DB_TYPE_FORMULA_LINK);
+        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $db_con->set_usr($this->usr->id);
@@ -86,13 +86,13 @@ class formula_link_list
         // also load the linked user specific phrase with the same SQL statement
         $db_con->set_join_fields(
             phrase::FLD_NAMES,
-            DB_TYPE_PHRASE,
+            sql_db::TBL_PHRASE,
             phrase::FLD_ID,
             phrase::FLD_ID
         );
         $db_con->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
-            DB_TYPE_PHRASE,
+            sql_db::TBL_PHRASE,
             phrase::FLD_ID,
             phrase::FLD_ID
         );
@@ -100,7 +100,7 @@ class formula_link_list
             array_merge(
                 phrase::FLD_NAMES_NUM_USR,
                 user_sandbox::FLD_NAMES_NUM_USR),
-            DB_TYPE_PHRASE,
+            sql_db::TBL_PHRASE,
             phrase::FLD_ID,
             phrase::FLD_ID,
             true
@@ -203,10 +203,10 @@ class formula_link_list
                     //$db_con = new mysql;
                     $db_con->usr_id = $this->usr->id;
                     // delete first all user configuration that have also been excluded
-                    $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA_LINK);
+                    $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK);
                     $result = $db_con->delete(array(formula_link::FLD_ID, user_sandbox::FLD_EXCLUDED), array($frm_lnk->id, '1'));
                     if ($result == '') {
-                        $db_con->set_type(DB_TYPE_FORMULA_LINK);
+                        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
                         $result = $db_con->delete(formula_link::FLD_ID, $frm_lnk->id);
                     }
                 } else {

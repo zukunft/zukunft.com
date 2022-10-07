@@ -85,6 +85,65 @@ class sql_db
     const POSTGRES = "PostgreSQL";
     const MYSQL = "MySQL";
 
+    // SQL table and model object names used
+    // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
+    // TODO use const for all object names
+    const TBL_USER = 'user';
+    const TBL_USER_TYPE = 'user_type';
+    const TBL_USER_PROFILE = 'user_profile';
+    const TBL_USER_OFFICIAL_TYPE = 'user_official_type';
+    const TBL_WORD = 'word';
+    const TBL_WORD_TYPE = 'word_type';
+    const TBL_TRIPLE = 'word_link';
+    const TBL_VERB = 'verb';
+    const TBL_PHRASE = 'phrase';
+    const TBL_PHRASE_GROUP = 'phrase_group';
+    const TBL_PHRASE_GROUP_WORD_LINK = 'phrase_group_word_link';
+    const TBL_PHRASE_GROUP_TRIPLE_LINK = 'phrase_group_triple_link';
+    const TBL_VALUE = 'value';
+    const TBL_VALUE_TIME_SERIES = 'value_time_series';
+    const TBL_VALUE_TIME_SERIES_DATA = 'value_ts_data';
+    const TBL_VALUE_PHRASE_LINK = 'value_phrase_link';
+    const TBL_SOURCE = 'source';
+    const TBL_SOURCE_TYPE = 'source_type';
+    const TBL_REF = 'ref';
+    const TBL_REF_TYPE = 'ref_type';
+    const TBL_FORMULA = 'formula';
+    const TBL_FORMULA_TYPE = 'formula_type';
+    const TBL_FORMULA_LINK = 'formula_link';
+    const TBL_FORMULA_LINK_TYPE = 'formula_link_type';
+    const TBL_FORMULA_ELEMENT = 'formula_element';
+    const TBL_FORMULA_ELEMENT_TYPE = 'formula_element_type';
+    const TBL_FORMULA_VALUE = 'formula_value';
+    const TBL_VIEW = 'view';
+    const TBL_VIEW_TYPE = 'view_type';
+    const TBL_VIEW_COMPONENT = 'view_component';
+    const TBL_VIEW_COMPONENT_LINK = 'view_component_link';
+    const TBL_VIEW_COMPONENT_TYPE = 'view_component_type';
+    const TBL_VIEW_COMPONENT_LINK_TYPE = 'view_component_link_type';
+    const TBL_VIEW_COMPONENT_POS_TYPE = 'view_component_position_type';
+
+    const TBL_CHANGE = 'change';
+    const TBL_CHANGE_TABLE = 'change_table';
+    const TBL_CHANGE_FIELD = 'change_field';
+    const TBL_CHANGE_ACTION = 'change_action';
+    const TBL_CHANGE_LINK = 'change_link';
+    const TBL_CONFIG = 'config';
+    const TBL_IP = 'user_blocked_ip';
+    const TBL_SYS_LOG = 'sys_log';
+    const TBL_SYS_LOG_STATUS = 'sys_log_status';
+    const TBL_SYS_LOG_FUNCTION = 'sys_log_function';
+    const TBL_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
+    const TBL_TASK = 'calc_and_cleanup_task';
+    const TBL_TASK_TYPE = 'calc_and_cleanup_task_type';
+
+    const TBL_LANGUAGE_FORM = 'language_form';
+
+    const TBL_SHARE = 'share_type';
+    const TBL_PROTECTION = 'protection_type';
+
+    const TBL_USER_PREFIX = 'user_';
+
     // the parameter types for prepared queries independent of the SQL dialect
     const PAR_INT = 'int';
     const PAR_INT_NOT = 'int_not';
@@ -107,27 +166,27 @@ class sql_db
     const MYSQL_RESERVED_NAMES_EXTRA = ['VALUE', 'VALUES', 'URL'];
 
     // tables that do not have a name
-    // e.g. DB_TYPE_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
+    // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     const DB_TYPES_NOT_NAMED = [
-        DB_TYPE_TRIPLE,
-        DB_TYPE_VALUE,
-        DB_TYPE_VALUE_TIME_SERIES,
-        DB_TYPE_FORMULA_LINK,
-        DB_TYPE_FORMULA_VALUE,
-        DB_TYPE_FORMULA_ELEMENT,
-        DB_TYPE_VIEW_COMPONENT_LINK,
-        DB_TYPE_VALUE_PHRASE_LINK,
-        DB_TYPE_PHRASE_GROUP_WORD_LINK,
-        DB_TYPE_PHRASE_GROUP_TRIPLE_LINK,
-        DB_TYPE_REF,
-        DB_TYPE_IP,
-        DB_TYPE_CHANGE,
-        DB_TYPE_CHANGE_LINK,
-        DB_TYPE_SYS_LOG
+        sql_db::TBL_TRIPLE,
+        sql_db::TBL_VALUE,
+        sql_db::TBL_VALUE_TIME_SERIES,
+        sql_db::TBL_FORMULA_LINK,
+        sql_db::TBL_FORMULA_VALUE,
+        sql_db::TBL_FORMULA_ELEMENT,
+        sql_db::TBL_VIEW_COMPONENT_LINK,
+        sql_db::TBL_VALUE_PHRASE_LINK,
+        sql_db::TBL_PHRASE_GROUP_WORD_LINK,
+        sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
+        sql_db::TBL_REF,
+        sql_db::TBL_IP,
+        sql_db::TBL_CHANGE,
+        sql_db::TBL_CHANGE_LINK,
+        sql_db::TBL_SYS_LOG
     ];
     // tables that link two named tables
     // TODO set automatically by set_link_fields???
-    const DB_TYPES_LINK = [DB_TYPE_TRIPLE, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF];
+    const DB_TYPES_LINK = [sql_db::TBL_TRIPLE, sql_db::TBL_FORMULA_LINK, sql_db::TBL_VIEW_COMPONENT_LINK, sql_db::TBL_REF];
 
     const ORDER_DESC = 'DESC';
 
@@ -1234,9 +1293,9 @@ class sql_db
     {
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
-        if (zu_str_is_left($type, DB_TYPE_USER_PREFIX)
-            and $type != DB_TYPE_USER_TYPE) {
-            $type = zu_str_right_of($type, DB_TYPE_USER_PREFIX);
+        if (zu_str_is_left($type, sql_db::TBL_USER_PREFIX)
+            and $type != sql_db::TBL_USER_TYPE) {
+            $type = zu_str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . '_id';
         // exceptions for nice english
@@ -1270,8 +1329,8 @@ class sql_db
     {
         $type = $this->type;
         // exceptions for user overwrite tables
-        if (zu_str_is_left($type, DB_TYPE_USER_PREFIX)) {
-            $type = zu_str_right_of($type, DB_TYPE_USER_PREFIX);
+        if (zu_str_is_left($type, sql_db::TBL_USER_PREFIX)) {
+            $type = zu_str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . '_name';
         // exceptions to be adjusted
@@ -2445,7 +2504,7 @@ class sql_db
                 }
                 if (count($this->join_usr_count_field_lst) > 0) {
                     $this->from .= ' FROM ' . $this->name_sql_esc($this->table) . ' ' . sql_db::STD_TBL;
-                    $this->from .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join_table_name . ' ' . sql_db::LNK_TBL;
+                    $this->from .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join_table_name . ' ' . sql_db::LNK_TBL;
                     $this->from .= ' ON ' . sql_db::LNK_TBL . '.' . $join_from_id_field . ' = ' . sql_db::STD_TBL . '.' . $join_id_field;
                     $this->add_par(self::PAR_INT, $this->usr_id);
                     $this->from .= ' WHERE ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . $this->par_name() . ' ';
@@ -2466,7 +2525,7 @@ class sql_db
                 $this->join .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::LNK_TBL;
                 $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . sql_db::LNK_TBL . '.' . $join_id_field;
                 if ($this->usr_query and $this->join_usr_query) {
-                    $this->join .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join_table_name . ' ' . sql_db::ULK_TBL;
+                    $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join_table_name . ' ' . sql_db::ULK_TBL;
                     $this->join .= ' ON ' . sql_db::LNK_TBL . '.' . $join_id_field . ' = ' . sql_db::ULK_TBL . '.' . $join_id_field;
                     if (!$this->all_query) {
                         $this->join .= ' AND ' . sql_db::ULK_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
@@ -2506,7 +2565,7 @@ class sql_db
             $this->join .= ' LEFT JOIN ' . $join2_table_name . ' ' . sql_db::LNK2_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join2_from_id_field . ' = ' . sql_db::LNK2_TBL . '.' . $join2_id_field;
             if ($this->usr_query and $this->join2_usr_query) {
-                $this->join .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join2_table_name . ' ' . sql_db::ULK2_TBL;
+                $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join2_table_name . ' ' . sql_db::ULK2_TBL;
                 $this->join .= ' ON ' . sql_db::LNK2_TBL . '.' . $join2_id_field . ' = ' . sql_db::ULK2_TBL . '.' . $join2_id_field;
                 if (!$this->all_query) {
                     $this->join .= ' AND ' . sql_db::ULK2_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
@@ -2545,7 +2604,7 @@ class sql_db
             $this->join .= ' LEFT JOIN ' . $join3_table_name . ' ' . sql_db::LNK3_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join3_from_id_field . ' = ' . sql_db::LNK3_TBL . '.' . $join3_id_field;
             if ($this->usr_query and $this->join3_usr_query) {
-                $this->join .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join3_table_name . ' ' . sql_db::ULK3_TBL;
+                $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join3_table_name . ' ' . sql_db::ULK3_TBL;
                 $this->join .= ' ON ' . sql_db::LNK3_TBL . '.' . $join3_id_field . ' = ' . sql_db::ULK3_TBL . '.' . $join3_id_field;
                 if (!$this->all_query) {
                     $this->join .= ' AND ' . sql_db::ULK3_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
@@ -2584,7 +2643,7 @@ class sql_db
             $this->join .= ' LEFT JOIN ' . $join4_table_name . ' ' . sql_db::LNK4_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join4_from_id_field . ' = ' . sql_db::LNK4_TBL . '.' . $join4_id_field;
             if ($this->usr_query and $this->join4_usr_query) {
-                $this->join .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join4_table_name . ' ' . sql_db::ULK4_TBL;
+                $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join4_table_name . ' ' . sql_db::ULK4_TBL;
                 $this->join .= ' ON ' . sql_db::LNK4_TBL . '.' . $join4_id_field . ' = ' . sql_db::ULK4_TBL . '.' . $join4_id_field;
                 if (!$this->all_query) {
                     $this->join .= ' AND ' . sql_db::ULK4_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
@@ -2623,7 +2682,7 @@ class sql_db
     private
     function set_from_user()
     {
-        $this->from = ' FROM ' . $this->name_sql_esc(DB_TYPE_USER_PREFIX . $this->table);
+        $this->from = ' FROM ' . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table);
     }
 
     /**
@@ -2922,7 +2981,7 @@ class sql_db
         } else {
             $this->add_par(sql_db::PAR_INT, $id);
             $sql_mid = " user_id 
-                FROM " . $this->name_sql_esc(DB_TYPE_USER_PREFIX . $this->table) . " 
+                FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) . " 
                WHERE " . $this->id_field . " = " . $this->par_name() . "
                  AND (excluded <> 1 OR excluded is NULL)";
             if ($owner_id > 0) {
@@ -3054,10 +3113,10 @@ class sql_db
                     }
                 } else {
                     // return the database row id if the value is not a time series number
-                    if ($this->type != DB_TYPE_VALUE_TIME_SERIES_DATA
-                        and $this->type != DB_TYPE_LANGUAGE_FORM
-                        and $this->type != DB_TYPE_USER_OFFICIAL_TYPE
-                        and $this->type != DB_TYPE_USER_TYPE) {
+                    if ($this->type != sql_db::TBL_VALUE_TIME_SERIES_DATA
+                        and $this->type != sql_db::TBL_LANGUAGE_FORM
+                        and $this->type != sql_db::TBL_USER_OFFICIAL_TYPE
+                        and $this->type != sql_db::TBL_USER_TYPE) {
                         $sql = $sql . ' RETURNING ' . $this->id_field . ';';
                     }
 
@@ -3085,7 +3144,7 @@ class sql_db
                                 log_err('Execution of ' . $sql . ' failed due to ' . $sql_error);
                             }
                         } else {
-                            if ($this->type != DB_TYPE_VALUE_TIME_SERIES_DATA) {
+                            if ($this->type != sql_db::TBL_VALUE_TIME_SERIES_DATA) {
                                 if (is_resource($sql_result) or $sql_result::class == 'PgSql\Result') {
                                     $result = pg_fetch_array($sql_result)[0];
                                 } else {
@@ -3210,7 +3269,7 @@ class sql_db
         $sql_where = ' WHERE ' . $this->id_field . ' = ' . $this->sf($id);
         if (substr($this->type, 0, 4) == 'user') {
             // ... but not for the user table itself
-            if ($this->type <> 'user' and $this->type <> 'user_profile' and $this->type <> DB_TYPE_USER_TYPE) {
+            if ($this->type <> sql_db::TBL_USER and $this->type <> sql_db::TBL_USER_PROFILE and $this->type <> sql_db::TBL_USER_TYPE) {
                 $sql_where .= ' AND user_id = ' . $this->usr_id;
             }
         }

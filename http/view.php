@@ -2,38 +2,40 @@
 
 /*
 
-  view.php - create the final HTML code to display a zukunft.com view
-  --------
+    view.php - create the final HTML code to display a zukunft.com view
+    --------
 
-  - the view contains the overall formatting like page size
-  - the view component links to words, values or formulas
-  - a view component can be linked to a view or a view component define by the view_link_type
-  
-  This file is part of zukunft.com - calc with words
+    - the view contains the overall formatting like page size
+    - the view component links to words, values or formulas
+    - a view component can be linked to a view or a view component define by the view_link_type
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
 // for callable php files the standard zukunft.com header to load all classes and allow debugging
+use html\api;
+
 $debug = $_GET['debug'] ?? 0;
 include_once '../src/main/php/zu_lib.php';
 
@@ -56,8 +58,8 @@ if ($usr->id > 0) {
     // get the word(s) to display
     // TODO replace it with phrase
     $wrd = new word($usr);
-    if (isset($_GET['words'])) {
-        $wrd->main_wrd_from_txt($_GET['words']);
+    if (isset($_GET[api::PAR_VIEW_WORDS])) {
+        $wrd->main_wrd_from_txt($_GET[api::PAR_VIEW_WORDS]);
     } else {
         // get last word used by the user or a default value
         $wrd = $usr->last_wrd();

@@ -212,7 +212,7 @@ class system_unit_tests
         $t->subheader('System consistency tests');
 
         // sql to check the system consistency
-        $db_con->set_type(DB_TYPE_FORMULA);
+        $db_con->set_type(sql_db::TBL_FORMULA);
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $db_con->missing_owner_sql();
         $expected_sql = $t->file('db/system/missing_owner_by_formula.sql');
@@ -239,7 +239,7 @@ class system_unit_tests
 
         // sql to load by id
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $db_con->remove_prefix_sql(DB_TYPE_VERB, 'code_id');
+        $qp = $db_con->remove_prefix_sql(sql_db::TBL_VERB, 'code_id');
         $expected_sql = $t->file('db/system/remove_prefix_by_verb_code_id.sql');
         $t->assert('database_upgrade->remove_prefix of verb code_id', $t->trim($qp->sql), $t->trim($expected_sql));
 
@@ -252,7 +252,7 @@ class system_unit_tests
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $db_con->remove_prefix_sql(DB_TYPE_VERB, 'code_id');
+        $qp = $db_con->remove_prefix_sql(sql_db::TBL_VERB, 'code_id');
         $expected_sql = $t->file('db/system/remove_prefix_by_verb_code_id_mysql.sql');
         $t->assert('database_upgrade->remove_prefix of verb code_id for MySQL', $t->trim($qp->sql), $t->trim($expected_sql));
 
@@ -373,7 +373,7 @@ class system_unit_tests
         $t->subheader('SQL database link tests');
 
         $db_con = new sql_db();
-        $db_con->set_type(DB_TYPE_FORMULA);
+        $db_con->set_type(sql_db::TBL_FORMULA);
         $created = $db_con->count_sql();
         $expected = file_get_contents(PATH_TEST_FILES . 'db/formula/formula_count.sql');
         $t->assert_sql('sql_db->count', $created, $expected);

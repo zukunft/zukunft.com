@@ -85,11 +85,11 @@ class user_log_named extends user_log
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'field_row';
-        $db_con->set_type(DB_TYPE_CHANGE);
+        $db_con->set_type(sql_db::TBL_CHANGE);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_join_fields(array(user::FLD_NAME),DB_TYPE_USER);
+        $db_con->set_join_fields(array(user::FLD_NAME),sql_db::TBL_USER);
         $db_con->set_where_text($db_con->where_par(array(self::FLD_FIELD_ID, self::FLD_ROW_ID), array($field_id, $row_id)));
         $db_con->set_order(self::FLD_ID, sql_db::ORDER_DESC);
         $qp->sql = $db_con->select_by_id();
@@ -175,7 +175,7 @@ class user_log_named extends user_log
 
         //$db_con = new mysql;
         $db_type = $db_con->get_type();
-        $db_con->set_type(DB_TYPE_CHANGE);
+        $db_con->set_type(sql_db::TBL_CHANGE);
         $db_con->set_usr($this->usr->id);
         $log_id = $db_con->insert($sql_fields, $sql_values);
 
@@ -211,7 +211,7 @@ class user_log_named extends user_log
         $result = false;
 
         $db_type = $db_con->get_type();
-        $db_con->set_type(DB_TYPE_CHANGE);
+        $db_con->set_type(sql_db::TBL_CHANGE);
         $db_con->set_usr($this->usr->id);
         if ($db_con->update($this->id, "row_id", $row_id)) {
             // restore the type before saving the log

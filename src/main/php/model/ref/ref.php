@@ -94,7 +94,7 @@ class ref
             log_err('Either the database ID (' . $this->id . ') or the phrase id (' . $this->phr->id . ') AND the reference type id (' . $this->ref_type->id . ') must be set to load a reference.', 'ref->load');
         } else {
 
-            $db_con->set_type(DB_TYPE_REF);
+            $db_con->set_type(sql_db::TBL_REF);
             $qp = new sql_par(self::class);
             if ($this->id != 0) {
                 $qp->name = 'ref_by_id';
@@ -340,7 +340,7 @@ class ref
         $log = $this->log_add();
         if ($log->id > 0) {
             // insert the new reference
-            $db_con->set_type(DB_TYPE_REF);
+            $db_con->set_type(sql_db::TBL_REF);
             $db_con->set_usr($this->usr->id);
 
             $this->id = $db_con->insert(
@@ -393,7 +393,7 @@ class ref
         if ($this->usr != null) {
             $db_con->set_usr($this->usr->id);
         }
-        $db_con->set_type(DB_TYPE_REF);
+        $db_con->set_type(sql_db::TBL_REF);
 
         // check if the external reference is supposed to be added
         if ($this->id <= 0) {
@@ -426,7 +426,7 @@ class ref
             if ($this->external_key <> $db_rec->external_key) {
                 $log = $this->log_upd($db_rec);
                 if ($log->id > 0) {
-                    $db_con->set_type(DB_TYPE_REF);
+                    $db_con->set_type(sql_db::TBL_REF);
                     if ($db_con->update($this->id, 'external_key', $this->external_key)) {
                         log_debug('ref->save update ... done.');
                     }
@@ -450,7 +450,7 @@ class ref
             } else {
                 $log = $this->log_del();
                 if ($log->id > 0) {
-                    $db_con->set_type(DB_TYPE_REF);
+                    $db_con->set_type(sql_db::TBL_REF);
                     $del_result = $db_con->delete('ref_id', $this->id);
                     if ($del_result == '') {
                         log_debug('ref->del update -> done.');

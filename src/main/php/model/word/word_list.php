@@ -101,7 +101,7 @@ class word_list
      */
     function load_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_type(sql_db::TBL_WORD);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $db_con->set_usr($this->usr->id);
@@ -167,7 +167,7 @@ class word_list
             $qp->name .= 'group';
             $db_con->set_name($qp->name);
             $db_con->add_par(sql_db::PAR_INT, $grp_id);
-            $table_name = $db_con->get_table_name(DB_TYPE_PHRASE_GROUP_WORD_LINK);
+            $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
             $sql_where = sql_db::STD_TBL . '.' . word::FLD_ID . ' IN ( SELECT ' . word::FLD_ID . ' 
                                     FROM ' . $table_name . '
                                     WHERE ' . phrase_group::FLD_ID . ' = ' . $db_con->par_name() . ')';
@@ -262,7 +262,7 @@ class word_list
             if ($verb_id <> 0) {
                 $db_con->set_join_fields(
                     array(verb::FLD_ID),
-                    DB_TYPE_TRIPLE,
+                    sql_db::TBL_TRIPLE,
                     word::FLD_ID,
                     $join_field,
                     verb::FLD_ID,
@@ -271,7 +271,7 @@ class word_list
             } else {
                 $db_con->set_join_fields(
                     array(verb::FLD_ID),
-                    DB_TYPE_TRIPLE,
+                    sql_db::TBL_TRIPLE,
                     word::FLD_ID,
                     $join_field);
             }

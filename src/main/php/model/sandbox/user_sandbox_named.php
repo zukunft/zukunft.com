@@ -223,30 +223,30 @@ class user_sandbox_named extends user_sandbox
         $result = '';
         if (!$usr->is_system()) {
             if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-                if ($this->obj_name == DB_TYPE_WORD) {
+                if ($this->obj_name == sql_db::TBL_WORD) {
                     if (in_array($this->name, word::RESERVED_WORDS)) {
                         // the admin user needs to add the read test word during initial load
                         if ($usr->is_admin() and $this->name != word::TN_READ) {
                             $result = '"' . $this->name . '" is a reserved name for system testing. Please use another name';
                         }
                     }
-                } elseif ($this->obj_name == DB_TYPE_PHRASE) {
+                } elseif ($this->obj_name == sql_db::TBL_PHRASE) {
                     if (in_array($this->name, phrase::RESERVED_PHRASES)) {
                         $result = '"' . $this->name . '" is a reserved phrase name for system testing. Please use another name';
                     }
-                } elseif ($this->obj_name == DB_TYPE_FORMULA) {
+                } elseif ($this->obj_name == sql_db::TBL_FORMULA) {
                     if (in_array($this->name, formula::RESERVED_FORMULAS)) {
                         $result = '"' . $this->name . '" is a reserved formula name for system testing. Please use another name';
                     }
-                } elseif ($this->obj_name == DB_TYPE_VIEW) {
+                } elseif ($this->obj_name == sql_db::TBL_VIEW) {
                     if (in_array($this->name, view::RESERVED_VIEWS)) {
                         $result = '"' . $this->name . '" is a reserved view name for system testing. Please use another name';
                     }
-                } elseif ($this->obj_name == DB_TYPE_VIEW_COMPONENT) {
+                } elseif ($this->obj_name == sql_db::TBL_VIEW_COMPONENT) {
                     if (in_array($this->name, view_cmp::RESERVED_VIEW_COMPONENTS)) {
                         $result = '"' . $this->name . '" is a reserved view component name for system testing. Please use another name';
                     }
-                } elseif ($this->obj_name == DB_TYPE_SOURCE) {
+                } elseif ($this->obj_name == sql_db::TBL_SOURCE) {
                     if (in_array($this->name, source::RESERVED_SOURCES)) {
                         // the admin user needs to add the read test source during initial load
                         if ($usr->is_admin() and $this->name != source::TN_READ) {
@@ -407,7 +407,7 @@ class user_sandbox_named extends user_sandbox
                 $result = $this->is_same_std($obj_to_check);
             } else {
                 // create a synthetic unique index over words, phrase, verbs and formulas
-                if ($this->obj_name == DB_TYPE_WORD or $this->obj_name == DB_TYPE_PHRASE or $this->obj_name == DB_TYPE_FORMULA or $this->obj_name == DB_TYPE_VERB) {
+                if ($this->obj_name == sql_db::TBL_WORD or $this->obj_name == sql_db::TBL_PHRASE or $this->obj_name == sql_db::TBL_FORMULA or $this->obj_name == sql_db::TBL_VERB) {
                     if ($this->name == $obj_to_check->name) {
                         $result = true;
                     }
@@ -435,9 +435,9 @@ class user_sandbox_named extends user_sandbox
         // check potential duplicate by name
         // for words and formulas it needs to be checked if a term (word, verb or formula) with the same name already exist
         // for verbs the check is inside the verbs class because verbs are not part of the user sandbox
-        if ($this->obj_name == DB_TYPE_WORD
-            or $this->obj_name == DB_TYPE_TRIPLE
-            or $this->obj_name == DB_TYPE_FORMULA) {
+        if ($this->obj_name == sql_db::TBL_WORD
+            or $this->obj_name == sql_db::TBL_TRIPLE
+            or $this->obj_name == sql_db::TBL_FORMULA) {
             $similar_trm = $this->get_term();
             if ($similar_trm != null) {
                 if ($similar_trm->obj != null) {

@@ -95,7 +95,7 @@ function sql_code_link($code_id, $description, $db_con)
         log_debug('table name for code_id ' . $code_id . ' (' . $db_type . ') not found <br>');
     } else {
         // get the preloaded types directly from the hash
-        if ($db_type == DB_TYPE_WORD_TYPE) {
+        if ($db_type == sql_db::TBL_WORD_TYPE) {
             $row_id = $word_types_hash[$code_id];
         } else {
             //$db_con = new mysql;

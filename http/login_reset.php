@@ -30,6 +30,8 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use html\html_base;
+
 $debug = $_GET['debug'] ?? 0;
 include_once '../src/main/php/zu_lib.php';
 
@@ -66,13 +68,13 @@ if ($usr->id > 0) {
         // Lets search the database for the user name and password
         // don't use the sf shortcut here!
         // TODO prevent code injection
-        $usr_name = mysqli_real_escape_string($_POST['username']);
-        $usr_mail = mysqli_real_escape_string($_POST['email']);
+        $usr_name = $_POST['username'];
+        $usr_mail = $_POST['email'];
         $sql = "SELECT * FROM users  
               WHERE user_name ='" . $usr_name . "' 
                   OR email ='" . $usr_mail . "'
                     LIMIT 1";
-        $sql_result = mysqli_query($sql);
+        $sql_result = mysqli_query($db_con, $sql);
         if (mysqli_num_rows($sql_result) == 1) {
             $row = mysqli_fetch_array($sql_result);
             $user_id = $row[user::FLD_ID];
@@ -81,7 +83,7 @@ if ($usr->id > 0) {
             // save activation key
             $key = getRandomKey(20);
             //$db_con = new mysql;
-            $db_con->set_type(DB_TYPE_USER);
+            $db_con->set_type(sql_db::TBL_USER);
             $db_con->set_usr($usr->id);
             if (!$db_con->update($user_id, array("activation_key", "activation_key_timeout"), array($db_con->sf($key), 'NOW() + INTERVAL 1 DAY'))) {
                 log_err('Saving of activation key failed for user ' . $user_id, 'login_reset');
@@ -115,7 +117,7 @@ if (!$_SESSION['logged']) {
     $result .= dsp_text_h2('Reset password<br>');
     $result .= 'Fill in one of the fields to receive a temporary password via email:<br><br> ';
     $result .= 'Username:<br> ';
-    $result .= '<input type="username" name="username"><br><br> ';
+    $result .= '<input name="username"><br><br> ';
     $result .= 'Email address:<br> ';
     $result .= '<input type="email" name="email"><br><br> ';
     $result .= $msg;

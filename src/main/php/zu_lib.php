@@ -158,66 +158,7 @@
 
 */
 
-// a list of all object names used
-// the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
-// TODO use const for all object names
 use html\html_base;
-
-const DB_TYPE_USER = 'user';
-const DB_TYPE_USER_TYPE = 'user_type';
-const DB_TYPE_USER_PROFILE = 'user_profile';
-const DB_TYPE_USER_OFFICIAL_TYPE = 'user_official_type';
-const DB_TYPE_WORD = 'word';
-const DB_TYPE_WORD_TYPE = 'word_type';
-const DB_TYPE_TRIPLE = 'word_link';
-const DB_TYPE_VERB = 'verb';
-const DB_TYPE_PHRASE = 'phrase';
-const DB_TYPE_PHRASE_GROUP = 'phrase_group';
-const DB_TYPE_PHRASE_GROUP_WORD_LINK = 'phrase_group_word_link';
-const DB_TYPE_PHRASE_GROUP_TRIPLE_LINK = 'phrase_group_triple_link';
-const DB_TYPE_VALUE = 'value';
-const DB_TYPE_VALUE_TIME_SERIES = 'value_time_series';
-const DB_TYPE_VALUE_TIME_SERIES_DATA = 'value_ts_data';
-const DB_TYPE_VALUE_PHRASE_LINK = 'value_phrase_link';
-const DB_TYPE_SOURCE = 'source';
-const DB_TYPE_SOURCE_TYPE = 'source_type';
-const DB_TYPE_REF = 'ref';
-const DB_TYPE_REF_TYPE = 'ref_type';
-const DB_TYPE_FORMULA = 'formula';
-const DB_TYPE_FORMULA_TYPE = 'formula_type';
-const DB_TYPE_FORMULA_LINK = 'formula_link';
-const DB_TYPE_FORMULA_LINK_TYPE = 'formula_link_type';
-const DB_TYPE_FORMULA_ELEMENT = 'formula_element';
-const DB_TYPE_FORMULA_ELEMENT_TYPE = 'formula_element_type';
-const DB_TYPE_FORMULA_VALUE = 'formula_value';
-const DB_TYPE_VIEW = 'view';
-const DB_TYPE_VIEW_TYPE = 'view_type';
-const DB_TYPE_VIEW_COMPONENT = 'view_component';
-const DB_TYPE_VIEW_COMPONENT_LINK = 'view_component_link';
-const DB_TYPE_VIEW_COMPONENT_TYPE = 'view_component_type';
-const DB_TYPE_VIEW_COMPONENT_LINK_TYPE = 'view_component_link_type';
-const DB_TYPE_VIEW_COMPONENT_POS_TYPE = 'view_component_position_type';
-
-const DB_TYPE_CHANGE = 'change';
-const DB_TYPE_CHANGE_TABLE = 'change_table';
-const DB_TYPE_CHANGE_FIELD = 'change_field';
-const DB_TYPE_CHANGE_ACTION = 'change_action';
-const DB_TYPE_CHANGE_LINK = 'change_link';
-const DB_TYPE_CONFIG = 'config';
-const DB_TYPE_IP = 'user_blocked_ip';
-const DB_TYPE_SYS_LOG = 'sys_log';
-const DB_TYPE_SYS_LOG_STATUS = 'sys_log_status';
-const DB_TYPE_SYS_LOG_FUNCTION = 'sys_log_function';
-const DB_TYPE_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
-const DB_TYPE_TASK = 'calc_and_cleanup_task';
-const DB_TYPE_TASK_TYPE = 'calc_and_cleanup_task_type';
-
-const DB_TYPE_LANGUAGE_FORM = 'language_form';
-
-const DB_TYPE_SHARE = 'share_type';
-const DB_TYPE_PROTECTION = 'protection_type';
-
-const DB_TYPE_USER_PREFIX = 'user_';
 
 const DB_FIELD_EXT_ID = '_id';
 const DB_FIELD_EXT_NAME = '_name';
@@ -744,7 +685,7 @@ function log_msg(string $msg_text,
 
             $sys_log_msg_lst[] = $msg_type_text;
             if ($msg_log_level > LOG_LEVEL) {
-                $db_con->set_type(DB_TYPE_SYS_LOG_FUNCTION);
+                $db_con->set_type(sql_db::TBL_SYS_LOG_FUNCTION);
                 $function_id = $db_con->get_id($function_name);
                 if ($function_id <= 0) {
                     $function_id = $db_con->add_id($function_name);
@@ -771,7 +712,7 @@ function log_msg(string $msg_text,
                     $fields[] = "user_id";
                     $values[] = $user_id;
                 }
-                $db_con->set_type(DB_TYPE_SYS_LOG);
+                $db_con->set_type(sql_db::TBL_SYS_LOG);
                 $sys_log_id = $db_con->insert($fields, $values, false);
                 //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
                 //$sys_log_id = mysqli_insert_id();
@@ -1032,7 +973,7 @@ function prg_end($db_con)
     $sys_time_end = time();
     if ($sys_time_end > $sys_time_limit) {
         $db_con->usr_id = SYSTEM_USER_ID;
-        $db_con->set_type(DB_TYPE_SYS_SCRIPT);
+        $db_con->set_type(sql_db::TBL_SYS_SCRIPT);
         $sys_script_id = $db_con->get_id($sys_script);
         if ($sys_script_id <= 0) {
             $sys_script_id = $db_con->add_id($sys_script);

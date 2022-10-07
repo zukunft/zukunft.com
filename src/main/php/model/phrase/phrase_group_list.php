@@ -62,7 +62,7 @@ class phrase_group_list
      */
     function load_sql(sql_db $db_con, bool $get_name = false): sql_par
     {
-        $db_con->set_type(DB_TYPE_PHRASE_GROUP);
+        $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
         $qp = new sql_par(self::class);
         $qp->name = self::class . '_by_';
         $sql_where = '';
@@ -89,9 +89,9 @@ class phrase_group_list
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(phrase_group::FLD_NAMES);
             if ($this->phr->is_word()) {
-                $db_con->set_join_fields(array(word::FLD_ID), DB_TYPE_PHRASE_GROUP_WORD_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
+                $db_con->set_join_fields(array(word::FLD_ID), sql_db::TBL_PHRASE_GROUP_WORD_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
             } else {
-                $db_con->set_join_fields(array('triple_id'), DB_TYPE_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
+                $db_con->set_join_fields(array('triple_id'), sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
             }
             $db_con->set_where_text($sql_where);
             $qp->sql = $db_con->select_by_id();

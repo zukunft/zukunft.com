@@ -88,9 +88,9 @@ class user_log
     protected function set_table(): void
     {
         if ($this->usr == null) {
-            log_warning('user_log->set_table "' . $this->table . '" but user is missing');
+            log_warning(' "' . $this->table . '" but user is missing');
         } else {
-            log_debug('user_log->set_table "' . $this->table . '" for ' . $this->usr->dsp_id());
+            log_debug(' "' . $this->table . '" for ' . $this->usr->dsp_id());
         }
 
         global $db_con;
@@ -106,7 +106,7 @@ class user_log
         // if e.g. a "value" is changed $this->table is "values" and the reference 1 is saved in the log to save space
         //$db_con = new mysql;
         $db_type = $db_con->get_type();
-        $db_con->set_type(DB_TYPE_CHANGE_TABLE);
+        $db_con->set_type(sql_db::TBL_CHANGE_TABLE);
         $db_con->set_usr($this->usr->id);
         $table_id = $db_con->get_id($this->table);
 
@@ -115,7 +115,7 @@ class user_log
             $table_id = $db_con->add_id($this->table);
             // save also the code_id
             if ($table_id > 0) {
-                $db_con->set_type(DB_TYPE_CHANGE_TABLE);
+                $db_con->set_type(sql_db::TBL_CHANGE_TABLE);
                 $db_con->set_usr($this->usr->id);
                 $db_con->update($table_id, array('code_id'), array($this->table));
             }
@@ -155,7 +155,7 @@ class user_log
 
         //$db_con = new mysql;
         $db_type = $db_con->get_type();
-        $db_con->set_type(DB_TYPE_CHANGE_FIELD);
+        $db_con->set_type(sql_db::TBL_CHANGE_FIELD);
         $db_con->usr_id = $this->usr->id;
         $field_id = $db_con->get_id_2key($this->field, "table_id", $this->table_id);
 
@@ -189,7 +189,7 @@ class user_log
         // if e.g. the action is "add" the reference 1 is saved in the log table to save space
         //$db_con = new mysql;
         $db_type = $db_con->get_type();
-        $db_con->set_type(DB_TYPE_CHANGE_ACTION);
+        $db_con->set_type(sql_db::TBL_CHANGE_ACTION);
         $db_con->usr_id = $this->usr->id;
         $action_id = $db_con->get_id($this->action);
 

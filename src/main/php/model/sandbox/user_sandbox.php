@@ -83,14 +83,14 @@ class user_sandbox
     );
     // list of all user sandbox database types
     const DB_TYPES = array(
-        DB_TYPE_WORD,
-        DB_TYPE_TRIPLE,
-        DB_TYPE_VALUE,
-        DB_TYPE_FORMULA,
-        DB_TYPE_FORMULA_LINK,
-        DB_TYPE_VIEW,
-        DB_TYPE_VIEW_COMPONENT,
-        DB_TYPE_VIEW_COMPONENT_LINK
+        sql_db::TBL_WORD,
+        sql_db::TBL_TRIPLE,
+        sql_db::TBL_VALUE,
+        sql_db::TBL_FORMULA,
+        sql_db::TBL_FORMULA_LINK,
+        sql_db::TBL_VIEW,
+        sql_db::TBL_VIEW_COMPONENT,
+        sql_db::TBL_VIEW_COMPONENT_LINK
     );
 
     /*
@@ -283,7 +283,7 @@ class user_sandbox
      */
     public function row_mapper_usr(array $db_row, $id_fld)
     {
-        $this->usr_cfg_id = $db_row[DB_TYPE_USER_PREFIX . $id_fld];
+        $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
         $this->share_id = $db_row[self::FLD_SHARE];
         $this->protection_id = $db_row[self::FLD_PROTECT];
     }
@@ -883,7 +883,7 @@ class user_sandbox
         $action = 'Deletion of user ' . $this->obj_name . ' ';
         $msg_failed = $this->id . ' failed for ' . $this->usr->name;
 
-        $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
+        $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
         try {
             $msg = $db_con->delete(
                 array($this->obj_name . '_id', self::FLD_USER),
@@ -957,7 +957,7 @@ class user_sandbox
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
+                $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
                 $db_con->set_usr($this->usr->id);
                 $log_id = $db_con->insert(array($db_con->get_id_field(), sql_db::FLD_USER_ID), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
@@ -1020,7 +1020,7 @@ class user_sandbox
             // TODO add the table exceptions from sql_db
             $log->table = $this->obj_name . 's';
         } else {
-            $log->table = DB_TYPE_USER_PREFIX . $this->obj_name . 's';
+            $log->table = sql_db::TBL_USER_PREFIX . $this->obj_name . 's';
         }
 
         return $log;
@@ -1144,7 +1144,7 @@ class user_sandbox
                 if ($new_value == $std_value) {
                     if ($this->has_usr_cfg()) {
                         log_debug($this->obj_name . '->save_field_do remove user change');
-                        $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
+                        $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
                         $db_con->set_usr($this->usr->id);
                         if (!$db_con->update($this->id, $log->field, Null)) {
                             $result = 'remove of ' . $log->field . ' failed';
@@ -1165,7 +1165,7 @@ class user_sandbox
                     }
                 }
                 if ($result == '') {
-                    $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
+                    $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
                     $db_con->set_usr($this->usr->id);
                     if ($new_value == $std_value) {
                         log_debug($this->obj_name . '->save_field_do remove user change');
@@ -1237,7 +1237,7 @@ class user_sandbox
                     }
                 }
                 if ($result == '') {
-                    $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
+                    $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
                     $db_con->set_usr($this->usr->id);
                     if ($new_value == $std_value) {
                         if (!$db_con->update($this->id, $log->field, Null)) {
@@ -1292,7 +1292,7 @@ class user_sandbox
                     }
                 }
                 if ($result == '') {
-                    $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
+                    $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
                     $db_con->set_usr($this->usr->id);
                     if (!$db_con->update($this->id, $log->field, $new_value)) {
                         $result = 'setting of share type failed';
@@ -1488,25 +1488,25 @@ class user_sandbox
         $result = false;
 
         /*
-        if ($this->obj_name == DB_TYPE_WORD and $obj_to_check->obj_name == DB_TYPE_FORMULA) {
+        if ($this->obj_name == sql_db::TBL_WORD and $obj_to_check->obj_name == sql_db::TBL_FORMULA) {
             // special case if word should be created representing the formula it is a kind of same at least the creation of the word should be alloed
             if ($this->name == $obj_to_check->name) {
                 $result = true;
             }
-        } elseif ($this->obj_name == DB_TYPE_WORD and $obj_to_check->obj_name == DB_TYPE_WORD) {
+        } elseif ($this->obj_name == sql_db::TBL_WORD and $obj_to_check->obj_name == sql_db::TBL_WORD) {
 
         */
-        if ($this->obj_name == DB_TYPE_WORD and $obj_to_check->obj_name == DB_TYPE_WORD) {
+        if ($this->obj_name == sql_db::TBL_WORD and $obj_to_check->obj_name == sql_db::TBL_WORD) {
             // special case a word should not be combined with a word that is representing a formulas
             if ($this->name == $obj_to_check->name) {
                 if (isset($this->type_id) and isset($obj_to_check->type_id)) {
                     if ($this->type_id == $obj_to_check->type_id) {
                         $result = true;
                     } else {
-                        if ($this->type_id == DB_TYPE_FORMULA and $obj_to_check->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
+                        if ($this->type_id == sql_db::TBL_FORMULA and $obj_to_check->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
                             // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
                             $result = true;
-                        } elseif ($obj_to_check->type_id == DB_TYPE_FORMULA and $this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
+                        } elseif ($obj_to_check->type_id == sql_db::TBL_FORMULA and $this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
                             // like above, but the other way round
                             $result = true;
                         } elseif ($this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK) or $obj_to_check->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
@@ -1543,7 +1543,7 @@ class user_sandbox
                 $result = $this->is_same_std($obj_to_check);
             } else {
                 // create a synthetic unique index over words, phrase, verbs and formulas
-                if ($this->obj_name == DB_TYPE_WORD or $this->obj_name == DB_TYPE_PHRASE or $this->obj_name == DB_TYPE_FORMULA or $this->obj_name == DB_TYPE_VERB) {
+                if ($this->obj_name == sql_db::TBL_WORD or $this->obj_name == sql_db::TBL_PHRASE or $this->obj_name == sql_db::TBL_FORMULA or $this->obj_name == sql_db::TBL_VERB) {
                     if ($this->name == $obj_to_check->name) {
                         $result = true;
                     }
@@ -1777,35 +1777,35 @@ class user_sandbox
             $db_con->usr_id = $this->usr->id;
 
             // for words first delete all links
-            if ($this->obj_name == DB_TYPE_WORD) {
+            if ($this->obj_name == sql_db::TBL_WORD) {
                 $msg = $this->del_links();
                 $result->add($msg);
             }
 
             // for triples first delete all links
-            if ($this->obj_name == DB_TYPE_TRIPLE) {
+            if ($this->obj_name == sql_db::TBL_TRIPLE) {
                 $msg = $this->del_links();
                 $result->add($msg);
             }
 
             // for formulas first delete all links
-            if ($this->obj_name == DB_TYPE_FORMULA) {
+            if ($this->obj_name == sql_db::TBL_FORMULA) {
                 $msg = $this->del_links();
                 $result->add($msg);
 
                 // and the corresponding formula elements
                 if ($result->is_ok()) {
-                    $db_con->set_type(DB_TYPE_FORMULA_ELEMENT);
+                    $db_con->set_type(sql_db::TBL_FORMULA_ELEMENT);
                     $db_con->set_usr($this->usr->id);
-                    $msg = $db_con->delete(DB_TYPE_FORMULA . DB_FIELD_EXT_ID, $this->id);
+                    $msg = $db_con->delete(sql_db::TBL_FORMULA . DB_FIELD_EXT_ID, $this->id);
                     $result->add_message($msg);
                 }
 
                 // and the corresponding formula values
                 if ($result->is_ok()) {
-                    $db_con->set_type(DB_TYPE_FORMULA_VALUE);
+                    $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
                     $db_con->set_usr($this->usr->id);
-                    $msg = $db_con->delete(DB_TYPE_FORMULA . DB_FIELD_EXT_ID, $this->id);
+                    $msg = $db_con->delete(sql_db::TBL_FORMULA . DB_FIELD_EXT_ID, $this->id);
                     $result->add_message($msg);
                 }
 
@@ -1821,20 +1821,20 @@ class user_sandbox
             }
 
             // for view components first delete all links
-            if ($this->obj_name == DB_TYPE_VIEW_COMPONENT) {
+            if ($this->obj_name == sql_db::TBL_VIEW_COMPONENT) {
                 $msg = $this->del_links();
                 $result->add($msg);
             }
 
             // for views first delete all links
-            if ($this->obj_name == DB_TYPE_VIEW) {
+            if ($this->obj_name == sql_db::TBL_VIEW) {
                 $msg = $this->del_links();
                 $result->add($msg);
             }
 
             // delete first all user configuration that have also been excluded
             if ($result->is_ok()) {
-                $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
+                $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
                 $db_con->set_usr($this->usr->id);
                 $msg = $db_con->delete(
                     array($this->obj_name . DB_FIELD_EXT_ID, 'excluded'),

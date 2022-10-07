@@ -142,7 +142,7 @@ class user_log_link extends user_log
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'table';
-        $db_con->set_type(DB_TYPE_CHANGE_LINK);
+        $db_con->set_type(sql_db::TBL_CHANGE_LINK);
 
         $fields = [];
         $values = [];
@@ -173,7 +173,7 @@ class user_log_link extends user_log
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_join_fields(array(user::FLD_NAME),DB_TYPE_USER);
+        $db_con->set_join_fields(array(user::FLD_NAME),sql_db::TBL_USER);
 
         $db_con->set_where_text($db_con->where_par($fields, $values));
         $db_con->set_order(self::FLD_ID, sql_db::ORDER_DESC);
@@ -232,7 +232,7 @@ class user_log_link extends user_log
         // if e.g. a "value" is changed $this->table is "values" and the reference 1 is saved in the log to save space
         //$db_con = new mysql;
         $db_type = $db_con->get_type();
-        $db_con->set_type(DB_TYPE_CHANGE_TABLE);
+        $db_con->set_type(sql_db::TBL_CHANGE_TABLE);
         $db_con->usr_id = $this->usr->id;
         $table_id = $db_con->get_id($this->table);
 
@@ -266,7 +266,7 @@ class user_log_link extends user_log
         // if e.g. the action is "add" the reference 1 is saved in the log table to save space
         //$db_con = new mysql;
         $db_type = $db_con->get_type();
-        $db_con->set_type(DB_TYPE_CHANGE_ACTION);
+        $db_con->set_type(sql_db::TBL_CHANGE_ACTION);
         $db_con->usr_id = $this->usr->id;
         $action_id = $db_con->get_id($this->action);
 
@@ -316,7 +316,7 @@ class user_log_link extends user_log
         global $db_con;
         $result = '';
         //$db_con = new mysql;
-        $db_con->set_type(DB_TYPE_SOURCE);
+        $db_con->set_type(sql_db::TBL_SOURCE);
         $result .= $db_con->get_name($id);
         return $result;
     }
@@ -369,7 +369,7 @@ class user_log_link extends user_log
 
         //$db_con = new mysql;
         $db_type = $db_con->get_type();
-        $db_con->set_type(DB_TYPE_CHANGE_LINK);
+        $db_con->set_type(sql_db::TBL_CHANGE_LINK);
         $db_con->set_usr($this->usr->id);
         $log_id = $db_con->insert($sql_fields, $sql_values);
 
@@ -567,7 +567,7 @@ class user_log_link extends user_log
 
         //$db_con = new mysql;
         $db_type = $db_con->get_type();
-        $db_con->set_type(DB_TYPE_CHANGE_LINK);
+        $db_con->set_type(sql_db::TBL_CHANGE_LINK);
         $db_con->set_usr($this->usr->id);
         $log_id = $db_con->insert($sql_fields, $sql_values);
 
@@ -602,7 +602,7 @@ class user_log_link extends user_log
 
         $result = true;
         $db_type = $db_con->get_type();
-        $db_con->set_type(DB_TYPE_CHANGE_LINK);
+        $db_con->set_type(sql_db::TBL_CHANGE_LINK);
         $db_con->set_usr($this->usr->id);
         if (!$db_con->update($this->id, "row_id", $row_id)) {
             // write the error message in steps to get at least some message if the parameters causes an additional the error

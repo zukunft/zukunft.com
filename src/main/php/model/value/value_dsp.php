@@ -262,7 +262,7 @@ class value_dsp_old extends value
               FROM value_phrase_links l,
                    value_phrase_links lt,
                    words t,
-                   " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v
+                   " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v
          LEFT JOIN user_values u ON v.value_id = u.value_id AND u.user_id = " . $this->usr->id . " 
              WHERE l.phrase_id = " . $wrd_id . "
                AND l.value_id = v.value_id

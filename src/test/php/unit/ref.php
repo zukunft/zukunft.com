@@ -79,7 +79,7 @@ class ref_unit_tests
 
         // sql to load the ref types
         $ref_type_list = new ref_type_list();
-        $t->assert_load_sql($db_con, $ref_type_list, DB_TYPE_REF_TYPE);
+        $t->assert_load_sql($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);
 
     }
 
