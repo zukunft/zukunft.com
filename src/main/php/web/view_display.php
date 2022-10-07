@@ -32,6 +32,7 @@
 use html\api;
 use html\button;
 use html\html_base;
+use html\html_selector;
 
 class view_dsp_old extends view
 {
@@ -47,7 +48,6 @@ class view_dsp_old extends view
      */
     private function dsp_type_open(): string
     {
-        log_debug($this->type_id);
         $result = '';
         // move to database !!
         // but avoid security leaks

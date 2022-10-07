@@ -63,6 +63,7 @@ class term_api extends user_sandbox_named_api
         string $name = '',
         string $obj = null)
     {
+        parent::__construct($id, $name);
         $this->set_obj_id($id, $obj);
         $this->name = $name;
         // TODO set type
@@ -108,6 +109,19 @@ class term_api extends user_sandbox_named_api
         }
     }
 
+    /**
+     * @return int the id of the containing object witch is (corresponding to id())
+     * e.g 1 for a word, 1 for a phrase, 1 for a formula and 1 for a verb
+     */
+    function id_obj(): int
+    {
+        if ($this->id % 2 == 0) {
+            return abs($this->id / 2);
+        } else {
+            return abs(($this->id + 1) / 2);
+        }
+    }
+
     /*
      * casting objects
      */
@@ -124,22 +138,22 @@ class term_api extends user_sandbox_named_api
 
     protected function wrd_dsp(): word_dsp
     {
-        return new word_dsp($this->id, $this->name);
+        return new word_dsp($this->id_obj(), $this->name);
     }
 
     protected function trp_dsp(): triple_dsp
     {
-        return new triple_dsp($this->id, $this->name);
+        return new triple_dsp($this->id_obj(), $this->name);
     }
 
     protected function frm_dsp(): formula_dsp
     {
-        return new formula_dsp($this->id, $this->name);
+        return new formula_dsp($this->id_obj(), $this->name);
     }
 
     protected function vrb_dsp(): verb_dsp
     {
-        return new verb_dsp($this->id, $this->name);
+        return new verb_dsp($this->id_obj(), $this->name);
     }
 
     /*
