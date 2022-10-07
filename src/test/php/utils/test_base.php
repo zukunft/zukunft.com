@@ -755,7 +755,7 @@ class test_base
     /**
      * create a phrase list object based on an array of strings
      */
-    function load_word_list($array_of_word_str): word_list
+    function load_word_list(array $array_of_word_str): word_list
     {
         global $usr;
         $wrd_lst = new word_list($usr);
@@ -763,7 +763,7 @@ class test_base
         return $wrd_lst;
     }
 
-    function test_word_list($array_of_word_str): word_list
+    function test_word_list(array $array_of_word_str): word_list
     {
         $wrd_lst = $this->load_word_list($array_of_word_str);
         $target = '"' . implode('","', $array_of_word_str) . '"';
@@ -775,7 +775,7 @@ class test_base
     /**
      * create a phrase list object based on an array of strings
      */
-    function load_phrase_list($array_of_word_str): phrase_list
+    function load_phrase_list(array $array_of_word_str): phrase_list
     {
         global $usr;
         $phr_lst = new phrase_list($usr);
@@ -783,7 +783,7 @@ class test_base
         return $phr_lst;
     }
 
-    function test_phrase_list($array_of_word_str): phrase_list
+    function test_phrase_list(array $array_of_word_str): phrase_list
     {
         $phr_lst = $this->load_phrase_list($array_of_word_str);
         $target = '"' . implode('","', $array_of_word_str) . '"';
@@ -863,7 +863,7 @@ class test_base
         return $val;
     }
 
-    function add_value($array_of_word_str, $target): value
+    function add_value(array $array_of_word_str, float $target): value
     {
         global $usr;
         $val = $this->load_value($array_of_word_str);
@@ -888,7 +888,7 @@ class test_base
         return $val;
     }
 
-    function test_value($array_of_word_str, $target): value
+    function test_value(array $array_of_word_str, float $target): value
     {
         $val = $this->add_value($array_of_word_str, $target);
         $result = $val->number;
@@ -1195,7 +1195,7 @@ class test_base
     /**
      * the HTML code to display the header text
      */
-    function header($header_text): void
+    function header(string $header_text): void
     {
         echo '<br><br><h2>' . $header_text . '</h2><br>';
     }
@@ -1203,7 +1203,7 @@ class test_base
     /**
      * the HTML code to display the subheader text
      */
-    function subheader($header_text): void
+    function subheader(string $header_text): void
     {
         echo '<br><h3>' . $header_text . '</h3><br>';
     }
@@ -1228,7 +1228,13 @@ class test_base
      * @param $test_type
      * @return bool
      */
-    function assert(string $msg, $result, $target, $exe_max_time = TIMEOUT_LIMIT, $comment = '', $test_type = ''): bool
+    function assert(
+        string $msg,
+        string|array $result,
+        string|array $target,
+        float $exe_max_time = TIMEOUT_LIMIT,
+        string $comment = '',
+        string $test_type = ''): bool
     {
         return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
     }
@@ -1436,7 +1442,7 @@ class test_base
      *
      * @param sql_par $qp the query parameters that should be tested
      * @param string $dialect if not PostgreSQL the name of the SQL dialect
-     * @return void
+     * @return bool true if the test is fine
      */
     function assert_qp(sql_par $qp, string $dialect = ''): bool
     {
@@ -1517,7 +1523,13 @@ class test_base
      *
      * @return bool true if the test result is fine
      */
-    function dsp($msg, $target, $result, $exe_max_time = TIMEOUT_LIMIT, $comment = '', $test_type = ''): bool
+    function dsp(
+        string $msg,
+        string|array $target,
+        string|array $result,
+        float $exe_max_time = TIMEOUT_LIMIT,
+        string $comment = '',
+        string $test_type = ''): bool
     {
 
         // init the test result vars
@@ -1610,7 +1622,7 @@ class test_base
             if ($result != null) {
                 if (is_array($result[0])) {
                     $txt .= "\"";
-                    foreach ($result as $result_item) {
+                    foreach ($result[0] as $result_item) {
                         if ($result_item <> $result[0]) {
                             $txt .= ",";
                         }
@@ -1651,9 +1663,14 @@ class test_base
      * similar to test_show_result, but the target only needs to be part of the result
      * e.g. "Zurich" is part of the canton word list
      */
-    function dsp_contains($test_text, $target, $result, $exe_max_time = TIMEOUT_LIMIT, $comment = ''): bool
+    function dsp_contains(
+        string $test_text,
+        string $target,
+        string $result,
+        float $exe_max_time = TIMEOUT_LIMIT,
+        string $comment = ''): bool
     {
-        if (strpos($result, $target) === false) {
+        if (!str_contains($result, $target) and $result != '' and $target != '') {
             $result = $target . ' not found in ' . $result;
         } else {
             $result = $target;
@@ -1753,7 +1770,7 @@ class test_base
 
 function zu_test_time_setup(testing $t): string
 {
-    global $usr, $db_con;
+    global $db_con;
 
     $result = '';
     $this_year = intval(date('Y'));
