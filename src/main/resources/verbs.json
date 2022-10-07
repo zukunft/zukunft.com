@@ -120,6 +120,38 @@
       "name_plural_reverse": "can be",
       "name_plural": "can be",
       "name_reverse": "can be"
+    },
+    {
+      "name": "can use",
+      "code_id": "can_use",
+      "description": "use indicates that a new result is created e.g. a turbine can use water or wind or any type of liquid or gas to convert energy",
+      "name_plural": "can use",
+      "name_plural_reverse": "can be used by",
+      "name_reverse": "can be used by"
+    },
+    {
+      "name": "scaled by",
+      "code_id": "scaled",
+      "description": "to define the usual scaling e.g. for watt hours usually the scaling kilo (kWh) is used",
+      "name_plural": "scaled by",
+      "name_plural_reverse": "are scaling for",
+      "name_reverse": "is scaling for"
+    },
+    {
+      "name": "per",
+      "code_id": "per",
+      "description": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty",
+      "name_plural": "per",
+      "name_plural_reverse": "",
+      "name_reverse": ""
+    },
+    {
+      "name": "of",
+      "code_id": "of",
+      "description": "the time duration of a status for comparing same by same e.g. 1 hour of full load is the same as 2 hours of half load",
+      "name_plural": "of",
+      "name_plural_reverse": "",
+      "name_reverse": ""
     }
   ]
 }

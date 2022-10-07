@@ -45,6 +45,7 @@ class verb
     const FOLLOW = "follow";
     const CAN_CONTAIN = "can_contain";
     const CAN_BE = "can_be";
+    const CAN_USE = "can_use";
 
     // search directions to get related words (phrases)
     const DIRECTION_NO = '';
