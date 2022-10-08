@@ -57,6 +57,10 @@ class term
     public ?string $name = null; // the name used (must be unique for words, verbs and formulas)
     public ?object $obj = null;  // the word, verb or formula object
 
+    /*
+     * construct and map
+     */
+
     /**
      * always set the user because a term is always user specific
      * @param user $usr the user who requested to see this term
@@ -70,6 +74,25 @@ class term
     function reset(): void
     {
         $this->id = 0;
+    }
+
+    /**
+     * @return bool true if at least one term has been loaded
+     */
+    function row_mapper(array $db_row): bool
+    {
+        if ($this->is_word()) {
+            return $this->get_word()->row_mapper($db_row);
+        } elseif ($this->is_triple()) {
+            return $this->get_triple()->row_mapper($db_row);
+        } elseif ($this->is_formula()) {
+            return $this->get_formula()->row_mapper($db_row);
+        } elseif ($this->is_verb()) {
+            return $this->get_verb()->row_mapper($db_row);
+        } else {
+            log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
+            return false;
+        }
     }
 
     /*

@@ -40,11 +40,16 @@ class term_list_unit_tests
      */
     function run(testing $t): void
     {
+        // init
+        $db_con = new sql_db();
+        $t->name = 'term_list->';
+        $t->resource_path = 'db/phrase/';
+
         $t->header('Unit tests of the term list class (src/main/php/model/phrase/term_list.php)');
 
         $html = new html_base();
 
-        $t->subheader('Term List display tests');
+        $t->subheader('term list display tests');
 
         $this->t = $t;
 
@@ -54,6 +59,14 @@ class term_list_unit_tests
         $test_page .= 'names with links: ' . $lst->dsp_obj()->dsp() . '<br>';
 
         $t->html_test($test_page, 'term_list', $t);
+
+
+        $t->subheader('term list sql tests');
+
+        $lst = $this->new_list();
+        $t->assert_load_sql($db_con, $lst);
+
+
     }
 
     /**

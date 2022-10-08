@@ -73,12 +73,12 @@ if ($db_con == null) {
 
         // show the matching words to select
         $wrd_lst = new word_list($usr);
-        $result .= $wrd_lst->dsp_like($find_str, $usr->id);
+        $result .= $wrd_lst->dsp_like($find_str, $usr);
 
         // show the matching terms to select
         // TODO create a term list object
         //$wrd_lst = new term_list($usr);
-        //$result .= $wrd_lst->dsp_like($find_str, $usr->id);
+        //$result .= $wrd_lst->dsp_like($find_str, $usr);
     }
 }
 

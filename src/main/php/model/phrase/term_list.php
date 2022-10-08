@@ -30,9 +30,7 @@
   
 */
 
-use cfg\phrase_type;
 use html\term_list_dsp;
-use html\word_dsp;
 
 class term_list
 {
@@ -42,6 +40,22 @@ class term_list
     // so a normal 0 to n order could have more advantages)
     public array $lst;
     public user $usr;  // the user object of the person for whom the phrase list is loaded, so to say the viewer
+
+    // object specific database and JSON object field names
+    const FLD_NAME = 'term_name';
+    const FLD_USAGE = 'usage';
+
+    // list of the user specific database field names
+    const FLD_NAMES_USR = array(
+        sql_db::FLD_DESCRIPTION
+    );
+    // list of the user specific numeric database field names
+    const FLD_NAMES_NUM_USR = array(
+        self::FLD_USAGE,
+        user_sandbox::FLD_EXCLUDED,
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
+    );
 
     /**
      * always set the user because a phrase list is always user specific
@@ -75,20 +89,43 @@ class term_list
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_name_like_sql(sql_db $db_con): sql_par
+    function load_sql(sql_db $db_con, string $pattern = ''): sql_par
     {
         $qp = new sql_par(self::class);
+        $qp->name .= 'name_like';
 
-        $db_con->set_type(sql_db::TBL_WORD);
+        $db_con->set_type(sql_db::VT_TERM);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(word::FLD_NAMES);
-        $db_con->set_usr_fields(word::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
-        $qp->sql = $db_con->select_by_id();
+
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $db_con->add_name_pattern($pattern);
+        $qp->sql = $db_con->select_by_field(self::FLD_NAME);
         $qp->par = $db_con->get_par();
 
         return $qp;
+    }
+
+    /**
+     * load the terms that matches the given pattern
+     */
+    function load_like(): bool
+    {
+        global $db_con;
+        $result = false;
+
+        $qp = $this->load_sql($db_con);
+        $trm_lst = $db_con->get($qp);
+        foreach ($trm_lst as $db_row) {
+            $trm = new term($this->usr);
+            $trm->row_mapper($db_row);
+            if ($trm->id() != 0) {
+                $this->add($trm);
+                $result = true;
+            }
+        }
+
+        return $result;
     }
 
     /**

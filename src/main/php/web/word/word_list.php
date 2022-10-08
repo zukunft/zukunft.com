@@ -35,6 +35,8 @@ use api\word_list_api;
 use cfg\phrase_type;
 use db_cl;
 use formula;
+use term_list;
+use user;
 
 class word_list_dsp extends word_list_api
 {
@@ -96,14 +98,16 @@ class word_list_dsp extends word_list_api
     }
 
     // display a list of words that match to the given pattern
-    function dsp_like($word_pattern, $user_id): string
+    function dsp_like($word_pattern, user $usr): string
     {
-        log_debug($word_pattern . ',u' . $user_id);
+        log_debug($word_pattern . ',u' . $usr->id);
 
         global $db_con;
         $result = '';
 
         $back = 1;
+        $trm_lst = new term_list($usr);
+
         // get the link types related to the word
         $sql = " ( SELECT t.word_id AS id, t.word_name AS name, 'word' AS type
                  FROM words t 

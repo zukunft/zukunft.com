@@ -37,8 +37,6 @@ class system_unit_tests
         global $usr;
         global $sql_names;
 
-        $db_con = new sql_db();
-
         // init
         $db_con = new sql_db();
         $t->name = 'system->';

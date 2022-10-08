@@ -207,7 +207,7 @@ class word_list
      * @param string $word_pattern the id of the word type
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_pattern(sql_db $db_con, string $word_pattern): sql_par
+    function load_sql_pattern(sql_db $db_con, string $word_pattern = ''): sql_par
     {
         $qp = $this->load_sql($db_con);
         if ($word_pattern !=  '') {

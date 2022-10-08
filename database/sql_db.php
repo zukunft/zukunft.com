@@ -144,6 +144,9 @@ class sql_db
 
     const TBL_USER_PREFIX = 'user_';
 
+    // the synthetic view tables (VT) for union query creation
+    const VT_TERM = 'term';
+
     // the parameter types for prepared queries independent of the SQL dialect
     const PAR_INT = 'int';
     const PAR_INT_NOT = 'int_not';
@@ -285,9 +288,9 @@ class sql_db
     private ?array $join3_usr_num_field_lst = [];   // same as $join_usr_num_field_lst but for the third join
     private ?array $join4_usr_num_field_lst = [];   // same as $join_usr_num_field_lst but for the fourth join
     private ?array $join_usr_count_field_lst = [];  // list of fields that should be returned to the next select query where the count are taken from a joined table
-    private ?array $join2_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the second join
-    private ?array $join3_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the third join
-    private ?array $join4_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the fourth join
+    //private ?array $join2_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the second join
+    //private ?array $join3_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the third join
+    //private ?array $join4_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the fourth join
     private ?string $join_type = '';                // the type name of the table to join
     private ?string $join2_type = '';               // the type name of the second table to join (maybe later switch to join n tables)
     private ?string $join3_type = '';               // the type name of the third table to join (maybe later switch to join n tables)
@@ -2845,6 +2848,25 @@ class sql_db
 
         return $this->end_sql($sql);
     }
+
+    /*
+    function select_union(array $db_cons): string
+    {
+        // create a prepare SQL statement if possible
+        $sql = '';
+
+        $fields_common = [];
+        foreach ($db_cons as $db_con) {
+            if ($sql != '') {
+                $sql .= ' UNION ( ';
+            }
+            $sql .= $db_con->prepare_sql();
+            $sql .= ' ) ';
+        }
+
+        return $this->end_sql($sql);
+    }
+    */
 
     /**
      * create the SQL parameters to count the number of rows related to a database table type

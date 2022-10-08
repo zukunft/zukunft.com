@@ -40,7 +40,9 @@ class ip_range_list extends base_list
 
     /**
      * add an ip range to the list
-     * @returns bool true if the object has been added
+     *
+     * @param ip_range $range the ip range that should be added to the list
+     * @return bool true if the object has been added
      */
     protected function add(ip_range $range): bool
     {
@@ -74,6 +76,8 @@ class ip_range_list extends base_list
 
     /**
      * load the active ip ranges
+     *
+     * @return true if at least one ip range has been loaded
      */
     function load(): bool
     {
@@ -84,8 +88,11 @@ class ip_range_list extends base_list
         $ip_lst = $db_con->get($qp);
         foreach ($ip_lst as $db_row) {
             $ip = new ip_range();
-            $result = $ip->row_mapper($db_row);
-            $this->add($ip);
+            $ip->row_mapper($db_row);
+            if ($ip->id() > 0) {
+                $this->add($ip);
+                $result = true;
+            }
         }
 
         return $result;
@@ -96,6 +103,8 @@ class ip_range_list extends base_list
      */
 
     /**
+     * checks if the given ip range is within any of the ip range of this list
+     *
      * @param string $ip_addr the ip address that should be checked
      * @return user_message explains which ip ranges has been violated and the given reason for the blocking
      */
