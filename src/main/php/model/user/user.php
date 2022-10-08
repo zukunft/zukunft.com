@@ -250,10 +250,18 @@ class user
             $db_con->add_par(sql_db::PAR_TEXT, $this->code_id);
             $qp->sql = $db_con->select_by_code_id();
         } elseif ($this->name <> '') {
-            $qp->name .= 'name';
-            $db_con->set_name($qp->name);
-            $db_con->add_par(sql_db::PAR_TEXT, $this->name);
-            $qp->sql = $db_con->select_by_name();
+            if ($this->email == '') {
+                $qp->name .= 'name';
+                $db_con->set_name($qp->name);
+                $db_con->add_par(sql_db::PAR_TEXT, $this->name);
+                $qp->sql = $db_con->select_by_name();
+            } else {
+                $qp->name .= 'name_or_email';
+                $db_con->set_name($qp->name);
+                $db_con->add_par(sql_db::PAR_TEXT, $this->name);
+                $db_con->add_par(sql_db::PAR_TEXT_OR, $this->email);
+                $qp->sql = $db_con->select_by_name_or(self::FLD_EMAIL);
+            }
         } elseif ($this->ip_addr <> '') {
             $qp->name .= self::FLD_IP_ADDRESS;
             $db_con->set_name($qp->name);
@@ -308,6 +316,22 @@ class user
 
         $this->reset();
         $this->id = $id;
+        return $this->load($db_con);
+    }
+
+    /**
+     * load one user by name or email
+     * @param string $name the username of the user
+     * @param string $email the email of the user
+     * @return bool true if a user has been found
+     */
+    function load_by_name_or_email(string $name, string $email): bool
+    {
+        global $db_con;
+
+        $this->reset();
+        $this->name = $name;
+        $this->email = $email;
         return $this->load($db_con);
     }
 

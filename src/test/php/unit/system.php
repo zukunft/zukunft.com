@@ -141,6 +141,8 @@ class system_unit_tests
         $test_usr->reset();
         $test_usr->name = user::NAME_SYSTEM_TEST;
         $t->assert_load_sql($db_con, $test_usr);
+        $test_usr->email = user::NAME_SYSTEM_TEST;
+        $t->assert_load_sql($db_con, $test_usr);
         $test_usr->reset();
         $test_usr->code_id = user::NAME_SYSTEM_TEST;
         $t->assert_load_sql($db_con, $test_usr);

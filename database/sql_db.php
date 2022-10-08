@@ -150,6 +150,7 @@ class sql_db
     const PAR_INT_LIST = 'int_list';
     const PAR_TEXT = 'text';
     const PAR_TEXT_LIST = 'text_list';
+    const PAR_TEXT_OR = 'text_or';
     const PAR_LIKE = 'like';
     const PAR_CONST = 'const';
 
@@ -2231,7 +2232,11 @@ class sql_db
                         if ($this->where == '') {
                             $this->where = ' WHERE ';
                         } else {
-                            $this->where .= ' AND ';
+                            if ($par_type == self::PAR_TEXT_OR) {
+                                $this->where .= ' OR ';
+                            } else {
+                                $this->where .= ' AND ';
+                            }
                         }
                         if ($this->usr_query
                             or $this->join <> ''
@@ -2751,6 +2756,17 @@ class sql_db
     }
 
     /**
+     * create a SQL select statement for the connected database and force to use the name
+     * and another field for an or selection
+     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
+     * @return string the created SQL statement in the previous set dialect
+     */
+    function select_by_name_or(string $or_field_name, bool $has_id = true): string
+    {
+        return $this->select_by(array($this->name_field, $or_field_name), $has_id);
+    }
+
+    /**
      * create a SQL select statement for the connected database
      * and force to use the code id instead of the id
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
@@ -2896,6 +2912,9 @@ class sql_db
                     break;
                 case self::PAR_TEXT_LIST:
                     $this->par_types[] = 'text[]';
+                    break;
+                case self::PAR_TEXT_OR:
+                    $this->par_types[] = 'text';
                     break;
                 case self::PAR_LIKE:
                     $this->par_types[] = 'text';
