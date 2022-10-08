@@ -133,6 +133,22 @@
          - vue: for the vue.js based frontend, which can cache api objects for read only. This implies that the backend has an api to reload single objects
          - db: for the persistence layer
 
+    TODO for all objects (in progress: user)
+        1. complete phpDOCS
+        2. add type to all function parameter
+        3. create unit test for all functions
+            a) prefer assert_qp vs assert_sql
+            b) prefer assert vs dsp
+        4. create db and api tests
+        5. update the OpenAPI doc
+        6. use parametrized queries
+        7. use translated user interface messages
+        8. use const
+            a) for db fields
+        9. remove class and function from debug
+       10. capsule object vars
+        done:
+
 
     This file is part of zukunft.com - calc with words
 
@@ -206,11 +222,13 @@ include_once $path_php . 'db/db_check.php';
 include_once $path_php . 'utils/json_utils.php';
 include_once $path_php . 'model/helper/object_type.php';
 include_once $path_php . 'model/user/user_type_list.php';
+include_once $path_php . 'model/system/list.php';
 include_once $path_php . 'model/system/type_list.php';
 include_once $path_php . 'model/system/log.php';
 include_once $path_php . 'model/system/system_utils.php';
 include_once $path_php . 'model/system/system_error_log_status_list.php';
 include_once $path_php . 'model/system/ip_range.php';
+include_once $path_php . 'model/system/ip_range_list.php';
 include_once $path_php . 'model/change/log_table.php';
 include_once $path_php . 'model/helper/link_list.php';
 // service

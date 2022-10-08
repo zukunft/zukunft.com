@@ -35,9 +35,9 @@ use html\html_base;
 $debug = $_GET['debug'] ?? 0;
 include_once '../src/main/php/zu_lib.php';
 
-//include("auth.php");
+// TODO include("auth.php");
 // all taken from
-function getRandomKey($length = 20)
+function getRandomKey(int $length = 20): string
 {
     $chars = "A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6";
     $key = "";
@@ -81,7 +81,7 @@ if ($usr->id > 0) {
             $user_email = $row['email'];
 
             // save activation key
-            $key = getRandomKey(20);
+            $key = getRandomKey();
             //$db_con = new mysql;
             $db_con->set_type(sql_db::TBL_USER);
             $db_con->set_usr($usr->id);
@@ -99,7 +99,7 @@ if ($usr->id > 0) {
             mail($mail_to, $mail_subject, $mail_body, $mail_header);
             // TODO ask if cookies are allowed: if yes, the session id does not need to be forwarded
             // if no, use the session id
-            header("Location: http/login_activate.php?id=" . $user_id . ""); // Modify to go to the page you would like
+            header("Location: http/login_activate.php?id=" . $user_id); // Modify to go to the page you would like
             //header("Location: view.php?sid=".SID.""); // Modify to go to the page you would like
             exit;
         } else {

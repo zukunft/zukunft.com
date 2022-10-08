@@ -2,10 +2,10 @@
 
 /*
 
-    api\List.php - the minimal list object used for the api
-    ------------
+    system\base_list.php - the minimal list object used for the list used in the model
+    --------------------
 
-    e.g. used for the value and formula result api object
+    e.g. used for the ip range list object
 
     This file is part of zukunft.com - calc with words
 
@@ -31,9 +31,7 @@
 
 */
 
-namespace api;
-
-class list_api
+class base_list
 {
     // the protected main var
     protected array $lst;

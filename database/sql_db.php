@@ -220,6 +220,8 @@ class sql_db
     const FLD_FORMAT_VAL = "number";              // to force the numeric formatting of a value for the SQL statement formatting
     const FLD_FORMAT_BOOL = "boolean";            // to force the boolean formatting of a value for the SQL statement formatting
 
+    const VAL_BOOL_TRUE = "1";
+
     /*
      * object variables
      */
@@ -2104,9 +2106,10 @@ class sql_db
         return $result;
     }
 
-    function set_where_id_in(string $id_field_name, array $ids)
+    function set_where_id_in(string $id_field_name, array $ids): string
     {
         $this->where = ' WHERE ' . $this->where_in_par($id_field_name, $ids);
+        return $this->where;
     }
 
     /**
@@ -2120,6 +2123,20 @@ class sql_db
     function where_id(string $id_field_name, int $id, bool $is_join_query = false): string
     {
         return $this->where_par(array($id_field_name), array($id), $is_join_query);
+    }
+
+    /**
+     * set the where statement to select based on a non standard id field
+     *
+     * @param string $id_field_name name of the id field which is usually self::FLD_ID
+     * @param int $id the unique object id
+     * @param bool $is_join_query to force using the table name prefix
+     * @return string the SQL WHERE statement
+     */
+    function set_where_id(string $id_field_name, int $id, bool $is_join_query = false): string
+    {
+        $this->where = ' WHERE ' . $this->where_par(array($id_field_name), array($id), $is_join_query);
+        return $this->where;
     }
 
     /**

@@ -91,6 +91,22 @@ class ip_range
         return $result;
     }
 
+    /*
+     * get and set
+     */
+
+    /**
+     * @returns int the protected id of the ip range
+     */
+    public function id(): int
+    {
+        return $this->id;
+    }
+
+    /*
+     * loading
+     */
+
     /**
      * create an SQL statement to retrieve the ip range from the database
      *
@@ -151,6 +167,13 @@ class ip_range
         }
 
         return $result;
+    }
+
+    function load_by_id(int $id): bool
+    {
+        $this->reset();
+        $this->id = $id;
+        return $this->load();
     }
 
     /**
@@ -222,6 +245,25 @@ class ip_range
             }
         } else {
             $result .= $this->id;
+        }
+        return $result;
+    }
+
+    /**
+     * check if an ip address is within this range
+     *
+     * @param string $ip_addr the ip address to check
+     * @return bool true if the given ip address is within the ip range
+     */
+    public function includes(string $ip_addr): bool
+    {
+        $result = false;
+        if (ip2long(trim($this->from)) <= ip2long(trim($ip_addr))
+            && ip2long(trim($ip_addr)) <= ip2long(trim($this->to))) {
+            log_debug(' ip ' . $ip_addr . ' (' . ip2long(trim($ip_addr)) . ') is in range between ' .
+                $this->from . ' (' . ip2long(trim($this->from)) . ') and  ' .
+                $this->to . ' (' . ip2long(trim($this->to)) . ')');
+            $result = true;
         }
         return $result;
     }

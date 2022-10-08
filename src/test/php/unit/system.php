@@ -118,6 +118,12 @@ class system_unit_tests
         $t->assert('ip_range->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
 
+        $t->subheader('ip list sql tests');
+
+        $ip_lst = new ip_range_list();
+        $t->assert_load_sql($db_con, $ip_lst);
+
+
         $t->subheader('user list loading sql tests');
 
         // check if the sql to load the complete list of all .. types is created as expected
@@ -144,7 +150,6 @@ class system_unit_tests
         $test_usr->reset();
         $test_usr->profile_id = 2;
         $t->assert_load_sql($db_con, $test_usr);
-
 
 
         $t->subheader('system config sql tests');
@@ -327,7 +332,7 @@ class system_unit_tests
         //$log->log_trace = (new Exception)->getTraceAsString();
         $log->function_name = 'system test';
         $log->solver_name = $usr->name;
-        $log->status_name =  cl(db_cl::LOG_STATUS, sys_log_status::NEW);
+        $log->status_name = cl(db_cl::LOG_STATUS, sys_log_status::NEW);
         $log_dsp = $log->get_dsp_obj();
         $created = $log_dsp->get_json();
         $expected = file_get_contents(PATH_TEST_FILES . 'api/system/error_log.json');
@@ -346,7 +351,7 @@ class system_unit_tests
         //$log2->log_trace = (new Exception)->getTraceAsString();
         $log2->function_name = 'system test 2';
         $log2->solver_name = $usr->name;
-        $log2->status_name =  cl(db_cl::LOG_STATUS, sys_log_status::CLOSED);
+        $log2->status_name = cl(db_cl::LOG_STATUS, sys_log_status::CLOSED);
 
         $log_lst = new system_error_log_list();
         $log_lst->add($log);

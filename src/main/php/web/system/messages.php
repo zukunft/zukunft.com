@@ -39,6 +39,9 @@ class msg
     const WORD_DELETE = 'delete_word';
     const WORD_UNLINK = 'unlink_word';
     const PLEASE_SELECT = 'please_select';
+    const IP_BLOCK_PRE_ADDR = 'ip_block_pre_addr';
+    const IP_BLOCK_POST_ADDR = 'ip_block_post_addr';
+    const IP_BLOCK_SOLUTION = 'ip_block_solution';
 
     public function txt(string $message_id): string
     {
@@ -58,6 +61,16 @@ class msg
                 break;
             case self::PLEASE_SELECT:
                 $msg_text = 'please select ...';
+                break;
+            case self::IP_BLOCK_PRE_ADDR:
+                $msg_text = 'Your IP ';
+                break;
+            case self::IP_BLOCK_POST_ADDR:
+                $msg_text = ' is blocked at the moment because ';
+                break;
+            case self::IP_BLOCK_SOLUTION:
+                $msg_text = '. If you think, this should not be the case, ' .
+                    'please request the unblocking with an email to admin@zukunft.com.';
                 break;
             default:
                 $msg_text = $message_id . ' (translation missing)';

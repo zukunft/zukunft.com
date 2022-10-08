@@ -2,44 +2,45 @@
 
 /*
 
-  user.php - a person who uses zukunft.com
-  --------
+    user.php - a person who uses zukunft.com
+    --------
 
-  if a user has done 3 value edits he can add new values (adding a word to a value also creates a new value)
-  if a user has added 3 values and at least one is accepted by another user, he can add words and formula and he must have a valid email
-  if a user has added 2 formula and both are accepted by at least one other user and no one has complained, he can change formulas and words, including linking of words
-  if a user has linked a 10 words and all got accepted by one other user and no one has complained, he can request new verbs and he must have an validated address
+    if a user has done 3 value edits he can add new values (adding a word to a value also creates a new value)
+    if a user has added 3 values and at least one is accepted by another user, he can add words and formula and he must have a valid email
+    if a user has added 2 formula and both are accepted by at least one other user and no one has complained, he can change formulas and words, including linking of words
+    if a user has linked a 10 words and all got accepted by one other user and no one has complained, he can request new verbs and he must have an validated address
 
-  if a user got 10 pending word or formula discussion, he can no longer add words or formula utils the open discussions are less than 10
-  if a user got 5 pending word or formula discussion, he can no longer change words or formula utils the open discussions are less than 5
-  if a user got 2 pending verb discussion, he can no longer add verbs utils the open discussions are less than 2
+    if a user got 10 pending word or formula discussion, he can no longer add words or formula utils the open discussions are less than 10
+    if a user got 5 pending word or formula discussion, he can no longer change words or formula utils the open discussions are less than 5
+    if a user got 2 pending verb discussion, he can no longer add verbs utils the open discussions are less than 2
 
-  the same ip can max 10 add 10 values and max 5 user a day, upon request the number of max user creation can be increased for an ip range
+    the same ip can max 10 add 10 values and max 5 user a day, upon request the number of max user creation can be increased for an ip range
 
-  TODO move the non functional user parameters to hidden words to be able to reuse the standard view functionality
-  
-  
-  This file is part of zukunft.com - calc with words
+    TODO make sure that no right gain is possible
+    TODO move the non functional user parameters to hidden words to be able to reuse the standard view functionality
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
@@ -137,6 +138,7 @@ class user
     {
         $this->id = null;
         $this->name = null;
+        $this->description = null;
         $this->ip_addr = null;
         $this->email = null;
         $this->first_name = null;
@@ -152,6 +154,8 @@ class user
         $this->vrb_id = null;
 
         $this->wrd = null;
+        $this->profile = null;
+        $this->viewer = null;
 
     }
 
@@ -215,7 +219,7 @@ class user
     }
 
     /**
-     * create an SQL statement to retrieve the parameters of an user from the database
+     * create an SQL statement to retrieve the parameters of a user from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $class the name of the child class from where the call has been triggered
@@ -251,7 +255,7 @@ class user
             $db_con->add_par(sql_db::PAR_TEXT, $this->name);
             $qp->sql = $db_con->select_by_name();
         } elseif ($this->ip_addr <> '') {
-            $qp->name .= 'ip_address';
+            $qp->name .= self::FLD_IP_ADDRESS;
             $db_con->set_name($qp->name);
             $db_con->add_par(sql_db::PAR_TEXT, $this->ip_addr);
             $qp->sql = $db_con->select_by_field(self::FLD_IP_ADDRESS);
@@ -270,7 +274,10 @@ class user
     }
 
 
-    //
+    /**
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return array the database record for the db row to object mapper
+     */
     private function load_db(sql_db $db_con): array
     {
 
@@ -289,14 +296,25 @@ class user
      * load the missing user parameters from the database
      * should be private because the loading should be done via the get method
      */
-    function load($db_con): bool
+    function load(sql_db $db_con): bool
     {
         $db_usr = $this->load_db($db_con);
         return $this->row_mapper($db_usr);
     }
 
-    // special function to exposed the user loading for simulating test users for the automatic system test
-    // TODO used also in the user sandbox: check if this is correct
+    function load_by_id(int $id): bool
+    {
+        global $db_con;
+
+        $this->reset();
+        $this->id = $id;
+        return $this->load($db_con);
+    }
+
+    /**
+     * special function to exposed the user loading for simulating test users for the automatic system test
+     * TODO used also in the user sandbox: check if this is correct
+     */
     function load_test_user(): bool
     {
         global $db_con;
@@ -323,42 +341,35 @@ class user
     {
         $result = false;
         if (ip2long(trim($min)) <= ip2long(trim($ip_addr)) && ip2long(trim($ip_addr)) <= ip2long(trim($max))) {
-            log_debug('user->ip_in_range ip ' . $ip_addr . ' (' . ip2long(trim($ip_addr)) . ') is in range between ' . $min . ' (' . ip2long(trim($min)) . ') and  ' . $max . ' (' . ip2long(trim($max)) . ')');
-            return true;
+            log_debug(' ip ' . $ip_addr . ' (' . ip2long(trim($ip_addr)) . ') is in range between ' . $min . ' (' . ip2long(trim($min)) . ') and  ' . $max . ' (' . ip2long(trim($max)) . ')');
+            $result = true;
         }
         return $result;
 
     }
 
-    // return the message, why the if is not permitted
-    // exposed as public mainly for testing
-    public function ip_check($ip_addr): string
+    /**
+     *
+     * exposed as public mainly for testing
+     * @return string the message, why the if is not permitted
+     */
+    public function ip_check(string $ip_addr): string
     {
-        log_debug('user->ip_check (' . $ip_addr . ')');
+        log_debug(' (' . $ip_addr . ')');
 
-        global $db_con;
-
-        $msg = '';
-        $sql = "SELECT ip_from,
-                   ip_to,
-                   reason
-              FROM user_blocked_ips 
-             WHERE is_active = 1;";
-        $db_con->usr_id = $this->id;
-        $ip_lst = $db_con->get_old($sql);
-        foreach ($ip_lst as $ip_range) {
-            log_debug('user->ip_check range (' . $ip_range['ip_from'] . ' to ' . $ip_range['ip_to'] . ')');
-            if ($this->ip_in_range($ip_addr, $ip_range['ip_from'], $ip_range['ip_to'])) {
-                log_debug('user->ip_check ip ' . $ip_addr . ' blocked due to range from ' . $ip_range['ip_from'] . ' to ' . $ip_range['ip_to']);
-                $msg = 'Your IP ' . $ip_addr . ' is blocked at the moment because ' . $ip_range['reason'] . '. If you think, this should not be the case, please request the unblocking with an email to admin@zukunft.com.';
-                $this->id = 0; // switch off the permission
-            }
+        $ip_lst = new ip_range_list();
+        $ip_lst->load();
+        $test_result = $ip_lst->includes($ip_addr);
+        if (!$test_result->is_ok()) {
+            $this->id = 0; // switch off the permission
         }
-        return $msg;
+        return $test_result->all_message_text();
     }
 
-    // get the ip address of the active user
-    private function get_ip()
+    /**
+     * @return string the ip address of the active user
+     */
+    private function get_ip(): string
     {
         if (array_key_exists("REMOTE_ADDR", $_SERVER)) {
             $this->ip_addr = $_SERVER['REMOTE_ADDR'];
@@ -369,7 +380,9 @@ class user
         return $this->ip_addr;
     }
 
-    // get the active session user object
+    /**
+     * @returns string the active session user object
+     */
     function get(): string
     {
         $result = ''; // for the result message e.g. if the user is blocked
@@ -378,7 +391,7 @@ class user
         if ($this->ip_addr == '') {
             $this->get_ip();
         } else {
-            log_debug('user->get (' . $this->ip_addr . ')');
+            log_debug(' (' . $this->ip_addr . ')');
         }
         // even if the user has an open session, but the ip is blocked, drop the user
         $result .= $this->ip_check($this->ip_addr);
@@ -390,7 +403,7 @@ class user
                     $this->id = $_SESSION['usr_id'];
                     global $db_con;
                     $this->load($db_con);
-                    log_debug('user->get -> use (' . $this->id . ')');
+                    log_debug(' -> use (' . $this->id . ')');
                 }
             } else {
                 // else use the IP address (for testing don't overwrite any testing ip)
@@ -446,7 +459,7 @@ class user
                 }
             }
         }
-        log_debug('user->got "' . $this->name . '" (' . $this->id . ')');
+        log_debug(' "' . $this->name . '" (' . $this->id . ')');
         return $result;
     }
 
@@ -495,10 +508,12 @@ class user
     }
 
 
-    // true if the user has admin rights
+    /**
+     * @returns bool true if the user has admin rights
+     */
     function is_admin(): bool
     {
-        log_debug('user->is_admin (' . $this->id . ')');
+        log_debug(' (' . $this->id . ')');
         $result = false;
 
         if (!isset($this->profile_id)) {
@@ -511,10 +526,12 @@ class user
         return $result;
     }
 
-    // true if the user is a system user e.g. the reserved word names can be used
+    /**
+     * @returns bool true if the user is a system user e.g. the reserved word names can be used
+     */
     function is_system(): bool
     {
-        log_debug('user->is_system (' . $this->id . ')');
+        log_debug(' (' . $this->id . ')');
         $result = false;
 
         if (!isset($this->profile_id)) {
@@ -531,7 +548,7 @@ class user
     // true if the user has the right to import data
     function can_import(): bool
     {
-        log_debug('user->can_import (' . $this->id . ')');
+        log_debug(' (' . $this->id . ')');
         $result = false;
 
         if (!isset($this->profile_id)) {
@@ -559,8 +576,10 @@ class user
         return $wrd->dsp_obj();
     }
 
-    // set the parameters for the virtual user that represents the standard view for all users
-    function dummy_all()
+    /**
+     * set the parameters for the virtual user that represents the standard view for all users
+     */
+    function dummy_all(): void
     {
         $this->id = 0;
         $this->code_id = 'all';
@@ -592,7 +611,7 @@ class user
     // remember the last source that the user has used
     function set_source($source_id): bool
     {
-        log_debug('user->set_source(' . $this->id . ',s' . $source_id . ')');
+        log_debug('(' . $this->id . ',s' . $source_id . ')');
         global $db_con;
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
@@ -604,7 +623,7 @@ class user
     // TODO add the database field
     function set_verb($vrb_id): bool
     {
-        log_debug('user->set_verb(' . $this->id . ',s' . $vrb_id . ')');
+        log_debug('(' . $this->id . ',s' . $vrb_id . ')');
         global $db_con;
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
@@ -613,7 +632,7 @@ class user
         return $result;
     }
 
-    function set_profile(string $profile_code_id)
+    function set_profile(string $profile_code_id): void
     {
         global $user_profiles;
         $this->profile_id = $user_profiles->id($profile_code_id);
@@ -623,7 +642,7 @@ class user
     // set the main log entry parameters for updating one word field
     private function log_upd(): user_log_named
     {
-        log_debug('user->log_upd user ' . $this->name);
+        log_debug(' user ' . $this->name);
         $log = new user_log_named;
         $log->usr = $this;
         $log->action = user_log::ACTION_UPDATE;
@@ -632,8 +651,10 @@ class user
         return $log;
     }
 
-    // check and update a single user parameter
-    private function upd_par($db_con, $usr_par, $db_row, $fld_name, $par_name)
+    /**
+     * check and update a single user parameter
+     */
+    private function upd_par(sql_db $db_con, $usr_par, $db_row, $fld_name, $par_name)
     {
         $result = '';
         if ($usr_par[$par_name] <> $db_row[$fld_name]
@@ -651,11 +672,12 @@ class user
         return $result;
     }
 
-    // check and update all user parameters
-    function upd_pars($usr_par)
+    /**
+     * check and update all user parameters
+     */
+    function upd_pars($usr_par): string
     {
-        log_debug('user->upd_pars');
-        log_debug('user->upd_pars(u' . $this->id . ',p' . dsp_array($usr_par) . ')');
+        log_debug();
 
         global $db_con;
 
@@ -668,20 +690,22 @@ class user
         $db_usr = new user;
         $db_usr->id = $this->id;
         $db_row = $db_usr->load_db($db_con);
-        log_debug('user->save -> database user loaded "' . $db_row['name'] . '"');
+        log_debug(' -> database user loaded "' . $db_row['name'] . '"');
 
-        $this->upd_par($db_con, $usr_par, $db_row, "user_name", 'name');
-        $this->upd_par($db_con, $usr_par, $db_row, "email", 'email');
-        $this->upd_par($db_con, $usr_par, $db_row, "first_name", 'fname');
-        $this->upd_par($db_con, $usr_par, $db_row, "last_name", 'lname');
+        $this->upd_par($db_con, $usr_par, $db_row, self::FLD_NAME, 'name');
+        $this->upd_par($db_con, $usr_par, $db_row, self::FLD_EMAIL, 'email');
+        $this->upd_par($db_con, $usr_par, $db_row, self::FLD_FIRST_NAME, 'fname');
+        $this->upd_par($db_con, $usr_par, $db_row, self::FLD_LAST_NAME, 'lname');
 
-        log_debug('user->upd_pars -> done');
+        log_debug(' -> done');
         return $result;
     }
 
-    // if at least one other user has switched off all changes from this user
-    // all changes of this user should be excluded from the standard values
-    // e.g. a user has a
+    /**
+     * if at least one other user has switched off all changes from this user
+     * all changes of this user should be excluded from the standard values
+     * e.g. a user has a
+     */
     function exclude_from_standard()
     {
     }
@@ -700,7 +724,7 @@ class user
         $db_con->set_type(sql_db::TBL_USER);
 
         if ($this->id <= 0) {
-            log_debug("user->save add (" . $this->name . ")");
+            log_debug(" add (" . $this->name . ")");
 
             $this->id = $db_con->insert("user_name", $this->name);
             // log the changes???
@@ -712,17 +736,17 @@ class user
                 // add the ip address to the user, but never for system users
                 if ($this->profile_id != cl(db_cl::USER_PROFILE, user_profile::SYSTEM)
                     and $this->profile_id != cl(db_cl::USER_PROFILE, user_profile::TEST)) {
-                    if (!$db_con->update($this->id, "ip_address", $this->get_ip())) {
+                    if (!$db_con->update($this->id, self::FLD_IP_ADDRESS, $this->get_ip())) {
                         $result = 'Saving of user ' . $this->id . ' failed.';
                     }
                 }
-                log_debug("user->save add ... done");
+                log_debug(" add ... done");
             } else {
-                log_debug("user->save add ... failed");
+                log_debug(" add ... failed");
             }
         } else {
             // update the ip address and log the changes????
-            log_warning('user->save method for ip update missing', 'user->save', 'method for ip update missing', (new Exception)->getTraceAsString(), $this);
+            log_warning(' method for ip update missing', 'user->save', 'method for ip update missing', (new Exception)->getTraceAsString(), $this);
         }
         return $result;
     }
