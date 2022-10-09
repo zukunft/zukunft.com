@@ -7,6 +7,17 @@
 
     Compared to phrase_groups a phrase list is a memory only object that cannot be saved to the database
 
+    TODO
+        add function to
+             selects out of a word list the most important word
+             e.g. given the word list "Turnover, Nestlé, 2014, GAAP", "Turnover" and "Nestlé" is selected,
+             because "2014" is the default time word for a company
+             and "GAAP" is the default Accounting word for a company
+        add function to
+             returns an array of the missing word types
+             e.g. ("Nestlé", "turnover") with formula "increase" returns "time_jump" is missing
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

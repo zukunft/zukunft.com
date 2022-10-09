@@ -113,17 +113,6 @@ function zu_sql_std_type ($table_name) {
   return $result;
 }
 
-// create a standard query for a list of database id and name
-function zu_sql_std_lst ($type) {
-  log_debug("zu_sql_std_lst (".$type.")");
-  
-  $table    = zu_sql_std_table      ($type);
-  $id_fld   = zu_sql_std_id_field   ($type);
-  $name_fld = zu_sql_std_name_field ($type);
-  $sql = "SELECT ".$id_fld.", ".$name_fld." FROM ".$table." ORDER BY ".$name_fld.";";
-  
-  return $sql;
-}
 
 // formats the table name for the sql statement
 function zu_sql_table_name ($table_name) {
@@ -140,18 +129,3 @@ function zu_sql_table_name ($table_name) {
 
   return $result;
 }
-
-// returns the pk for the given table
-function zu_sql_get_id_field ($table_name) {
-  log_debug("zu_sql_get_id_field ... ");
-
-  $type   = zu_sql_std_type ($table_name);
-  $result = zu_sql_std_id_field ($type);
-
-  log_debug("zu_sql_get_id_field ... done");
-
-  return $result;
-}
-
-
-?>

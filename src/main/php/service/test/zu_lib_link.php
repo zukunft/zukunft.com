@@ -54,25 +54,6 @@
 */
 
 
-// return the link word name for more than one item and for the reverse relation
-// e.g. for the link "is a" the plural reverse is "are": "ABB is a company and Roche is a company" -> "Companies are ABB and Roche"
-function zul_plural_reverse ($id) {
-  return zu_sql_get_field ('verb', $id, 'name_plural_reverse');
-}
-
-function zul_reverse ($id) {
-  return zu_sql_get_field ('verb', $id, 'name_reverse');
-}
-
-function zul_plural ($id) {
-  return zu_sql_get_field ('verb', $id, 'name_plural');
-}
-
-// name including the user id as a parameter to return the verb in the language of the user
-function zul_name ($id) {
-  return zu_sql_get_field ('verb', $id, 'verb_name');
-}
-
 // the verb id for the given name
 function zul_id ($name) {
   log_debug('zul_id('.$name.')');

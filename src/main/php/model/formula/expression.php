@@ -32,6 +32,92 @@
 class expression
 {
 
+    /* sample
+
+    original request: formula: increase, words: "Nestlé", "turnover"
+    formula "increase": (next[] - last[]) / last[]
+    formula "next": needs time jump value[is time jump for
+    so                       -> next["time jump"->,         "follower of"->"Now"]
+    1. find_missing_word_types: next["time jump"->"Company","follower of"->"Now"]
+    2. calc word:               next["YoY",                 "follower of"->"Now"]
+    3. calc word:               next["YoY",                 "follower of"->"This Year"]
+    4. calc word:               next["YoY",                 "follower of"->"2013"]
+    5. calc word:               next["YoY",                 "2014"]
+
+
+    parse
+
+    1. get inner part
+    2. do fixed functions
+    3. add word
+    4. get values
+
+    rules:
+    a verb cannot have the same name as a word
+    a formula cannot have the same name as a word
+    if needed just add "(formula)"
+
+
+
+    next needs time jump -> value[is time jump for->:time_word]
+    this year:
+    2013 is predecessor of 2014
+    time jump for company is "YoY" -> word link table
+    next
+
+    formula types: calc:
+
+    syntax: function_name["link_type->word_type:word_name"]
+    or: word_from>word_link:word_to e.g. “>is a:Company” lists all companies
+    or: word[condition_formula] e.g. “GAAP[>is:US]” use GAAP only for US based companies
+    or: word1 || word2 e.g. “GAAP[>is:US]” use word1 or word2 (maybe replace “||” with “or” for users)
+    or: -word e.g. “-word” remove the word from the context
+
+    samples: next["->Timejump"] means next needs a time jump word
+    db format: {f2}[->{}]
+
+    Four steps to get the result
+    1. replace functions
+    2. complete words
+    3. get values
+    4. send calc to octave
+
+
+    zu_calc("increase("Nestlé", "turnover")")
+      -> find_missing_word_types("Nestlé", "turnover") with formula "increase" (zu_word_find_missing_types ($word_array, $formula_id))
+        -> increase needs time_jump word_type
+      -> assume_missing words("Nestlé", "turnover") with word_type "time_jump"
+          -> get time_jump for "Nestlé", "turnover"
+            -> add_word "YoY" linked to "Company" linked to "Nestlé"
+            -> result increase("Nestlé", "turnover", "YoY")
+    -> zu_calc("next(Nestlé, turnover, YoY)")
+       -> increase formula: (next() - last()) / last()
+       -> add_word("Next Year")
+          -> zu_calc("get_value(Nestlé, turnover, YoY, Next Year)")
+
+    Sample 2
+    zu_calc("countryweight("Nestlé")")
+    -> formula = '="Country" "differentiator"/"differentiator total"' // convert predefined formula "differentiator total"
+    -> "differentiator total" = '=sum("differentiator")' // convert predefined formula "differentiator total"
+    -> call 'get words("Nestlé" "Country" "differentiator")', which returns a list of words ergo the result will be a list
+    -> call 'get values("Nestlé" "Country" "differentiator")', which returns a list of values
+    -> call function sum to get the sum of the differentiators
+    -> calc the percent result for each value
+
+
+
+    Parser
+
+    The persing is done in two steps:
+
+    1. add default words and replace the words with value
+    2. calc the result
+
+    Do automatic caching of the results if needed
+
+    */
+
+
     /*
      * code links
      */

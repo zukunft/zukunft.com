@@ -78,17 +78,6 @@ function zuu_ip()
     return $_SERVER['REMOTE_ADDR'];
 }
 
-function zuu_name()
-{
-    if ($_SESSION['logged']) {
-        $user_name = $_SESSION['user_name'];
-    } else {
-        // else use the IP adress
-        $user_name = zuu_ip();
-    }
-    return $user_name;
-}
-
 function zuu_id()
 {
     // if the user has logged in use the logged in account
@@ -109,97 +98,4 @@ function zuu_id()
     return $user_id;
 }
 
-// return the user profile id
-function zuu_profile($user_id)
-{
-    log_debug('zuu_profile(' . $user_id . ')');
-    return zu_sql_get_field('user', $user_id, 'user_profile_id');
-}
 
-// return a list of all users that have done at least one modification compared to the standard
-function zuu_active_lst()
-{
-    log_debug('zuu_active_lst');
-
-    $sql = "SELECT u.user_id, u.user_name 
-            FROM users u,
-                 ( SELECT user_id 
-                    FROM ( SELECT user_id 
-                             FROM user_formulas
-                         GROUP BY user_id 
-                     UNION SELECT user_id 
-                             FROM user_words
-                         GROUP BY user_id 
-                     UNION SELECT user_id 
-                             FROM user_values
-                         GROUP BY user_id ) AS cp
-                GROUP BY user_id ) AS c
-           WHERE u.user_id = c.user_id;";
-    $result = zu_sql_get_lst($sql);
-
-    return $result;
-}
-
-// true if the user has admin rights
-function zuu_is_admin($user_id)
-{
-    log_debug('zuu_is_admin (' . $user_id . ')');
-    $result = false;
-
-    $user_profile = zuu_profile($user_id);
-    if ($user_profile == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
-        $result = true;
-    }
-    return $result;
-}
-
-// remember the last source that the user has used
-function zuu_set_source($user_id, $source_id)
-{
-    log_debug('zuu_set_source(' . $user_id . ',s' . $source_id . ')');
-    $result = zu_sql_update('users', $user_id, 'source_id', $source_id, $user_id);
-    return $result;
-}
-
-// return the last source that the user has used
-function zuu_last_source($user_id)
-{
-    log_debug('zuu_last_source(' . $user_id . ')');
-    return zu_sql_get_field('user', $user_id, 'source_id');
-}
-
-
-
-// check and update a single user parameter
-function zuu_upd_par($user_id, $usr_par, $usr_row, $fld_pos, $fld_name, $par_name): bool
-{
-    global $db_con;
-    $result = true;
-    if ($usr_row[$fld_pos] <> $usr_par[$par_name] and $usr_par[$par_name] <> "") {
-        if (zu_log($user_id, "update", "users", $fld_name, $usr_row[$fld_pos], $usr_par[$par_name], $user_id) > 0) {
-            $result = zu_sql_update("users", $user_id, $fld_name, $db_con->sf($usr_par[$par_name]), $user_id);
-        }
-    }
-    return $result;
-}
-
-// check and update all user parameters
-function zuu_upd_pars($user_id, $usr_par)
-{
-    log_debug('zuu_upd_pars(u' . $user_id . ',p' . implode($usr_par) . ')');
-    global $debug;
-    $result = ''; // reset the html code var
-
-    $sql = "SELECT user_name, email, first_name, last_name FROM users WHERE user_id = " . $user_id . ";";
-    $usr_row = zu_sql_get($sql);
-
-    zuu_upd_par($user_id, $usr_par, $usr_row, 0, "user_name", 'name', $debug);
-    zuu_upd_par($user_id, $usr_par, $usr_row, 1, "email", 'email');
-    zuu_upd_par($user_id, $usr_par, $usr_row, 2, "first_name", 'fname');
-    zuu_upd_par($user_id, $usr_par, $usr_row, 3, "last_name", 'lname');
-
-    log_debug('zuu_upd_pars -> done');
-    return $result;
-}
-
-?>

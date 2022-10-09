@@ -437,12 +437,9 @@ include_once $root_path.'lib/test/config.php';             if ($debug > 9) { ech
 include_once $root_path.'lib/test/zu_lib_sql.php';                if ($debug > 9) { echo 'lib sql loaded<br>'; }
 include_once $root_path.'lib/test/zu_lib_link.php';               if ($debug > 9) { echo 'lib link loaded<br>'; }
 include_once $root_path.'lib/test/zu_lib_sql_naming.php';         if ($debug > 9) { echo 'lib sql naming loaded<br>'; }
-include_once $root_path.'lib/test/zu_lib_value.php';              if ($debug > 9) { echo 'lib value loaded<br>'; }
 include_once $root_path.'lib/test/zu_lib_word.php';               if ($debug > 9) { echo 'lib word loaded<br>'; }
-include_once $root_path.'lib/test/zu_lib_word_db.php';            if ($debug > 9) { echo 'lib word database link loaded<br>'; }
 include_once $root_path.'lib/test/zu_lib_calc.php';               if ($debug > 9) { echo 'lib calc loaded<br>'; }
 include_once $root_path.'lib/test/zu_lib_user.php';               if ($debug > 9) { echo 'lib user loaded<br>'; }
-include_once $root_path.'lib/test/zu_lib_html.php';               if ($debug > 9) { echo 'lib html loaded<br>'; }
 */
 
 /*

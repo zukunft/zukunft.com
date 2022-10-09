@@ -166,12 +166,9 @@ include_once $path_it . 'test_export.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_sql.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_link.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_sql_naming.php';
-include_once $root_path . 'src/main/php/service/test/zu_lib_value.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_word.php';
-include_once $root_path . 'src/main/php/service/test/zu_lib_word_db.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_calc.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_user.php';
-include_once $root_path . 'src/main/php/service/test/zu_lib_html.php';
 
 // load the test functions still in development
 include_once $path_dev . 'test_legacy.php';

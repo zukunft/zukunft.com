@@ -145,27 +145,6 @@ function zu_sql_exe($sql, $user_id, $log_level, $function_name, $function_trace)
     return $result;
 }
 
-// returns all values of an SQL query in an array
-function zudb_get($sql, $user_id)
-{
-    global $debug;
-    if ($debug > 10) {
-        log_debug("zudb_get (" . $sql . ")");
-    } else {
-        log_debug("zudb_get (" . substr($sql, 0, 100) . " ... )");
-    }
-
-    $result = false;
-    if ($sql <> "") {
-        $sql_result = zu_sql_exe($sql, $user_id, sys_log_level::FATAL, "zudb_get", (new Exception)->getTraceAsString());
-        while ($sql_row = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
-            $result[] = $sql_row;
-        }
-    }
-
-    log_debug("zudb_get -> done");
-    return $result;
-}
 
 // get only the first record from the database
 function zudb_get1($sql, $user_id)
@@ -290,74 +269,6 @@ function zu_sql_update($table, $id, $fields, $values, $user_id): bool
 // functions to review
 // ---------------------
 
-// insert only if row does not yet exist
-// used to add a view entry at the moment
-function sql_insert($table, $id_field, $value_field, $new_value, $user_id)
-{
-    log_debug("sql_insert (tbl:" . $table . ",id_fld:" . $id_field . "," . $value_field . "," . $new_value . "," . $user_id . ")");
-    global $db_con;
-
-
-    $id_value = null;
-    // don't insert empty lines
-    if (trim($new_value) <> '') {
-        // check if value is already added
-        $id_value_lst = zu_sql_get("SELECT " . $id_field . " FROM " . zu_sql_table_name($table) . " WHERE " . $value_field . " = " . $db_con->sf($new_value) . ";");
-        $id_value = $id_value_lst[0];
-        if ($id_value > 0) {
-            log_debug("sql_insert -> " . $new_value . "already exists");
-        } else {
-            log_debug("sql_insert -> do insert " . $new_value . "");
-            $sql = "INSERT INTO " . zu_sql_table_name($table) . " (" . $value_field . ") VALUES (" . $db_con->sf($new_value) . ");";
-            $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "sql_insert", (new Exception)->getTraceAsString());
-            if (!$result) {
-                if ($table <> 'events') {
-                    log_err("Insert ".$table." ".$value_field." ".$new_value." failed",
-                        "Cannot insert into ".$table." the ".$value_field." ".$new_value." because: ".mysqli_error($db_con).".",
-                        EVENT_TYPE_SQL_ERROR,
-                        date('Y-m-d H:i:s'));
-                } else {
-                    echo "Error " . mysqli_error($db_con) . " when creating an event.";
-                }
-            } else {
-                log_debug("sql_insert -> get id for " . $new_value . "");
-                $id_value_lst = zu_sql_get("SELECT " . $id_field . " FROM " . zu_sql_table_name($table) . " WHERE " . $value_field . " = " . $db_con->sf($new_value) . ";");
-                $id_value = $id_value_lst[0];
-                //echo "SELECT ".$value_field." FROM ".$table." WHERE ".$value_field." = '".$new_value."';<br>";
-                //echo $id_value;
-                //sql_log($table, $id_field, $id_value, $value_field, "", $new_value);
-                //zu_sql_log_field ($table, $row_id, $user_id, $field_name, $new_value)
-            }
-        }
-    }
-
-    log_debug("sql_insert -> done (" . $id_value . ")");
-
-    return $id_value;
-}
-
-// set a value in an sql table and without saving the changes (only used to update the last checked time of events)
-function sql_set_no_log($table, $id_field, $id_value, $value_field, $new_value, $value_type)
-{
-    log_debug("sql_set_no_log ... ");
-    global $db_con;
-
-    // get the existing value
-    $db_value = zu_sql_get_value($table, $id_field, $id_value, $value_field);
-    if ($value_type == 'date') {
-        $db_value = strtotime($db_value);
-        $new_value = date("Y-m-d", $new_value);
-    }
-    if ($db_value <> $new_value) {
-        $sql_query = "UPDATE " . zu_sql_table_name($table) . " SET `" . $value_field . "` = '" . $new_value . "' WHERE `" . $id_field . "` = " . $db_con->sf($id_value) . ";";
-        //echo $sql_query;
-        mysqli_query($sql_query);
-    }
-
-    log_debug("sql_set_no_log ... done");
-
-    return $new_value;
-}
 
 // returns all results of an SQL query 
 function zu_sql_get_all($sql)
@@ -473,32 +384,6 @@ function zu_sql_get_lst_2fld($query)
     return $result;
 }
 
-// returns the id list of an SQL query
-// e.g. 6 is the array keys and Sales the value
-function zu_sql_get_ids($sql)
-{
-    global $debug;
-    if ($debug > 10) {
-        log_debug("zu_sql_get_ids (" . $sql . ")");
-    } else {
-        log_debug("zu_sql_get_ids (" . substr($sql, 0, 100) . " ... )");
-    }
-
-    $result = array();
-    if ($sql <> "") {
-        $user_id = zuu_id();
-        $sql_result = zu_sql_exe($sql, $user_id, sys_log_level::FATAL, "zu_sql_get_ids", (new Exception)->getTraceAsString());
-        while ($value_entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
-            if (!in_array($value_entry[0], $result)) {
-                $result[] = $value_entry[0];
-            }
-        }
-    }
-
-    log_debug("zu_sql_get_ids -> (" . implode(",", $result) . ")");
-
-    return $result;
-}
 
 // returns first value of a simple SQL query 
 function zu_sql_get_value($table_name, $field_name, $id_name, $id)
@@ -535,23 +420,6 @@ function zu_sql_get_value_2key($table_name, $field_name, $id1_name, $id1, $id2_n
     return $result;
 }
 
-
-// returns one the name of a standard table
-// standard table means that the table name ends with 's', the name field is the table name plus '_name' and prim index ends with '_id'
-function zu_sql_get_name($type, $id)
-{
-    log_debug("zu_sql_get_name ... ");
-
-    $result = '';
-    $table_name = zu_sql_std_table($type);
-    $id_name = zu_sql_std_id_field($type);
-    $field_name = zu_sql_std_name_field($type);
-    $result = zu_sql_get_value($table_name, $field_name, $id_name, $id);
-
-    log_debug("zu_sql_get_name ... " . $result . ".");
-
-    return $result;
-}
 
 // returns the id field of a standard table
 // standard table means that the table name ends with 's', the name field is the table name plus '_name' and prim index ends with '_id'
@@ -593,38 +461,6 @@ function zu_sql_get_id_usr($type, $name, $user_id)
     return zu_sql_get_id_2key($type, $name, "user_id", $user_id);
 }
 
-function zu_sql_add_id($type, $name, $user_id)
-{
-    log_debug("zu_sql_add_id (" . $type . "," . $name . "," . $user_id . ")");
-    global $db_con;
-
-    $result = '';
-    $table_name = zu_sql_std_table($type);
-    $id_name = zu_sql_std_id_field($type);
-    $field_name = zu_sql_std_name_field($type);
-    $result = zu_sql_insert($table_name, $field_name, $db_con->sf($name), $user_id);
-
-    log_debug("zu_sql_add_id ... done (" . $result . ")");
-
-    return $result;
-}
-
-// similar to zu_sql_add_id, but using a second ID field
-function zu_sql_add_id_2key($type, $name, $field2_name, $field2_value, $user_id)
-{
-    log_debug("zu_sql_add_id_2key (" . $type . "," . $name . "," . $field2_name . "," . $field2_value . "," . $user_id . ")");
-    global $db_con;
-
-    $result = '';
-    $table_name = zu_sql_std_table($type);
-    $id_name = zu_sql_std_id_field($type);
-    $field_name = zu_sql_std_name_field($type);
-    $result = zu_sql_insert($table_name, $field_name . "," . $field2_name, $db_con->sf($name) . "," . $db_con->sf($field2_value), $user_id);
-
-    log_debug("zu_sql_add_id ... done (" . $result . ")");
-
-    return $result;
-}
 
 // returns one field of a standard table
 // standard table means that the table name ends with 's' and prim index ends with '_id'
@@ -718,40 +554,6 @@ function zu_sql_user_id_by_ip($ip_address)
 }
 
 // get the value for one table cell
-function zu_sql_tbl_value($word_id, $row_word_id, $col_word_id, $user_id)
-{
-    log_debug('zu_sql_tbl_value(' . $word_id . ',' . $row_word_id . ',' . $col_word_id . ',' . $user_id . ')');
-
-    $query = "    SELECT v.`word_value`, "
-        . "           v.`value_id`, "
-        . "           tc.`words` "
-        . "      FROM `value_phrase_links` l1, "
-        . "           `value_phrase_links` l2, "
-        . "           `value_phrase_links` l3, "
-        . "           (SELECT l.`value_id`, "
-        . "             count(l.`phrase_id`) as words "
-        . "              FROM `value_phrase_links` l "
-        . "          GROUP BY l.`value_id` ) as tc, "
-        . "           `values` v "
-        . " LEFT JOIN `user_values` u ON v.`value_id` = u.`value_id` AND u.`user_id` = " . $user_id . " "
-        . "     WHERE l1.`word_id` = " . $word_id . " "
-        . "       AND l2.`word_id` = " . $row_word_id . " "
-        . "       AND l3.`word_id` = " . $col_word_id . " "
-        . "       AND l1.`value_id` = v.`value_id` "
-        . "       AND l2.`value_id` = v.`value_id` "
-        . "       AND l3.`value_id` = v.`value_id` "
-        . "       AND tc.`value_id` = v.`value_id` "
-        . "       AND (u.`excluded` IS NULL OR u.`excluded` = 0) "
-        . "  GROUP BY v.`value_id` "
-        . "  ORDER BY tc.`words` ;";
-    $result = zu_sql_get($query);
-
-    log_debug('zu_sql_tbl_value ... done (' . $result . ')');
-
-    return $result;
-}
-
-// get the value for one table cell
 function zu_sql_tbl_value_part($word_id, $row_word_id, $col_word_id, $part_word_id, $user_id)
 {
     log_debug('zu_sql_tbl_value_part(' . $word_id . ',r' . $row_word_id . ',c' . $col_word_id . ',p' . $part_word_id . ',u' . $user_id . ')');
@@ -788,48 +590,6 @@ function zu_sql_tbl_value_part($word_id, $row_word_id, $col_word_id, $part_word_
     return $result;
 }
 
-// get the value and a list of all words related to one value
-function zu_sql_val($val_id, $user_id)
-{
-    log_debug('zu_sql_val(' . $val_id . ',u' . $user_id . ')');
-
-    $sql = "    SELECT v.`value_id`, "
-        . "           v.`word_value` "
-        . "     FROM  `values` v "
-        //. " LEFT JOIN `user_values` u ON v.`value_id` = u.`value_id` AND u.`user_id` = ".$user_id." "
-        . "     WHERE v.`value_id` = " . $val_id . " "
-        //. "       AND (u.`excluded` IS NULL OR u.`excluded` = 0) "
-        . "  GROUP BY v.`value_id` "
-        . "  ORDER BY v.`value_id` ;";
-    log_debug('zu_sql_val -> sql (' . $sql . ')');
-    $result = zu_sql_get_lst($sql);
-
-    log_debug('zu_sql_val -> done (' . implode(",", $result) . ')');
-
-    return $result;
-}
-
-// get the value and a list of all words related to one value
-function zu_sql_val_wrd_lst($val_id, $user_id)
-{
-    log_debug('zu_sql_val_wrd_lst(' . $val_id . ',u' . $user_id . ')');
-
-    $sql = "    SELECT t.`word_id`, "
-        . "           t.`word_name` "
-        . "     FROM  `value_phrase_links` l, "
-        . "           `words` t "
-        . " LEFT JOIN `user_words` u ON t.`word_id` = u.`word_id` AND u.`user_id` = " . $user_id . " "
-        . "     WHERE l.`value_id` = " . $val_id . " "
-        . "       AND l.`phrase_id`  = t.`word_id` "
-        . "       AND (u.`excluded` IS NULL OR u.`excluded` = 0) "
-        . "  GROUP BY t.`word_id` "
-        . "  ORDER BY t.`word_id` ;";
-    $result = zu_sql_get_lst($sql);
-
-    log_debug('zu_sql_val_wrd_lst ... done (' . implode(",", $result) . ')');
-
-    return $result;
-}
 
 // get a value that matches best all words in the list
 // best match means the most special value is selected
@@ -916,128 +676,9 @@ function zu_sql_wrd_ids_val($wrd_ids, $user_id)
     return $wrd_val;
 }
 
-// the three functions should not be used any more
-
-function zu_sql_word_ids_value($wrd_ids, $user_id)
-{
-    $wrd_val = zu_sql_wrd_ids_val($wrd_ids, $user_id);
-    return $wrd_val['num'];
-}
-
-function zu_sql_word_lst_value($wrd_ids, $user_id)
-{
-    $wrd_val = zu_sql_wrd_ids_val($wrd_ids, $user_id);
-    return $wrd_val['num'];
-}
-
-function zu_sql_word_lst_value_id($wrd_ids, $user_id)
-{
-    $wrd_val = zu_sql_wrd_ids_val($wrd_ids, $user_id);
-    return $wrd_val['id'];
-}
 
 
-// get only the values related to one word
-function zu_sql_word_values($word_id, $user_id)
-{
-    log_debug('zu_sql_word_values(' . $word_id . ',u' . $user_id . ')');
 
-    $result = array();
-    if ($word_id > 0) {
-        $sql = "    SELECT l.`value_id`, "
-            . "           v.`word_value`, "
-            . "           u.`user_value`, "
-            . "           v.`excluded`, "
-            . "           u.`excluded` AS user_excluded "
-            . "      FROM `value_phrase_links` l, "
-            . "           `values` v "
-            . " LEFT JOIN `user_values` u ON v.`value_id` = u.`value_id` AND u.`user_id` = " . $user_id . " "
-            . "     WHERE l.`word_id` = " . $word_id . " "
-            . "       AND l.`value_id` = v.`value_id` "
-            . "       AND (u.`excluded` IS NULL OR u.`excluded` = 0) "
-            . "  GROUP BY l.`value_id` "
-            . "  ORDER BY v.`word_value`;";
-        $result = zu_sql_get_lst($sql);
-
-        log_debug('zu_sql_word_values ... done (' . implode(",", $result) . ')');
-    }
-
-    return $result;
-}
-
-// get the word name for an array of word ids
-function zu_sql_wrd_ids_to_lst_names($word_ids, $user_id)
-{
-    log_debug('zu_sql_wrd_ids_to_lst_names(' . implode(",", $word_ids) . 'u' . $user_id . ')');
-
-    $result = array();
-    if (!empty($word_ids)) {
-        $sql = "    SELECT t.`word_id`, "
-            . "           IF(u.`word_name` IS NULL,t.`word_name`,u.`word_name`) AS word_name "
-            . "      FROM `words` t "
-            . " LEFT JOIN `user_words` u ON t.`word_id` = u.`word_id` AND u.`user_id` = " . $user_id . " "
-            . "     WHERE t.`word_id` IN (" . implode(",", $word_ids) . ") "
-            . "       AND (u.`excluded` IS NULL OR u.`excluded` = 0) "
-            . "  GROUP BY t.`word_id` "
-            . "  ORDER BY t.`word_name`;";
-        $result = zu_sql_get_lst($sql);
-
-        log_debug('zu_sql_wrd_ids_to_lst_names -> done (' . zu_lst_dsp($result) . ')');
-    }
-
-    return $result;
-}
-
-// get the word name for an array of word ids
-function zu_sql_wrd_ids_to_lst($word_ids, $user_id)
-{
-    log_debug('zu_sql_wrd_ids_to_lst(' . implode(",", $word_ids) . 'u' . $user_id . ')');
-
-    $result = array();
-    if (!empty($word_ids)) {
-        $sql = "    SELECT t.`word_id`, "
-            . "           IF(u.`word_name` IS NULL,t.`word_name`,u.`word_name`) AS word_name, "
-            . "           t.`word_type_id`, "
-            . "           u.`excluded` AS user_excluded "
-            . "      FROM `words` t "
-            . " LEFT JOIN `user_words` u ON t.`word_id` = u.`word_id` AND u.`user_id` = " . $user_id . " "
-            . "     WHERE t.`word_id` IN (" . implode(",", $word_ids) . ") "
-            . "       AND (u.`excluded` IS NULL OR u.`excluded` = 0) "
-            . "  GROUP BY t.`word_id` "
-            . "  ORDER BY t.`word_id`;";
-        $result = zu_sql_get_lst_2fld($sql);
-
-        log_debug('zu_sql_wrd_ids_to_lst -> done (' . zu_lst_dsp($result) . ')');
-    }
-
-    return $result;
-}
-
-
-// select the values related to a word list
-function zu_sql_word_lst_values($word_ids, $value_ids, $user_id)
-{
-    log_debug('zu_sql_word_lst_values(' . implode(",", $word_ids) . 'v' . implode(",", $value_ids) . 'u' . $user_id . ')');
-
-    if (sizeof($value_ids) > 0) {
-        $sql = "   SELECT v.`value_id`, "
-            . "          v.`word_value` "
-            . "     FROM `value_phrase_links` l, "
-            . "          `values` v "
-            . "    WHERE l.`phrase_id`  IN (" . implode(",", $word_ids) . ") "
-            . "      AND l.`value_id` IN (" . implode(",", $value_ids) . ") "
-            . "      AND l.`value_id` = v.`value_id` "
-            . " GROUP BY v.`value_id`;";
-        log_debug('zu_sql_word_lst_values -> sql (' . $sql . ')');
-        $result = zu_sql_get_lst($sql);
-    } else {
-        $result = false;
-    }
-
-    log_debug('zu_sql_word_lst_values ... done (' . implode(",", $result) . ')');
-
-    return $result;
-}
 
 // add extra words to row words if the extra word is a differentiator
 function zu_sql_word_lst_add_differentiator($word_lst, $xtra_words)
@@ -1077,30 +718,6 @@ function zu_sql_word_lst_add_differentiator($word_lst, $xtra_words)
     return $result;
 }
 
-// get all words related to a value list
-function zu_sql_value_ids_words($val_ids, $user_id)
-{
-    log_debug("zu_sql_value_ids_words(" . implode(",", $val_ids) . ")");
-
-    if (sizeof($val_ids) > 0) {
-        $query = "   SELECT l.phrase_id, "
-            . "          t.word_name, "
-            . "          t.word_type_id "
-            . "     FROM value_phrase_links l, "
-            . "          words t "
-            . "    WHERE l.value_id in (" . implode(",", $val_ids) . ") "
-            . "      AND l.phrase_id = t.word_id "
-            . " GROUP BY l.phrase_id;";
-        $result = zu_sql_get_lst_2fld($query);
-    } else {
-        $result = "";
-    }
-
-    log_debug("zu_sql_value_ids_words ... done (" . zu_lst_dsp($result) . ")");
-
-    return $result;
-}
-
 // similar to zu_sql_value_ids_words, but for a value list
 function zu_sql_value_lst_words($val_lst, $user_id)
 {
@@ -1127,118 +744,9 @@ function zu_sql_value_lst_words($val_lst, $user_id)
     return $result;
 }
 
-// loops over a value list and add the word ids to the array
-function zu_sql_value_lst_add_words($val_lst, $user_id)
-{
-    log_debug("zu_sql_value_lst_add_words(" . implode(",", $val_lst) . ")");
 
-    $result = array();
-    if (sizeof($val_lst) > 0) {
-        $query = "   SELECT l.phrase_id, "
-            . "          t.word_name, "
-            . "          t.word_type_id "
-            . "     FROM value_phrase_links l, "
-            . "          words t "
-            . "    WHERE l.value_id in (" . implode(",", array_keys($val_lst)) . ") "
-            . "      AND l.phrase_id = t.word_id "
-            . " GROUP BY l.phrase_id;";
-        $result = zu_sql_get_lst_2fld($query);
-    } else {
-        $result = "";
-    }
 
-    log_debug("zu_sql_value_lst_add_words ... done (" . zu_lst_dsp($result) . ")");
 
-    return $result;
-}
-
-// get all words that are linked to all values of the value list
-function zu_sql_value_lst_common_words($value_lst)
-{
-    log_debug('zu_sql_value_lst_common_words(' . implode(",", $value_lst) . ')');
-    $result = array();
-
-    if (count($value_lst) > 0) {
-        $query = " /* get the words used for each value */ "
-            . " SELECT v_usage.word_id, v_usage.word_name "
-            . "   FROM ( /* get all words used and count the number of usage */ "
-            . "          SELECT l.phrase_id, t.word_name, COUNT(l.value_id) AS word_usage "
-            . "            FROM value_phrase_links l, words t  "
-            . "           WHERE l.value_id IN (" . implode(",", $value_lst) . ")   "
-            . "             AND l.phrase_id = t.word_id "
-            . "        GROUP BY l.phrase_id) AS v_usage "
-            . "  WHERE v_usage.word_usage = "
-            . "        ( /* get the max number of words really used */ "
-            . "          SELECT MAX(word_usage) AS max_words "
-            . "            FROM ( /* get the real number of words for each value */ "
-            . "                   SELECT COUNT(l.value_id) AS word_usage "
-            . "                     FROM value_phrase_links l, words t  "
-            . "                    WHERE l.value_id IN (" . implode(",", $value_lst) . ")  "
-            . "             AND l.phrase_id = t.word_id "
-            . "        GROUP BY l.phrase_id) AS t_usage);";
-        $result = zu_sql_get_lst($query);
-    }
-
-    log_debug("zu_sql_value_lst_common_words ... done(" . implode(",", $result) . ")");
-
-    return $result;
-}
-
-// returns all parts of a view 
-function zu_sql_view_components($view_id, $user_id)
-{
-    log_debug('zu_sql_view_components(' . $view_id . ')');
-
-    $sql = " SELECT e.view_component_name, e.word_id_row, e.link_type_id, e.view_component_type_id, e.formula_id, e.view_component_id, t.code_id, e.word_id_col 
-               FROM view_components e, view_component_links l, view_component_types t 
-              WHERE l.view_id = " . $view_id . " 
-                AND l.view_component_id = e.view_component_id 
-                AND e.view_component_type_id = t.view_component_type_id 
-           ORDER BY l.order_nbr;";
-    log_debug("zu_sql_view_components ... " . $sql);
-    $result = zu_sql_get_all($sql);
-
-    log_debug("zu_sql_view_components ... done");
-
-    return $result;
-}
-
-// returns the next free order number for a new view entry
-function zu_sql_view_component_next_nbr($view_id, $user_id)
-{
-    log_debug('zu_sql_view_component_next_nbr(' . $view_id . ')');
-
-    $query = "   SELECT max(l.order_nbr) 
-                 FROM view_component_links l 
-                WHERE l.view_id = " . $view_id . " 
-             ORDER BY l.order_nbr;";
-    $result = zu_sql_get1($query);
-
-    // if nothing is found, assume one as the next free number
-    if ($result <= 0) {
-        $result = 1;
-    }
-
-    log_debug("zu_sql_view_component_next_nbr -> (" . $result . ")");
-
-    return $result;
-}
-
-// get all possible word link types
-function zu_sql_verbs($user_id)
-{
-    log_debug("zu_sql_verbs(" . $user_id . ")");
-
-    $sql = "   SELECT l.verb_id, "
-        . "          l.verb_name "
-        . "     FROM verbs l "
-        . " ORDER BY l.type_name;";
-    $result = zu_sql_get_lst($sql);
-
-    log_debug("zu_sql_verbs ... done (" . implode(",", $result) . ")");
-
-    return $result;
-}
 
 /*
   word tree building
@@ -1276,204 +784,3 @@ function zu_sql_word_lst_linked($word_lst, $verb_id, $direction)
     return $result;
 }
 
-// create a list of words that are foaf of the given word
-function zu_sql_word_ids_linked($word_lst, $verb_id, $direction)
-{
-    log_debug('zu_sql_word_ids_linked(' . implode(",", $word_lst) . ',' . $verb_id . ',' . $direction . ')');
-
-    $result = array();
-
-    if (implode(",", $word_lst) <> "") {
-        if ($verb_id > 0) {
-            $sql_link = " AND l.verb_id = " . $verb_id . " ";
-        } else {
-            $sql_link = " ";
-        }
-
-        if ($direction == word_select_direction::UP) {
-            $sql_dir = " l.from_phrase_id = t.word_id AND l.to_phrase_id   IN (" . implode(",", $word_lst) . ") ";
-        } else {
-            $sql_dir = " l.to_phrase_id   = t.word_id AND l.from_phrase_id IN (" . implode(",", $word_lst) . ") ";
-        }
-
-        $sql = "SELECT t.word_id, t.word_name, t.word_type_id, l.word_link_id "
-            . "  FROM word_links l, words t "
-            . " WHERE " . $sql_dir
-            . $sql_link
-            . " ORDER BY t.word_name;";
-
-        $result = zu_sql_get_lst($sql);
-    }
-
-    return $result;
-}
-
-// simple query returning functions
-// --------------------------------
-
-// sql to returns all words used for the word selector in view entry edit
-function zu_sql_words($user_id)
-{
-    $query = "SELECT t.word_id, 
-              IF ( u.word_name IS NULL, t.word_name, u.word_name ) AS name
-              FROM words t
-         LEFT JOIN user_words u ON (t.word_id = u.word_id 
-                                AND u.user_id = " . $user_id . "
-                                AND (u.excluded is NULL OR u.excluded = 0))
-            WHERE (t.excluded is NULL OR t.excluded = 0)  
-          ORDER BY name;";
-    return $query;
-}
-
-// returns the words linked to a given word
-function zu_sql_words_linked($word_id, $verb_id, $direction, $user_id): string
-{
-    $sql = "";
-
-    if ($word_id > 0) {
-        if ($verb_id > 0) {
-            $sql_link = " AND l.verb_id = " . $verb_id . " ";
-        } else {
-            $sql_link = " ";
-        }
-
-        if ($direction == word_select_direction::DOWN) {
-            $sql_dir = " l.from_phrase_id = t.word_id AND l.to_phrase_id   = " . $word_id . " ";
-        } else {
-            $sql_dir = " l.to_phrase_id   = t.word_id AND l.from_phrase_id = " . $word_id . " ";
-        }
-
-        $sql = "SELECT t.word_id, t.word_name, t.word_type_id, l.word_link_id "
-            . "  FROM word_links l, words t "
-            . " WHERE " . $sql_dir
-            . $sql_link
-            . " ORDER BY t.word_name;";
-    }
-
-    return $sql;
-}
-
-//
-function zu_sql_word_unlink($link_id)
-{
-    log_debug('zu_sql_word_unlink(' . $link_id . ')');
-    $sql = "DELETE FROM `word_links` WHERE word_link_id = " . $link_id . ";";
-    return mysqli_query($sql);
-}
-
-// returns all views 
-function zu_sql_views()
-{
-    $query = "SELECT view_id, view_name "
-        . "  FROM views;";
-    return $query;
-}
-
-// returns all non internal views 
-function zu_sql_views_user()
-{
-    $query = "SELECT view_id, view_name "
-        . "  FROM views "
-        . " WHERE code_id IS NULL;";
-    return $query;
-}
-
-// returns all view types 
-function zu_sql_view_types()
-{
-    $query = "SELECT view_type_id, type_name "
-        . "  FROM view_typelist;";
-    return $query;
-}
-
-// returns all view entry types 
-function zu_sql_view_component_types()
-{
-    $query = "SELECT view_component_type_id, type_name "
-        . "  FROM view_component_types;";
-    return $query;
-}
-
-// returns all view entries 
-function zu_sql_view_component_lst()
-{
-    $query = "SELECT view_component_id, view_component_name "
-        . "  FROM view_components;";
-    return $query;
-}
-
-/*
-general database function that are using the word, value and formula libraries
-----------------
-*/
-
-// returns the id of a word, verb or formula including the internal formula maker
-// used to prevent double entries
-// it checks the name universe of each user seperately
-function zu_sql_id($name, $user_id)
-{
-    log_debug("zu_sql_id (" . $name . ",u" . $user_id . ")");
-
-    $result = "";
-    $wrd_id = zut_id($name, $user_id);
-    if ($wrd_id > 0) {
-        $result = expression::WORD_START . $wrd_id . expression::WORD_END;
-    }
-    if ($result == '') {
-        $lnk_id = zul_id($name);
-        if ($lnk_id > 0) {
-            $result = expression::TRIPLE_START . $lnk_id . expression::TRIPLE_END;
-        } else {
-            $lnk_id = zu_sql_get_value('verbs', 'link_type_id', 'formula_name', $name);
-        }
-        if ($lnk_id > 0) {
-            $result = expression::TRIPLE_START . $lnk_id . expression::TRIPLE_END;
-        }
-    }
-    if ($result == '') {
-        $frm_id = zuf_id($name, $user_id);
-        if ($frm_id > 0) {
-            $result = expression::FORMULA_START . $frm_id . expression::FORMULA_END;
-        }
-    }
-    return $result;
-}
-
-// linked to zu_sql_id and returns a message for the user for the double naming and offers a solution
-function zu_sql_id_msg($id_txt, $id_name, $user_id)
-{
-    log_debug("zu_sql_id_msg (" . $id_txt . "," . $id_name . ",u" . $user_id . ")");
-
-    $result = "";
-    if (zu_str_is_left($id_txt, expression::WORD_START)) {
-        $wrd_id = zu_str_between($id_txt, expression::WORD_START, expression::WORD_END);
-        if ($wrd_id > 0) {
-            $result = zuh_err('A word with the name "' . $id_name . '" already exists. Please use another name.');
-        }
-    }
-    // check if verb exists
-    if (zu_str_is_left($id_txt, expression::TRIPLE_START)) {
-        $lnk_id = zu_str_between($id_txt, expression::TRIPLE_START, expression::TRIPLE_END);
-        if ($lnk_id > 0) {
-            $result = zuh_err('A verb with the name "' . $id_name . '" already exists. Please use another name.');
-        }
-    }
-    // check if word exists
-    if (zu_str_is_left($id_txt, expression::FORMULA_START)) {
-        $frm_id = zu_str_between($id_txt, expression::FORMULA_START, expression::FORMULA_END);
-        if ($frm_id > 0) {
-            $result = zuh_err('A formula with name "' . $id_name . '" already exists. Please use another name.');
-        }
-    }
-    return $result;
-}
-
-//
-// does a database consistency check to detect and repair code errors
-function zu_sql_check()
-{
-    // check for double names and resolve the problem
-}
-
-
-?>

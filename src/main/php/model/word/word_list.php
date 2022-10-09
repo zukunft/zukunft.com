@@ -10,6 +10,9 @@
     TODO: check the consistence usage of the parameter $back
     TODO: add bool $incl_is to include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a Company" is true
     TODO: add bool $incl_alias to include all alias words that are of the ids
+    TODO: look at a word list and remove the general word, if there is a more specific word also part of the list
+          e.g. remove "Country", but keep "Switzerland"
+
 
     This file is part of zukunft.com - calc with words
 

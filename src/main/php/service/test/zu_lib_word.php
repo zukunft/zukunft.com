@@ -110,48 +110,7 @@ function zut_type($wrd_id, $user_id)
     return $result;
 }
 
-// return the word type name of a give word type id
-function zut_type_name($type_id)
-{
-    log_debug('zut_type_name(' . $type_id . ')');
-    return zu_sql_get_field('word_type', $type_id, sql_db::FLD_TYPE_NAME);
-}
 
-// return the word category name based on the verb is
-function zut_is_name($id)
-{
-    log_debug('zut_is_name(' . $id . ')');
-    $is_word = zut_is_id($id);
-    $result = zu_sql_get_name('word', $is_word);
-    return $result;
-}
-
-// return the word category id based on the predefined verb is
-function zut_is_id($id)
-{
-    log_debug('zut_is_id(' . $id . ')');
-    $link_id = cl(db_cl::VERB, verb::IS_A);
-    $result = zu_sql_get_value_2key('word_links', 'to_phrase_id', 'from_phrase_id', $id, verb::FLD_ID, $link_id);
-    return $result;
-}
-
-// return the follow word id based on the predefined verb following
-function zut_next_id($wrd_id, $user_id)
-{
-    log_debug('zut_next_id(' . $wrd_id . ',u' . $user_id . ')');
-    $link_id = cl(db_cl::VERB, verb::FOLLOW);
-    $result = zu_sql_get_value_2key('word_links', 'from_phrase_id', 'to_phrase_id', $wrd_id, verb::FLD_ID, $link_id);
-    return $result;
-}
-
-// return the prior word id based on the predefined verb following
-function zut_prior_id($wrd_id, $user_id)
-{
-    log_debug('zut_prior_id(' . $wrd_id . ',u' . $user_id . ')');
-    $link_id = cl(db_cl::VERB, verb::FOLLOW);
-    $result = zu_sql_get_value_2key('word_links', 'to_phrase_id', 'from_phrase_id', $wrd_id, verb::FLD_ID, $link_id);
-    return $result;
-}
 
 // the word id for the given word string
 function zut_id($wrd_name, $user_id)
@@ -169,32 +128,6 @@ function zut_id($wrd_name, $user_id)
 
     log_debug('zut_id -> (' . $wrd_id . ' for ' . $wrd_name . ')');
     return $wrd_id;
-}
-
-// get all words of one type
-function zut_type_lst($wrd_type, $user_id)
-{
-    log_debug('zut_type_ids (' . $wrd_type . ',u' . $user_id . ')');
-
-    $sql = "SELECT word_id, word_name FROM words WHERE word_type_id = " . $wrd_type . " ORDER BY word_name;";
-    $result = zu_sql_get_lst($sql);
-    return $result;
-}
-
-// true if the word id has a "is a" relation to the related word
-// e.g.for the given word string
-function zut_is_a($word_id, $related_word_id)
-{
-    log_debug('zut_is_a (' . $word_id . ',' . $related_word_id . ')');
-
-    $result = false;
-    $is_word_ids = zut_ids_is($word_id); // should be taken from the original array to increase speed
-    if (in_array($related_word_id, $is_word_ids)) {
-        $result = true;
-    }
-
-    log_debug('zut_is_a -> ' . zu_dsp_bool($result) . '' . $word_id);
-    return $result;
 }
 
 
@@ -235,39 +168,7 @@ function zut_is_time($word_id)
     return $result;
 }
 
-// filter the time words out of the list of words
-function zut_time_lst($word_lst)
-{
-    log_debug('zut_time_lst(' . zu_lst_dsp($word_lst) . ')');
 
-    $result = array();
-    $time_type = cl(db_cl::WORD_TYPE, phrase_type::TIME);
-    // loop over the word ids and add only the time ids to the result array
-    foreach (array_keys($word_lst) as $word_id) {
-        $word_type = $word_lst[$word_id][1];
-        if ($word_type == $time_type) {
-            $result[$word_id] = $word_lst[$word_id];
-        }
-    }
-    log_debug('zut_time_lst ... done (' . zu_lst_dsp($result) . ')');
-    return $result;
-}
-
-// filter the time words out of a list of word ids
-function zut_time_ids($word_ids)
-{
-    log_debug('zut_time_ids(' . implode(",", $word_ids) . ')');
-
-    $result = array();
-    // loop over the word ids and add only the time ids to the result array
-    foreach ($word_ids as $word_id) {
-        if (zut_is_time($word_id)) {
-            $result[] = $word_id;
-        }
-    }
-    log_debug('zut_time_ids -> done');
-    return $result;
-}
 
 // exclude the time words from a list of word ids
 function zut_ids_ex_time($word_ids, $user_id)
@@ -302,119 +203,7 @@ function zut_time_id($word_ids, $user_id)
     return $result;
 }
 
-// true if a word lst contains a time word
-function zut_has_time($word_lst)
-{
-    log_debug('zut_has_time(' . implode(",", $word_lst) . ')');
 
-    $result = false;
-    // loop over the word ids and add only the time ids to the result array
-    foreach (array_keys($word_lst) as $word_id) {
-        if ($result == false) {
-            if (zut_is_time($word_id)) {
-                $result = true;
-            }
-        }
-    }
-    log_debug('zut_has_time ... done (' . zu_dsp_bool($result) . ')');
-    return $result;
-}
-
-// create a useful list of time word
-function zut_time_useful($word_lst)
-{
-    log_debug('zut_time_useful(' . zu_lst_dsp($word_lst) . ')');
-
-    //$result = zu_lst_to_flat_lst($word_lst);
-    $result = $word_lst;
-    asort($result);
-    // sort
-    //print_r($word_lst);
-
-    // get the most ofter time type e.g. years if the list contains more than 5 years
-    //$type_most_used = zut_time_type_most_used ($word_lst);
-
-    // if nothing special is defined try to select 20 % outlook to the future
-    // get latest time without estimate
-    // check the number of none estimate results
-    // if the hist is longer than it should be dfine the start word
-    // fill from the start word the default number of words
-
-
-    log_debug('zut_time_useful -> (' . zu_lst_dsp($result) . ')');
-    return $result;
-}
-
-// get the time of the last value related to a word and assisiated to a word list
-function zut_get_max_time($word_id, $word_lst, $user_id)
-{
-    log_debug('zut_get_max_time(' . $word_id . ',' . implode(",", $word_lst) . ',' . $user_id . ')');
-
-    $result = 0;
-
-    // get all values related to the selectiong word, because this is probably strongest selection and to save time reduce the number of records asap
-    $value_lst = zu_sql_word_values($word_id, $user_id);
-
-    if (sizeof($value_lst) > 0) {
-
-        // get all words related to the value list
-        $all_word_lst = zu_sql_value_lst_words($value_lst, $user_id);
-
-        // get the time words
-        $time_lst = zut_time_lst($all_word_lst);
-
-        // get the most usefult (last) time words (replace by a "followed by" sorted list
-        arsort($time_lst);
-        $time_keys = array_keys($time_lst);
-        $result = $time_keys[0];
-    }
-
-    log_debug('zut_get_max_time ... done (' . $result . ')');
-    return $result;
-}
-
-// get the time of the last value related to a word and assisiated to a word list
-function zut_get_max_time_all($word_id, $word_lst, $user_id)
-{
-    log_debug('zut_get_max_time_all(' . $word_id . ',' . implode(",", $word_lst) . ',' . $user_id . ')');
-
-    $result = 0;
-
-    // get all values related to the selectiong word, because this is probably strongest selection and to save time reduce the number of records asap
-    $value_in = zuv_of_wrd_ids($word_lst, $user_id);
-    $value_lst = array();
-    $value_lst[$value_in['id']] = $value_in['num'];
-    log_debug('zut_get_max_time_all -> (' . implode(",", $value_lst) . ')');
-
-    if (sizeof($value_lst) > 0) {
-
-        // get all words related to the value list
-        $all_word_lst = zu_sql_value_lst_words($value_lst, $user_id);
-
-        // get the time words
-        $time_lst = zut_time_lst($all_word_lst);
-
-        // get the most usefult (last) time words (replace by a "followed by" sorted list
-        arsort($time_lst);
-        $time_keys = array_keys($time_lst);
-        $result = $time_keys[0];
-    }
-
-    log_debug('zut_get_max_time_all ... done (' . $result . ')');
-    return $result;
-}
-
-// get the most ofter time type e.g. years if the list contains more than 5 years
-function zut_time_type_most_used($word_lst)
-{
-    log_debug('zut_time_type_most_used(' . $word_lst . ')');
-
-    // get the most ofter time type e.g. years if the list contains more than 5 years
-    // if nothing special is defined try to select 20 % outlokk to the future
-    $result = $word_lst->lst[0];
-
-    return $result;
-}
 
 // true if a word lst contains a scaling word
 function zut_has_scaling($word_ids)
@@ -436,24 +225,6 @@ function zut_has_scaling($word_ids)
     return $result;
 }
 
-// get the (first) scaling words of the word lst
-function zut_scale_lst($word_lst)
-{
-    log_debug('zut_scale_lst(' . zu_lst_dsp($word_lst) . ')');
-
-    $result = array();
-    $scale_type = cl(db_cl::WORD_TYPE, phrase_type::SCALING);
-    $scale_type_hidden = cl(db_cl::WORD_TYPE, phrase_type::SCALING_HIDDEN);
-    // loop over the word ids and add only the time ids to the result array
-    foreach (array_keys($word_lst) as $word_id) {
-        $word_type = $word_lst[$word_id][1];
-        if ($word_type == $scale_type or $word_type == $scale_type_hidden) {
-            $result[$word_id] = $word_lst[$word_id];
-        }
-    }
-    log_debug('zut_scale_lst ... done (' . zu_lst_dsp($result) . ')');
-    return $result;
-}
 
 // get the (last) scaling word of the word id list
 function zut_scale_id($wrd_ids, $user_id)
@@ -512,121 +283,3 @@ function zut_names_to_lst($word_names, $user_id)
 }
 
 
-// returns an array with only the time word
-/* function zut_time_ids ($word_ids) {
-  // split the word list in single words
-  $word_list = "";
-  // loop over the words and get the ids
-  // $word_id_list = array();
-  foreach ($word_ids as $word_id) {
-    if ($word_list == "") { 
-      $word_list = $word_id;
-    } else {
-      $word_list = $word_list.",".$word_id;
-    }
-  }
-  
-  return $word_list;
-
-} 
-
-*/
-
-
-// returns an array with only the time word
-/* function zut_non_time_ids ($word_ids) {
-  // split the word list in single words
-  $word_list = "";
-  // loop over the words and get the ids
-  // $word_id_list = array();
-  foreach ($word_ids as $word_id) {
-    if ($word_list == "") { 
-      $word_list = $word_id;
-    } else {
-      $word_list = $word_list.",".$word_id;
-    }
-  }
-  
-  return $word_list;
-
-} */
-
-
-/*
-
-Default functions - assuming the best guess
-
-*/
-
-// if the user has given no hind at all guess an word the the user might be interested to start
-function zut_default_id($user_id)
-{
-    log_debug('zut_default_id(' . $user_id . ')');
-    $result = zu_sql_get_value("users", "last_word_id", "user_id", $user_id);
-    if ($result <= 0) {
-        $result = 1; // if nothing is know, start with the first word
-    }
-    log_debug('zut_default_id->' . $result . ')');
-    return $result;
-}
-
-/*
-
-Functions to be reviewed
-
-*/
-
-
-// selects out of a word list the most importand word
-// e.g. given the word list "Turnover, Nestlé, 2014, GAAP", "Turnover" and "Nestlé" is selected, 
-// because "2014" is the default time word for a company 
-// and "GAAP" is the default Accounting word for a company 
-function zut_select_top($debug)
-{
-}
-
-// returns true if the test_word is the default type word for the word list
-// e.g. for the word list "Turnover, Nestlé" the default "time_word" is is the actual year
-function zut_is_default_word($word_list, $word_type, $test_word)
-{
-}
-
-// returns an array of the missing word types
-// e.g. ("Nestlé", "turnover") with formula "increase" returns "time_jump" is missing
-function zut_find_missing_types($word_array, $formula_id)
-{
-    // get needed word type
-    // get word types existing
-    // find missing
-    $result = zu_sql_get_value_2key("formula_word_type_links", "word_type_id", "formula_id", $formula_id, "link_type_id", 5, 0);
-    return $result;
-}
-
-// returns the "nearest" word of a given type related to a word array
-// e.g. ("Nestlé", "turnover") with word_type "time_jump" gets nothing on the first level
-// but it finds "YoY" related to Company linked to Nestlé
-function zut_assume($word_array, $word_type_id)
-{
-    $result = "YoY";
-    return $result;
-}
-
-// look at a word list and remove the general word, if there is a more specific word also part of the list e.g. remove "Country", but keep "Switzerland"
-function zut_keep_only_specific($word_array)
-{
-    log_debug('zut_keep_only_specific(' . implode(",", $word_array) . ')');
-
-    $result = $word_array;
-    foreach ($word_array as $word_id) {
-        $word_types = zut_foaf_parent($word_id);
-        log_debug('zut_keep_only_specific -> ' . $word_id . ' is of type (' . implode(",", $word_types) . ')');
-        $result = zu_lst_not_in_no_key($result, array_keys($word_types));
-    }
-
-    log_debug('zut_keep_only_specific -> (' . implode(",", $result) . ')');
-
-    return $result;
-}
-
-
-?>
