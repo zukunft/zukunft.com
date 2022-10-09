@@ -50,7 +50,8 @@ if ($usr->id > 0) {
     log_debug("get_csv(" . $words . ")");
     $word_names = explode(",", $words);
 
-    $wrd_lst = (new word_list($usr))->load_by_names($word_names);
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names($word_names);
 
     // get time word
     $time_word_id = 0;
@@ -65,36 +66,25 @@ if ($usr->id > 0) {
       zu_debug("-> time word (".$time_word_id.")"); */
     log_debug("other words (" . implode(",", $word_names) . ")");
 
-    // get formula
-    $frm = new formula($usr);
-    $formula_name = zut_get_formula($word_names);
-    $formula_text = '';
-    if ($formula_name <> '') {
-        $frm->name = $formula_name;
-        $frm->load();
-        //$word_names = zu_lst_not_in($word_names, $formula_name);
-        $word_names = array_diff($word_names, array($formula_name));
-        log_debug("word names used (" . implode(",", $word_names) . ")");
-        $formula_id = $frm->id;
-        $formula_text = $frm->ref_text;
-        log_debug("formula used (" . $formula_text . ")");
-    }
-
-    $word_lst = array_keys(zut_names_to_lst($word_names, $usr->id));
-    log_debug("words used (" . implode(",", $word_lst) . ")");
-
-    if ($formula_text <> '') {
-        $in_result = $frm->to_num($word_lst, 0);
-        $value_lst = $in_result[0];
-        if (is_array($value_lst)) {
-            $result .= $formula_name . ',name' . "\r\n<br>";
-            foreach ($value_lst as $value_row) {
-                $result .= '' . $value_row[0] . ',' . $value_row[1] . "\r\n<br>";
+    // get formulas and related values
+    $frm_lst = new formula_list($usr);
+    $frm_lst->load_by_names($word_names);
+    foreach ($frm_lst AS $frm) {
+        if ($frm->ref_text <> '') {
+            $val_lst = $frm->get_fv_lst();
+            if (!$val_lst->is_empty()) {
+                $result .= $frm->ref_text . ',name' . "\r\n<br>";
+                foreach ($val_lst as $val) {
+                    $result .= '' . $val->name() . ',' . $val->val_formatted() . "\r\n<br>";
+                }
+            } else {
+                $result .= $frm->ref_text . " \r\n<br>";
             }
-        } else {
-            $result .= $formula_name . ' ' . $value_lst . "\r\n<br>";
         }
     }
+
+    log_debug("words used (" . $wrd_lst->name() . ")");
+
 }
 
 echo $result;

@@ -162,6 +162,27 @@ class formula_list
     }
 
     /**
+     * set the SQL query parameters to load a list of formulas by an array of formula names
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param array $names an array of formula names which should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_names(sql_db $db_con, array $names): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        if (count($names) > 0) {
+            $qp->name .= 'names';
+            $db_con->set_name($qp->name);
+            $db_con->add_par_in_txt($names);
+            $qp->sql = $db_con->select_by_field(formula::FLD_NAME);
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
      * set the SQL query parameters to load a list of formulas linked to one of the phrases from the given list
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param phrase $phr a phrase used to select the formulas
@@ -265,7 +286,7 @@ class formula_list
     }
 
     /**
-     * load a list of formula links with the direct linked phrases related to the given formula id
+     * load a list of formulas by the given formula id
      * @param array $frm_ids an array of formula ids which should be loaded
      * @return bool true if at least one word found
      */
@@ -273,6 +294,18 @@ class formula_list
     {
         global $db_con;
         $qp = $this->load_sql_by_frm_ids($db_con, $frm_ids);
+        return $this->load_int($qp);
+    }
+
+    /**
+     * load a list of formulas by the given formula names
+     * @param array $names an array of formula ids which should be loaded
+     * @return bool true if at least one word found
+     */
+    function load_by_names(array $names): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_names($db_con, $names);
         return $this->load_int($qp);
     }
 

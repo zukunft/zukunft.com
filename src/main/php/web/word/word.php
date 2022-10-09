@@ -43,6 +43,7 @@ class word_dsp extends word_api
     // default view settings
     const TIME_MIN_COLS = 3; // minimum number of same time type word to display in a table e.g. if at least 3 years exist use a table to display
     const TIME_MAX_COLS = 10; // maximum number of same time type word to display in a table e.g. if more the 10 years exist, by default show only the lst 10 years
+    const TIME_FUT_PCT = 20; // the default number of future outlook e.g. if there are 10 years of hist and 3 years of outlook display 8 years of hist and 2 years outlook
 
     const FORM_EDIT = 'word_edit';
 

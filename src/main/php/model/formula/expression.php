@@ -138,6 +138,11 @@ class expression
     const FORMULA_START = '{f';   //
     const FORMULA_END = '}';    //
 
+    // text conversion const (used to convert word, formula or verbs text to a reference)
+    const BRACKET_OPEN = '(';    //
+    const BRACKET_CLOSE = ')';    //
+    const TXT_FIELD = '"';    // don't look for math symbols in text that is a high quotes
+
     // text conversion syntax elements
     // used to convert word, triple, verb or formula name to a database reference
     const WORD_DELIMITER = '"';    // or a zukunft verb or a zukunft formula

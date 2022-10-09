@@ -68,7 +68,6 @@ class formula_value_list
     }
 
 
-
     /**
      * create the SQL to load a list of formula values link to
      * a formula
@@ -843,6 +842,18 @@ class formula_value_list
         }
         log_debug('fv_lst->merge -> to ' . $this->dsp_id());
         return $this;
+    }
+
+    /**
+     * @return bool true if the list is empty
+     */
+    function is_empty(): bool
+    {
+        if (count($this->lst) <= 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

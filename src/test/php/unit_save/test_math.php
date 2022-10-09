@@ -65,7 +65,7 @@ function run_math_test(testing $t)
     // test zuc_is_text_only
     $formula = "\"this is just a text\"";
     $target = true;
-    $result = zuc_is_text_only($formula);
+    $result = $calc->is_text_only($formula);
     $t->dsp(", zuc_is_text_only: a text like " . $formula, $target, $result);
 
     // test zuc_pos_separator
@@ -77,27 +77,24 @@ function run_math_test(testing $t)
 
     // test zuc_has_bracket
     $math_text = "(2 - 1) * 2";
-    $target = true;
     $result = $calc->has_bracket($math_text);
-    $t->dsp(", zuc_has_bracket: the result for formula \"" . $math_text . "\"", $target, $result);
+    $t->dsp(", zuc_has_bracket: the result for formula \"" . $math_text . "\"", true, $result);
 
     // test zuc_has_formula
     $formula = "{f4} / {f5}";
-    $target = true;
-    $result = zuc_has_formula($formula);
-    $t->dsp(", zuc_has_formula: the result for formula \"" . $formula . "\"", $target, $result);
+    $result = $calc->has_formula($formula);
+    $t->dsp(", zuc_has_formula: the result for formula \"" . $formula . "\"", true, $result);
 
     // test zuc_is_date
     $date_text = "01.02.2013";
-    $target = true;
-    $result = zuc_is_date($date_text);
-    $t->dsp(", zuc_is_date: the result for \"" . $date_text . "\"", $target, $result);
+    $result = $calc->is_date($date_text);
+    $t->dsp(", zuc_is_date: the result for \"" . $date_text . "\"", true, $result);
 
 
     // test zuc_pos_word
     $formula_text = "{t6}";
     $target = "0";
-    $result = zuc_pos_word($formula_text);
+    $result = $calc->pos_word($formula_text);
     $t->dsp(", zuc_pos_word: the result for formula \"" . $formula_text . "\"", $target, $result);
 
     // test zut_keep_only_specific
@@ -122,13 +119,13 @@ function run_math_test(testing $t)
     // test zuc_math_parse
     $math_text = "3 - 1";
     $target = 2;
-    $result = $calc->parse($math_text, ZUP_RESULT_TYPE_VALUE, $time_phr);
+    $result = $calc->parse($math_text, math::RESULT_TYPE_VALUE, $time_phr);
     $t->dsp(", zuc_math_parse: the result for formula \"" . $math_text . "\"", $target, $result);
 
     // test zuc_math_parse
     $math_text = "2 * 2";
     $target = 4;
-    $result = $calc->parse($math_text, ZUP_RESULT_TYPE_VALUE, $time_phr);
+    $result = $calc->parse($math_text, math::RESULT_TYPE_VALUE, $time_phr);
     $t->dsp(", zuc_math_parse: the result for formula \"" . $math_text . "\"", $target, $result);
 
     // test zuc_is_math_symbol_or_num

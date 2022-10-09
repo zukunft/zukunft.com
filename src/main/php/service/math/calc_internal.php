@@ -67,10 +67,14 @@
 class math
 {
 
+    // interface const (to be removed, because specific functions for each part has been created)
+    const RESULT_TYPE_DB = 'db';       // returns a formula in the database format
+    const RESULT_TYPE_USER = 'user';   // returns a formula in the user format
+    const RESULT_TYPE_VALUE = 'value'; // returns a result of the formula
+
     /*
-      external functions that are supposed to be called from other libraries
-      ------------------
-    */
+     * external functions that are supposed to be called from other libraries
+     */
 
     /**
      * actually calculate the numeric result; this should be replaced by R
@@ -103,12 +107,13 @@ class math
     }
 
     /*
-      internal functions
-      ------------------
-    */
+     * internal functions
+     */
 
-    // returns the position of the corresponding separator and takes text fields and brackets into account by not splitting them
-    public function pos_separator(string $formula, $separator, $start_pos): int
+    /**
+     * @returns int the position of the corresponding separator and takes text fields and brackets into account by not splitting them
+     */
+    public function pos_separator(string $formula, string $separator, int $start_pos): int
     {
         log_debug("pos_separator (" . $formula . "," . $separator . "," . $start_pos . ")");
 
@@ -120,7 +125,7 @@ class math
         do {
             // don't look into text that is a high quotes
             if ($open_brackets == 0) {
-                if (substr($formula, $pos, strlen(ZUP_CHAR_TXT_FIELD)) == ZUP_CHAR_TXT_FIELD) {
+                if (substr($formula, $pos, strlen(expression::TXT_FIELD)) == expression::TXT_FIELD) {
                     if ($text_linked) {
                         $text_linked = False;
                     } else {
@@ -136,10 +141,10 @@ class math
                         $found = true;
                     }
                 }
-                if (substr($formula, $pos, strlen(ZUP_CHAR_BRAKET_OPEN)) == ZUP_CHAR_BRAKET_OPEN) {
+                if (substr($formula, $pos, strlen(expression::BRACKET_OPEN)) == expression::BRACKET_OPEN) {
                     $open_brackets = $open_brackets + 1;
                 }
-                if (substr($formula, $pos, strlen(ZUP_CHAR_BRAKET_CLOSE)) == ZUP_CHAR_BRAKET_CLOSE && $open_brackets > 0) {
+                if (substr($formula, $pos, strlen(expression::BRACKET_CLOSE)) == expression::BRACKET_CLOSE && $open_brackets > 0) {
                     $open_brackets = $open_brackets - 1;
                 }
             }
@@ -159,7 +164,9 @@ class math
     }
 
 
-// returns the position of the next predefined function
+    /**
+     * @returns int the position of the next predefined function
+     */
     private function pos_function(string $formula): int
     {
         log_debug("pos_function (" . $formula . ")");
@@ -181,7 +188,9 @@ class math
         return $pos;
     }
 
-// returns true if a text contains a mathematical function
+    /**
+     * @returns bool true if a text contains a mathematical function
+     */
     private function has_function_pos(string $formula): bool
     {
         log_debug("has_function_pos (" . $formula . ")");
@@ -195,7 +204,9 @@ class math
         return $result;
     }
 
-// returns the next predefined function
+    /**
+     * @returns string the next predefined function
+     */
     private function get_function(string $formula): string
     {
         log_debug("get_function (" . $formula . ")");
@@ -203,13 +214,13 @@ class math
         // if not found return -1 because the separator can also be on position 0
         $result = '';
 
-        if (substr($formula, 0, strlen(ZUP_FUNC_IF)) == ZUP_FUNC_IF) {
+        if (str_starts_with($formula, ZUP_FUNC_IF)) {
             $result = ZUP_FUNC_IF;
         }
-        if (substr($formula, 0, strlen(ZUP_FUNC_SUM)) == ZUP_FUNC_SUM) {
+        if (str_starts_with($formula, ZUP_FUNC_SUM)) {
             $result = ZUP_FUNC_SUM;
         }
-        if (substr($formula, 0, strlen(ZUP_FUNC_ISNUM)) == ZUP_FUNC_ISNUM) {
+        if (str_starts_with($formula, ZUP_FUNC_ISNUM)) {
             $result = ZUP_FUNC_ISNUM;
         }
 
@@ -217,7 +228,9 @@ class math
         return $result;
     }
 
-// returns the position of the next mathematical operator
+    /**
+     * @returns int the position of the next mathematical operator
+     */
     private function pos_operator(string $formula): int
     {
         log_debug("pos_operator (" . $formula . ")");
@@ -255,7 +268,9 @@ class math
         return $next_pos;
     }
 
-// returns true if a text contains a mathematical operator
+    /**
+     * @returns bool true if a text contains a mathematical operator
+     */
     private function has_operator(string $formula): bool
     {
         log_debug("has_operator (" . $formula . ")");
@@ -269,7 +284,9 @@ class math
         return $result;
     }
 
-// get the left most math operator
+    /**
+     * @return string get the left most math operator
+     */
     private function get_operator(string $formula): string
     {
         log_debug("get_operator (" . $formula . ")");
@@ -301,7 +318,9 @@ class math
         return $result;
     }
 
-// get the next math operator
+    /**
+     * @return string get the next math operator
+     */
     private function get_operator_pos(string $formula): string
     {
         log_debug("get_operator_pos (" . $formula . ")");
@@ -310,31 +329,23 @@ class math
         $pos = $this->pos_operator($formula);
         if ($formula[$pos] == ZUP_OPER_ADD) {
             $result = ZUP_OPER_ADD;
-        } else {
-            if ($formula[$pos] == ZUP_OPER_SUB) {
-                $result = ZUP_OPER_SUB;
-            } else {
-                if ($formula[$pos] == ZUP_OPER_MUL) {
-                    $result = ZUP_OPER_MUL;
-                } else {
-                    if ($formula[$pos] == ZUP_OPER_DIV) {
-                        $result = ZUP_OPER_DIV;
-                    } else {
-                        if ($formula[$pos] == ZUP_OPER_AND) {
-                            $result = ZUP_OPER_AND;
-                        } else {
-                            if ($formula[$pos] == ZUP_OPER_OR) {
-                                $result = ZUP_OPER_OR;
-                            }
-                        }
-                    }
-                }
-            }
+        } elseif ($formula[$pos] == ZUP_OPER_SUB) {
+            $result = ZUP_OPER_SUB;
+        } elseif ($formula[$pos] == ZUP_OPER_MUL) {
+            $result = ZUP_OPER_MUL;
+        } elseif ($formula[$pos] == ZUP_OPER_DIV) {
+            $result = ZUP_OPER_DIV;
+        } elseif ($formula[$pos] == ZUP_OPER_AND) {
+            $result = ZUP_OPER_AND;
+        } elseif ($formula[$pos] == ZUP_OPER_OR) {
+            $result = ZUP_OPER_OR;
         }
         return $result;
     }
 
-// returns the next bracket
+    /**
+     * @returns string the next bracket
+     */
     private function get_bracket(string $formula): string
     {
         log_debug("get_bracket (" . $formula . ")");
@@ -342,50 +353,109 @@ class math
         // if not found return -1 because the separator can also be on position 0
         $result = '';
 
-        if (substr($formula, 0, strlen(ZUP_CHAR_BRAKET_OPEN)) == ZUP_CHAR_BRAKET_OPEN) {
-            $result = ZUP_CHAR_BRAKET_OPEN;
+        if (str_starts_with($formula, expression::BRACKET_OPEN)) {
+            $result = expression::BRACKET_OPEN;
         }
-        if (substr($formula, 0, strlen(ZUP_CHAR_BRAKET_CLOSE)) == ZUP_CHAR_BRAKET_CLOSE) {
-            $result = ZUP_CHAR_BRAKET_CLOSE;
+        if (str_starts_with($formula, expression::BRACKET_CLOSE)) {
+            $result = expression::BRACKET_CLOSE;
         }
 
         log_debug("get_bracket -> " . $result);
         return $result;
     }
 
-// returns true if the formula starts with a bracket, so that first the inner part needs to be calculated
+    /**
+     * @returns bool true if the formula starts with a bracket, so that first the inner part needs to be calculated
+     */
     public function has_bracket(string $formula): bool
     {
         log_debug("has_bracket (" . $formula . ")");
 
-        $result = false;
-        if (substr($formula, 0, strlen(ZUP_CHAR_BRAKET_OPEN)) == ZUP_CHAR_BRAKET_OPEN) {
-            $result = True;
+        if (str_starts_with($formula, expression::BRACKET_OPEN)) {
+            return true;
+        } else {
+            return false;
         }
-        return $result;
     }
 
-// true if the formula starts with the closing bracket
+    /**
+     * @returns bool true if the formula starts with the closing bracket
+     */
     private function has_bracket_close(string $formula): bool
     {
-        log_debug("has_bracket_close (" . $formula . ")");
-
-        $result = false;
-        if (substr($formula, 0, strlen(ZUP_CHAR_BRAKET_CLOSE)) == ZUP_CHAR_BRAKET_CLOSE) {
-            $result = True;
+        if (str_starts_with($formula, expression::BRACKET_CLOSE)) {
+            return true;
+        } else {
+            return false;
         }
+    }
+
+    /**
+     * @returns bool true if the formula starts with a bracket, so that first the inner part needs to be calculated
+     */
+    public function has_formula(string $formula): bool
+    {
+        if (str_starts_with($formula, expression::FORMULA_START)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @returns bool true if the remaining formula part is only text, do not parse it any more
+     */
+    public function is_text_only(string $formula): bool
+    {
+        if ($formula[0] == expression::TXT_FIELD && substr($formula, -1) == expression::TXT_FIELD) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @returns bool true if the remaining formula part is only a date
+     */
+    public function is_date(string $formula): bool
+    {
+        $date = date_parse($formula);
+        if (checkdate($date["month"], $date["day"], $date["year"])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @returns int the position of the word id in the database reference format
+     */
+    public function pos_word(string $formula): int
+    {
+        $result = -1;
+
+        $calc = new math();
+
+        $pos = $calc->pos_separator($formula, expression::WORD_START, 0,);
+        $end = $calc->pos_separator($formula, expression::WORD_END, $pos);
+        if ($pos >= 0 and $end > $pos) {
+            $result = $pos;
+        }
+
+        log_debug("zuc_pos_word ->  (" . $result . ")");
         return $result;
     }
 
-
     /*
-      math functions
-      --------------
-    */
+     * math functions
+     */
 
-    // interprets or converts a math operator condition
-    // this could and should be replaced by R-project.org later
-    private function calc(string $formula, $operator)
+    /**
+     * interprets or converts a math operator condition
+     * this could and should be replaced by R-project.org later
+     * @returns string with the result of the formula that can be converted into a number
+     */
+    private function calc(string $formula, $operator): string
     {
         $result = $formula;
 
@@ -447,25 +517,33 @@ class math
         return $result;
     }
 
-// interprets or converts a math operator condition
+    /**
+     * @returns string interprets or converts a math operator condition
+     */
     private function math_mul(string $formula): string
     {
         return $this->calc($formula, ZUP_OPER_MUL);
     }
 
-// interprets or converts a math operator condition
+    /**
+     * @returns string interprets or converts a math operator condition
+     */
     private function math_div(string $formula): string
     {
         return $this->calc($formula, ZUP_OPER_DIV);
     }
 
-// interprets or converts a math operator condition
+    /**
+     * @returns string interprets or converts a math operator condition
+     */
     private function math_add(string $formula): string
     {
         return $this->calc($formula, ZUP_OPER_ADD);
     }
 
-// interprets or converts a math operator condition
+    /**
+     * @returns string interprets or converts a math operator condition
+     */
     private function math_sub(string $formula): string
     {
         return $this->calc($formula, ZUP_OPER_SUB);
@@ -479,11 +557,11 @@ class math
         $result = $formula;
 
         // get the position of the next bracket
-        $inner_start_pos = $this->pos_separator($result, ZUP_CHAR_BRAKET_OPEN, 0);
+        $inner_start_pos = $this->pos_separator($result, expression::BRACKET_OPEN, 0);
         // if there is a bracket ...
         if ($inner_start_pos >= 0) {
             // ... and a closing bracket ...
-            $inner_end_pos = $this->pos_separator($result, ZUP_CHAR_BRAKET_CLOSE, $inner_start_pos + 1);
+            $inner_end_pos = $this->pos_separator($result, expression::BRACKET_CLOSE, $inner_start_pos + 1);
 
             // ... separate the formula
 
@@ -495,7 +573,7 @@ class math
             log_debug("math_bracket -> inner_part " . $inner_part);
 
             // get the right part, but don't get the result of the right part because will be done by the calling function
-            $right_part = zu_str_right_of($result, $left_part . ZUP_CHAR_BRAKET_OPEN . $inner_part . ZUP_CHAR_BRAKET_CLOSE);
+            $right_part = zu_str_right_of($result, $left_part . expression::BRACKET_OPEN . $inner_part . expression::BRACKET_CLOSE);
             log_debug("math_bracket -> right_part " . $right_part);
 
             // ... and something needs to be calculated
@@ -514,7 +592,10 @@ class math
         return $result;
     }
 
-// 
+    /**
+     * @param string $formula
+     * @return string
+     */
     private function math_if(string $formula): string
     {
         $result = $formula;
@@ -522,12 +603,12 @@ class math
         // get the position of the next bracket
         log_debug("math_if -> separate ");
         $if_start_pos = $this->pos_separator($result, ZUP_FUNC_IF, 0);
-        $inner_start_pos = $this->pos_separator($result, ZUP_CHAR_BRAKET_OPEN, 0);
+        $inner_start_pos = $this->pos_separator($result, expression::BRACKET_OPEN, 0);
         log_debug("math_if -> separate ");
         // if there is a bracket ...
         if ($if_start_pos >= 0 and $inner_start_pos >= 0 and $if_start_pos < $inner_start_pos) {
             // ... and a closing bracket ...
-            $inner_end_pos = $this->pos_separator($result, ZUP_CHAR_BRAKET_CLOSE, $inner_start_pos + 1);
+            $inner_end_pos = $this->pos_separator($result, expression::BRACKET_CLOSE, $inner_start_pos + 1);
 
             // ... separate the formula
 
@@ -539,7 +620,7 @@ class math
             log_debug('math_if -> inner_part "' . $inner_part . '"');
 
             // get the right part, but don't get the result of the right part because will be done by the calling function
-            $right_part = zu_str_right_of($result, $left_part . ZUP_CHAR_BRAKET_OPEN . $inner_part . ZUP_CHAR_BRAKET_CLOSE);
+            $right_part = zu_str_right_of($result, $left_part . expression::BRACKET_OPEN . $inner_part . expression::BRACKET_CLOSE);
             log_debug("math_if -> right_part " . $right_part);
 
             // ... and something needs to be looked at
@@ -555,13 +636,13 @@ class math
                     $inner_left_part = $this->parse($inner_left_part);
                     $inner_right_part = $this->parse($inner_right_part);
                     if ($operator == ZUP_OPER_AND) {
-                        if ($inner_left_part == True and $inner_right_part == True) {
+                        if ($inner_left_part and $inner_right_part) {
                             log_debug('if: get logical result for "' . $inner_part . '" is "true"');
                             $result = $this->parse($right_part);
                         }
                     }
                     if ($operator == ZUP_OPER_OR) {
-                        if ($inner_left_part == True or $inner_right_part == True) {
+                        if ($inner_left_part or $inner_right_part) {
                             log_debug('if: get logical result for "' . $inner_part . '" is "true"');
                             $result = $this->parse($right_part);
                         }
@@ -582,7 +663,9 @@ class math
     }
 
 
-    // returns true if the next symbol is a math symbol (that can be ignored if a formula should be converted to the db format)
+    /**
+     * @returns bool true if the next symbol is a math symbol (that can be ignored if a formula should be converted to the db format)
+     */
     private function is_math_symbol(string $formula): bool
     {
         log_debug("is_math_symbol (" . $formula . ")");
@@ -610,7 +693,9 @@ class math
         return $result;
     }
 
-// true if the first char of the formula is a number
+    /**
+     * @returns bool true if the first char of the formula is a number
+     */
     private function next_char_is_num(string $formula): bool
     {
         $result = false;

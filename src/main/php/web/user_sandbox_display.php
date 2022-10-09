@@ -30,6 +30,8 @@
   
 */
 
+use html\html_selector;
+
 class user_sandbox_display extends user_sandbox_value
 {
 
@@ -81,6 +83,8 @@ class user_sandbox_display extends user_sandbox_value
      */
     function dsp_sandbox_wrd($user_id, $back_link)
     {
+        global $db_con;
+
         log_debug('zuu_dsp_sandbox_wrd(u' . $user_id . ')');
         $result = ''; // reset the html code var
 
@@ -92,12 +96,12 @@ class user_sandbox_display extends user_sandbox_value
                  words t
            WHERE u.user_id = " . $user_id . "
              AND u.word_id = t.word_id;";
-        $sql_result = zu_sql_get_all($sql);
+        $sql_result = $db_con->get_old($sql);
 
         // prepare to show the word link
         $row_nbr = 0;
         $result .= '<table>';
-        while ($wrd_row = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
+        foreach ($sql_result as $wrd_row) {
             $row_nbr++;
             $result .= '<tr>';
             if ($row_nbr == 1) {
@@ -120,6 +124,7 @@ class user_sandbox_display extends user_sandbox_value
      */
     function dsp_sandbox_frm($user_id, $back_link)
     {
+        global $db_con;
         log_debug('dsp_sandbox_frm(u' . $user_id . ')');
         $result = ''; // reset the html code var
 
@@ -132,12 +137,12 @@ class user_sandbox_display extends user_sandbox_value
                  formulas f
            WHERE u.user_id = " . $user_id . "
              AND u.formula_id = f.formula_id;";
-        $sql_result = zu_sql_get_all($sql);
+        $sql_result = $db_con->get_old($sql);
 
         // prepare to show the word link
         $row_nbr = 0;
         $result .= '<table>';
-        while ($wrd_row = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
+        foreach ($sql_result as $wrd_row) {
             $row_nbr++;
             $result .= '<tr>';
             if ($row_nbr == 1) {
