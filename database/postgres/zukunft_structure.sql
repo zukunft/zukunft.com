@@ -748,6 +748,7 @@ CREATE TABLE IF NOT EXISTS user_formulas
     formula_type_id   bigint         DEFAULT NULL,
     all_values_needed smallint       DEFAULT NULL,
     share_type_id     bigint         DEFAULT NULL,
+    protect_id        bigint    NOT NULL,
     last_update       timestamp NULL DEFAULT NULL,
     usage             bigint    NULL DEFAULT NULL,
     excluded          smallint       DEFAULT NULL
@@ -1009,6 +1010,7 @@ CREATE TABLE IF NOT EXISTS user_words
     description   text,
     word_type_id  bigint            DEFAULT NULL,
     view_id       bigint            DEFAULT NULL,
+    values        bigint            DEFAULT NULL,
     excluded      smallint          DEFAULT NULL,
     share_type_id smallint          DEFAULT NULL,
     protect_id    smallint NOT NULL DEFAULT '1'
@@ -1024,14 +1026,17 @@ CREATE TABLE IF NOT EXISTS user_word_links
 (
     word_link_id   BIGSERIAL PRIMARY KEY,
     user_id        bigint            DEFAULT NULL,
+    name_given     varchar(200)      DEFAULT NULL,
+    name_generated varchar(200)      DEFAULT NULL,
     description    text,
-    word_link_name varchar(200)      DEFAULT NULL,
+    values         bigint            DEFAULT NULL,
     excluded       smallint          DEFAULT NULL,
     share_type_id  smallint          DEFAULT NULL,
     protect_id     smallint NOT NULL DEFAULT '1'
 );
 
-COMMENT ON COLUMN user_word_links.word_link_name is 'the used unique name (either user created or generic based on the underlying)';
+COMMENT ON COLUMN user_word_links.name_given is 'the unique name manually set by the user, which can be empty';
+COMMENT ON COLUMN user_word_links.name_generated is 'the generic unique name based on the phrases and verb, which can be overwritten by the given name';
 
 -- --------------------------------------------------------
 
@@ -1436,11 +1441,13 @@ CREATE TABLE IF NOT EXISTS word_links
     from_phrase_id              bigint   NOT NULL,
     verb_id                     bigint   NOT NULL,
     to_phrase_id                bigint   NOT NULL,
+    name_given                  varchar(200)      DEFAULT NULL,
+    name_generated              varchar(200)      DEFAULT NULL,
+    description                 text,
     word_link_condition_id      bigint            DEFAULT NULL,
     word_link_condition_type_id bigint            DEFAULT NULL,
-    description                 text,
     word_type_id                bigint            DEFAULT NULL,
-    word_link_name              varchar(200)      DEFAULT NULL,
+    values                      bigint            DEFAULT NULL,
     excluded                    smallint          DEFAULT NULL,
     share_type_id               smallint          DEFAULT NULL,
     protect_id                  smallint NOT NULL DEFAULT '1'
@@ -1448,7 +1455,8 @@ CREATE TABLE IF NOT EXISTS word_links
 
 COMMENT ON COLUMN word_links.word_link_condition_id is 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
 COMMENT ON COLUMN word_links.word_link_condition_type_id is 'maybe not needed';
-COMMENT ON COLUMN word_links.word_link_name is 'the used unique name (either user created or generic based on the underlying)';
+COMMENT ON COLUMN word_links.name_given is 'the unique name manually set by the user, which can be empty';
+COMMENT ON COLUMN word_links.name_generated is 'the generic unique name based on the phrases and verb, which can be overwritten by the given name';
 
 -- --------------------------------------------------------
 
@@ -1526,7 +1534,7 @@ SELECT w.word_id   AS phrase_id,
        w.excluded,
        w.share_type_id,
        w.protect_id
-FROM user_words AS w
+  FROM user_words AS w
 UNION
 SELECT (l.word_link_id * -(1))                                                    AS phrase_id,
        l.user_id,
@@ -1536,7 +1544,7 @@ SELECT (l.word_link_id * -(1))                                                  
        l.excluded,
        l.share_type_id,
        l.protect_id
-FROM user_word_links AS l;
+  FROM user_word_links AS l;
 
 --
 -- Structure for view terms
@@ -1551,7 +1559,8 @@ SELECT ((w.word_id * 2) - 1) AS term_id,
        w.excluded,
        w.share_type_id,
        w.protect_id
-FROM words AS w
+  FROM words AS w
+ WHERE word_type_id <> 10
 UNION
 SELECT ((l.word_link_id * -2) + 1)                                                  AS term_id,
        l.user_id,
@@ -1561,7 +1570,7 @@ SELECT ((l.word_link_id * -2) + 1)                                              
        l.excluded,
        l.share_type_id,
        l.protect_id
-FROM word_links AS l
+  FROM word_links AS l
 UNION
 SELECT (f.formula_id * 2) AS term_id,
        f.user_id,
@@ -1571,7 +1580,7 @@ SELECT (f.formula_id * 2) AS term_id,
        f.excluded,
        f.share_type_id,
        f.protect_id
-FROM formulas AS f
+  FROM formulas AS f
 UNION
 SELECT (v.verb_id * -2) AS term_id,
        NULL            AS user_id,
@@ -1581,7 +1590,7 @@ SELECT (v.verb_id * -2) AS term_id,
        NULL            AS excluded,
        1               AS share_type_id,
        3               AS protect_id
-FROM verbs AS v
+  FROM verbs AS v
 ;
 
 --
@@ -1597,7 +1606,8 @@ SELECT ((w.word_id * 2) - 1) AS term_id,
        w.excluded,
        w.share_type_id,
        w.protect_id
-FROM user_words AS w
+  FROM user_words AS w
+ WHERE word_type_id <> 10
 UNION
 SELECT ((l.word_link_id * -2) + 1)                                                  AS term_id,
        l.user_id,
@@ -1607,7 +1617,7 @@ SELECT ((l.word_link_id * -2) + 1)                                              
        l.excluded,
        l.share_type_id,
        l.protect_id
-FROM user_word_links AS l
+  FROM user_word_links AS l
 UNION
 SELECT (f.formula_id * 2) AS term_id,
        f.user_id,
@@ -1617,7 +1627,7 @@ SELECT (f.formula_id * 2) AS term_id,
        f.excluded,
        f.share_type_id,
        f.protect_id
-FROM user_formulas AS f
+  FROM user_formulas AS f
 UNION
 SELECT (v.verb_id * -2) AS term_id,
        NULL            AS user_id,
@@ -1627,7 +1637,7 @@ SELECT (v.verb_id * -2) AS term_id,
        NULL            AS excluded,
        1               AS share_type_id,
        3               AS protect_id
-FROM verbs AS v
+  FROM verbs AS v
 ;
 
 -- --------------------------------------------------------
