@@ -489,13 +489,14 @@ class word extends user_sandbox_description
 
     /**
      * get a list of values related to this word
-     * @param int $limit
+     * @param int $page the offset / page
+     * @param int $size the number of values that should be returned
      * @return value_list a list object with the most relevant values related to this word
      */
-    function value_list(int $limit = SQL_ROW_LIMIT): value_list
+    function value_list(int $page = 1, int $size = SQL_ROW_LIMIT): value_list
     {
         $val_lst = new value_list($this->usr);
-        $val_lst->load();
+        $val_lst->load($page, $size);
         return $val_lst;
     }
 
@@ -958,9 +959,11 @@ class word extends user_sandbox_description
         return $result;
     }
 
-    // returns the html code to select a word
-    // database link must be open
-    function selector_word($id, $pos, $form_name): string
+    /**
+     * @returns string the html code to select a word
+     * database link must be open
+     */
+    function selector_word(int $id, int $pos, string $form_name): string
     {
         log_debug('word_dsp->selector_word ... word id ' . $id);
         $result = '';
@@ -982,8 +985,12 @@ class word extends user_sandbox_description
         return $result;
     }
 
-    //
-    private function type_selector($script, $bs_class): string
+    /**
+     * @param string $script
+     * @param string $bs_class
+     * @return string
+     */
+    private function type_selector(string $script, string $bs_class): string
     {
         $result = '';
         $sel = new html_selector;
@@ -998,8 +1005,10 @@ class word extends user_sandbox_description
         return $result;
     }
 
-    // HTML code to edit all word fields
-    function dsp_add($wrd_id, $wrd_to, $vrb_id, $back): string
+    /**
+     * @return string HTML code to edit all word fields
+     */
+    function dsp_add(int $wrd_id, int $wrd_to, int $vrb_id, $back): string
     {
         log_debug('word_dsp->dsp_add ' . $this->dsp_id() . ' or link the existing word with id ' . $wrd_id . ' to ' . $wrd_to . ' by verb ' . $vrb_id . ' for user ' . $this->usr->name . ' (called by ' . $back . ')');
         $result = '';
@@ -1081,7 +1090,7 @@ class word extends user_sandbox_description
             $dsp_log .= dsp_text_h3("Latest link changes related to this word", "change_hist");
             $dsp_log .= $changes;
         }
-        return $wrd_dsp->dsp_edit(
+        return $wrd_dsp->form_edit(
             $dsp_graph,
             $dsp_log,
             $this->dsp_formula($back),

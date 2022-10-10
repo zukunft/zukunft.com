@@ -31,10 +31,8 @@
 
 namespace html;
 
-use api\term_api;
 use api\word_api;
 use api\phrase_api;
-use html\phrase_dsp;
 use word;
 
 class word_dsp extends word_api
@@ -157,6 +155,14 @@ class word_dsp extends word_api
         return $html->tr($name . $btn);
     }
 
+    function form_add(): string
+    {
+        $html = new html_base();
+        $result = '';
+
+        return $result;
+    }
+
     /**
      * HTML code to edit all word fields
      * @param string $dsp_graph the html code of the related phrases
@@ -166,7 +172,7 @@ class word_dsp extends word_api
      * @param string $back the html code to be opened in case of a back action
      * @return string the html code to display the edit page
      */
-    function dsp_edit(string $dsp_graph, string $dsp_log, string $dsp_frm, string $dsp_type, string $back = ''): string
+    function form_edit(string $dsp_graph, string $dsp_log, string $dsp_frm, string $dsp_type, string $back = ''): string
     {
         $html = new html_base();
         $result = '';

@@ -56,7 +56,7 @@ class word_display_unit_tests
         $test_page .= 'view header<br>';
         $test_page .= $wrd->header() . '<br>';
         $test_page .= 'edit mask<br>';
-        $test_page .= $wrd->dsp_edit('', '', '', '') . '<br>';
+        $test_page .= $wrd->form_edit('', '', '', '') . '<br>';
         $t->html_test($test_page, 'word', $t);
     }
 

@@ -407,10 +407,16 @@ class html_base
 
     /**
      * create the html code to display a table
+     * @param string $form_name the unique name of the html form
      * @param string $tbl_rows the html code of all rows including the header rows
      * @return string the table html code
      */
-    function form(string $form_name, string $tbl_rows, string $submit_name = '', string $back = '', string $del_call = ''): string
+    function form(
+        string $form_name,
+        string $tbl_rows,
+        string $submit_name = '',
+        string $back = '',
+        string $del_call = ''): string
     {
         return $this->form_start($form_name) . $tbl_rows . $this->form_end($submit_name, $back, $del_call);
     }
@@ -474,7 +480,7 @@ class html_base
     /**
      * end a html form
      */
-    function form_end($submit_name, $back, $del_call = ''): string
+    function form_end(string $submit_name, string $back, $del_call = ''): string
     {
         $result = '';
         if (UI_USE_BOOTSTRAP) {
