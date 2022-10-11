@@ -36,7 +36,6 @@ use cfg\phrase_type;
 use html\term_dsp;
 use html\word_dsp;
 use word;
-use word_type;
 
 class word_api extends user_sandbox_named_api
 {
@@ -63,7 +62,7 @@ class word_api extends user_sandbox_named_api
     private ?phrase_api $parent;
 
     // repeat the type in the frontend object for faster selection
-    private ?\word_type $type;
+    private ?phrase_type $type;
 
     /*
      * construct and map
@@ -118,16 +117,12 @@ class word_api extends user_sandbox_named_api
      */
     public function set_type(string $type): void
     {
-        $this->type = new word_type($type);
+        $this->type = new phrase_type($type);
     }
 
-    function type(): string
+    function type(): ?phrase_type
     {
-        if ($this->type == null) {
-            return '';
-        } else {
-            return $this->type->code_id();
-        }
+        return $this->type;
     }
 
     /*

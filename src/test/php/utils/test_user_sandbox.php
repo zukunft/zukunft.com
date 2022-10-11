@@ -36,7 +36,7 @@ function run_user_sandbox_test(testing $t)
 {
 
     global $usr1;
-    global $word_types;
+    global $phrase_types;
 
     $t->header('Test the user sandbox class (classes/user_sandbox.php)');
 
@@ -47,7 +47,7 @@ function run_user_sandbox_test(testing $t)
     $wrd1->type_id = cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK);
     $wrd1->name = TW_MIO;
     $wrd2 = new word($usr1);
-    $wrd2->type_id = $word_types->default_id();
+    $wrd2->type_id = $phrase_types->default_id();
     $wrd2->name = TW_MIO;
     $target = false;
     $result = $wrd1->is_same($wrd2);

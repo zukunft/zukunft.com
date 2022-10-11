@@ -32,7 +32,7 @@
 
 */
 
-global $word_types;
+global $phrase_types;
 
 use api\triple_api;
 use cfg\share_type;
@@ -598,7 +598,7 @@ class word_link extends user_sandbox_link_description
     private
     function import_phrase(string $name, bool $do_save = true): phrase
     {
-        global $word_types;
+        global $phrase_types;
 
         $result = new phrase($this->usr);
         $result->name = $name;
@@ -610,7 +610,7 @@ class word_link extends user_sandbox_link_description
                 $wrd->load();
                 if ($wrd->id == 0) {
                     $wrd->name = $name;
-                    $wrd->type_id = $word_types->default_id();
+                    $wrd->type_id = $phrase_types->default_id();
                     $wrd->save();
                 }
                 if ($wrd->id == 0) {
@@ -632,7 +632,7 @@ class word_link extends user_sandbox_link_description
      */
     function import_obj(array $json_obj, bool $do_save = true): user_message
     {
-        global $word_types;
+        global $phrase_types;
         global $share_types;
         global $protection_types;
 
@@ -647,7 +647,7 @@ class word_link extends user_sandbox_link_description
                 $this->description = $value;
             }
             if ($key == exp_obj::FLD_TYPE) {
-                $this->type_id = $word_types->id($value);
+                $this->type_id = $phrase_types->id($value);
             }
             if ($key == self::FLD_EX_FROM) {
                 if ($value == "") {

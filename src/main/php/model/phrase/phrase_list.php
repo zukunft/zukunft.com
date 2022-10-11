@@ -987,7 +987,7 @@ class phrase_list
      */
     function import_lst(array $json_obj, bool $do_save = true): user_message
     {
-        global $word_types;
+        global $phrase_types;
 
         $result = new user_message();
         foreach ($json_obj as $value) {
@@ -1002,7 +1002,7 @@ class phrase_list
                         $wrd->load();
                         if ($wrd->id == 0) {
                             $wrd->name = $value;
-                            $wrd->type_id = $word_types->default_id();
+                            $wrd->type_id = $phrase_types->default_id();
                             $result->add_message($wrd->save());
                         }
                         if ($wrd->id == 0) {

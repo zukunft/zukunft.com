@@ -846,7 +846,7 @@ function prg_restart(string $code_name): sql_db
 {
     global $system_users;
     global $user_profiles;
-    global $word_types;
+    global $phrase_types;
     global $formula_types;
     global $formula_link_types;
     global $formula_element_types;
@@ -889,8 +889,8 @@ function prg_restart(string $code_name): sql_db
     // these tables are expected to be so small that it is more efficient to load all database records once at start
     $user_profiles = new user_profile_list();
     $user_profiles->load($db_con);
-    $word_types = new word_type_list();
-    $word_types->load($db_con);
+    $phrase_types = new word_type_list();
+    $phrase_types->load($db_con);
     $formula_types = new formula_type_list();
     $formula_types->load($db_con);
     $formula_link_types = new formula_link_type_list();

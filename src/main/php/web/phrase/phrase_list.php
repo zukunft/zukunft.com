@@ -35,7 +35,6 @@
 namespace html;
 
 use api\phrase_list_api;
-use word_type;
 
 class phrase_list_dsp extends phrase_list_api
 {

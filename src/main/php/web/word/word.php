@@ -33,6 +33,7 @@ namespace html;
 
 use api\word_api;
 use api\phrase_api;
+use cfg\phrase_type;
 use word;
 
 class word_dsp extends word_api
@@ -155,10 +156,47 @@ class word_dsp extends word_api
         return $html->tr($name . $btn);
     }
 
-    function form_add(): string
+    /**
+     * @param string $script
+     * @param string $bs_class
+     * @return string
+     */
+    private function type_selector(string $script, string $bs_class): string
+    {
+        $result = '';
+        $sel = new html_selector;
+        $sel->form = $script;
+        $sel->name = 'type';
+        $sel->label = "Word type:";
+        $sel->bs_class = $bs_class;
+        $sel->sql = sql_lst("word_type");
+        $sel->selected = $this->type()->id();
+        $sel->dummy_text = '';
+        $result .= $sel->display();
+        return $result;
+    }
+
+    function dsp_type_selector(string $back = ''): string
+    {
+        $result = '';
+        if ($this->type()->code_id() == phrase_type::FORMULA_LINK) {
+            $result .= ' type: ' . $this->type()->name();
+        } else {
+            $result .= $this->type_selector('word_edit', "col-sm-4");
+        }
+        return $result;
+    }
+
+    function form_add(string $back = ''): string
     {
         $html = new html_base();
+        $ui_msg = new msg();
         $result = '';
+
+        $header = $html->text_h2($ui_msg->txt(msg::FORM_WORD_ADD_TITLE));
+        $hidden_fields = $html->form_hidden("back", $back);
+        $hidden_fields .= $html->form_hidden("confirm", '1');
+        $detail_fields = $html->form_text("word_name", $this->plural(), $ui_msg->txt(msg::FORM_WORD_FLD_NAME));
 
         return $result;
     }

@@ -128,7 +128,7 @@ to avoid confusion words, formula names, word_links (verbs) and value_phrase_lin
 
 for words, formulas and verbs the user can add a specific name in any language
 
-Admin edit: for word_links (verbs), word_types, link_types, formula_types there is only one valid record and only an admin user is allowed to change it, which is also because these tables have a code id
+Admin edit: for word_links (verbs), phrase_types, link_types, formula_types there is only one valid record and only an admin user is allowed to change it, which is also because these tables have a code id
 
 Sources: every user can change it, but there is only one valid row
 

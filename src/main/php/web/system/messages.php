@@ -42,6 +42,8 @@ class msg
     const IP_BLOCK_PRE_ADDR = 'ip_block_pre_addr';
     const IP_BLOCK_POST_ADDR = 'ip_block_post_addr';
     const IP_BLOCK_SOLUTION = 'ip_block_solution';
+    const FORM_WORD_ADD_TITLE = 'form_word_add_title';
+    const FORM_WORD_FLD_NAME = 'form_word_fld_name';
 
     public function txt(string $message_id): string
     {
@@ -71,6 +73,12 @@ class msg
             case self::IP_BLOCK_SOLUTION:
                 $msg_text = '. If you think, this should not be the case, ' .
                     'please request the unblocking with an email to admin@zukunft.com.';
+                break;
+            case self::FORM_WORD_ADD_TITLE:
+                $msg_text = 'Add a new word';
+                break;
+            case self::FORM_WORD_FLD_NAME:
+                $msg_text = 'Word name';
                 break;
             default:
                 $msg_text = $message_id . ' (translation missing)';

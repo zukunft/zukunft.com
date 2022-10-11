@@ -164,10 +164,10 @@ class test_unit extends testing
      */
     function init_word_types()
     {
-        global $word_types;
+        global $phrase_types;
 
-        $word_types = new word_type_list();
-        $word_types->load_dummy();
+        $phrase_types = new word_type_list();
+        $phrase_types->load_dummy();
 
     }
 

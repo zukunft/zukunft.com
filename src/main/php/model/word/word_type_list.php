@@ -29,7 +29,7 @@
   
 */
 
-global $word_types;
+global $phrase_types;
 
 use cfg\phrase_type;
 

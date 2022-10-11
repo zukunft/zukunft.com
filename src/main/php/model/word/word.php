@@ -630,7 +630,7 @@ class word extends user_sandbox_description
      */
     function import_obj(array $json_obj, bool $do_save = true): user_message
     {
-        global $word_types;
+        global $phrase_types;
         global $share_types;
         global $protection_types;
 
@@ -646,7 +646,7 @@ class word extends user_sandbox_description
                 $this->name = $value;
             }
             if ($key == exp_obj::FLD_TYPE) {
-                $this->type_id = $word_types->id($value);
+                $this->type_id = $phrase_types->id($value);
             }
             if ($key == self::FLD_PLURAL) {
                 if ($value <> '') {
@@ -681,7 +681,7 @@ class word extends user_sandbox_description
 
         // set the default type if no type is specified
         if ($this->type_id == 0) {
-            $this->type_id = $word_types->default_id();
+            $this->type_id = $phrase_types->default_id();
         }
         // save the word in the database
         if ($do_save) {
@@ -720,7 +720,7 @@ class word extends user_sandbox_description
      */
     function export_obj(bool $do_load = true): user_sandbox_exp_named
     {
-        global $word_types;
+        global $phrase_types;
 
         log_debug();
         $result = new word_exp();
@@ -735,7 +735,7 @@ class word extends user_sandbox_description
             $result->description = $this->description;
         }
         if (isset($this->type_id)) {
-            if ($this->type_id <> $word_types->default_id()) {
+            if ($this->type_id <> $phrase_types->default_id()) {
                 $result->type = $this->type_code_id();
             }
         }
@@ -1132,9 +1132,9 @@ class word extends user_sandbox_description
      */
     function btn_add(string $back = ''): string
     {
-        global $word_types;
+        global $phrase_types;
         $vrb_is = cl(db_cl::VERB, verb::IS_A);
-        $wrd_type = $word_types->default_id(); // maybe base it on the other linked words
+        $wrd_type = $phrase_types->default_id(); // maybe base it on the other linked words
         $wrd_add_title = "add a new " . $this->name;
         $wrd_add_call = "/http/word_add.php?verb=" . $vrb_is . "&word=" . $this->id . "&type=" . $wrd_type . "&back=" . $back . "";
         return (new button($wrd_add_title, $wrd_add_call))->add();
@@ -1156,8 +1156,8 @@ class word extends user_sandbox_description
      */
     function type_name(): string
     {
-        global $word_types;
-        return $word_types->name($this->type_id);
+        global $phrase_types;
+        return $phrase_types->name($this->type_id);
     }
 
     /**
@@ -1166,8 +1166,8 @@ class word extends user_sandbox_description
      */
     function type_code_id(): string
     {
-        global $word_types;
-        return $word_types->code_id($this->type_id);
+        global $phrase_types;
+        return $phrase_types->code_id($this->type_id);
     }
 
     /**
@@ -1176,12 +1176,12 @@ class word extends user_sandbox_description
      */
     function is_type(string $type): bool
     {
-        global $word_types;
+        global $phrase_types;
 
         log_debug($this->dsp_id() . ' is ' . $type);
 
         $result = false;
-        if ($this->type_id == $word_types->id($type)) {
+        if ($this->type_id == $phrase_types->id($type)) {
             $result = true;
             log_debug($this->dsp_id() . ' is ' . $type);
         }
@@ -1622,7 +1622,7 @@ class word extends user_sandbox_description
      */
     function has_cfg(): bool
     {
-        global $word_types;
+        global $phrase_types;
 
         $has_cfg = false;
         if (isset($this->plural)) {
@@ -1636,7 +1636,7 @@ class word extends user_sandbox_description
             }
         }
         if (isset($this->type_id)) {
-            if ($this->type_id <> $word_types->default_id()) {
+            if ($this->type_id <> $phrase_types->default_id()) {
                 $has_cfg = true;
             }
         }

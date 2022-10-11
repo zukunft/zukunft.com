@@ -930,11 +930,11 @@ class phrase
      */
     function is_percent(): bool
     {
-        global $word_types;
+        global $phrase_types;
 
         $result = false;
         if ($this->obj != null) {
-            if ($this->obj->type_id == $word_types->id(phrase_type::PERCENT)) {
+            if ($this->obj->type_id == $phrase_types->id(phrase_type::PERCENT)) {
                 $result = true;
             }
         } else {
