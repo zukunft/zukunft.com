@@ -46,7 +46,7 @@ class user_sandbox_api
 {
 
     // fields for the backend link
-    protected int $id; // the database id of the object, which is the same as the related database object in the backend
+    public int $id; // the database id of the object, which is the same as the related database object in the backend
 
     /*
      * construct and map

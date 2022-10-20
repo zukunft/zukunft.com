@@ -2,7 +2,7 @@
 
 /*
 
-  api/phrase/read.php - send a word to the frontend
+  api/phrase/read.php - the word API controller: send a word to the frontend
   ------------
   
   This file is part of zukunft.com - calc with words
@@ -30,17 +30,20 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use api\word_api;
+
 $debug = $_GET['debug'] ?? 0;
-include_once '../../src/main/php/zu_lib.php';
+const ROOT_PATH = __DIR__ . '/../../';
+include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
-$db_con = prg_start("api/word");
+$db_con = prg_start("api/word", "", false);
 
 // get the parameters
 $wrd_id = $_GET['id'] ?? 0;
 
 $msg = '';
-$result = new \api\word_api(); // reset the html code var
+$result = new word_api(); // reset the html code var
 
 // load the session user parameters
 $usr = new user;
@@ -84,4 +87,4 @@ if ($msg == '') {
 
 }
 
-prg_end($db_con);
+prg_end_api($db_con);

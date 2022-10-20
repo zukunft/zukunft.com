@@ -53,7 +53,7 @@ class word_api extends user_sandbox_named_api
     const TN_CONST = 'Pi';
 
     // the mouse over tooltip for the word
-    protected ?string $description = null;
+    public ?string $description = null;
 
     // the language specific forms
     private ?string $plural = null;

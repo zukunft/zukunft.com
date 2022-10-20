@@ -40,7 +40,7 @@ class user_sandbox_named_api extends user_sandbox_api
 
     // the unique name of the object that is shown to the user
     // the name must always be set
-    protected string $name;
+    public string $name;
 
     // all named objects can have a type that links predefined functionality to it
     // e.g. all value assigned with the percent word are per default shown as percent with two decimals

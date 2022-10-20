@@ -182,9 +182,6 @@ const DB_FIELD_EXT_NAME = '_name';
 // the fixed system user
 const SYSTEM_USER_ID = 1; //
 
-const ROOT_PATH = '../';
-
-
 // the main global vars to shorten the code by avoiding them in many function calls as parameter
 global $db_com; // the database connection
 global $usr;    // the session user
@@ -203,17 +200,12 @@ $sys_time_start = time();
 $sys_time_limit = time() + 2;
 $sys_log_msg_lst = array();
 
-/*
-global $root_path;
-
-if ($root_path == '') {
-    $root_path = '../';
-}
-*/
-
 
 // set the paths of the program code
 $path_php = ROOT_PATH . 'src/main/php/'; // path of the main php source code
+
+// TODO check php version
+//phpinfo();
 
 // database links
 include_once ROOT_PATH . 'database/sql_db.php';
@@ -965,14 +957,13 @@ function load_usr_data()
 
 }
 
-function prg_end($db_con)
+/**
+ * write the execution time to the database if it is long
+ */
+function prg_end_write_time($db_con)
 {
     global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
-    $html = new html_base();
-    echo $html->footer();
-
-    // write the execution time to the database if it is long
     $sys_time_end = time();
     if ($sys_time_end > $sys_time_limit) {
         $db_con->usr_id = SYSTEM_USER_ID;
@@ -992,17 +983,27 @@ function prg_end($db_con)
         $db_con->exe($sql);
     }
 
-    // Free result test
-    //mysqli_free_result($result);
-
-    // Closing connection
-    $db_con->close();
-
     // free the global vars
     unset($sys_log_msg_lst);
     unset($sys_script);
     unset($sys_time_limit);
     unset($sys_time_start);
+}
+
+function prg_end($db_con)
+{
+    global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
+
+    $html = new html_base();
+    echo $html->footer();
+
+    prg_end_write_time($db_con);
+
+    // Free result test
+    //mysqli_free_result($result);
+
+    // Closing connection
+    $db_con->close();
 
     log_debug(' ... database link closed');
 }
@@ -1016,14 +1017,10 @@ function prg_end_about($link)
     $html = new html_base();
     echo $html->footer(true);
 
+    prg_end_write_time($db_con);
+
     // Closing connection
     $db_con->close();
-
-    // free the global vars
-    unset($sys_log_msg_lst);
-    unset($sys_script);
-    unset($sys_time_limit);
-    unset($sys_time_start);
 
     log_debug(' ... database link closed');
 }
@@ -1035,23 +1032,17 @@ function prg_end_api($link)
     global $db_con;
     global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
+    prg_end_write_time($db_con);
+
     // Closing connection
     $db_con->close();
-
-    // free the global vars
-    unset($sys_log_msg_lst);
-    unset($sys_script);
-    unset($sys_time_limit);
-    unset($sys_time_start);
 
     log_debug(' ... database link closed');
 }
 
 /*
-
-display functions
-
-*/
+ * display functions
+ */
 
 // to display a boolean var
 function zu_dsp_bool($bool_var): string
