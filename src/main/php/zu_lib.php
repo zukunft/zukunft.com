@@ -204,7 +204,13 @@ $sys_log_msg_lst = array();
 // set the paths of the program code
 $path_php = ROOT_PATH . 'src/main/php/'; // path of the main php source code
 
-// TODO check php version
+// check php version
+$version = explode('.', PHP_VERSION);
+if ($version[0] < 8) {
+    if ($version[1] < 1) {
+        echo 'at least php version 8.1 is needed';
+    }
+}
 //phpinfo();
 
 // database links
