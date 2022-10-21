@@ -337,6 +337,7 @@ include_once $path_php . 'model/view/view_cmp_link_list.php';
 include_once $path_php . 'model/view/view_cmp_link_types.php';
 // general frontend API classes
 include_once $path_php . 'api/message_header.php';
+include_once $path_php . 'api/controller.php';
 include_once $path_php . 'api/system/error_log.php';
 include_once $path_php . 'api/system/error_log_list.php';
 include_once $path_php . 'api/system/batch_job.php';

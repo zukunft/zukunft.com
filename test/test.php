@@ -208,7 +208,7 @@ if ($start_usr->id > 0) {
             (new string_unit_tests)->run($t); // test functions not yet split into single unit tests
             run_math_test($t);
             run_word_tests($t);
-            run_word_api_test($t);
+            run_api_test($t);
             //run_word_ui_test($t);
             run_word_display_test($t);
             run_word_list_test($t);

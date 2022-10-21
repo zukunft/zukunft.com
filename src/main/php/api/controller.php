@@ -2,9 +2,8 @@
 
 /*
 
-  test_word_ui.php - TESTing of the WORD User Interface
-  ------------------
-  
+    controller.php - the base class for API controller
+    --------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,17 +29,39 @@
 
 */
 
-// --------------------------------------
-// start testing the system functionality 
-// --------------------------------------
+namespace controller;
 
-function run_api_test(testing $t)
+use api\user_sandbox_api;
+
+class controller
 {
-    global $usr;
 
-    $t->assert_api_get(word::class);
-    $t->assert_api_get(verb::class);
+    function get(user_sandbox_api $api_obj, string $msg): void
+    {
+        // required headers
+        header("Access-Control-Allow-Origin: *");
+        header("Content-Type: application/json; charset=UTF-8");
 
-    // $t->assert_rest(new word($usr, word::TN_READ));
+        // return the word json or the error message
+        if ($msg == '') {
 
+            // set response code - 200 OK
+            http_response_code(200);
+
+            // return the word object
+            echo json_encode($api_obj);
+
+        } else {
+
+            // set response code - 400 Bad Request
+            http_response_code(400);
+
+            // tell the user no products found
+            echo json_encode(
+                array("message" => $msg)
+            );
+
+        }
+
+    }
 }

@@ -2,10 +2,10 @@
 
 /*
 
-  api/word/index.php - the word API controller: send a word to the frontend
+  api/verb/index.php - the verb API controller: send a verb to the frontend
   ------------------
   
-  This file is part of zukunft.com - calc with words
+  This file is part of zukunft.com - calc with verbs
 
   zukunft.com is free software: you can redistribute it and/or modify it
   under the terms of the GNU General Public License as
@@ -29,7 +29,7 @@
   
 */
 
-use api\word_api;
+use api\verb_api;
 use controller\controller;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
@@ -38,13 +38,13 @@ const ROOT_PATH = __DIR__ . '/../../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
-$db_con = prg_start("api/word", "", false);
+$db_con = prg_start("api/verb", "", false);
 
 // get the parameters
-$wrd_id = $_GET['id'] ?? 0;
+$vrb_id = $_GET['id'] ?? 0;
 
 $msg = '';
-$result = new word_api(); // reset the html code var
+$result = new verb_api(); // reset the html code var
 
 // load the session user parameters
 $usr = new user;
@@ -53,13 +53,13 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
 
-    if ($wrd_id > 0) {
-        $wrd = new word($usr);
-        $wrd->id = $wrd_id;
-        $wrd->load();
-        $result = $wrd->api_obj();
+    if ($vrb_id > 0) {
+        $vrb = new verb();
+        $vrb->id = $vrb_id;
+        $vrb->load();
+        $result = $vrb->api_obj();
     } else {
-        $msg = 'word id is missing';
+        $msg = 'verb id is missing';
     }
 }
 
