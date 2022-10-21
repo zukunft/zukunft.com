@@ -31,7 +31,8 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 $debug = $_GET['debug'] ?? 0;
-include_once '../src/main/php/zu_lib.php';
+const ROOT_PATH = __DIR__ . '/../';
+include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("value");
@@ -65,7 +66,7 @@ if ($usr->id > 0) {
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(explode(",", $wrd_names));
 
-        $result .= $wrd_lst->name_linked();
+        $result .= $wrd_lst->dsp_obj()->dsp();
         $result .= ' = ';
         $val = $wrd_lst->value();
         $result .= $val->display_linked($back);

@@ -137,7 +137,8 @@ global $debug;
 $debug = $_GET['debug'] ?? 0;
 
 // load the main functions
-include_once '../src/main/php/zu_lib.php';
+const ROOT_PATH = __DIR__ . '/../';
+include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database and display header
 $db_con = prg_start("unit and integration testing");
@@ -207,6 +208,7 @@ if ($start_usr->id > 0) {
             (new string_unit_tests)->run($t); // test functions not yet split into single unit tests
             run_math_test($t);
             run_word_tests($t);
+            run_word_api_test($t);
             //run_word_ui_test($t);
             run_word_display_test($t);
             run_word_list_test($t);

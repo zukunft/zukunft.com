@@ -40,6 +40,8 @@
 // TODO move the names and values for testing to the single objects and check that they cannot be used by an user
 // TODO add checks that all id (name or link) changing return the correct error message if the new id already exists
 
+CONST HOST_TESTING = 'http://localhost';
+
 global $debug;
 global $root_path;
 
@@ -54,6 +56,7 @@ $path_test = $root_path . 'src/test/php/';     // the test base path
 $path_utils = $path_test . 'utils/';           // for the general tests and test setup
 $path_unit = $path_test . 'unit/';             // for unit tests
 $path_unit_db = $path_test . 'unit_db/';       // for the unit tests with database real only
+$path_unit_api = $path_test . 'api/';          // for the unit tests of the frontend API
 $path_unit_dsp = $path_test . 'unit_display/'; // for the unit tests that create HTML code
 $path_unit_ui = $path_test . 'unit_ui/';       // for the unit tests that create JSON messages for the frontend
 $path_unit_save = $path_test . 'unit_save/';   // for the unit tests that save to database (and cleanup the test data after completion)
@@ -105,6 +108,7 @@ include_once $path_unit . 'word_display.php';
 include_once $path_unit . 'word_list_display.php';
 include_once $path_unit . 'triple_display.php';
 include_once $path_unit . 'phrase_list_display.php';
+include_once $path_unit_api . 'word.php';
 include_once $path_unit_dsp . 'test_display.php';
 include_once $path_unit_dsp . 'type_lists.php';
 
@@ -1248,6 +1252,20 @@ class test_base
     }
 
     /**
+     * check if an object json file can be recreated by importing the object and recreating the json with the export function
+     *
+     * @param string $class the class name of the object to test
+     * @param int $id the database id of the db row that should be used for testing
+     * @return bool true if the json has no relevant differences
+     */
+    function assert_api_get(string $class, int $id = 1): bool
+    {
+        $actual = json_decode($this->api_call("GET", HOST_TESTING . '/api/' . $class, array("id" => $id)), true);
+        $expected = json_decode($this->file('api/' . $class . '/' . $class . '.json'), true);
+        return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
+    }
+
+    /**
      * check if the REST curl calls are possible
      *
      * @param object $usr_obj the object to enrich which REST curl calls should be tested
@@ -1256,7 +1274,7 @@ class test_base
     function assert_rest(object $usr_obj): bool
     {
         $obj_name = get_class($usr_obj);
-        $url_read = 'api/' . $obj_name . '/read.php';
+        $url_read = 'api/' . $obj_name . '/index.php';
         $original_json = json_decode(json_encode($usr_obj->$usr_obj()), true);
         $recreated_json = '';
         $api_obj = $usr_obj->api_obj();
@@ -1750,6 +1768,40 @@ class test_base
         return $this->seq_nbr;
     }
 
+    function api_call($method, $url, $data = false)
+    {
+        $curl = curl_init();
+
+        switch ($method)
+        {
+            case "POST":
+                curl_setopt($curl, CURLOPT_POST, 1);
+
+                if ($data)
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                break;
+            case "PUT":
+                curl_setopt($curl, CURLOPT_PUT, 1);
+                break;
+            default:
+                if ($data)
+                    $url = sprintf("%s?%s", $url, http_build_query($data));
+        }
+
+        // Optional Authentication:
+        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($curl, CURLOPT_USERPWD, "username:password");
+
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+
+        $result = curl_exec($curl);
+
+        curl_close($curl);
+
+        return $result;
+    }
 }
 
 

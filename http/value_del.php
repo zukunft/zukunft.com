@@ -32,9 +32,11 @@
 // standard zukunft header for callable php files to allow debugging and lib loading
 use html\api;
 use html\button;
+use html\html_base;
 
 $debug = $_GET['debug'] ?? 0;
-include_once '../src/main/php/zu_lib.php';
+const ROOT_PATH = __DIR__ . '/../';
+include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // to create the code for the html frontend
 $html = new html_base();

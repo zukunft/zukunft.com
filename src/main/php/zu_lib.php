@@ -211,6 +211,7 @@ if ($version[0] < 8) {
         echo 'at least php version 8.1 is needed';
     }
 }
+//check if "sudo apt-get install php-curl" is done for testing
 //phpinfo();
 
 // database links

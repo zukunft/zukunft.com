@@ -2,11 +2,9 @@
 
 /*
 
-    test_units.php - for fast internal code consistency TESTing of the technical library functions without database connection
-    ------------
-
-    because these tests are done without the database, we don't care if the is called by anybody, so we don't need the admin user test
-
+  test_word_ui.php - TESTing of the WORD User Interface
+  ------------------
+  
 
     This file is part of zukunft.com - calc with words
 
@@ -32,27 +30,16 @@
 
 */
 
-// standard zukunft header for callable php files to allow debugging and lib loading
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+// --------------------------------------
+// start testing the system functionality 
+// --------------------------------------
 
+function run_word_api_test(testing $t)
+{
+    global $usr;
 
-// load the testing functions
-include_once '../src/test/php/utils/test_base.php';
+    $t->assert_api_get(word::class);
 
-// ---------------
-// prepare testing
-// ---------------
+    // $t->assert_rest(new word($usr, word::TN_READ));
 
-$t = new test_unit();
-
-// ------------------
-// start unit testing
-// ------------------
-
-$t->run_unit();
-
-// display the test results
-$t->dsp_result_html();
-$t->dsp_result();
+}

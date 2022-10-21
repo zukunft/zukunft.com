@@ -30,7 +30,8 @@
 
 */
 
-include_once '../src/main/php/zu_lib.php';
+const ROOT_PATH = __DIR__ . '/../';
+include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database and display header
 $db_con = prg_start("test_reset_db");

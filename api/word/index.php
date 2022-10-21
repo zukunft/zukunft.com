@@ -2,7 +2,7 @@
 
 /*
 
-  api/phrase/read.php - the word API controller: send a word to the frontend
+  api/phrase/index.php - the word API controller: send a word to the frontend
   ------------
   
   This file is part of zukunft.com - calc with words

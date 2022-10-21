@@ -68,7 +68,8 @@ function err_dsp($err_id, $user_id)
 
 
 $debug = $_GET['debug'] ?? 0;
-include_once '../src/main/php/zu_lib.php';
+const ROOT_PATH = __DIR__ . '/../';
+include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 $db_con = prg_start("error_log");
 

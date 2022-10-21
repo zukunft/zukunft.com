@@ -31,7 +31,8 @@
 */
 
 $debug = $_GET['debug'] ?? 0;
-include_once '../src/main/php/zu_lib.php';
+const ROOT_PATH = __DIR__ . '/../';
+include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 $result = ''; // reset the html code var
 
@@ -73,7 +74,7 @@ if ($db_con == null) {
 
         // show the matching words to select
         $wrd_lst = new word_list($usr);
-        $result .= $wrd_lst->dsp_like($find_str, $usr);
+        $result .= $wrd_lst->dsp_obj()->dsp_like($find_str, $usr);
 
         // show the matching terms to select
         // TODO create a term list object

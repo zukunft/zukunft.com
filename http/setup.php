@@ -12,7 +12,8 @@
 use cfg\phrase_type;
 
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+const ROOT_PATH = __DIR__ . '/../';
+include_once ROOT_PATH . 'src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 /*
 

@@ -31,7 +31,8 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 $debug = $_GET['debug'] ?? 0;
-include_once '../src/main/php/zu_lib.php';
+const ROOT_PATH = __DIR__ . '/../';
+include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("view_select");
@@ -80,7 +81,7 @@ if ($usr->id > 0) {
     $result .= $dsp->selector_page($word_id, $back);
 
     // show the changes
-    $result .= $wrd->dsp_log_view($back);
+    $result .= $wrd->dsp_obj()->dsp_log_view($back);
 }
 
 echo $result;

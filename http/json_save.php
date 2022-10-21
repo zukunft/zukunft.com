@@ -33,7 +33,8 @@
 use export\json_io;
 
 $debug = $_GET['debug'] ?? 0;
-include_once '../src/main/php/zu_lib.php';
+const ROOT_PATH = __DIR__ . '/../';
+include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start_api("json_save");
