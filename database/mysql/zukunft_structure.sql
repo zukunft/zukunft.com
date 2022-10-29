@@ -397,12 +397,12 @@ CREATE TABLE IF NOT EXISTS `phrase_group_triple_links`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`phrase_group_word_links`
+-- Table structure for table`phrase_group_triples`
 --
 
-CREATE TABLE IF NOT EXISTS `phrase_group_word_links`
+CREATE TABLE IF NOT EXISTS `phrase_group_triples`
 (
-    `phrase_group_word_link_id` int(11) NOT NULL,
+    `phrase_group_triple_id` int(11) NOT NULL,
     `phrase_group_id`           int(11) NOT NULL,
     `word_id`                   int(11) NOT NULL
 ) ENGINE = InnoDB
@@ -810,12 +810,12 @@ CREATE TABLE IF NOT EXISTS `user_phrase_group_triple_links`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`user_phrase_group_word_links`
+-- Table structure for table`user_phrase_group_triples`
 --
 
-CREATE TABLE IF NOT EXISTS `user_phrase_group_word_links`
+CREATE TABLE IF NOT EXISTS `user_phrase_group_triples`
 (
-    `phrase_group_word_link_id` int(11) NOT NULL,
+    `phrase_group_triple_id` int(11) NOT NULL,
     `user_id`                   int(11)    DEFAULT NULL,
     `excluded`                  tinyint(4) DEFAULT NULL
 ) ENGINE = InnoDB
@@ -1011,12 +1011,12 @@ CREATE TABLE IF NOT EXISTS `user_words`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`user_word_links`
+-- Table structure for table`user_triples`
 --
 
-CREATE TABLE IF NOT EXISTS `user_word_links`
+CREATE TABLE IF NOT EXISTS `user_triples`
 (
-    `word_link_id`   int(11) NOT NULL,
+    `triple_id`   int(11) NOT NULL,
     `user_id`        int(11)      DEFAULT NULL,
     `name_given`     varchar(200) DEFAULT NULL COMMENT 'the unique name manually set by the user, which can be empty',
     `name_generated` varchar(200) DEFAULT NULL COMMENT 'the generic unique name based on the phrases and verb, which can be overwritten by the given name',
@@ -1321,13 +1321,13 @@ CREATE TABLE IF NOT EXISTS `view_types`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`view_word_links`
+-- Table structure for table`view_term_links`
 --
 
-CREATE TABLE IF NOT EXISTS `view_word_links`
+CREATE TABLE IF NOT EXISTS `view_term_links`
 (
     `view_term_link_id` int(11) NOT NULL,
-    `word_id`           int(11) NOT NULL,
+    `term_id`           int(11) NOT NULL,
     `type_id`           int(11) NOT NULL DEFAULT '1' COMMENT '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups',
     `link_type_id`      int(11)          DEFAULT NULL,
     `view_id`           int(11)          DEFAULT NULL
@@ -1394,12 +1394,12 @@ CREATE TABLE IF NOT EXISTS `word_del_requests`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`word_links`
+-- Table structure for table`triples`
 --
 
-CREATE TABLE IF NOT EXISTS `word_links`
+CREATE TABLE IF NOT EXISTS `triples`
 (
-    `word_link_id`                int(11) NOT NULL,
+    `triple_id`                int(11) NOT NULL,
     `user_id`                     int(11)      DEFAULT NULL,
     `from_phrase_id`              int(11) NOT NULL,
     `verb_id`                     int(11) NOT NULL,
@@ -1407,8 +1407,8 @@ CREATE TABLE IF NOT EXISTS `word_links`
     `name_given`                  varchar(200) DEFAULT NULL COMMENT 'the unique name manually set by the user, which can be empty',
     `name_generated`              varchar(200) DEFAULT NULL COMMENT 'the generic unique name based on the phrases and verb, which can be overwritten by the given name',
     `description`                 text,
-    `word_link_condition_id`      int(11)      DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true',
-    `word_link_condition_type_id` int(11)      DEFAULT NULL COMMENT 'maybe not needed',
+    `triple_condition_id`      int(11)      DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true',
+    `triple_condition_type_id` int(11)      DEFAULT NULL COMMENT 'maybe not needed',
     `word_type_id`                int(11)      DEFAULT NULL,
     `values`                      int(11)      DEFAULT NULL,
     `excluded`                    tinyint(4)   DEFAULT NULL,
@@ -1469,16 +1469,16 @@ select `words`.`word_id`            AS `phrase_id`,
        `words`.`protect_id` AS `protect_id`
   from `words`
 union
-select (`word_links`.`word_link_id` * -(1)) AS `phrase_id`,
-       `word_links`.`user_id`               AS `user_id`,
-       if(`word_links`.`name_given` is null, `word_links`.`name_generated`, `word_links`.`name_given`) AS `name_used`,
-       `word_links`.`description`           AS `description`,
-       `word_links`.`values`                AS `values`,
-       `word_links`.`word_type_id`          AS `word_type_id`,
-       `word_links`.`excluded`              AS `excluded`,
-       `word_links`.`share_type_id`         AS `share_type_id`,
-       `word_links`.`protect_id`    AS `protect_id`
-  from `word_links`;
+select (`triples`.`triple_id` * -(1)) AS `phrase_id`,
+       `triples`.`user_id`               AS `user_id`,
+       if(`triples`.`name_given` is null, `triples`.`name_generated`, `triples`.`name_given`) AS `name_used`,
+       `triples`.`description`           AS `description`,
+       `triples`.`values`                AS `values`,
+       `triples`.`word_type_id`          AS `word_type_id`,
+       `triples`.`excluded`              AS `excluded`,
+       `triples`.`share_type_id`         AS `share_type_id`,
+       `triples`.`protect_id`    AS `protect_id`
+  from `triples`;
 
 --
 -- Structure for view`phrases`
@@ -1497,15 +1497,15 @@ select `user_words`.`word_id`       AS `phrase_id`,
        `user_words`.`protect_id`    AS `protect_id`
   from `user_words`
 union
-select (`user_word_links`.`word_link_id` * -(1)) AS `phrase_id`,
-       `user_word_links`.`user_id`               AS `user_id`,
-       if(`user_word_links`.`name_given` is null, `user_word_links`.`name_generated`, `user_word_links`.`name_given`) AS `name_used`,
-       `user_word_links`.`description`           AS `description`,
-       `user_word_links`.`values`                AS `values`,
-       `user_word_links`.`excluded`              AS `excluded`,
-       `user_word_links`.`share_type_id`         AS `share_type_id`,
-       `user_word_links`.`protect_id`            AS `protect_id`
-  from `user_word_links`;
+select (`user_triples`.`triple_id` * -(1)) AS `phrase_id`,
+       `user_triples`.`user_id`               AS `user_id`,
+       if(`user_triples`.`name_given` is null, `user_triples`.`name_generated`, `user_triples`.`name_given`) AS `name_used`,
+       `user_triples`.`description`           AS `description`,
+       `user_triples`.`values`                AS `values`,
+       `user_triples`.`excluded`              AS `excluded`,
+       `user_triples`.`share_type_id`         AS `share_type_id`,
+       `user_triples`.`protect_id`            AS `protect_id`
+  from `user_triples`;
 
 
 --
@@ -1525,15 +1525,15 @@ select ((`words`.`word_id` * 2) - 1) AS `term_id`,
     from `words`
    where `words`.`word_type_id` <> 10
 union
-select ((`word_links`.`word_link_id` * -2) + 1) AS `term_id`,
-         `word_links`.`user_id`                 AS `user_id`,
-         if(`word_links`.`name_given` is null, `word_links`.`name_generated`, `word_links`.`name_given`) AS `term_name`,
-         `word_links`.`description`             AS `description`,
-         `word_links`.`values`                  AS `usage`,
-         `word_links`.`excluded`                AS `excluded`,
-         `word_links`.`share_type_id`           AS `share_type_id`,
-         `word_links`.`protect_id`              AS `protect_id`
-    from `word_links`
+select ((`triples`.`triple_id` * -2) + 1) AS `term_id`,
+         `triples`.`user_id`                 AS `user_id`,
+         if(`triples`.`name_given` is null, `triples`.`name_generated`, `triples`.`name_given`) AS `term_name`,
+         `triples`.`description`             AS `description`,
+         `triples`.`values`                  AS `usage`,
+         `triples`.`excluded`                AS `excluded`,
+         `triples`.`share_type_id`           AS `share_type_id`,
+         `triples`.`protect_id`              AS `protect_id`
+    from `triples`
 union
 select (`formulas`.`formula_id` * 2) AS `term_id`,
         `formulas`.`user_id`         AS `user_id`,
@@ -1574,15 +1574,15 @@ select ((`user_words`.`word_id` * 2) - 1) AS `term_id`,
   from `user_words`
  where `user_words`.`word_type_id` <> 10
 union
-select ((`user_word_links`.`word_link_id` * -2) + 1) AS `term_id`,
-       `user_word_links`.`user_id`                   AS `user_id`,
-        if(`user_word_links`.`name_given` is null, `user_word_links`.`name_generated`, `user_word_links`.`name_given`) AS `term_name`,
-       `user_word_links`.`description`               AS `description`,
-       `user_word_links`.`values`                    AS `usage`,
-       `user_word_links`.`excluded`                  AS `excluded`,
-       `user_word_links`.`share_type_id`             AS `share_type_id`,
-       `user_word_links`.`protect_id`                AS `protect_id`
-  from `user_word_links`
+select ((`user_triples`.`triple_id` * -2) + 1) AS `term_id`,
+       `user_triples`.`user_id`                   AS `user_id`,
+        if(`user_triples`.`name_given` is null, `user_triples`.`name_generated`, `user_triples`.`name_given`) AS `term_name`,
+       `user_triples`.`description`               AS `description`,
+       `user_triples`.`values`                    AS `usage`,
+       `user_triples`.`excluded`                  AS `excluded`,
+       `user_triples`.`share_type_id`             AS `share_type_id`,
+       `user_triples`.`protect_id`                AS `protect_id`
+  from `user_triples`
 union
 select (`user_formulas`.`formula_id` * 2) AS `term_id`,
        `user_formulas`.`user_id`          AS `user_id`,
@@ -1614,10 +1614,10 @@ DROP TABLE IF EXISTS `phrase_group_phrase_links`;
 
 CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
     SECURITY DEFINER VIEW `phrase_group_phrase_links` AS
-select `phrase_group_word_links`.`phrase_group_word_link_id` AS `phrase_group_phrase_link_id`,
-       `phrase_group_word_links`.`phrase_group_id`           AS `phrase_group_id`,
-       `phrase_group_word_links`.`word_id`                   AS `phrase_id`
-from `phrase_group_word_links`
+select `phrase_group_triples`.`phrase_group_triple_id` AS `phrase_group_phrase_link_id`,
+       `phrase_group_triples`.`phrase_group_id`           AS `phrase_group_id`,
+       `phrase_group_triples`.`word_id`                   AS `phrase_id`
+from `phrase_group_triples`
 union
 select `phrase_group_triple_links`.`phrase_group_triple_link_id` AS `phrase_group_phrase_link_id`,
        `phrase_group_triple_links`.`phrase_group_id`             AS `phrase_group_id`,
@@ -1633,10 +1633,10 @@ DROP TABLE IF EXISTS `user_phrase_group_phrase_links`;
 
 CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
     SECURITY DEFINER VIEW `user_phrase_group_phrase_links` AS
-select `user_phrase_group_word_links`.`phrase_group_word_link_id` AS `phrase_group_phrase_link_id`,
-       `user_phrase_group_word_links`.`user_id`                   AS `user_id`,
-       `user_phrase_group_word_links`.`excluded`                  AS `excluded`
-from `user_phrase_group_word_links`
+select `user_phrase_group_triples`.`phrase_group_triple_id` AS `phrase_group_phrase_link_id`,
+       `user_phrase_group_triples`.`user_id`                   AS `user_id`,
+       `user_phrase_group_triples`.`excluded`                  AS `excluded`
+from `user_phrase_group_triples`
 union
 select `user_phrase_group_triple_links`.`phrase_group_triple_link_id` AS `phrase_group_phrase_link_id`,
        `user_phrase_group_triple_links`.`user_id`                     AS `user_id`,
@@ -1791,10 +1791,10 @@ ALTER TABLE `phrase_group_triple_links`
     ADD KEY `triple_id` (`triple_id`);
 
 --
--- Indexes for table`phrase_group_word_links`
+-- Indexes for table`phrase_group_triples`
 --
-ALTER TABLE `phrase_group_word_links`
-    ADD PRIMARY KEY (`phrase_group_word_link_id`),
+ALTER TABLE `phrase_group_triples`
+    ADD PRIMARY KEY (`phrase_group_triple_id`),
     ADD KEY `phrase_group_id` (`phrase_group_id`),
     ADD KEY `word_id` (`word_id`);
 
@@ -1956,11 +1956,11 @@ ALTER TABLE `user_phrase_group_triple_links`
     ADD KEY `user_id` (`user_id`);
 
 --
--- Indexes for table`user_phrase_group_word_links`
+-- Indexes for table`user_phrase_group_triples`
 --
-ALTER TABLE `user_phrase_group_word_links`
-    ADD UNIQUE KEY `phrase_group_word_link_id` (`phrase_group_word_link_id`, `user_id`),
-    ADD KEY `phrase_group_word_link_id_2` (`phrase_group_word_link_id`),
+ALTER TABLE `user_phrase_group_triples`
+    ADD UNIQUE KEY `phrase_group_triple_id` (`phrase_group_triple_id`, `user_id`),
+    ADD KEY `phrase_group_triple_id_2` (`phrase_group_triple_id`),
     ADD KEY `user_id` (`user_id`);
 
 --
@@ -2051,11 +2051,11 @@ ALTER TABLE `user_words`
     ADD KEY `view_id` (`view_id`);
 
 --
--- Indexes for table`user_word_links`
+-- Indexes for table`user_triples`
 --
-ALTER TABLE `user_word_links`
-    ADD UNIQUE KEY `word_link_id` (`word_link_id`, `user_id`),
-    ADD KEY `word_link_id_2` (`word_link_id`),
+ALTER TABLE `user_triples`
+    ADD UNIQUE KEY `triple_id` (`triple_id`, `user_id`),
+    ADD KEY `triple_id_2` (`triple_id`),
     ADD KEY `user_id` (`user_id`);
 
 --
@@ -2168,9 +2168,9 @@ ALTER TABLE `view_types`
     ADD PRIMARY KEY (`view_type_id`);
 
 --
--- Indexes for table`view_word_links`
+-- Indexes for table`view_term_links`
 --
-ALTER TABLE `view_word_links`
+ALTER TABLE `view_term_links`
     ADD PRIMARY KEY (`view_term_link_id`);
 
 --
@@ -2189,10 +2189,10 @@ ALTER TABLE `word_del_requests`
     ADD PRIMARY KEY (`word_del_request_id`);
 
 --
--- Indexes for table`word_links`
+-- Indexes for table`triples`
 --
-ALTER TABLE `word_links`
-    ADD PRIMARY KEY (`word_link_id`);
+ALTER TABLE `triples`
+    ADD PRIMARY KEY (`triple_id`);
 
 --
 -- Indexes for table`word_periods`
@@ -2310,10 +2310,10 @@ ALTER TABLE `phrase_groups`
 ALTER TABLE `phrase_group_triple_links`
     MODIFY `phrase_group_triple_link_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`phrase_group_word_links`
+-- AUTO_INCREMENT for table`phrase_group_triples`
 --
-ALTER TABLE `phrase_group_word_links`
-    MODIFY `phrase_group_word_link_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `phrase_group_triples`
+    MODIFY `phrase_group_triple_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`protection_types`
 --
@@ -2485,9 +2485,9 @@ ALTER TABLE `view_link_types`
 ALTER TABLE `view_types`
     MODIFY `view_type_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`view_word_links`
+-- AUTO_INCREMENT for table`view_term_links`
 --
-ALTER TABLE `view_word_links`
+ALTER TABLE `view_term_links`
     MODIFY `view_term_link_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`words`
@@ -2500,10 +2500,10 @@ ALTER TABLE `words`
 ALTER TABLE `word_del_requests`
     MODIFY `word_del_request_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`word_links`
+-- AUTO_INCREMENT for table`triples`
 --
-ALTER TABLE `word_links`
-    MODIFY `word_link_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `triples`
+    MODIFY `triple_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`word_types`
 --
@@ -2564,13 +2564,13 @@ ALTER TABLE `formula_values`
 --
 ALTER TABLE `phrase_group_triple_links`
     ADD CONSTRAINT `phrase_group_triple_links_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`),
-    ADD CONSTRAINT `phrase_group_triple_links_fk_2` FOREIGN KEY (`triple_id`) REFERENCES `word_links` (`word_link_id`);
+    ADD CONSTRAINT `phrase_group_triple_links_fk_2` FOREIGN KEY (`triple_id`) REFERENCES `triples` (`triple_id`);
 
 --
--- Constraints for table`phrase_group_word_links`
+-- Constraints for table`phrase_group_triples`
 --
-ALTER TABLE `phrase_group_word_links`
-    ADD CONSTRAINT `phrase_group_word_links_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`);
+ALTER TABLE `phrase_group_triples`
+    ADD CONSTRAINT `phrase_group_triples_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`);
 
 --
 -- Constraints for table`refs`
@@ -2639,11 +2639,11 @@ ALTER TABLE `user_phrase_group_triple_links`
     ADD CONSTRAINT `user_phrase_group_triple_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
--- Constraints for table`user_phrase_group_word_links`
+-- Constraints for table`user_phrase_group_triples`
 --
-ALTER TABLE `user_phrase_group_word_links`
-    ADD CONSTRAINT `user_phrase_group_word_links_fk_1` FOREIGN KEY (`phrase_group_word_link_id`) REFERENCES `phrase_group_word_links` (`phrase_group_word_link_id`),
-    ADD CONSTRAINT `user_phrase_group_word_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+ALTER TABLE `user_phrase_group_triples`
+    ADD CONSTRAINT `user_phrase_group_triples_fk_1` FOREIGN KEY (`phrase_group_triple_id`) REFERENCES `phrase_group_triples` (`phrase_group_triple_id`),
+    ADD CONSTRAINT `user_phrase_group_triples_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table`user_sources`
@@ -2704,11 +2704,11 @@ ALTER TABLE `user_words`
     ADD CONSTRAINT `user_words_fk_4` FOREIGN KEY (`word_id`) REFERENCES `words` (`word_id`);
 
 --
--- Constraints for table`user_word_links`
+-- Constraints for table`user_triples`
 --
-ALTER TABLE `user_word_links`
-    ADD CONSTRAINT `user_word_links_fk_1` FOREIGN KEY (`word_link_id`) REFERENCES `word_links` (`word_link_id`),
-    ADD CONSTRAINT `user_word_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+ALTER TABLE `user_triples`
+    ADD CONSTRAINT `user_triples_fk_1` FOREIGN KEY (`triple_id`) REFERENCES `triples` (`triple_id`),
+    ADD CONSTRAINT `user_triples_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table`values`

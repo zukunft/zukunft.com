@@ -439,7 +439,7 @@ class user_log_link extends user_log
         // set the table specific references
         log_debug('user_log_link->add -> set fields');
         if ($this->table == "words"
-            or $this->table == "word_links") {
+            or $this->table == "triples") {
             if ($this->action == "add" or $this->action == "update") {
                 if ($this->new_from != null and $this->new_link != null and $this->new_to != null) {
                     $this->new_text_from = $this->new_from->name;

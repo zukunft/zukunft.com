@@ -446,7 +446,7 @@ class user_sandbox
 
     /*
     // check if the owner is set for all records of a user sandbox object
-    // e.g. if the owner of a new word_link is set correctly at creation
+    // e.g. if the owner of a new triple is set correctly at creation
     //      if not changes of another can overwrite the standard and by that influence the setup of the creator
     function chk_owner ($type, $correct) {
       zu_debug($this->obj_name.'->chk_owner for '.$type);

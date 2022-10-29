@@ -33,7 +33,7 @@ namespace html;
 
 use api\phrase_api;
 use api\triple_api;
-use word_link;
+use triple;
 
 class triple_dsp extends triple_api
 {
@@ -86,7 +86,7 @@ class triple_dsp extends triple_api
 
     function term(): term_dsp
     {
-        return new term_dsp($this->id, $this->name, word_link::class);
+        return new term_dsp($this->id, $this->name, triple::class);
     }
 
 }

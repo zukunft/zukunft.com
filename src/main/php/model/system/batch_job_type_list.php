@@ -42,7 +42,7 @@ class job_type_list extends user_type_list
     const FORMULA_DEL = "formula_del";
     const FORMULA_LINK = "formula_link";
     const FORMULA_UNLINK = "formula_unlink";
-    const WORD_LINK = "word_link";
+    const triple = "triple";
     const WORD_UNLINK = "word_unlink";
 
     /**

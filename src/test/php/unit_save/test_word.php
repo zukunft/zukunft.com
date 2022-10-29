@@ -54,10 +54,10 @@ function create_test_words(testing $t)
     }
     $prev_word_name = null;
     foreach (word::TEST_WORDS_TIME as $word_name) {
-        $t->test_word_link($word_name, verb::IS_A, word::TN_YEAR);
+        $t->test_triple($word_name, verb::IS_A, word::TN_YEAR);
         $t->test_word($word_name, phrase_type::TIME);
         if ($prev_word_name != null) {
-            $t->test_word_link($word_name, verb::FOLLOW, $prev_word_name);
+            $t->test_triple($word_name, verb::FOLLOW, $prev_word_name);
         }
         $prev_word_name = $word_name;
     }
@@ -127,7 +127,7 @@ function run_word_tests(testing $t)
 
     // next word
     $wrd_time_next = $t->test_word(word::TN_2022, phrase_type::TIME);
-    $t->test_word_link(word::TN_2022, verb::FOLLOW, word::TN_2021);
+    $t->test_triple(word::TN_2022, verb::FOLLOW, word::TN_2021);
     $target = $wrd_time_next->name;
     $wrd_next = $wrd_time->next();
     $result = $wrd_next->name;
@@ -211,8 +211,8 @@ function run_word_tests(testing $t)
     $wrd_canton = $t->test_word(word::TN_CANTON);
     $wrd_city = $t->test_word(word::TN_CITY);
     $wrd_ZH = $t->test_word(word::TN_ZH);
-    $t->test_word_link(word::TN_ZH, verb::IS_A, word::TN_CANTON);
-    $t->test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY);
+    $t->test_triple(word::TN_ZH, verb::IS_A, word::TN_CANTON);
+    $t->test_triple(word::TN_ZH, verb::IS_A, word::TN_CITY);
 
     // word is e.g. Zurich as a Canton ...
     $target = $wrd_canton->name;
@@ -247,28 +247,28 @@ function run_word_tests(testing $t)
     // e.g. ...
     $wrd_cf = $t->test_word(word::TN_CASH_FLOW);
     $wrd_tax = $t->test_word(word::TN_TAX_REPORT);
-    $t->test_word_link(word::TN_TAX_REPORT, verb::IS_PART_OF, word::TN_CASH_FLOW);
+    $t->test_triple(word::TN_TAX_REPORT, verb::IS_PART_OF, word::TN_CASH_FLOW);
 
     // create the test words and relations many mixed relations
     // e.g. a financial report
     $t->test_word(word::TN_FIN_REPORT);
-    $t->test_word_link(word::TN_CASH_FLOW, verb::IS_A, word::TN_FIN_REPORT);
+    $t->test_triple(word::TN_CASH_FLOW, verb::IS_A, word::TN_FIN_REPORT);
 
     // create the test words and relations for multi level contains
     // e.g. assets contain current assets which contains cash
     $t->test_word(word::TN_ASSETS);
     $t->test_word(word::TN_ASSETS_CURRENT);
     $t->test_word(word::TN_CASH);
-    $t->test_word_link(word::TN_CASH, verb::IS_PART_OF, word::TN_ASSETS_CURRENT);
-    $t->test_word_link(word::TN_ASSETS_CURRENT, verb::IS_PART_OF, word::TN_ASSETS);
+    $t->test_triple(word::TN_CASH, verb::IS_PART_OF, word::TN_ASSETS_CURRENT);
+    $t->test_triple(word::TN_ASSETS_CURRENT, verb::IS_PART_OF, word::TN_ASSETS);
 
     // create the test words and relations for differentiators
     // e.g. energy can be a sector
     $t->test_word(word::TN_SECTOR);
     $t->test_word(word::TN_ENERGY);
     $t->test_word(word::TN_WIND_ENERGY);
-    $t->test_word_link(word::TN_SECTOR, verb::CAN_CONTAIN, word::TN_ENERGY);
-    $t->test_word_link(word::TN_ENERGY, verb::CAN_CONTAIN, word::TN_WIND_ENERGY);
+    $t->test_triple(word::TN_SECTOR, verb::CAN_CONTAIN, word::TN_ENERGY);
+    $t->test_triple(word::TN_ENERGY, verb::CAN_CONTAIN, word::TN_WIND_ENERGY);
 
     // word is part
     $target = $wrd_cf->name;

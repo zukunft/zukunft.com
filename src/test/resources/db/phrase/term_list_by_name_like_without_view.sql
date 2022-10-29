@@ -18,7 +18,7 @@ PREPARE term_list_by_name_like (int,text) AS
           FROM words s
      LEFT JOIN user_words u ON s.word_id = u.word_id AND u.user_id = $1
 
-  UNION SELECT ((s.word_link_id * -2) + 1) AS term_id,
+  UNION SELECT ((s.triple_id * -2) + 1) AS term_id,
                s.values                    AS usage,
                CASE WHEN (u.name_given     <> '' IS NOT TRUE) THEN
                CASE WHEN (s.name_given     <> '' IS NOT TRUE) THEN
@@ -30,8 +30,8 @@ PREPARE term_list_by_name_like (int,text) AS
                CASE WHEN (u.excluded                 IS NULL) THEN s.excluded       ELSE u.excluded      END AS excluded,
                CASE WHEN (u.share_type_id            IS NULL) THEN s.share_type_id  ELSE u.share_type_id END AS share_type_id,
                CASE WHEN (u.protect_id               IS NULL) THEN s.protect_id     ELSE u.protect_id    END AS protect_id
-          FROM word_links s
-     LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id AND u.user_id = $1
+          FROM triples s
+     LEFT JOIN user_triples u ON s.triple_id = u.triple_id AND u.user_id = $1
 
   UNION SELECT (s.formula_id * 2) AS term_id,
                s.usage            AS usage,

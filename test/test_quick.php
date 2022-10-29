@@ -111,7 +111,7 @@ if ($start_usr->id > 0) {
             run_word_display_test($t);
             run_word_list_test($t);
             /*
-            run_word_link_test($t);
+            run_triple_test($t);
             run_ref_test($t);
             run_phrase_test($t);
             run_phrase_group_test($t);

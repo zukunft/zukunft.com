@@ -72,8 +72,8 @@ or in the math (MATHematical) format, which should contain only numeric values
 by default a verb can be used forward and backward e.g. ABB is a company and companies are ABB, ...
 if the reverse name is empty, the verb can only be used the forward way
 if a link should only be used one way for one phrase link, the negative verb is saved
-verbs are also named as word_links
-- trp (TRiPle)             - a triple/sentence, so a word connected to another word with a verb (word_link.php is the related class)
+verbs are also named as triples
+- trp (TRiPle)             - a triple/sentence, so a word connected to another word with a verb (triple.php is the related class)
 - lnk (LiNK)               - n-to-m connection e.g. between a phrase and a view
 - phr (PHRase)             - transformed triple or word in order to use them together as one object
 - grp (GrouP)              - a group of terms or triples excluding time terms to reduce the number of groups needed and speed up the system
@@ -124,11 +124,11 @@ database change setup
 
 User Sandbox: values, formulas, formula_links, views and view elements are included in the user sandbox, which means, each user can exclude or adjust single entries
 
-to avoid confusion words, formula names, word_links (verbs) and value_phrase_links are excluded from the user sandbox, but a normal user can change the name, which will hopefully not happen often.
+to avoid confusion words, formula names, triples (verbs) and value_phrase_links are excluded from the user sandbox, but a normal user can change the name, which will hopefully not happen often.
 
 for words, formulas and verbs the user can add a specific name in any language
 
-Admin edit: for word_links (verbs), phrase_types, link_types, formula_types there is only one valid record and only an admin user is allowed to change it, which is also because these tables have a code id
+Admin edit: for triples (verbs), phrase_types, link_types, formula_types there is only one valid record and only an admin user is allowed to change it, which is also because these tables have a code id
 
 Sources: every user can change it, but there is only one valid row
 
@@ -250,7 +250,7 @@ value view
 word view
 - set and compare the default view for words e.g. the view for company should be company list
 - in link_edit.php?id=313 allow to change the name for the phrase and show the history
-- rename word_links to phrase links, because it should always be possible to link a phrase
+- rename triples to phrase links, because it should always be possible to link a phrase
 
 formula
 

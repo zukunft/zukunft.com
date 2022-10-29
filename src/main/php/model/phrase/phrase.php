@@ -6,7 +6,7 @@
     ----------
 
     this is not saved in a separate table
-    e.g. to build a selector the entries are caught either from the words or word_links table
+    e.g. to build a selector the entries are caught either from the words or triples table
 
     If the user wants to overwrite a formula result, there are two possibilities for the technical realisation
 
@@ -65,7 +65,7 @@ class phrase
 
     // the common phrase database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
-        word_link::FLD_TYPE
+        triple::FLD_TYPE
     );
     // list of the common user specific database field names of phrases
     const FLD_NAMES_USR = array(
@@ -116,7 +116,7 @@ class phrase
         if ($from != ''
             AND $verb != ''
             AND $to != '') {
-                $this->obj = new word_link($usr, $from, $verb, $to, $name);
+                $this->obj = new triple($usr, $from, $verb, $to, $name);
         } else {
             if ($from != '') {
                 $this->obj = new word($usr, $from);
@@ -153,19 +153,19 @@ class phrase
             } elseif ($db_row[$id_fld] > 0) {
                 $this->id = $db_row[$id_fld];
                 // map a triple
-                $trp = new word_link($this->usr);
+                $trp = new triple($this->usr);
                 $trp->id = $db_row[$id_fld] * -1;
                 //$trp->owner_id = $db_row[user_sandbox::FLD_USER . $fld_ext];
                 $trp->excluded = $db_row[user_sandbox::FLD_EXCLUDED . $fld_ext];
                 //$trp->name = $db_row[word::FLD_NAME . $fld_ext];
-                $trp->name = $db_row[word_link::FLD_NAME . $fld_ext];
+                $trp->name = $db_row[triple::FLD_NAME . $fld_ext];
                 $trp->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
-                $trp->type_id = $db_row[word_link::FLD_TYPE . $fld_ext];
+                $trp->type_id = $db_row[triple::FLD_TYPE . $fld_ext];
                 $trp->share_id = $db_row[user_sandbox::FLD_SHARE . $fld_ext];
                 $trp->protection_id = $db_row[user_sandbox::FLD_PROTECT . $fld_ext];
                 // not yet loaded with initial load
-                // $trp->from->id = $db_row[word_link::FLD_FROM];
-                // $trp->to->id = $db_row[word_link::FLD_TO];
+                // $trp->from->id = $db_row[triple::FLD_FROM];
+                // $trp->to->id = $db_row[triple::FLD_TO];
                 // $trp->verb->id = $db_row[verb::FLD_ID];
                 $this->obj = $trp;
                 $result = true;
@@ -217,7 +217,7 @@ class phrase
 
         // direct load if the type is known
         if ($this->is_triple()) {
-            $lnk = new word_link($this->usr);
+            $lnk = new triple($this->usr);
             $lnk->id = $this->id * -1;
             $result = $lnk->load();
             $this->obj = $lnk;
@@ -360,7 +360,7 @@ class phrase
     {
         $result = false;
         if (isset($this->obj)) {
-            if (get_class($this->obj) == word_link::class) {
+            if (get_class($this->obj) == triple::class) {
                 $result = true;
             }
         } else {
@@ -424,10 +424,10 @@ class phrase
         return $wrd_dsp;
     }
 
-    protected function get_triple(): word_link
+    protected function get_triple(): triple
     {
-        $lnk = new word_link($this->usr);
-        if (get_class($this->obj) == word_link::class) {
+        $lnk = new triple($this->usr);
+        if (get_class($this->obj) == triple::class) {
             $lnk->id = $this->obj->id;
             $lnk->fob = $this->obj->fob;
             $lnk->tob = $this->obj->tob;
@@ -443,12 +443,12 @@ class phrase
         return $lnk;
     }
 
-    protected function get_triple_dsp(): word_link
+    protected function get_triple_dsp(): triple
     {
         $lnk_dsp = new triple_dsp();
         if (get_class($this->obj) == triple_dsp::class) {
             $lnk_dsp = $this->obj;
-        } elseif (get_class($this->obj) == word_link::class) {
+        } elseif (get_class($this->obj) == triple::class) {
             $lnk_dsp = $this->get_triple()->dsp_obj();
         }
         return $lnk_dsp;
@@ -735,11 +735,11 @@ class phrase
                         FROM words w   
                    LEFT JOIN user_words u ON u.word_id = w.word_id 
                                          AND u.user_id = ' . $this->usr->id . ' ';
-        $sql_triples = 'SELECT DISTINCT l.word_link_id * -1 AS id, 
+        $sql_triples = 'SELECT DISTINCT l.triple_id * -1 AS id, 
                                ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
-                          FROM word_links l
-                     LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
+                          FROM triples l
+                     LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                 AND u.user_id = ' . $this->usr->id . ' ';
 
         if (isset($type)) {
@@ -752,8 +752,8 @@ class phrase
                                         SELECT DISTINCT
                                                l.from_phrase_id,    
                                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
-                                          FROM word_links l
-                                     LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
+                                          FROM triples l
+                                     LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->usr->id . '
                                          WHERE l.to_phrase_id = ' . $type->id . ' 
                                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . ' ) AS a 
@@ -764,8 +764,8 @@ class phrase
                                         SELECT DISTINCT
                                                l.from_phrase_id,    
                                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
-                                          FROM word_links l
-                                     LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
+                                          FROM triples l
+                                     LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->usr->id . '
                                          WHERE l.to_phrase_id <> ' . $type->id . ' 
                                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
@@ -788,18 +788,18 @@ class phrase
                 // if a word has another type, use the triple
                 $sql_triples = 'SELECT DISTINCT ' . $sql_field_names . ' FROM (
                         SELECT DISTINCT
-                               l.word_link_id * -1 AS id, 
+                               l.triple_id * -1 AS id, 
                                ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
-                          FROM word_links l
-                     LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
+                          FROM triples l
+                     LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                 AND u.user_id = ' . $this->usr->id . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
                            AND l.to_phrase_id = ' . $type->id . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*
-                $sql_type_from = ', word_links t LEFT JOIN user_word_links ut ON ut.word_link_id = t.word_link_id
+                $sql_type_from = ', triples t LEFT JOIN user_triples ut ON ut.triple_id = t.triple_id
                                                                              AND ut.user_id = '.$this->usr->id.'';
                 $sql_type_where_words   = 'WHERE w.word_id = t.from_phrase_id
                                              AND t.verb_id = '.cl(SQL_LINK_TYPE_IS).'
@@ -816,11 +816,11 @@ class phrase
                                       '.$sql_type_from.'
                                       '.$sql_type_where_words.'
                               GROUP BY name';
-                $sql_triples = 'SELECT l.word_link_id * -1 AS id,
+                $sql_triples = 'SELECT l.triple_id * -1 AS id,
                                       IF(u.name IS NULL, l.name, u.name) AS name,
                                       IF(u.excluded IS NULL, COALESCE(l.excluded, 0), COALESCE(u.excluded, 0)) AS excluded
-                                  FROM word_links l
-                            LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id
+                                  FROM triples l
+                            LEFT JOIN user_triples u ON u.triple_id = l.triple_id
                                                         AND u.user_id = '.$this->usr->id.'
                                       '.$sql_type_from.'
                                       '.$sql_type_where_triples.'

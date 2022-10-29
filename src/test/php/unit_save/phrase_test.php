@@ -34,15 +34,15 @@ function create_test_phrases(testing $t)
 {
     $t->header('Check if all base phrases are correct');
 
-    $t->test_word_link(word::TN_ZH, verb::IS_A, word::TN_CANTON, phrase::TN_ZH_CANTON);
-    $t->test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY, phrase::TN_ZH_CITY, phrase::TN_ZH_CITY);
-    $t->test_word_link(word::TN_ZH, verb::IS_A, word::TN_COMPANY, phrase::TN_ZH_COMPANY, phrase::TN_ZH_COMPANY);
+    $t->test_triple(word::TN_ZH, verb::IS_A, word::TN_CANTON, phrase::TN_ZH_CANTON);
+    $t->test_triple(word::TN_ZH, verb::IS_A, word::TN_CITY, phrase::TN_ZH_CITY, phrase::TN_ZH_CITY);
+    $t->test_triple(word::TN_ZH, verb::IS_A, word::TN_COMPANY, phrase::TN_ZH_COMPANY, phrase::TN_ZH_COMPANY);
 
-    $t->test_word_link(TW_ABB, verb::IS_A, TEST_WORD, TP_ABB);
-    $t->test_word_link(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
-    $t->test_word_link(TW_2014, verb::FOLLOW, TW_2013, TP_FOLLOW);
+    $t->test_triple(TW_ABB, verb::IS_A, TEST_WORD, TP_ABB);
+    $t->test_triple(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
+    $t->test_triple(TW_2014, verb::FOLLOW, TW_2013, TP_FOLLOW);
     // TODO check direction
-    $t->test_word_link(TW_TAX, verb::IS_PART_OF, TW_CF, TP_TAXES);
+    $t->test_triple(TW_TAX, verb::IS_PART_OF, TW_CF, TP_TAXES);
 
     $t->header('Check if all base phrases are correct');
     $t->test_phrase(phrase::TN_ZH_COMPANY);
@@ -67,7 +67,7 @@ function run_phrase_test(testing $t)
 
     // prepare the Insurance Zurich
     $wrd_zh = $t->load_word(word::TN_ZH);
-    $lnk_company = new word_link($usr);
+    $lnk_company = new triple($usr);
     $lnk_company->from->id = $wrd_zh->id;
     $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
     $lnk_company->to->id = $wrd_company->id;

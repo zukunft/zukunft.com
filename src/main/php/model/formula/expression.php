@@ -68,7 +68,7 @@ class expression
     formula types: calc:
 
     syntax: function_name["link_type->word_type:word_name"]
-    or: word_from>word_link:word_to e.g. “>is a:Company” lists all companies
+    or: word_from>triple:word_to e.g. “>is a:Company” lists all companies
     or: word[condition_formula] e.g. “GAAP[>is:US]” use GAAP only for US based companies
     or: word1 || word2 e.g. “GAAP[>is:US]” use word1 or word2 (maybe replace “||” with “or” for users)
     or: -word e.g. “-word” remove the word from the context

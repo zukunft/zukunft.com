@@ -2,7 +2,7 @@
 
 /*
 
-    api\triple.php - the minimal triple (word_link) object
+    api\triple.php - the minimal triple (triple) object
     --------------
 
 
@@ -33,7 +33,7 @@
 namespace api;
 
 use html\term_dsp;
-use word_link;
+use triple;
 
 class triple_api extends user_sandbox_named_api
 {
@@ -67,7 +67,7 @@ class triple_api extends user_sandbox_named_api
 
     function term(): term_api|term_dsp
     {
-        return new term_api($this->id, $this->name, word_link::class);
+        return new term_api($this->id, $this->name, triple::class);
     }
 
 }

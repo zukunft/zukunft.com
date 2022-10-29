@@ -21,16 +21,16 @@ select `words`.`word_id`            AS `phrase_id`,
        `words`.`protect_id` AS `protect_id`
 from `words`
 union
-select (`word_links`.`word_link_id` * -(1)) AS `phrase_id`,
-       `word_links`.`user_id`               AS `user_id`,
-       if(`word_links`.`name_given` is null, `word_links`.`name_generated`, `word_links`.`name_given`) AS `name_used`,
-       `word_links`.`description`           AS `description`,
-       `word_links`.`values`                AS `values`,
-       `word_links`.`word_type_id`          AS `word_type_id`,
-       `word_links`.`excluded`              AS `excluded`,
-       `word_links`.`share_type_id`         AS `share_type_id`,
-       `word_links`.`protect_id`    AS `protect_id`
-from `word_links`;
+select (`triples`.`triple_id` * -(1)) AS `phrase_id`,
+       `triples`.`user_id`               AS `user_id`,
+       if(`triples`.`name_given` is null, `triples`.`name_generated`, `triples`.`name_given`) AS `name_used`,
+       `triples`.`description`           AS `description`,
+       `triples`.`values`                AS `values`,
+       `triples`.`word_type_id`          AS `word_type_id`,
+       `triples`.`excluded`              AS `excluded`,
+       `triples`.`share_type_id`         AS `share_type_id`,
+       `triples`.`protect_id`    AS `protect_id`
+from `triples`;
 
 --
 -- Structure for view`user_phrases`
@@ -48,15 +48,15 @@ select `user_words`.`word_id`       AS `phrase_id`,
        `user_words`.`protect_id`    AS `protect_id`
 from `user_words`
 union
-select (`user_word_links`.`word_link_id` * -(1)) AS `phrase_id`,
-       `user_word_links`.`user_id`               AS `user_id`,
-       if(`user_word_links`.`name_given` is null, `user_word_links`.`name_generated`, `user_word_links`.`name_given`) AS `name_used`,
-       `user_word_links`.`description`           AS `description`,
-       `user_word_links`.`values`                AS `values`,
-       `user_word_links`.`excluded`              AS `excluded`,
-       `user_word_links`.`share_type_id`         AS `share_type_id`,
-       `user_word_links`.`protect_id`            AS `protect_id`
-from `user_word_links`;
+select (`user_triples`.`triple_id` * -(1)) AS `phrase_id`,
+       `user_triples`.`user_id`               AS `user_id`,
+       if(`user_triples`.`name_given` is null, `user_triples`.`name_generated`, `user_triples`.`name_given`) AS `name_used`,
+       `user_triples`.`description`           AS `description`,
+       `user_triples`.`values`                AS `values`,
+       `user_triples`.`excluded`              AS `excluded`,
+       `user_triples`.`share_type_id`         AS `share_type_id`,
+       `user_triples`.`protect_id`            AS `protect_id`
+from `user_triples`;
 
 
 --
@@ -76,15 +76,15 @@ select ((`words`.`word_id` * 2) - 1) AS `term_id`,
 from `words`
 where `words`.`word_type_id` <> 10
 union
-select ((`word_links`.`word_link_id` * -2) + 1) AS `term_id`,
-       `word_links`.`user_id`                 AS `user_id`,
-       if(`word_links`.`name_given` is null, `word_links`.`name_generated`, `word_links`.`name_given`) AS `term_name`,
-       `word_links`.`description`             AS `description`,
-       `word_links`.`values`                  AS `usage`,
-       `word_links`.`excluded`                AS `excluded`,
-       `word_links`.`share_type_id`           AS `share_type_id`,
-       `word_links`.`protect_id`              AS `protect_id`
-from `word_links`
+select ((`triples`.`triple_id` * -2) + 1) AS `term_id`,
+       `triples`.`user_id`                 AS `user_id`,
+       if(`triples`.`name_given` is null, `triples`.`name_generated`, `triples`.`name_given`) AS `term_name`,
+       `triples`.`description`             AS `description`,
+       `triples`.`values`                  AS `usage`,
+       `triples`.`excluded`                AS `excluded`,
+       `triples`.`share_type_id`           AS `share_type_id`,
+       `triples`.`protect_id`              AS `protect_id`
+from `triples`
 union
 select (`formulas`.`formula_id` * 2) AS `term_id`,
        `formulas`.`user_id`         AS `user_id`,
@@ -125,15 +125,15 @@ select ((`user_words`.`word_id` * 2) - 1) AS `term_id`,
 from `user_words`
 where `user_words`.`word_type_id` <> 10
 union
-select ((`user_word_links`.`word_link_id` * -2) + 1) AS `term_id`,
-       `user_word_links`.`user_id`                   AS `user_id`,
-       if(`user_word_links`.`name_given` is null, `user_word_links`.`name_generated`, `user_word_links`.`name_given`) AS `term_name`,
-       `user_word_links`.`description`               AS `description`,
-       `user_word_links`.`values`                    AS `usage`,
-       `user_word_links`.`excluded`                  AS `excluded`,
-       `user_word_links`.`share_type_id`             AS `share_type_id`,
-       `user_word_links`.`protect_id`                AS `protect_id`
-from `user_word_links`
+select ((`user_triples`.`triple_id` * -2) + 1) AS `term_id`,
+       `user_triples`.`user_id`                   AS `user_id`,
+       if(`user_triples`.`name_given` is null, `user_triples`.`name_generated`, `user_triples`.`name_given`) AS `term_name`,
+       `user_triples`.`description`               AS `description`,
+       `user_triples`.`values`                    AS `usage`,
+       `user_triples`.`excluded`                  AS `excluded`,
+       `user_triples`.`share_type_id`             AS `share_type_id`,
+       `user_triples`.`protect_id`                AS `protect_id`
+from `user_triples`
 union
 select (`user_formulas`.`formula_id` * 2) AS `term_id`,
        `user_formulas`.`user_id`          AS `user_id`,

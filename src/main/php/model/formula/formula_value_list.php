@@ -107,8 +107,8 @@ class formula_value_list
                 }
             } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
                 $sql_by .= word::FLD_ID;
-            } elseif (get_class($obj) == word_link::class) {
-                $sql_by .= word_link::FLD_ID_NEW;
+            } elseif (get_class($obj) == triple::class) {
+                $sql_by .= triple::FLD_ID_NEW;
             }
         }
         if ($sql_by == '') {
@@ -151,11 +151,11 @@ class formula_value_list
                     $db_con->add_par(sql_db::PAR_INT, $obj->id, false, true);
                     $db_con->set_join_fields(
                         array(formula_value::FLD_GRP),
-                        sql_db::TBL_PHRASE_GROUP_WORD_LINK,
+                        sql_db::TBL_PHRASE_GROUP_TRIPLE,
                         formula_value::FLD_GRP,
                         formula_value::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(word::FLD_ID));
-                } elseif (get_class($obj) == word_link::class) {
+                } elseif (get_class($obj) == triple::class) {
                     // TODO check if the results are still correct if the user has excluded the triple
                     $db_con->add_par(sql_db::PAR_INT, $obj->id, false, true);
                     $db_con->set_join_fields(
@@ -163,7 +163,7 @@ class formula_value_list
                         sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
                         formula_value::FLD_GRP,
                         formula_value::FLD_GRP);
-                    $qp->sql = $db_con->select_by_field_list(array(word_link::FLD_ID_NEW));
+                    $qp->sql = $db_con->select_by_field_list(array(triple::FLD_ID_NEW));
                 }
             }
             $qp->par = $db_con->get_par();

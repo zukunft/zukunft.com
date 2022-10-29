@@ -15,7 +15,7 @@ PREPARE word_list_by_parents_verb_select FROM
            IF(u.protect_id    IS NULL, s.protect_id,    u.protect_id)    AS protect_id
       FROM words s
  LEFT JOIN user_words u ON s.word_id = u.word_id AND u.user_id = ?
- LEFT JOIN word_links l ON s.word_id = l.to_phrase_id
+ LEFT JOIN triples l ON s.word_id = l.to_phrase_id
      WHERE l.from_phrase_id IN (?)
        AND l.verb_id = ?
   ORDER BY s.`values` DESC, word_name';

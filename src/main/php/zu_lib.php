@@ -266,23 +266,23 @@ include_once $path_php . 'model/system/system_error_log_list.php';
 include_once $path_php . 'model/system/batch_job.php';
 include_once $path_php . 'model/system/batch_job_list.php';
 include_once $path_php . 'model/system/batch_job_type_list.php';
-include_once $path_php . 'model/helper/word_link_object.php';
+include_once $path_php . 'model/helper/triple_object.php';
 // model classes
 include_once $path_php . 'model/word/word.php';
 include_once $path_php . 'model/word/word_exp.php';
 include_once $path_php . 'model/word/word_type.php';
 include_once $path_php . 'model/word/word_type_list.php';
 include_once $path_php . 'model/word/word_list.php';
-include_once $path_php . 'model/word/word_link.php';
-include_once $path_php . 'model/word/word_link_exp.php';
-include_once $path_php . 'model/word/word_link_list.php';
+include_once $path_php . 'model/word/triple.php';
+include_once $path_php . 'model/word/triple_exp.php';
+include_once $path_php . 'model/word/triple_list.php';
 include_once $path_php . 'model/phrase/phrase.php';
 include_once $path_php . 'model/phrase/phrase_list.php';
 include_once $path_php . 'model/phrase/phrase_list_dsp.php';
 include_once $path_php . 'model/phrase/phrase_group.php';
 include_once $path_php . 'model/phrase/phrase_group_list.php';
 include_once $path_php . 'model/phrase/phrase_group_link.php';
-include_once $path_php . 'model/phrase/phrase_group_word_link.php';
+include_once $path_php . 'model/phrase/phrase_group_triple.php';
 include_once $path_php . 'model/phrase/phrase_group_triple_link.php';
 include_once $path_php . 'model/phrase/phrase_type.php';
 include_once $path_php . 'model/phrase/term.php';
@@ -467,7 +467,7 @@ const UI_CAN_CHANGE_VIEW_NAME = TRUE;
 const UI_CAN_CHANGE_VIEW_COMPONENT_NAME = TRUE; // dito for view components
 const UI_CAN_CHANGE_VIEW_COMPONENT_LINK = TRUE; // dito for view component links
 const UI_CAN_CHANGE_WORD_NAME = TRUE; // dito for words
-const UI_CAN_CHANGE_WORD_LINK_NAME = TRUE; // dito for phrases
+const UI_CAN_CHANGE_triple_NAME = TRUE; // dito for phrases
 const UI_CAN_CHANGE_FORMULA_NAME = TRUE; // dito for formulas
 const UI_CAN_CHANGE_VERB_NAME = TRUE; // dito for verbs
 const UI_CAN_CHANGE_SOURCE_NAME = TRUE; // dito for sources
@@ -549,8 +549,8 @@ const SYSTEM_VERB_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'verbs.json';
 const PATH_BASE_CONFIG_MESSAGE_FILES = PATH_BASE_CONFIG_FILES . 'messages/';
 define("BASE_CONFIG_FILES", serialize(array(
     'system_views.json',
-    'scaling.json',
     'units.json',
+    'scaling.json',
     'time_definition.json',
     'ip_blacklist.json',
     'country.json',

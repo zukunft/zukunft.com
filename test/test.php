@@ -58,8 +58,8 @@
     user_log_display.php
     word_display.php
     word_list.php
-    word_link.php
-    word_link_list.php
+    triple.php
+    triple_list.php
     phrase.php
     phrase_list.php
     phrase_group.php
@@ -212,7 +212,7 @@ if ($start_usr->id > 0) {
             //run_word_ui_test($t);
             run_word_display_test($t);
             run_word_list_test($t);
-            run_word_link_test($t);
+            run_triple_test($t);
             run_ref_test($t);
             run_phrase_test($t);
             run_phrase_group_test($t);

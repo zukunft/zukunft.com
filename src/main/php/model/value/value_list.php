@@ -139,7 +139,7 @@ class value_list
             $db_con->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
             $db_con->set_join_fields(array(phrase_group::FLD_ID), sql_db::TBL_PHRASE_GROUP);
             if ($this->phr->is_word()) {
-                $db_con->set_join_fields(array(word::FLD_ID), sql_db::TBL_PHRASE_GROUP_WORD_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
+                $db_con->set_join_fields(array(word::FLD_ID), sql_db::TBL_PHRASE_GROUP_TRIPLE, phrase_group::FLD_ID, phrase_group::FLD_ID);
             } else {
                 $db_con->set_join_fields(array('triple_id'), sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
             }

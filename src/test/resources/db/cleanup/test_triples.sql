@@ -1,3 +1,3 @@
 SELECT *
-FROM word_links
-WHERE word_links.name_generated LIKE 'System Test%';
+FROM triples
+WHERE triples.name_generated LIKE 'System Test%';

@@ -94,11 +94,11 @@ class sql_db
     const TBL_USER_OFFICIAL_TYPE = 'user_official_type';
     const TBL_WORD = 'word';
     const TBL_WORD_TYPE = 'word_type';
-    const TBL_TRIPLE = 'word_link';
+    const TBL_TRIPLE = 'triple';
     const TBL_VERB = 'verb';
     const TBL_PHRASE = 'phrase';
     const TBL_PHRASE_GROUP = 'phrase_group';
-    const TBL_PHRASE_GROUP_WORD_LINK = 'phrase_group_word_link';
+    const TBL_PHRASE_GROUP_TRIPLE = 'phrase_group_triple';
     const TBL_PHRASE_GROUP_TRIPLE_LINK = 'phrase_group_triple_link';
     const TBL_VALUE = 'value';
     const TBL_VALUE_TIME_SERIES = 'value_time_series';
@@ -122,6 +122,7 @@ class sql_db
     const TBL_VIEW_COMPONENT_TYPE = 'view_component_type';
     const TBL_VIEW_COMPONENT_LINK_TYPE = 'view_component_link_type';
     const TBL_VIEW_COMPONENT_POS_TYPE = 'view_component_position_type';
+    const TBL_VIEW_TERM_LINK = 'view_term_link';
 
     const TBL_CHANGE = 'change';
     const TBL_CHANGE_TABLE = 'change_table';
@@ -180,7 +181,7 @@ class sql_db
         sql_db::TBL_FORMULA_ELEMENT,
         sql_db::TBL_VIEW_COMPONENT_LINK,
         sql_db::TBL_VALUE_PHRASE_LINK,
-        sql_db::TBL_PHRASE_GROUP_WORD_LINK,
+        sql_db::TBL_PHRASE_GROUP_TRIPLE,
         sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
         sql_db::TBL_REF,
         sql_db::TBL_IP,

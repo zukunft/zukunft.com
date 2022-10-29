@@ -141,7 +141,7 @@ class user_dsp extends user
     }
 
     /**
-     * display word_link changes by the user which are not (yet) standard
+     * display triple changes by the user which are not (yet) standard
      */
     function dsp_sandbox_wrd_link($back): string
     {
@@ -153,9 +153,9 @@ class user_dsp extends user
         // create the databased link
         $db_con->usr_id = $this->id;
 
-        // get all values changed by the user to a non standard word_link
+        // get all values changed by the user to a non standard triple
         if (SQL_DB_TYPE == sql_db::POSTGRES) {
-            $sql = "SELECT u.word_link_id AS id, 
+            $sql = "SELECT u.triple_id AS id, 
                    l.user_id      AS owner_id, 
                    l.from_phrase_id, 
                    l.verb_id, 
@@ -164,12 +164,12 @@ class user_dsp extends user
                    l.name                                                        AS std_name, 
                    CASE WHEN (u.excluded <> '' IS NOT TRUE) THEN l.excluded ELSE u.excluded END AS usr_excluded,
                    l.excluded                                                    AS std_excluded
-              FROM user_word_links u,
-                   word_links l
+              FROM user_triples u,
+                   triples l
              WHERE u.user_id = " . $this->id . "
-               AND u.word_link_id = l.word_link_id;";
+               AND u.triple_id = l.triple_id;";
         } else {
-            $sql = "SELECT u.word_link_id AS id, 
+            $sql = "SELECT u.triple_id AS id, 
                    l.user_id      AS owner_id, 
                    l.from_phrase_id, 
                    l.verb_id, 
@@ -178,10 +178,10 @@ class user_dsp extends user
                    l.name                                         AS std_name, 
                    IF(u.excluded IS NULL, l.excluded, u.excluded) AS usr_excluded,
                    l.excluded                                     AS std_excluded
-              FROM user_word_links u,
-                   word_links l
+              FROM user_triples u,
+                   triples l
              WHERE u.user_id = " . $this->id . "
-               AND u.word_link_id = l.word_link_id;";
+               AND u.triple_id = l.triple_id;";
         }
         $sbx_lst = $db_con->get_old($sql);
 
@@ -192,8 +192,8 @@ class user_dsp extends user
             foreach ($sbx_lst as $sbx_row) {
                 $row_nbr++;
 
-                // create the word_link objects with the minimal parameter needed
-                $wrd_usr = new word_link($this);
+                // create the triple objects with the minimal parameter needed
+                $wrd_usr = new triple($this);
                 $wrd_usr->id = $sbx_row['id'];
                 $wrd_usr->from->id = $sbx_row['from_phrase_id'];
                 $wrd_usr->verb->id = $sbx_row[verb::FLD_ID];
@@ -219,34 +219,34 @@ class user_dsp extends user
                     $wrd_usr->del_usr_cfg();
                 } else {
 
-                    // prepare the row word_links
+                    // prepare the row triples
                     //$sandbox_item_name = $wrd_usr->name_linked($back);
 
-                    // format the user word_link
+                    // format the user triple
                     if ($wrd_usr->excluded == 1) {
                         $sandbox_usr_txt = "deleted";
                     } else {
                         $sandbox_usr_txt = $wrd_usr->name();
                     }
 
-                    // format the standard word_link
+                    // format the standard triple
                     if ($wrd_std->excluded == 1) {
                         $sandbox_std_txt = "deleted";
                     } else {
                         $sandbox_std_txt = $wrd_std->name();
                     }
 
-                    // format the word_link of other users
+                    // format the triple of other users
                     $sandbox_other = '';
-                    $sql_other = "SELECT l.word_link_id, 
+                    $sql_other = "SELECT l.triple_id, 
                                u.user_id, 
                                u.name, 
                                u.excluded
-                          FROM user_word_links u,
-                               word_links l
+                          FROM user_triples u,
+                               triples l
                          WHERE u.user_id <> " . $this->id . "
-                           AND u.word_link_id = l.word_link_id
-                           AND u.word_link_id = " . $sbx_row['id'] . "
+                           AND u.triple_id = l.triple_id
+                           AND u.triple_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
                     $sbx_lst_other = $db_con->get_old($sql_other);
@@ -255,7 +255,7 @@ class user_dsp extends user
                         $usr_other->id = $wrd_lnk_other_row[user::FLD_ID];
                         $usr_other->load_test_user();
 
-                        // to review: load all user word_links with one query
+                        // to review: load all user triples with one query
                         $wrd_lnk_other = clone $wrd_usr;
                         $wrd_lnk_other->usr = $usr_other;
                         $wrd_lnk_other->load();
@@ -266,13 +266,13 @@ class user_dsp extends user
                         }
                         $sandbox_other .= $wrd_lnk_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user_word_link.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = '<a href="/http/user_triple.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id . '&undo_triple=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard word_link " . $sbx_row['std_word_link'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard triple " . $sbx_row['std_triple'], $url) . '</td>';
 
-                    // display the word_link changes by the user
+                    // display the triple changes by the user
                     $result .= '<tr>';
                     // display headline
                     if ($row_nbr == 1) {

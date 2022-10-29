@@ -313,19 +313,19 @@ class testing extends test_base
         }
 
         // request to delete some triples not yet covered by the other cleanup jobs
-        $this->del_word_link(word::TN_2019, verb::IS_A, word::TN_YEAR);
-        $this->del_word_link(word::TN_2020, verb::IS_A, word::TN_YEAR);
-        $this->del_word_link(word::TN_2021, verb::IS_A, word::TN_YEAR);
-        $this->del_word_link(word::TN_2022, verb::IS_A, word::TN_YEAR);
-        $this->del_word_link(word::TN_2020, verb::FOLLOW, word::TN_2019);
-        $this->del_word_link(word::TN_2021, verb::FOLLOW, word::TN_2020);
-        $this->del_word_link(word::TN_2022, verb::FOLLOW, word::TN_2021);
-        $this->del_word_link(word::TN_CASH_FLOW, verb::IS_A, word::TN_FIN_REPORT);
-        $this->del_word_link(word::TN_TAX_REPORT, verb::IS_PART_OF, word::TN_CASH_FLOW);
-        $this->del_word_link(word::TN_CASH, verb::IS_PART_OF, word::TN_ASSETS_CURRENT);
-        $this->del_word_link(word::TN_ASSETS_CURRENT, verb::IS_PART_OF, word::TN_ASSETS);
-        $this->del_word_link(word::TN_SECTOR, verb::CAN_CONTAIN, word::TN_ENERGY);
-        $this->del_word_link(word::TN_ENERGY, verb::CAN_CONTAIN, word::TN_WIND_ENERGY);
+        $this->del_triple(word::TN_2019, verb::IS_A, word::TN_YEAR);
+        $this->del_triple(word::TN_2020, verb::IS_A, word::TN_YEAR);
+        $this->del_triple(word::TN_2021, verb::IS_A, word::TN_YEAR);
+        $this->del_triple(word::TN_2022, verb::IS_A, word::TN_YEAR);
+        $this->del_triple(word::TN_2020, verb::FOLLOW, word::TN_2019);
+        $this->del_triple(word::TN_2021, verb::FOLLOW, word::TN_2020);
+        $this->del_triple(word::TN_2022, verb::FOLLOW, word::TN_2021);
+        $this->del_triple(word::TN_CASH_FLOW, verb::IS_A, word::TN_FIN_REPORT);
+        $this->del_triple(word::TN_TAX_REPORT, verb::IS_PART_OF, word::TN_CASH_FLOW);
+        $this->del_triple(word::TN_CASH, verb::IS_PART_OF, word::TN_ASSETS_CURRENT);
+        $this->del_triple(word::TN_ASSETS_CURRENT, verb::IS_PART_OF, word::TN_ASSETS);
+        $this->del_triple(word::TN_SECTOR, verb::CAN_CONTAIN, word::TN_ENERGY);
+        $this->del_triple(word::TN_ENERGY, verb::CAN_CONTAIN, word::TN_WIND_ENERGY);
 
         // request to delete the added test word
         // TODO: if a user has changed the word during the test, delete also the user words
@@ -363,7 +363,7 @@ class testing extends test_base
         // TODO better use a info system log message
         echo $db_con->seq_reset(sql_db::TBL_VALUE) . '<br>';
         echo $db_con->seq_reset(sql_db::TBL_WORD) . '<br>';
-        echo $db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_WORD_LINK) . '<br>';
+        echo $db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_TRIPLE) . '<br>';
         echo $db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK) . '<br>';
         echo $db_con->seq_reset(sql_db::TBL_FORMULA) . '<br>';
         echo $db_con->seq_reset(sql_db::TBL_FORMULA_LINK) . '<br>';

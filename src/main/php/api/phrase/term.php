@@ -40,7 +40,7 @@ use html\verb_dsp;
 use html\word_dsp;
 use verb;
 use word;
-use word_link;
+use triple;
 
 class term_api extends user_sandbox_named_api
 {
@@ -100,7 +100,7 @@ class term_api extends user_sandbox_named_api
     {
         if ($class == word::class) {
             $this->id = ($id * 2) - 1;
-        } elseif ($class == word_link::class) {
+        } elseif ($class == triple::class) {
             $this->id = ($id * -2) + 1;
         } elseif ($class == formula::class) {
             $this->id = ($id * 2);
@@ -177,7 +177,7 @@ class term_api extends user_sandbox_named_api
      */
     function is_triple(): bool
     {
-        if ($this->class_from_id() == word_link::class) {
+        if ($this->class_from_id() == triple::class) {
             return true;
         } else {
             return false;
@@ -214,7 +214,7 @@ class term_api extends user_sandbox_named_api
             if ($this->id > 0) {
                 return word::class;
             } else {
-                return word_link::class;
+                return triple::class;
             }
         } else {
             if ($this->id > 0) {

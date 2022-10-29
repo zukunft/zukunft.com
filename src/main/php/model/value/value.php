@@ -131,7 +131,7 @@ class value extends user_sandbox_display
     public ?array $ids = null;            // list of the word or triple ids (if > 0 id of a word if < 0 id of a triple)
     public ?phrase_list $phr_lst = null;  // the phrase object list for this value
     public ?word_list $wrd_lst = null;    // the word object list for this value
-    public ?word_link_list $lnk_lst = null;        // the triple object list  for this value
+    public ?triple_list $lnk_lst = null;        // the triple object list  for this value
     public ?DateTime $update_time = null; // time of the last update, which could also be taken from the change log
 
     // field for user interaction
@@ -325,7 +325,7 @@ class value extends user_sandbox_display
                 if ($sql_grp_from <> '') {
                     $sql_grp_from .= ',';
                 }
-                $sql_grp_from .= 'phrase_group_word_links l' . $pos;
+                $sql_grp_from .= 'phrase_group_triples l' . $pos;
                 $pos_prior = $pos - 1;
                 if ($sql_grp_where <> '') {
                     $sql_grp_where .= ' AND l' . $pos_prior . '.' . phrase_group::FLD_ID . ' = l' . $pos . '.' . phrase_group::FLD_ID . ' AND ';

@@ -41,6 +41,20 @@ class user_sandbox_description extends user_sandbox_named
         $this->description = null;
     }
 
+    /*
+     * casting objects
+     */
+
+    /**
+     * @param object $api_obj frontend API objects that should be filled with unique object name
+     */
+    function fill_api_obj(object $api_obj): void
+    {
+        parent::fill_api_obj($api_obj);
+
+        $api_obj->description = $this->description;
+    }
+
     /**
      * set the update parameters for the word description
      */

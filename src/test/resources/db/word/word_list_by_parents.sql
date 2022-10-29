@@ -15,6 +15,6 @@ PREPARE word_list_by_parents (int, int[]) AS
            CASE WHEN (u.protect_id        IS     NULL) THEN s.protect_id    ELSE u.protect_id    END AS protect_id
       FROM words s
  LEFT JOIN user_words u ON s.word_id = u.word_id AND u.user_id = $1
- LEFT JOIN word_links l ON s.word_id = l.to_phrase_id
+ LEFT JOIN triples l ON s.word_id = l.to_phrase_id
      WHERE l.from_phrase_id = ANY ($2)
   ORDER BY s.values DESC, word_name;

@@ -1,9 +1,10 @@
 <?php
 
-// TODO sync with word_link
-use PHPUnit\Framework\TestCase;
+// TODO sync with triple
+//use PHPUnit\Framework\TestCase;
 
-class triple_unit_tests extends TestCase
+//class triple_unit_tests extends TestCase
+class triple_unit_tests
 {
     function run(testing $t)
     {
@@ -14,7 +15,7 @@ class triple_unit_tests extends TestCase
         $db_con = new sql_db();
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
-        $json_file = 'unit/triple/second.json';
+        $json_file = 'unit/triple/pi.json';
         $usr->id = 1;
 
         $t->header('Unit tests of the triple class (src/main/php/model/word/triple.php)');
@@ -22,21 +23,22 @@ class triple_unit_tests extends TestCase
 
         $t->subheader('SQL statement tests');
 
-        // sql to load the word by id
-        $wrd = new word_link($usr);
-        $wrd->id = 2;
-        $t->assert_load_sql($db_con, $wrd);
-        $t->assert_load_standard_sql($db_con, $wrd);
+        // sql to load the triple by id
+        $trp = new triple($usr);
+        $trp->id = 2;
+        $t->assert_load_sql($db_con, $trp);
+        $t->assert_load_standard_sql($db_con, $trp);
 
-        // sql to load the word by name
-        $wrd = new word_link($usr);
-        $t->assert_load_sql($db_con, $wrd);
-        $t->assert_load_standard_sql($db_con, $wrd);
+        // sql to load the triple by name
+        $trp = new triple($usr);
+        $trp->name = triple::TN_READ;
+        $t->assert_load_sql($db_con, $trp);
+        $t->assert_load_standard_sql($db_con, $trp);
 
 
         $t->subheader('Im- and Export tests');
 
-        $t->assert_json(new word_link($usr), $json_file);
+        $t->assert_json(new triple($usr), $json_file);
 
     }
 

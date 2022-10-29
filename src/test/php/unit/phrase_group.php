@@ -101,7 +101,7 @@ class phrase_group_unit_tests
         $t->assert_sql_name_unique($phr_grp->get_by_wrd_lst_sql(true));
 
         // sql to load the phrase group word link by id
-        $grp_wrd_lnk = new phrase_group_word_link();
+        $grp_wrd_lnk = new phrase_group_triple();
         $grp_wrd_lnk->id = 11;
         $t->assert_load_sql($db_con, $grp_wrd_lnk);
 
@@ -118,10 +118,10 @@ class phrase_group_unit_tests
         $phr_grp_lst->phr = $wrd->phrase();
         $created_sql = $phr_grp_lst->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/phrase/phrase_group_list_by_word.sql');
-        $t->assert('phrase_group_list->load_all_word_linked', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('phrase_group_list->load_all_tripleed', $t->trim($created_sql), $t->trim($expected_sql));
 
         // sql to load all phrase groups linked to a triple
-        $lnk = $t->load_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY);
+        $lnk = $t->load_triple(word::TN_ZH, verb::IS_A, word::TN_CITY);
         $lnk->id = 2; // dummy number just to test the SQL creation
         $phr_grp_lst = new phrase_group_list($usr);
         $phr_grp_lst->phr = $lnk->phrase();
@@ -130,12 +130,12 @@ class phrase_group_unit_tests
         $t->assert('phrase_group_list->load_all_triple_linked', $t->trim($created_sql), $t->trim($expected_sql));
 
 
-        $t->header('Unit tests of the phrase group word link class (src/main/php/model/phrase/phrase_group_word_link.php)');
+        $t->header('Unit tests of the phrase group word link class (src/main/php/model/phrase/phrase_group_triple.php)');
 
         $t->subheader('SQL statement tests');
 
         // sql to load the phrase group word links related to a group
-        $grp_wrd_lnk = new phrase_group_word_link();
+        $grp_wrd_lnk = new phrase_group_triple();
         $phr_grp = new phrase_group($usr);
         $phr_grp->id = 13;
         $this->assert_load_by_group_id_sql($t, $db_con, $grp_wrd_lnk, $phr_grp);

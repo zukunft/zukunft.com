@@ -40,8 +40,8 @@ class change_log_table extends user_type_list
     const VALUE_LINK = "value_links";
     const WORD = "words";
     const WORD_USR = "user_words";
-    const WORD_LINK = "word_links";
-    const WORD_LINK_USR = "user_word_links";
+    const triple = "triples";
+    const triple_USR = "user_triples";
     const VERB = "verbs";
     const FORMULA = "formulas";
     const FORMULA_USR = "user_formulas";

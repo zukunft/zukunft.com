@@ -94,7 +94,7 @@
   below a list of predefined verbs that have a fixed predefined behavior as const
   the const is the code_id that is also shown to to user if he/she wants to change the name
 
-  verbs are also named as word_links
+  verbs are also named as triples
   
 
     This file is part of zukunft.com - calc with words

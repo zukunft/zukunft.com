@@ -446,7 +446,7 @@ class word extends user_sandbox_description
             $qp = $this->load_sql($db_con);
 
             if ($db_con->get_where() <> '') {
-                // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
+                // similar statement used in triple_list->load, check if changes should be repeated in triple_list.php
                 $db_wrd = $db_con->get1($qp);
                 $this->row_mapper($db_wrd);
                 if ($this->id <> 0) {
@@ -1337,7 +1337,7 @@ class word extends user_sandbox_description
         $result = false;
         $wrd_lst = $this->children();
         if (!$wrd_lst->does_contain($child)) {
-            $wrd_lnk = new word_link($this->usr);
+            $wrd_lnk = new triple($this->usr);
             $wrd_lnk->from = $child->phrase();
             $wrd_lnk->verb = $verbs->get_verb(verb::IS_A);
             $wrd_lnk->to = $this->phrase();
@@ -1939,7 +1939,7 @@ class word extends user_sandbox_description
         $grp_lst->load();
 
         // collect all triples where this word is used
-        $trp_lst = new word_link_list($this->usr);
+        $trp_lst = new triple_list($this->usr);
         $trp_lst->load_by_phr($this->phrase());
 
         // collect all values related to word triple

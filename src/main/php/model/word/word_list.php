@@ -170,7 +170,7 @@ class word_list
             $qp->name .= 'group';
             $db_con->set_name($qp->name);
             $db_con->add_par(sql_db::PAR_INT, $grp_id);
-            $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
+            $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_TRIPLE);
             $sql_where = sql_db::STD_TBL . '.' . word::FLD_ID . ' IN ( SELECT ' . word::FLD_ID . ' 
                                     FROM ' . $table_name . '
                                     WHERE ' . phrase_group::FLD_ID . ' = ' . $db_con->par_name() . ')';
@@ -251,13 +251,13 @@ class word_list
             if ($direction == word_select_direction::UP) {
                 $qp->name .= 'parents';
                 $db_con->add_par_in_int($this->ids());
-                $sql_where = sql_db::LNK_TBL . '.' . word_link::FLD_FROM . $sql_in . $db_con->par_name() . ')';
-                $join_field = word_link::FLD_TO;
+                $sql_where = sql_db::LNK_TBL . '.' . triple::FLD_FROM . $sql_in . $db_con->par_name() . ')';
+                $join_field = triple::FLD_TO;
             } elseif ($direction == word_select_direction::DOWN) {
                 $qp->name .= 'children';
                 $db_con->add_par_in_int($this->ids());
-                $sql_where = sql_db::LNK_TBL . '.' . word_link::FLD_TO . $sql_in . $db_con->par_name() . ')';
-                $join_field = word_link::FLD_FROM;
+                $sql_where = sql_db::LNK_TBL . '.' . triple::FLD_TO . $sql_in . $db_con->par_name() . ')';
+                $join_field = triple::FLD_FROM;
             } else {
                 log_err('Unknown direction ' . $direction);
             }

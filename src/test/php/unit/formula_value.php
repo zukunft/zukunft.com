@@ -147,7 +147,7 @@ class formula_value_unit_tests
 
         // sql to load a list of formula values by the triple id
         $fv_lst = new formula_value_list($usr);
-        $trp = new word_link($usr);
+        $trp = new triple($usr);
         $trp->id = 3;
         $t->assert_load_list_sql($db_con, $fv_lst, $trp);
 

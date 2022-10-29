@@ -85,9 +85,9 @@ class test_unit extends testing
         (new string_unit_tests)->run($this); // test functions not yet split into single unit tests
         (new system_unit_tests)->run($this);
         (new word_unit_tests)->run($this);
-        (new word_link_unit_tests)->run($this);
+        (new triple_unit_tests)->run($this);
         (new word_list_unit_tests)->run($this);
-        (new word_link_list_unit_tests)->run($this);
+        (new triple_list_unit_tests)->run($this);
         (new phrase_unit_tests)->run($this);
         (new phrase_list_unit_tests)->run($this);
         (new phrase_group_unit_tests)->run($this);

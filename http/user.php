@@ -86,7 +86,7 @@ if ($usr->id > 0) {
 
     // undo user changes for triples
     if ($undo_lnk > 0) {
-        $lnk = new word_link($usr);
+        $lnk = new triple($usr);
         $lnk->id = $undo_lnk;
         $lnk->del_usr_cfg();
     }

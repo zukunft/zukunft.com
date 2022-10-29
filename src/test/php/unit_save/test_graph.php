@@ -36,7 +36,7 @@ function run_graph_test(testing $t)
 
     $back = 0;
 
-    $t->header('Test the graph class (classes/word_link_list.php)');
+    $t->header('Test the graph class (classes/triple_list.php)');
 
     // get all phrase links used for a phrase and its related values
     // e.g. for the phrase "Company" the link "Company has a balance sheet" should be returned
@@ -60,7 +60,7 @@ function run_graph_test(testing $t)
     }
     // step 4: get the word links for the used phrases
     //         these are the word links that are needed for a complete export
-    $lnk_lst = new word_link_list($usr);
+    $lnk_lst = new triple_list($usr);
     $lnk_lst->wrd_lst = $phr_lst_used->wrd_lst();
     $lnk_lst->direction = 'up';
     $lnk_lst->load_old();
@@ -68,9 +68,9 @@ function run_graph_test(testing $t)
     // check if at least the basic relations are in the database
     /*
     $target = '' . word::TN_CITY_AS_CATEGORY . ' has a balance sheet';
-    $t->dsp_contains(', word_link_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
     $target = 'Company has a forecast';
-    $t->dsp_contains(', word_link_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
     $target = 'Company uses employee';
     $t->dsp_contains(', word ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
     */
@@ -78,14 +78,14 @@ function run_graph_test(testing $t)
     // similar to above, but just for the zurich
     $phr_lst = new phrase_list($usr);
     $phr_lst->load_by_names(array(word::TN_ZH, word::TN_INHABITANT, word::TN_MIO));
-    $lnk_lst = new word_link_list($usr);
+    $lnk_lst = new triple_list($usr);
     $lnk_lst->wrd_lst = $phr_lst->wrd_lst_all();
     $lnk_lst->direction = 'up';
     $lnk_lst->load_old();
     $result = $lnk_lst->name();
     // to be reviewed
     $target = 'System Test Phrase: Zurich (City),System Test Phrase: Zurich Insurance,System Test Word Member e.g. Zurich (System Test Word Category e.g. Canton)';
-    $t->dsp_contains(', word_link_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
 
     // the other side
@@ -96,7 +96,7 @@ function run_graph_test(testing $t)
     $is->id = cl(db_cl::VERB, verb::IS_A);
     $is->usr = $usr;
     $is->load();
-    $graph = new word_link_list($usr);
+    $graph = new triple_list($usr);
     $graph->wrd = $ZH;
     $graph->vrb = $is;
     $graph->direction = 'up';

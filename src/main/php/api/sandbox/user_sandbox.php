@@ -39,7 +39,7 @@ use user;
 use user_sandbox;
 use value;
 use word;
-use word_link;
+use triple;
 use function log_err;
 
 class user_sandbox_api
@@ -86,7 +86,7 @@ class user_sandbox_api
         if ($class == word_api::class) {
             $db_obj = new word($usr);
         } elseif ($class == triple_api::class) {
-            $db_obj = new word_link($usr);
+            $db_obj = new triple($usr);
         } elseif ($class == value_api::class) {
             $db_obj = new value($usr);
         } elseif ($class == formula_api::class) {

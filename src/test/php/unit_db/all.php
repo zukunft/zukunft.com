@@ -36,11 +36,11 @@ function init_unit_db_tests(testing $t)
 {
 
     // add the database rows for read testing
-    $t->test_word_link(
-        word_link::TN_READ, verb::IS_A, word::TN_READ,
-        word_link::TN_READ_NAME, word_link::TN_READ_NAME
+    $t->test_triple(
+        triple::TN_READ, verb::IS_A, word::TN_READ,
+        triple::TN_READ_NAME, triple::TN_READ_NAME
     );
-    $phr_grp = $t->add_phrase_group(array(word_link::TN_READ_NAME),phrase_group::TN_READ);
+    $phr_grp = $t->add_phrase_group(array(triple::TN_READ_NAME),phrase_group::TN_READ);
     $t->test_value_by_phr_grp($phr_grp, value::TV_READ);
 
 }

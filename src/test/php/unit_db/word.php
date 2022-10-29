@@ -2,7 +2,7 @@
 
 /*
 
-  test/unit_db/word.php - database unit testing of the word, word_link and phrase functions
+  test/unit_db/word.php - database unit testing of the word, triple and phrase functions
   ---------------------
 
 
@@ -76,9 +76,9 @@ function run_word_unit_db_tests(testing $t)
     $wrd_scale->name = word::TN_READ_SCALE;
     $wrd_scale->load();
     $phr = new phrase($usr);
-    $phr->name = word_link::TN_READ_NAME;
+    $phr->name = triple::TN_READ_NAME;
     $phr->load();
-    $phr_grp = $t->load_phrase_group(array(word_link::TN_READ));
+    $phr_grp = $t->load_phrase_group(array(triple::TN_READ));
 
     // load a word list by the word id
     $wrd_lst = new word_list($usr);
@@ -103,7 +103,7 @@ function run_word_unit_db_tests(testing $t)
     // load a word list by the phrase group
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_grp_id($phr_grp->id);
-    $t->assert('load_by_group', $wrd_lst->name(), '"' . word_link::TN_READ . '"');
+    $t->assert('load_by_group', $wrd_lst->name(), '"' . triple::TN_READ . '"');
 
     // load a word list by type
     $wrd_lst = new word_list($usr);
@@ -128,12 +128,12 @@ function run_word_unit_db_tests(testing $t)
     $t->assert('add_id', $wrd_lst->name(), '"' . word::TN_READ . '","' . word::TN_READ_SCALE . '"');
 
 
-    $t->header('Unit database tests of the word class (src/main/php/model/word/word_link.php)');
-    $t->name = 'word_link->';
+    $t->header('Unit database tests of the word class (src/main/php/model/word/triple.php)');
+    $t->name = 'triple->';
 
     $t->subheader('Frontend API tests');
 
-    $trp = $t->load_word_link(word_link::TN_READ, verb::IS_A, word::TN_READ);
+    $trp = $t->load_triple(triple::TN_READ, verb::IS_A, word::TN_READ);
     $t->assert_api($trp);
 
 }

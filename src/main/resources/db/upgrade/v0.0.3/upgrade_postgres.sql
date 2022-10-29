@@ -20,7 +20,7 @@ SELECT w.word_id   AS phrase_id,
        w.protect_id
 FROM words AS w
 UNION
-SELECT (l.word_link_id * -(1))                                                    AS phrase_id,
+SELECT (l.triple_id * -(1))                                                    AS phrase_id,
        l.user_id,
        CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS name_used,
        l.description,
@@ -29,7 +29,7 @@ SELECT (l.word_link_id * -(1))                                                  
        l.excluded,
        l.share_type_id,
        l.protect_id
-FROM word_links AS l;
+FROM triples AS l;
 
 --
 -- Structure for the user_phrases view
@@ -46,7 +46,7 @@ SELECT w.word_id   AS phrase_id,
        w.protect_id
 FROM user_words AS w
 UNION
-SELECT (l.word_link_id * -(1))                                                    AS phrase_id,
+SELECT (l.triple_id * -(1))                                                    AS phrase_id,
        l.user_id,
        CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS name_used,
        l.description,
@@ -54,7 +54,7 @@ SELECT (l.word_link_id * -(1))                                                  
        l.excluded,
        l.share_type_id,
        l.protect_id
-FROM user_word_links AS l;
+FROM user_triples AS l;
 
 --
 -- Structure for view terms
@@ -71,7 +71,7 @@ SELECT ((w.word_id * 2) - 1) AS term_id,
        w.protect_id
 FROM words AS w
 UNION
-SELECT ((l.word_link_id * -2) + 1)                                                  AS term_id,
+SELECT ((l.triple_id * -2) + 1)                                                  AS term_id,
        l.user_id,
        CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS term_name,
        l.description,
@@ -79,7 +79,7 @@ SELECT ((l.word_link_id * -2) + 1)                                              
        l.excluded,
        l.share_type_id,
        l.protect_id
-FROM word_links AS l
+FROM triples AS l
 UNION
 SELECT (f.formula_id * 2) AS term_id,
        f.user_id,
@@ -117,7 +117,7 @@ SELECT ((w.word_id * 2) - 1) AS term_id,
        w.protect_id
 FROM user_words AS w
 UNION
-SELECT ((l.word_link_id * -2) + 1)                                                  AS term_id,
+SELECT ((l.triple_id * -2) + 1)                                                  AS term_id,
        l.user_id,
        CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS term_name,
        l.description,
@@ -125,7 +125,7 @@ SELECT ((l.word_link_id * -2) + 1)                                              
        l.excluded,
        l.share_type_id,
        l.protect_id
-FROM user_word_links AS l
+FROM user_triples AS l
 UNION
 SELECT (f.formula_id * 2) AS term_id,
        f.user_id,

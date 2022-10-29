@@ -62,7 +62,7 @@ if ($usr->id > 0) {
     if ($link_id > 0) {
 
         // create the source object to have an object to update the parameters
-        $lnk = new word_link($usr);
+        $lnk = new triple($usr);
         $lnk->id = $link_id;
         $lnk->load();
 

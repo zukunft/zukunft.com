@@ -8,6 +8,7 @@
   "words": [
     {
       "name": "Mathematical constant",
+      "description": "A mathematical constant that never changes e.g. Pi",
       "type": "constant",
       "protection": "admin_protection",
       "refs": [

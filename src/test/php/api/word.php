@@ -40,6 +40,7 @@ function run_api_test(testing $t)
 
     $t->assert_api_get(word::class);
     $t->assert_api_get(verb::class);
+    $t->assert_api_get(triple::class);
 
     // $t->assert_rest(new word($usr, word::TN_READ));
 

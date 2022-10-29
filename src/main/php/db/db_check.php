@@ -100,6 +100,20 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
     $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
     // TODO check if change has been successful
+    // rename word_link to triple
+    $result .= $db_con->change_table_name('phrase_group_word_link', sql_db::TBL_PHRASE_GROUP_TRIPLE);
+    $result .= $db_con->change_column_name(sql_db::TBL_PHRASE_GROUP_TRIPLE, 'phrase_group_word_link_id', 'phrase_group_triple_id');
+    $result .= $db_con->change_table_name(sql_db::TBL_USER_PREFIX . 'phrase_group_word_link', sql_db::TBL_USER_PREFIX . sql_db::TBL_PHRASE_GROUP_TRIPLE);
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_PHRASE_GROUP_TRIPLE, 'phrase_group_word_link_id', sql_db::TBL_USER_PREFIX . 'phrase_group_triple_id');
+    $result .= $db_con->change_table_name('word_link', sql_db::TBL_TRIPLE);
+    $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'word_link_id', 'triple_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'word_link_condition_id', 'triple_condition_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'word_link_condition_type_id', 'triple_condition_type_id');
+    $result .= $db_con->change_table_name(sql_db::TBL_USER_PREFIX . 'word_link', sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE);
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'word_link_id', sql_db::TBL_USER_PREFIX . 'triple_id');
+    $result .= $db_con->change_table_name('view_word_link', sql_db::TBL_VIEW_TERM_LINK);
+    //
+    $result .= $db_con->change_table_name('languages_forms', sql_db::TBL_LANGUAGE_FORM);
     $result .= $db_con->add_column(sql_db::TBL_USER_PROFILE, 'right_level', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'protect_id', 'smallint');
@@ -137,7 +151,6 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE_TIME_SERIES, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE_TIME_SERIES, 'protect_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_VIEW_COMPONENT_POS_TYPE, 'code_id', 'varchar(50)');
-    $result .= $db_con->change_table_name('languages_forms', sql_db::TBL_LANGUAGE_FORM);
     $result .= $db_con->change_column_name(sql_db::TBL_LANGUAGE_FORM, 'lanuages_id', 'language_id');
     $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'user_value', 'word_value');
     $result .= $db_con->change_column_name(sql_db::TBL_VALUE_TIME_SERIES, 'value_time_serie_id', 'value_time_series_id');

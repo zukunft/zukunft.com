@@ -150,7 +150,7 @@ class file_import
                     }
                 } elseif ($key == export::TRIPLES) {
                     foreach ($json_obj as $triple) {
-                        $wrd_lnk = new word_link($this->usr);
+                        $wrd_lnk = new triple($this->usr);
                         $import_result = $wrd_lnk->import_obj($triple);
                         if ($import_result->is_ok()) {
                             $this->triples_done++;

@@ -138,7 +138,7 @@ class term
     {
         if ($class == word::class) {
             $this->id = ($id * 2) - 1;
-        } elseif ($class == word_link::class) {
+        } elseif ($class == triple::class) {
             $this->id = ($id * -2) + 1;
         } elseif ($class == formula::class) {
             $this->id = ($id * 2);
@@ -193,7 +193,7 @@ class term
     {
         $result = false;
         if (isset($this->obj)) {
-            if (get_class($this->obj) == word_link::class) {
+            if (get_class($this->obj) == triple::class) {
                 $result = true;
             }
         }
@@ -241,10 +241,10 @@ class term
         return $wrd;
     }
 
-    private function get_triple(): word_link
+    private function get_triple(): triple
     {
-        $lnk = new word_link($this->usr);
-        if (get_class($this->obj) == word_link::class) {
+        $lnk = new triple($this->usr);
+        if (get_class($this->obj) == triple::class) {
             $lnk = $this->obj;
         }
         return $lnk;
@@ -316,17 +316,17 @@ class term
 
     /**
      * test if the name is used already and load the object
-     * @param bool $including_word_links
+     * @param bool $including_triples
      * @return int the id of the object found and zero if nothing is found
      */
-    function load(bool $including_word_links = true): int
+    function load(bool $including_triples = true): int
     {
         log_debug('term->load (' . $this->name . ')');
         $result = 0;
 
         if ($this->load_word()) {
             $result = $this->obj->id;
-        } elseif ($this->load_triple($including_word_links)) {
+        } elseif ($this->load_triple($including_triples)) {
             $result = $this->obj->id;
         } elseif ($this->load_formula()) {
             $result = $this->obj->id;
@@ -364,15 +364,15 @@ class term
     /**
      * simply load a triple
      */
-    private function load_triple(bool $including_word_links): bool
+    private function load_triple(bool $including_triples): bool
     {
         $result = false;
-        if ($including_word_links) {
-            $lnk = new word_link($this->usr);
+        if ($including_triples) {
+            $lnk = new triple($this->usr);
             $lnk->name = $this->name;
             if ($lnk->load()) {
-                $this->set_obj_id($lnk->id, word_link::class);
-                //$this->type = word_link::class;
+                $this->set_obj_id($lnk->id, triple::class);
+                //$this->type = triple::class;
                 $this->type = 'triple';
                 $this->obj = $lnk;
                 $result = true;

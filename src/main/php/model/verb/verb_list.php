@@ -91,9 +91,9 @@ class verb_list extends user_type_list
             // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
             $db_con->add_par(sql_db::PAR_INT, $phr->id);
             if ($direction == word_select_direction::UP) {
-                $qp->sql = $db_con->select_by_field(word_link::FLD_FROM);
+                $qp->sql = $db_con->select_by_field(triple::FLD_FROM);
             } else {
-                $qp->sql = $db_con->select_by_field(word_link::FLD_TO);
+                $qp->sql = $db_con->select_by_field(triple::FLD_TO);
             }
             $qp->par = $db_con->get_par();
         }
@@ -245,7 +245,7 @@ class verb_list extends user_type_list
 
         $sql = "UPDATE verbs v
                    SET words = ( SELECT COUNT(to_phrase_id) 
-                                   FROM word_links l
+                                   FROM triples l
                                   WHERE v.verb_id = l.verb_id)
                  WHERE verb_id > 0;";
         $db_con->usr_id = $this->usr->id;

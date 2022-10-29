@@ -39,7 +39,7 @@ class phrase_group_triple_link extends phrase_group_link
     // all database field names excluding the id
     const FLD_NAMES = array(
         phrase_group::FLD_ID,
-        word_link::FLD_ID_NEW
+        triple::FLD_ID_NEW
     );
 
     // database fields
@@ -57,7 +57,7 @@ class phrase_group_triple_link extends phrase_group_link
         if ($db_row != null) {
             $this->id = $db_row[self::FLD_ID];
             $this->grp_id = $db_row[phrase_group::FLD_ID];
-            $this->trp_id = $db_row[word_link::FLD_ID_NEW];
+            $this->trp_id = $db_row[triple::FLD_ID_NEW];
             $result = true;
         }
         return $result;

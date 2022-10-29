@@ -131,7 +131,7 @@ if ($usr->id > 0) {
 
         } elseif ($wrd_id > 0) {
             // check link of the existing word already exists
-            $lnk_test = new word_link($usr);
+            $lnk_test = new triple($usr);
             $lnk_test->from->id = $wrd_id;
             $lnk_test->verb->id = $vrb_id;
             $lnk_test->to->id = $wrd_to;
@@ -141,7 +141,7 @@ if ($usr->id > 0) {
                 log_debug('check forward link ' . $wrd_id . ' ' . $vrb_id . ' ' . $wrd_to . '');
                 $msg .= '"' . $lnk_test->from_name . ' ' . $lnk_test->verb->name . ' ' . $lnk_test->to_name . '" already exists. ';
             }
-            $lnk_rev = new word_link($usr);
+            $lnk_rev = new triple($usr);
             $lnk_rev->from->id = $wrd_to;
             $lnk_rev->verb->id = $vrb_id;
             $lnk_rev->to->id = $wrd_id;
@@ -167,7 +167,7 @@ if ($usr->id > 0) {
             if ($wrd->id > 0 and $vrb_id <> 0 and $wrd_to > 0) {
                 // ... and link it to an existing word
                 log_debug('word ' . $wrd->id . ' linked via ' . $vrb_id . ' to ' . $wrd_to . ': ' . $add_result);
-                $lnk = new word_link($usr);
+                $lnk = new triple($usr);
                 $lnk->from->id = $wrd->id;
                 $lnk->verb->id = $vrb_id;
                 $lnk->to->id = $wrd_to;

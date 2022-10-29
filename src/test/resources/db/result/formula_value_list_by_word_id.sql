@@ -11,5 +11,5 @@ PREPARE formula_value_list_by_word_id (int) AS
            s.dirty,
            l.phrase_group_id
       FROM formula_values s
- LEFT JOIN phrase_group_word_links l ON s.phrase_group_id = l.phrase_group_id
+ LEFT JOIN phrase_group_triples l ON s.phrase_group_id = l.phrase_group_id
      WHERE l.word_id = $1;

@@ -2,7 +2,7 @@
 
 /*
 
-    phrase_group.php - a combination of a word list and a word_link_list
+    phrase_group.php - a combination of a word list and a triple_list
     ----------------
 
     a kind of phrase list, but separated into two different lists
@@ -366,9 +366,9 @@ class phrase_group
                 if ($wrd != null) {
                     if ($wrd->id <> 0) {
                         if ($sql_from == '') {
-                            $sql_from .= 'phrase_group_word_links l' . $pos;
+                            $sql_from .= 'phrase_group_triples l' . $pos;
                         } else {
-                            $sql_from .= ', phrase_group_word_links l' . $pos;
+                            $sql_from .= ', phrase_group_triples l' . $pos;
                         }
                         if ($sql_where == '') {
                             $sql_where .= 'l' . $pos . '.word_id = ' . $wrd->id;
@@ -415,9 +415,9 @@ class phrase_group
                 $sql_where = '';
                 foreach ($wrd_lst->ids as $wrd_id) {
                     if ($sql_from == '') {
-                        $sql_from .= 'phrase_group_word_links l' . $pos;
+                        $sql_from .= 'phrase_group_triples l' . $pos;
                     } else {
-                        $sql_from .= ', phrase_group_word_links l' . $pos;
+                        $sql_from .= ', phrase_group_triples l' . $pos;
                     }
                     if ($sql_where == '') {
                         $sql_where .= 'l' . $pos . '.word_id = ' . $wrd_id;
@@ -720,9 +720,9 @@ class phrase_group
 
         // switch between the word and triple settings
         if ($type == sql_db::TBL_WORD) {
-            $lnk = new phrase_group_word_link();
+            $lnk = new phrase_group_triple();
             $qp = $lnk->load_by_group_id_sql($db_con, $this);
-            $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
+            $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_TRIPLE);
             $field_name = word::FLD_ID;
         } else {
             $lnk = new phrase_group_triple_link();
@@ -800,7 +800,7 @@ class phrase_group
         global $db_con;
         $result = new user_message();
 
-        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
+        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_TRIPLE);
         $db_con->usr_id = $this->usr->id;
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);

@@ -79,8 +79,8 @@ include_once $path_unit . 'system.php';
 include_once $path_unit . 'user_sandbox.php';
 include_once $path_unit . 'word.php';
 include_once $path_unit . 'word_list.php';
-include_once $path_unit . 'word_link.php';
-include_once $path_unit . 'word_link_list.php';
+include_once $path_unit . 'triple.php';
+include_once $path_unit . 'triple_list.php';
 include_once $path_unit . 'phrase.php';
 include_once $path_unit . 'phrase_list.php';
 include_once $path_unit . 'phrase_group.php';
@@ -138,7 +138,7 @@ include_once $path_unit_save . 'test_math.php';
 include_once $path_unit_save . 'test_word.php';
 include_once $path_unit_save . 'test_word_display.php';
 include_once $path_unit_save . 'test_word_list.php';
-include_once $path_unit_save . 'test_word_link.php';
+include_once $path_unit_save . 'test_triple.php';
 include_once $path_unit_save . 'phrase_test.php';
 include_once $path_unit_save . 'phrase_list_test.php';
 include_once $path_unit_save . 'phrase_group_test.php';
@@ -464,7 +464,7 @@ class test_base
      * @param int|null $id t force setting the id for unit testing
      * @param string|null $wrd_type_code_id the id of the predefined word type which the new word should have
      * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
-     * @return word_link the created triple object
+     * @return triple the created triple object
      */
     function new_triple(string  $wrd_name,
                         string  $from_name,
@@ -472,7 +472,7 @@ class test_base
                         string  $to_name,
                         ?int $id = null,
                         ?string $wrd_type_code_id = null,
-                        ?user   $test_usr = null): word_link
+                        ?user   $test_usr = null): triple
     {
         global $usr;
         global $verbs;
@@ -484,7 +484,7 @@ class test_base
             $test_usr = $usr;
         }
 
-        $trp = new word_link($test_usr);
+        $trp = new triple($test_usr);
         $trp->id = $id;
         $trp->from = $this->new_word($from_name)->phrase();
         $trp->verb = $verbs->get_verb($verb_code_id);
@@ -497,9 +497,9 @@ class test_base
         return $trp;
     }
 
-    function load_word_link(string $from_name,
+    function load_triple(string $from_name,
                             string $verb_code_id,
-                            string $to_name): word_link
+                            string $to_name): triple
     {
         global $usr;
         global $verbs;
@@ -511,7 +511,7 @@ class test_base
 
         $vrb = $verbs->get_verb($verb_code_id);
 
-        $lnk_test = new word_link($usr);
+        $lnk_test = new triple($usr);
         if ($from->id > 0 or $to->id > 0) {
             // check if the forward link exists
             $lnk_test->from = $from;
@@ -526,12 +526,12 @@ class test_base
      * check if a word link exists and if not and requested create it
      * $phrase_name should be set if the standard name for the link should not be used
      */
-    function test_word_link(string $from_name,
+    function test_triple(string $from_name,
                             string $verb_code_id,
                             string $to_name,
                             string $target = '',
                             string $phrase_name = '',
-                            bool   $autocreate = true): word_link
+                            bool   $autocreate = true): triple
     {
         global $usr;
         global $verbs;
@@ -556,7 +556,7 @@ class test_base
 
         $vrb = $verbs->get_verb($verb_code_id);
 
-        $lnk_test = new word_link($usr);
+        $lnk_test = new triple($usr);
         if ($from->id == 0 or $to->id == 0) {
             log_err("Words " . $from_name . " and " . $to_name . " cannot be created");
         } else {
@@ -610,11 +610,11 @@ class test_base
         return $result;
     }
 
-    function del_word_link(string $from_name,
+    function del_triple(string $from_name,
                            string $verb_code_id,
                            string $to_name): bool
     {
-        $trp = $this->load_word_link($from_name, $verb_code_id, $to_name);
+        $trp = $this->load_triple($from_name, $verb_code_id, $to_name);
         if ($trp->id <> 0) {
             $trp->del();
             return true;
@@ -1825,10 +1825,10 @@ function zu_test_time_setup(testing $t): string
         for ($year = $start_year; $year <= $end_year; $year++) {
             $this_year = $year;
             $t->test_word(strval($this_year));
-            $wrd_lnk = $t->test_word_link(TW_YEAR, verb::IS_A, $this_year);
+            $wrd_lnk = $t->test_triple(TW_YEAR, verb::IS_A, $this_year);
             $result = $wrd_lnk->name;
             if ($prev_year <> '') {
-                $t->test_word_link($prev_year, verb::FOLLOW, $this_year);
+                $t->test_triple($prev_year, verb::FOLLOW, $this_year);
             }
             $prev_year = $this_year;
         }
