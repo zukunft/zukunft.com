@@ -9,6 +9,7 @@ PREPARE triple_by_id FROM
                 s.word_type_id,
                 s.triple_condition_id,
                 s.triple_condition_type_id,
+                IF(u.triple_name    IS NULL, s.triple_name,    u.triple_name)    AS triple_name,
                 IF(u.name_given     IS NULL, s.name_given,     u.name_given)     AS name_given,
                 IF(u.name_generated IS NULL, s.name_generated, u.name_generated) AS name_generated,
                 IF(u.description    IS NULL, s.description,    u.description)    AS description,

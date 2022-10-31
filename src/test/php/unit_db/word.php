@@ -113,6 +113,7 @@ function run_word_unit_db_tests(testing $t)
     // load a word list by name pattern
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_pattern('S');
+    // TODO contains at least
     $t->assert('load_by_pattern', $wrd_lst->name(), '"S","September","Share","Share Price","SI base unit","Sv"');
 
     // add a word to a list by the word id

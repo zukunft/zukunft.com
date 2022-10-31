@@ -108,7 +108,7 @@ class formula_value_list
             } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
                 $sql_by .= word::FLD_ID;
             } elseif (get_class($obj) == triple::class) {
-                $sql_by .= triple::FLD_ID_NEW;
+                $sql_by .= triple::FLD_ID;
             }
         }
         if ($sql_by == '') {
@@ -163,7 +163,7 @@ class formula_value_list
                         sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
                         formula_value::FLD_GRP,
                         formula_value::FLD_GRP);
-                    $qp->sql = $db_con->select_by_field_list(array(triple::FLD_ID_NEW));
+                    $qp->sql = $db_con->select_by_field_list(array(triple::FLD_ID));
                 }
             }
             $qp->par = $db_con->get_par();

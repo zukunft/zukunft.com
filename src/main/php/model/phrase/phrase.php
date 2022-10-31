@@ -114,9 +114,9 @@ class phrase
 
         // create the automatically related objects if requested
         if ($from != ''
-            AND $verb != ''
-            AND $to != '') {
-                $this->obj = new triple($usr, $from, $verb, $to, $name);
+            and $verb != ''
+            and $to != '') {
+            $this->obj = new triple($usr, $from, $verb, $to, $name);
         } else {
             if ($from != '') {
                 $this->obj = new word($usr, $from);
@@ -158,7 +158,7 @@ class phrase
                 //$trp->owner_id = $db_row[user_sandbox::FLD_USER . $fld_ext];
                 $trp->excluded = $db_row[user_sandbox::FLD_EXCLUDED . $fld_ext];
                 //$trp->name = $db_row[word::FLD_NAME . $fld_ext];
-                $trp->name = $db_row[triple::FLD_NAME . $fld_ext];
+                $trp->name = $db_row[triple::FLD_NAME_GIVEN . $fld_ext];
                 $trp->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 $trp->type_id = $db_row[triple::FLD_TYPE . $fld_ext];
                 $trp->share_id = $db_row[user_sandbox::FLD_SHARE . $fld_ext];
@@ -955,20 +955,47 @@ class phrase
         return $wrd->dsp_time_selector($type, $form_name, $pos, $back);
     }
 
+    /**
+     * @return string
+     */
     function save(): string
     {
+        global $phrase_types;
+
         $result = '';
 
+        /*
         if (isset($this->obj)) {
             $result = $this->obj->save();
         }
-
-        /*
-        if ($this->is_word()) {
-            $wrd = $this->get_word();
-            $result = $wrd->save();
-        }
         */
+
+        // try if the word exists
+        $wrd = new word($this->usr);
+        $wrd->name = $this->name;
+        $wrd->load();
+        if ($wrd->id > 0) {
+            $this->id = $wrd->phrase()->id;
+        } else {
+            // try if the triple exists
+            $trp = new triple($this->usr);
+            $trp->name = $this->name;
+            $trp->load();
+            if ($trp->id > 0) {
+                $this->id = $trp->phrase()->id * -1;
+            } else {
+                // create a word if neither the word nor the triple exists
+                $wrd = new word($this->usr);
+                $wrd->name = $this->name;
+                $wrd->type_id = $phrase_types->default_id();
+                $result = $wrd->save();
+                if ($wrd->id == 0) {
+                    log_err('Cannot add from word ' . $this->dsp_id(), 'phrase->save');
+                } else {
+                    $this->id = $wrd->phrase()->id;
+                }
+            }
+        }
 
         return $result;
     }

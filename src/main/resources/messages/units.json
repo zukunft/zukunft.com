@@ -990,97 +990,97 @@
   ],
   "triples": [
     {
-      "name": "",
+      "name": "Pi (math)",
       "from": "Pi",
       "verb": "is a",
       "to": "Mathematical constant"
     },
     {
-      "name": "",
+      "name": "second (unit)",
       "from": "second",
       "verb": "is a",
       "to": "SI base unit"
     },
     {
-      "name": "",
+      "name": "metre (unit)",
       "from": "metre",
       "verb": "is a",
       "to": "SI base unit"
     },
     {
-      "name": "",
+      "name": "kilogram (unit)",
       "from": "kilogram",
       "verb": "is a",
       "to": "SI base unit"
     },
     {
-      "name": "",
+      "name": "ampere (unit)",
       "from": "ampere",
       "verb": "is a",
       "to": "SI base unit"
     },
     {
-      "name": "",
+      "name": "kelvin (unit)",
       "from": "kelvin",
       "verb": "is a",
       "to": "SI base unit"
     },
     {
-      "name": "",
+      "name": "mole (unit)",
       "from": "mole",
       "verb": "is a",
       "to": "SI base unit"
     },
     {
-      "name": "",
+      "name": "candela (unit)",
       "from": "candela",
       "verb": "is a",
       "to": "SI base unit"
     },
     {
-      "name": "s",
+      "name": "s (unit symbol)",
       "from": "s",
       "verb": "is alias of",
       "to": "second"
     },
     {
-      "name": "m",
+      "name": "m (unit symbol)",
       "from": "m",
       "verb": "is alias of",
       "to": "metre"
     },
     {
-      "name": "kg",
+      "name": "kg (unit symbol)",
       "from": "kg",
       "verb": "is alias of",
       "to": "kilogram"
     },
     {
-      "name": "A",
+      "name": "A (unit symbol)",
       "from": "A",
       "verb": "is alias of",
       "to": "ampere"
     },
     {
-      "name": "K",
-      "from": "kg",
+      "name": "K (unit symbol)",
+      "from": "K",
       "verb": "is alias of",
       "to": "kelvin"
     },
     {
-      "name": "mol",
+      "name": "mol (unit symbol)",
       "from": "mol",
       "verb": "is alias of",
       "to": "mole"
     },
     {
-      "name": "cd",
+      "name": "cd (unit symbol)",
       "from": "cd",
       "verb": "is alias of",
       "to": "candela"
     },
     {
-      "name": "l",
+      "name": "l (unit symbol)",
       "from": "l",
       "verb": "is alias of",
       "to": "litre"

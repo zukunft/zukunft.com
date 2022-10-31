@@ -1457,6 +1457,7 @@ COMMENT ON COLUMN triples.triple_condition_id is 'formula_id of a formula with a
 COMMENT ON COLUMN triples.triple_condition_type_id is 'maybe not needed';
 COMMENT ON COLUMN triples.name_given is 'the unique name manually set by the user, which can be empty';
 COMMENT ON COLUMN triples.name_generated is 'the generic unique name based on the phrases and verb, which can be overwritten by the given name';
+COMMENT ON COLUMN triples.description is 'as for all other named objects an explaining text that is shown to the user in case of mouseover';
 
 -- --------------------------------------------------------
 

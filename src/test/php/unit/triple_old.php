@@ -30,9 +30,9 @@
 
 */
 
-// TODO combone
+// TODO combine with triple_unit_test
 
-class triple_unit_tests
+class triple_unit_tests_old
 {
     function run(testing $t): void
     {

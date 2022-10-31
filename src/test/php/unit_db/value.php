@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit_db/value.php - database unit testing of the value functions
-  ---------------------
+    test/unit_db/value.php - database unit testing of the value functions
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,7 +30,7 @@
 
 */
 
-function run_value_unit_db_tests(testing $t)
+function run_value_unit_db_tests(testing $t): void
 {
 
     $t->header('Unit database tests of the value class (src/main/php/model/value/value.php)');

@@ -523,7 +523,7 @@ class user_sandbox_unit_tests
         // ... same for a link table
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $db_con->set_fields(array('from_phrase_id', 'to_phrase_id', verb::FLD_ID, 'word_type_id'));
-        $db_con->set_usr_fields(array(triple::FLD_NAME, sql_db::FLD_DESCRIPTION, user_sandbox::FLD_EXCLUDED));
+        $db_con->set_usr_fields(array(triple::FLD_NAME_GIVEN, sql_db::FLD_DESCRIPTION, user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('s.triple_id = 1');
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT s.triple_id,
@@ -711,7 +711,7 @@ class user_sandbox_unit_tests
         // test the triple load_standard SQL creation
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', verb::FLD_ID);
-        $db_con->set_fields(array(triple::FLD_NAME, sql_db::FLD_DESCRIPTION, user_sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array(triple::FLD_NAME_GIVEN, sql_db::FLD_DESCRIPTION, user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('triple_id = 1');
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT triple_id,
@@ -729,7 +729,7 @@ class user_sandbox_unit_tests
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', verb::FLD_ID);
         $db_con->set_fields(array('word_type_id'));
-        $db_con->set_usr_fields(array(triple::FLD_NAME, sql_db::FLD_DESCRIPTION));
+        $db_con->set_usr_fields(array(triple::FLD_NAME_GIVEN, sql_db::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array(user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('s.triple_id = 1');
         $created_sql = $db_con->select_by_id();
@@ -752,7 +752,7 @@ class user_sandbox_unit_tests
 
         // test the verb_list load SQL creation
         $db_con->set_type(sql_db::TBL_TRIPLE);
-        $db_con->set_usr_fields(array(triple::FLD_NAME, sql_db::FLD_DESCRIPTION));
+        $db_con->set_usr_fields(array(triple::FLD_NAME_GIVEN, sql_db::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array(user_sandbox::FLD_EXCLUDED));
         $db_con->set_join_fields(array(sql_db::FLD_CODE_ID, 'verb_name', 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION), sql_db::TBL_VERB);
         $db_con->set_fields(array(verb::FLD_ID));
@@ -947,7 +947,7 @@ class user_sandbox_unit_tests
         // ... same for a link table
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $db_con->set_fields(array('from_phrase_id', 'to_phrase_id', verb::FLD_ID, 'word_type_id'));
-        $db_con->set_usr_fields(array(triple::FLD_NAME, sql_db::FLD_DESCRIPTION, user_sandbox::FLD_EXCLUDED));
+        $db_con->set_usr_fields(array(triple::FLD_NAME_GIVEN, sql_db::FLD_DESCRIPTION, user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('s.triple_id = 1');
         $created_sql = $db_con->select_by_id();
         $sql_avoid_code_check_prefix = "SELECT";
@@ -1087,7 +1087,7 @@ class user_sandbox_unit_tests
         // test the triple load_standard SQL creation
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', verb::FLD_ID);
-        $db_con->set_fields(array(triple::FLD_NAME, sql_db::FLD_DESCRIPTION, 'word_type_id', user_sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array(triple::FLD_NAME_GIVEN, sql_db::FLD_DESCRIPTION, 'word_type_id', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('triple_id = 1');
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT 
@@ -1106,7 +1106,7 @@ class user_sandbox_unit_tests
         // test the triple load SQL creation
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', verb::FLD_ID);
-        $db_con->set_usr_fields(array(triple::FLD_NAME, sql_db::FLD_DESCRIPTION));
+        $db_con->set_usr_fields(array(triple::FLD_NAME_GIVEN, sql_db::FLD_DESCRIPTION));
         $db_con->set_fields(array('word_type_id'));
         $db_con->set_usr_num_fields(array(user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('triple_id = 1');

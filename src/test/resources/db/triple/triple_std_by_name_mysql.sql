@@ -6,6 +6,7 @@ PREPARE triple_std_by_name FROM
            word_type_id,
            triple_condition_id,
            triple_condition_type_id,
+           triple_name,
            name_given,
            name_generated,
            description,
@@ -15,4 +16,4 @@ PREPARE triple_std_by_name FROM
            protect_id,
            user_id
       FROM triples
-     WHERE name_given = ?';
+     WHERE triple_name = ?';

@@ -128,7 +128,7 @@ class triple_list
             phrase::FLD_ID,
             true
         );
-        $db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(verb::FLD_ID) . ', ' . triple::FLD_NAME);
+        $db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(verb::FLD_ID) . ', ' . triple::FLD_NAME_GIVEN);
         return $qp;
     }
 
@@ -451,6 +451,7 @@ class triple_list
                        l.verb_id,
                        l.word_type_id,
                        l.to_phrase_id,
+                       l.triple_name,
                        l.name_given,
                        l.name_generated,
                        l.description,

@@ -43,6 +43,8 @@ class triple_api extends user_sandbox_named_api
     private verb_api $verb;
     private phrase_api $to;
 
+    public ?string $description = null; // the triple description that is shown as a mouseover explain to the user
+
     /*
      * construct and map
      */

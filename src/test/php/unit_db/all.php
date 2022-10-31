@@ -32,7 +32,7 @@
 
 */
 
-function init_unit_db_tests(testing $t)
+function init_unit_db_tests(testing $t): void
 {
 
     // add the database rows for read testing
@@ -45,7 +45,7 @@ function init_unit_db_tests(testing $t)
 
 }
 
-function run_unit_db_tests(testing $t)
+function run_unit_db_tests(testing $t): void
 {
     $t->header('Start the zukunft.com unit database read only tests');
 

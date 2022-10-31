@@ -9,6 +9,7 @@ PREPARE triple_by_name FROM
                 s.word_type_id,
                 s.triple_condition_id,
                 s.triple_condition_type_id,
+                IF(u.triple_name    IS NULL, s.triple_name,    u.triple_name)    AS triple_name,
                 IF(u.name_given     IS NULL, s.name_given,     u.name_given)     AS name_given,
                 IF(u.name_generated IS NULL, s.name_generated, u.name_generated) AS name_generated,
                 IF(u.description    IS NULL, s.description,    u.description)    AS description,
@@ -19,4 +20,4 @@ PREPARE triple_by_name FROM
            FROM triples s
       LEFT JOIN user_triples u ON s.triple_id = u.triple_id
             AND u.user_id = ?
-          WHERE s.name_given = ?';
+          WHERE s.triple_name = ?';

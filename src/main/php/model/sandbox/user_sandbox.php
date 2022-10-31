@@ -1647,9 +1647,6 @@ class user_sandbox
 
             // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
             if ($this->id == 0) {
-                if ($this->name == 'one') {
-                    $this->name = 'one';
-                }
                 log_debug($this->obj_name . '->save check possible duplicates before adding ' . $this->dsp_id());
                 $similar = $this->get_similar();
                 if ($similar != null) {

@@ -84,6 +84,7 @@ include_once $path_unit . 'triple_list.php';
 include_once $path_unit . 'phrase.php';
 include_once $path_unit . 'phrase_list.php';
 include_once $path_unit . 'phrase_group.php';
+include_once $path_unit . 'term.php';
 include_once $path_unit . 'term_list.php';
 include_once $path_unit . 'value.php';
 include_once $path_unit . 'value_phrase_link.php';
@@ -567,8 +568,8 @@ class test_base
             $lnk_test->load();
             if ($lnk_test->id > 0) {
                 // refresh the given name if needed
-                if ($phrase_name <> '' and $lnk_test->description() <> $phrase_name) {
-                    $lnk_test->description = $phrase_name;
+                if ($phrase_name <> '' and $lnk_test->name_given() <> $phrase_name) {
+                    $lnk_test->set_name_given($phrase_name);
                     $lnk_test->save();
                     $lnk_test->load();
                 }
@@ -586,22 +587,18 @@ class test_base
                     $lnk_test->from = $from;
                     $lnk_test->verb = $vrb;
                     $lnk_test->to = $to;
+                    if ($lnk_test->name_given() <> $phrase_name) {
+                        $lnk_test->set_name_given($phrase_name);
+                    }
                     $lnk_test->save();
                     $lnk_test->load();
-                    // refresh the given name if needed
-                    if ($lnk_test->id <> 0 and $phrase_name <> '' and $lnk_test->description() <> $phrase_name) {
-                        $lnk_test->description = $phrase_name;
-                        $lnk_test->save();
-                        $lnk_test->load();
-                    }
-                    $result = $lnk_test;
                 }
             }
         }
         // fallback setting of target f
         $result_text = '';
         if ($lnk_test->id > 0) {
-            $result_text = $lnk_test->description();
+            $result_text = $lnk_test->name();
             if ($target == '') {
                 $target = $lnk_test->name();
             }
@@ -1214,12 +1211,12 @@ class test_base
      * TODO replace all dsp calls with this but the
      *
      * @param string $msg (unique) description of the test
-     * @param $result
-     * @param $target
-     * @param $exe_max_time
-     * @param $comment
-     * @param $test_type
-     * @return bool
+     * @param string|array $result the actual result
+     * @param string|array $target the expected result
+     * @param float $exe_max_time the expected max time to create the result
+     * @param string $comment
+     * @param string $test_type
+     * @return bool true is the result is fine
      */
     function assert(
         string $msg,
@@ -1768,7 +1765,7 @@ class test_base
         return $this->seq_nbr;
     }
 
-    function api_call($method, $url, $data = false)
+    function api_call($method, $url, $data = false): string
     {
         $curl = curl_init();
 

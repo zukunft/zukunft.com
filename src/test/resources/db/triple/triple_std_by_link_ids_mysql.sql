@@ -6,6 +6,7 @@ PREPARE triple_std_by_link_ids FROM
            word_type_id,
            triple_condition_id,
            triple_condition_type_id,
+           triple_name,
            name_given,
            name_generated,
            description,

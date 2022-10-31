@@ -110,14 +110,17 @@ class term
 
     /**
      * @return int the id of the containing object witch is (corresponding to id())
-     * e.g 1 for a word, 1 for a phrase, 1 for a formula and 1 for a verb
+     * e.g 1 for word with id 1
+     *     -1 for a phrase with id 1
+     *     2 for a formula with id 1
+     * and -2 for a verb with id 1
      */
     function id_obj(): int
     {
         if ($this->id % 2 == 0) {
-            return abs($this->id / 2);
+            return abs($this->id) / 2;
         } else {
-            return abs(($this->id + 1) / 2);
+            return (abs($this->id) + 1) / 2;
         }
     }
 
@@ -131,6 +134,8 @@ class term
     }
 
     /**
+     * set the term id based id the word, triple, verb or formula id
+     *
      * @param int $id the object id that is converted to the term id
      * @return void
      */
@@ -145,6 +150,11 @@ class term
         } elseif ($class == verb::class) {
             $this->id = ($id * -2);
         }
+    }
+
+    function name(): string
+    {
+        return $this->name;
     }
 
     /**

@@ -153,6 +153,14 @@ class verb
      * set and get
      */
 
+    /**
+     * @return int the database id which is not 0 if the object has been saved
+     */
+    public function id(): int
+    {
+        return $this->id;
+    }
+
     /*
      * casting objects
      */

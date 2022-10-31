@@ -163,12 +163,14 @@ class formula extends user_sandbox_description
      * define the settings for this formula object
      * @param user $usr the user who requested to see this formula
      */
-    function __construct(user $usr)
+    function __construct(user $usr, string $name = '')
     {
         parent::__construct($usr);
         $this->obj_name = sql_db::TBL_FORMULA;
 
         $this->rename_can_switch = UI_CAN_CHANGE_FORMULA_NAME;
+
+        $this->name = $name;
     }
 
     function reset(): void

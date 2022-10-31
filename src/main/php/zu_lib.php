@@ -90,6 +90,7 @@
     TODO load the config, that is not expected to be changed during a session once at startup
     TODO start the backend only once and react to REST calls from the frontend
     TODO make use of __DIR__ ?
+    TODO check the install of needed packages e.g. to make sure curl_init() works
     TODO create a User Interface API
     TODO offer to use FreeOTP for two factor authentication
     TODO change config files from json to yaml to complete "reduce to the max"

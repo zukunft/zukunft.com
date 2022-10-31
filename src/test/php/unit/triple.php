@@ -6,7 +6,7 @@
 //class triple_unit_tests extends TestCase
 class triple_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;
@@ -19,6 +19,17 @@ class triple_unit_tests
         $usr->id = 1;
 
         $t->header('Unit tests of the triple class (src/main/php/model/word/triple.php)');
+
+
+        $t->subheader('API unit tests');
+
+        $trp = new triple($usr, triple::TN_READ);
+        $trp->id = 1;
+        $trp->description = 'The mathematical constant Pi';
+        $api_trp = $trp->api_obj();
+        $t->assert($t->name . 'api->id', $api_trp->id, $trp->id());
+        $t->assert($t->name . 'api->name', $api_trp->name, $trp->name());
+        $t->assert($t->name . 'api->description', $api_trp->description, $trp->description);
 
 
         $t->subheader('SQL statement tests');

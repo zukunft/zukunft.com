@@ -52,12 +52,12 @@ class triple extends user_sandbox_link_description
 
     // object specific database and JSON object field names
     const FLD_ID = 'triple_id';
-    const FLD_ID_NEW = 'triple_id';
-    const FLD_NAME = 'name_given';
-    const FLD_NAME_AUTO = 'name_generated';
     const FLD_FROM = 'from_phrase_id';
     const FLD_TO = 'to_phrase_id';
     const FLD_TYPE = 'word_type_id';
+    const FLD_NAME = 'triple_name';  // the name used which must be unique within the terms of the user
+    const FLD_NAME_GIVEN = 'name_given'; // the name set by the user, which can be null if the generated name should be used
+    const FLD_NAME_AUTO = 'name_generated'; // the generated name is saved in the database for database base unique check
     const FLD_VALUES = 'values';
     const FLD_COND_ID = 'triple_condition_id';
     const FLD_COND_TYPE = 'triple_condition_type_id';
@@ -77,6 +77,7 @@ class triple extends user_sandbox_link_description
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
         self::FLD_NAME,
+        self::FLD_NAME_GIVEN,
         self::FLD_NAME_AUTO,
         sql_db::FLD_DESCRIPTION
     );
@@ -109,10 +110,12 @@ class triple extends user_sandbox_link_description
      */
 
     // the word link object
-    public phrase $from; // the first object (either word, triple or group)
-    public verb $verb;   // the link type object
-    public phrase $to;   // the second object (either word, triple or group)
-    public ?int $values; // the total number of values linked to this triple as an indication how common the triple is and to sort the triples
+    public phrase $from;            // the first object (either word, triple or group)
+    public verb $verb;              // the link type object
+    public phrase $to;              // the second object (either word, triple or group)
+    private ?string $name_given;     // the name manually set by the user, which can be empty
+    private string $name_generated; // the generated name based on the linked objects and saved in the database for faster searching
+    public ?int $values;            // the total number of values linked to this triple as an indication how common the triple is and to sort the triples
 
     /*
      * construct and map
@@ -136,6 +139,8 @@ class triple extends user_sandbox_link_description
         $this->obj_name = sql_db::TBL_TRIPLE;
 
         $this->name = $name;
+        $this->name_given = null;
+        $this->name_generated = '';
         $this->rename_can_switch = UI_CAN_CHANGE_triple_NAME;
 
         // also create the link objects because there is now case where they are supposed to be null
@@ -152,6 +157,9 @@ class triple extends user_sandbox_link_description
         $this->owner_id = null;
         $this->values = null;
         $this->excluded = null;
+        $this->name = '';
+        $this->name_given = null;
+        $this->name_generated = '';
 
         $this->create_objects();
     }
@@ -182,12 +190,108 @@ class triple extends user_sandbox_link_description
             $this->from->id = $db_row[self::FLD_FROM];
             $this->to->id = $db_row[self::FLD_TO];
             $this->verb->id = $db_row[verb::FLD_ID];
-            $this->name = $db_row[self::FLD_NAME];
+            $this->set_name($db_row[self::FLD_NAME]);
+            $this->set_name_given($db_row[self::FLD_NAME_GIVEN]);
+            $this->set_name_generated($db_row[self::FLD_NAME_AUTO]);
             $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_TYPE];
             $this->values = $db_row[self::FLD_VALUES];
         }
         return $result;
+    }
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the name used object
+     * @param string $name
+     * @return void
+     */
+    public function set_name(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * set the name manually set by the user and set the used name if needed
+     * @param string|null $name_given
+     * @return void
+     */
+    public function set_name_given(?string $name_given): void
+    {
+        $this->name_given = $name_given;
+    }
+
+    /**
+     *
+     * @param string|null $name_generated the generated name as saved in the database
+     * @return void
+     */
+    function set_name_generated(?string $name_generated): void
+    {
+        if ($name_generated != null) {
+            // use the updated generated name or the generated name loaded from the database
+            $this->name_generated = $name_generated;
+        } else {
+            // worst case use an empty string
+            $this->name_generated = '';
+            log_warning('No name found for triple ' . $this->id);
+        }
+    }
+
+    /**
+     * set the used name, update the generated name if needed
+     * @return void
+     */
+    public function set_names(): void
+    {
+        // update the generated name if needed
+        if ($this->generate_name() != '' and $this->generate_name() != ' ()') {
+            $this->name_generated = $this->generate_name();
+        }
+        // remove the given name if not needed
+        if ($this->name_given == $this->name_generated) {
+            $this->name_given = null;
+        } else {
+            // or set the given name if needed e.g. when called be json import
+            if ($this->name != '' and $this->name != $this->name_generated) {
+                $this->name_given = $this->name;
+            }
+        }
+        // use the generated name as fallback
+        if ($this->name == '') {
+            if ($this->name_given != null and $this->name_given != '') {
+                $this->name = $this->name_given;
+            } else {
+                $this->name = $this->name_generated;
+            }
+        }
+    }
+
+    /**
+     * @return string|null the name manually set by the user or null if the generated name should be used
+     */
+    public function name_given(): ?string
+    {
+        return $this->name_given;
+    }
+
+    /**
+     * TODO check where the function or the db value should be used
+     */
+    public function name_generated(): ?string
+    {
+        return $this->name_generated;
+    }
+
+    /**
+     * @return string|null the description of the link which should be shown to the user as mouseover
+     */
+    function description(): ?string
+    {
+        return $this->description();
     }
 
     /*
@@ -199,8 +303,13 @@ class triple extends user_sandbox_link_description
      */
     function api_obj(): object
     {
-        $min_obj = new triple_api();
-        return parent::fill_min_obj($min_obj);
+        $api_obj = new triple_api();
+        if (!$this->excluded) {
+            parent::fill_min_obj($api_obj);
+            $api_obj->name = $this->name;
+            $api_obj->description = $this->description;
+        }
+        return $api_obj;
     }
 
     /**
@@ -281,7 +390,7 @@ class triple extends user_sandbox_link_description
                 log_debug('triple->load_standard check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
                 if ($new_name <> $this->name) {
                     $db_con->set_type(sql_db::TBL_TRIPLE);
-                    $result = $db_con->update($this->id, self::FLD_NAME, $new_name);
+                    $result = $db_con->update($this->id, self::FLD_NAME_GIVEN, $new_name);
                     $this->name = $new_name;
                 }
             }
@@ -340,12 +449,12 @@ class triple extends user_sandbox_link_description
             if ($this->id > 0) {
                 // automatically update the generic name
                 $this->load_objects();
-                $new_name = $this->name();
+                $new_name = $this->name_generated();
                 log_debug('triple->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
                 if ($new_name <> $this->name) {
                     $db_con->set_type(sql_db::TBL_TRIPLE);
-                    $db_con->update($this->id, self::FLD_NAME, $new_name);
-                    $this->name = $new_name;
+                    $db_con->update($this->id, self::FLD_NAME_AUTO, $new_name);
+                    $this->set_name_generated($new_name);
                 }
                 $result = true;
             } else {
@@ -392,7 +501,7 @@ class triple extends user_sandbox_link_description
         // after every load call from outside the class the order should be checked and reversed if needed
         $this->check_order();
 
-        // load word from
+        // load the "from" phrase
         if (!isset($this->from)) {
             log_err("The word (" . $this->from->id . ") must be set before it can be loaded.", "triple->load_objects");
         } else {
@@ -443,7 +552,7 @@ class triple extends user_sandbox_link_description
             }
         }
 
-        // load word to
+        // load the "to" phrase
         if (!isset($this->to)) {
             if ($this->to->id == 0) {
                 // set a dummy word
@@ -525,6 +634,12 @@ class triple extends user_sandbox_link_description
             $db_con->add_par(sql_db::PAR_INT, $this->to->id);
             $db_con->add_par(sql_db::PAR_INT, $this->verb->id);
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_FROM, self::FLD_TO, verb::FLD_ID));
+        } elseif ($this->name_generated() != '') {
+            $db_con->add_par(sql_db::PAR_TEXT, $this->name_generated());
+            $qp->sql = $db_con->select_by_field(self::FLD_NAME_AUTO);
+        } elseif ($this->name_given() != '') {
+            $db_con->add_par(sql_db::PAR_TEXT, $this->name_given());
+            $qp->sql = $db_con->select_by_field(self::FLD_NAME_GIVEN);
         }
         $qp->par = $db_con->get_par();
         return $qp;
@@ -595,28 +710,20 @@ class triple extends user_sandbox_link_description
      * @param bool $do_save to switch off saving for unit testing
      * @return phrase the created phrase object
      */
-    private
-    function import_phrase(string $name, bool $do_save = true): phrase
+    private function import_phrase(string $name, bool $do_save = true): phrase
     {
-        global $phrase_types;
-
         $result = new phrase($this->usr);
         $result->name = $name;
         if ($do_save) {
             $result->load();
             if ($result->id == 0) {
-                $wrd = new word($this->usr);
-                $wrd->name = $name;
-                $wrd->load();
-                if ($wrd->id == 0) {
-                    $wrd->name = $name;
-                    $wrd->type_id = $phrase_types->default_id();
-                    $wrd->save();
-                }
-                if ($wrd->id == 0) {
+                $phr = new phrase($this->usr);
+                $phr->name = $name;
+                $phr->save();
+                if ($phr->id == 0) {
                     log_err('Cannot add from word "' . $name . '" when importing ' . $this->dsp_id(), 'triple->import_obj');
                 } else {
-                    $result = $wrd->phrase();
+                    $result = $phr;
                 }
             }
         }
@@ -641,7 +748,7 @@ class triple extends user_sandbox_link_description
 
         foreach ($json_obj as $key => $value) {
             if ($key == exp_obj::FLD_NAME) {
-                $this->name = $value;
+                $this->set_name($value);
             }
             if ($key == exp_obj::FLD_DESCRIPTION) {
                 $this->description = $value;
@@ -686,6 +793,8 @@ class triple extends user_sandbox_link_description
             }
         }
         if ($result->is_ok() and $do_save) {
+            // remove unneeded given names
+            $this->set_names();
             $result->add_message($this->save());
         }
 
@@ -752,15 +861,15 @@ class triple extends user_sandbox_link_description
         $result = '';
 
         if ($this->excluded <> 1) {
-            // use the user defined description
-            if ($this->description <> '') {
-                $result = $this->description;
-                // or use special verb based generic description
-            } elseif ($this->verb->id == cl(db_cl::VERB, verb::IS_A)) {
-                $result = $this->from->name . ' (' . $this->to->name . ')';
-                // or use the standard generic description
+            if ($this->name <> '') {
+                // use the object
+                $result = $this->name;
+            } elseif ($this->name_given() <> '') {
+                // use the user defined description
+                $result = $this->name_given();
             } else {
-                $result = $this->from->name . ' ' . $this->verb->name . ' ' . $this->to->name;
+                // or use the standard generic description
+                $result = $this->name_generated();
             }
         }
 
@@ -768,12 +877,27 @@ class triple extends user_sandbox_link_description
     }
 
     /**
-     * returns either the user defined description or the dynamic created description
-     * TODO check where the function or the db value should be used
+     * @return string the generated name based on the linked phrases
      */
-    function description(): string
+    function generate_name(): string
     {
-        return $this->name();
+        if ($this->verb->id == cl(db_cl::VERB, verb::IS_A) and $this->from->name != '' and $this->to->name != '') {
+            // use the user defined description
+            return $this->from->name . ' (' . $this->to->name . ')';
+        } elseif ($this->from->name != '' and $this->verb->name != '' and $this->to->name != '') {
+            // or use the standard generic description
+            return $this->from->name . ' ' . $this->verb->name . ' ' . $this->to->name;
+        } elseif ($this->from->name != '' and $this->to->name != '') {
+            // or use the short generic description
+            return $this->from->name . ' ' . $this->to->name;
+        } else {
+            // or use the name as fallback
+            if ($this->name_given() == null) {
+                return '';
+            } else {
+                return $this->name_given();
+            }
+        }
     }
 
     /**
@@ -920,7 +1044,7 @@ class triple extends user_sandbox_link_description
      */
     function dsp_link(): string
     {
-        return '<a href="/http/view.php?link=' . $this->id . '" title="' . $this->description . '">' . $this->name . '</a>';
+        return '<a href="/http/view.php?link=' . $this->id . '" title="' . $this->name() . '">' . $this->name() . '</a>';
     }
 
     /**
@@ -1135,7 +1259,7 @@ class triple extends user_sandbox_link_description
             if ($usr_cfg) {
                 if ($usr_cfg[self::FLD_ID] > 0) {
                     // TODO use the FLD_NAMES array with all relevant field names
-                    if ($usr_cfg[self::FLD_NAME] == Null
+                    if ($usr_cfg[self::FLD_NAME_GIVEN] == Null
                         and $usr_cfg[sql_db::FLD_DESCRIPTION] == Null
                         and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                         // delete the entry in the user sandbox
@@ -1229,16 +1353,15 @@ class triple extends user_sandbox_link_description
     }
 
     /**
-     * set the update parameters for the phrase link name
+     * set the update parameters for the triple name
      */
-    private
     function save_field_name(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
 
         // the name field is a generic created field, so update it before saving
         // the generic name of $this is saved to the database for faster uniqueness check (TODO to be checked if this is really faster)
-        $this->name = $this->name();
+        $this->set_names();
 
         if ($db_rec->name <> $this->name) {
             $log = $this->log_upd_field();
@@ -1253,9 +1376,49 @@ class triple extends user_sandbox_link_description
     }
 
     /**
-     * set the update parameters for the phrase link description
+     * set the update parameters for the triple given name
      */
-    function save_field_description(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    private
+    function save_field_name_given(sql_db $db_con, triple $db_rec, triple $std_rec): string
+    {
+        $result = '';
+
+        if ($db_rec->name_given() <> $this->name_given()) {
+            $log = $this->log_upd_field();
+            $log->old_value = $db_rec->name_given();
+            $log->new_value = $this->name_given();
+            $log->std_value = $std_rec->name_given();
+            $log->row_id = $this->id;
+            $log->field = self::FLD_NAME_GIVEN;
+            $result .= $this->save_field_do($db_con, $log);
+        }
+        return $result;
+    }
+
+    /**
+     * set the update parameters for the triple generated name
+     */
+    private
+    function save_field_name_generated(sql_db $db_con, triple $db_rec, triple $std_rec): string
+    {
+        $result = '';
+
+        if ($db_rec->name_generated <> $this->name_generated()) {
+            $log = $this->log_upd_field();
+            $log->old_value = $db_rec->name_generated;
+            $log->new_value = $this->name_generated();
+            $log->std_value = $std_rec->name_generated;
+            $log->row_id = $this->id;
+            $log->field = self::FLD_NAME_AUTO;
+            $result .= $this->save_field_do($db_con, $log);
+        }
+        return $result;
+    }
+
+    /**
+     * set the update parameters for the triple description
+     */
+    function save_field_triple_description(sql_db $db_con, triple $db_rec, triple $std_rec): string
     {
         $result = '';
         if ($db_rec->description <> $this->description) {
@@ -1273,10 +1436,12 @@ class triple extends user_sandbox_link_description
     /**
      * save all updated triple fields excluding id fields (from, verb and to), because already done when adding a triple
      */
-    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_triple_fields(sql_db $db_con, triple $db_rec, triple $std_rec): string
     {
         $result = $this->save_field_name($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_description($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_name_given($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_name_generated($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_triple_description($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         //$result .= $this->save_field_type     ($db_con, $db_rec, $std_rec);
         log_debug('triple->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
@@ -1421,7 +1586,7 @@ class triple extends user_sandbox_link_description
                     $db_rec->to = $this->to;
                     $std_rec = clone $db_rec;
                     // save the triple fields
-                    $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                    $result->add_message($this->save_triple_fields($db_con, $db_rec, $std_rec));
                 }
 
             } else {
@@ -1514,7 +1679,7 @@ class triple extends user_sandbox_link_description
                 // if a problem has appeared up to here, don't try to save the values
                 // the problem is shown to the user by the calling interactive script
                 if ($result == '') {
-                    $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                    $result .= $this->save_triple_fields($db_con, $db_rec, $std_rec);
                 }
             }
         }
