@@ -254,8 +254,10 @@ class word extends user_sandbox_description
     /**
      * define the settings for this word object
      * @param user $usr the user who requested to see this word
+     * @param int $id mainly for test creation the database id of the word
+     * @param string $name mainly for test creation the name of the word
      */
-    function __construct(user $usr, string $name = '')
+    function __construct(user $usr, int $id = 0, string $name = '')
     {
         parent::__construct($usr);
         $this->reset();
@@ -263,7 +265,12 @@ class word extends user_sandbox_description
 
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_NAME;
 
-        $this->name = $name;
+        if ($id > 0) {
+            $this->id = $id;
+        }
+        if ($name != '') {
+            $this->name = $name;
+        }
     }
 
     /**

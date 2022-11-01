@@ -19,12 +19,19 @@ function json_clean(array $in_json): array
 
 /**
  * check if the import JSON array matches the export JSON array
- * @param array $json_in a JSON array that is can contain empty field
- * @param array $json_ex a JSON that can have other empty field than $json_in and in a different order
+ * @param array|null $json_in a JSON array that is can contain empty field
+ * @param array|null $json_ex a JSON that can have other empty field than $json_in and in a different order
  * @return bool true if the JSON have the same meaning
  */
-function json_is_similar(array $json_in, array $json_ex): bool
+function json_is_similar(?array $json_in, ?array $json_ex): bool
 {
+    // this is for compare, so a null value is considered to be the same as an empty array
+    if ($json_in == null) {
+        $json_in = [];
+    }
+    if ($json_ex == null) {
+        $json_ex = [];
+    }
     // remove empty JSON fields
     $json_in_clean = json_encode(json_clean($json_in));
     $json_ex_clean = json_encode(json_clean($json_ex));

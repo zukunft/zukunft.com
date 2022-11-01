@@ -1241,6 +1241,10 @@ class phrase_list
         return $result;
     }
 
+    /*
+     * modification functions
+     */
+
     /**
      * add one phrase to the phrase list, but only if it is not yet part of the phrase list
      * @returns bool true the phrase has been added

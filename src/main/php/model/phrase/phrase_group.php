@@ -99,11 +99,16 @@ class phrase_group
      * set the user which is needed in all cases
      * @param user $usr the user who requested to see this phrase group
      */
-    function __construct(user $usr)
+    function __construct(user $usr, int $id = 0, array $prh_names = [])
     {
         $this->usr = $usr;
 
         $this->reset();
+
+        if ($id > 0) {
+            $this->id = $id;
+        }
+        $this->add_phrase_names($prh_names);
     }
 
     private function reset(): void
@@ -118,17 +123,18 @@ class phrase_group
     }
 
     /**
-     * @return phrase_group the phrase group frontend API object
+     * @return phrase_group_api the phrase group frontend API object
      */
-    function api_obj(): object
+    function api_obj(): phrase_group_api
     {
-        $min_obj = new phrase_group_api();
-        $min_obj->reset_lst();
+        $api_obj = new phrase_group_api();
+        $api_obj->reset_lst();
         foreach ($this->phr_lst->lst as $phr) {
-            $min_obj->add($phr->get_obj->api_obj());
+            $api_obj->add($phr->api_obj());
         }
-        $min_obj->set_id($this->id);
-        return $min_obj;
+        $api_obj->set_id($this->id);
+        $api_obj->set_name($this->grp_name);
+        return $api_obj;
     }
 
     function row_mapper(array $db_row): bool
@@ -149,6 +155,23 @@ class phrase_group
             }
         }
         return $result;
+    }
+
+    /*
+     * set and get function
+     */
+
+    public function set_name(string $name = ''): void
+    {
+        if ($name != '') {
+            $this->grp_name = $name;
+        } else {
+            if ($this->phr_lst->count() > 0) {
+                $this->grp_name = implode(',', $this->phr_lst->names());
+            } else {
+                log_warning('name of phrase group ' . $this->dsp_id() . ' missing');
+            }
+        }
     }
 
     /*
@@ -455,6 +478,43 @@ class phrase_group
         return $this;
     }
     */
+
+    /*
+     * modification functions
+     */
+
+    /**
+     * @param word $wrd the word that should be added to this phrase group
+     * @return bool true if the word has been added and false if the word already is part of the group
+     */
+    function add_word(word $wrd): bool
+    {
+        return $this->phr_lst->add($wrd->phrase());
+    }
+
+    /**
+     * add a list of phrases based on the name WITHOUT loading the database id
+     * used mainly for testing
+     * @param array $prh_names
+     * @return bool
+     */
+    function add_phrase_names(array $prh_names = []): bool
+    {
+        $result = false;
+        if (count($prh_names) > 0) {
+            $wrd_id = 1;
+            foreach ($prh_names as $prh_name) {
+                if (!in_array($prh_name, $this->phr_lst->names())) {
+                    // if only the name is know, add a simple word
+                    $this->add_word(new word($this->usr, $wrd_id, $prh_name));
+                    $result = true;
+                }
+                $wrd_id++;
+            }
+        }
+        $this->set_name();
+        return $result;
+    }
 
     /*
      * display functions

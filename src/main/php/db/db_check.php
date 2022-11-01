@@ -314,7 +314,7 @@ function db_upgrade_0_0_4($db_con): string
  */
 function db_fill_code_links(sql_db $db_con)
 {
-    log_debug('Refresh code links for ...');
+    global $debug;
 
     // get the list of CSV and loop
     $csv_file_list = unserialize(BASE_CODE_LINK_FILES);
@@ -330,7 +330,7 @@ function db_fill_code_links(sql_db $db_con)
         } else {
             $db_type = substr($table_name, 0, -1);
         }
-        log_debug($table_name);
+        log_debug('load "' . $table_name . '"', $debug - 6);
         if (($handle = fopen($csv_path, "r")) !== FALSE) {
             $continue = true;
             $id_col_name = '';
@@ -392,7 +392,6 @@ function db_fill_code_links(sql_db $db_con)
                 $row++;
             }
             fclose($handle);
-            log_debug('Refresh of code links done');
         }
 
     }

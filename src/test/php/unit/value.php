@@ -86,6 +86,11 @@ class value_unit_tests
 
         $t->subheader('Convert tests');
 
+        // casting API
+        $grp = new phrase_group($usr, 1,  array(phrase_group::TN_READ));
+        $val = new value($usr, 1, round(value::TV_READ, 13), $grp);
+        $t->assert_api($val);
+
         // casting figure
         $val = new value($usr);
         $val->number = value::TEST_PCT;

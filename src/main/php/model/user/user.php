@@ -191,6 +191,8 @@ class user
 
     function row_mapper(array $db_usr): bool
     {
+        global $debug;
+
         $result = false;
         if (!$db_usr) {
             $this->id = 0;
@@ -212,7 +214,7 @@ class user
                 $this->thousand_sep = DEFAULT_THOUSAND_SEP;
                 $this->percent_decimals = DEFAULT_PERCENT_DECIMALS;
                 $result = true;
-                log_debug($this->name);
+                log_debug($this->name, $debug - 25);
             }
         }
         return $result;
@@ -379,7 +381,8 @@ class user
      */
     public function ip_check(string $ip_addr): string
     {
-        log_debug(' (' . $ip_addr . ')');
+        global $debug;
+        log_debug(' (' . $ip_addr . ')', $debug - 12);
 
         $ip_lst = new ip_range_list();
         $ip_lst->load();
@@ -409,13 +412,15 @@ class user
      */
     function get(): string
     {
+        global $debug;
+
         $result = ''; // for the result message e.g. if the user is blocked
 
         // test first if the IP is blocked
         if ($this->ip_addr == '') {
             $this->get_ip();
         } else {
-            log_debug(' (' . $this->ip_addr . ')');
+            log_debug(' (' . $this->ip_addr . ')', $debug -1);
         }
         // even if the user has an open session, but the ip is blocked, drop the user
         $result .= $this->ip_check($this->ip_addr);

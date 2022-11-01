@@ -34,7 +34,7 @@ namespace api;
 
 use html\value_dsp;
 
-class value_api extends user_sandbox_value_api
+class value_api extends user_sandbox_value_api implements \JsonSerializable
 {
 
     /*
@@ -61,4 +61,19 @@ class value_api extends user_sandbox_value_api
         return $dsp_obj;
     }
 
+    /*
+     * interface
+     */
+
+    /**
+     * an array of the value vars including the private vars
+     */
+    public function jsonSerialize(): array
+    {
+        $vars = get_object_vars($this);
+        // TODO fix
+        //$vars['name'] = $this->grp()->name();
+        $vars['number'] = $this->val();
+        return $vars;
+    }
 }

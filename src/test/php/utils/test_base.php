@@ -1230,12 +1230,13 @@ class test_base
     }
 
     /**
-     * check if the frontend API object can be created and if the recreation of the backend object result to the same object
+     * check if the frontend API object can be created
+     * and if the export based recreation of the backend object result to the similar object
      *
      * @param object $usr_obj the object which frontend API functions should be tested
      * @return bool true if the reloaded backend object has no relevant differences
      */
-    function assert_api(object $usr_obj): bool
+    function assert_api_exp(object $usr_obj): bool
     {
         $original_json = json_decode(json_encode($usr_obj->export_obj(false)), true);
         $recreated_json = '';
@@ -1249,7 +1250,27 @@ class test_base
     }
 
     /**
-     * check if an object json file can be recreated by importing the object and recreating the json with the export function
+     * get the expected api json message of a user sandbox object
+     *
+     * @param string $class the class name of the object to test
+     * @return string with the expected json message
+     */
+    private function api_json_expected(string $class): string
+    {
+        return $this->file('api/' . $class . '/' . $class . '.json');
+    }
+
+    function assert_api(object $usr_obj): bool
+    {
+        $api_obj = $usr_obj->api_obj();
+        $actual = json_decode(json_encode($usr_obj->api_obj()), true);
+        $expected = json_decode($this->api_json_expected($usr_obj::class), true);
+        return $this->assert($usr_obj::class . ' API object', json_is_similar($actual, $expected), true);
+    }
+
+    /**
+     * check if the REST GET call returns the expected JSON message
+     * for testing the local deployments needs to be updated using an external script
      *
      * @param string $class the class name of the object to test
      * @param int $id the database id of the db row that should be used for testing
@@ -1258,7 +1279,7 @@ class test_base
     function assert_api_get(string $class, int $id = 1): bool
     {
         $actual = json_decode($this->api_call("GET", HOST_TESTING . '/api/' . $class, array("id" => $id)), true);
-        $expected = json_decode($this->file('api/' . $class . '/' . $class . '.json'), true);
+        $expected = json_decode($this->api_json_expected($class), true);
         return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
     }
 

@@ -822,12 +822,10 @@ function prg_start(string $code_name, string $style = "", $echo_header = true): 
     // resume session (based on cookies)
     session_start();
 
-    log_debug($code_name . ' ...');
-
     $sys_time_start = time();
     $sys_script = $code_name;
 
-    log_debug($code_name . ' ... session_start');
+    log_debug($code_name . ': session_start');
 
     // html header
     if ($echo_header) {
@@ -867,9 +865,8 @@ function prg_restart(string $code_name): sql_db
     // link to database
     $db_con = new sql_db;
     $db_con->db_type = SQL_DB_TYPE;
-    log_debug($code_name . ' ... db set');
     $db_con->open();
-    log_debug($code_name . ' ... database link open');
+    log_debug($code_name . ': db open');
 
     // check the system setup
     $result = db_check($db_con);

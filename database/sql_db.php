@@ -419,7 +419,6 @@ class sql_db
             log_err('Database type ' . $this->db_type . ' not yet implemented');
         }
 
-        log_debug("done");
         return true;
     }
 
@@ -1287,13 +1286,14 @@ class sql_db
     //
     private function set_table($usr_table = false): void
     {
+        global $debug;
         if ($usr_table) {
             $this->table = sql_db::USER_PREFIX . $this->get_table_name($this->type);
             $this->usr_only_query = true;
         } else {
             $this->table = $this->get_table_name($this->type);
         }
-        log_debug("to (" . $this->table . ")");
+        log_debug('to "' . $this->table . '"', $debug - 20);
     }
 
     public function get_id_field_name($type): string
@@ -1334,6 +1334,7 @@ class sql_db
 
     private function set_name_field(): void
     {
+        global $debug;
         $type = $this->type;
         // exceptions for user overwrite tables
         if (zu_str_is_left($type, sql_db::TBL_USER_PREFIX)) {
@@ -1390,7 +1391,7 @@ class sql_db
         if ($result == 'triple_name') {
             $result = 'name';
         }
-        log_debug("to (" . $result . ")");
+        log_debug('to "' . $result . '"', $debug - 20);
         $this->name_field = $result;
     }
 
@@ -1442,7 +1443,8 @@ class sql_db
      */
     function exe(string $sql, string $sql_name = '', array $sql_array = array(), int $log_level = sys_log_level::ERROR)
     {
-        log_debug("(" . $sql . " named " . $sql_name . " for  user " . $this->usr_id . ")");
+        global $debug;
+        log_debug('"' . $sql . '" named "' . $sql_name . '" for  user ' . $this->usr_id, $debug - 15);
 
         // PostgreSQL part
         if ($this->db_type == sql_db::POSTGRES) {
@@ -1474,6 +1476,8 @@ class sql_db
      */
     private function exe_postgres(string $sql, string $sql_name = '', array $sql_array = array(), int $log_level = sys_log_level::ERROR)
     {
+        global $debug;
+
         $result = null;
 
         // check database connection
@@ -1487,7 +1491,7 @@ class sql_db
             if ($sql_name == '') {
                 // TODO switch to error when all SQL statements are named
                 //log_warning('Name for SQL statement ' . $sql . ' is missing');
-                log_debug('Name for SQL statement ' . $sql . ' is missing');
+                log_debug('Name for SQL statement ' . $sql . ' is missing', $debug - 5);
             }
 
             // remove query formatting
@@ -1727,7 +1731,7 @@ class sql_db
         global $debug;
         if ($debug > 20) {
             log_debug("sql_db->" . $type . " (" . $sql . ")");
-        } else {
+        } elseif ($debug > 10) {
             log_debug("sql_db->" . $type . " (" . substr($sql, 0, 100) . " ... )");
         }
     }
@@ -3079,7 +3083,8 @@ class sql_db
      */
     function missing_owner(): array
     {
-        log_debug("sql_db->missing_owner (" . $this->type . ")");
+        global $debug;
+        log_debug("sql_db->missing_owner (" . $this->type . ")", $debug - 4);
         $qp = $this->missing_owner_sql();
         return $this->get($qp);
     }
@@ -3305,7 +3310,7 @@ class sql_db
     {
         global $debug;
 
-        log_debug('of ' . $this->type . ' row ' . dsp_var($id) . ' ' . dsp_var($fields) . ' with "' . dsp_var($values) . '" for user ' . $this->usr_id);
+        log_debug('of ' . $this->type . ' row ' . dsp_var($id) . ' ' . dsp_var($fields) . ' with "' . dsp_var($values) . '" for user ' . $this->usr_id, $debug - 7);
 
         $result = true;
 
@@ -3348,7 +3353,7 @@ class sql_db
                 $sql_set .= ' SET ' . $fields . ' = ' . $this->sf($values);
             }
             $sql = $sql_upd . $sql_set . $sql_where . ';';
-            log_debug('sql "' . $sql . '"');
+            log_debug('sql "' . $sql . '"', $debug - 12);
             //$result = $this->exe($sql, 'update_' . $this->name_sql_esc($this->table), array(), sys_log_level::FATAL);
             try {
                 $sql_result = $this->exe($sql, '', array(), sys_log_level::FATAL);
@@ -3362,7 +3367,7 @@ class sql_db
             }
         }
 
-        log_debug('done (' . $result . ')');
+        log_debug('done (' . $result . ')', $debug - 17);
         return $result;
     }
 
@@ -3477,6 +3482,8 @@ class sql_db
      */
     function postgres_format($field_value, $forced_format)
     {
+        global $debug;
+
         $result = $field_value;
 
         // add the formatting for the sql statement
@@ -3500,7 +3507,7 @@ class sql_db
                 $result = strval($result);
             }
         }
-        log_debug("sql_db->postgres_format -> done (" . $result . ")");
+        log_debug("sql_db->postgres_format -> done (" . $result . ")", $debug - 25);
 
         return $result;
     }

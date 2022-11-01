@@ -2,8 +2,8 @@
 
 /*
 
-  test_word_ui.php - TESTing of the WORD User Interface
-  ------------------
+    test/php/api/word.php - TESTing of the API U
+    ---------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -34,13 +34,14 @@
 // start testing the system functionality 
 // --------------------------------------
 
-function run_api_test(testing $t)
+function run_api_test(testing $t): void
 {
     global $usr;
 
     $t->assert_api_get(word::class);
     $t->assert_api_get(verb::class);
     $t->assert_api_get(triple::class);
+    $t->assert_api_get(value::class);
 
     // $t->assert_rest(new word($usr, word::TN_READ));
 

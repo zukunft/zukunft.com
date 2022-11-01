@@ -42,8 +42,7 @@ class term_unit_tests
 
         $t->header('Unit tests of the term class (src/main/php/model/phrase/term.php)');
 
-        $wrd = new word($usr, word::TN_READ);
-        $wrd->id = 1;
+        $wrd = new word($usr, 1, word::TN_READ);
         $trm = $wrd->term();
         $t->assert($t->name . 'term->word id', $trm->id_obj(), $wrd->id());
         $t->assert($t->name . 'term->word name', $trm->name(), $wrd->name());

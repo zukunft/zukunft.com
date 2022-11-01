@@ -137,6 +137,10 @@ class value extends user_sandbox_display
     // field for user interaction
     public ?string $usr_value = null;     // the raw value as the user has entered it including formatting chars such as the thousand separator
 
+    /*
+     * casting
+     */
+
     /**
      * @return value_api the value frontend api object
      */
@@ -144,6 +148,10 @@ class value extends user_sandbox_display
     {
         $api_obj = new value_api();
         $api_obj->set_val($this->number);
+        if ($this->grp != null) {
+            // TODO activate
+            //$api_obj->set_grp($this->grp->api_obj());
+        }
         return parent::fill_min_obj($api_obj);
     }
 
@@ -164,7 +172,7 @@ class value extends user_sandbox_display
      * set the user sandbox type for a value object and set the user, which is needed in all cases
      * @param user $usr the user who requested to see this value
      */
-    function __construct(user $usr)
+    function __construct(user $usr, ?int $id = null, ?float $num_val = null, ?phrase_group $phr_grp = null)
     {
         parent::__construct($usr);
         $this->obj_type = user_sandbox::TYPE_VALUE;
@@ -173,6 +181,16 @@ class value extends user_sandbox_display
         $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
 
         $this->reset();
+
+        if ($id != null) {
+            $this->id = $id;
+        }
+        if ($num_val != null) {
+            $this->number = $num_val;
+        }
+        if ($phr_grp != null) {
+            $this->set_grp($phr_grp);
+        }
     }
 
     function reset(): void
@@ -249,6 +267,18 @@ class value extends user_sandbox_display
             $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE]);
         }
         return $result;
+    }
+
+
+    /*
+     * set and get
+     */
+
+    public function set_grp(phrase_group $grp): void
+    {
+        $this->grp = $grp;
+
+        $this->phr_lst = $grp->phr_lst;
     }
 
 
@@ -378,13 +408,14 @@ class value extends user_sandbox_display
     {
 
         global $db_con;
+        global $debug;
         $result = true;
 
         // check the all minimal input parameters
         if (!isset($this->usr)) {
             log_err('The user id must be set to load a result.', 'value->load');
         } else {
-            log_debug('value->load');
+            log_debug($this->dsp_id(), $debug - 9);
 
             $qp = $this->load_sql($db_con);
             $db_val = $db_con->get1($qp);
@@ -417,7 +448,7 @@ class value extends user_sandbox_display
             }
             */
         }
-        log_debug('value->load -> got ' . $this->number . ' with id ' . $this->id);
+        log_debug('got ' . $this->number . ' with id ' . $this->id, $debug - 1);
         return $result;
     }
 
@@ -441,7 +472,7 @@ class value extends user_sandbox_display
                 // try to get a value with another scaling
                 $phr_lst_unscaled = clone $this->phr_lst;
                 $phr_lst_unscaled->ex_scaling();
-                log_debug('value->load_best try unscaled with ' . $phr_lst_unscaled->dsp_id());
+                log_debug('try unscaled with ' . $phr_lst_unscaled->dsp_id());
                 $grp_unscale = $phr_lst_unscaled->get_grp();
                 $this->grp->id = $grp_unscale->id;
                 $this->load();
@@ -450,7 +481,7 @@ class value extends user_sandbox_display
                     // try to get a value with another measure
                     $phr_lst_converted = clone $phr_lst_unscaled;
                     $phr_lst_converted->ex_measure();
-                    log_debug('value->load_best try converted with ' . $phr_lst_converted->dsp_id());
+                    log_debug('try converted with ' . $phr_lst_converted->dsp_id());
                     $grp_unscale = $phr_lst_converted->get_grp();
                     $this->grp->id = $grp_unscale->id;
                     $this->load();
@@ -461,7 +492,7 @@ class value extends user_sandbox_display
                 }
             }
         }
-        log_debug('value->load_best got ' . $this->number . ' for ' . $this->dsp_id());
+        log_debug('got ' . $this->number . ' for ' . $this->dsp_id());
     }
 
     /*
@@ -485,14 +516,14 @@ class value extends user_sandbox_display
      */
     function load_phrases()
     {
-        log_debug('value->load_phrases');
+        log_debug();
         // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
         if ($this->grp->id > 0) {
             $this->load_grp_by_id();
         }
-        log_debug('value->load_phrases load time');
+        log_debug('load time');
         $this->load_time_phrase();
-        log_debug('value->load_phrases -> done (' . (new Exception)->getTraceAsString() . ')');
+        log_debug('done (' . (new Exception)->getTraceAsString() . ')');
     }
 
     /**
@@ -502,7 +533,7 @@ class value extends user_sandbox_display
     function load_source(): ?source
     {
         $src = null;
-        log_debug('value->load_source for ' . $this->dsp_id());
+        log_debug('for ' . $this->dsp_id());
 
         if ($this->get_source_id() > 0) {
             $this->source->usr = $this->usr;
@@ -513,9 +544,9 @@ class value extends user_sandbox_display
         }
 
         if (isset($src)) {
-            log_debug('value->load_source -> ' . $src->dsp_id());
+            log_debug($src->dsp_id());
         } else {
-            log_debug('value->load_source done');
+            log_debug('done');
         }
         return $src;
     }
@@ -546,20 +577,20 @@ class value extends user_sandbox_display
 
                 // these if's are only needed for debugging to avoid accessing an unset object, which would cause a crash
                 if (isset($this->phr_lst)) {
-                    log_debug('value->load_grp_by_id got ' . $this->phr_lst->dsp_name() . ' from group ' . $this->grp->id . ' for "' . $this->usr->name . '"');
+                    log_debug('got ' . $this->phr_lst->dsp_name() . ' from group ' . $this->grp->id . ' for "' . $this->usr->name . '"');
                 }
                 if (isset($this->wrd_lst)) {
                     if (isset($this->lnk_lst)) {
-                        log_debug('value->load_grp_by_id with words ' . $this->wrd_lst->name() . ' and triples ' . $this->lnk_lst->dsp_id() . ' by group ' . $this->grp->id . ' for "' . $this->usr->name . '"');
+                        log_debug('with words ' . $this->wrd_lst->name() . ' and triples ' . $this->lnk_lst->dsp_id() . ' by group ' . $this->grp->id . ' for "' . $this->usr->name . '"');
                     } else {
-                        log_debug('value->load_grp_by_id with words ' . $this->wrd_lst->name() . ' by group ' . $this->grp->id . ' for "' . $this->usr->name . '"');
+                        log_debug('with words ' . $this->wrd_lst->name() . ' by group ' . $this->grp->id . ' for "' . $this->usr->name . '"');
                     }
                 } else {
-                    log_debug('value->load_grp_by_id ' . $this->grp->id . ' for "' . $this->usr->name . '"');
+                    log_debug($this->grp->id . ' for "' . $this->usr->name . '"');
                 }
             }
         }
-        log_debug('value->load_grp_by_id -> done');
+        log_debug('done');
     }
 
     /*
@@ -658,8 +689,7 @@ class value extends user_sandbox_display
     function source_name(): string
     {
         $result = '';
-        log_debug('value->source_name');
-        log_debug('value->source_name for ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         if ($this->get_source_id() > 0) {
             $this->load_source();

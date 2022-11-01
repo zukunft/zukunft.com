@@ -50,8 +50,7 @@ class word_unit_tests
 
         $t->subheader('API unit tests');
 
-        $wrd = new word($usr, word::TN_READ);
-        $wrd->id = 1;
+        $wrd = new word($usr, 1, word::TN_READ);
         $wrd->description = 'A mathematical constant that never changes e.g. Pi';
         $api_wrd = $wrd->api_obj();
         $t->assert($t->name . 'api->id', $api_wrd->id, $wrd->id());

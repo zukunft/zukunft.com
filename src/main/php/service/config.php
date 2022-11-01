@@ -75,9 +75,9 @@ class config
      */
     function get(string $code_id, sql_db $db_con): ?string
     {
+        global $debug;
 
         // init
-        log_debug('cfg_get for "' . $code_id . '"');
         $db_value = '';
 
         // the config table is existing since 0.0.2, so it does not need to be checked, if the config table itself exists
@@ -98,6 +98,7 @@ class config
                 }
             }
         }
+        log_debug('"' . $code_id . '": ' . $db_value, $debug - 1);
         return $db_value;
     }
 
@@ -109,8 +110,10 @@ class config
      */
     function set(string $code_id, string $value, sql_db $db_con, string $description = ''): bool
     {
+        global $debug;
+
         // init
-        log_debug('cfg_get for "' . $code_id . '"');
+        log_debug('"' . $code_id . '" to ' . $value, $debug - 1);
         $result = false;
 
         $qp = $this->get_sql($db_con, $code_id);

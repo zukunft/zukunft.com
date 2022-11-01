@@ -60,7 +60,7 @@ function run_word_unit_db_tests(testing $t)
     $t->subheader('Frontend API tests');
 
     $wrd = $t->load_word(word::TN_READ);
-    $t->assert_api($wrd);
+    $t->assert_api_exp($wrd);
 
 
     $t->header('Unit database tests of the word list class (src/main/php/model/word/word_list.php)');
@@ -135,7 +135,7 @@ function run_word_unit_db_tests(testing $t)
     $t->subheader('Frontend API tests');
 
     $trp = $t->load_triple(triple::TN_READ, verb::IS_A, word::TN_READ);
-    $t->assert_api($trp);
+    $t->assert_api_exp($trp);
 
 }
 
