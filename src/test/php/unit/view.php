@@ -84,6 +84,13 @@ class view_unit_tests
         $expected_sql = $t->file('db/view/view_components_by_view_id_mysql.sql');
         $t->dsp('view->load_components_sql for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
 
+        $t->subheader('Convert tests');
+
+        // casting API
+        $dsp = new view($usr);
+        $dsp->set(1, view::TN_READ);
+        $t->assert_api($dsp);
+
         /*
          * im- and export tests
          */

@@ -111,6 +111,7 @@ class view extends user_sandbox_named
      */
 
     // persevered view names for unit and integration tests (TN means TEST NAME)
+    const TN_READ = 'Word';
     const TN_ADD = 'System Test View';
     const TN_RENAMED = 'System Test View Renamed';
     const TN_COMPLETE = 'System Test View Complete';
@@ -196,6 +197,21 @@ class view extends user_sandbox_named
         }
         return $result;
     }
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the most used object vars with one set statement
+     * @param int $id mainly for test creation the database id of the view
+     * @param string $name mainly for test creation the name of the view
+     */
+    public function set(int $id = 0, string $name = ''): void
+    {
+        parent::set($id, $name);
+    }
+
 
     /*
      * casting objects
