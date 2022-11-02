@@ -76,6 +76,9 @@ class view_cmp extends user_sandbox_named
      * for system testing
      */
 
+    // view components used for unit tests
+    const TN_READ = 'Name';
+
     // persevered view component names for unit and integration tests
     const TN_ADD = 'System Test View Component';
     const TN_RENAMED = 'System Test View Component Renamed';

@@ -32,7 +32,7 @@
 
 class view_component_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;
@@ -44,7 +44,7 @@ class view_component_unit_tests
         $json_file = 'unit/view/car_costs.json';
         $usr->id = 1;
 
-        $t->header('Unit tests of the view class (src/main/php/model/value/view_component.php)');
+        $t->header('Unit tests of the view component class (src/main/php/model/view/view_component.php)');
 
 
         $t->subheader('SQL statement tests');
@@ -61,6 +61,14 @@ class view_component_unit_tests
         $cmp->name = view::TN_ADD;
         $t->assert_load_sql($db_con, $cmp);
         $t->assert_load_standard_sql($db_con, $cmp);
+
+
+        $t->subheader('Convert tests');
+
+        // casting API
+        $cmp = new view_cmp($usr);
+        $cmp->set(1, view_cmp::TN_READ);
+        $t->assert_api($cmp);
 
 
         $t->subheader('Im- and Export tests');

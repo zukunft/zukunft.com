@@ -1230,6 +1230,29 @@ class test_base
     }
 
     /**
+     * check if the test results contains at least all expected results
+     *
+     * @param string $msg (unique) description of the test
+     * @param array $result the actual result
+     * @param array $target the expected result
+     * @param float $exe_max_time the expected max time to create the result
+     * @param string $comment
+     * @param string $test_type
+     * @return bool true is the result is fine
+     */
+    function assert_contains(
+        string $msg,
+        array $result,
+        array $target,
+        float $exe_max_time = TIMEOUT_LIMIT,
+        string $comment = '',
+        string $test_type = ''): bool
+    {
+        $result = array_intersect($result, $target);
+        return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
+    }
+
+    /**
      * check if the frontend API object can be created
      * and if the export based recreation of the backend object result to the similar object
      *

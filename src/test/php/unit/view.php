@@ -32,7 +32,7 @@
 
 class view_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;
@@ -44,7 +44,7 @@ class view_unit_tests
         $json_file = 'unit/view/car_costs.json';
         $usr->id = 1;
 
-        $t->header('Unit tests of the view class (src/main/php/model/value/view.php)');
+        $t->header('Unit tests of the view class (src/main/php/model/view/view.php)');
 
 
         $t->subheader('SQL statement tests');

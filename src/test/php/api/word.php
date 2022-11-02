@@ -44,6 +44,7 @@ function run_api_test(testing $t): void
     $t->assert_api_get(value::class);
     $t->assert_api_get(formula::class);
     $t->assert_api_get(view::class);
+    $t->assert_api_get(view_cmp::class);
 
     // $t->assert_rest(new word($usr, word::TN_READ));
 
