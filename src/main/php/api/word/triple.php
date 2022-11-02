@@ -58,9 +58,48 @@ class triple_api extends user_sandbox_named_api
     )
     {
         parent::__construct($id, $name);
-        $this->from = new phrase_api(0, $from);
-        $this->verb= new verb_api(0, $verb);
-        $this->to = new phrase_api(0, $to);
+        $this->set($from, $verb, $to);
+    }
+
+    /*
+     * set and get
+     */
+
+    function set(string $from, string $verb, string $to): void
+    {
+        $this->set_from(new phrase_api(0, $from));
+        $this->set_verb(new verb_api(0, $verb));
+        $this->set_to(new phrase_api(0, $to));
+    }
+
+    function set_from(phrase_api $from): void
+    {
+        $this->from = $from;
+    }
+
+    function set_verb(verb_api $vrb): void
+    {
+        $this->verb = $vrb;
+    }
+
+    function set_to(phrase_api $to): void
+    {
+        $this->to = $to;
+    }
+
+    function from(): phrase_api
+    {
+        return $this->from;
+    }
+
+    function verb(): verb_api
+    {
+        return $this->verb;
+    }
+
+    function to(): phrase_api
+    {
+        return $this->to;
     }
 
     /*

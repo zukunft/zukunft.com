@@ -47,18 +47,6 @@ class word_unit_tests
 
         $t->header('Unit tests of the word class (src/main/php/model/word/word.php)');
 
-
-        $t->subheader('API unit tests');
-
-        $wrd = new word($usr);
-        $wrd->set(1, word::TN_READ);
-        $wrd->description = 'A mathematical constant that never changes e.g. Pi';
-        $api_wrd = $wrd->api_obj();
-        $t->assert($t->name . 'api->id', $api_wrd->id, $wrd->id());
-        $t->assert($t->name . 'api->name', $api_wrd->name, $wrd->name());
-        $t->assert($t->name . 'api->description', $api_wrd->description, $wrd->description);
-
-
         $t->subheader('SQL statement tests');
 
         // sql to load the word by id
@@ -82,6 +70,17 @@ class word_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $qp = $wrd->view_sql($db_con);
         $t->assert_qp($qp, $db_con->db_type);
+
+
+        $t->subheader('API unit tests');
+
+        $wrd = new word($usr);
+        $wrd->set(1, word::TN_READ);
+        $wrd->description = 'A mathematical constant that never changes e.g. Pi';
+        $api_wrd = $wrd->api_obj();
+        $t->assert($t->name . 'api->id', $api_wrd->id, $wrd->id());
+        $t->assert($t->name . 'api->name', $api_wrd->name, $wrd->name());
+        $t->assert($t->name . 'api->description', $api_wrd->description, $wrd->description);
 
 
         $t->subheader('Im- and Export tests');

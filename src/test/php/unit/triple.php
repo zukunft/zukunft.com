@@ -21,17 +21,6 @@ class triple_unit_tests
         $t->header('Unit tests of the triple class (src/main/php/model/word/triple.php)');
 
 
-        $t->subheader('API unit tests');
-
-        $trp = new triple($usr);
-        $trp->set(1, triple::TN_READ);
-        $trp->description = 'The mathematical constant Pi';
-        $api_trp = $trp->api_obj();
-        $t->assert($t->name . 'api->id', $api_trp->id, $trp->id());
-        $t->assert($t->name . 'api->name', $api_trp->name, $trp->name());
-        $t->assert($t->name . 'api->description', $api_trp->description, $trp->description);
-
-
         $t->subheader('SQL statement tests');
 
         // sql to load the triple by id
@@ -45,6 +34,19 @@ class triple_unit_tests
         $trp->name = triple::TN_READ;
         $t->assert_load_sql($db_con, $trp);
         $t->assert_load_standard_sql($db_con, $trp);
+
+
+        $t->subheader('API unit tests');
+
+        $trp = new triple($usr);
+        $trp->set(1, triple::TN_READ, triple::TN_READ, verb::IS_A, word::TN_READ);
+        $trp->description = 'The mathematical constant Pi';
+        $api_trp = $trp->api_obj();
+        $t->assert($t->name . 'api->id', $api_trp->id, $trp->id());
+        $t->assert($t->name . 'api->name', $api_trp->name, $trp->name());
+        $t->assert($t->name . 'api->description', $api_trp->description, $trp->description);
+        $t->assert($t->name . 'api->from', $api_trp->from()->name, $trp->from->obj->name());
+        $t->assert($t->name . 'api->to', $api_trp->to()->name, $trp->to->obj->name());
 
 
         $t->subheader('Im- and Export tests');

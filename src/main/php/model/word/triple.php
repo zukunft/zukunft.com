@@ -323,6 +323,13 @@ class triple extends user_sandbox_link_description
             parent::fill_min_obj($api_obj);
             $api_obj->name = $this->name;
             $api_obj->description = $this->description;
+            if ($this->from->obj != null) {
+                $api_obj->set_from($this->from->obj->phrase()->api_obj());
+            }
+            //$api_obj->set_verb($this->verb->api_obj());
+            if ($this->to->obj != null) {
+                $api_obj->set_to($this->to->obj->phrase()->api_obj());
+            }
         }
         return $api_obj;
     }
