@@ -176,14 +176,16 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
     $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_VALUE, 'source_time_word_id', 'source_time_id');
     if (!$db_con->has_column($db_con->get_table_name(sql_db::TBL_TRIPLE), 'name_generated')) {
-        $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'name', 'name_generated');
+        $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'name', 'triple_name');
         $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'description', 'name_given');
+        $result .= $db_con->add_column(sql_db::TBL_TRIPLE, 'name_generated', 'text');
         $result .= $db_con->add_column(sql_db::TBL_TRIPLE, 'description', 'text');
     }
     $result .= $db_con->add_column(sql_db::TBL_TRIPLE, 'values', 'bigint');
     if (!$db_con->has_column($db_con->get_table_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE), 'name_generated')) {
-        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'name', 'name_generated');
+        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'name', 'triple_name');
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'description', 'name_given');
+        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'name_generated', 'text');
         $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'description', 'text');
     }
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'values', 'bigint');
