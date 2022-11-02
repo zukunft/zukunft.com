@@ -143,6 +143,7 @@ class user_sandbox
      */
     function __construct(user $usr)
     {
+        // the default type that is overwritten by the child objects
         $this->obj_type = self::TYPE_NAMED;
 
         $this->usr = $usr;
@@ -164,6 +165,10 @@ class user_sandbox
      * set and get
      */
 
+    /**
+     * set the most used object vars with one set statement
+     * @param int $id mainly for test creation the database id of the user sandbox object
+     */
     public function set_id(?int $id): void
     {
         $this->id = $id;

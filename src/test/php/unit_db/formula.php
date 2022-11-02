@@ -53,7 +53,7 @@ function run_formula_unit_db_tests(testing $t)
 
     $t->subheader('Frontend API tests');
 
-    $frm = $t->load_formula(formula::TN_READ);
+    $frm = $t->load_formula(formula::TN_READ_TEST);
     $t->assert_api_exp($frm);
 
 }

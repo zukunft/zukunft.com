@@ -506,7 +506,9 @@ class phrase_group
             foreach ($prh_names as $prh_name) {
                 if (!in_array($prh_name, $this->phr_lst->names())) {
                     // if only the name is know, add a simple word
-                    $this->add_word(new word($this->usr, $wrd_id, $prh_name));
+                    $wrd = new word($this->usr);
+                    $wrd->set($wrd_id, $prh_name);
+                    $this->add_word($wrd);
                     $result = true;
                 }
                 $wrd_id++;

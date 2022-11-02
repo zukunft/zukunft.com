@@ -91,7 +91,8 @@ class formula extends user_sandbox_description
      */
 
     // persevered formula names for unit and integration tests
-    const TN_READ = 'increase';
+    const TN_READ = 'scale minute to sec';
+    const TN_READ_TEST = 'increase';
     const TN_ADD = 'System Test Formula';
     const TN_RENAMED = 'System Test Formula Renamed';
     const TN_THIS = 'System Test Formula This'; // to test if another formula of the functional type "this" can be created
@@ -163,14 +164,12 @@ class formula extends user_sandbox_description
      * define the settings for this formula object
      * @param user $usr the user who requested to see this formula
      */
-    function __construct(user $usr, string $name = '')
+    function __construct(user $usr)
     {
         parent::__construct($usr);
+
         $this->obj_name = sql_db::TBL_FORMULA;
-
         $this->rename_can_switch = UI_CAN_CHANGE_FORMULA_NAME;
-
-        $this->name = $name;
     }
 
     function reset(): void
@@ -195,6 +194,20 @@ class formula extends user_sandbox_description
 
         $this->needs_fv_upd = false;
         $this->ref_text_r = '';
+    }
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the most used object vars with one set statement
+     * @param int $id mainly for test creation the database id of the formula
+     * @param string $name mainly for test creation the name of the formula
+     */
+    public function set(int $id = 0, string $name = ''): void
+    {
+        parent::set($id, $name);
     }
 
     /*

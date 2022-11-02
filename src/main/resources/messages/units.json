@@ -1088,11 +1088,6 @@
   ],
   "formulas": [
     {
-      "name": "definition of joule",
-      "expression": "\"joule\" = ( \"kg\" * \"metre\" * \"metre\" ) / \"second\" * \"second\"",
-      "assigned_word": "joule"
-    },
-    {
       "name": "scale minute to sec",
       "expression": "\"second\" = \"minute\" * 60",
       "assigned_word": "minute"
@@ -1156,6 +1151,11 @@
       "name": "scale km to 100 km",
       "expression": "\"per 100 km\" = \"km\" * 100",
       "assigned_word": "kilometre"
+    },
+    {
+      "name": "definition of joule",
+      "expression": "\"joule\" = ( \"kg\" * \"metre\" * \"metre\" ) / \"second\" * \"second\"",
+      "assigned_word": "joule"
     }
   ],
   "sources": [

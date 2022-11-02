@@ -23,8 +23,8 @@ class triple_unit_tests
 
         $t->subheader('API unit tests');
 
-        $trp = new triple($usr, triple::TN_READ);
-        $trp->id = 1;
+        $trp = new triple($usr);
+        $trp->set(1, triple::TN_READ);
         $trp->description = 'The mathematical constant Pi';
         $api_trp = $trp->api_obj();
         $t->assert($t->name . 'api->id', $api_trp->id, $trp->id());

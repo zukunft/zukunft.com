@@ -154,6 +154,33 @@ class verb
      */
 
     /**
+     * set the most used object vars with one set statement
+     * @param int $id mainly for test creation the database id of the word
+     * @param string $name mainly for test creation the name of the word
+     */
+    public function set(int $id = 0, string $name = ''): void
+    {
+        $this->set_id($id);
+        $this->set_name($name);
+    }
+
+    /**
+     * @param int|null $id the database id of the verb
+     */
+    public function set_id(?int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @param string|null $name the unitque name of the verb
+     */
+    public function set_name(?string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
      * @return int the database id which is not 0 if the object has been saved
      */
     public function id(): int

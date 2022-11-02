@@ -125,26 +125,22 @@ class triple extends user_sandbox_link_description
      * define the settings for this triple object
      * @param user $usr the user who requested to see this triple
      */
-    function __construct(
-        user   $usr,
-        string $name = '',
-        string $from = '',
-        string $verb = '',
-        string $to = ''
-    )
+    function __construct(user $usr)
     {
-        parent::__construct($usr);
-        $this->reset();
-        $this->obj_type = user_sandbox::TYPE_LINK;
-        $this->obj_name = sql_db::TBL_TRIPLE;
+        $this->id = null;
 
-        $this->name = $name;
+        parent::__construct($usr);
+
+        $this->obj_name = sql_db::TBL_TRIPLE;
+        $this->rename_can_switch = UI_CAN_CHANGE_triple_NAME;
+        $this->obj_type = user_sandbox::TYPE_LINK;
+
+        $this->reset();
         $this->name_given = null;
         $this->name_generated = '';
-        $this->rename_can_switch = UI_CAN_CHANGE_triple_NAME;
 
         // also create the link objects because there is now case where they are supposed to be null
-        $this->create_objects($from, $verb, $to);
+        $this->create_objects();
     }
 
     /**
@@ -152,7 +148,6 @@ class triple extends user_sandbox_link_description
      */
     function reset(): void
     {
-        $this->id = null;
         $this->usr_cfg_id = null;
         $this->owner_id = null;
         $this->values = null;
@@ -170,9 +165,9 @@ class triple extends user_sandbox_link_description
         string $to = ''
     )
     {
-        $this->from = new phrase($this->usr, $from);
+        $this->from = new phrase($this->usr, 0, $from);
         $this->verb = new verb(0, $verb);
-        $this->to = new phrase($this->usr, $to);
+        $this->to = new phrase($this->usr, 0, $to);
     }
 
     /**
@@ -203,6 +198,26 @@ class triple extends user_sandbox_link_description
     /*
      * set and get
      */
+
+    /**
+     * set the most used object vars with one set statement
+     * @param int $id mainly for test creation the database id of the word
+     * @param string $name mainly for test creation the name of the word
+     */
+    public function set(
+        int    $id = 0,
+        string $name = '',
+        string $from = '',
+        string $verb = '',
+        string $to = ''
+    ): void
+    {
+        parent::set_id($id);
+        if ($name != '') {
+            $this->name = $name;
+        }
+        $this->create_objects($from, $verb, $to);
+    }
 
     /**
      * set the name used object

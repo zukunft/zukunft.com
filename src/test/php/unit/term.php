@@ -42,19 +42,21 @@ class term_unit_tests
 
         $t->header('Unit tests of the term class (src/main/php/model/phrase/term.php)');
 
-        $wrd = new word($usr, 1, word::TN_READ);
+        $wrd = new word($usr);
+        $wrd->set(1, word::TN_READ);
         $trm = $wrd->term();
         $t->assert($t->name . 'term->word id', $trm->id_obj(), $wrd->id());
         $t->assert($t->name . 'term->word name', $trm->name(), $wrd->name());
 
-        $trp = new triple($usr, triple::TN_READ);
+        $trp = new triple($usr);
+        $trp->set(1, triple::TN_READ);
         $trp->id = 1;
         $trm = $trp->term();
         $t->assert($t->name . 'term->triple id', $trm->id_obj(), $trp->id());
         $t->assert($t->name . 'term->triple name', $trm->name(), $trp->name());
 
-        $frm = new formula($usr, formula::TN_READ);
-        $frm->id = 1;
+        $frm = new formula($usr);
+        $frm->set(1, formula::TN_READ);
         $trm = $frm->term();
         $t->assert($t->name . 'term->formula id', $trm->id_obj(), $frm->id());
         $t->assert($t->name . 'term->formula name', $trm->name(), $frm->name());

@@ -76,6 +76,14 @@ class formula_unit_tests
         $t->assert_qp($qp, sql_db::MYSQL);
 
 
+        $t->subheader('Convert tests');
+
+        // casting API
+        $frm = new formula($usr);
+        $frm->set(1,  formula::TN_READ);
+        $t->assert_api($frm);
+
+
         $t->name = 'formula_list->';
 
         $t->subheader('SQL list statement tests');
@@ -93,12 +101,12 @@ class formula_unit_tests
 
         // check the PostgreSQL query syntax to load a list of formulas by the names
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $frm_lst->load_sql_by_names($db_con, array(formula::TN_READ, formula::TN_ADD));
+        $qp = $frm_lst->load_sql_by_names($db_con, array(formula::TN_READ_TEST, formula::TN_ADD));
         $t->assert_qp($qp, sql_db::POSTGRES);
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $frm_lst->load_sql_by_names($db_con, array(formula::TN_READ, formula::TN_ADD));
+        $qp = $frm_lst->load_sql_by_names($db_con, array(formula::TN_READ_TEST, formula::TN_ADD));
         $t->assert_qp($qp, sql_db::MYSQL);
 
         // check the PostgreSQL query syntax to load a list of formulas by phrase

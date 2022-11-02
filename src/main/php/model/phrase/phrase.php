@@ -105,6 +105,7 @@ class phrase
      */
     function __construct(
         user   $usr,
+        int    $id = 0,
         string $from = '',
         string $verb = '',
         string $to = '',
@@ -116,10 +117,12 @@ class phrase
         if ($from != ''
             and $verb != ''
             and $to != '') {
-            $this->obj = new triple($usr, $from, $verb, $to, $name);
+            $this->obj = new triple($usr);
+            $this->obj->set($id * -1, $from, $verb, $to, $name);
         } else {
             if ($from != '') {
-                $this->obj = new word($usr, $from);
+                $this->obj = new word($usr);
+                $this->obj->set($id, $from);
             }
         }
     }

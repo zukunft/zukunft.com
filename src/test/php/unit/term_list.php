@@ -81,7 +81,7 @@ class term_list_unit_tests
         $lst->add($this->t->new_triple(
             triple::TN_READ_NAME,
             triple::TN_READ, verb::IS_A, word::TN_READ)->term());
-        $lst->add($this->t->new_formula(formula::TN_READ)->term());
+        $lst->add($this->t->new_formula(formula::TN_READ_TEST)->term());
         $lst->add($this->t->new_verb(verb::IS_A)->term());
         return $lst;
     }

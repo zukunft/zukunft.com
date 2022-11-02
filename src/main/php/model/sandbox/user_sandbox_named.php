@@ -41,6 +41,10 @@ class user_sandbox_named extends user_sandbox
     // object specific database and JSON object field names
     const FLD_NAME = 'name';
 
+    /*
+     * construct and map
+     */
+
     /**
      * reset the search values of this object
      * needed to search for the standard object, because the search is work, value, formula or ... specific
@@ -50,6 +54,24 @@ class user_sandbox_named extends user_sandbox
         parent::reset();
 
         $this->name = '';
+    }
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the most used object vars with one set statement
+     * @param int $id mainly for test creation the database id of the named user sandbox object
+     * @param string $name mainly for test creation the name of the named user sandbox object
+     */
+    public function set(int $id = 0, string $name = ''): void
+    {
+        parent::set_id($id);
+
+        if ($name != '') {
+            $this->name = $name;
+        }
     }
 
     /*

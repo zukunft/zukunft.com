@@ -257,20 +257,13 @@ class word extends user_sandbox_description
      * @param int $id mainly for test creation the database id of the word
      * @param string $name mainly for test creation the name of the word
      */
-    function __construct(user $usr, int $id = 0, string $name = '')
+    function __construct(user $usr)
     {
-        parent::__construct($usr);
         $this->reset();
+        parent::__construct($usr);
+
         $this->obj_name = sql_db::TBL_WORD;
-
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_NAME;
-
-        if ($id > 0) {
-            $this->id = $id;
-        }
-        if ($name != '') {
-            $this->name = $name;
-        }
     }
 
     /**
@@ -315,6 +308,20 @@ class word extends user_sandbox_description
             $this->view_id = $db_row[self::FLD_VIEW];
         }
         return $result;
+    }
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the most used object vars with one set statement
+     * @param int $id mainly for test creation the database id of the word
+     * @param string $name mainly for test creation the name of the word
+     */
+    public function set(int $id = 0, string $name = ''): void
+    {
+        parent::set($id, $name);
     }
 
     /*
