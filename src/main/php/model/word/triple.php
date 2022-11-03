@@ -356,7 +356,7 @@ class triple extends user_sandbox_link_description
     }
 
     /*
-     * loading
+     * loading / database access object (DAO) functions
      */
 
     /**

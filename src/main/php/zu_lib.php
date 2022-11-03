@@ -18,7 +18,7 @@
     TODO add the view result at least as simple text to the JSON export
 
     after that this should be done while keeping step 1. to 4. for each commit:
-    TODO review cast to display objectsto always use display objects
+    TODO review cast to display objects to always use display objects
     TODO make all vars of display objects private or protected
     TODO move display functions to frontend objects
     TODO check that all queries are parameterized by setting $db_con->set_name

@@ -30,6 +30,7 @@
   
 */
 
+use api\term_list_api;
 use html\term_list_dsp;
 
 class term_list
@@ -42,6 +43,7 @@ class term_list
     public user $usr;  // the user object of the person for whom the phrase list is loaded, so to say the viewer
 
     // object specific database and JSON object field names
+    const FLD_ID = 'term_id';
     const FLD_NAME = 'term_name';
     const FLD_USAGE = 'usage';
 
@@ -67,6 +69,22 @@ class term_list
         $this->usr = $usr;
     }
 
+    /*
+     * casting objects
+     */
+
+    /**
+     * @return term_list_api the word list object with the display interface functions
+     */
+    function api_obj(): term_list_api
+    {
+        $api_obj = new term_list_api();
+        foreach ($this->lst as $trm) {
+            $api_obj->add($trm->api_obj());
+        }
+        return $api_obj;
+    }
+
     /**
      * @return term_list_dsp the word object with the display interface functions
      */
@@ -84,21 +102,52 @@ class term_list
      */
 
     /**
-     * create an SQL statement to retrieve a list of terms from the database
+     * create the common part of an SQL statement to retrieve a list of terms from the database
+     * uses the term view which includes only the main fields
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @param string $query_name the name of the query use to prepare and call the query
      */
-    function load_sql(sql_db $db_con, string $pattern = ''): sql_par
+    private function load_sql(sql_db $db_con, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
-        $qp->name .= 'name_like';
+        $qp->name .= $query_name;
 
         $db_con->set_type(sql_db::VT_TERM);
         $db_con->set_name($qp->name);
 
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of terms from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_ids(sql_db $db_con, trm_ids $ids): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'ids');
+        $db_con->add_par_in_int($ids->lst);
+        $qp->sql = $db_con->select_by_field(self::FLD_ID);
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of terms from the database
+     * uses the erm view which includes only the main fields
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_like(sql_db $db_con, string $pattern = ''): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'name_like');
         $db_con->add_name_pattern($pattern);
         $qp->sql = $db_con->select_by_field(self::FLD_NAME);
         $qp->par = $db_con->get_par();
@@ -107,14 +156,14 @@ class term_list
     }
 
     /**
-     * load the terms that matches the given pattern
+     * load the terms that based on the given query parameters
+     * @param sql_par $qp the query parameters created by the calling function
      */
-    function load_like(): bool
+    private function load(sql_par $qp): bool
     {
         global $db_con;
         $result = false;
 
-        $qp = $this->load_sql($db_con);
         $trm_lst = $db_con->get($qp);
         foreach ($trm_lst as $db_row) {
             $trm = new term($this->usr);
@@ -127,6 +176,36 @@ class term_list
 
         return $result;
     }
+
+    /**
+     * load the terms selected by the id
+     *
+     * @param trm_ids $ids of term ids that should be loaded
+     * @return bool true if at least one term has been loaded
+     */
+    function load_by_ids(trm_ids $ids): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_ids($db_con, $ids);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the terms that matches the given pattern
+     * @param string $pattern part of the name that should be used to select the terms
+     */
+    function load_like(string $pattern): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_like($db_con, $pattern);
+        return $this->load($qp);
+    }
+
+    /*
+     * modification function
+     */
 
     /**
      * add one term to the term list, but only if it is not yet part of the term list
@@ -155,6 +234,10 @@ class term_list
         }
         return $result;
     }
+
+    /*
+     * get function
+     */
 
     /**
      * @returns array the phrase ids as an array

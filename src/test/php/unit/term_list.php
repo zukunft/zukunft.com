@@ -64,8 +64,8 @@ class term_list_unit_tests
         $t->subheader('term list sql tests');
 
         $lst = $this->new_list();
-        $t->assert_load_sql($db_con, $lst);
-
+        $t->assert_load_sql_ids($db_con, $lst);
+        $t->assert_load_sql_like($db_con, $lst);
 
     }
 
