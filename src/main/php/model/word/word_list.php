@@ -1210,7 +1210,7 @@ class word_list
             log_err('Cannot create phrase group for an empty list.', 'word_list->get_grp');
         } else {
             $grp = new phrase_group($this->usr);
-            $grp->load_by_ids((new trm_ids($this->ids())));
+            $grp->load_by_ids((new phr_ids($this->ids())));
         }
 
         /*

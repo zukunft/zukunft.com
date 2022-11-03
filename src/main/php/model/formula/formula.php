@@ -686,7 +686,7 @@ class formula extends user_sandbox_description
 
             if (count($phr_ids->lst) > 0) {
                 $phr_lst = new phrase_list($this->usr);
-                $phr_lst->load_by_given_ids($phr_ids);
+                $phr_lst->load_by_ids($phr_ids);
                 log_debug("formula->assign_phr_glst_direct -> number of words " . dsp_count($phr_lst->lst));
             }
         } else {
@@ -734,7 +734,7 @@ class formula extends user_sandbox_description
                     $phr_ids = array_merge($direct_phr_lst->id_lst(), $indirect_phr_lst->id_lst());
                     $phr_ids = array_unique($phr_ids);
 
-                    $phr_lst->load_by_given_ids((new trm_ids($phr_ids)));
+                    $phr_lst->load_by_ids((new phr_ids($phr_ids)));
                     log_debug(self::class . '->assign_phr_glst -> number of words and triples ' . dsp_count($phr_lst->lst));
                 } else {
                     log_debug(self::class . '->assign_phr_glst -> no words are assigned to ' . $this->dsp_id());

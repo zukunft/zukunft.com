@@ -34,7 +34,7 @@ namespace api;
 
 use html\phrase_list_dsp;
 
-class phrase_list_api extends list_api
+class phrase_list_api extends list_api implements \JsonSerializable
 {
 
     /*
@@ -54,25 +54,6 @@ class phrase_list_api extends list_api
     {
         return parent::add_obj($phr);
     }
-
-    /*
-     * info
-     */
-
-    /**
-     * @return bool true if one of the phrases is of type percent
-     */
-    function has_percent(): bool
-    {
-        $result = false;
-        foreach ($this->lst as $phr) {
-            if ($phr->is_percent()) {
-                $result = true;
-            }
-        }
-        return $result;
-    }
-
 
     /*
      * casting objects
@@ -101,8 +82,39 @@ class phrase_list_api extends list_api
     }
 
     /*
+     * interface
+     */
+
+    /**
+     * an array of the value vars including the private vars
+     */
+    public function jsonSerialize(): array
+    {
+        $vars = [];
+        foreach ($this->lst as $phr) {
+            $vars[] = json_decode(json_encode($phr));
+        }
+        return $vars;
+    }
+
+    /*
      * information functions
      */
+
+    /**
+     * @return bool true if one of the phrases is of type percent
+     */
+    function has_percent(): bool
+    {
+        $result = false;
+        foreach ($this->lst as $phr) {
+            if ($phr->is_percent()) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
 
     /**
      * @returns int the number of phrases of the protected list
@@ -129,6 +141,8 @@ class phrase_list_api extends list_api
      */
 
     /**
+     * removes all terms from this list that are not in the given list
+     * @param term_list_api $new_lst the terms that should remain in this list
      * @returns phrase_list_api with the phrases of this list and the new list
      */
     function intersect(phrase_list_api $new_lst): phrase_list_api

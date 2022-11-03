@@ -600,7 +600,7 @@ class value_list
         }
         $phr_lst = new phrase_list($this->usr);
         if (count($all_ids) > 0) {
-            $phr_lst->load_by_given_ids(new trm_ids($all_ids));
+            $phr_lst->load_by_ids(new phr_ids($all_ids));
         }
         log_debug(dsp_count($phr_lst->lst));
         return $phr_lst;

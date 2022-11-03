@@ -198,7 +198,7 @@ class expression
     function phr_lst(): phrase_list
     {
         $phr_lst = $this->phr_id_lst($this->r_part());
-        $phr_lst->load_by_ids();
+        $phr_lst->load_by_ids_already_set();
 
         return $phr_lst;
     }
@@ -210,7 +210,7 @@ class expression
     function fv_phr_lst(): phrase_list
     {
         $phr_lst = $this->phr_id_lst($this->fv_part());
-        $phr_lst->load_by_ids();
+        $phr_lst->load_by_ids_already_set();
 
         return $phr_lst;
     }

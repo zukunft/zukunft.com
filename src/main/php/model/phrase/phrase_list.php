@@ -42,6 +42,7 @@
   
 */
 
+use api\phrase_list_api;
 use cfg\phrase_type;
 use html\word_dsp;
 
@@ -62,6 +63,22 @@ class phrase_list
     {
         $this->lst = array();
         $this->usr = $usr;
+    }
+
+    /*
+     * casting objects
+     */
+
+    /**
+     * @return phrase_list_api the word list object with the display interface functions
+     */
+    function api_obj(): phrase_list_api
+    {
+        $api_obj = new phrase_list_api();
+        foreach ($this->lst as $phr) {
+            $api_obj->add($phr->api_obj());
+        }
+        return $api_obj;
     }
 
     /**
@@ -131,10 +148,11 @@ class phrase_list
 
     /**
      * load the phrases selected by the id of the list entries
+     * TODO use load_byids instead
      *
      * @return bool true if at least one phrase has been loaded
      */
-    function load_by_ids(): bool
+    function load_by_ids_already_set(): bool
     {
         global $db_con;
         $result = false;
@@ -207,10 +225,10 @@ class phrase_list
     /**
      * load the phrases selected by the id
      *
-     * @param trm_ids $ids of phrase ids that should be loaded
+     * @param phr_ids $ids of phrase ids that should be loaded
      * @return bool true if at least one phrase has been loaded
      */
-    function load_by_given_ids(trm_ids $ids): bool
+    function load_by_ids(phr_ids $ids): bool
     {
         global $db_con;
         $result = false;
@@ -1087,9 +1105,9 @@ class phrase_list
     }
 
     /**
-     * @return trm_ids with the sorted phrase ids where a triple has a negative id
+     * @return phr_ids with the sorted phrase ids where a triple has a negative id
      */
-    function ids(): trm_ids
+    function ids(): phr_ids
     {
         $lst = array();
         if (count($this->lst) > 0) {
@@ -1101,7 +1119,7 @@ class phrase_list
             }
         }
         asort($lst);
-        return (new trm_ids($lst));
+        return (new phr_ids($lst));
     }
 
     /**
@@ -2005,7 +2023,29 @@ class phrase_list
 }
 
 /**
- * helper class to make sure that a triple id list is never mixed with a phrase id list
+ * helper class to make sure that
+ * a triple id list is never mixed with a phrase id list
+ * a phrase id list is never mixed with a term id list
+ */
+class phr_ids
+{
+    public ?array $lst = null;
+
+    function __construct(array $ids)
+    {
+        $this->lst = $ids;
+    }
+
+    function count(): int
+    {
+        return (count($this->lst));
+    }
+}
+
+/**
+ * helper class to make sure that
+ * a triple id list is never mixed with a term id list
+ * a phrase id list is never mixed with a term id list
  */
 class trm_ids
 {

@@ -257,7 +257,7 @@ function run_word_list_test(testing $t)
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_names(array(word::TN_ZH, word::TN_2021, word::TN_CHF, word::TN_MIO));
     $grp = new phrase_group($usr);
-    $grp->load_by_ids((new trm_ids($wrd_lst->ids())));
+    $grp->load_by_ids((new phr_ids($wrd_lst->ids())));
     $result = $grp->get_id();
     $target = 1; // the creation should be tested, but how?
     if ($result > 0) {

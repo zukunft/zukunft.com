@@ -110,6 +110,8 @@ class term_list_api extends list_api
      */
 
     /**
+     * removes all terms from this list that are not in the given list
+     * @param term_list_api $new_lst the terms that should remain in this list
      * @returns term_list_api with the terms of this list and the new list
      */
     function intersect(term_list_api $new_lst): term_list_api
@@ -132,6 +134,11 @@ class term_list_api extends list_api
         return $this;
     }
 
+    /**
+     * remove all terms from the given list from this list
+     * @param term_list_api $del_lst the terms that should be removed
+     * @return term_list_api this
+     */
     function remove(term_list_api $del_lst): term_list_api
     {
         if (!$del_lst->is_empty()) {

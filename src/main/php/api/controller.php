@@ -31,25 +31,33 @@
 
 namespace controller;
 
+use api\list_api;
 use api\user_sandbox_api;
 
 class controller
 {
 
-    function get(user_sandbox_api $api_obj, string $msg): void
+    /**
+     * response to a get request
+     *
+     * @param string $json the object as a json string that should be returned
+     * @param string $msg the message as a json string that should be returned
+     * @return void
+     */
+    private function get_response(string $api_obj, string $msg): void
     {
         // required headers
         header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/json; charset=UTF-8");
 
-        // return the word json or the error message
+        // return the api json or the error message
         if ($msg == '') {
 
             // set response code - 200 OK
             http_response_code(200);
 
-            // return the word object
-            echo json_encode($api_obj);
+            // return e.g. the word object
+            echo $api_obj;
 
         } else {
 
@@ -60,8 +68,36 @@ class controller
             echo json_encode(
                 array("message" => $msg)
             );
-
         }
+    }
 
+    /**
+     * encode an user sandbox object for the frontend api
+     * and response to a get request
+     *
+     * @param user_sandbox_api $api_obj the object that should be encoded
+     * @param string $msg if filled the message that should be shown to the user instead of the object
+     * @return void
+     */
+    function get(user_sandbox_api $api_obj, string $msg): void
+    {
+        // return the api json or the error message
+        if ($msg == '') {
+            $this->get_response(json_encode($api_obj), $msg);
+        } else {
+            // tell the user e.g. that no products found
+            $this->get_response('', $msg);
+        }
+    }
+
+    function get_list(list_api $api_obj, string $msg): void
+    {
+        // return the api json or the error message
+        if ($msg == '') {
+            $this->get_response(json_encode($api_obj), $msg);
+        } else {
+            // tell the user e.g. that no products found
+            $this->get_response('', $msg);
+        }
     }
 }

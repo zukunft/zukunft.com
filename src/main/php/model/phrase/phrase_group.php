@@ -221,13 +221,13 @@ class phrase_group
 
     /**
      * shortcut function to create the phrase list and load the group with one call
-     * @param trm_ids $ids list of phrase ids where triples have a negative id
+     * @param phr_ids $ids list of phrase ids where triples have a negative id
      * @return bool
      */
-    function load_by_ids(trm_ids $ids): bool
+    function load_by_ids(phr_ids $ids): bool
     {
         $phr_lst = new phrase_list($this->usr);
-        $phr_lst->load_by_given_ids($ids);
+        $phr_lst->load_by_ids($ids);
         return $this->load_by_lst($phr_lst);
     }
 
@@ -251,7 +251,7 @@ class phrase_group
     {
         if (!$this->phr_lst->loaded()) {
             $ids = $this->phr_lst->ids();
-            $this->phr_lst->load_by_given_ids($ids);
+            $this->phr_lst->load_by_ids($ids);
         }
     }
 

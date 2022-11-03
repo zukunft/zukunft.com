@@ -740,7 +740,7 @@ class value extends user_sandbox_display
                 if (!empty($this->ids)) {
                     log_debug('value->set_phr_lst_by_ids for "' . implode(",", $ids) . '" and "' . $this->usr->name . '"');
                     $phr_lst = new phrase_list($this->usr);
-                    if (!$phr_lst->load_by_given_ids((new trm_ids($ids)))) {
+                    if (!$phr_lst->load_by_ids((new phr_ids($ids)))) {
                         $result = 'Cannot load phrases by id';
                     }
                     $this->phr_lst = $phr_lst;
@@ -777,7 +777,7 @@ class value extends user_sandbox_display
             if (!empty($this->ids)) {
                 log_debug('value->set_grp_by_ids for ids "' . implode(",", $this->ids) . '" for "' . $this->usr->name . '"');
                 $grp = new phrase_group($this->usr); // in case the word names and word links can be user specific maybe the owner should be used here
-                $grp->load_by_ids((new trm_ids($this->ids)));
+                $grp->load_by_ids((new phr_ids($this->ids)));
                 if ($grp->id > 0) {
                     $this->grp = $grp;
                     /* actually not needed

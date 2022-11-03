@@ -1286,7 +1286,7 @@ class test_base
     function assert_api(object $usr_obj): bool
     {
         $api_obj = $usr_obj->api_obj();
-        $actual = json_decode(json_encode($usr_obj->api_obj()), true);
+        $actual = json_decode(json_encode($api_obj), true);
         $expected = json_decode($this->api_json_expected($usr_obj::class), true);
         return $this->assert($usr_obj::class . ' API object', json_is_similar($actual, $expected), true);
     }
@@ -1302,6 +1302,21 @@ class test_base
     function assert_api_get(string $class, int $id = 1): bool
     {
         $actual = json_decode($this->api_call("GET", HOST_TESTING . '/api/' . $class, array("id" => $id)), true);
+        $expected = json_decode($this->api_json_expected($class), true);
+        return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
+    }
+
+    /**
+     * check if the REST GET call returns the expected JSON message
+     * for testing the local deployments needs to be updated using an external script
+     *
+     * @param string $class the class name of the object to test
+     * @param array $ids the database ids of the db rows that should be used for testing
+     * @return bool true if the json has no relevant differences
+     */
+    function assert_api_get_list(string $class, array $ids = [1,2]): bool
+    {
+        $actual = json_decode($this->api_call("GET", HOST_TESTING . '/api/' . $class, implode(",", $ids)), true);
         $expected = json_decode($this->api_json_expected($class), true);
         return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
     }
