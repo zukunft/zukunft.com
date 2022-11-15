@@ -373,8 +373,9 @@ include_once $path_php . 'api/view/view.php';
 include_once $path_php . 'api/view/view_cmp.php';
 // general HTML frontend classes
 include_once $path_php . 'web/back_trace.php';
-include_once $path_php . 'web/user_display.php';
+include_once $path_php . 'web/user_display_old.php';
 include_once $path_php . 'web/user_log_display.php';
+include_once $path_php . 'web/user/user.php';
 include_once $path_php . 'web/user/user_type_list.php';
 include_once $path_php . 'web/system/messages.php';
 include_once $path_php . 'web/system/error_log_list.php';

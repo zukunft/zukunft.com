@@ -113,6 +113,7 @@ class test_unit extends testing
         // do the UI unit tests
         (new html_unit_tests)->run($this);
         (new type_list_display_unit_tests)->run($this);
+        (new user_display_unit_tests)->run($this);
         (new word_display_unit_tests)->run($this);
         (new word_list_display_unit_tests)->run($this);
         (new triple_display_unit_tests)->run($this);

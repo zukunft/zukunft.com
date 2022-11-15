@@ -105,6 +105,7 @@ include_once $path_unit . 'user_log.php';
 
 // load the testing functions for creating HTML code
 include_once $path_unit . 'html.php';
+include_once $path_unit . 'user_display.php';
 include_once $path_unit . 'word_display.php';
 include_once $path_unit . 'word_list_display.php';
 include_once $path_unit . 'triple_display.php';
@@ -339,11 +340,11 @@ class test_base
         // e.g. a value owned by the first user cannot be adjusted by the second user instead a user specific value is created
         // instead a user specific value is created
         // for testing $usr is the user who has started the test ans $usr1 and $usr2 are the users used for simulation
-        $this->usr1 = new user_dsp;
+        $this->usr1 = new user_dsp_old;
         $this->usr1->name = user::NAME_SYSTEM_TEST;
         $this->usr1->load_test_user();
 
-        $this->usr2 = new user_dsp;
+        $this->usr2 = new user_dsp_old;
         $this->usr2->name = user::NAME_SYSTEM_TEST_PARTNER;
         $this->usr2->load_test_user();
 

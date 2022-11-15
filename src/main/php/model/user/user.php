@@ -199,11 +199,11 @@ class user
      */
 
     /**
-     * @return user_dsp the user object with the display interface functions
+     * @return user_dsp_old the user object with the display interface functions
      */
-    function dsp_obj(): user_dsp
+    function dsp_obj(): user_dsp_old
     {
-        $dsp_obj = new user_dsp();
+        $dsp_obj = new user_dsp_old();
 
         $dsp_obj->id = $this->id;
         $dsp_obj->name = $this->name;
@@ -648,10 +648,10 @@ class user
     }
 
     // create the display user object based on the object (not needed any more if always the display user object is used)
-    function dsp_user(): user_dsp
+    function dsp_user(): user_dsp_old
     {
         global $db_con;
-        $dsp_user = new user_dsp;
+        $dsp_user = new user_dsp_old;
         $dsp_user->id = $this->id;
         $dsp_user->load($db_con);
         return $dsp_user;

@@ -2,8 +2,9 @@
 
 /*
 
-    api\user.php - the simple object to export a user json for the frontend API
-    ------------
+    test/unit/user_display.php - TESTing of the USER DISPLAY functions
+    --------------------------
+  
 
     This file is part of zukunft.com - calc with words
 
@@ -29,38 +30,26 @@
 
 */
 
-namespace api;
+use html\html_base;
+use html\user_dsp;
 
-class user_api
+class user_display_unit_tests
 {
-
-    // field names used for JSON creation
-    public string $id;
-    public string $name;
-    public string $description;
-    public string $profile;
-    public string $email;
-    public string $first_name;
-    public string $last_name;
-
-    function __construct()
+    function run(testing $t): void
     {
-        $this->id = 0;
-        $this->name = '';
-        $this->description = '';
-        $this->profile = '';
-        $this->email = '';
-        $this->first_name = '';
-        $this->last_name = '';
-    }
+        global $usr;
+        $html = new html_base();
 
-    /**
-     * just used for unit testing
-     * @return string the frontend API JSON string
-     */
-    function get_json(): string
-    {
-        return json_encode($this);
+        $t->subheader('User tests');
+
+        $usr_dsp = new user_dsp();
+        $usr_dsp->id = 1;
+        $usr_dsp->name = 'zukunft.com';
+        $usr_dsp->email = 'heang@zukunft.com';
+        $usr_dsp->first_name = 'Heang';
+        $usr_dsp->last_name = 'Lor';
+        $test_page = $usr_dsp->form_edit(1) . '<br>';
+        $t->html_test($test_page, 'user', $t);
     }
 
 }

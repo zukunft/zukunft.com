@@ -29,7 +29,7 @@
   
 */
 
-class user_dsp extends user
+class user_dsp_old extends user
 {
 
     // display a form with the user parameters such as name or email
