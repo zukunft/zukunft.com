@@ -322,6 +322,25 @@ class word extends user_sandbox_description
         parent::set($id, $name);
     }
 
+    /**
+     * set the value to rank the words by usage
+     *
+     * @param int $usage a higher value moves the word to the top of the selection list
+     * @return void
+     */
+    function set_usage(int $usage): void
+    {
+        $this->values = $usage;
+    }
+
+    /**
+     * @return int a higher number indicates a higher usage
+     */
+    function usage(): int
+    {
+        return $this->values;
+    }
+
     /*
      * casting objects
      */
@@ -405,6 +424,20 @@ class word extends user_sandbox_description
             $result = $this->load_owner();
         }
         return $result;
+    }
+
+    /**
+     * create an SQL statement to retrieve a word by id from the database
+     * added to word just to assign the class for the user sandbox object
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $id the id of the user sandbox object
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    {
+        return parent::load_sql_by_id($db_con, $id, $class);
     }
 
     /**

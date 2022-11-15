@@ -221,6 +221,8 @@ include_once $path_php . 'db/db_check.php';
 // utils
 include_once $path_php . 'utils/json_utils.php';
 include_once $path_php . 'model/helper/object_type.php';
+include_once $path_php . 'model/helper/db_object.php';
+include_once $path_php . 'model/helper/db_object_named.php';
 include_once $path_php . 'model/user/user_type_list.php';
 include_once $path_php . 'model/system/list.php';
 include_once $path_php . 'model/system/type_list.php';

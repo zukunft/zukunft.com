@@ -236,7 +236,7 @@ class user_sandbox_named extends user_sandbox
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class): int
+    function load_by_name(string $name, string $class = self::class): int
     {
         global $db_con;
 

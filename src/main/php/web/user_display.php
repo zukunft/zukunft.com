@@ -34,7 +34,7 @@ class user_dsp extends user
 
     // display a form with the user parameters such as name or email
     // add back here ???
-    function dsp_edit($back)
+    function dsp_edit($back): string
     {
         log_debug('user_dsp->dsp_edit(u' . $this->id . ')');
         $result = ''; // reset the html code var

@@ -210,6 +210,25 @@ class formula extends user_sandbox_description
         parent::set($id, $name);
     }
 
+    /**
+     * set the value to rank the formulas by usage
+     *
+     * @param int $usage a higher value moves the formula to the top of the selection list
+     * @return void
+     */
+    function set_usage(int $usage): void
+    {
+        //$this->values = $usage;
+    }
+
+    /**
+     * @return int a higher number indicates a higher usage
+     */
+    function usage(): int
+    {
+        return 0;
+    }
+
     /*
      * casting objects
      */

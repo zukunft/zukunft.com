@@ -43,7 +43,7 @@ use cfg\protection_type;
 use cfg\share_type;
 use export\exp_obj;
 
-class user_sandbox
+class user_sandbox extends db_object
 {
     /*
      * types
@@ -103,7 +103,6 @@ class user_sandbox
     public bool $rename_can_switch = True; // true if renaming an object can switch to another object with the new name
 
     // database fields that are used in all objects and that have a specific behavior
-    public ?int $id = null;            // the database id of the object, which is the same for the standard and the user specific object
     public ?int $usr_cfg_id = null;    // the database id if there is already some user specific configuration for this object
     private user $usr;                 // the person for whom the object is loaded, so to say the viewer
     public ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
@@ -163,15 +162,6 @@ class user_sandbox
      */
 
     /**
-     * set the most used object vars with one set statement
-     * @param int|null $id mainly for test creation the database id of the user sandbox object
-     */
-    public function set_id(?int $id): void
-    {
-        $this->id = $id;
-    }
-
-    /**
      * set the user of the user sandbox object
      *
      * @param user $usr the person who wants to access the object e.g. the word
@@ -180,15 +170,6 @@ class user_sandbox
     function set_user(user $usr): void
     {
         $this->usr = $usr;
-    }
-
-    /**
-     * @return int|null the database id which is not 0 if the object has been saved
-     * the internal null value is used to detect if database saving has been tried
-     */
-    public function id(): ?int
-    {
-        return $this->id;
     }
 
     /**
@@ -383,7 +364,7 @@ class user_sandbox
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class): sql_par
+    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($db_con, 'id', $class);
         $db_con->add_par_int($id);
@@ -465,7 +446,7 @@ class user_sandbox
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, string $class): int
+    function load_by_id(int $id, string $class = self::class): int
     {
         global $db_con;
 

@@ -62,6 +62,7 @@ function run_unit_db_tests(testing $t): void
     run_word_unit_db_tests($t);
     run_value_unit_db_tests($t);
 
+    (new term_unit_db_tests)->run($t);
     run_term_list_test($t);
     run_api_test($t);
 

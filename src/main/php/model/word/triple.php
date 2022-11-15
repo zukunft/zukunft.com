@@ -286,6 +286,25 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
     }
 
     /**
+     * set the value to rank the triple by usage
+     *
+     * @param int $usage a higher value moves the triple to the top of the selection list
+     * @return void
+     */
+    function set_usage(int $usage): void
+    {
+        $this->values = $usage;
+    }
+
+    /**
+     * @return int a higher number indicates a higher usage
+     */
+    function usage(): int
+    {
+        return $this->values;
+    }
+
+    /**
      * @return string|null the name manually set by the user or null if the generated name should be used
      */
     public function name_given(): ?string
@@ -453,7 +472,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class): sql_par
+    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($db_con, 'id', $class);
         $db_con->add_par_int($id);
@@ -577,7 +596,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, string $class): int
+    function load_by_id(int $id, string $class = self::class): int
     {
         global $db_con;
 
@@ -592,7 +611,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class): int
+    function load_by_name(string $name, string $class = self::class): int
     {
         global $db_con;
 

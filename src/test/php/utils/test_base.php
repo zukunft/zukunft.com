@@ -121,6 +121,7 @@ include_once $path_unit_db . 'sql_db.php';
 include_once $path_unit_db . 'user.php';
 include_once $path_unit_db . 'word.php';
 include_once $path_unit_db . 'verb.php';
+include_once $path_unit_db . 'term.php';
 include_once $path_unit_db . 'value.php';
 include_once $path_unit_db . 'formula.php';
 include_once $path_unit_db . 'view.php';
@@ -1552,6 +1553,28 @@ class test_base
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_standard_sql($db_con, get_class($usr_obj));
             $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the object loading by id and name
+     *
+     * @param user_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param string $name the name
+     * @return bool true if all tests are fine
+     */
+    function assert_load(db_object $usr_obj, string $name): bool
+    {
+        // check the loading via id and check the name
+        $usr_obj->load_by_id(1, $usr_obj::class);
+        $result = $this->assert($usr_obj::class . '->load', $usr_obj->name(), $name);
+
+        // ... and check the loading via name and check the id
+        if ($result) {
+            $usr_obj->reset();
+            $usr_obj->load_by_name($name, $usr_obj::class);
+            $result = $this->assert($usr_obj::class . '->load', $usr_obj->id(), 1);
         }
         return $result;
     }

@@ -40,6 +40,7 @@ class verb
 {
 
     // predefined word link types or verbs
+    const TN_READ = "not set";
     const IS_A = "is";
     const IS_PART_OF = "contains";
     const FOLLOW = "follow";
@@ -196,9 +197,20 @@ class verb
     }
 
     /**
-     * @return int the database id which is not 0 if the object has been saved
+     * set the value to rank the verbs by usage
+     *
+     * @param int $usage a higher value moves the verb to the top of the selection list
+     * @return void
      */
-    public function id(): int
+    function set_usage(int $usage): void
+    {
+        //$this->values = $usage;
+    }
+
+    /**
+     * @return int|null the database id which is not 0 if the object has been saved
+     */
+    public function id(): ?int
     {
         return $this->id;
     }
@@ -209,6 +221,14 @@ class verb
     function user(): ?user
     {
         return $this->usr;
+    }
+
+    /**
+     * @return int a higher number indicates a higher usage
+     */
+    function usage(): int
+    {
+        return 0;
     }
 
     /*
