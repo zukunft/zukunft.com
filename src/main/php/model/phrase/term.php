@@ -52,6 +52,7 @@ class term
 {
 
     // field names of the database view for terms
+    // the database view is used e.g. for a fast check of a new term name
     const FLD_ID = 'term_id';
     const FLD_NAME = 'term_name';
     const FLD_USAGE = 'usage';
@@ -70,7 +71,6 @@ class term
 
     // the term vars, which is probably just the related object
     private int $id;             // the database id of the word, verb or formula
-    public ?user $usr = null;    // the person who wants to add a term (word, verb, triple or formula)
     public ?int $usage = null;   // a higher number indicates a higher usage
     public ?object $obj = null;  // the word, triple, formula or verb object
 
@@ -82,10 +82,11 @@ class term
      * always set the user because a term is always user specific
      * @param user $usr the user who requested to see this term
      */
-    function __construct(user $usr)
+    function __construct(user $usr, string $class = word::class)
     {
         $this->reset();
-        $this->usr = $usr;
+        $this->set_obj($class);
+        $this->set_user($usr);
     }
 
     function reset(): void
@@ -156,13 +157,13 @@ class term
     function set_id_from_obj(int $id, string $class): void
     {
         if ($class == word::class) {
-            $this->obj = new word($this->usr);
+            $this->obj = new word($this->user());
             $this->id = ($id * 2) - 1;
         } elseif ($class == triple::class) {
-            $this->obj = new triple($this->usr);
+            $this->obj = new triple($this->user());
             $this->id = ($id * -2) + 1;
         } elseif ($class == formula::class) {
-            $this->obj = new formula($this->usr);
+            $this->obj = new formula($this->user());
             $this->id = ($id * 2);
         } elseif ($class == verb::class) {
             $this->obj = new verb();
@@ -188,33 +189,34 @@ class term
     {
         if ($this->id > 0) {
             if ($this->id % 2 == 0) {
-                $this->obj = new formula($this->usr);
+                $this->obj = new formula($this->user());
             } else {
-                $this->obj = new word($this->usr);
+                $this->obj = new word($this->user());
             }
         } else {
             if ($this->id % 2 == 0) {
                 $this->obj = new verb();
             } else {
-                $this->obj = new triple($this->usr);
+                $this->obj = new triple($this->user());
             }
         }
         $this->set_obj_id();
     }
 
     /**
-     * create the expected object based on the given class
+     * create the word, triple, formula or verb object based on the given class
+     *
      * @param string $class the calling class name
      * @return void
      */
     private function set_obj(string $class): void
     {
         if ($class == word::class) {
-            $this->obj = new word($this->usr);
+            $this->obj = new word($this->user());
         } elseif ($class == triple::class) {
-            $this->obj = new triple($this->usr);
+            $this->obj = new triple($this->user());
         } elseif ($class == formula::class) {
-            $this->obj = new formula($this->usr);
+            $this->obj = new formula($this->user());
         } elseif ($class == verb::class) {
             $this->obj = new verb();
         } else {
@@ -232,10 +234,26 @@ class term
      */
     function set_name(string $name, string $class = ''): void
     {
-        if ($class != '') {
+        if ($class != '' and $this->obj == null) {
             $this->set_obj($class);
         }
         $this->obj->set_name($name);
+    }
+
+    /**
+     * set the user of the term object, which is also the user of the term
+     * because of this object retrieval set and get of the user is needed for all linked objects
+     *
+     * @param user $usr the person who wants to add a term (word, verb, triple or formula)
+     * @param string $class the class of the term object can be set to force the creation of the related object
+     * @return void
+     */
+    function set_user(user $usr, string $class = ''): void
+    {
+        if ($class != '' and $this->obj == null) {
+            $this->set_obj($class);
+        }
+        $this->obj->set_user($usr);
     }
 
     /**
@@ -272,6 +290,19 @@ class term
         return $result;
     }
 
+    /**
+     * @return user|null the person who wants to see a term (word, verb, triple or formula)
+     *                   in case of a verb it can be null
+     */
+    function user(): ?user
+    {
+        $result = new user();
+        if (isset($this->obj)) {
+            $result = $this->obj->user();
+        }
+        return $result;
+    }
+
     function type(): string
     {
         $result = '';
@@ -300,8 +331,8 @@ class term
         } else {
             $result .= $this->id();
         }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->id > 0) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -372,7 +403,7 @@ class term
 
     private function get_word(): word
     {
-        $wrd = new word($this->usr);
+        $wrd = new word($this->user());
         if (get_class($this->obj) == word::class) {
             $wrd = $this->obj;
         }
@@ -381,7 +412,7 @@ class term
 
     private function get_triple(): triple
     {
-        $lnk = new triple($this->usr);
+        $lnk = new triple($this->user());
         if (get_class($this->obj) == triple::class) {
             $lnk = $this->obj;
         }
@@ -390,7 +421,7 @@ class term
 
     private function get_formula(): formula
     {
-        $frm = new formula($this->usr);
+        $frm = new formula($this->user());
         if (get_class($this->obj) == formula::class) {
             $frm = $this->obj;
         }
@@ -479,10 +510,9 @@ class term
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param int $id the id of the term as defined in the database term view
-     * @param string $class the name of this class
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_db $db_con, int $id): sql_par
     {
         $qp = $this->load_sql($db_con, 'id');
         $db_con->add_par_int($id);
@@ -497,10 +527,9 @@ class term
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $name the name of the term and the related word, triple, formula or verb
-     * @param string $class the name of this class
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_db $db_con, string $name, string $class = self::class): sql_par
+    function load_sql_by_name(sql_db $db_con, string $name): sql_par
     {
         $qp = $this->load_sql($db_con, 'name');
         $db_con->add_par_txt($name);
@@ -534,7 +563,7 @@ class term
         global $db_con;
 
         log_debug($id);
-        $qp = $this->load_sql_by_id($db_con, self::class, $id);
+        $qp = $this->load_sql_by_id($db_con, $id);
         return $this->load($qp);
     }
 
@@ -548,52 +577,28 @@ class term
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name($db_con, $name, self::class);
+        $qp = $this->load_sql_by_name($db_con, $name);
         return $this->load($qp);
     }
 
     /**
      * load the term object by the word or triple id (not the phrase id)
-     * @param int $id
+     * @param int $id the id of the term object e.g. for a triple "-1"
+     * @param bool $including_triples to include the words or triple of a triple (not recursive)
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_obj_id(int $id): int
+    function load_by_obj_id(int $id, bool $including_triples = true): int
     {
         log_debug($this->name());
         $result = 0;
 
-        if ($this->load_word()) {
+        if ($this->load_word_by_id($id)) {
             $result = $this->obj->id;
-        } elseif ($this->load_triple()) {
+        } elseif ($this->load_triple_by_id($id, $including_triples)) {
             $result = $this->obj->id;
-        } elseif ($this->load_formula()) {
+        } elseif ($this->load_formula_by_id($id)) {
             $result = $this->obj->id;
-        } elseif ($this->load_verb()) {
-            $result = $this->obj->id;
-        }
-        log_debug('term->load loaded id "' . $this->id() . '" for ' . $this->name());
-
-        return $result;
-    }
-
-    /**
-     * test if the name is used already and load the object
-     * @param string $name the name of the term (and word, triple, formula or verb) to load
-     * @param bool $including_triples
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_obj_name(string $name, bool $including_triples = true): int
-    {
-        log_debug($this->name());
-        $result = 0;
-
-        if ($this->load_word($name)) {
-            $result = $this->obj->id;
-        } elseif ($this->load_triple($name, $including_triples)) {
-            $result = $this->obj->id;
-        } elseif ($this->load_formula($name)) {
-            $result = $this->obj->id;
-        } elseif ($this->load_verb($name)) {
+        } elseif ($this->load_verb_by_id($id)) {
             $result = $this->obj->id;
         }
         log_debug('term->load loaded id "' . $this->id() . '" for ' . $this->name());
@@ -605,14 +610,14 @@ class term
      * simply load a word
      * (separate functions for loading  for a better overview)
      */
-    private function load_word(string $name): bool
+    private function load_word_by_id(int $id): bool
     {
         $result = false;
-        $wrd = new word($this->usr);
-        if ($wrd->load_by_name($name, word::class)) {
+        $wrd = new word($this->user());
+        if ($wrd->load_by_id($id, word::class)) {
             log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK));
             if ($wrd->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
-                $result = $this->load_formula($name);
+                $result = $this->load_formula_by_id($id);
             } else {
                 $this->set_id_from_obj($wrd->id, word::class);
                 $this->obj = $wrd;
@@ -625,12 +630,12 @@ class term
     /**
      * simply load a triple
      */
-    private function load_triple(string $name, bool $including_triples): bool
+    private function load_triple_by_id(int $id, bool $including_triples): bool
     {
         $result = false;
         if ($including_triples) {
-            $trp = new triple($this->usr);
-            if ($trp->load_by_name($name, triple::class)) {
+            $trp = new triple($this->user());
+            if ($trp->load_by_id($id, triple::class)) {
                 $this->set_id_from_obj($trp->id, triple::class);
                 $this->obj = $trp;
                 $result = true;
@@ -643,11 +648,11 @@ class term
      * simply load a formula
      * without fixing any missing related word issues
      */
-    private function load_formula(string $name): bool
+    private function load_formula_by_id(int $id): bool
     {
         $result = false;
-        $frm = new formula($this->usr);
-        if ($frm->load_by_name($name, formula::class)) {
+        $frm = new formula($this->user());
+        if ($frm->load_by_id($id, formula::class)) {
             $this->set_id_from_obj($frm->id, formula::class);
             $this->obj = $frm;
             $result = true;
@@ -658,12 +663,108 @@ class term
     /**
      * simply load a verb
      */
-    private function load_verb(string $name): bool
+    private function load_verb_by_id(int $id): bool
     {
         $result = false;
         $vrb = new verb;
         $vrb->name = $this->name();
-        $vrb->usr = $this->usr;
+        $vrb->set_user($this->user());
+        if ($vrb->load_by_id($id)) {
+            $this->set_id_from_obj($vrb->id, verb::class);
+            $this->obj = $vrb;
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * test if the name is used already and load the object
+     * @param string $name the name of the term (and word, triple, formula or verb) to load
+     * @param bool $including_triples to include the words or triple of a triple (not recursive)
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_obj_name(string $name, bool $including_triples = true): int
+    {
+        log_debug($this->name());
+        $result = 0;
+
+        if ($this->load_word_by_name($name)) {
+            $result = $this->obj->id;
+        } elseif ($this->load_triple_by_name($name, $including_triples)) {
+            $result = $this->obj->id;
+        } elseif ($this->load_formula_by_name($name)) {
+            $result = $this->obj->id;
+        } elseif ($this->load_verb_by_name($name)) {
+            $result = $this->obj->id;
+        }
+        log_debug('term->load loaded id "' . $this->id() . '" for ' . $this->name());
+
+        return $result;
+    }
+
+    /**
+     * simply load a word by name
+     * (separate functions for loading  for a better overview)
+     */
+    private function load_word_by_name(string $name): bool
+    {
+        $result = false;
+        $wrd = new word($this->user());
+        if ($wrd->load_by_name($name, word::class)) {
+            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK));
+            if ($wrd->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
+                $result = $this->load_formula_by_name($name);
+            } else {
+                $this->set_id_from_obj($wrd->id, word::class);
+                $this->obj = $wrd;
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * simply load a triple by name
+     */
+    private function load_triple_by_name(string $name, bool $including_triples): bool
+    {
+        $result = false;
+        if ($including_triples) {
+            $trp = new triple($this->user());
+            if ($trp->load_by_name($name, triple::class)) {
+                $this->set_id_from_obj($trp->id, triple::class);
+                $this->obj = $trp;
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * simply load a formula by name
+     * without fixing any missing related word issues
+     */
+    private function load_formula_by_name(string $name): bool
+    {
+        $result = false;
+        $frm = new formula($this->user());
+        if ($frm->load_by_name($name, formula::class)) {
+            $this->set_id_from_obj($frm->id, formula::class);
+            $this->obj = $frm;
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * simply load a verb by name
+     */
+    private function load_verb_by_name(string $name): bool
+    {
+        $result = false;
+        $vrb = new verb;
+        $vrb->name = $this->name();
+        $vrb->set_user($this->user());
         if ($vrb->load_by_name($name)) {
             $this->set_id_from_obj($vrb->id, verb::class);
             $this->obj = $vrb;

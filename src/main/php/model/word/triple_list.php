@@ -46,7 +46,7 @@ class triple_list
     const DIRECTION_BOTH = 'both';
 
     public array $lst; // the list of triples
-    public user $usr;    // the user object of the person for whom the triple list is loaded, so to say the viewer
+    private user $usr; // the user object of the person for whom the triple list is loaded, so to say the viewer
 
     // fields to select a part of the graph (TODO deprecated)
     public array $ids = array();  // list of link ids
@@ -56,6 +56,10 @@ class triple_list
     public ?verb_list $vrb_lst = null; // show the graph elements related to these verbs
     public string $direction = self::DIRECTION_DOWN;  // either up, down or both
 
+    /*
+     * construct and map
+     */
+
     /**
      * always set the user because a triple list is always user specific
      * @param user $usr the user who requested to see this triple list
@@ -63,7 +67,30 @@ class triple_list
     function __construct(user $usr)
     {
         $this->lst = array();
+        $this->set_user($usr);
+    }
+
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the triple list
+     *
+     * @param user $usr the person who wants to access the triples
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
         $this->usr = $usr;
+    }
+
+    /**
+     * @return user the person who wants to see the triples
+     */
+    function user(): user
+    {
+        return $this->usr;
     }
 
     /*
@@ -80,7 +107,7 @@ class triple_list
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_link_fields(triple::FLD_FROM, triple::FLD_TO, verb::FLD_ID);
         $db_con->set_fields(triple::FLD_NAMES);
         $db_con->set_usr_fields(triple::FLD_NAMES_USR);
@@ -212,7 +239,7 @@ class triple_list
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $trp = new triple($this->usr);
+                    $trp = new triple($this->user());
                     $trp->row_mapper($db_row);
                     // the simple object row mapper allows mapping excluded objects to remove the exclusion
                     // but an object list should not have excluded objects
@@ -222,10 +249,10 @@ class triple_list
                         // fill verb
                         $trp->verb = $verbs->get_verb_by_id($db_row[verb::FLD_ID]);
                         // fill from
-                        $trp->from = new phrase($this->usr);
+                        $trp->from = new phrase($this->user());
                         $trp->from->row_mapper($db_row, triple::FLD_FROM, '1');
                         // fill to
-                        $trp->to = new phrase($this->usr);
+                        $trp->to = new phrase($this->user());
                         $trp->to->row_mapper($db_row, triple::FLD_TO, '2');
                     }
                 }
@@ -281,7 +308,7 @@ class triple_list
     private function load_wrd_from($pos): string
     {
         return " words t" . $pos . " LEFT JOIN user_words u" . $pos . " ON u" . $pos . ".word_id = t" . $pos . ".word_id 
-                                                                       AND u" . $pos . ".user_id = " . $this->usr->id . " ";
+                                                                       AND u" . $pos . ".user_id = " . $this->user()->id . " ";
     }
 
     // returns the of predefined sql statement (must be corresponding to load_sql)
@@ -468,7 +495,7 @@ class triple_list
                        " . $sql_wrd2_fields . "
                   FROM triples l
              LEFT JOIN user_triples ul ON ul.triple_id = l.triple_id 
-                                        AND ul.user_id = " . $this->usr->id . ",
+                                        AND ul.user_id = " . $this->user()->id . ",
                        verbs v, 
                        " . $sql_wrd1_from . "
                        " . $sql_wrd2_from . "
@@ -492,10 +519,10 @@ class triple_list
         global $db_con;
 
         // check the all minimal input parameters
-        if (!isset($this->usr)) {
+        if (!$this->user()->is_set()) {
             log_err("The user id must be set to load a graph.", "triple_list->load");
         } else {
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $sql = $this->load_sql($db_con);
             $db_lst = $db_con->get_old($sql);
             log_debug('triple_list->load ... sql "' . $sql . '"');
@@ -504,13 +531,13 @@ class triple_list
             if ($db_lst != null) {
                 foreach ($db_lst as $db_lnk) {
                     if (is_null($db_lnk[user_sandbox::FLD_EXCLUDED]) or $db_lnk[user_sandbox::FLD_EXCLUDED] == 0) {
-                        $new_link = new triple($this->usr);
+                        $new_link = new triple($this->user());
                         $new_link->row_mapper($db_lnk);
                         if ($new_link->id > 0) {
                             // fill the verb
                             if ($new_link->verb->id > 0) {
                                 $new_verb = new verb;
-                                $new_verb->usr = $this->usr;
+                                $new_verb->set_user($this->user());
                                 $new_verb->row_mapper($db_lnk);
                                 $new_link->verb = $new_verb;
                             }
@@ -524,7 +551,7 @@ class triple_list
                                 }
                             } else {
                                 if ($db_lnk['word_id1'] > 0) {
-                                    $new_word = new word($this->usr);
+                                    $new_word = new word($this->user());
                                     $new_word->id = $db_lnk['word_id1'];
                                     $new_word->owner_id = $db_lnk['user_id1'];
                                     $new_word->set_name($db_lnk['word_name1']);
@@ -536,7 +563,7 @@ class triple_list
                                     $new_link->from = $new_word->phrase();
                                     $new_link->from_name = $new_word->name();
                                 } elseif ($db_lnk['word_id1'] < 0) {
-                                    $new_word = new triple($this->usr);
+                                    $new_word = new triple($this->user());
                                     $new_word->id = $db_lnk['word_id1'] * -1; // TODO check if not word_id is correct
                                     $new_link->from = $new_word->phrase();
                                     $new_link->from_name = $new_word->name();
@@ -546,7 +573,7 @@ class triple_list
                             }
                             // fill the to word
                             if ($db_lnk['word_id2'] > 0) {
-                                $new_word = new word($this->usr);
+                                $new_word = new word($this->user());
                                 $new_word->id = $db_lnk['word_id2'];
                                 $new_word->owner_id = $db_lnk['user_id2'];
                                 $new_word->set_name($db_lnk['word_name2']);
@@ -559,7 +586,7 @@ class triple_list
                                 $new_link->to = $new_word->phrase();
                                 $new_link->to_name = $new_word->name();
                             } elseif ($db_lnk['word_id2'] < 0) {
-                                $new_word = new triple($this->usr);
+                                $new_word = new triple($this->user());
                                 $new_word->id = $db_lnk['word_id2'] * -1;
                                 $new_link->to = $new_word->phrase();
                                 $new_link->to_name = $new_word->name();
@@ -633,11 +660,11 @@ class triple_list
         $result = '';
 
         // check the all minimal input parameters
-        if (!isset($this->usr)) {
+        if (!$this->user()->is_set()) {
             log_err("The user id must be set to load a graph.", "triple_list->load");
         } else {
             if (isset($this->wrd)) {
-                log_debug('graph->display for ' . $this->wrd->name() . ' ' . $this->direction . ' and user ' . $this->usr->name . ' called from ' . $back);
+                log_debug('graph->display for ' . $this->wrd->name() . ' ' . $this->direction . ' and user ' . $this->user()->name . ' called from ' . $back);
             }
             $prev_verb_id = 0;
 
@@ -795,7 +822,7 @@ class triple_list
      */
     function phrase_lst(): phrase_list
     {
-        $phr_lst = new phrase_list($this->usr);
+        $phr_lst = new phrase_list($this->user());
         foreach ($this->lst as $lnk) {
             $phr_lst->lst[] = $lnk->phrase();
         }

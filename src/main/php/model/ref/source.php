@@ -207,7 +207,7 @@ class source extends user_sandbox_named
 
         $db_con->set_type(sql_db::TBL_SOURCE);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
@@ -233,13 +233,13 @@ class source extends user_sandbox_named
             $qp->name .= 'name';
         } else {
             log_err('Either the database ID (' . $this->id . ') or the ' .
-                $class . ' name (' . $this->name . ') and the user (' . $this->usr->id . ') must be set to load a ' .
+                $class . ' name (' . $this->name . ') and the user (' . $this->user()->id . ') must be set to load a ' .
                 $class, $class . '->load');
         }
 
         $db_con->set_type(sql_db::TBL_SOURCE);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
@@ -267,10 +267,10 @@ class source extends user_sandbox_named
         $result = false;
 
         // check the all minimal input parameters
-        if (!isset($this->usr)) {
+        if (!$this->user()->is_set()) {
             log_err("The user id must be set to load a source.", "source->load");
         } elseif ($this->id <= 0 and $this->code_id == '' and $this->name == '') {
-            log_err("Either the database ID (" . $this->id . "), the name (" . $this->name . ") or the code_id (" . $this->code_id . ") and the user (" . $this->usr->id . ") must be set to load a source.", "source->load");
+            log_err("Either the database ID (" . $this->id . "), the name (" . $this->name . ") or the code_id (" . $this->code_id . ") and the user (" . $this->user()->id . ") must be set to load a source.", "source->load");
         } else {
 
             $qp = $this->load_sql_obj_vars($db_con);
@@ -307,7 +307,7 @@ class source extends user_sandbox_named
         if ($this->type_id > 0) {
             $qp = new sql_par(self::class);
             $db_con->set_type(sql_db::TBL_SOURCE_TYPE);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_where_std($this->type_id);
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
@@ -396,8 +396,8 @@ class source extends user_sandbox_named
         } else {
             $result .= $this->id;
         }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->is_set()) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -422,7 +422,7 @@ class source extends user_sandbox_named
     // word_id - id of the starting word to display; can be a single word, a comma separated list of word ids, a word group or a word triple
     function display($wrd): string
     {
-        log_debug('source->display "' . $wrd->name() . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id . ')  for user "' . $this->usr->name . '"');
+        log_debug('source->display "' . $wrd->name() . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id . ')  for user "' . $this->user()->name . '"');
         $result = '';
 
         if ($this->id <= 0) {
@@ -448,14 +448,14 @@ class source extends user_sandbox_named
 
         // for new values assume the last source used, but not for existing values to enable only changing the value, but not setting the source
         if ($this->id <= 0 and $form_name == "value_add") {
-            $this->id = $this->usr->source_id;
+            $this->id = $this->user()->source_id;
         }
 
         log_debug("source->dsp_select -> source id used (" . $this->id . ")");
         $sel = new html_selector;
         $sel->form = $form_name;
         $sel->name = "source";
-        $sel->sql = sql_lst_usr("source", $this->usr);
+        $sel->sql = sql_lst_usr("source", $this->user());
         $sel->selected = $this->id;
         $sel->dummy_text = 'please define the source';
         $result .= '      taken from ' . $sel->display() . ' ';
@@ -467,7 +467,7 @@ class source extends user_sandbox_named
     // display a selector for the source type
     private function dsp_select_type($form_name, $back): string
     {
-        log_debug("source->dsp_select_type (" . $this->id . "," . $form_name . ",b" . $back . " and user " . $this->usr->name . ")");
+        log_debug("source->dsp_select_type (" . $this->id . "," . $form_name . ",b" . $back . " and user " . $this->user()->name . ")");
 
         $result = ''; // reset the html code var
 
@@ -484,7 +484,7 @@ class source extends user_sandbox_named
     // display a html view to change the source name and url
     function dsp_edit(string $back = ''): string
     {
-        log_debug('source->dsp_edit ' . $this->dsp_id() . ' by user ' . $this->usr->name);
+        log_debug('source->dsp_edit ' . $this->dsp_id() . ' by user ' . $this->user()->name);
         $result = '';
 
         if ($this->id <= 0) {
@@ -563,9 +563,9 @@ class source extends user_sandbox_named
     // because if another user has changed the source and the original value is changed, maybe the user source also needs to be updated
     function can_change(): bool
     {
-        log_debug('source->can_change (' . $this->id . ',u' . $this->usr->id . ')');
+        log_debug('source->can_change (' . $this->id . ',u' . $this->user()->id . ')');
         $can_change = false;
-        if ($this->owner_id == $this->usr->id or $this->owner_id <= 0) {
+        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
             $can_change = true;
         }
 
@@ -580,14 +580,14 @@ class source extends user_sandbox_named
         $result = true;
 
         if (!$this->has_usr_cfg()) {
-            log_debug('source->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+            log_debug('source->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
             // check again if there ist not yet a record
             $db_con->set_type(sql_db::TBL_SOURCE, true);
             $qp = new sql_par(self::class);
             $qp->name = 'source_add_usr_cfg';
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_where_std($this->id);
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
@@ -598,7 +598,7 @@ class source extends user_sandbox_named
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE);
-                $log_id = $db_con->insert(array('source_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array('source_id', user_sandbox::FLD_USER), array($this->id, $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_source failed.');
                     $result = false;
@@ -633,7 +633,7 @@ class source extends user_sandbox_named
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
         global $db_con;
         $result = true;
@@ -642,9 +642,9 @@ class source extends user_sandbox_named
 
         // check again if there ist not yet a record
         $qp = $this->usr_cfg_sql($db_con);
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $usr_src_cfg = $db_con->get1($qp);
-        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
+        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
         if ($usr_src_cfg['source_id'] > 0) {
             // TODO check that this converts all fields for all types
             // TODO define for each user sandbox object a list with all user fields and loop here over this array
@@ -654,9 +654,9 @@ class source extends user_sandbox_named
                 and $usr_src_cfg['source_type_id'] == Null
                 and $usr_src_cfg[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
-                log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE);
-                $del_result = $db_con->delete(array('source_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
+                $del_result = $db_con->delete(array('source_id', user_sandbox::FLD_USER), array($this->id, $this->user()->id));
                 if ($del_result != '') {
                     $result = false;
                     log_err('Deletion of user_source failed.');

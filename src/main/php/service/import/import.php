@@ -128,7 +128,7 @@ class file_import
                     $import_result = new user_message();
                     foreach ($json_obj as $verb) {
                         $vrb = new verb;
-                        $vrb->usr = $this->usr;
+                        $vrb->set_user($this->usr);
                         $import_result = $vrb->import_obj($verb);
                         if ($import_result->is_ok()) {
                             $this->verbs_done++;
@@ -243,7 +243,7 @@ class file_import
                 } elseif ($key == export::IP_BLACKLIST) {
                     foreach ($json_obj as $ip_range) {
                         $ip_obj = new ip_range;
-                        $ip_obj->usr = $this->usr;
+                        $ip_obj->set_user($this->usr);
                         $import_result = $ip_obj->import_obj($ip_range);
                         if ($import_result->is_ok()) {
                             $this->system_done++;

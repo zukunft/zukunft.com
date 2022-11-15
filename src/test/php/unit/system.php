@@ -70,7 +70,7 @@ class system_unit_tests
         // sql to load by id
         $db_con->db_type = sql_db::POSTGRES;
         $ip_range->id = 1;
-        $ip_range->usr = $usr;
+        $ip_range->set_user($usr);
         $created_sql = $ip_range->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/ip_blocked.sql');
         $t->assert('ip_range->load_sql by id', $t->trim($created_sql), $t->trim($expected_sql));
@@ -95,7 +95,7 @@ class system_unit_tests
         $ip_range->reset();
         $ip_range->from = '66.249.64.95';
         $ip_range->to = '66.249.64.95';
-        $ip_range->usr = $usr;
+        $ip_range->set_user($usr);
         $created_sql = $ip_range->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/ip_range.sql');
         $t->assert('ip_range->load_sql by ip range', $t->trim($created_sql), $t->trim($expected_sql));
@@ -204,7 +204,7 @@ class system_unit_tests
 
         $json_in = json_decode(file_get_contents(PATH_TEST_FILES . 'unit/system/ip_blacklist.json'), true);
         $ip_range = new ip_range();
-        $ip_range->usr = $usr;
+        $ip_range->set_user($usr);
         $ip_range->import_obj($json_in, false);
         $json_ex = json_decode(json_encode($ip_range->export_obj()), true);
         $result = json_is_similar($json_in, $json_ex);
@@ -294,7 +294,7 @@ class system_unit_tests
         $t->subheader('System log list tests');
 
         $log_lst = new system_error_log_list();
-        $log_lst->usr = $usr;
+        $log_lst->set_user($usr);
 
         // sql to load all
         $db_con->db_type = sql_db::POSTGRES;

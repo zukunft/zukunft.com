@@ -39,7 +39,7 @@ class formula_list
 
     // array of the loaded formula objects
     public array $lst;
-    public user $usr;            // if 0 (not NULL) for standard formulas, otherwise for a user specific formulas
+    private user $usr; // if id is 0 (not NULL) for standard formulas, otherwise for a user specific formulas
 
     // TODO deprecate: fields to select the formulas
     public ?word $wrd = null;            // show the formulas related to this word
@@ -60,7 +60,7 @@ class formula_list
     function __construct(user $usr)
     {
         $this->lst = array();
-        $this->usr = $usr;
+        $this->set_user($usr);
     }
 
     /**
@@ -90,6 +90,29 @@ class formula_list
             }
         }
         return $result;
+    }
+
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the formula list
+     *
+     * @param user $usr the person who wants to access the formulas
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
+        $this->usr = $usr;
+    }
+
+    /**
+     * @return user the person who wants to see the formulas
+     */
+    function user(): user
+    {
+        return $this->usr;
     }
 
     /*
@@ -134,7 +157,7 @@ class formula_list
         $db_con->set_type(sql_db::TBL_FORMULA);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_usr_fields(formula::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(formula::FLD_NAMES_NUM_USR);
         return $qp;
@@ -247,7 +270,7 @@ class formula_list
     {
         $db_con->set_type(sql_db::TBL_FORMULA);
         $qp = new sql_par(self::class);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_all();
         $qp->name = formula_list::class . '_all';
         $db_con->set_name($qp->name);

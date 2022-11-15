@@ -77,7 +77,7 @@ class view_dsp_old extends view
      */
     private function dsp_entries($wrd, $back): string
     {
-        log_debug('"' . $wrd->name() . '" with the view ' . $this->dsp_id() . ' for user "' . $this->usr->name . '"');
+        log_debug('"' . $wrd->name() . '" with the view ' . $this->dsp_id() . ' for user "' . $this->user()->name . '"');
 
         $result = '';
         $this->load_components();
@@ -112,7 +112,7 @@ class view_dsp_old extends view
      */
     function display($wrd, $back): string
     {
-        log_debug('"' . $wrd->name() . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id . ')  for user "' . $this->usr->name . '"');
+        log_debug('"' . $wrd->name() . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id . ')  for user "' . $this->user()->name . '"');
         $result = '';
 
         // check and correct the parameters
@@ -243,7 +243,7 @@ class view_dsp_old extends view
 
         $result = $this->html_navbar_start();
         $result .= '<td class="right_ref">';
-        if ($this->is_system() and !$this->usr->is_admin()) {
+        if ($this->is_system() and !$this->user()->is_admin()) {
             $result .= (new button('find a word or formula', $html->url(api::SEARCH)))->find() . ' - ';
             $result .= '' . $this->name . ' ';
         } else {
@@ -358,7 +358,7 @@ class view_dsp_old extends view
         $result = '';
 
         // check the all minimal input parameters are set
-        if (!isset($this->usr)) {
+        if (!$this->user()->is_set()) {
             log_err("The user id must be set to display a view.", "view_dsp->dsp_navbar");
         } elseif ($this->id <= 0) {
             log_err("The display ID (" . $this->id . ") must be set to display a view.", "view_dsp->dsp_navbar");
@@ -385,7 +385,7 @@ class view_dsp_old extends view
         $result = '';
 
         // check the all minimal input parameters are set
-        if (!isset($this->usr)) {
+        if (!$this->user()->is_set()) {
             log_err("The user id must be set to display a view.", "view_dsp->dsp_navbar");
         } else {
             if (UI_USE_BOOTSTRAP) {
@@ -423,7 +423,7 @@ class view_dsp_old extends view
         log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display($this->usr);
+        $log_dsp = new user_log_display($this->user());
         $log_dsp->id = $this->id;
         $log_dsp->type = view::class;
         $log_dsp->page = $page;
@@ -444,7 +444,7 @@ class view_dsp_old extends view
         log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display($this->usr);
+        $log_dsp = new user_log_display($this->user());
         $log_dsp->id = $this->id;
         $log_dsp->type = view::class;
         $log_dsp->page = $page;
@@ -463,7 +463,7 @@ class view_dsp_old extends view
       $result = '';
 
       // check the all minimal input parameters are set
-      if (!isset($this->usr)) {
+      if (!$this->user()->is_set()) {
         zu_err("The user id must be set to display a view.", "view_dsp->dsp_navbar");
       } else {
         $result  = $this->dsp_user($wrd);
@@ -513,7 +513,7 @@ class view_dsp_old extends view
                 $sel->form = 'view_edit';
                 $sel->dummy_text = 'Select a view component ...';
                 $sel->name = 'add_view_component';
-                $sel->sql = sql_lst_usr("view_component", $this->usr);
+                $sel->sql = sql_lst_usr("view_component", $this->user());
                 $sel->selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $sel->display();
 
@@ -580,7 +580,7 @@ class view_dsp_old extends view
             $script = "view_add";
             $result .= dsp_text_h2('Create a new view (for <a href="/http/view.php?words=' . $wrd->id . '">' . $wrd->name() . '</a>)');
         } else {
-            log_debug($this->dsp_id() . ' for user ' . $this->usr->name . ' (called from ' . $back . ')');
+            log_debug($this->dsp_id() . ' for user ' . $this->user()->name . ' (called from ' . $back . ')');
             $script = "view_edit";
             $result .= dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id . '">' . $wrd->name() . '</a>)');
         }

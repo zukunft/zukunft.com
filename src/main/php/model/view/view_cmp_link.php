@@ -102,7 +102,7 @@ class view_cmp_link extends user_sandbox_link
     {
         parent::reset();
 
-        $this->reset_objects($this->usr);
+        $this->reset_objects($this->user());
 
         $this->order_nbr = null;
         $this->pos_type_id = null;
@@ -176,7 +176,7 @@ class view_cmp_link extends user_sandbox_link
             $qp->name .= 'std_link_ids';
         }
         $db_con->set_name($qp->name);
-        //TODO check if $db_con->set_usr($this->usr->id); is needed
+        //TODO check if $db_con->set_usr($this->user()->id); is needed
         $db_con->set_fields(array(sql_db::FLD_USER_ID));
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
         $db_con->set_fields(array_merge(
@@ -227,7 +227,7 @@ class view_cmp_link extends user_sandbox_link
 
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
@@ -255,7 +255,7 @@ class view_cmp_link extends user_sandbox_link
 
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id > 0) {
@@ -281,7 +281,7 @@ class view_cmp_link extends user_sandbox_link
         $result = false;
 
         // check the all minimal input parameters are set
-        if (!isset($this->usr)) {
+        if (!$this->user()->is_set()) {
             log_err("The user id must be set to load a view component link.", "view_component_link->load");
         } else {
 
@@ -320,7 +320,7 @@ class view_cmp_link extends user_sandbox_link
     {
         $result = true;
         if (!isset($this->fob) and $this->dsp->id > 0) {
-            $dsp = new view_dsp_old($this->usr);
+            $dsp = new view_dsp_old($this->user());
             $dsp->id = $this->dsp->id;
             if ($dsp->load_obj_vars()) {
                 $this->fob = $dsp;
@@ -329,7 +329,7 @@ class view_cmp_link extends user_sandbox_link
             }
         }
         if (!isset($this->tob) and $this->cmp->id > 0) {
-            $cmp = new view_dsp_old($this->usr);
+            $cmp = new view_dsp_old($this->user());
             $cmp->id = $this->cmp->id;
             if ($cmp->load_obj_vars()) {
                 $this->tob = $cmp;
@@ -388,8 +388,8 @@ class view_cmp_link extends user_sandbox_link
         } else {
             $result .= ', but no link id)';
         }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->is_set()) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -444,7 +444,7 @@ class view_cmp_link extends user_sandbox_link
                 $order_nbr = 1;
                 foreach ($this->fob->cmp_lst as $entry) {
                     // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                    $cmp_lnk = new view_cmp_link($this->usr);
+                    $cmp_lnk = new view_cmp_link($this->user());
                     $cmp_lnk->fob = $this->fob;
                     $cmp_lnk->tob = $entry;
                     $cmp_lnk->load_obj_vars();
@@ -465,7 +465,7 @@ class view_cmp_link extends user_sandbox_link
                     // check if correction was successful
                     $order_nbr = 0;
                     foreach ($this->fob->cmp_lst as $entry) {
-                        $cmp_lnk = new view_cmp_link($this->usr);
+                        $cmp_lnk = new view_cmp_link($this->user());
                         $cmp_lnk->fob = $this->fob;
                         $cmp_lnk->tob = $entry;
                         $cmp_lnk->load_obj_vars();
@@ -483,7 +483,7 @@ class view_cmp_link extends user_sandbox_link
                 $prev_entry_down = false;
                 foreach ($this->fob->cmp_lst as $entry) {
                     // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                    $cmp_lnk = new view_cmp_link($this->usr);
+                    $cmp_lnk = new view_cmp_link($this->user());
                     $cmp_lnk->fob = $this->fob;
                     $cmp_lnk->tob = $entry;
                     $cmp_lnk->load_obj_vars();
@@ -554,9 +554,9 @@ class view_cmp_link extends user_sandbox_link
 
         if (!$this->has_usr_cfg()) {
             if (isset($this->fob) and isset($this->tob)) {
-                log_debug('view_component_link->add_usr_cfg for "' . $this->fob->name() . '"/"' . $this->tob->name() . '" by user "' . $this->usr->name . '"');
+                log_debug('view_component_link->add_usr_cfg for "' . $this->fob->name() . '"/"' . $this->tob->name() . '" by user "' . $this->user()->name . '"');
             } else {
-                log_debug('view_component_link->add_usr_cfg for "' . $this->id . '" and user "' . $this->usr->name . '"');
+                log_debug('view_component_link->add_usr_cfg for "' . $this->id . '" and user "' . $this->user()->name . '"');
             }
 
             // check again if there is not yet a record
@@ -564,7 +564,7 @@ class view_cmp_link extends user_sandbox_link
             $qp = new sql_par(self::class);
             $qp->name = 'view_cmp_link_add_usr_cfg';
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_where_std($this->id);
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
@@ -575,7 +575,7 @@ class view_cmp_link extends user_sandbox_link
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT_LINK);
-                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view_component_link failed.');
                     $result = false;
@@ -618,7 +618,7 @@ class view_cmp_link extends user_sandbox_link
 
         // check again if there ist not yet a record
         $qp = $this->usr_cfg_sql($db_con);
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $usr_cfg = $db_con->get1($qp);
         if ($usr_cfg) {
             if ($usr_cfg[self::FLD_ID] > 0) {
@@ -689,7 +689,7 @@ class view_cmp_link extends user_sandbox_link
         global $db_con;
         return $db_con->insert(
             array($this->from_name . '_id', $this->to_name . '_id', "user_id", 'order_nbr'),
-            array($this->fob->id, $this->tob->id, $this->usr->id, $this->order_nbr));
+            array($this->fob->id, $this->tob->id, $this->user()->id, $this->order_nbr));
     }
 
 }

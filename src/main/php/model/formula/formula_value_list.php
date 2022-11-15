@@ -41,17 +41,44 @@ class formula_value_list
     public array $lst;   // list of the formula results
     public user $usr;    // the person who wants to see the results
 
+    /*
+     * construct and map
+     */
+
     function __construct(user $usr)
     {
         $this->lst = array();
+        $this->set_user($usr);
+    }
+
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the value list
+     *
+     * @param user|null $usr the person who wants to access the values
+     * @return void
+     */
+    function set_user(?user $usr): void
+    {
         $this->usr = $usr;
+    }
+
+    /**
+     * @return user|null the person who wants to see the values
+     */
+    function user(): ?user
+    {
+        return $this->usr;
     }
 
     /*
      *  load functions
      */
 
-    function load_by_phr_lst_sql(sql_db $db_con, phrase_list $phr_lstl): sql_par
+    function load_by_phr_lst_sql(sql_db $db_con, phrase_list $phr_lst): sql_par
     {
         $qp = new sql_par(self::class);
 
@@ -112,7 +139,7 @@ class formula_value_list
             }
         }
         if ($sql_by == '') {
-            log_err('Either the formula id or the phrase group id and the user (' . $this->usr->id .
+            log_err('Either the formula id or the phrase group id and the user (' . $this->user()->id .
                 ') must be set to load a ' . self::class, self::class . '->load_sql');
             $qp->name = '';
         } else {
@@ -120,7 +147,7 @@ class formula_value_list
             $qp->name .= $sql_by;
             $db_con->set_name(substr($qp->name, 0, 62));
             $db_con->set_fields(formula_value::FLD_NAMES);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             if ($obj->id > 0) {
                 if (get_class($obj) == formula::class or get_class($obj) == formula_dsp_old::class) {
                     $db_con->add_par(sql_db::PAR_INT, $obj->id);
@@ -280,8 +307,8 @@ class formula_value_list
             }
         }
         /*
-        if (isset($this->usr)) {
-          $result .= ' for user '.$this->usr->name;
+        if ($this->user()->is_set()) {
+          $result .= ' for user '.$this->user()->name;
         }
         */
         return $result;
@@ -342,9 +369,9 @@ class formula_value_list
 
                 // check user consistency (can be switched off once the program ist stable)
                 if (!isset($fv->usr)) {
-                    log_err('The user of a formula result list element differs from the list user.', 'fv_lst->names', 'The user of "' . $fv->name() . '" is missing, but the list user is "' . $this->usr->name . '".', (new Exception)->getTraceAsString(), $this->usr);
+                    log_err('The user of a formula result list element differs from the list user.', 'fv_lst->names', 'The user of "' . $fv->name() . '" is missing, but the list user is "' . $this->user()->name . '".', (new Exception)->getTraceAsString(), $this->usr);
                 } elseif ($fv->usr <> $this->usr) {
-                    log_err('The user of a formula result list element differs from the list user.', 'fv_lst->names', 'The user "' . $fv->usr->name . '" of "' . $fv->name() . '" does not match the list user "' . $this->usr->name . '".', (new Exception)->getTraceAsString(), $this->usr);
+                    log_err('The user of a formula result list element differs from the list user.', 'fv_lst->names', 'The user "' . $fv->usr->name . '" of "' . $fv->name() . '" does not match the list user "' . $this->user()->name . '".', (new Exception)->getTraceAsString(), $this->usr);
                 }
             }
         }
@@ -400,7 +427,7 @@ class formula_value_list
      * - the word assigned to the formula ($phr_id)
      * - the word that are used in the formula ($frm_phr_ids)
      * - the formula ($frm_row) to provide parameters, but not for selection
-     * - the user ($this->usr->id) to filter the results
+     * - the user ($this->user()->id) to filter the results
      * and request on formula result for each word group
      * e.g. the formula is assigned to Company ($phr_id) and the "operating income" formula result should be calculated
      *      so Sales and Cost are words of the formula
@@ -418,7 +445,7 @@ class formula_value_list
      */
     function add_frm_val($phr_id, $frm_phr_ids, $frm_row, $usr_id)
     {
-        log_debug('fv_lst->add_frm_val(t' . $phr_id . ',' . dsp_array($frm_phr_ids) . ',u' . $this->usr->id . ')');
+        log_debug('fv_lst->add_frm_val(t' . $phr_id . ',' . dsp_array($frm_phr_ids) . ',u' . $this->user()->id . ')');
 
         global $debug;
 
@@ -430,7 +457,7 @@ class formula_value_list
         $wrd->load_obj_vars();
 
         $val_lst = new value_list($this->usr);
-        $value_lst = $val_lst->load_frm_related_grp_phrs($phr_id, $frm_phr_ids, $this->usr->id);
+        $value_lst = $val_lst->load_frm_related_grp_phrs($phr_id, $frm_phr_ids, $this->user()->id);
 
         foreach (array_keys($value_lst) as $val_id) {
             /* maybe use for debugging */
@@ -455,7 +482,7 @@ class formula_value_list
 
             // build the single calculation request
             $calc_row = array();
-            $calc_row['usr_id'] = $this->usr->id;
+            $calc_row['usr_id'] = $this->user()->id;
             $calc_row['frm_id'] = $frm_row[formula::FLD_ID];
             $calc_row['frm_name'] = $frm_row['formula_name'];
             $calc_row['frm_text'] = $frm_row['formula_text'];
@@ -505,9 +532,8 @@ class formula_value_list
             // remove double requests
 
             if (!empty($phr_lst->lst)) {
-                $calc_request = new batch_job;
+                $calc_request = new batch_job($usr);
                 $calc_request->frm = $frm;
-                $calc_request->usr = $usr;
                 $calc_request->phr_lst = $phr_lst;
                 $result->add($calc_request);
                 log_debug('request "' . $frm->name() . '" for "' . $phr_lst->name() . '"');
@@ -517,13 +543,13 @@ class formula_value_list
 
         // loop over the word categories assigned to the formulas
         // get the words where the formula is used including the based on the assigned word e.g. Company or year
-        //$sql_result = zuf_wrd_lst ($frm_lst->ids, $this->usr->id);
+        //$sql_result = zuf_wrd_lst ($frm_lst->ids, $this->user()->id);
         //zu_debug('fv_lst->frm_upd_lst_usr -> number of formula assigned words '. mysqli_num_rows ($sql_result));
         //while ($frm_row = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
-        //zu_debug('fv_lst->frm_upd_lst_usr -> formula '.$frm_row['formula_name'].' ('.$frm_row['resolved_text'].') linked to '.zut_name($frm_row['word_id'], $this->usr->id));
+        //zu_debug('fv_lst->frm_upd_lst_usr -> formula '.$frm_row['formula_name'].' ('.$frm_row['resolved_text'].') linked to '.zut_name($frm_row['word_id'], $this->user()->id));
 
         // also use the formula for all related words e.g. if the formula should be used for "Company" use it also for "ABB"
-        //$is_word_ids = zut_ids_are($frm_row['word_id'], $this->usr->id); // should later be taken from the original array to increase speed
+        //$is_word_ids = zut_ids_are($frm_row['word_id'], $this->user()->id); // should later be taken from the original array to increase speed
 
         // include also the main word in the testing
         //$is_word_ids[] = $frm_row['word_id'];
@@ -531,27 +557,27 @@ class formula_value_list
         /*
         $used_word_lst = New word_list;
         $used_word_lst->ids    = $used_word_ids;
-        $used_word_lst->usr_id = $this->usr->id;
+        $used_word_lst->usr_id = $this->user()->id;
         $used_word_lst->load ();
 
         // loop over the words assigned to the formulas
-        zu_debug('the formula "'.$frm_row['formula_name'].'" is assigned to "'.zut_name($frm_row['word_id'], $this->usr->id).'", which are '.implode(",",$used_word_lst->names_linked()));
+        zu_debug('the formula "'.$frm_row['formula_name'].'" is assigned to "'.zut_name($frm_row['word_id'], $this->user()->id).'", which are '.implode(",",$used_word_lst->names_linked()));
         foreach ($used_word_ids AS $phr_id) {
           $special_frm_phr_ids = array();
 
-          if (zuf_has_verb($frm_row['formula_text'], $this->usr->id)) {
+          if (zuf_has_verb($frm_row['formula_text'], $this->user()->id)) {
             // special case
             zu_debug('fv_lst->frm_upd_lst_usr -> formula has verb ('.$frm_row['formula_text'].')');
           } else {
 
             // include all results of the underlying formulas
-            $all_frm_ids = zuf_frm_ids ($frm_row['formula_text'], $this->usr->id);
+            $all_frm_ids = zuf_frm_ids ($frm_row['formula_text'], $this->user()->id);
 
             // get fixed / special formulas
             $frm_ids = array();
             foreach ($all_frm_ids as $chk_frm_id) {
-              if (zuf_is_special ($chk_frm_id, $this->usr->id)) {
-                $special_frm_phr_ids = $frm_upd_lst_frm_special ($chk_frm_id, $frm_row['formula_text'], $this->usr->id, $phr_id);
+              if (zuf_is_special ($chk_frm_id, $this->user()->id)) {
+                $special_frm_phr_ids = $frm_upd_lst_frm_special ($chk_frm_id, $frm_row['formula_text'], $this->user()->id, $phr_id);
 
                 //get all values related to the words
               } else {
@@ -560,14 +586,14 @@ class formula_value_list
             }
 
             // include the results of the underlying formulas, but only the once related to one of the words assigned to the formula
-            $result_fv = zuc_upd_lst_fv($val_wrd_lst, $phr_id, $frm_ids, $frm_row, $this->usr->id);
+            $result_fv = zuc_upd_lst_fv($val_wrd_lst, $phr_id, $frm_ids, $frm_row, $this->user()->id);
             $result = array_merge($result, $result_fv);
 
             // get all values related to assigned word and to the formula words
             // and based on this value get the unique word list
             // e.g. if the formula text contains the word "Sales" all values that are related to Sales should be taken into account
             //      $frm_phr_ids is the list of words for the value selection, so in this case it would contain "Sales"
-            $frm_phr_ids = zuf_phr_ids ($frm_row['formula_text'], $this->usr->id);
+            $frm_phr_ids = zuf_phr_ids ($frm_row['formula_text'], $this->user()->id);
             zu_debug('fv_lst->frm_upd_lst_usr -> frm_phr_ids1 ('.implode(",",$frm_phr_ids).')');
 
             // add word words for the special formulas
@@ -577,8 +603,8 @@ class formula_value_list
             $frm_phr_ids = array_filter($frm_phr_ids);
             zu_debug('fv_lst->frm_upd_lst_usr -> frm_phr_ids2 ('.implode(",",$frm_phr_ids).')');
 
-            $result_val = $this->add_frm_val($phr_id, $frm_phr_ids, $frm_row, $this->usr->id);
-            // $result_val = zuc_upd_lst_val($phr_id, $frm_phr_ids, $frm_row, $this->usr->id);
+            $result_val = $this->add_frm_val($phr_id, $frm_phr_ids, $frm_row, $this->user()->id);
+            // $result_val = zuc_upd_lst_val($phr_id, $frm_phr_ids, $frm_row, $this->user()->id);
             $result = array_merge($result, $result_val);
 
             // show the user the progress every two seconds
@@ -630,7 +656,7 @@ class formula_value_list
         // e.g. if the formula is assigned to "Company" and "ABB is a Company" include ABB in the phrase list
         // check in frm_upd_lst_usr only if the user has done any modifications that may influence the word list
         $phr_lst_frm_assigned = $frm->assign_phr_lst();
-        log_debug('formula "' . $frm->name() . '" is assigned to ' . $phr_lst_frm_assigned->dsp_name() . ' for user ' . $phr_lst_frm_assigned->usr->name . '');
+        log_debug('formula "' . $frm->name() . '" is assigned to ' . $phr_lst_frm_assigned->dsp_name() . ' for user ' . $phr_lst_frm_assigned->user()->name . '');
 
         // get a list of all words, triples, formulas and verbs used in the formula
         // e.g. for the formula "net profit" the word "Sales" & "cost of sales" is used
@@ -713,10 +739,10 @@ class formula_value_list
         foreach ($usr_lst->lst as $usr) {
             // check
             $usr_calc_needed = False;
-            if ($usr->id == $this->usr->id) {
+            if ($usr->id == $this->user()->id) {
                 $usr_calc_needed = true;
             }
-            if ($this->usr->id == 0 or $usr_calc_needed) {
+            if ($this->user()->id == 0 or $usr_calc_needed) {
                 log_debug('update values for user: ' . $usr->name . ' and formula ' . $frm->name());
 
                 $result = $this->frm_upd_lst_usr($frm, $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos);
@@ -765,7 +791,7 @@ class formula_value_list
         $formula_links = '';
         $sql = "SELECT l.formula_id, f.formula_text FROM value_formula_links l, formulas f WHERE l.value_id = " . $val->id . " AND l.formula_id = f.formula_id;";
         //$db_con = New mysql;
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $db_lst = $db_con->get_old($sql);
         if ($db_lst != null) {
             foreach ($db_lst as $db_fv) {

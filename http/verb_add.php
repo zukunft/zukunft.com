@@ -62,7 +62,7 @@ if ($usr->id > 0) {
 
         // create the object to store the parameters so that if the add form is shown again it is already filled
         $vrb = new verb;
-        $vrb->usr = $usr;
+        $vrb->set_user($usr);
 
         // load the parameters to the verb object to display it again in case of an error
         if (isset($_GET['name'])) {

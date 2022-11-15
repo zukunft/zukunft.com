@@ -175,11 +175,11 @@ function run_word_display_test(testing $t)
     /*
     $wrd_company = New word_dsp;
     $wrd_company->name = "TEST_WORD";
-    $wrd_company->usr = $usr;
+    $wrd_company->set_user($usr);
     $wrd_company->load();
     $wrd_ratios = New word_dsp;
     $wrd_ratios->name = "Company main ratio";
-    $wrd_ratios->usr = $usr;
+    $wrd_ratios->set_user($usr);
     $wrd_ratios->load();
     $target = zut_dsp_list_wrd_val($wrd_company->id, $wrd_ratios->id, $usr->id);
     $target = substr($target,0,200);

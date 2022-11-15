@@ -197,7 +197,7 @@ class view_cmp extends user_sandbox_named
      */
     function dsp_obj(): object
     {
-        $dsp_obj = new view_cmp_dsp_old($this->usr);
+        $dsp_obj = new view_cmp_dsp_old($this->user());
 
         $dsp_obj = parent::fill_dsp_obj($dsp_obj);
 
@@ -313,7 +313,7 @@ class view_cmp extends user_sandbox_named
 
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
@@ -340,7 +340,7 @@ class view_cmp extends user_sandbox_named
 
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id != 0) {
@@ -366,10 +366,10 @@ class view_cmp extends user_sandbox_named
         $result = false;
 
         // check the minimal input parameters
-        if (!isset($this->usr)) {
+        if (!$this->user()->is_set()) {
             log_err("The user id must be set to load a view component.", "view_component->load");
         } elseif ($this->id <= 0 and $this->name == '') {
-            log_err("Either the database ID (" . $this->id . ") or the display item name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to find a display item.", "view_component->load");
+            log_err("Either the database ID (" . $this->id . ") or the display item name (" . $this->name . ") and the user (" . $this->user()->id . ") must be set to find a display item.", "view_component->load");
         } else {
 
             $qp = $this->load_sql_obj_vars($db_con);
@@ -406,7 +406,7 @@ class view_cmp extends user_sandbox_named
     {
         $result = '';
         if ($this->word_id_row > 0) {
-            $wrd_row = new word($this->usr);
+            $wrd_row = new word($this->user());
             $wrd_row->load_by_id($this->word_id_row, word::class);
             $this->wrd_row = $wrd_row;
             $result = $wrd_row->name();
@@ -424,7 +424,7 @@ class view_cmp extends user_sandbox_named
     {
         $result = '';
         if ($this->word_id_col > 0) {
-            $wrd_col = new word($this->usr);
+            $wrd_col = new word($this->user());
             $wrd_col->load_by_id($this->word_id_col, word::class);
             $this->wrd_col = $wrd_col;
             $result = $wrd_col->name();
@@ -437,7 +437,7 @@ class view_cmp extends user_sandbox_named
     {
         $result = '';
         if ($this->word_id_col2 > 0) {
-            $wrd_col2 = new word($this->usr);
+            $wrd_col2 = new word($this->user());
             $wrd_col2->load_by_id($this->word_id_col2, word::class);
             $this->wrd_col2 = $wrd_col2;
             $result = $wrd_col2->name();
@@ -450,7 +450,7 @@ class view_cmp extends user_sandbox_named
     {
         $result = '';
         if ($this->formula_id > 0) {
-            $frm = new formula($this->usr);
+            $frm = new formula($this->user());
             $frm->load_by_id($this->formula_id, formula::class);
             $this->frm = $frm;
             $result = $frm->name();
@@ -486,8 +486,8 @@ class view_cmp extends user_sandbox_named
     {
         $result = array();
 
-        if ($this->id > 0 and isset($this->usr)) {
-            $lst = new view_cmp_link_list($this->usr);
+        if ($this->id > 0 and $this->user()->is_set()) {
+            $lst = new view_cmp_link_list($this->user());
             $lst->load_by_component($this);
             $result = $lst->view_ids();
         } else {
@@ -606,7 +606,7 @@ class view_cmp extends user_sandbox_named
                     FROM view_component_types
                    WHERE view_component_type_id = ".$this->type_id.";";
           $db_con = new mysql;
-          $db_con->usr_id = $this->usr->id;
+          $db_con->usr_id = $this->user()->id;
           $db_type = $db_con->get1($sql);
           $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }
@@ -636,10 +636,10 @@ class view_cmp extends user_sandbox_named
                               " . $db_con->get_usr_field("order_nbr", "l", "u", sql_db::FLD_FORMAT_VAL) . " 
                           FROM view_component_links l 
                     LEFT JOIN user_view_component_links u ON u.view_component_link_id = l.view_component_link_id 
-                                                      AND u.user_id = " . $this->usr->id . " 
+                                                      AND u.user_id = " . $this->user()->id . " 
                         WHERE l.view_id = " . $view_id . " ) AS m;";
             //$db_con = new mysql;
-            $db_con->usr_id = $this->usr->id;
+            $db_con->usr_id = $this->user()->id;
             $db_row = $db_con->get1_old($sql);
             $result = $db_row["max_order_nbr"];
 
@@ -658,9 +658,9 @@ class view_cmp extends user_sandbox_named
     // set the log entry parameters for a value update
     function log_link($dsp): bool
     {
-        log_debug('view_component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->usr->id);
+        log_debug('view_component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id);
         $log = new user_log_link;
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_ADD;
         $log->table = 'view_component_links';
         $log->new_from = clone $this;
@@ -675,9 +675,9 @@ class view_cmp extends user_sandbox_named
     // set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
     function log_unlink($dsp): bool
     {
-        log_debug('view_component->log_unlink ' . $this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->usr->id);
+        log_debug('view_component->log_unlink ' . $this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id);
         $log = new user_log_link;
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_DELETE;
         $log->table = 'view_component_links';
         $log->old_from = clone $this;
@@ -694,7 +694,7 @@ class view_cmp extends user_sandbox_named
     {
         log_debug('view_component->link ' . $this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
 
-        $dsp_lnk = new view_cmp_link($this->usr);
+        $dsp_lnk = new view_cmp_link($this->user());
         $dsp_lnk->fob = $dsp;
         $dsp_lnk->tob = $this;
         $dsp_lnk->order_nbr = $order_nbr;
@@ -709,9 +709,9 @@ class view_cmp extends user_sandbox_named
     {
         $result = '';
 
-        if (isset($dsp) and isset($this->usr)) {
+        if (isset($dsp) and $this->user()->is_set()) {
             log_debug('view_component->unlink ' . $this->dsp_id() . ' from "' . $dsp->name . '" (' . $dsp->id . ')');
-            $dsp_lnk = new view_cmp_link($this->usr);
+            $dsp_lnk = new view_cmp_link($this->user());
             $dsp_lnk->fob = $dsp;
             $dsp_lnk->tob = $this;
             $msg = $dsp_lnk->del();
@@ -730,14 +730,14 @@ class view_cmp extends user_sandbox_named
         $result = true;
 
         if (!$this->has_usr_cfg()) {
-            log_debug('view_component->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+            log_debug('view_component->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
             // check again if there ist not yet a record
             $db_con->set_type(sql_db::TBL_VIEW_COMPONENT, true);
             $qp = new sql_par(self::class);
             $qp->name = 'view_cmp_del_usr_cfg_if';
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_fields(array('view_component_id'));
             $db_con->set_where_std($this->id);
             $qp->sql = $db_con->select_by_set_id();
@@ -749,7 +749,7 @@ class view_cmp extends user_sandbox_named
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT);
-                $log_id = $db_con->insert(array('view_component_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array('view_component_id', user_sandbox::FLD_USER), array($this->id, $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view_component failed.');
                     $result = false;
@@ -786,7 +786,7 @@ class view_cmp extends user_sandbox_named
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
         global $db_con;
         $result = true;
@@ -795,10 +795,10 @@ class view_cmp extends user_sandbox_named
 
         // check again if there is not yet a record
         $qp = $this->usr_cfg_sql($db_con);
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $usr_cfg = $db_con->get1($qp);
 
-        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
+        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
         if ($usr_cfg != null) {
             if ($usr_cfg['view_component_id'] > 0) {
                 if ($usr_cfg[self::FLD_NAME] == ''
@@ -811,7 +811,7 @@ class view_cmp extends user_sandbox_named
                     and $usr_cfg[self::FLD_COL2_PHRASE] == Null
                     and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                     // delete the entry in the user sandbox
-                    log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                    log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
                     $result = $this->del_usr_cfg_exe($db_con);
                 }
             }
@@ -1001,12 +1001,12 @@ class view_cmp extends user_sandbox_named
         $result = new user_message();
 
         // collect all component links where this component is used
-        $lnk_lst = new view_cmp_link_list($this->usr);
+        $lnk_lst = new view_cmp_link_list($this->user());
         $lnk_lst->load_by_component($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
-        if (!$lnk_lst->empty()) {
+        if (!$lnk_lst->is_empty()) {
             $result->add($lnk_lst->del());
         }
 

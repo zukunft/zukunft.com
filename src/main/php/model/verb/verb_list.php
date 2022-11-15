@@ -34,7 +34,7 @@ global $verbs;
 class verb_list extends user_type_list
 {
 
-    public ?user $usr = null;   // the user object of the person for whom the verb list is loaded, so to say the viewer
+    private ?user $usr = null; // the user object of the person for whom the verb list is loaded, so to say the viewer
 
     // search and load fields
     public ?word $wrd = null;  // to load a list related to this word
@@ -50,7 +50,30 @@ class verb_list extends user_type_list
      */
     function __construct(?user $usr = null)
     {
+        $this->set_user($usr);
+    }
+
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the verb list
+     *
+     * @param user|null $usr the person who wants to access the verbs
+     * @return void
+     */
+    function set_user(?user $usr): void
+    {
         $this->usr = $usr;
+    }
+
+    /**
+     * @return user|null the person who wants to see the verbs
+     */
+    function user(): ?user
+    {
+        return $this->usr;
     }
 
     /*
@@ -83,7 +106,7 @@ class verb_list extends user_type_list
         if ($qp->name != '') {
             $db_con->set_type(sql_db::TBL_TRIPLE);
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_usr_num_fields(array(user_sandbox::FLD_EXCLUDED));
             $db_con->set_join_fields(array_merge(verb::FLD_NAMES, array(verb::FLD_NAME)), sql_db::TBL_VERB);
             $db_con->set_fields(array(verb::FLD_ID));
@@ -114,11 +137,11 @@ class verb_list extends user_type_list
 
         $result = false;
         // check the all minimal input parameters
-        if (!isset($this->usr)) {
+        if (!$this->user()->is_set()) {
             log_err("The user id must be set to load a list of verbs.", "verb_list->load");
             /*
             } elseif (!isset($this->wrd) OR $this->direction == '')  {
-              zu_err("The word id, the direction and the user (".$this->usr->name.") must be set to load a list of verbs.", "verb_list->load");
+              zu_err("The word id, the direction and the user (".$this->user()->name.") must be set to load a list of verbs.", "verb_list->load");
             */
         } else {
             $qp = $this->load_by_linked_phrases_sql($db_con, $phr, $direction);
@@ -131,7 +154,7 @@ class verb_list extends user_type_list
                         if (!in_array($db_vrb[verb::FLD_ID], $vrb_id_lst)) {
                             $vrb = new verb;
                             $vrb->row_mapper($db_vrb);
-                            $vrb->usr = $this->usr;
+                            $vrb->set_user($this->usr);
                             $vrb_lst[] = $vrb;
                             $vrb_id_lst[] = $vrb->id;
                             log_debug('verb_list->load added (' . $vrb->name . ')');
@@ -163,7 +186,7 @@ class verb_list extends user_type_list
         $qp->name = $class . '_all';
 
         $db_con->set_name($qp->name);
-        //TODO check if $db_con->set_usr($this->usr->id); is needed
+        //TODO check if $db_con->set_usr($this->user()->id); is needed
         $db_con->set_fields(verb::FLD_NAMES);
         $db_con->set_page_par(SQL_ROW_MAX, 0);
         $qp->sql = $db_con->select_all();
@@ -248,7 +271,7 @@ class verb_list extends user_type_list
                                    FROM triples l
                                   WHERE v.verb_id = l.verb_id)
                  WHERE verb_id > 0;";
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         return $db_con->exe_try('Calculation of the verb usage', $sql);
     }
 

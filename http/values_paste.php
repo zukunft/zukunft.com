@@ -90,7 +90,7 @@ if ($usr->id > 0) {
           // add the new value to the database
           $val_wrd_lst = New word_list;
           $val_wrd_lst->ids = $wrd_ids;
-          $val_wrd_lst->usr = $usr;
+          $val_wrd_lst->set_user($usr);
           $val_wrd_lst->load();
           $val = New value;
           $val->

@@ -230,7 +230,7 @@ class formula extends user_sandbox_description
      */
     function dsp_obj_old(): object
     {
-        $dsp_obj = new formula_dsp_old($this->usr);
+        $dsp_obj = new formula_dsp_old($this->user());
 
         $dsp_obj = parent::fill_dsp_obj($dsp_obj);
 
@@ -373,7 +373,7 @@ class formula extends user_sandbox_description
         // maybe the formula name should be excluded from the user sandbox to avoid confusion
         $db_con->set_type(sql_db::TBL_FORMULA);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
@@ -397,13 +397,13 @@ class formula extends user_sandbox_description
             $qp->name .= 'name';
         } else {
             log_err('Either the database ID (' . $this->id . ') or the ' .
-                $class . ' name (' . $this->name . ') and the user (' . $this->usr->id . ') must be set to load a ' .
+                $class . ' name (' . $this->name . ') and the user (' . $this->user()->id . ') must be set to load a ' .
                 $class, $class . '->load');
         }
         // the formula name should be excluded from the user sandbox to avoid confusion
         $db_con->set_type(sql_db::TBL_FORMULA);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id != 0) {
@@ -414,7 +414,7 @@ class formula extends user_sandbox_description
             $qp->sql = $db_con->select_by_set_name();
         } else {
             log_err('Either the database ID (' . $this->id . ') or the ' .
-                $class . ' name (' . $this->name . ') and the user (' . $this->usr->id . ') must be set to load a ' .
+                $class . ' name (' . $this->name . ') and the user (' . $this->user()->id . ') must be set to load a ' .
                 $class, $class . '->load');
         }
         $qp->par = $db_con->get_par();
@@ -431,10 +431,10 @@ class formula extends user_sandbox_description
         $result = false;
 
         // check the all minimal input parameters
-        if (!isset($this->usr)) {
+        if (!$this->user()->is_set()) {
             log_err("The user id must be set to load a formula.", "formula->load");
         } elseif ($this->id <= 0 and $this->name == '') {
-            log_err("Either the database ID (" . $this->id . ") or the formula name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a formula.", "formula->load");
+            log_err("Either the database ID (" . $this->id . ") or the formula name (" . $this->name . ") and the user (" . $this->user()->id . ") must be set to load a formula.", "formula->load");
         } else {
 
             $qp = $this->load_sql_obj_vars($db_con);
@@ -474,7 +474,7 @@ class formula extends user_sandbox_description
         $qp = new sql_par(self::class);
         $qp->name = self::class . '_user_sandbox';
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(array_merge(array(user_sandbox::FLD_USER), self::FLD_NAMES_USR, self::FLD_NAMES_NUM_USR));
         $db_con->add_par(sql_db::PAR_INT, strval($this->id));
         $qp->sql = $db_con->select_by_field(self::FLD_ID);
@@ -498,7 +498,7 @@ class formula extends user_sandbox_description
         }
         if ($do_load) {
             log_debug(self::class . '->load_wrd load ' . $this->dsp_id());
-            $name_wrd = new word($this->usr);
+            $name_wrd = new word($this->user());
             $name_wrd->load_by_name($this->name, word::class);
             if ($name_wrd->id > 0) {
                 $this->name_wrd = $name_wrd;
@@ -540,7 +540,7 @@ class formula extends user_sandbox_description
         $result = false;
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
-        $name_wrd = new word($this->usr);
+        $name_wrd = new word($this->user());
         $name_wrd->name = $this->name();
         $name_wrd->type_id = cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK);
         $name_wrd->add();
@@ -563,7 +563,7 @@ class formula extends user_sandbox_description
         $result = false;
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
-        $name_wrd = new word($this->usr);
+        $name_wrd = new word($this->user());
         $name_wrd->set_name($this->name);
         $name_wrd->type_id = cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK);
         $name_wrd->save();
@@ -610,7 +610,7 @@ class formula extends user_sandbox_description
      */
     function special_result($phr_lst, $time_phr)
     {
-        log_debug("formula->special_result (" . $this->id . ",t" . $phr_lst->dsp_id() . ",time" . $time_phr->name() . " and user " . $this->usr->name . ")");
+        log_debug("formula->special_result (" . $this->id . ",t" . $phr_lst->dsp_id() . ",time" . $time_phr->name() . " and user " . $this->user()->name . ")");
         $val = null;
 
         if ($this->type_id > 0) {
@@ -690,7 +690,7 @@ class formula extends user_sandbox_description
         foreach ($phr_lst->lst as $phr) {
             // temp solution utils the real reason is found why the phrase list elements are missing the user settings
             if (!isset($phr->usr)) {
-                $phr->usr = $this->usr;
+                $phr->set_user($this->user());
             }
             // get all special phrases
             $time_phr = $this->special_time_phr($phr);
@@ -711,14 +711,14 @@ class formula extends user_sandbox_description
     {
         $phr_lst = null;
 
-        if ($this->id > 0 and isset($this->usr)) {
-            log_debug(self::class . '->assign_phr_glst_direct for formula ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
-            $frm_lnk_lst = new formula_link_list($this->usr);
+        if ($this->id > 0 and $this->user()->is_set()) {
+            log_debug(self::class . '->assign_phr_glst_direct for formula ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
+            $frm_lnk_lst = new formula_link_list($this->user());
             $frm_lnk_lst->load_by_frm_id($this->id);
             $phr_ids = $frm_lnk_lst->phrase_ids($sbx);
 
             if (count($phr_ids->lst) > 0) {
-                $phr_lst = new phrase_list($this->usr);
+                $phr_lst = new phrase_list($this->user());
                 $phr_lst->load_by_ids($phr_ids);
                 log_debug("formula->assign_phr_glst_direct -> number of words " . dsp_count($phr_lst->lst));
             }
@@ -751,9 +751,9 @@ class formula extends user_sandbox_description
      */
     function assign_phr_glst($sbx): phrase_list
     {
-        $phr_lst = new phrase_list($this->usr);
+        $phr_lst = new phrase_list($this->user());
 
-        if ($this->id > 0 and isset($this->usr)) {
+        if ($this->id > 0 and $this->user()->is_set()) {
             $direct_phr_lst = $this->assign_phr_glst_direct($sbx);
             if ($direct_phr_lst != null) {
                 if (count($direct_phr_lst->lst) > 0) {
@@ -817,7 +817,7 @@ class formula extends user_sandbox_description
         global $db_con;
 
         $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         return $db_con->delete($this->fld_id(), $this->id);
     }
 
@@ -832,7 +832,7 @@ class formula extends user_sandbox_description
 
         // check
         if ($this->ref_text_r == '' and $this->ref_text <> '') {
-            $exp = new expression($this->usr);
+            $exp = new expression($this->user());
             $exp->ref_text = $this->ref_text;
             $this->ref_text_r = expression::CHAR_CALC . $exp->r_part();
         }
@@ -852,10 +852,10 @@ class formula extends user_sandbox_description
         log_debug(self::class . '->to_num -> the phrases excluded time are ' . $phr_lst_ex->dsp_id());
 
         // create the formula value list
-        $fv_lst = new formula_value_list($this->usr);
+        $fv_lst = new formula_value_list($this->user());
 
         // create a master formula value object to only need to fill it with the numbers in the code below
-        $fv_init = new formula_value($this->usr); // maybe move the constructor of formula_value_list?
+        $fv_init = new formula_value($this->user()); // maybe move the constructor of formula_value_list?
         $fv_init->frm = $this;
         $fv_init->ref_text = $this->ref_text_r;
         $fv_init->num_text = $this->ref_text_r;
@@ -1075,7 +1075,7 @@ class formula extends user_sandbox_description
 
     $calc_request = New batch_job;
     $calc_request->frm     = $this;
-    $calc_request->usr     = $this->usr;
+    $calc_request->usr     = $this->user();
     $calc_request->phr_lst = $phr_lst;
     $result[] = $calc_request;
     zu_debug('request "'.$frm->name.'" for "'.$phr_lst->name().'"');
@@ -1108,10 +1108,10 @@ class formula extends user_sandbox_description
             // check if an update of the result is needed
             /*
       $needs_update = true;
-      if ($this->has_verb ($this->ref_text, $this->usr->id)) {
+      if ($this->has_verb ($this->ref_text, $this->user()->id)) {
         $needs_update = true; // this case will be checked later
       } else {
-        $frm_wrd_ids = $this->wrd_ids($this->ref_text, $this->usr->id);
+        $frm_wrd_ids = $this->wrd_ids($this->ref_text, $this->user()->id);
       } */
 
             // reload the formula if needed, but this should be done by the calling function, so create an info message
@@ -1121,7 +1121,7 @@ class formula extends user_sandbox_description
             }
 
             // build the formula expression for calculating the result
-            $exp = new expression($this->usr);
+            $exp = new expression($this->user());
             $exp->ref_text = $this->ref_text;
 
             // the phrase left of the equation sign should be added to the result
@@ -1223,7 +1223,7 @@ class formula extends user_sandbox_description
      */
     function expression(): expression
     {
-        $exp = new expression($this->usr);
+        $exp = new expression($this->user());
         $exp->ref_text = $this->ref_text;
         $exp->usr_text = $this->usr_text;
         log_debug(self::class . '->expression ' . $exp->ref_text . ' for user ' . $exp->usr->name);
@@ -1235,7 +1235,7 @@ class formula extends user_sandbox_description
      */
     function get_fv_lst(): formula_value_list
     {
-        $fv_lst = new formula_value_list($this->usr);
+        $fv_lst = new formula_value_list($this->user());
         $fv_lst->load_by_frm($this);
         return $fv_lst;
     }
@@ -1257,9 +1257,9 @@ class formula extends user_sandbox_description
         $result = new user_message;
 
         // reset the all parameters for the formula object but keep the user
-        $usr = $this->usr;
+        $usr = $this->user();
         $this->reset();
-        $this->usr = $usr;
+        $this->set_user($usr);
         foreach ($json_obj as $key => $value) {
             if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
@@ -1319,11 +1319,11 @@ class formula extends user_sandbox_description
     private function assign_phrase(string $phr_name, bool $do_save = true): string
     {
         $result = '';
-        $phr = new phrase($this->usr);
+        $phr = new phrase($this->user());
         if ($do_save) {
             $phr->load_by_name($phr_name);
             if ($this->id > 0 and $phr->id <> 0) {
-                $frm_lnk = new formula_link($this->usr);
+                $frm_lnk = new formula_link($this->user());
                 $frm_lnk->fob = $this;
                 $frm_lnk->tob = $phr;
                 $result .= $frm_lnk->save();
@@ -1497,7 +1497,7 @@ class formula extends user_sandbox_description
         log_debug(self::class . '->element_refresh_type -> got (' . dsp_array($elm_ids) . ') of type ' . $element_type . ' from text');
 
         // read the existing elements from the database
-        $frm_elm_lst = new formula_element_list($this->usr);
+        $frm_elm_lst = new formula_element_list($this->user());
         $qp = $frm_elm_lst->load_sql_by_frm_and_type_id($db_con, $this->id, $elm_type_id);
         $db_lst = $db_con->get($qp);
 
@@ -1522,7 +1522,7 @@ class formula extends user_sandbox_description
             if ($frm_usr_id > 0) {
                 $field_values[] = $frm_usr_id;
             } else {
-                $field_values[] = $this->usr->id;
+                $field_values[] = $this->user()->id;
             }
             $field_names[] = 'formula_element_type_id';
             $field_values[] = $elm_type_id;
@@ -1571,17 +1571,17 @@ class formula extends user_sandbox_description
      */
     function element_refresh($frm_text): bool
     {
-        log_debug(self::class . '->element_refresh (f' . $this->id . '' . $frm_text . ',u' . $this->usr->id . ')');
+        log_debug(self::class . '->element_refresh (f' . $this->id . '' . $frm_text . ',u' . $this->user()->id . ')');
 
         global $db_con;
         $result = true;
 
         // refresh the links for the standard formula used if the user has not changed the formula
-        $result = $this->element_refresh_type($frm_text, formula_element_type::WORD, 0, $this->usr->id);
+        $result = $this->element_refresh_type($frm_text, formula_element_type::WORD, 0, $this->user()->id);
 
         // update formula links of the standard formula
         if ($result) {
-            $result = $this->element_refresh_type($frm_text, formula_element_type::FORMULA, 0, $this->usr->id);
+            $result = $this->element_refresh_type($frm_text, formula_element_type::FORMULA, 0, $this->user()->id);
         }
 
         // refresh the links for the user specific formula
@@ -1591,11 +1591,11 @@ class formula extends user_sandbox_description
             foreach ($db_lst as $db_row) {
                 // update word links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, formula_element_type::WORD, $db_row[self::FLD_USER], $this->usr->id);
+                    $result = $this->element_refresh_type($frm_text, formula_element_type::WORD, $db_row[self::FLD_USER], $this->user()->id);
                 }
                 // update formula links of the standard formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, formula_element_type::FORMULA, $db_row[self::FLD_USER], $this->usr->id);
+                    $result = $this->element_refresh_type($frm_text, formula_element_type::FORMULA, $db_row[self::FLD_USER], $this->user()->id);
                 }
             }
         }
@@ -1613,7 +1613,7 @@ class formula extends user_sandbox_description
      */
     function term(): term
     {
-        $trm = new term($this->usr);
+        $trm = new term($this->user());
         $trm->set_id_from_obj($this->id, self::class);
         $trm->set_name($this->name);
         $trm->obj = $this;
@@ -1630,9 +1630,9 @@ class formula extends user_sandbox_description
     function link_phr($phr): string
     {
         $result = '';
-        if (isset($phr) and isset($this->usr)) {
-            log_debug(self::class . '->link_phr link ' . $this->dsp_id() . ' to "' . $phr->name() . '" for user "' . $this->usr->name . '"');
-            $frm_lnk = new formula_link($this->usr);
+        if (isset($phr) and $this->user()->is_set()) {
+            log_debug(self::class . '->link_phr link ' . $this->dsp_id() . ' to "' . $phr->name() . '" for user "' . $this->user()->name . '"');
+            $frm_lnk = new formula_link($this->user());
             $frm_lnk->fob = $this;
             $frm_lnk->tob = $phr;
             $result = $frm_lnk->save();
@@ -1646,9 +1646,9 @@ class formula extends user_sandbox_description
     function unlink_phr($phr): string
     {
         $result = '';
-        if (isset($phr) and isset($this->usr)) {
-            log_debug(self::class . '->unlink_phr unlink ' . $this->dsp_id() . ' from "' . $phr->name() . '" for user "' . $this->usr->name . '"');
-            $frm_lnk = new formula_link($this->usr);
+        if (isset($phr) and $this->user()->is_set()) {
+            log_debug(self::class . '->unlink_phr unlink ' . $this->dsp_id() . ' from "' . $phr->name() . '" for user "' . $this->user()->name . '"');
+            $frm_lnk = new formula_link($this->user());
             $frm_lnk->fob = $this;
             $frm_lnk->tob = $phr;
             $msg = $frm_lnk->del();
@@ -1671,7 +1671,7 @@ class formula extends user_sandbox_description
     function set_ref_text(): string
     {
         $result = '';
-        $exp = new expression($this->usr);
+        $exp = new expression($this->user());
         $exp->usr_text = $this->usr_text;
         $this->ref_text = $exp->get_ref_text();
         $result .= $exp->err_text;
@@ -1705,7 +1705,7 @@ class formula extends user_sandbox_description
                    AND user_id <> ".$this->owner_id."
                    AND (excluded <> 1 OR excluded is NULL)";
         //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $change_user_id = $db_con->get1($sql);
         if ($change_user_id > 0) {
           $result = false;
@@ -1755,9 +1755,9 @@ class formula extends user_sandbox_description
      */
     function can_change(): bool
     {
-        log_debug(self::class . '->can_change ' . $this->dsp_id() . ' by user "' . $this->usr->name . '"');
+        log_debug(self::class . '->can_change ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $can_change = false;
-        if ($this->owner_id == $this->usr->id or $this->owner_id <= 0) {
+        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
             $can_change = true;
         }
         log_debug(self::class . '->can_change -> (' . zu_dsp_bool($can_change) . ')');
@@ -1786,14 +1786,14 @@ class formula extends user_sandbox_description
         $result = true;
 
         if (!$this->has_usr_cfg()) {
-            log_debug(self::class . '->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+            log_debug(self::class . '->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
             // check again if there ist not yet a record
             $db_con->set_type(sql_db::TBL_FORMULA, true);
             $qp = new sql_par(self::class);
             $qp->name = 'formula_add_usr_cfg';
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_where_std($this->id);
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
@@ -1804,7 +1804,7 @@ class formula extends user_sandbox_description
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
-                $log_id = $db_con->insert(array($this->fld_id(), self::FLD_USER), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array($this->fld_id(), self::FLD_USER), array($this->id, $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_formula failed.');
                     $result = false;
@@ -1838,7 +1838,7 @@ class formula extends user_sandbox_description
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
         global $db_con;
         $result = true;
@@ -1846,9 +1846,9 @@ class formula extends user_sandbox_description
 
         // check again if the user config is still needed (don't use $this->has_usr_cfg to include all updated)
         $qp = $this->usr_cfg_sql($db_con);
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $usr_cfg = $db_con->get1($qp);
-        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
+        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
         if ($usr_cfg[$this->fld_id()] > 0) {
             if ($usr_cfg[self::FLD_NAME] == ''
                 and $usr_cfg[self::FLD_FORMULA_TEXT] == ''
@@ -1858,10 +1858,10 @@ class formula extends user_sandbox_description
                 and $usr_cfg[self::FLD_ALL_NEEDED] == Null
                 and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
-                log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
                 $result = $this->del_usr_cfg_exe($db_con);
             } else {
-                log_debug('not true for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                log_debug('not true for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
             }
         }
 
@@ -1882,14 +1882,14 @@ class formula extends user_sandbox_description
 
         $result = false;
         $action = 'Deletion of user formula ';
-        $msg_failed = $this->id . ' failed for ' . $this->usr->name;
+        $msg_failed = $this->id . ' failed for ' . $this->user()->name;
         $msg = '';
 
         $db_con->set_type(sql_db::TBL_FORMULA_ELEMENT);
         try {
             $msg = $db_con->delete(
                 array($this->fld_id(), self::FLD_USER),
-                array($this->id, $this->usr->id));
+                array($this->id, $this->user()->id));
         } catch (Exception $e) {
             log_err($action . ' elements ' . $msg_failed . ' because ' . $e);
         }
@@ -1900,7 +1900,7 @@ class formula extends user_sandbox_description
             try {
                 $msg = $db_con->delete(
                     array($this->fld_id(), self::FLD_USER),
-                    array($this->id, $this->usr->id));
+                    array($this->id, $this->user()->id));
                 if ($msg == '') {
                     $this->usr_cfg_id = null;
                     $result = true;
@@ -1924,12 +1924,12 @@ class formula extends user_sandbox_description
         global $db_con;
         $result = '';
 
-        if ($this->id > 0 and $this->usr->id > 0) {
-            log_debug(self::class . '->del_usr_cfg  "' . $this->id . ' und user ' . $this->usr->name);
+        if ($this->id > 0 and $this->user()->id > 0) {
+            log_debug(self::class . '->del_usr_cfg  "' . $this->id . ' und user ' . $this->user()->name);
 
             $log = $this->log_del();
             if ($log->id > 0) {
-                $db_con->usr_id = $this->usr->id;
+                $db_con->usr_id = $this->user()->id;
                 $result = $this->del_usr_cfg_exe($db_con);
             }
 
@@ -2091,7 +2091,7 @@ class formula extends user_sandbox_description
                 $log->field = self::FLD_NAME;
                 $result .= $this->save_field_do($db_con, $log);
                 // in case a word link exist, change also the name of the word
-                $wrd = new word($this->usr);
+                $wrd = new word($this->user());
                 $wrd->load_by_name($db_rec->name, word::class);
                 $wrd->set_name($this->name);
                 $result .= $wrd->save();
@@ -2116,7 +2116,7 @@ class formula extends user_sandbox_description
         if ($db_rec->name <> $this->name) {
             log_debug(self::class . '->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
             // in case a word link exist, change also the name of the word
-            $wrd = new word($this->usr);
+            $wrd = new word($this->user());
             $wrd->load_by_name($db_rec->name, word::class);
             $wrd->set_name($this->name);
             $add_result = $wrd->save();
@@ -2224,7 +2224,7 @@ class formula extends user_sandbox_description
 
                         // ... and create a new display component link
                         $this->id = 0;
-                        $this->owner_id = $this->usr->id;
+                        $this->owner_id = $this->user()->id;
                         // TODO check the result values and if the id is needed
                         $result .= $this->add()->get_last_message();
                         log_debug(self::class . '->save_id_if_updated recreate the display component link del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
@@ -2261,7 +2261,7 @@ class formula extends user_sandbox_description
             // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
             $this->id = $db_con->insert(
                 array(self::FLD_NAME, self::FLD_USER, self::FLD_LAST_UPDATE, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT),
-                array($this->name, $this->usr->id, "Now()", $this->ref_text, $this->usr_text));
+                array($this->name, $this->user()->id, "Now()", $this->ref_text, $this->usr_text));
             if ($this->id > 0) {
                 log_debug(self::class . '->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id);
                 // update the id in the log for the correct reference
@@ -2276,7 +2276,7 @@ class formula extends user_sandbox_description
                     if ($this->create_wrd()) {
 
                         // create an empty db_frm element to force saving of all set fields
-                        $db_rec = new formula($this->usr);
+                        $db_rec = new formula($this->user());
                         $db_rec->set_name($this->name());
                         $std_rec = clone $db_rec;
                         // save the formula fields
@@ -2299,7 +2299,7 @@ class formula extends user_sandbox_description
      */
     function save(): string
     {
-        log_debug(self::class . '->save >' . $this->usr_text . '< (id ' . $this->id . ') as ' . $this->dsp_id() . ' for user ' . $this->usr->name);
+        log_debug(self::class . '->save >' . $this->usr_text . '< (id ' . $this->id . ') as ' . $this->dsp_id() . ' for user ' . $this->user()->name);
 
         global $db_con;
 
@@ -2309,7 +2309,7 @@ class formula extends user_sandbox_description
         if ($result == '') {
 
             // build the database object because the is anyway needed
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_type(sql_db::TBL_FORMULA);
 
             // check if a new formula is supposed to be added
@@ -2346,10 +2346,10 @@ class formula extends user_sandbox_description
                 log_debug(self::class . '->save -> update ' . $this->id);
                 // read the database values to be able to check if something has been changed; done first,
                 // because it needs to be done for user and general formulas
-                $db_rec = new formula($this->usr);
+                $db_rec = new formula($this->user());
                 $db_rec->load_by_id($this->id, formula::class);
                 log_debug(self::class . '->save -> database formula "' . $db_rec->name . '" (' . $db_rec->id . ') loaded');
-                $std_rec = new formula($this->usr); // must also be set to allow to take the ownership
+                $std_rec = new formula($this->user()); // must also be set to allow to take the ownership
                 $std_rec->id = $this->id;
                 $std_rec->load_standard();
                 log_debug(self::class . '->save -> standard formula "' . $std_rec->name . '" (' . $std_rec->id . ') loaded');
@@ -2395,7 +2395,7 @@ class formula extends user_sandbox_description
     function del_links(): user_message
     {
         $result = new user_message();
-        $frm_lnk_lst = new formula_link_list($this->usr);
+        $frm_lnk_lst = new formula_link_list($this->user());
         if ($frm_lnk_lst->load_by_frm_id($this->id)) {
             $msg = $frm_lnk_lst->del_without_log();
             $result->add_message($msg);

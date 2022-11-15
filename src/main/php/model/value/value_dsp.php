@@ -78,11 +78,11 @@ class value_dsp_old extends value
     {
         $result = '';
 
-        log_debug('value->display_linked (' . $this->id . ',u' . $this->usr->id . ')');
+        log_debug('value->display_linked (' . $this->id . ',u' . $this->user()->id . ')');
         if (!is_null($this->number)) {
             $num_text = $this->val_formatted();
             $link_format = '';
-            if (isset($this->usr)) {
+            if ($this->user()->is_set()) {
                 if (!$this->is_std()) {
                     $link_format = ' class="user_specific"';
                 }
@@ -145,10 +145,10 @@ class value_dsp_old extends value
             }
             if ($this->wrd_lst != null) {
                 if ($this->wrd_lst->has_percent()) {
-                    $result = round($this->number * 100, $this->usr->percent_decimals) . "%";
+                    $result = round($this->number * 100, $this->user()->percent_decimals) . "%";
                 } else {
                     if ($this->number >= 1000 or $this->number <= -1000) {
-                        $result .= number_format($this->number, 0, $this->usr->dec_point, $this->usr->thousand_sep);
+                        $result .= number_format($this->number, 0, $this->user()->dec_point, $this->user()->thousand_sep);
                     } else {
                         $result = round($this->number, 2);
                     }
@@ -205,7 +205,7 @@ class value_dsp_old extends value
         log_debug("value->dsp_hist for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display($this->usr);
+        $log_dsp = new user_log_display($this->user());
         $log_dsp->id = $this->id;
         $log_dsp->obj = $this;
         $log_dsp->type = value::class;
@@ -225,7 +225,7 @@ class value_dsp_old extends value
         log_debug("value->dsp_hist_links (" . $this->id . ",size" . $size . ",b" . $size . ")");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display($this->usr);
+        $log_dsp = new user_log_display($this->user());
         $log_dsp->id = $this->id;
         $log_dsp->type = value::class;
         $log_dsp->page = $page;
@@ -263,7 +263,7 @@ class value_dsp_old extends value
                    value_phrase_links lt,
                    words t,
                    " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v
-         LEFT JOIN user_values u ON v.value_id = u.value_id AND u.user_id = " . $this->usr->id . " 
+         LEFT JOIN user_values u ON v.value_id = u.value_id AND u.user_id = " . $this->user()->id . " 
              WHERE l.phrase_id = " . $wrd_id . "
                AND l.value_id = v.value_id
                AND v.value_id = lt.value_id
@@ -272,7 +272,7 @@ class value_dsp_old extends value
                AND (u.excluded IS NULL OR u.excluded = 0) 
              LIMIT " . $size . ";";
         //$db_con = New mysql;
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $db_lst = $db_con->get_old($sql);
 
         // prepare to show where the user uses different value than a normal viewer
@@ -351,17 +351,17 @@ class value_dsp_old extends value
             $script = "value_add";
             $result .= dsp_form_start($script);
             $result .= dsp_text_h3("Add value for");
-            log_debug("value->dsp_edit new for phrase ids " . implode(",", $this->ids) . " and user " . $this->usr->id . ".");
+            log_debug("value->dsp_edit new for phrase ids " . implode(",", $this->ids) . " and user " . $this->user()->id . ".");
         } else {
             $script = "value_edit";
             $result .= dsp_form_start($script);
             $result .= dsp_text_h3("Change value for");
             if (count($this->ids) <= 0) {
                 $this->load_phrases();
-                log_debug('value->dsp_edit id ' . $this->id . ' with "' . $this->grp->name() . '"@"' . $this->time_phr->name() . '"and user ' . $this->usr->id);
+                log_debug('value->dsp_edit id ' . $this->id . ' with "' . $this->grp->name() . '"@"' . $this->time_phr->name() . '"and user ' . $this->user()->id);
             } else {
                 $this->load_time_phrase();
-                log_debug('value->dsp_edit id ' . $this->id . ' with phrase ids ' . dsp_array($this->ids) . ' and user ' . $this->usr->id);
+                log_debug('value->dsp_edit id ' . $this->id . ' with phrase ids ' . dsp_array($this->ids) . ' and user ' . $this->user()->id);
             }
         }
         $this_url = '/http/' . $script . '.php?id=' . $this->id . '&back=' . $back; // url to call this display again to display the user changes
@@ -392,7 +392,7 @@ class value_dsp_old extends value
       // load the phrase list
       $phr_lst = New phrase_list;
       $phr_lst->ids = $this->ids;
-      $phr_lst->usr = $this->usr;
+      $phr_lst->usr = $this->user();
       $phr_lst->load();
 
       // separate the time if needed
@@ -405,7 +405,7 @@ class value_dsp_old extends value
 
             // assign the type to the phrases
             foreach ($phr_lst->lst as $phr) {
-                $phr->usr = $this->usr;
+                $phr->set_user($this->user());
                 foreach (array_keys($this->ids) as $pos) {
                     if ($phr->id == $this->ids[$pos]) {
                         $phr->is_wrd_id = $type_ids[$pos];
@@ -455,14 +455,14 @@ class value_dsp_old extends value
           $phr_lst_sel_old = array();
           if ($phr->is_wrd_id > 0) {
             // prepare the selector for the type phrase
-            $phr->is_wrd->usr = $this->usr;
+            $phr->is_wrd->usr = $this->user();
             $phr_lst_sel = $phr->is_wrd->children();
             zu_debug("value->dsp_edit -> suggested phrases for ".$phr->name().": ".$phr_lst_sel->name().".");
           } else {
             // if no phrase group is found, use the phrase type time if the phrase is a time phrase
             if ($phr->is_time()) {
               $phr_lst_sel = New phrase_list;
-              $phr_lst_sel->usr = $this->usr;
+              $phr_lst_sel->usr = $this->user();
               $phr_lst_sel->phrase_type_id = cl(SQL_WORD_TYPE_TIME);
               $phr_lst_sel->load();
             }
@@ -559,7 +559,7 @@ class value_dsp_old extends value
                 if ($phr_id == 0) {
                     $result .= '    <td colspan="2">';
 
-                    $phr_new = new phrase($this->usr);
+                    $phr_new = new phrase($this->user());
                     $result .= $phr_new->dsp_selector(0, $script, $url_pos, '', $back);
                     $url_pos++;
 

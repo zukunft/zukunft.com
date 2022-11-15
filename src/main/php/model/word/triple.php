@@ -165,9 +165,9 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
         string $to = ''
     )
     {
-        $this->from = new phrase($this->usr, 0, $from);
+        $this->from = new phrase($this->user(), 0, $from);
         $this->verb = new verb(0, $verb);
-        $this->to = new phrase($this->usr, 0, $to);
+        $this->to = new phrase($this->user(), 0, $to);
     }
 
     /**
@@ -372,7 +372,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
         $qp = new sql_par($class, true);
         $qp->name .= $this->load_sql_name_ext();
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES_LINK,
             self::FLD_NAMES,
@@ -436,7 +436,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
 
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_link_fields(self::FLD_FROM, self::FLD_TO, verb::FLD_ID);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
@@ -496,7 +496,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
 
         // similar statement used in triple_list->load, check if changes should be repeated in triple_list.php
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_link_fields(self::FLD_FROM, self::FLD_TO, verb::FLD_ID);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
@@ -544,10 +544,10 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
         $qp = $this->load_sql_obj_vars($db_con);
 
         if ($qp->sql == '') {
-            if (is_null($this->usr->id)) {
+            if (is_null($this->user()->id)) {
                 log_err("The user id must be set to load a word.", "triple->load");
             } else {
-                log_err('Either the database ID (' . $this->id . '), unique word link (' . $this->from->id . ',' . $this->verb->id . ',' . $this->to->id . ') or the name (' . $this->name . ') and the user (' . $this->usr->id . ') must be set to load a word link.', "triple->load");
+                log_err('Either the database ID (' . $this->id . '), unique word link (' . $this->from->id . ',' . $this->verb->id . ',' . $this->to->id . ') or the name (' . $this->name . ') and the user (' . $this->user()->id . ') must be set to load a word link.', "triple->load");
             }
         } else {
             $db_lnk = $db_con->get1($qp);
@@ -651,9 +651,9 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
         if (!isset($this->from)) {
             log_err("The word (" . $this->from->id . ") must be set before it can be loaded.", "triple->load_objects");
         } else {
-            if ($this->from->id <> 0 and !is_null($this->usr->id)) {
+            if ($this->from->id <> 0 and !is_null($this->user()->id)) {
                 if ($this->from->id > 0) {
-                    $wrd = new word($this->usr);
+                    $wrd = new word($this->user());
                     $wrd->load_by_id($this->from->id, word::class);
                     if ($wrd->name() <> '') {
                         $this->from = $wrd->phrase();
@@ -663,7 +663,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
                         $result = false;
                     }
                 } elseif ($this->from->id < 0) {
-                    $lnk = new triple($this->usr);
+                    $lnk = new triple($this->user());
                     $lnk->load_by_id($this->from->id * -1, triple::class);
                     if ($lnk->id > 0) {
                         $this->from = $lnk->phrase();
@@ -674,7 +674,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
                     }
                 } else {
                     // if type is not (yet) set, create a dummy object to enable the selection
-                    $phr = new phrase($this->usr);
+                    $phr = new phrase($this->user());
                     $this->from = $phr;
                 }
                 log_debug('triple->load_objects -> from ' . $this->from->name());
@@ -685,10 +685,10 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
         if (!isset($this->verb)) {
             log_err("The verb (" . $this->verb->id . ") must be set before it can be loaded.", "triple->load_objects");
         } else {
-            if ($this->verb->id <> 0 and !is_null($this->usr->id)) {
+            if ($this->verb->id <> 0 and !is_null($this->user()->id)) {
                 $vrb = new verb;
                 $vrb->id = $this->verb->id;
-                $vrb->usr = $this->usr;
+                $vrb->set_user($this->user());
                 $vrb->load_by_vars();
                 $this->verb = $vrb;
                 $this->verb->name = $vrb->name;
@@ -700,13 +700,13 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
         if (!isset($this->to)) {
             if ($this->to->id == 0) {
                 // set a dummy word
-                $wrd_to = new word($this->usr);
+                $wrd_to = new word($this->user());
                 $this->to = $wrd_to->phrase();
             }
         } else {
-            if ($this->to->id <> 0 and !is_null($this->usr->id)) {
+            if ($this->to->id <> 0 and !is_null($this->user()->id)) {
                 if ($this->to->id > 0) {
-                    $wrd_to = new word($this->usr);
+                    $wrd_to = new word($this->user());
                     $wrd_to->load_by_id($this->to->id, word::class);
                     if ($wrd_to->name() <> '') {
                         $this->to = $wrd_to->phrase();
@@ -716,7 +716,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
                         $result = false;
                     }
                 } elseif ($this->to->id < 0) {
-                    $lnk = new triple($this->usr);
+                    $lnk = new triple($this->user());
                     $lnk->load_by_id($this->to->id * -1, triple::class);
                     if ($lnk->id > 0) {
                         $this->to = $lnk->phrase();
@@ -727,7 +727,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
                     }
                 } else {
                     // if type is not (yet) set, create a dummy object to enable the selection
-                    $phr_to = new phrase($this->usr);
+                    $phr_to = new phrase($this->user());
                     $this->to = $phr_to;
                 }
                 log_debug('triple->load_objects -> to ' . $this->to->name());
@@ -749,7 +749,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
             return 'link_ids';
         } else {
             log_err('Either the database ID (' . $this->id . ') or the ' .
-                self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->usr->id . ') must be set to load a ' .
+                self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->user()->id . ') must be set to load a ' .
                 self::class, self::class . '->load');
             return '';
         }
@@ -811,7 +811,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
     function wrd_lst(): word_list
     {
         log_debug('triple->wrd_lst ' . $this->dsp_id());
-        $wrd_lst = new word_list($this->usr);
+        $wrd_lst = new word_list($this->user());
 
         // add the "from" side
         if (isset($this->from)) {
@@ -877,12 +877,12 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
      */
     private function import_phrase(string $name, bool $do_save = true): phrase
     {
-        $result = new phrase($this->usr);
+        $result = new phrase($this->user());
         if ($do_save) {
             $result->load_by_name($name);
             if ($result->id == 0) {
                 // if there is no word or triple with the name yet, automatically create a word
-                $wrd = new word($this->usr);
+                $wrd = new word($this->user());
                 $wrd->set_name($name);
                 $wrd->save();
                 if ($wrd->id == 0) {
@@ -940,7 +940,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
             if ($key == self::FLD_EX_VERB) {
                 $vrb = new verb;
                 $vrb->name = $value;
-                $vrb->usr = $this->usr;
+                $vrb->set_user($this->user());
                 if ($result->is_ok() and $do_save) {
                     $vrb->load_by_vars();
                     if ($vrb->id <= 0) {
@@ -1012,8 +1012,8 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
         if ($this->id > 0) {
             $result .= ' -> ' . $this->id . ')';
         }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->is_set()) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -1158,7 +1158,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
      */
     function dsp_edit(string $back = ''): string
     {
-        log_debug("triple->dsp_edit id " . $this->id . " for user" . $this->usr->id . ".");
+        log_debug("triple->dsp_edit id " . $this->id . " for user" . $this->user()->id . ".");
         $result = ''; // reset the html code var
 
         // at least to create the dummy objects to display the selectors
@@ -1247,7 +1247,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
      */
     function phrase(): phrase
     {
-        $phr = new phrase($this->usr);
+        $phr = new phrase($this->user());
         // the triple has positive id, but the phrase uses a negative id
         $phr->id = $this->id * -1;
         $phr->set_name($this->name, triple::class);
@@ -1261,7 +1261,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
      */
     function term(): term
     {
-        $trm = new term($this->usr);
+        $trm = new term($this->user());
         $trm->set_id_from_obj($this->id, self::class);
         $trm->set_name($this->name(), triple::class);
         $trm->obj = $this;
@@ -1323,9 +1323,9 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
      */
     function can_change(): bool
     {
-        log_debug('triple->can_change ' . $this->dsp_id() . ' by user "' . $this->usr->name . '" (id ' . $this->usr->id . ', owner id ' . $this->owner_id . ')');
+        log_debug('triple->can_change ' . $this->dsp_id() . ' by user "' . $this->user()->name . '" (id ' . $this->user()->id . ', owner id ' . $this->owner_id . ')');
         $can_change = false;
-        if ($this->owner_id == $this->usr->id or $this->owner_id <= 0) {
+        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
             $can_change = true;
         }
         log_debug('triple->can_change -> (' . zu_dsp_bool($can_change) . ')');
@@ -1354,9 +1354,9 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
 
         if (!$this->has_usr_cfg()) {
             if (isset($this->from) and isset($this->to)) {
-                log_debug('triple->add_usr_cfg for "' . $this->from->name() . '"/"' . $this->to->name() . '" by user "' . $this->usr->name . '"');
+                log_debug('triple->add_usr_cfg for "' . $this->from->name() . '"/"' . $this->to->name() . '" by user "' . $this->user()->name . '"');
             } else {
-                log_debug('triple->add_usr_cfg for "' . $this->id . '" and user "' . $this->usr->name . '"');
+                log_debug('triple->add_usr_cfg for "' . $this->id . '" and user "' . $this->user()->name . '"');
             }
 
             // check again if there ist not yet a record
@@ -1364,7 +1364,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
             $qp = new sql_par(self::class);
             $qp->name = 'triple_add_usr_cfg';
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_where_std($this->id);
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
@@ -1375,7 +1375,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE);
-                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_triple failed.');
                     $result = false;
@@ -1410,7 +1410,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
         global $db_con;
         $result = false;
@@ -1420,9 +1420,9 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
             log_err('cannot delete user sandbox if id is missing');
         } else {
             $qp = $this->usr_cfg_sql($db_con);
-            $db_con->usr_id = $this->usr->id;
+            $db_con->usr_id = $this->user()->id;
             $usr_cfg = $db_con->get1($qp);
-            log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
+            log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
             if ($usr_cfg) {
                 if ($usr_cfg[self::FLD_ID] > 0) {
                     // TODO use the FLD_NAMES array with all relevant field names
@@ -1430,7 +1430,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
                         and $usr_cfg[sql_db::FLD_DESCRIPTION] == Null
                         and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                         // delete the entry in the user sandbox
-                        log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                        log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
                         $result = $this->del_usr_cfg_exe($db_con);
                     }
                 }
@@ -1451,9 +1451,9 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
      */
     function log_link_add(): user_log_link
     {
-        log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->usr->name . '"');
+        log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $log = new user_log_link;
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_ADD;
         $log->table = 'triples';
         $log->new_from = $this->from;
@@ -1471,7 +1471,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
     function log_upd(): user_log_link
     {
         $log = new user_log_link;
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_UPDATE;
         if ($this->can_change()) {
             $log->table = 'triples';
@@ -1488,9 +1488,9 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
      */
     function log_del_link(): user_log_link
     {
-        log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->usr->name . '"');
+        log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $log = new user_log_link;
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_DELETE;
         $log->table = 'triples';
         $log->old_from = $this->from;
@@ -1508,7 +1508,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
     function log_upd_field(): user_log_named
     {
         $log = new user_log_named;
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_UPDATE;
         if ($this->can_change()) {
             $log->table = 'triples';
@@ -1705,7 +1705,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
 
                     // ... and create a new triple
                     $this->id = 0;
-                    $this->owner_id = $this->usr->id;
+                    $this->owner_id = $this->user()->id;
                     $result .= $this->add()->get_last_message();
                     log_debug('triple->save_id_if_updated recreate the triple del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                 }
@@ -1736,9 +1736,9 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
             // insert the new triple
             $db_con->set_type(sql_db::TBL_TRIPLE);
             $this->id = $db_con->insert(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
-                array($this->from->id, $this->verb->id, $this->to->id, $this->usr->id));
+                array($this->from->id, $this->verb->id, $this->to->id, $this->user()->id));
             // TODO make sure on all add functions that the database object is always set
-            //array($this->from->id, $this->verb->id, $this->to->id, $this->usr->id));
+            //array($this->from->id, $this->verb->id, $this->to->id, $this->user()->id));
             if ($this->id > 0) {
                 // update the id in the log
                 if (!$log->add_ref($this->id)) {
@@ -1747,7 +1747,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
                 } else {
 
                     // create an empty db_rec element to force saving of all set fields
-                    $db_rec = new triple($this->usr);
+                    $db_rec = new triple($this->user());
                     $db_rec->from = $this->from;
                     $db_rec->verb = $this->verb;
                     $db_rec->to = $this->to;
@@ -1770,7 +1770,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
      */
     function save(): string
     {
-        log_debug('triple->save "' . $this->description . '" for user ' . $this->usr->id);
+        log_debug('triple->save "' . $this->description . '" for user ' . $this->user()->id);
 
         global $db_con;
         $result = '';
@@ -1779,7 +1779,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
         $this->load_objects();
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_type(sql_db::TBL_TRIPLE);
 
         // check if the opposite triple already exists and if yes, ask for confirmation
@@ -1820,13 +1820,13 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
                 log_debug('triple->save update "' . $this->id . '"');
                 // read the database values to be able to check if something has been changed;
                 // done first, because it needs to be done for user and general phrases
-                $db_rec = new triple($this->usr);
+                $db_rec = new triple($this->user());
                 $db_rec->id = $this->id;
                 if (!$db_rec->load_obj_vars()) {
                     $result .= 'Reloading of triple failed';
                 }
                 log_debug('triple->save -> database triple "' . $db_rec->name . '" (' . $db_rec->id . ') loaded');
-                $std_rec = new triple($this->usr); // the user must also be set to allow to take the ownership
+                $std_rec = new triple($this->user()); // the user must also be set to allow to take the ownership
                 $std_rec->id = $this->id;
                 if (!$std_rec->load_standard()) {
                     $result .= 'Reloading of the default values for triple failed';
@@ -1867,12 +1867,12 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
         $result = new user_message();
 
         // collect all phrase groups where this triple is used
-        $grp_lst = new phrase_group_list($this->usr);
+        $grp_lst = new phrase_group_list($this->user());
         $grp_lst->phr = $this->phrase();
         $grp_lst->load();
 
         // collect all values related to this triple
-        $val_lst = new value_list($this->usr);
+        $val_lst = new value_list($this->user());
         $val_lst->load_by_phr($this->phrase());
 
         // if there are still values, ask if they really should be deleted

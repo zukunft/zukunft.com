@@ -59,7 +59,7 @@ function run_batch_job_test(testing $t)
     $t->dsp('batch_job->value to link', $target, $result);
 
     // test adding a batch job
-    $job = new batch_job;
+    $job = new batch_job($usr);
     $job->obj = $val;
     $job->type = cl(db_cl::JOB_TYPE, job_type_list::VALUE_UPDATE);
     $result = $job->add();
@@ -84,7 +84,7 @@ function run_batch_job_list_test(testing $t)
 
     // test adding a batch job via a list
     $job_lst = new batch_job_list($usr);
-    $calc_request = new batch_job;
+    $calc_request = new batch_job($usr);
     $calc_request->frm = $frm;
     $calc_request->usr = $usr;
     $calc_request->phr_lst = $phr_lst;

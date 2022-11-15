@@ -103,7 +103,7 @@ class formula_element
      */
     function load_by_id(int $ref_id): void
     {
-        if ($ref_id != 0 and isset($this->usr)) {
+        if ($ref_id != 0 and $this->usr->is_set()) {
             if ($this->type == self::TYPE_WORD) {
                 $wrd = new word($this->usr);
                 $wrd->load_by_id($ref_id, word::class);
@@ -115,7 +115,7 @@ class formula_element
             if ($this->type == self::TYPE_VERB) {
                 $lnk = new verb;
                 $lnk->id = $ref_id;
-                $lnk->usr = $this->usr;
+                $lnk->set_user($this->usr);
                 $lnk->load_by_vars();
                 $this->name = $lnk->name;
                 $this->dsp_name = $lnk->display($this->back);
@@ -168,7 +168,7 @@ class formula_element
                 $result .= '(' . $this->obj->id . ')';
             }
         }
-        if (isset($this->usr)) {
+        if ($this->usr->is_set()) {
             $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
         }
 

@@ -61,7 +61,7 @@ class value_list_dsp_old extends value_list
 
         // if parameters are fine display the table
         if ($result == '') {
-            log_debug('"' . $phr_row->name . '" for "' . $this->phr->name() . '" and user "' . $this->usr->name . '"');
+            log_debug('"' . $phr_row->name . '" for "' . $this->phr->name() . '" and user "' . $this->user()->name . '"');
 
             // init the display vars
             $val_main = null; // the "main" value used as a sample for a new value
@@ -94,7 +94,7 @@ class value_list_dsp_old extends value_list
             $time_phr = $all_time_lst->time_useful();
             $time_lst = null;
             if ($time_phr != null) {
-                $time_lst = new phrase_list($time_phr->usr);
+                $time_lst = new phrase_list($time_phr->user());
                 $time_lst->add($time_phr);
                 log_debug('times sorted ' . $time_lst->name());
             }
@@ -176,7 +176,7 @@ class value_list_dsp_old extends value_list
 
                 // check if row is empty
                 $row_has_value = false;
-                $grp = new phrase_group($this->usr);
+                $grp = new phrase_group($this->user());
                 $grp->load_by_ids(new phr_ids($wrd_ids));
                 foreach ($time_lst->lst as $time_wrd) {
                     $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
@@ -200,7 +200,7 @@ class value_list_dsp_old extends value_list
 
                         // get the phrase group for the value row
                         // to be done for the list at once
-                        $grp = new phrase_group($this->usr);
+                        $grp = new phrase_group($this->user());
                         $grp->load_by_ids(new phr_ids($val_wrd_ids));
                         log_debug("val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
 
@@ -242,7 +242,7 @@ class value_list_dsp_old extends value_list
                 }
 
                 // display the row differentiators
-                $sub_wrd->usr = $this->usr; // to be fixed in the lines before
+                $sub_wrd->usr = $this->user(); // to be fixed in the lines before
                 log_debug("... get differentiator for " . $sub_wrd->id . " and user " . $sub_wrd->usr->name . ".");
                 // get all potential differentiator words
                 $sub_wrd_lst = $sub_wrd->lst();
@@ -301,7 +301,7 @@ class value_list_dsp_old extends value_list
 
                                 // get the phrase group for the value row
                                 // to be done for the list at once
-                                $grp = new phrase_group($this->usr);
+                                $grp = new phrase_group($this->user());
                                 $grp->load_by_ids(new phr_ids($val_wrd_ids));
                                 log_debug("val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
 

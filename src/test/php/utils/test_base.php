@@ -580,7 +580,7 @@ class test_base
                 $lnk_test->from = $to;
                 $lnk_test->verb = $vrb;
                 $lnk_test->to = $from;
-                $lnk_test->usr = $usr;
+                $lnk_test->set_user($usr);
                 $lnk_test->load_obj_vars();
                 $result = $lnk_test;
                 // create the link if requested
@@ -932,7 +932,7 @@ class test_base
         $vrb = new verb();
         $vrb->id = $id;
         $vrb->name = $vrb_name;
-        $vrb->usr = $usr;
+        $vrb->set_user($usr);
 
         return $vrb;
     }
@@ -989,7 +989,7 @@ class test_base
 
         $dsp = $this->load_view($dsp_name, $test_usr);
         if ($dsp->id == 0) {
-            $dsp->usr = $test_usr;
+            $dsp->set_user($test_usr);
             $dsp->set_name($dsp_name);
             $dsp->save();
         }
@@ -1027,7 +1027,7 @@ class test_base
 
         $cmp = $this->load_view_component($cmp_name, $test_usr);
         if ($cmp->id == 0 or $cmp->id == Null) {
-            $cmp->usr = $test_usr;
+            $cmp->set_user($test_usr);
             $cmp->set_name($cmp_name);
             if ($type_code_id != '') {
                 $cmp->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, $type_code_id);
@@ -1260,7 +1260,7 @@ class test_base
         $recreated_json = '';
         $api_obj = $usr_obj->api_obj();
         if ($api_obj->id() == $usr_obj->id()) {
-            $db_obj = $api_obj->db_obj($usr_obj->usr, get_class($api_obj));
+            $db_obj = $api_obj->db_obj($usr_obj->user(), get_class($api_obj));
             $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
         }
         $result = json_is_similar($original_json, $recreated_json);

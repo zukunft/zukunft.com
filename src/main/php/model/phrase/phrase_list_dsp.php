@@ -51,10 +51,10 @@ class phrase_list_dsp_old extends phrase_list
         if (isset($this->lst)) {
             foreach ($this->lst as $phr) {
                 $result[] = $phr->name();
-                if (!isset($phr->usr)) {
-                    log_err('The user of a phrase list element differs from the list user.', 'phrase_list->names', 'The user of "' . $phr->name() . '" is missing, but the list user is "' . $this->usr->name . '".', (new Exception)->getTraceAsString(), $this->usr);
-                } elseif ($phr->usr <> $this->usr) {
-                    log_err('The user of a phrase list element differs from the list user.', 'phrase_list->names', 'The user "' . $phr->usr->name . '" of "' . $phr->name() . '" does not match the list user "' . $this->usr->name . '".', (new Exception)->getTraceAsString(), $this->usr);
+                if (!$phr->user()->is_set()) {
+                    log_err('The user of a phrase list element differs from the list user.', 'phrase_list->names', 'The user of "' . $phr->name() . '" is missing, but the list user is "' . $this->user()->name . '".', (new Exception)->getTraceAsString(), $this->user());
+                } elseif ($phr->user() <> $this->user()) {
+                    log_err('The user of a phrase list element differs from the list user.', 'phrase_list->names', 'The user "' . $phr->user()->name . '" of "' . $phr->name() . '" does not match the list user "' . $this->user()->name . '".', (new Exception)->getTraceAsString(), $this->user());
                 }
             }
         }

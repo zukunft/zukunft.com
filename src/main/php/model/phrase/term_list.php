@@ -49,8 +49,30 @@ class term_list
     function __construct(user $usr)
     {
         $this->lst = array();
+        $this->set_user($usr);
+    }
+
+    /*
+     * get, set and debug functions
+     */
+
+    /**
+     * set the user of the term list
+     * because of this object retrieval set and get of the user is needed for all linked objects
+     *
+     * @param user $usr the name of the term set in the related object
+     * @return void
+     */
+    public function set_user(user $usr): void
+    {
         $this->usr = $usr;
     }
+
+    public function user(): user
+    {
+        return $this->usr;
+    }
+
 
     /*
      * casting objects
@@ -200,8 +222,8 @@ class term_list
     {
         $result = false;
         // check parameters
-        if ($trm_to_add->usr == null) {
-            $trm_to_add->usr = $this->usr;
+        if ($trm_to_add->user() == null) {
+            $trm_to_add->set_user($this->user());
         }
         if ($trm_to_add != null) {
             log_debug($trm_to_add->dsp_id());
@@ -270,8 +292,8 @@ class term_list
         } else {
             $result = $id;
         }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->is_set()) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
 
         return $result;

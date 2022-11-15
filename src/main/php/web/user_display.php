@@ -85,7 +85,7 @@ class user_dsp extends user
 
         $result = '';
         $err_lst = new system_error_log_list;
-        $err_lst->usr = $this;
+        $err_lst->set_user($this);
         $err_lst->page = $page;
         $err_lst->size = $size;
         $err_lst->dsp_type = $dsp_type;
@@ -199,7 +199,7 @@ class user_dsp extends user
                 $wrd_usr->from->id = $sbx_row['from_phrase_id'];
                 $wrd_usr->verb->id = $sbx_row[verb::FLD_ID];
                 $wrd_usr->to->id = $sbx_row['to_phrase_id'];
-                $wrd_usr->name = $sbx_row['usr_name'];
+                $wrd_usr->set_name($sbx_row['usr_name']);
                 $wrd_usr->excluded = $sbx_row['usr_excluded'];
                 $wrd_usr->load_obj_vars();
 
@@ -209,13 +209,13 @@ class user_dsp extends user
                 $usr_std->load_test_user();
 
                 $wrd_std = clone $wrd_usr;
-                $wrd_std->usr = $usr_std;
+                $wrd_std->set_user($usr_std);
                 $wrd_std->load_obj_vars();
-                $wrd_std->name = $sbx_row['std_name'];
+                $wrd_std->set_name($sbx_row['std_name']);
                 $wrd_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
-                if ($wrd_usr->name == $wrd_std->name
+                if ($wrd_usr->name() == $wrd_std->name()
                     and $wrd_usr->excluded == $wrd_std->excluded) {
                     $wrd_usr->del_usr_cfg();
                 } else {
@@ -258,7 +258,7 @@ class user_dsp extends user
 
                         // to review: load all user triples with one query
                         $wrd_lnk_other = clone $wrd_usr;
-                        $wrd_lnk_other->usr = $usr_other;
+                        $wrd_lnk_other->set_user($usr_other);
                         $wrd_lnk_other->load_obj_vars();
                         $wrd_lnk_other->name = $wrd_lnk_other_row['name'];
                         $wrd_lnk_other->excluded = $wrd_lnk_other_row[user_sandbox::FLD_EXCLUDED];
@@ -416,7 +416,7 @@ class user_dsp extends user
                 $usr_std->load_test_user();
 
                 $frm_std = clone $frm_usr;
-                $frm_std->usr = $usr_std;
+                $frm_std->set_user($usr_std);
                 $frm_std->link_type_id = $sbx_row['std_type'];
                 $frm_std->excluded = $sbx_row['std_excluded'];
 
@@ -467,7 +467,7 @@ class user_dsp extends user
 
                         // to review: load all user formula_links with one query
                         $frm_lnk_other = clone $frm_usr;
-                        $frm_lnk_other->usr = $usr_other;
+                        $frm_lnk_other->set_user($usr_other);
                         $frm_lnk_other->link_type_id = $frm_lnk_other_row['link_type_id'];
                         $frm_lnk_other->excluded = $frm_lnk_other_row[user_sandbox::FLD_EXCLUDED];
                         $frm_lnk_other->load_objects();
@@ -584,7 +584,7 @@ class user_dsp extends user
                 $usr_std->load_test_user();
 
                 $val_std = clone $val_usr;
-                $val_std->usr = $usr_std;
+                $val_std->set_user($usr_std);
                 $val_std->number = $val_row['std_value'];
                 $val_std->set_source_id($val_row['std_source']);
                 $val_std->excluded = $val_row['std_excluded'];
@@ -599,7 +599,7 @@ class user_dsp extends user
                     // prepare the row values
                     $sandbox_item_name = '';
                     if (isset($val_usr->wrd_lst)) {
-                        $sandbox_item_name = $val_usr->wrd_lst->name_linked();
+                        $sandbox_item_name = $val_usr->wrd_lst->dsp_obj()->name_linked();
                     }
 
                     // format the user value
@@ -639,7 +639,7 @@ class user_dsp extends user
 
                         // to review: load all user values with one query
                         $val_other = clone $val_usr;
-                        $val_other->usr = $usr_other;
+                        $val_other->set_user($usr_other);
                         $val_other->number = $val_other_row['user_value'];
                         $val_other->set_source_id($val_other_row['source_id']);
                         $val_other->excluded = $val_other_row[user_sandbox::FLD_EXCLUDED];
@@ -754,7 +754,7 @@ class user_dsp extends user
                 $usr_std->load_test_user();
 
                 $dsp_std = clone $dsp_usr;
-                $dsp_std->usr = $usr_std;
+                $dsp_std->set_user($usr_std);
                 $dsp_std->name = $sbx_row['std_name'];
                 $dsp_std->comment = $sbx_row['std_comment'];
                 $dsp_std->type_id = $sbx_row['std_type'];
@@ -806,7 +806,7 @@ class user_dsp extends user
 
                         // to review: load all user views with one query
                         $dsp_other = clone $dsp_usr;
-                        $dsp_other->usr = $usr_other;
+                        $dsp_other->set_user($usr_other);
                         $dsp_other->name = $dsp_other_row[view::FLD_NAME];
                         $dsp_other->comment = $dsp_other_row['comment'];
                         $dsp_other->type_id = $dsp_other_row[view::FLD_TYPE];
@@ -920,14 +920,14 @@ class user_dsp extends user
                 $usr_std->load_test_user();
 
                 $dsp_std = clone $dsp_usr;
-                $dsp_std->usr = $usr_std;
-                $dsp_std->name = $sbx_row['std_name'];
+                $dsp_std->set_user($usr_std);
+                $dsp_std->set_name($sbx_row['std_name']);
                 $dsp_std->comment = $sbx_row['std_comment'];
                 $dsp_std->type_id = $sbx_row['std_type'];
                 $dsp_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
-                if ($dsp_usr->name == $dsp_std->name
+                if ($dsp_usr->name() == $dsp_std->name()
                     and $dsp_usr->comment == $dsp_std->comment
                     and $dsp_usr->type_id == $dsp_std->type_id
                     and $dsp_usr->excluded == $dsp_std->excluded) {
@@ -938,7 +938,7 @@ class user_dsp extends user
                     if ($dsp_usr->excluded == 1) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $dsp_usr->name;
+                        $sandbox_usr_txt = $dsp_usr->name();
                     }
                     $sandbox_usr_txt = '<a href="/http/view_component_edit.php?id=' . $dsp_usr->id . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
 
@@ -946,7 +946,7 @@ class user_dsp extends user
                     if ($dsp_std->excluded == 1) {
                         $sandbox_std_txt = "deleted";
                     } else {
-                        $sandbox_std_txt = $dsp_std->name;
+                        $sandbox_std_txt = $dsp_std->name();
                     }
 
                     // format the view_component of other users
@@ -972,15 +972,15 @@ class user_dsp extends user
 
                         // to review: load all user view_components with one query
                         $cmp_other = clone $dsp_usr;
-                        $cmp_other->usr = $usr_other;
-                        $cmp_other->name = $cmp_other_row[view_cmp::FLD_NAME];
+                        $cmp_other->set_user($usr_other);
+                        $cmp_other->set_name($cmp_other_row[view_cmp::FLD_NAME]);
                         $cmp_other->comment = $cmp_other_row['comment'];
                         $cmp_other->type_id = $cmp_other_row['view_component_type_id'];
                         $cmp_other->excluded = $cmp_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $sandbox_other .= $cmp_other->name;
+                        $sandbox_other .= $cmp_other->name();
                     }
                     $sandbox_other = '<a href="/http/user.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
@@ -1091,7 +1091,7 @@ class user_dsp extends user
                 $usr_std->load_test_user();
 
                 $dsp_std = clone $dsp_usr;
-                $dsp_std->usr = $usr_std;
+                $dsp_std->set_user($usr_std);
                 $dsp_std->order_nbr = $sbx_row['std_order'];
                 $dsp_std->position_type = $sbx_row['std_type'];
                 $dsp_std->excluded = $sbx_row['std_excluded'];
@@ -1142,7 +1142,7 @@ class user_dsp extends user
 
                         // to review: load all user view_component_links with one query
                         $dsp_lnk_other = clone $dsp_usr;
-                        $dsp_lnk_other->usr = $usr_other;
+                        $dsp_lnk_other->set_user($usr_other);
                         $dsp_lnk_other->order_nbr = $dsp_lnk_other_row['order_nbr'];
                         $dsp_lnk_other->position_type = $dsp_lnk_other_row['position_type'];
                         $dsp_lnk_other->excluded = $dsp_lnk_other_row[user_sandbox::FLD_EXCLUDED];
@@ -1250,7 +1250,7 @@ class user_dsp extends user
                 // create the source objects with the minimal parameter needed
                 $dsp_usr = new source($this);
                 $dsp_usr->id = $sbx_row['id'];
-                $dsp_usr->name = $sbx_row['usr_name'];
+                $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->url = $sbx_row['usr_url'];
                 $dsp_usr->comment = $sbx_row['usr_comment'];
                 $dsp_usr->type_id = $sbx_row['usr_type'];
@@ -1262,15 +1262,15 @@ class user_dsp extends user
                 $usr_std->load_test_user();
 
                 $dsp_std = clone $dsp_usr;
-                $dsp_std->usr = $usr_std;
-                $dsp_std->name = $sbx_row['std_name'];
+                $dsp_std->set_user($usr_std);
+                $dsp_std->set_name($sbx_row['std_name']);
                 $dsp_std->url = $sbx_row['std_url'];
                 $dsp_std->comment = $sbx_row['std_comment'];
                 $dsp_std->type_id = $sbx_row['std_type'];
                 $dsp_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
-                if ($dsp_usr->name == $dsp_std->name
+                if ($dsp_usr->name() == $dsp_std->name()
                     and $dsp_usr->url == $dsp_std->url
                     and $dsp_usr->comment == $dsp_std->comment
                     and $dsp_usr->type_id == $dsp_std->type_id
@@ -1284,7 +1284,7 @@ class user_dsp extends user
                     if ($dsp_usr->excluded == 1) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $dsp_usr->name;
+                        $sandbox_usr_txt = $dsp_usr->name();
                     }
                     $sandbox_usr_txt = '<a href="/http/source_edit.php?id=' . $dsp_usr->id . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
 
@@ -1292,7 +1292,7 @@ class user_dsp extends user
                     if ($dsp_std->excluded == 1) {
                         $sandbox_std_txt = "deleted";
                     } else {
-                        $sandbox_std_txt = $dsp_std->name;
+                        $sandbox_std_txt = $dsp_std->name();
                     }
 
                     // format the source of other users
@@ -1319,8 +1319,8 @@ class user_dsp extends user
 
                         // to review: load all user sources with one query
                         $dsp_other = clone $dsp_usr;
-                        $dsp_other->usr = $usr_other;
-                        $dsp_other->name = $dsp_other_row['source_name'];
+                        $dsp_other->set_user($usr_other);
+                        $dsp_other->set_name($dsp_other_row['source_name']);
                         $dsp_other->url = $dsp_other_row['url'];
                         $dsp_other->comment = $dsp_other_row['comment'];
                         $dsp_other->type_id = $dsp_other_row['source_type_id'];
@@ -1328,7 +1328,7 @@ class user_dsp extends user
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $sandbox_other .= $dsp_other->name;
+                        $sandbox_other .= $dsp_other->name();
                     }
                     $sandbox_other = '<a href="/http/user_source.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 

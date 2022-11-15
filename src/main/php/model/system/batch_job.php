@@ -89,6 +89,19 @@ class batch_job
     public ?formula $frm = null;           // the formula object that should be used for updating the result
     public ?phrase_list $phr_lst = null;   //
 
+    /*
+     * construct and map
+     */
+
+    /**
+     * always set the user because a term is always user specific
+     * @param user $usr the user who requested to see this term
+     */
+    function __construct(user $usr)
+    {
+        $this->usr = $usr;
+    }
+
 
     // request a new calculation
     function add(): int
@@ -149,7 +162,7 @@ class batch_job
 
         // load all depending formula results
         if (isset($this->obj)) {
-            log_debug('batch_job->exe_val_upd -> get list for user ' . $this->obj->usr->name);
+            log_debug('batch_job->exe_val_upd -> get list for user ' . $this->obj->user()->name);
             $fv_lst = $this->obj->fv_lst_depending();
             if ($fv_lst != null) {
                 log_debug('batch_job->exe_val_upd -> got ' . $fv_lst->dsp_id());

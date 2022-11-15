@@ -33,7 +33,44 @@ class formula_element_group_list
 {
 
     public ?array $lst = null; // the list of formula element groups
-    public ?user $usr = null;  // the person who has requested the formula element groups
+    private ?user $usr = null;  // the person who has requested the formula element groups
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * always set the user because a formula element group list is always user specific
+     * @param user $usr the user who requested to see the formula with the formula element groups
+     */
+    function __construct(user $usr)
+    {
+        $this->lst = array();
+        $this->set_user($usr);
+    }
+
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the formula element list
+     *
+     * @param user $usr the person who wants to access the formula element groups
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
+        $this->usr = $usr;
+    }
+
+    /**
+     * @return user the person who wants to see the formula elements
+     */
+    function user(): user
+    {
+        return $this->usr;
+    }
 
     /*
     display functions
@@ -43,8 +80,8 @@ class formula_element_group_list
     function dsp_id(): string
     {
         $result = dsp_array($this->ids());
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->is_set()) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
 
         return $result;

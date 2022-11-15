@@ -57,7 +57,7 @@ class ip_range
     public bool $active = false;
 
     // in memory only fields
-    public ?user $usr = null;             // just needed for logging the changes
+    private ?user $usr = null;             // just needed for logging the changes
 
     function reset(): void
     {
@@ -67,7 +67,7 @@ class ip_range
         $this->reason = null;
         $this->active = false;
 
-        $this->usr = null;
+        $this->set_user(null);
     }
 
     function row_mapper(array $db_row): bool
@@ -96,11 +96,30 @@ class ip_range
      */
 
     /**
+     * set the user of the ip range if needed
+     *
+     * @param user|null $usr the person who wants to use the ip range
+     * @return void
+     */
+    function set_user(?user $usr): void
+    {
+        $this->usr = $usr;
+    }
+
+    /**
      * @returns int the protected id of the ip range
      */
     public function id(): int
     {
         return $this->id;
+    }
+
+    /**
+     * @return user|null the person who uses the ip range and null if for all users
+     */
+    function user(): ?user
+    {
+        return $this->usr;
     }
 
     /*
@@ -139,7 +158,7 @@ class ip_range
         $sql = '';
         if ($qp->name != '') {
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_where_text($sql_where);
             $qp->sql = $db_con->select_by_set_id();
@@ -339,7 +358,7 @@ class ip_range
         log_debug(self::class . '->log_add ' . $this->dsp_id());
 
         $log = new user_log_named;
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_ADD;
         $log->table = sql_db::TBL_IP;
         $log->field = $this->name();
@@ -354,7 +373,7 @@ class ip_range
     {
         log_debug(self::class . '->log_upd ' . $this->dsp_id());
         $log = new user_log_named;
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_UPDATE;
         $log->table = sql_db::TBL_IP;
 
@@ -384,7 +403,7 @@ class ip_range
         if ($log->id > 0) {
             // insert the new ip range
             $db_con->set_type(sql_db::TBL_IP);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
 
             $this->id = $db_con->insert(
                 array(self::FLD_FROM, self::FLD_TO, self::FLD_REASON, self::FLD_ACTIVE),
@@ -418,7 +437,7 @@ class ip_range
         $db_chk->id = $this->id;
         $db_chk->from = $this->from;
         $db_chk->to = $this->to;
-        $db_chk->usr = $this->usr;
+        $db_chk->set_user($this->user());
         $db_chk->load();
         if ($db_chk->id > 0) {
             log_debug(self::class . '->get_similar an ' . $this->dsp_id() . ' already exists');
@@ -440,7 +459,7 @@ class ip_range
         $result = '';
 
         // build the database object because this is needed anyway
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_type(sql_db::TBL_IP);
 
         // check if the external reference is supposed to be added
@@ -466,7 +485,7 @@ class ip_range
             $db_rec = clone $this;
             $db_rec->reset();
             $db_rec->id = $this->id;
-            $db_rec->usr = $this->usr;
+            $db_rec->set_user($this->user());
             if ($db_rec->load()) {
                 $result .= $this->save_fields($db_con, $db_rec);
             }

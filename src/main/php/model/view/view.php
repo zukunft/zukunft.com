@@ -287,7 +287,7 @@ class view extends user_sandbox_named
 
         $db_con->set_type(sql_db::TBL_VIEW);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
@@ -317,7 +317,7 @@ class view extends user_sandbox_named
 
         $db_con->set_type(sql_db::TBL_VIEW);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
@@ -337,7 +337,7 @@ class view extends user_sandbox_named
         $db_con_tmp = new sql_db();
         $db_con_tmp->set_type(sql_db::TBL_VIEW);
         $db_con->set_name($qp->name);
-        $db_con_tmp->set_usr($this->usr->id);
+        $db_con_tmp->set_usr($this->user()->id);
         $db_con_tmp->set_where_std($phr->id);
         $sql = "SELECT u.view_id, count(u.user_id) AS users
                        FROM words w 
@@ -348,7 +348,7 @@ class view extends user_sandbox_named
 
         // load all parameters of the view with one sql statement
         $db_con->set_type(sql_db::TBL_VIEW);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
@@ -370,10 +370,10 @@ class view extends user_sandbox_named
         $result = false;
 
         // check the all minimal input parameters
-        if (!isset($this->usr)) {
+        if (!$this->user()->is_set()) {
             log_err("The user id must be set to load a view.", "view->load");
         } elseif ($this->id <= 0 and $this->code_id == '' and $this->name == '') {
-            log_err("Either the database ID (" . $this->id . "), the name (" . $this->name . ") or the code_id (" . $this->code_id . ") and the user (" . $this->usr->id . ") must be set to load a view.", "view->load");
+            log_err("Either the database ID (" . $this->id . "), the name (" . $this->name . ") or the code_id (" . $this->code_id . ") and the user (" . $this->user()->id . ") must be set to load a view.", "view->load");
         } else {
 
             $qp = $this->load_sql_obj_vars($db_con);
@@ -424,7 +424,7 @@ class view extends user_sandbox_named
         }
 
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_name($qp->name);
         $db_con->set_fields(view_cmp_link::FLD_NAMES);
         $db_con->set_usr_num_fields(view_cmp_link::FLD_NAMES_NUM_USR);
@@ -456,7 +456,7 @@ class view extends user_sandbox_named
         global $db_con;
         $result = true;
 
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $qp = $this->load_components_sql($db_con);
         $db_lst = $db_con->get($qp);
         $this->cmp_lst = array();
@@ -465,7 +465,7 @@ class view extends user_sandbox_named
                 // this is only for the view of the active user, so a direct exclude can be done
                 if ((is_null($db_entry[self::FLD_EXCLUDED]) or $db_entry[self::FLD_EXCLUDED] == 0)
                     and (is_null($db_entry[self::FLD_EXCLUDED.'2']) or $db_entry[self::FLD_EXCLUDED.'2'] == 0)) {
-                    $new_entry = new view_cmp_dsp_old($this->usr);
+                    $new_entry = new view_cmp_dsp_old($this->user());
                     $new_entry->id = $db_entry[view_cmp::FLD_ID];
                     $new_entry->owner_id = $db_entry[user_sandbox::FLD_USER];
                     $new_entry->order_nbr = $db_entry[view_cmp_link::FLD_ORDER_NBR];
@@ -576,7 +576,7 @@ class view extends user_sandbox_named
             } else {
                 if ($do_save) {
                     $cmp->save();
-                    $cmp_lnk = new view_cmp_link($this->usr);
+                    $cmp_lnk = new view_cmp_link($this->user());
                     $cmp_lnk->dsp->id = $this->id;
                     $cmp_lnk->cmp->id = $cmp->id;
                     $cmp_lnk->order_nbr = $cmp->order_nbr;
@@ -603,10 +603,10 @@ class view extends user_sandbox_named
         if ($view_component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_up");
         } else {
-            $cmp = new view_cmp_dsp_old($this->usr);
+            $cmp = new view_cmp_dsp_old($this->user());
             $cmp->id = $view_component_id;
             $cmp->load_obj_vars();
-            $cmp_lnk = new view_cmp_link($this->usr);
+            $cmp_lnk = new view_cmp_link($this->user());
             $cmp_lnk->fob = $this;
             $cmp_lnk->tob = $cmp;
             $cmp_lnk->load_obj_vars();
@@ -625,10 +625,10 @@ class view extends user_sandbox_named
         if ($view_component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_down");
         } else {
-            $cmp = new view_cmp_dsp_old($this->usr);
+            $cmp = new view_cmp_dsp_old($this->user());
             $cmp->id = $view_component_id;
             $cmp->load_obj_vars();
-            $cmp_lnk = new view_cmp_link($this->usr);
+            $cmp_lnk = new view_cmp_link($this->user());
             $cmp_lnk->fob = $this;
             $cmp_lnk->tob = $cmp;
             $cmp_lnk->load_obj_vars();
@@ -653,12 +653,12 @@ class view extends user_sandbox_named
                  WHERE code_id IS NULL
               ORDER BY view_name;";
               */
-        $sql = sql_lst_usr("view", $this->usr);
+        $sql = sql_lst_usr("view", $this->user());
         $call = '/http/view.php?words=' . $wrd_id;
         $field = 'new_id';
 
         //$db_con = New mysql;
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $dsp_lst = $db_con->get_old($sql);
         foreach ($dsp_lst as $dsp) {
             $view_id = $dsp['id'];
@@ -697,9 +697,9 @@ class view extends user_sandbox_named
         $result = new user_message;
 
         // reset the all parameters for the word object but keep the user
-        $usr = $this->usr;
+        $usr = $this->user();
         $this->reset();
-        $this->usr = $usr;
+        $this->set_user($usr);
 
         // first save the parameters of the view itself
         foreach ($json_obj as $key => $value) {
@@ -721,7 +721,7 @@ class view extends user_sandbox_named
                 $this->comment = $value;
             }
             if ($key == user_type::FLD_CODE_ID) {
-                if ($this->usr->is_admin()) {
+                if ($this->user()->is_admin()) {
                     $this->code_id = $value;
                 }
             }
@@ -834,7 +834,7 @@ class view extends user_sandbox_named
             $qp = new sql_par(self::class);
             $qp->name = 'view_add_usr_cfg';
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_where_std($this->id);
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
@@ -845,7 +845,7 @@ class view extends user_sandbox_named
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW);
-                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view failed.');
                     $result = false;
@@ -879,7 +879,7 @@ class view extends user_sandbox_named
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
         global $db_con;
         $result = true;
@@ -888,16 +888,16 @@ class view extends user_sandbox_named
 
         // check again if there ist not yet a record
         $qp = $this->usr_cfg_sql($db_con);
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $usr_cfg = $db_con->get1($qp);
 
-        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $qp->sql . ')');
+        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
         if ($usr_cfg[self::FLD_ID] > 0) {
             if ($usr_cfg[self::FLD_COMMENT] == ''
                 and $usr_cfg[self::FLD_TYPE] == Null
                 and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
-                log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
                 $result = $this->del_usr_cfg_exe($db_con);
             }
         }
@@ -986,12 +986,12 @@ class view extends user_sandbox_named
         $result = new user_message();
 
         // collect all component links where this view is used
-        $lnk_lst = new view_cmp_link_list($this->usr);
+        $lnk_lst = new view_cmp_link_list($this->user());
         $lnk_lst->load_by_view($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
-        if (!$lnk_lst->empty()) {
+        if (!$lnk_lst->is_empty()) {
             $result->add($lnk_lst->del());
         }
 

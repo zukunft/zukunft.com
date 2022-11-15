@@ -403,13 +403,13 @@ class expression
         // init result and work vars
         $lst = array();
         if ($group_it) {
-            $result = new formula_element_group_list;
+            $result = new formula_element_group_list($this->usr);
             $elm_grp = new formula_element_group;
             $elm_grp->usr = $this->usr;
         } else {
             $result = new formula_element_list($this->usr);
         }
-        $result->usr = $this->usr;
+        $result->set_user($this->usr);
         $work = $this->r_part();
         if (is_null($type) or $type == "") {
             $type = self::SELECT_ALL;
@@ -694,7 +694,7 @@ class expression
             $db_sym = self::TRIPLE_START . $id . self::TRIPLE_END;
             $vrb = new verb;
             $vrb->id = $id;
-            $vrb->usr = $this->usr;
+            $vrb->set_user($this->usr);
             $vrb->load_by_vars();
             $result = str_replace($db_sym, self::WORD_DELIMITER . $vrb->name . self::WORD_DELIMITER, $result);
             $id = zu_str_between($result, self::TRIPLE_START, self::TRIPLE_END);
@@ -773,7 +773,7 @@ class expression
                 if ($db_sym == '') {
                     $vrb = new verb;
                     $vrb->name = $name;
-                    $vrb->usr = $this->usr;
+                    $vrb->set_user($this->usr);
                     $vrb->load_by_vars();
                     if ($vrb->id > 0) {
                         $db_sym = self::TRIPLE_START . $vrb->id . self::TRIPLE_END;

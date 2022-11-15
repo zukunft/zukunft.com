@@ -49,7 +49,7 @@ class word_list
     // (key is at the moment the database id, but it looks like this has no advantages,
     // so a normal 0 to n order could have more advantages)
     public array $lst;
-    public user $usr;    // the user object of the person for whom the word list is loaded, so to say the viewer
+    private user $usr;    // the user object of the person for whom the word list is loaded, so to say the viewer
 
     /*
      * construct and map
@@ -62,7 +62,30 @@ class word_list
     function __construct(user $usr)
     {
         $this->lst = array();
+        $this->set_user($usr);
+    }
+
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the word list
+     *
+     * @param user $usr the person who wants to access the words
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
         $this->usr = $usr;
+    }
+
+    /**
+     * @return user the person who wants to see the words
+     */
+    function user(): user
+    {
+        return $this->usr;
     }
 
     /*
@@ -107,7 +130,7 @@ class word_list
         $db_con->set_type(sql_db::TBL_WORD);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(word::FLD_NAMES);
         $db_con->set_usr_fields(word::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
@@ -325,7 +348,7 @@ class word_list
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $wrd = new word($this->usr);
+                    $wrd = new word($this->user());
                     $wrd->row_mapper($db_row);
                     $this->lst[] = $wrd;
                     $result = true;
@@ -413,20 +436,20 @@ class word_list
     {
 
         global $db_con;
-        $additional_added = new word_list($this->usr); // list of the added words with this call
+        $additional_added = new word_list($this->user()); // list of the added words with this call
 
         $qp = $this->load_sql_linked_words($db_con, $verb_id, $direction);
         if ($qp->name == '') {
             log_warning('The word list is empty, so nothing could be found', self::class . '->load_linked_words');
         } else {
-            $db_con->usr_id = $this->usr->id;
+            $db_con->usr_id = $this->user()->id;
             $db_wrd_lst = $db_con->get($qp);
             if ($db_wrd_lst) {
                 log_debug(self::class . '->add_by_type -> got ' . dsp_count($db_wrd_lst));
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
                         if ($db_wrd[word::FLD_ID] > 0 and !in_array($db_wrd[word::FLD_ID], $this->ids())) {
-                            $new_word = new word($this->usr);
+                            $new_word = new word($this->user());
                             $new_word->row_mapper($db_wrd);
                             $additional_added->add($new_word);
                             log_debug(self::class . '->add_by_type -> added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd[verb::FLD_ID] . ')');
@@ -525,7 +548,7 @@ class word_list
     {
         log_debug(self::class . '->foaf_parents (type id ' . $verb_id . ')');
         $level = 0;
-        $added_wrd_lst = new word_list($this->usr); // list of the added word ids
+        $added_wrd_lst = new word_list($this->user()); // list of the added word ids
         $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, word_select_direction::UP, 0);
 
         log_debug(self::class . '->foaf_parents -> (' . $added_wrd_lst->name() . ')');
@@ -542,7 +565,7 @@ class word_list
     function parents(int $verb_id, int $level): word_list
     {
         log_debug(self::class . '->parents(' . $verb_id . ')');
-        $added_wrd_lst = new word_list($this->usr); // list of the added word ids
+        $added_wrd_lst = new word_list($this->user()); // list of the added word ids
         $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, word_select_direction::UP, $level);
 
         log_debug(self::class . '->parents -> (' . $added_wrd_lst->name() . ')');
@@ -559,7 +582,7 @@ class word_list
     {
         log_debug(self::class . '->foaf_children type ' . $verb_id);
         $level = 0;
-        $added_wrd_lst = new word_list($this->usr); // list of the added word ids
+        $added_wrd_lst = new word_list($this->user()); // list of the added word ids
         $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, word_select_direction::DOWN, 0);
 
         log_debug(self::class . '->foaf_children -> (' . $added_wrd_lst->name() . ')');
@@ -576,7 +599,7 @@ class word_list
     function children(int $verb_id, int $level): word_list
     {
         log_debug(self::class . '->children type ' . $verb_id);
-        $added_wrd_lst = new word_list($this->usr); // list of the added word ids
+        $added_wrd_lst = new word_list($this->user()); // list of the added word ids
         $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, word_select_direction::DOWN, $level);
 
         log_debug(self::class . '->children -> (' . $added_wrd_lst->name() . ')');
@@ -706,7 +729,7 @@ class word_list
      */
     function keep_only_specific(): word_list
     {
-        $parents = new word_list($this->usr);
+        $parents = new word_list($this->user());
         foreach ($this->lst as $wrd) {
             $phr_lst = $wrd->parents();
             $wrd_lst = $phr_lst->wrd_lst_all();
@@ -746,7 +769,7 @@ class word_list
         log_debug($wrd_id_to_add);
         if (!in_array($wrd_id_to_add, $this->ids())) {
             if ($wrd_id_to_add > 0) {
-                $wrd_to_add = new word($this->usr);
+                $wrd_to_add = new word($this->user());
                 $wrd_to_add->load_by_id($wrd_id_to_add, word::class);
 
                 $this->add($wrd_to_add);
@@ -765,10 +788,10 @@ class word_list
     {
         $result = false;
         log_debug($wrd_name_to_add);
-        if (is_null($this->usr->id)) {
+        if (is_null($this->user()->id)) {
             log_err("The user must be set.", "word_list->add_name");
         } else {
-            $wrd_to_add = new word($this->usr);
+            $wrd_to_add = new word($this->user());
             $wrd_to_add->load_by_name($wrd_name_to_add, word::class);
 
             $this->add($wrd_to_add);
@@ -890,7 +913,7 @@ class word_list
      */
     function wlsort(): array
     {
-        log_debug(self::class . '->wlsort (' . $this->dsp_id() . ' and user ' . $this->usr->name . ')');
+        log_debug(self::class . '->wlsort (' . $this->dsp_id() . ' and user ' . $this->user()->name . ')');
         $name_lst = array();
         $result = array();
         $pos = 0;
@@ -966,7 +989,7 @@ class word_list
     {
         log_debug(self::class . '->time_lst for words "' . $this->dsp_id() . '"');
 
-        $result = new word_list($this->usr);
+        $result = new word_list($this->user());
         $time_type = cl(db_cl::WORD_TYPE, phrase_type::TIME);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
@@ -1023,7 +1046,7 @@ class word_list
     {
         log_debug(self::class . '->measure_lst(' . $this->dsp_id() . ')');
 
-        $result = new word_list($this->usr);
+        $result = new word_list($this->user());
         $measure_type = cl(db_cl::WORD_TYPE, phrase_type::MEASURE);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
@@ -1046,13 +1069,13 @@ class word_list
     {
         log_debug(self::class . '->scaling_lst(' . $this->dsp_id() . ')');
 
-        $result = new word_list($this->usr);
+        $result = new word_list($this->user());
         $scale_type = cl(db_cl::WORD_TYPE, phrase_type::SCALING);
         $scale_hidden_type = cl(db_cl::WORD_TYPE, phrase_type::SCALING_HIDDEN);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
             if ($wrd->type_id == $scale_type or $wrd->type_id == $scale_hidden_type) {
-                $wrd->usr = $this->usr; // review: should not be needed
+                $wrd->usr = $this->user(); // review: should not be needed
                 $result->lst[] = $wrd;
                 log_debug(self::class . '->scaling_lst -> found (' . $wrd->name() . ')');
             } else {
@@ -1071,7 +1094,7 @@ class word_list
     {
         log_debug(self::class . '->percent_lst(' . $this->dsp_id() . ')');
 
-        $result = new word_list($this->usr);
+        $result = new word_list($this->user());
         $percent_type = cl(db_cl::WORD_TYPE, phrase_type::PERCENT);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
@@ -1159,8 +1182,8 @@ class word_list
         } else {
             $result = $id;
         }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->is_set()) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
 
         return $result;
@@ -1213,13 +1236,13 @@ class word_list
     {
         log_debug(self::class . '->get_grp');
 
-        $grp = new phrase_group($this->usr);
+        $grp = new phrase_group($this->user());
 
         // get or create the group
         if (count($this->ids()) <= 0) {
             log_err('Cannot create phrase group for an empty list.', 'word_list->get_grp');
         } else {
-            $grp = new phrase_group($this->usr);
+            $grp = new phrase_group($this->user());
             $grp->load_by_ids((new phr_ids($this->ids())));
         }
 
@@ -1227,12 +1250,12 @@ class word_list
         TODO check if a new group is not created
         $result = $grp->get_id();
         if ($result->id > 0) {
-          zu_debug('word_list->get_grp <'.$result->id.'> for "'.$this->name().'" and user '.$this->usr->name);
+          zu_debug('word_list->get_grp <'.$result->id.'> for "'.$this->name().'" and user '.$this->user()->name);
         } else {
           zu_debug('word_list->get_grp create for "'.implode(",",$grp->wrd_lst->names()).'" ('.implode(",",$grp->wrd_lst->ids()).') and user '.$grp->usr->name);
           $result = $grp->get_id();
           if ($result->id > 0) {
-            zu_debug('word_list->get_grp created <'.$result->id.'> for "'.$this->name().'" and user '.$this->usr->name);
+            zu_debug('word_list->get_grp created <'.$result->id.'> for "'.$this->name().'" and user '.$this->user()->name);
           }
         }
         */
@@ -1246,7 +1269,7 @@ class word_list
     function phrase_lst(): phrase_list
     {
         log_debug(self::class . '->phrase_lst ' . $this->dsp_id());
-        $phr_lst = new phrase_list($this->usr);
+        $phr_lst = new phrase_list($this->user());
         foreach ($this->lst as $wrd) {
             if (get_class($wrd) == word::class or get_class($wrd) == word_dsp::class) {
                 $phr_lst->lst[] = $wrd->phrase();
@@ -1267,17 +1290,17 @@ class word_list
      */
     function value(): value
     {
-        $val = new value($this->usr);
+        $val = new value($this->user());
         $phr_lst = $this->phrase_lst();
         $time_phr = $phr_lst->time_useful();
         $phr_lst->ex_time();
-        $phr_grp = new phrase_group($this->usr);
+        $phr_grp = new phrase_group($this->user());
         $phr_grp->load_by_lst($phr_lst);
         $val->grp = $phr_grp;
         $val->time_phr = $time_phr;
         $val->load_obj_vars();
 
-        log_debug(self::class . '->value "' . $val->name() . '" for "' . $this->usr->name . '" is ' . $val->number);
+        log_debug(self::class . '->value "' . $val->name() . '" for "' . $this->user()->name . '" is ' . $val->number);
         return $val;
     }
 
@@ -1287,7 +1310,7 @@ class word_list
      */
     function value_scaled(): value
     {
-        log_debug("word_list->value_scaled " . $this->dsp_id() . " for " . $this->usr->name . ".");
+        log_debug("word_list->value_scaled " . $this->dsp_id() . " for " . $this->user()->name . ".");
 
         $val = $this->value();
 
@@ -1444,8 +1467,8 @@ class word_list
      */
     function max_time(): word
     {
-        log_debug(self::class . '->max_time (' . $this->dsp_id() . ' and user ' . $this->usr->name . ')');
-        $max_wrd = new word($this->usr);
+        log_debug(self::class . '->max_time (' . $this->dsp_id() . ' and user ' . $this->user()->name . ')');
+        $max_wrd = new word($this->user());
         if (count($this->lst) > 0) {
             foreach ($this->lst as $wrd) {
                 // to be replaced by "is following"
@@ -1464,11 +1487,11 @@ class word_list
      */
     function max_val_time(): ?word
     {
-        log_debug(self::class . '->max_val_time ' . $this->dsp_id() . ' and user ' . $this->usr->name . ')');
+        log_debug(self::class . '->max_val_time ' . $this->dsp_id() . ' and user ' . $this->user()->name . ')');
         $wrd = null;
 
         // load the list of all value related to the word list
-        $val_lst = new value_list($this->usr);
+        $val_lst = new value_list($this->user());
         $val_lst->phr_lst = $this->phrase_lst();
         $val_lst->load_by_phr_lst();
         log_debug(self::class . '->max_val_time ... ' . dsp_count($val_lst->lst) . ' values for ' . $this->dsp_id());
@@ -1487,7 +1510,7 @@ class word_list
             }
         }
 
-        $time_lst = new word_list($this->usr);
+        $time_lst = new word_list($this->user());
         if (count($time_ids) > 0) {
             $time_lst->load_by_ids($time_ids);
             $wrd = $time_lst->max_time();
@@ -1497,7 +1520,7 @@ class word_list
         // get all values related to the selecting word, because this is probably strongest selection and to save time reduce the number of records asap
         $val = New value;
         $val->wrd_lst = $this;
-        $val->usr = $this->usr;
+        $val->usr = $this->user();
         $val->load_by_wrd_lst();
         $value_lst = array();
         $value_lst[$val->id] = $val->number;
@@ -1506,7 +1529,7 @@ class word_list
         if (sizeof($value_lst) > 0) {
 
           // get all words related to the value list
-          $all_word_lst = zu_sql_value_lst_words($value_lst, $this->usr->id);
+          $all_word_lst = zu_sql_value_lst_words($value_lst, $this->user()->id);
 
           // get the time words
           $time_lst = zut_time_lst($all_word_lst);
@@ -1518,7 +1541,7 @@ class word_list
           $wrd = New word_dsp;
           if ($wrd_id > 0) {
             $wrd->id = $wrd_id;
-            $wrd->usr = $this->usr;
+            $wrd->usr = $this->user();
             $wrd->load();
           }
         }
@@ -1550,7 +1573,7 @@ class word_list
             foreach ($time_phr_lst->lst as $time_wrd) {
                 if (is_null($phr)) {
                     $phr = $time_wrd;
-                    $phr->usr = $this->usr;
+                    $phr->set_user($this->user());
                 } else {
                     log_warning("The word list contains more time word than supported by the program.", "word_list->assume_time");
                 }

@@ -84,7 +84,7 @@ function run_triple_test(testing $t)
     $wrd = $t->load_word(TEST_WORD);
     $vrb = new verb;
     $vrb->id = cl(db_cl::VERB, verb::IS_A);
-    $vrb->usr = $t->usr1;
+    $vrb->set_user($t->usr1);
     $vrb->load_by_vars();
     $lnk = new triple($t->usr1);
     $lnk->from->id = $wrd_added->id;

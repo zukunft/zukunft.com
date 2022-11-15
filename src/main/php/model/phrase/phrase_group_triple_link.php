@@ -112,7 +112,7 @@ class phrase_group_triple_link extends phrase_group_link
         }
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_name($qp->name);
-        //$db_con->set_usr($this->usr->id);
+        //$db_con->set_usr($this->user()->id);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 

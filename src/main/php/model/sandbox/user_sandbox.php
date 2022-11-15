@@ -105,7 +105,7 @@ class user_sandbox
     // database fields that are used in all objects and that have a specific behavior
     public ?int $id = null;            // the database id of the object, which is the same for the standard and the user specific object
     public ?int $usr_cfg_id = null;    // the database id if there is already some user specific configuration for this object
-    public user $usr;                  // the person for whom the object is loaded, so to say the viewer
+    private user $usr;                 // the person for whom the object is loaded, so to say the viewer
     public ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
     public ?int $share_id = null;      // id for public, personal, group or private
     public ?int $protection_id = null; // id for no, user, admin or full protection
@@ -143,7 +143,7 @@ class user_sandbox
         // the default type that is overwritten by the child objects
         $this->obj_type = self::TYPE_NAMED;
 
-        $this->usr = $usr;
+        $this->set_user($usr);
     }
 
     /**
@@ -164,11 +164,22 @@ class user_sandbox
 
     /**
      * set the most used object vars with one set statement
-     * @param int $id mainly for test creation the database id of the user sandbox object
+     * @param int|null $id mainly for test creation the database id of the user sandbox object
      */
     public function set_id(?int $id): void
     {
         $this->id = $id;
+    }
+
+    /**
+     * set the user of the user sandbox object
+     *
+     * @param user $usr the person who wants to access the object e.g. the word
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
+        $this->usr = $usr;
     }
 
     /**
@@ -178,6 +189,14 @@ class user_sandbox
     public function id(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * @return user the person who wants to see a word, verb, triple, formula or view
+     */
+    function user(): user
+    {
+        return $this->usr;
     }
 
     /*
@@ -313,7 +332,7 @@ class user_sandbox
         $qp->name .= 'id';
 
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->add_par(sql_db::PAR_INT, strval($this->id));
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -416,8 +435,8 @@ class user_sandbox
                 if ($this->usr == null) {
                     log_err('Cannot set owner, because not user is set');
                 } else {
-                    $db_con->set_usr($this->usr->id);
-                    if ($db_con->update($this->id, self::FLD_USER, $this->usr->id)) {
+                    $db_con->set_usr($this->user()->id);
+                    if ($db_con->update($this->id, self::FLD_USER, $this->user()->id)) {
                         $result = true;
                     }
                 }
@@ -487,8 +506,8 @@ class user_sandbox
         $qp = new sql_par($class);
         $qp->name .= 'usr_cfg';
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
-        $qp->sql = $db_con->select_by_id_and_user($this->id, $this->usr->id);
+        $db_con->set_usr($this->user()->id);
+        $qp->sql = $db_con->select_by_id_and_user($this->id, $this->user()->id);
         $qp->par = $db_con->get_par();
         return $qp;
     }
@@ -499,8 +518,8 @@ class user_sandbox
     function dsp_id(): string
     {
         $result = '';
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->is_set()) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -534,7 +553,7 @@ class user_sandbox
 
       //$db_con = New mysql;
       $db_con->set_type($this->obj_name);
-      $db_con->set_usr($this->usr->id);
+      $db_con->set_usr($this->user()->id);
 
       if ($correct === True) {
         // set the default owner for all records with a missing owner
@@ -618,7 +637,7 @@ class user_sandbox
         }
         $db_con->set_type($this->obj_name, true);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(array(sql_db::FLD_USER_ID));
         $qp->sql = $db_con->select_by_id_not_owner($this->id, $this->owner_id);
 
@@ -640,7 +659,7 @@ class user_sandbox
 
         $user_id = 0;
         $db_con->set_type($this->obj_name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $qp = $this->changer_sql($db_con);
         $db_row = $db_con->get1($qp);
         if ($db_row != false) {
@@ -716,7 +735,7 @@ class user_sandbox
         }
         $db_con->set_type($this->obj_name, true);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(array(sql_db::FLD_USER_ID));
         $qp->sql = $db_con->select_by_id_not_owner($this->id);
 
@@ -744,8 +763,8 @@ class user_sandbox
             if ($this->owner_id > 0) {
                 $result = $this->owner_id;
             } else {
-                if ($this->usr->id > 0) {
-                    $result = $this->usr->id;
+                if ($this->user()->id > 0) {
+                    $result = $this->user()->id;
                 }
             }
         }
@@ -778,9 +797,9 @@ class user_sandbox
         $result = false;
         log_debug($this->obj_name . '->take_ownership ' . $this->dsp_id());
 
-        if ($this->usr->is_admin()) {
+        if ($this->user()->is_admin()) {
             // TODO activate $result .= $this->usr_cfg_create_all();
-            $result = $this->set_owner($this->usr->id); // TODO remove double getting of the user object
+            $result = $this->set_owner($this->user()->id); // TODO remove double getting of the user object
             // TODO activate $result .= $this->usr_cfg_cleanup();
         }
 
@@ -808,7 +827,7 @@ class user_sandbox
             $std->load_standard();
 
             $db_con->set_type($this->obj_name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             if (!$db_con->update($this->id, self::FLD_USER, $new_owner_id)) {
                 $result = false;
             }
@@ -866,12 +885,12 @@ class user_sandbox
         $result = true;
         log_debug($this->obj_name . '->used_by_someone_else (' . $this->id . ')');
 
-        log_debug($this->obj_name . '->used_by_someone_else owner is ' . $this->owner_id . ' and the change is requested by ' . $this->usr->id);
-        if ($this->owner_id == $this->usr->id or $this->owner_id <= 0) {
+        log_debug($this->obj_name . '->used_by_someone_else owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id);
+        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
             $changer_id = $this->changer();
             // removed "OR $changer_id <= 0" because if no one has changed the object jet does not mean that it can be changed
-            log_debug($this->obj_name . '->used_by_someone_else changer is ' . $changer_id . ' and the change is requested by ' . $this->usr->id);
-            if ($changer_id == $this->usr->id or $changer_id <= 0) {
+            log_debug($this->obj_name . '->used_by_someone_else changer is ' . $changer_id . ' and the change is requested by ' . $this->user()->id);
+            if ($changer_id == $this->user()->id or $changer_id <= 0) {
                 $result = false;
             }
         }
@@ -888,8 +907,8 @@ class user_sandbox
 
         // if the user who wants to change it, is the owner, he can do it
         // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
-        log_debug($this->obj_name . '->can_change owner is ' . $this->owner_id . ' and the change is requested by ' . $this->usr->id);
-        if ($this->owner_id == $this->usr->id or $this->owner_id <= 0) {
+        log_debug($this->obj_name . '->can_change owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id);
+        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
             $result = true;
         }
 
@@ -941,13 +960,13 @@ class user_sandbox
 
         $result = false;
         $action = 'Deletion of user ' . $this->obj_name . ' ';
-        $msg_failed = $this->id . ' failed for ' . $this->usr->name;
+        $msg_failed = $this->id . ' failed for ' . $this->user()->name;
 
         $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
         try {
             $msg = $db_con->delete(
                 array($this->obj_name . '_id', self::FLD_USER),
-                array($this->id, $this->usr->id));
+                array($this->id, $this->user()->id));
             if ($msg == '') {
                 $this->usr_cfg_id = null;
                 $result = true;
@@ -968,10 +987,10 @@ class user_sandbox
         global $db_con;
         $result = true;
 
-        if ($this->id > 0 and $this->usr->id > 0) {
+        if ($this->id > 0 and $this->user()->id > 0) {
             $log = $this->log_del();
             if ($log->id > 0) {
-                $db_con->usr_id = $this->usr->id;
+                $db_con->usr_id = $this->user()->id;
                 $result = $this->del_usr_cfg_exe($db_con);
             }
 
@@ -991,12 +1010,12 @@ class user_sandbox
 
         if (!$this->has_usr_cfg()) {
             if ($this->obj_type == self::TYPE_NAMED) {
-                log_debug($this->obj_name . '->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                log_debug($this->obj_name . '->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
             } elseif ($this->obj_type == self::TYPE_LINK) {
                 if (isset($this->from) and isset($this->to)) {
-                    log_debug($this->obj_name . '->add_usr_cfg for "' . $this->from->name . '"/"' . $this->to->name . '" by user "' . $this->usr->name . '"');
+                    log_debug($this->obj_name . '->add_usr_cfg for "' . $this->from->name . '"/"' . $this->to->name . '" by user "' . $this->user()->name . '"');
                 } else {
-                    log_debug($this->obj_name . '->add_usr_cfg for "' . $this->id . '" and user "' . $this->usr->name . '"');
+                    log_debug($this->obj_name . '->add_usr_cfg for "' . $this->id . '" and user "' . $this->user()->name . '"');
                 }
             } else {
                 log_err('Unknown user sandbox type ' . $this->obj_type . ' in ' . $this->obj_name, $this->obj_name . '->log_add');
@@ -1007,7 +1026,7 @@ class user_sandbox
             $qp = new sql_par(self::class);
             $qp->name = 'add_usr_cfg';
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_where_std($this->id);
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
@@ -1018,8 +1037,8 @@ class user_sandbox
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
-                $db_con->set_usr($this->usr->id);
-                $log_id = $db_con->insert(array($db_con->get_id_field(), sql_db::FLD_USER_ID), array($this->id, $this->usr->id));
+                $db_con->set_usr($this->user()->id);
+                $log_id = $db_con->insert(array($db_con->get_id_field(), sql_db::FLD_USER_ID), array($this->id, $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $this->obj_name . ' failed.');
                     $result = false;
@@ -1205,7 +1224,7 @@ class user_sandbox
                     if ($this->has_usr_cfg()) {
                         log_debug($this->obj_name . '->save_field_do remove user change');
                         $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
-                        $db_con->set_usr($this->usr->id);
+                        $db_con->set_usr($this->user()->id);
                         if (!$db_con->update($this->id, $log->field, Null)) {
                             $result = 'remove of ' . $log->field . ' failed';
                         }
@@ -1213,7 +1232,7 @@ class user_sandbox
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 } else {
                     $db_con->set_type($this->obj_name);
-                    $db_con->set_usr($this->usr->id);
+                    $db_con->set_usr($this->user()->id);
                     if (!$db_con->update($this->id, $log->field, $new_value)) {
                         $result = 'update of ' . $log->field . ' to ' . $new_value . ' failed';
                     }
@@ -1226,7 +1245,7 @@ class user_sandbox
                 }
                 if ($result == '') {
                     $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
-                    $db_con->set_usr($this->usr->id);
+                    $db_con->set_usr($this->user()->id);
                     if ($new_value == $std_value) {
                         log_debug($this->obj_name . '->save_field_do remove user change');
                         if (!$db_con->update($this->id, $log->field, Null)) {
@@ -1286,7 +1305,7 @@ class user_sandbox
             // similar to $this->save_field_do
             if ($this->can_change()) {
                 $db_con->set_type($this->obj_name);
-                $db_con->set_usr($this->usr->id);
+                $db_con->set_usr($this->user()->id);
                 if (!$db_con->update($this->id, $log->field, $new_value)) {
                     $result .= 'excluding of ' . $this->obj_name . ' failed';
                 }
@@ -1298,7 +1317,7 @@ class user_sandbox
                 }
                 if ($result == '') {
                     $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
-                    $db_con->set_usr($this->usr->id);
+                    $db_con->set_usr($this->user()->id);
                     if ($new_value == $std_value) {
                         if (!$db_con->update($this->id, $log->field, Null)) {
                             $result .= 'include of ' . $this->obj_name . ' for user failed';
@@ -1353,7 +1372,7 @@ class user_sandbox
                 }
                 if ($result == '') {
                     $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
-                    $db_con->set_usr($this->usr->id);
+                    $db_con->set_usr($this->user()->id);
                     if (!$db_con->update($this->id, $log->field, $new_value)) {
                         $result = 'setting of share type failed';
                     }
@@ -1499,7 +1518,7 @@ class user_sandbox
                     if ($result = '') {
                         // ... and create a new display component link
                         $this->id = 0;
-                        $this->owner_id = $this->usr->id;
+                        $this->owner_id = $this->user()->id;
                         $result .= $this->add()->get_last_message();
                     }
                 }
@@ -1704,7 +1723,7 @@ class user_sandbox
 
             // configure the global database connection object for the select, insert, update and delete queries
             $db_con->set_type($this->obj_name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
 
             // create an object to check possible duplicates
             $similar = null;
@@ -1769,7 +1788,7 @@ class user_sandbox
                             }
                             // configure the global database connection object again to overwrite any changes from load_objects
                             $db_con->set_type($this->obj_name);
-                            $db_con->set_usr($this->usr->id);
+                            $db_con->set_usr($this->user()->id);
                         }
                     }
 
@@ -1841,7 +1860,7 @@ class user_sandbox
             $log = $this->log_del();
         }
         if ($log->id > 0) {
-            $db_con->usr_id = $this->usr->id;
+            $db_con->usr_id = $this->user()->id;
 
             // for words first delete all links
             if ($this->obj_name == sql_db::TBL_WORD) {
@@ -1863,7 +1882,7 @@ class user_sandbox
                 // and the corresponding formula elements
                 if ($result->is_ok()) {
                     $db_con->set_type(sql_db::TBL_FORMULA_ELEMENT);
-                    $db_con->set_usr($this->usr->id);
+                    $db_con->set_usr($this->user()->id);
                     $msg = $db_con->delete(sql_db::TBL_FORMULA . DB_FIELD_EXT_ID, $this->id);
                     $result->add_message($msg);
                 }
@@ -1871,7 +1890,7 @@ class user_sandbox
                 // and the corresponding formula values
                 if ($result->is_ok()) {
                     $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
-                    $db_con->set_usr($this->usr->id);
+                    $db_con->set_usr($this->user()->id);
                     $msg = $db_con->delete(sql_db::TBL_FORMULA . DB_FIELD_EXT_ID, $this->id);
                     $result->add_message($msg);
                 }
@@ -1902,7 +1921,7 @@ class user_sandbox
             // delete first all user configuration that have also been excluded
             if ($result->is_ok()) {
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
-                $db_con->set_usr($this->usr->id);
+                $db_con->set_usr($this->user()->id);
                 $msg = $db_con->delete(
                     array($this->obj_name . DB_FIELD_EXT_ID, 'excluded'),
                     array($this->id, '1'));
@@ -1911,7 +1930,7 @@ class user_sandbox
             if ($result->is_ok()) {
                 // finally, delete the object
                 $db_con->set_type($this->obj_name);
-                $db_con->set_usr($this->usr->id);
+                $db_con->set_usr($this->user()->id);
                 $msg = $db_con->delete($this->obj_name . '_id', $this->id);
                 $result->add_message($msg);
                 log_debug($this->obj_name . '->del_exe of ' . $this->dsp_id() . ' done');
@@ -1957,7 +1976,7 @@ class user_sandbox
                     $msg .= $this->del_exe();
                 } else {
                     // if the owner deletes the object find a new owner or delete the object completely
-                    if ($this->owner_id == $this->usr->id) {
+                    if ($this->owner_id == $this->user()->id) {
                         log_debug($this->obj_name . '->del owner has requested the deletion');
                         // get median user
                         $new_owner_id = $this->median_user();

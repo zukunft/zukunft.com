@@ -36,20 +36,55 @@ class link_list
      *  object vars
      */
 
-    public array $lst; // the list of the view component links
-    public user $usr;  // the person for whom the list has been created
+    public array $lst; // the list of the links e.g. a component to a view or a formula to a phrase
+    private user $usr; // the person for whom the list has been created
 
 
+    /*
+     * construct and map
+     */
+
+    /**
+     * always set the user because a link list is always user specific
+     * @param user $usr the user who requested to see e.g. the formula links
+     */
     function __construct(user $usr)
     {
         $this->lst = [];
+        $this->set_user($usr);
+    }
+
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the phrase list
+     *
+     * @param user $usr the person who wants to access the phrases
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
         $this->usr = $usr;
     }
 
     /**
+     * @return user the person who wants to see the phrases
+     */
+    function user(): user
+    {
+        return $this->usr;
+    }
+
+    /*
+     *  information functions
+     */
+
+    /**
      * @return bool true if the list is already empty
      */
-    function empty(): bool
+    function is_empty(): bool
     {
         $result = true;
         if ($this->lst != null) {

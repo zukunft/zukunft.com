@@ -42,11 +42,34 @@ class system_error_log_list
     const DSP_OTHER = 'other';
 
     public ?array $lst = null;      // a list of system error objects
-    public ?user $usr = null;       // the user who wants to see the errors
+    private ?user $usr = null;      // the user who wants to see the errors
     public ?string $dsp_type = '';  //
-    public int $page = 0;       //
-    public int $size = 0;       //
+    public int $page = 0;           //
+    public int $size = 0;           //
     public ?string $back = '';      //
+
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the error log
+     *
+     * @param user|null $usr the person who wants to see the error log
+     * @return void
+     */
+    function set_user(?user $usr): void
+    {
+        $this->usr = $usr;
+    }
+
+    /**
+     * @return user|null the person who wants to see the error log
+     */
+    function user(): ?user
+    {
+        return $this->usr;
+    }
 
     /*
      * casting objects
@@ -96,13 +119,13 @@ class system_error_log_list
             $sql_where = $sql_status;
             $qp->name .= self::DSP_ALL;
         } elseif ($this->dsp_type == self::DSP_OTHER) {
-            $db_con->add_par(sql_db::PAR_INT, $this->usr->id);
+            $db_con->add_par(sql_db::PAR_INT, $this->user()->id);
             $sql_where = $sql_status .
                 ' AND (' . sql_db::STD_TBL . '.' . user_sandbox::FLD_USER . ' <> ' . $db_con->par_name() .
                 ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
             $qp->name .= self::DSP_OTHER;
         } elseif ($this->dsp_type == self::DSP_MY) {
-            $db_con->add_par(sql_db::PAR_INT, $this->usr->id);
+            $db_con->add_par(sql_db::PAR_INT, $this->user()->id);
             $sql_where = $sql_status .
                 ' AND (' . sql_db::STD_TBL . '.' . user_sandbox::FLD_USER . ' = ' . $db_con->par_name() .
                 ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
@@ -114,7 +137,7 @@ class system_error_log_list
         if ($sql_where <> '') {
             $db_con->set_type(sql_db::TBL_SYS_LOG);
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_fields(system_error_log::FLD_NAMES);
             $db_con->set_join_fields(array(system_error_log::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
             $db_con->set_join_fields(array(user_type::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
@@ -139,7 +162,7 @@ class system_error_log_list
      */
     function load(): bool
     {
-        log_debug('system_error_log_list->load for user "' . $this->usr->name . '"');
+        log_debug('system_error_log_list->load for user "' . $this->user()->name . '"');
 
         global $db_con;
         $result = false;

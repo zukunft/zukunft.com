@@ -79,8 +79,8 @@ class figure_list
             $result = $id;
         }
         /*
-        if (isset($this->usr)) {
-          $result .= ' for user '.$this->usr->name;
+        if ($this->user()->is_set()) {
+          $result .= ' for user '.$this->user()->name;
         }
         */
 

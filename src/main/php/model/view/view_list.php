@@ -38,8 +38,35 @@ class view_list extends user_type_list
 
     function __construct(user $usr)
     {
+        $this->set_user($usr);
+    }
+
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the phrase list
+     *
+     * @param user $usr the person who wants to access the phrases
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
         $this->usr = $usr;
     }
+
+    /**
+     * @return user the person who wants to see the phrases
+     */
+    function user(): user
+    {
+        return $this->usr;
+    }
+
+    /*
+     * loading functions
+     */
 
     /**
      * force to reload the list of views from the database that have a used code id
@@ -51,7 +78,7 @@ class view_list extends user_type_list
     {
         $this->lst = [];
         $db_con->set_type($db_type);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(view::FLD_NAMES);
         $db_con->set_usr_fields(view::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(view::FLD_NAMES_NUM_USR);

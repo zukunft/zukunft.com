@@ -53,7 +53,11 @@ class phrase_list
     // (key is at the moment the database id, but it looks like this has no advantages,
     // so a normal 0 to n order could have more advantages)
     public array $lst;
-    public user $usr;  // the user object of the person for whom the phrase list is loaded, so to say the viewer
+    private user $usr;  // the user object of the person for whom the phrase list is loaded, so to say the viewer
+
+    /*
+     * construct and map
+     */
 
     /**
      * always set the user because a phrase list is always user specific
@@ -62,7 +66,30 @@ class phrase_list
     function __construct(user $usr)
     {
         $this->lst = array();
+        $this->set_user($usr);
+    }
+
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the phrase list
+     *
+     * @param user $usr the person who wants to access the phrases
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
         $this->usr = $usr;
+    }
+
+    /**
+     * @return user the person who wants to see the phrases
+     */
+    function user(): user
+    {
+        return $this->usr;
     }
 
     /*
@@ -109,7 +136,7 @@ class phrase_list
         $qp->name .= count($ids) . 'ids_word_part';
 
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(word::FLD_NAMES);
         $db_con->set_usr_fields(word::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
@@ -134,7 +161,7 @@ class phrase_list
         $qp->name .= count($ids) . 'ids_triple_part';
 
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_link_fields(triple::FLD_FROM, triple::FLD_TO, verb::FLD_ID);
         $db_con->set_fields(triple::FLD_NAMES);
         $db_con->set_usr_fields(triple::FLD_NAMES_USR);
@@ -182,7 +209,7 @@ class phrase_list
                 }
             } else {
                 $qp = $this->load_by_wrd_ids_sql($db_con, $wrd_ids);
-                $db_con->usr_id = $this->usr->id;
+                $db_con->usr_id = $this->user()->id;
                 $db_wrd_lst = $db_con->get($qp);
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
@@ -206,7 +233,7 @@ class phrase_list
                 }
             } else {
                 $qp = $this->load_by_trp_ids_sql($db_con, $lnk_ids);
-                $db_con->usr_id = $this->usr->id;
+                $db_con->usr_id = $this->user()->id;
                 $db_trp_lst = $db_con->get($qp);
                 foreach ($db_trp_lst as $db_trp) {
                     if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
@@ -258,7 +285,7 @@ class phrase_list
                 }
             } else {
                 $qp = $this->load_by_wrd_ids_sql($db_con, $wrd_ids);
-                $db_con->usr_id = $this->usr->id;
+                $db_con->usr_id = $this->user()->id;
                 $db_wrd_lst = $db_con->get($qp);
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
@@ -282,7 +309,7 @@ class phrase_list
                 }
             } else {
                 $qp = $this->load_by_trp_ids_sql($db_con, $lnk_ids);
-                $db_con->usr_id = $this->usr->id;
+                $db_con->usr_id = $this->user()->id;
                 $db_trp_lst = $db_con->get($qp);
                 foreach ($db_trp_lst as $db_trp) {
                     if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
@@ -360,13 +387,13 @@ class phrase_list
                              ' . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM ' . $db_con->get_table_name(sql_db::TBL_WORD) . ' w   
                    LEFT JOIN user_' . $db_con->get_table_name(sql_db::TBL_WORD) . ' u ON u.' . word::FLD_ID . ' = w.' . word::FLD_ID . ' 
-                                         AND u.user_id = ' . $this->usr->id . ' ';
+                                         AND u.user_id = ' . $this->user()->id . ' ';
         $sql_triples = 'SELECT DISTINCT l.triple_id * -1 AS id, 
                                ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM triples l
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                AND u.user_id = ' . $this->usr->id . ' ';
+                                                AND u.user_id = ' . $this->user()->id . ' ';
 
         if (isset($type)) {
             if ($type->id > 0) {
@@ -380,7 +407,7 @@ class phrase_list
                                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                                           FROM triples l
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                                AND u.user_id = ' . $this->usr->id . '
+                                                                AND u.user_id = ' . $this->user()->id . '
                                          WHERE l.to_phrase_id = ' . $type->id . ' 
                                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
@@ -392,7 +419,7 @@ class phrase_list
                                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                                           FROM triples l
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                                AND u.user_id = ' . $this->usr->id . '
+                                                                AND u.user_id = ' . $this->user()->id . '
                                          WHERE l.to_phrase_id <> ' . $type->id . ' 
                                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
@@ -406,7 +433,7 @@ class phrase_list
                              ' . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM ( ' . $sql_wrd_all . ' ) a, words w
                    LEFT JOIN user_words u ON u.' . word::FLD_ID . ' = w.' . word::FLD_ID . ' 
-                                         AND u.user_id = ' . $this->usr->id . '
+                                         AND u.user_id = ' . $this->user()->id . '
                        WHERE w.' . word::FLD_ID . ' NOT IN ( ' . $sql_wrd_other . ' )                                        
                          AND w.' . word::FLD_ID . ' = a.id ) AS w 
                        WHERE ' . $sql_where_exclude . ' ';
@@ -419,14 +446,14 @@ class phrase_list
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM triples l
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                AND u.user_id = ' . $this->usr->id . '
+                                                AND u.user_id = ' . $this->user()->id . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
                            AND l.to_phrase_id = ' . $type->id . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*
                 $sql_type_from = ', triples t LEFT JOIN user_triples ut ON ut.triple_id = t.triple_id
-                                                                             AND ut.user_id = '.$this->usr->id.'';
+                                                                             AND ut.user_id = '.$this->user()->id.'';
                 $sql_type_where_words   = 'WHERE w.' . word::FLD_ID . ' = t.from_phrase_id
                                              AND t.verb_id = '.cl(SQL_LINK_TYPE_IS).'
                                              AND t.to_phrase_id = '.$type->id.' ';
@@ -438,7 +465,7 @@ class phrase_list
                                       IF(u.excluded IS NULL, COALESCE(w.excluded, 0), COALESCE(u.excluded, 0)) AS excluded
                                   FROM words w
                             LEFT JOIN user_words u ON u.' . word::FLD_ID . ' = w.' . word::FLD_ID . '
-                                                  AND u.user_id = '.$this->usr->id.'
+                                                  AND u.user_id = '.$this->user()->id.'
                                       '.$sql_type_from.'
                                       '.$sql_type_where_words.'
                               GROUP BY name';
@@ -447,7 +474,7 @@ class phrase_list
                                       IF(u.excluded IS NULL, COALESCE(l.excluded, 0), COALESCE(u.excluded, 0)) AS excluded
                                   FROM triples l
                             LEFT JOIN user_triples u ON u.triple_id = l.triple_id
-                                                        AND u.user_id = '.$this->usr->id.'
+                                                        AND u.user_id = '.$this->user()->id.'
                                       '.$sql_type_from.'
                                       '.$sql_type_where_triples.'
                               GROUP BY name';
@@ -466,7 +493,7 @@ class phrase_list
         // select the related words
         $db_con->set_type(sql_db::TBL_WORD);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(triple::FLD_NAMES);
         $db_con->set_usr_fields(triple::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(triple::FLD_NAMES_NUM_USR);
@@ -478,7 +505,7 @@ class phrase_list
         // select the related triple
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_link_fields(triple::FLD_FROM, triple::FLD_TO, verb::FLD_ID);
         $db_con->set_fields(triple::FLD_NAMES);
         $db_con->set_usr_fields(triple::FLD_NAMES_USR);
@@ -598,7 +625,7 @@ class phrase_list
                             " . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . "
                        FROM " . $sql_from . "
                   LEFT JOIN user_words u ON u.word_id = w.word_id
-                                        AND u.user_id = " . $this->usr->id . "
+                                        AND u.user_id = " . $this->user()->id . "
                       WHERE w.word_type_id = " . cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME) . "
                         " . $sql_where_and . "
                    GROUP BY name) AS s
@@ -668,7 +695,7 @@ class phrase_list
         $wrd_lst = new word_list($this->usr);
 
         // check the basic settings
-        if (!isset($this->usr)) {
+        if (!$this->user()->is_set()) {
             log_err('User for phrase list ' . $this->dsp_id() . ' missing', 'phrase_list->wrd_lst_all');
         }
 
@@ -1192,8 +1219,8 @@ class phrase_list
         }
 
         /* the user is in most cases no extra info
-        if (isset($this->usr)) {
-          $result .= ' for user '.$this->usr->name;
+        if ($this->user()->is_set()) {
+          $result .= ' for user '.$this->user()->name;
         }
         */
 
@@ -1362,7 +1389,7 @@ class phrase_list
     function add_name($phr_name_to_add): void
     {
         log_debug('phrase_list->add_name "' . $phr_name_to_add . '"');
-        if (is_null($this->usr->id)) {
+        if (is_null($this->user()->id)) {
             log_err("The user must be set.", "phrase_list->add_name");
         } else {
             $phr_to_add = new phrase($this->usr);
@@ -1536,7 +1563,7 @@ class phrase_list
         foreach ($this->lst as $phr) {
             // temp workaround utils the reason is found, why the user is sometimes not set
             if (!isset($phr->usr)) {
-                $phr->usr = $this->usr;
+                $phr->set_user($this->usr);
             }
             $phr_lst_is = $phr->is();
             if (isset($phr_lst_is)) {
@@ -1618,7 +1645,7 @@ class phrase_list
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
             // temp solution for testing
-            $phr->usr = $this->usr;
+            $phr->set_user($this->usr);
             log_debug('phrase_list->has_percent -> check ' . $phr->dsp_id());
             if ($result == false) {
                 if ($phr->is_percent()) {
@@ -1662,7 +1689,7 @@ class phrase_list
 
         $wrd_lst = $this->wrd_lst_all();
         $result = $wrd_lst->time_lst();
-        $result->usr = $this->usr;
+        $result->set_user($this->usr);
         return $result;
     }
 
@@ -1818,7 +1845,7 @@ class phrase_list
      */
     function name_sort(): array
     {
-        log_debug('phrase_list->wlsort ' . $this->dsp_id() . ' and user ' . $this->usr->name);
+        log_debug('phrase_list->wlsort ' . $this->dsp_id() . ' and user ' . $this->user()->name);
         $name_lst = array();
         $result = array();
         $pos = 0;
@@ -1851,7 +1878,7 @@ class phrase_list
      */
     function max_time(): phrase
     {
-        log_debug('phrase_list->max_time (' . $this->dsp_id() . ' and user ' . $this->usr->name . ')');
+        log_debug('phrase_list->max_time (' . $this->dsp_id() . ' and user ' . $this->user()->name . ')');
         $max_phr = new phrase($this->usr);
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {

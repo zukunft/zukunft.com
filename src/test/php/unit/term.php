@@ -67,7 +67,7 @@ class term_unit_tests
         $t->assert($t->name . 'formula name', $trm->name(), $frm->name());
 
         $vrb = new verb(1, verb::IS_A);
-        $vrb->usr = $usr;
+        $vrb->set_user($usr);
         $trm = $vrb->term();
         $t->assert($t->name . 'verb id', $trm->id_obj(), $vrb->id());
         $t->assert($t->name . 'verb name', $trm->name(), $vrb->name());

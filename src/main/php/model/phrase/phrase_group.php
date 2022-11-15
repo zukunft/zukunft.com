@@ -88,7 +88,7 @@ class phrase_group
     public ?string $auto_name;    // the automatically created generic name for the word group, used for a quick display of values
 
     // in memory only fields
-    public user $usr;             // the user object of the person for whom the word and triple list is loaded, so to say the viewer
+    private user $usr;             // the user object of the person for whom the word and triple list is loaded, so to say the viewer
     public ?array $id_order = array();       // the ids from above in the order that the user wants to see them
 
     /*
@@ -101,7 +101,7 @@ class phrase_group
      */
     function __construct(user $usr, int $id = 0, array $prh_names = [])
     {
-        $this->usr = $usr;
+        $this->set_user($usr);
 
         $this->reset();
 
@@ -121,6 +121,33 @@ class phrase_group
 
         $this->id_order = array();
     }
+
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the phrase group
+     *
+     * @param user $usr the person who wants to access the phrase group
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
+        $this->usr = $usr;
+    }
+
+    /**
+     * @return user the person who wants to see the phrase group
+     */
+    function user(): user
+    {
+        return $this->usr;
+    }
+
+    /*
+     * casting objects
+     */
 
     /**
      * @return phrase_group_api the phrase group frontend API object
@@ -190,7 +217,7 @@ class phrase_group
         $qp = new sql_par(self::class);
         $qp->name .= $this->load_sql_name_ext();
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(self::FLD_NAMES);
 
         return $this->load_sql_select_qp($db_con, $qp);
@@ -272,7 +299,7 @@ class phrase_group
             return 'name';
         } else {
             log_err('Either the database ID (' . $this->id . ') or the ' .
-                self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->usr->id . ') must be set to load a ' .
+                self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->user()->id . ') must be set to load a ' .
                 self::class, self::class . '->load');
             return '';
         }
@@ -372,7 +399,7 @@ class phrase_group
         } elseif (count($wrd_lst->lst) > 0) {
             $sql_name .= count($wrd_lst->lst) . 'word_id';
         } else {
-            log_err("Either the database ID (" . $this->id . ") or a word list and the user (" . $this->usr->id . ") must be set to load a phrase list.", "phrase_list->load");
+            log_err("Either the database ID (" . $this->id . ") or a word list and the user (" . $this->user()->id . ") must be set to load a phrase list.", "phrase_list->load");
         }
 
         $sql_from = '';
@@ -456,14 +483,14 @@ class phrase_group
               GROUP BY l1.phrase_group_id;";
                 log_debug('phrase_group->get_by_wrd_lst sql ' . $sql);
                 //$db_con = New mysql;
-                $db_con->usr_id = $this->usr->id;
+                $db_con->usr_id = $this->user()->id;
                 $db_grp = $db_con->get1_old($sql);
                 if ($db_grp != null) {
                     $this->id = $db_grp['phrase_group_id'];
                     if ($this->id > 0) {
                         log_debug('phrase_group->get_by_wrd_lst got id ' . $this->id);
                         $result = $this->load();
-                        log_debug('phrase_group->get_by_wrd_lst ' . $result . ' found <' . $this->id . '> for ' . $wrd_lst->name() . ' and user ' . $this->usr->name);
+                        log_debug('phrase_group->get_by_wrd_lst ' . $result . ' found <' . $this->id . '> for ' . $wrd_lst->name() . ' and user ' . $this->user()->name);
                     } else {
                         log_warning('No group found for words ' . $wrd_lst->name() . '.', "phrase_group->get_by_wrd_lst");
                     }
@@ -542,8 +569,8 @@ class phrase_group
                 $result .= ' for phrases ' . $this->phr_lst->dsp_id();
             }
         }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->is_set()) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
 
         return $result;
@@ -589,7 +616,7 @@ class phrase_group
         $val->grp = $this;
         $val->load_obj_vars();
 
-        log_debug('phrase_group->value ' . $val->wrd_lst->name() . ' for "' . $this->usr->name . '" is ' . $val->number);
+        log_debug('phrase_group->value ' . $val->wrd_lst->name() . ' for "' . $this->user()->name . '" is ' . $val->number);
         return $val;
     }
 
@@ -599,7 +626,7 @@ class phrase_group
      */
     function result($time_wrd_id): ?array
     {
-        log_debug("phrase_group->result (" . $this->id . ",time" . $time_wrd_id . ",u" . $this->usr->name . ")");
+        log_debug("phrase_group->result (" . $this->id . ",time" . $time_wrd_id . ",u" . $this->user()->name . ")");
 
         global $db_con;
 
@@ -610,7 +637,7 @@ class phrase_group
         }
 
         //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $sql = "SELECT formula_value_id AS id,
                    formula_value    AS num,
                    user_id          AS usr,
@@ -618,7 +645,7 @@ class phrase_group
               FROM formula_values 
              WHERE phrase_group_id = " . $this->id . "
                AND " . $sql_time . "
-               AND user_id = " . $this->usr->id . ";";
+               AND user_id = " . $this->user()->id . ";";
         $result = $db_con->get1_old($sql);
 
         // if no user specific result is found, get the standard result
@@ -648,7 +675,7 @@ class phrase_group
                 log_debug("phrase_group->result -> (" . $result['num'] . ")");
             }
         } else {
-            log_debug("phrase_group->result -> (" . $result['num'] . " for " . $this->usr->id . ")");
+            log_debug("phrase_group->result -> (" . $result['num'] . " for " . $this->user()->id . ")");
         }
 
         return $result;
@@ -675,7 +702,7 @@ class phrase_group
         if ($this->auto_name <> $group_name) {
             if ($this->id > 0) {
                 // update the generic name in the database
-                $db_con->usr_id = $this->usr->id;
+                $db_con->usr_id = $this->user()->id;
                 $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
                 if ($db_con->update($this->id, self::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
@@ -694,7 +721,7 @@ class phrase_group
     private function selector()
     {
         $result = '';
-        log_debug('phrase_group->selector for ' . $this->id . ' and user "' . $this->usr->name . '"');
+        log_debug('phrase_group->selector for ' . $this->id . ' and user "' . $this->user()->name . '"');
 
         new function: load_main_type to load all word and phrase types with one query
 
@@ -734,7 +761,7 @@ class phrase_group
             $wrd_id_txt = implode(',', $this->phr_lst->wrd_ids());
             $trp_id_txt = implode(',', $this->phr_lst->trp_ids());
             if ($wrd_id_txt <> '' or $trp_id_txt <> '') {
-                $db_con->usr_id = $this->usr->id;
+                $db_con->usr_id = $this->user()->id;
 
                 if (strlen($wrd_id_txt) > 255) {
                     log_err('Too many words assigned to one value ("' . $wrd_id_txt . '" is longer than the max database size of 255).', "phrase_group->set_wrd_id_txt");
@@ -778,7 +805,7 @@ class phrase_group
         $result = '';
 
         // create the db link object for all actions
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
 
         // switch between the word and triple settings
         if ($type == sql_db::TBL_WORD) {
@@ -790,7 +817,7 @@ class phrase_group
             $lnk = new phrase_group_triple_link();
             $qp = $lnk->load_by_group_id_sql($db_con, $this);
             $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
-            $field_name = 'triple_id';
+            $field_name = triple::FLD_ID;
         }
 
         // read all existing group links
@@ -863,12 +890,12 @@ class phrase_group
         $result = new user_message();
 
         $db_con->set_type(sql_db::TBL_PHRASE_GROUP_TRIPLE);
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
         $db_con->set_type(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
@@ -897,7 +924,7 @@ class phrase_group
         $result = $this->del_phr_links();
 
         $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
@@ -921,7 +948,7 @@ class phrase_group
               FROM phrase_group_phrase_links
              WHERE phrase_group_id = ' . $this->id . ';';
         //$db_con = New mysql;
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $lnk_id_lst = $db_con->get_old($sql);
         foreach ($lnk_id_lst as $db_row) {
             $result[] = $db_row[phrase::FLD_ID];

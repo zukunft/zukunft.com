@@ -43,6 +43,10 @@ class phrase_group_list
     // search fields
     public ?phrase $phr; //
 
+    /*
+     * construct and map
+     */
+
     /**
      * always set the user because a phrase group list is always user specific
      * @param user $usr the user who requested to see the phrase groups
@@ -50,8 +54,35 @@ class phrase_group_list
     function __construct(user $usr)
     {
         $this->lst = array();
+        $this->set_user($usr);
+    }
+
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the phrase group list
+     *
+     * @param user $usr the person who wants to access the phrase groups
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
         $this->usr = $usr;
     }
+
+    /**
+     * @return user the person who wants to see the phrase groups
+     */
+    function user(): user
+    {
+        return $this->usr;
+    }
+
+    /*
+     * load functions
+     */
 
     /**
      * create an SQL statement to retrieve a list of phrase groups from the database
@@ -71,13 +102,13 @@ class phrase_group_list
         if ($this->phr != null) {
             if ($this->phr->id <> 0) {
                 if ($this->phr->is_word()) {
-                    $qp->name .= 'word_id';
+                    $qp->name .= word::FLD_ID;
                     $db_con->add_par(sql_db::PAR_INT, $this->phr->id);
-                    $sql_where = 'l.word_id = ' . $db_con->par_name();
+                    $sql_where = 'l.' . word::FLD_ID . ' = ' . $db_con->par_name();
                 } else {
-                    $qp->name .= 'triple_id';
+                    $qp->name .= triple::FLD_ID;
                     $db_con->add_par(sql_db::PAR_INT, $this->phr->id * -1);
-                    $sql_where = 'l.triple_id = ' . $db_con->par_name();
+                    $sql_where = 'l.' . triple::FLD_ID . ' = ' . $db_con->par_name();
                 }
             }
         }
@@ -86,12 +117,12 @@ class phrase_group_list
         } else {
 
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_fields(phrase_group::FLD_NAMES);
             if ($this->phr->is_word()) {
                 $db_con->set_join_fields(array(word::FLD_ID), sql_db::TBL_PHRASE_GROUP_TRIPLE, phrase_group::FLD_ID, phrase_group::FLD_ID);
             } else {
-                $db_con->set_join_fields(array('triple_id'), sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
+                $db_con->set_join_fields(array(triple::FLD_ID), sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
             }
             $db_con->set_where_text($sql_where);
             $qp->sql = $db_con->select_by_set_id();
@@ -108,7 +139,7 @@ class phrase_group_list
         $result = false;
 
         // check the all minimal input parameters
-        if (!isset($this->usr)) {
+        if (!$this->user()->is_set()) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql($db_con);
@@ -331,10 +362,10 @@ class phrase_group_list
             $sql_group = 'SELECT l1.phrase_group_id
                       FROM phrase_group_phrase_links l1
                  LEFT JOIN user_phrase_group_phrase_links u1 ON u1.phrase_group_phrase_link_id = l1.phrase_group_phrase_link_id 
-                                                            AND u1.user_id = ' . $this->usr->id . ',
+                                                            AND u1.user_id = ' . $this->user()->id . ',
                            phrase_group_phrase_links l2
                  LEFT JOIN user_phrase_group_phrase_links u2 ON u2.phrase_group_phrase_link_id = l2.phrase_group_phrase_link_id 
-                                                            AND u2.user_id = ' . $this->usr->id . '
+                                                            AND u2.user_id = ' . $this->user()->id . '
                      WHERE l1.phrase_id IN (' . $phr_linked_ex->ids_txt() . ')  
                        AND l2.phrase_id IN (' . $phr_used_ex->ids_txt() . ')
                        AND l1.phrase_group_id = l2.phrase_group_id
@@ -392,7 +423,7 @@ class phrase_group_list
 
         log_debug('phr_grp_lst->get_grp_by_phr -> sql "' . $sql . '"');
         //$db_con = New mysql;
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         return $db_con->get_old($sql);
     }
 
@@ -413,7 +444,7 @@ class phrase_group_list
             log_err('Formula phrase is missing.', 'phr_grp_lst->add_grp_by_phr');
         }
 
-        log_debug('phr_grp_lst->add_grp_by_phr -> ' . $frm_linked->name() . ' related ' . $type . 's found for ' . $frm_used->name() . ' and user ' . $this->usr->name);
+        log_debug('phr_grp_lst->add_grp_by_phr -> ' . $frm_linked->name() . ' related ' . $type . 's found for ' . $frm_used->name() . ' and user ' . $this->user()->name);
         $added = 0;
         $changed = 0;
 

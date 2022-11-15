@@ -73,7 +73,7 @@ class verb
     );
 
     public ?int $id = null;           // the database id of the word link type (verb)
-    public ?user $usr = null;         // not used at the moment, because there should not be any user specific verbs
+    private ?user $usr = null;         // not used at the moment, because there should not be any user specific verbs
     //                                   otherwise if id is 0 (not NULL) the standard word link type, otherwise the user specific verb
     public ?string $code_id = '';     // the main id to detect verbs that have a special behavior
     public ?string $name = '';        // the verb name to build the "sentence" for the user, which cannot be empty
@@ -185,11 +185,30 @@ class verb
     }
 
     /**
+     * set the user of the verb
+     *
+     * @param user|null $usr the person who wants to access the verb
+     * @return void
+     */
+    function set_user(?user $usr): void
+    {
+        $this->usr = $usr;
+    }
+
+    /**
      * @return int the database id which is not 0 if the object has been saved
      */
     public function id(): int
     {
         return $this->id;
+    }
+
+    /**
+     * @return user|null the person who wants to see this verb
+     */
+    function user(): ?user
+    {
+        return $this->usr;
     }
 
     /*
@@ -406,7 +425,7 @@ class verb
         // reset all parameters of this verb object but keep the user
         $usr = $this->usr;
         $this->reset();
-        $this->usr = $usr;
+        $this->set_user($usr);
         foreach ($json_obj as $key => $value) {
             if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
@@ -458,8 +477,8 @@ class verb
         } else {
             $result .= $this->id;
         }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->is_set()) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -500,8 +519,8 @@ class verb
         $result .= $sel->display();
 
         log_debug('verb->dsp_selector -> admin id ' . $this->id);
-        if (isset($this->usr)) {
-            if ($this->usr->is_admin()) {
+        if ($this->user()->is_set()) {
+            if ($this->user()->is_admin()) {
                 // admin users should always have the possibility to create a new verb / link type
                 $result .= \html\btn_add('add new verb', '/http/verb_add.php?back=' . $back);
             }
@@ -577,7 +596,7 @@ class verb
      */
     private function get_term(): term
     {
-        $trm = new term($this->usr);
+        $trm = new term($this->usr, self::class);
         $trm->set_name($this->name, self::class);
         $trm->load_by_obj_name($this->name, false);
         return $trm;
@@ -607,7 +626,7 @@ class verb
         $qp->name .= 'usage';
         $db_con->set_type(sql_db::TBL_WORD);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_where_std($this->id);
         $qp->sql = $db_con->select_by_set_id();
@@ -640,7 +659,7 @@ class verb
     // true if no other user has modified the verb
     private function not_changed(): bool
     {
-        log_debug('verb->not_changed (' . $this->id . ') by someone else than the owner (' . $this->usr->id . ')');
+        log_debug('verb->not_changed (' . $this->id . ') by someone else than the owner (' . $this->user()->id . ')');
 
         global $db_con;
         $result = true;
@@ -653,7 +672,7 @@ class verb
                    AND user_id <> ".$this->owner_id."
                    AND (excluded <> 1 OR excluded is NULL)";
         //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $change_user_id = $db_con->get1($sql);
         if ($change_user_id > 0) {
           $result = false;
@@ -697,7 +716,7 @@ class verb
     // set the main log entry parameters for updating one verb field
     private function log_upd(): user_log_named
     {
-        log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->usr->name);
+        log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = user_log::ACTION_UPDATE;
@@ -709,7 +728,7 @@ class verb
     // set the log entry parameter to delete a verb
     private function log_del(): user_log_named
     {
-        log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->usr->name);
+        log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = user_log::ACTION_DELETE;
@@ -917,7 +936,7 @@ class verb
 
                   // ... and create a new display component link
                   $this->id = 0;
-                  $this->owner_id = $this->usr->id;
+                  $this->owner_id = $this->user()->id;
                   $result .= $this->add($db_con);
                   zu_debug('verb->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'")');
                 }
@@ -968,13 +987,13 @@ class verb
     // add or update a verb in the database (or create a user verb if the program settings allow this)
     function save(): string
     {
-        log_debug('verb->save ' . $this->dsp_id() . ' for user ' . $this->usr->name);
+        log_debug('verb->save ' . $this->dsp_id() . ' for user ' . $this->user()->name);
 
         global $db_con;
         $result = '';
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_type(sql_db::TBL_VERB);
 
         // check if a new word is supposed to be added
@@ -1054,7 +1073,7 @@ class verb
                     $log = $this->log_del();
                     if ($log->id > 0) {
                         //$db_con = new mysql;
-                        $db_con->usr_id = $this->usr->id;
+                        $db_con->usr_id = $this->user()->id;
                         $db_con->set_type(sql_db::TBL_VERB);
                         $result = $db_con->delete(self::FLD_ID, $this->id);
                     }

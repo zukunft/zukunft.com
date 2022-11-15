@@ -152,7 +152,7 @@ class user_sandbox_named extends user_sandbox
      */
     function get_term(): term
     {
-        $trm = new term($this->usr);
+        $trm = new term($this->user());
         $trm->load_by_name($this->name());
         return $trm;
     }
@@ -179,7 +179,7 @@ class user_sandbox_named extends user_sandbox
         }
 
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         if ($this->id != 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
             $qp->sql = $db_con->select_by_set_id();
@@ -272,8 +272,8 @@ class user_sandbox_named extends user_sandbox
         } else {
             $result .= $this->id;
         }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->id > 0) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -292,7 +292,7 @@ class user_sandbox_named extends user_sandbox
         $log->old_value = '';
         $log->new_value = $this->name;
 
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_ADD;
         // TODO add the table exceptions from sql_db
         $log->table = $this->obj_name . 's';
@@ -315,7 +315,7 @@ class user_sandbox_named extends user_sandbox
         $log->old_value = $this->name;
         $log->new_value = '';
 
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_DELETE;
         $log->table = $this->obj_name . 's';
         $log->row_id = $this->id;
@@ -394,8 +394,8 @@ class user_sandbox_named extends user_sandbox
             // insert the new object and save the object key
             // TODO check that always before a db action is called the db type is set correctly
             $db_con->set_type($this->obj_name);
-            $db_con->set_usr($this->usr->id);
-            $this->id = $db_con->insert(array($this->obj_name . '_name', "user_id"), array($this->name, $this->usr->id));
+            $db_con->set_usr($this->user()->id);
+            $this->id = $db_con->insert(array($this->obj_name . '_name', "user_id"), array($this->name, $this->user()->id));
 
             // save the object fields if saving the key was successful
             if ($this->id > 0) {
@@ -411,7 +411,7 @@ class user_sandbox_named extends user_sandbox
                     $db_rec = clone $this;
                     $db_rec->reset();
                     $db_rec->name = $this->name;
-                    $db_rec->usr = $this->usr;
+                    $db_rec->set_user($this->user());
                     $std_rec = clone $db_rec;
                     // save the object fields
                     $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
@@ -479,7 +479,7 @@ class user_sandbox_named extends user_sandbox
             $log->row_id = $this->id;
             if ($log->add()) {
                 $db_con->set_type($this->obj_name);
-                $db_con->set_usr($this->usr->id);
+                $db_con->set_usr($this->user()->id);
                 if (!$db_con->update($this->id,
                     array($this->obj_name . '_name'),
                     array($this->name))) {
@@ -544,7 +544,7 @@ class user_sandbox_named extends user_sandbox
      */
     function get_similar(): ?user_sandbox
     {
-        $result = new user_sandbox_named($this->usr);
+        $result = new user_sandbox_named($this->user());
 
         // check potential duplicate by name
         // for words and formulas it needs to be checked if a term (word, verb or formula) with the same name already exist
@@ -563,7 +563,7 @@ class user_sandbox_named extends user_sandbox
             // used for view, view_component, source, ...
             $db_chk = clone $this;
             $db_chk->reset();
-            $db_chk->usr = $this->usr;
+            $db_chk->set_user($this->user());
             $db_chk->name = $this->name;
             // check with the standard namespace
             if ($db_chk->load_standard()) {
@@ -573,7 +573,7 @@ class user_sandbox_named extends user_sandbox
                 }
             }
             // check with the user namespace
-            $db_chk->usr = $this->usr;
+            $db_chk->set_user($this->user());
             if ($db_chk->load_obj_vars()) {
                 if ($db_chk->id > 0) {
                     log_debug($this->obj_name . '->get_similar "' . $this->dsp_id() . '" has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');

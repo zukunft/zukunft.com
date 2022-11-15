@@ -39,7 +39,6 @@ use api\value_list_api;
 use formula_value_list;
 use phrase;
 use word_list;
-use word_list_dsp;
 
 class value_list_dsp extends value_list_api
 {
@@ -94,7 +93,7 @@ class value_list_dsp extends value_list_api
     /**
      * return the html code to display all values related to a given word
      * $phr->id is the related word that should not be included in the display
-     * $this->usr->id is a parameter, because the viewer must not be the owner of the value
+     * $this->user()->id is a parameter, because the viewer must not be the owner of the value
      * TODO move remaining parts to the table() function
      * TODO add back
      */
@@ -107,8 +106,8 @@ class value_list_dsp extends value_list_api
 
         // display the common words
         if (!empty($common_phr_ids)) {
-            $common_phr_lst = new word_list_dsp($this->usr);
-            $common_phr_lst->load_by_ids($common_phr_ids);
+            $common_phr_lst = new word_list_dsp();
+            //$common_phr_lst->load_by_ids($common_phr_ids);
             $result .= ' in (' . implode(",", $common_phr_lst->names_linked()) . ')<br>';
         }
 
@@ -123,7 +122,7 @@ class value_list_dsp extends value_list_api
 
         log_debug('add new button');
         foreach ($this->lst as $val) {
-            //$this->usr->id  = $val->usr->id;
+            //$this->user()->id  = $val->usr->id;
 
             // get the words
             $val->load_phrases();
@@ -166,7 +165,7 @@ class value_list_dsp extends value_list_api
                 log_debug('linked words ' . $val->id . ' done');
                 // to review
                 // list the related formula values
-                $fv_lst = new formula_value_list($this->usr);
+                $fv_lst = new formula_value_list($this->user());
                 $fv_lst->load_by_val($val);
                 $result .= $fv_lst->frm_links_html();
                 $result .= '    </td>';
@@ -195,7 +194,7 @@ class value_list_dsp extends value_list_api
         // allow the user to add a completely new value
         log_debug('new');
         if (empty($common_phr_ids)) {
-            $common_phr_lst = new word_list($this->usr);
+            $common_phr_lst = new word_list($this->user());
             $common_phr_ids[] = $this->phr->id;
             $common_phr_lst->load_by_ids($common_phr_ids);
         }

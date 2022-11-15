@@ -43,7 +43,7 @@ class value_list
 {
 
     public array $lst;                       // the list of values
-    public ?user $usr = null;                // the person who wants to see ths value list
+    private ?user $usr = null;               // the person who wants to see ths value list
 
     // fields to select the values
     public ?phrase $phr = null;              // show the values related to this phrase
@@ -72,7 +72,30 @@ class value_list
     function __construct(user $usr)
     {
         $this->lst = array();
+        $this->set_user($usr);
+    }
+
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the value list
+     *
+     * @param user|null $usr the person who wants to access the values
+     * @return void
+     */
+    function set_user(?user $usr): void
+    {
         $this->usr = $usr;
+    }
+
+    /**
+     * @return user|null the person who wants to see the values
+     */
+    function user(): ?user
+    {
+        return $this->usr;
     }
 
     /*
@@ -122,7 +145,7 @@ class value_list
                 if ($this->phr->is_word()) {
                     $sql_name_ext .= 'word_id';
                 } else {
-                    $sql_name_ext .= 'triple_id';
+                    $sql_name_ext .= triple::FLD_ID;
                 }
             }
         } elseif ($this->phr_lst != '') {
@@ -133,7 +156,7 @@ class value_list
         } else {
             $sql_name .= $sql_name_ext;
             $db_con->set_name($sql_name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_fields(value::FLD_NAMES);
             $db_con->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
             $db_con->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
@@ -141,7 +164,7 @@ class value_list
             if ($this->phr->is_word()) {
                 $db_con->set_join_fields(array(word::FLD_ID), sql_db::TBL_PHRASE_GROUP_TRIPLE, phrase_group::FLD_ID, phrase_group::FLD_ID);
             } else {
-                $db_con->set_join_fields(array('triple_id'), sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
+                $db_con->set_join_fields(array(triple::FLD_ID), sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
             }
             if ($this->phr != null) {
                 if ($this->phr->id <> 0) {
@@ -179,7 +202,7 @@ class value_list
         $result = false;
 
         // check the all minimal input parameters
-        if (!isset($this->usr)) {
+        if (!$this->user()->is_set()) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql($db_con);
@@ -187,7 +210,7 @@ class value_list
             if ($db_con->get_where() == '') {
                 log_err('The phrase must be set to load ' . self::class, self::class . '->load');
             } else {
-                $db_con->usr_id = $this->usr->id;
+                $db_con->usr_id = $this->user()->id;
                 $db_val_lst = $db_con->get($qp);
                 foreach ($db_val_lst as $db_val) {
                     if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
@@ -226,7 +249,7 @@ class value_list
         $qp->name .= 'phrase_id';
 
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(value::FLD_NAMES);
         $db_con->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
         $db_con->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
@@ -257,7 +280,7 @@ class value_list
 
         $qp = $this->load_by_phr_sql($db_con, $phr);
 
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $db_val_lst = $db_con->get($qp);
         foreach ($db_val_lst as $db_val) {
             if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
@@ -285,7 +308,7 @@ class value_list
                       v.time_word_id
                   FROM " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
             LEFT JOIN user_values u ON u.value_id = v.value_id 
-                                    AND u.user_id = " . $this->usr->id . " 
+                                    AND u.user_id = " . $this->user()->id . " 
                 WHERE v.value_id IN ( SELECT value_id 
                                         FROM value_phrase_links 
                                         WHERE phrase_id IN (" . implode(",", $this->phr_lst->id_lst()) . ")
@@ -304,10 +327,10 @@ class value_list
 
         // the id and the user must be set
         if (isset($this->phr_lst)) {
-            if (count($this->phr_lst->id_lst()) > 0 and !is_null($this->usr->id)) {
+            if (count($this->phr_lst->id_lst()) > 0 and !is_null($this->user()->id)) {
                 log_debug('for ' . $this->phr_lst->dsp_id());
                 $sql = $this->load_all_sql();
-                $db_con->usr_id = $this->usr->id;
+                $db_con->usr_id = $this->user()->id;
                 $db_val_lst = $db_con->get_old($sql);
                 if ($db_val_lst != false) {
                     foreach ($db_val_lst as $db_val) {
@@ -370,7 +393,7 @@ class value_list
                        v.time_word_id
                   FROM " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
              LEFT JOIN user_values u ON u.value_id = v.value_id 
-                                    AND u.user_id = " . $this->usr->id . " 
+                                    AND u.user_id = " . $this->user()->id . " 
                  WHERE v.value_id IN ( SELECT DISTINCT v.value_id 
                                          FROM " . $sql_from . "
                                               " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v
@@ -393,11 +416,11 @@ class value_list
         global $db_con;
 
         // the word list and the user must be set
-        if (count($this->phr_lst->id_lst()) > 0 and !is_null($this->usr->id)) {
+        if (count($this->phr_lst->id_lst()) > 0 and !is_null($this->user()->id)) {
             $sql = $this->load_by_phr_lst_sql($db_con);
 
             if ($sql <> '') {
-                $db_con->usr_id = $this->usr->id;
+                $db_con->usr_id = $this->user()->id;
                 $db_val_lst = $db_con->get_old($sql);
                 if ($db_val_lst != false) {
                     foreach ($db_val_lst as $db_val) {
@@ -902,7 +925,7 @@ class value_list
 
         // the id and the user must be set
         $db_con->set_type(sql_db::TBL_VALUE);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $sql = $db_con->select_by_set_id();
         $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {
@@ -936,7 +959,7 @@ class value_list
                 AND l1.phrase_id = " . $phr_id . "
                 AND l2.phrase_id IN (" . implode(",", $phr_ids) . ");";
             //$db_con = New mysql;
-            $db_con->usr_id = $this->usr->id;
+            $db_con->usr_id = $this->user()->id;
             $db_lst = $db_con->get_old($sql);
             foreach ($db_lst as $db_val) {
                 $result = $db_val['value_id'];
@@ -972,7 +995,7 @@ class value_list
                 AND (u.excluded IS NULL OR u.excluded = 0) 
             GROUP BY l.value_id, l.phrase_id;";
             //$db_con = New mysql;
-            $db_con->usr_id = $this->usr->id;
+            $db_con->usr_id = $this->user()->id;
             $db_lst = $db_con->get_old($sql);
             $value_id = -1; // set to an id that is never used to force the creation of a new entry at start
             foreach ($db_lst as $db_val) {
@@ -1032,7 +1055,7 @@ class value_list
 
     // return the html code to display all values related to a given word
     // $phr->id is the related word that should not be included in the display
-    // $this->usr->id is a parameter, because the viewer must not be the owner of the value
+    // $this->user()->id is a parameter, because the viewer must not be the owner of the value
     // TODO add back
     function html($back)
     {
@@ -1087,7 +1110,7 @@ class value_list
 
         log_debug('add new button');
         foreach ($this->lst as $val) {
-            //$this->usr->id  = $val->usr->id;
+            //$this->user()->id  = $val->usr->id;
 
             // get the words
             $val->load_phrases();

@@ -70,7 +70,7 @@ class formula_link extends user_sandbox_link
     {
         parent::reset();
 
-        $this->reset_objects($this->usr);
+        $this->reset_objects($this->user());
 
         $this->order_nbr = null;
         $this->link_type_id = null;
@@ -121,7 +121,7 @@ class formula_link extends user_sandbox_link
         $qp = new sql_par(self::class);
         $sql_name = self::class . '_add_usr_cfg';
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(formula_link::FLD_NAMES_NUM_USR);
         $db_con->set_where_std($this->id);
         $qp->sql = $db_con->select_by_set_id();
@@ -140,7 +140,7 @@ class formula_link extends user_sandbox_link
     private function is_usr_set(): bool
     {
         $result = false;
-        if ($this->usr->id > 0) {
+        if ($this->user()->id > 0) {
             $result = true;
         }
         return $result;
@@ -196,7 +196,7 @@ class formula_link extends user_sandbox_link
 
         $db_con->set_type(sql_db::TBL_FORMULA_LINK);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
@@ -232,7 +232,7 @@ class formula_link extends user_sandbox_link
         $qp = new sql_par($class, true);
         $qp->name .= $this->load_sql_name_extension();
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_fields(array(sql_db::FLD_USER_ID, formula_link::FLD_TYPE, self::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld($this->id, $this->formula_id(), $this->phrase_id());
@@ -280,7 +280,7 @@ class formula_link extends user_sandbox_link
         $qp->name .= $this->load_sql_name_extension();
         $db_con->set_type(sql_db::TBL_FORMULA_LINK);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         $db_con->set_where_link_no_fld($this->id, $this->formula_id(), $this->phrase_id());
@@ -333,7 +333,7 @@ class formula_link extends user_sandbox_link
     {
         $result = true;
         if ($this->formula_id() > 0) {
-            $frm = new formula($this->usr);
+            $frm = new formula($this->user());
             $frm->load_by_id($this->formula_id(), formula::class);
             if ($frm->id > 0) {
                 $this->fob = $frm;
@@ -343,7 +343,7 @@ class formula_link extends user_sandbox_link
         }
         if ($result) {
             if ($this->phrase_id() <> 0) {
-                $phr = new phrase($this->usr);
+                $phr = new phrase($this->user());
                 $phr->id = $this->phrase_id();
                 if ($phr->load_by_obj_par()) {
                     $this->tob = $phr;
@@ -401,8 +401,8 @@ class formula_link extends user_sandbox_link
         if ($this->id > 0) {
             $result .= ' -> ' . $this->id;
         }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->is_set()) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -488,7 +488,7 @@ class formula_link extends user_sandbox_link
         global $db_con;
         $result = true;
         $qp = $this->not_changed_sql($db_con);
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $db_row = $db_con->get1($qp);
         if ($db_row != null) {
             if ($db_row[self::FLD_USER] > 0) {
@@ -506,7 +506,7 @@ class formula_link extends user_sandbox_link
     function can_change(): bool
     {
         $can_change = false;
-        if ($this->owner_id == $this->usr->id or $this->owner_id <= 0) {
+        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
             $can_change = true;
         }
         log_debug('formula_link->can_change -> (' . zu_dsp_bool($can_change) . ')');
@@ -543,7 +543,7 @@ class formula_link extends user_sandbox_link
             }
             // create an entry in the user sandbox
             $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK);
-            $log_id = $db_con->insert(array(formula_link::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->usr->id));
+            $log_id = $db_con->insert(array(formula_link::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id));
             if ($log_id <= 0) {
                 log_err('Insert of user_formula_link failed.');
                 $result = false;
@@ -560,14 +560,14 @@ class formula_link extends user_sandbox_link
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+        log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
         global $db_con;
         $result = true;
 
         // check again if there ist not yet a record
         $qp = $this->load_user_sql($db_con);
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id;
         $db_row = $db_con->get1($qp);
         if ($db_row) {
             if ($db_row[formula_link::FLD_ID] > 0) {
@@ -590,7 +590,7 @@ class formula_link extends user_sandbox_link
     function log_upd_field(): user_log_named
     {
         $log = new user_log_named;
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_UPDATE;
         if ($this->can_change()) {
             $log->table = 'formula_links';
@@ -645,7 +645,7 @@ class formula_link extends user_sandbox_link
         global $db_con;
         return $db_con->insert(
             array($this->from_name . '_id', $this->to_name . '_id', "user_id", 'order_nbr'),
-            array($this->fob->id, $this->tob->id, $this->usr->id, $this->order_nbr));
+            array($this->fob->id, $this->tob->id, $this->user()->id, $this->order_nbr));
     }
 
     /**
@@ -660,9 +660,9 @@ class formula_link extends user_sandbox_link
 
         // check if the required parameters are set
         if (isset($this->fob) and isset($this->tob)) {
-            log_debug('formula_link->save "' . $this->fob->name() . '" to "' . $this->tob->name() . '" (id ' . $this->id . ') for user ' . $this->usr->name);
+            log_debug('formula_link->save "' . $this->fob->name() . '" to "' . $this->tob->name() . '" (id ' . $this->id . ') for user ' . $this->user()->name);
         } elseif ($this->id > 0) {
-            log_debug('formula_link->save id ' . $this->id . ' for user ' . $this->usr->name);
+            log_debug('formula_link->save id ' . $this->id . ' for user ' . $this->user()->name);
         } else {
             log_err("Either the formula and the word or the id must be set to link a formula to a word.", "formula_link->save");
         }
@@ -671,14 +671,14 @@ class formula_link extends user_sandbox_link
         $this->load_objects();
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_type(sql_db::TBL_FORMULA_LINK);
 
         // check if a new value is supposed to be added
         if ($this->id <= 0) {
             log_debug('formula_link->save check if a new formula_link for "' . $this->fob->name() . '" and "' . $this->tob->name() . '" needs to be created');
             // check if a formula_link with the same formula and word is already in the database
-            $db_chk = new formula_link($this->usr);
+            $db_chk = new formula_link($this->user());
             $db_chk->fob = $this->fob;
             $db_chk->tob = $this->tob;
             $db_chk->load_standard();
@@ -694,13 +694,13 @@ class formula_link extends user_sandbox_link
             log_debug('formula_link->save update "' . $this->id . '"');
             // read the database values to be able to check if something has been changed; done first,
             // because it needs to be done for user and general formulas
-            $db_rec = new formula_link($this->usr);
+            $db_rec = new formula_link($this->user());
             $db_rec->id = $this->id;
             $db_rec->load_obj_vars();
             $db_rec->load_objects();
             $db_con->set_type(sql_db::TBL_FORMULA_LINK);
             log_debug("formula_link->save -> database formula loaded (" . $db_rec->id . ")");
-            $std_rec = new formula_link($this->usr); // must also be set to allow to take the ownership
+            $std_rec = new formula_link($this->user()); // must also be set to allow to take the ownership
             $std_rec->id = $this->id;
             $std_rec->load_standard();
             log_debug("formula_link->save -> standard formula settings loaded (" . $std_rec->id . ")");

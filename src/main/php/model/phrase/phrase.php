@@ -98,7 +98,7 @@ class phrase
     public ?int $id = null;            // if positive the database id of the word or if negative of a triple
     public ?object $obj = null;        // if loaded the linked word or triple object
     // TODO deprecate
-    public ?user $usr = null;          // the person for whom the word is loaded, so to say the viewer
+    private ?user $usr = null;         // the person for whom the word is loaded, so to say the viewer
     public ?int $usage = null;         // a higher number indicates a higher usage
     public string $description = '';   // simply the word or triple description to reduce the number of "->" on the code
 
@@ -122,7 +122,7 @@ class phrase
         string $to = '',
         string $name = '')
     {
-        $this->usr = $usr;
+        $this->set_user($usr);
 
         // create the automatically related objects if requested
         if ($from != ''
@@ -188,6 +188,10 @@ class phrase
         return $result;
     }
 
+    /*
+     * get and set
+     */
+
     /**
      * @param int $id the phrase (not the object!) id
      * @return void
@@ -241,10 +245,21 @@ class phrase
      */
     function set_name(string $name, string $class = ''): void
     {
-        if ($class != '') {
+        if ($class != '' and $this->obj == null) {
             $this->set_obj($class);
         }
         $this->obj->set_name($name);
+    }
+
+    /**
+     * set the user of the phrase
+     *
+     * @param user $usr the person who wants to access the phrase
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
+        $this->usr = $usr;
     }
 
     /**
@@ -266,6 +281,14 @@ class phrase
         } else {
             return $this->obj->name();
         }
+    }
+
+    /**
+     * @return user the person who wants to see the phrase
+     */
+    function user(): user
+    {
+        return $this->usr;
     }
 
     /*
@@ -750,7 +773,7 @@ class phrase
      */
     function val_lst(): value_list
     {
-        log_debug('for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
+        log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
         $val_lst = new value_list($this->usr);
         $val_lst->phr = $this;
         $val_lst->page_size = SQL_ROW_MAX;
@@ -796,8 +819,8 @@ class phrase
         } else {
             $result .= $this->id;
         }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->is_set()) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -954,13 +977,13 @@ class phrase
                              ' . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM words w   
                    LEFT JOIN user_words u ON u.word_id = w.word_id 
-                                         AND u.user_id = ' . $this->usr->id . ' ';
+                                         AND u.user_id = ' . $this->user()->id . ' ';
         $sql_triples = 'SELECT DISTINCT l.triple_id * -1 AS id, 
                                ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM triples l
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                AND u.user_id = ' . $this->usr->id . ' ';
+                                                AND u.user_id = ' . $this->user()->id . ' ';
 
         if (isset($type)) {
             if ($type->id > 0) {
@@ -974,7 +997,7 @@ class phrase
                                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                                           FROM triples l
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                                AND u.user_id = ' . $this->usr->id . '
+                                                                AND u.user_id = ' . $this->user()->id . '
                                          WHERE l.to_phrase_id = ' . $type->id . ' 
                                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
@@ -986,7 +1009,7 @@ class phrase
                                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                                           FROM triples l
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                                AND u.user_id = ' . $this->usr->id . '
+                                                                AND u.user_id = ' . $this->user()->id . '
                                          WHERE l.to_phrase_id <> ' . $type->id . ' 
                                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
@@ -1000,7 +1023,7 @@ class phrase
                              ' . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM ( ' . $sql_wrd_all . ' ) a, words w
                    LEFT JOIN user_words u ON u.word_id = w.word_id 
-                                         AND u.user_id = ' . $this->usr->id . '
+                                         AND u.user_id = ' . $this->user()->id . '
                        WHERE w.word_id NOT IN ( ' . $sql_wrd_other . ' )                                        
                          AND w.word_id = a.id ) AS w 
                        WHERE ' . $sql_where_exclude . ' ';
@@ -1013,14 +1036,14 @@ class phrase
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM triples l
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                AND u.user_id = ' . $this->usr->id . '
+                                                AND u.user_id = ' . $this->user()->id . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
                            AND l.to_phrase_id = ' . $type->id . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*
                 $sql_type_from = ', triples t LEFT JOIN user_triples ut ON ut.triple_id = t.triple_id
-                                                                             AND ut.user_id = '.$this->usr->id.'';
+                                                                             AND ut.user_id = '.$this->user()->id.'';
                 $sql_type_where_words   = 'WHERE w.word_id = t.from_phrase_id
                                              AND t.verb_id = '.cl(SQL_LINK_TYPE_IS).'
                                              AND t.to_phrase_id = '.$type->id.' ';
@@ -1032,7 +1055,7 @@ class phrase
                                       IF(u.excluded IS NULL, COALESCE(w.excluded, 0), COALESCE(u.excluded, 0)) AS excluded
                                   FROM words w
                             LEFT JOIN user_words u ON u.word_id = w.word_id
-                                                  AND u.user_id = '.$this->usr->id.'
+                                                  AND u.user_id = '.$this->user()->id.'
                                       '.$sql_type_from.'
                                       '.$sql_type_where_words.'
                               GROUP BY name';
@@ -1041,7 +1064,7 @@ class phrase
                                       IF(u.excluded IS NULL, COALESCE(l.excluded, 0), COALESCE(u.excluded, 0)) AS excluded
                                   FROM triples l
                             LEFT JOIN user_triples u ON u.triple_id = l.triple_id
-                                                        AND u.user_id = '.$this->usr->id.'
+                                                        AND u.user_id = '.$this->user()->id.'
                                       '.$sql_type_from.'
                                       '.$sql_type_where_triples.'
                               GROUP BY name';

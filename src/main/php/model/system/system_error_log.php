@@ -64,7 +64,7 @@ class system_error_log
 
     // object vars for the database fields
     public ?int $id = null;             // the database id of the log entry
-    public ?user $usr = null;           // the user who wants to see the error
+    private ?user $usr = null;           // the user who wants to see the error
     public ?int $usr_id = null;         // the user id who was logged in when the error happened
     public string $usr_name = '';       // the username who was logged in when the error happened
     public ?int $solver_id = null;      // the admin id who has solved the problem
@@ -78,6 +78,10 @@ class system_error_log
 
     public string $function_name = '';  //
     public string $status_name = '';    //
+
+    /*
+     * construct and map
+     */
 
     /**
      * @return bool true if a row is found
@@ -104,6 +108,33 @@ class system_error_log
         }
     }
 
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the error log
+     *
+     * @param user|null $usr the person who wants to see the error log
+     * @return void
+     */
+    function set_user(?user $usr): void
+    {
+        $this->usr = $usr;
+    }
+
+    /**
+     * @return user|null the person who wants to see the error log
+     */
+    function user(): ?user
+    {
+        return $this->usr;
+    }
+
+    /*
+     * cast
+     */
+
     /**
      * @return system_error_log_api a filled frontend api object
      */
@@ -120,6 +151,10 @@ class system_error_log
         $dsp_obj->status = $this->status_name;
         return $dsp_obj;
     }
+
+    /*
+     * loading
+     */
 
     /**
      * create the SQL statement to load one system log entry
@@ -179,7 +214,7 @@ class system_error_log
     {
         log_debug('system_error_log->log_upd');
         $log = new user_log_named;
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_UPDATE;
         $log->table = sql_db::TBL_SYS_LOG;
 
@@ -237,13 +272,13 @@ class system_error_log
         $result = '';
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_type(sql_db::TBL_SYS_LOG);
 
         if ($this->id > 0) {
             $db_rec = new system_error_log;
             $db_rec->id = $this->id;
-            $db_rec->usr = $this->usr;
+            $db_rec->set_user($this->user());
             if ($db_rec->load()) {
                 log_debug("system_error_log->save -> database entry loaded");
             }

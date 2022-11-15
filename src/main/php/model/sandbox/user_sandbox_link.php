@@ -175,8 +175,8 @@ class user_sandbox_link extends user_sandbox
             $result .= $this->name . ' (' . $this->id . ') of type ';
         }
         $result .= $this->obj_name . ' ' . $this->obj_type;
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->is_set()) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -195,7 +195,7 @@ class user_sandbox_link extends user_sandbox
         $log->new_from = $this->fob;
         $log->new_to = $this->tob;
 
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_ADD;
         // TODO add the table exceptions from sql_db
         $log->table = $this->obj_name . 's';
@@ -217,7 +217,7 @@ class user_sandbox_link extends user_sandbox
         $log->old_from = $this->fob;
         $log->old_to = $this->tob;
 
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_DELETE;
         $log->table = $this->obj_name . 's';
         $log->row_id = $this->id;
@@ -235,7 +235,7 @@ class user_sandbox_link extends user_sandbox
         global $db_con;
         return $db_con->insert(
             array($this->from_name . '_id', $this->to_name . '_id', "user_id"),
-            array($this->fob->id, $this->tob->id, $this->usr->id));
+            array($this->fob->id, $this->tob->id, $this->user()->id));
     }
 
     /**
@@ -260,7 +260,7 @@ class user_sandbox_link extends user_sandbox
             // insert the new object and save the object key
             // TODO check that always before a db action is called the db type is set correctly
             $db_con->set_type($this->obj_name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $this->id = $this->add_insert();
 
             // save the object fields if saving the key was successful
@@ -278,7 +278,7 @@ class user_sandbox_link extends user_sandbox
                     $db_rec->reset();
                     $db_rec->fob = $this->fob;
                     $db_rec->tob = $this->tob;
-                    $db_rec->usr = $this->usr;
+                    $db_rec->set_user($this->user());
                     $std_rec = clone $db_rec;
                     // save the object fields
                     $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
@@ -349,7 +349,7 @@ class user_sandbox_link extends user_sandbox
             $log->row_id = $this->id;
             if ($log->add()) {
                 $db_con->set_type($this->obj_name);
-                $db_con->set_usr($this->usr->id);
+                $db_con->set_usr($this->user()->id);
                 if (!$db_con->update($this->id,
                     array($this->from_name . '_id', $this->from_name . '_id'),
                     array($this->fob->id, $this->tob->id))) {
@@ -395,7 +395,7 @@ class user_sandbox_link extends user_sandbox
      */
     function get_similar(): ?user_sandbox
     {
-        $result = new user_sandbox($this->usr);
+        $result = new user_sandbox($this->user());
 
         // check potential duplicate by name
         // check for linked objects
@@ -413,7 +413,7 @@ class user_sandbox_link extends user_sandbox
                 }
             }
             // check with the user linkspace
-            $db_chk->usr = $this->usr;
+            $db_chk->set_user($this->user());
             if ($db_chk->load_obj_vars()) {
                 if ($db_chk->id > 0) {
                     log_debug($this->obj_name . '->get_similar the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user linkspace');

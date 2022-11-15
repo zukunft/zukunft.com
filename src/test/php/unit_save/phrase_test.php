@@ -80,7 +80,7 @@ function run_phrase_test(testing $t)
     // test the phrase display functions (word side)
     $phr = new phrase($usr);
     $phr->id = $wrd_company->id;
-    $phr->usr = $usr;
+    $phr->set_user($usr);
     $phr->load_by_obj_par();
     $result = $phr->name();
     $target = word::TN_COMPANY;

@@ -58,7 +58,7 @@ if ($usr->id > 0) {
     // create the verb object to have an place to update the parameters
     $vrb = new verb;
     $vrb->id = $_GET['id'];
-    $vrb->usr = $usr;
+    $vrb->set_user($usr);
     $vrb->load_by_vars();
 
     if ($vrb->id <= 0) {

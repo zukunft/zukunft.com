@@ -33,7 +33,11 @@ class formula_element_list
 {
 
     public array $lst; // the list of formula elements
-    public user $usr;  // the person who has requested the formula elements
+    private user $usr;  // the person who has requested the formula elements
+
+    /*
+     * construct and map
+     */
 
     /**
      * always set the user because a formula element list is always user specific
@@ -42,7 +46,30 @@ class formula_element_list
     function __construct(user $usr)
     {
         $this->lst = array();
+        $this->set_user($usr);
+    }
+
+    /*
+     * get and set
+     */
+
+    /**
+     * set the user of the formula element list
+     *
+     * @param user $usr the person who wants to access the formula elements
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
         $this->usr = $usr;
+    }
+
+    /**
+     * @return user the person who wants to see the formula elements
+     */
+    function user(): user
+    {
+        return $this->usr;
     }
 
     /*
@@ -59,7 +86,7 @@ class formula_element_list
         $db_con->set_type(sql_db::TBL_FORMULA_ELEMENT);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(formula_element::FLD_NAMES);
         return $qp;
     }
@@ -77,7 +104,7 @@ class formula_element_list
             $qp->name .= 'frm_id';
             $db_con->set_name($qp->name);
             $db_con->add_par(sql_db::PAR_INT, $frm_id);
-            $db_con->add_par(sql_db::PAR_INT, $this->usr->id);
+            $db_con->add_par(sql_db::PAR_INT, $this->user()->id);
             $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID, user_sandbox::FLD_USER));
         } else {
             $qp->name = '';
@@ -101,7 +128,7 @@ class formula_element_list
             $db_con->set_name($qp->name);
             $db_con->add_par(sql_db::PAR_INT, $frm_id);
             $db_con->add_par(sql_db::PAR_INT, $elm_type_id);
-            $db_con->add_par(sql_db::PAR_INT, $this->usr->id);
+            $db_con->add_par(sql_db::PAR_INT, $this->user()->id);
             $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID, formula_element::FLD_TYPE, user_sandbox::FLD_USER));
         } else {
             $qp->name = '';
@@ -145,8 +172,8 @@ class formula_element_list
         } else {
             $result = $id;
         }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->is_set()) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
 
         return $result;

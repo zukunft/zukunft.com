@@ -40,7 +40,7 @@ function run_verb_test(testing $t)
     // check the loading of the "is a" verb
     $vrb = new verb;
     $vrb->id = cl(db_cl::VERB, verb::IS_A);
-    $vrb->usr = $usr;
+    $vrb->set_user($usr);
     $vrb->load_by_vars();
     $target = 'is a';
     $result = $vrb->name;

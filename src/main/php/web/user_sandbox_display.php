@@ -42,7 +42,7 @@ class user_sandbox_display extends user_sandbox_value
         $result = ''; // reset the html code var
 
         // only the owner can change the share type (TODO or an admin)
-        if ($this->usr->id == $this->owner_id) {
+        if ($this->user()->id == $this->owner_id) {
             $sel = new html_selector;
             $sel->form = $form_name;
             $sel->name = "share";
@@ -63,7 +63,7 @@ class user_sandbox_display extends user_sandbox_value
         $result = ''; // reset the html code var
 
         // only the owner can change the protection level (TODO or an admin)
-        if ($this->usr->id == $this->owner_id) {
+        if ($this->user()->id == $this->owner_id) {
             $sel = new html_selector;
             $sel->form = $form_name;
             $sel->name = "protection";

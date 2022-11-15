@@ -60,7 +60,7 @@ if ($usr->id > 0) {
         // update the error if requested
         if ($log_id > 0 and $status_id > 0) {
             $err_entry = new system_error_log;
-            $err_entry->usr = $usr;
+            $err_entry->set_user($usr);
             $err_entry->id = $log_id;
             $err_entry->status_id = $status_id;
             $err_entry->save();
@@ -69,7 +69,7 @@ if ($usr->id > 0) {
         // display all program issues if the user is an admin
         $errors_all = '';
         $err_lst = new system_error_log_list;
-        $err_lst->usr = $usr;
+        $err_lst->set_user($usr);
         $err_lst->dsp_type = system_error_log_list::DSP_ALL;
         $err_lst->page = 1;
         $err_lst->size = 20;

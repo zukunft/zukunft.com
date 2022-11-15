@@ -60,7 +60,7 @@ class ref
     public ?string $external_key = null;  // the unique key in the external system
 
     // in memory only fields
-    public user $usr;                     // just needed for logging the changes
+    private user $usr;                    // just needed for logging the changes
     public ?phrase $phr = null;           // the phrase object incl. the database id of the word, verb or formula
     public ?ref_type $ref_type = null;    // the ref type object incl. the database id of the ref type
 
@@ -78,7 +78,7 @@ class ref
 
     function __construct(user $usr)
     {
-        $this->usr = $usr;
+        $this->set_user($usr);
         $this->create_objects($usr);
     }
 
@@ -87,7 +87,7 @@ class ref
         $this->id = null;
         $this->external_key = '';
 
-        $this->create_objects($this->usr);
+        $this->create_objects($this->user());
     }
 
     private function create_objects(user $usr):void
@@ -138,11 +138,30 @@ class ref
     }
 
     /**
+     * set the user of the reference
+     *
+     * @param user $usr the person who wants to access the reference
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
+        $this->usr = $usr;
+    }
+
+    /**
      * @return int the database id which is not 0 if the object has been saved
      */
     public function id(): int
     {
         return $this->id;
+    }
+
+    /**
+     * @return user the person who wants to see the reference
+     */
+    function user(): user
+    {
+        return $this->usr;
     }
 
     /*
@@ -163,7 +182,7 @@ class ref
 
         $db_con->set_type(sql_db::TBL_REF);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id);
         $db_con->set_link_fields(phrase::FLD_ID, self::FLD_TYPE);
         $db_con->set_fields(self::FLD_NAMES);
 
@@ -240,7 +259,7 @@ class ref
                 $qp->name = 'ref_by_link_ids';
             }
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
             $db_con->set_link_fields(phrase::FLD_ID, self::FLD_TYPE);
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_where_link_no_fld($this->id, $this->phr->id, $this->ref_type->id);
@@ -304,7 +323,7 @@ class ref
 
         if ($this->phr->name() == null or $this->phr->name() == '') {
             if ($this->phr->id <> 0) {
-                $phr = new phrase($this->usr);
+                $phr = new phrase($this->user());
                 $phr->id = $this->phr->id;
                 if ($phr->load_by_obj_par()) {
                     $this->phr = $phr;
@@ -439,7 +458,7 @@ class ref
         }
 
         $log = new user_log_link;
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_ADD;
         $log->table = 'refs';
         // TODO review in log_link
@@ -458,7 +477,7 @@ class ref
     {
         log_debug('ref->log_upd ' . $this->dsp_id());
         $log = new user_log_link;
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_UPDATE;
         $log->table = 'refs';
         $log->old_from = $db_rec->phr;
@@ -487,7 +506,7 @@ class ref
         }
 
         $log = new user_log_link;
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_DELETE;
         $log->table = 'refs';
         $log->old_from = $this->phr;
@@ -513,7 +532,7 @@ class ref
         if ($log->id > 0) {
             // insert the new reference
             $db_con->set_type(sql_db::TBL_REF);
-            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr($this->user()->id);
 
             $this->id = $db_con->insert(
                 array(phrase::FLD_ID, self::FLD_EX_KEY, self::FLD_TYPE),
@@ -562,8 +581,8 @@ class ref
         $result = '';
 
         // build the database object because the is anyway needed
-        if ($this->usr != null) {
-            $db_con->set_usr($this->usr->id);
+        if ($this->user()->is_set()) {
+            $db_con->set_usr($this->user()->id);
         }
         $db_con->set_type(sql_db::TBL_REF);
 

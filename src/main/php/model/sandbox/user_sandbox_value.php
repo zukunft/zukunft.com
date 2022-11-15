@@ -77,8 +77,8 @@ class user_sandbox_value extends user_sandbox
                 $result .= $this->time_phr->dsp_id();
             }
         }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        if ($this->user()->is_set()) {
+            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -97,7 +97,7 @@ class user_sandbox_value extends user_sandbox
         $log->old_value = '';
         $log->new_value = $this->number;
 
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_ADD;
         // TODO add the table exceptions from sql_db
         $log->table = $this->obj_name . 's';
@@ -120,7 +120,7 @@ class user_sandbox_value extends user_sandbox
         $log->old_value = $this->number;
         $log->new_value = '';
 
-        $log->usr = $this->usr;
+        $log->usr = $this->user();
         $log->action = user_log::ACTION_DELETE;
         $log->table = $this->obj_name . 's';
         $log->row_id = $this->id;

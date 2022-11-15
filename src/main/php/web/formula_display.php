@@ -71,7 +71,7 @@ class formula_dsp_old extends formula
     function dsp_result($wrd, $back): string
     {
         log_debug('for "' . $wrd->name() . '" and formula ' . $this->dsp_id());
-        $fv = new formula_value($this->usr);
+        $fv = new formula_value($this->user());
         $fv->frm = $this;
         $fv->wrd = $wrd;
         log_debug('load fv');
@@ -132,9 +132,9 @@ class formula_dsp_old extends formula
     // display the history of a formula
     private function dsp_hist_log($page, $size, $call, $back): user_log_display
     {
-        $log_dsp = new user_log_display($this->usr);
+        $log_dsp = new user_log_display($this->user());
         $log_dsp->id = $this->id;
-        $log_dsp->usr = $this->usr;
+        $log_dsp->usr = $this->user();
         $log_dsp->type = formula::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
@@ -172,7 +172,7 @@ class formula_dsp_old extends formula
     // list all words linked to the formula and allow to unlink or add new words
     function dsp_used4words($add, $wrd, $back): string
     {
-        log_debug($this->ref_text . " for " . $wrd->name() . ",back:" . $back . " and user " . $this->usr->name . ".");
+        log_debug($this->ref_text . " for " . $wrd->name() . ",back:" . $back . " and user " . $this->user()->name . ".");
         $result = '';
 
         $html = new html_base();
@@ -198,7 +198,7 @@ class formula_dsp_old extends formula
             $sel->form = "formula_edit"; // ??? to review
             $sel->name = 'link_phrase';
             $sel->dummy_text = 'select a word where the formula should also be used';
-            $sel->sql = sql_lst_usr("word", $this->usr);
+            $sel->sql = sql_lst_usr("word", $this->user());
             if ($wrd->id > 0) {
                 $sel->selected = $wrd->id;
             } else {
@@ -227,14 +227,14 @@ class formula_dsp_old extends formula
         log_debug($this->ref_text);
         $result = '<br>';
 
-        $result .= dsp_btn_text("Test", '/http/formula_test.php?id=' . $this->id . '&user=' . $this->usr->id . '&back=' . $back);
-        $result .= dsp_btn_text("Refresh results", '/http/formula_test.php?id=' . $this->id . '&user=' . $this->usr->id . '&back=' . $back . '&refresh=1');
+        $result .= dsp_btn_text("Test", '/http/formula_test.php?id=' . $this->id . '&user=' . $this->user()->id . '&back=' . $back);
+        $result .= dsp_btn_text("Refresh results", '/http/formula_test.php?id=' . $this->id . '&user=' . $this->user()->id . '&back=' . $back . '&refresh=1');
 
         $result .= '<br><br>';
 
         // display some sample values
         log_debug("value list");
-        $fv_lst = new formula_value_list($this->usr);
+        $fv_lst = new formula_value_list($this->user());
         $fv_lst->load($this);
         $sample_val = $fv_lst->display($back);
         if (trim($sample_val) <> "") {
@@ -253,7 +253,7 @@ class formula_dsp_old extends formula
     // $wrd is the word that should be linked (used for a new formula)
     function dsp_edit($add, $wrd, $back): string
     {
-        log_debug("" . $this->ref_text . " for " . $wrd->name() . ", back:" . $back . " and user " . $this->usr->name . ".");
+        log_debug("" . $this->ref_text . " for " . $wrd->name() . ", back:" . $back . " and user " . $this->user()->name . ".");
         $result = '';
 
         $resolved_text = str_replace('"', '&quot;', $this->usr_text);
@@ -288,7 +288,7 @@ class formula_dsp_old extends formula
         $result .= dsp_form_fld("description", $this->description, "Description:", "col-sm-9");
         // predefined formulas like "this" or "next" should only be changed by an admin
         // TODO check if formula user or login user should be used
-        if (!$this->is_special() or $this->usr->is_admin()) {
+        if (!$this->is_special() or $this->user()->is_admin()) {
             $result .= dsp_form_fld("formula_text", $resolved_text, "Expression:", "col-sm-10");
         }
         $result .= dsp_form_fld_checkbox("need_all_val", $this->need_all_val, "calculate only if all values used in the formula exist");
