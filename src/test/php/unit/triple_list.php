@@ -32,7 +32,7 @@
 
 class triple_list_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;
@@ -548,7 +548,7 @@ class triple_list_unit_tests
      * @param array $ids filled with a list of word ids to be used for the query creation
      * @return void
      */
-    private function assert_sql_by_ids(testing $t, sql_db $db_con, triple_list $lst, array $ids)
+    private function assert_sql_by_ids(testing $t, sql_db $db_con, triple_list $lst, array $ids): void
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;

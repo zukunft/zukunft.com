@@ -94,7 +94,7 @@ class phrase_group_list
                 $db_con->set_join_fields(array('triple_id'), sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
             }
             $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
 
         }
@@ -190,7 +190,7 @@ class phrase_group_list
         $time = new word($this->usr);
         if ($time_id > 0) {
             $time->id = $time_id;
-            $time->load();
+            $time->load_obj_vars();
             log_debug('phrase_group_list->add_grp_time_id -> found time ' . $time->dsp_id());
         }
         return $this->add_with_time($grp, $time);

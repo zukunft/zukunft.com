@@ -124,7 +124,7 @@ class formula_link extends user_sandbox_link
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(formula_link::FLD_NAMES_NUM_USR);
         $db_con->set_where_std($this->id);
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -183,6 +183,27 @@ class formula_link extends user_sandbox_link
      */
 
     /**
+     * create the common part of an SQL statement to retrieve the parameters of a formula link from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp->name .= $query_name;
+
+        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+
+        return $qp;
+    }
+
+    /**
      * @return string the query name extension to make the query name unique and parameter specific
      */
     private function load_sql_name_extension(): string
@@ -214,8 +235,8 @@ class formula_link extends user_sandbox_link
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_fields(array(sql_db::FLD_USER_ID, formula_link::FLD_TYPE, self::FLD_EXCLUDED));
-        $db_con->set_where_link($this->id, $this->formula_id(), $this->phrase_id());
-        $qp->sql = $db_con->select_by_id();
+        $db_con->set_where_link_no_fld($this->id, $this->formula_id(), $this->phrase_id());
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -253,17 +274,17 @@ class formula_link extends user_sandbox_link
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($db_con, self::class);
+        $qp = parent::load_sql_obj_vars($db_con, $class);
         $qp->name .= $this->load_sql_name_extension();
         $db_con->set_type(sql_db::TBL_FORMULA_LINK);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_usr_num_fields(array(formula_link::FLD_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_SHARE, user_sandbox::FLD_PROTECT));
-        $db_con->set_where_link($this->id, $this->formula_id(), $this->phrase_id());
-        $qp->sql = $db_con->select_by_id();
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $db_con->set_where_link_no_fld($this->id, $this->formula_id(), $this->phrase_id());
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -275,7 +296,7 @@ class formula_link extends user_sandbox_link
      * or by the IDs of the formula and the assigned phrase
      * @return bool true if the loading of the formula link been successful
      */
-    function load(): bool
+    function load_obj_vars(): bool
     {
         global $db_con;
         $result = false;
@@ -288,7 +309,7 @@ class formula_link extends user_sandbox_link
             if (!$this->is_unique()) {
                 log_warning("The formula link " . $this->dsp_id() . " is not unique", "formula_link->load");
             } else {
-                $qp = $this->load_sql($db_con);
+                $qp = $this->load_sql_obj_vars($db_con);
 
                 if ($qp->has_par()) {
                     $db_row = $db_con->get1($qp);
@@ -313,8 +334,8 @@ class formula_link extends user_sandbox_link
         $result = true;
         if ($this->formula_id() > 0) {
             $frm = new formula($this->usr);
-            $frm->id = $this->formula_id();
-            if ($frm->load()) {
+            $frm->load_by_id($this->formula_id(), formula::class);
+            if ($frm->id > 0) {
                 $this->fob = $frm;
             } else {
                 $result = false;
@@ -324,7 +345,7 @@ class formula_link extends user_sandbox_link
             if ($this->phrase_id() <> 0) {
                 $phr = new phrase($this->usr);
                 $phr->id = $this->phrase_id();
-                if ($phr->load()) {
+                if ($phr->load_by_obj_par()) {
                     $this->tob = $phr;
                 } else {
                     $result = false;
@@ -333,6 +354,21 @@ class formula_link extends user_sandbox_link
         }
         $this->link_type_name();
         return $result;
+    }
+
+    function id_field(): string
+    {
+        return self::FLD_ID;
+    }
+
+    function from_field(): string
+    {
+        return formula::FLD_ID;
+    }
+
+    function to_field(): string
+    {
+        return phrase::FLD_ID;
     }
 
     /*
@@ -347,17 +383,17 @@ class formula_link extends user_sandbox_link
         $result = '';
 
         if ($this->fob != null) {
-            if ($this->fob->name <> '') {
-                $result .= $this->fob->name . ' '; // e.g. Company details
+            if ($this->fob->name() <> '') {
+                $result .= $this->fob->name() . ' '; // e.g. Company details
                 $result .= ' (' . $this->fob->id . ')';
             }
         }
         if ($this->tob != null) {
-            if ($this->tob->name <> '') {
+            if ($this->tob->name() <> '') {
                 if ($result != '') {
                     $result .= ' ';
                 }
-                $result .= $this->tob->name;     // e.g. cash flow statement
+                $result .= $this->tob->name();     // e.g. cash flow statement
                 $result .= ' (' . $this->tob->id . ')';
             }
         }
@@ -596,7 +632,7 @@ class formula_link extends user_sandbox_link
         // link type not used at the moment
         $result = $this->save_field_type($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        log_debug('formula_link->save_fields all fields for "' . $this->fob->name . '" to "' . $this->tob->name . '" has been saved');
+        log_debug('formula_link->save_fields all fields for "' . $this->fob->name() . '" to "' . $this->tob->name() . '" has been saved');
         return $result;
     }
 
@@ -624,7 +660,7 @@ class formula_link extends user_sandbox_link
 
         // check if the required parameters are set
         if (isset($this->fob) and isset($this->tob)) {
-            log_debug('formula_link->save "' . $this->fob->name . '" to "' . $this->tob->name . '" (id ' . $this->id . ') for user ' . $this->usr->name);
+            log_debug('formula_link->save "' . $this->fob->name() . '" to "' . $this->tob->name() . '" (id ' . $this->id . ') for user ' . $this->usr->name);
         } elseif ($this->id > 0) {
             log_debug('formula_link->save id ' . $this->id . ' for user ' . $this->usr->name);
         } else {
@@ -640,7 +676,7 @@ class formula_link extends user_sandbox_link
 
         // check if a new value is supposed to be added
         if ($this->id <= 0) {
-            log_debug('formula_link->save check if a new formula_link for "' . $this->fob->name . '" and "' . $this->tob->name . '" needs to be created');
+            log_debug('formula_link->save check if a new formula_link for "' . $this->fob->name() . '" and "' . $this->tob->name() . '" needs to be created');
             // check if a formula_link with the same formula and word is already in the database
             $db_chk = new formula_link($this->usr);
             $db_chk->fob = $this->fob;
@@ -652,7 +688,7 @@ class formula_link extends user_sandbox_link
         }
 
         if ($this->id <= 0) {
-            log_debug('formula_link->save new link from "' . $this->fob->name . '" to "' . $this->tob->name . '"');
+            log_debug('formula_link->save new link from "' . $this->fob->name() . '" to "' . $this->tob->name() . '"');
             $result .= $this->add()->get_last_message();
         } else {
             log_debug('formula_link->save update "' . $this->id . '"');
@@ -660,7 +696,7 @@ class formula_link extends user_sandbox_link
             // because it needs to be done for user and general formulas
             $db_rec = new formula_link($this->usr);
             $db_rec->id = $this->id;
-            $db_rec->load();
+            $db_rec->load_obj_vars();
             $db_rec->load_objects();
             $db_con->set_type(sql_db::TBL_FORMULA_LINK);
             log_debug("formula_link->save -> database formula loaded (" . $db_rec->id . ")");

@@ -71,7 +71,7 @@ function run_phrase_test(testing $t)
     $lnk_company->from->id = $wrd_zh->id;
     $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
     $lnk_company->to->id = $wrd_company->id;
-    $lnk_company->load();
+    $lnk_company->load_obj_vars();
 
     // remember the id for later use
     $zh_company_id = $lnk_company->id;
@@ -81,8 +81,8 @@ function run_phrase_test(testing $t)
     $phr = new phrase($usr);
     $phr->id = $wrd_company->id;
     $phr->usr = $usr;
-    $phr->load();
-    $result = $phr->name;
+    $phr->load_by_obj_par();
+    $result = $phr->name();
     $target = word::TN_COMPANY;
     $t->dsp('phrase->load word by id ' . $wrd_company->id, $target, $result);
 
@@ -103,8 +103,8 @@ function run_phrase_test(testing $t)
     // test the phrase display functions (triple side)
     $phr = new phrase($usr);
     $phr->id = $zh_company_id * -1;
-    $phr->load();
-    $result = $phr->name;
+    $phr->load_by_obj_par();
+    $result = $phr->name();
     $target = phrase::TN_ZH_COMPANY;
     $t->dsp('phrase->load triple by id ' . $zh_company_id, $target, $result);
 
@@ -128,19 +128,17 @@ function run_phrase_test(testing $t)
     $back = $wrd_company->id;
     $phr = new phrase($usr);
     $phr->id = $zh_company_id * -1;
-    $phr->load();
+    $phr->load_by_obj_par();
     $result = $phr->dsp_selector(Null, $form_name, $pos, '', $back);
     $target = phrase::TN_ZH_COMPANY;
     $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' . phrase::TN_ZH_COMPANY . ' selected contains ' . phrase::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test the phrase selector of type company
     $wrd_ABB = new word($usr);
-    $wrd_ABB->name = TW_ABB;
-    $wrd_ABB->load();
+    $wrd_ABB->load_by_name(TW_ABB, word::class);
     $phr = $wrd_ABB->phrase();
     $wrd_company = new word($usr);
-    $wrd_company->name = TEST_WORD;
-    $wrd_company->load();
+    $wrd_company->load_by_name(TEST_WORD, word::class);
     $result = $phr->dsp_selector($wrd_company, $form_name, $pos, '', $back);
     $target = TW_ABB;
     $t->dsp_contains(', phrase->dsp_selector of type ' . TEST_WORD . ': ' . $result . ' with ABB selected contains ' . phrase::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
@@ -149,9 +147,9 @@ function run_phrase_test(testing $t)
     $phr = $t->load_phrase(TW_VESTAS);
     $is_phr = $phr->is_mainly();
     if ($is_phr != null) {
-        $result = $is_phr->name;
+        $result = $is_phr->name();
     }
     $target = TEST_WORD;
-    $t->dsp('phrase->is_mainly for ' . $phr->name, $target, $result);
+    $t->dsp('phrase->is_mainly for ' . $phr->name(), $target, $result);
 
 }

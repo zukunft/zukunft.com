@@ -30,7 +30,7 @@
   
 */
 
-class triple_object extends user_sandbox_link_description
+class triple_object extends user_sandbox_link_named
 {
 
 }

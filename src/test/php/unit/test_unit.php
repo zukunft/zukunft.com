@@ -84,9 +84,11 @@ class test_unit extends testing
         // do the unit tests
         (new string_unit_tests)->run($this); // test functions not yet split into single unit tests
         (new system_unit_tests)->run($this);
+        (new user_sandbox_unit_tests)->run($this);
         (new word_unit_tests)->run($this);
-        (new triple_unit_tests)->run($this);
         (new word_list_unit_tests)->run($this);
+        (new verb_unit_tests)->run($this);
+        (new triple_unit_tests)->run($this);
         (new triple_list_unit_tests)->run($this);
         (new phrase_unit_tests)->run($this);
         (new phrase_list_unit_tests)->run($this);
@@ -94,19 +96,17 @@ class test_unit extends testing
         (new term_unit_tests)->run($this);
         (new term_list_unit_tests)->run($this);
         (new view_unit_tests)->run($this);
-        (new view_component_unit_tests())->run($this);
-        (new view_component_link_unit_tests)->run($this);
         (new value_unit_tests)->run($this);
-        (new value_phrase_link_unit_tests)->run($this);
         (new value_list_unit_tests)->run($this);
+        (new value_phrase_link_unit_tests)->run($this);
         (new formula_unit_tests)->run($this);
         (new formula_link_unit_tests)->run($this);
         (new formula_value_unit_tests)->run($this);
         (new formula_element_unit_tests)->run($this);
         (new figure_unit_tests)->run($this);
         (new expression_unit_tests)->run($this);
-        (new user_sandbox_unit_tests)->run($this);
-        (new verb_unit_tests)->run($this);
+        (new view_component_unit_tests())->run($this);
+        (new view_component_link_unit_tests)->run($this);
         (new ref_unit_tests)->run($this);
         (new user_log_unit_tests)->run($this);
 

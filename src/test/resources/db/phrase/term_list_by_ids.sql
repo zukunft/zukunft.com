@@ -10,6 +10,7 @@ PREPARE term_list_by_ids (int,int[]) AS
            CASE WHEN (u.protect_id        IS     NULL) THEN s.protect_id    ELSE u.protect_id    END AS protect_id
       FROM terms s
  LEFT JOIN user_terms u ON s.term_id = u.term_id AND u.user_id = $1
-     WHERE s.term_id = ANY ($2);
+     WHERE s.term_id = ANY ($2)
+  ORDER BY s.term_id;
 
 

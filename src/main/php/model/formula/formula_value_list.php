@@ -375,7 +375,7 @@ class formula_value_list
                 $fv->load_phrases(); // load any missing objects if needed
                 $phr_lst = clone $fv->phr_lst;
                 if (isset($fv->time_phr)) {
-                    log_debug("fv_lst->display -> add time " . $fv->time_phr->name . ".");
+                    log_debug("fv_lst->display -> add time " . $fv->time_phr->name() . ".");
                     $phr_lst->add($fv->time_phr);
                 }
                 $phr_lst_dsp = $phr_lst->dsp_obj();
@@ -427,7 +427,7 @@ class formula_value_list
         // temp utils the call is reviewed
         $wrd = new word($this->usr);
         $wrd->id = $phr_id;
-        $wrd->load();
+        $wrd->load_obj_vars();
 
         $val_lst = new value_list($this->usr);
         $value_lst = $val_lst->load_frm_related_grp_phrs($phr_id, $frm_phr_ids, $this->usr->id);
@@ -440,11 +440,11 @@ class formula_value_list
                 foreach ($debug_phr_ids as $debug_phr_id) {
                     $debug_wrd = new word($this->usr);
                     $debug_wrd->id = $debug_phr_id;
-                    $debug_wrd->load();
-                    $debug_txt .= ", " . $debug_wrd->name;
+                    $debug_wrd->load_obj_vars();
+                    $debug_txt .= ", " . $debug_wrd->name();
                 }
             }
-            log_debug('fv_lst->add_frm_val -> calc ' . $frm_row['formula_name'] . ' for ' . $wrd->name . ' (' . $phr_id . ')' . $debug_txt);
+            log_debug('fv_lst->add_frm_val -> calc ' . $frm_row['formula_name'] . ' for ' . $wrd->name() . ' (' . $phr_id . ')' . $debug_txt);
 
             // get the group words
             $phr_ids = $value_lst[$val_id][1];
@@ -475,7 +475,7 @@ class formula_value_list
         formula $frm,
                 $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
     {
-        log_debug('fv_lst->frm_upd_lst_usr(' . $frm->name . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
+        log_debug('fv_lst->frm_upd_lst_usr(' . $frm->name() . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
         $result = new batch_job_list($usr);
         $added = 0;
 
@@ -510,7 +510,7 @@ class formula_value_list
                 $calc_request->usr = $usr;
                 $calc_request->phr_lst = $phr_lst;
                 $result->add($calc_request);
-                log_debug('request "' . $frm->name . '" for "' . $phr_lst->name() . '"');
+                log_debug('request "' . $frm->name() . '" for "' . $phr_lst->name() . '"');
                 $added++;
             }
         }
@@ -630,14 +630,14 @@ class formula_value_list
         // e.g. if the formula is assigned to "Company" and "ABB is a Company" include ABB in the phrase list
         // check in frm_upd_lst_usr only if the user has done any modifications that may influence the word list
         $phr_lst_frm_assigned = $frm->assign_phr_lst();
-        log_debug('formula "' . $frm->name . '" is assigned to ' . $phr_lst_frm_assigned->dsp_name() . ' for user ' . $phr_lst_frm_assigned->usr->name . '');
+        log_debug('formula "' . $frm->name() . '" is assigned to ' . $phr_lst_frm_assigned->dsp_name() . ' for user ' . $phr_lst_frm_assigned->usr->name . '');
 
         // get a list of all words, triples, formulas and verbs used in the formula
         // e.g. for the formula "net profit" the word "Sales" & "cost of sales" is used
         // for formulas the formula word is used
         $exp = $frm->expression();
         $phr_lst_frm_used = $exp->phr_verb_lst($back);
-        log_debug('formula "' . $frm->name . '" uses ' . $phr_lst_frm_used->name_linked() . ' (taken from ' . $frm->usr_text . ')');
+        log_debug('formula "' . $frm->name() . '" uses ' . $phr_lst_frm_used->name_linked() . ' (taken from ' . $frm->usr_text . ')');
 
         // get the list of predefined "following" phrases/formulas like "prior" or "next"
         $phr_lst_preset_following = $exp->element_special_following($back);
@@ -672,12 +672,14 @@ class formula_value_list
         // e.g. to calculate the "increase" of "ABB,Sales" the formula results for "ABB,Sales,increase" should not be used
         //      because the "increase" of an "increase" is a gradient not an "increase"
 
+        /*
         // get the phrase name of the formula e.g. "increase"
         if (!isset($frm->name_wrd)) {
             $frm->load_wrd();
         }
+        */
         $phr_frm = $frm->name_wrd;
-        log_debug('For ' . $frm->usr_text . ' formula results with the name ' . $phr_frm->name() . ' should not be used for calculation to avoid loops');
+        log_debug('For ' . $frm->usr_text . ' formula results with the name ' . $phr_frm->name_dsp() . ' should not be used for calculation to avoid loops');
 
         // get the phrase name of the formula e.g. "percent"
         $exp = $frm->expression();
@@ -715,7 +717,7 @@ class formula_value_list
                 $usr_calc_needed = true;
             }
             if ($this->usr->id == 0 or $usr_calc_needed) {
-                log_debug('update values for user: ' . $usr->name . ' and formula ' . $frm->name);
+                log_debug('update values for user: ' . $usr->name . ' and formula ' . $frm->name());
 
                 $result = $this->frm_upd_lst_usr($frm, $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos);
             }
@@ -775,7 +777,7 @@ class formula_value_list
                 }
                 $frm = new formula($this->usr);
                 $frm->id = $frm_id;
-                $frm->load();
+                $frm->load_obj_vars();
                 $back = '';
                 $fv_list = $frm->to_num($phr_lst_used, $back);
                 $formula_value = $fv_list->get_first();

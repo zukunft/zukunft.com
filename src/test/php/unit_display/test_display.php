@@ -33,7 +33,7 @@
 use html\button;
 use html\html_base;
 
-function run_display_test(testing $t)
+function run_display_test(testing $t): void
 {
 
     global $usr;
@@ -46,8 +46,7 @@ function run_display_test(testing $t)
     // test the usage of a view to create the HTML code
     $wrd = $t->load_word(word::TN_READ);
     $dsp = new view($usr);
-    $dsp->name = 'Company ratios';
-    $dsp->load();
+    $dsp->load_by_name(view::TN_READ_RATIO, view::class);
     //$result = $dsp->display($wrd, $back);
     $target = true;
     //$t->dsp_contains(', view_dsp->display is "'.$result.'" which should contain '.$wrd_abb->name.'', $target, $result);
@@ -59,9 +58,9 @@ function run_display_test(testing $t)
     $cmp = new view_cmp_dsp_old($usr);
     $cmp->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::TEXT);
     $cmp->set_id(1);
-    $cmp->name = TS_NESN_2016_NAME;
+    $cmp->set_name(view::TN_READ_NESN_2016);
     $result = $cmp->dsp_obj()->html();
-    $target = ' ' . TS_NESN_2016_NAME;
+    $target = ' ' . view::TN_READ_NESN_2016;
     $t->dsp('view_component_dsp->text', $target, $result);
 
 

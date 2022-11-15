@@ -69,7 +69,7 @@ class testing extends test_base
                     // request to delete the added test value
                     $val = new value($this->usr1);
                     $val->id = $val_id;
-                    $val->load();
+                    $val->load_obj_vars();
                     // check again, because some id may be added twice
                     if ($val->id > 0) {
                         $msg = $val->del();
@@ -124,14 +124,14 @@ class testing extends test_base
         if ($dsp_usr2->id > 0 and $cmp_usr2->id > 0) {
             $result .= $cmp_usr2->unlink($dsp_usr2);
             $target = '';
-            $this->dsp('cleanup: unlink first component "' . $cmp_usr2->name . '" from "' . $dsp_usr2->name . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+            $this->dsp('cleanup: unlink first component "' . $cmp_usr2->name() . '" from "' . $dsp_usr2->name() . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // check if the test components have been unlinked
         if ($dsp->id > 0 and $cmp->id > 0) {
             $result .= $cmp->unlink($dsp);
             $target = '';
-            $this->dsp('cleanup: unlink first component "' . $cmp->name . '" from "' . $dsp->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+            $this->dsp('cleanup: unlink first component "' . $cmp->name() . '" from "' . $dsp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // unlink the second component
@@ -141,14 +141,14 @@ class testing extends test_base
         if ($dsp->id > 0 and $cmp2->id > 0) {
             $result .= $cmp2->unlink($dsp);
             $target = '';
-            $this->dsp('cleanup: unlink second component "' . $cmp2->name . '" from "' . $dsp->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+            $this->dsp('cleanup: unlink second component "' . $cmp2->name() . '" from "' . $dsp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // unlink the second component for user 2
         if ($dsp_usr2->id > 0 and $cmp2_usr2->id > 0) {
             $result .= $cmp2_usr2->unlink($dsp_usr2);
             $target = '';
-            $this->dsp('cleanup: unlink second component "' . $cmp2_usr2->name . '" from "' . $dsp_usr2->name . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+            $this->dsp('cleanup: unlink second component "' . $cmp2_usr2->name() . '" from "' . $dsp_usr2->name() . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // request to delete the added test views

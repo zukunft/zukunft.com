@@ -172,7 +172,7 @@ class source extends user_sandbox_named
             array(sql_db::FLD_USER_ID)
         ));
 
-        return parent::load_standard_sql($db_con, self::class);
+        return parent::load_standard_sql($db_con, $class);
     }
 
     /**
@@ -185,12 +185,34 @@ class source extends user_sandbox_named
     {
         global $db_con;
         $qp = $this->load_standard_sql($db_con);
-        $result = parent::load_standard($qp, self::class);
+        $result = parent::load_standard($qp, $class);
 
         if ($result) {
             $result = $this->load_owner();
         }
         return $result;
+    }
+
+    /**
+     * create the common part of an SQL statement to retrieve the parameters of a source from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp->name .= $query_name;
+
+        $db_con->set_type(sql_db::TBL_SOURCE);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+
+        return $qp;
     }
 
     /**
@@ -200,9 +222,9 @@ class source extends user_sandbox_named
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($db_con, self::class);
+        $qp = parent::load_sql_obj_vars($db_con, $class);
         if ($this->id != 0) {
             $qp->name .= 'id';
         } elseif ($this->code_id != '') {
@@ -223,13 +245,13 @@ class source extends user_sandbox_named
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id != 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
         } elseif ($this->code_id != '') {
             $db_con->add_par(sql_db::PAR_TEXT, $this->code_id);
             $qp->sql = $db_con->select_by_code_id();
         } elseif ($this->name != '') {
             $db_con->add_par(sql_db::PAR_TEXT, $this->name);
-            $qp->sql = $db_con->select_by_name();
+            $qp->sql = $db_con->select_by_set_name();
         }
         $qp->par = $db_con->get_par();
 
@@ -239,7 +261,7 @@ class source extends user_sandbox_named
     /**
      * load the missing source parameters from the database
      */
-    function load(): bool
+    function load_obj_vars(): bool
     {
         global $db_con;
         $result = false;
@@ -251,7 +273,7 @@ class source extends user_sandbox_named
             log_err("Either the database ID (" . $this->id . "), the name (" . $this->name . ") or the code_id (" . $this->code_id . ") and the user (" . $this->usr->id . ") must be set to load a source.", "source->load");
         } else {
 
-            $qp = $this->load_sql($db_con);
+            $qp = $this->load_sql_obj_vars($db_con);
 
             if ($db_con->get_where() <> '') {
                 $db_row = $db_con->get1($qp);
@@ -263,6 +285,16 @@ class source extends user_sandbox_named
             }
         }
         return $result;
+    }
+
+    function id_field(): string
+    {
+        return self::FLD_ID;
+    }
+
+    function name_field(): string
+    {
+        return self::FLD_NAME;
     }
 
 
@@ -277,7 +309,7 @@ class source extends user_sandbox_named
             $db_con->set_type(sql_db::TBL_SOURCE_TYPE);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where_std($this->type_id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
             $db_type = $db_con->get1($qp);
             $this->type_name = $db_type['source_type_name'];
@@ -329,7 +361,7 @@ class source extends user_sandbox_named
         $result = new source_exp();
 
         // add the source parameters
-        $result->name = $this->name;
+        $result->name = $this->name();
         if ($this->url <> '') {
             $result->url = $this->url;
         }
@@ -390,7 +422,7 @@ class source extends user_sandbox_named
     // word_id - id of the starting word to display; can be a single word, a comma separated list of word ids, a word group or a word triple
     function display($wrd): string
     {
-        log_debug('source->display "' . $wrd->name . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id . ')  for user "' . $this->usr->name . '"');
+        log_debug('source->display "' . $wrd->name() . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id . ')  for user "' . $this->usr->name . '"');
         $result = '';
 
         if ($this->id <= 0) {
@@ -557,7 +589,7 @@ class source extends user_sandbox_named
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where_std($this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {

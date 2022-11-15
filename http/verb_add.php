@@ -53,7 +53,7 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::VERB_ADD);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back']; // the calling word which should be displayed after saving
 
     if (!$usr->is_admin()) {
@@ -87,8 +87,7 @@ if ($usr->id > 0) {
 
                 // check if a verb, formula or word with the same name is already in the database
                 $trm = new term($usr);
-                $trm->name = $vrb->name;
-                $trm->load();
+                $trm->load_by_name($vrb->name);
                 if ($trm->id_obj() > 0) {
                     $msg .= $trm->id_used_msg();
                 }

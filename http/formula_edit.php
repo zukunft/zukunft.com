@@ -50,13 +50,13 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::FORMULA_EDIT);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back'];
 
     // create the formula object to have an place to update the parameters
     $frm = new formula($usr);
     $frm->id = $_GET['id']; // id of the formula that can be changed
-    $frm->load();
+    $frm->load_obj_vars();
 
     // load the parameters to the formula object to display the user input again in case of an error
     if (isset($_GET['formula_name'])) {
@@ -89,7 +89,7 @@ if ($usr->id > 0) {
         if ($_GET['link_phrase'] > 0) {
             $phr = new phrase($usr);
             $phr->id = $_GET['link_phrase'];
-            $phr->load();
+            $phr->load_by_obj_par();
             $upd_result = $frm->link_phr($phr);
         }
 
@@ -97,7 +97,7 @@ if ($usr->id > 0) {
         if ($_GET['unlink_phrase'] > 0) {
             $phr = new phrase($usr);
             $phr->id = $_GET['unlink_phrase'];
-            $phr->load();
+            $phr->load_by_obj_par();
             $upd_result = $frm->unlink_phr($phr);
         }
 
@@ -132,7 +132,7 @@ if ($usr->id > 0) {
             $result .= dsp_err($msg);
 
             // display the view to change the formula
-            $frm->load(); // reload to formula object to display the real database values
+            $frm->load_obj_vars(); // reload to formula object to display the real database values
             if (isset($_GET['add_link'])) {
                 $add_link = $_GET['add_link'];
             } else {

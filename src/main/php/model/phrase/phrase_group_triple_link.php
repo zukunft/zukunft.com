@@ -97,7 +97,7 @@ class phrase_group_triple_link extends phrase_group_link
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con): sql_par
+    function load_sql_obj_vars(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
         $qp = new sql_par(self::class);
@@ -113,7 +113,7 @@ class phrase_group_triple_link extends phrase_group_link
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_name($qp->name);
         //$db_con->set_usr($this->usr->id);
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -125,7 +125,7 @@ class phrase_group_triple_link extends phrase_group_link
     function load(): bool
     {
         global $db_con;
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql_obj_vars($db_con);
         return $this->row_mapper($db_con->get1($qp));
     }
 

@@ -177,7 +177,7 @@ class user_log_link extends user_log
 
         $db_con->set_where_text($db_con->where_par($fields, $values));
         $db_con->set_order(self::FLD_ID, sql_db::ORDER_DESC);
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -304,14 +304,14 @@ class user_log_link extends user_log
             $this->set_usr();
             $wrd = new word($this->usr);
             $wrd->id = $id;
-            $wrd->load();
-            $result = $wrd->name;
+            $wrd->load_obj_vars();
+            $result = $wrd->name();
             log_debug('user_log_link->word_name got ' . $result);
         }
         return $result;
     }
 
-    private function source_name($id)
+    private function source_name($id): string
     {
         global $db_con;
         $result = '';
@@ -442,9 +442,9 @@ class user_log_link extends user_log
             or $this->table == "triples") {
             if ($this->action == "add" or $this->action == "update") {
                 if ($this->new_from != null and $this->new_link != null and $this->new_to != null) {
-                    $this->new_text_from = $this->new_from->name;
+                    $this->new_text_from = $this->new_from->name();
                     $this->new_text_link = $this->new_link->name;
-                    $this->new_text_to = $this->new_to->name;
+                    $this->new_text_to = $this->new_to->name();
                     $this->new_from_id = $this->new_from->id;
                     $this->new_link_id = $this->new_link->id;
                     $this->new_to_id = $this->new_to->id;
@@ -454,9 +454,9 @@ class user_log_link extends user_log
             }
             if ($this->action == "del" or $this->action == "update") {
                 if ($this->old_from != null and $this->old_link != null and $this->old_to != null) {
-                    $this->old_text_from = $this->old_from->name;
+                    $this->old_text_from = $this->old_from->name();
                     $this->old_text_link = $this->old_link->name;
-                    $this->old_text_to = $this->old_to->name;
+                    $this->old_text_to = $this->old_to->name();
                     $this->old_from_id = $this->old_from->id;
                     $this->old_link_id = $this->old_link->id;
                     $this->old_to_id = $this->old_to->id;
@@ -468,7 +468,7 @@ class user_log_link extends user_log
         if ($this->table == "refs") {
             if ($this->action == "add" or $this->action == "update") {
                 if ($this->new_from != null and $this->new_link != null and $this->new_to != null) {
-                    $this->new_text_from = $this->new_from->name;
+                    $this->new_text_from = $this->new_from->name();
                     $this->new_text_link = $this->new_link->name;
                     $this->new_text_to = $this->new_to->external_key;
                     $this->new_from_id = $this->new_from->id;
@@ -480,7 +480,7 @@ class user_log_link extends user_log
             }
             if ($this->action == "del" or $this->action == "update") {
                 if ($this->old_from != null and $this->old_link != null and $this->old_to != null) {
-                    $this->old_text_from = $this->old_from->name;
+                    $this->old_text_from = $this->old_from->name();
                     $this->old_text_link = $this->old_link->name;
                     $this->old_text_to = $this->old_to->external_key;
                     $this->old_from_id = $this->old_from->id;
@@ -496,8 +496,8 @@ class user_log_link extends user_log
             or $this->table == "formula_links") {
             if ($this->action == "add" or $this->action == "update") {
                 if ($this->new_from != null and $this->new_to != null) {
-                    $this->new_text_from = $this->new_from->name;
-                    $this->new_text_to = $this->new_to->name;
+                    $this->new_text_from = $this->new_from->name();
+                    $this->new_text_to = $this->new_to->name();
                     $this->new_from_id = $this->new_from->id;
                     $this->new_to_id = $this->new_to->id;
                 } else {
@@ -506,8 +506,8 @@ class user_log_link extends user_log
             }
             if ($this->action == "del" or $this->action == "update") {
                 if ($this->old_from != null and $this->old_to != null) {
-                    $this->old_text_from = $this->old_from->name;
-                    $this->old_text_to = $this->old_to->name;
+                    $this->old_text_from = $this->old_from->name();
+                    $this->old_text_to = $this->old_to->name();
                     $this->old_from_id = $this->old_from->id;
                     $this->old_to_id = $this->old_to->id;
                 } else {

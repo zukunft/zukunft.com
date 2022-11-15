@@ -152,10 +152,10 @@ class value_list_dsp extends value_list_api
                     if ($val->time_phr->id > 0) {
                         $time_phr = new phrase($val->usr);
                         $time_phr->id = $val->time_phr->id;
-                        $time_phr->load();
+                        $time_phr->load_by_obj_par();
                         $val->time_phr = $time_phr;
                         $dsp_phr_lst->add($time_phr);
-                        log_debug('add time word ' . $val->time_phr->name);
+                        log_debug('add time word ' . $val->time_phr->name());
                     }
                 }
 

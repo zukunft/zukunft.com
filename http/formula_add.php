@@ -54,7 +54,7 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::FORMULA_ADD);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back'];
 
     // init the formula object
@@ -62,7 +62,7 @@ if ($usr->id > 0) {
 
     // load the parameters to the formula object to display the user input again in case of an error
     if (isset($_GET['formula_name'])) {
-        $frm->name = $_GET['formula_name'];
+        $frm->set_name($_GET['formula_name']);
     } // the new formula name
     if (isset($_GET['formula_text'])) {
         $frm->usr_text = $_GET['formula_text'];
@@ -83,7 +83,7 @@ if ($usr->id > 0) {
     $wrd = new word($usr);
     if (isset($_GET['word'])) {
         $wrd->id = $_GET['word'];
-        $wrd->load();
+        $wrd->load_obj_vars();
     }
 
     // if the user has requested to add a new formula
@@ -95,7 +95,7 @@ if ($usr->id > 0) {
             $msg .= dsp_err('Word missing; Internal error, because a formula should always be linked to a word or a list of words.');
         }
 
-        if ($frm->name == "") {
+        if ($frm->name() == "") {
             $msg .= dsp_err('Formula name missing; Please give the unique name to be able to identify it.');
         }
 
@@ -106,10 +106,8 @@ if ($usr->id > 0) {
         // check if a word, verb or formula with the same name already exists
         log_debug('word');
         $trm = $frm->get_term();
-        if (isset($trm)) {
-            if ($trm->id_obj() > 0) {
-                $msg .= $trm->id_used_msg();
-            }
+        if ($trm->id_obj() > 0) {
+            $msg .= $trm->id_used_msg();
         }
         log_debug('checked');
 

@@ -91,7 +91,7 @@ class formula_element
             if ($db_row[self::FLD_ID] > 0) {
                 $this->id = $db_row[self::FLD_ID];
                 $this->type = $db_row[self::FLD_TYPE];
-                $this->load($db_row[self::FLD_REF_ID]);
+                $this->load_by_id($db_row[self::FLD_REF_ID]);
                 $result = true;
             }
         }
@@ -101,14 +101,13 @@ class formula_element
     /**
      * get the name and other parameters from the database
      */
-    function load(int $ref_id)
+    function load_by_id(int $ref_id): void
     {
         if ($ref_id != 0 and isset($this->usr)) {
             if ($this->type == self::TYPE_WORD) {
                 $wrd = new word($this->usr);
-                $wrd->id = $ref_id;
-                $wrd->load();
-                $this->name = $wrd->name;
+                $wrd->load_by_id($ref_id, word::class);
+                $this->name = $wrd->name();
                 $this->dsp_name = $wrd->dsp_obj()->dsp_link($this->back);
                 $this->symbol = expression::WORD_START . $wrd->id . expression::WORD_END;
                 $this->obj = $wrd;
@@ -117,7 +116,7 @@ class formula_element
                 $lnk = new verb;
                 $lnk->id = $ref_id;
                 $lnk->usr = $this->usr;
-                $lnk->load();
+                $lnk->load_by_vars();
                 $this->name = $lnk->name;
                 $this->dsp_name = $lnk->display($this->back);
                 $this->symbol = expression::TRIPLE_START . $lnk->id . expression::TRIPLE_END;
@@ -125,17 +124,17 @@ class formula_element
             }
             if ($this->type == self::TYPE_FORMULA) {
                 $frm = new formula($this->usr);
-                $frm->id = $ref_id;
-                $frm->load();
-                $this->name = $frm->name;
+                $frm->load_by_id($ref_id, formula::class);
+                $this->name = $frm->name();
                 $this->dsp_name = $frm->dsp_obj_old()->name_linked($this->back);
                 $this->symbol = expression::FORMULA_START . $frm->id . expression::FORMULA_END;
                 $this->obj = $frm;
+                /*
                 // in case of a formula load also the corresponding word
                 $wrd = new word($this->usr);
-                $wrd->name = $frm->name;
-                $wrd->load();
+                $wrd->load_by_name($frm->name, word::class);
                 $this->wrd_obj = $wrd;
+                */
                 //
                 if ($frm->is_special()) {
                     $this->frm_type = $frm->type_cl;
@@ -191,7 +190,7 @@ class formula_element
                 } elseif ($this->type == verb::class) {
                     $result = $this->name;
                 } elseif ($this->type == formula::class) {
-                    $result = $this->obj->name;
+                    $result = $this->obj->name();
                 }
             }
         }

@@ -47,19 +47,26 @@ class view_unit_tests
         $t->header('Unit tests of the view class (src/main/php/model/view/view.php)');
 
 
+        $t->subheader('SQL user sandbox statement tests');
+
+        $dsp = new view($usr);
+        $t->assert_load_sql_id($db_con, $dsp);
+        $t->assert_load_sql_name($db_con, $dsp);
+
+
         $t->subheader('SQL statement tests');
 
         // sql to load the view by id
         $dsp = new view($usr);
         $dsp->id = 2;
-        $t->assert_load_sql($db_con, $dsp);
+        //$t->assert_load_sql($db_con, $dsp);
         $t->assert_load_standard_sql($db_con, $dsp);
         $t->assert_user_config_sql($db_con, $dsp);
 
         // sql to load the view by name
         $dsp = new view($usr);
-        $dsp->name = view::TN_ADD;
-        $t->assert_load_sql($db_con, $dsp);
+        $dsp->set_name(view::TN_ADD);
+        //$t->assert_load_sql($db_con, $dsp);
         $t->assert_load_standard_sql($db_con, $dsp);
 
         // sql to load the view by code id
@@ -113,7 +120,7 @@ class view_unit_tests
         $dsp->name = view::TEST_NAME_ADD;
         $dsp->usr = $usr;
         $wrd = new word($usr);
-        $wrd->name = word::TEST_NAME;
+        $wrd->set_name(word::TEST_NAME);
         $result = $dsp->display($wrd, 1);
         $target = '';
         $t->dsp('view->display', $target, $result);

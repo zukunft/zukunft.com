@@ -30,7 +30,7 @@
 
 */
 
-function create_test_view_components(testing $t)
+function create_test_view_components(testing $t): void
 {
     $t->header('Check if all base view components are existing');
 
@@ -41,7 +41,7 @@ function create_test_view_components(testing $t)
 
 }
 
-function run_view_component_test(testing $t)
+function run_view_component_test(testing $t): void
 {
 
     $t->header('Test the view component class (classes/view_component.php)');
@@ -58,7 +58,7 @@ function run_view_component_test(testing $t)
     // test the complete view_component for one word
     $wrd = New word_dsp;
     $wrd->usr  = $t->usr1;
-    $wrd->name = TW_ABB;
+    $wrd->set_name(TW_ABB);
     $wrd->load();
     $result = $cmp->display($wrd);
     // check if the view_component contains the word name
@@ -75,22 +75,21 @@ function run_view_component_test(testing $t)
     */
     // test adding of one view_component
     $cmp = new view_cmp($t->usr1);
-    $cmp->name = view_cmp::TN_ADD;
+    $cmp->set_name(view_cmp::TN_ADD);
     $cmp->comment = 'Just added for testing';
     $result = $cmp->save();
     if ($cmp->id > 0) {
         $result = $cmp->comment;
     }
     $target = 'Just added for testing';
-    $t->dsp('view_component->save for adding "' . $cmp->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp('view_component->save for adding "' . $cmp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if the view_component name has been saved
     $cmp_added = new view_cmp($t->usr1);
-    $cmp_added->name = view_cmp::TN_ADD;
-    $cmp_added->load();
+    $cmp_added->load_by_name(view_cmp::TN_ADD, view_cmp::class);
     $result = $cmp_added->comment;
     $target = 'Just added for testing';
-    $t->dsp('view_component->load the added "' . $cmp_added->name . '"', $target, $result);
+    $t->dsp('view_component->load the added "' . $cmp_added->name() . '"', $target, $result);
 
     // check if the view_component adding has been logged
     $log = new user_log_named;
@@ -104,33 +103,31 @@ function run_view_component_test(testing $t)
 
     // check if adding the same view_component again creates a correct error message
     $cmp = new view_cmp($t->usr1);
-    $cmp->name = view_cmp::TN_ADD;
+    $cmp->set_name(view_cmp::TN_ADD);
     $result = $cmp->save();
     // in case of other settings
     $target = 'A view component with the name "' . view_cmp::TN_ADD . '" already exists. Please use another name.';
     // for the standard settings
     $target = '';
-    $t->dsp('view_component->save adding "' . $cmp->name . '" again', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp('view_component->save adding "' . $cmp->name() . '" again', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if the view_component can be renamed
     $cmp = new view_cmp($t->usr1);
-    $cmp->name = view_cmp::TN_ADD;
-    $cmp->load();
-    $cmp->name = view_cmp::TN_RENAMED;
+    $cmp->load_by_name(view_cmp::TN_ADD, view_cmp::class);
+    $cmp->set_name(view_cmp::TN_RENAMED);
     $result = $cmp->save();
     $target = '';
     $t->dsp('view_component->save rename "' . view_cmp::TN_ADD . '" to "' . view_cmp::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if the view_component renaming was successful
     $cmp_renamed = new view_cmp($t->usr1);
-    $cmp_renamed->name = view_cmp::TN_RENAMED;
-    $result = $cmp_renamed->load();
+    $result = $cmp_renamed->load_by_name(view_cmp::TN_RENAMED, view_cmp::class);
     if ($result == '') {
         if ($cmp_renamed->id > 0) {
-            $result = $cmp_renamed->name;
+            $result = $cmp_renamed->name();
         }
     }
-    $target = true;
+    $target = 13;
     $t->dsp('view_component->load renamed view_component "' . view_cmp::TN_RENAMED . '"', $target, $result);
 
     // check if the view_component renaming has been logged
@@ -145,8 +142,7 @@ function run_view_component_test(testing $t)
 
     // check if the view_component parameters can be added
     $cmp_renamed = new view_cmp($t->usr1);
-    $cmp_renamed->name = view_cmp::TN_RENAMED;
-    $cmp_renamed->load();
+    $cmp_renamed->load_by_name(view_cmp::TN_RENAMED, view_cmp::class);
     $cmp_renamed->comment = 'Just added for testing the user sandbox';
     $cmp_renamed->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::WORD_NAME);
     $result = $cmp_renamed->save();
@@ -155,8 +151,7 @@ function run_view_component_test(testing $t)
 
     // check if the view_component parameters have been added
     $cmp_reloaded = new view_cmp($t->usr1);
-    $cmp_reloaded->name = view_cmp::TN_RENAMED;
-    $cmp_reloaded->load();
+    $cmp_reloaded->load_by_name(view_cmp::TN_RENAMED, view_cmp::class);
     $result = $cmp_reloaded->comment;
     $target = 'Just added for testing the user sandbox';
     $t->dsp('view_component->load comment for "' . view_cmp::TN_RENAMED . '"', $target, $result);
@@ -180,8 +175,7 @@ function run_view_component_test(testing $t)
 
     // check if a user specific view_component is created if another user changes the view_component
     $cmp_usr2 = new view_cmp($t->usr2);
-    $cmp_usr2->name = view_cmp::TN_RENAMED;
-    $cmp_usr2->load();
+    $cmp_usr2->load_by_name(view_cmp::TN_RENAMED, view_cmp::class);
     $cmp_usr2->comment = 'Just changed for testing the user sandbox';
     $cmp_usr2->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::FORMULAS);
     $result = $cmp_usr2->save();
@@ -190,8 +184,7 @@ function run_view_component_test(testing $t)
 
     // check if a user specific view_component changes have been saved
     $cmp_usr2_reloaded = new view_cmp($t->usr2);
-    $cmp_usr2_reloaded->name = view_cmp::TN_RENAMED;
-    $cmp_usr2_reloaded->load();
+    $cmp_usr2_reloaded->load_by_name(view_cmp::TN_RENAMED, view_cmp::class);
     $result = $cmp_usr2_reloaded->comment;
     $target = 'Just changed for testing the user sandbox';
     $t->dsp('view_component->load comment for "' . view_cmp::TN_RENAMED . '"', $target, $result);
@@ -201,8 +194,7 @@ function run_view_component_test(testing $t)
 
     // check the view_component for the original user remains unchanged
     $cmp_reloaded = new view_cmp($t->usr1);
-    $cmp_reloaded->name = view_cmp::TN_RENAMED;
-    $cmp_reloaded->load();
+    $cmp_reloaded->load_by_name(view_cmp::TN_RENAMED, view_cmp::class);
     $result = $cmp_reloaded->comment;
     $target = 'Just added for testing the user sandbox';
     $t->dsp('view_component->load comment for "' . view_cmp::TN_RENAMED . '"', $target, $result);
@@ -212,8 +204,7 @@ function run_view_component_test(testing $t)
 
     // check if undo all specific changes removes the user view_component
     $cmp_usr2 = new view_cmp($t->usr2);
-    $cmp_usr2->name = view_cmp::TN_RENAMED;
-    $cmp_usr2->load();
+    $cmp_usr2->load_by_name(view_cmp::TN_RENAMED, view_cmp::class);
     $cmp_usr2->comment = 'Just added for testing the user sandbox';
     $cmp_usr2->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::WORD_NAME);
     $result = $cmp_usr2->save();
@@ -222,8 +213,7 @@ function run_view_component_test(testing $t)
 
     // check if a user specific view_component changes have been saved
     $cmp_usr2_reloaded = new view_cmp($t->usr2);
-    $cmp_usr2_reloaded->name = view_cmp::TN_RENAMED;
-    $cmp_usr2_reloaded->load();
+    $cmp_usr2_reloaded->load_by_name(view_cmp::TN_RENAMED, view_cmp::class);
     $result = $cmp_usr2_reloaded->comment;
     $target = 'Just added for testing the user sandbox';
     $t->dsp('view_component->load comment for "' . view_cmp::TN_RENAMED . '"', $target, $result);

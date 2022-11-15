@@ -55,7 +55,7 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::LINK_ADD);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back'];      // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled

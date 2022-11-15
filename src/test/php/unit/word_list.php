@@ -113,32 +113,32 @@ class word_list_unit_tests
         // create words for unit testing
         $wrd1 = new word($usr);
         $wrd1->id = 1;
-        $wrd1->name = 'word1';
+        $wrd1->set_name('word1');
         $wrd2 = new word($usr);
         $wrd2->id = 2;
-        $wrd2->name = 'word2';
+        $wrd2->set_name('word2');
         $wrd3 = new word($usr);
         $wrd3->id = 3;
-        $wrd3->name = 'word3';
+        $wrd3->set_name('word3');
         $wrd_time = new word($usr);
         $wrd_time->id = 4;
-        $wrd_time->name = 'time_word';
+        $wrd_time->set_name('time_word');
         $wrd_time->type_id = cl(db_cl::WORD_TYPE, phrase_type::TIME);
         $wrd_time2 = new word($usr);
         $wrd_time2->id = 5;
-        $wrd_time2->name = 'time_word2';
+        $wrd_time2->set_name('time_word2');
         $wrd_time2->type_id = cl(db_cl::WORD_TYPE, phrase_type::TIME);
         $wrd_scale = new word($usr);
         $wrd_scale->id = 6;
-        $wrd_scale->name = 'scale_word';
+        $wrd_scale->set_name('scale_word');
         $wrd_scale->type_id = cl(db_cl::WORD_TYPE, phrase_type::SCALING);
         $wrd_percent = new word($usr);
         $wrd_percent->id = 7;
-        $wrd_percent->name = 'percent_word';
+        $wrd_percent->set_name('percent_word');
         $wrd_percent->type_id = cl(db_cl::WORD_TYPE, phrase_type::PERCENT);
         $wrd_measure = new word($usr);
         $wrd_measure->id = 8;
-        $wrd_measure->name = 'measure_word';
+        $wrd_measure->set_name('measure_word');
         $wrd_measure->type_id = cl(db_cl::WORD_TYPE, phrase_type::MEASURE);
 
         // merge two lists

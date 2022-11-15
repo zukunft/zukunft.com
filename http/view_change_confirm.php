@@ -71,8 +71,8 @@ if ($usr->id > 0) {
         // show the word name
         $wrd = new word($usr);
         $wrd->id = $word_id;
-        $wrd->load();
-        $result .= dsp_text_h2('Select the display format for "' . $wrd->name . '"');
+        $wrd->load_obj_vars();
+        $result .= dsp_text_h2('Select the display format for "' . $wrd->name() . '"');
     }
 
     // allow to change to type

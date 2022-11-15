@@ -51,6 +51,76 @@ class user_sandbox_link extends user_sandbox
     }
 
     /**
+     * create an SQL statement to retrieve a user sandbox link by the ids of the linked objects from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $from the subject object id
+     * @param int $type the predicate object id
+     * @param int $to the object (grammar) object id
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_link(sql_db $db_con, int $from, int $type, int $to, string $class): sql_par
+    {
+        if ($type > 0) {
+            $qp = $this->load_sql($db_con, 'link_type_obj_ids', $class);
+            $db_con->set_where_link($from, $type, $to, $this->from_field(), $this->type_field(), $this->to_field());
+        } else {
+            $qp = $this->load_sql($db_con, 'link_obj_ids', $class);
+            $db_con->set_where_link($from, 0, $to, $this->from_field(), '', $this->to_field());
+        }
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load a named user sandbox object by name
+     * @param int $from the subject object id
+     * @param int $type the predicate object id
+     * @param int $to the object (grammar) object id
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_link(int $from, int $type, int $to, string $class): int
+    {
+        global $db_con;
+
+        log_debug(dsp_array(array($from, $type, $to)));
+        $qp = $this->load_sql_by_link($db_con, $from, $type, $to, $class);
+        return parent::load($qp);
+    }
+
+    /**
+     * dummy function for the subject object that should always be overwritten by the child object
+     * @return string
+     */
+    function from_field(): string
+    {
+        return '';
+    }
+
+    /**
+     * dummy function for the predicate object that should always be overwritten by the child object
+     * @return string
+     */
+    function type_field(): string
+    {
+        return '';
+    }
+
+    /**
+     * dummy function for the object (grammar) object (computer science)
+     * that should always be overwritten by the child object
+     * @return string
+     */
+    function to_field(): string
+    {
+        return '';
+    }
+
+    /**
      * fill a similar object that is extended with display interface functions
      *
      * @return object the object fill with all user sandbox value
@@ -320,9 +390,10 @@ class user_sandbox_link extends user_sandbox
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @returns string a filled object that links the same objects
+     * @returns string|null a filled object that links the same objects
+     *                            or null if nothing similar has been found
      */
-    function get_similar(): user_sandbox
+    function get_similar(): ?user_sandbox
     {
         $result = new user_sandbox($this->usr);
 
@@ -337,15 +408,15 @@ class user_sandbox_link extends user_sandbox
             $db_chk->tob = $this->tob;
             if ($db_chk->load_standard()) {
                 if ($db_chk->id > 0) {
-                    log_debug($this->obj_name . '->get_similar the ' . $this->fob->name . ' "' . $this->fob->name . '" is already linked to "' . $this->tob->name . '" of the standard linkspace');
+                    log_debug($this->obj_name . '->get_similar the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard linkspace');
                     $result = $db_chk;
                 }
             }
             // check with the user linkspace
             $db_chk->usr = $this->usr;
-            if ($db_chk->load()) {
+            if ($db_chk->load_obj_vars()) {
                 if ($db_chk->id > 0) {
-                    log_debug($this->obj_name . '->get_similar the ' . $this->fob->name . ' "' . $this->fob->name . '" is already linked to "' . $this->tob->name . '" of the user linkspace');
+                    log_debug($this->obj_name . '->get_similar the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user linkspace');
                     $result = $db_chk;
                 }
             }

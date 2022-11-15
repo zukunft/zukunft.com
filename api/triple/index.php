@@ -56,7 +56,7 @@ if ($usr->id > 0) {
     if ($trp_id > 0) {
         $trp = new triple($usr);
         $trp->id = $trp_id;
-        $trp->load();
+        $trp->load_obj_vars();
         $result = $trp->api_obj();
     } else {
         $msg = 'triple id is missing';

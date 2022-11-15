@@ -32,7 +32,7 @@
 
 class ref_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;
@@ -46,6 +46,13 @@ class ref_unit_tests
 
         $t->header('Unit tests of the Ref class (src/main/php/model/ref/ref.php)');
 
+        $t->subheader('SQL user sandbox statement tests');
+
+        $ref = new ref($usr);
+        $t->assert_load_sql_id($db_con, $ref);
+        $t->assert_load_sql_name($db_con, $ref);
+
+
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new ref($usr), $json_file);
@@ -55,12 +62,19 @@ class ref_unit_tests
         $t->header('Unit tests of the source class (src/main/php/model/ref/source.php)');
 
 
+        $t->subheader('SQL user sandbox statement tests');
+
+        $src = new source($usr);
+        $t->assert_load_sql_id($db_con, $src);
+        $t->assert_load_sql_name($db_con, $src);
+
+
         $t->subheader('SQL statement tests');
 
         // sql to load a source by id
         $src = new source($usr);
         $src->id = 4;
-        $t->assert_load_sql($db_con, $src);
+        //$t->assert_load_sql($db_con, $src);
         $t->assert_load_standard_sql($db_con, $src);
 
         // sql to load a source by code id
@@ -70,8 +84,8 @@ class ref_unit_tests
 
         // sql to load a source by name
         $src = new source($usr);
-        $src->name = source::TN_READ;
-        $t->assert_load_sql($db_con, $src);
+        $src->set_name(source::TN_READ);
+        //$t->assert_load_sql($db_con, $src);
         $t->assert_load_standard_sql($db_con, $src);
         $src->id = 5;
         $t->assert_not_changed_sql($db_con, $src);

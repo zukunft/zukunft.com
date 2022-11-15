@@ -104,7 +104,7 @@ if (isset($_POST['submit'])) {
         $db_con->set_type(sql_db::TBL_USER);
         $db_con->set_usr(SYSTEM_USER_ID);
         $db_con->set_where_std(null,$usr_name);
-        $sql = $db_con->select_by_id();
+        $sql = $db_con->select_by_set_id();
         $db_row = $db_con->get1_old($sql);
         $usr_id = $db_row[user_sandbox::FLD_USER];
         if ($usr_id > 0) {

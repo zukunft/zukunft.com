@@ -47,7 +47,7 @@ class phrase_type extends object_type
     const SCALING_HIDDEN = "scaling_hidden";
     const SCALING_PCT = "scaling_percent"; // TODO used to define the scaling formula word to scale percentage values ?
     const SCALED_MEASURE = "scaled_measure"; // TODO add usage sample
-    const FORMULA_LINK = "formula_link";
+    const FORMULA_LINK = "formula_link"; // special phrase type for functional words that are used to link values to formulas
     const CALC = "calc"; // TODO add usage sample
     const LAYER = "view"; // TODO add usage sample
     const OTHER = "type_other";

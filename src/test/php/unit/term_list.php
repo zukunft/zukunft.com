@@ -67,6 +67,11 @@ class term_list_unit_tests
         $t->assert_load_sql_ids($db_con, $lst);
         $t->assert_load_sql_like($db_con, $lst);
 
+        $t->subheader('API unit tests');
+
+        $trm_lst = $this->get_term_list_related();
+        $t->assert_api($trm_lst);
+
     }
 
     /**
@@ -84,6 +89,46 @@ class term_list_unit_tests
         $lst->add($this->t->new_formula(formula::TN_READ_TEST)->term());
         $lst->add($this->t->new_verb(verb::IS_A)->term());
         return $lst;
+    }
+
+    /**
+     * create a term list test object without using a database connection
+     * that matches the all members of word with id 1 (math const)
+     */
+    public function get_term_list_related(): term_list
+    {
+        global $usr;
+        $trm_lst = new term_list($usr);
+        $trm_lst->add($this->get_term(1, triple::TN_READ_NAME, 2));
+        $trm_lst->add($this->get_term(1, word::TN_READ, 1));
+        return $trm_lst;
+    }
+
+    /**
+     * create the standard filled term object
+     */
+    private function get_term(int $id, string $name, int $type): term
+    {
+        global $usr;
+        $result = null;
+        if ($type == 1) {
+            $wrd = new word($usr);
+            $wrd->set($id, $name);
+            $result = $wrd->term();
+        } elseif ($type == 2)  {
+            $trp = new triple($usr);
+            $trp->set($id, $name);
+            $result = $trp->term();
+        } elseif ($type == 3)  {
+            $frm = new formula($usr);
+            $frm->set($id, $name);
+            $result = $frm->term();
+        } elseif ($type == 4)  {
+            $vrb = new verb();
+            $vrb->set($id, $name);
+            $result = $vrb->term();
+        }
+        return $result;
     }
 
 }

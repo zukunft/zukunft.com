@@ -54,7 +54,7 @@ if ($usr->id > 0) {
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::VERBS);
     $dsp->usr = $usr;
-    $dsp->load();
+    $dsp->load_obj_vars();
 
     // show the header
     $result .= $dsp->dsp_navbar($back);

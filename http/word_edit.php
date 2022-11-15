@@ -52,13 +52,13 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::WORD_EDIT);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back']; // the word id from which this value change has been called (maybe later any page)
 
     // create the word object to have an place to update the parameters
     $wrd = new word($usr);
     $wrd->id = $_GET['id'];
-    $wrd->load();
+    $wrd->load_obj_vars();
 
     if ($wrd->id <= 0) {
         $result .= log_info("The word id must be set to display a word.", "word_edit.php", '', (new Exception)->getTraceAsString(), $usr);
@@ -66,7 +66,7 @@ if ($usr->id > 0) {
 
         // get all parameters (but if not set, use the database value)
         if (isset($_GET['name'])) {
-            $wrd->name = $_GET['name'];
+            $wrd->set_name($_GET['name']);
         } //
         if (isset($_GET['plural'])) {
             $wrd->plural = $_GET['plural'];
@@ -82,7 +82,7 @@ if ($usr->id > 0) {
         if ($_GET['confirm'] > 0) {
 
             // an empty word name should never be saved; instead the word should be deleted)
-            if ($wrd->name == '') {
+            if ($wrd->name() == '') {
                 $msg .= 'An empty name should never be saved. Please delete the word instead.';
             } else {
                 // save the changes

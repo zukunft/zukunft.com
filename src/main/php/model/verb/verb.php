@@ -119,8 +119,12 @@ class verb
         $this->usage = 0;
     }
 
-    // set the class vars based on a database record
-    // $db_row is an array with the database values
+    /**
+     * set the class vars based on a database record
+     *
+     * @param array $db_row is an array with the database values
+     * @return bool true if the verb is loaded and valid
+     */
     function row_mapper(array $db_row): bool
     {
         $result = false;
@@ -173,7 +177,7 @@ class verb
     }
 
     /**
-     * @param string|null $name the unitque name of the verb
+     * @param string|null $name the unique name of the verb
      */
     public function set_name(?string $name): void
     {
@@ -219,12 +223,68 @@ class verb
      */
 
     /**
+     * create the common part of an SQL statement to retrieve the parameters of a verb from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $query_name the name of the query use to prepare and call the query
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name): sql_par
+    {
+        $qp = new sql_par(verb::class);
+        $qp->name .= $query_name;
+
+        $db_con->set_type(sql_db::TBL_VERB);
+        $db_con->set_name($qp->name);
+        $db_con->set_fields(self::FLD_NAMES);
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a verb by id from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $id the id of the user sandbox object
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_id(sql_db $db_con, int $id): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'id');
+        $qp->sql = $db_con->select_by_id($id);
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a verb by name from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $name the name of the term and the related word, triple, formula or verb
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_name(sql_db $db_con, string $name): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'name');
+        $db_con->add_par(sql_db::PAR_TEXT, $name);
+        $sql_where = '( ' . self::FLD_NAME . ' = ' . $db_con->par_name();
+        $db_con->add_par(sql_db::PAR_TEXT, $name);
+        $sql_where .= ' OR ' . self::FLD_FORMULA . ' = ' . $db_con->par_name() . ')';
+        $db_con->set_where_text($sql_where);
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
      * create the SQL to load a verb by one of the object vars which means id, name or code_id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
     {
         global $usr;
 
@@ -246,7 +306,7 @@ class verb
         $db_con->set_fields(self::FLD_NAMES);
         if ($this->id != 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
         } elseif ($this->code_id != '') {
             $db_con->add_par(sql_db::PAR_TEXT, $this->code_id);
             $qp->sql = $db_con->select_by_code_id();
@@ -256,7 +316,7 @@ class verb
             $db_con->add_par(sql_db::PAR_TEXT, $this->name);
             $sql_where .= ' OR ' . self::FLD_FORMULA . ' = ' . $db_con->par_name() . ')';
             $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
         }
         $qp->par = $db_con->get_par();
 
@@ -267,13 +327,13 @@ class verb
      * load the missing verb parameters from the database
      * @returns bool true if the verbs object is successfully filled from database
      */
-    function load(): bool
+    function load_by_vars(): bool
     {
 
         global $db_con;
         $result = false;
 
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql_obj_vars($db_con);
 
         if ($qp->name != '') {
             $db_row = $db_con->get1($qp);
@@ -282,6 +342,52 @@ class verb
         }
         return $result;
     }
+
+    /**
+     * load a verb from the database
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper($db_row);
+        return $this->id();
+    }
+
+    /**
+     * load a verb by database id
+     * @param int $id the id of the word, triple, formula, verb, view or view component
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id): int
+    {
+        global $db_con;
+
+        log_debug($id);
+        $qp = $this->load_sql_by_id($db_con, $id);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a verb by the verb name
+     * @param string $name the name of the verb
+     * @return int the id of the verb found and zero if nothing is found
+     */
+    function load_by_name(string $name): int
+    {
+        global $db_con;
+
+        log_debug($name);
+        $qp = $this->load_sql_by_name($db_con, $name);
+        return $this->load($qp);
+    }
+
+    /*
+     * import and export functions
+     */
 
     /**
      * add a verb in the database from an imported json object of external database from
@@ -472,8 +578,8 @@ class verb
     private function get_term(): term
     {
         $trm = new term($this->usr);
-        $trm->name = $this->name;
-        $trm->load(false);
+        $trm->set_name($this->name, self::class);
+        $trm->load_by_obj_name($this->name, false);
         return $trm;
     }
 
@@ -483,8 +589,8 @@ class verb
     function term(): term
     {
         $trm = new term($this->usr);
-        $trm->set_obj_id($this->id, self::class);
-        $trm->name = $this->name;
+        $trm->set_id_from_obj($this->id, self::class);
+        $trm->set_name($this->name);
         $trm->obj = $this;
         return $trm;
     }
@@ -504,7 +610,7 @@ class verb
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_where_std($this->id);
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -875,7 +981,7 @@ class verb
         if ($this->id <= 0) {
             // check if a word, formula or verb with the same name is already in the database
             $trm = $this->get_term();
-            if ($trm->id_obj() > 0 and $trm->type <> 'verb') {
+            if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
                 $result .= $trm->id_used_msg();
             } else {
                 $this->id = $trm->id_obj();
@@ -893,14 +999,14 @@ class verb
             $db_rec = new verb;
             $db_rec->id = $this->id;
             $db_rec->usr = $this->usr;
-            $db_rec->load();
+            $db_rec->load_by_vars();
             log_debug("verb->save -> database verb loaded (" . $db_rec->name . ")");
 
             // if the name has changed, check if verb, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
             if ($db_rec->name <> $this->name) {
                 // check if a verb, formula or verb with the same name is already in the database
                 $trm = $this->get_term();
-                if ($trm->id_obj() > 0 and $trm->type <> 'verb') {
+                if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
                     $result .= $trm->id_used_msg();
                 } else {
                     if ($this->can_change()) {
@@ -941,7 +1047,7 @@ class verb
         global $db_con;
         $result = '';
 
-        if ($this->load()) {
+        if ($this->load_by_vars()) {
             if ($this->id > 0) {
                 log_debug('verb->del ' . $this->dsp_id());
                 if ($this->can_change()) {

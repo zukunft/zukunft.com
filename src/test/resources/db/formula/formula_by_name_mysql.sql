@@ -14,4 +14,5 @@ PREPARE formula_by_name FROM
             IF(u.protect_id        IS NULL, s.protect_id,        u.protect_id) AS protect_id
        FROM formulas s
   LEFT JOIN user_formulas u  ON s.formula_id = u.formula_id AND u.user_id = ?
-      WHERE s.formula_name = ?';
+      WHERE (u.formula_name = ?
+         OR (s.formula_name = ? AND u.formula_name IS NULL))';

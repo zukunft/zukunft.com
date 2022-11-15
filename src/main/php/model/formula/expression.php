@@ -486,7 +486,7 @@ class expression
                 if ($elm->obj != null) {
                     if ($elm->obj->id > 0) {
                         $elm->usr = $this->usr;
-                        $elm->load($elm->obj->id);
+                        $elm->load_by_id($elm->obj->id);
 
                         // update work text
                         $changed = str_replace($elm->symbol, $elm->name, $work);
@@ -673,9 +673,8 @@ class expression
         while ($id > 0) {
             $db_sym = self::WORD_START . $id . self::WORD_END;
             $wrd = new word($this->usr);
-            $wrd->id = $id;
-            $wrd->load();
-            $result = str_replace($db_sym, self::WORD_DELIMITER . $wrd->name . self::WORD_DELIMITER, $result);
+            $wrd->load_by_id($id, word::class);
+            $result = str_replace($db_sym, self::WORD_DELIMITER . $wrd->name() . self::WORD_DELIMITER, $result);
             $id = zu_str_between($result, self::WORD_START, self::WORD_END);
         }
 
@@ -684,9 +683,8 @@ class expression
         while ($id > 0) {
             $db_sym = self::FORMULA_START . $id . self::FORMULA_END;
             $frm = new formula($this->usr);
-            $frm->id = $id;
-            $frm->load();
-            $result = str_replace($db_sym, self::WORD_DELIMITER . $frm->name . self::WORD_DELIMITER, $result);
+            $frm->load_by_id($id, formula::class);
+            $result = str_replace($db_sym, self::WORD_DELIMITER . $frm->name() . self::WORD_DELIMITER, $result);
             $id = zu_str_between($result, self::FORMULA_START, self::FORMULA_END);
         }
 
@@ -697,7 +695,7 @@ class expression
             $vrb = new verb;
             $vrb->id = $id;
             $vrb->usr = $this->usr;
-            $vrb->load();
+            $vrb->load_by_vars();
             $result = str_replace($db_sym, self::WORD_DELIMITER . $vrb->name . self::WORD_DELIMITER, $result);
             $id = zu_str_between($result, self::TRIPLE_START, self::TRIPLE_END);
         }
@@ -755,8 +753,7 @@ class expression
                 // check for formulas first, because for every formula a word is also existing
                 // similar to a part in get_usr_part, maybe combine
                 $frm = new formula($this->usr);
-                $frm->name = $name;
-                $frm->load();
+                $frm->load_by_name($name, formula::class);
                 if ($frm->id > 0) {
                     $db_sym = self::FORMULA_START . $frm->id . self::FORMULA_END;
                     log_debug('expression->get_ref_part -> found formula "' . $db_sym . '" for "' . $name . '"');
@@ -765,8 +762,7 @@ class expression
                 // check for words
                 if ($db_sym == '') {
                     $wrd = new word($this->usr);
-                    $wrd->name = $name;
-                    $wrd->load();
+                    $wrd->load_by_name($name, word::class);
                     if ($wrd->id > 0) {
                         $db_sym = self::WORD_START . $wrd->id . self::WORD_END;
                         log_debug('expression->get_ref_part -> found word "' . $db_sym . '" for "' . $name . '"');
@@ -778,7 +774,7 @@ class expression
                     $vrb = new verb;
                     $vrb->name = $name;
                     $vrb->usr = $this->usr;
-                    $vrb->load();
+                    $vrb->load_by_vars();
                     if ($vrb->id > 0) {
                         $db_sym = self::TRIPLE_START . $vrb->id . self::TRIPLE_END;
                         log_debug('expression->get_ref_part -> found verb "' . $db_sym . '" for "' . $name . '"');

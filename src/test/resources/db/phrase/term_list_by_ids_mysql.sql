@@ -10,4 +10,5 @@ PREPARE term_list_by_ids FROM
             IF(u.protect_id    IS NULL,s.protect_id,    u.protect_id)    AS protect_id
        FROM terms s
   LEFT JOIN user_terms u ON s.term_id = u.term_id AND u.user_id = ?
-      WHERE s.term_id IN (?)';
+      WHERE s.term_id IN (?)
+   ORDER BY s.term_id';

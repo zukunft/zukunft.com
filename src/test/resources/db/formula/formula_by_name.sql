@@ -14,4 +14,5 @@ PREPARE formula_by_name (int, text) AS
            CASE WHEN (u.protect_id          IS     NULL) THEN s.protect_id        ELSE u.protect_id        END AS protect_id
       FROM formulas s
  LEFT JOIN user_formulas  u ON s.formula_id = u.formula_id AND u.user_id = $1
-     WHERE s.formula_name = $2;
+     WHERE (u.formula_name = $2
+        OR (s.formula_name = $2 AND u.formula_name IS NULL));

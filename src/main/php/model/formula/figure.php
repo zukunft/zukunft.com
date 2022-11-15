@@ -125,7 +125,7 @@ class figure
             $result .= $this->obj->name();
         }
         if (isset($this->time_wrd)) {
-            $result .= $this->time_wrd->name();
+            $result .= $this->time_wrd->name_dsp();
         }
 
         return $result;

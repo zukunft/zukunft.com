@@ -34,7 +34,10 @@ use cfg\phrase_type;
 
 class formula_value_unit_tests
 {
-    function run(testing $t)
+
+    CONST TN_INCREASE_CH_CAPITA_2020 = '0.0078718332961637';
+
+    function run(testing $t): void
     {
 
         global $usr;

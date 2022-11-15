@@ -1,6 +1,6 @@
 PREPARE value_by_id (int, int) AS
     SELECT s.value_id,
-           u.value_id                                                            AS user_value_id,
+           u.value_id AS user_value_id,
            s.user_id,
            s.phrase_group_id,
            s.time_word_id,
@@ -12,5 +12,5 @@ PREPARE value_by_id (int, int) AS
            u.share_type_id
 
     FROM values s
-             LEFT JOIN user_values u ON s.value_id = u.value_id AND u.user_id = $2
-    WHERE s.value_id = $1;
+             LEFT JOIN user_values u ON s.value_id = u.value_id AND u.user_id = $1
+    WHERE s.value_id = $2;

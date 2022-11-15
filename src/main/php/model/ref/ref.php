@@ -38,6 +38,20 @@ use export\ref_exp;
 class ref
 {
 
+    /*
+     * database link
+     */
+
+    // object specific database and JSON object field names
+    const FLD_ID = 'ref_id';
+    const FLD_TYPE = 'ref_type_id';
+    const FLD_EX_KEY = 'external_key';
+
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const FLD_NAMES = array(
+        self::FLD_EX_KEY
+    );
+
     // persevered reference names for unit and integration tests
     const TEST_REF_NAME = 'System Test Reference Name';
 
@@ -83,8 +97,132 @@ class ref
         $this->ref_type = new ref_type(ref_type::WIKIDATA, ref_type::WIKIDATA);
     }
 
-    // test if the name is used already
-    function load(): bool
+    /**
+     * set the class vars based on a database record
+     *
+     * @param array $db_row is an array with the database values
+     * @return bool true if the verb is loaded and valid
+     */
+    function row_mapper(array $db_row): bool
+    {
+        $result = false;
+        if ($db_row != null) {
+            if ($db_row[self::FLD_ID] > 0) {
+                $this->id = $db_row[self::FLD_ID];
+                $this->phr->id = $db_row[phrase::FLD_ID];
+                $this->external_key = $db_row[self::FLD_EX_KEY];
+                $this->ref_type = get_ref_type_by_id($db_row[self::FLD_TYPE]);
+                if ($this->load_objects()) {
+                    $result = true;
+                    log_debug('ref->load -> done ' . $this->dsp_id());
+                }
+            } else {
+                $this->id = 0;
+            }
+        } else {
+            $this->id = 0;
+        }
+        return $result;
+    }
+
+    /*
+     * set and get
+     */
+
+    /**
+     * @param int|null $id the database id of the verb
+     */
+    public function set_id(?int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return int the database id which is not 0 if the object has been saved
+     */
+    public function id(): int
+    {
+        return $this->id;
+    }
+
+    /*
+     * loading
+     */
+
+    /**
+     * create the common part of an SQL statement to retrieve the parameters of a source from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = new sql_par($class);
+        $qp->name .= $query_name;
+
+        $db_con->set_type(sql_db::TBL_REF);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_link_fields(phrase::FLD_ID, self::FLD_TYPE);
+        $db_con->set_fields(self::FLD_NAMES);
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a ref by id from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $id the id of the user sandbox object
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_id(sql_db $db_con, int $id): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'id');
+        $qp->sql = $db_con->select_by_id($id);
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a ref by name from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $name the name of the term and the related word, triple, formula or verb
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_name(sql_db $db_con, string $name): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'ex_key');
+        $qp->sql = $db_con->select_by_name($name, self::FLD_EX_KEY);
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a ref by id from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $id the id of the user sandbox object
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_link_ids(sql_db $db_con, int $id): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'link_ids');
+        $db_con->set_where_link_no_fld($this->id, $this->phr->id, $this->ref_type->id);
+        $qp->sql = $db_con->select_by_id($id);
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * test if the name is used already
+     */
+    function load_obj_vars(): bool
     {
         global $db_con;
         $result = false;
@@ -103,31 +241,60 @@ class ref
             }
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_link_fields(phrase::FLD_ID, 'ref_type_id');
-            $db_con->set_fields(array('external_key'));
-            $db_con->set_where_link($this->id, $this->phr->id, $this->ref_type->id);
-            $qp->sql = $db_con->select_by_id();
+            $db_con->set_link_fields(phrase::FLD_ID, self::FLD_TYPE);
+            $db_con->set_fields(self::FLD_NAMES);
+            $db_con->set_where_link_no_fld($this->id, $this->phr->id, $this->ref_type->id);
+            $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
 
             if ($db_con->get_where() <> '') {
                 $db_ref = $db_con->get1($qp);
-                if ($db_ref != null) {
-                    if ($db_ref['ref_id'] > 0) {
-                        $this->id = $db_ref['ref_id'];
-                        $this->phr->id = $db_ref[phrase::FLD_ID];
-                        $this->external_key = $db_ref['external_key'];
-                        $this->ref_type = get_ref_type_by_id($db_ref['ref_type_id']);
-                        if ($this->load_objects()) {
-                            $result = true;
-                            log_debug('ref->load -> done ' . $this->dsp_id());
-                        }
-                    } else {
-                        $this->id = 0;
-                    }
-                }
+                $result = $this->row_mapper($db_ref);
             }
         }
         return $result;
+    }
+
+    /**
+     * load a verb from the database
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper($db_row);
+        return $this->id();
+    }
+
+    /**
+     * load a verb by database id
+     * @param int $id the id of the word, triple, formula, verb, view or view component
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id): int
+    {
+        global $db_con;
+
+        log_debug($id);
+        $qp = $this->load_sql_by_id($db_con, $id);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a verb by the verb name
+     * @param string $external_key_name the name of the external key for the reference
+     * @return int the id of the verb found and zero if nothing is found
+     */
+    function load_by_ex_key(string $external_key_name): int
+    {
+        global $db_con;
+
+        log_debug($external_key_name);
+        $qp = $this->load_sql_by_name($db_con, $external_key_name);
+        return $this->load($qp);
     }
 
     // to load the related objects if the reference object is loaded
@@ -135,11 +302,11 @@ class ref
     {
         $result = true;
 
-        if ($this->phr->name == null or $this->phr->name == '') {
+        if ($this->phr->name() == null or $this->phr->name() == '') {
             if ($this->phr->id <> 0) {
                 $phr = new phrase($this->usr);
                 $phr->id = $this->phr->id;
-                if ($phr->load()) {
+                if ($phr->load_by_obj_par()) {
                     $this->phr = $phr;
                     log_debug('ref->load_objects -> phrase ' . $this->phr->dsp_id() . ' loaded');
                 } else {
@@ -150,6 +317,11 @@ class ref
 
         log_debug('ref->load_objects -> done');
         return $result;
+    }
+
+    function id_field(): string
+    {
+        return self::FLD_ID;
     }
 
     /**
@@ -233,7 +405,7 @@ class ref
         $result = '';
 
         if (isset($this->phr)) {
-            $result .= 'ref of "' . $this->phr->name . '"';
+            $result .= 'ref of "' . $this->phr->name() . '"';
         } else {
             if (isset($this->phr->id)) {
                 if ($this->phr->id > 0) {
@@ -344,7 +516,7 @@ class ref
             $db_con->set_usr($this->usr->id);
 
             $this->id = $db_con->insert(
-                array(phrase::FLD_ID, 'external_key', 'ref_type_id'),
+                array(phrase::FLD_ID, self::FLD_EX_KEY, self::FLD_TYPE),
                 array($this->phr->id, $this->external_key, $this->ref_type->id));
             if ($this->id > 0) {
                 // update the id in the log for the correct reference
@@ -371,7 +543,7 @@ class ref
         $db_chk->reset();
         $db_chk->phr = $this->phr;
         $db_chk->ref_type = $this->ref_type;
-        $db_chk->load();
+        $db_chk->load_obj_vars();
         if ($db_chk->id > 0) {
             log_debug('ref->get_similar an external reference for ' . $this->dsp_id() . ' already exists');
             $result = $db_chk;
@@ -418,8 +590,7 @@ class ref
             // done first, because it needs to be done for user and general object values
             $db_rec = clone $this;
             $db_rec->reset();
-            $db_rec->id = $this->id;
-            $db_rec->load();
+            $db_rec->load_by_id($this->id);
             log_debug('ref->save reloaded from db');
 
             // if needed log the change and update the database
@@ -427,7 +598,7 @@ class ref
                 $log = $this->log_upd($db_rec);
                 if ($log->id > 0) {
                     $db_con->set_type(sql_db::TBL_REF);
-                    if ($db_con->update($this->id, 'external_key', $this->external_key)) {
+                    if ($db_con->update($this->id, self::FLD_EX_KEY, $this->external_key)) {
                         log_debug('ref->save update ... done.');
                     }
                 }
@@ -442,7 +613,7 @@ class ref
         global $db_con;
         $result = new user_message();
 
-        if (!$this->load()) {
+        if (!$this->load_obj_vars()) {
             log_warning('Reload of ref ' . $this->dsp_id() . ' for deletion failed', 'ref->del');
         } else {
             if ($this->id <= 0) {
@@ -451,7 +622,7 @@ class ref
                 $log = $this->log_del();
                 if ($log->id > 0) {
                     $db_con->set_type(sql_db::TBL_REF);
-                    $del_result = $db_con->delete('ref_id', $this->id);
+                    $del_result = $db_con->delete(self::FLD_ID, $this->id);
                     if ($del_result == '') {
                         log_debug('ref->del update -> done.');
                     } else {

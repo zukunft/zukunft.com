@@ -114,9 +114,6 @@ class user_sandbox
     // when loading the word and saving the excluded field is handled as a normal user sandbox field,
     // but for calculation, use and display an excluded should not be used
 
-    // database fields only used for objects that have a name
-    public ?string $name = '';   // simply the object name, which cannot be empty if it is a named object
-
     // database fields only used for the value object
     public ?float $number = null; // simply the numeric value
 
@@ -286,7 +283,7 @@ class user_sandbox
      * @param array $db_row with the data loaded from the database
      * @return void
      */
-    public function row_mapper_usr(array $db_row, $id_fld)
+    public function row_mapper_usr(array $db_row, $id_fld): void
     {
         $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
         $this->share_id = $db_row[self::FLD_SHARE];
@@ -298,7 +295,7 @@ class user_sandbox
      *
      * @return void
      */
-    public function row_mapper_std()
+    public function row_mapper_std(): void
     {
         $this->share_id = cl(db_cl::SHARE_TYPE, share_type::PUBLIC);
         $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT);
@@ -318,7 +315,7 @@ class user_sandbox
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->add_par(sql_db::PAR_INT, strval($this->id));
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -345,13 +342,55 @@ class user_sandbox
     }
 
     /**
+     * dummy function to create the common part of an SQL statement
+     * which is overwritten by the child objects
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $query_name the name of the selection fields to make the query name unique
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class): sql_par
+    {
+        log_warning('The parent load_sql function related to ' . $db_con->get_type() . ' should have never been called for ' . $query_name);
+        return new sql_par($class);;
+    }
+
+    /**
+     * create an SQL statement to retrieve a user sandbox object by id from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $id the id of the user sandbox object
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_id(sql_db $db_con, int $id, string $class): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'id', $class);
+        $db_con->add_par_int($id);
+        $qp->sql = $db_con->select_by_field($this->id_field());
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * dummy function that should always be overwritten by the child object
+     * @return string
+     */
+    function id_field(): string
+    {
+        return '';
+    }
+
+    /**
      * create the SQL to load a single user specific value
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $class): sql_par
     {
         return new sql_par($class);
     }
@@ -388,6 +427,35 @@ class user_sandbox
     }
 
     /**
+     * load a user sandbox object e.g. word, triple, value, formula, result or view from the database
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper($db_row);
+        return $this->id();
+    }
+
+    /**
+     * load a named user sandbox object by database id
+     * @param int $id the id of the word, triple, formula, verb, view or view component
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id, string $class): int
+    {
+        global $db_con;
+
+        log_debug($id);
+        $qp = $this->load_sql_by_id($db_con, $id, $class);
+        return $this->load($qp);
+    }
+
+    /**
      * dummy function to get the missing objects from the database that is always overwritten by the child class
      * @returns bool  false if the loading has failed
      */
@@ -401,7 +469,7 @@ class user_sandbox
      * dummy function to get the missing object values from the database that is always overwritten by the child class
      * @returns bool  false if the loading has failed
      */
-    function load(): bool
+    function load_obj_vars(): bool
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
         return true;
@@ -486,19 +554,6 @@ class user_sandbox
       return $id_lst;
     }
     */
-
-    /**
-     * get the term corresponding to this word or formula name
-     * so in this case, if a formula or verb with the same name already exists, get it
-     * @return term
-     */
-    function get_term(): term
-    {
-        $trm = new term($this->usr);
-        $trm->name = $this->name;
-        $trm->load();
-        return $trm;
-    }
 
     /*
      *  type loading functions
@@ -954,7 +1009,7 @@ class user_sandbox
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where_std($this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
@@ -1484,7 +1539,7 @@ class user_sandbox
 
     /**
      * check that the given object is by the unique keys the same as the actual object
-     * handles the specials case that for each formula a corresponding word is created (which needs to be check if this is really needed)
+     * handles the specials case that for each formula a corresponding word is created (which needs to be checked if this is really needed)
      * so if a formula word "millions" is not the same as the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
      * in short: if two objects are the same by this definition, they are supposed to be merged
      */
@@ -1508,13 +1563,16 @@ class user_sandbox
                     if ($this->type_id == $obj_to_check->type_id) {
                         $result = true;
                     } else {
-                        if ($this->type_id == sql_db::TBL_FORMULA and $obj_to_check->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
+                        if ($this->type_id == sql_db::TBL_FORMULA
+                            and $obj_to_check->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
                             // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
                             $result = true;
-                        } elseif ($obj_to_check->type_id == sql_db::TBL_FORMULA and $this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
+                        } elseif ($obj_to_check->type_id == sql_db::TBL_FORMULA
+                            and $this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
                             // like above, but the other way round
                             $result = true;
-                        } elseif ($this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK) or $obj_to_check->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
+                        } elseif ($this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)
+                            or $obj_to_check->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
                             // if one of the two words is a formula link and not both, the user should ge no suggestion to combine them
                             $result = false;
                         } else {
@@ -1569,9 +1627,10 @@ class user_sandbox
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @returns string a filled object that has the same name or links the same objects
+     * @returns user_sandbox|null a filled object that has the same name or links the same objects
+     *                            or null if nothing similar has been found
      */
-    function get_similar(): user_sandbox
+    function get_similar(): ?user_sandbox
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
         return new user_sandbox($this->usr);
@@ -1661,8 +1720,15 @@ class user_sandbox
                     }
                     if ($similar->id <> 0) {
                         // if similar is found set the id to trigger the updating instead of adding
-                        $similar->load(); // e.g. to get the type_id
-                        $this->id = $similar->id;
+                        $similar->load_by_id($similar->id, $similar::class); // e.g. to get the type_id
+                        // prevent that the id of a formula is used for the word with the type formula link
+                        if (get_class($this) == get_class($similar)) {
+                            $this->id = $similar->id;
+                        } else {
+                            if (get_class($this) != word::class or get_class($similar) != formula::class) {
+                                log_err('Unexpected similar prevention class ' . get_class($this));
+                            }
+                        }
                     } else {
                         $similar = null;
                     }
@@ -1692,9 +1758,8 @@ class user_sandbox
                     // done first, because it needs to be done for user and general object values
                     $db_rec = clone $this;
                     $db_rec->reset();
-                    $db_rec->id = $this->id;
                     $db_rec->usr = $this->usr;
-                    if (!$db_rec->load()) {
+                    if (!$db_rec->load_by_id($this->id, $db_rec::class)) {
                         $result .= 'Reloading of user ' . $this->obj_name . ' failed';
                     } else {
                         log_debug($this->obj_name . '->save reloaded from db');
@@ -1814,7 +1879,7 @@ class user_sandbox
                 // and the corresponding word if possible
                 if ($result->is_ok()) {
                     $wrd = new word($this->usr);
-                    $wrd->name = $this->name;
+                    $wrd->set_name($this->name());
                     $wrd->type_id = cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK);
                     $msg = $wrd->del();
                     $result->add($msg);
@@ -1879,7 +1944,7 @@ class user_sandbox
 
         // refresh the object with the database to include all updates utils now (TODO start of lock for commit here)
         // TODO it seems that the owner is not updated
-        if (!$this->load()) {
+        if (!$this->load_obj_vars()) {
             log_warning('Reload of for deletion has lead to unexpected', $this->obj_name . '->del', 'Reload of ' . $this->obj_name . ' ' . $this->dsp_id() . ' for deletion or exclude has unexpectedly lead to ' . $msg . '.', (new Exception)->getTraceAsString(), $this->usr);
         } else {
             log_debug($this->obj_name . '->del reloaded ' . $this->dsp_id());
@@ -1933,9 +1998,8 @@ class user_sandbox
 
                         $db_rec = clone $this;
                         $db_rec->reset();
-                        $db_rec->id = $this->id;
                         $db_rec->usr = $this->usr;
-                        if ($db_rec->load()) {
+                        if ($db_rec->load_by_id($this->id, $db_rec::class)) {
                             log_debug($this->obj_name . '->save reloaded ' . $db_rec->dsp_id() . ' from database');
                             if ($this->obj_type == self::TYPE_LINK) {
                                 if (!$db_rec->load_objects()) {

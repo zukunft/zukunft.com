@@ -54,7 +54,7 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::IMPORT);
-    $dsp->load();
+    $dsp->load_obj_vars();
 
     // get the filepath of the data that are supposed to be imported
     $fileName = $_FILES["fileToUpload"]["name"];

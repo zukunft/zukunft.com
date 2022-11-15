@@ -114,7 +114,7 @@ class phrase_list
         $db_con->set_usr_fields(word::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
         $db_con->set_where_id_in(word::FLD_ID, $ids);
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -140,7 +140,7 @@ class phrase_list
         $db_con->set_usr_fields(triple::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(triple::FLD_NAMES_NUM_USR);
         $db_con->set_where_id_in(triple::FLD_ID, $ids);
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -315,14 +315,12 @@ class phrase_list
         if (count($names) > 0) {
             foreach ($names as $name) {
                 $wrd = new word($this->usr);
-                $wrd->name = $name;
-                $wrd->load();
+                $wrd->load_by_name($name, word::class);
                 if ($wrd->id <> 0) {
                     $this->lst[] = $wrd->phrase();
                 } else {
                     $trp = new triple($this->usr);
-                    $trp->name = $name;
-                    $trp->load();
+                    $trp->load_by_name($name, triple::class);
                     if ($trp->id <> 0) {
                         $this->lst[] = $trp->phrase();
                     } else {
@@ -682,7 +680,7 @@ class phrase_list
                 if ($phr->obj->id == 0) {
                     log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
                 } else {
-                    if ($phr->obj->name == '') {
+                    if ($phr->name() == '') {
                         $phr->load();
                         log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                     }
@@ -693,7 +691,7 @@ class phrase_list
                         // use the recursive triple function to include the foaf words
                         $sub_wrd_lst = $phr->obj->wrd_lst();
                         foreach ($sub_wrd_lst->lst as $wrd) {
-                            if ($wrd->name == '') {
+                            if ($wrd->name() == '') {
                                 $wrd->load();
                                 log_warning('Word ' . $wrd->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                             }
@@ -784,7 +782,8 @@ class phrase_list
     */
 
     /**
-     * @returns array a list of phrases, that characterises the given phrase e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is a"
+     * @returns array a list of phrases, that characterises the given phrase
+     * e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is a"
      * ex foaf_parent
      */
     function foaf_parents($verb_id): phrase_list
@@ -804,7 +803,7 @@ class phrase_list
      * @param verb|null $vrb if not null the verbs to filter the parents
      * @param int $level is the number of levels that should be looked into and 0 (zero) loads unlimited levels
      */
-    function parents(?verb $vrb= null, int $level = 0): phrase_list
+    function parents(?verb $vrb = null, int $level = 0): phrase_list
     {
         log_debug($vrb->dsp_id());
         $wrd_lst = $this->wrd_lst_all();
@@ -835,7 +834,7 @@ class phrase_list
     // similar to foaf_child, but for only one level
     // $level is the number of levels that should be looked into
     // ex foaf_child_step
-    function children(?verb $vrb= null, int $level = 0): phrase_list
+    function children(?verb $vrb = null, int $level = 0): phrase_list
     {
         log_debug('phrase_list->children type ' . $vrb->id);
         $wrd_lst = $this->wrd_lst_all();
@@ -904,7 +903,7 @@ class phrase_list
     {
         $result = true;
         foreach ($this->lst as $phr) {
-            if ($phr->id == 0 or $phr->name == '') {
+            if ($phr->id == 0 or $phr->name() == '') {
                 $result = false;
             }
         }
@@ -1011,15 +1010,13 @@ class phrase_list
         foreach ($json_obj as $value) {
             if ($value != '') {
                 $phr = new phrase($this->usr);
-                $phr->name = $value;
                 if ($result->is_ok() and $do_save) {
-                    $phr->load();
+                    $phr->load_by_name($value);
                     if ($phr->id == 0) {
                         $wrd = new word($this->usr);
-                        $wrd->name = $value;
-                        $wrd->load();
+                        $wrd->load_by_name($value, word::class);
                         if ($wrd->id == 0) {
-                            $wrd->name = $value;
+                            $wrd->set_name($value);
                             $wrd->type_id = $phrase_types->default_id();
                             $result->add_message($wrd->save());
                         }
@@ -1029,6 +1026,9 @@ class phrase_list
                             $phr = $wrd->phrase();
                         }
                     }
+                } else {
+                    // fallback for unit tests
+                    $phr->set_name($value, word::class);
                 }
                 $this->add($phr);
             }
@@ -1238,7 +1238,9 @@ class phrase_list
     {
         $name_lst = array();
         foreach ($this->lst as $phr) {
-            $name_lst[] = $phr->name;
+            if ($phr != null) {
+                $name_lst[] = $phr->name();
+            }
         }
         // TODO allow to fix the order
         asort($name_lst);
@@ -1276,7 +1278,7 @@ class phrase_list
             if (get_class($phr_to_add) <> phrase::class) {
                 log_err("Object to add must be of type phrase, but it is " . get_class($phr_to_add) . ".", "phrase_list->add");
             } else {
-                if ($phr_to_add->id <> 0 or $phr_to_add->name != '') {
+                if ($phr_to_add->id <> 0 or $phr_to_add->name() != '') {
                     if (count($this->id_lst()) > 0) {
                         if (!in_array($phr_to_add->id, $this->id_lst())) {
                             $this->lst[] = $phr_to_add;
@@ -1357,15 +1359,14 @@ class phrase_list
     /**
      * add one phrase to the phrase list defined by the phrase name
      */
-    function add_name($phr_name_to_add)
+    function add_name($phr_name_to_add): void
     {
         log_debug('phrase_list->add_name "' . $phr_name_to_add . '"');
         if (is_null($this->usr->id)) {
             log_err("The user must be set.", "phrase_list->add_name");
         } else {
             $phr_to_add = new phrase($this->usr);
-            $phr_to_add->name = $phr_name_to_add;
-            $phr_to_add->load();
+            $phr_to_add->load_by_name($phr_name_to_add);
 
             if ($phr_to_add->id <> 0) {
                 $this->add($phr_to_add);
@@ -1541,7 +1542,7 @@ class phrase_list
             if (isset($phr_lst_is)) {
                 if (!empty($phr_lst_is->ids)) {
                     $result = zu_lst_not_in_no_key($result, $phr_lst_is->ids);
-                    log_debug('phrase_list->keep_only_specific -> "' . $phr->name . '" is of type ' . $phr_lst_is->dsp_id());
+                    log_debug('phrase_list->keep_only_specific -> "' . $phr->name() . '" is of type ' . $phr_lst_is->dsp_id());
                 }
             }
         }
@@ -1558,7 +1559,7 @@ class phrase_list
         $result = false;
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
-            log_debug('phrase_list->has_time -> check (' . $phr->name . ')');
+            log_debug('phrase_list->has_time -> check (' . $phr->name() . ')');
             if ($result == false) {
                 if ($phr->is_time()) {
                     $result = true;
@@ -1681,8 +1682,7 @@ class phrase_list
         foreach ($time_wrds->ids() as $time_id) {
             if (is_null($result)) {
                 $time_wrd = new word($this->usr);
-                $time_wrd->id = $time_id;
-                $time_wrd->load();
+                $time_wrd->load_by_id($time_id, word::class);
                 // return a phrase not a word because "Q1" can be also a wikidata Qualifier and to differentiate this, "Q1 (Quarter)" should be returned
                 $result = $time_wrd->phrase();
             } else {
@@ -1745,9 +1745,9 @@ class phrase_list
             } else {
                 if ($phr->type_id() == $measure_type) {
                     $result->add($phr);
-                    log_debug('phrase_list->measure_lst -> found (' . $phr->name . ')');
+                    log_debug('phrase_list->measure_lst -> found (' . $phr->name() . ')');
                 } else {
-                    log_debug('phrase_list->measure_lst -> ' . $phr->name . ' has type id ' . $phr->type_id() . ', which is not the measure type id ' . $measure_type);
+                    log_debug('phrase_list->measure_lst -> ' . $phr->name() . ' has type id ' . $phr->type_id() . ', which is not the measure type id ' . $measure_type);
                 }
             }
         }
@@ -1770,9 +1770,9 @@ class phrase_list
         foreach ($this->lst as $phr) {
             if ($phr->type_id() == $scale_type or $phr->type_id() == $scale_hidden_type) {
                 $result->add($phr);
-                log_debug('phrase_list->scaling_lst -> found (' . $phr->name . ')');
+                log_debug('phrase_list->scaling_lst -> found (' . $phr->name() . ')');
             } else {
-                log_debug('phrase_list->scaling_lst -> not found (' . $phr->name . ')');
+                log_debug('phrase_list->scaling_lst -> not found (' . $phr->name() . ')');
             }
         }
         log_debug('phrase_list->scaling_lst -> (' . dsp_count($result->lst) . ')');
@@ -1823,7 +1823,7 @@ class phrase_list
         $result = array();
         $pos = 0;
         foreach ($this->lst as $phr) {
-            $name_lst[$pos] = $phr->name;
+            $name_lst[$pos] = $phr->name();
             $pos++;
         }
         asort($name_lst);
@@ -1831,7 +1831,7 @@ class phrase_list
         foreach (array_keys($name_lst) as $sorted_id) {
             log_debug('phrase_list->wlsort get ' . $sorted_id);
             $phr_to_add = $this->lst[$sorted_id];
-            log_debug('phrase_list->wlsort got ' . $phr_to_add->name);
+            log_debug('phrase_list->wlsort got ' . $phr_to_add->name());
             $result[] = $phr_to_add;
         }
         // check
@@ -1856,8 +1856,8 @@ class phrase_list
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {
                 // to be replaced by "is following"
-                if ($phr->name > $max_phr->name) {
-                    log_debug('phrase_list->max_time -> select (' . $phr->name . ' instead of ' . $max_phr->name . ')');
+                if ($phr->name() > $max_phr->name()) {
+                    log_debug('phrase_list->max_time -> select (' . $phr->name() . ' instead of ' . $max_phr->name() . ')');
                     $max_phr = clone $phr;
                 }
             }
@@ -1897,7 +1897,7 @@ class phrase_list
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {
                 if (isset($phr)) {
-                    log_debug('phrase_list->common check if "' . $phr->name . '" is in ' . $filter_lst->name());
+                    log_debug('phrase_list->common check if "' . $phr->name() . '" is in ' . $filter_lst->name());
                     if (in_array($phr, $filter_lst->lst)) {
                         $result[] = $phr;
                     }
@@ -1971,7 +1971,7 @@ class phrase_list
     {
         $val = new value($this->usr);
         $val->grp = $this->get_grp();
-        $val->load();
+        $val->load_obj_vars();
 
         return $val;
     }

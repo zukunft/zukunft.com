@@ -55,7 +55,7 @@ function run_formula_element_test(testing $t)
             if ($elm->obj == null) {
                 log_err('object of formula element ' . $elm->dsp_id() . ' missing');
             } else {
-                $elm->load($elm->obj->id);
+                $elm->load_by_id($elm->obj->id);
             }
 
             $result = $elm->dsp_id();
@@ -104,7 +104,7 @@ function run_formula_element_test(testing $t)
 
 }
 
-function run_formula_element_list_test(testing $t)
+function run_formula_element_list_test(testing $t): void
 {
 
     $back = 0;

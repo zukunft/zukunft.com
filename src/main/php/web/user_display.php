@@ -193,6 +193,7 @@ class user_dsp extends user
                 $row_nbr++;
 
                 // create the triple objects with the minimal parameter needed
+                // TODO maybe use row mapper
                 $wrd_usr = new triple($this);
                 $wrd_usr->id = $sbx_row['id'];
                 $wrd_usr->from->id = $sbx_row['from_phrase_id'];
@@ -200,7 +201,7 @@ class user_dsp extends user
                 $wrd_usr->to->id = $sbx_row['to_phrase_id'];
                 $wrd_usr->name = $sbx_row['usr_name'];
                 $wrd_usr->excluded = $sbx_row['usr_excluded'];
-                $wrd_usr->load();
+                $wrd_usr->load_obj_vars();
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
@@ -209,7 +210,7 @@ class user_dsp extends user
 
                 $wrd_std = clone $wrd_usr;
                 $wrd_std->usr = $usr_std;
-                $wrd_std->load();
+                $wrd_std->load_obj_vars();
                 $wrd_std->name = $sbx_row['std_name'];
                 $wrd_std->excluded = $sbx_row['std_excluded'];
 
@@ -258,7 +259,7 @@ class user_dsp extends user
                         // to review: load all user triples with one query
                         $wrd_lnk_other = clone $wrd_usr;
                         $wrd_lnk_other->usr = $usr_other;
-                        $wrd_lnk_other->load();
+                        $wrd_lnk_other->load_obj_vars();
                         $wrd_lnk_other->name = $wrd_lnk_other_row['name'];
                         $wrd_lnk_other->excluded = $wrd_lnk_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {

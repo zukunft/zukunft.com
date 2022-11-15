@@ -275,7 +275,7 @@ class view_cmp extends user_sandbox_named
             array(sql_db::FLD_USER_ID)
         ));
 
-        return parent::load_standard_sql($db_con, self::class);
+        return parent::load_standard_sql($db_con, $class);
     }
 
     /**
@@ -288,7 +288,7 @@ class view_cmp extends user_sandbox_named
     {
         global $db_con;
         $qp = $this->load_standard_sql($db_con);
-        $result = parent::load_standard($qp, self::class);
+        $result = parent::load_standard($qp, $class);
 
         if ($result) {
             $result = $this->load_owner();
@@ -300,15 +300,36 @@ class view_cmp extends user_sandbox_named
     }
 
     /**
+     * create the common part of an SQL statement to retrieve the parameters of a view component from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp->name .= $query_name;
+
+        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+
+        return $qp;
+    }
+
+    /**
      * create an SQL statement to retrieve the parameters of a view component from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($db_con, self::class);
+        $qp = parent::load_sql_obj_vars($db_con, $class);
         if ($this->id != 0) {
             $qp->name .= 'id';
         } elseif ($this->name != '') {
@@ -324,10 +345,10 @@ class view_cmp extends user_sandbox_named
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id != 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
         } elseif ($this->name != '') {
             $db_con->add_par(sql_db::PAR_TEXT, $this->name);
-            $qp->sql = $db_con->select_by_name();
+            $qp->sql = $db_con->select_by_set_name();
         } else {
             log_err('Either the id or name must be set to get a named user sandbox object');
         }
@@ -337,7 +358,7 @@ class view_cmp extends user_sandbox_named
     }
 
     // load the missing view component parameters from the database
-    function load(): bool
+    function load_obj_vars(): bool
     {
         log_debug('view_component->load');
 
@@ -351,7 +372,7 @@ class view_cmp extends user_sandbox_named
             log_err("Either the database ID (" . $this->id . ") or the display item name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to find a display item.", "view_component->load");
         } else {
 
-            $qp = $this->load_sql($db_con);
+            $qp = $this->load_sql_obj_vars($db_con);
             $db_cmp = $db_con->get1($qp);
 
             $this->row_mapper($db_cmp);
@@ -386,10 +407,9 @@ class view_cmp extends user_sandbox_named
         $result = '';
         if ($this->word_id_row > 0) {
             $wrd_row = new word($this->usr);
-            $wrd_row->id = $this->word_id_row;
-            $wrd_row->load();
+            $wrd_row->load_by_id($this->word_id_row, word::class);
             $this->wrd_row = $wrd_row;
-            $result = $wrd_row->name;
+            $result = $wrd_row->name();
         }
         return $result;
     }
@@ -405,10 +425,9 @@ class view_cmp extends user_sandbox_named
         $result = '';
         if ($this->word_id_col > 0) {
             $wrd_col = new word($this->usr);
-            $wrd_col->id = $this->word_id_col;
-            $wrd_col->load();
+            $wrd_col->load_by_id($this->word_id_col, word::class);
             $this->wrd_col = $wrd_col;
-            $result = $wrd_col->name;
+            $result = $wrd_col->name();
         }
         return $result;
     }
@@ -419,10 +438,9 @@ class view_cmp extends user_sandbox_named
         $result = '';
         if ($this->word_id_col2 > 0) {
             $wrd_col2 = new word($this->usr);
-            $wrd_col2->id = $this->word_id_col2;
-            $wrd_col2->load();
+            $wrd_col2->load_by_id($this->word_id_col2, word::class);
             $this->wrd_col2 = $wrd_col2;
-            $result = $wrd_col2->name;
+            $result = $wrd_col2->name();
         }
         return $result;
     }
@@ -433,12 +451,21 @@ class view_cmp extends user_sandbox_named
         $result = '';
         if ($this->formula_id > 0) {
             $frm = new formula($this->usr);
-            $frm->id = $this->formula_id;
-            $frm->load();
+            $frm->load_by_id($this->formula_id, formula::class);
             $this->frm = $frm;
-            $result = $frm->name;
+            $result = $frm->name();
         }
         return $result;
+    }
+
+    function id_field(): string
+    {
+        return self::FLD_ID;
+    }
+
+    function name_field(): string
+    {
+        return self::FLD_NAME;
     }
 
     /**
@@ -542,18 +569,18 @@ class view_cmp extends user_sandbox_named
         if ($this->order_nbr >= 0) {
             $result->position = $this->order_nbr;
         }
-        $result->name = $this->name;
+        $result->name = $this->name();
         if ($this->type_name() <> '') {
             $result->type = $this->type_name();
         }
         if (isset($this->wrd_row)) {
-            $result->row = $this->wrd_row->name;
+            $result->row = $this->wrd_row->name();
         }
         if (isset($this->wrd_col)) {
-            $result->column = $this->wrd_col->name;
+            $result->column = $this->wrd_col->name();
         }
         if (isset($this->wrd_col2)) {
-            $result->column2 = $this->wrd_col2->name;
+            $result->column2 = $this->wrd_col2->name();
         }
         if ($this->comment <> '') {
             $result->comment = $this->comment;
@@ -713,7 +740,7 @@ class view_cmp extends user_sandbox_named
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(array('view_component_id'));
             $db_con->set_where_std($this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {

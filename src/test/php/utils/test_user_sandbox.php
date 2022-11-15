@@ -35,7 +35,6 @@ use cfg\phrase_type;
 function run_user_sandbox_test(testing $t)
 {
 
-    global $usr1;
     global $phrase_types;
 
     $t->header('Test the user sandbox class (classes/user_sandbox.php)');
@@ -43,12 +42,12 @@ function run_user_sandbox_test(testing $t)
     $t->subheader('Test the is_same and is_similar function');
 
     // a word is not the same as the same word that represents a formula
-    $wrd1 = new word($usr1);
+    $wrd1 = new word($t->usr1);
     $wrd1->type_id = cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK);
-    $wrd1->name = TW_MIO;
-    $wrd2 = new word($usr1);
+    $wrd1->set_name(TW_MIO);
+    $wrd2 = new word($t->usr1);
     $wrd2->type_id = $phrase_types->default_id();
-    $wrd2->name = TW_MIO;
+    $wrd2->set_name(TW_MIO);
     $target = false;
     $result = $wrd1->is_same($wrd2);
     $t->dsp("a word is not the same as the same word that represents a formula", $target, $result);
@@ -62,7 +61,7 @@ function run_user_sandbox_test(testing $t)
 
     // create a new source (user_sandbox->save case 1)
     $src = new source($t->usr1);
-    $src->name = TS_IPCC_AR6_SYNTHESIS;
+    $src->set_name(TS_IPCC_AR6_SYNTHESIS);
     $result = $src->save();
     $target = '';
     $t->dsp('user_sandbox->save create a new source', $target, $result);
@@ -76,15 +75,15 @@ function run_user_sandbox_test(testing $t)
     // check if the source has been saved (check user_sandbox->save case 1)
     $src = new source($t->usr1);
     $src->id = $src_id;
-    if ($src->load()) {
-        $result = $src->name;
+    if ($src->load_obj_vars()) {
+        $result = $src->name();
     }
     $target = TS_IPCC_AR6_SYNTHESIS;
     $t->dsp('user_sandbox->save check created source', $target, $result);
 
     // update the source url by name (user_sandbox->save case 2)
     $src = new source($t->usr1);
-    $src->name = TS_IPCC_AR6_SYNTHESIS;
+    $src->set_name(TS_IPCC_AR6_SYNTHESIS);
     $src->url = TS_IPCC_AR6_SYNTHESIS_URL;
     $result = $src->save();
     $target = '';
@@ -99,7 +98,7 @@ function run_user_sandbox_test(testing $t)
     // check if the source url has been updates (check user_sandbox->save case 2)
     $src = new source($t->usr1);
     $src->id = $src_id;
-    if ($src->load()) {
+    if ($src->load_obj_vars()) {
         $result = $src->url;
     }
     $target = TS_IPCC_AR6_SYNTHESIS_URL;

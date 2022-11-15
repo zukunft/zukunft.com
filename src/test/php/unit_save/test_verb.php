@@ -41,7 +41,7 @@ function run_verb_test(testing $t)
     $vrb = new verb;
     $vrb->id = cl(db_cl::VERB, verb::IS_A);
     $vrb->usr = $usr;
-    $vrb->load();
+    $vrb->load_by_vars();
     $target = 'is a';
     $result = $vrb->name;
     $t->dsp('verb->load ', $target, $result);

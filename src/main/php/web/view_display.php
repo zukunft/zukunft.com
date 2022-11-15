@@ -77,7 +77,7 @@ class view_dsp_old extends view
      */
     private function dsp_entries($wrd, $back): string
     {
-        log_debug('"' . $wrd->name . '" with the view ' . $this->dsp_id() . ' for user "' . $this->usr->name . '"');
+        log_debug('"' . $wrd->name() . '" with the view ' . $this->dsp_id() . ' for user "' . $this->usr->name . '"');
 
         $result = '';
         $this->load_components();
@@ -112,7 +112,7 @@ class view_dsp_old extends view
      */
     function display($wrd, $back): string
     {
-        log_debug('"' . $wrd->name . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id . ')  for user "' . $this->usr->name . '"');
+        log_debug('"' . $wrd->name() . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id . ')  for user "' . $this->usr->name . '"');
         $result = '';
 
         // check and correct the parameters
@@ -364,7 +364,7 @@ class view_dsp_old extends view
             log_err("The display ID (" . $this->id . ") must be set to display a view.", "view_dsp->dsp_navbar");
         } else {
             if ($this->name == '') {
-                $this->load();
+                $this->load_obj_vars();
             }
             if (UI_USE_BOOTSTRAP) {
                 $result = $this->dsp_navbar_bs(TRUE, $back);
@@ -578,11 +578,11 @@ class view_dsp_old extends view
         if ($this->id <= 0) {
             log_debug('create a view');
             $script = "view_add";
-            $result .= dsp_text_h2('Create a new view (for <a href="/http/view.php?words=' . $wrd->id . '">' . $wrd->name . '</a>)');
+            $result .= dsp_text_h2('Create a new view (for <a href="/http/view.php?words=' . $wrd->id . '">' . $wrd->name() . '</a>)');
         } else {
             log_debug($this->dsp_id() . ' for user ' . $this->usr->name . ' (called from ' . $back . ')');
             $script = "view_edit";
-            $result .= dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id . '">' . $wrd->name . '</a>)');
+            $result .= dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id . '">' . $wrd->name() . '</a>)');
         }
         $result .= '<div class="row">';
 

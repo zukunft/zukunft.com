@@ -46,7 +46,7 @@ function run_ref_test(testing $t)
     $ref = new ref($usr);
     $ref->phr = $wrd->phrase();
     $ref->ref_type = $ref_type;
-    $ref->load();
+    $ref->load_obj_vars();
     $result = $ref->external_key;
     $target = ref::TEST_REF_NAME;
     $t->dsp('ref->load "' . word::TN_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
@@ -54,9 +54,8 @@ function run_ref_test(testing $t)
     if ($ref->id > 0) {
         // load by id and test the loading of the objects
         $ref2 = new ref($usr);
-        $ref2->id = $ref->id;
-        $ref2->load();
-        $result = $ref2->phr->name;
+        $ref2->load_by_id($ref->id);
+        $result = $ref2->phr->name();
         $target = word::TN_ADD;
         $t->dsp('ref->load_object word', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
         $result = $ref2->ref_type->name;

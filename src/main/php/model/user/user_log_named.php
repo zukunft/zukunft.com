@@ -92,7 +92,7 @@ class user_log_named extends user_log
         $db_con->set_join_fields(array(user::FLD_NAME),sql_db::TBL_USER);
         $db_con->set_where_text($db_con->where_par(array(self::FLD_FIELD_ID, self::FLD_ROW_ID), array($field_id, $row_id)));
         $db_con->set_order(self::FLD_ID, sql_db::ORDER_DESC);
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;

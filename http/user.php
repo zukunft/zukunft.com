@@ -65,7 +65,7 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::USER);
-    $dsp->load();
+    $dsp->load_obj_vars();
 
     // do user changes
     $result .= $usr->upd_pars($_GET);

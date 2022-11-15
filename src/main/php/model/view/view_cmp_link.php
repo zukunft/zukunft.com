@@ -182,8 +182,8 @@ class view_cmp_link extends user_sandbox_link
         $db_con->set_fields(array_merge(
             self::FLD_NAMES_NUM_USR,
             array(sql_db::FLD_USER_ID)));
-        $db_con->set_where_link($this->id, $this->dsp->id, $this->cmp->id);
-        $qp->sql = $db_con->select_by_id();
+        $db_con->set_where_link_no_fld($this->id, $this->dsp->id, $this->cmp->id);
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -214,15 +214,36 @@ class view_cmp_link extends user_sandbox_link
     }
 
     /**
+     * create the common part of an SQL statement to retrieve the parameters of a view component link from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp->name .= $query_name;
+
+        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+
+        return $qp;
+    }
+
+    /**
      * create an SQL statement to retrieve the parameters of a view component link from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($db_con, self::class);
+        $qp = parent::load_sql_obj_vars($db_con, $class);
         if ($this->id > 0) {
             $qp->name .= 'id';
         } elseif ($this->dsp->id > 0 and $this->cmp->id > 0) {
@@ -254,7 +275,7 @@ class view_cmp_link extends user_sandbox_link
      * load the missing view component parameters from the database for the requesting user
      * @returns bool true if a link has been loaded
      */
-    function load(): bool
+    function load_obj_vars(): bool
     {
         global $db_con;
         $result = false;
@@ -274,7 +295,7 @@ class view_cmp_link extends user_sandbox_link
                 }
             }
 
-            $qp = $this->load_sql($db_con);
+            $qp = $this->load_sql_obj_vars($db_con);
 
             if ($db_con->get_where() <> '') {
                 $db_dsl = $db_con->get1($qp);
@@ -301,7 +322,7 @@ class view_cmp_link extends user_sandbox_link
         if (!isset($this->fob) and $this->dsp->id > 0) {
             $dsp = new view_dsp_old($this->usr);
             $dsp->id = $this->dsp->id;
-            if ($dsp->load()) {
+            if ($dsp->load_obj_vars()) {
                 $this->fob = $dsp;
             } else {
                 $result = false;
@@ -310,13 +331,28 @@ class view_cmp_link extends user_sandbox_link
         if (!isset($this->tob) and $this->cmp->id > 0) {
             $cmp = new view_dsp_old($this->usr);
             $cmp->id = $this->cmp->id;
-            if ($cmp->load()) {
+            if ($cmp->load_obj_vars()) {
                 $this->tob = $cmp;
             } else {
                 $result = false;
             }
         }
         return $result;
+    }
+
+    function id_field(): string
+    {
+        return self::FLD_ID;
+    }
+
+    function from_field(): string
+    {
+        return view::FLD_ID;
+    }
+
+    function to_field(): string
+    {
+        return view_cmp::FLD_ID;
     }
 
     /*
@@ -333,9 +369,9 @@ class view_cmp_link extends user_sandbox_link
         $result = '';
 
         if (isset($this->fob) and isset($this->tob)) {
-            if ($this->fob->name <> '' and $this->tob->name <> '') {
-                $result .= '"' . $this->tob->name . '" in "'; // e.g. Company details
-                $result .= $this->fob->name . '"';     // e.g. cash flow statement
+            if ($this->fob->name() <> '' and $this->tob->name() <> '') {
+                $result .= '"' . $this->tob->name() . '" in "'; // e.g. Company details
+                $result .= $this->fob->name() . '"';     // e.g. cash flow statement
             }
             if ($this->fob->id <> 0 and $this->tob->id <> 0) {
                 $result .= ' (' . $this->fob->id . ',' . $this->tob->id;
@@ -383,7 +419,7 @@ class view_cmp_link extends user_sandbox_link
 
         // load any missing parameters
         if (!isset($this->id) or !isset($this->dsp->id)) {
-            $this->load();
+            $this->load_obj_vars();
         }
         $this->load_objects();
 
@@ -411,7 +447,7 @@ class view_cmp_link extends user_sandbox_link
                     $cmp_lnk = new view_cmp_link($this->usr);
                     $cmp_lnk->fob = $this->fob;
                     $cmp_lnk->tob = $entry;
-                    $cmp_lnk->load();
+                    $cmp_lnk->load_obj_vars();
                     // fix any wrong order numbers
                     if ($cmp_lnk->order_nbr != $order_nbr) {
                         log_debug('view_component_link->move check order number of the view component ' . $entry->dsp_id() . ' corrected from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
@@ -432,7 +468,7 @@ class view_cmp_link extends user_sandbox_link
                         $cmp_lnk = new view_cmp_link($this->usr);
                         $cmp_lnk->fob = $this->fob;
                         $cmp_lnk->tob = $entry;
-                        $cmp_lnk->load();
+                        $cmp_lnk->load_obj_vars();
                         if ($cmp_lnk->order_nbr != $order_nbr) {
                             log_err('Component link ' . $cmp_lnk->dsp_id() . ' should have position ' . $order_nbr . ', but is ' . $cmp_lnk->order_nbr, "view_component_link->move");
                         }
@@ -450,7 +486,7 @@ class view_cmp_link extends user_sandbox_link
                     $cmp_lnk = new view_cmp_link($this->usr);
                     $cmp_lnk->fob = $this->fob;
                     $cmp_lnk->tob = $entry;
-                    $cmp_lnk->load();
+                    $cmp_lnk->load_obj_vars();
                     if ($prev_entry_down) {
                         if (isset($prev_entry)) {
                             log_debug('view_component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
@@ -458,7 +494,7 @@ class view_cmp_link extends user_sandbox_link
                             $prev_entry->save();
                             $prev_entry = null;
                         }
-                        log_debug('view_component_link->move order number of the view component "' . $cmp_lnk->tob->name . '" changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in "' . $this->fob->name . '"');
+                        log_debug('view_component_link->move order number of the view component "' . $cmp_lnk->tob->name() . '" changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in "' . $this->fob->name() . '"');
                         $cmp_lnk->order_nbr = $order_nbr - 1;
                         $cmp_lnk->save();
                         $result = true;
@@ -518,7 +554,7 @@ class view_cmp_link extends user_sandbox_link
 
         if (!$this->has_usr_cfg()) {
             if (isset($this->fob) and isset($this->tob)) {
-                log_debug('view_component_link->add_usr_cfg for "' . $this->fob->name . '"/"' . $this->tob->name . '" by user "' . $this->usr->name . '"');
+                log_debug('view_component_link->add_usr_cfg for "' . $this->fob->name() . '"/"' . $this->tob->name() . '" by user "' . $this->usr->name . '"');
             } else {
                 log_debug('view_component_link->add_usr_cfg for "' . $this->id . '" and user "' . $this->usr->name . '"');
             }
@@ -530,7 +566,7 @@ class view_cmp_link extends user_sandbox_link
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where_std($this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {

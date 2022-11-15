@@ -32,7 +32,7 @@
 
 class formula_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;
@@ -46,24 +46,30 @@ class formula_unit_tests
 
         $t->header('Unit tests of the formula class (src/main/php/model/formula/formula.php)');
 
+
+        $t->subheader('SQL user sandbox statement tests');
+
+        $frm = new formula($usr);
+        $t->assert_load_sql_id($db_con, $frm);
+        $t->assert_load_sql_name($db_con, $frm);
+
+
         $t->subheader('SQL statement tests');
 
         // sql to load the formula by id
         $frm = new formula($usr);
         $frm->id = 2;
-        $t->assert_load_sql($db_con, $frm);
+        //$t->assert_load_sql($db_con, $frm);
         $t->assert_load_standard_sql($db_con, $frm);
         $t->assert_not_changed_sql($db_con, $frm);
         $t->assert_user_config_sql($db_con, $frm);
 
         // sql to load the formula by name
         $frm = new formula($usr);
-        $frm->name = formula::TF_SCALE_MIO;
-        $t->assert_load_sql($db_con, $frm);
+        $frm->set_name(formula::TF_SCALE_MIO);
+        //$t->assert_load_sql($db_con, $frm);
         $t->assert_load_standard_sql($db_con, $frm);
 
-
-        $t->subheader('SQL user sandbox statement tests');
 
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -112,7 +118,7 @@ class formula_unit_tests
         // check the PostgreSQL query syntax to load a list of formulas by phrase
         $wrd = new word($usr);
         $wrd->id = 1;
-        $wrd->name = word::TN_ADD;
+        $wrd->set_name(word::TN_ADD);
         $phr = $wrd->phrase();
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $frm_lst->load_sql_by_phr($db_con, $phr);

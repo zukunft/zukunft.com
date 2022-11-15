@@ -227,7 +227,7 @@ class user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
         $db_con->set_type(sql_db::TBL_USER);
@@ -245,7 +245,7 @@ class user
             $qp->name .= 'id';
             $db_con->set_name($qp->name);
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
         } elseif ($this->code_id > 0) {
             $qp->name .= 'code_id';
             $db_con->set_name($qp->name);
@@ -256,7 +256,7 @@ class user
                 $qp->name .= 'name';
                 $db_con->set_name($qp->name);
                 $db_con->add_par(sql_db::PAR_TEXT, $this->name);
-                $qp->sql = $db_con->select_by_name();
+                $qp->sql = $db_con->select_by_set_name();
             } else {
                 $qp->name .= 'name_or_email';
                 $db_con->set_name($qp->name);
@@ -293,7 +293,7 @@ class user
 
         $db_usr = null;
         // select the user either by id, code_id, name or ip
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql_obj_vars($db_con);
         if (!$qp->has_par()) {
             log_err("Either the database ID, the user name, the ip address or the code_id must be set for loading a user.", "user->load", '', (new Exception)->getTraceAsString(), $this);
         } else {
@@ -353,7 +353,7 @@ class user
 
         $this->reset();
         $this->profile_id = $profile_id;
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql_obj_vars($db_con);
         $db_usr = $db_con->get1($qp);
         return $this->row_mapper($db_usr);
     }
@@ -599,8 +599,7 @@ class user
             $this->wrd_id = DEFAULT_WORD_ID;
         }
         $wrd = new word($this);
-        $wrd->id = $this->wrd_id;
-        $wrd->load();
+        $wrd->load_by_id($this->wrd_id, word::class);
         $this->wrd = $wrd;
         return $wrd->dsp_obj();
     }

@@ -37,17 +37,6 @@ use html\html_selector;
 class formula_dsp_old extends formula
 {
 
-    // show the formula name to the user in the most simple form (without any ids)
-    function name(): string
-    {
-        return $this->name;
-    }
-
-    public function set_name(string $name)
-    {
-        $this->name = $name;
-    }
-
     // create the HTML code to display the formula name with the HTML link
     function name_linked(?string $back = ''): string
     {
@@ -81,7 +70,7 @@ class formula_dsp_old extends formula
      */
     function dsp_result($wrd, $back): string
     {
-        log_debug('for "' . $wrd->name . '" and formula ' . $this->dsp_id());
+        log_debug('for "' . $wrd->name() . '" and formula ' . $this->dsp_id());
         $fv = new formula_value($this->usr);
         $fv->frm = $this;
         $fv->wrd = $wrd;
@@ -183,7 +172,7 @@ class formula_dsp_old extends formula
     // list all words linked to the formula and allow to unlink or add new words
     function dsp_used4words($add, $wrd, $back): string
     {
-        log_debug($this->ref_text . " for " . $wrd->name . ",back:" . $back . " and user " . $this->usr->name . ".");
+        log_debug($this->ref_text . " for " . $wrd->name() . ",back:" . $back . " and user " . $this->usr->name . ".");
         $result = '';
 
         $html = new html_base();
@@ -264,7 +253,7 @@ class formula_dsp_old extends formula
     // $wrd is the word that should be linked (used for a new formula)
     function dsp_edit($add, $wrd, $back): string
     {
-        log_debug("" . $this->ref_text . " for " . $wrd->name . ", back:" . $back . " and user " . $this->usr->name . ".");
+        log_debug("" . $this->ref_text . " for " . $wrd->name() . ", back:" . $back . " and user " . $this->usr->name . ".");
         $result = '';
 
         $resolved_text = str_replace('"', '&quot;', $this->usr_text);

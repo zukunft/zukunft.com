@@ -31,7 +31,7 @@ class triple_unit_tests
 
         // sql to load the triple by name
         $trp = new triple($usr);
-        $trp->name = triple::TN_READ;
+        $trp->set_name(triple::TN_READ);
         $t->assert_load_sql($db_con, $trp);
         $t->assert_load_standard_sql($db_con, $trp);
 
@@ -45,8 +45,8 @@ class triple_unit_tests
         $t->assert($t->name . 'api->id', $api_trp->id, $trp->id());
         $t->assert($t->name . 'api->name', $api_trp->name, $trp->name());
         $t->assert($t->name . 'api->description', $api_trp->description, $trp->description);
-        $t->assert($t->name . 'api->from', $api_trp->from()->name, $trp->from->obj->name());
-        $t->assert($t->name . 'api->to', $api_trp->to()->name, $trp->to->obj->name());
+        $t->assert($t->name . 'api->from', $api_trp->from()->name, $trp->from->obj->name_dsp());
+        $t->assert($t->name . 'api->to', $api_trp->to()->name, $trp->to->obj->name_dsp());
 
 
         $t->subheader('Im- and Export tests');

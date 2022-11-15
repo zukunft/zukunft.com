@@ -157,7 +157,7 @@ class value_list
             $db_con->set_where_text($sql_where);
             //$db_con->set_page_par();
             $qp->name = $sql_name;
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
 
         }
@@ -197,7 +197,7 @@ class value_list
                         if ($db_val['time_word_id'] <> 0) {
                             $time_phr = new phrase($this->usr);
                             $time_phr->id = $db_val['time_word_id'];
-                            if ($time_phr->load()) {
+                            if ($time_phr->load_by_obj_par()) {
                                 $val->time_phr = $time_phr;
                             }
                         }
@@ -234,7 +234,7 @@ class value_list
             array(value::FLD_ID), sql_db::TBL_VALUE_PHRASE_LINK,
             value::FLD_ID, value::FLD_ID,
             phrase::FLD_ID, $phr->id);
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -483,9 +483,9 @@ class value_list
 
             if ($key == source_exp::FLD_REF) {
                 $src = new source($this->usr);
-                $src->name = $value;
+                $src->set_name($value);
                 if ($result->is_ok() and $do_save) {
-                    $src->load();
+                    $src->load_obj_vars();
                     if ($src->id == 0) {
                         $result->add_message($src->save());
                     }
@@ -499,8 +499,11 @@ class value_list
                         $val_to_add = clone $val;
                         $val_to_add->phr_lst = clone $phr_lst;
                         $val_phr = new phrase($this->usr);
-                        $val_phr->name = $val_key;
-                        $val_phr->load();
+                        if ($do_save) {
+                            $val_phr->load_by_name($val_key);
+                        } else {
+                            $val_phr->set_name($val_key, word::class);
+                        }
                         $val_to_add->phr_lst->add($val_phr);
                         $val_to_add->number = $val_number;
                         if ($do_save) {
@@ -551,7 +554,7 @@ class value_list
 
             // add the time
             if (isset($val0->time_phr)) {
-                $result->time = $val0->time_phr->name;
+                $result->time = $val0->time_phr->name();
             }
 
             // add the share type
@@ -568,7 +571,7 @@ class value_list
 
             // add the source
             if ($val0->source != null) {
-                $result->source = $val0->source->name;
+                $result->source = $val0->source->name();
             }
 
             foreach ($this->lst as $val) {
@@ -735,8 +738,8 @@ class value_list
             }
             $found = false;
             foreach ($val_phr_lst->lst as $phr) {
-                //zu_debug('value_list->filter_by_phrase_lst val is '.$phr->name.' in '.$phr_lst->name());
-                if (in_array($phr->name, $phr_lst->names())) {
+                //zu_debug('value_list->filter_by_phrase_lst val is '.$phr->name().' in '.$phr_lst->name());
+                if (in_array($phr->name(), $phr_lst->names())) {
                     if (isset($val_phr_lst)) {
                         log_debug('val phrase list ' . $val_phr_lst->name() . ' is found in ' . $phr_lst->name());
                     } else {
@@ -900,12 +903,11 @@ class value_list
         // the id and the user must be set
         $db_con->set_type(sql_db::TBL_VALUE);
         $db_con->set_usr($this->usr->id);
-        $sql = $db_con->select_by_id();
+        $sql = $db_con->select_by_set_id();
         $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {
             $val = new value($this->usr);
-            $val->id = $db_val['value_id'];
-            $val->load();
+            $val->load_by_id($db_val['value_id'], value::class);
             if (!$val->check()) {
                 $result = false;
             }
@@ -1114,10 +1116,10 @@ class value_list
                     if ($val->time_phr->id > 0) {
                         $time_phr = new phrase($val->usr);
                         $time_phr->id = $val->time_phr->id;
-                        $time_phr->load();
+                        $time_phr->load_by_obj_par();
                         $val->time_phr = $time_phr;
                         $dsp_phr_lst->add($time_phr);
-                        log_debug('add time word ' . $val->time_phr->name);
+                        log_debug('add time word ' . $val->time_phr->name());
                     }
                 }
 

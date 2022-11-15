@@ -11,7 +11,7 @@
 CREATE OR REPLACE VIEW phrases AS
 SELECT w.word_id   AS phrase_id,
        w.user_id,
-       w.word_name AS name_used,
+       w.word_name AS phrase_name,
        w.description,
        w.values,
        w.word_type_id,
@@ -22,7 +22,7 @@ FROM words AS w
 UNION
 SELECT (l.triple_id * -(1))                                                    AS phrase_id,
        l.user_id,
-       CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS name_used,
+       CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS phrase_name,
        l.description,
        l.values,
        l.word_type_id,
@@ -38,7 +38,7 @@ FROM triples AS l;
 CREATE OR REPLACE VIEW user_phrases AS
 SELECT w.word_id   AS phrase_id,
        w.user_id,
-       w.word_name AS name_used,
+       w.word_name AS phrase_name,
        w.description,
        w.values,
        w.excluded,
@@ -48,7 +48,7 @@ FROM user_words AS w
 UNION
 SELECT (l.triple_id * -(1))                                                    AS phrase_id,
        l.user_id,
-       CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS name_used,
+       CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS phrase_name,
        l.description,
        l.values,
        l.excluded,
@@ -70,6 +70,7 @@ SELECT ((w.word_id * 2) - 1) AS term_id,
        w.share_type_id,
        w.protect_id
 FROM words AS w
+WHERE w.word_type_id <> 10 OR w.word_type_id IS NULL
 UNION
 SELECT ((l.triple_id * -2) + 1)                                                  AS term_id,
        l.user_id,
@@ -116,6 +117,7 @@ SELECT ((w.word_id * 2) - 1) AS term_id,
        w.share_type_id,
        w.protect_id
 FROM user_words AS w
+WHERE w.word_type_id <> 10
 UNION
 SELECT ((l.triple_id * -2) + 1)                                                  AS term_id,
        l.user_id,

@@ -49,7 +49,7 @@ class ref_type_list extends user_type_list
      * @param string $db_type the database name e.g. the table name without s
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $db_type): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $db_type): sql_par
     {
         $db_con->set_type($db_type);
         $qp = new sql_par($db_type);
@@ -72,7 +72,7 @@ class ref_type_list extends user_type_list
     private function load_list(sql_db $db_con, string $db_type): void
     {
         $this->lst = array();
-        $qp = $this->load_sql($db_con, $db_type);
+        $qp = $this->load_sql_obj_vars($db_con, $db_type);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {

@@ -32,7 +32,7 @@
 
 class verb_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;
@@ -48,10 +48,14 @@ class verb_unit_tests
 
         $t->subheader('SQL statement tests');
 
-        // sql to load a verb by id
         $vrb = new verb();
-        $vrb->id = 4;
-        $t->assert_load_sql($db_con, $vrb);
+        $t->assert_load_sql_id($db_con, $vrb);
+        //$t->assert_load_sql_name($db_con, $vrb);
+
+        // sql to load a verb by id
+        //$vrb = new verb();
+        //$vrb->id = 4;
+        //$t->assert_load_sql($db_con, $vrb);
 
         // sql to load a verb by code id
         $vrb = new verb();

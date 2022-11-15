@@ -52,7 +52,7 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::ADD);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back']; // 
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
@@ -97,7 +97,7 @@ if ($usr->id > 0) {
         $wrd->id = $_GET['word'];
         //$wrd->type_id = $view_type;
         if ($wrd->id > 0) {
-            $wrd->load();
+            $wrd->load_obj_vars();
         }
 
         // show the header (in view edit views the view cannot be changed)

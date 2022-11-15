@@ -34,7 +34,7 @@ namespace api;
 
 use html\term_list_dsp;
 
-class term_list_api extends list_api
+class term_list_api extends list_api implements \JsonSerializable
 {
 
     /*
@@ -79,6 +79,22 @@ class term_list_api extends list_api
         $dsp_obj->set_lst_dirty();
 
         return $dsp_obj;
+    }
+
+    /*
+     * interface
+     */
+
+    /**
+     * an array of the value vars including the private vars
+     */
+    public function jsonSerialize(): array
+    {
+        $vars = [];
+        foreach ($this->lst as $phr) {
+            $vars[] = json_decode(json_encode($phr));
+        }
+        return $vars;
     }
 
     /*

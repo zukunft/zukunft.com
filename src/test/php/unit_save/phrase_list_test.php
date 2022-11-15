@@ -46,7 +46,7 @@ function run_phrase_list_test(testing $t)
     $lnk_company->from->id = $wrd_zh->id;
     $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
     $lnk_company->to->id = $wrd_company->id;
-    $lnk_company->load();
+    $lnk_company->load_obj_vars();
     $triple_sample_id = $lnk_company->id;
 
     // test the phrase loading via id

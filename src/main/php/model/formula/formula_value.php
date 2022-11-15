@@ -204,7 +204,7 @@ class formula_value
         $qp->name .= 'id';
         $db_con->set_name($qp->name);
         $db_con->add_par(sql_db::PAR_INT, $this->id);
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -380,7 +380,7 @@ class formula_value
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_where_text($sql_where);
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -434,7 +434,7 @@ class formula_value
                     $phr_lst = new phrase_list($this->usr);
                     $phr_lst->load_by_ids(new phr_ids($this->phr_ids()));
                     // ... or to get the most interesting result for this word
-                } elseif (isset($this->wrd) and isset($this->frm)) {
+                } elseif ($this->wrd != null and isset($this->frm)) {
                     if ($this->wrd->id > 0 and $this->frm->id > 0 and isset($this->frm->name_wrd)) {
                         // get the best matching word group
                         $phr_lst = new phrase_list($this->usr);
@@ -477,9 +477,11 @@ class formula_value
 
             // create the source phrase list if just the word is given
             if ($this->phr_lst == null and $this->wrd != null) {
-                $new_phr_lst = new phrase_list($this->usr);
-                $new_phr_lst->add($this->wrd->phrase());
-                $this->phr_lst = $new_phr_lst;
+                if ($this->wrd->id > 0 or $this->wrd->name() != '') {
+                    $new_phr_lst = new phrase_list($this->usr);
+                    $new_phr_lst->add($this->wrd->phrase());
+                    $this->phr_lst = $new_phr_lst;
+                }
             }
 
             // set the source group id if the source list is set, but not the group id
@@ -757,12 +759,12 @@ class formula_value
                 log_debug('formula_value->load_time_wrd_src for source time "' . $this->src_time_id . '"');
                 $time_phr = new phrase($this->usr);
                 $time_phr->id = $this->src_time_id;
-                $time_phr->load();
+                $time_phr->load_by_obj_par();
                 if ($time_phr->id <> 0) {
                     $this->src_time_phr = $time_phr;
                     if ($this->src_phr_lst != null) {
                         $this->src_phr_lst->add($time_phr);
-                        log_debug('formula_value->load_time_wrd_src source time word "' . $time_phr->name . '" added');
+                        log_debug('formula_value->load_time_wrd_src source time word "' . $time_phr->name() . '" added');
                     }
                 }
             }
@@ -780,12 +782,12 @@ class formula_value
                 log_debug('formula_value->load_phr_lst for time "' . $this->time_id . '"');
                 $time_phr = new phrase($this->usr);
                 $time_phr->id = $this->time_id;
-                $time_phr->load();
+                $time_phr->load_by_obj_par();
                 if ($time_phr->id <> 0) {
                     $this->time_phr = $time_phr;
                     if ($this->phr_lst != null) {
                         $this->phr_lst->add($time_phr);
-                        log_debug('formula_value->load_time_wrd time word "' . $time_phr->name . '" added');
+                        log_debug('formula_value->load_time_wrd time word "' . $time_phr->name() . '" added');
                     }
                 }
             }
@@ -815,8 +817,7 @@ class formula_value
         if ($this->frm->id > 0) {
             log_debug('for user ' . $this->usr->name);
             $frm = new formula($this->usr);
-            $frm->id = $this->frm->id;
-            $frm->load();
+            $frm->load_by_id($this->frm->id, formula::class);
             $this->frm = $frm;
         }
     }
@@ -910,7 +911,7 @@ class formula_value
         if ($this->phr_lst != null) {
             if (count($this->phr_lst->lst) > 0) {
                 foreach ($this->phr_lst->lst as $phr) {
-                    $phr_lst[] = $phr->name;
+                    $phr_lst[] = $phr->name();
                 }
                 if (count($phr_lst) > 0) {
                     $result->words = $phr_lst;
@@ -946,7 +947,7 @@ class formula_value
                 $time_wrd = $time_phr_lst->lst[0];
                 if (isset($this->src_time_phr)) {
                     if ($this->src_time_phr->id <> $time_wrd->id) {
-                        log_warning('The word list suggested "' . $time_wrd->name . '", but the time is already set to  "' . $this->src_time_phr->name . '" (' . $this->id . ').', 'formula_value->save_prepare_phr_lst_src');
+                        log_warning('The word list suggested "' . $time_wrd->name . '", but the time is already set to  "' . $this->src_time_phr->name() . '" (' . $this->id . ').', 'formula_value->save_prepare_phr_lst_src');
                     }
                 } else {
                     $this->src_time_phr = $time_wrd;
@@ -980,7 +981,7 @@ class formula_value
                 $time_wrd = $time_phr_lst->lst[0];
                 if (isset($this->time_phr)) {
                     if ($this->time_phr->id <> $time_wrd->id) {
-                        log_warning('The word list suggested "' . $time_wrd->name . '", but the time is already set to  "' . $this->time_phr->name . '" (' . $this->id . ').', 'formula_value->save_prepare_phr_lst');
+                        log_warning('The word list suggested "' . $time_wrd->name . '", but the time is already set to  "' . $this->time_phr->name() . '" (' . $this->id . ').', 'formula_value->save_prepare_phr_lst');
                     }
                 } else {
                     $this->time_phr = $time_wrd;
@@ -1135,7 +1136,7 @@ class formula_value
             $result .= $this->phr_lst->dsp_name();
         }
         if (isset($this->time_phr)) {
-            $result .= '@' . $this->time_phr->name();
+            $result .= '@' . $this->time_phr->dsp_name();
         }
 
         return $result;
@@ -1208,7 +1209,7 @@ class formula_value
         // $lead_wrd->id  = $lead_phr_id;
         // $lead_wrd->usr = $this->usr;
         // $lead_wrd->load();
-        //$result .= $lead_phr_id->name;
+        //$result .= $lead_phr_id->name();
 
         // build the title
         $title = '';
@@ -1237,8 +1238,7 @@ class formula_value
 
         // display the formula with links
         $frm = new formula($this->usr);
-        $frm->id = $this->frm->id;
-        $frm->load();
+        $frm->load_by_id($this->frm->id, formula::class);
         $result .= ' based on</br>' . $frm->name_linked($back);
         $result .= ' ' . $frm->dsp_text($back) . "\n";
         $result .= ' ' . $frm->btn_edit($back) . "\n";
@@ -1274,21 +1274,21 @@ class formula_value
                 $src_phr_lst = clone $this->src_phr_lst;
                 $frm_wrd_id = $frm->name_wrd->id;
                 $src_phr_lst->diff_by_ids(array($frm_wrd_id));
-                log_debug('formula_value->explain -> formula word "' . $frm->name_wrd->name . '" excluded from ' . $src_phr_lst->dsp_name());
+                log_debug('formula_value->explain -> formula word "' . $frm->name_wrd->name() . '" excluded from ' . $src_phr_lst->dsp_name());
 
                 // select or guess the element time word if needed
                 log_debug('formula_value->explain -> guess the time ... ');
                 if ($this->src_time_id <= 0) {
                     if ($this->time_id > 0) {
                         $elm_time_phr = $this->time_phr;
-                        log_debug('formula_value->explain -> time ' . $this->time_phr->name . ' taken from the result');
+                        log_debug('formula_value->explain -> time ' . $this->time_phr->name() . ' taken from the result');
                     } else {
                         $elm_time_phr = $src_phr_lst->assume_time();
-                        log_debug('formula_value->explain -> time ' . $elm_time_phr->name . ' assumed');
+                        log_debug('formula_value->explain -> time ' . $elm_time_phr->name() . ' assumed');
                     }
                 } else {
                     $elm_time_phr = $this->src_time_phr;
-                    log_debug('formula_value->explain -> time ' . $elm_time_phr->name . ' taken from the source');
+                    log_debug('formula_value->explain -> time ' . $elm_time_phr->name() . ' taken from the source');
                 }
 
                 $elm_grp->phr_lst = $src_phr_lst;
@@ -1474,7 +1474,7 @@ class formula_value
                 }
 
                 if (!isset($this->value)) {
-                    log_info('No result calculated for "' . $this->frm->name . '" based on ' . $this->src_phr_lst->dsp_id() . ' for user ' . $this->usr->id . '.', "formula_value->save_if_updated");
+                    log_info('No result calculated for "' . $this->frm->name() . '" based on ' . $this->src_phr_lst->dsp_id() . ' for user ' . $this->usr->id . '.', "formula_value->save_if_updated");
                 } else {
                     // save the default value if the result time is the "newest"
                     if (isset($fv_default_time)) {

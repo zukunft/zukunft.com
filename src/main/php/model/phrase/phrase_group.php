@@ -184,7 +184,7 @@ class phrase_group
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement base on the parameters set in $this
      */
-    function load_sql(sql_db $db_con): sql_par
+    function load_sql_obj_vars(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
         $qp = new sql_par(self::class);
@@ -205,7 +205,7 @@ class phrase_group
         global $db_con;
         $result = false;
 
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql_obj_vars($db_con);
 
         if ($qp->sql == '') {
             log_err('Some ids for a ' . self::class . ' must be set to load a ' . self::class, self::class . '->load');
@@ -291,7 +291,7 @@ class phrase_group
         $trp_txt = implode(',', $this->phr_lst->trp_ids());
         if ($this->id != 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
         } elseif ($wrd_txt != '' and $trp_txt != '') {
             $db_con->add_par(sql_db::PAR_TEXT, $wrd_txt);
             $db_con->add_par(sql_db::PAR_TEXT, $trp_txt);
@@ -587,7 +587,7 @@ class phrase_group
     {
         $val = new value($this->usr);
         $val->grp = $this;
-        $val->load();
+        $val->load_obj_vars();
 
         log_debug('phrase_group->value ' . $val->wrd_lst->name() . ' for "' . $this->usr->name . '" is ' . $val->number);
         return $val;
@@ -875,7 +875,7 @@ class phrase_group
         // delete the related value
         $val = new value($this->usr);
         $val->grp = $this;
-        $val->load();
+        $val->load_obj_vars();
 
         if ($val->id > 0) {
             $val->del();

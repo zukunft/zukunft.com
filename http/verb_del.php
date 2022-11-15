@@ -52,7 +52,7 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::VERB_DEL);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // get the parameters
@@ -65,7 +65,7 @@ if ($usr->id > 0) {
         $vrb = new verb;
         $vrb->id = $vrb_id;
         $vrb->usr = $usr;
-        $vrb->load();
+        $vrb->load_by_vars();
 
         if ($confirm == 1) {
             $vrb->del();

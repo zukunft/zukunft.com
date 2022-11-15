@@ -251,7 +251,7 @@ include_once $path_php . 'model/sandbox/user_sandbox.php';
 include_once $path_php . 'model/sandbox/user_sandbox_named.php';
 include_once $path_php . 'model/sandbox/user_sandbox_value.php';
 include_once $path_php . 'model/sandbox/user_sandbox_link.php';
-include_once $path_php . 'model/sandbox/user_sandbox_link_description.php';
+include_once $path_php . 'model/sandbox/user_sandbox_link_named.php';
 include_once $path_php . 'model/sandbox/user_sandbox_description.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp_named.php';
@@ -1381,6 +1381,16 @@ function sql_array(array $in_array): string
         }
     }
     return $result;
+}
+
+function camelize(string $input, string $separator = '_'): string
+{
+    return str_replace($separator, '', lcfirst(ucwords($input, $separator)));
+}
+
+function camelize_ex_1(string $input, string $separator = '_'): string
+{
+    return str_replace($separator, '', ucwords($input, $separator));
 }
 
 // get all entries of the list that are not in the second list

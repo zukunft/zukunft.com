@@ -60,13 +60,13 @@ if ($usr->id > 0) {
         // create the view component object to apply the user changes to it
         $cmp = new view_cmp_dsp_old($usr);
         $cmp->id = $_GET['id'];
-        $result .= $cmp->load();
+        $result .= $cmp->load_obj_vars();
 
         // get the word used as a sample to illustrate the changes
         $wrd = new word($usr);
         if (isset($_GET['word'])) {
             $wrd->id = $_GET['word'];
-            $result .= $wrd->load();
+            $result .= $wrd->load_obj_vars();
         } else {
             // get the default word for the view $dsp
         }
@@ -80,7 +80,7 @@ if ($usr->id > 0) {
         if ($dsp_link_id > 0) {
             $dsp_link = new view_dsp_old($usr);
             $dsp_link->id = $dsp_link_id;
-            $result .= $dsp_link->load();
+            $result .= $dsp_link->load_obj_vars();
             $order_nbr = $cmp->next_nbr($dsp_link_id);
             $upd_result = $cmp->link($dsp_link, $order_nbr);
         }
@@ -89,7 +89,7 @@ if ($usr->id > 0) {
         if ($dsp_unlink_id > 0) {
             $dsp_unlink = new view_dsp_old($usr);
             $dsp_unlink->id = $dsp_unlink_id;
-            $result .= $dsp_unlink->load();
+            $result .= $dsp_unlink->load_obj_vars();
             $upd_result .= $cmp->unlink($dsp_unlink);
         }
 

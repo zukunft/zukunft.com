@@ -1523,7 +1523,7 @@ select ((`words`.`word_id` * 2) - 1) AS `term_id`,
          `words`.`share_type_id`     AS `share_type_id`,
          `words`.`protect_id`        AS `protect_id`
     from `words`
-   where `words`.`word_type_id` <> 10
+   where `words`.`word_type_id` <> 10 OR `words`.`word_type_id` is null
 union
 select ((`triples`.`triple_id` * -2) + 1) AS `term_id`,
          `triples`.`user_id`                 AS `user_id`,

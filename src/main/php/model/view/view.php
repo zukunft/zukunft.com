@@ -117,6 +117,9 @@ class view extends user_sandbox_named
     const TN_COMPLETE = 'System Test View Complete';
     const TN_TABLE = 'System Test View Table';
 
+    const TN_READ_RATIO = 'Company ratios';
+    const TN_READ_NESN_2016 = 'Nestlé Financial Statement 2016';
+
     // array of view names that used for testing and remove them after the test
     const RESERVED_VIEWS = array(
         self::TN_ADD,
@@ -248,7 +251,7 @@ class view extends user_sandbox_named
             array(sql_db::FLD_USER_ID)
         ));
 
-        return parent::load_standard_sql($db_con, self::class);
+        return parent::load_standard_sql($db_con, $class);
     }
 
     /**
@@ -262,12 +265,34 @@ class view extends user_sandbox_named
 
         global $db_con;
         $qp = $this->load_standard_sql($db_con);
-        $result = parent::load_standard($qp, self::class);
+        $result = parent::load_standard($qp, $class);
 
         if ($result) {
             $result = $this->load_owner();
         }
         return $result;
+    }
+
+    /**
+     * create the common part of an SQL statement to retrieve the parameters of a view from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp->name .= $query_name;
+
+        $db_con->set_type(sql_db::TBL_VIEW);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+
+        return $qp;
     }
 
     /**
@@ -277,9 +302,9 @@ class view extends user_sandbox_named
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($db_con, self::class);
+        $qp = parent::load_sql_obj_vars($db_con, $class);
         if ($this->id != 0) {
             $qp->name .= 'id';
         } elseif ($this->code_id != '') {
@@ -297,7 +322,7 @@ class view extends user_sandbox_named
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         $db_con->set_where_std($this->id, $this->name, $this->code_id);
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -306,7 +331,7 @@ class view extends user_sandbox_named
     // TODO review and add a unit test
     function load_by_phrase_sql(sql_db $db_con, phrase $phr): sql_par
     {
-        $qp = parent::load_sql($db_con, self::class);
+        $qp = parent::load_sql_obj_vars($db_con, self::class);
 
         // sql to get the id of the most often used view
         $db_con_tmp = new sql_db();
@@ -338,7 +363,7 @@ class view extends user_sandbox_named
      * load the missing view parameters from the database
      * based either on the id or the view name
      */
-    function load(): bool
+    function load_obj_vars(): bool
     {
 
         global $db_con;
@@ -351,7 +376,7 @@ class view extends user_sandbox_named
             log_err("Either the database ID (" . $this->id . "), the name (" . $this->name . ") or the code_id (" . $this->code_id . ") and the user (" . $this->usr->id . ") must be set to load a view.", "view->load");
         } else {
 
-            $qp = $this->load_sql($db_con);
+            $qp = $this->load_sql_obj_vars($db_con);
 
             if ($db_con->get_where() <> '') {
                 $db_view = $db_con->get1($qp);
@@ -389,7 +414,7 @@ class view extends user_sandbox_named
      */
     function load_components_sql(sql_db $db_con): sql_par
     {
-        $qp = parent::load_sql($db_con, view_cmp::class);
+        $qp = parent::load_sql_obj_vars($db_con, view_cmp::class);
         if ($this->id != 0) {
             $qp->name .= 'view_id';
         } elseif ($this->name != '') {
@@ -463,6 +488,16 @@ class view extends user_sandbox_named
         return $result;
     }
 
+    function id_field(): string
+    {
+        return self::FLD_ID;
+    }
+
+    function name_field(): string
+    {
+        return self::FLD_NAME;
+    }
+
     /*
     object display functions
     */
@@ -515,7 +550,7 @@ class view extends user_sandbox_named
     /**
      * display the unique id fields
      */
-    function name(): string
+    function name_dsp(): string
     {
         return '"' . $this->name . '"';
     }
@@ -570,11 +605,11 @@ class view extends user_sandbox_named
         } else {
             $cmp = new view_cmp_dsp_old($this->usr);
             $cmp->id = $view_component_id;
-            $cmp->load();
+            $cmp->load_obj_vars();
             $cmp_lnk = new view_cmp_link($this->usr);
             $cmp_lnk->fob = $this;
             $cmp_lnk->tob = $cmp;
-            $cmp_lnk->load();
+            $cmp_lnk->load_obj_vars();
             $result .= $cmp_lnk->move_up();
         }
         return $result;
@@ -592,11 +627,11 @@ class view extends user_sandbox_named
         } else {
             $cmp = new view_cmp_dsp_old($this->usr);
             $cmp->id = $view_component_id;
-            $cmp->load();
+            $cmp->load_obj_vars();
             $cmp_lnk = new view_cmp_link($this->usr);
             $cmp_lnk->fob = $this;
             $cmp_lnk->tob = $cmp;
-            $cmp_lnk->load();
+            $cmp_lnk->load_obj_vars();
             $result .= $cmp_lnk->move_down();
         }
         return $result;
@@ -739,7 +774,7 @@ class view extends user_sandbox_named
         $result = new view_exp();
 
         // add the view parameters
-        $result->name = $this->name;
+        $result->name = $this->name();
         $result->description = $this->comment;
         $result->type = $this->type_code_id();
 
@@ -801,7 +836,7 @@ class view extends user_sandbox_named
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where_std($this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {

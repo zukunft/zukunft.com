@@ -70,14 +70,11 @@ function run_word_unit_db_tests(testing $t)
 
     // create word objects for testing
     $wrd = new word($usr);
-    $wrd->name = word::TN_READ;
-    $wrd->load();
+    $wrd->load_by_name(word::TN_READ, word::class);
     $wrd_scale = new word($usr);
-    $wrd_scale->name = word::TN_READ_SCALE;
-    $wrd_scale->load();
+    $wrd_scale->load_by_name(word::TN_READ_SCALE, word::class);
     $phr = new phrase($usr);
-    $phr->name = triple::TN_READ_NAME;
-    $phr->load();
+    $phr->load_by_name(triple::TN_READ_NAME);
     $phr_grp = $t->load_phrase_group(array(triple::TN_READ));
 
     // load a word list by the word id

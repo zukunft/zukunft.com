@@ -93,15 +93,13 @@ if ($usr->id > 0) {
         // create a display object, select and load the view and display the word according to the view
         if ($view_id > 0) {
             $dsp = new view_dsp_old($usr);
-            $dsp->id = $view_id;
-            $dsp->load();
+            $dsp->load_by_id($view_id, view::class);
             $dsp_text = $dsp->display($wrd, $back);
 
             // use a fallback if the view is empty
             if ($dsp_text == '' or $dsp->name == '') {
                 $view_id = cl(db_cl::VIEW, view::START);
-                $dsp->id = $view_id;
-                $dsp->load();
+                $dsp->load_by_id($view_id, view::class);
                 $dsp_text = $dsp->display($wrd, $back);
             }
             if ($dsp_text == '') {
@@ -110,7 +108,7 @@ if ($usr->id > 0) {
                 $result .= $dsp_text;
             }
         } else {
-            $result .= log_err('No view for "' . $wrd->name . '" found.', "view.php", '', (new Exception)->getTraceAsString(), $usr);
+            $result .= log_err('No view for "' . $wrd->name() . '" found.', "view.php", '', (new Exception)->getTraceAsString(), $usr);
         }
 
     } else {

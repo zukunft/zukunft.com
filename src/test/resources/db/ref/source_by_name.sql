@@ -11,4 +11,5 @@ PREPARE source_by_name (int, text) AS
            CASE WHEN (u.excluded          IS     NULL) THEN s.excluded       ELSE u.excluded       END AS excluded
       FROM sources s
  LEFT JOIN user_sources u ON s.source_id = u.source_id AND u.user_id = $1
-     WHERE s.source_name = $2;
+     WHERE (u.source_name = $2
+        OR (s.source_name = $2 AND u.source_name IS NULL));

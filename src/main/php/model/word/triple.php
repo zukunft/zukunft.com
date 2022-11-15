@@ -43,7 +43,7 @@ use html\api;
 use html\button;
 use html\triple_dsp;
 
-class triple extends user_sandbox_link_description
+class triple extends user_sandbox_link_named implements \JsonSerializable
 {
 
     /*
@@ -152,7 +152,7 @@ class triple extends user_sandbox_link_description
         $this->owner_id = null;
         $this->values = null;
         $this->excluded = null;
-        $this->name = '';
+        $this->set_name('');
         $this->name_given = null;
         $this->name_generated = '';
 
@@ -214,7 +214,7 @@ class triple extends user_sandbox_link_description
     {
         parent::set_id($id);
         if ($name != '') {
-            $this->name = $name;
+            $this->set_name($name);
         }
         $this->create_objects($from, $verb, $to);
     }
@@ -423,13 +423,72 @@ class triple extends user_sandbox_link_description
     }
 
     /**
+     * create the common part of an SQL statement to retrieve the parameters of a word from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp->name .= $query_name;
+
+        $db_con->set_type(sql_db::TBL_TRIPLE);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_link_fields(self::FLD_FROM, self::FLD_TO, verb::FLD_ID);
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a formula by id from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $id the id of the user sandbox object
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_id(sql_db $db_con, int $id, string $class): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'id', $class);
+        $db_con->add_par_int($id);
+        $qp->sql = $db_con->select_by_field($this->id_field());
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a term by name from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $name the name of the term and the related word, triple, formula or verb
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_name(sql_db $db_con, string $name, string $class): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'name', $class);
+        $db_con->set_where_name($name, $this->name_field());
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
      * create an SQL statement to retrieve the parameters of a triple from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $qp = new sql_par(self::class);
@@ -447,9 +506,34 @@ class triple extends user_sandbox_link_description
     }
 
     /**
+     * load a named user sandbox object e.g. word, triple, formula, verb or view from the database
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper($db_row);
+        if ($this->id > 0) {
+            // automatically update the generic name
+            $this->load_objects();
+            $new_name = $this->name_generated();
+            log_debug('triple->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
+            if ($new_name <> $this->name) {
+                $db_con->set_type(sql_db::TBL_TRIPLE);
+                $db_con->update($this->id, self::FLD_NAME_AUTO, $new_name);
+                $this->set_name_generated($new_name);
+            }
+        }
+        return $this->id();
+    }
+
+    /**
      * load the word link without the linked objects, because in many cases the object are already loaded by the caller
      */
-    function load(): bool
+    function load_obj_vars(): bool
     {
         global $db_con;
         $result = false;
@@ -457,7 +541,7 @@ class triple extends user_sandbox_link_description
         // after every load call from outside the class the order should be checked and reversed if needed
         $this->check_order();
 
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql_obj_vars($db_con);
 
         if ($qp->sql == '') {
             if (is_null($this->usr->id)) {
@@ -488,6 +572,46 @@ class triple extends user_sandbox_link_description
     }
 
     /**
+     * load a named user sandbox object by database id
+     * @param int $id the id of the word, triple, formula, verb, view or view component
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id, string $class): int
+    {
+        global $db_con;
+
+        log_debug($id);
+        $qp = $this->load_sql_by_id($db_con, $id, $class);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a named user sandbox object by name
+     * @param string $name the name of the word, triple, formula, verb, view or view component
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_name(string $name, string $class): int
+    {
+        global $db_con;
+
+        log_debug($name);
+        $qp = $this->load_sql_by_name($db_con, $name, $class);
+        return $this->load($qp);
+    }
+
+    function id_field(): string
+    {
+        return self::FLD_ID;
+    }
+
+    function name_field(): string
+    {
+        return self::FLD_NAME;
+    }
+
+    /**
      * if needed reverse the order if the user has entered it the other way round
      * e.g. "Cask Flow Statement" "contains" "Taxes" instead of "Taxes" "is part of" "Cask Flow Statement"
      */
@@ -496,17 +620,17 @@ class triple extends user_sandbox_link_description
         if ($this->verb->id < 0) {
             $to = $this->to;
             $to_id = $this->to->id;
-            $to_name = $this->to->name;
+            $to_name = $this->to->name();
             $this->to = $this->from;
             $this->to->id = $this->from->id;
-            $this->to->name = $this->from->name;
+            $this->to->set_name($this->from->name());
             $this->verb->id = $this->verb->id * -1;
             if (isset($this->verb)) {
                 $this->verb->name = $this->verb->reverse;
             }
             $this->from = $to;
             $this->from->id = $to_id;
-            $this->from->name = $to_name;
+            $this->from->set_name($to_name);
             log_debug('triple->check_order -> reversed');
         }
     }
@@ -530,22 +654,20 @@ class triple extends user_sandbox_link_description
             if ($this->from->id <> 0 and !is_null($this->usr->id)) {
                 if ($this->from->id > 0) {
                     $wrd = new word($this->usr);
-                    $wrd->id = $this->from->id;
-                    $wrd->load();
-                    if ($wrd->name <> '') {
+                    $wrd->load_by_id($this->from->id, word::class);
+                    if ($wrd->name() <> '') {
                         $this->from = $wrd->phrase();
-                        $this->from->name = $wrd->name;
+                        $this->from->set_name($wrd->name());
                     } else {
                         log_err('Failed to load first word of phrase ' . $this->dsp_id());
                         $result = false;
                     }
                 } elseif ($this->from->id < 0) {
                     $lnk = new triple($this->usr);
-                    $lnk->id = $this->from->id * -1;
-                    $lnk->load();
+                    $lnk->load_by_id($this->from->id * -1, triple::class);
                     if ($lnk->id > 0) {
                         $this->from = $lnk->phrase();
-                        $this->from->name = $lnk->name();
+                        $this->from->set_name($lnk->name());
                     } else {
                         log_err('Failed to load first phrase of phrase ' . $this->dsp_id());
                         $result = false;
@@ -555,7 +677,7 @@ class triple extends user_sandbox_link_description
                     $phr = new phrase($this->usr);
                     $this->from = $phr;
                 }
-                log_debug('triple->load_objects -> from ' . $this->from->name);
+                log_debug('triple->load_objects -> from ' . $this->from->name());
             }
         }
 
@@ -567,7 +689,7 @@ class triple extends user_sandbox_link_description
                 $vrb = new verb;
                 $vrb->id = $this->verb->id;
                 $vrb->usr = $this->usr;
-                $vrb->load();
+                $vrb->load_by_vars();
                 $this->verb = $vrb;
                 $this->verb->name = $vrb->name;
                 log_debug('triple->load_objects -> verb ' . $this->verb->name);
@@ -585,22 +707,20 @@ class triple extends user_sandbox_link_description
             if ($this->to->id <> 0 and !is_null($this->usr->id)) {
                 if ($this->to->id > 0) {
                     $wrd_to = new word($this->usr);
-                    $wrd_to->id = $this->to->id;
-                    $wrd_to->load();
-                    if ($wrd_to->name <> '') {
+                    $wrd_to->load_by_id($this->to->id, word::class);
+                    if ($wrd_to->name() <> '') {
                         $this->to = $wrd_to->phrase();
-                        $this->to->name = $wrd_to->name;
+                        $this->to->set_name($wrd_to->name());
                     } else {
                         log_err('Failed to load second word of phrase ' . $this->dsp_id());
                         $result = false;
                     }
                 } elseif ($this->to->id < 0) {
                     $lnk = new triple($this->usr);
-                    $lnk->id = $this->to->id * -1;
-                    $lnk->load();
+                    $lnk->load_by_id($this->to->id * -1, triple::class);
                     if ($lnk->id > 0) {
                         $this->to = $lnk->phrase();
-                        $this->to->name = $lnk->name();
+                        $this->to->set_name($lnk->name());
                     } else {
                         log_err('Failed to load second phrase of phrase ' . $this->dsp_id());
                         $result = false;
@@ -610,7 +730,7 @@ class triple extends user_sandbox_link_description
                     $phr_to = new phrase($this->usr);
                     $this->to = $phr_to;
                 }
-                log_debug('triple->load_objects -> to ' . $this->to->name);
+                log_debug('triple->load_objects -> to ' . $this->to->name());
             }
         }
         return $result;
@@ -646,7 +766,7 @@ class triple extends user_sandbox_link_description
     {
         if ($this->id != 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
         } elseif ($this->name != '') {
             $db_con->add_par(sql_db::PAR_TEXT, $this->name);
             //$qp->sql = $db_con->select_by_name();
@@ -725,6 +845,29 @@ class triple extends user_sandbox_link_description
         return $wrd_lst;
     }
 
+    /*
+     * interface
+     */
+
+    /**
+     * an array of the value vars including the private vars
+     */
+    public function jsonSerialize(): array
+    {
+        $vars = get_object_vars($this);
+        if ($this->from->obj != null) {
+            $vars['from'] = $this->from->obj->name_dsp();
+        }
+        if ($this->to->obj != null) {
+            $vars['to'] = $this->to->obj->name_dsp();
+        }
+        return $vars;
+    }
+
+    /*
+     * import ans export
+     */
+
     /**
      * get a phrase based on the name (and save it if needed and requested)
      *
@@ -735,19 +878,21 @@ class triple extends user_sandbox_link_description
     private function import_phrase(string $name, bool $do_save = true): phrase
     {
         $result = new phrase($this->usr);
-        $result->name = $name;
         if ($do_save) {
-            $result->load();
+            $result->load_by_name($name);
             if ($result->id == 0) {
-                $phr = new phrase($this->usr);
-                $phr->name = $name;
-                $phr->save();
-                if ($phr->id == 0) {
+                // if there is no word or triple with the name yet, automatically create a word
+                $wrd = new word($this->usr);
+                $wrd->set_name($name);
+                $wrd->save();
+                if ($wrd->id == 0) {
                     log_err('Cannot add from word "' . $name . '" when importing ' . $this->dsp_id(), 'triple->import_obj');
                 } else {
-                    $result = $phr;
+                    $result = $wrd->phrase();
                 }
             }
+        } else {
+            $result->set_name($name, word::class);
         }
         return $result;
     }
@@ -797,7 +942,7 @@ class triple extends user_sandbox_link_description
                 $vrb->name = $value;
                 $vrb->usr = $this->usr;
                 if ($result->is_ok() and $do_save) {
-                    $vrb->load();
+                    $vrb->load_by_vars();
                     if ($vrb->id <= 0) {
                         $result->add_message('verb "' . $value . '" not found');
                         if ($this->name <> '') {
@@ -838,9 +983,9 @@ class triple extends user_sandbox_link_description
         if ($this->description <> '') {
             $result->description = $this->description;
         }
-        $result->from = $this->from->name;
+        $result->from = $this->from->name();
         $result->verb = $this->verb->name;
-        $result->to = $this->to->name;
+        $result->to = $this->to->name();
 
         log_debug('triple->export_obj -> ' . json_encode($result));
         return $result;
@@ -858,10 +1003,10 @@ class triple extends user_sandbox_link_description
     {
         $result = '';
 
-        if ($this->from->name <> '' and $this->verb->name <> '' and $this->to->name <> '') {
-            $result .= $this->from->name . ' '; // e.g. Australia
+        if ($this->from->name() <> '' and $this->verb->name <> '' and $this->to->name() <> '') {
+            $result .= $this->from->name() . ' '; // e.g. Australia
             $result .= $this->verb->name . ' '; // e.g. is a
-            $result .= $this->to->name;       // e.g. Country
+            $result .= $this->to->name();       // e.g. Country
         }
         $result .= ' (' . $this->from->id . ',' . $this->verb->id . ',' . $this->to->id;
         if ($this->id > 0) {
@@ -903,15 +1048,15 @@ class triple extends user_sandbox_link_description
      */
     function generate_name(): string
     {
-        if ($this->verb->id == cl(db_cl::VERB, verb::IS_A) and $this->from->name != '' and $this->to->name != '') {
+        if ($this->verb->id == cl(db_cl::VERB, verb::IS_A) and $this->from->name() != '' and $this->to->name() != '') {
             // use the user defined description
-            return $this->from->name . ' (' . $this->to->name . ')';
-        } elseif ($this->from->name != '' and $this->verb->name != '' and $this->to->name != '') {
+            return $this->from->name() . ' (' . $this->to->name() . ')';
+        } elseif ($this->from->name() != '' and $this->verb->name != '' and $this->to->name() != '') {
             // or use the standard generic description
-            return $this->from->name . ' ' . $this->verb->name . ' ' . $this->to->name;
-        } elseif ($this->from->name != '' and $this->to->name != '') {
+            return $this->from->name() . ' ' . $this->verb->name . ' ' . $this->to->name();
+        } elseif ($this->from->name() != '' and $this->to->name() != '') {
             // or use the short generic description
-            return $this->from->name . ' ' . $this->to->name;
+            return $this->from->name() . ' ' . $this->to->name();
         } else {
             // or use the name as fallback
             if ($this->name_given() == null) {
@@ -946,9 +1091,9 @@ class triple extends user_sandbox_link_description
         $this->load_objects();
 
         // prepare to show the word link
-        $result .= $this->from->name . ' '; // e.g. Australia
+        $result .= $this->from->name() . ' '; // e.g. Australia
         $result .= $this->verb->name . ' '; // e.g. is a
-        $result .= $this->to->name;       // e.g. Country
+        $result .= $this->to->name();       // e.g. Country
 
         return $result;
     }
@@ -967,9 +1112,9 @@ class triple extends user_sandbox_link_description
         $this->load_objects();
 
         // prepare to show the word link
-        $result .= $this->to->name . ' ';   // e.g. Countries
+        $result .= $this->to->name() . ' ';   // e.g. Countries
         $result .= $this->verb->name . ' '; // e.g. are
-        $result .= $this->from->name;     // e.g. Australia (and others)
+        $result .= $this->from->name();     // e.g. Australia (and others)
 
         return $result;
     }
@@ -989,7 +1134,7 @@ class triple extends user_sandbox_link_description
         $form_name = 'link_add';
         //$result .= 'Create a combined word (semantic triple):<br>';
         $result .= '<br>Define a new relation for <br><br>';
-        $result .= '<b>' . $this->from->name . '</b> ';
+        $result .= '<b>' . $this->from->name() . '</b> ';
         $result .= dsp_form_start($form_name);
         $result .= dsp_form_hidden("back", $back);
         $result .= dsp_form_hidden("confirm", '1');
@@ -1017,14 +1162,14 @@ class triple extends user_sandbox_link_description
         $result = ''; // reset the html code var
 
         // at least to create the dummy objects to display the selectors
-        $this->load();
+        $this->load_obj_vars();
         $this->load_objects();
         log_debug("triple->dsp_edit id " . $this->id . " load done.");
 
         // prepare to show the word link
         if ($this->id > 0) {
             $form_name = 'link_edit';
-            $result .= dsp_text_h2('Change "' . $this->from->name . ' ' . $this->verb->name . ' ' . $this->to->name . '" to ');
+            $result .= dsp_text_h2('Change "' . $this->from->name() . ' ' . $this->verb->name . ' ' . $this->to->name() . '" to ');
             $result .= dsp_form_start($form_name);
             $result .= dsp_form_hidden("back", $back);
             $result .= dsp_form_hidden("confirm", '1');
@@ -1105,7 +1250,7 @@ class triple extends user_sandbox_link_description
         $phr = new phrase($this->usr);
         // the triple has positive id, but the phrase uses a negative id
         $phr->id = $this->id * -1;
-        $phr->name = $this->name;
+        $phr->set_name($this->name, triple::class);
         $phr->obj = $this;
         log_debug('triple->phrase of ' . $this->dsp_id());
         return $phr;
@@ -1117,8 +1262,8 @@ class triple extends user_sandbox_link_description
     function term(): term
     {
         $trm = new term($this->usr);
-        $trm->set_obj_id($this->id, self::class);
-        $trm->name = $this->name;
+        $trm->set_id_from_obj($this->id, self::class);
+        $trm->set_name($this->name(), triple::class);
         $trm->obj = $this;
         log_debug($this->dsp_id());
         return $trm;
@@ -1209,7 +1354,7 @@ class triple extends user_sandbox_link_description
 
         if (!$this->has_usr_cfg()) {
             if (isset($this->from) and isset($this->to)) {
-                log_debug('triple->add_usr_cfg for "' . $this->from->name . '"/"' . $this->to->name . '" by user "' . $this->usr->name . '"');
+                log_debug('triple->add_usr_cfg for "' . $this->from->name() . '"/"' . $this->to->name() . '" by user "' . $this->usr->name . '"');
             } else {
                 log_debug('triple->add_usr_cfg for "' . $this->id . '" and user "' . $this->usr->name . '"');
             }
@@ -1221,7 +1366,7 @@ class triple extends user_sandbox_link_description
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where_std($this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
@@ -1385,11 +1530,11 @@ class triple extends user_sandbox_link_description
         // the generic name of $this is saved to the database for faster uniqueness check (TODO to be checked if this is really faster)
         $this->set_names();
 
-        if ($db_rec->name <> $this->name) {
+        if ($db_rec->name() <> $this->name()) {
             $log = $this->log_upd_field();
-            $log->old_value = $db_rec->name;
-            $log->new_value = $this->name;
-            $log->std_value = $std_rec->name;
+            $log->old_value = $db_rec->name();
+            $log->new_value = $this->name();
+            $log->std_value = $std_rec->name();
             $log->row_id = $this->id;
             $log->field = self::FLD_NAME;
             $result .= $this->save_field_do($db_con, $log);
@@ -1480,7 +1625,7 @@ class triple extends user_sandbox_link_description
         if ($db_rec->from->id <> $this->from->id
             or $db_rec->verb->id <> $this->verb->id
             or $db_rec->to->id <> $this->to->id) {
-            log_debug('triple->save_id_fields to "' . $this->to->name . '" (' . $this->to->id . ') from "' . $db_rec->to->name . '" (' . $db_rec->to->id . ') standard ' . $std_rec->to->name . '" (' . $std_rec->to->id . ')');
+            log_debug('triple->save_id_fields to "' . $this->to->name() . '" (' . $this->to->id . ') from "' . $db_rec->to->name . '" (' . $db_rec->to->id . ') standard ' . $std_rec->to->name . '" (' . $std_rec->to->id . ')');
             $log = $this->log_upd();
             $log->old_from = $db_rec->from;
             $log->new_from = $this->from;
@@ -1580,7 +1725,7 @@ class triple extends user_sandbox_link_description
      */
     function add(): user_message
     {
-        log_debug('triple->add new triple for "' . $this->from->name . '" ' . $this->verb->name . ' "' . $this->to->name . '"');
+        log_debug('triple->add new triple for "' . $this->from->name() . '" ' . $this->verb->name . ' "' . $this->to->name() . '"');
 
         global $db_con;
         $result = new user_message();
@@ -1639,7 +1784,7 @@ class triple extends user_sandbox_link_description
 
         // check if the opposite triple already exists and if yes, ask for confirmation
         if ($this->id <= 0) {
-            log_debug('triple->save check if a new triple for "' . $this->from->name . '" and "' . $this->to->name . '" needs to be created');
+            log_debug('triple->save check if a new triple for "' . $this->from->name() . '" and "' . $this->to->name() . '" needs to be created');
             // check if the reverse triple is already in the database
             $db_chk_rev = clone $this;
             $db_chk_rev->from = $this->to;
@@ -1651,13 +1796,13 @@ class triple extends user_sandbox_link_description
             $db_chk_rev->load_standard();
             if ($db_chk_rev->id > 0) {
                 $this->id = $db_chk_rev->id;
-                $result .= dsp_err('The reverse of "' . $this->from->name . ' ' . $this->verb->name . ' ' . $this->to->name . '" already exists. Do you really want to create both sides?');
+                $result .= dsp_err('The reverse of "' . $this->from->name() . ' ' . $this->verb->name . ' ' . $this->to->name() . '" already exists. Do you really want to create both sides?');
             }
         }
 
         // check if the triple already exists and if yes, update it if needed
         if ($this->id <= 0 and $result == '') {
-            log_debug('triple->save check if a new triple for "' . $this->from->name . '" and "' . $this->to->name . '" needs to be created');
+            log_debug('triple->save check if a new triple for "' . $this->from->name() . '" and "' . $this->to->name() . '" needs to be created');
             // check if the same triple is already in the database
             $db_chk = clone $this;
             $db_chk->load_standard();
@@ -1677,7 +1822,7 @@ class triple extends user_sandbox_link_description
                 // done first, because it needs to be done for user and general phrases
                 $db_rec = new triple($this->usr);
                 $db_rec->id = $this->id;
-                if (!$db_rec->load()) {
+                if (!$db_rec->load_obj_vars()) {
                     $result .= 'Reloading of triple failed';
                 }
                 log_debug('triple->save -> database triple "' . $db_rec->name . '" (' . $db_rec->id . ') loaded');

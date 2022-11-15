@@ -69,8 +69,8 @@ if ($usr->id > 0) {
     $wrd = new word($usr);
     if ($word_id > 0) {
         $wrd->id = $word_id;
-        $wrd->load();
-        $result .= dsp_text_h2('Select the display format for "' . $wrd->name . '"');
+        $wrd->load_obj_vars();
+        $result .= dsp_text_h2('Select the display format for "' . $wrd->name() . '"');
     } else {
         $result .= dsp_text_h2('The word is missing for which the display format should be changed. If you can explain how to reproduce this error message, please report the steps on https://github.com/zukunft/zukunft.com/issues.');
     }

@@ -77,10 +77,10 @@ class formula_list
                     if ($db_row[formula::FLD_ID] > 0) {
                         $frm = new formula($this->usr);
                         $frm->row_mapper($db_row);
-                        if ($frm->name <> '') {
+                        // TODO check if this is really needed
+                        if ($frm->name() <> '') {
                             $name_wrd = new word($this->usr);
-                            $name_wrd->name = $frm->name;
-                            $name_wrd->load();
+                            $name_wrd->load_by_name($frm->name(), word::class);
                             $frm->name_wrd = $name_wrd;
                         }
                         $this->lst[] = $frm;
@@ -409,7 +409,7 @@ class formula_list
         $result = array();
         if ($this->lst != null) {
             foreach ($this->lst as $frm) {
-                $result[] = $frm->name;
+                $result[] = $frm->name();
             }
         }
         return $result;

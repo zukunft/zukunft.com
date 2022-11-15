@@ -15,4 +15,5 @@ PREPARE view_cmp_by_name FROM
             IF(u.protect_id             IS NULL, s.protect_id,             u.protect_id)             AS protect_id
        FROM view_components s
   LEFT JOIN user_view_components u  ON s.view_component_id = u.view_component_id AND u.user_id = ?
-      WHERE s.view_component_name = ?';
+      WHERE (u.view_component_name = ?
+         OR (s.view_component_name = ? AND u.view_component_name IS NULL))';

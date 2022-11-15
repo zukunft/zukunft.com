@@ -47,26 +47,20 @@ class formula_link_unit_tests
 
         $t->header('Unit tests of the formula link class (src/main/php/model/formula/formula_link.php)');
 
+
+        $t->subheader('SQL user sandbox statement tests');
+
+        // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
+        $flk = new formula_link($usr);
+        $t->assert_load_sql_id($db_con, $flk);
+        $t->assert_load_sql_link($db_con, $flk);
+
+
         $t->subheader('SQL statement tests');
 
-        // sql to load the formula link by id
-        $lnk = new formula_link($usr);
-        $lnk->id = 2;
-        $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $lnk->load_sql($db_con)->sql;
-        $expected_sql = $t->file('db/formula/formula_link_by_id.sql');
-        $t->assert('formula_link->load_sql by formula link id', $t->trim($created_sql), $t->trim($expected_sql));
-
-        // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($lnk->load_sql($db_con, true)->name);
-
-        // ... and for MySQL
-        $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $lnk->load_sql($db_con)->sql;
-        $expected_sql = $t->file('db/formula/formula_link_by_id_mysql.sql');
-        $t->assert('formula_link->load_sql for MySQL by formula link id', $t->trim($created_sql), $t->trim($expected_sql));
-
         // sql to load the standard formula link by id
+        $lnk = new formula_link($usr);
+        $lnk->id = 1;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $lnk->load_standard_sql($db_con)->sql;
         $expected_sql = $t->file('db/formula/formula_link_std_by_id.sql');

@@ -66,7 +66,7 @@ class formula_element_group
         }
         $time_name = '';
         if (isset($this->time_phr)) {
-            $time_name = $this->time_phr->name;
+            $time_name = $this->time_phr->name();
         }
         if ($name <> '') {
             $result = '"' . $name . '" (' . $id . ')';
@@ -194,7 +194,7 @@ class formula_element_group
                     $val_time = $frm_elm->obj->special_time_phr($this->time_phr);
                     if ($val_time->id > 0) {
                         $val_time_phr = $val_time;
-                        if ($val_time_phr->id == 0 or $val_time_phr->name == '') {
+                        if ($val_time_phr->id == 0 or $val_time_phr->name() == '') {
                             $val_time_phr->load();
                         }
                         log_debug('formula_element_group->set_formula_time_phrase -> add element word for special formula result ' . $val_phr_lst->dsp_id() . ' taken from the result');
@@ -207,7 +207,7 @@ class formula_element_group
             $val_phr_lst->ex_time();
             $val_phr_lst->add($val_time_phr);
             $this->time_phr = $val_time_phr;
-            log_debug('formula_element_group->set_formula_time_phrase -> got the special formula word "' . $val_time_phr->name . '" (' . $val_time_phr->id . ')');
+            log_debug('formula_element_group->set_formula_time_phrase -> got the special formula word "' . $val_time_phr->name() . '" (' . $val_time_phr->id . ')');
         }
 
         if (isset($val_time_phr)) {
@@ -317,7 +317,7 @@ class formula_element_group
                 $wrd_val->time_phr = $val_time_phr;
             }
             // TODO create $wrd_val->load_best();
-            $wrd_val->load();
+            $wrd_val->load_obj_vars();
 
             if ($wrd_val->id > 0) {
                 // save the value to the result
@@ -357,7 +357,7 @@ class formula_element_group
                     $fig->symbol = $this->symbol;
                     $fig_lst->lst[] = $fig;
 
-                    log_debug('formula_element_group->figures -> formula value for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name . '" (word group ' . $val_phr_grp->id . ', user ' . $this->usr->id . ') = ' . $grp_fv->value);
+                    log_debug('formula_element_group->figures -> formula value for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name() . '" (word group ' . $val_phr_grp->id . ', user ' . $this->usr->id . ') = ' . $grp_fv->value);
                 } else {
                     // if there is also not a formula result at least one number of the formula is not valid
                     $fig_lst->fig_missing = True;
@@ -392,7 +392,7 @@ class formula_element_group
         // TODO: show the time phrase only if it differs from the main time phrase
         if (isset($fig_lst->time_phr) and isset($time_default)) {
             if ($fig_lst->time_phr->id <> $time_default->id) {
-                $result .= ' (' . $fig_lst->time_phr->name . ')';
+                $result .= ' (' . $fig_lst->time_phr->name() . ')';
             }
         }
 

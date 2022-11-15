@@ -87,7 +87,7 @@ if ($back <= 0) {
 }
 $wrd = new word($usr);
 $wrd->id = $back;
-$wrd->load();
+$wrd->load_obj_vars();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {

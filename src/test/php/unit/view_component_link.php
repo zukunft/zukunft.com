@@ -32,7 +32,7 @@
 
 class view_component_link_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;
@@ -45,14 +45,21 @@ class view_component_link_unit_tests
 
         $t->header('Unit tests of the view component link class (src/main/php/model/view/view_component_link.php)');
 
-        /*
-         * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
-         */
+
+        $t->subheader('SQL user sandbox statement tests');
+
+        // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
+        $vcl = new view_cmp_link($usr);
+        $t->assert_load_sql_id($db_con, $vcl);
+        $t->assert_load_sql_link($db_con, $vcl);
+
+
+        $t->subheader('SQL statement tests');
 
         // sql to load a view component link by the id
         $lnk = new view_cmp_link($usr);
         $lnk->id = 1;
-        $t->assert_load_sql($db_con, $lnk);
+        //$t->assert_load_sql($db_con, $lnk);
         $t->assert_user_config_sql($db_con, $lnk);
 
         // sql to load a list of value by the phrase ids
@@ -89,7 +96,7 @@ class view_component_link_unit_tests
      * @param view_cmp|null $cmp the component used for selection
      * @return void
      */
-    private function assert_lst_sql_all(testing $t, sql_db $db_con, view_cmp_link_list $lst, ?view $dsp = null, ?view_cmp $cmp = null)
+    private function assert_lst_sql_all(testing $t, sql_db $db_con, view_cmp_link_list $lst, ?view $dsp = null, ?view_cmp $cmp = null): void
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;

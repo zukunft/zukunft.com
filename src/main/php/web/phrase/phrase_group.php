@@ -47,7 +47,7 @@ class phrase_group_dsp extends phrase_group_api
         $result = '';
         if ($this->name_dirty()) {
             if ($this->name <> '') {
-                $result .= $this->name;
+                $result .= $this->name();
             } else {
                 $lst_to_show = $this->phr_lst();
                 if ($phr_lst_header != null) {

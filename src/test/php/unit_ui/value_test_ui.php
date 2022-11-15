@@ -47,10 +47,10 @@ function run_value_ui_test(testing $t)
     $phr_lst_added->add_name(word::TN_RENAMED);
     $val_added = new value($usr);
     $val_added->ids = $phr_lst_added->id_lst();
-    $val_added->load();
+    $val_added->load_obj_vars();
     $val_ch = new value($usr);
     $val_ch->ids = $phr_lst_ch->id_lst();
-    $val_ch->load();
+    $val_ch->load_obj_vars();
 
     // call the add value page and check if at least some basic keywords are returned
     $back = 0;
@@ -92,7 +92,7 @@ function run_value_ui_test(testing $t)
     // test get a single value from a value list by group and time
     // get all value for Switzerland
     $wrd = new word_dsp($usr);
-    $wrd->name = word::TN_CH;
+    $wrd->set_name(word::TN_CH);
     $wrd->load();
     $val_lst = $wrd->val_lst();
     // build the phrase list to select the value Sales for 2014
@@ -182,7 +182,7 @@ function run_value_ui_test(testing $t)
 
     // test the value table
     $wrd = new word_dsp($usr);
-    $wrd->name = 'Nestlé';
+    $wrd->set_name('Nestlé');
     $wrd->load();
     $wrd_col = new word_dsp($usr);
     $wrd_col->name = TW_CF;
@@ -191,7 +191,7 @@ function run_value_ui_test(testing $t)
     $val_lst->phr = $wrd->phrase();
     $result = $val_lst->dsp_table($wrd_col, $wrd->id);
     $target = TV_NESN_SALES_2016_FORMATTED;
-    $t->dsp_contains(', value_list_dsp->dsp_table for "' . $wrd->name . '" (' . $result . ') contains ' . $target . '', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
+    $t->dsp_contains(', value_list_dsp->dsp_table for "' . $wrd->name() . '" (' . $result . ') contains ' . $target . '', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
     //$result = $val_lst->dsp_table($wrd_col, $wrd->id);
     //$target = zuv_table ($wrd->id, $wrd_col->id, $usr->id);
     //$t->dsp('value_list_dsp->dsp_table for "'.$wrd->name.'"', $target, $result, TIMEOUT_LIMIT_DB);

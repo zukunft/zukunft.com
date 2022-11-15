@@ -53,13 +53,13 @@ if ($usr->id > 0) {
     // prepare the display to edit the view
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::ADD);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back'];
 
     // create the view object that the user can change
     $dsp_edit = new view_dsp_old($usr);
     $dsp_edit->id = $_GET['id'];
-    $result .= $dsp_edit->load();
+    $result .= $dsp_edit->load_obj_vars();
 
     // get the view id to adjust
     if ($dsp_edit->id <= 0) {
@@ -69,7 +69,7 @@ if ($usr->id > 0) {
         // get the word used as a sample the show the changes
         $wrd = new word($usr);
         $wrd->id = $_GET['word'];
-        $result .= $wrd->load();
+        $result .= $wrd->load_obj_vars();
 
         // save the direct changes
         // ... of the element list
@@ -93,7 +93,7 @@ if ($usr->id > 0) {
         if (isset($_GET['del'])) {
             $cmp = new view_cmp($usr);
             $cmp->id = $_GET['del'];
-            $cmp->load();
+            $cmp->load_obj_vars();
             $cmp->unlink($dsp_edit);
         }
 
@@ -102,7 +102,7 @@ if ($usr->id > 0) {
             if ($_GET['add_view_component'] > 0) {
                 $cmp = new view_cmp($usr);
                 $cmp->id = $_GET['add_view_component'];
-                $cmp->load();
+                $cmp->load_obj_vars();
                 $order_nbr = $cmp->next_nbr($dsp_edit->id);
                 $cmp->link($dsp_edit, $order_nbr);
             }
@@ -115,7 +115,7 @@ if ($usr->id > 0) {
                 $cmp->name = $_GET['entry_name'];
                 $add_result = $cmp->save();
                 if ($add_result == '') {
-                    $cmp->load();
+                    $cmp->load_obj_vars();
                     if ($cmp->id > 0) {
                         $cmp->type_id = $_GET['new_entry_type'];
                         $cmp->save();

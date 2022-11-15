@@ -38,35 +38,49 @@ class term_unit_tests
         global $usr;
 
         // init
+        $db_con = new sql_db();
         $t->name = 'term->';
+        $t->resource_path = 'db/term/';
+        $usr->id = 1;
 
         $t->header('Unit tests of the term class (src/main/php/model/phrase/term.php)');
+
+        $t->subheader('Set and get of the grouped object tests');
 
         $wrd = new word($usr);
         $wrd->set(1, word::TN_READ);
         $trm = $wrd->term();
-        $t->assert($t->name . 'term->word id', $trm->id_obj(), $wrd->id());
-        $t->assert($t->name . 'term->word name', $trm->name(), $wrd->name());
+        $t->assert($t->name . 'word id', $trm->id_obj(), $wrd->id());
+        $t->assert($t->name . 'word name', $trm->name(), $wrd->name_dsp());
 
         $trp = new triple($usr);
         $trp->set(1, triple::TN_READ);
         $trp->id = 1;
         $trm = $trp->term();
-        $t->assert($t->name . 'term->triple id', $trm->id_obj(), $trp->id());
-        $t->assert($t->name . 'term->triple name', $trm->name(), $trp->name());
+        $t->assert($t->name . 'triple id', $trm->id_obj(), $trp->id());
+        $t->assert($t->name . 'triple name', $trm->name(), $trp->name());
 
         $frm = new formula($usr);
         $frm->set(1, formula::TN_READ);
         $trm = $frm->term();
-        $t->assert($t->name . 'term->formula id', $trm->id_obj(), $frm->id());
-        $t->assert($t->name . 'term->formula name', $trm->name(), $frm->name());
+        $t->assert($t->name . 'formula id', $trm->id_obj(), $frm->id());
+        $t->assert($t->name . 'formula name', $trm->name(), $frm->name());
 
         $vrb = new verb(1, verb::IS_A);
         $vrb->usr = $usr;
         $trm = $vrb->term();
-        $t->assert($t->name . 'term->verb id', $trm->id_obj(), $vrb->id());
-        $t->assert($t->name . 'term->verb name', $trm->name(), $vrb->name());
+        $t->assert($t->name . 'verb id', $trm->id_obj(), $vrb->id());
+        $t->assert($t->name . 'verb name', $trm->name(), $vrb->name());
 
+
+        $t->subheader('SQL statement tests');
+
+        // check the creation of the prepared sql statements to load a term by id or name
+        // TODO use assert_load_sql_id for all objects
+        // TODO use assert_load_sql_name for all named objects
+        $trm = new term($usr);
+        $t->assert_load_sql_id($db_con, $trm);
+        $t->assert_load_sql_name($db_con, $trm);
     }
 
 }

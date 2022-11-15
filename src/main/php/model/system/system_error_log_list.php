@@ -125,7 +125,7 @@ class system_error_log_list
             $db_con->set_where_text($sql_where);
             $db_con->set_order(system_error_log::FLD_TIME, sql_db::ORDER_DESC);
             $db_con->set_page_par($this->size, $this->page);
-            $sql = $db_con->select_by_id();
+            $sql = $db_con->select_by_set_id();
             $qp->sql = $sql;
             $qp->par = $db_con->get_par();
         }

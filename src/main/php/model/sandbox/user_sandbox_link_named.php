@@ -30,13 +30,14 @@
 */
 
 
-class user_sandbox_link_description extends user_sandbox_link
+class user_sandbox_link_named extends user_sandbox_link
 {
     // the word, triple, verb oder formula description that is shown as a mouseover explain to the user
     // if description is NULL the database value should not be updated
     // or for triples the description that may differ from the generic created text
     // e.g. Zurich AG instead of Zurich (Company)
     // if the description is empty the generic created name is used
+    protected ?string $name = '';   // simply the object name, which cannot be empty if it is a named object
     public ?string $description = null;
 
     function reset(): void
@@ -44,6 +45,36 @@ class user_sandbox_link_description extends user_sandbox_link
         parent::reset();
         $this->description = null;
     }
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the name of this named user sandbox link object
+     * set and get of the name is needed to use the same function for phrase or term
+     *
+     * @param string $name the name of this named user sandbox object e.g. word set in the related object
+     * @return void
+     */
+    public function set_name(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * get the name of the word object
+     *
+     * @return string the name from the object e.g. word using the same function as the phrase and term
+     */
+    public function name(): string
+    {
+        return $this->name;
+    }
+
+    /*
+     * save function
+     */
 
     /**
      * set the update parameters for the word description

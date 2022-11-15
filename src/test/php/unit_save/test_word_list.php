@@ -288,7 +288,7 @@ function run_word_list_test(testing $t)
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_names(array(word::TN_ZH, word::TN_2021, word::TN_MIO));
     $abb_last_year = $wrd_lst->assume_time();
-    $result = $abb_last_year->name;
+    $result = $abb_last_year->name();
     $target = word::TN_2021;
     $t->dsp('word_list->assume_time for ' . $wrd_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_DB);
 

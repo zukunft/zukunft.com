@@ -42,6 +42,13 @@ class user_sandbox_named extends user_sandbox
     const FLD_NAME = 'name';
 
     /*
+     * object vars
+     */
+
+    // database fields only used for objects that have a name
+    protected ?string $name = '';   // simply the object name, which cannot be empty if it is a named object
+
+    /*
      * construct and map
      */
 
@@ -72,6 +79,28 @@ class user_sandbox_named extends user_sandbox
         if ($name != '') {
             $this->name = $name;
         }
+    }
+
+    /**
+     * set the name of this named user sandbox object
+     * set and get of the name is needed to use the same function for phrase or term
+     *
+     * @param string $name the name of this named user sandbox object e.g. word set in the related object
+     * @return void
+     */
+    public function set_name(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * get the name of the word object
+     *
+     * @return string the name from the object e.g. word using the same function as the phrase and term
+     */
+    public function name(): string
+    {
+        return $this->name;
     }
 
     /*
@@ -117,6 +146,22 @@ class user_sandbox_named extends user_sandbox
     }
 
     /**
+     * get the term corresponding to this word or formula name
+     * so in this case, if a formula or verb with the same name already exists, get it
+     * @return term
+     */
+    function get_term(): term
+    {
+        $trm = new term($this->usr);
+        $trm->load_by_name($this->name());
+        return $trm;
+    }
+
+    /*
+     * loading
+     */
+
+    /**
      * create the SQL to load the single default value always by the id or name
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $class the name of the child class from where the call has been triggered
@@ -137,10 +182,10 @@ class user_sandbox_named extends user_sandbox
         $db_con->set_usr($this->usr->id);
         if ($this->id != 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
         } else {
             $db_con->add_par(sql_db::PAR_TEXT, $this->name);
-            $qp->sql = $db_con->select_by_name();
+            $qp->sql = $db_con->select_by_set_name();
         }
         $qp->par = $db_con->get_par();
 
@@ -166,6 +211,52 @@ class user_sandbox_named extends user_sandbox
         }
         return $result;
     }
+
+    /**
+     * create an SQL statement to retrieve a term by name from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $name the name of the term and the related word, triple, formula or verb
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_name(sql_db $db_con, string $name, string $class): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'name', $class);
+        $db_con->set_where_name($name, $this->name_field());
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load a named user sandbox object by name
+     * @param string $name the name of the word, triple, formula, verb, view or view component
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_name(string $name, string $class): int
+    {
+        global $db_con;
+
+        log_debug($name);
+        $qp = $this->load_sql_by_name($db_con, $name, $class);
+        return parent::load($qp);
+    }
+
+    /**
+     * dummy function that should always be overwritten by the child object
+     * @return string
+     */
+    function name_field(): string
+    {
+        return '';
+    }
+
+    /*
+     * information function
+     */
 
     /**
      * return best possible identification for this object mainly used for debugging
@@ -430,7 +521,7 @@ class user_sandbox_named extends user_sandbox
             } else {
                 // create a synthetic unique index over words, phrase, verbs and formulas
                 if ($this->obj_name == sql_db::TBL_WORD or $this->obj_name == sql_db::TBL_PHRASE or $this->obj_name == sql_db::TBL_FORMULA or $this->obj_name == sql_db::TBL_VERB) {
-                    if ($this->name == $obj_to_check->name) {
+                    if ($this->name == $obj_to_check->name()) {
                         $result = true;
                     }
                 }
@@ -448,9 +539,10 @@ class user_sandbox_named extends user_sandbox
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @return user_sandbox a filled object that has the same name
+     * @return user_sandbox|null a filled object that has the same name
+     *                            or null if nothing similar has been found
      */
-    function get_similar(): user_sandbox
+    function get_similar(): ?user_sandbox
     {
         $result = new user_sandbox_named($this->usr);
 
@@ -461,12 +553,10 @@ class user_sandbox_named extends user_sandbox
             or $this->obj_name == sql_db::TBL_TRIPLE
             or $this->obj_name == sql_db::TBL_FORMULA) {
             $similar_trm = $this->get_term();
-            if ($similar_trm != null) {
-                if ($similar_trm->obj != null) {
-                    $result = $similar_trm->obj;
-                    if (!$this->is_similar_named($result)) {
-                        log_err($this->dsp_id() . ' is supposed to be similar to ' . $result->dsp_id() . ', but it seems not');
-                    }
+            if ($similar_trm->id_obj() > 0) {
+                $result = $similar_trm->obj;
+                if (!$this->is_similar_named($result)) {
+                    log_err($this->dsp_id() . ' is supposed to be similar to ' . $result->dsp_id() . ', but it seems not');
                 }
             }
         } else {
@@ -484,7 +574,7 @@ class user_sandbox_named extends user_sandbox
             }
             // check with the user namespace
             $db_chk->usr = $this->usr;
-            if ($db_chk->load()) {
+            if ($db_chk->load_obj_vars()) {
                 if ($db_chk->id > 0) {
                     log_debug($this->obj_name . '->get_similar "' . $this->dsp_id() . '" has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
                     $result = $db_chk;
@@ -492,7 +582,11 @@ class user_sandbox_named extends user_sandbox
             }
         }
 
-        return $result;
+        if ($result->id() != 0) {
+            return $result;
+        } else {
+            return null;
+        }
     }
 
 }

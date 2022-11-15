@@ -12,5 +12,5 @@ PREPARE value_by_phrase_group_id (int, int) AS
            u.share_type_id
 
     FROM values s
-             LEFT JOIN user_values u ON s.value_id = u.value_id AND u.user_id = $2
-    WHERE s.phrase_group_id = $1;
+             LEFT JOIN user_values u ON s.value_id = u.value_id AND u.user_id = $1
+    WHERE s.phrase_group_id = $2;

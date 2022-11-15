@@ -148,6 +148,7 @@ include_once $path_unit_save . 'ref_test.php';
 include_once $path_unit_save . 'test_graph.php';
 include_once $path_unit_save . 'test_verb.php';
 include_once $path_unit_save . 'test_term.php';
+include_once $path_unit_save . 'term_list.php';
 include_once $path_unit_save . 'value_test.php';
 include_once $path_unit_save . 'test_source.php';
 include_once $path_unit_save . 'test_expression.php';
@@ -386,7 +387,7 @@ class test_base
 
         $wrd = new word($test_usr);
         $wrd->id = $id;
-        $wrd->name = $wrd_name;
+        $wrd->set_name($wrd_name);
 
         if ($wrd_type_code_id != null) {
             $wrd->type_id = cl(db_cl::WORD_TYPE, $wrd_type_code_id);
@@ -408,8 +409,8 @@ class test_base
             $test_usr = $usr;
         }
         $wrd = new word($test_usr);
-        $wrd->name = $wrd_name;
-        $wrd->load();
+        $wrd->set_name($wrd_name);
+        $wrd->load_obj_vars();
         return $wrd;
     }
 
@@ -425,7 +426,7 @@ class test_base
     {
         $wrd = $this->load_word($wrd_name, $test_usr);
         if ($wrd->id == 0) {
-            $wrd->name = $wrd_name;
+            $wrd->set_name($wrd_name);
             $wrd->save();
         }
         if ($wrd_type_code_id != null) {
@@ -447,7 +448,7 @@ class test_base
     {
         $wrd = $this->add_word($wrd_name, $wrd_type_code_id, $test_usr);
         $target = $wrd_name;
-        $this->dsp('testing->add_word', $target, $wrd->name);
+        $this->dsp('testing->add_word', $target, $wrd->name());
         return $wrd;
     }
 
@@ -490,7 +491,7 @@ class test_base
         $trp->from = $this->new_word($from_name)->phrase();
         $trp->verb = $verbs->get_verb($verb_code_id);
         $trp->to = $this->new_word($to_name)->phrase();
-        $trp->name = $wrd_name;
+        $trp->set_name($wrd_name);
 
         if ($wrd_type_code_id != null) {
             $trp->type_id = cl(db_cl::WORD_TYPE, $wrd_type_code_id);
@@ -518,7 +519,7 @@ class test_base
             $lnk_test->from = $from;
             $lnk_test->verb = $vrb;
             $lnk_test->to = $to;
-            $lnk_test->load();
+            $lnk_test->load_obj_vars();
         }
         return $lnk_test;
     }
@@ -542,15 +543,15 @@ class test_base
         // create the words if needed
         $wrd_from = $this->load_word($from_name);
         if ($wrd_from->id <= 0 and $autocreate) {
-            $wrd_from->name = $from_name;
+            $wrd_from->set_name($from_name);
             $wrd_from->save();
-            $wrd_from->load();
+            $wrd_from->load_obj_vars();
         }
         $wrd_to = $this->load_word($to_name);
         if ($wrd_to->id <= 0 and $autocreate) {
-            $wrd_to->name = $to_name;
+            $wrd_to->set_name($to_name);
             $wrd_to->save();
-            $wrd_to->load();
+            $wrd_to->load_obj_vars();
         }
         $from = $wrd_from->phrase();
         $to = $wrd_to->phrase();
@@ -565,13 +566,13 @@ class test_base
             $lnk_test->from = $from;
             $lnk_test->verb = $vrb;
             $lnk_test->to = $to;
-            $lnk_test->load();
+            $lnk_test->load_obj_vars();
             if ($lnk_test->id > 0) {
                 // refresh the given name if needed
                 if ($phrase_name <> '' and $lnk_test->name_given() <> $phrase_name) {
                     $lnk_test->set_name_given($phrase_name);
                     $lnk_test->save();
-                    $lnk_test->load();
+                    $lnk_test->load_obj_vars();
                 }
                 $result = $lnk_test;
             } else {
@@ -580,7 +581,7 @@ class test_base
                 $lnk_test->verb = $vrb;
                 $lnk_test->to = $from;
                 $lnk_test->usr = $usr;
-                $lnk_test->load();
+                $lnk_test->load_obj_vars();
                 $result = $lnk_test;
                 // create the link if requested
                 if ($lnk_test->id <= 0 and $autocreate) {
@@ -591,7 +592,7 @@ class test_base
                         $lnk_test->set_name_given($phrase_name);
                     }
                     $lnk_test->save();
-                    $lnk_test->load();
+                    $lnk_test->load_obj_vars();
                 }
             }
         }
@@ -646,7 +647,7 @@ class test_base
 
         $frm = new formula($test_usr);
         $frm->id = $id;
-        $frm->name = $frm_name;
+        $frm->set_name($frm_name);
 
         if ($frm_type_code_id != null) {
             $frm->type_id = cl(db_cl::FORMULA_TYPE, $frm_type_code_id);
@@ -658,8 +659,7 @@ class test_base
     {
         global $usr;
         $frm = new formula_dsp_old($usr);
-        $frm->name = $frm_name;
-        $frm->load();
+        $frm->load_by_name($frm_name, formula::class);
         return $frm;
     }
 
@@ -670,7 +670,7 @@ class test_base
     {
         $frm = $this->load_formula($frm_name);
         if ($frm->id == 0) {
-            $frm->name = $frm_name;
+            $frm->set_name($frm_name);
             $frm->usr_text = $frm_text;
             $frm->set_ref_text();
             $frm->save();
@@ -681,7 +681,7 @@ class test_base
     function test_formula(string $frm_name, string $frm_text): formula
     {
         $frm = $this->add_formula($frm_name, $frm_text);
-        $this->dsp('formula', $frm_name, $frm->name);
+        $this->dsp('formula', $frm_name, $frm->name());
         return $frm;
     }
 
@@ -700,7 +700,7 @@ class test_base
         $ref->phr = $phr;
         $ref->ref_type = get_ref_type($type_name);
         if ($phr->id != 0) {
-            $ref->load();
+            $ref->load_obj_vars();
         }
         return $ref;
     }
@@ -709,7 +709,7 @@ class test_base
     {
         $wrd = $this->test_word($wrd_name);
         $phr = $wrd->phrase();
-        $ref = $this->load_ref($wrd->name, $type_name);
+        $ref = $this->load_ref($wrd->name(), $type_name);
         if ($ref->id == 0) {
             $ref->phr = $phr;
             $ref->ref_type = get_ref_type($type_name);
@@ -725,8 +725,8 @@ class test_base
     {
         global $usr;
         $phr = new phrase($usr);
-        $phr->name = $phr_name;
-        $phr->load();
+        $phr->load_by_name($phr_name);
+        $phr->load_obj();
         return $phr;
     }
 
@@ -738,7 +738,7 @@ class test_base
     function test_phrase(string $phr_name): phrase
     {
         $phr = $this->load_phrase($phr_name);
-        $this->dsp('phrase', $phr_name, $phr->name);
+        $this->dsp('phrase', $phr_name, $phr->name());
         return $phr;
     }
 
@@ -827,8 +827,7 @@ class test_base
     function load_value_by_id(user $usr, int $id): value
     {
         $val = new value($usr);
-        $val->id = $id;
-        $val->load();
+        $val->load_by_id($id, value::class);
         return $val;
     }
 
@@ -848,7 +847,7 @@ class test_base
         } else {
             $val->grp = $phr_grp;
             $val->time_phr = $time_phr;
-            $val->load();
+            $val->load_obj_vars();
         }
         return $val;
     }
@@ -892,7 +891,7 @@ class test_base
 
         $val = new value($usr);
         $val->grp = $phr_grp;
-        $val->load();
+        $val->load_obj_vars();
         return $val;
     }
 
@@ -942,8 +941,8 @@ class test_base
     {
         global $usr;
         $src = new source($usr);
-        $src->name = $src_name;
-        $src->load();
+        $src->set_name($src_name);
+        $src->load_obj_vars();
         return $src;
     }
 
@@ -951,7 +950,7 @@ class test_base
     {
         $src = $this->load_source($src_name);
         if ($src->id == 0) {
-            $src->name = $src_name;
+            $src->set_name($src_name);
             $src->save();
         }
         return $src;
@@ -960,7 +959,7 @@ class test_base
     function test_source(string $src_name): source
     {
         $src = $this->add_source($src_name);
-        $this->dsp('source', $src_name, $src->name);
+        $this->dsp('source', $src_name, $src->name());
         return $src;
     }
 
@@ -976,8 +975,7 @@ class test_base
         }
 
         $dsp = new view_dsp_old($test_usr);
-        $dsp->name = $dsp_name;
-        $dsp->load();
+        $dsp->load_by_name($dsp_name, view::class);
         return $dsp;
     }
 
@@ -992,7 +990,7 @@ class test_base
         $dsp = $this->load_view($dsp_name, $test_usr);
         if ($dsp->id == 0) {
             $dsp->usr = $test_usr;
-            $dsp->name = $dsp_name;
+            $dsp->set_name($dsp_name);
             $dsp->save();
         }
         return $dsp;
@@ -1001,7 +999,7 @@ class test_base
     function test_view(string $dsp_name, ?user $test_usr = null): view
     {
         $dsp = $this->add_view($dsp_name, $test_usr);
-        $this->dsp('view', $dsp_name, $dsp->name);
+        $this->dsp('view', $dsp_name, $dsp->name());
         return $dsp;
     }
 
@@ -1015,8 +1013,7 @@ class test_base
         }
 
         $cmp = new view_cmp($test_usr);
-        $cmp->name = $cmp_name;
-        $cmp->load();
+        $cmp->load_by_name($cmp_name, view_cmp::class);
         return $cmp;
     }
 
@@ -1031,7 +1028,7 @@ class test_base
         $cmp = $this->load_view_component($cmp_name, $test_usr);
         if ($cmp->id == 0 or $cmp->id == Null) {
             $cmp->usr = $test_usr;
-            $cmp->name = $cmp_name;
+            $cmp->set_name($cmp_name);
             if ($type_code_id != '') {
                 $cmp->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, $type_code_id);
             }
@@ -1043,7 +1040,7 @@ class test_base
     function test_view_component(string $cmp_name, string $type_code_id = '', ?user $test_usr = null): view_cmp
     {
         $cmp = $this->add_view_component($cmp_name, $type_code_id, $test_usr);
-        $this->dsp('view component', $cmp_name, $cmp->name);
+        $this->dsp('view component', $cmp_name, $cmp->name());
         return $cmp;
     }
 
@@ -1082,18 +1079,16 @@ class test_base
         $result = '';
 
         $frm = new formula($usr);
-        $frm->name = $formula_name;
-        $frm->load();
+        $frm->load_by_name($formula_name, formula::class);
         $phr = new word($usr);
-        $phr->name = $word_name;
-        $phr->load();
+        $phr->load_by_name($word_name, word::class);
         if ($frm->id > 0 and $phr->id <> 0) {
             $frm_lnk = new formula_link($usr);
             $frm_lnk->fob = $frm;
             $frm_lnk->tob = $phr;
-            $frm_lnk->load();
+            $frm_lnk->load_obj_vars();
             if ($frm_lnk->id > 0) {
-                $result = $frm_lnk->fob->name . ' is linked to ' . $frm_lnk->tob->name;
+                $result = $frm_lnk->fob->name() . ' is linked to ' . $frm_lnk->tob->name();
                 $target = $formula_name . ' is linked to ' . $word_name;
                 $this->dsp('formula_link', $target, $result);
             } else {
@@ -1301,7 +1296,11 @@ class test_base
      */
     function assert_api_get(string $class, int $id = 1): bool
     {
-        $actual = json_decode($this->api_call("GET", HOST_TESTING . '/api/' . $class, array("id" => $id)), true);
+        $url = HOST_TESTING . '/api/' . $class;
+        $data = array("id" => $id);
+        // TODO check why for formula a double call is needed
+        $actual = json_decode($this->api_call("GET", $url, $data), true);
+        $actual = json_decode($this->api_call("GET", $url, $data), true);
         $expected = json_decode($this->api_json_expected($class), true);
         return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
     }
@@ -1316,7 +1315,9 @@ class test_base
      */
     function assert_api_get_list(string $class, array $ids = [1,2]): bool
     {
-        $actual = json_decode($this->api_call("GET", HOST_TESTING . '/api/' . $class, implode(",", $ids)), true);
+        $url = HOST_TESTING . '/api/' . camelize($class);
+        $data = array("ids" => implode(",", $ids));
+        $actual = json_decode($this->api_call("GET", $url, $data), true);
         $expected = json_decode($this->api_json_expected($class), true);
         return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
     }
@@ -1374,13 +1375,37 @@ class test_base
 
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql($db_con, $db_type);
+        $qp = $usr_obj->load_sql_obj_vars($db_con, $db_type);
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql($db_con, $db_type);
+            $qp = $usr_obj->load_sql_obj_vars($db_con, $db_type);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * similar to assert_load_sql but for an id
+     * check the object load by id list SQL statements for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_load_sql_id(sql_db $db_con, object $usr_obj): bool
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_id($db_con, 1, $usr_obj::class);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_id($db_con, 1, $usr_obj::class);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;
@@ -1405,6 +1430,54 @@ class test_base
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_ids($db_con, new trm_ids(array()));
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * similar to assert_load_sql but select one row based on the name
+     * check the object load by name SQL statements for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_load_sql_name(sql_db $db_con, object $usr_obj): bool
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_name($db_con, 'System test', $usr_obj::class);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_name($db_con, 'System test', $usr_obj::class);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * similar to assert_load_sql but select one row based on the linked components
+     * check the SQL statements for user object load by linked objects for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_load_sql_link(sql_db $db_con, object $usr_obj): bool
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_link($db_con, 1,0,3, $usr_obj::class);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_link($db_con, 1,0,3, $usr_obj::class);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;
@@ -1930,7 +2003,7 @@ function zu_test_time_setup(testing $t): string
             $this_year = $year;
             $t->test_word(strval($this_year));
             $wrd_lnk = $t->test_triple(TW_YEAR, verb::IS_A, $this_year);
-            $result = $wrd_lnk->name;
+            $result = $wrd_lnk->name();
             if ($prev_year <> '') {
                 $t->test_triple($prev_year, verb::FOLLOW, $this_year);
             }

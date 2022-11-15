@@ -61,14 +61,14 @@ function run_formula_trigger_test(testing $t)
     // check if the first number have been saved correctly
     $added_val = new value($usr);
     $added_val->grp = $phr_lst1->get_grp();
-    $added_val->load();
+    $added_val->load_obj_vars();
     $result = $added_val->number;
     $target = TV_TEST_SALES_2016;
     $t->dsp('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     // check if the second number have been saved correctly
     $added_val2 = new value($usr);
     $added_val2->grp = $phr_lst2->get_grp();
-    $added_val2->load();
+    $added_val2->load_obj_vars();
     $result = $added_val2->number;
     $target = TV_TEST_SALES_2017;
     $t->dsp('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);

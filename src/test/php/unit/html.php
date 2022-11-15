@@ -178,11 +178,11 @@ class html_unit_tests
         $cmp = new view_cmp($usr);
         $cmp->set_type(view_cmp_type::TEXT);
         $cmp->set_id(1);
-        $cmp->name = 'View component text';
+        $cmp->set_name(view_cmp::TN_ADD);
         $t->html_test($cmp->dsp_obj()->html(), 'view_cmp_text', $t);
 
         $wrd = new \api\word_api();
-        $wrd->set_name('View component word name');
+        $wrd->set_name(word::TN_ADD);
         $cmp->obj = $wrd;
 
     }

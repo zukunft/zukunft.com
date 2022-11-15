@@ -53,7 +53,7 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::SOURCE_ADD);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back'];      // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
@@ -81,7 +81,7 @@ if ($usr->id > 0) {
             // check if source name already exists (move this part to the save function??)
             $db_src = new source($usr);
             $db_src->name = $src->name;
-            $db_src->load();
+            $db_src->load_obj_vars();
             if ($db_src->id > 0) {
                 $msg .= 'Name ' . $src->name . ' is already existing. Please enter another name or use the existing source.';
             }

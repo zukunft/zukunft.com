@@ -32,7 +32,7 @@
 
 use cfg\phrase_type;
 
-function create_test_words(testing $t)
+function create_test_words(testing $t): void
 {
 
     $t->header('Check if all base words are correct');
@@ -64,7 +64,7 @@ function create_test_words(testing $t)
 
 }
 
-function run_word_tests(testing $t)
+function run_word_tests(testing $t): void
 {
 
     $t->header('Test the word class (classes/word.php)');
@@ -76,9 +76,9 @@ function run_word_tests(testing $t)
     $wrd_by_name = $t->add_word(word::TN_READ, null, $t->usr1);
     $wrd_by_id = new word($t->usr1);
     $wrd_by_id->id = $wrd_by_name->id;
-    $wrd_by_id->load();
+    $wrd_by_id->load_obj_vars();
     $target = word::TN_READ;
-    $result = $wrd_by_id->name;
+    $result = $wrd_by_id->name();
     $t->dsp('word->load of ' . $wrd_read->id . ' by id ' . $wrd_by_name->id, $target, $result);
 
     // word type
@@ -128,14 +128,14 @@ function run_word_tests(testing $t)
     // next word
     $wrd_time_next = $t->test_word(word::TN_2022, phrase_type::TIME);
     $t->test_triple(word::TN_2022, verb::FOLLOW, word::TN_2021);
-    $target = $wrd_time_next->name;
+    $target = $wrd_time_next->name();
     $wrd_next = $wrd_time->next();
-    $result = $wrd_next->name;
+    $result = $wrd_next->name();
     $t->dsp('word->next for ' . word::TN_2021, $target, $result);
 
-    $target = $wrd_time->name;
+    $target = $wrd_time->name();
     $wrd_prior = $wrd_time_next->prior();
-    $result = $wrd_prior->name;
+    $result = $wrd_prior->name();
     $t->dsp('word->prior for ' . word::TN_2022, $target, $result);
 
     // create a parent test word
@@ -147,7 +147,7 @@ function run_word_tests(testing $t)
     $phr_lst = $wrd_parent->children();
     $target = word::TN_READ;
     if ($phr_lst->does_contain($wrd_read)) {
-        $result = $wrd_read->name();
+        $result = $wrd_read->name_dsp();
     } else {
         $result = '';
     }
@@ -157,7 +157,7 @@ function run_word_tests(testing $t)
     // e.g. the list of Cantons does not include the word Canton itself
     $target = '';
     if ($phr_lst->does_contain($wrd_parent)) {
-        $result = $wrd_read->name();
+        $result = $wrd_read->name_dsp();
     } else {
         $result = '';
     }
@@ -167,9 +167,9 @@ function run_word_tests(testing $t)
     // e.g. which is for parent Canton the phrase "Zurich (Canton)", but not, as tested later, the phrase "Zurich (City)"
     //      "Cantons are Zurich, Bern, ... and valid is also everything related to the Word Canton itself"
     $phr_lst = $wrd_parent->are();
-    $target = $wrd_read->name;
+    $target = $wrd_read->name();
     if ($phr_lst->does_contain($wrd_parent)) {
-        $result = $wrd_read->name;
+        $result = $wrd_read->name();
     } else {
         $result = '';
     }
@@ -177,9 +177,9 @@ function run_word_tests(testing $t)
 
     // ... word are including the start word
     // e.g. to get also formulas related to Cantons all formulas related to "Zurich (Canton)" and the word "Canton" itself must be selected
-    $target = $wrd_read->name;
+    $target = $wrd_read->name();
     if ($phr_lst->does_contain($wrd_read)) {
-        $result = $wrd_read->name;
+        $result = $wrd_read->name();
     } else {
         $result = '';
     }
@@ -187,9 +187,9 @@ function run_word_tests(testing $t)
 
     // word parents
     $phr_lst = $wrd_read->parents();
-    $target = $wrd_parent->name;
+    $target = $wrd_parent->name();
     if ($phr_lst->does_contain($wrd_parent)) {
-        $result = $wrd_parent->name;
+        $result = $wrd_parent->name();
     } else {
         $result = '';
     }
@@ -198,7 +198,7 @@ function run_word_tests(testing $t)
     // ... word parents excluding the start word
     $target = '';
     if ($phr_lst->does_contain($wrd_read)) {
-        $result = $wrd_read->name;
+        $result = $wrd_read->name();
     } else {
         $result = '';
     }
@@ -215,29 +215,29 @@ function run_word_tests(testing $t)
     $t->test_triple(word::TN_ZH, verb::IS_A, word::TN_CITY);
 
     // word is e.g. Zurich as a Canton ...
-    $target = $wrd_canton->name;
+    $target = $wrd_canton->name();
     $phr_lst = $wrd_ZH->is();
     if ($phr_lst->does_contain($wrd_canton)) {
-        $result = $wrd_canton->name;
+        $result = $wrd_canton->name();
     } else {
         $result = '';
     }
     $t->dsp('word->is "' . word::TN_ZH . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
     // ... and Zurich is a City
-    $target = $wrd_city->name;
+    $target = $wrd_city->name();
     $phr_lst = $wrd_ZH->is();
     if ($phr_lst->does_contain($wrd_city)) {
-        $result = $wrd_city->name;
+        $result = $wrd_city->name();
     } else {
         $result = '';
     }
     $t->dsp('word->and is "' . word::TN_ZH . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
     // ... word is including the start word
-    $target = $wrd_ZH->name;
+    $target = $wrd_ZH->name();
     if ($phr_lst->does_contain($wrd_ZH)) {
-        $result = $wrd_ZH->name;
+        $result = $wrd_ZH->name();
     } else {
         $result = '';
     }
@@ -271,10 +271,10 @@ function run_word_tests(testing $t)
     $t->test_triple(word::TN_ENERGY, verb::CAN_CONTAIN, word::TN_WIND_ENERGY);
 
     // word is part
-    $target = $wrd_cf->name;
+    $target = $wrd_cf->name();
     $phr_lst = $wrd_tax->is_part();
     if ($phr_lst->does_contain($wrd_cf)) {
-        $result = $wrd_cf->name;
+        $result = $wrd_cf->name();
     } else {
         $result = '';
     }
@@ -282,7 +282,7 @@ function run_word_tests(testing $t)
 
     // save a new word
     $wrd_new = new word($t->usr1);
-    $wrd_new->name = word::TN_READ;
+    $wrd_new->set_name(word::TN_READ);
     $result = $wrd_new->save();
     //$target = 'A word with the name "'.word::TEST_NAME_READ.'" already exists. Please use another name.';
     $target = '';
@@ -290,7 +290,7 @@ function run_word_tests(testing $t)
 
     // test the creation of a new word
     $wrd_add = new word($t->usr1);
-    $wrd_add->name = word::TN_ADD;
+    $wrd_add->set_name(word::TN_ADD);
     $result = $wrd_add->save();
     $target = '';
     $t->dsp('word->save for "' . word::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
@@ -311,26 +311,24 @@ function run_word_tests(testing $t)
 
     // ... test if the new word has been created
     $wrd_added = $t->load_word(word::TN_ADD);
-    $wrd_added->load();
+    $wrd_added->load_obj_vars();
     if ($wrd_added->id > 0) {
-        $result = $wrd_added->name;
+        $result = $wrd_added->name();
     }
     $target = word::TN_ADD;
     $t->dsp('word->load of added word "' . word::TN_ADD . '"', $target, $result);
 
     // check if the word can be renamed
-    $wrd_added->name = word::TN_RENAMED;
+    $wrd_added->set_name(word::TN_RENAMED);
     $result = $wrd_added->save();
     $target = '';
     $t->dsp('word->save rename "' . word::TN_ADD . '" to "' . word::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB);
 
     // check if the word renaming was successful
     $wrd_renamed = new word($t->usr1);
-    $wrd_renamed->name = word::TN_RENAMED;
-    $wrd_renamed->usr = $t->usr1;
-    if ($wrd_renamed->load()) {
+    if ($wrd_renamed->load_by_name(word::TN_RENAMED, word::class)) {
         if ($wrd_renamed->id > 0) {
-            $result = $wrd_renamed->name;
+            $result = $wrd_renamed->name();
         }
     }
     $target = word::TN_RENAMED;
@@ -387,8 +385,7 @@ function run_word_tests(testing $t)
 
     // check if a user specific word is created if another user changes the word
     $wrd_usr2 = new word($t->usr2);
-    $wrd_usr2->name = word::TN_RENAMED;
-    $wrd_usr2->load();
+    $wrd_usr2->load_by_name(word::TN_RENAMED, word::class);
     $wrd_usr2->plural = word::TN_RENAMED . 's2';
     $wrd_usr2->description = word::TN_RENAMED . ' description2';
     $wrd_usr2->type_id = cl(db_cl::WORD_TYPE, phrase_type::TIME);
@@ -398,8 +395,7 @@ function run_word_tests(testing $t)
 
     // check if a user specific word changes have been saved
     $wrd_usr2_reloaded = new word($t->usr2);
-    $wrd_usr2_reloaded->name = word::TN_RENAMED;
-    $wrd_usr2_reloaded->load();
+    $wrd_usr2_reloaded->load_by_name(word::TN_RENAMED, word::class);
     $result = $wrd_usr2_reloaded->plural;
     $target = word::TN_RENAMED . 's2';
     $t->dsp('word->load plural for "' . word::TN_RENAMED . '"', $target, $result);
@@ -424,8 +420,7 @@ function run_word_tests(testing $t)
 
     // check if undo all specific changes removes the user word
     $wrd_usr2 = new word($t->usr2);
-    $wrd_usr2->name = word::TN_RENAMED;
-    $wrd_usr2->load();
+    $wrd_usr2->load_by_name(word::TN_RENAMED, word::class);
     $wrd_usr2->plural = word::TN_RENAMED . 's';
     $wrd_usr2->description = word::TN_RENAMED . ' description';
     $wrd_usr2->type_id = cl(db_cl::WORD_TYPE, phrase_type::OTHER);
@@ -435,8 +430,7 @@ function run_word_tests(testing $t)
 
     // check if a user specific word changes have been saved
     $wrd_usr2_reloaded = new word($t->usr2);
-    $wrd_usr2_reloaded->name = word::TN_RENAMED;
-    $wrd_usr2_reloaded->load();
+    $wrd_usr2_reloaded->load_by_name(word::TN_RENAMED, word::class);
     $result = $wrd_usr2_reloaded->plural;
     $target = word::TN_RENAMED . 's';
     $t->dsp('word->load plural for "' . word::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
@@ -459,11 +453,11 @@ function run_word_tests(testing $t)
     $wrd_usr2->del();
     $wrd_usr2_reloaded = $t->load_word(word::TN_RENAMED, $t->usr2);
     $target = '';
-    $result = $wrd_usr2_reloaded->name();
+    $result = $wrd_usr2_reloaded->name_dsp();
     $t->dsp('user 2 has deleted word "' . word::TN_RENAMED . '"', $target, $result);
     $wrd_usr1_reloaded = $t->load_word(word::TN_RENAMED, $t->usr1);
-    $target = $wrd_usr1->name();
-    $result = $wrd_usr1_reloaded->name();
+    $target = $wrd_usr1->name_dsp();
+    $result = $wrd_usr1_reloaded->name_dsp();
     $t->dsp('but the word "' . word::TN_RENAMED . '" is still the same for user 1', $target, $result);
 
 
@@ -492,7 +486,7 @@ function run_word_tests(testing $t)
     $wrd->usr = $t->usr1;
     $wrd->main_wrd_from_txt($wrd_read->id . ',' . $wrd_read->id);
     $target = word::TEST_NAME_READ;
-    $result = $wrd_by_name->name;
+    $result = $wrd_by_name->name();
     $t->dsp('word->main_wrd_from_txt', $target, $result);
     */
 

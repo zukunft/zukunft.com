@@ -46,6 +46,8 @@ function run_api_test(testing $t): void
     $t->assert_api_get(view::class);
     $t->assert_api_get(view_cmp::class);
 
+    $t->assert_api_get_list(phrase_list::class);
+    $t->assert_api_get_list(term_list::class, [1,-1]);
     // $t->assert_rest(new word($usr, word::TN_READ));
 
 }

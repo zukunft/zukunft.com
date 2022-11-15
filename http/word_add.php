@@ -69,7 +69,7 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::WORD_ADD);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back']; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
@@ -77,7 +77,7 @@ if ($usr->id > 0) {
 
     // update the parameters on the object, so that the object save can update the database
     if (isset($_GET['word_name'])) {
-        $wrd->name = $_GET['word_name'];
+        $wrd->set_name($_GET['word_name']);
     } // the name that must be unique for words, triples, formulas and verbs
     if (isset($_GET['type'])) {
         $wrd->type_id = $_GET['type'];
@@ -92,7 +92,7 @@ if ($usr->id > 0) {
     if ($_GET['confirm'] > 0) {
 
         // check if either a new word text is entered by the user or the user as selected an existing word to link
-        if ($wrd->name == "" and $wrd_id <= 0) {
+        if ($wrd->name() == "" and $wrd_id <= 0) {
             $msg .= 'Either enter a name for the new word or select an existing word to link.';
         }
         /*
@@ -104,16 +104,15 @@ if ($usr->id > 0) {
           $msg .= 'Word missing; Please press back and select a related word, because all new words must be linked to an existing word. ';
         }
         */
-        if ($wrd->type_id <= 0 and $wrd->name <> "") {
+        if ($wrd->type_id <= 0 and $wrd->name() <> "") {
             $wrd_id = 0; // if new word in supposed to be added, but type is missing, do not add an existing word
             $msg .= 'Type missing; Please press back and select a word type. ';
         }
 
         // check if a word, verb or formula with the same name already exists
-        if ($wrd->name <> "") {
+        if ($wrd->name() <> "") {
             $trm = new term($usr);
-            $trm->name = $wrd->name;
-            $trm->load();
+            $trm->load_by_name($wrd->name);
             if ($trm->id_obj() > 0) {
                 /*
                 // TODO: if a formula exists, suggest to create a word as a formula link, so that the formula results can be shown in parallel to the entered values
@@ -135,7 +134,7 @@ if ($usr->id > 0) {
             $lnk_test->from->id = $wrd_id;
             $lnk_test->verb->id = $vrb_id;
             $lnk_test->to->id = $wrd_to;
-            $lnk_test->load();
+            $lnk_test->load_obj_vars();
             if ($lnk_test->id > 0) {
                 $lnk_test->load_objects();
                 log_debug('check forward link ' . $wrd_id . ' ' . $vrb_id . ' ' . $wrd_to . '');
@@ -145,7 +144,7 @@ if ($usr->id > 0) {
             $lnk_rev->from->id = $wrd_to;
             $lnk_rev->verb->id = $vrb_id;
             $lnk_rev->to->id = $wrd_id;
-            $lnk_rev->load();
+            $lnk_rev->load_obj_vars();
             if ($lnk_rev->id > 0) {
                 $lnk_rev->load_objects();
                 $msg .= 'The reverse of "' . $lnk_rev->from_name . ' ' . $lnk_rev->verb->name . ' ' . $lnk_rev->to_name . '" already exists. Do you really want to add both sides? ';
@@ -157,11 +156,11 @@ if ($usr->id > 0) {
             log_debug('no msg');
             $add_result = '';
             // ... add the new word to the database
-            if ($wrd->name <> "") {
+            if ($wrd->name() <> "") {
                 $add_result .= $wrd->save();
             } else {
                 $wrd->id = $wrd_id;
-                $wrd->load();
+                $wrd->load_obj_vars();
             }
             log_debug('test word');
             if ($wrd->id > 0 and $vrb_id <> 0 and $wrd_to > 0) {

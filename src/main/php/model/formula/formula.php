@@ -151,8 +151,8 @@ class formula extends user_sandbox_description
 
     // in memory only fields
     public ?string $type_cl = '';          // the code id of the formula type
-    public ?word $name_wrd = null;         // the word object for the formula name:
-    //                                        because values can only be assigned to words, also for the formula name a word must exist
+    public ?word $name_wrd = null;         // the triple object for the formula name:
+    //                                        because values can only be assigned to phrases, also for the formula name a triple must exist
     public bool $needs_fv_upd = false;     // true if the formula results needs to be updated
     public ?string $ref_text_r = '';       // the part of the formula expression that is right of the equation sign (used as a work-in-progress field for calculation)
 
@@ -337,7 +337,7 @@ class formula extends user_sandbox_description
             array(sql_db::FLD_USER_ID)
         ));
 
-        return parent::load_standard_sql($db_con, self::class);
+        return parent::load_standard_sql($db_con, $class);
     }
 
     /**
@@ -350,12 +350,34 @@ class formula extends user_sandbox_description
     {
         global $db_con;
         $qp = $this->load_standard_sql($db_con);
-        $result = parent::load_standard($qp, self::class);
+        $result = parent::load_standard($qp, $class);
 
         if ($result) {
             $result = $this->load_owner();
         }
         return $result;
+    }
+
+    /**
+     * create the common part of an SQL statement to retrieve the parameters of a formula from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $query_name the name of the selection fields to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp->name .= $query_name;
+
+        // maybe the formula name should be excluded from the user sandbox to avoid confusion
+        $db_con->set_type(sql_db::TBL_FORMULA);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+
+        return $qp;
     }
 
     /**
@@ -365,10 +387,10 @@ class formula extends user_sandbox_description
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
     {
 
-        $qp = parent::load_sql($db_con, self::class);
+        $qp = parent::load_sql_obj_vars($db_con, $class);
         if ($this->id != 0) {
             $qp->name .= 'id';
         } elseif ($this->name != '') {
@@ -386,10 +408,10 @@ class formula extends user_sandbox_description
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id != 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
         } elseif ($this->name != '') {
             $db_con->add_par(sql_db::PAR_TEXT, $this->name);
-            $qp->sql = $db_con->select_by_name();
+            $qp->sql = $db_con->select_by_set_name();
         } else {
             log_err('Either the database ID (' . $this->id . ') or the ' .
                 $class . ' name (' . $this->name . ') and the user (' . $this->usr->id . ') must be set to load a ' .
@@ -403,7 +425,7 @@ class formula extends user_sandbox_description
     /**
      * load the missing formula parameters from the database
      */
-    function load(bool $with_automatic_error_fixing = true): bool
+    function load_obj_vars(bool $with_automatic_error_fixing = true): bool
     {
         global $db_con;
         $result = false;
@@ -415,7 +437,7 @@ class formula extends user_sandbox_description
             log_err("Either the database ID (" . $this->id . ") or the formula name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a formula.", "formula->load");
         } else {
 
-            $qp = $this->load_sql($db_con);
+            $qp = $this->load_sql_obj_vars($db_con);
 
             if ($db_con->get_where() <> '') {
                 $db_frm = $db_con->get1($qp);
@@ -425,6 +447,9 @@ class formula extends user_sandbox_description
                     log_debug(self::class . '->load ' . $this->dsp_id() . ' not excluded');
 
                     // load the formula name word object
+                    // a word (TODO triple)
+                    // with the same name as the formula is needed,
+                    // because values can only be assigned to a word
                     if (is_null($this->name_wrd)) {
                         $result = $this->load_wrd($with_automatic_error_fixing);
                     } else {
@@ -474,12 +499,11 @@ class formula extends user_sandbox_description
         if ($do_load) {
             log_debug(self::class . '->load_wrd load ' . $this->dsp_id());
             $name_wrd = new word($this->usr);
-            $name_wrd->name = $this->name;
-            $name_wrd->load();
+            $name_wrd->load_by_name($this->name, word::class);
             if ($name_wrd->id > 0) {
                 $this->name_wrd = $name_wrd;
             } else {
-                // if the loading of the corresponding word fails,
+                // if the loading of the corresponding triple fails,
                 // try to recreate it and report the internal error
                 // because this should actually never happen
                 if ($with_automatic_error_fixing) {
@@ -496,6 +520,15 @@ class formula extends user_sandbox_description
         return $result;
     }
 
+    function id_field(): string
+    {
+        return self::FLD_ID;
+    }
+
+    function name_field(): string
+    {
+        return self::FLD_NAME;
+    }
 
     /**
      * add the corresponding name word for the formula name to the database without similar check
@@ -508,7 +541,7 @@ class formula extends user_sandbox_description
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word($this->usr);
-        $name_wrd->name = $this->name;
+        $name_wrd->name = $this->name();
         $name_wrd->type_id = cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK);
         $name_wrd->add();
         if ($name_wrd->id > 0) {
@@ -531,7 +564,7 @@ class formula extends user_sandbox_description
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word($this->usr);
-        $name_wrd->name = $this->name;
+        $name_wrd->set_name($this->name);
         $name_wrd->type_id = cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK);
         $name_wrd->save();
         if ($name_wrd->id > 0) {
@@ -577,7 +610,7 @@ class formula extends user_sandbox_description
      */
     function special_result($phr_lst, $time_phr)
     {
-        log_debug("formula->special_result (" . $this->id . ",t" . $phr_lst->dsp_id() . ",time" . $time_phr->name . " and user " . $this->usr->name . ")");
+        log_debug("formula->special_result (" . $this->id . ",t" . $phr_lst->dsp_id() . ",time" . $time_phr->name() . " and user " . $this->usr->name . ")");
         $val = null;
 
         if ($this->type_id > 0) {
@@ -585,7 +618,7 @@ class formula extends user_sandbox_description
             if ($this->type_cl == formula::THIS) {
                 $val_phr_lst = clone $phr_lst;
                 $val_phr_lst->add($time_phr); // the time word should be added at the end, because ...
-                log_debug("formula->special_result -> this (" . $time_phr->name . ")");
+                log_debug("formula->special_result -> this (" . $time_phr->name() . ")");
                 $val = $val_phr_lst->value_scaled();
             }
             if ($this->type_cl == formula::NEXT) {
@@ -765,8 +798,7 @@ class formula extends user_sandbox_description
     }
 
 
-    public
-    static function cmp($a, $b): string
+    public static function cmp($a, $b): string
     {
         return strcmp($a->name, $b->name);
     }
@@ -1084,7 +1116,7 @@ class formula extends user_sandbox_description
 
             // reload the formula if needed, but this should be done by the calling function, so create an info message
             if ($this->name == '' or is_null($this->name_wrd)) {
-                $this->load();
+                $this->load_obj_vars();
                 log_info('formula ' . $this->dsp_id() . ' reloaded.', 'formula->calc');
             }
 
@@ -1093,6 +1125,7 @@ class formula extends user_sandbox_description
             $exp->ref_text = $this->ref_text;
 
             // the phrase left of the equation sign should be added to the result
+            // e.g. percent for the increase formula
             $has_result_phrases = false;
             $fv_add_phr_lst = $exp->fv_phr_lst();
             if (isset($fv_add_phr_lst)) {
@@ -1124,6 +1157,8 @@ class formula extends user_sandbox_description
 
                             // apply general rules to the result words
                             if (isset($fv_add_phr_lst)) {
+
+                                // add the phrases left of the equal sign to the result e.g. percent for the increase formula
                                 log_debug(self::class . '->calc -> result words "' . $fv_add_phr_lst->dsp_id() . '" defined for ' . $fv->phr_lst->dsp_id());
                                 $fv_add_wrd_lst = $fv_add_phr_lst->wrd_lst_all();
 
@@ -1165,6 +1200,9 @@ class formula extends user_sandbox_description
                                 log_debug(self::class . '->calc -> added words ' . $fv_add_phr_lst->dsp_id() . ' to the result ' . $fv->phr_lst->dsp_id());
                             }
 
+                            // add the formula name also to the result phrase e.g. increase
+                            $fv->phr_lst->add($this->name_wrd->phrase());
+
                             $fv = $fv->save_if_updated($has_result_phrases);
 
                         }
@@ -1172,10 +1210,6 @@ class formula extends user_sandbox_description
                 }
             }
 
-            /*
-        // ??? add the formula name word also to the source words
-        $src_phr_lst->add($this->name_wrd);
-      */
 
             $result = $fv_lst->lst;
         }
@@ -1286,9 +1320,8 @@ class formula extends user_sandbox_description
     {
         $result = '';
         $phr = new phrase($this->usr);
-        $phr->name = $phr_name;
         if ($do_save) {
-            $phr->load();
+            $phr->load_by_name($phr_name);
             if ($this->id > 0 and $phr->id <> 0) {
                 $frm_lnk = new formula_link($this->usr);
                 $frm_lnk->fob = $this;
@@ -1310,7 +1343,7 @@ class formula extends user_sandbox_description
         $result = new formula_exp();
 
         if ($this->name <> '') {
-            $result->name = $this->name;
+            $result->name = $this->name();
         }
         if (isset($this->type_id)) {
             if ($this->type_id <> $formula_types->default_id()) {
@@ -1581,8 +1614,8 @@ class formula extends user_sandbox_description
     function term(): term
     {
         $trm = new term($this->usr);
-        $trm->set_obj_id($this->id, self::class);
-        $trm->name = $this->name;
+        $trm->set_id_from_obj($this->id, self::class);
+        $trm->set_name($this->name);
         $trm->obj = $this;
         return $trm;
     }
@@ -1598,7 +1631,7 @@ class formula extends user_sandbox_description
     {
         $result = '';
         if (isset($phr) and isset($this->usr)) {
-            log_debug(self::class . '->link_phr link ' . $this->dsp_id() . ' to "' . $phr->name . '" for user "' . $this->usr->name . '"');
+            log_debug(self::class . '->link_phr link ' . $this->dsp_id() . ' to "' . $phr->name() . '" for user "' . $this->usr->name . '"');
             $frm_lnk = new formula_link($this->usr);
             $frm_lnk->fob = $this;
             $frm_lnk->tob = $phr;
@@ -1614,7 +1647,7 @@ class formula extends user_sandbox_description
     {
         $result = '';
         if (isset($phr) and isset($this->usr)) {
-            log_debug(self::class . '->unlink_phr unlink ' . $this->dsp_id() . ' from "' . $phr->name . '" for user "' . $this->usr->name . '"');
+            log_debug(self::class . '->unlink_phr unlink ' . $this->dsp_id() . ' from "' . $phr->name() . '" for user "' . $this->usr->name . '"');
             $frm_lnk = new formula_link($this->usr);
             $frm_lnk->fob = $this;
             $frm_lnk->tob = $phr;
@@ -1706,8 +1739,10 @@ class formula extends user_sandbox_description
         } else {
             $qp = $this->not_changed_sql($db_con);
             $db_row = $db_con->get1($qp);
-            if ($db_row[self::FLD_USER] > 0) {
-                $result = false;
+            if ($db_row != null) {
+                if ($db_row[self::FLD_USER] > 0) {
+                    $result = false;
+                }
             }
         }
         log_debug(self::class . '->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result));
@@ -1760,7 +1795,7 @@ class formula extends user_sandbox_description
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where_std($this->id);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
@@ -2049,17 +2084,16 @@ class formula extends user_sandbox_description
             $this->needs_fv_upd = true;
             if ($this->can_change() and $this->not_changed()) {
                 $log = $this->log_upd();
-                $log->old_value = $db_rec->name;
-                $log->new_value = $this->name;
-                $log->std_value = $std_rec->name;
+                $log->old_value = $db_rec->name();
+                $log->new_value = $this->name();
+                $log->std_value = $std_rec->name();
                 $log->row_id = $this->id;
                 $log->field = self::FLD_NAME;
                 $result .= $this->save_field_do($db_con, $log);
                 // in case a word link exist, change also the name of the word
                 $wrd = new word($this->usr);
-                $wrd->name = $db_rec->name;
-                $wrd->load();
-                $wrd->name = $this->name;
+                $wrd->load_by_name($db_rec->name, word::class);
+                $wrd->set_name($this->name);
                 $result .= $wrd->save();
 
             } else {
@@ -2083,9 +2117,8 @@ class formula extends user_sandbox_description
             log_debug(self::class . '->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
             // in case a word link exist, change also the name of the word
             $wrd = new word($this->usr);
-            $wrd->name = $db_rec->name;
-            $wrd->load();
-            $wrd->name = $this->name;
+            $wrd->load_by_name($db_rec->name, word::class);
+            $wrd->set_name($this->name);
             $add_result = $wrd->save();
             if ($add_result == '') {
                 log_debug(self::class . '->save_id_fields word "' . $db_rec->name . '" renamed to ' . $wrd->dsp_id());
@@ -2095,9 +2128,9 @@ class formula extends user_sandbox_description
 
             // change the formula name
             $log = $this->log_upd();
-            $log->old_value = $db_rec->name;
-            $log->new_value = $this->name;
-            $log->std_value = $std_rec->name;
+            $log->old_value = $db_rec->name();
+            $log->new_value = $this->name();
+            $log->std_value = $std_rec->name();
             $log->row_id = $this->id;
             $log->field = self::FLD_NAME;
             if ($log->add()) {
@@ -2105,7 +2138,7 @@ class formula extends user_sandbox_description
                 if (!$db_con->update($this->id,
                     array(self::FLD_NAME),
                     array($this->name))) {
-                    $result .= 'formula ' . $db_rec->name . ' cannot be renamed to ' . $this->name;
+                    $result .= 'formula ' . $db_rec->name . ' cannot be renamed to ' . $this->name();
                 }
             }
         }
@@ -2117,10 +2150,10 @@ class formula extends user_sandbox_description
     function is_term_the_same(term $trm): bool
     {
         $result = false;
-        if ($trm->type == formula::class) {
+        if ($trm->type() == formula::class) {
             //$result = $trm;
             $result = true;
-        } elseif ($trm->type == word::class or $trm->type == word_dsp::class) {
+        } elseif ($trm->type() == word::class or $trm->type() == word_dsp::class) {
             if ($trm->obj == null) {
                 log_warning('The object of the term has been expected to be loaded');
             } else {
@@ -2143,12 +2176,12 @@ class formula extends user_sandbox_description
         $result = '';
 
         // if the name has changed, check if word, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
-        if ($db_rec->name <> $this->name) {
+        if ($db_rec->name() <> $this->name()) {
             // check if a verb or word with the same name is already in the database
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and !$this->is_term_the_same($trm)) {
                 $result .= $trm->id_used_msg();
-                log_debug(self::class . '->save_id_if_updated name "' . $trm->name . '" used already as "' . $trm->type . '"');
+                log_debug(self::class . '->save_id_if_updated name "' . $trm->name() . '" used already as "' . $trm->type() . '"');
             } else {
 
                 // check if target formula already exists
@@ -2238,11 +2271,13 @@ class formula extends user_sandbox_description
                 } else {
                     // create the related formula word
                     // the creation of a formula word should not be needed if on creation a view of word, phrase, verb nad formula is used to check uniqueness
+                    // the creation of the formula word is switched off because the term loading should be fine now
+                    // TODO check and remove the create_wrd function and the phrase_type::FORMULA_LINK
                     if ($this->create_wrd()) {
 
                         // create an empty db_frm element to force saving of all set fields
                         $db_rec = new formula($this->usr);
-                        $db_rec->name = $this->name;
+                        $db_rec->set_name($this->name());
                         $std_rec = clone $db_rec;
                         // save the formula fields
                         $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
@@ -2283,8 +2318,16 @@ class formula extends user_sandbox_description
                 log_debug(self::class . '->save -> add ' . $this->dsp_id());
                 $trm = $this->get_term();
                 if ($trm->id_obj() > 0) {
-                    if ($trm->type <> 'formula') {
-                        $result .= $trm->id_used_msg();
+                    if ($trm->type() <> formula::class) {
+                        if ($trm->type() == word::class) {
+                            if ($trm->obj->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
+                                log_debug('adding formula name ' . $this->dsp_id() . ' has just a matching formula word');
+                            } else {
+                                $result .= $trm->id_used_msg();
+                            }
+                        } else {
+                            $result .= $trm->id_used_msg();
+                        }
                     } else {
                         $this->id = $trm->id_obj();
                         log_debug(self::class . '->save adding formula name ' . $this->dsp_id() . ' is OK');
@@ -2304,8 +2347,7 @@ class formula extends user_sandbox_description
                 // read the database values to be able to check if something has been changed; done first,
                 // because it needs to be done for user and general formulas
                 $db_rec = new formula($this->usr);
-                $db_rec->id = $this->id;
-                $db_rec->load();
+                $db_rec->load_by_id($this->id, formula::class);
                 log_debug(self::class . '->save -> database formula "' . $db_rec->name . '" (' . $db_rec->id . ') loaded');
                 $std_rec = new formula($this->usr); // must also be set to allow to take the ownership
                 $std_rec->id = $this->id;

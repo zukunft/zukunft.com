@@ -47,8 +47,8 @@ class hist_log_dsp
             $result .= 'no word selected';
         } else {
             // load the word parameters if not yet done
-            if ($wrd->name == "") {
-                $wrd->load();
+            if ($wrd->name() == "") {
+                $wrd->load_obj_vars();
             }
 
             $changes = $wrd->dsp_hist(1, 20, '', $back);

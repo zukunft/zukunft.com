@@ -47,33 +47,29 @@ function run_word_display_test(testing $t)
     // test uses the old function zum_word_list to compare, so it is a kind of double coding
     // correct test would be using a "fixed HTML text contains"
     $wrd_ZH = new word($usr);
-    $wrd_ZH->name = word::TN_ZH;
-    $wrd_ZH->load();
+    $wrd_ZH->load_by_name(word::TN_ZH, word::class);
     $direction = 'up';
     $target = TEST_WORD;
     // get the link types related to the word
     $link_types = $wrd_ZH->link_types($direction);
     $result = $wrd_ZH->dsp_graph($direction, $link_types, 0);
-    $t->dsp_contains('word_dsp->dsp_graph ' . $direction . ' for ' . $wrd_ZH->name, $target, $result);
+    $t->dsp_contains('word_dsp->dsp_graph ' . $direction . ' for ' . $wrd_ZH->name(), $target, $result);
 
     // ... and the other side
     $wrd_ZH = new word($usr);
-    $wrd_ZH->name = word::TN_ZH;
-    $wrd_ZH->load();
+    $wrd_ZH->load_by_name(word::TN_ZH, word::class);
     $direction = 'down';
     $target = 'Nothing linked to "System Test Word Member e.g. Zurich" until now. Click here to link it.';
     $link_types = $wrd_ZH->link_types($direction);
     $result = $wrd_ZH->dsp_graph($direction, $link_types, 0);
-    $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_ZH->name, $target, $result);
+    $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_ZH->name(), $target, $result);
 
     // ... and the graph display for 2019
     $wrd_2020 = new word($usr);
-    $wrd_2020->name = word::TN_2020;
-    $wrd_2020->load();
+    $wrd_2020->load_by_name(word::TN_2020, word::class);
     $direction = 'down';
     $wrd_2021 = new word($usr);
-    $wrd_2021->name = word::TN_2021;
-    $wrd_2021->load();
+    $wrd_2021->load_by_name(word::TN_2021, word::class);
     $lnk_20_to_21 = $t->load_triple(word::TN_2021, verb::FOLLOW, word::TN_2020);
     // TODO change direction?
     $target = ' is followed by<table class="table col-sm-5 table-borderless">
@@ -107,7 +103,7 @@ function run_word_display_test(testing $t)
         log_err('Unexpected diff ' . $diff);
         $target = $result;
     }
-    $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name, $target, $result);
+    $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name(), $target, $result);
 
     // ... and the other side
     $direction = 'up';
@@ -158,15 +154,13 @@ function run_word_display_test(testing $t)
         log_err('Unexpected diff ' . $diff);
         $target = $result;
     }
-    $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name, $target, $result);
+    $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name(), $target, $result);
 
     // the value table for ABB
     $wrd_ZH = new word($usr);
-    $wrd_ZH->name = word::TN_ZH;
-    $wrd_ZH->load();
+    $wrd_ZH->load_by_name(word::TN_ZH, word::class);
     $wrd_year = new word($usr);
-    $wrd_year->name = word::TN_YEAR;
-    $wrd_year->load();
+    $wrd_year->load_by_name(word::TN_YEAR, word::class);
     /*
     $target = zut_dsp_list_wrd_val($wrd_ZH->id, $wrd_year->id, $usr->id);
     $target = substr($target,0,208);
@@ -175,7 +169,7 @@ function run_word_display_test(testing $t)
     $target = word::TN_ZH;
     $result = $wrd_ZH->dsp_val_list($wrd_year, $wrd_year->is_mainly(), 0);
     //$t->dsp('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
-    $t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // the value table for Company
     /*
@@ -208,6 +202,6 @@ function run_word_display_test(testing $t)
     $sel->dummy_text = '... please select';
     $result .= $sel->display();
     $target = phrase::TN_ZH_COMPANY;
-    $t->dsp_contains(', display_selector->display of all ' . $phr_corp->name . ' with ' . $phr_ZH_INS->name() . ' selected', $target, $result);
+    $t->dsp_contains(', display_selector->display of all ' . $phr_corp->name() . ' with ' . $phr_ZH_INS->dsp_name() . ' selected', $target, $result);
 
 }

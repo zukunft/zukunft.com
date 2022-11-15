@@ -141,7 +141,7 @@ class value_dsp_old extends value
 
         if (!is_null($this->number)) {
             if (is_null($this->wrd_lst)) {
-                $this->load();
+                $this->load_obj_vars();
             }
             if ($this->wrd_lst != null) {
                 if ($this->wrd_lst->has_percent()) {
@@ -358,7 +358,7 @@ class value_dsp_old extends value
             $result .= dsp_text_h3("Change value for");
             if (count($this->ids) <= 0) {
                 $this->load_phrases();
-                log_debug('value->dsp_edit id ' . $this->id . ' with "' . $this->grp->name() . '"@"' . $this->time_phr->name . '"and user ' . $this->usr->id);
+                log_debug('value->dsp_edit id ' . $this->id . ' with "' . $this->grp->name() . '"@"' . $this->time_phr->name() . '"and user ' . $this->usr->id);
             } else {
                 $this->load_time_phrase();
                 log_debug('value->dsp_edit id ' . $this->id . ' with phrase ids ' . dsp_array($this->ids) . ' and user ' . $this->usr->id);
@@ -417,11 +417,11 @@ class value_dsp_old extends value
                 }
                 // guess the missing phrase types
                 if ($phr->is_wrd_id == 0) {
-                    log_debug('value->dsp_edit -> guess type for "' . $phr->name . '"');
+                    log_debug('value->dsp_edit -> guess type for "' . $phr->name() . '"');
                     $phr->is_wrd = $phr->is_mainly();
                     if ($phr->is_wrd->id > 0) {
                         $phr->is_wrd_id = $phr->is_wrd->id;
-                        log_debug('value->dsp_edit -> guessed type for ' . $phr->name . ': ' . $phr->is_wrd->name);
+                        log_debug('value->dsp_edit -> guessed type for ' . $phr->name() . ': ' . $phr->is_wrd->name);
                     }
                 }
             }
@@ -432,7 +432,7 @@ class value_dsp_old extends value
             foreach ($phr_lst->lst as $phr) {
                 //if ($type_ids[$pos] < 0) {
                 if ($phr->is_wrd_id < 0) {
-                    log_debug('value->dsp_edit -> show fixed phrase "' . $phr->name . '"');
+                    log_debug('value->dsp_edit -> show fixed phrase "' . $phr->name() . '"');
                     // allow the user to change also the fixed phrases
                     $type_ids_adj = $type_ids;
                     $type_ids_adj[$phr->dsp_pos] = 0;
@@ -457,7 +457,7 @@ class value_dsp_old extends value
             // prepare the selector for the type phrase
             $phr->is_wrd->usr = $this->usr;
             $phr_lst_sel = $phr->is_wrd->children();
-            zu_debug("value->dsp_edit -> suggested phrases for ".$phr->name.": ".$phr_lst_sel->name().".");
+            zu_debug("value->dsp_edit -> suggested phrases for ".$phr->name().": ".$phr_lst_sel->name().".");
           } else {
             // if no phrase group is found, use the phrase type time if the phrase is a time phrase
             if ($phr->is_time()) {
@@ -505,8 +505,8 @@ class value_dsp_old extends value
                             $url_pos++;
 
                             $result .= '    </td>';
-                            $result .= '    <td>' . \html\btn_del("Remove " . $phr->name, $used_url) . '</td>';
-                            $result .= '    <td>' . \html\btn_edit("Rename " . $phr->name, $phrase_url) . '</td>';
+                            $result .= '    <td>' . \html\btn_del("Remove " . $phr->name(), $used_url) . '</td>';
+                            $result .= '    <td>' . \html\btn_edit("Rename " . $phr->name(), $phrase_url) . '</td>';
                         }
                     }
 
@@ -523,8 +523,8 @@ class value_dsp_old extends value
                             $url_pos++;
 
                             $result .= '    </td>';
-                            $result .= '    <td>' . \html\btn_del("Remove " . $phr->name, $used_url) . '</td>';
-                            $result .= '    <td>' . \html\btn_edit("Rename " . $phr->name, $phrase_url) . '</td>';
+                            $result .= '    <td>' . \html\btn_del("Remove " . $phr->name(), $used_url) . '</td>';
+                            $result .= '    <td>' . \html\btn_edit("Rename " . $phr->name(), $phrase_url) . '</td>';
                         }
                     }
 
@@ -546,7 +546,7 @@ class value_dsp_old extends value
                         $url_pos++;
 
                         $result .= '    </td>';
-                        $result .= '    <td>' . \html\btn_del("Remove " . $this->time_phr->name, $used_url) . '</td>';
+                        $result .= '    <td>' . \html\btn_del("Remove " . $this->time_phr->name(), $used_url) . '</td>';
                     }
                     $result .= '  </tr>';
                 }

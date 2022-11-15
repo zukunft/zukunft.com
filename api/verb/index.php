@@ -56,7 +56,7 @@ if ($usr->id > 0) {
     if ($vrb_id > 0) {
         $vrb = new verb();
         $vrb->id = $vrb_id;
-        $vrb->load();
+        $vrb->load_by_vars();
         $result = $vrb->api_obj();
     } else {
         $msg = 'verb id is missing';

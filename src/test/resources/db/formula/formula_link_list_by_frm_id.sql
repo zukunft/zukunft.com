@@ -9,7 +9,7 @@ PREPARE formula_link_list_by_frm_id (int, int) AS
            CASE WHEN (u.excluded           IS     NULL) THEN s.excluded      ELSE u.excluded       END AS excluded,
            CASE WHEN (u.share_type_id      IS     NULL) THEN s.share_type_id ELSE u.share_type_id  END AS share_type_id,
            CASE WHEN (u.protect_id         IS     NULL) THEN s.protect_id    ELSE u.protect_id     END AS protect_id,
-           CASE WHEN (ul.name_used   <> '' IS NOT TRUE) THEN l.name_used     ELSE ul.name_used     END AS name_used1,
+           CASE WHEN (ul.phrase_name <> '' IS NOT TRUE) THEN l.phrase_name   ELSE ul.phrase_name   END AS phrase_name1,
            CASE WHEN (ul.description <> '' IS NOT TRUE) THEN l.description   ELSE ul.description   END AS description1,
            CASE WHEN (ul.values            IS     NULL) THEN l.values        ELSE ul.values        END AS values1,
            CASE WHEN (ul.excluded          IS     NULL) THEN l.excluded      ELSE ul.excluded      END AS excluded1,

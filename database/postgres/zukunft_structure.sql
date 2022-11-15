@@ -1561,7 +1561,7 @@ SELECT ((w.word_id * 2) - 1) AS term_id,
        w.share_type_id,
        w.protect_id
   FROM words AS w
- WHERE word_type_id <> 10
+ WHERE w.word_type_id <> 10 OR w.word_type_id IS NULL
 UNION
 SELECT ((l.triple_id * -2) + 1)                                                  AS term_id,
        l.user_id,

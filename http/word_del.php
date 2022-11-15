@@ -52,7 +52,7 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::WORD_DEL);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // get the parameters
@@ -64,7 +64,7 @@ if ($usr->id > 0) {
         // create the word object to have an object to update the parameters
         $wrd = new word($usr);
         $wrd->id = $wrd_id;
-        $wrd->load();
+        $wrd->load_obj_vars();
 
         if ($confirm == 1) {
             $wrd->del();
@@ -74,7 +74,7 @@ if ($usr->id > 0) {
             // display the view header
             $result .= $dsp->dsp_navbar($back);
 
-            $result .= \html\btn_yesno("Delete " . $wrd->name . "? ", "/http/word_del.php?id=" . $wrd_id . "&back=" . $back);
+            $result .= \html\btn_yesno("Delete " . $wrd->name() . "? ", "/http/word_del.php?id=" . $wrd_id . "&back=" . $back);
         }
     } else {
         $result .= dsp_go_back($back, $usr);

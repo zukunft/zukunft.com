@@ -52,13 +52,13 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::SOURCE_EDIT);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // create the source object to have an place to update the parameters
     $src = new source($usr);
     $src->id = $_GET['id'];
-    $src->load();
+    $src->load_obj_vars();
 
     if ($src->id <= 0) {
         $result .= log_err("No source found to change because the id is missing.", "source_edit.php");

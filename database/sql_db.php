@@ -146,6 +146,7 @@ class sql_db
     const TBL_USER_PREFIX = 'user_';
 
     // the synthetic view tables (VT) for union query creation
+    const VT_PHRASE = 'phrase';
     const VT_TERM = 'term';
 
     // the parameter types for prepared queries independent of the SQL dialect
@@ -193,6 +194,7 @@ class sql_db
     // TODO set automatically by set_link_fields???
     const DB_TYPES_LINK = [sql_db::TBL_TRIPLE, sql_db::TBL_FORMULA_LINK, sql_db::TBL_VIEW_COMPONENT_LINK, sql_db::TBL_REF];
 
+    const ORDER_ASC = 'ASC';
     const ORDER_DESC = 'DESC';
 
     const NULL_VALUE = 'NULL';
@@ -554,12 +556,30 @@ class sql_db
     }
 
     /**
+     * interface function to add a text parameter for a prepared query
+     * @param int $id the integer value for the WHERE IN SQL statement part
+     */
+    function add_par_int(int $id): void
+    {
+        $this->add_par(sql_db::PAR_INT, $id);
+    }
+
+    /**
      * interface function to add a "IN" parameter for a prepared query
      * @param array $ids with the int id values for the WHERE IN SQL statement part
      */
     function add_par_in_int(array $ids, bool $named = false, bool $use_link = false): void
     {
         $this->add_par(sql_db::PAR_INT_LIST, $this->int_array_to_sql_string($ids), $named, $use_link);
+    }
+
+    /**
+     * interface function to add a text parameter for a prepared query
+     * @param string $name the search text for the WHERE IN SQL statement part
+     */
+    function add_par_txt(string $name): void
+    {
+        $this->add_par(sql_db::PAR_TEXT, $name);
     }
 
     /**
@@ -2135,7 +2155,7 @@ class sql_db
     }
 
     /**
-     * set the where statement to select based on a non standard id field
+     * set the where statement to select based on a none standard id field
      *
      * @param string $id_field_name name of the id field which is usually self::FLD_ID
      * @param int $id the unique object id
@@ -2146,6 +2166,160 @@ class sql_db
     {
         $this->where = ' WHERE ' . $this->where_par(array($id_field_name), array($id), $is_join_query);
         return $this->where;
+    }
+
+    /**
+     * set the user sandbox name where statement
+     * the type must have been already set e.g. to 'source'
+     */
+    function set_where_name($name = '', string $name_field): string
+    {
+        $result = '';
+
+        if ($name <> '' and !is_null($this->usr_id)) {
+            /*
+             * because the object name can be user specific,
+             * don't use the standard name for the selection e.g. s.view_name
+             * use instead the user specific name e.g. view_name
+             */
+            $this->add_par(sql_db::PAR_TEXT, $name);
+            if ($this->usr_query or $this->join <> '') {
+                $result .= '(' . sql_db::USR_TBL . '.';
+                $result .= $name_field . " = " . $this->par_name();
+                $result .= ' OR (' . sql_db::STD_TBL . '.';
+                if (SQL_DB_TYPE != sql_db::POSTGRES) {
+                    $this->add_par(sql_db::PAR_TEXT, $name);
+                }
+                $result .= $name_field . " = " . $this->par_name();
+                $result .= ' AND ' . sql_db::USR_TBL . '.';
+                $result .= $name_field . " IS NULL))";
+            } else {
+                $result .= $name_field . " = " . $this->par_name();
+            }
+        }
+        if ($this->usr_only_query) {
+            if (!$this->all_query) {
+                $this->add_par(sql_db::PAR_INT, $this->usr_view_id);
+                $result .= ' AND ' . sql_db::FLD_USER_ID . ' = ' . $this->par_name();
+            }
+        }
+
+        if ($result == '') {
+            log_err('Internal error: to find a ' . $this->type . ' either the id, name or code_id must be set', 'sql->set_where');
+        } else {
+            $this->where = ' WHERE ' . $result;
+        }
+
+        return $result;
+    }
+
+    /**
+     * set the where statement to select based on a id fields of the linked objects
+     *
+     * @param int $from the subject object id
+     * @param int $type the predicate object id
+     * @param int $to the object (grammar) object id
+     * @param string $from_field_name name of the "from" id field which is usually self::FLD_FROM
+     * @param string $type_field_name name of the type/predicate id field which is usually self::FLD_TYPE
+     * @param string $to_field_name name of the "to" id field which is usually self::FLD_TO
+     * @return string the SQL WHERE statement
+     */
+    function set_where_link(
+        int    $from,
+        int    $type,
+        int    $to,
+        string $from_field_name,
+        string $type_field_name,
+        string $to_field_name
+    ): string
+    {
+        $this->id_from_field = $from_field_name;
+        $this->id_to_field = $to_field_name;
+        if ($type > 0) {
+            $this->id_link_field = $type_field_name;
+        }
+        return $this->set_where_link_no_fld(0, $from, $to, $type);
+    }
+
+    /**
+     * set the SQL WHERE statement for link tables
+     * if $id_from or $id_to is null all links to the other side are selected
+     *    e.g. if for formula_links just the phrase id is set, all formulas linked to the given phrase are returned
+     * TODO allow also to retrieve a list of linked objects
+     * TODO get the user specific list of linked objects
+     * TODO use always parameterized values
+     */
+    function set_where_link_no_fld(?int $id = 0, ?int $id_from = 0, ?int $id_to = 0, ?int $id_type = 0): string
+    {
+        $result = '';
+
+        // select one link by the prime id
+        if ($id <> 0) {
+            if ($this->usr_query or $this->join <> '') {
+                $result .= sql_db::STD_TBL . '.';
+            }
+            $this->add_par(sql_db::PAR_INT, $id);
+            $result .= $this->id_field . " = " . $this->par_name();
+            // select one link by the from and to id
+        } elseif ($id_from <> 0 and $id_to <> 0) {
+            if ($this->id_from_field == '' or $this->id_to_field == '') {
+                log_err('Internal error: to find a ' . $this->type . ' the link fields must be defined', 'sql->set_where_link_no_fld');
+            } else {
+                if ($this->usr_query or $this->join <> '') {
+                    $result .= sql_db::STD_TBL . '.';
+                }
+                $this->add_par(sql_db::PAR_INT, $id_from);
+                $result .= $this->id_from_field . " = " . $this->par_name() . " AND ";
+                if ($this->usr_query or $this->join <> '') {
+                    $result .= sql_db::STD_TBL . '.';
+                }
+                $this->add_par(sql_db::PAR_INT, $id_to);
+                $result .= $this->id_to_field . " = " . $this->par_name();
+                if ($id_type <> 0) {
+                    if ($this->id_link_field == '') {
+                        log_err('Internal error: to find a ' . $this->type . ' the link type field must be defined', 'sql->set_where_link_no_fld');
+                    } else {
+                        $result .= ' AND ';
+                        if ($this->usr_query or $this->join <> '') {
+                            $result .= sql_db::STD_TBL . '.';
+                        }
+                        $this->add_par(sql_db::PAR_INT, $id_type);
+                        $result .= $this->id_link_field . " = " . $this->par_name();
+                    }
+
+                }
+            }
+        } elseif ($id_from <> 0) {
+            if ($this->id_from_field == '') {
+                log_err('Internal error: to find a ' . $this->type . ' the from field must be defined', 'sql->set_where_link_no_fld');
+            } else {
+                if ($this->usr_query or $this->join <> '') {
+                    $result .= sql_db::STD_TBL . '.';
+                }
+                $this->add_par(sql_db::PAR_INT, $id_from);
+                $result .= $this->id_from_field . ' = ' . $this->par_name();
+            }
+        } elseif ($id_to <> 0) {
+            if ($this->id_to_field == '') {
+                log_err('Internal error: to find a ' . $this->type . ' the to field must be defined', 'sql->set_where_link_no_fld');
+            } else {
+                if ($this->usr_query or $this->join <> '') {
+                    $result .= sql_db::STD_TBL . '.';
+                }
+                $this->add_par(sql_db::PAR_INT, $id_to);
+                $result .= $this->id_to_field . ' = ' . $this->par_name();
+            }
+        } else {
+            log_err('Internal error: to find a ' . $this->type . ' the a field must be defined', 'sql->set_where_link_no_fld');
+        }
+
+        if ($result == '') {
+            log_err('Internal error: to find a ' . $this->type . ' either the id or the from and to id must be set', 'sql->set_where_link_no_fld');
+        } else {
+            $this->where = ' WHERE ' . $result;
+        }
+
+        return $result;
     }
 
     /**
@@ -2181,25 +2355,7 @@ class sql_db
                 $result .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
             }
         } elseif ($name <> '' and !is_null($this->usr_id)) {
-            /*
-             * because the object name can be user specific,
-             * don't use the standard name for the selection e.g. s.view_name
-             * use instead the user specific name e.g. view_name
-             */
-            $this->add_par(sql_db::PAR_TEXT, $name);
-            if ($this->usr_query or $this->join <> '') {
-                $result .= '(' . sql_db::USR_TBL . '.';
-                $result .= $this->name_field . " = " . $this->par_name();
-                $result .= ' OR (' . sql_db::STD_TBL . '.';
-                if (SQL_DB_TYPE != sql_db::POSTGRES) {
-                    $this->add_par(sql_db::PAR_TEXT, $name);
-                }
-                $result .= $this->name_field . " = " . $this->par_name();
-                $result .= ' AND ' . sql_db::USR_TBL . '.';
-                $result .= $this->name_field . " IS NULL))";
-            } else {
-                $result .= $this->name_field . " = " . $this->par_name();
-            }
+            $result .= $this->set_where_name($name, $this->name_field);
         }
         if ($this->usr_only_query) {
             if (!$this->all_query) {
@@ -2283,87 +2439,6 @@ class sql_db
                 }
             }
         }
-    }
-
-    /**
-     * set the SQL WHERE statement for link tables
-     * if $id_from or $id_to is null all links to the other side are selected
-     *    e.g. if for formula_links just the phrase id is set, all formulas linked to the given phrase are returned
-     * TODO allow also to retrieve a list of linked objects
-     * TODO get the user specific list of linked objects
-     * TODO use always parameterized values
-     */
-    function set_where_link(?int $id = 0, ?int $id_from = 0, ?int $id_to = 0, ?int $id_type = 0): string
-    {
-        $result = '';
-
-        // select one link by the prime id
-        if ($id <> 0) {
-            if ($this->usr_query or $this->join <> '') {
-                $result .= sql_db::STD_TBL . '.';
-            }
-            $this->add_par(sql_db::PAR_INT, $id);
-            $result .= $this->id_field . " = " . $this->par_name();
-            // select one link by the from and to id
-        } elseif ($id_from <> 0 and $id_to <> 0) {
-            if ($this->id_from_field == '' or $this->id_to_field == '') {
-                log_err('Internal error: to find a ' . $this->type . ' the link fields must be defined', 'sql->set_where_link');
-            } else {
-                if ($this->usr_query or $this->join <> '') {
-                    $result .= sql_db::STD_TBL . '.';
-                }
-                $this->add_par(sql_db::PAR_INT, $id_from);
-                $result .= $this->id_from_field . " = " . $this->par_name() . " AND ";
-                if ($this->usr_query or $this->join <> '') {
-                    $result .= sql_db::STD_TBL . '.';
-                }
-                $this->add_par(sql_db::PAR_INT, $id_to);
-                $result .= $this->id_to_field . " = " . $this->par_name();
-                if ($id_type <> 0) {
-                    if ($this->id_link_field == '') {
-                        log_err('Internal error: to find a ' . $this->type . ' the link type field must be defined', 'sql->set_where_link');
-                    } else {
-                        $result .= ' AND ';
-                        if ($this->usr_query or $this->join <> '') {
-                            $result .= sql_db::STD_TBL . '.';
-                        }
-                        $this->add_par(sql_db::PAR_INT, $id_type);
-                        $result .= $this->id_link_field . " = " . $this->par_name();
-                    }
-
-                }
-            }
-        } elseif ($id_from <> 0) {
-            if ($this->id_from_field == '') {
-                log_err('Internal error: to find a ' . $this->type . ' the from field must be defined', 'sql->set_where_link');
-            } else {
-                if ($this->usr_query or $this->join <> '') {
-                    $result .= sql_db::STD_TBL . '.';
-                }
-                $this->add_par(sql_db::PAR_INT, $id_from);
-                $result .= $this->id_from_field . ' = ' . $this->par_name();
-            }
-        } elseif ($id_to <> 0) {
-            if ($this->id_to_field == '') {
-                log_err('Internal error: to find a ' . $this->type . ' the to field must be defined', 'sql->set_where_link');
-            } else {
-                if ($this->usr_query or $this->join <> '') {
-                    $result .= sql_db::STD_TBL . '.';
-                }
-                $this->add_par(sql_db::PAR_INT, $id_to);
-                $result .= $this->id_to_field . ' = ' . $this->par_name();
-            }
-        } else {
-            log_err('Internal error: to find a ' . $this->type . ' the a field must be defined', 'sql->set_where_link');
-        }
-
-        if ($result == '') {
-            log_err('Internal error: to find a ' . $this->type . ' either the id or the from and to id must be set', 'sql->set_where_link');
-        } else {
-            $this->where = ' WHERE ' . $result;
-        }
-
-        return $result;
     }
 
     /**
@@ -2733,6 +2808,36 @@ class sql_db
 
     /**
      * create a SQL select statement for the connected database
+     * and select by the default id field
+     * @param int $id the database id of the object
+     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
+     * @return string the created SQL statement in the previous set dialect
+     */
+    function select_by_id(int $id, bool $has_id = true): string
+    {
+        $this->add_par_int($id);
+        return $this->select_by(array($this->id_field), $has_id);
+    }
+
+    /**
+     * create a SQL select statement for the connected database
+     * and select by the default id field
+     * @param string $name the unique name of the object
+     * @param string $name_field the field name for the object name if it differs from the standard field name
+     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
+     * @return string the created SQL statement in the previous set dialect
+     */
+    function select_by_name(string $name, string $name_field = '', bool $has_id = true): string
+    {
+        $this->add_par_txt($name);
+        if ($name_field != '') {
+            $this->name_field = $name_field;
+        }
+        return $this->select_by(array($this->name_field), $has_id);
+    }
+
+    /**
+     * create a SQL select statement for the connected database
      * and select the standard and the user sandbox rows
      * @return string the created SQL statement in the previous set dialect
      */
@@ -2747,7 +2852,7 @@ class sql_db
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @return string the created SQL statement in the previous set dialect
      */
-    function select_by_id(bool $has_id = true): string
+    function select_by_set_id(bool $has_id = true): string
     {
         return $this->select_by(array($this->id_field), $has_id);
     }
@@ -2758,7 +2863,7 @@ class sql_db
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @return string the created SQL statement in the previous set dialect
      */
-    function select_by_name(bool $has_id = true): string
+    function select_by_set_name(bool $has_id = true): string
     {
         return $this->select_by(array($this->name_field), $has_id);
     }

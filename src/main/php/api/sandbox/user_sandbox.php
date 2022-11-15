@@ -85,17 +85,19 @@ class user_sandbox_api
         $db_obj = null;
         if ($class == word_api::class) {
             $db_obj = new word($usr);
+            $db_obj->load_by_id($this->id, word::class);
         } elseif ($class == triple_api::class) {
             $db_obj = new triple($usr);
+            $db_obj->load_by_id($this->id, triple::class);
         } elseif ($class == value_api::class) {
             $db_obj = new value($usr);
+            $db_obj->load_by_id($this->id, value::class);
         } elseif ($class == formula_api::class) {
             $db_obj = new formula($usr);
+            $db_obj->load_by_id($this->id, formula::class);
         } else {
             log_err('API class "' . $class . '" not yet implemented');
         }
-        $db_obj->id = $this->id;
-        $db_obj->load();
         return $db_obj;
     }
 

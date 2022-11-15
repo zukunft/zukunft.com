@@ -42,23 +42,6 @@ class term_list
     public array $lst;
     public user $usr;  // the user object of the person for whom the phrase list is loaded, so to say the viewer
 
-    // object specific database and JSON object field names
-    const FLD_ID = 'term_id';
-    const FLD_NAME = 'term_name';
-    const FLD_USAGE = 'usage';
-
-    // list of the user specific database field names
-    const FLD_NAMES_USR = array(
-        sql_db::FLD_DESCRIPTION
-    );
-    // list of the user specific numeric database field names
-    const FLD_NAMES_NUM_USR = array(
-        self::FLD_USAGE,
-        user_sandbox::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
-    );
-
     /**
      * always set the user because a phrase list is always user specific
      * @param user $usr the user who requested to see this phrase list
@@ -116,8 +99,8 @@ class term_list
         $db_con->set_type(sql_db::VT_TERM);
         $db_con->set_name($qp->name);
 
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $db_con->set_usr_fields(term::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(term::FLD_NAMES_NUM_USR);
 
         return $qp;
     }
@@ -132,7 +115,8 @@ class term_list
     {
         $qp = $this->load_sql($db_con, 'ids');
         $db_con->add_par_in_int($ids->lst);
-        $qp->sql = $db_con->select_by_field(self::FLD_ID);
+        $db_con->set_order(term::FLD_ID, sql_db::ORDER_ASC);
+        $qp->sql = $db_con->select_by_field(term::FLD_ID);
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -149,7 +133,7 @@ class term_list
     {
         $qp = $this->load_sql($db_con, 'name_like');
         $db_con->add_name_pattern($pattern);
-        $qp->sql = $db_con->select_by_field(self::FLD_NAME);
+        $qp->sql = $db_con->select_by_field(term::FLD_NAME);
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -158,6 +142,7 @@ class term_list
     /**
      * load the terms that based on the given query parameters
      * @param sql_par $qp the query parameters created by the calling function
+     * @return bool true if at least one term has been loaded
      */
     private function load(sql_par $qp): bool
     {
@@ -220,7 +205,7 @@ class term_list
         }
         if ($trm_to_add != null) {
             log_debug($trm_to_add->dsp_id());
-            if ($trm_to_add->id() <> 0 or $trm_to_add->name != '') {
+            if ($trm_to_add->id() <> 0 or $trm_to_add->name() != '') {
                 if (count($this->id_lst()) > 0) {
                     if (!in_array($trm_to_add->id(), $this->id_lst())) {
                         $this->lst[] = $trm_to_add;
@@ -249,6 +234,14 @@ class term_list
     }
 
     /**
+     * return a list of the term list ids as sql compatible text
+     */
+    function ids_txt(): string
+    {
+        return dsp_array($this->id_lst());
+    }
+
+    /**
      * @return trm_ids with the sorted term ids where a triple has a negative id
      */
     function ids(): trm_ids
@@ -264,6 +257,60 @@ class term_list
         }
         asort($lst);
         return (new trm_ids($lst));
+    }
+
+    /**
+     * @return string with the best possible id for this element mainly used for debugging
+     */
+    function dsp_id(): string
+    {
+        $id = $this->ids_txt();
+        if ($this->name() <> '""') {
+            $result = $this->name() . ' (' . $id . ')';
+        } else {
+            $result = $id;
+        }
+        if (isset($this->usr)) {
+            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        }
+
+        return $result;
+    }
+
+    /**
+     * this function is called from dsp_id, so no call of another function is allowed
+     * @return string with all names of the list
+     */
+    function name(): string
+    {
+        global $debug;
+        $result = '';
+
+        if ($debug > 10) {
+            $result .= '"' . implode('","', $this->names()) . '"';
+        } else {
+            $result .= '"' . implode('","', array_slice($this->names(), 0, 7));
+            if (count($this->names()) > 8) {
+                $result .= ' ... total ' . dsp_count($this->lst);
+            }
+            $result .= '"';
+        }
+        return $result;
+    }
+
+    /**
+     * this function is called from dsp_id, so no call of another function is allowed
+     * @return array a list of the word names
+     */
+    function names(): array
+    {
+        $result = array();
+        foreach ($this->lst as $trm) {
+            if (isset($trm)) {
+                $result[] = $trm->name();
+            }
+        }
+        return $result;
     }
 
 }

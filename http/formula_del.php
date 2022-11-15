@@ -49,7 +49,7 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::FORMULA_DEL);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back'];
 
     // get the parameters
@@ -62,7 +62,7 @@ if ($usr->id > 0) {
         // init the formula object
         $frm = new formula($usr);
         $frm->id = $formula_id;
-        $frm->load();
+        $frm->load_obj_vars();
 
         if ($confirm == 1) {
             $frm->del();

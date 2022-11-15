@@ -108,7 +108,7 @@ class value_phrase_link
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con): sql_par
+    function load_sql_obj_vars(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
         $qp = new sql_par(self::class);
@@ -136,7 +136,7 @@ class value_phrase_link
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
 
         }
@@ -151,7 +151,7 @@ class value_phrase_link
 
         global $db_con;
 
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql_obj_vars($db_con);
 
         return $this->row_mapper($db_con->get1($qp));
     }
@@ -275,7 +275,7 @@ class value_phrase_link
     // only allowed if the value has not yet been used
     function save()
     {
-        log_debug("val_lnk->save link word id " . $this->phr->name . " to " . $this->val->id . " (link id " . $this->id . " for user " . $this->usr->id . ").");
+        log_debug("val_lnk->save link word id " . $this->phr->name() . " to " . $this->val->id . " (link id " . $this->id . " for user " . $this->usr->id . ").");
 
         global $db_con;
         $db_con->set_usr($this->usr->id);
@@ -284,7 +284,7 @@ class value_phrase_link
         if (!$this->used()) {
             // check if a new value is supposed to be added
             if ($this->id <= 0) {
-                log_debug("val_lnk->save check if word " . $this->phr->name . " is already linked to " . $this->val->id . ".");
+                log_debug("val_lnk->save check if word " . $this->phr->name() . " is already linked to " . $this->val->id . ".");
                 // check if a value_phrase_link with the same word is already in the database
                 $db_chk = new value_phrase_link($this->usr);
                 $db_chk->val = $this->val;
@@ -296,7 +296,7 @@ class value_phrase_link
             }
 
             if ($this->id <= 0) {
-                log_debug('val_lnk->save add new value_phrase_link of "' . $this->phr->name . '" to "' . $this->val->id . '"');
+                log_debug('val_lnk->save add new value_phrase_link of "' . $this->phr->name() . '" to "' . $this->val->id . '"');
                 // log the insert attempt first
                 $log = $this->log_add();
                 if ($log->id > 0) {

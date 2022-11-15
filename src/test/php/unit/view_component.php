@@ -47,19 +47,26 @@ class view_component_unit_tests
         $t->header('Unit tests of the view component class (src/main/php/model/view/view_component.php)');
 
 
+        $t->subheader('SQL user sandbox statement tests');
+
+        $cmp = new view_cmp($usr);
+        $t->assert_load_sql_id($db_con, $cmp);
+        $t->assert_load_sql_name($db_con, $cmp);
+
+
         $t->subheader('SQL statement tests');
 
         // sql to load the view components by id
         $cmp = new view_cmp($usr);
         $cmp->id = 2;
-        $t->assert_load_sql($db_con, $cmp);
+        //$t->assert_load_sql($db_con, $cmp);
         $t->assert_load_standard_sql($db_con, $cmp);
         $t->assert_user_config_sql($db_con, $cmp);
 
         // sql to load the view components by name
         $cmp = new view_cmp($usr);
-        $cmp->name = view::TN_ADD;
-        $t->assert_load_sql($db_con, $cmp);
+        $cmp->set_name(view::TN_ADD);
+        //$t->assert_load_sql($db_con, $cmp);
         $t->assert_load_standard_sql($db_con, $cmp);
 
 

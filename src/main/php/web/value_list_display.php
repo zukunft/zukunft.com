@@ -61,7 +61,7 @@ class value_list_dsp_old extends value_list
 
         // if parameters are fine display the table
         if ($result == '') {
-            log_debug('"' . $phr_row->name . '" for "' . $this->phr->name . '" and user "' . $this->usr->name . '"');
+            log_debug('"' . $phr_row->name . '" for "' . $this->phr->name() . '" and user "' . $this->usr->name . '"');
 
             // init the display vars
             $val_main = null; // the "main" value used as a sample for a new value

@@ -58,7 +58,7 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::VALUE_DEL);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back'];  // the page from which the value deletion has been called
 
     // get the parameters
@@ -70,7 +70,7 @@ if ($usr->id > 0) {
         // create the value object to have an object to update the parameters
         $val = new value($usr);
         $val->id = $val_id;
-        $val->load();
+        $val->load_obj_vars();
 
         if ($confirm == 1) {
             // actually delete the value (at least for this user)

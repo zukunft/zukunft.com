@@ -9,7 +9,7 @@ PREPARE formula_link_list_by_frm_id FROM
             IF(u.excluded       IS NULL, s.excluded,       u.excluded)      AS excluded,
             IF(u.share_type_id  IS NULL, s.share_type_id,  u.share_type_id) AS share_type_id,
             IF(u.protect_id     IS NULL, s.protect_id,     u.protect_id)    AS protect_id,
-            IF(ul.name_used     IS NULL, l.name_used,     ul.name_used)     AS name_used1,
+            IF(ul.phrase_name   IS NULL, l.phrase_name,   ul.phrase_name)   AS phrase_name1,
             IF(ul.description   IS NULL, l.description,   ul.description)   AS description1,
             IF(ul.`values`      IS NULL, l.`values`,      ul.`values`)      AS values1,
             IF(ul.excluded      IS NULL, l.excluded,      ul.excluded)      AS excluded1,

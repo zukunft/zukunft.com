@@ -156,7 +156,7 @@ class verb_list extends user_type_list
      * @param string $class the class name to be compatible with the user sandbox load_sql functions
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_VERB);
         $qp = new sql_par($class);
@@ -183,7 +183,7 @@ class verb_list extends user_type_list
     private function load_list(sql_db $db_con, string $db_type): array
     {
         $this->lst = [];
-        $qp = $this->load_sql($db_con, $db_type);
+        $qp = $this->load_sql_obj_vars($db_con, $db_type);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {

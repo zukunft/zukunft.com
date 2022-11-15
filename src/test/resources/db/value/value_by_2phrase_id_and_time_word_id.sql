@@ -10,10 +10,9 @@ PREPARE value_by_2phrase_id_and_time_word_id (int, int, int) AS
            CASE WHEN (u.excluded           IS NULL) THEN s.excluded           ELSE u.excluded           END  AS excluded,
            CASE WHEN (u.protect_id IS NULL) THEN s.protect_id ELSE u.protect_id END  AS protect_id,
            u.share_type_id
-
-    FROM values s
-             LEFT JOIN user_values u ON s.value_id = u.value_id AND u.user_id = $3
-    WHERE s.phrase_group_id IN (SELECT l1.phrase_group_id
-                              FROM phrase_group_triples l1
-                              WHERE l1.word_id = $1)
-      AND time_word_id = $2 ;
+      FROM values s
+ LEFT JOIN user_values u ON s.value_id = u.value_id AND u.user_id = $1
+     WHERE s.phrase_group_id IN (SELECT l1.phrase_group_id
+                                  FROM phrase_group_triples l1
+                                 WHERE l1.word_id = $2)
+       AND time_word_id = $3 ;

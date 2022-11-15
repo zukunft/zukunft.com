@@ -30,7 +30,7 @@
 
 */
 
-function run_system_unit_db_tests(testing $t)
+function run_system_unit_db_tests(testing $t): void
 {
 
     global $db_con;

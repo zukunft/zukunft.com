@@ -91,7 +91,7 @@ class user_type_list
      * database (dao) functions
      */
 
-    function load_sql(sql_db $db_con, string $db_type): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $db_type): sql_par
     {
         $db_con->set_type($db_type);
         $qp = new sql_par($db_type);
@@ -115,7 +115,7 @@ class user_type_list
     private function load_list(sql_db $db_con, string $db_type): array
     {
         $this->lst = [];
-        $qp = $this->load_sql($db_con, $db_type);
+        $qp = $this->load_sql_obj_vars($db_con, $db_type);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {

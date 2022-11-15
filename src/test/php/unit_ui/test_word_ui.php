@@ -34,7 +34,7 @@
 // start testing the system functionality 
 // --------------------------------------
 
-function run_word_ui_test(testing $t)
+function run_word_ui_test(testing $t): void
 {
 
     global $usr;
@@ -44,7 +44,7 @@ function run_word_ui_test(testing $t)
 
     // call the add word page and check if at least some keywords are returned
     $wrd = new word_dsp($usr);
-    $wrd->name = word::TN_READ;
+    $wrd->set_name(word::TN_READ);
     $wrd->load();
     $vrb_is = cl(db_cl::VERB, verb::IS_A);
     $wrd_type = $phrase_types->default_id();

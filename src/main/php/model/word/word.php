@@ -254,8 +254,6 @@ class word extends user_sandbox_description
     /**
      * define the settings for this word object
      * @param user $usr the user who requested to see this word
-     * @param int $id mainly for test creation the database id of the word
-     * @param string $name mainly for test creation the name of the word
      */
     function __construct(user $usr)
     {
@@ -388,7 +386,7 @@ class word extends user_sandbox_description
             array(sql_db::FLD_USER_ID)
         ));
 
-        return parent::load_standard_sql($db_con, self::class);
+        return parent::load_standard_sql($db_con, $class);
     }
 
     /**
@@ -401,12 +399,34 @@ class word extends user_sandbox_description
     {
         global $db_con;
         $qp = $this->load_standard_sql($db_con);
-        $result = parent::load_standard($qp, self::class);
+        $result = parent::load_standard($qp, $class);
 
         if ($result) {
             $result = $this->load_owner();
         }
         return $result;
+    }
+
+    /**
+     * create the common part of an SQL statement to retrieve the parameters of a word from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp->name .= $query_name;
+
+        $db_con->set_type(sql_db::TBL_WORD);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+
+        return $qp;
     }
 
     /**
@@ -416,9 +436,9 @@ class word extends user_sandbox_description
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($db_con, self::class);
+        $qp = parent::load_sql_obj_vars($db_con, $class);
         if ($this->id != 0) {
             $qp->name .= 'id';
         } elseif ($this->name != '') {
@@ -434,7 +454,7 @@ class word extends user_sandbox_description
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         $db_con->set_where_std($this->id, $this->name);
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -443,7 +463,7 @@ class word extends user_sandbox_description
     /**
      * load the missing word parameters from the database
      */
-    function load(): bool
+    function load_obj_vars(): bool
     {
         global $db_con;
         $result = false;
@@ -457,7 +477,7 @@ class word extends user_sandbox_description
             log_err("Either the database ID (" . $this->id . ") or the word name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
         } else {
 
-            $qp = $this->load_sql($db_con);
+            $qp = $this->load_sql_obj_vars($db_con);
 
             if ($db_con->get_where() <> '') {
                 // similar statement used in triple_list->load, check if changes should be repeated in triple_list.php
@@ -474,6 +494,16 @@ class word extends user_sandbox_description
             }
         }
         return $result;
+    }
+
+    function id_field(): string
+    {
+        return self::FLD_ID;
+    }
+
+    function name_field(): string
+    {
+        return self::FLD_NAME;
     }
 
     /**
@@ -493,7 +523,7 @@ class word extends user_sandbox_description
                 $this->name = $wrd_ids[0];
                 log_debug('from "' . $id_txt . '" got name ' . $this->name);
             }
-            $this->load();
+            $this->load_obj_vars();
         }
     }
 
@@ -521,7 +551,7 @@ class word extends user_sandbox_description
     {
         $result = null;
 
-        $this->load();
+        $this->load_obj_vars();
 
         if ($this->view != null) {
             $result = $this->view;
@@ -530,7 +560,7 @@ class word extends user_sandbox_description
                 log_debug('got id ' . $this->view_id);
                 $result = new view($this->usr);
                 $result->id = $this->view_id;
-                if ($result->load()) {
+                if ($result->load_obj_vars()) {
                     $this->view = $result;
                     log_debug('for ' . $this->dsp_id() . ' is ' . $result->dsp_id());
                 }
@@ -551,7 +581,7 @@ class word extends user_sandbox_description
         $qp = new sql_par(self::class);
         $qp->name = 'word_view_most_used';
         $db_con->set_name($qp->name);
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -620,15 +650,14 @@ class word extends user_sandbox_description
         $qp->name = 'word_formula_by_id';
         $db_con->set_name($qp->name);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_where_link(null, null, $this->id);
-        $qp->sql = $db_con->select_by_id();
+        $db_con->set_where_link_no_fld(null, null, $this->id);
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
         $db_row = $db_con->get1($qp);
         $frm = new formula($this->usr);
         if ($db_row !== false) {
             if ($db_row[formula::FLD_ID] > 0) {
-                $frm->id = $db_row[formula::FLD_ID];
-                $frm->load();
+                $frm->load_by_id($db_row[formula::FLD_ID], formula::class);
             }
         }
 
@@ -680,14 +709,15 @@ class word extends user_sandbox_description
             }
             if ($key == exp_obj::FLD_VIEW) {
                 $wrd_view = new view($this->usr);
-                $wrd_view->name = $value;
                 if ($do_save) {
-                    $wrd_view->load();
+                    $wrd_view->load_by_name($value, view::class);
                     if ($wrd_view->id == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     } else {
                         $this->view_id = $wrd_view->id;
                     }
+                } else {
+                    $wrd_view->set_name($value);
                 }
                 $this->view = $wrd_view;
             }
@@ -740,7 +770,7 @@ class word extends user_sandbox_description
         $result = new word_exp();
 
         if ($this->name <> '') {
-            $result->name = $this->name;
+            $result->name = $this->name();
         }
         if ($this->plural <> '') {
             $result->plural = $this->plural;
@@ -770,7 +800,7 @@ class word extends user_sandbox_description
             }
         }
         if (isset($this->view)) {
-            $result->view = $this->view->name;
+            $result->view = $this->view->name();
         }
         if (isset($this->ref_lst)) {
             foreach ($this->ref_lst as $ref) {
@@ -791,7 +821,7 @@ class word extends user_sandbox_description
     /**
      * return the name (just because all objects should have a name function)
      */
-    function name(): string
+    function name_dsp(): string
     {
         if ($this->excluded) {
             return '';
@@ -839,8 +869,7 @@ class word extends user_sandbox_description
             // not needed any more if wrd lst is created based on word_display elements
             // to review
             $row_phr_dsp = new word($this->usr);
-            $row_phr_dsp->id = $row_phr->id;
-            $row_phr_dsp->load();
+            $row_phr_dsp->load_by_id($row_phr->id, word::class);
             if ($row_nbr == 0) {
                 $result .= '  <tr>' . "\n";
                 $result .= '    <th>' . "\n";
@@ -1149,7 +1178,7 @@ class word extends user_sandbox_description
         global $phrase_types;
         $vrb_is = cl(db_cl::VERB, verb::IS_A);
         $wrd_type = $phrase_types->default_id(); // maybe base it on the other linked words
-        $wrd_add_title = "add a new " . $this->name;
+        $wrd_add_title = "add a new " . $this->name();
         $wrd_add_call = "/http/word_add.php?verb=" . $vrb_is . "&word=" . $this->id . "&type=" . $wrd_type . "&back=" . $back . "";
         return (new button($wrd_add_title, $wrd_add_call))->add();
     }
@@ -1334,7 +1363,7 @@ class word extends user_sandbox_description
         if (count($is_phr_lst->lst) >= 1) {
             $result = $is_phr_lst->lst[0];
         }
-        log_debug($this->dsp_id() . ' is a ' . $result->name);
+        log_debug($this->dsp_id() . ' is a ' . $result->name());
         return $result;
     }
 
@@ -1439,7 +1468,7 @@ class word extends user_sandbox_description
             $result->id = intval($key_result);
         }
         if ($result->id > 0) {
-            $result->load();
+            $result->load_obj_vars();
         }
         return $result;
     }
@@ -1463,7 +1492,7 @@ class word extends user_sandbox_description
             $result->id = intval($key_result);
         }
         if ($result->id > 0) {
-            $result->load();
+            $result->load_obj_vars();
         }
         return $result;
     }
@@ -1608,7 +1637,7 @@ class word extends user_sandbox_description
     {
         $phr = new phrase($this->usr);
         $phr->id = $this->id;
-        $phr->name = $this->name;
+        $phr->set_name($this->name, word::class);
         $phr->obj = $this;
         log_debug($this->dsp_id());
         return $phr;
@@ -1620,8 +1649,8 @@ class word extends user_sandbox_description
     function term(): term
     {
         $trm = new term($this->usr);
-        $trm->set_obj_id($this->id, self::class);
-        $trm->name = $this->name;
+        $trm->set_id_from_obj($this->id, self::class);
+        $trm->set_name($this->name);
         $trm->obj = $this;
         log_debug($this->dsp_id());
         return $trm;
@@ -1789,7 +1818,7 @@ class word extends user_sandbox_description
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::ALL_FLD_NAMES);
         $db_con->set_where_std($this->id);
-        $qp->sql = $db_con->select_by_id();
+        $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
         $usr_wrd_cfg = $db_con->get1($qp);
         if ($usr_wrd_cfg != null) {
@@ -1815,7 +1844,7 @@ class word extends user_sandbox_description
         log_debug($this->dsp_id() . ' for user ' . $this->usr->name);
         $dsp_new = new view_dsp_old($this->usr);
         $dsp_new->id = $view_id;
-        $dsp_new->load();
+        $dsp_new->load_obj_vars();
 
         $log = new user_log_named;
         $log->usr = $this->usr;
@@ -1825,14 +1854,14 @@ class word extends user_sandbox_description
         if ($this->view_id > 0) {
             $dsp_old = new view_dsp_old($this->usr);
             $dsp_old->id = $this->view_id;
-            $dsp_old->load();
-            $log->old_value = $dsp_old->name;
+            $dsp_old->load_obj_vars();
+            $log->old_value = $dsp_old->name();
             $log->old_id = $dsp_old->id;
         } else {
             $log->old_value = '';
             $log->old_id = 0;
         }
-        $log->new_value = $dsp_new->name;
+        $log->new_value = $dsp_new->name();
         $log->new_id = $dsp_new->id;
         $log->row_id = $this->id;
         $log->add();

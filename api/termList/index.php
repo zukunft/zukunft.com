@@ -42,7 +42,8 @@ $db_con = prg_start("api/termList", "", false);
 
 // get the parameters
 $trm_ids = $_GET['ids'] ?? 0;
-$pattern = $_GET['pattern'] ?? '';
+//$pattern = $_GET['pattern'] ?? '';
+$pattern = '';
 
 $msg = '';
 $result = new term_list_api(); // reset the html code var

@@ -138,7 +138,7 @@ class value_time_series extends user_sandbox_display
         $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
         $db_con->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(sql_db::FLD_USER_ID)));
 
-        return parent::load_standard_sql($db_con, self::class);
+        return parent::load_standard_sql($db_con, $class);
     }
 
     /**
@@ -151,7 +151,7 @@ class value_time_series extends user_sandbox_display
     {
         global $db_con;
         $qp = $this->load_standard_sql($db_con);
-        return parent::load_standard($qp, self::class);
+        return parent::load_standard($qp, $class);
     }
 
     /**
@@ -160,7 +160,7 @@ class value_time_series extends user_sandbox_display
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
         $qp = new sql_par(self::class);
@@ -184,7 +184,7 @@ class value_time_series extends user_sandbox_display
             $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
             $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
             $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
         }
 
@@ -197,7 +197,7 @@ class value_time_series extends user_sandbox_display
      *
      * TODO load the related time series data
      */
-    function load(): bool
+    function load_obj_vars(): bool
     {
         global $db_con;
         $result = true;
@@ -208,7 +208,7 @@ class value_time_series extends user_sandbox_display
         } else {
             log_debug(self::class . '->load');
 
-            $qp = $this->load_sql($db_con);
+            $qp = $this->load_sql_obj_vars($db_con);
             $db_val = $db_con->get1($qp);
             $result = $this->row_mapper($db_val);
         }
@@ -281,7 +281,7 @@ class value_time_series extends user_sandbox_display
             // check if a time series for the phrase group is already in the database
             $db_chk = new value_time_series($this->usr);
             $db_chk->grp = $this->grp;
-            $db_chk->load();
+            $db_chk->load_obj_vars();
             if ($db_chk->id > 0) {
                 $this->id = $db_chk->id;
             }
@@ -297,7 +297,7 @@ class value_time_series extends user_sandbox_display
             // done first, because it needs to be done for user and general values
             $db_rec = new value_time_series($this->usr);
             $db_rec->id = $this->id;
-            $db_rec->load();
+            $db_rec->load_obj_vars();
             $std_rec = new value_time_series($this->usr); // user must also be set to allow to take the ownership
             $std_rec->id = $this->id;
             $std_rec->load_standard();

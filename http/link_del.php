@@ -51,7 +51,7 @@ if ($usr->id > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::LINK_DEL);
-    $dsp->load();
+    $dsp->load_obj_vars();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // get the parameters
@@ -64,7 +64,7 @@ if ($usr->id > 0) {
         // create the source object to have an object to update the parameters
         $lnk = new triple($usr);
         $lnk->id = $link_id;
-        $lnk->load();
+        $lnk->load_obj_vars();
 
         if ($confirm == 1) {
             $lnk->del();

@@ -99,9 +99,7 @@ class triple_list
             phrase::FLD_ID
         );
         $db_con->set_join_usr_num_fields(
-            array_merge(
-                phrase::FLD_NAMES_NUM_USR,
-                user_sandbox::FLD_NAMES_NUM_USR),
+            phrase::FLD_NAMES_NUM_USR,
             sql_db::TBL_PHRASE,
             triple::FLD_FROM,
             phrase::FLD_ID,
@@ -120,9 +118,7 @@ class triple_list
             phrase::FLD_ID
         );
         $db_con->set_join_usr_num_fields(
-            array_merge(
-                phrase::FLD_NAMES_NUM_USR,
-                user_sandbox::FLD_NAMES_NUM_USR),
+            phrase::FLD_NAMES_NUM_USR,
             sql_db::TBL_PHRASE,
             triple::FLD_TO,
             phrase::FLD_ID,
@@ -521,29 +517,29 @@ class triple_list
                             // fill the "from" word
                             // if the source word is set, the query result probably does not contain the values of the source word
                             if (isset($this->wrd)) {
-                                log_debug('triple_list->load ... use "' . $this->wrd->name . '" as from');
+                                log_debug('triple_list->load ... use "' . $this->wrd->name() . '" as from');
                                 if ($this->wrd != null) {
                                     $new_link->from = $this->wrd->phrase();
-                                    $new_link->from_name = $this->wrd->name;
+                                    $new_link->from_name = $this->wrd->name();
                                 }
                             } else {
                                 if ($db_lnk['word_id1'] > 0) {
                                     $new_word = new word($this->usr);
                                     $new_word->id = $db_lnk['word_id1'];
                                     $new_word->owner_id = $db_lnk['user_id1'];
-                                    $new_word->name = $db_lnk['word_name1'];
+                                    $new_word->set_name($db_lnk['word_name1']);
                                     $new_word->plural = $db_lnk['plural1'];
                                     $new_word->description = $db_lnk['description1'];
                                     $new_word->type_id = $db_lnk['word_type_id1'];
                                     //$new_word->row_mapper($db_lnk);
                                     $new_word->link_type_id = $db_lnk[verb::FLD_ID];
                                     $new_link->from = $new_word->phrase();
-                                    $new_link->from_name = $new_word->name;
+                                    $new_link->from_name = $new_word->name();
                                 } elseif ($db_lnk['word_id1'] < 0) {
                                     $new_word = new triple($this->usr);
                                     $new_word->id = $db_lnk['word_id1'] * -1; // TODO check if not word_id is correct
                                     $new_link->from = $new_word->phrase();
-                                    $new_link->from_name = $new_word->name;
+                                    $new_link->from_name = $new_word->name();
                                 } else {
                                     log_warning('triple_list->load word missing');
                                 }
@@ -553,20 +549,20 @@ class triple_list
                                 $new_word = new word($this->usr);
                                 $new_word->id = $db_lnk['word_id2'];
                                 $new_word->owner_id = $db_lnk['user_id2'];
-                                $new_word->name = $db_lnk['word_name2'];
+                                $new_word->set_name($db_lnk['word_name2']);
                                 $new_word->plural = $db_lnk['plural2'];
                                 $new_word->description = $db_lnk['description2'];
                                 $new_word->type_id = $db_lnk['word_type_id2'];
                                 $new_word->link_type_id = $db_lnk[verb::FLD_ID];
                                 //$added_wrd2_lst->add($new_word);
-                                log_debug('triple_list->load -> added word "' . $new_word->name . '" for verb (' . $db_lnk[verb::FLD_ID] . ')');
+                                log_debug('triple_list->load -> added word "' . $new_word->name() . '" for verb (' . $db_lnk[verb::FLD_ID] . ')');
                                 $new_link->to = $new_word->phrase();
-                                $new_link->to_name = $new_word->name;
+                                $new_link->to_name = $new_word->name();
                             } elseif ($db_lnk['word_id2'] < 0) {
                                 $new_word = new triple($this->usr);
                                 $new_word->id = $db_lnk['word_id2'] * -1;
                                 $new_link->to = $new_word->phrase();
-                                $new_link->to_name = $new_word->name;
+                                $new_link->to_name = $new_word->name();
                             }
                             $this->lst[] = $new_link;
                         }
@@ -623,8 +619,8 @@ class triple_list
     {
         $result = array();
         foreach ($this->lst as $lnk) {
-            if ($lnk->name <> '') {
-                $result[] = $lnk->name;
+            if ($lnk->name() <> '') {
+                $result[] = $lnk->name();
             }
         }
         return $result;
@@ -641,7 +637,7 @@ class triple_list
             log_err("The user id must be set to load a graph.", "triple_list->load");
         } else {
             if (isset($this->wrd)) {
-                log_debug('graph->display for ' . $this->wrd->name . ' ' . $this->direction . ' and user ' . $this->usr->name . ' called from ' . $back);
+                log_debug('graph->display for ' . $this->wrd->name() . ' ' . $this->direction . ' and user ' . $this->usr->name . ' called from ' . $back);
             }
             $prev_verb_id = 0;
 
@@ -682,7 +678,7 @@ class triple_list
                                 $result .= " " . $lnk->verb->plural;
                             }
                         } else {
-                            $result .= $this->wrd->name;
+                            $result .= $this->wrd->name();
                             if ($this->direction == word_select_direction::DOWN) {
                                 $result .= " " . $lnk->verb->reverse;
                             } else {
@@ -697,7 +693,7 @@ class triple_list
                     if ($lnk->from == null) {
                         log_warning('graph->display from is missing');
                     } else {
-                        log_debug('word->dsp_graph display word ' . $lnk->from->name);
+                        log_debug('word->dsp_graph display word ' . $lnk->from->name());
                         $result .= '  <tr>' . "\n";
                         if ($lnk->to != null) {
                             $dsp_obj = $lnk->to->get_dsp_obj();

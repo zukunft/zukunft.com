@@ -97,9 +97,7 @@ class formula_link_list
             phrase::FLD_ID
         );
         $db_con->set_join_usr_num_fields(
-            array_merge(
-                phrase::FLD_NAMES_NUM_USR,
-                user_sandbox::FLD_NAMES_NUM_USR),
+            phrase::FLD_NAMES_NUM_USR,
             sql_db::TBL_PHRASE,
             phrase::FLD_ID,
             phrase::FLD_ID,
