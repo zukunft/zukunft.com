@@ -44,7 +44,9 @@
   
 */
 
+use api\user_api;
 use export\exp_obj;
+use html\user_dsp;
 use html\word_dsp;
 
 class user
@@ -199,9 +201,42 @@ class user
      */
 
     /**
+     * @return user_api the user frontend api object with all fields filled
+     */
+    function api_obj(): user_api
+    {
+        $api_obj = new user_api();
+        return $this->api_obj_fields($api_obj);
+    }
+
+    /**
+     * @return user_dsp the user frontend display object with all fields filled
+     */
+    function dsp_obj(): user_dsp
+    {
+        $api_obj = new user_dsp();
+        return $this->api_obj_fields($api_obj);
+    }
+
+    /**
+     * @return user_api|user_dsp the user api or display object with all fields filled
+     */
+    private function api_obj_fields(user_api|user_dsp $api_obj): user_api|user_dsp
+    {
+        $api_obj->id = $this->id;
+        $api_obj->name = $this->name;
+        $api_obj->description = $this->description;
+        $api_obj->profile = $this->profile;
+        $api_obj->email = $this->email;
+        $api_obj->first_name = $this->first_name;
+        $api_obj->last_name = $this->last_name;
+        return $api_obj;
+    }
+
+    /**
      * @return user_dsp_old the user object with the display interface functions
      */
-    function dsp_obj(): user_dsp_old
+    function dsp_obj_old(): user_dsp_old
     {
         $dsp_obj = new user_dsp_old();
 

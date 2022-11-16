@@ -54,7 +54,8 @@ $undo_src = $_GET['undo_source'];
 // load the session user parameters
 $usr = new user;
 $result .= $usr->get();
-$dsp_usr = $usr->dsp_user();
+$dsp_usr = $usr->dsp_obj();
+$dsp_usr_old = $usr->dsp_user();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
@@ -127,7 +128,7 @@ if ($usr->id > 0) {
     }
 
     $result .= $dsp->dsp_navbar($back);
-    $result .= $dsp_usr->dsp_edit($back);
+    $result .= $dsp_usr->form_edit($back);
 
     // allow to import data
     if ($usr->can_import()) {
@@ -146,7 +147,7 @@ if ($usr->id > 0) {
     }
 
     // display the user sandbox if there is something in
-    $sandbox = $dsp_usr->dsp_sandbox($back);
+    $sandbox = $dsp_usr_old->dsp_sandbox($back);
     if (trim($sandbox) <> "") {
         $result .= dsp_text_h2("Your changes, which are not standard");
         $result .= $sandbox;
@@ -154,7 +155,7 @@ if ($usr->id > 0) {
     }
 
     // display the user changes 
-    $changes = $dsp_usr->dsp_changes(0, SQL_ROW_LIMIT, 1, $back);
+    $changes = $dsp_usr_old->dsp_changes(0, SQL_ROW_LIMIT, 1, $back);
     if (trim($changes) <> "") {
         $result .= dsp_text_h2("Your latest changes");
         $result .= $changes;
@@ -162,7 +163,7 @@ if ($usr->id > 0) {
     }
 
     // display the program issues that the user has found if there are some
-    $errors = $dsp_usr->dsp_errors("", SQL_ROW_LIMIT, 1, $back);
+    $errors = $dsp_usr_old->dsp_errors("", SQL_ROW_LIMIT, 1, $back);
     if (trim($errors) <> "") {
         $result .= dsp_text_h2("Program issues that you found, that have not yet been solved.");
         $result .= $errors;
@@ -171,7 +172,7 @@ if ($usr->id > 0) {
 
     // display all program issues if the user is an admin
     if ($usr->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
-        $errors_all = $dsp_usr->dsp_errors("other", SQL_ROW_LIMIT, 1, $back);
+        $errors_all = $dsp_usr_old->dsp_errors("other", SQL_ROW_LIMIT, 1, $back);
         if (trim($errors_all) <> "") {
             $result .= dsp_text_h2("Program issues that other user have found, that have not yet been solved.");
             $result .= $errors_all;

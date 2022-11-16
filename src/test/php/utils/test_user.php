@@ -44,7 +44,7 @@ function run_user_test(testing $t)
     // test the user display after the word changes to have a sample case
     $t->header('Test the user display class (classes/user_display.php)');
 
-    $result = $usr->dsp_obj()->dsp_edit($back);
+    $result = $usr->dsp_obj_old()->dsp_edit($back);
     $target = user::NAME_SYSTEM_TEST;
     $t->dsp_contains(', user_display->dsp_edit', $target, $result);
 
