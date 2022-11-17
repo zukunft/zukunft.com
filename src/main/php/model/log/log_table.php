@@ -2,7 +2,7 @@
 
 /*
 
-  model/change/log_table.php - to link coded functionality to a change log table
+  model/log/log_table.php - to link coded functionality to a log log table
   --------------------------
   
   This file is part of zukunft.com - calc with words
@@ -33,7 +33,7 @@ global $change_log_tables;
 
 class change_log_table extends user_type_list
 {
-    // list of change log table with linked functionalities
+    // list of log log table with linked functionalities
     const USR = "users";
     const VALUE = "values";
     const VALUE_USR = "user_values";

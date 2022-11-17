@@ -2,8 +2,8 @@
 
 /*
 
-    api\user.php - the simple object to export a user json for the frontend API
-    ------------
+    model/log/error_log.php - get the log of the system errors from the database
+    -----------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -26,41 +26,16 @@
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-
+  
 */
 
-namespace api;
-
-class user_api
+class error_log
 {
+    public int $id;                 // the database id of the system error
+    public datetime $change_timel;  // the date and time of the log entry
+    public user $usr;               // the user that has caused the error
+    public string $description;     //
 
-    // field names used for JSON creation
-    public string $id;
-    public string $name;
-    public ?string $description;
-    public ?string $profile;
-    public ?string $email;
-    public ?string $first_name;
-    public ?string $last_name;
 
-    function __construct()
-    {
-        $this->id = 0;
-        $this->name = '';
-        $this->description = null;
-        $this->profile = null;
-        $this->email = null;
-        $this->first_name = null;
-        $this->last_name = null;
-    }
-
-    /**
-     * just used for unit testing
-     * @return string the frontend API JSON string
-     */
-    function get_json(): string
-    {
-        return json_encode($this);
-    }
 
 }

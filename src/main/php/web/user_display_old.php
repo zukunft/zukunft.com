@@ -32,29 +32,6 @@
 class user_dsp_old extends user
 {
 
-    // display a form with the user parameters such as name or email
-    // add back here ???
-    function dsp_edit($back): string
-    {
-        log_debug('user_dsp->dsp_edit(u' . $this->id . ')');
-        $result = ''; // reset the html code var
-
-        // display the user fields using a table and not using px in css to be independent from any screen solution
-        $result .= dsp_text_h2('User "' . $this->name . '"', '');
-        $result .= dsp_form_start("user");
-        $result .= dsp_tbl_start();
-        $result .= '<input type="hidden" name="id"    value="' . $this->id . '">';
-        $result .= '<tr><td>username  </td><td> <input type="text"   name="name"  value="' . $this->name . '"></td></tr>';
-        $result .= '<tr><td>email     </td><td> <input type="text"   name="email" value="' . $this->email . '"></td></tr>';
-        $result .= '<tr><td>first name</td><td> <input type="text"   name="fname" value="' . $this->first_name . '"></td></tr>';
-        $result .= '<tr><td>last name </td><td> <input type="text"   name="lname" value="' . $this->last_name . '"></td></tr>';
-        $result .= dsp_tbl_end();
-        $result .= dsp_form_end('', $back);
-
-        log_debug('user_dsp->dsp_edit -> done');
-        return $result;
-    }
-
     /**
      * display the latest changes by the user
      */

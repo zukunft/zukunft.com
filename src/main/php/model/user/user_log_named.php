@@ -32,6 +32,10 @@
 class user_log_named extends user_log
 {
 
+    /*
+      * database link
+      */
+
     // user log database and JSON object field names for named user sandbox objects
     const FLD_FIELD_ID = 'change_field_id';
     const FLD_ROW_ID = 'row_id';
@@ -52,13 +56,21 @@ class user_log_named extends user_log
         self::FLD_NEW_ID
     );
 
-    // additional
+    /*
+     * object vars
+     */
+
+    // additional to user_log
     public ?string $old_value = null;      // the field value before the user change
     public ?int $old_id = null;            // the reference id before the user change e.g. for fields using a sub table such as status
     public ?string $new_value = null;      // the field value after the user change
     public ?int $new_id = null;            // the reference id after the user change e.g. for fields using a sub table such as status
     public ?string $std_value = null;  // the standard field value for all users that does not have changed it
     public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
+
+    /*
+     * construct and map
+     */
 
     /**
      * @return bool true if a row is found
@@ -81,7 +93,17 @@ class user_log_named extends user_log
         }
     }
 
-    function load_sql(sql_db $db_con, int $field_id, int $row_id): sql_par
+    /*
+     * loading
+     */
+
+    /**
+     * create the common part of an SQL statement to retrieve the parameters of the change log
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'field_row';
@@ -90,8 +112,43 @@ class user_log_named extends user_log
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_join_fields(array(user::FLD_NAME),sql_db::TBL_USER);
-        $db_con->set_where_text($db_con->where_par(array(self::FLD_FIELD_ID, self::FLD_ROW_ID), array($field_id, $row_id)));
         $db_con->set_order(self::FLD_ID, sql_db::ORDER_DESC);
+
+        return $qp;
+    }
+
+    /**
+     * create the SQL statement to retrieve the parameters of the change log by field and row id
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $field_id the database id of the database field (and table) of the changes that the user wants to see
+     * @param int $row_id the database id of the database row of the changes that the user wants to see
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    public function load_sql_by_field_row(sql_db $db_con, int $field_id, int $row_id): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        $db_con->set_where_text($db_con->where_par(array(self::FLD_FIELD_ID, self::FLD_ROW_ID), array($field_id, $row_id)));
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create the SQL statement to retrieve the parameters of the change log by name
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    public function load_by_user_sql(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $qp->name .= 'user';
+        $db_con->set_type(sql_db::TBL_CHANGE);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(self::FLD_NAMES);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
@@ -113,7 +170,7 @@ class user_log_named extends user_log
         parent::set_field();
 
         $db_type = $db_con->get_type();
-        $qp = $this->load_sql($db_con, $this->field_id, $this->row_id);
+        $qp = $this->load_sql_by_field_row($db_con, $this->field_id, $this->row_id);
         $db_row = $db_con->get1($qp);
         $this->row_mapper($db_row);
         if ($db_row) {
