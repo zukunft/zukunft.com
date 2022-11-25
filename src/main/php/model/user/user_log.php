@@ -63,6 +63,7 @@ class user_log
     // user log database and JSON object field names
     const FLD_ID = 'change_id';
     const FLD_CHANGE_TIME = 'change_time';
+    const FLD_ACTION = 'change_action_id';
 
     /*
      * object vars

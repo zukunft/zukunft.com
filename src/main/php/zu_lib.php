@@ -250,6 +250,7 @@ include_once $path_php . 'model/user/user_list.php';
 include_once $path_php . 'model/user/user_log.php';
 include_once $path_php . 'model/user/user_log_named.php';
 include_once $path_php . 'model/user/user_log_link.php';
+include_once $path_php . 'model/user/user_log_field.php';
 include_once $path_php . 'model/sandbox/user_sandbox.php';
 include_once $path_php . 'model/sandbox/user_sandbox_named.php';
 include_once $path_php . 'model/sandbox/user_sandbox_value.php';

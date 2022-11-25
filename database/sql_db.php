@@ -151,6 +151,7 @@ class sql_db
 
     // the parameter types for prepared queries independent of the SQL dialect
     const PAR_INT = 'int';
+    const PAR_INT_OR = 'int_or';
     const PAR_INT_NOT = 'int_not';
     const PAR_INT_LIST = 'int_list';
     const PAR_TEXT = 'text';
@@ -2172,7 +2173,7 @@ class sql_db
      * set the user sandbox name where statement
      * the type must have been already set e.g. to 'source'
      */
-    function set_where_name($name = '', string $name_field): string
+    function set_where_name(string $name = '', string $name_field = ''): string
     {
         $result = '';
 

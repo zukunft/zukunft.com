@@ -60,6 +60,7 @@ class user_log_unit_tests
         $t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));
 
         // sql to load a log entry by field and row id
+        // TODO check that user specific changes are included in the list of changes
         $log = new user_log_named();
         $log->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
@@ -82,6 +83,14 @@ class user_log_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $qp = $log->load_sql($db_con, 1);
         $t->assert_qp($qp, $db_con->db_type);
+
+        // compare the new and the old query creation
+        $log = new user_log_named();
+        $log->usr = $usr;
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $log->load_sql_by_field_row($db_con, 1, 2);
+        $sql_expected = 'PREPARE user_log_named_by_field_row (int,int) AS ' . $log->load_sql_old(word::class, )->sql;
+        $t->assert_sql('word', $qp->sql, $sql_expected);
 
     }
 

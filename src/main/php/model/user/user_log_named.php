@@ -47,9 +47,10 @@ class user_log_named extends user_log
     // all database field names
     const FLD_NAMES = array(
         user::FLD_ID,
+        self::FLD_CHANGE_TIME,
+        self::FLD_ACTION,
         self::FLD_FIELD_ID,
         self::FLD_ROW_ID,
-        self::FLD_CHANGE_TIME,
         self::FLD_OLD_VALUE,
         self::FLD_OLD_ID,
         self::FLD_NEW_VALUE,
@@ -111,8 +112,9 @@ class user_log_named extends user_log
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_join_fields(array(user::FLD_NAME),sql_db::TBL_USER);
-        $db_con->set_order(self::FLD_ID, sql_db::ORDER_DESC);
+        $db_con->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
+        $db_con->set_join_fields(array(user_log_field::FLD_TABLE), sql_db::TBL_CHANGE_FIELD);
+        $db_con->set_order(self::FLD_CHANGE_TIME, sql_db::ORDER_DESC);
 
         return $qp;
     }
@@ -128,8 +130,15 @@ class user_log_named extends user_log
     public function load_sql_by_field_row(sql_db $db_con, int $field_id, int $row_id): sql_par
     {
         $qp = $this->load_sql($db_con);
-        $db_con->set_where_text($db_con->where_par(array(self::FLD_FIELD_ID, self::FLD_ROW_ID), array($field_id, $row_id)));
-        $qp->sql = $db_con->select_by_set_id();
+        $db_con->set_page();
+        $db_con->add_par(sql_db::PAR_INT, $field_id);
+        $db_con->add_par(sql_db::PAR_INT, $row_id);
+        $qp->sql = $db_con->select_by_field_list(
+            array(
+                user_log_named::FLD_FIELD_ID,
+                user_log_named::FLD_ROW_ID,
+                user_sandbox::FLD_USER
+            ));
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -152,6 +161,81 @@ class user_log_named extends user_log
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
+        return $qp;
+    }
+
+    function load_sql_old(string $type): sql_par
+    {
+        global $db_con;
+        $result = ''; // reset the html code var
+
+        $qp = new sql_par(self::class);
+
+        // set default values
+        if (!isset($this->size)) {
+            $this->size = SQL_ROW_LIMIT;
+        } else {
+            if ($this->size <= 0) {
+                $this->size = SQL_ROW_LIMIT;
+            }
+        }
+
+        // select the change table to use
+        $sql_where = '';
+        $sql_row = '';
+        $sql_user = '';
+        // the setting for most cases
+        $sql_row = ' s.row_id  = $2 ';
+        // the class specific settings
+        if ($type == user::class) {
+            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD) . " 
+                   OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . ") AND ";
+            $sql_row = '';
+            $sql_user = 's.user_id = u.user_id
+                AND s.user_id = ' . $this->usr->id . ' ';
+        } elseif ($type == word::class) {
+            //$db_con->add_par(sql_db::PAR_INT, cl(db_cl::LOG_TABLE, change_log_table::WORD));
+            //$db_con->add_par(sql_db::PAR_INT, cl(db_cl::LOG_TABLE, change_log_table::WORD_USR));
+            $sql_where = " s.change_field_id = $1 ";
+        } elseif ($type == value::class) {
+            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VALUE) . " 
+                     OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VALUE_USR) . ") AND ";
+        } elseif ($type == formula::class) {
+            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::FORMULA) . " 
+                     OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::FORMULA_USR) . ") AND ";
+        } elseif ($type == view::class) {
+            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW) . " 
+                     OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_USR) . ") AND ";
+        } elseif ($type == view_cmp::class) {
+            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_COMPONENT) . " 
+                     OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_COMPONENT_USR) . ") AND ";
+        }
+
+        if ($sql_where == '') {
+            log_err("Internal error: object not defined for showing the changes.", "user_log_display->dsp_hist");
+        } else {
+            // get word changes by the user that are not standard
+            $qp->sql = "SELECT s.change_id, 
+                     s.user_id, 
+                     s.change_time, 
+                     s.change_action_id, 
+                     s.change_field_id, 
+                     s.row_id, 
+                     s.old_value, 
+                     s.old_id, 
+                     s.new_value,
+                     s.new_id, 
+                     l.user_name,
+                     l2.table_id
+                FROM changes s 
+           LEFT JOIN users l ON s.user_id = l.user_id
+           LEFT JOIN change_fields l2 ON s.change_field_id = l2.change_field_id
+               WHERE " . $sql_where . " AND " . $sql_row . " 
+            ORDER BY s.change_time DESC
+               LIMIT " . $this->size . ";";
+            log_debug('user_log_display->dsp_hist ' . $qp->sql);
+            $db_con->usr_id = $this->usr->id;
+        }
         return $qp;
     }
 
@@ -195,10 +279,18 @@ class user_log_named extends user_log
         return $result;
     }
 
-    // log a user change of a word, value or formula
+    /**
+     * log a user change of a word, value or formula
+     * @return true if the change has been logged successfully
+     */
     function add(): bool
     {
-        log_debug('user_log->add do "' . $this->action . '" in "' . $this->table . ',' . $this->field . '" log change from "' . $this->old_value . '" (id ' . $this->old_id . ') to "' . $this->new_value . '" (id ' . $this->new_id . ') in row ' . $this->row_id);
+        log_debug(' do "' . $this->action
+            . '" in "' . $this->table
+            . ',' . $this->field
+            . '" log change from "'
+            . $this->old_value . '" (id ' . $this->old_id . ')' .
+            ' to "' . $this->new_value . '" (id ' . $this->new_id . ') in row ' . $this->row_id);
 
         global $db_con;
 
