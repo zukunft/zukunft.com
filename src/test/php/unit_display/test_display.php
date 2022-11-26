@@ -60,7 +60,7 @@ function run_display_test(testing $t): void
     $cmp->set_id(1);
     $cmp->set_name(view::TN_READ_NESN_2016);
     $result = $cmp->dsp_obj()->html();
-    $target = ' ' . view::TN_READ_NESN_2016;
+    $target = view::TN_READ_NESN_2016;
     $t->dsp('view_component_dsp->text', $target, $result);
 
 

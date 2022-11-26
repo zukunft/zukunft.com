@@ -230,7 +230,7 @@ class html_base
                  string $par_name = '',
                  string $id_ext = ''): string
     {
-        $result = api::PATH . $obj_name . api::EXT;
+        $result = api::PATH_FIXED . $obj_name . api::EXT;
         if ($id <> 0) {
             if ($par_name != '') {
                 $result .= '?' . $par_name . '=' . $id;
@@ -569,31 +569,49 @@ class html_base
     }
 
     /**
+     * converts object class name to an edit php script name
+     *
+     */
+    public function edit_url(string $class): string
+    {
+        return $class . api::UPDATE . api::EXT;
+    }
+
+    /**
      * display a list that can be sorted using the fixed field "order_nbr"
      * $sql_result - list of the query results
+     *
+     * @param array $item_lst a list of objects that have at least an id and a name
      */
-    function list_sort($sql_result, $id_field, $text_field, $script_name, $script_parameter)
+    function list_sort(
+        array  $item_lst,
+        string $class,
+        string $script_parameter,
+        string $back = ''): string
     {
         $result = '';
 
         $row_nbr = 0;
-        $num_rows = mysqli_num_rows($sql_result);
-        while ($entry = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
+        $num_rows = count($item_lst);
+        foreach ($item_lst as $key =>  $item) {
             // list of all possible view entries
             $row_nbr = $row_nbr + 1;
-            $edit_script = zu_id_to_edit($id_field);
-            $result .= '<a href="/http/' . $edit_script . '?id=' . $entry[$id_field] . '&back=' . $script_parameter . '">' . $entry[$text_field] . '</a> ';
+            $edit_script = $this->edit_url($class);
+            $url = $this->url($edit_script, $key, $back);
+            $result .= $this->ref($url, $item);
             if ($row_nbr > 1) {
-                $result .= '<a href="/http/' . $script_name . '?id=' . $script_parameter . '&move_up=' . $entry[$id_field] . '">up</a>';
+                $url = $this->url($edit_script, $key, $back, '&move_up=' . $key);
+                $result .= $this->ref($url, 'up');
             }
             if ($row_nbr > 1 and $row_nbr < $num_rows) {
                 $result .= '/';
             }
             if ($row_nbr < $num_rows) {
-                $result .= '<a href="/http/' . $script_name . '?id=' . $script_parameter . '&move_down=' . $entry[$id_field] . '">down</a>';
+                $url = $this->url($edit_script, $key, $back, '&move_down=' . $key);
+                $result .= $this->ref($url, 'down');
             }
             $result .= ' ';
-            $result .= \html\btn_del('Delete ' . $text_field, $script_name . '?id=' . $script_parameter . '&del=' . $entry[$id_field]);
+            $result .= \html\btn_del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
             $result .= '<br>';
         }
 
@@ -608,22 +626,23 @@ class html_base
      * similar to the table function, which is used for values and formula results
      *
      * @param array $item_lst a list of objects that have at least an id and a name
-     * @param string the class name of the array entries
+     * @param string $class the object that is requested e.g. a view
+     * @param string $back the target for the back / ctrl-z function
      * @returns string with the html code to display the list
      */
-    function list(array $item_lst, string $item_type, string $back = ''): string
+    function list(array $item_lst, string $class, string $back = ''): string
     {
         $result = "";
 
         foreach ($item_lst as $item) {
             if ($item->id != null) {
-                $url = $this->url($item_type . api::UPDATE, $item->id, $back);
+                $url = $this->url($class . api::UPDATE, $item->id, $back);
                 $result .= $this->ref($url, $item->name);
                 $result .= '<br>';
             }
         }
-        $url_add = $this->url($item_type . api::CREATE, 0, $back);
-        $result .= (new button('Add ' . $item_type, $url_add))->add();
+        $url_add = $this->url($class . api::CREATE, 0, $back);
+        $result .= (new button('Add ' . $class, $url_add))->add();
         $result .= '<br>';
 
         return $result;

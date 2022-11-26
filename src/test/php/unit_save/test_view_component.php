@@ -34,7 +34,7 @@ function create_test_view_components(testing $t): void
 {
     $t->header('Check if all base view components are existing');
 
-    $t->test_view_component(view_cmp::TN_TITLE, view_cmp_type::WORD_NAME);
+    $t->test_view_component(view_cmp::TN_TITLE, view_cmp_type::PHRASE_NAME);
     $t->test_view_component(view_cmp::TN_VALUES, view_cmp_type::VALUES_ALL);
     $t->test_view_component(view_cmp::TN_RESULTS, view_cmp_type::FORMULA_RESULTS);
     $t->test_view_component(view_cmp::TN_TABLE, view_cmp_type::WORD_VALUE);
@@ -144,7 +144,7 @@ function run_view_component_test(testing $t): void
     $cmp_renamed = new view_cmp($t->usr1);
     $cmp_renamed->load_by_name(view_cmp::TN_RENAMED, view_cmp::class);
     $cmp_renamed->comment = 'Just added for testing the user sandbox';
-    $cmp_renamed->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::WORD_NAME);
+    $cmp_renamed->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::PHRASE_NAME);
     $result = $cmp_renamed->save();
     $target = '';
     $t->dsp('view_component->save all view_component fields beside the name for "' . view_cmp::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_LONG);
@@ -156,7 +156,7 @@ function run_view_component_test(testing $t): void
     $target = 'Just added for testing the user sandbox';
     $t->dsp('view_component->load comment for "' . view_cmp::TN_RENAMED . '"', $target, $result);
     $result = $cmp_reloaded->type_id;
-    $target = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::WORD_NAME);
+    $target = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::PHRASE_NAME);
     $t->dsp('view_component->load type_id for "' . view_cmp::TN_RENAMED . '"', $target, $result);
 
     // check if the view_component parameter adding have been logged
@@ -199,14 +199,14 @@ function run_view_component_test(testing $t): void
     $target = 'Just added for testing the user sandbox';
     $t->dsp('view_component->load comment for "' . view_cmp::TN_RENAMED . '"', $target, $result);
     $result = $cmp_reloaded->type_id;
-    $target = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::WORD_NAME);
+    $target = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::PHRASE_NAME);
     $t->dsp('view_component->load type_id for "' . view_cmp::TN_RENAMED . '"', $target, $result);
 
     // check if undo all specific changes removes the user view_component
     $cmp_usr2 = new view_cmp($t->usr2);
     $cmp_usr2->load_by_name(view_cmp::TN_RENAMED, view_cmp::class);
     $cmp_usr2->comment = 'Just added for testing the user sandbox';
-    $cmp_usr2->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::WORD_NAME);
+    $cmp_usr2->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::PHRASE_NAME);
     $result = $cmp_usr2->save();
     $target = '';
     $t->dsp('view_component->save undo the user view_component fields beside the name for "' . view_cmp::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);

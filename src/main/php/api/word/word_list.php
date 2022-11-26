@@ -49,7 +49,7 @@ class word_list_api extends list_api
 
     /**
      * add a word to the list
-     * @returns bool true if the phrase has been added
+     * @returns bool true if the word has been added
      */
     function add(word_api $phr): bool
     {
@@ -80,30 +80,6 @@ class word_list_api extends list_api
         $dsp_obj->set_lst_dirty();
 
         return $dsp_obj;
-    }
-
-    /*
-     * information functions
-     */
-
-    /**
-     * @returns int the number of phrases of the protected list
-     */
-    function count(): int
-    {
-        return count($this->lst);
-    }
-
-    /**
-     * @returns true if the list does not contain any phrase
-     */
-    function is_empty(): bool
-    {
-        if ($this->count() <= 0) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /*

@@ -99,7 +99,7 @@ if ($usr->id > 0) {
 
         // get other field parameters
         if (isset($_GET['name'])) {
-            $cmp->name = $_GET['name'];
+            $cmp->set_name($_GET['name']);
         }
         if (isset($_GET['comment'])) {
             $cmp->comment = $_GET['comment'];

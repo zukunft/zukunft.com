@@ -18,6 +18,10 @@
     TODO add the view result at least as simple text to the JSON export
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO use in the frontend only the code id of types
+    TODO use in the backend always the type object instead of the db type id
+    TODO always use the frontend path CONST instead of 'http'
+    TODO replace the fixed edit masks with a view call of a mask with a code id
     TODO review cast to display objects to always use display objects
     TODO make all vars of display objects private or protected
     TODO move display functions to frontend objects
@@ -373,6 +377,7 @@ include_once $path_php . 'api/formula/formula_value.php';
 include_once $path_php . 'api/formula/formula_value_list.php';
 include_once $path_php . 'api/view/view.php';
 include_once $path_php . 'api/view/view_cmp.php';
+include_once $path_php . 'api/view/view_cmp_list.php';
 // general HTML frontend classes
 include_once $path_php . 'web/back_trace.php';
 include_once $path_php . 'web/user_display_old.php';
@@ -405,6 +410,7 @@ include_once $path_php . 'web/formula/formula_value_list.php';
 include_once $path_php . 'web/view/view.php';
 include_once $path_php . 'web/view/view_cmp.php';
 include_once $path_php . 'web/view/view_cmp_link_dsp.php';
+include_once $path_php . 'web/view/view_cmp_list.php';
 
 // deprecated HTML frontend classes
 include_once $path_php . 'web/phrase/phrase_display.php';

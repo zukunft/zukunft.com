@@ -107,7 +107,7 @@ class formula_dsp_old extends formula
     {
         log_debug($phr_id);
         $result = '    <td>' . "\n";
-        $url = api::PATH . self::class . api::UPDATE . api::EXT .'?id=' . $this->id . '&unlink_phrase=' . $phr_id . '&back=' . $back;
+        $url = api::PATH_FIXED . self::class . api::UPDATE . api::EXT .'?id=' . $this->id . '&unlink_phrase=' . $phr_id . '&back=' . $back;
         $result .=  (new button("unlink word", $url))->del();
         $result .= '    </td>' . "\n";
         return $result;

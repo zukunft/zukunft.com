@@ -60,7 +60,6 @@ class view_dsp_old extends view
 
     private function dsp_type_close(): string
     {
-        log_debug($this->type_id);
         $result = '';
         // move to a view component function
         // for the word array build an object
@@ -87,7 +86,7 @@ class view_dsp_old extends view
             // list of all possible view components
             $cmp_dsp = $cmp->dsp_obj();
             $result .= $cmp_dsp->text();        // just to display a simple text
-            $result .= $cmp_dsp->word_name($wrd); // show the word name and give the user the possibility to change the word name
+            $result .= $cmp_dsp->word_name($wrd->phrase()->dsp_obj()); // show the word name and give the user the possibility to change the word name
             $result .= $cmp_dsp->table($wrd); // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
             $result .= $cmp_dsp->num_list($wrd, $back); // a word list with some key numbers e.g. all companies with the PE ratio
             $result .= $cmp_dsp->formulas($wrd); // display all formulas related to the given word
@@ -497,6 +496,7 @@ class view_dsp_old extends view
             $dsp_list->lst = $this->cmp_lst;
             $dsp_list->id_field = "view_component_id";
             $dsp_list->script_name = "view_edit.php";
+            $dsp_list->class_edit = view::class;
             $dsp_list->script_parameter = $this->id . "&back=" . $back . "&word=" . $wrd->id;
             $result .= $dsp_list->display($back);
             log_debug('displayed');

@@ -116,26 +116,6 @@ class phrase_list_api extends list_api implements \JsonSerializable
     }
 
 
-    /**
-     * @returns int the number of phrases of the protected list
-     */
-    function count(): int
-    {
-        return count($this->lst);
-    }
-
-    /**
-     * @returns true if the list does not contain any phrase
-     */
-    function is_empty(): bool
-    {
-        if ($this->count() <= 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     /*
      * modification functions
      */

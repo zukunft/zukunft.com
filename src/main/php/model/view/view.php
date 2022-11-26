@@ -32,6 +32,7 @@
 use api\view_api;
 use export\view_exp;
 use export\exp_obj;
+use html\view_dsp;
 
 class view extends user_sandbox_named
 {
@@ -228,6 +229,23 @@ class view extends user_sandbox_named
         $api_obj = new view_api();
         parent::fill_api_obj($api_obj);
         return $api_obj;
+    }
+
+    /**
+     * @return view_dsp the view object with the html creation functions
+     */
+    function dsp_obj(): object
+    {
+        $dsp_obj = new view_dsp();
+
+        $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+
+        $dsp_obj->type_id = $this->type_id;
+
+        $dsp_obj->share_id = $this->share_id;
+        $dsp_obj->protection_id = $this->protection_id;
+
+        return $dsp_obj;
     }
 
     /*

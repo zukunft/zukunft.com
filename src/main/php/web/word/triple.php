@@ -66,7 +66,7 @@ class triple_dsp extends triple_api
     {
 
         $html = new html_base();
-        $url = $html->url(api::PATH . 'link' . api::UPDATE . api::EXT, $this->id, $wrd->id);
+        $url = $html->url(api::PATH_FIXED . 'link' . api::UPDATE . api::EXT, $this->id, $wrd->id);
         $btn = (new button("edit word link", $url))->edit();
 
         return $html->td($btn);

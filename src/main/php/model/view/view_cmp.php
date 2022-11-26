@@ -32,6 +32,7 @@
 use api\view_cmp_api;
 use export\view_cmp_exp;
 use export\exp_obj;
+use html\view_cmp_dsp;
 
 class view_cmp extends user_sandbox_named
 {
@@ -193,15 +194,17 @@ class view_cmp extends user_sandbox_named
     }
 
     /**
-     * @return view_cmp_dsp_old the view component object with the html creation functions
+     * @return view_cmp_dsp the view component object with the html creation functions
      */
     function dsp_obj(): object
     {
-        $dsp_obj = new view_cmp_dsp_old($this->user());
+        global $view_component_types;
+
+        $dsp_obj = new view_cmp_dsp();
 
         $dsp_obj = parent::fill_dsp_obj($dsp_obj);
 
-        $dsp_obj->type_id = $this->type_id;
+        $dsp_obj->type = $view_component_types->get_by_id($this->type_id)->code_id();
 
         $dsp_obj->link_type_id = $this->link_type_id;
 

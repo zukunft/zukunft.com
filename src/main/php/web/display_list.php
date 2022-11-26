@@ -32,59 +32,57 @@
   
 */
 
-class dsp_list {
+use html\api;
+use html\html_base;
 
-  // the parameters
-  public $lst              = null; // a array of objects that must have id and name
-  public $id_field         = null; // 
-  public $script_name      = null; // name of the code that handles the list
-  public $script_parameter = null; // 
-  
-  // converts a id field name to an edit php script name
-  // assuming that ...
-  private function id_to_edit() {
-    log_debug("zu_id_to_edit(".$this->id_field.")");
-    $result = zu_str_left_of($this->id_field, "_id")."_edit.php";
-    // TODO: cleanup
-    if ($result == 'view_component_edit.php') { $result = 'view_component_edit.php'; }
-    return $result;
-  }
+class dsp_list extends html_base
+{
 
-  // display a list that can be sorted using the fixed field "order_nbr"
-  function display (string $back = ''): string{
-    $result  = '';
-    
-    // set the default values
-    $row_nbr = 0;
-    $num_rows = count($this->lst);
-    foreach ($this->lst AS $entry) {
-      if (UI_USE_BOOTSTRAP) { $result .= '<tr><td>'; }    
-      
-      // list of all possible view components
-      $row_nbr = $row_nbr + 1;
-      $edit_script = $this->id_to_edit();
-      $result .=  '<a href="/http/'.$edit_script.'?id='.$entry->id.'&back='.$this->script_parameter.'">'.$entry->name.'</a> ';
-      if ($row_nbr > 1) {
-        $result .= '<a href="/http/'.$this->script_name.'?id='.$this->script_parameter.'&move_up='.$entry->id.'">up</a>';
-      }
-      if ($row_nbr > 1 and $row_nbr < $num_rows) {
-        $result .= '/';
-      }
-      if ($row_nbr < $num_rows) {
-        $result .= '<a href="/http/'.$this->script_name.'?id='.$this->script_parameter.'&move_down='.$entry->id.'">down</a>';
-      }
-      if (UI_USE_BOOTSTRAP) { $result .= '</td><td>'; }    
-      $result .= ' ';
-      $result .= \html\btn_del ('Delete '.zu_str_left_of($this->id_field, "_id"), $this->script_name.'?id='.$this->script_parameter.'&del='.$entry->id);
-      if (UI_USE_BOOTSTRAP) { $result .= '</td></tr>'; }    
-      $result .= '<br>';
+    // the parameters
+    public ?array $lst = null; // a array of objects that must have id and name
+    public ?string $id_field = null; //
+    public string $script_name = ''; // name of the code that handles the list
+    public string $class_edit = ''; // the class name
+    public ?string $script_parameter = null; //
+
+    // display a list that can be sorted using the fixed field "order_nbr"
+    function display(string $back = ''): string
+    {
+        $result = '';
+
+        // set the default values
+        $row_nbr = 0;
+        $num_rows = count($this->lst);
+        foreach ($this->lst as $entry) {
+            if (UI_USE_BOOTSTRAP) {
+                $result .= '<tr><td>';
+            }
+
+            // list of all possible view components
+            $row_nbr = $row_nbr + 1;
+            $edit_script = $this->edit_url($this->class_edit);
+            $result .= '<a href="/http/' . $edit_script . '?id=' . $entry->id . '&back=' . $this->script_parameter . '">' . $entry->name . '</a> ';
+            if ($row_nbr > 1) {
+                $result .= '<a href="/http/' . $this->script_name . '?id=' . $this->script_parameter . '&move_up=' . $entry->id . '">up</a>';
+            }
+            if ($row_nbr > 1 and $row_nbr < $num_rows) {
+                $result .= '/';
+            }
+            if ($row_nbr < $num_rows) {
+                $result .= '<a href="/http/' . $this->script_name . '?id=' . $this->script_parameter . '&move_down=' . $entry->id . '">down</a>';
+            }
+            if (UI_USE_BOOTSTRAP) {
+                $result .= '</td><td>';
+            }
+            $result .= ' ';
+            $result .= \html\btn_del('Delete ' . zu_str_left_of($this->id_field, "_id"), $this->script_name . '?id=' . $this->script_parameter . '&del=' . $entry->id);
+            if (UI_USE_BOOTSTRAP) {
+                $result .= '</td></tr>';
+            }
+            $result .= '<br>';
+        }
+
+        return $result;
     }
 
-    return $result;
-  }
-
 }
-
-
-
-?>

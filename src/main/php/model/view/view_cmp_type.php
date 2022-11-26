@@ -37,7 +37,7 @@ class view_cmp_type
     const WORD_SELECT = "word_select";
     const WORDS_UP = "word_list_up";
     const WORDS_DOWN = "word_list_down";
-    const WORD_NAME = "word_name";
+    const PHRASE_NAME = "word_name";
     const WORD_VALUE = "word_value_list";
     const VALUES_ALL = "values_all";
     const VALUES_RELATED = "values_related";

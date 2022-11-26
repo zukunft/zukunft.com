@@ -29,6 +29,7 @@
   
 */
 
+use html\html_selector;
 use html\word_dsp;
 
 class view_cmp_dsp_old extends view_cmp
@@ -68,7 +69,7 @@ class view_cmp_dsp_old extends view_cmp
     function word_name(word $wrd): string
     {
         $result = '';
-        if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::WORD_NAME)) {
+        if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::PHRASE_NAME)) {
             if (!isset($wrd)) {
                 $result .= log_err('No word selected for "' . $this->name . '".', "view_component_dsp->word_name");
             } else {
@@ -183,7 +184,7 @@ class view_cmp_dsp_old extends view_cmp
     // show all words that are based on the given start word
     // and related to the main word
     // later the start word should be selected automatically based on what most users has clicked on
-    function word_children($wrd)
+    function word_children($wrd): string
     {
         $result = '';
 
@@ -196,7 +197,7 @@ class view_cmp_dsp_old extends view_cmp
     }
 
     // show all word that this words is based on
-    function word_parents($wrd)
+    function word_parents($wrd): string
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::WORDS_DOWN)) {
@@ -207,7 +208,7 @@ class view_cmp_dsp_old extends view_cmp
     }
 
     // configure the json export
-    function json_export($wrd, $back)
+    function json_export($wrd, $back): string
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::JSON_EXPORT)) {
@@ -220,7 +221,7 @@ class view_cmp_dsp_old extends view_cmp
     }
 
     // configure the xml export
-    function xml_export($wrd, $back)
+    function xml_export($wrd, $back): string
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::XML_EXPORT)) {
@@ -233,7 +234,7 @@ class view_cmp_dsp_old extends view_cmp
     }
 
     // configure the csv export
-    function csv_export($wrd, $back)
+    function csv_export($wrd, $back): string
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::CSV_EXPORT)) {
@@ -284,7 +285,7 @@ class view_cmp_dsp_old extends view_cmp
 
 
     // allow the user to unlink a view
-    function btn_unlink($view_id, $wrd, $back)
+    function btn_unlink($view_id, $wrd, $back): string
     {
         log_debug('me' . $this->id . ',m' . $view_id . ',t' . $wrd->id . ')');
         $result = '    <td>' . "\n";
@@ -294,7 +295,7 @@ class view_cmp_dsp_old extends view_cmp
     }
 
     // lists of all views where a view component is used
-    private function linked_views($add_link, $wrd, $back)
+    private function linked_views($add_link, $wrd, $back): string
     {
         log_debug("id " . $this->id . " and user " . $this->user()->id . " (word " . $wrd->id . ", add " . $add_link . ").");
 
@@ -352,7 +353,7 @@ class view_cmp_dsp_old extends view_cmp
     }
 
     // display the component type selector
-    private function dsp_type_selector($script, $class)
+    private function dsp_type_selector($script, $class): string
     {
         $result = '';
         $sel = new html_selector;
@@ -368,7 +369,7 @@ class view_cmp_dsp_old extends view_cmp
     }
 
     // display the component word_row selector
-    private function dsp_word_row_selector($script, $class)
+    private function dsp_word_row_selector($script, $class): string
     {
         $result = '';
         $sel = new html_selector;
@@ -388,7 +389,7 @@ class view_cmp_dsp_old extends view_cmp
     }
 
     // display the component word_col selector
-    private function dsp_word_col_selector($script, $class)
+    private function dsp_word_col_selector($script, $class): string
     {
         $result = '';
         $sel = new html_selector;
@@ -408,7 +409,7 @@ class view_cmp_dsp_old extends view_cmp
     }
 
     // display the history of a view component
-    function dsp_hist($page, $size, $call, $back)
+    function dsp_hist($page, $size, $call, $back): string
     {
         log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
@@ -428,7 +429,7 @@ class view_cmp_dsp_old extends view_cmp
     }
 
     // display the link history of a view component
-    function dsp_hist_links($page, $size, $call, $back)
+    function dsp_hist_links($page, $size, $call, $back): string
     {
         log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
@@ -447,13 +448,13 @@ class view_cmp_dsp_old extends view_cmp
     }
 
     // TODO HTML code to add a view component
-    function dsp_add($add_link, $wrd, $back)
+    function dsp_add($add_link, $wrd, $back): string
     {
         return $this->dsp_edit($add_link, $wrd, $back);
     }
 
     // HTML code to edit all word fields
-    function dsp_edit($add_link, $wrd, $back)
+    function dsp_edit($add_link, $wrd, $back): string
     {
         log_debug($this->dsp_id() . ' for user ' . $this->user()->name . ' (called from ' . $back . ')');
         $result = '';

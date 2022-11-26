@@ -102,6 +102,30 @@ class list_api
     }
 
     /*
+     * information functions
+     */
+
+    /**
+     * @returns int the number of objects of the protected list
+     */
+    function count(): int
+    {
+        return count($this->lst);
+    }
+
+    /**
+     * @returns true if the list does not contain any object
+     */
+    function is_empty(): bool
+    {
+        if ($this->count() <= 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /*
      * modify functions
      */
 

@@ -35,18 +35,14 @@ namespace html;
 class api
 {
 
-    // url path to the api functions
-    const PATH = '/http/';
+    // url path of the api
+    const PATH = '/api/';
 
-    // url extension of the api functions
+    // url path to the fixed views
+    const PATH_FIXED = '/http/';
+
+    // url extension of the fixed views
     const EXT = '.php';
-
-    // url of all possible the api calls
-    const CREATE = '_add';
-    const UPDATE = '_edit';
-    const REMOVE = '_del';
-    const LIST = '';
-    const SEARCH = 'find';
 
     // classes used to allow renaming of the API name independent of the class name
     const WORD = 'word';
@@ -56,6 +52,13 @@ class api
     const FORMULA = 'formula';
     const VIEW = 'view';
     const LINK = 'link';
+
+    // class extensions of all possible the fixed views
+    const CREATE = '_add';
+    const UPDATE = '_edit';
+    const REMOVE = '_del';
+    const LIST = '';
+    const SEARCH = 'find';
 
     // special api function independent of a class
     const LOGIN_RESET = 'login_reset';

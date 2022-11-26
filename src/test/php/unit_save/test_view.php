@@ -57,8 +57,7 @@ function run_view_test(testing $t)
 
     // test the complete view for one word
     $wrd = new word($t->usr1);
-    $wrd->set_name(word::TN_CH);
-    $wrd->load_obj_vars();
+    $wrd->load_by_name(word::TN_CH);
     $result = $dsp->display($wrd, $back);
     // check if the view contains the word name
     $target = word::TN_CH;

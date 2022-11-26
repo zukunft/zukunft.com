@@ -36,4 +36,17 @@ use api\view_api;
 class view_dsp extends view_api
 {
 
+    public function list_sort(): string
+    {
+        return $this->components()->dsp();
+    }
+
+    private function components(): view_cmp_list_dsp
+    {
+        $lst = new view_cmp_list_dsp();
+        foreach ($this->cmp_lst as $cmp) {
+            $lst->add($cmp->dsp_obj());
+        }
+        return $lst;
+    }
 }

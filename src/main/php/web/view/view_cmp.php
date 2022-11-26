@@ -32,8 +32,185 @@
 namespace html;
 
 use api\view_cmp_api;
+use view_cmp_type;
 
 class view_cmp_dsp extends view_cmp_api
 {
+
+    /**
+     * @returns string the html code to display this view component
+     */
+    function html(?phrase_dsp $phr = null): string
+    {
+        $result = '';
+        switch ($this->type) {
+            case view_cmp_type::TEXT:
+                $result .= $this->text();
+                break;
+            case view_cmp_type::PHRASE_NAME:
+                $result .= $this->word_name($phr);
+                break;
+            case view_cmp_type::VALUES_RELATED:
+                $result .= $this->table();
+                break;
+            default:
+                $result .= 'ERROR: unknown type ';
+        }
+        return $result;
+    }
+
+    /**
+     * @return string a fixed text
+     */
+    function text(): string
+    {
+        if ($this->type == view_cmp_type::TEXT) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * @return string the name of a phrase and give the user the possibility to change the phrase name
+     */
+    function word_name(phrase_dsp $phr): string
+    {
+        if ($this->type == view_cmp_type::PHRASE_NAME) {
+            return $phr->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function table(): string
+    {
+        if ($this->type == view_cmp_type::VALUES_RELATED) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function num_list(): string
+    {
+        if ($this->type == view_cmp_type::WORD_VALUE) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function formulas(): string
+    {
+        if ($this->type == view_cmp_type::FORMULAS) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function formula_values(): string
+    {
+        if ($this->type == view_cmp_type::FORMULA_RESULTS) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function word_children(): string
+    {
+        if ($this->type == view_cmp_type::WORDS_DOWN) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function word_parents(): string
+    {
+        if ($this->type == view_cmp_type::WORDS_UP) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function json_export(): string
+    {
+        if ($this->type == view_cmp_type::JSON_EXPORT) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function xml_export(): string
+    {
+        if ($this->type == view_cmp_type::XML_EXPORT) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function csv_export(): string
+    {
+        if ($this->type == view_cmp_type::CSV_EXPORT) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function all(): string
+    {
+        if ($this->type == view_cmp_type::VALUES_ALL) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
 
 }

@@ -2,11 +2,8 @@
 
 /*
 
-    web\user\user_type_list.php - the display extension of the user specific api type list object
-    ---------------------------
-
-    to create the HTML code to display a list of object types
-
+    view_cmp_list_dsp.php - a list function to create the HTML code to display a view component list
+    ---------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -34,31 +31,34 @@
 
 namespace html;
 
-use api\user_type_list_api;
+use api\view_cmp_list_api;
 
-class user_type_list_dsp extends user_type_list_api
+class view_cmp_list_dsp extends view_cmp_list_api
 {
 
-    function list(string $class, string $title = ''): string
+    /**
+     * @param string $back the back trace url for the undo functionality
+     * @return string with a list of the word names with html links
+     * ex. names_linked
+     */
+    function dsp(string $back = ''): string
     {
-        $html = new html_base();
-        if ($title != '') {
-            $title = $html->text_h2($title);
-        }
-        return $title . $html->list($this->lst(), $class);
+        return implode(', ', $this->names_linked($back));
     }
 
     /**
-     * @returns string the html code to select a type from this list
+     * @param string $back the back trace url for the undo functionality
+     * @return array with a list of the word names with html links
      */
-    function selector(string $name = '', string $form = '', int $selected = 0): string
+    function names_linked(string $back = ''): array
     {
-        $sel = new html_selector();
-        $sel->name = $name;
-        $sel->form = $form;
-        $sel->lst = $this->lst_key();
-        $sel->selected = $selected;
-        return $sel->dsp();
+        $result = array();
+        foreach ($this->lst as $wrd) {
+            if (!$wrd->is_hidden()) {
+                $result[] = $wrd->dsp_obj()->dsp_link($back);
+            }
+        }
+        return $result;
     }
 
 }
