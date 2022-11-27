@@ -64,7 +64,7 @@ class word_dsp extends word_api
     {
         $html = new html_base();
         $url = $html->url(api::VIEW, $this->id, $back, api::PAR_VIEW_WORDS);
-        return $html->ref($url, $this->name(), $this->description, $style);
+        return $html->ref($url, $this->name(), $this->description(), $style);
     }
 
     /**

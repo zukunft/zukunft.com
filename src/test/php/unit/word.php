@@ -84,7 +84,7 @@ class word_unit_tests
 
         $wrd = new word($usr);
         $wrd->set(1, word::TN_READ);
-        $wrd->description = 'A mathematical constant that never changes e.g. Pi';
+        $wrd->description = word::TD_READ;
         $api_wrd = $wrd->api_obj();
         $t->assert($t->name . 'api->id', $api_wrd->id, $wrd->id());
         $t->assert($t->name . 'api->name', $api_wrd->name, $wrd->name_dsp());

@@ -247,6 +247,21 @@ class view_cmp extends user_sandbox_named
      */
 
     /**
+     * set the most used view component vars with one set statement
+     * @param int $id mainly for test creation the database id of the view component
+     * @param string $name mainly for test creation the name of the view component
+     * @param string $type_code_id the code id of the predefined view component type
+     */
+    public function set(int $id = 0, string $name = '', string $type_code_id = ''): void
+    {
+        parent::set($id, $name);
+
+        if ($type_code_id != '') {
+            $this->set_type($type_code_id);
+        }
+    }
+
+    /**
      * set the view component type
      *
      * @param string $type_code_id the code id that should be added to this view component

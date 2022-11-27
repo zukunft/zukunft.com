@@ -38,7 +38,7 @@ use export\exp_obj;
 use html\formula_dsp;
 use html\word_dsp;
 
-class formula extends user_sandbox_description
+class formula extends user_sandbox_named_with_type
 {
     /*
      * default startup values
@@ -74,7 +74,7 @@ class formula extends user_sandbox_description
     const FLD_NAMES_USR = array(
         self::FLD_FORMULA_TEXT,
         self::FLD_FORMULA_USER_TEXT,
-        sql_db::FLD_DESCRIPTION
+        self::FLD_DESCRIPTION
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
@@ -204,10 +204,22 @@ class formula extends user_sandbox_description
      * set the most used object vars with one set statement
      * @param int $id mainly for test creation the database id of the formula
      * @param string $name mainly for test creation the name of the formula
+     * @param string $type_code_id the code id of the predefined formula type
      */
-    public function set(int $id = 0, string $name = ''): void
+    public function set(int $id = 0, string $name = '', string $type_code_id = ''): void
     {
         parent::set($id, $name);
+    }
+
+    /**
+     * set the predefined type of this formula
+     *
+     * @param string $type_code_id the code id that should be added to this word
+     * @return void
+     */
+    function set_type(string $type_code_id): void
+    {
+        $this->type_id = cl(db_cl::FORMULA_TYPE, $type_code_id);
     }
 
     /**
@@ -312,7 +324,7 @@ class formula extends user_sandbox_description
             $this->name = $db_row[self::FLD_NAME];
             $this->ref_text = $db_row[self::FLD_FORMULA_TEXT];
             $this->usr_text = $db_row[self::FLD_FORMULA_USER_TEXT];
-            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            $this->description = $db_row[self::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_FORMULA_TYPE];
             $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
             $this->need_all_val = $this->get_bool($db_row[self::FLD_ALL_NEEDED]);
@@ -1872,7 +1884,7 @@ class formula extends user_sandbox_description
             if ($usr_cfg[self::FLD_NAME] == ''
                 and $usr_cfg[self::FLD_FORMULA_TEXT] == ''
                 and $usr_cfg[self::FLD_FORMULA_USER_TEXT] == ''
-                and $usr_cfg[sql_db::FLD_DESCRIPTION] == ''
+                and $usr_cfg[self::FLD_DESCRIPTION] == ''
                 and $usr_cfg[self::FLD_FORMULA_TYPE] == Null
                 and $usr_cfg[self::FLD_ALL_NEEDED] == Null
                 and $usr_cfg[self::FLD_EXCLUDED] == Null) {

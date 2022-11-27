@@ -443,7 +443,7 @@ function run_word_tests(testing $t): void
 
     // display
     $back = 1;
-    $target = '<a href="/http/view.php?words=' . $wrd_read->id . '&back=1" title="' . word::TN_READ . '">' . word::TN_READ . '</a>';
+    $target = '<a href="/http/view.php?words=' . $wrd_read->id . '&back=1" title="' . word::TD_READ . '">' . word::TN_READ . '</a>';
     $result = $wrd_read->dsp_obj()->dsp_link($back);
     $t->dsp('word->display "' . word::TN_READ . '"', $target, $result);
 

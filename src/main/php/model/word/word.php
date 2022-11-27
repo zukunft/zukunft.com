@@ -52,7 +52,7 @@ use html\button;
 use html\html_selector;
 use html\word_dsp;
 
-class word extends user_sandbox_description
+class word extends user_sandbox_named_with_type
 {
     /*
      * database link
@@ -76,7 +76,7 @@ class word extends user_sandbox_description
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
         self::FLD_PLURAL,
-        sql_db::FLD_DESCRIPTION
+        self::FLD_DESCRIPTION
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
@@ -90,7 +90,7 @@ class word extends user_sandbox_description
     const ALL_FLD_NAMES = array(
         self::FLD_NAME,
         self::FLD_PLURAL,
-        sql_db::FLD_DESCRIPTION,
+        self::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_VIEW,
         self::FLD_EXCLUDED
@@ -107,6 +107,7 @@ class word extends user_sandbox_description
     // persevered word names for unit and integration tests based on the database
     // for stand-alone unit test words see api/word/word_min.php
     const TN_READ = 'Mathematical constant';
+    const TD_READ = 'A mathematical constant that never changes e.g. Pi';
     const TN_READ_SCALE = 'million';
     const TN_READ_PERCENT = 'percent';
     const TN_ADD = 'System Test Word';
@@ -301,7 +302,7 @@ class word extends user_sandbox_description
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
             $this->plural = $db_row[self::FLD_PLURAL];
-            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            $this->description = $db_row[self::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_TYPE];
             $this->view_id = $db_row[self::FLD_VIEW];
         }
@@ -316,10 +317,26 @@ class word extends user_sandbox_description
      * set the most used object vars with one set statement
      * @param int $id mainly for test creation the database id of the word
      * @param string $name mainly for test creation the name of the word
+     * @param string $type_code_id the code id of the predefined phrase type
      */
-    public function set(int $id = 0, string $name = ''): void
+    public function set(int $id = 0, string $name = '', string $type_code_id = ''): void
     {
         parent::set($id, $name);
+
+        if ($type_code_id != '') {
+            $this->set_type($type_code_id);
+        }
+    }
+
+    /**
+     * set the phrase type of this word
+     *
+     * @param string $type_code_id the code id that should be added to this word
+     * @return void
+     */
+    function set_type(string $type_code_id): void
+    {
+        $this->type_id = cl(db_cl::WORD_TYPE, $type_code_id);
     }
 
     /**

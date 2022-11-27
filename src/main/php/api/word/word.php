@@ -53,6 +53,7 @@ class word_api extends user_sandbox_named_api
     const TN_CONST = 'Pi';
 
     // the mouse over tooltip for the word
+    // a null value is needed to detect if nothing has been changed by the user
     public ?string $description = null;
 
     // the language specific forms
@@ -68,7 +69,7 @@ class word_api extends user_sandbox_named_api
      * construct and map
      */
 
-    function __construct(int $id = 0, string $name = '', string $description = '')
+    function __construct(int $id = 0, string $name = '', ?string $description = null)
     {
         parent::__construct($id, $name);
         $this->description = $description;
@@ -85,9 +86,16 @@ class word_api extends user_sandbox_named_api
         $this->description = $description;
     }
 
+    /**
+     * @return string the display value of the tooltip where null is an empty string
+     */
     function description(): string
     {
-        return $this->description;
+        if ($this->description == null) {
+            return '';
+        } else {
+            return $this->description;
+        }
     }
 
     public function set_plural(string $plural): void

@@ -210,10 +210,26 @@ class view extends user_sandbox_named
      * set the most used object vars with one set statement
      * @param int $id mainly for test creation the database id of the view
      * @param string $name mainly for test creation the name of the view
+     * @param string $type_code_id the code id of the predefined view type
      */
-    public function set(int $id = 0, string $name = ''): void
+    public function set(int $id = 0, string $name = '', string $type_code_id = ''): void
     {
         parent::set($id, $name);
+
+        if ($type_code_id != '') {
+            $this->set_type($type_code_id);
+        }
+    }
+
+    /**
+     * set the view type
+     *
+     * @param string $type_code_id the code id that should be added to this view
+     * @return void
+     */
+    function set_type(string $type_code_id): void
+    {
+        $this->type_id = cl(db_cl::VIEW_TYPE, $type_code_id);
     }
 
 

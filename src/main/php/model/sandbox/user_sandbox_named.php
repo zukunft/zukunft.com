@@ -40,13 +40,16 @@ class user_sandbox_named extends user_sandbox
 
     // object specific database and JSON object field names
     const FLD_NAME = 'name';
+    const FLD_DESCRIPTION = 'description';
 
     /*
      * object vars
      */
 
     // database fields only used for objects that have a name
-    protected ?string $name = '';   // simply the object name, which cannot be empty if it is a named object
+    protected string $name = '';        // simply the object name, which cannot be empty if it is a named object
+    public ?string $description = null; // the object description that is shown as a mouseover explain to the user
+    //                                     if description is NULL the database value should not be updated
 
     /*
      * construct and map
@@ -61,6 +64,7 @@ class user_sandbox_named extends user_sandbox
         parent::reset();
 
         $this->name = '';
+        $this->description = null;
     }
 
     /*
@@ -71,13 +75,14 @@ class user_sandbox_named extends user_sandbox
      * set the most used object vars with one set statement
      * @param int $id mainly for test creation the database id of the named user sandbox object
      * @param string $name mainly for test creation the name of the named user sandbox object
+     * @param string $type_code_id the code id of the predefined object type only used by some child objects
      */
-    public function set(int $id = 0, string $name = ''): void
+    public function set(int $id = 0, string $name = '', string $type_code_id = ''): void
     {
         parent::set_id($id);
 
         if ($name != '') {
-            $this->name = $name;
+            $this->set_name($name);
         }
     }
 
@@ -114,7 +119,8 @@ class user_sandbox_named extends user_sandbox
     {
         parent::fill_api_obj($api_obj);
 
-        $api_obj->set_name($this->name);
+        $api_obj->set_name($this->name());
+        $api_obj->description =  $this->description;
     }
 
     /**
@@ -126,6 +132,7 @@ class user_sandbox_named extends user_sandbox
         parent::fill_min_obj($min_obj);
 
         $min_obj->set_name($this->name);
+        $min_obj->description =  $this->description;
 
         return $min_obj;
     }
@@ -141,6 +148,7 @@ class user_sandbox_named extends user_sandbox
         parent::fill_dsp_obj($dsp_obj);
 
         $dsp_obj->set_name($this->name());
+        $dsp_obj->description =  $this->description;
 
         return $dsp_obj;
     }
@@ -451,6 +459,27 @@ class user_sandbox_named extends user_sandbox
     function msg_id_already_used(): string
     {
         return 'A ' . $this->obj_name . ' with the name "' . $this->name . '" already exists. Please use another name.';
+    }
+
+    /**
+     * set the update parameters for the word description
+     */
+    function save_field_description(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    {
+        $result = '';
+        // if the description is not set, don't overwrite any db entry
+        if ($this->description <> Null) {
+            if ($this->description <> $db_rec->description) {
+                $log = $this->log_upd();
+                $log->old_value = $db_rec->description;
+                $log->new_value = $this->description;
+                $log->std_value = $std_rec->description;
+                $log->row_id = $this->id;
+                $log->field = self::FLD_DESCRIPTION;
+                $result = $this->save_field_do($db_con, $log);
+            }
+        }
+        return $result;
     }
 
     /**
