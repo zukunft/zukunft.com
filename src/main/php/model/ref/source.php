@@ -33,7 +33,7 @@ use export\source_exp;
 use export\exp_obj;
 use html\html_selector;
 
-class source extends user_sandbox_named
+class source extends user_sandbox_named_with_type
 {
 
     /*
@@ -145,6 +145,36 @@ class source extends user_sandbox_named
             $this->code_id = $db_row[sql_db::FLD_CODE_ID];
         }
         return $result;
+    }
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the most used object vars with one set statement
+     * @param int $id mainly for test creation the database id of the source
+     * @param string $name mainly for test creation the name of the source
+     * @param string $type_code_id the code id of the predefined source type
+     */
+    public function set(int $id = 0, string $name = '', string $type_code_id = ''): void
+    {
+        parent::set($id, $name);
+
+        if ($type_code_id != '') {
+            $this->set_type($type_code_id);
+        }
+    }
+
+    /**
+     * set the predefined type of this source
+     *
+     * @param string $type_code_id the code id that should be added to this source
+     * @return void
+     */
+    function set_type(string $type_code_id): void
+    {
+        $this->type_id = cl(db_cl::SOURCE_TYPE, $type_code_id);
     }
 
     /*
@@ -300,10 +330,11 @@ class source extends user_sandbox_named
     {
         global $source_types;
 
+        $type_name = '';
         if ($this->type_id > 0) {
-            $this->type_name = $source_types->name($this->type_id);
+            $type_name = $source_types->name($this->type_id);
         }
-        return $this->type_name;
+        return $type_name;
     }
 
     /**

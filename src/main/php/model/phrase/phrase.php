@@ -747,7 +747,7 @@ class phrase
                 $wrd->load_by_name($json_value, word::class);
                 if ($wrd->id == 0) {
                     $wrd->set_name($json_value);
-                    $wrd->type_id = cl(db_cl::WORD_TYPE, phrase_type::TIME);
+                    $wrd->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::TIME);
                     $result->add_message($wrd->save());
                 }
                 if ($wrd->id == 0) {

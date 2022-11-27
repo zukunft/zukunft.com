@@ -336,7 +336,7 @@ class word extends user_sandbox_named_with_type
      */
     function set_type(string $type_code_id): void
     {
-        $this->type_id = cl(db_cl::WORD_TYPE, $type_code_id);
+        $this->type_id = cl(db_cl::PHRASE_TYPE, $type_code_id);
     }
 
     /**
@@ -1120,7 +1120,7 @@ class word extends user_sandbox_named_with_type
     function dsp_formula(string $back = ''): string
     {
         $result = '';
-        if ($this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
+        if ($this->type_id == cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK)) {
             $result .= dsp_form_hidden("name", $this->name);
             $result .= '  to change the name of "' . $this->name . '" rename the ';
             $frm = $this->formula();
@@ -1135,7 +1135,7 @@ class word extends user_sandbox_named_with_type
     function dsp_type_selector(string $back = ''): string
     {
         $result = '';
-        if ($this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
+        if ($this->type_id == cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK)) {
             $result .= ' type: ' . $this->type_name();
         } else {
             $result .= $this->type_selector('word_edit', "col-sm-4");

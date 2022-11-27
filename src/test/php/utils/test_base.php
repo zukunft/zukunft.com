@@ -392,7 +392,7 @@ class test_base
         $wrd->set_name($wrd_name);
 
         if ($wrd_type_code_id != null) {
-            $wrd->type_id = cl(db_cl::WORD_TYPE, $wrd_type_code_id);
+            $wrd->type_id = cl(db_cl::PHRASE_TYPE, $wrd_type_code_id);
         }
         return $wrd;
     }
@@ -432,7 +432,7 @@ class test_base
             $wrd->save();
         }
         if ($wrd_type_code_id != null) {
-            $wrd->type_id = cl(db_cl::WORD_TYPE, $wrd_type_code_id);
+            $wrd->type_id = cl(db_cl::PHRASE_TYPE, $wrd_type_code_id);
             $wrd->save();
         }
         return $wrd;
@@ -496,7 +496,7 @@ class test_base
         $trp->set_name($wrd_name);
 
         if ($wrd_type_code_id != null) {
-            $trp->type_id = cl(db_cl::WORD_TYPE, $wrd_type_code_id);
+            $trp->type_id = cl(db_cl::PHRASE_TYPE, $wrd_type_code_id);
         }
         return $trp;
     }

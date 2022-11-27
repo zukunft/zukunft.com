@@ -50,7 +50,7 @@ function run_ref_unit_db_tests(testing $t): void
 
     // ... and check if at least the most critical is loaded
     // TODO check
-    $result = cl(db_cl::WORD_TYPE, phrase_type::NORMAL);
+    $result = cl(db_cl::PHRASE_TYPE, phrase_type::NORMAL);
     $target = 1;
     $t->dsp('unit_db_ref->check ' . phrase_type::NORMAL, $result, $target);
 

@@ -45,10 +45,6 @@ class user_sandbox_named_api extends user_sandbox_api
     // the mouse over tooltip for the named object e.g. word, triple, formula, verb, view or component
     public ?string $description = null;
 
-    // all named objects can have a type that links predefined functionality to it
-    // e.g. all value assigned with the percent word are per default shown as percent with two decimals
-    //protected object_type $type;
-
 
     /*
      * construct and map

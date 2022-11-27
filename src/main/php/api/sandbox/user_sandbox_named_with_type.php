@@ -35,6 +35,8 @@ namespace api;
 class user_sandbox_named_with_type_api extends user_sandbox_named_api
 {
 
+    // all named objects can have a type that links predefined functionality to it
+    // e.g. all value assigned with the percent word are per default shown as percent with two decimals
     // the frontend object just contains the id of the type
     // because the type can be fast selected from the preloaded type list
     public ?int $type_id;

@@ -35,7 +35,7 @@
   
 */
 
-class view_cmp_link extends user_sandbox_link
+class view_cmp_link extends user_sandbox_link_with_type
 {
 
     /*

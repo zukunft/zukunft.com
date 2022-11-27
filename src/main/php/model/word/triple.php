@@ -43,7 +43,7 @@ use html\api;
 use html\button;
 use html\triple_dsp;
 
-class triple extends user_sandbox_link_named implements \JsonSerializable
+class triple extends user_sandbox_link_named_with_type implements \JsonSerializable
 {
 
     /*

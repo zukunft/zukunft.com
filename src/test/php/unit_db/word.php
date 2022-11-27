@@ -52,7 +52,7 @@ function run_word_unit_db_tests(testing $t)
     $t->dsp('unit_db_word->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::WORD_TYPE, phrase_type::NORMAL);
+    $result = cl(db_cl::PHRASE_TYPE, phrase_type::NORMAL);
     $target = 1;
     $t->dsp('unit_db_word->check ' . phrase_type::NORMAL, $result, $target);
 
@@ -103,7 +103,7 @@ function run_word_unit_db_tests(testing $t)
 
     // load a word list by type
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_type(cl(db_cl::WORD_TYPE, phrase_type::PERCENT));
+    $wrd_lst->load_by_type(cl(db_cl::PHRASE_TYPE, phrase_type::PERCENT));
     $t->assert('load_by_type', $wrd_lst->name(), '"' . word::TN_READ_PERCENT . '"');
 
     // load a word list by name pattern

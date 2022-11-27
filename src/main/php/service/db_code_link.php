@@ -35,7 +35,7 @@ class db_cl
 {
     // list of all user types that are used
     const SYS_USER = "system_user";
-    const WORD_TYPE = "word_type";
+    const PHRASE_TYPE = "word_type";
     const VERB = "verb";
     const FORMULA_TYPE = "formula_type";
     const FORMULA_LINK_TYPE = "formula_link_type";
@@ -78,7 +78,7 @@ class db_cl
         return $user_profiles->id($code_id);
     }
 
-    function word_type_id(string $code_id): int
+    function phrase_type_id(string $code_id): int
     {
         global $phrase_types;
         return $phrase_types->id($code_id);
@@ -186,7 +186,7 @@ class db_cl
         return $user_profiles->get($id);
     }
 
-    function word_type(int $id)
+    function phrase_type(int $id)
     {
         global $phrase_types;
         return $phrase_types->get_by_id($id);
@@ -276,7 +276,7 @@ class db_cl
         return $user_profiles->name($id);
     }
 
-    function word_type_name(int $id): string
+    function phrase_type_name(int $id): string
     {
         global $phrase_types;
         return $phrase_types->name($id);
@@ -374,7 +374,7 @@ class db_cl
  * shortcut name for db_code_link for better code reading
  * TODO it is more data saving to use get on the global object e.g. $user_profile->get($code_id)
  *
- * @param string $type e.g. word_type or formulas_type to select the list of unique code ids
+ * @param string $type e.g. phrase_type or formulas_type to select the list of unique code ids
  * @param string $code_id the code id that must be unique within the given type
  * @return int the database prime key row id
  */
@@ -392,8 +392,8 @@ function cl(string $type, string $code_id): int
         case db_cl::USER_PROFILE:
             $result = $db_code_link->user_profile_id($code_id);
             break;
-        case db_cl::WORD_TYPE:
-            $result = $db_code_link->word_type_id($code_id);
+        case db_cl::PHRASE_TYPE:
+            $result = $db_code_link->phrase_type_id($code_id);
             break;
         case db_cl::VERB:
             $result = $db_code_link->verb_id($code_id);
@@ -463,8 +463,8 @@ function cl_name(string $type, int $id): string
         case db_cl::USER_PROFILE:
             $result = $db_code_link->user_profile_name($id);
             break;
-        case db_cl::WORD_TYPE:
-            $result = $db_code_link->word_type_name($id);
+        case db_cl::PHRASE_TYPE:
+            $result = $db_code_link->phrase_type_name($id);
             break;
         case db_cl::VERB:
             $result = $db_code_link->verb_name($id);
@@ -515,7 +515,7 @@ function cl_name(string $type, int $id): string
 /**
  * get a predefined type object e.g. word type, formula type, ...
  *
- * @param string $type e.g. word_type or formulas_type to select the list of unique code ids
+ * @param string $type e.g. phrase_type or formulas_type to select the list of unique code ids
  * @param string $code_id the code id that must be unique within the given type
  * @return user_type the loaded type object
  */
@@ -530,8 +530,8 @@ function get_type(string $type, string $code_id): user_type
         case db_cl::USER_PROFILE:
             $result = $db_code_link->user_profile($db_code_link->user_profile_id($code_id));
             break;
-        case db_cl::WORD_TYPE:
-            $result = $db_code_link->word_type($db_code_link->word_type_id($code_id));
+        case db_cl::PHRASE_TYPE:
+            $result = $db_code_link->phrase_type($db_code_link->phrase_type_id($code_id));
             break;
         /* switched off, because it returns an extended object
         case db_cl::VERB:

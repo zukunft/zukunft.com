@@ -1667,7 +1667,7 @@ class phrase_list
         log_debug('phrase_list->time_lst_old(' . $this->dsp_id() . ')');
 
         $result = array();
-        $time_type = cl(db_cl::WORD_TYPE, phrase_type::TIME);
+        $time_type = cl(db_cl::PHRASE_TYPE, phrase_type::TIME);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
             if ($phr->type_id() == $time_type) {
@@ -1763,7 +1763,7 @@ class phrase_list
         log_debug('phrase_list->measure_lst(' . $this->dsp_id());
 
         $result = new phrase_list($this->usr);
-        $measure_type = cl(db_cl::WORD_TYPE, phrase_type::MEASURE);
+        $measure_type = cl(db_cl::PHRASE_TYPE, phrase_type::MEASURE);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
             if (get_class($phr) <> phrase::class and get_class($phr) <> word::class and get_class($phr) <> word_dsp::class) {
@@ -1791,8 +1791,8 @@ class phrase_list
         log_debug('phrase_list->scaling_lst(' . $this->dsp_id());
 
         $result = new phrase_list($this->usr);
-        $scale_type = cl(db_cl::WORD_TYPE, phrase_type::SCALING);
-        $scale_hidden_type = cl(db_cl::WORD_TYPE, phrase_type::SCALING_HIDDEN);
+        $scale_type = cl(db_cl::PHRASE_TYPE, phrase_type::SCALING);
+        $scale_hidden_type = cl(db_cl::PHRASE_TYPE, phrase_type::SCALING_HIDDEN);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
             if ($phr->type_id() == $scale_type or $phr->type_id() == $scale_hidden_type) {

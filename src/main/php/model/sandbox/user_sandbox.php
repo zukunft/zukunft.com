@@ -121,11 +121,6 @@ class user_sandbox extends db_object
     public ?string $from_name = null;  // the name of the from object type e.g. view for view_component_links
     public ?string $to_name = '';      // the name of the  to  object type e.g. view for view_component_links
 
-    // database fields only used for the type objects such as words, formulas, values, terms and view component links
-    public ?int $type_id = null; // the id of the source type, view type, view component type or word type e.g. to classify measure words
-    // or the formula type to link special behavior to special formulas like "this" or "next"
-    public ?string $type_name = ''; // the name of the word type, word link type, view type, view component type or formula type
-
 
     /*
      * construct and map
@@ -351,7 +346,7 @@ class user_sandbox extends db_object
     protected function load_sql(sql_db $db_con, string $query_name, string $class): sql_par
     {
         log_warning('The parent load_sql function related to ' . $db_con->get_type() . ' should have never been called for ' . $query_name);
-        return new sql_par($class);;
+        return new sql_par($class);
     }
 
     /**
@@ -1562,15 +1557,15 @@ class user_sandbox extends db_object
                         $result = true;
                     } else {
                         if ($this->type_id == sql_db::TBL_FORMULA
-                            and $obj_to_check->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
+                            and $obj_to_check->type_id == cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK)) {
                             // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
                             $result = true;
                         } elseif ($obj_to_check->type_id == sql_db::TBL_FORMULA
-                            and $this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
+                            and $this->type_id == cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK)) {
                             // like above, but the other way round
                             $result = true;
-                        } elseif ($this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)
-                            or $obj_to_check->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
+                        } elseif ($this->type_id == cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK)
+                            or $obj_to_check->type_id == cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK)) {
                             // if one of the two words is a formula link and not both, the user should ge no suggestion to combine them
                             $result = false;
                         } else {
@@ -1878,7 +1873,7 @@ class user_sandbox extends db_object
                 if ($result->is_ok()) {
                     $wrd = new word($this->usr);
                     $wrd->set_name($this->name());
-                    $wrd->type_id = cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK);
+                    $wrd->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK);
                     $msg = $wrd->del();
                     $result->add($msg);
                 }

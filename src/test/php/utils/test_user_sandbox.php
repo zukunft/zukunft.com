@@ -43,7 +43,7 @@ function run_user_sandbox_test(testing $t)
 
     // a word is not the same as the same word that represents a formula
     $wrd1 = new word($t->usr1);
-    $wrd1->type_id = cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK);
+    $wrd1->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK);
     $wrd1->set_name(TW_MIO);
     $wrd2 = new word($t->usr1);
     $wrd2->type_id = $phrase_types->default_id();

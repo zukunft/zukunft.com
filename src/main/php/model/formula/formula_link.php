@@ -29,7 +29,7 @@
   
 */
 
-class formula_link extends user_sandbox_link
+class formula_link extends user_sandbox_link_with_type
 {
 
     // list of the formula link types that have a coded functionality

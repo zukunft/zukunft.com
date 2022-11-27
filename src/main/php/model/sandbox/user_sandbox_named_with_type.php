@@ -38,6 +38,8 @@ class user_sandbox_named_with_type extends user_sandbox_named
     // because all types are preloaded with the database id the name and code id can fast be received
     // the id of the source type, view type, view component type or word type
     // e.g. to classify measure words
+    // the id of the source type, view type, view component type or word type e.g. to classify measure words
+    // or the formula type to link special behavior to special formulas like "this" or "next"
     public ?int $type_id = null;
 
     /*

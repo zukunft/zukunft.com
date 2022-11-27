@@ -34,7 +34,7 @@ use export\view_exp;
 use export\exp_obj;
 use html\view_dsp;
 
-class view extends user_sandbox_named
+class view extends user_sandbox_named_with_type
 {
     /*
      * database link

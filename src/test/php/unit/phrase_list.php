@@ -136,7 +136,7 @@ class phrase_list_unit_tests
         global $usr;
         $wrd = new word($usr);
         $wrd->set(2, word::TN_RENAMED);
-        $wrd->type_id = cl(db_cl::WORD_TYPE, phrase_type::TIME);
+        $wrd->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::TIME);
         return $wrd->phrase();
     }
 
