@@ -551,7 +551,7 @@ class view_cmp extends user_sandbox_named_with_type
             if ($key == self::FLD_POSITION or $key == self::FLD_POSITION_OLD) {
                 $this->order_nbr = $value;
             }
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == exp_obj::FLD_CODE_ID) {
                 if ($value != '') {
                     $this->type_id = $this->type_id_by_code_id($value);
                 }

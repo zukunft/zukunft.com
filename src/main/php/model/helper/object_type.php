@@ -41,14 +41,62 @@ class object_type
     public string $name;
     public string $code_id;
 
+    /*
+     * construct and map
+     */
+
+    function __construct(?string $code_id, int $id = 0, string $name = '')
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->code_id = $code_id;
+    }
+
+    /*
+     * set and get
+     */
+
+    function id(): int
+    {
+        return $this->id;
+    }
+
+    function name(): string
+    {
+        return $this->name;
+    }
+
+    function code_id(): string
+    {
+        return $this->code_id;
+    }
+
+    function set_id(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    function set_name(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    function set_code_id(string $code_id): void
+    {
+        $this->code_id = $code_id;
+    }
+
+    /*
+     * information
+     */
+
     function is_type(string $type_to_check): bool
     {
-        if ($this->code_id == $type_to_check){
+        if ($this->code_id == $type_to_check) {
             return true;
         } else {
             return false;
         }
     }
-
 
 }

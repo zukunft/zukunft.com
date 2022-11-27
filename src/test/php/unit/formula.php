@@ -30,6 +30,8 @@
 
 */
 
+use cfg\formula_type;
+
 class formula_unit_tests
 {
     function run(testing $t): void
@@ -86,7 +88,7 @@ class formula_unit_tests
 
         // casting API
         $frm = new formula($usr);
-        $frm->set(1,  formula::TN_READ);
+        $frm->set(1,  formula::TN_READ, formula_type::CALC);
         $t->assert_api($frm);
 
 
@@ -172,7 +174,7 @@ class formula_unit_tests
         /*
         $frm_next = new formula($usr);
         $frm_next->name = "next";
-        $frm_next->type_id = cl(db_cl::FORMULA_TYPE, formula::NEXT);
+        $frm_next->type_id = cl(db_cl::FORMULA_TYPE, formula_type::NEXT);
         $frm_next->id = 1;
         $frm_has_next = new formula($usr);
         $frm_has_next->usr_text = '=next';

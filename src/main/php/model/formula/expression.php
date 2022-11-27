@@ -29,6 +29,8 @@
 
 */
 
+use cfg\formula_type;
+
 class expression
 {
 
@@ -614,9 +616,9 @@ class expression
         $elm_lst = $this->element_lst_all(expression::SELECT_ALL, FALSE);
         if (!empty($elm_lst->lst)) {
             foreach ($elm_lst->lst as $elm) {
-                if ($elm->frm_type == formula::THIS
-                    or $elm->frm_type == formula::NEXT
-                    or $elm->frm_type == formula::PREV) {
+                if ($elm->frm_type == formula_type::THIS
+                    or $elm->frm_type == formula_type::NEXT
+                    or $elm->frm_type == formula_type::PREV) {
                     $phr_lst->lst[] = $elm->wrd_obj;
                 }
             }
@@ -640,9 +642,9 @@ class expression
         $elm_lst = $this->element_lst_all(expression::SELECT_ALL, FALSE);
         if (!empty($elm_lst->lst)) {
             foreach ($elm_lst->lst as $elm) {
-                if ($elm->frm_type == formula::THIS
-                    or $elm->frm_type == formula::NEXT
-                    or $elm->frm_type == formula::PREV) {
+                if ($elm->frm_type == formula_type::THIS
+                    or $elm->frm_type == formula_type::NEXT
+                    or $elm->frm_type == formula_type::PREV) {
                     $frm_lst->lst[] = $elm->obj;
                     $frm_lst->ids[] = $elm->id;
                 }

@@ -1,5 +1,6 @@
 {
   "id": 1,
   "name": "scale minute to sec",
-  "description": ""
+  "description": "",
+  "type_id": 1
 }

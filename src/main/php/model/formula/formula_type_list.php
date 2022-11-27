@@ -2,34 +2,36 @@
 
 /*
 
-  formula_types.php - to link coded functionality to a formula
-  -----------------
-  
-  This file is part of zukunft.com - calc with words
+    model/formula/formula_type_list.php - list to link coded functionality to a formula
+    -----------------------------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
 global $formula_types;
+
+use cfg\formula_type;
 
 class formula_type_list extends user_type_list
 {
@@ -49,13 +51,12 @@ class formula_type_list extends user_type_list
      */
     function load_dummy(): void
     {
-        parent::load_dummy();
-        $type = new user_type(formula::CALC, formula::CALC);
+        $type = new user_type(formula_type::CALC, formula_type::CALC);
+        $this->lst[1] = $type;
+        $this->hash[formula_type::CALC] = 1;
+        $type = new user_type(formula_type::REV, formula_type::REV);
         $this->lst[2] = $type;
-        $this->hash[formula::CALC] = 2;
-        $type = new user_type(formula::REV, formula::REV);
-        $this->lst[3] = $type;
-        $this->hash[formula::REV] = 3;
+        $this->hash[formula_type::REV] = 2;
     }
 
     /**
@@ -63,7 +64,7 @@ class formula_type_list extends user_type_list
      */
     function default_id(): int
     {
-        return parent::id(formula::CALC);
+        return parent::id(formula_type::CALC);
     }
 
 }

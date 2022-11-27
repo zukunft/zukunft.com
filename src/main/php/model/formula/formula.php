@@ -30,6 +30,7 @@
 */
 
 use api\formula_api;
+use cfg\formula_type;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
@@ -128,17 +129,6 @@ class formula extends user_sandbox_named_with_type
     );
 
     /*
-     * code links
-     */
-
-    // list of the formula types that have a coded functionality
-    const CALC = "default";    // a normal calculation formula
-    const NEXT = "time_next";  // time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"
-    const THIS = "time_this";  // selects the assumed time term
-    const PREV = "time_prior"; // time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"
-    const REV = "reversible";  // used to define a const value that is not supposed to be changed like pi
-
-    /*
      * object vars
      */
 
@@ -208,6 +198,10 @@ class formula extends user_sandbox_named_with_type
     public function set(int $id = 0, string $name = '', string $type_code_id = ''): void
     {
         parent::set($id, $name);
+
+        if ($type_code_id != '') {
+            $this->set_type($type_code_id);
+        }
     }
 
     /**
@@ -633,13 +627,13 @@ class formula extends user_sandbox_named_with_type
 
         if ($this->type_id > 0) {
             log_debug("formula->special_result -> type (" . $this->type_cl . ")");
-            if ($this->type_cl == formula::THIS) {
+            if ($this->type_cl == formula_type::THIS) {
                 $val_phr_lst = clone $phr_lst;
                 $val_phr_lst->add($time_phr); // the time word should be added at the end, because ...
                 log_debug("formula->special_result -> this (" . $time_phr->name() . ")");
                 $val = $val_phr_lst->value_scaled();
             }
-            if ($this->type_cl == formula::NEXT) {
+            if ($this->type_cl == formula_type::NEXT) {
                 $val_phr_lst = clone $phr_lst;
                 $next_wrd = $time_phr->next();
                 if ($next_wrd->id > 0) {
@@ -648,7 +642,7 @@ class formula extends user_sandbox_named_with_type
                     $val = $val_phr_lst->value_scaled();
                 }
             }
-            if ($this->type_cl == formula::PREV) {
+            if ($this->type_cl == formula_type::PREV) {
                 $val_phr_lst = clone $phr_lst;
                 $prior_wrd = $time_phr->prior();
                 if ($prior_wrd->id > 0) {
@@ -676,15 +670,15 @@ class formula extends user_sandbox_named_with_type
             if ($time_phr->id <= 0) {
                 log_err('No time defined for ' . $time_phr->dsp_id() . '.', 'formula->special_time_phr');
             } else {
-                if ($this->type_cl == formula::THIS) {
+                if ($this->type_cl == formula_type::THIS) {
                     $result = $time_phr;
                 }
-                if ($this->type_cl == formula::NEXT) {
+                if ($this->type_cl == formula_type::NEXT) {
                     $this_wrd = $time_phr->main_word();
                     $next_wrd = $this_wrd->next();
                     $result = $next_wrd->phrase();
                 }
-                if ($this->type_cl == formula::PREV) {
+                if ($this->type_cl == formula_type::PREV) {
                     $this_wrd = $time_phr->main_word();
                     $prior_wrd = $this_wrd->prior();
                     $result = $prior_wrd->phrase();

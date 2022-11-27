@@ -318,6 +318,7 @@ include_once $path_php . 'model/ref/source_type_list.php';
 include_once $path_php . 'model/formula/expression.php';
 include_once $path_php . 'model/formula/formula.php';
 include_once $path_php . 'model/formula/formula_exp.php';
+include_once $path_php . 'model/formula/formula_type.php';
 include_once $path_php . 'model/formula/formula_type_list.php';
 include_once $path_php . 'model/formula/formula_list.php';
 include_once $path_php . 'model/formula/formula_link.php';

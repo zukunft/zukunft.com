@@ -53,8 +53,8 @@ class view_cmp_type_list extends user_type_list
         $this->lst[2] = $type;
         $this->hash[view_cmp_type::TEXT] = 2;
         $type = new user_type(view_cmp_type::PHRASE_NAME, view_cmp_type::PHRASE_NAME);
-        $this->lst[3] = $type;
-        $this->hash[view_cmp_type::PHRASE_NAME] = 3;
+        $this->lst[8] = $type;
+        $this->hash[view_cmp_type::PHRASE_NAME] = 8;
     }
 
     /**

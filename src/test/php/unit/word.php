@@ -30,6 +30,8 @@
 
 */
 
+use cfg\phrase_type;
+
 class word_unit_tests
 {
 
@@ -83,7 +85,7 @@ class word_unit_tests
         $t->subheader('API unit tests');
 
         $wrd = new word($usr);
-        $wrd->set(1, word::TN_READ);
+        $wrd->set(1, word::TN_READ, phrase_type::MATH_CONST);
         $wrd->description = word::TD_READ;
         $api_wrd = $wrd->api_obj();
         $t->assert($t->name . 'api->id', $api_wrd->id, $wrd->id());

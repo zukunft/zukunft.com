@@ -2,9 +2,8 @@
 
 /*
 
-    api/sandbox/user_sandbox_named_with_type_api.php - extends the superclass for named api objects with the type id
-    ------------------------------------------------
-
+    model/formula/phrase_type.php - the formula type object with the ENUM values for hardcoded formulas
+    -----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,41 +29,20 @@
 
 */
 
-namespace api;
+namespace cfg;
 
-class user_sandbox_named_with_type_api extends user_sandbox_named_api
+class formula_type extends object_type
 {
 
-    // the frontend object just contains the id of the type
-    // because the type can be fast selected from the preloaded type list
-    public ?int $type_id;
-
-
     /*
-     * construct and map
+     * code links
      */
 
-    function __construct(int $id = 0, string $name = '', ?string $description = null, ?int $type_id = null)
-    {
-        parent::__construct($id, $name);
-        $this->set_type_id($type_id);
-    }
-
-
-    /*
-     * set and get
-     */
-
-    public function set_type_id(?int $type_id): void
-    {
-        $this->type_id = $type_id;
-    }
-
-    public function type_id(): ?int
-    {
-        return $this->type_id;
-    }
+    // list of the formula types that have a coded functionality
+    const CALC = "default";    // a normal calculation formula
+    const NEXT = "time_next";  // time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"
+    const THIS = "time_this";  // selects the assumed time term
+    const PREV = "time_prior"; // time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"
+    const REV = "reversible";  // used to define a const value that is not supposed to be changed like pi
 
 }
-
-

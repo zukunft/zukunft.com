@@ -1,5 +1,6 @@
 {
   "id": 1,
   "name": "Mathematical constant",
-  "description": "A mathematical constant that never changes e.g. Pi"
+  "description": "A mathematical constant that never changes e.g. Pi",
+  "type_id": 17
 }

@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
+use cfg\formula_type;
+
 function run_formula_unit_db_tests(testing $t)
 {
 
@@ -43,9 +45,9 @@ function run_formula_unit_db_tests(testing $t)
     $t->dsp('unit_db_formula->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::FORMULA_TYPE, formula::CALC);
+    $result = cl(db_cl::FORMULA_TYPE, formula_type::CALC);
     $target = 1;
-    $t->dsp('unit_db_formula->check ' . formula::CALC, $result, $target);
+    $t->dsp('unit_db_formula->check ' . formula_type::CALC, $result, $target);
 
     // check the estimates for the calculation blocks
     $calc_blocks = (new formula_list($usr))->calc_blocks($db_con);
