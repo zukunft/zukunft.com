@@ -45,9 +45,6 @@ use triple;
 class term_api extends user_sandbox_named_api
 {
 
-    // the mouse over tooltip for the word
-    private ?string $description = null;
-
     // the word, triple, verb or formula object
     private ?user_sandbox_api $obj = null;
 

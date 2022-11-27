@@ -282,6 +282,7 @@ include_once $path_php . 'model/word/word_exp.php';
 include_once $path_php . 'model/word/word_type.php';
 include_once $path_php . 'model/word/word_type_list.php';
 include_once $path_php . 'model/word/word_list.php';
+include_once $path_php . 'model/word/word_change_list.php';
 include_once $path_php . 'model/word/triple.php';
 include_once $path_php . 'model/word/triple_exp.php';
 include_once $path_php . 'model/word/triple_list.php';

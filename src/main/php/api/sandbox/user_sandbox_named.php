@@ -2,8 +2,8 @@
 
 /*
 
-    api\user_sandbox_named.php - extends the minimal superclass for named objects such as formulas
-    --------------------------
+    api/sandbox/user_sandbox_named_api.php - extends the frontend API superclass for named objects such as formulas
+    --------------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -41,6 +41,9 @@ class user_sandbox_named_api extends user_sandbox_api
     // the unique name of the object that is shown to the user
     // the name must always be set
     public string $name;
+
+    // the mouse over tooltip for the named object e.g. word, triple, formula, verb, view or component
+    public ?string $description = null;
 
     // all named objects can have a type that links predefined functionality to it
     // e.g. all value assigned with the percent word are per default shown as percent with two decimals
