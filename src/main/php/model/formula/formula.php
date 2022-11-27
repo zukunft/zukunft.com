@@ -172,24 +172,23 @@ class formula extends user_sandbox_named_with_type
         $this->rename_can_switch = UI_CAN_CHANGE_FORMULA_NAME;
     }
 
+    /**
+     * clear the view component object values
+     * @return void
+     */
     function reset(): void
     {
-        $this->id = null;
-        $this->usr_cfg_id = null;
-        $this->owner_id = null;
-        $this->excluded = null;
+        parent::reset();
 
         $this->name = '';
 
         $this->ref_text = '';
         $this->usr_text = '';
-        $this->description = '';
         $this->type_id = null;
         $this->need_all_val = false;
         $this->last_update = null;
 
         $this->type_cl = '';
-        $this->type_name = '';
         $this->name_wrd = null;
 
         $this->needs_fv_upd = false;
@@ -263,7 +262,8 @@ class formula extends user_sandbox_named_with_type
     {
         $dsp_obj = new formula_dsp_old($this->user());
 
-        $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+        $dsp_obj->id = $this->id;
+        $dsp_obj->name = $this->name;
 
         $dsp_obj->ref_text = $this->ref_text;
         $dsp_obj->usr_text = $this->usr_text;
@@ -273,7 +273,6 @@ class formula extends user_sandbox_named_with_type
         $dsp_obj->last_update = $this->last_update;
 
         $dsp_obj->type_cl = $this->type_cl;
-        $dsp_obj->type_name = $this->type_name;
         $dsp_obj->name_wrd = $this->name_wrd;
 
         $dsp_obj->needs_fv_upd = $this->needs_fv_upd;
@@ -289,21 +288,9 @@ class formula extends user_sandbox_named_with_type
     {
         $dsp_obj = new formula_dsp();
 
-        $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+        parent::fill_dsp_obj($dsp_obj);
 
-        $dsp_obj->ref_text = $this->ref_text;
-        $dsp_obj->usr_text = $this->usr_text;
-        $dsp_obj->description = $this->description;
-        $dsp_obj->type_id = $this->type_id;
-        $dsp_obj->need_all_val = $this->need_all_val;
-        $dsp_obj->last_update = $this->last_update;
-
-        $dsp_obj->type_cl = $this->type_cl;
-        $dsp_obj->type_name = $this->type_name;
-        $dsp_obj->name_wrd = $this->name_wrd;
-
-        $dsp_obj->needs_fv_upd = $this->needs_fv_upd;
-        $dsp_obj->ref_text_r = $this->ref_text_r;
+        $dsp_obj->set_usr_text($this->usr_text);
 
         return $dsp_obj;
     }

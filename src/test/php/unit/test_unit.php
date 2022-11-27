@@ -76,6 +76,7 @@ class test_unit extends testing
         $this->init_view_component_link_types();
         $this->init_view_component_pos_types();
         $this->init_ref_types();
+        $this->init_source_types();
         $this->init_share_types();
         $this->init_protection_types();
         $this->init_job_types();
@@ -290,6 +291,18 @@ class test_unit extends testing
 
         $ref_types = new ref_type_list();
         $ref_types->load_dummy();
+
+    }
+
+    /**
+     * create source type array for the unit tests without database connection
+     */
+    function init_source_types()
+    {
+        global $source_types;
+
+        $source_types = new source_type_list();
+        $source_types->load_dummy();
 
     }
 

@@ -34,7 +34,7 @@ use export\view_cmp_exp;
 use export\exp_obj;
 use html\view_cmp_dsp;
 
-class view_cmp extends user_sandbox_named
+class view_cmp extends user_sandbox_named_with_type
 {
 
     /*
@@ -79,6 +79,7 @@ class view_cmp extends user_sandbox_named
 
     // view components used for unit tests
     const TN_READ = 'Name';
+    const TD_READ = 'simply show the word name';
 
     // persevered view component names for unit and integration tests
     const TN_ADD = 'System Test View Component';
@@ -113,7 +114,6 @@ class view_cmp extends user_sandbox_named
      */
 
     // database fields additional to the user sandbox fields for the view component
-    public ?string $comment = null;         // the view component description that is shown as a mouseover explain to the user
     public ?int $word_id_row = null;        // if the view component uses a related word tree this is the start node
     //                                         e.g. for "company" the start node could be "cash flow statement" to show the cash flow for any company
     public ?int $link_type_id = null;       // the word link type used to build the word tree started with the $start_word_id
@@ -153,16 +153,14 @@ class view_cmp extends user_sandbox_named
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_NAME;
     }
 
+    /**
+     * clear the view component object values
+     * @return void
+     */
     function reset(): void
     {
-        $this->id = null;
-        $this->usr_cfg_id = null;
-        $this->owner_id = null;
-        $this->excluded = null;
+        parent::reset();
 
-        $this->name = '';
-
-        $this->comment = '';
         $this->order_nbr = null;
         $this->type_id = null;
         $this->word_id_row = null;
@@ -175,7 +173,6 @@ class view_cmp extends user_sandbox_named
         $this->wrd_col2 = null;
         $this->frm = null;
         $this->link_type_name = '';
-        $this->type_name = '';
         $this->code_id = '';
         $this->back = null;
     }
@@ -189,8 +186,9 @@ class view_cmp extends user_sandbox_named
      */
     function api_obj(): object
     {
-        $min_obj = new view_cmp_api();
-        return parent::fill_min_obj($min_obj);
+        $api_obj = new view_cmp_api();
+        $this->fill_api_obj($api_obj);
+        return $api_obj;
     }
 
     /**
@@ -202,14 +200,10 @@ class view_cmp extends user_sandbox_named
 
         $dsp_obj = new view_cmp_dsp();
 
-        $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+        parent::fill_dsp_obj($dsp_obj);
 
-        $dsp_obj->type = $view_component_types->get_by_id($this->type_id)->code_id();
-
-        $dsp_obj->link_type_id = $this->link_type_id;
-
-        $dsp_obj->share_id = $this->share_id;
-        $dsp_obj->protection_id = $this->protection_id;
+        $dsp_obj->set_type_id($this->type_id);
+        //$dsp_obj->set_type($view_component_types->get_by_id($this->type_id)->code_id());
 
         return $dsp_obj;
     }
@@ -231,7 +225,7 @@ class view_cmp extends user_sandbox_named
         $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
-            $this->comment = $db_row[self::FLD_COMMENT];
+            $this->description = $db_row[self::FLD_COMMENT];
             $this->type_id = $db_row[self::FLD_TYPE];
             $this->word_id_row = $db_row[self::FLD_ROW_PHRASE];
             $this->link_type_id = $db_row[self::FLD_LINK_TYPE];
@@ -563,7 +557,7 @@ class view_cmp extends user_sandbox_named
                 }
             }
             if ($key == exp_obj::FLD_DESCRIPTION) {
-                $this->comment = $value;
+                $this->description = $value;
             }
         }
 
@@ -576,7 +570,9 @@ class view_cmp extends user_sandbox_named
         return $result;
     }
 
-// create an object for the export
+    /**
+     * create an object for the export
+     */
     function export_obj(bool $do_load = true): exp_obj
     {
         log_debug('view_component->export_obj ' . $this->dsp_id());
@@ -600,8 +596,8 @@ class view_cmp extends user_sandbox_named
         if (isset($this->wrd_col2)) {
             $result->column2 = $this->wrd_col2->name();
         }
-        if ($this->comment <> '') {
-            $result->comment = $this->comment;
+        if ($this->description <> '') {
+            $result->comment = $this->description;
         }
 
         log_debug('view_component->export_obj -> ' . json_encode($result));
@@ -843,16 +839,17 @@ class view_cmp extends user_sandbox_named
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param user_sandbox $db_rec the view component as saved in the database before the update
      * @param user_sandbox $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everting is fine
+     * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
     function save_field_comment(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
-        if ($db_rec->comment <> $this->comment) {
+        // TODO check if everywhere null value on import does not lead to overwrite of existing values
+        if ($db_rec->description <> $this->description and $this->description != null) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->comment;
-            $log->new_value = $this->comment;
-            $log->std_value = $std_rec->comment;
+            $log->old_value = $db_rec->description;
+            $log->new_value = $this->description;
+            $log->std_value = $std_rec->description;
             $log->row_id = $this->id;
             $log->field = self::FLD_COMMENT;
             $result = $this->save_field_do($db_con, $log);
@@ -866,7 +863,7 @@ class view_cmp extends user_sandbox_named
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param user_sandbox $db_rec the view component as saved in the database before the update
      * @param user_sandbox $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everting is fine
+     * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
     function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
@@ -892,7 +889,7 @@ class view_cmp extends user_sandbox_named
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param user_sandbox $db_rec the view component as saved in the database before the update
      * @param user_sandbox $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everting is fine
+     * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
     function save_field_wrd_row(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
@@ -918,7 +915,7 @@ class view_cmp extends user_sandbox_named
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param user_sandbox $db_rec the view component as saved in the database before the update
      * @param user_sandbox $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everting is fine
+     * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
     function save_field_wrd_col(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
@@ -944,7 +941,7 @@ class view_cmp extends user_sandbox_named
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param user_sandbox $db_rec the view component as saved in the database before the update
      * @param user_sandbox $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everting is fine
+     * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
     function save_field_wrd_col2(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
@@ -970,7 +967,7 @@ class view_cmp extends user_sandbox_named
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param user_sandbox $db_rec the view component as saved in the database before the update
      * @param user_sandbox $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everting is fine
+     * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
     function save_field_formula(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
@@ -996,7 +993,7 @@ class view_cmp extends user_sandbox_named
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param user_sandbox $db_rec the view component as saved in the database before the update
      * @param user_sandbox $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everting is fine
+     * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
     function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {

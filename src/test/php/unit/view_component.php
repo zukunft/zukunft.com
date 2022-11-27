@@ -75,6 +75,7 @@ class view_component_unit_tests
         // casting API
         $cmp = new view_cmp($usr);
         $cmp->set(1, view_cmp::TN_READ, view_cmp_type::PHRASE_NAME);
+        $cmp->description = view_cmp::TD_READ;
         $t->assert_api($cmp);
 
 

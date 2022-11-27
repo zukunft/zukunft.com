@@ -88,7 +88,7 @@ class db_object
     }
 
     /**
-     * load a row from the database selected by name
+     * load a row from the database selected by name (only used by named objects)
      * @param string $name the name of the word, triple, formula, verb, view or view component
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found

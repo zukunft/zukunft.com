@@ -2,8 +2,8 @@
 
 /*
 
-    api\view.php - the view object for the frontend API
-    ------------
+    api/sandbox/user_sandbox_named_with_type_api.php - extends the superclass for named api objects with the type id
+    ------------------------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,11 +32,39 @@
 
 namespace api;
 
-class view_api extends user_sandbox_named_with_type_api
+class user_sandbox_named_with_type_api extends user_sandbox_named_api
 {
-    // the mouse over tooltip for the word
-    public ?string $description = null;
 
-    // the components linked to this view
-    public array $cmp_lst = [];
+    // the frontend object just contains the id of the type
+    // because the type can be fast selected from the preloaded type list
+    protected ?int $type_id;
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(int $id = 0, string $name = '', ?string $description = null, ?int $type_id = null)
+    {
+        parent::__construct($id, $name);
+        $this->set_type_id($type_id);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    public function set_type_id(?int $type_id): void
+    {
+        $this->type_id = $type_id;
+    }
+
+    public function type_id(): ?int
+    {
+        return $this->type_id;
+    }
+
 }
+
+

@@ -339,7 +339,7 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
     {
         $api_obj = new triple_api();
         if (!$this->excluded) {
-            parent::fill_min_obj($api_obj);
+            $this->fill_api_obj($api_obj);
             $api_obj->name = $this->name;
             $api_obj->description = $this->description;
             if ($this->from->obj != null) {
@@ -360,16 +360,12 @@ class triple extends user_sandbox_link_named implements \JsonSerializable
     {
         $dsp_obj = new triple_dsp();
 
-        $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+        parent::fill_dsp_obj($dsp_obj);
 
         $dsp_obj->set_name($this->name);
-        $dsp_obj->verb = $this->verb->dsp_obj();
+        $dsp_obj->set_verb($this->verb->dsp_obj());
 
-        $dsp_obj->share_id = $this->share_id;
-        $dsp_obj->protection_id = $this->protection_id;
-
-        $dsp_obj->type_id = $this->type_id;
-        $dsp_obj->values = $this->values;
+        $dsp_obj->set_type_id($this->type_id);
 
         return $dsp_obj;
     }

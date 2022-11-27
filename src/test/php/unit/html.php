@@ -187,9 +187,7 @@ class html_unit_tests
         $t->subheader('View component tests');
 
         $cmp = new view_cmp($usr);
-        $cmp->set_type(view_cmp_type::TEXT);
-        $cmp->set_id(1);
-        $cmp->set_name(view_cmp::TN_ADD);
+        $cmp->set(1, view_cmp::TN_ADD, view_cmp_type::TEXT);
         $t->html_test($cmp->dsp_obj()->html(), 'view_cmp_text', $t);
 
         $wrd = new \api\word_api();

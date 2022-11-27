@@ -32,13 +32,13 @@
 
 namespace api;
 
-use view_cmp_type;
-
-class view_cmp_api extends user_sandbox_named_api
+class view_cmp_api extends user_sandbox_named_with_type_api
 {
     // the mouse over tooltip for the word
     public ?string $description = null;
 
     // the code id of the view component type because all types should be loaded in the frontend at startup
-    public ?string $type = null;
+    // public int $pos_type_id = view_cmp_pos_type::BELOW;
+    // TODO use for default position ?
+    // public int $pos_type_id = 1;
 }

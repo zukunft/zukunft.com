@@ -124,33 +124,17 @@ class user_sandbox_named extends user_sandbox
     }
 
     /**
-     * TODO deprecate
-     * @return object frontend API object filled with unique object name
-     */
-    function fill_min_obj(object $min_obj): object
-    {
-        parent::fill_min_obj($min_obj);
-
-        $min_obj->set_name($this->name);
-        $min_obj->description =  $this->description;
-
-        return $min_obj;
-    }
-
-    /**
      * fill a similar object that is extended with display interface functions
      * TODO base on the api object and deprecate
      *
-     * @return object the object fill with all user sandbox value
+     * @param object $dsp_obj the object that should be filled with all user sandbox value
      */
-    function fill_dsp_obj(object $dsp_obj): object
+    function fill_dsp_obj(object $dsp_obj): void
     {
         parent::fill_dsp_obj($dsp_obj);
 
         $dsp_obj->set_name($this->name());
         $dsp_obj->description =  $this->description;
-
-        return $dsp_obj;
     }
 
     /**

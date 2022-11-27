@@ -154,10 +154,10 @@ function run_view_component_link_test(testing $t)
     // create a second view element to be able to test the change of the view order
     $cmp2 = new view_cmp($t->usr1);
     $cmp2->set_name(view_cmp::TN_ADD2);
-    $cmp2->comment = 'Just added a second view component for testing';
+    $cmp2->description = 'Just added a second view component for testing';
     $result = $cmp2->save();
     if ($cmp2->id > 0) {
-        $result = $cmp2->comment;
+        $result = $cmp2->description;
     }
     $target = 'Just added a second view component for testing';
     $t->dsp('view_component->save for adding a second one "' . $cmp2->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);

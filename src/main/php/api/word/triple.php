@@ -35,7 +35,7 @@ namespace api;
 use html\term_dsp;
 use triple;
 
-class triple_api extends user_sandbox_named_api
+class triple_api extends user_sandbox_named_with_type_api
 {
 
     // the triple components

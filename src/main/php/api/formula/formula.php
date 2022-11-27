@@ -36,7 +36,7 @@ use formula;
 use html\formula_dsp;
 use html\term_dsp;
 
-class formula_api extends user_sandbox_named_api
+class formula_api extends user_sandbox_named_with_type_api
 {
 
     // formulas for stand-alone unit tests

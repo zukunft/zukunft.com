@@ -35,6 +35,8 @@
 
 */
 
+// TODO combine with class object_type
+
 class user_type
 {
 

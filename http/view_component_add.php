@@ -102,7 +102,7 @@ if ($usr->id > 0) {
             $cmp->set_name($_GET['name']);
         }
         if (isset($_GET['comment'])) {
-            $cmp->comment = $_GET['comment'];
+            $cmp->description = $_GET['comment'];
         }
         if (isset($_GET['type'])) {
             $cmp->type_id = $_GET['type'];

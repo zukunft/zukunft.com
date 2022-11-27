@@ -152,7 +152,8 @@ class value extends user_sandbox_display
             // TODO activate
             //$api_obj->set_grp($this->grp->api_obj());
         }
-        return parent::fill_min_obj($api_obj);
+        $this->fill_api_obj($api_obj);
+        return $api_obj;
     }
 
     /**
@@ -225,7 +226,7 @@ class value extends user_sandbox_display
     {
         $dsp_obj = new value_dsp_old($this->user());
 
-        $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+        parent::fill_dsp_obj($dsp_obj);
 
         $dsp_obj->number = $this->number;
         $dsp_obj->source = $this->source;

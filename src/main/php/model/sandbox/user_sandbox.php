@@ -224,17 +224,15 @@ class user_sandbox extends db_object
     /**
      * fill a similar object that is extended with display interface functions
      *
-     * @return object the object fill with all user sandbox value
+     * @param object $dsp_obj the object that should be filled with all user sandbox values
      */
-    function fill_dsp_obj(object $dsp_obj): object
+    function fill_dsp_obj(object $dsp_obj): void
     {
         $dsp_obj->set_id($this->id());
         $dsp_obj->usr_cfg_id = $this->usr_cfg_id;
         $dsp_obj->usr = $this->usr;
         $dsp_obj->owner_id = $this->owner_id;
         $dsp_obj->excluded = $this->excluded;
-
-        return $dsp_obj;
     }
 
     /*

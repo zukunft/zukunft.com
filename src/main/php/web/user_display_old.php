@@ -886,8 +886,8 @@ class user_dsp_old extends user
                 // create the view_component object with the minimal parameter needed
                 $dsp_usr = new view_cmp_dsp_old($this);
                 $dsp_usr->id = $sbx_row['id'];
-                $dsp_usr->name = $sbx_row['usr_name'];
-                $dsp_usr->comment = $sbx_row['usr_comment'];
+                $dsp_usr->set_name($sbx_row['usr_name']);
+                $dsp_usr->description = $sbx_row['usr_comment'];
                 $dsp_usr->type_id = $sbx_row['usr_type'];
                 $dsp_usr->excluded = $sbx_row['usr_excluded'];
 
@@ -899,13 +899,13 @@ class user_dsp_old extends user
                 $dsp_std = clone $dsp_usr;
                 $dsp_std->set_user($usr_std);
                 $dsp_std->set_name($sbx_row['std_name']);
-                $dsp_std->comment = $sbx_row['std_comment'];
+                $dsp_std->description = $sbx_row['std_comment'];
                 $dsp_std->type_id = $sbx_row['std_type'];
                 $dsp_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
                 if ($dsp_usr->name() == $dsp_std->name()
-                    and $dsp_usr->comment == $dsp_std->comment
+                    and $dsp_usr->description == $dsp_std->description
                     and $dsp_usr->type_id == $dsp_std->type_id
                     and $dsp_usr->excluded == $dsp_std->excluded) {
                     //$dsp_usr->del_usr_cfg();
@@ -951,7 +951,7 @@ class user_dsp_old extends user
                         $cmp_other = clone $dsp_usr;
                         $cmp_other->set_user($usr_other);
                         $cmp_other->set_name($cmp_other_row[view_cmp::FLD_NAME]);
-                        $cmp_other->comment = $cmp_other_row['comment'];
+                        $cmp_other->description = $cmp_other_row['comment'];
                         $cmp_other->type_id = $cmp_other_row['view_component_type_id'];
                         $cmp_other->excluded = $cmp_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {

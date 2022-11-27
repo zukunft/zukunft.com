@@ -266,7 +266,7 @@ class word extends user_sandbox_named_with_type
     }
 
     /**
-     * clear the object values
+     * clear the word object values
      * @return void
      */
     function reset(): void
@@ -382,20 +382,10 @@ class word extends user_sandbox_named_with_type
         $dsp_obj = new word_dsp();
 
         if (!$this->excluded) {
-            $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+            parent::fill_dsp_obj($dsp_obj);
 
-            $dsp_obj->plural = $this->plural;
-            $dsp_obj->type_id = $this->type_id;
-            $dsp_obj->view_id = $this->view_id;
-            $dsp_obj->values = $this->values;
-
-            $dsp_obj->link_type_id = $this->link_type_id;
-
-            $dsp_obj->share_id = $this->share_id;
-            $dsp_obj->protection_id = $this->protection_id;
-
-            $dsp_obj->view = $this->view;
-            $dsp_obj->ref_lst = $this->ref_lst;
+            $dsp_obj->set_plural($this->plural);
+            $dsp_obj->set_type_id($this->type_id);
         }
 
         return $dsp_obj;

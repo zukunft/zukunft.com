@@ -51,13 +51,11 @@ class user_sandbox_value extends user_sandbox
      *
      * @return object the object fill with all user sandbox value
      */
-    function fill_dsp_obj(object $dsp_obj): object
+    function fill_dsp_obj(object $dsp_obj): void
     {
         parent::fill_dsp_obj($dsp_obj);
 
         $dsp_obj->number = $this->number;
-
-        return $dsp_obj;
     }
 
     /**

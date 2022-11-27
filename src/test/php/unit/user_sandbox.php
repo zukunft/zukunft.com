@@ -230,7 +230,7 @@ class user_sandbox_unit_tests
         $db_con->set_where_std(2);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "PREPARE source_type_by_id (int) AS 
-              SELECT source_type_id,  source_type_name 
+              SELECT source_type_id,  type_name 
                 FROM source_types
                WHERE source_type_id = $1;";
         $t->dsp('PostgreSQL select based on id', $t->trim($expected_sql), $t->trim($created_sql));
@@ -242,7 +242,7 @@ class user_sandbox_unit_tests
         $db_con->set_where_std(2);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "PREPARE source_type_by_id FROM
-             'SELECT source_type_id, source_type_name
+             'SELECT source_type_id, type_name
                 FROM source_types
                WHERE source_type_id = ?';";
         $t->dsp('MySQL select based on id', $t->trim($expected_sql), $t->trim($created_sql));

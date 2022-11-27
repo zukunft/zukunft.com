@@ -114,10 +114,7 @@ class source extends user_sandbox_named
 
     function reset(): void
     {
-        $this->id = null;
-        $this->usr_cfg_id = null;
-        $this->owner_id = null;
-        $this->excluded = null;
+        parent::reset();
 
         $this->name = '';
 
@@ -126,7 +123,6 @@ class source extends user_sandbox_named
         $this->type_id = null;
         $this->code_id = '';
 
-        $this->type_name = '';
         $this->back = null;
     }
 
@@ -302,17 +298,10 @@ class source extends user_sandbox_named
     // TODO integrate this into the load
     private function type_name(): string
     {
-        global $db_con;
+        global $source_types;
 
         if ($this->type_id > 0) {
-            $qp = new sql_par(self::class);
-            $db_con->set_type(sql_db::TBL_SOURCE_TYPE);
-            $db_con->set_usr($this->user()->id);
-            $db_con->set_where_std($this->type_id);
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
-            $db_type = $db_con->get1($qp);
-            $this->type_name = $db_type['source_type_name'];
+            $this->type_name = $source_types->name($this->type_id);
         }
         return $this->type_name;
     }

@@ -43,7 +43,6 @@ class view_exp extends user_sandbox_exp_named
     {
         parent::reset();
 
-        $this->description = '';
         $this->type = '';
 
         $this->view_components = null;

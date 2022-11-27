@@ -33,4 +33,58 @@
 class user_sandbox_named_with_type extends user_sandbox_named
 {
 
+    // database id of the type used for named user sandbox objects with predefined functionality
+    // such as words, formulas, values, terms and view component links
+    // because all types are preloaded with the database id the name and code id can fast be received
+    // the id of the source type, view type, view component type or word type
+    // e.g. to classify measure words
+    public ?int $type_id = null;
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the database id of the type
+     *
+     * @param int|null $type_id the database id of the type
+     * @return void
+     */
+    function set_type_id(?int $type_id): void
+    {
+        $this->type_id = $type_id;
+    }
+
+    /**
+     * @return int|null the database id of the type
+     */
+    function type_id(): ?int
+    {
+        return $this->type_id;
+    }
+
+    /*
+     * casting objects
+     */
+
+    /**
+     * @param object $api_obj frontend API objects that should be filled with unique object name
+     */
+    function fill_api_obj(object $api_obj): void
+    {
+        parent::fill_api_obj($api_obj);
+
+        $api_obj->set_type_id($this->type_id());
+    }
+
+    /**
+     * @param object $dsp_obj frontend API objects that should be filled with unique object name
+     */
+    function fill_dsp_obj(object $dsp_obj): void
+    {
+        parent::fill_api_obj($dsp_obj);
+
+        $dsp_obj->set_type_id($this->type_id());
+    }
+
 }

@@ -2,8 +2,11 @@
 
 /*
 
-    api\view.php - the view object for the frontend API
-    ------------
+    source_type.php - the base object for external source type such as pubmed
+    ---------------
+
+    the source type is used for all external sources that have some coded functionality
+    but does not allow a full bidirectional synchronisation like a reference type
 
 
     This file is part of zukunft.com - calc with words
@@ -27,16 +30,16 @@
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-
+   
 */
 
-namespace api;
-
-class view_api extends user_sandbox_named_with_type_api
+class source_type extends user_type
 {
-    // the mouse over tooltip for the word
-    public ?string $description = null;
+    // list of the source types that have a coded functionality
+    const XBRL = "xbrl";
 
-    // the components linked to this view
-    public array $cmp_lst = [];
+    public int $id = 0;
+
+    // the url that can be used to receive data if the external key is added
+    // public ?string $url = null;
 }

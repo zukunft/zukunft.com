@@ -517,9 +517,10 @@ CREATE TABLE IF NOT EXISTS sources
 
 CREATE TABLE IF NOT EXISTS source_types
 (
-    source_type_id   BIGSERIAL PRIMARY KEY,
-    source_type_name varchar(200) NOT NULL,
-    code_id          varchar(100) NOT NULL
+    source_type_id BIGSERIAL PRIMARY KEY,
+    type_name      varchar(200) NOT NULL,
+    code_id        varchar(100) NOT NULL,
+    description text            NOT NULL
 );
 
 -- --------------------------------------------------------

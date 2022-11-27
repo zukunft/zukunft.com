@@ -519,9 +519,10 @@ CREATE TABLE IF NOT EXISTS `sources`
 
 CREATE TABLE IF NOT EXISTS `source_types`
 (
-    `source_type_id`   int(11)      NOT NULL,
-    `source_type_name` varchar(200) NOT NULL,
-    `code_id`          varchar(100) NOT NULL
+    `source_type_id` int(11)      NOT NULL,
+    `type_name`      varchar(200) NOT NULL,
+    `code_id`        varchar(100) NOT NULL,
+    `description`    text         NOT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 5
   DEFAULT CHARSET = utf8;

@@ -125,7 +125,7 @@ class user_sandbox_link extends user_sandbox
      *
      * @return object the object fill with all user sandbox value
      */
-    function fill_dsp_obj(object $dsp_obj): object
+    function fill_dsp_obj(object $dsp_obj): void
     {
         parent::fill_dsp_obj($dsp_obj);
 
@@ -135,8 +135,6 @@ class user_sandbox_link extends user_sandbox
         if ($this->fob != null) {
             $dsp_obj->tob = $this->tob->dsp_obj();
         }
-
-        return $dsp_obj;
     }
 
     /**

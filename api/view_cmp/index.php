@@ -55,8 +55,7 @@ if ($usr->id > 0) {
 
     if ($cmp_id > 0) {
         $cmp = new view_cmp($usr);
-        $cmp->id = $cmp_id;
-        $cmp->load_obj_vars();
+        $cmp->load_by_id($cmp_id);
         $result = $cmp->api_obj();
     } else {
         $msg = 'component id is missing';

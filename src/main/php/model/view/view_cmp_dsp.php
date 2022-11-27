@@ -489,7 +489,7 @@ class view_cmp_dsp_old extends view_cmp
         $result .= $this->dsp_word_row_selector($script, "col-sm-6"); // allow to change the word_row word
         $result .= $this->dsp_word_col_selector($script, "col-sm-6"); // allow to change the word col word
         $result .= '</div>';
-        $result .= dsp_form_fld("comment", $this->comment, "Comment:");
+        $result .= dsp_form_fld("comment", $this->description, "Comment:");
         if ($add_link <= 0) {
             if ($this->id > 0) {
                 $result .= dsp_form_end('', $back, "/http/view_component_del.php?id=" . $this->id . "&back=" . $back);

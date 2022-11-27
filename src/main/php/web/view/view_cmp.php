@@ -42,21 +42,13 @@ class view_cmp_dsp extends view_cmp_api
      */
     function html(?phrase_dsp $phr = null): string
     {
-        $result = '';
-        switch ($this->type) {
-            case view_cmp_type::TEXT:
-                $result .= $this->text();
-                break;
-            case view_cmp_type::PHRASE_NAME:
-                $result .= $this->word_name($phr);
-                break;
-            case view_cmp_type::VALUES_RELATED:
-                $result .= $this->table();
-                break;
-            default:
-                $result .= 'ERROR: unknown type ';
-        }
-        return $result;
+        global $view_component_types;
+        return match ($view_component_types->code_id($this->type_id)) {
+            view_cmp_type::TEXT => $this->text(),
+            view_cmp_type::PHRASE_NAME => $this->word_name($phr),
+            view_cmp_type::VALUES_RELATED => $this->table(),
+            default => 'ERROR: unknown type ',
+        };
     }
 
     /**
@@ -64,7 +56,8 @@ class view_cmp_dsp extends view_cmp_api
      */
     function text(): string
     {
-        if ($this->type == view_cmp_type::TEXT) {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id) == view_cmp_type::TEXT) {
             return $this->name();
         } else {
             return '';
@@ -76,7 +69,8 @@ class view_cmp_dsp extends view_cmp_api
      */
     function word_name(phrase_dsp $phr): string
     {
-        if ($this->type == view_cmp_type::PHRASE_NAME) {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id) == view_cmp_type::PHRASE_NAME) {
             return $phr->name();
         } else {
             return '';
@@ -89,7 +83,8 @@ class view_cmp_dsp extends view_cmp_api
      */
     function table(): string
     {
-        if ($this->type == view_cmp_type::VALUES_RELATED) {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id) == view_cmp_type::VALUES_RELATED) {
             return $this->name();
         } else {
             return '';
@@ -102,7 +97,8 @@ class view_cmp_dsp extends view_cmp_api
      */
     function num_list(): string
     {
-        if ($this->type == view_cmp_type::WORD_VALUE) {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id) == view_cmp_type::WORD_VALUE) {
             return $this->name();
         } else {
             return '';
@@ -115,7 +111,8 @@ class view_cmp_dsp extends view_cmp_api
      */
     function formulas(): string
     {
-        if ($this->type == view_cmp_type::FORMULAS) {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id) == view_cmp_type::FORMULAS) {
             return $this->name();
         } else {
             return '';
@@ -128,7 +125,8 @@ class view_cmp_dsp extends view_cmp_api
      */
     function formula_values(): string
     {
-        if ($this->type == view_cmp_type::FORMULA_RESULTS) {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id) == view_cmp_type::FORMULA_RESULTS) {
             return $this->name();
         } else {
             return '';
@@ -141,7 +139,8 @@ class view_cmp_dsp extends view_cmp_api
      */
     function word_children(): string
     {
-        if ($this->type == view_cmp_type::WORDS_DOWN) {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id) == view_cmp_type::WORDS_DOWN) {
             return $this->name();
         } else {
             return '';
@@ -154,7 +153,8 @@ class view_cmp_dsp extends view_cmp_api
      */
     function word_parents(): string
     {
-        if ($this->type == view_cmp_type::WORDS_UP) {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id) == view_cmp_type::WORDS_UP) {
             return $this->name();
         } else {
             return '';
@@ -167,7 +167,8 @@ class view_cmp_dsp extends view_cmp_api
      */
     function json_export(): string
     {
-        if ($this->type == view_cmp_type::JSON_EXPORT) {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id) == view_cmp_type::JSON_EXPORT) {
             return $this->name();
         } else {
             return '';
@@ -180,7 +181,8 @@ class view_cmp_dsp extends view_cmp_api
      */
     function xml_export(): string
     {
-        if ($this->type == view_cmp_type::XML_EXPORT) {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id) == view_cmp_type::XML_EXPORT) {
             return $this->name();
         } else {
             return '';
@@ -193,7 +195,8 @@ class view_cmp_dsp extends view_cmp_api
      */
     function csv_export(): string
     {
-        if ($this->type == view_cmp_type::CSV_EXPORT) {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id) == view_cmp_type::CSV_EXPORT) {
             return $this->name();
         } else {
             return '';
@@ -206,7 +209,8 @@ class view_cmp_dsp extends view_cmp_api
      */
     function all(): string
     {
-        if ($this->type == view_cmp_type::VALUES_ALL) {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id) == view_cmp_type::VALUES_ALL) {
             return $this->name();
         } else {
             return '';

@@ -32,25 +32,39 @@
 
 use cfg\phrase_type;
 
-function run_ref_unit_db_tests(testing $t)
+function run_ref_unit_db_tests(testing $t): void
 {
 
     global $db_con;
 
+    // init
     $t->header('Unit database tests of the ref class (src/main/php/model/ref/ref.php)');
+    $t->name = 'unit_db_ref->';
 
     $t->subheader('Reference types tests');
 
     // load the ref types
     $lst = new ref_type_list();
     $result = $lst->load($db_con);
-    $target = true;
-    $t->dsp('unit_db_ref->load_types', $target, $result);
+    $t->dsp('unit_db_ref->load_types', true, $result);
 
     // ... and check if at least the most critical is loaded
+    // TODO check
     $result = cl(db_cl::WORD_TYPE, phrase_type::NORMAL);
     $target = 1;
     $t->dsp('unit_db_ref->check ' . phrase_type::NORMAL, $result, $target);
+
+
+    $t->subheader('Source types tests');
+
+    // load the source types
+    $lst = new source_type_list();
+    $result = $lst->load($db_con);
+    $t->assert('load_source_types', $result, true);
+
+    // ... and check if at least the most critical is loaded
+    $result = cl(db_cl::SOURCE_TYPE, source_type::XBRL);
+    $t->assert('check ' . source_type::XBRL, $result, 2);
 
 }
 

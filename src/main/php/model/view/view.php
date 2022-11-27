@@ -165,18 +165,12 @@ class view extends user_sandbox_named
 
     function reset(): void
     {
-        $this->id = null;
-        $this->usr_cfg_id = null;
-        $this->owner_id = null;
-        $this->excluded = null;
-
-        $this->name = '';
+        parent::reset();
 
         $this->comment = '';
         $this->type_id = null;
         $this->code_id = '';
 
-        $this->type_name = '';
         $this->cmp_lst = null;
         $this->back = null;
     }
@@ -254,12 +248,9 @@ class view extends user_sandbox_named
     {
         $dsp_obj = new view_dsp();
 
-        $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+        parent::fill_dsp_obj($dsp_obj);
 
-        $dsp_obj->type_id = $this->type_id;
-
-        $dsp_obj->share_id = $this->share_id;
-        $dsp_obj->protection_id = $this->protection_id;
+        $dsp_obj->set_type_id($this->type_id);
 
         return $dsp_obj;
     }

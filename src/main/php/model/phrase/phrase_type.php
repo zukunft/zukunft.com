@@ -56,7 +56,7 @@ class phrase_type extends object_type
      * construct and map
      */
 
-    function __construct(string $code_id, int $id = 0, string $name = '')
+    function __construct(?string $code_id, int $id = 0, string $name = '')
     {
         $this->id = $id;
         $this->name = $name;

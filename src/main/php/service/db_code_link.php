@@ -45,6 +45,7 @@ class db_cl
     const VIEW_COMPONENT_TYPE = "view_component_type";
     const VIEW_COMPONENT_POS_TYPE = "view_component_position_type";
     const REF_TYPE = "ref_type";
+    const SOURCE_TYPE = "source_type";
     const SHARE_TYPE = "share_type";
     const PROTECTION_TYPE = "protection_type";
     const USER_PROFILE = "user_profile_type";
@@ -135,6 +136,12 @@ class db_cl
     {
         global $ref_types;
         return $ref_types->id($code_id);
+    }
+
+    function source_type_id(string $code_id): int
+    {
+        global $source_types;
+        return $source_types->id($code_id);
     }
 
     function share_type_id(string $code_id): int
@@ -329,6 +336,12 @@ class db_cl
         return $ref_types->name($id);
     }
 
+    function source_type_name(int $id): string
+    {
+        global $source_types;
+        return $source_types->name($id);
+    }
+
     function share_type_name(int $id): string
     {
         global $share_types;
@@ -409,6 +422,9 @@ function cl(string $type, string $code_id): int
         case db_cl::REF_TYPE:
             $result = $db_code_link->ref_type_id($code_id);
             break;
+        case db_cl::SOURCE_TYPE:
+            $result = $db_code_link->source_type_id($code_id);
+            break;
         case db_cl::SHARE_TYPE:
             $result = $db_code_link->share_type_id($code_id);
             break;
@@ -477,6 +493,9 @@ function cl_name(string $type, int $id): string
         case db_cl::REF_TYPE:
             $result = $db_code_link->ref_type_name($id);
             break;
+        case db_cl::SOURCE_TYPE:
+            $result = $db_code_link->source_type_name($id);
+            break;
         case db_cl::SHARE_TYPE:
             $result = $db_code_link->share_type_name($id);
             break;
@@ -541,6 +560,7 @@ function get_type(string $type, string $code_id): user_type
             $result = $db_code_link->view_component_pos_type($db_code_link->view_component_pos_type_id($code_id));
             break;
         // db_cl::REF_TYPE is excluded here because it returns an extended object
+        // db_cl::SOURCE_TYPE is excluded here because it returns an extended object
         case db_cl::SHARE_TYPE:
             $result = $db_code_link->share_type($db_code_link->share_type_id($code_id));
             break;

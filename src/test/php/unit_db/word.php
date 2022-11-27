@@ -39,7 +39,6 @@ function run_word_unit_db_tests(testing $t)
     global $usr;
 
     // init
-
     $t->header('Unit database tests of the word class (src/main/php/model/word/word.php)');
     $t->name = 'word->';
     $t->resource_path = 'db/word/';

@@ -37,7 +37,7 @@ use html\term_dsp;
 use html\word_dsp;
 use word;
 
-class word_api extends user_sandbox_named_api
+class word_api extends user_sandbox_named_with_type_api
 {
     // word names for stand-alone unit tests
     // for database based test words see model/word/word.php
@@ -62,9 +62,6 @@ class word_api extends user_sandbox_named_api
     // the main parent phrase
     private ?phrase_api $parent;
 
-    // repeat the type in the frontend object for faster selection
-    private ?phrase_type $type;
-
     /*
      * construct and map
      */
@@ -74,7 +71,7 @@ class word_api extends user_sandbox_named_api
         parent::__construct($id, $name);
         $this->description = $description;
         $this->parent = null;
-        $this->type = null;
+        $this->type_id = null;
     }
 
     /*
@@ -98,7 +95,7 @@ class word_api extends user_sandbox_named_api
         }
     }
 
-    public function set_plural(string $plural): void
+    public function set_plural(?string $plural): void
     {
         $this->plural = $plural;
     }
@@ -119,18 +116,30 @@ class word_api extends user_sandbox_named_api
     }
 
     /**
-     * TODO use ENUM instead of string in php version 8.1
-     * @param string $type
-     * @return void
+     * @param string|null $code_id the code id of the phrase type
      */
-    public function set_type(string $type): void
+    function set_type(?string $code_id): void
     {
-        $this->type = new phrase_type($type);
+        global $phrase_types;
+        if ($code_id == null) {
+            $this->set_type_id(null);
+        } else {
+            $this->set_type_id($phrase_types->id($code_id));
+        }
     }
 
-    function type(): ?phrase_type
+    /**
+     * TODO use ENUM instead of string in php version 8.1
+     * @return phrase_type|null the phrase type of this word
+     */
+    function type(): ?object
     {
-        return $this->type;
+        global $phrase_types;
+        if ($this->type_id == null) {
+            return null;
+        } else {
+            return $phrase_types->get_by_id($this->type_id);
+        }
     }
 
     /*
@@ -149,7 +158,7 @@ class word_api extends user_sandbox_named_api
     {
         $wrd_dsp = new word_dsp($this->id, $this->name, $this->description);
         $wrd_dsp->plural = $this->plural;
-        $wrd_dsp->type = $this->type;
+        $wrd_dsp->type_id = $this->type_id;
         if ($this->parent != null) {
             $wrd_dsp->parent = $this->parent->dsp_obj();
         }
@@ -172,8 +181,8 @@ class word_api extends user_sandbox_named_api
     function is_type(string $type): bool
     {
         $result = false;
-        if ($this->type != Null) {
-            if ($this->type->code_id == $type) {
+        if ($this->type() != Null) {
+            if ($this->type()->code_id == $type) {
                 $result = true;
             }
         }
