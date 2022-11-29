@@ -134,6 +134,7 @@ class user_sandbox extends db_object
      */
     function __construct(user $usr)
     {
+        parent::__construct();
         // the default type that is overwritten by the child objects
         $this->obj_type = self::TYPE_NAMED;
 

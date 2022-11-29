@@ -73,7 +73,7 @@ class ref_unit_tests
 
         // sql to load a source by id
         $src = new source($usr);
-        $src->id = 4;
+        $src->set_id(4);
         //$t->assert_load_sql($db_con, $src);
         $t->assert_load_standard_sql($db_con, $src);
 
@@ -87,7 +87,7 @@ class ref_unit_tests
         $src->set_name(source::TN_READ);
         //$t->assert_load_sql($db_con, $src);
         $t->assert_load_standard_sql($db_con, $src);
-        $src->id = 5;
+        $src->set_id(5);
         $t->assert_not_changed_sql($db_con, $src);
         $t->assert_user_config_sql($db_con, $src);
 

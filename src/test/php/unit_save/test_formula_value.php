@@ -46,9 +46,9 @@ function run_formula_value_test(testing $t): void
     $phr_lst->add_name(word::TN_READ_PERCENT);
     $phr_lst->add_name(word::TN_INHABITANT);
     $ch_up_grp = $phr_lst->get_grp();
-    if ($ch_up_grp->id > 0) {
+    if ($ch_up_grp->id() > 0) {
         $ch_increase = new formula_value($usr);
-        $ch_increase->load_by_grp($ch_up_grp->id);
+        $ch_increase->load_by_grp($ch_up_grp->id());
         $result = $ch_increase->value;
         if ($result == null) {
             $result = '';
@@ -58,16 +58,16 @@ function run_formula_value_test(testing $t): void
     }
     // TODO review
     $target = formula_value_unit_tests::TN_INCREASE_CH_CAPITA_2020;
-    $t->dsp('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id . ')', $target, $result, TIMEOUT_LIMIT_LONG);
+    $t->dsp('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, TIMEOUT_LIMIT_LONG);
 
     // test load result with time
     $phr_lst->add_name(word::TN_2020);
     $time_phr = $phr_lst->time_useful();
     $phr_lst->ex_time();
     $ch_up_grp = $phr_lst->get_grp();
-    if ($ch_up_grp->id > 0) {
+    if ($ch_up_grp->id() > 0) {
         $ch_increase = new formula_value($usr);
-        $ch_increase->load_by_grp($ch_up_grp->id, $time_phr->id);
+        $ch_increase->load_by_grp($ch_up_grp->id(), $time_phr->id());
         $result = $ch_increase->value;
         if ($result == null) {
             $result = '';
@@ -78,7 +78,7 @@ function run_formula_value_test(testing $t): void
     //$result = $ch_increase->phr_grp_id;
     $target = formula_value_unit_tests::TN_INCREASE_CH_CAPITA_2020;
     if (isset($time_phr) and isset($ch_up_grp)) {
-        $t->dsp('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id . ')', $target, $result);
+        $t->dsp('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result);
     } else {
         $t->dsp('value->val_formatted incl time for ', $target, $result);
     }
@@ -102,7 +102,7 @@ function run_formula_value_test(testing $t): void
     */
     $k_val = new formula_value($usr);
     //$result = $mio_val->check();
-    $k_val->load_by_grp($ch_k_grp->id);
+    $k_val->load_by_grp($ch_k_grp->id());
     $result = $k_val->value;
     if ($result == null) {
         $result = '';

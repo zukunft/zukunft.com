@@ -81,7 +81,7 @@ function run_system_test(testing $t)
     $usr_test->load_test_user();
     $target = '<a href="/http/user.php?id=' . $usr_test->id . '">zukunft.com system test</a>';
     $result = $usr->display();
-    $t->dsp('user->load for id ' . $wrd_company->id, $target, $result);
+    $t->dsp('user->load for id ' . $wrd_company->id(), $target, $result);
 
 
     $t->header('Test the user list class (classes/user_list.php)');

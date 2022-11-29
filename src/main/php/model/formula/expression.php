@@ -440,7 +440,7 @@ class expression
                         if ($obj_id > 0) {
                             $elm->type = formula_element::TYPE_WORD;
                             $wrd = new word($this->usr);
-                            $wrd->id = $obj_id;
+                            $wrd->set_id($obj_id);
                             $elm->obj = $wrd;
                             $pos = strpos($work, self::WORD_START);
                             log_debug('expression->element_lst_all -> wrd pos ' . $pos);
@@ -486,9 +486,9 @@ class expression
 
                 // add reference to result
                 if ($elm->obj != null) {
-                    if ($elm->obj->id > 0) {
+                    if ($elm->obj->id() > 0) {
                         $elm->usr = $this->usr;
-                        $elm->load_by_id($elm->obj->id);
+                        $elm->load_by_id($elm->obj->id());
 
                         // update work text
                         $changed = str_replace($elm->symbol, $elm->name, $work);
@@ -756,8 +756,8 @@ class expression
                 // similar to a part in get_usr_part, maybe combine
                 $frm = new formula($this->usr);
                 $frm->load_by_name($name, formula::class);
-                if ($frm->id > 0) {
-                    $db_sym = self::FORMULA_START . $frm->id . self::FORMULA_END;
+                if ($frm->id() > 0) {
+                    $db_sym = self::FORMULA_START . $frm->id() . self::FORMULA_END;
                     log_debug('expression->get_ref_part -> found formula "' . $db_sym . '" for "' . $name . '"');
                 }
 
@@ -765,8 +765,8 @@ class expression
                 if ($db_sym == '') {
                     $wrd = new word($this->usr);
                     $wrd->load_by_name($name, word::class);
-                    if ($wrd->id > 0) {
-                        $db_sym = self::WORD_START . $wrd->id . self::WORD_END;
+                    if ($wrd->id() > 0) {
+                        $db_sym = self::WORD_START . $wrd->id() . self::WORD_END;
                         log_debug('expression->get_ref_part -> found word "' . $db_sym . '" for "' . $name . '"');
                     }
                 }

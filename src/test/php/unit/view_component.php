@@ -58,7 +58,7 @@ class view_component_unit_tests
 
         // sql to load the view components by id
         $cmp = new view_cmp($usr);
-        $cmp->id = 2;
+        $cmp->set_id(2);
         //$t->assert_load_sql($db_con, $cmp);
         $t->assert_load_standard_sql($db_con, $cmp);
         $t->assert_user_config_sql($db_con, $cmp);

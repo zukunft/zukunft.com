@@ -54,7 +54,7 @@ function run_graph_test(testing $t)
     // step 3: get all phrases used for the value descriptions
     $phr_lst_used = new phrase_list($usr);
     foreach ($wrd_lst_all->lst as $wrd) {
-        if (!array_key_exists($wrd->id, $phr_lst_used->id_lst())) {
+        if (!array_key_exists($wrd->id(), $phr_lst_used->id_lst())) {
             $phr_lst_used->add($wrd->phrase());
         }
     }

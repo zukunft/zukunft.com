@@ -55,7 +55,7 @@ if ($usr->id > 0) {
 
     if ($wrd_id > 0) {
         $wrd = new word($usr);
-        $wrd->id = $wrd_id;
+        $wrd->set_id($wrd_id);
         $wrd->load_obj_vars();
         $result = $wrd->api_obj();
     } else {

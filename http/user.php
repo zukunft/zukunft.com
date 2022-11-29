@@ -65,7 +65,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::USER);
+    $dsp->set_id(cl(db_cl::VIEW, view::USER));
     $dsp->load_obj_vars();
 
     // do user changes
@@ -74,56 +74,56 @@ if ($usr->id > 0) {
     // undo user changes for values
     if ($undo_val > 0) {
         $val = new value($usr);
-        $val->id = $undo_val;
+        $val->set_id($undo_val);
         $val->del_usr_cfg();
     }
 
     // undo user changes for words
     if ($undo_wrd > 0) {
         $wrd = new word($usr);
-        $wrd->id = $undo_wrd;
+        $wrd->set_id($undo_wrd);
         $wrd->del_usr_cfg();
     }
 
     // undo user changes for triples
     if ($undo_lnk > 0) {
         $lnk = new triple($usr);
-        $lnk->id = $undo_lnk;
+        $lnk->set_id($undo_lnk);
         $lnk->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_frm > 0) {
         $frm = new formula($usr);
-        $frm->id = $undo_frm;
+        $frm->set_id($undo_frm);
         $frm->del_usr_cfg();
     }
 
     // undo user changes for formula word links
     if ($undo_frm_lnk > 0) {
         $frm_lnk = new formula_link($usr);
-        $frm_lnk->id = $undo_frm_lnk;
+        $frm_lnk->set_id($undo_frm_lnk);
         $frm_lnk->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_dsp > 0) {
         $dsp = new view($usr);
-        $dsp->id = $undo_dsp;
+        $dsp->set_id($undo_dsp);
         $dsp->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_cmp > 0) {
         $cmp = new view_cmp($usr);
-        $cmp->id = $undo_cmp;
+        $cmp->set_id($undo_cmp);
         $cmp->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_cmp_lnk > 0) {
         $cmp_lnk = new view_cmp_link($usr);
-        $cmp_lnk->id = $undo_cmp_lnk;
+        $cmp_lnk->set_id($undo_cmp_lnk);
         $cmp_lnk->del_usr_cfg();
     }
 

@@ -50,10 +50,10 @@ function run_source_test(testing $t)
     $src_by_name = new source($t->usr1);
     $src_by_name->load_by_name(source::TN_READ, source::class);
     $src_by_id = new source($t->usr1);
-    $src_by_id->load_by_id($src_by_name->id, source::class);
+    $src_by_id->load_by_id($src_by_name->id(), source::class);
     $target = source::TN_READ;
     $result = $src_by_id->name();
-    $t->dsp('source->load of ' . $src_read->id . ' by id ' . $src_by_name->id, $target, $result);
+    $t->dsp('source->load of ' . $src_read->id() . ' by id ' . $src_by_name->id(), $target, $result);
 
     // test the creation of a new source
     $src_add = new source($t->usr1);
@@ -63,11 +63,11 @@ function run_source_test(testing $t)
     $t->dsp('source->save for "' . source::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
 
     // ... check if the source creation has been logged
-    if ($src_add->id > 0) {
+    if ($src_add->id() > 0) {
         $log = new user_log_named;
         $log->table = 'sources';
         $log->field = 'source_name';
-        $log->row_id = $src_add->id;
+        $log->row_id = $src_add->id();
         $log->usr = $t->usr1;
         $result = $log->dsp_last(true);
     }
@@ -77,7 +77,7 @@ function run_source_test(testing $t)
     // ... test if the new source has been created
     $src_added = $t->load_source(source::TN_ADD);
     $src_added->load_obj_vars();
-    if ($src_added->id > 0) {
+    if ($src_added->id() > 0) {
         $result = $src_added->name();
     }
     $target = source::TN_ADD;
@@ -92,7 +92,7 @@ function run_source_test(testing $t)
     // check if the source renaming was successful
     $src_renamed = new source($t->usr1);
     if ($src_renamed->load_by_name(source::TN_RENAMED, source::class)) {
-        if ($src_renamed->id > 0) {
+        if ($src_renamed->id() > 0) {
             $result = $src_renamed->name();
         }
     }
@@ -103,10 +103,10 @@ function run_source_test(testing $t)
     $log = new user_log_named;
     $log->table = 'sources';
     $log->field = 'source_name';
-    $log->row_id = $src_renamed->id;
+    $log->row_id = $src_renamed->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system test changed ' . source::TN_ADD . ' to ' . source::TN_RENAMED . '';
+    $target = 'zukunft.com system test changed ' . source::TN_ADD . ' to ' . source::TN_RENAMED;
     $t->dsp('source->save rename logged for "' . source::TN_RENAMED . '"', $target, $result);
 
     // check if the source parameters can be added
@@ -129,7 +129,7 @@ function run_source_test(testing $t)
     $log = new user_log_named;
     $log->table = 'sources';
     $log->field = 'url';
-    $log->row_id = $src_reloaded->id;
+    $log->row_id = $src_reloaded->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added ' . source::TEST_URL;

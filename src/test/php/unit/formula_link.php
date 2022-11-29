@@ -60,7 +60,7 @@ class formula_link_unit_tests
 
         // sql to load the standard formula link by id
         $lnk = new formula_link($usr);
-        $lnk->id = 1;
+        $lnk->set_id(1);
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $lnk->load_standard_sql($db_con)->sql;
         $expected_sql = $t->file('db/formula/formula_link_std_by_id.sql');
@@ -83,7 +83,7 @@ class formula_link_unit_tests
 
         // sql to check if no one else has changed the formula link
         $lnk = new formula_link($usr);
-        $lnk->id = 2;
+        $lnk->set_id(2);
         $lnk->owner_id = 3;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $lnk->not_changed_sql($db_con)->sql;

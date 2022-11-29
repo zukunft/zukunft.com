@@ -42,7 +42,7 @@
 
 use api\phrase_group_api;
 
-class phrase_group
+class phrase_group extends db_object
 {
     /*
      * database link
@@ -79,7 +79,6 @@ class phrase_group
      */
 
     // database fields
-    public ?int $id = null;       // the database id of the word group
     public ?string $grp_name;     // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
     public phrase_list $phr_lst;  // the phrase list object
     public ?string $id_order_txt; // the ids from above in the order that the user wants to see them
@@ -101,6 +100,7 @@ class phrase_group
      */
     function __construct(user $usr, int $id = 0, array $prh_names = [])
     {
+        parent::__construct();
         $this->set_user($usr);
 
         $this->reset();
@@ -414,16 +414,16 @@ class phrase_group
             $sql_from_prefix = 'l1.';
             foreach ($wrd_lst->lst as $wrd) {
                 if ($wrd != null) {
-                    if ($wrd->id <> 0) {
+                    if ($wrd->id() <> 0) {
                         if ($sql_from == '') {
                             $sql_from .= 'phrase_group_triples l' . $pos;
                         } else {
                             $sql_from .= ', phrase_group_triples l' . $pos;
                         }
                         if ($sql_where == '') {
-                            $sql_where .= 'l' . $pos . '.word_id = ' . $wrd->id;
+                            $sql_where .= 'l' . $pos . '.word_id = ' . $wrd->id();
                         } else {
-                            $sql_where .= ' AND l' . $pos . '.word_id = l' . $prev_pos . '.word_id AND l' . $pos . '.word_id = ' . $wrd->id;
+                            $sql_where .= ' AND l' . $pos . '.word_id = l' . $prev_pos . '.word_id AND l' . $pos . '.word_id = ' . $wrd->id();
                         }
                     }
                 }

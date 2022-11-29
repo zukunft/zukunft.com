@@ -57,7 +57,7 @@ function run_formula_element_group_test(testing $t)
     $elm_grp_lst = $exp->element_grp_lst();
 
     $result = $elm_grp_lst->dsp_id();
-    $target = '"this" ('.$frm_this->id.'),"prior" ('.$frm_prior->id.') for user 2 (zukunft.com system test)';
+    $target = '"this" ('.$frm_this->id().'),"prior" ('.$frm_prior->id().') for user 2 (zukunft.com system test)';
     $t->dsp_contains(', formula_element_group_list->dsp_id', $target, $result);
 
 
@@ -77,17 +77,17 @@ function run_formula_element_group_test(testing $t)
 
         // test debug id first
         $result = $elm_grp->dsp_id();
-        $target = '"this" ('.$frm_this->id.') and "System Test Scaling Word e.g. millions","System Test Word Parent e.g. Switzerland","System Test Word Unit e.g. inhabitant"';
+        $target = '"this" ('.$frm_this->id().') and "System Test Scaling Word e.g. millions","System Test Word Parent e.g. Switzerland","System Test Word Unit e.g. inhabitant"';
         $t->dsp('formula_element_group->dsp_id', $target, $result);
 
         // test symbol for text replacement in the formula expression text
         $result = $elm_grp->build_symbol();
-        $target = '{f'.$frm_this->id.'}';
+        $target = '{f'.$frm_this->id().'}';
         $t->dsp('formula_element_group->build_symbol', $target, $result);
 
         // test the display name that can be used for user debugging
         $result = trim($elm_grp->dsp_names());
-        $target = trim('<a href="/http/formula_edit.php?id='.$frm_this->id.'&back=">this</a>');
+        $target = trim('<a href="/http/formula_edit.php?id='.$frm_this->id().'&back=">this</a>');
         $t->dsp('formula_element_group->dsp_names', $target, $result);
 
         // test if the values for an element group are displayed correctly

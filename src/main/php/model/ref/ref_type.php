@@ -40,4 +40,18 @@ class ref_type extends user_type
 
     // the url that can be used to receive data if the external key is added
     public ?string $url = null;
+
+    /*
+     * set and get
+     */
+
+    /**
+     * to be compatible with the other db_objects
+     * @return int|null the database id which is not 0 if the object has been saved
+     */
+    public function id(): ?int
+    {
+        return $this->id;
+    }
+
 }

@@ -91,7 +91,7 @@ class verb_list extends user_type_list
     function load_by_linked_phrases_sql(sql_db $db_con, phrase $phr, string $direction): sql_par
     {
         $qp = new sql_par(self::class);
-        if ($phr->id != 0) {
+        if ($phr->id() != 0) {
             $qp->name .= 'phr_id';
             if ($direction == word_select_direction::UP) {
                 $qp->name .= '_up';
@@ -112,7 +112,7 @@ class verb_list extends user_type_list
             $db_con->set_fields(array(verb::FLD_ID));
             // set the where clause depending on the values given
             // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
-            $db_con->add_par(sql_db::PAR_INT, $phr->id);
+            $db_con->add_par(sql_db::PAR_INT, $phr->id());
             if ($direction == word_select_direction::UP) {
                 $qp->sql = $db_con->select_by_field(triple::FLD_FROM);
             } else {

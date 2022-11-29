@@ -46,14 +46,14 @@ function run_value_test(testing $t)
     ),
         value::TV_CH_INHABITANTS_2019_IN_MIO);
 
-    if ($ch_inhabitants->id <= 0) {
+    if ($ch_inhabitants->id() <= 0) {
         log_err('Loading of test value ' . $ch_inhabitants->dsp_id() . ' failed');
     } else {
         // test load by value id
-        $val = $t->load_value_by_id($t->usr1, $ch_inhabitants->id);
+        $val = $t->load_value_by_id($t->usr1, $ch_inhabitants->id());
         $result = $val->number;
         $target = value::TV_CH_INHABITANTS_2019_IN_MIO;
-        $t->assert(', value->load for value id "' . $ch_inhabitants->id . '"', $result, $target);
+        $t->assert(', value->load for value id "' . $ch_inhabitants->id() . '"', $result, $target);
 
         // test load by phrase list first to get the value id
         $phr_lst = $t->load_phrase_list(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
@@ -69,17 +69,17 @@ function run_value_test(testing $t)
 
         // test load by value id
         $val = new value($t->usr1);
-        if ($val_by_phr_lst->id <> 0) {
-            $val->load_by_id($val_by_phr_lst->id, value::class);
+        if ($val_by_phr_lst->id() <> 0) {
+            $val->load_by_id($val_by_phr_lst->id(), value::class);
             $result = $val->number;
             $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
-            $t->dsp(', value->load for value id "' . $ch_inhabitants->id . '"', $target, $result);
+            $t->dsp(', value->load for value id "' . $ch_inhabitants->id() . '"', $target, $result);
 
             // test rebuild_grp_id by value id
             $result = $val->check();
             $target = true;
         }
-        $t->dsp(', value->check for value id "' . $ch_inhabitants->id . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->dsp(', value->check for value id "' . $ch_inhabitants->id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     }
 
     // test another rebuild_grp_id by value id
@@ -92,7 +92,7 @@ function run_value_test(testing $t)
         $chk_val->load_obj_vars();
     }
     $target = true;
-    if ($chk_val->id <= 0) {
+    if ($chk_val->id() <= 0) {
         $result = 'No value found for ' . $chk_phr_grp->dsp_id() . '.';
         $t->dsp(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     } else {
@@ -149,14 +149,14 @@ function run_value_test(testing $t)
     $phr_lst = $t->load_word_list(array(word::TN_CANTON, word::TN_ZH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
     $phr_lst->ex_time();
     $grp = $phr_lst->get_grp();
-    if ($grp->id == 0) {
+    if ($grp->id() == 0) {
         $result = 'No word list found.';
     } else {
         $val = new value($t->usr1);
         $val->grp = $grp;
         $val->load_obj_vars();
         $result = '';
-        if ($val->id <= 0) {
+        if ($val->id() <= 0) {
             $result = 'No value found for ' . $val->dsp_id() . '.';
         } else {
             if ($val->grp != null) {
@@ -168,7 +168,7 @@ function run_value_test(testing $t)
         }
     }
     $target = array();
-    $t->dsp(', value->load for group id "' . $grp->id . '"', $target, $result);
+    $t->dsp(', value->load for group id "' . $grp->id() . '"', $target, $result);
 
     // test the formatting of a value (percent)
     $pct_val = $t->load_value(array(word::TN_CANTON, word::TN_ZH, word::TN_CH, word::TN_INHABITANT, word::TN_PCT, word::TN_2020));
@@ -200,7 +200,7 @@ function run_value_test(testing $t)
     $mio_val->load_obj_vars();
     $fig = $mio_val->figure();
     $result = $fig->display_linked('1');
-    $target = '<a href="/http/value_edit.php?id=' . $mio_val->id . '&back=1" title="1.55">1.55</a>';
+    $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1" title="1.55">1.55</a>';
     $diff = str_diff($result, $target);
     if ($diff != '') {
         $target = $result;
@@ -216,7 +216,7 @@ function run_value_test(testing $t)
     // test the HTML code creation including the hyperlink
     $result = $mio_val->display_linked('1');
     //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-    $target = '<a href="/http/value_edit.php?id=' . $mio_val->id . '&back=1"  >1.55</a>';
+    $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1"  >1.55</a>';
     $diff = str_diff($result, $target);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);
@@ -228,7 +228,7 @@ function run_value_test(testing $t)
     $mio_val->number = value::TEST_VALUE;
     $result = $mio_val->display_linked('1');
     //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-    $target = '<a href="/http/value_edit.php?id=' . $mio_val->id . '&back=1"  >123\'456</a>';
+    $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1"  >123\'456</a>';
     $diff = str_diff($result, $target);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);
@@ -258,15 +258,15 @@ function run_value_test(testing $t)
     $result = $add_val->save();
     $target = '';
     $t->dsp(', value->save ' . $add_val->number . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
-    $test_val_lst[] = $add_val->id;
+    $test_val_lst[] = $add_val->id();
 
 
     // ... check if the value adding has been logged
-    if ($add_val->id > 0) {
+    if ($add_val->id() > 0) {
         $log = new user_log_named;
         $log->table = 'values';
         $log->field = 'word_value';
-        $log->row_id = $add_val->id;
+        $log->row_id = $add_val->id();
         $log->usr = $t->usr1;
         $result = $log->dsp_last(true);
     }
@@ -281,8 +281,8 @@ function run_value_test(testing $t)
     $target = '123456789';
     $t->dsp(', value->load the value previous saved for "' . $phr_grp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     // remember the added value id to be able to remove the test
-    $added_val_id = $added_val->id;
-    $test_val_lst[] = $added_val->id;
+    $added_val_id = $added_val->id();
+    $test_val_lst[] = $added_val->id();
 
     // test if a value with the same phrases, but different time can be added
     $phr_grp2 = $t->load_phrase_group(array(word::TN_RENAMED, word::TN_INHABITANT, word::TN_MIO, word::TN_2019));
@@ -306,11 +306,11 @@ function run_value_test(testing $t)
     */
 
     // ... check if the value adding has been logged
-    if ($add_val->id > 0) {
+    if ($add_val->id() > 0) {
         $log = new user_log_named;
         $log->table = 'values';
         $log->field = 'word_value';
-        $log->row_id = $add_val2->id;
+        $log->row_id = $add_val2->id();
         $log->usr = $t->usr1;
         $result = $log->dsp_last(true);
     }
@@ -325,11 +325,11 @@ function run_value_test(testing $t)
     $target = '234567890';
     $t->dsp(', value->load the value previous saved for "' . $phr_grp2->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     // remember the added value id to be able to remove the test
-    $test_val_lst[] = $added_val2->id;
+    $test_val_lst[] = $added_val2->id();
 
     // check if the value can be changed
     $added_val = new value($t->usr1);
-    $added_val->id = $added_val_id;
+    $added_val->set_id($added_val_id);
     $added_val->load_obj_vars();
     $added_val->number = 987654321;
     $result = $added_val->save();
@@ -337,11 +337,11 @@ function run_value_test(testing $t)
     $t->dsp(', word->save update value id "' . $added_val_id . '" from  "' . $add_val->number . '" to "' . $added_val->number . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the value change has been logged
-    if ($added_val->id > 0) {
+    if ($added_val->id() > 0) {
         $log = new user_log_named;
         $log->table = 'values';
         $log->field = 'word_value';
-        $log->row_id = $added_val->id;
+        $log->row_id = $added_val->id();
         $log->usr = $t->usr1;
         $result = $log->dsp_last(true);
     }
@@ -350,7 +350,7 @@ function run_value_test(testing $t)
 
     // ... check if the value has really been updated
     $added_val = new value($t->usr1);
-    $added_val->id = $added_val_id;
+    $added_val->set_id($added_val_id);
     $added_val->load_obj_vars();
     $result = $added_val->number;
     $target = '987654321';
@@ -368,7 +368,7 @@ function run_value_test(testing $t)
     $phr_lst = $wrd_lst->phrase_lst(); */
     $val_usr2 = new value($t->usr2);
     //$val_usr2->ids = $phr_lst->ids;
-    $val_usr2->id = $added_val_id;
+    $val_usr2->set_id($added_val_id);
     $val_usr2->load_obj_vars();
     $val_usr2->number = 23456;
     $result = $val_usr2->save();
@@ -377,13 +377,13 @@ function run_value_test(testing $t)
 
     // ... check if the value change for the other user has been logged
     $val_usr2 = new value($t->usr2);
-    $val_usr2->id = $added_val_id;
+    $val_usr2->set_id($added_val_id);
     $val_usr2->load_obj_vars();
-    if ($val_usr2->id > 0) {
+    if ($val_usr2->id() > 0) {
         $log = new user_log_named;
         $log->table = 'user_values';
         $log->field = 'word_value';
-        $log->row_id = $val_usr2->id;
+        $log->row_id = $val_usr2->id();
         $log->usr = $t->usr2;
         $result = $log->dsp_last(true);
     }
@@ -419,11 +419,11 @@ function run_value_test(testing $t)
     $val_usr2 = new value($t->usr2);
     $val_usr2->grp = $phr_grp;
     $val_usr2->load_obj_vars();
-    if ($val_usr2->id > 0) {
+    if ($val_usr2->id() > 0) {
         $log = new user_log_named;
         $log->table = 'user_values';
         $log->field = 'word_value';
-        $log->row_id = $val_usr2->id;
+        $log->row_id = $val_usr2->id();
         $log->usr = $t->usr2;
         $result = $log->dsp_last(true);
     }

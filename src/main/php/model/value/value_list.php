@@ -141,7 +141,7 @@ class value_list
 
 
         if ($this->phr != null) {
-            if ($this->phr->id <> 0) {
+            if ($this->phr->id() <> 0) {
                 if ($this->phr->is_word()) {
                     $sql_name_ext .= 'word_id';
                 } else {
@@ -167,12 +167,12 @@ class value_list
                 $db_con->set_join_fields(array(triple::FLD_ID), sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
             }
             if ($this->phr != null) {
-                if ($this->phr->id <> 0) {
+                if ($this->phr->id() <> 0) {
                     if ($this->phr->is_word()) {
-                        $db_con->add_par(sql_db::PAR_INT, $this->phr->id);
+                        $db_con->add_par(sql_db::PAR_INT, $this->phr->id());
                         $sql_where = 'l2.word_id = ' . $db_con->par_name();
                     } else {
-                        $db_con->add_par(sql_db::PAR_INT, $this->phr->id * -1);
+                        $db_con->add_par(sql_db::PAR_INT, $this->phr->id() * -1);
                         $sql_where = 'l2.triple_id = ' . $db_con->par_name();
                     }
                 }
@@ -219,7 +219,7 @@ class value_list
                         // TODO either integrate this in the query or load this with one sql for all values
                         if ($db_val['time_word_id'] <> 0) {
                             $time_phr = new phrase($this->usr);
-                            $time_phr->id = $db_val['time_word_id'];
+                            $time_phr->set_id($db_val['time_word_id']);
                             if ($time_phr->load_by_obj_par()) {
                                 $val->time_phr = $time_phr;
                             }
@@ -256,7 +256,7 @@ class value_list
         $db_con->set_join_fields(
             array(value::FLD_ID), sql_db::TBL_VALUE_PHRASE_LINK,
             value::FLD_ID, value::FLD_ID,
-            phrase::FLD_ID, $phr->id);
+            phrase::FLD_ID, $phr->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
@@ -426,12 +426,12 @@ class value_list
                     foreach ($db_val_lst as $db_val) {
                         if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
                             $val = new value($this->usr);
-                            $val->id = $db_val['value_id'];
+                            $val->set_id($db_val['value_id']);
                             $val->owner_id = $db_val[user_sandbox::FLD_USER];
                             $val->number = $db_val['word_value'];
                             $val->set_source_id($db_val['source_id']);
                             $val->last_update = get_datetime($db_val['last_update']);
-                            $val->grp->id = $db_val['phrase_group_id'];
+                            $val->grp->set_id($db_val['phrase_group_id']);
                             $val->set_time_id($db_val['time_word_id']);
                             $this->lst[] = $val;
                         }
@@ -509,7 +509,7 @@ class value_list
                 $src->set_name($value);
                 if ($result->is_ok() and $do_save) {
                     $src->load_obj_vars();
-                    if ($src->id == 0) {
+                    if ($src->id() == 0) {
                         $result->add_message($src->save());
                     }
                 }
@@ -1086,7 +1086,7 @@ class value_list
         }
 
         log_debug('common ');
-        $common_phr_ids = array_diff($common_phr_ids, array($this->phr->id));  // exclude the list word
+        $common_phr_ids = array_diff($common_phr_ids, array($this->phr->id()));  // exclude the list word
         $common_phr_ids = array_values($common_phr_ids);            // cleanup the array
 
         // display the common words
@@ -1122,11 +1122,11 @@ class value_list
                 $dsp_phr_lst = $val_phr_lst->dsp_obj();
                 log_debug('cloned ' . $val->id);
                 if (isset($this->phr)) {
-                    if (isset($this->phr->id)) {
-                        $dsp_phr_lst->diff_by_ids(array($this->phr->id));
+                    if ($this->phr->id() != null) {
+                        $dsp_phr_lst->diff_by_ids(array($this->phr->id()));
                     }
                 }
-                log_debug('removed ' . $this->phr->id);
+                log_debug('removed ' . $this->phr->id());
                 $dsp_phr_lst->diff_by_ids($common_phr_ids);
                 // remove the words of the previous row, because it should not be shown on each line
                 if (isset($last_phr_lst->ids)) {
@@ -1138,7 +1138,7 @@ class value_list
                 if ($val->time_phr != null) {
                     if ($val->time_phr->id > 0) {
                         $time_phr = new phrase($val->usr);
-                        $time_phr->id = $val->time_phr->id;
+                        $time_phr->set_id($val->time_phr->id);
                         $time_phr->load_by_obj_par();
                         $val->time_phr = $time_phr;
                         $dsp_phr_lst->add($time_phr);
@@ -1163,15 +1163,15 @@ class value_list
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $result .= \html\btn_add_value($val_phr_lst, Null, $this->phr->id);
+                    $result .= \html\btn_add_value($val_phr_lst, Null, $this->phr->id());
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
-                $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->phr->id);
+                $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->phr->id());
                 $result .= '    </td>';
                 $result .= '    <td>';
-                $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->phr->id);
+                $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->phr->id());
                 $result .= '    </td>';
                 $result .= '  </tr>';
             }
@@ -1184,7 +1184,7 @@ class value_list
         log_debug('new');
         if (empty($common_phr_ids)) {
             $common_phr_lst_new = new word_list($this->usr);
-            $common_phr_ids[] = $this->phr->id;
+            $common_phr_ids[] = $this->phr->id();
             $common_phr_lst_new->load_by_ids($common_phr_ids);
         }
 

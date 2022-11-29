@@ -38,7 +38,20 @@ class db_object
      */
 
     // database fields that are used in all objects and that have a specific behavior
-    public ?int $id = null;            // the database id of the object, which is the same for the standard and the user specific object
+    // the database id of the object, which is the same for the standard and the user specific object
+    protected ?int $id = null;
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * reset the id to null to indicate that the database object has not been loaded
+     */
+    function __construct()
+    {
+        $this->id = null;
+    }
 
     /*
      * set and get
@@ -60,6 +73,26 @@ class db_object
     public function id(): ?int
     {
         return $this->id;
+    }
+
+    /*
+     * information
+     */
+
+    /**
+     * @return bool true if the object has a database id
+     */
+    public function isset(): bool
+    {
+        if ($this->id == null) {
+            return false;
+        } else {
+            if ($this->id != 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     /*

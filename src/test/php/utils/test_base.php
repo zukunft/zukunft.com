@@ -388,7 +388,7 @@ class test_base
         }
 
         $wrd = new word($test_usr);
-        $wrd->id = $id;
+        $wrd->set_id($id);
         $wrd->set_name($wrd_name);
 
         if ($wrd_type_code_id != null) {
@@ -427,7 +427,7 @@ class test_base
     function add_word(string $wrd_name, ?string $wrd_type_code_id = null, ?user $test_usr = null): word
     {
         $wrd = $this->load_word($wrd_name, $test_usr);
-        if ($wrd->id == 0) {
+        if ($wrd->id() == 0) {
             $wrd->set_name($wrd_name);
             $wrd->save();
         }
@@ -489,7 +489,7 @@ class test_base
         }
 
         $trp = new triple($test_usr);
-        $trp->id = $id;
+        $trp->set_id($id);
         $trp->from = $this->new_word($from_name)->phrase();
         $trp->verb = $verbs->get_verb($verb_code_id);
         $trp->to = $this->new_word($to_name)->phrase();
@@ -516,7 +516,7 @@ class test_base
         $vrb = $verbs->get_verb($verb_code_id);
 
         $lnk_test = new triple($usr);
-        if ($from->id > 0 or $to->id > 0) {
+        if ($from->id() > 0 or $to->id() > 0) {
             // check if the forward link exists
             $lnk_test->from = $from;
             $lnk_test->verb = $vrb;
@@ -544,13 +544,13 @@ class test_base
 
         // create the words if needed
         $wrd_from = $this->load_word($from_name);
-        if ($wrd_from->id <= 0 and $autocreate) {
+        if ($wrd_from->id() <= 0 and $autocreate) {
             $wrd_from->set_name($from_name);
             $wrd_from->save();
             $wrd_from->load_obj_vars();
         }
         $wrd_to = $this->load_word($to_name);
-        if ($wrd_to->id <= 0 and $autocreate) {
+        if ($wrd_to->id() <= 0 and $autocreate) {
             $wrd_to->set_name($to_name);
             $wrd_to->save();
             $wrd_to->load_obj_vars();
@@ -561,7 +561,7 @@ class test_base
         $vrb = $verbs->get_verb($verb_code_id);
 
         $lnk_test = new triple($usr);
-        if ($from->id == 0 or $to->id == 0) {
+        if ($from->id() == 0 or $to->id() == 0) {
             log_err("Words " . $from_name . " and " . $to_name . " cannot be created");
         } else {
             // check if the forward link exists
@@ -569,7 +569,7 @@ class test_base
             $lnk_test->verb = $vrb;
             $lnk_test->to = $to;
             $lnk_test->load_obj_vars();
-            if ($lnk_test->id > 0) {
+            if ($lnk_test->id() > 0) {
                 // refresh the given name if needed
                 if ($phrase_name <> '' and $lnk_test->name_given() <> $phrase_name) {
                     $lnk_test->set_name_given($phrase_name);
@@ -586,7 +586,7 @@ class test_base
                 $lnk_test->load_obj_vars();
                 $result = $lnk_test;
                 // create the link if requested
-                if ($lnk_test->id <= 0 and $autocreate) {
+                if ($lnk_test->id() <= 0 and $autocreate) {
                     $lnk_test->from = $from;
                     $lnk_test->verb = $vrb;
                     $lnk_test->to = $to;
@@ -600,7 +600,7 @@ class test_base
         }
         // fallback setting of target f
         $result_text = '';
-        if ($lnk_test->id > 0) {
+        if ($lnk_test->id() > 0) {
             $result_text = $lnk_test->name();
             if ($target == '') {
                 $target = $lnk_test->name();
@@ -615,7 +615,7 @@ class test_base
                            string $to_name): bool
     {
         $trp = $this->load_triple($from_name, $verb_code_id, $to_name);
-        if ($trp->id <> 0) {
+        if ($trp->id() <> 0) {
             $trp->del();
             return true;
         } else {
@@ -648,7 +648,7 @@ class test_base
         }
 
         $frm = new formula($test_usr);
-        $frm->id = $id;
+        $frm->set_id($id);
         $frm->set_name($frm_name);
 
         if ($frm_type_code_id != null) {
@@ -671,7 +671,7 @@ class test_base
     function add_formula(string $frm_name, string $frm_text): formula
     {
         $frm = $this->load_formula($frm_name);
-        if ($frm->id == 0) {
+        if ($frm->id() == 0) {
             $frm->set_name($frm_name);
             $frm->usr_text = $frm_text;
             $frm->set_ref_text();
@@ -701,7 +701,7 @@ class test_base
         $ref = new ref($usr);
         $ref->phr = $phr;
         $ref->ref_type = get_ref_type($type_name);
-        if ($phr->id != 0) {
+        if ($phr->id() != 0) {
             $ref->load_obj_vars();
         }
         return $ref;
@@ -858,7 +858,7 @@ class test_base
     {
         global $usr;
         $val = $this->load_value($array_of_word_str);
-        if ($val->id == 0) {
+        if ($val->id() == 0) {
             // the time separation is done here until there is a phrase series value table that can be used also to time phrases
             $phr_lst = $this->load_phrase_list($array_of_word_str);
             $time_phr = $phr_lst->time_useful();
@@ -900,7 +900,7 @@ class test_base
     function add_value_by_phr_grp(phrase_group $phr_grp, float $target): value
     {
         $val = $this->load_value_by_phr_grp($phr_grp);
-        if ($val->id == 0) {
+        if ($val->id() == 0) {
             $val->grp = $phr_grp;
             $val->number = $target;
             $val->save();
@@ -951,7 +951,7 @@ class test_base
     function add_source(string $src_name): source
     {
         $src = $this->load_source($src_name);
-        if ($src->id == 0) {
+        if ($src->id() == 0) {
             $src->set_name($src_name);
             $src->save();
         }
@@ -990,7 +990,7 @@ class test_base
         }
 
         $dsp = $this->load_view($dsp_name, $test_usr);
-        if ($dsp->id == 0) {
+        if ($dsp->id() == 0) {
             $dsp->set_user($test_usr);
             $dsp->set_name($dsp_name);
             $dsp->save();
@@ -1028,7 +1028,7 @@ class test_base
         }
 
         $cmp = $this->load_view_component($cmp_name, $test_usr);
-        if ($cmp->id == 0 or $cmp->id == Null) {
+        if ($cmp->id() == 0 or $cmp->id() == Null) {
             $cmp->set_user($test_usr);
             $cmp->set_name($cmp_name);
             if ($type_code_id != '') {
@@ -1067,7 +1067,7 @@ class test_base
         $dsp = $this->load_view($dsp_name);
         $cmp = $this->load_view_component($cmp_name);
         if ($dsp != null and $cmp != null) {
-            if ($dsp->id > 0 and $cmp->id > 0) {
+            if ($dsp->id() > 0 and $cmp->id() > 0) {
                 $result = $cmp->unlink($dsp);
             }
         }
@@ -1084,12 +1084,12 @@ class test_base
         $frm->load_by_name($formula_name, formula::class);
         $phr = new word($usr);
         $phr->load_by_name($word_name, word::class);
-        if ($frm->id > 0 and $phr->id <> 0) {
+        if ($frm->id() > 0 and $phr->id() <> 0) {
             $frm_lnk = new formula_link($usr);
             $frm_lnk->fob = $frm;
             $frm_lnk->tob = $phr;
             $frm_lnk->load_obj_vars();
-            if ($frm_lnk->id > 0) {
+            if ($frm_lnk->id() > 0) {
                 $result = $frm_lnk->fob->name() . ' is linked to ' . $frm_lnk->tob->name();
                 $target = $formula_name . ' is linked to ' . $word_name;
                 $this->dsp('formula_link', $target, $result);

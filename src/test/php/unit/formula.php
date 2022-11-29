@@ -60,7 +60,7 @@ class formula_unit_tests
 
         // sql to load the formula by id
         $frm = new formula($usr);
-        $frm->id = 2;
+        $frm->set_id(2);
         //$t->assert_load_sql($db_con, $frm);
         $t->assert_load_standard_sql($db_con, $frm);
         $t->assert_not_changed_sql($db_con, $frm);
@@ -119,8 +119,7 @@ class formula_unit_tests
 
         // check the PostgreSQL query syntax to load a list of formulas by phrase
         $wrd = new word($usr);
-        $wrd->id = 1;
-        $wrd->set_name(word::TN_ADD);
+        $wrd->set(1,word::TN_ADD);
         $phr = $wrd->phrase();
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $frm_lst->load_sql_by_phr($db_con, $phr);
@@ -165,7 +164,7 @@ class formula_unit_tests
         $result = $exp->fv_phr_lst();
         $target = new phrase_list($usr);
         $wrd = new word($usr);
-        $wrd->id = 205;
+        $wrd->set_id(205);
         $target->lst[] = $wrd->phrase();
         $t->assert('Expression->fv_phr_lst for ' . formula::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
 

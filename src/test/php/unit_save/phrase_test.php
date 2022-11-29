@@ -68,26 +68,26 @@ function run_phrase_test(testing $t)
     // prepare the Insurance Zurich
     $wrd_zh = $t->load_word(word::TN_ZH);
     $lnk_company = new triple($usr);
-    $lnk_company->from->id = $wrd_zh->id;
+    $lnk_company->from->set_id($wrd_zh->id());
     $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
-    $lnk_company->to->id = $wrd_company->id;
+    $lnk_company->to->set_id($wrd_company->id());
     $lnk_company->load_obj_vars();
 
     // remember the id for later use
-    $zh_company_id = $lnk_company->id;
+    $zh_company_id = $lnk_company->id();
 
 
     // test the phrase display functions (word side)
     $phr = new phrase($usr);
-    $phr->id = $wrd_company->id;
+    $phr->set_id($wrd_company->id());
     $phr->set_user($usr);
     $phr->load_by_obj_par();
     $result = $phr->name();
     $target = word::TN_COMPANY;
-    $t->dsp('phrase->load word by id ' . $wrd_company->id, $target, $result);
+    $t->dsp('phrase->load word by id ' . $wrd_company->id(), $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
-    $target = ' <td><a href="/http/view.php?words=' . $wrd_company->id . '" title="System Test Word Group e.g. Company">' . word::TN_COMPANY . '</a></td> ';
+    $target = ' <td><a href="/http/view.php?words=' . $wrd_company->id() . '" title="System Test Word Group e.g. Company">' . word::TN_COMPANY . '</a></td> ';
     $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
     $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
     $result = trim_all($result);
@@ -102,14 +102,14 @@ function run_phrase_test(testing $t)
 
     // test the phrase display functions (triple side)
     $phr = new phrase($usr);
-    $phr->id = $zh_company_id * -1;
+    $phr->set_id($zh_company_id * -1);
     $phr->load_by_obj_par();
     $result = $phr->name();
     $target = phrase::TN_ZH_COMPANY;
     $t->dsp('phrase->load triple by id ' . $zh_company_id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
-    $target = ' <td> <a href="/http/view.php?link=' . $lnk_company->id . '" title="' . phrase::TN_ZH_COMPANY . '">' . phrase::TN_ZH_COMPANY . '</a></td> ';
+    $target = ' <td> <a href="/http/view.php?link=' . $lnk_company->id() . '" title="' . phrase::TN_ZH_COMPANY . '">' . phrase::TN_ZH_COMPANY . '</a></td> ';
     $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
     $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
     $result = trim_all($result);
@@ -125,9 +125,9 @@ function run_phrase_test(testing $t)
     // test the phrase selector
     $form_name = 'test_phrase_selector';
     $pos = 1;
-    $back = $wrd_company->id;
+    $back = $wrd_company->id();
     $phr = new phrase($usr);
-    $phr->id = $zh_company_id * -1;
+    $phr->set_id($zh_company_id * -1);
     $phr->load_by_obj_par();
     $result = $phr->dsp_selector(Null, $form_name, $pos, '', $back);
     $target = phrase::TN_ZH_COMPANY;

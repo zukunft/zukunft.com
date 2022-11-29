@@ -25,7 +25,7 @@ class triple_unit_tests
 
         // sql to load the triple by id
         $trp = new triple($usr);
-        $trp->id = 2;
+        $trp->set_id(2);
         $t->assert_load_sql($db_con, $trp);
         $t->assert_load_standard_sql($db_con, $trp);
 

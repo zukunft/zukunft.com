@@ -44,11 +44,9 @@ class user_sandbox_unit_tests
 
         // test if two sources are supposed to be the same
         $src1 = new source($usr);
-        $src1->id = 1;
-        $src1->set_name(TS_IPCC_AR6_SYNTHESIS);
+        $src1->set(1, TS_IPCC_AR6_SYNTHESIS);
         $src2 = new source($usr);
-        $src2->id = 2;
-        $src2->set_name(TS_IPCC_AR6_SYNTHESIS);
+        $src2->set(2, TS_IPCC_AR6_SYNTHESIS);
         $target = true;
         $result = $src1->is_same($src2);
         $t->dsp("are two sources supposed to be the same", $target, $result);
@@ -60,10 +58,10 @@ class user_sandbox_unit_tests
 
         // a source can have the same name as a word
         $wrd1 = new word($usr);
-        $wrd1->id = 1;
+        $wrd1->set_id( 1);
         $wrd1->set_name(TS_IPCC_AR6_SYNTHESIS);
         $src2 = new source($usr);
-        $src2->id = 2;
+        $src2->set_id( 2);
         $src2->set_name(TS_IPCC_AR6_SYNTHESIS);
         $target = false;
         $result = $wrd1->is_same($src2);
@@ -1812,7 +1810,7 @@ class user_sandbox_unit_tests
 
         // the word changer query (used in user_sandbox->changer_sql)
         $wrd = new word($usr);
-        $wrd->id = 1;
+        $wrd->set_id( 1);
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $wrd->changer_sql($db_con);
         $t->assert_qp($qp, $db_con->db_type);

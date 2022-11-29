@@ -109,7 +109,7 @@ class formula_element
                 $wrd->load_by_id($ref_id, word::class);
                 $this->name = $wrd->name();
                 $this->dsp_name = $wrd->dsp_obj()->dsp_link($this->back);
-                $this->symbol = expression::WORD_START . $wrd->id . expression::WORD_END;
+                $this->symbol = expression::WORD_START . $wrd->id() . expression::WORD_END;
                 $this->obj = $wrd;
             }
             if ($this->type == self::TYPE_VERB) {
@@ -127,7 +127,7 @@ class formula_element
                 $frm->load_by_id($ref_id, formula::class);
                 $this->name = $frm->name();
                 $this->dsp_name = $frm->dsp_obj_old()->name_linked($this->back);
-                $this->symbol = expression::FORMULA_START . $frm->id . expression::FORMULA_END;
+                $this->symbol = expression::FORMULA_START . $frm->id() . expression::FORMULA_END;
                 $this->obj = $frm;
                 /*
                 // in case of a formula load also the corresponding word
@@ -165,7 +165,7 @@ class formula_element
             $result .= '(' . $this->id . ')';
         } else {
             if ($this->obj != null) {
-                $result .= '(' . $this->obj->id . ')';
+                $result .= '(' . $this->obj->id() . ')';
             }
         }
         if ($this->usr->is_set()) {
@@ -183,7 +183,7 @@ class formula_element
         $result = '';
 
         if ($this->obj != null) {
-            if ($this->obj->id != 0) {
+            if ($this->obj->id() != 0) {
                 // TODO replace with phrase
                 if ($this->type == 'word') {
                     $result = $this->obj->name();
@@ -209,7 +209,7 @@ class formula_element
         $result = '';
 
         if ($this->obj != null) {
-            if ($this->obj->id <> 0) {
+            if ($this->obj->id() <> 0) {
                 // TODO replace with phrase
                 if ($this->type == word::class) {
                     $result = $this->obj->dsp_obj()->dsp_link($back);

@@ -53,7 +53,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::FORMULA_ADD);
+    $dsp->set_id(cl(db_cl::VIEW, view::FORMULA_ADD));
     $dsp->load_obj_vars();
     $back = $_GET['back'];
 
@@ -82,7 +82,7 @@ if ($usr->id > 0) {
     // get the word to which the new formula should be linked to
     $wrd = new word($usr);
     if (isset($_GET['word'])) {
-        $wrd->id = $_GET['word'];
+        $wrd->set_id($_GET['word']);
         $wrd->load_obj_vars();
     }
 
@@ -125,7 +125,7 @@ if ($usr->id > 0) {
 
                 // if adding was successful ...
                 // link the formula to at least one word
-                if ($wrd->id > 0) {
+                if ($wrd->id() > 0) {
                     $phr = $wrd->phrase();
                     $add_result .= $frm->link_phr($phr);
 

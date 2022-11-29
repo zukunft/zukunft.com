@@ -172,10 +172,10 @@ class user_dsp_old extends user
                 // create the triple objects with the minimal parameter needed
                 // TODO maybe use row mapper
                 $wrd_usr = new triple($this);
-                $wrd_usr->id = $sbx_row['id'];
-                $wrd_usr->from->id = $sbx_row['from_phrase_id'];
+                $wrd_usr->set_id($sbx_row['id']);
+                $wrd_usr->from->set_id($sbx_row['from_phrase_id']);
                 $wrd_usr->verb->id = $sbx_row[verb::FLD_ID];
-                $wrd_usr->to->id = $sbx_row['to_phrase_id'];
+                $wrd_usr->to->set_id($sbx_row['to_phrase_id']);
                 $wrd_usr->set_name($sbx_row['usr_name']);
                 $wrd_usr->excluded = $sbx_row['usr_excluded'];
                 $wrd_usr->load_obj_vars();
@@ -237,7 +237,7 @@ class user_dsp_old extends user
                         $wrd_lnk_other = clone $wrd_usr;
                         $wrd_lnk_other->set_user($usr_other);
                         $wrd_lnk_other->load_obj_vars();
-                        $wrd_lnk_other->name = $wrd_lnk_other_row['name'];
+                        $wrd_lnk_other->set_name($wrd_lnk_other_row['name']);
                         $wrd_lnk_other->excluded = $wrd_lnk_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
@@ -380,7 +380,7 @@ class user_dsp_old extends user
 
                 // create the formula_link objects with the minimal parameter needed
                 $frm_usr = new formula_link($this);
-                $frm_usr->id = $sbx_row['id'];
+                $frm_usr->set_id($sbx_row['id']);
                 $frm_usr->fob->id = $sbx_row[formula::FLD_ID];
                 $frm_usr->tob->id = $sbx_row[phrase::FLD_ID];
                 $frm_usr->link_type_id = $sbx_row['usr_type'];
@@ -547,11 +547,11 @@ class user_dsp_old extends user
 
                 // create the value objects with the minimal parameter needed
                 $val_usr = new value($this);
-                $val_usr->id = $val_row['id'];
+                $val_usr->set_id($val_row['id']);
                 $val_usr->number = $val_row['usr_value'];
                 $val_usr->set_source_id($val_row['usr_source']);
                 $val_usr->excluded = $val_row['usr_excluded'];
-                $val_usr->grp->id = $val_row['phrase_group_id'];
+                $val_usr->grp->set_id($val_row['phrase_group_id']);
                 $val_usr->set_time_id($val_row['time_word_id']);
                 $val_usr->load_phrases();
 
@@ -568,7 +568,7 @@ class user_dsp_old extends user
 
                 // check database consistency and correct it if needed
                 if ($val_usr->number == $val_std->number
-                    and $val_usr->source == $val_std->source
+                    and $val_usr->source === $val_std->source
                     and $val_usr->excluded == $val_std->excluded) {
                     $val_usr->del_usr_cfg();
                 } else {
@@ -585,7 +585,7 @@ class user_dsp_old extends user
                     } else {
                         $sandbox_usr_txt = $val_usr->val_formatted();
                     }
-                    $sandbox_usr_txt = '<a href="/http/value_edit.php?id=' . $val_usr->id . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
+                    $sandbox_usr_txt = '<a href="/http/value_edit.php?id=' . $val_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
 
                     // format the standard value
                     if ($val_std->excluded == 1) {
@@ -717,13 +717,13 @@ class user_dsp_old extends user
                 $row_nbr++;
 
                 // create the view objects with the minimal parameter needed
-                $dsp_usr = new view_dsp_old;
-                $dsp_usr->id = $sbx_row['id'];
-                $dsp_usr->name = $sbx_row['usr_name'];
+                $dsp_usr = new view_dsp_old();
+                $dsp_usr->set_id($sbx_row['id']);
+                $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->comment = $sbx_row['usr_comment'];
                 $dsp_usr->type_id = $sbx_row['usr_type'];
                 $dsp_usr->excluded = $sbx_row['usr_excluded'];
-                $dsp_usr->usr = $this;
+                $dsp_usr->set_user($this);
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
@@ -732,13 +732,13 @@ class user_dsp_old extends user
 
                 $dsp_std = clone $dsp_usr;
                 $dsp_std->set_user($usr_std);
-                $dsp_std->name = $sbx_row['std_name'];
+                $dsp_std->set_name($sbx_row['std_name']);
                 $dsp_std->comment = $sbx_row['std_comment'];
                 $dsp_std->type_id = $sbx_row['std_type'];
                 $dsp_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
-                if ($dsp_usr->name == $dsp_std->name
+                if ($dsp_usr->set_name($dsp_std->name())
                     and $dsp_usr->comment == $dsp_std->comment
                     and $dsp_usr->type_id == $dsp_std->type_id
                     and $dsp_usr->excluded == $dsp_std->excluded) {
@@ -749,15 +749,15 @@ class user_dsp_old extends user
                     if ($dsp_usr->excluded == 1) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $dsp_usr->name;
+                        $sandbox_usr_txt = $dsp_usr->name();
                     }
-                    $sandbox_usr_txt = '<a href="/http/view_edit.php?id=' . $dsp_usr->id . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
+                    $sandbox_usr_txt = '<a href="/http/view_edit.php?id=' . $dsp_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
 
                     // format the standard view
                     if ($dsp_std->excluded == 1) {
                         $sandbox_std_txt = "deleted";
                     } else {
-                        $sandbox_std_txt = $dsp_std->name;
+                        $sandbox_std_txt = $dsp_std->name();
                     }
 
                     // format the view of other users
@@ -784,14 +784,14 @@ class user_dsp_old extends user
                         // to review: load all user views with one query
                         $dsp_other = clone $dsp_usr;
                         $dsp_other->set_user($usr_other);
-                        $dsp_other->name = $dsp_other_row[view::FLD_NAME];
+                        $dsp_other->set_name($dsp_other_row[view::FLD_NAME]);
                         $dsp_other->comment = $dsp_other_row['comment'];
                         $dsp_other->type_id = $dsp_other_row[view::FLD_TYPE];
                         $dsp_other->excluded = $dsp_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $sandbox_other .= $dsp_other->name;
+                        $sandbox_other .= $dsp_other->name();
                     }
                     $sandbox_other = '<a href="/http/user_view.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
@@ -885,7 +885,7 @@ class user_dsp_old extends user
 
                 // create the view_component object with the minimal parameter needed
                 $dsp_usr = new view_cmp_dsp_old($this);
-                $dsp_usr->id = $sbx_row['id'];
+                $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->description = $sbx_row['usr_comment'];
                 $dsp_usr->type_id = $sbx_row['usr_type'];
@@ -917,7 +917,7 @@ class user_dsp_old extends user
                     } else {
                         $sandbox_usr_txt = $dsp_usr->name();
                     }
-                    $sandbox_usr_txt = '<a href="/http/view_component_edit.php?id=' . $dsp_usr->id . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
+                    $sandbox_usr_txt = '<a href="/http/view_component_edit.php?id=' . $dsp_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
 
                     // format the standard view_component
                     if ($dsp_std->excluded == 1) {
@@ -1054,9 +1054,9 @@ class user_dsp_old extends user
 
                 // create the view_component_link objects with the minimal parameter needed
                 $dsp_usr = new view_cmp_link($this);
-                $dsp_usr->id = $sbx_row['id'];
-                $dsp_usr->dsp->id = $sbx_row[view::FLD_ID];
-                $dsp_usr->cmp->id = $sbx_row['view_component_id'];
+                $dsp_usr->set_id($sbx_row['id']);
+                $dsp_usr->dsp->set_id($sbx_row[view::FLD_ID]);
+                $dsp_usr->cmp->set_id($sbx_row['view_component_id']);
                 $dsp_usr->order_nbr = $sbx_row['usr_order'];
                 $dsp_usr->position_type = $sbx_row['usr_type'];
                 $dsp_usr->excluded = $sbx_row['usr_excluded'];
@@ -1226,7 +1226,7 @@ class user_dsp_old extends user
 
                 // create the source objects with the minimal parameter needed
                 $dsp_usr = new source($this);
-                $dsp_usr->id = $sbx_row['id'];
+                $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->url = $sbx_row['usr_url'];
                 $dsp_usr->comment = $sbx_row['usr_comment'];
@@ -1263,7 +1263,7 @@ class user_dsp_old extends user
                     } else {
                         $sandbox_usr_txt = $dsp_usr->name();
                     }
-                    $sandbox_usr_txt = '<a href="/http/source_edit.php?id=' . $dsp_usr->id . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
+                    $sandbox_usr_txt = '<a href="/http/source_edit.php?id=' . $dsp_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
 
                     // format the standard source
                     if ($dsp_std->excluded == 1) {

@@ -55,7 +55,7 @@ class triple_list_unit_tests
         // load by triple phr
         $trp_lst = new triple_list($usr);
         $phr = new phrase($usr);
-        $phr->id = 5;
+        $phr->set_id(5);
         $this->assert_sql_by_phr($t, $db_con, $trp_lst, $phr);
 
         /*
@@ -132,7 +132,7 @@ class triple_list_unit_tests
 
         // sql to load by word link list by word and up
         $wrd = new word($usr);
-        $wrd->id = 1;
+        $wrd->set_id(1);
         $wrd_lnk_lst = new triple_list($usr);
         $wrd_lnk_lst->wrd = $wrd;
         $wrd_lnk_lst->direction = triple_list::DIRECTION_UP;
@@ -187,7 +187,7 @@ class triple_list_unit_tests
 
         // sql to load by word link list by word and down
         $wrd = new word($usr);
-        $wrd->id = 2;
+        $wrd->set_id(2);
         $wrd_lnk_lst = new triple_list($usr);
         $wrd_lnk_lst->wrd = $wrd;
         $wrd_lnk_lst->direction = triple_list::DIRECTION_DOWN;
@@ -243,10 +243,10 @@ class triple_list_unit_tests
         // sql to load by word link list by word list and up
         $wrd_lst = new word_list($usr);
         $wrd = new word($usr);
-        $wrd->id = 1;
+        $wrd->set_id(1);
         $wrd_lst->add($wrd);
         $wrd = new word($usr);
-        $wrd->id = 2;
+        $wrd->set_id(2);
         $wrd_lst->add($wrd);
         $wrd_lnk_lst = new triple_list($usr);
         $wrd_lnk_lst->wrd_lst = $wrd_lst;
@@ -315,10 +315,10 @@ class triple_list_unit_tests
         // sql to load by word link list by word list and down
         $wrd_lst = new word_list($usr);
         $wrd = new word($usr);
-        $wrd->id = 2;
+        $wrd->set_id(2);
         $wrd_lst->add($wrd);
         $wrd = new word($usr);
-        $wrd->id = 3;
+        $wrd->set_id(3);
         $wrd_lst->add($wrd);
         $wrd_lnk_lst = new triple_list($usr);
         $wrd_lnk_lst->wrd_lst = $wrd_lst;
@@ -387,10 +387,10 @@ class triple_list_unit_tests
         // sql to load by word link list by word list and down filtered by a verb
         $wrd_lst = new word_list($usr);
         $wrd = new word($usr);
-        $wrd->id = 2;
+        $wrd->set_id(2);
         $wrd_lst->add($wrd);
         $wrd = new word($usr);
-        $wrd->id = 3;
+        $wrd->set_id(3);
         $wrd_lst->add($wrd);
         $vrb = new verb();
         $vrb->id = 2;
@@ -463,10 +463,10 @@ class triple_list_unit_tests
         // sql to load by word link list by word list and down filtered by a verb list
         $wrd_lst = new word_list($usr);
         $wrd = new word($usr);
-        $wrd->id = 2;
+        $wrd->set_id(2);
         $wrd_lst->add($wrd);
         $wrd = new word($usr);
-        $wrd->id = 3;
+        $wrd->set_id(3);
         $wrd_lst->add($wrd);
         $vrb_lst = new verb_list($usr);
         $vrb_lst->ids = [1, 2];

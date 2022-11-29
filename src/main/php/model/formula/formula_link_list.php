@@ -192,13 +192,13 @@ class formula_link_list extends link_list
                     $db_con->usr_id = $this->user()->id;
                     // delete first all user configuration that have also been excluded
                     $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK);
-                    $result = $db_con->delete(array(formula_link::FLD_ID, user_sandbox::FLD_EXCLUDED), array($frm_lnk->id, '1'));
+                    $result = $db_con->delete(array(formula_link::FLD_ID, user_sandbox::FLD_EXCLUDED), array($frm_lnk->id(), '1'));
                     if ($result == '') {
                         $db_con->set_type(sql_db::TBL_FORMULA_LINK);
-                        $result = $db_con->delete(formula_link::FLD_ID, $frm_lnk->id);
+                        $result = $db_con->delete(formula_link::FLD_ID, $frm_lnk->id());
                     }
                 } else {
-                    log_err("Cannot delete a formula word link (id " . $frm_lnk->id . "), which is used or created by another user.", "formula_link_list->del_without_log");
+                    log_err("Cannot delete a formula word link (id " . $frm_lnk->id() . "), which is used or created by another user.", "formula_link_list->del_without_log");
                 }
             }
         }

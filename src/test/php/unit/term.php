@@ -55,7 +55,6 @@ class term_unit_tests
 
         $trp = new triple($usr);
         $trp->set(1, triple::TN_READ);
-        $trp->id = 1;
         $trm = $trp->term();
         $t->assert($t->name . 'triple id', $trm->id_obj(), $trp->id());
         $t->assert($t->name . 'triple name', $trm->name(), $trp->name());

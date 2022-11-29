@@ -45,21 +45,21 @@ function run_term_test(testing $t): void
     $term->load_by_obj_name(word::TN_ZH);
     $target = 'A word with the name "' . word::TN_ZH . '" already exists. Please use another name.';
     $result = $term->id_used_msg();
-    $t->dsp_contains(', term->load for id ' . $wrd_zh->id, $target, $result);
+    $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
     // ... check also for a triple
     $term = new term($usr);
     $term->load_by_obj_name(phrase::TN_ZH_CITY);
     $target = 'A triple with the name "' . phrase::TN_ZH_CITY . '" already exists. Please use another name.';
     $result = $term->id_used_msg();
-    $t->dsp_contains(', term->load for id ' . $wrd_zh->id, $target, $result);
+    $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
     // ... check also for a verb
     $term = new term($usr);
     $term->load_by_obj_name(verb::IS_A);
     $target = 'A verb with the name "is a" already exists. Please use another name.';
     $result = $term->id_used_msg();
-    $t->dsp_contains(', term->load for id ' . $wrd_zh->id, $target, $result);
+    $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
     // ... check also for a formula
     $term = new term($usr);
@@ -67,6 +67,6 @@ function run_term_test(testing $t): void
     // each formula name has also a word
     $target = 'A formula with the name "' . formula::TN_INCREASE . '" already exists. Please use another name.';
     $result = $term->id_used_msg();
-    $t->dsp_contains(', term->load for id ' . $wrd_zh->id, $target, $result);
+    $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
 }

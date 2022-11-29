@@ -507,7 +507,7 @@ class view_dsp_old extends view
             // check if the add button has been pressed and ask the user what to add
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
-                $url = $html->url(view::class . api::UPDATE, $this->id, $back, '', word::class . '=' . $wrd->id . '&add_entry=-1&');
+                $url = $html->url(view::class . api::UPDATE, $this->id, $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
                 $result .= (new button("add view component", $url))->add();
                 $sel = new html_selector;
                 $sel->form = 'view_edit';
@@ -517,7 +517,7 @@ class view_dsp_old extends view
                 $sel->selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $sel->display();
 
-                $result .= dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id . "&back=" . $back);
+                $result .= dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: <input type="text" name="entry_name"> ';
                 $sel = new html_selector;
@@ -527,9 +527,9 @@ class view_dsp_old extends view
                 $sel->sql = sql_lst("view_component_type");
                 $sel->selected = $this->type_id;  // ??? should this not be the default entry type
                 $result .= $sel->display();
-                $result .= dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id . "&back=" . $back);
+                $result .= dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
-                $result .= (new button("add view component", "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id . "&add_entry=1&back=" . $back))->add();
+                $result .= (new button("add view component", "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&add_entry=1&back=" . $back))->add();
             }
         }
         if (UI_USE_BOOTSTRAP) {
@@ -578,11 +578,11 @@ class view_dsp_old extends view
         if ($this->id <= 0) {
             log_debug('create a view');
             $script = "view_add";
-            $result .= dsp_text_h2('Create a new view (for <a href="/http/view.php?words=' . $wrd->id . '">' . $wrd->name() . '</a>)');
+            $result .= dsp_text_h2('Create a new view (for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
         } else {
             log_debug($this->dsp_id() . ' for user ' . $this->user()->name . ' (called from ' . $back . ')');
             $script = "view_edit";
-            $result .= dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id . '">' . $wrd->name() . '</a>)');
+            $result .= dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
         }
         $result .= '<div class="row">';
 

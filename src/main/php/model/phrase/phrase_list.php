@@ -203,7 +203,7 @@ class phrase_list
                 // add the words just with the id for unit testing
                 foreach ($wrd_ids as $id) {
                     $wrd = new word($this->usr);
-                    $wrd->id = $id;
+                    $wrd->set_id($id);
                     $this->lst[] = $wrd->phrase();
                     $result = true;
                 }
@@ -227,7 +227,7 @@ class phrase_list
                 // add the triple just with the id for unit testing
                 foreach ($lnk_ids as $id) {
                     $trp = new triple($this->usr);
-                    $trp->id = $id;
+                    $trp->set_id($id);
                     $this->lst[] = $trp->phrase();
                     $result = true;
                 }
@@ -279,7 +279,7 @@ class phrase_list
                 // add the words just with the id for unit testing
                 foreach ($wrd_ids as $id) {
                     $wrd = new word($this->usr);
-                    $wrd->id = $id;
+                    $wrd->set_id($id);
                     $this->lst[] = $wrd->phrase();
                     $result = true;
                 }
@@ -303,7 +303,7 @@ class phrase_list
                 // add the triple just with the id for unit testing
                 foreach ($lnk_ids as $id) {
                     $wrd = new triple($this->usr);
-                    $wrd->id = $id;
+                    $wrd->set_id($id);
                     $this->lst[] = $wrd->phrase();
                     $result = true;
                 }
@@ -343,12 +343,12 @@ class phrase_list
             foreach ($names as $name) {
                 $wrd = new word($this->usr);
                 $wrd->load_by_name($name, word::class);
-                if ($wrd->id <> 0) {
+                if ($wrd->id() <> 0) {
                     $this->lst[] = $wrd->phrase();
                 } else {
                     $trp = new triple($this->usr);
                     $trp->load_by_name($name, triple::class);
-                    if ($trp->id <> 0) {
+                    if ($trp->id() <> 0) {
                         $this->lst[] = $trp->phrase();
                     } else {
                         log_warning('Cannot load ' . $name);
@@ -659,7 +659,7 @@ class phrase_list
                 foreach ($wrd_ids as $id) {
                     if (!in_array($id, $ids)) {
                         $phr = new phrase($this->usr);
-                        $phr->id = $id;
+                        $phr->set_id($id);
                         $this->lst[] = $phr;
                         $ids[] = $id;
                     }
@@ -675,7 +675,7 @@ class phrase_list
                     $id = $id * -1;
                     if (!in_array($id, $ids)) {
                         $phr = new phrase($this->usr);
-                        $phr->id = $id;
+                        $phr->set_id($id);
                         $this->lst[] = $phr;
                         $ids[] = $id;
                     }
@@ -704,7 +704,7 @@ class phrase_list
             if ($phr->obj == null) {
                 log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
             } else {
-                if ($phr->obj->id == 0) {
+                if ($phr->obj->id() == 0) {
                     log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
                 } else {
                     if ($phr->name() == '') {
@@ -743,7 +743,7 @@ class phrase_list
     {
         $wrd_lst = new word_list($this->usr);
         foreach ($this->lst as $phr) {
-            if ($phr->id > 0) {
+            if ($phr->id() > 0) {
                 if (isset($phr->obj)) {
                     $wrd_lst->add($phr->obj);
                 }
@@ -760,7 +760,7 @@ class phrase_list
     {
         $trp_lst = new triple_list($this->usr);
         foreach ($this->lst as $phr) {
-            if ($phr->id < 0) {
+            if ($phr->id() < 0) {
                 if (isset($phr->obj)) {
                     $trp_lst->add($phr->obj);
                 }
@@ -930,7 +930,7 @@ class phrase_list
     {
         $result = true;
         foreach ($this->lst as $phr) {
-            if ($phr->id == 0 or $phr->name() == '') {
+            if ($phr->id() == 0 or $phr->name() == '') {
                 $result = false;
             }
         }
@@ -1039,15 +1039,15 @@ class phrase_list
                 $phr = new phrase($this->usr);
                 if ($result->is_ok() and $do_save) {
                     $phr->load_by_name($value);
-                    if ($phr->id == 0) {
+                    if ($phr->id() == 0) {
                         $wrd = new word($this->usr);
                         $wrd->load_by_name($value, word::class);
-                        if ($wrd->id == 0) {
+                        if ($wrd->id() == 0) {
                             $wrd->set_name($value);
                             $wrd->type_id = $phrase_types->default_id();
                             $result->add_message($wrd->save());
                         }
-                        if ($wrd->id == 0) {
+                        if ($wrd->id() == 0) {
                             log_err('Cannot add word "' . $value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
                         } else {
                             $phr = $wrd->phrase();
@@ -1140,8 +1140,8 @@ class phrase_list
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {
                 // use only valid ids
-                if ($phr->id <> 0) {
-                    $lst[] = $phr->id;
+                if ($phr->id() <> 0) {
+                    $lst[] = $phr->id();
                 }
             }
         }
@@ -1158,8 +1158,8 @@ class phrase_list
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {
                 // use only valid word ids
-                if ($phr->id > 0) {
-                    $result[] = $phr->id;
+                if ($phr->id() > 0) {
+                    $result[] = $phr->id();
                 }
             }
         }
@@ -1176,8 +1176,8 @@ class phrase_list
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {
                 // use only valid triple ids
-                if ($phr->id < 0) {
-                    $result[] = $phr->id * -1;
+                if ($phr->id() < 0) {
+                    $result[] = $phr->id() * -1;
                 }
             }
         }
@@ -1280,7 +1280,7 @@ class phrase_list
         $result = false;
 
         foreach ($this->lst as $phr) {
-            if ($phr->id == $phr_to_check->id) {
+            if ($phr->id() == $phr_to_check->id()) {
                 $result = true;
             }
         }
@@ -1305,9 +1305,9 @@ class phrase_list
             if (get_class($phr_to_add) <> phrase::class) {
                 log_err("Object to add must be of type phrase, but it is " . get_class($phr_to_add) . ".", "phrase_list->add");
             } else {
-                if ($phr_to_add->id <> 0 or $phr_to_add->name() != '') {
+                if ($phr_to_add->id() <> 0 or $phr_to_add->name() != '') {
                     if (count($this->id_lst()) > 0) {
-                        if (!in_array($phr_to_add->id, $this->id_lst())) {
+                        if (!in_array($phr_to_add->id(), $this->id_lst())) {
                             $this->lst[] = $phr_to_add;
                             $result = true;
                         }
@@ -1376,7 +1376,7 @@ class phrase_list
         if ($phr_id_to_add <> 0) {
             if (!in_array($phr_id_to_add, $this->id_lst())) {
                 $phr_to_add = new phrase($this->usr);
-                $phr_to_add->id = $phr_id_to_add;
+                $phr_to_add->set_id($phr_id_to_add);
 
                 $this->add($phr_to_add);
             }
@@ -1395,7 +1395,7 @@ class phrase_list
             $phr_to_add = new phrase($this->usr);
             $phr_to_add->load_by_name($phr_name_to_add);
 
-            if ($phr_to_add->id <> 0) {
+            if ($phr_to_add->id() <> 0) {
                 $this->add($phr_to_add);
             } else {
                 log_err('"' . $phr_name_to_add . '" not found.', "phrase_list->add_name");
@@ -1469,7 +1469,7 @@ class phrase_list
             $phr_lst = array();
             $lst_ids = $filter_phr_lst->id_lst();
             foreach ($result->lst as $phr) {
-                if (in_array($phr->id, $lst_ids)) {
+                if (in_array($phr->id(), $lst_ids)) {
                     $phr_lst[] = $phr;
                 }
             }
@@ -1496,7 +1496,7 @@ class phrase_list
             $result = array();
             $lst_ids = $del_lst->id_lst();
             foreach ($this->lst as $phr) {
-                if (!in_array($phr->id, $lst_ids)) {
+                if (!in_array($phr->id(), $lst_ids)) {
                     $result[] = $phr;
                 }
             }

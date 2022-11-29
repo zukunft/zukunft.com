@@ -62,8 +62,8 @@ function run_formula_link_test(testing $t)
     // ... check the correct logging
     $log = new user_log_link;
     $log->table = 'formula_links';
-    $log->new_from_id = $frm->id;
-    $log->new_to_id = $phr->id;
+    $log->new_from_id = $frm->id();
+    $log->new_to_id = $phr->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test linked System Test Formula Renamed to ' . word::TN_RENAMED;
@@ -76,7 +76,7 @@ function run_formula_link_test(testing $t)
     $frm_lnk->load_obj_vars();
 
     $frm_lnk2 = new formula_link($t->usr1);
-    $frm_lnk2->load_by_id($frm_lnk->id, formula_link::class);
+    $frm_lnk2->load_by_id($frm_lnk->id(), formula_link::class);
     $frm_lnk2->load_objects();
 
     // ... if form name is correct the chain of load via object, reload via id and load of the objects has worked
@@ -125,8 +125,8 @@ function run_formula_link_test(testing $t)
     // ... check if the removal of the link for the second user has been logged
     $log = new user_log_link;
     $log->table = 'formula_links';
-    $log->old_from_id = $frm->id;
-    $log->old_to_id = $phr->id;
+    $log->old_from_id = $frm->id();
+    $log->old_to_id = $phr->id();
     $log->usr = $t->usr2;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test partner unlinked System Test Formula Renamed from ' . word::TN_RENAMED . '';
@@ -161,8 +161,8 @@ function run_formula_link_test(testing $t)
     // check the correct logging
     $log = new user_log_link;
     $log->table = 'formula_links';
-    $log->old_from_id = $frm->id;
-    $log->old_to_id = $phr->id;
+    $log->old_from_id = $frm->id();
+    $log->old_to_id = $phr->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test unlinked System Test Formula Renamed from ' . word::TN_RENAMED . '';
@@ -209,7 +209,7 @@ function run_formula_link_list_test(testing $t)
 
     $frm = $t->load_formula(formula::TN_INCREASE);
     $frm_lnk_lst = new formula_link_list($t->usr1);
-    $frm_lnk_lst->load_by_frm_id($frm->id);
+    $frm_lnk_lst->load_by_frm_id($frm->id());
     $phr_ids = $frm_lnk_lst->phrase_ids(false);
     $phr_lst = new phrase_list($t->usr1);
     $phr_lst->load_by_ids($phr_ids);

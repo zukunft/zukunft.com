@@ -55,18 +55,18 @@ function run_formula_element_test(testing $t)
             if ($elm->obj == null) {
                 log_err('object of formula element ' . $elm->dsp_id() . ' missing');
             } else {
-                $elm->load_by_id($elm->obj->id);
+                $elm->load_by_id($elm->obj->id());
             }
 
             $result = $elm->dsp_id();
             if ($pos == 0) {
-                $target = 'word "System Test Word Parent e.g. Country" (' . $wrd_country->id . ') for user 2 (zukunft.com system test)';
+                $target = 'word "System Test Word Parent e.g. Country" (' . $wrd_country->id() . ') for user 2 (zukunft.com system test)';
             } elseif ($pos == 1) {
                 $target = 'verb "can be used as a differentiator for" (' . $vrb_id . ') for user 2 (zukunft.com system test)';
             } elseif ($pos == 2) {
-                $target = 'word "System Test Word Category e.g. Canton" (' . $wrd_canton->id . ') for user 2 (zukunft.com system test)';
+                $target = 'word "System Test Word Category e.g. Canton" (' . $wrd_canton->id() . ') for user 2 (zukunft.com system test)';
             } elseif ($pos == 3) {
-                $target = 'word "System Test Word Total" (' . $wrd_total->id . ') for user 2 (zukunft.com system test)';
+                $target = 'word "System Test Word Total" (' . $wrd_total->id() . ') for user 2 (zukunft.com system test)';
             }
             $t->dsp('formula_element->dsp_id', $target, $result);
 
@@ -84,13 +84,13 @@ function run_formula_element_test(testing $t)
 
             $result = $elm->name_linked($back);
             if ($pos == 0) {
-                $target = '<a href="/http/view.php?words=' . $wrd_country->id . '&back=0" title="System Test Word Parent e.g. Country">System Test Word Parent e.g. Country</a>';
+                $target = '<a href="/http/view.php?words=' . $wrd_country->id() . '&back=0" title="System Test Word Parent e.g. Country">System Test Word Parent e.g. Country</a>';
             } elseif ($pos == 1) {
                 $target = 'can be used as a differentiator for';
             } elseif ($pos == 2) {
-                $target = '<a href="/http/view.php?words=' . $wrd_canton->id . '&back=0" title="System Test Word Category e.g. Canton">System Test Word Category e.g. Canton</a>';
+                $target = '<a href="/http/view.php?words=' . $wrd_canton->id() . '&back=0" title="System Test Word Category e.g. Canton">System Test Word Category e.g. Canton</a>';
             } elseif ($pos == 3) {
-                $target = '<a href="/http/view.php?words=' . $wrd_total->id . '&back=0" title="System Test Word Total">System Test Word Total</a>';
+                $target = '<a href="/http/view.php?words=' . $wrd_total->id() . '&back=0" title="System Test Word Total">System Test Word Total</a>';
             }
             $t->dsp('formula_element->dsp_id', $target, $result);
 

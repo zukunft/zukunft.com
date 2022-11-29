@@ -93,8 +93,8 @@ class value_phrase_link
                 $this->id = 0;
             } else {
                 $this->id = $db_row[self::FLD_ID];
-                $this->val->id = $db_row[value::FLD_ID];
-                $this->phr->id = $db_row[phrase::FLD_ID];
+                $this->val->set_id($db_row[value::FLD_ID]);
+                $this->phr->set_id($db_row[phrase::FLD_ID]);
                 $this->weight = $db_row[self::FLD_WEIGHT];
                 $this->type = $db_row[self::FLD_TYPE];
                 $this->frm_id = $db_row[self::FLD_FORMULA];
@@ -152,11 +152,11 @@ class value_phrase_link
                 array(self::FLD_ID),
                 array($this->id)
             );
-        } elseif ($this->val->id > 0 and $this->phr->id > 0 and $this->user()->id > 0) {
+        } elseif ($this->val->id() > 0 and $this->phr->id() > 0 and $this->user()->id > 0) {
             $qp->name .= 'val_phr_usr_id';
             $sql_where .= $db_con->where_par(
                 array(value::FLD_ID, phrase::FLD_ID, user_sandbox::FLD_USER),
-                array($this->val->id, $this->phr->id, $this->user()->id)
+                array($this->val->id(), $this->phr->id(), $this->user()->id)
             );
         } else {
             log_err("The id or the value id, phrase id and user id must be set to load the value phrase links", self::class . '->load_sql');
@@ -196,9 +196,9 @@ class value_phrase_link
         $result = true;
 
         if (isset($this->val)) {
-            if ($this->val->id > 0) {
+            if ($this->val->id() > 0) {
                 $result = $this->val->used();
-                log_debug('val_lnk->used for id ' . $this->val->id . ' is ' . zu_dsp_bool($result));
+                log_debug('val_lnk->used for id ' . $this->val->id() . ' is ' . zu_dsp_bool($result));
             }
         }
         return $result;
@@ -226,7 +226,7 @@ class value_phrase_link
      */
     private function log_add(): user_log_link
     {
-        log_debug('val_lnk->log_add for "' . $this->phr->id . ' to ' . $this->val->id);
+        log_debug('val_lnk->log_add for "' . $this->phr->id() . ' to ' . $this->val->id());
         $log = new user_log_link;
         $log->usr = $this->usr;
         $log->action = user_log::ACTION_ADD;
@@ -243,7 +243,7 @@ class value_phrase_link
     // e.g. if the entered the number for "interest income", but see that he has used the word "interest cost" and changes it to "interest income"
     private function log_upd($db_rec): user_log_link
     {
-        log_debug('val_lnk->log_upd for "' . $this->phr->id . ' to ' . $this->val->id);
+        log_debug('val_lnk->log_upd for "' . $this->phr->id() . ' to ' . $this->val->id());
         $log = new user_log_link;
         $log->usr = $this->usr;
         $log->action = user_log::ACTION_UPDATE;
@@ -262,11 +262,11 @@ class value_phrase_link
     private function save_field_wrd(sql_db $db_con, $db_rec): string
     {
         $result = '';
-        if ($db_rec->wrd->id <> $this->phr->id) {
+        if ($db_rec->wrd->id <> $this->phr->id()) {
             $log = $this->log_upd($db_con);
             if ($log->add()) {
                 $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
-                $result .= $db_con->update($this->id, phrase::FLD_ID, $this->phr->id);
+                $result .= $db_con->update($this->id, phrase::FLD_ID, $this->phr->id());
             }
         }
         return $result;
@@ -279,24 +279,24 @@ class value_phrase_link
         // check duplicates
         $sql = "SELECT value_phrase_link_id 
               FROM value_phrase_links 
-             WHERE value_id = " . $this->val->id . " 
-               AND phrase_id  = " . $this->phr->id . " 
+             WHERE value_id = " . $this->val->id() . " 
+               AND phrase_id  = " . $this->phr->id() . " 
                AND value_phrase_link_id <> " . $this->id . ";";
         $db_row = $db_con->get1($sql);
         $this->id = $db_row['value_phrase_link_id'];
         if ($this->id > 0) {
             //$result = $db_con->delete(array('value_id',phrase::FLD_ID,'value_phrase_link_id'), array($this->val->id,$this->phr->id,$this->id));
             $sql_del = "DELETE FROM value_phrase_links 
-                    WHERE value_id = " . $this->val->id . " 
-                      AND phrase_id  = " . $this->phr->id . " 
+                    WHERE value_id = " . $this->val->id() . " 
+                      AND phrase_id  = " . $this->phr->id() . " 
                       AND value_phrase_link_id <> " . $this->id . ";";
             $sql_result = $db_con->exe($sql_del, $this->user()->id, sys_log_level::ERROR, "val_lnk->update", (new Exception)->getTraceAsString());
             $db_row = $db_con->get1($sql);
             $this->id = $db_row['value_phrase_link_id'];
             if ($this->id > 0) {
-                log_err("Duplicate words (" . $this->phr->id . ") for value " . $this->val->dsp_id() . " found and the automatic removal failed.", "val_lnk->update");
+                log_err("Duplicate words (" . $this->phr->id() . ") for value " . $this->val->dsp_id() . " found and the automatic removal failed.", "val_lnk->update");
             } else {
-                log_warning("Duplicate words (" . $this->phr->id . ") for value " . $this->dsp_id() . " found, but they have been removed automatically.", "val_lnk->update");
+                log_warning("Duplicate words (" . $this->phr->id() . ") for value " . $this->dsp_id() . " found, but they have been removed automatically.", "val_lnk->update");
             }
         }
         return $result;
@@ -306,7 +306,7 @@ class value_phrase_link
     // only allowed if the value has not yet been used
     function save()
     {
-        log_debug("val_lnk->save link word id " . $this->phr->name() . " to " . $this->val->id . " (link id " . $this->id . " for user " . $this->user()->id . ").");
+        log_debug("val_lnk->save link word id " . $this->phr->name() . " to " . $this->val->id() . " (link id " . $this->id . " for user " . $this->user()->id . ").");
 
         global $db_con;
         $db_con->set_usr($this->user()->id);
@@ -315,7 +315,7 @@ class value_phrase_link
         if (!$this->used()) {
             // check if a new value is supposed to be added
             if ($this->id <= 0) {
-                log_debug("val_lnk->save check if word " . $this->phr->name() . " is already linked to " . $this->val->id . ".");
+                log_debug("val_lnk->save check if word " . $this->phr->name() . " is already linked to " . $this->val->id() . ".");
                 // check if a value_phrase_link with the same word is already in the database
                 $db_chk = new value_phrase_link($this->usr);
                 $db_chk->val = $this->val;
@@ -327,18 +327,18 @@ class value_phrase_link
             }
 
             if ($this->id <= 0) {
-                log_debug('val_lnk->save add new value_phrase_link of "' . $this->phr->name() . '" to "' . $this->val->id . '"');
+                log_debug('val_lnk->save add new value_phrase_link of "' . $this->phr->name() . '" to "' . $this->val->id() . '"');
                 // log the insert attempt first
                 $log = $this->log_add();
                 if ($log->id > 0) {
                     // insert the new value_phrase_link
                     $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
-                    $this->id = $db_con->insert(array("value_id", "word_id"), array($this->val->id, $this->phr->id));
+                    $this->id = $db_con->insert(array("value_id", "word_id"), array($this->val->id(), $this->phr->id()));
                     if ($this->id > 0) {
                         // update the id in the log
                         $result = $log->add_ref($this->id);
                     } else {
-                        log_err("Adding value_phrase_link " . $this->val->id . " failed.", "val_lnk->save");
+                        log_err("Adding value_phrase_link " . $this->val->id() . " failed.", "val_lnk->save");
                     }
                 }
             } else {
@@ -368,11 +368,11 @@ class value_phrase_link
     /**
      * remove a link
      * the user id is the user who has requested the change,
-     * but it is a parameter and not part of the object, because there are not user specific value word links
+     * but it is a parameter and not part of the object, because there are no user specific value word links
      */
     function del($user_id): string
     {
-        log_debug("val_lnk->del (v" . $this->val->dsp_id() . ",t" . $this->phr->id . ",u" . $user_id . ")");
+        log_debug("val_lnk->del (v" . $this->val->dsp_id() . ",t" . $this->phr->id() . ",u" . $user_id . ")");
 
         global $db_con;
         $result = '';
@@ -383,7 +383,7 @@ class value_phrase_link
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->user()->id;
                 $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
-                $result .= $db_con->delete(array('value_id', phrase::FLD_ID), array($this->val->id, $this->phr->id));
+                $result .= $db_con->delete(array('value_id', phrase::FLD_ID), array($this->val->id(), $this->phr->id()));
             }
         } else {
             // check if removing a word link is matching another value

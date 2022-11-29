@@ -58,14 +58,14 @@ class view_component_link_unit_tests
 
         // sql to load a view component link by the id
         $lnk = new view_cmp_link($usr);
-        $lnk->id = 1;
+        $lnk->set_id(1);
         //$t->assert_load_sql($db_con, $lnk);
         $t->assert_user_config_sql($db_con, $lnk);
 
         // sql to load a list of value by the phrase ids
         $lnk = new view_cmp_link($usr);
-        $lnk->dsp->id = 1;
-        $lnk->cmp->id = 2;
+        $lnk->dsp->set_id(1);
+        $lnk->cmp->set_id(2);
         $t->assert_load_sql($db_con, $lnk);
 
 
@@ -74,13 +74,13 @@ class view_component_link_unit_tests
         // sql to load a view component link list by view id
         $dsp_cmp_lnk_lst = new view_cmp_link_list($usr);
         $dsp = new view($usr);
-        $dsp-> id = 2;
+        $dsp->set_id(2);
         $this->assert_lst_sql_all($t, $db_con, $dsp_cmp_lnk_lst, $dsp);
 
         // sql to load a view component link list by component id
         $dsp_cmp_lnk_lst = new view_cmp_link_list($usr);
         $cmp = new view_cmp($usr);
-        $cmp-> id = 3;
+        $cmp->set_id(3);
         $this->assert_lst_sql_all($t, $db_con, $dsp_cmp_lnk_lst, null, $cmp);
 
     }

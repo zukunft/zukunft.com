@@ -56,12 +56,11 @@ class phrase_unit_tests
 
         // sql to load the word by id
         $phr = new phrase($usr);
-        $phr->id = 2;
+        $phr->set_id(2);
 
         // check the PostgreSQL query syntax
         $wrd_company = new word($usr);
-        $wrd_company->id = 2;
-        $wrd_company->set_name(word::TN_COMPANY);
+        $wrd_company->set(2, word::TN_COMPANY);
         $sql_name = 'phrase_list_related';
         $db_con->db_type = sql_db::POSTGRES;
         $file_name = $t->resource_path . $sql_name . test_base::FILE_EXT;

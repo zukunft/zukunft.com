@@ -59,14 +59,12 @@ if ($usr->id > 0) {
 
         // create the view component object to apply the user changes to it
         $cmp = new view_cmp_dsp_old($usr);
-        $cmp->id = $_GET['id'];
-        $result .= $cmp->load_obj_vars();
+        $result .= $cmp->load_by_id($_GET['id']);
 
         // get the word used as a sample to illustrate the changes
         $wrd = new word($usr);
         if (isset($_GET['word'])) {
-            $wrd->id = $_GET['word'];
-            $result .= $wrd->load_obj_vars();
+            $result .= $wrd->load_by_id($_GET['word']);
         } else {
             // get the default word for the view $dsp
         }
@@ -79,8 +77,7 @@ if ($usr->id > 0) {
         $dsp_link_id = $_GET['link_view'];    // to link the view component to another view
         if ($dsp_link_id > 0) {
             $dsp_link = new view_dsp_old($usr);
-            $dsp_link->id = $dsp_link_id;
-            $result .= $dsp_link->load_obj_vars();
+            $result .= $dsp_link->load_by_id($dsp_link_id);
             $order_nbr = $cmp->next_nbr($dsp_link_id);
             $upd_result = $cmp->link($dsp_link, $order_nbr);
         }
@@ -88,8 +85,7 @@ if ($usr->id > 0) {
         $dsp_unlink_id = $_GET['unlink_view'];  // to unlink a view component from the view
         if ($dsp_unlink_id > 0) {
             $dsp_unlink = new view_dsp_old($usr);
-            $dsp_unlink->id = $dsp_unlink_id;
-            $result .= $dsp_unlink->load_obj_vars();
+            $result .= $dsp_unlink->load_by_id($dsp_unlink_id);
             $upd_result .= $cmp->unlink($dsp_unlink);
         }
 
@@ -133,7 +129,7 @@ if ($usr->id > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // in view edit views the view cannot be changed
-            $result .= $dsp->dsp_navbar_no_view($wrd->id);
+            $result .= $dsp->dsp_navbar_no_view($wrd->id());
             $result .= dsp_err($msg);
 
             // if the user has requested to use this display component also in another view, $add_link is greater than 0

@@ -213,7 +213,7 @@ function run_formula_test(testing $t): void
     $frm_dsp = $frm->dsp_obj_old();
     $exp = $frm->expression();
     $result = $exp->dsp_id();
-    $target = '""percent" = ( "this" - "prior" ) / "prior"" ({t'.$wrd_percent->id.'}=({f'.$frm_this->id.'}-{f'.$frm_prior->id.'})/{f'.$frm_prior->id.'})';
+    $target = '""percent" = ( "this" - "prior" ) / "prior"" ({t'.$wrd_percent->id().'}=({f'.$frm_this->id().'}-{f'.$frm_prior->id().'})/{f'.$frm_prior->id().'})';
     $t->dsp('formula->expression for ' . $frm->dsp_id(), $target, $result);
 
     // ... the formula name
@@ -223,13 +223,13 @@ function run_formula_test(testing $t): void
 
     // ... in HTML format
     $result = $frm_dsp->dsp_text($back);
-    $target = '"percent" = ( <a href="/http/formula_edit.php?id='.$frm_this->id.'&back=0">this</a> - <a href="/http/formula_edit.php?id='.$frm_prior->id.'&back=0">prior</a> ) / <a href="/http/formula_edit.php?id='.$frm_prior->id.'&back=0">prior</a>';
+    $target = '"percent" = ( <a href="/http/formula_edit.php?id='.$frm_this->id().'&back=0">this</a> - <a href="/http/formula_edit.php?id='.$frm_prior->id().'&back=0">prior</a> ) / <a href="/http/formula_edit.php?id='.$frm_prior->id().'&back=0">prior</a>';
     $t->dsp('formula->dsp_text for ' . $frm->dsp_id(), $target, $result);
 
     // ... in HTML format with link
     $frm_increase = $t->load_formula(formula::TN_INCREASE);
     $result = $frm_dsp->name_linked($back);
-    $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id . '&back=0">' . formula::TN_INCREASE . '</a>';
+    $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id() . '&back=0">' . formula::TN_INCREASE . '</a>';
     $t->dsp('formula->display for ' . $frm->dsp_id(), $target, $result);
 
     // ... the formula result selected by the word and in percent
@@ -284,7 +284,7 @@ function run_formula_test(testing $t): void
     $frm->set_name(formula::TN_ADD);
     $frm->usr_text = '"percent" = ( "this" - "prior" ) / "prior"';
     $result = $frm->save();
-    if ($frm->id > 0) {
+    if ($frm->id() > 0) {
         $result = $frm->usr_text;
     }
     $target = '"percent" = ( "this" - "prior" ) / "prior"';
@@ -300,7 +300,7 @@ function run_formula_test(testing $t): void
     $log = new user_log_named;
     $log->table = 'formulas';
     $log->field = 'formula_name';
-    $log->row_id = $frm->id;
+    $log->row_id = $frm->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added System Test Formula';
@@ -326,7 +326,7 @@ function run_formula_test(testing $t): void
     // ... and if the formula renaming was successful
     $frm_renamed = new formula($t->usr1);
     $frm_renamed->load_by_name(formula::TN_RENAMED, formula::class);
-    if ($frm_renamed->id > 0) {
+    if ($frm_renamed->id() > 0) {
         $result = $frm_renamed->name();
     }
     $target = formula::TN_RENAMED;
@@ -336,7 +336,7 @@ function run_formula_test(testing $t): void
     $log = new user_log_named;
     $log->table = 'formulas';
     $log->field = 'formula_name';
-    $log->row_id = $frm_renamed->id;
+    $log->row_id = $frm_renamed->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test changed System Test Formula to System Test Formula Renamed';
@@ -357,7 +357,7 @@ function run_formula_test(testing $t): void
     $target = '= "this"';
     $t->dsp('formula->load usr_text for "' . formula::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->ref_text;
-    $target = '={f'.$frm_this->id.'}';
+    $target = '={f'.$frm_this->id().'}';
     $t->dsp('formula->load ref_text for "' . formula::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->description;
     $target = formula::TN_RENAMED . ' description';
@@ -373,7 +373,7 @@ function run_formula_test(testing $t): void
     $log = new user_log_named;
     $log->table = 'formulas';
     $log->field = 'resolved_text';
-    $log->row_id = $frm_reloaded->id;
+    $log->row_id = $frm_reloaded->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     // use the next line if system config is non-standard
@@ -383,8 +383,8 @@ function run_formula_test(testing $t): void
     $log->field = 'formula_text';
     $result = $log->dsp_last(true);
     // use the next line if system config is non-standard
-    $target = 'zukunft.com system test changed {t'.$wrd_percent->id.'}=( {f'.$frm_this->id.'} - {f5} ) / {f5} to ={f3}';
-    $target = 'zukunft.com system test changed {t'.$wrd_percent->id.'}=1-({f'.$frm_this->id.'}/{f'.$frm_prior->id.'}) to ={f'.$frm_this->id.'}';
+    $target = 'zukunft.com system test changed {t'.$wrd_percent->id().'}=( {f'.$frm_this->id().'} - {f5} ) / {f5} to ={f3}';
+    $target = 'zukunft.com system test changed {t'.$wrd_percent->id().'}=1-({f'.$frm_this->id().'}/{f'.$frm_prior->id().'}) to ={f'.$frm_this->id().'}';
     $t->dsp('formula->load formula_text for "' . formula::TN_RENAMED . '" logged', $target, $result);
     $log->field = 'description';
     $result = $log->dsp_last(true);
@@ -419,7 +419,7 @@ function run_formula_test(testing $t): void
     $target = '"percent" = ( "this" - "prior" ) / "prior"';
     $t->dsp('formula->load usr_text for "' . formula::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->ref_text;
-    $target = '{t'.$wrd_percent->id.'}=({f'.$frm_this->id.'}-{f'.$frm_prior->id.'})/{f'.$frm_prior->id.'}';
+    $target = '{t'.$wrd_percent->id().'}=({f'.$frm_this->id().'}-{f'.$frm_prior->id().'})/{f'.$frm_prior->id().'}';
     $t->dsp('formula->load ref_text for "' . formula::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->description;
     $target = formula::TN_RENAMED . ' description2';
@@ -437,7 +437,7 @@ function run_formula_test(testing $t): void
     $target = '= "this"';
     $t->dsp('formula->load usr_text for "' . formula::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->ref_text;
-    $target = '={f'.$frm_this->id.'}';
+    $target = '={f'.$frm_this->id().'}';
     $t->dsp('formula->load ref_text for "' . formula::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->description;
     $target = formula::TN_RENAMED . ' description';
@@ -467,7 +467,7 @@ function run_formula_test(testing $t): void
     $target = '= "this"';
     $t->dsp('formula->load usr_text for "' . formula::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->ref_text;
-    $target = '={f'.$frm_this->id.'}';
+    $target = '={f'.$frm_this->id().'}';
     $t->dsp('formula->load ref_text for "' . formula::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->description;
     $target = formula::TN_RENAMED . ' description';
@@ -497,9 +497,9 @@ function run_formula_list_test(testing $t): void
     $wrd_share = $t->test_word(word::TN_SHARE);
 
     $wrd = new word($t->usr1);
-    $wrd->load_by_id($wrd_share->id, word::class);
+    $wrd->load_by_id($wrd_share->id(), word::class);
     $frm_lst = new formula_list($t->usr1);
-    $frm_lst->back = $wrd->id;
+    $frm_lst->back = $wrd->id();
     $frm_lst->load_by_phr($wrd->phrase());
     $result = $frm_lst->display();
     $target = formula::TN_RATIO;

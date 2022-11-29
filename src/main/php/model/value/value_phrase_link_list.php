@@ -50,11 +50,11 @@ class value_phrase_link_list extends link_list
         $sql_by = '';
 
         if ($val != null) {
-            if ($val->id > 0) {
+            if ($val->id() > 0) {
                 $sql_by = value::FLD_ID;
             }
         } elseif ($phr != null) {
-            if ($phr->id <> 0) {
+            if ($phr->id() <> 0) {
                 $sql_by = phrase::FLD_ID;
             }
         }
@@ -73,13 +73,13 @@ class value_phrase_link_list extends link_list
                 $db_con->set_join_fields(array(phrase::FLD_ID), sql_db::TBL_PHRASE);
             }
             if ($val != null) {
-                if ($val->id > 0) {
-                    $db_con->add_par(sql_db::PAR_INT, $val->id);
+                if ($val->id() > 0) {
+                    $db_con->add_par(sql_db::PAR_INT, $val->id());
                     $qp->sql = $db_con->select_by_field_list(array(value::FLD_ID));
                 }
             } elseif ($phr != null) {
-                if ($phr->id <> 0) {
-                    $db_con->add_par(sql_db::PAR_INT, $phr->id);
+                if ($phr->id() <> 0) {
+                    $db_con->add_par(sql_db::PAR_INT, $phr->id());
                     $qp->sql = $db_con->select_by_field_list(array(phrase::FLD_ID));
                 }
             }
@@ -113,9 +113,9 @@ class value_phrase_link_list extends link_list
             } else {
 
                 if ($val != null) {
-                    $id = $val->id;
+                    $id = $val->id();
                 } else {
-                    $id = $phr->id;
+                    $id = $phr->id();
                 }
 
                 // if $sql is an empty string, the prepared statement should be used
@@ -185,9 +185,9 @@ class value_phrase_link_list extends link_list
     {
         $result = array();
         foreach ($this->lst as $lnk) {
-            if ($lnk->phr->id <> 0) {
-                if (in_array($lnk->phr->id, $result)) {
-                    $result[] = $lnk->phr->id;
+            if ($lnk->phr->id() <> 0) {
+                if (in_array($lnk->phr->id(), $result)) {
+                    $result[] = $lnk->phr->id();
                 }
             }
         }

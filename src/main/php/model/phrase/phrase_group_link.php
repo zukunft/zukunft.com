@@ -31,16 +31,19 @@
 
 */
 
-class phrase_group_link
+class phrase_group_link extends db_object
 {
 
     // database fields
-    public int $id;        // the primary database id of the numeric value, which is the same for the standard and the user specific value
     public int $grp_id;    // the phrase group id and not the object to reduce the memory usage
+
+    /*
+     * construct and map
+     */
 
     function __construct()
     {
-        $this->id = 0;
+        parent::__construct();
         $this->grp_id = 0;
     }
 

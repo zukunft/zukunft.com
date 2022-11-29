@@ -136,7 +136,7 @@ class value_list_dsp_old extends value_list
             if (count($common_lst->lst) > 0) {
                 $common_text = '(in ';
                 foreach ($common_lst->lst as $common_word) {
-                    if ($common_word->id <> $this->phr->id) {
+                    if ($common_word->id() <> $this->phr->id()) {
                         $common_text .= $common_word->dsp_tbl_row();
                     }
                 }
@@ -166,7 +166,7 @@ class value_list_dsp_old extends value_list
             $id = 0; // TODO review and rename
             foreach ($row_wrd_lst->lst as $sub_wrd) {
                 $wrd_ids = array();
-                $wrd_ids[] = $this->phr->id;
+                $wrd_ids[] = $this->phr->id();
                 $wrd_ids[] = $sub_wrd->id;
                 foreach ($common_lst->id_lst() as $extra_id) {
                     if (!in_array($extra_id, $wrd_ids)) {
@@ -202,7 +202,7 @@ class value_list_dsp_old extends value_list
                         // to be done for the list at once
                         $grp = new phrase_group($this->user());
                         $grp->load_by_ids(new phr_ids($val_wrd_ids));
-                        log_debug("val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
+                        log_debug("val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id() . ".");
 
                         $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                         if ($tbl_value->number == "") {
@@ -216,13 +216,13 @@ class value_list_dsp_old extends value_list
                                 $type_ids[] = 0;
                             }
 
-                            if ($sub_wrd->id > 0) {
+                            if ($sub_wrd->id() > 0) {
                                 $add_phr_lst->add($sub_wrd->phrase());
                                 $add_phr_ids[] = $sub_wrd->id;
                                 $type_ids[] = $sub_wrd->id; // TODO check if it should not be $type_word_id
                             }
                             // if values for just one column are added, the column head word id is already in the common id list and due to that does not need to be added
-                            if (!in_array($time_wrd->id, $add_phr_ids) and $time_wrd->id > 0) {
+                            if (!in_array($time_wrd->id(), $add_phr_ids) and $time_wrd->id() > 0) {
                                 $add_phr_lst->add($time_wrd->phrase());
                                 $add_phr_ids[] = $time_wrd->id;
                                 $type_ids[] = 0;
@@ -243,7 +243,7 @@ class value_list_dsp_old extends value_list
 
                 // display the row differentiators
                 $sub_wrd->usr = $this->user(); // to be fixed in the lines before
-                log_debug("... get differentiator for " . $sub_wrd->id . " and user " . $sub_wrd->usr->name . ".");
+                log_debug("... get differentiator for " . $sub_wrd->id() . " and user " . $sub_wrd->usr->name . ".");
                 // get all potential differentiator words
                 $sub_wrd_lst = $sub_wrd->lst();
                 $differentiator_words = $sub_wrd_lst->differentiators_filtered($phr_lst_all);
@@ -280,7 +280,7 @@ class value_list_dsp_old extends value_list
                             //$result .= '      <td>&nbsp;</td>';
                             $result .= $sub_wrd->dsp_tbl(0);
                             $wrd_ids = array();
-                            $wrd_ids[] = $this->phr->id;
+                            $wrd_ids[] = $this->phr->id();
                             if (!in_array($sub_wrd->id, $wrd_ids)) {
                                 $wrd_ids[] = $sub_wrd->id;
                             }
@@ -303,7 +303,7 @@ class value_list_dsp_old extends value_list
                                 // to be done for the list at once
                                 $grp = new phrase_group($this->user());
                                 $grp->load_by_ids(new phr_ids($val_wrd_ids));
-                                log_debug("val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
+                                log_debug("val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id() . ".");
 
                                 $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                                 if ($tbl_value->number == "") {
@@ -317,18 +317,18 @@ class value_list_dsp_old extends value_list
                                         $type_ids[] = 0;
                                     }
 
-                                    if ($sub_wrd->id > 0) {
+                                    if ($sub_wrd->id() > 0) {
                                         $add_phr_lst->add($sub_wrd->phrase());
                                         $add_phr_ids[] = $sub_wrd->id;
                                         $type_ids[] = $type_phr->id;
                                     }
-                                    if ($diff_phrase->id <> 0) {
+                                    if ($diff_phrase->id() <> 0) {
                                         $add_phr_lst->add($diff_phrase);
                                         $add_phr_ids[] = $diff_phrase->id;
                                         $type_ids[] = 0;
                                     }
                                     // if values for just one column are added, the column head word id is already in the common id list and due to that does not need to be added
-                                    if (!in_array($time_wrd->id, $add_phr_ids) and $time_wrd->id > 0) {
+                                    if (!in_array($time_wrd->id, $add_phr_ids) and $time_wrd->id() > 0) {
                                         $add_phr_lst->add($time_wrd->phrase());
                                         $add_phr_ids[] = $time_wrd->id;
                                         $type_ids[] = 0;

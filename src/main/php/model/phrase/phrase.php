@@ -56,7 +56,7 @@ use html\phrase_dsp;
 use html\triple_dsp;
 use html\word_dsp;
 
-class phrase
+class phrase extends db_object
 {
     // the database and JSON object duplicate field names for combined word and triples mainly to link phrases
     const FLD_ID = 'phrase_id';
@@ -95,7 +95,6 @@ class phrase
     );
 
     // database duplicate fields
-    public ?int $id = null;            // if positive the database id of the word or if negative of a triple
     public ?object $obj = null;        // if loaded the linked word or triple object
     // TODO deprecate
     private ?user $usr = null;         // the person for whom the word is loaded, so to say the viewer
@@ -122,6 +121,7 @@ class phrase
         string $to = '',
         string $name = '')
     {
+        parent::__construct();
         $this->set_user($usr);
 
         // create the automatically related objects if requested
@@ -154,7 +154,7 @@ class phrase
                 $this->id = $db_row[$id_fld];
                 // map a word
                 $wrd = new word($this->usr);
-                $wrd->id = $db_row[$id_fld];
+                $wrd->set_id($db_row[$id_fld]);
                 $wrd->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
                 $wrd->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 $wrd->type_id = $db_row[word::FLD_TYPE . $fld_ext];
@@ -168,7 +168,7 @@ class phrase
                 $this->id = $db_row[$id_fld];
                 // map a triple
                 $trp = new triple($this->usr);
-                $trp->id = $db_row[$id_fld] * -1;
+                $trp->set_id($db_row[$id_fld] * -1);
                 $trp->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
                 $trp->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 $trp->type_id = $db_row[triple::FLD_TYPE . $fld_ext];
@@ -191,15 +191,6 @@ class phrase
     /*
      * get and set
      */
-
-    /**
-     * @param int $id the phrase (not the object!) id
-     * @return void
-     */
-    function set_id(int $id): void
-    {
-        $this->id = $id;
-    }
 
     /**
      * set the phrase id based id the word or triple id
@@ -266,7 +257,7 @@ class phrase
      * @return int the id of the phrase witch is (corresponding to id_obj())
      * e.g 1 for a word, -1 for a triple
      */
-    function id(): int
+    function id(): ?int
     {
         return $this->id;
     }
@@ -423,7 +414,7 @@ class phrase
                 $wrd = new word($this->usr);
                 $result = $wrd->load_by_name($this->name(), word::class);
                 $this->obj = $wrd;
-                $this->id = $wrd->id;
+                $this->id = $wrd->id();
                 log_debug('formula word ' . $this->dsp_id());
             } else {
                 if ($this->type_name == '') {
@@ -481,12 +472,12 @@ class phrase
      * @param int $id the id of the phrase as defined in the database phrase view
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id): int
+    function load_by_id(int $id, string $class = self::class): int
     {
         global $db_con;
 
         log_debug($id);
-        $qp = $this->load_sql_by_id($db_con, self::class, $id);
+        $qp = $this->load_sql_by_id($db_con, $id, $class);
         return $this->load($qp);
     }
 
@@ -495,7 +486,7 @@ class phrase
      * @param string $name the name of the phrase and the related word, triple, formula or verb
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name): int
+    function load_by_name(string $name, string $class = self::class): int
     {
         global $db_con;
 
@@ -635,7 +626,7 @@ class phrase
     {
         $wrd = new word($this->usr);
         if (get_class($this->obj) == word::class) {
-            $wrd->id = $this->obj->id;
+            $wrd->set_id($this->obj->id());
             $wrd->usr_cfg_id = $this->obj->usr_cfg_id;
             $wrd->owner_id = $this->obj->owner_id;
             $wrd->share_id = $this->obj->share_id;
@@ -666,7 +657,7 @@ class phrase
     {
         $lnk = new triple($this->usr);
         if (get_class($this->obj) == triple::class) {
-            $lnk->id = $this->obj->id;
+            $lnk->set_id($this->obj->id());
             $lnk->fob = $this->obj->fob;
             $lnk->tob = $this->obj->tob;
             $lnk->usr_cfg_id = $this->obj->usr_cfg_id;
@@ -745,15 +736,15 @@ class phrase
             if ($this->id == 0) {
                 $wrd = new word($this->usr);
                 $wrd->load_by_name($json_value, word::class);
-                if ($wrd->id == 0) {
+                if ($wrd->id() == 0) {
                     $wrd->set_name($json_value);
                     $wrd->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::TIME);
                     $result->add_message($wrd->save());
                 }
-                if ($wrd->id == 0) {
+                if ($wrd->id() == 0) {
                     $result->add_message('Cannot add word "' . $json_value . '" when importing ' . $this->dsp_id());
                 } else {
-                    $this->id = $wrd->id;
+                    $this->id = $wrd->id();
                 }
             }
         } else {
@@ -986,7 +977,7 @@ class phrase
                                                 AND u.user_id = ' . $this->user()->id . ' ';
 
         if (isset($type)) {
-            if ($type->id > 0) {
+            if ($type->id() > 0) {
 
                 // select all phrase ids of the given type e.g. ABB, DANONE, Zurich
                 $sql_where_exclude = 'excluded = 0';
@@ -998,7 +989,7 @@ class phrase
                                           FROM triples l
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id . '
-                                         WHERE l.to_phrase_id = ' . $type->id . ' 
+                                         WHERE l.to_phrase_id = ' . $type->id() . ' 
                                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
 
@@ -1010,7 +1001,7 @@ class phrase
                                           FROM triples l
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id . '
-                                         WHERE l.to_phrase_id <> ' . $type->id . ' 
+                                         WHERE l.to_phrase_id <> ' . $type->id() . ' 
                                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
                                          WHERE ' . $sql_where_exclude . ' ';
@@ -1039,7 +1030,7 @@ class phrase
                                                 AND u.user_id = ' . $this->user()->id . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
-                           AND l.to_phrase_id = ' . $type->id . ' ) AS t 
+                           AND l.to_phrase_id = ' . $type->id() . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*
                 $sql_type_from = ', triples t LEFT JOIN user_triples ut ON ut.triple_id = t.triple_id
@@ -1216,13 +1207,13 @@ class phrase
         // try if the word exists
         $wrd = new word($this->usr);
         $wrd->load_by_name($this->name(), word::class);
-        if ($wrd->id > 0) {
+        if ($wrd->id() > 0) {
             $this->id = $wrd->phrase()->id;
         } else {
             // try if the triple exists
             $trp = new triple($this->usr);
             $trp->load_by_name($this->name(), triple::class);
-            if ($trp->id > 0) {
+            if ($trp->id() > 0) {
                 $this->id = $trp->phrase()->id * -1;
             } else {
                 // create a word if neither the word nor the triple exists
@@ -1230,7 +1221,7 @@ class phrase
                 $wrd->set_name($this->name());
                 $wrd->type_id = $phrase_types->default_id();
                 $result = $wrd->save();
-                if ($wrd->id == 0) {
+                if ($wrd->id() == 0) {
                     log_err('Cannot add from word ' . $this->dsp_id(), 'phrase->save');
                 } else {
                     $this->id = $wrd->phrase()->id;

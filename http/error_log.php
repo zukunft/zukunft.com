@@ -86,7 +86,7 @@ if ($back <= 0) {
     $back = 1; // replace with the fallback word id
 }
 $wrd = new word($usr);
-$wrd->id = $back;
+$wrd->set_id($back);
 $wrd->load_obj_vars();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
@@ -98,7 +98,7 @@ if ($usr->id > 0) {
 
         // prepare the display to edit the view
         $dsp = new view_dsp_old($usr);
-        $dsp->id = cl(db_cl::VIEW, view::ERR_LOG);
+        $dsp->set_id(cl(db_cl::VIEW, view::ERR_LOG));
         $result .= $dsp->dsp_navbar($back);
         //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
         $result .= err_dsp($err_id, $usr->id);

@@ -51,8 +51,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::ADD);
-    $dsp->load_obj_vars();
+    $dsp->load_by_id(cl(db_cl::VIEW, view::ADD));
     $back = $_GET['back']; // 
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
@@ -60,7 +59,7 @@ if ($usr->id > 0) {
 
     // load the parameters to the view object to display the user input again in case of an error
     if (isset($_GET['name'])) {
-        $dsp_add->name = $_GET['name'];
+        $dsp_add->set_name($_GET['name']);
     }    // name of the new view to add
     if (isset($_GET['comment'])) {
         $dsp_add->comment = $_GET['comment'];
@@ -94,14 +93,14 @@ if ($usr->id > 0) {
     if ($result == '') {
         // sample word that is used to simulate the view changes
         $wrd = new word($usr);
-        $wrd->id = $_GET['word'];
+        $wrd->set_id($_GET['word']);
         //$wrd->type_id = $view_type;
-        if ($wrd->id > 0) {
+        if ($wrd->id() > 0) {
             $wrd->load_obj_vars();
         }
 
         // show the header (in view edit views the view cannot be changed)
-        $result .= $dsp->dsp_navbar_no_view($wrd->id);
+        $result .= $dsp->dsp_navbar_no_view($wrd->id());
         $result .= dsp_err($msg);
 
         // show the form to create a new view

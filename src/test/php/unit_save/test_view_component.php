@@ -78,7 +78,7 @@ function run_view_component_test(testing $t): void
     $cmp->set_name(view_cmp::TN_ADD);
     $cmp->description = 'Just added for testing';
     $result = $cmp->save();
-    if ($cmp->id > 0) {
+    if ($cmp->id() > 0) {
         $result = $cmp->description;
     }
     $target = 'Just added for testing';
@@ -95,7 +95,7 @@ function run_view_component_test(testing $t): void
     $log = new user_log_named;
     $log->table = 'view_components';
     $log->field = view_cmp::FLD_NAME;
-    $log->row_id = $cmp->id;
+    $log->row_id = $cmp->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added System Test View Component';
@@ -123,7 +123,7 @@ function run_view_component_test(testing $t): void
     $cmp_renamed = new view_cmp($t->usr1);
     $result = $cmp_renamed->load_by_name(view_cmp::TN_RENAMED, view_cmp::class);
     if ($result == '') {
-        if ($cmp_renamed->id > 0) {
+        if ($cmp_renamed->id() > 0) {
             $result = $cmp_renamed->name();
         }
     }
@@ -134,7 +134,7 @@ function run_view_component_test(testing $t): void
     $log = new user_log_named;
     $log->table = 'view_components';
     $log->field = view_cmp::FLD_NAME;
-    $log->row_id = $cmp_renamed->id;
+    $log->row_id = $cmp_renamed->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test changed System Test View Component to System Test View Component Renamed';
@@ -163,7 +163,7 @@ function run_view_component_test(testing $t): void
     $log = new user_log_named;
     $log->table = 'view_components';
     $log->field = 'comment';
-    $log->row_id = $cmp_reloaded->id;
+    $log->row_id = $cmp_reloaded->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     //$target = 'zukunft.com system test added Just added for testing the user sandbox';

@@ -57,8 +57,8 @@ class value_phrase_link_unit_tests
         // sql to load a value phrase link by value, phrase and user id
         $val_phr_lnk = new value_phrase_link($usr);
         $val_phr_lnk->id = 0;
-        $val_phr_lnk->val->id = 1;
-        $val_phr_lnk->phr->id = 2;
+        $val_phr_lnk->val->set_id(1);
+        $val_phr_lnk->phr->set_id(2);
         $t->assert_load_sql($db_con, $val_phr_lnk);
 
 
@@ -67,13 +67,13 @@ class value_phrase_link_unit_tests
         // sql to load a value phrase link list by value id
         $val_phr_lnk_lst = new value_phrase_link_list($usr);
         $phr = new phrase($usr);
-        $phr-> id = 2;
+        $phr->set_id(2);
         $this->assert_lst_sql_all($t, $db_con, $val_phr_lnk_lst, $phr);
 
         // sql to load a value phrase link list by phrase id
         $val_phr_lnk_lst = new value_phrase_link_list($usr);
         $val = new value($usr);
-        $val-> id = 3;
+        $val->set_id(3);
         $this->assert_lst_sql_all($t, $db_con, $val_phr_lnk_lst, null, $val);
 
     }

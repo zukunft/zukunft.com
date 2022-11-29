@@ -51,9 +51,9 @@ function run_triple_test(testing $t)
 
     // ... now test the Canton Zurich
     $lnk_canton = new triple($t->usr1);
-    $lnk_canton->from->id = $wrd_zh->id;
+    $lnk_canton->from->set_id($wrd_zh->id());
     $lnk_canton->verb->id = cl(db_cl::VERB, verb::IS_A);
-    $lnk_canton->to->id = $wrd_canton->id;
+    $lnk_canton->to->set_id($wrd_canton->id());
     $lnk_canton->load_obj_vars();
     $target = word::TN_ZH . ' (' . word::TN_CANTON . ')';
     $result = $lnk_canton->name();
@@ -66,9 +66,9 @@ function run_triple_test(testing $t)
 
     // ... now test the Insurance Zurich
     $lnk_company = new triple($t->usr1);
-    $lnk_company->from->id = $wrd_zh->id;
+    $lnk_company->from->set_id($wrd_zh->id());
     $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
-    $lnk_company->to->id = $wrd_company->id;
+    $lnk_company->to->set_id($wrd_company->id());
     $lnk_company->load_obj_vars();
     $target = phrase::TN_ZH_COMPANY;
     $result = $lnk_company->name();
@@ -87,10 +87,10 @@ function run_triple_test(testing $t)
     $vrb->set_user($t->usr1);
     $vrb->load_by_vars();
     $lnk = new triple($t->usr1);
-    $lnk->from->id = $wrd_added->id;
+    $lnk->from->set_id($wrd_added->id());
     $lnk->verb->id = $vrb->id;
-    $lnk->to->id = $wrd->id;
-    if ($wrd->id <> 0) {
+    $lnk->to->set_id($wrd->id());
+    if ($wrd->id() <> 0) {
         $result = $lnk->save();
     } else {
         $result = 'id missing';
@@ -103,9 +103,9 @@ function run_triple_test(testing $t)
     // ... check the correct logging
     $log = new user_log_link;
     $log->table = 'triples';
-    $log->new_from_id = $wrd_added->id;
+    $log->new_from_id = $wrd_added->id();
     $log->new_link_id = $vrb->id;
-    $log->new_to_id = $wrd->id;
+    $log->new_to_id = $wrd->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test linked ' . word::TN_RENAMED . ' to ' . TEST_WORD . '';
@@ -114,18 +114,18 @@ function run_triple_test(testing $t)
     // ... check if the link is shown correctly
 
     $lnk = new triple($t->usr1);
-    $lnk->from->id = $wrd_added->id;
+    $lnk->from->set_id($wrd_added->id());
     $lnk->verb->id = $vrb->id;
-    $lnk->to->id = $wrd->id;
+    $lnk->to->set_id($wrd->id());
     $lnk->load_obj_vars();
     $result = $lnk->name();
     $target = '' . word::TN_RENAMED . ' (' . TEST_WORD . ')';
     $t->dsp('triple->load', $target, $result);
     // ... check if the link is shown correctly also for the second user
     $lnk2 = new triple($t->usr2);
-    $lnk2->from->id = $wrd_added->id;
+    $lnk2->from->set_id($wrd_added->id());
     $lnk2->verb->id = $vrb->id;
-    $lnk2->to->id = $wrd->id;
+    $lnk2->to->set_id($wrd->id());
     $lnk2->load_obj_vars();
     $result = $lnk2->name();
     $target = '' . word::TN_RENAMED . ' (' . TEST_WORD . ')';
@@ -135,9 +135,9 @@ function run_triple_test(testing $t)
 
     // if second user removes the new link
     $lnk = new triple($t->usr2);
-    $lnk->from->id = $wrd_added->id;
+    $lnk->from->set_id($wrd_added->id());
     $lnk->verb->id = $vrb->id;
-    $lnk->to->id = $wrd->id;
+    $lnk->to->set_id($wrd->id());
     $lnk->load_obj_vars();
     $msg = $lnk->del();
     $result = $msg->get_last_message();
@@ -147,9 +147,9 @@ function run_triple_test(testing $t)
     // ... check if the removal of the link for the second user has been logged
     $log = new user_log_link;
     $log->table = 'triples';
-    $log->old_from_id = $wrd_added->id;
+    $log->old_from_id = $wrd_added->id();
     $log->old_link_id = $vrb->id;
-    $log->old_to_id = $wrd->id;
+    $log->old_to_id = $wrd->id();
     $log->usr = $t->usr2;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test partner unlinked ' . word::TN_RENAMED . ' from ' . TEST_WORD . '';
@@ -158,9 +158,9 @@ function run_triple_test(testing $t)
 
     // ... check if the link is really not used any more for the second user
     $lnk2 = new triple($t->usr2);
-    $lnk2->from->id = $wrd_added->id;
+    $lnk2->from->set_id($wrd_added->id());
     $lnk2->verb->id = $vrb->id;
-    $lnk2->to->id = $wrd->id;
+    $lnk2->to->set_id($wrd->id());
     $lnk2->load_obj_vars();
     $result = $lnk2->name();
     $target = '';
@@ -172,9 +172,9 @@ function run_triple_test(testing $t)
 
     // ... check if the link is still used for the first user
     $lnk = new triple($t->usr1);
-    $lnk->from->id = $wrd_added->id;
+    $lnk->from->set_id($wrd_added->id());
     $lnk->verb->id = $vrb->id;
-    $lnk->to->id = $wrd->id;
+    $lnk->to->set_id($wrd->id());
     $lnk->load_obj_vars();
     $result = $lnk->name();
     $target = '' . word::TN_RENAMED . ' (' . TEST_WORD . ')';
@@ -184,9 +184,9 @@ function run_triple_test(testing $t)
 
     // if the first user also removes the link, both records should be deleted
     $lnk = new triple($t->usr1);
-    $lnk->from->id = $wrd_added->id;
+    $lnk->from->set_id($wrd_added->id());
     $lnk->verb->id = $vrb->id;
-    $lnk->to->id = $wrd->id;
+    $lnk->to->set_id($wrd->id());
     $lnk->load_obj_vars();
     $msg = $lnk->del();
     $result = $msg->get_last_message();
@@ -196,9 +196,9 @@ function run_triple_test(testing $t)
     // check the correct logging
     $log = new user_log_link;
     $log->table = 'triples';
-    $log->old_from_id = $wrd_added->id;
+    $log->old_from_id = $wrd_added->id();
     $log->old_link_id = $vrb->id;
-    $log->old_to_id = $wrd->id;
+    $log->old_to_id = $wrd->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test unlinked ' . word::TN_RENAMED . ' from ' . TEST_WORD . '';
@@ -206,9 +206,9 @@ function run_triple_test(testing $t)
 
     // check if the formula is not used any more for both users
     $lnk = new triple($t->usr1);
-    $lnk->from->id = $wrd_added->id;
+    $lnk->from->set_id($wrd_added->id());
     $lnk->verb->id = $vrb->id;
-    $lnk->to->id = $wrd->id;
+    $lnk->to->set_id($wrd->id());
     $lnk->load_obj_vars();
     $result = $lnk->name();
     $target = '';

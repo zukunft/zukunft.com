@@ -75,21 +75,21 @@ function run_word_display_test(testing $t)
     $target = ' is followed by<table class="table col-sm-5 table-borderless">
   <tr>
     <td>
-      <a href="/http/view.php?words=' . $wrd_2021->id . '" title="">System Test Time Word e.g. 2021</a>
+      <a href="/http/view.php?words=' . $wrd_2021->id() . '" title="">System Test Time Word e.g. 2021</a>
     </td>
     <td>
-<a href="/http/link_edit.php?id=' . $lnk_20_to_21->id . '&back=' . $wrd_2020->id . '" title="edit word link"><i class="far fa-edit"></i></a>    </td>
+<a href="/http/link_edit.php?id=' . $lnk_20_to_21->id() . '&back=' . $wrd_2020->id() . '" title="edit word link"><i class="far fa-edit"></i></a>    </td>
     <td>
-<a href="/http/link_del.php?id=' . $lnk_20_to_21->id . '&back=' . $wrd_2020->id . '" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
+<a href="/http/link_del.php?id=' . $lnk_20_to_21->id() . '&back=' . $wrd_2020->id() . '" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
   </tr>
 ';
     $target = '<table class="table table-borderless text-muted">
   <tr>
     <td>
-      <a href="/http/view.php?words=' . $wrd_2021->id . '&back=0" title="System Test Time Word e.g. 2021">System Test Time Word e.g. 2021</a>
+      <a href="/http/view.php?words=' . $wrd_2021->id() . '&back=0" title="System Test Time Word e.g. 2021">System Test Time Word e.g. 2021</a>
     </td>
     <td>
-      <a href="/http/view.php?words=' . $wrd_2020->id . '&back=0" title="System Test Another Time Word e.g. 2020">System Test Another Time Word e.g. 2020</a>
+      <a href="/http/view.php?words=' . $wrd_2020->id() . '&back=0" title="System Test Another Time Word e.g. 2020">System Test Another Time Word e.g. 2020</a>
     </td>
   </tr>
 </table>
@@ -114,22 +114,22 @@ function run_word_display_test(testing $t)
     $target = ' are<table class="table col-sm-5 table-borderless">
   <tr>
     <td>
-      <a href="/http/view.php?words=' . $wrd_year->id . '" title="">System Test Time Word Category e.g. Year</a>
+      <a href="/http/view.php?words=' . $wrd_year->id() . '" title="">System Test Time Word Category e.g. Year</a>
     </td>
     <td>
-<a href="/http/link_edit.php?id=' . $lnk_20_is_year->id . '&back=' . $wrd_2020->id . '" title="edit word link"><i class="far fa-edit"></i></a>    </td>
+<a href="/http/link_edit.php?id=' . $lnk_20_is_year->id() . '&back=' . $wrd_2020->id() . '" title="edit word link"><i class="far fa-edit"></i></a>    </td>
     <td>
-<a href="/http/link_del.php?id=' . $lnk_20_is_year->id . '&back=' . $wrd_2020->id . '" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
+<a href="/http/link_del.php?id=' . $lnk_20_is_year->id() . '&back=' . $wrd_2020->id() . '" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
   </tr>
  is follower of<table class="table col-sm-5 table-borderless">
   <tr>
     <td>
-      <a href="/http/view.php?words=' . $wrd_2019->id . '" title="">System Test Another Time Word e.g. 2019</a>
+      <a href="/http/view.php?words=' . $wrd_2019->id() . '" title="">System Test Another Time Word e.g. 2019</a>
     </td>
     <td>
-<a href="/http/link_edit.php?id=' . $lnk_19_to_20->id . '&back=' . $wrd_2020->id . '" title="edit word link"><i class="far fa-edit"></i></a>    </td>
+<a href="/http/link_edit.php?id=' . $lnk_19_to_20->id() . '&back=' . $wrd_2020->id() . '" title="edit word link"><i class="far fa-edit"></i></a>    </td>
     <td>
-<a href="/http/link_del.php?id=' . $lnk_19_to_20->id . '&back=' . $wrd_2020->id . '" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
+<a href="/http/link_del.php?id=' . $lnk_19_to_20->id() . '&back=' . $wrd_2020->id() . '" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
   </tr>
 ';
     $target = '<table class="table table-borderless text-muted"><tr><td><a href="/http/view.php?words=208&back=0" title="System Test Another Time Word e.g. 2020">System Test Another Time Word e.g. 2020</a></td><td><a href="/http/view.php?words=195&back=0" title="System Test Time Word Category e.g. Year">System Test Time Word Category e.g. Year</a></td><td><a href="/http/view.php?words=207&back=0" title="System Test Another Time Word e.g. 2019">System Test Another Time Word e.g. 2019</a></td></tr></table>
@@ -137,11 +137,11 @@ function run_word_display_test(testing $t)
     $target = '<table class="table table-borderless text-muted">
   <tr>
     <td>
-<a href="/http/view.php?words=' . $wrd_2020->id . '&back=0" title="System Test Another Time Word e.g. 2020">System Test Another Time Word e.g. 2020</a>    </td>
+<a href="/http/view.php?words=' . $wrd_2020->id() . '&back=0" title="System Test Another Time Word e.g. 2020">System Test Another Time Word e.g. 2020</a>    </td>
     <td>
-<a href="/http/view.php?words=' . $wrd_year->id . '&back=0" title="System Test Time Word Category e.g. Year">System Test Time Word Category e.g. Year</a>    </td>
+<a href="/http/view.php?words=' . $wrd_year->id() . '&back=0" title="System Test Time Word Category e.g. Year">System Test Time Word Category e.g. Year</a>    </td>
     <td>
-<a href="/http/view.php?words=' . $wrd_2019->id . '&back=0" title="System Test Another Time Word e.g. 2019">System Test Another Time Word e.g. 2019</a>    </td>
+<a href="/http/view.php?words=' . $wrd_2019->id() . '&back=0" title="System Test Another Time Word e.g. 2019">System Test Another Time Word e.g. 2019</a>    </td>
   </tr>
 </table>
 ';
@@ -162,7 +162,7 @@ function run_word_display_test(testing $t)
     $wrd_year = new word($usr);
     $wrd_year->load_by_name(word::TN_YEAR, word::class);
     /*
-    $target = zut_dsp_list_wrd_val($wrd_ZH->id, $wrd_year->id, $usr->id);
+    $target = zut_dsp_list_wrd_val($wrd_ZH->id(), $wrd_year->id(), $usr->id);
     $target = substr($target,0,208);
     */
     $target = word::TN_2020;
@@ -198,7 +198,7 @@ function run_word_display_test(testing $t)
     $sel->form = 'test_form';
     $sel->name = 'select_company';
     $sel->sql = $phr_corp->sql_list($phr_corp);
-    $sel->selected = $phr_ZH_INS->id;
+    $sel->selected = $phr_ZH_INS->id();
     $sel->dummy_text = '... please select';
     $result .= $sel->display();
     $target = phrase::TN_ZH_COMPANY;

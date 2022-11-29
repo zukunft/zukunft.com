@@ -79,7 +79,7 @@ class verb_unit_tests
         // sql to load a verb list by phrase id and direction up
         $vrb_lst = new verb_list($usr);
         $phr = new phrase($usr);
-        $phr->id = 5;
+        $phr->set_id(5);
         $this->assert_load_by_linked_phrases_sql($t, $db_con, $vrb_lst, $phr, word_select_direction::UP);
 
         // ... same for direction down

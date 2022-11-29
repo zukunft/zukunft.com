@@ -303,7 +303,7 @@ class user_log_link extends user_log
         if ($id > 0) {
             $this->set_usr();
             $wrd = new word($this->usr);
-            $wrd->id = $id;
+            $wrd->set_id($id);
             $wrd->load_obj_vars();
             $result = $wrd->name();
             log_debug('user_log_link->word_name got ' . $result);
@@ -445,9 +445,9 @@ class user_log_link extends user_log
                     $this->new_text_from = $this->new_from->name();
                     $this->new_text_link = $this->new_link->name;
                     $this->new_text_to = $this->new_to->name();
-                    $this->new_from_id = $this->new_from->id;
-                    $this->new_link_id = $this->new_link->id;
-                    $this->new_to_id = $this->new_to->id;
+                    $this->new_from_id = $this->new_from->id();
+                    $this->new_link_id = $this->new_link->id();
+                    $this->new_to_id = $this->new_to->id();
                 } else {
                     log_err('Object(s) missing when trying to log a triple add action');
                 }
@@ -457,9 +457,9 @@ class user_log_link extends user_log
                     $this->old_text_from = $this->old_from->name();
                     $this->old_text_link = $this->old_link->name;
                     $this->old_text_to = $this->old_to->name();
-                    $this->old_from_id = $this->old_from->id;
-                    $this->old_link_id = $this->old_link->id;
-                    $this->old_to_id = $this->old_to->id;
+                    $this->old_from_id = $this->old_from->id();
+                    $this->old_link_id = $this->old_link->id();
+                    $this->old_to_id = $this->old_to->id();
                 } else {
                     log_err('Object(s) missing when trying to log a triple del action');
                 }
@@ -471,9 +471,9 @@ class user_log_link extends user_log
                     $this->new_text_from = $this->new_from->name();
                     $this->new_text_link = $this->new_link->name;
                     $this->new_text_to = $this->new_to->external_key;
-                    $this->new_from_id = $this->new_from->id;
-                    $this->new_link_id = $this->new_link->id;
-                    $this->new_to_id = $this->new_to->id;
+                    $this->new_from_id = $this->new_from->id();
+                    $this->new_link_id = $this->new_link->id();
+                    $this->new_to_id = $this->new_to->id();
                 } else {
                     log_err('Object(s) missing when trying to log a ref add action');
                 }
@@ -483,9 +483,9 @@ class user_log_link extends user_log
                     $this->old_text_from = $this->old_from->name();
                     $this->old_text_link = $this->old_link->name;
                     $this->old_text_to = $this->old_to->external_key;
-                    $this->old_from_id = $this->old_from->id;
-                    $this->old_link_id = $this->old_link->id;
-                    $this->old_to_id = $this->old_to->id;
+                    $this->old_from_id = $this->old_from->id();
+                    $this->old_link_id = $this->old_link->id();
+                    $this->old_to_id = $this->old_to->id();
                 } else {
                     log_err('Object(s) missing when trying to log a ref del action');
                 }
@@ -498,8 +498,8 @@ class user_log_link extends user_log
                 if ($this->new_from != null and $this->new_to != null) {
                     $this->new_text_from = $this->new_from->name();
                     $this->new_text_to = $this->new_to->name();
-                    $this->new_from_id = $this->new_from->id;
-                    $this->new_to_id = $this->new_to->id;
+                    $this->new_from_id = $this->new_from->id();
+                    $this->new_to_id = $this->new_to->id();
                 } else {
                     log_err('Object(s) missing when trying to log an add action');
                 }
@@ -508,8 +508,8 @@ class user_log_link extends user_log
                 if ($this->old_from != null and $this->old_to != null) {
                     $this->old_text_from = $this->old_from->name();
                     $this->old_text_to = $this->old_to->name();
-                    $this->old_from_id = $this->old_from->id;
-                    $this->old_to_id = $this->old_to->id;
+                    $this->old_from_id = $this->old_from->id();
+                    $this->old_to_id = $this->old_to->id();
                 } else {
                     log_err('Object(s) missing when trying to log an del action');
                 }

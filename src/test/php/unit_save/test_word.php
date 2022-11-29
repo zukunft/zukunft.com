@@ -75,11 +75,11 @@ function run_word_tests(testing $t): void
     // check if loading a word by name and id works
     $wrd_by_name = $t->add_word(word::TN_READ, null, $t->usr1);
     $wrd_by_id = new word($t->usr1);
-    $wrd_by_id->id = $wrd_by_name->id;
+    $wrd_by_id->set_id($wrd_by_name->id());
     $wrd_by_id->load_obj_vars();
     $target = word::TN_READ;
     $result = $wrd_by_id->name();
-    $t->dsp('word->load of ' . $wrd_read->id . ' by id ' . $wrd_by_name->id, $target, $result);
+    $t->dsp('word->load of ' . $wrd_read->id() . ' by id ' . $wrd_by_name->id(), $target, $result);
 
     // word type
     $wrd_time = $t->test_word(word::TN_2021, phrase_type::TIME);
@@ -298,11 +298,11 @@ function run_word_tests(testing $t): void
     echo "... and also testing the user log class (classes/user_log.php)<br>";
 
     // ... check if the word creation has been logged
-    if ($wrd_add->id > 0) {
+    if ($wrd_add->id() > 0) {
         $log = new user_log_named;
         $log->table = 'words';
         $log->field = 'word_name';
-        $log->row_id = $wrd_add->id;
+        $log->row_id = $wrd_add->id();
         $log->usr = $t->usr1;
         $result = $log->dsp_last(true);
     }
@@ -312,7 +312,7 @@ function run_word_tests(testing $t): void
     // ... test if the new word has been created
     $wrd_added = $t->load_word(word::TN_ADD);
     $wrd_added->load_obj_vars();
-    if ($wrd_added->id > 0) {
+    if ($wrd_added->id() > 0) {
         $result = $wrd_added->name();
     }
     $target = word::TN_ADD;
@@ -327,7 +327,7 @@ function run_word_tests(testing $t): void
     // check if the word renaming was successful
     $wrd_renamed = new word($t->usr1);
     if ($wrd_renamed->load_by_name(word::TN_RENAMED, word::class)) {
-        if ($wrd_renamed->id > 0) {
+        if ($wrd_renamed->id() > 0) {
             $result = $wrd_renamed->name();
         }
     }
@@ -338,7 +338,7 @@ function run_word_tests(testing $t): void
     $log = new user_log_named;
     $log->table = 'words';
     $log->field = 'word_name';
-    $log->row_id = $wrd_renamed->id;
+    $log->row_id = $wrd_renamed->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test changed ' . word::TN_ADD . ' to ' . word::TN_RENAMED;
@@ -368,7 +368,7 @@ function run_word_tests(testing $t): void
     $log = new user_log_named;
     $log->table = 'words';
     $log->field = 'plural';
-    $log->row_id = $wrd_reloaded->id;
+    $log->row_id = $wrd_reloaded->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added ' . word::TN_RENAMED . 's';
@@ -443,7 +443,7 @@ function run_word_tests(testing $t): void
 
     // display
     $back = 1;
-    $target = '<a href="/http/view.php?words=' . $wrd_read->id . '&back=1" title="' . word::TD_READ . '">' . word::TN_READ . '</a>';
+    $target = '<a href="/http/view.php?words=' . $wrd_read->id() . '&back=1" title="' . word::TD_READ . '">' . word::TN_READ . '</a>';
     $result = $wrd_read->dsp_obj()->dsp_link($back);
     $t->dsp('word->display "' . word::TN_READ . '"', $target, $result);
 
@@ -484,7 +484,7 @@ function run_word_tests(testing $t): void
     /*
     $wrd = new word($t->usr1);
     $wrd->usr = $t->usr1;
-    $wrd->main_wrd_from_txt($wrd_read->id . ',' . $wrd_read->id);
+    $wrd->main_wrd_from_txt($wrd_read->id() . ',' . $wrd_read->id);
     $target = word::TEST_NAME_READ;
     $result = $wrd_by_name->name();
     $t->dsp('word->main_wrd_from_txt', $target, $result);

@@ -113,7 +113,7 @@ class formula_value_list
     {
         $qp = new sql_par(self::class);
         $sql_by = '';
-        if ($obj->id > 0) {
+        if ($obj->id() > 0) {
             if (get_class($obj) == formula::class or get_class($obj) == formula_dsp_old::class) {
                 $sql_by .= formula::FLD_ID;
             } elseif (get_class($obj) == phrase_group::class) {
@@ -148,18 +148,18 @@ class formula_value_list
             $db_con->set_name(substr($qp->name, 0, 62));
             $db_con->set_fields(formula_value::FLD_NAMES);
             $db_con->set_usr($this->user()->id);
-            if ($obj->id > 0) {
+            if ($obj->id() > 0) {
                 if (get_class($obj) == formula::class or get_class($obj) == formula_dsp_old::class) {
-                    $db_con->add_par(sql_db::PAR_INT, $obj->id);
+                    $db_con->add_par(sql_db::PAR_INT, $obj->id());
                     $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID));
                 } elseif (get_class($obj) == phrase_group::class) {
-                    $db_con->add_par(sql_db::PAR_INT, $obj->id);
+                    $db_con->add_par(sql_db::PAR_INT, $obj->id());
                     $link_fields = array();
                     if ($by_source) {
                         $link_fields[] = formula_value::FLD_SOURCE_GRP;
                         if ($obj2 != null) {
                             if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp_old::class) {
-                                $db_con->add_par(sql_db::PAR_INT, $obj2->id);
+                                $db_con->add_par(sql_db::PAR_INT, $obj2->id());
                                 $link_fields[] = formula_value::FLD_SOURCE_TIME;
                             }
                         }
@@ -167,7 +167,7 @@ class formula_value_list
                         $link_fields[] = phrase_group::FLD_ID;
                         if ($obj2 != null) {
                             if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp_old::class) {
-                                $db_con->add_par(sql_db::PAR_INT, $obj2->id);
+                                $db_con->add_par(sql_db::PAR_INT, $obj2->id());
                                 $link_fields[] = formula_value::FLD_TIME;
                             }
                         }
@@ -175,7 +175,7 @@ class formula_value_list
                     $qp->sql = $db_con->select_by_field_list($link_fields);
                 } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
                     // TODO check if the results are still correct if the user has excluded the word
-                    $db_con->add_par(sql_db::PAR_INT, $obj->id, false, true);
+                    $db_con->add_par(sql_db::PAR_INT, $obj->id(), false, true);
                     $db_con->set_join_fields(
                         array(formula_value::FLD_GRP),
                         sql_db::TBL_PHRASE_GROUP_TRIPLE,
@@ -184,7 +184,7 @@ class formula_value_list
                     $qp->sql = $db_con->select_by_field_list(array(word::FLD_ID));
                 } elseif (get_class($obj) == triple::class) {
                     // TODO check if the results are still correct if the user has excluded the triple
-                    $db_con->add_par(sql_db::PAR_INT, $obj->id, false, true);
+                    $db_con->add_par(sql_db::PAR_INT, $obj->id(), false, true);
                     $db_con->set_join_fields(
                         array(formula_value::FLD_GRP),
                         sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
@@ -288,7 +288,7 @@ class formula_value_list
             if (isset($this->lst)) {
                 foreach ($this->lst as $fv) {
                     $result .= $fv->dsp_id();
-                    $result .= ' (' . $fv->id . ') - ';
+                    $result .= ' (' . $fv->id() . ') - ';
                 }
             }
         } else {
@@ -297,7 +297,7 @@ class formula_value_list
                 foreach ($this->lst as $fv) {
                     if ($nbr <= 5) {
                         $result .= $fv->dsp_id();
-                        $result .= ' (' . $fv->id . ') - ';
+                        $result .= ' (' . $fv->id() . ') - ';
                     }
                     $nbr++;
                 }
@@ -349,8 +349,8 @@ class formula_value_list
         if (isset($this->lst)) {
             foreach ($this->lst as $fv) {
                 // use only valid ids
-                if ($fv->id <> 0) {
-                    $result[] = $fv->id;
+                if ($fv->id() <> 0) {
+                    $result[] = $fv->id();
                 }
             }
         }
@@ -453,7 +453,7 @@ class formula_value_list
 
         // temp utils the call is reviewed
         $wrd = new word($this->usr);
-        $wrd->id = $phr_id;
+        $wrd->set_id($phr_id);
         $wrd->load_obj_vars();
 
         $val_lst = new value_list($this->usr);
@@ -466,7 +466,7 @@ class formula_value_list
                 $debug_phr_ids = $value_lst[$val_id][1];
                 foreach ($debug_phr_ids as $debug_phr_id) {
                     $debug_wrd = new word($this->usr);
-                    $debug_wrd->id = $debug_phr_id;
+                    $debug_wrd->set_id($debug_phr_id);
                     $debug_wrd->load_obj_vars();
                     $debug_txt .= ", " . $debug_wrd->name();
                 }
@@ -784,12 +784,12 @@ class formula_value_list
 
         $phr_lst = $val->phr_lst;
 
-        log_debug("fv_lst->val_phr_lst ... for value " . $val->id);
+        log_debug("fv_lst->val_phr_lst ... for value " . $val->id());
         $result = '';
 
         // list all related formula results
         $formula_links = '';
-        $sql = "SELECT l.formula_id, f.formula_text FROM value_formula_links l, formulas f WHERE l.value_id = " . $val->id . " AND l.formula_id = f.formula_id;";
+        $sql = "SELECT l.formula_id, f.formula_text FROM value_formula_links l, formulas f WHERE l.value_id = " . $val->id() . " AND l.formula_id = f.formula_id;";
         //$db_con = New mysql;
         $db_con->usr_id = $this->user()->id;
         $db_lst = $db_con->get_old($sql);
@@ -802,7 +802,7 @@ class formula_value_list
                     $phr_lst_used->add($val->time_phr);
                 }
                 $frm = new formula($this->usr);
-                $frm->id = $frm_id;
+                $frm->set_id($frm_id);
                 $frm->load_obj_vars();
                 $back = '';
                 $fv_list = $frm->to_num($phr_lst_used, $back);

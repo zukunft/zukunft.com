@@ -214,7 +214,7 @@ class formula_list
     function load_sql_by_phr(sql_db $db_con, phrase $phr): sql_par
     {
         $qp = $this->load_sql($db_con);
-        if ($phr->id <> 0) {
+        if ($phr->id() <> 0) {
             $qp->name .= 'phr';
             $db_con->set_name($qp->name);
             $db_con->set_join_fields(
@@ -223,7 +223,7 @@ class formula_list
                 formula::FLD_ID,
                 formula::FLD_ID
             );
-            $db_con->add_par(sql_db::PAR_INT, $phr->id, false, true);
+            $db_con->add_par(sql_db::PAR_INT, $phr->id(), false, true);
             $qp->sql = $db_con->select_by_field(phrase::FLD_ID);
         } else {
             $qp->name = '';
@@ -461,7 +461,7 @@ class formula_list
                     }
                     // if the formula value is empty use the id to be able to select the formula
                     if ($formula_value == '') {
-                        $result .= $frm_dsp->id;
+                        $result .= $frm_dsp->id();
                     } else {
                         $result .= ' value ' . $formula_value;
                     }

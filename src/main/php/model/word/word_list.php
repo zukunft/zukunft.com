@@ -751,8 +751,8 @@ class word_list
     function add(word $wrd_to_add)
     {
         log_debug(self::class . '->add ' . $wrd_to_add->dsp_id());
-        if (!in_array($wrd_to_add->id, $this->ids())) {
-            if ($wrd_to_add->id > 0) {
+        if (!in_array($wrd_to_add->id(), $this->ids())) {
+            if ($wrd_to_add->id() > 0) {
                 $this->lst[] = $wrd_to_add;
             }
         }
@@ -810,7 +810,7 @@ class word_list
         $result = false;
         log_debug(self::class . '->merge ' . $new_wrd_lst->name() . ' to ' . $this->dsp_id() . '"');
         foreach ($new_wrd_lst->lst as $new_wrd) {
-            log_debug(self::class . '->merge add ' . $new_wrd->name() . ' (' . $new_wrd->id . ')');
+            log_debug(self::class . '->merge add ' . $new_wrd->name() . ' (' . $new_wrd->id() . ')');
             $this->add($new_wrd);
             $result = true;
         }
@@ -839,7 +839,7 @@ class word_list
             $result = array();
             $lst_ids = $del_wrd_lst->ids();
             foreach ($this->lst as $wrd) {
-                if (!in_array($wrd->id, $lst_ids)) {
+                if (!in_array($wrd->id(), $lst_ids)) {
                     $result[] = $wrd;
                 }
             }
@@ -970,7 +970,7 @@ class word_list
             $wrd_lst = array();
             $lst_ids = $filter_lst->ids();
             foreach ($result->lst as $wrd) {
-                if (in_array($wrd->id, $lst_ids)) {
+                if (in_array($wrd->id(), $lst_ids)) {
                     $wrd_lst[] = $wrd;
                 }
             }
@@ -1144,8 +1144,8 @@ class word_list
     {
         $result = array();
         foreach ($this->lst as $wrd) {
-            if ($wrd->id > 0) {
-                $result[] = $wrd->id;
+            if ($wrd->id() > 0) {
+                $result[] = $wrd->id();
             }
         }
         return $result;
@@ -1259,7 +1259,7 @@ class word_list
           }
         }
         */
-        log_debug(self::class . '->phrase_lst -> done (' . $grp->id . ')');
+        log_debug(self::class . '->phrase_lst -> done (' . $grp->id() . ')');
         return $grp;
     }
 
@@ -1315,7 +1315,7 @@ class word_list
         $val = $this->value();
 
         // get all words related to the value id; in many cases this does not match with the value_words there are used to get the word: it may contain additional word ids
-        if ($val->id > 0) {
+        if ($val->id() > 0) {
             log_debug("word_list->value_scaled -> get word " . $this->name());
             //$val->load_phrases();
             // switch on after value->scale is working fine
@@ -1337,7 +1337,7 @@ class word_list
         $result = false;
 
         foreach ($this->lst as $wrd) {
-            if ($wrd->id == $wrd_to_check->id) {
+            if ($wrd->id() == $wrd_to_check->id()) {
                 $result = true;
             }
         }
@@ -1501,10 +1501,10 @@ class word_list
             $val->load_phrases();
             if (isset($val->time_phr)) {
                 log_debug(self::class . '->max_val_time ... value (' . $val->number . ' @ ' . $val->time_phr->name() . ')');
-                if ($val->time_phr->id > 0) {
-                    if (!in_array($val->time_phr->id, $time_ids)) {
-                        $time_ids[] = $val->time_phr->id;
-                        log_debug(self::class . '->max_val_time ... add word id (' . $val->time_phr->id . ')');
+                if ($val->time_phr->id() > 0) {
+                    if (!in_array($val->time_phr->id(), $time_ids)) {
+                        $time_ids[] = $val->time_phr->id();
+                        log_debug(self::class . '->max_val_time ... add word id (' . $val->time_phr->id() . ')');
                     }
                 }
             }
@@ -1588,7 +1588,7 @@ class word_list
         }
 
         if ($phr != null) {
-            log_debug(self::class . '->assume_time -> time used "' . $phr->name() . '" (' . $phr->id . ')');
+            log_debug(self::class . '->assume_time -> time used "' . $phr->name() . '" (' . $phr->id() . ')');
             if (get_class($phr) == word::class or get_class($phr) == word_dsp::class) {
                 $result = $phr->phrase();
             } else {

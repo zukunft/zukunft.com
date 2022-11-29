@@ -69,11 +69,11 @@ class view_cmp_link_list extends link_list
         $sql_by = '';
 
         if ($dsp != null) {
-            if ($dsp->id > 0) {
+            if ($dsp->id() > 0) {
                 $sql_by = view::FLD_ID;
             }
         } elseif ($cmp != null) {
-            if ($cmp->id > 0) {
+            if ($cmp->id() > 0) {
                 $sql_by = view_cmp::FLD_ID;
             }
         }
@@ -93,13 +93,13 @@ class view_cmp_link_list extends link_list
                 $db_con->set_join_fields(array(view_cmp::FLD_ID), sql_db::TBL_VIEW_COMPONENT);
             }
             if ($dsp != null) {
-                if ($dsp->id > 0) {
-                    $db_con->add_par(sql_db::PAR_INT, $dsp->id);
+                if ($dsp->id() > 0) {
+                    $db_con->add_par(sql_db::PAR_INT, $dsp->id());
                     $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID));
                 }
             } elseif ($cmp != null) {
-                if ($cmp->id > 0) {
-                    $db_con->add_par(sql_db::PAR_INT, $cmp->id);
+                if ($cmp->id() > 0) {
+                    $db_con->add_par(sql_db::PAR_INT, $cmp->id());
                     $qp->sql = $db_con->select_by_field_list(array(view_cmp::FLD_ID));
                 }
             }
@@ -187,9 +187,9 @@ class view_cmp_link_list extends link_list
         $result = array();
         foreach ($this->lst as $lnk) {
             if ($lnk->dsp != null) {
-                if ($lnk->dsp->id <> 0) {
-                    if (!in_array($lnk->dsp->id, $result)) {
-                        $result[] = $lnk->dsp->id;
+                if ($lnk->dsp->id() <> 0) {
+                    if (!in_array($lnk->dsp->id(), $result)) {
+                        $result[] = $lnk->dsp->id();
                     }
                 }
             }
@@ -204,9 +204,9 @@ class view_cmp_link_list extends link_list
     {
         $result = array();
         foreach ($this->lst as $lnk) {
-            if ($lnk->cmp->id <> 0) {
-                if (in_array($lnk->cmp->id, $result)) {
-                    $result[] = $lnk->cmp->id;
+            if ($lnk->cmp->id() <> 0) {
+                if (in_array($lnk->cmp->id(), $result)) {
+                    $result[] = $lnk->cmp->id();
                 }
             }
         }

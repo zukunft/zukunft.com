@@ -54,7 +54,7 @@ class formula_value_unit_tests
 
         // check the sql to load a formula value by the id
         $fv = new formula_value($usr);
-        $fv->id = 1;
+        $fv->set_id(1);
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $fv->load_by_id_sql($db_con);
         $t->assert_qp($qp, sql_db::POSTGRES);
@@ -119,24 +119,24 @@ class formula_value_unit_tests
         // sql to load a list of formula values by the formula id
         $fv_lst = new formula_value_list($usr);
         $frm = new formula($usr);
-        $frm->id = 1;
+        $frm->set_id(1);
         $t->assert_load_list_sql($db_con, $fv_lst, $frm);
 
         // sql to load a list of formula values by the phrase group id
         $fv_lst = new formula_value_list($usr);
         $grp = new phrase_group($usr);
-        $grp->id = 2;
+        $grp->set_id(2);
         $t->assert_load_list_sql($db_con, $fv_lst, $grp);
 
         // ... and additional select by time
         $time_phr = new phrase($usr);
-        $time_phr->id = 3;
+        $time_phr->set_id(3);
         $t->assert_load_list_sql($db_con, $fv_lst, $grp, $time_phr);
 
         // sql to load a list of formula values by the source phrase group id
         $fv_lst = new formula_value_list($usr);
         $grp = new phrase_group($usr);
-        $grp->id = 2;
+        $grp->set_id(2);
         $t->assert_load_list_sql($db_con, $fv_lst, $grp, null, true);
 
         // ... and additional select by time
@@ -145,13 +145,13 @@ class formula_value_unit_tests
         // sql to load a list of formula values by the word id
         $fv_lst = new formula_value_list($usr);
         $wrd = new word($usr);
-        $wrd->id = 2;
+        $wrd->set_id(2);
         $t->assert_load_list_sql($db_con, $fv_lst, $wrd);
 
         // sql to load a list of formula values by the triple id
         $fv_lst = new formula_value_list($usr);
         $trp = new triple($usr);
-        $trp->id = 3;
+        $trp->set_id(3);
         $t->assert_load_list_sql($db_con, $fv_lst, $trp);
 
     }

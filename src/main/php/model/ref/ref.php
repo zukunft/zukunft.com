@@ -109,7 +109,7 @@ class ref
         if ($db_row != null) {
             if ($db_row[self::FLD_ID] > 0) {
                 $this->id = $db_row[self::FLD_ID];
-                $this->phr->id = $db_row[phrase::FLD_ID];
+                $this->phr->set_id($db_row[phrase::FLD_ID]);
                 $this->external_key = $db_row[self::FLD_EX_KEY];
                 $this->ref_type = get_ref_type_by_id($db_row[self::FLD_TYPE]);
                 if ($this->load_objects()) {
@@ -231,7 +231,7 @@ class ref
     function load_sql_by_link_ids(sql_db $db_con, int $id): sql_par
     {
         $qp = $this->load_sql($db_con, 'link_ids');
-        $db_con->set_where_link_no_fld($this->id, $this->phr->id, $this->ref_type->id);
+        $db_con->set_where_link_no_fld($this->id, $this->phr->id(), $this->ref_type->id);
         $qp->sql = $db_con->select_by_id($id);
         $qp->par = $db_con->get_par();
 
@@ -247,8 +247,8 @@ class ref
         $result = false;
 
         // check if the minimal input parameters are set
-        if ($this->id <= 0 and ($this->phr->id <= 0 or $this->ref_type->id <= 0)) {
-            log_err('Either the database ID (' . $this->id . ') or the phrase id (' . $this->phr->id . ') AND the reference type id (' . $this->ref_type->id . ') must be set to load a reference.', 'ref->load');
+        if ($this->id <= 0 and ($this->phr->id() <= 0 or $this->ref_type->id <= 0)) {
+            log_err('Either the database ID (' . $this->id . ') or the phrase id (' . $this->phr->id() . ') AND the reference type id (' . $this->ref_type->id . ') must be set to load a reference.', 'ref->load');
         } else {
 
             $db_con->set_type(sql_db::TBL_REF);
@@ -262,7 +262,7 @@ class ref
             $db_con->set_usr($this->user()->id);
             $db_con->set_link_fields(phrase::FLD_ID, self::FLD_TYPE);
             $db_con->set_fields(self::FLD_NAMES);
-            $db_con->set_where_link_no_fld($this->id, $this->phr->id, $this->ref_type->id);
+            $db_con->set_where_link_no_fld($this->id, $this->phr->id(), $this->ref_type->id);
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
 
@@ -322,10 +322,9 @@ class ref
         $result = true;
 
         if ($this->phr->name() == null or $this->phr->name() == '') {
-            if ($this->phr->id <> 0) {
+            if ($this->phr->id() <> 0) {
                 $phr = new phrase($this->user());
-                $phr->id = $this->phr->id;
-                if ($phr->load_by_obj_par()) {
+                if ($phr->load_by_id($this->phr->id())) {
                     $this->phr = $phr;
                     log_debug('ref->load_objects -> phrase ' . $this->phr->dsp_id() . ' loaded');
                 } else {
@@ -426,9 +425,9 @@ class ref
         if (isset($this->phr)) {
             $result .= 'ref of "' . $this->phr->name() . '"';
         } else {
-            if (isset($this->phr->id)) {
-                if ($this->phr->id > 0) {
-                    $result .= 'ref of phrase id ' . $this->phr->id . ' ';
+            if ($this->phr->id() != null) {
+                if ($this->phr->id() != 0) {
+                    $result .= 'ref of phrase id ' . $this->phr->id() . ' ';
                 }
             }
         }
@@ -536,7 +535,7 @@ class ref
 
             $this->id = $db_con->insert(
                 array(phrase::FLD_ID, self::FLD_EX_KEY, self::FLD_TYPE),
-                array($this->phr->id, $this->external_key, $this->ref_type->id));
+                array($this->phr->id(), $this->external_key, $this->ref_type->id));
             if ($this->id > 0) {
                 // update the id in the log for the correct reference
                 if (!$log->add_ref($this->id)) {

@@ -69,12 +69,12 @@ function run_user_sandbox_test(testing $t)
     // remember the id
     $src_id = 0;
     if ($result == '') {
-        $src_id = $src->id;
+        $src_id = $src->id();
     }
 
     // check if the source has been saved (check user_sandbox->save case 1)
     $src = new source($t->usr1);
-    $src->id = $src_id;
+    $src->set_id($src_id);
     if ($src->load_obj_vars()) {
         $result = $src->name();
     }
@@ -92,12 +92,12 @@ function run_user_sandbox_test(testing $t)
     // remember the id
     $src_id = 0;
     if ($result == '') {
-        $src_id = $src->id;
+        $src_id = $src->id();
     }
 
     // check if the source url has been updates (check user_sandbox->save case 2)
     $src = new source($t->usr1);
-    $src->id = $src_id;
+    $src->set_id($src_id);
     if ($src->load_obj_vars()) {
         $result = $src->url;
     }

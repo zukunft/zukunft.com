@@ -67,7 +67,7 @@ if ($usr->id > 0) {
     }
 
     // select the view
-    if ($wrd->id > 0) {
+    if ($wrd->id() > 0) {
         // if the user has changed the view for this word, save it
         if (isset($_GET['new_id'])) {
             $view_id = $_GET['new_id'];
@@ -97,7 +97,7 @@ if ($usr->id > 0) {
             $dsp_text = $dsp->display($wrd, $back);
 
             // use a fallback if the view is empty
-            if ($dsp_text == '' or $dsp->name == '') {
+            if ($dsp_text == '' or $dsp->name() == '') {
                 $view_id = cl(db_cl::VIEW, view::START);
                 $dsp->load_by_id($view_id, view::class);
                 $dsp_text = $dsp->display($wrd, $back);

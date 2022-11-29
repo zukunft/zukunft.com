@@ -82,6 +82,7 @@ class term extends db_object
      */
     function __construct(user $usr, string $class = word::class)
     {
+        parent::__construct();
         $this->reset();
         $this->set_obj($class);
         $this->set_user($usr);

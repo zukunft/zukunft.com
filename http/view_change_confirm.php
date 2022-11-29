@@ -70,8 +70,7 @@ if ($usr->id > 0) {
 
         // show the word name
         $wrd = new word($usr);
-        $wrd->id = $word_id;
-        $wrd->load_obj_vars();
+        $wrd->load_by_id($word_id);
         $result .= dsp_text_h2('Select the display format for "' . $wrd->name() . '"');
     }
 
@@ -80,7 +79,7 @@ if ($usr->id > 0) {
         $result .= dsp_err('view not found');
     } else {
         $dsp = new view($usr);
-        $dsp->id = $view_id;
+        $dsp->set_id($view_id);
         $result .= $dsp->selector_page($word_id, $back);
     }
 }

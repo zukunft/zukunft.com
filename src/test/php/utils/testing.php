@@ -68,10 +68,10 @@ class testing extends test_base
                 if ($val_id > 0) {
                     // request to delete the added test value
                     $val = new value($this->usr1);
-                    $val->id = $val_id;
+                    $val->set_id($val_id);
                     $val->load_obj_vars();
                     // check again, because some id may be added twice
-                    if ($val->id > 0) {
+                    if ($val->id() > 0) {
                         $msg = $val->del();
                         $result .= $msg->get_last_message();
                         $target = '';
@@ -92,25 +92,25 @@ class testing extends test_base
 
         // load the test view
         $dsp = $this->load_view(view::TN_ADD);
-        if ($dsp->id <= 0) {
+        if ($dsp->id() <= 0) {
             $dsp = $this->load_view(view::TN_RENAMED);
         }
 
         // load the test view for user 2
         $dsp_usr2 = $this->load_view(view::TN_ADD, $this->usr2);
-        if ($dsp_usr2->id <= 0) {
+        if ($dsp_usr2->id() <= 0) {
             $dsp_usr2 = $this->load_view(view::TN_RENAMED, $this->usr2);
         }
 
         // load the first test view component
         $cmp = $this->load_view_component(view_cmp::TN_ADD);
-        if ($cmp->id <= 0) {
+        if ($cmp->id() <= 0) {
             $cmp = $this->load_view_component(view_cmp::TN_RENAMED);
         }
 
         // load the first test view component for user 2
         $cmp_usr2 = $this->load_view_component(view_cmp::TN_ADD, $this->usr2);
-        if ($cmp_usr2->id <= 0) {
+        if ($cmp_usr2->id() <= 0) {
             $cmp_usr2 = $this->load_view_component(view_cmp::TN_RENAMED, $this->usr2);
         }
 
@@ -121,14 +121,14 @@ class testing extends test_base
         $cmp2_usr2 = $this->load_view_component(view_cmp::TN_ADD2, $this->usr2);
 
         // check if the test components have been unlinked for user 2
-        if ($dsp_usr2->id > 0 and $cmp_usr2->id > 0) {
+        if ($dsp_usr2->id() > 0 and $cmp_usr2->id() > 0) {
             $result .= $cmp_usr2->unlink($dsp_usr2);
             $target = '';
             $this->dsp('cleanup: unlink first component "' . $cmp_usr2->name() . '" from "' . $dsp_usr2->name() . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // check if the test components have been unlinked
-        if ($dsp->id > 0 and $cmp->id > 0) {
+        if ($dsp->id() > 0 and $cmp->id() > 0) {
             $result .= $cmp->unlink($dsp);
             $target = '';
             $this->dsp('cleanup: unlink first component "' . $cmp->name() . '" from "' . $dsp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -138,14 +138,14 @@ class testing extends test_base
         // error at the moment: if the second user is still using the link,
         // the second user does not get the owner
         // instead a foreign key error happens
-        if ($dsp->id > 0 and $cmp2->id > 0) {
+        if ($dsp->id() > 0 and $cmp2->id() > 0) {
             $result .= $cmp2->unlink($dsp);
             $target = '';
             $this->dsp('cleanup: unlink second component "' . $cmp2->name() . '" from "' . $dsp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // unlink the second component for user 2
-        if ($dsp_usr2->id > 0 and $cmp2_usr2->id > 0) {
+        if ($dsp_usr2->id() > 0 and $cmp2_usr2->id() > 0) {
             $result .= $cmp2_usr2->unlink($dsp_usr2);
             $target = '';
             $this->dsp('cleanup: unlink second component "' . $cmp2_usr2->name() . '" from "' . $dsp_usr2->name() . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -154,7 +154,7 @@ class testing extends test_base
         // request to delete the added test views
         foreach (view_cmp::RESERVED_VIEW_COMPONENTS as $cmp_name) {
             $cmp = $this->load_view_component($cmp_name);
-            if ($cmp->id > 0) {
+            if ($cmp->id() > 0) {
                 $msg = $cmp->del();
                 $result .= $msg->get_last_message();
                 $target = '';
@@ -165,7 +165,7 @@ class testing extends test_base
         // request to delete the added test views
         foreach (view::RESERVED_VIEWS as $dsp_name) {
             $dsp = $this->load_view($dsp_name);
-            if ($dsp->id > 0) {
+            if ($dsp->id() > 0) {
                 $msg = $dsp->del();
                 $result .= $msg->get_last_message();
                 $target = '';
@@ -175,12 +175,12 @@ class testing extends test_base
 
         // reload the first test view component for user 2
         $cmp_usr2 = $this->load_view_component(view_cmp::TN_ADD, $this->usr2);
-        if ($cmp_usr2->id <= 0) {
+        if ($cmp_usr2->id() <= 0) {
             $cmp_usr2 = $this->load_view_component(view_cmp::TN_RENAMED, $this->usr2);
         }
 
         // request to delete the test view component for user 2
-        if ($cmp_usr2->id > 0) {
+        if ($cmp_usr2->id() > 0) {
             $msg = $cmp_usr2->del();
             $result .= $msg->get_last_message();
             $target = '';
@@ -189,12 +189,12 @@ class testing extends test_base
 
         // reload the first test view component
         $cmp = $this->load_view_component(view_cmp::TN_ADD);
-        if ($cmp->id <= 0) {
+        if ($cmp->id() <= 0) {
             $cmp = $this->load_view_component(view_cmp::TN_RENAMED);
         }
 
         // request to delete the test view component
-        if ($cmp->id > 0) {
+        if ($cmp->id() > 0) {
             $msg = $cmp->del();
             $result .= $msg->get_last_message();
             $target = '';
@@ -205,7 +205,7 @@ class testing extends test_base
         $cmp2 = $this->load_view_component(view_cmp::TN_ADD2);
 
         // request to delete the second added test view component
-        if ($cmp2->id > 0) {
+        if ($cmp2->id() > 0) {
             $msg = $cmp2->del();
             $result .= $msg->get_last_message();
             $target = '';
@@ -213,7 +213,7 @@ class testing extends test_base
         }
 
         // request to delete the second added test view component for user 2
-        if ($cmp2_usr2->id > 0) {
+        if ($cmp2_usr2->id() > 0) {
             $msg = $cmp2_usr2->del();
             $result .= $msg->get_last_message();
             $target = '';
@@ -222,12 +222,12 @@ class testing extends test_base
 
         // reload the test view for user 2
         $dsp_usr2 = $this->load_view(view::TN_ADD, $this->usr2);
-        if ($dsp_usr2->id <= 0) {
+        if ($dsp_usr2->id() <= 0) {
             $dsp_usr2 = $this->load_view(view::TN_RENAMED, $this->usr2);
         }
 
         // request to delete the added test view for user 2 first
-        if ($dsp_usr2->id > 0) {
+        if ($dsp_usr2->id() > 0) {
             $msg = $dsp_usr2->del();
             $result .= $msg->get_last_message();
             $target = '';
@@ -236,12 +236,12 @@ class testing extends test_base
 
         // reload the test view
         $dsp = $this->load_view(view::TN_ADD);
-        if ($dsp->id <= 0) {
+        if ($dsp->id() <= 0) {
             $dsp = $this->load_view(view::TN_RENAMED);
         }
 
         // request to delete the added test view
-        if ($dsp->id > 0) {
+        if ($dsp->id() > 0) {
             $msg = $dsp->del();
             $result .= $msg->get_last_message();
             $target = '';
@@ -251,7 +251,7 @@ class testing extends test_base
         // request to delete the added test views
         foreach (view::RESERVED_VIEWS as $dsp_name) {
             $dsp = $this->load_view($dsp_name);
-            if ($dsp->id > 0) {
+            if ($dsp->id() > 0) {
                 $msg = $dsp->del();
                 $result .= $msg->get_last_message();
                 $target = '';
@@ -261,7 +261,7 @@ class testing extends test_base
 
         // request to delete the renamed test source
         $src = $this->load_source(source::TN_RENAMED);
-        if ($src->id > 0) {
+        if ($src->id() > 0) {
             $msg = $src->del();
             $result .= $msg->get_last_message();
             $target = '';
@@ -272,7 +272,7 @@ class testing extends test_base
         foreach (source::RESERVED_SOURCES as $src_name) {
             if ($src_name != source::TN_READ) {
                 $src = $this->load_source($src_name);
-                if ($src->id > 0) {
+                if ($src->id() > 0) {
                     $msg = $src->del();
                     $result .= $msg->get_last_message();
                     $target = '';
@@ -293,7 +293,7 @@ class testing extends test_base
         // request to delete the added test formulas
         foreach (formula::RESERVED_FORMULAS as $frm_name) {
             $dsp = $this->load_formula($frm_name);
-            if ($dsp->id > 0) {
+            if ($dsp->id() > 0) {
                 $msg = $dsp->del();
                 $result .= $msg->get_last_message();
                 $target = '';
@@ -304,7 +304,7 @@ class testing extends test_base
         // request to delete the added test phrases
         foreach (phrase::RESERVED_PHRASES as $phr_name) {
             $phr = $this->load_phrase($phr_name);
-            if ($phr->id <> 0) {
+            if ($phr->id() <> 0) {
                 $msg = $phr->del();
                 $result .= $msg->get_last_message();
                 $target = '';
@@ -330,7 +330,7 @@ class testing extends test_base
         // request to delete the added test word
         // TODO: if a user has changed the word during the test, delete also the user words
         $wrd = $this->load_word(word::TN_ADD);
-        if ($wrd->id > 0) {
+        if ($wrd->id() > 0) {
             $msg = $wrd->del();
             $result .= $msg->get_last_message();
             $target = '';
@@ -339,7 +339,7 @@ class testing extends test_base
 
         // request to delete the renamed test word
         $wrd = $this->load_word(word::TN_RENAMED);
-        if ($wrd->id > 0) {
+        if ($wrd->id() > 0) {
             $msg = $wrd->del();
             $result .= $msg->get_last_message();
             $target = '';
@@ -351,7 +351,7 @@ class testing extends test_base
             // ... but keep the read only test word
             if ($wrd_name != word::TN_READ) {
                 $wrd = $this->load_word($wrd_name);
-                if ($wrd->id > 0) {
+                if ($wrd->id() > 0) {
                     $msg = $wrd->del();
                     $result .= $msg->get_last_message();
                     $target = '';

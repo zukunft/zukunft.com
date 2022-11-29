@@ -119,7 +119,7 @@ class batch_job
             log_debug('batch_job->type ok');
             if ($this->row_id <= 0) {
                 if (isset($this->obj)) {
-                    $this->row_id = $this->obj->id;
+                    $this->row_id = $this->obj->id();
                 }
             }
             if ($this->row_id <= 0) {
@@ -130,7 +130,7 @@ class batch_job
                     if (!isset($this->usr)) {
                         $this->usr = $this->obj->usr;
                     }
-                    $this->row_id = $this->obj->id;
+                    $this->row_id = $this->obj->id();
                     log_debug('batch_job->add connect');
                     //$db_con = New mysql;
                     $db_type = $db_con->get_type();

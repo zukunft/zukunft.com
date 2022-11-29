@@ -58,7 +58,7 @@ class view_unit_tests
 
         // sql to load the view by id
         $dsp = new view($usr);
-        $dsp->id = 2;
+        $dsp->set_id(2);
         //$t->assert_load_sql($db_con, $dsp);
         $t->assert_load_standard_sql($db_con, $dsp);
         $t->assert_user_config_sql($db_con, $dsp);
@@ -76,7 +76,7 @@ class view_unit_tests
 
         // sql to load the view components
         $dsp = new view($usr);
-        $dsp->id = 2;
+        $dsp->set_id(2);
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $dsp->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/view/view_components_by_view_id.sql');

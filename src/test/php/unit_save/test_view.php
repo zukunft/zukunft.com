@@ -63,7 +63,7 @@ function run_view_test(testing $t)
     $target = word::TN_CH;
     $t->dsp_contains(', view->display "' . $dsp->name() . '" for "' . $wrd->name() . '" contains', $target, $result, TIMEOUT_LIMIT_LONG);
     // check if the view contains at least one value
-    $target = 'back='.$wrd->id.'">8.51</a>';
+    $target = 'back='.$wrd->id().'">8.51</a>';
     /* TODO fix the formula value display
     $t->dsp_contains(', view->display "' . $dsp->name . '" for "' . $wrd->name() . '" contains', $target, $result);
     // check if the view contains at least the main formulas
@@ -80,7 +80,7 @@ function run_view_test(testing $t)
     $dsp->set_name(view::TN_ADD);
     $dsp->comment = 'Just added for testing';
     $result = $dsp->save();
-    if ($dsp->id > 0) {
+    if ($dsp->id() > 0) {
         $result = $dsp->comment;
     }
     $target = 'Just added for testing';
@@ -97,7 +97,7 @@ function run_view_test(testing $t)
     $log = new user_log_named;
     $log->table = 'views';
     $log->field = view::FLD_NAME;
-    $log->row_id = $dsp->id;
+    $log->row_id = $dsp->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added System Test View';
@@ -123,7 +123,7 @@ function run_view_test(testing $t)
     $dsp_renamed = new view($t->usr1);
     $result = $dsp_renamed->load_by_name(view::TN_RENAMED, view::class);
     if ($result) {
-        if ($dsp_renamed->id > 0) {
+        if ($dsp_renamed->id() > 0) {
             $result = $dsp_renamed->name();
         }
     }
@@ -134,7 +134,7 @@ function run_view_test(testing $t)
     $log = new user_log_named;
     $log->table = 'views';
     $log->field = view::FLD_NAME;
-    $log->row_id = $dsp_renamed->id;
+    $log->row_id = $dsp_renamed->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test changed System Test View to System Test View Renamed';
@@ -161,7 +161,7 @@ function run_view_test(testing $t)
     $log = new user_log_named;
     $log->table = 'views';
     $log->field = 'comment';
-    $log->row_id = $dsp_reloaded->id;
+    $log->row_id = $dsp_reloaded->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added Just added for testing the user sandbox';
