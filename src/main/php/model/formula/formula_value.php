@@ -190,7 +190,7 @@ class formula_value extends db_object
     function api_obj(): object
     {
         $api_obj = new formula_value_api($this->id);
-        $api_obj->set_val($this->value);
+        $api_obj->set_number($this->value);
         return $api_obj;
     }
 

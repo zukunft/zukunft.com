@@ -55,8 +55,7 @@ if ($usr->id > 0) {
 
     if ($dsp_id > 0) {
         $dsp = new view($usr);
-        $dsp->set_id($dsp_id);
-        $dsp->load_obj_vars();
+        $dsp->load_by_id($dsp_id);
         $result = $dsp->api_obj();
     } else {
         $msg = 'view id is missing';

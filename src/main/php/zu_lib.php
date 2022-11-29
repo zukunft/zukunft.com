@@ -42,6 +42,8 @@
     TODO add a simple UI API JSON to text frontend for the view validation
     TODO exclude any search objects from list objects e.g. remove the phrase from the value list which implies to split the list loading into single functions such as load_by_phr
     TODO use a key-value table without a phrase group if a value is not user specific and none of the default settings has been changed
+         for the key-value table without a phrase group encode the key, so that automatically a virtual phrase group can be created
+         e.g. convert -12,3,67 to something like 4c48d5685a7e with the possibility to reverse
     TODO move all sample SQL statements from the unit test to separate files for auto syntax check
     TODO check that all sample SQL statements are checked for the unique name and for mysql syntax
     TODO cleanup the objects and remove all vars not needed any more e.g. id arrays

@@ -426,9 +426,9 @@ class value_list
                     foreach ($db_val_lst as $db_val) {
                         if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
                             $val = new value($this->usr);
-                            $val->set_id($db_val['value_id']);
+                            $val->set_id($db_val[value::FLD_ID]);
                             $val->owner_id = $db_val[user_sandbox::FLD_USER];
-                            $val->number = $db_val['word_value'];
+                            $val->set_number($db_val['word_value']);
                             $val->set_source_id($db_val['source_id']);
                             $val->last_update = get_datetime($db_val['last_update']);
                             $val->grp->set_id($db_val['phrase_group_id']);
@@ -528,7 +528,7 @@ class value_list
                             $val_phr->set_name($val_key, word::class);
                         }
                         $val_to_add->phr_lst->add($val_phr);
-                        $val_to_add->number = $val_number;
+                        $val_to_add->set_number($val_number);
                         if ($do_save) {
                             $val_to_add->grp = $phr_lst->get_grp();
                             $result->add_message($val_to_add->save());
@@ -602,7 +602,7 @@ class value_list
                 if (count($phr_name) > 0) {
                     $val_entry = array();
                     $key_name = array_values($phr_name)[0];
-                    $val_entry[$key_name] = $val->number;
+                    $val_entry[$key_name] = $val->number();
                     $result->values[] = $val_entry;
                 }
             }
@@ -797,11 +797,11 @@ class value_list
                 $wrd_missing = zu_lst_not_in_no_key($word_ids, $val->ids);
                 if (empty($wrd_missing)) {
                     // potential result candidate, because the value has all needed words
-                    log_debug("can (" . $val->number . ")");
+                    log_debug("can (" . $val->number() . ")");
                     $wrd_extra = zu_lst_not_in_no_key($val->ids, $word_ids);
                     if (empty($wrd_extra)) {
                         // if there is no extra word, it is the correct value
-                        log_debug("is (" . $val->number . ")");
+                        log_debug("is (" . $val->number() . ")");
                         $found = true;
                         $result = $val;
                     } else {
@@ -880,7 +880,7 @@ class value_list
     /**
      * return a list of phrase groups for all values of this list
      */
-    function phrase_groups()
+    function phrase_groups(): phrase_group_list
     {
         log_debug();
         $grp_lst = new phrase_group_list($this->usr);
@@ -930,7 +930,7 @@ class value_list
         $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {
             $val = new value($this->usr);
-            $val->load_by_id($db_val['value_id'], value::class);
+            $val->load_by_id($db_val[value::FLD_ID], value::class);
             if (!$val->check()) {
                 $result = false;
             }
@@ -962,7 +962,7 @@ class value_list
             $db_con->usr_id = $this->user()->id;
             $db_lst = $db_con->get_old($sql);
             foreach ($db_lst as $db_val) {
-                $result = $db_val['value_id'];
+                $result = $db_val[value::FLD_ID];
             }
         }
 
@@ -999,7 +999,7 @@ class value_list
             $db_lst = $db_con->get_old($sql);
             $value_id = -1; // set to an id that is never used to force the creation of a new entry at start
             foreach ($db_lst as $db_val) {
-                if ($value_id == $db_val['value_id']) {
+                if ($value_id == $db_val[value::FLD_ID]) {
                     $phr_result[] = $db_val[phrase::FLD_ID];
                 } else {
                     if ($value_id >= 0) {
@@ -1008,7 +1008,7 @@ class value_list
                         $result[$value_id] = $row_result;
                     }
                     // remember the values for a new result row
-                    $value_id = $db_val['value_id'];
+                    $value_id = $db_val[value::FLD_ID];
                     $val_num = $db_val['word_value'];
                     $row_result = array();
                     $row_result[] = $val_num;
@@ -1075,7 +1075,7 @@ class value_list
             $val_phr_lst = $val->phr_lst;
             if ($val_phr_lst->lst != null) {
                 if (count($val_phr_lst->lst) > 0) {
-                    log_debug('get words ' . $val->phr_lst->dsp_id() . ' for "' . $val->number . '" (' . $val->id . ')');
+                    log_debug('get words ' . $val->phr_lst->dsp_id() . ' for "' . $val->number() . '" (' . $val->id . ')');
                     if (empty($common_phr_ids)) {
                         $common_phr_ids = $val_phr_lst->id_lst();
                     } else {

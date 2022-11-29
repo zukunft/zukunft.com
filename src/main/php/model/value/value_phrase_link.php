@@ -285,7 +285,7 @@ class value_phrase_link
         $db_row = $db_con->get1($sql);
         $this->id = $db_row['value_phrase_link_id'];
         if ($this->id > 0) {
-            //$result = $db_con->delete(array('value_id',phrase::FLD_ID,'value_phrase_link_id'), array($this->val->id,$this->phr->id,$this->id));
+            //$result = $db_con->delete(array(value::FLD_ID,phrase::FLD_ID,'value_phrase_link_id'), array($this->val->id,$this->phr->id,$this->id));
             $sql_del = "DELETE FROM value_phrase_links 
                     WHERE value_id = " . $this->val->id() . " 
                       AND phrase_id  = " . $this->phr->id() . " 
@@ -383,7 +383,7 @@ class value_phrase_link
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->user()->id;
                 $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
-                $result .= $db_con->delete(array('value_id', phrase::FLD_ID), array($this->val->id(), $this->phr->id()));
+                $result .= $db_con->delete(array(value::FLD_ID, phrase::FLD_ID), array($this->val->id(), $this->phr->id()));
             }
         } else {
             // check if removing a word link is matching another value

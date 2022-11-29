@@ -51,7 +51,7 @@ function run_value_test(testing $t)
     } else {
         // test load by value id
         $val = $t->load_value_by_id($t->usr1, $ch_inhabitants->id());
-        $result = $val->number;
+        $result = $val->number();
         $target = value::TV_CH_INHABITANTS_2019_IN_MIO;
         $t->assert(', value->load for value id "' . $ch_inhabitants->id() . '"', $result, $target);
 
@@ -63,7 +63,7 @@ function run_value_test(testing $t)
         $val_by_phr_lst->grp = $phr_lst->get_grp();
         $val_by_phr_lst->time_phr = $time_phr;
         $val_by_phr_lst->load_obj_vars();
-        $result = $val_by_phr_lst->number;
+        $result = $val_by_phr_lst->number();
         $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->dsp(', value->load for another word list ' . $phr_lst->dsp_name(), $target, $result);
 
@@ -71,7 +71,7 @@ function run_value_test(testing $t)
         $val = new value($t->usr1);
         if ($val_by_phr_lst->id() <> 0) {
             $val->load_by_id($val_by_phr_lst->id(), value::class);
-            $result = $val->number;
+            $result = $val->number();
             $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
             $t->dsp(', value->load for value id "' . $ch_inhabitants->id() . '"', $target, $result);
 
@@ -100,7 +100,7 @@ function run_value_test(testing $t)
         $t->dsp(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
         // ... and check the number
-        $result = $chk_val->number;
+        $result = $chk_val->number();
         $target = value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO;
         $t->dsp(', value->load for "' . $chk_phr_grp->dsp_id() . '"', $target, $result);
 
@@ -225,7 +225,7 @@ function run_value_test(testing $t)
     $t->dsp(', value->display_linked', $target, $result);
 
     // change the number to force using the thousand separator
-    $mio_val->number = value::TEST_VALUE;
+    $mio_val->set_number(value::TEST_VALUE);
     $result = $mio_val->display_linked('1');
     //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1"  >123\'456</a>';
@@ -254,10 +254,10 @@ function run_value_test(testing $t)
     $phr_grp = $t->load_phrase_group(array(word::TN_RENAMED, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
     $add_val = new value($t->usr1);
     $add_val->grp = $phr_grp;
-    $add_val->number = value::TEST_BIG;
+    $add_val->set_number(value::TEST_BIG);
     $result = $add_val->save();
     $target = '';
-    $t->dsp(', value->save ' . $add_val->number . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     $test_val_lst[] = $add_val->id();
 
 
@@ -277,7 +277,7 @@ function run_value_test(testing $t)
     $added_val = new value($t->usr1);
     $added_val->grp = $phr_grp;
     $added_val->load_obj_vars();
-    $result = $added_val->number;
+    $result = $added_val->number();
     $target = '123456789';
     $t->dsp(', value->load the value previous saved for "' . $phr_grp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     // remember the added value id to be able to remove the test
@@ -288,21 +288,21 @@ function run_value_test(testing $t)
     $phr_grp2 = $t->load_phrase_group(array(word::TN_RENAMED, word::TN_INHABITANT, word::TN_MIO, word::TN_2019));
     $add_val2 = new value($t->usr1);
     $add_val2->grp = $phr_grp2;
-    $add_val2->number = value::TEST_BIGGER;
+    $add_val2->set_number(value::TEST_BIGGER);
     $result = $add_val2->save();
     $target = '';
-    $t->dsp(', value->save ' . $add_val2->number . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // test if a value with time stamp can be saved
     /*
     $phr_lst_ts = test_phrase_list(array(word::TN_RENAMED, word::TN_INHABITANT, word::TN_MIO));
     $add_val_ts = new value($t->usr1);
     $add_val_ts->ids = $phr_lst_ts->ids;
-    $add_val_ts->number = TV_ABB_PRICE_20200515;
+    $add_val_ts->set_number(TV_ABB_PRICE_20200515;
     $add_val_ts->time_stamp = new DateTime('2020-05-15');
     $result = $add_val_ts->save();
     $target = '';
-    $t->dsp(', value->save ' . $add_val_ts->number . ' for ' . $phr_lst_ts->name() . ' and ' . $add_val_ts->time_stamp->format(DateTimeInterface::ATOM) . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp(', value->save ' . $add_val_ts->number() . ' for ' . $phr_lst_ts->name() . ' and ' . $add_val_ts->time_stamp->format(DateTimeInterface::ATOM) . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     */
 
     // ... check if the value adding has been logged
@@ -321,7 +321,7 @@ function run_value_test(testing $t)
     $added_val2 = new value($t->usr1);
     $added_val2->grp = $phr_grp2;
     $added_val2->load_obj_vars();
-    $result = $added_val2->number;
+    $result = $added_val2->number();
     $target = '234567890';
     $t->dsp(', value->load the value previous saved for "' . $phr_grp2->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     // remember the added value id to be able to remove the test
@@ -331,10 +331,10 @@ function run_value_test(testing $t)
     $added_val = new value($t->usr1);
     $added_val->set_id($added_val_id);
     $added_val->load_obj_vars();
-    $added_val->number = 987654321;
+    $added_val->set_number(987654321);
     $result = $added_val->save();
     $target = '';
-    $t->dsp(', word->save update value id "' . $added_val_id . '" from  "' . $add_val->number . '" to "' . $added_val->number . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp(', word->save update value id "' . $added_val_id . '" from  "' . $add_val->number() . '" to "' . $added_val->number() . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the value change has been logged
     if ($added_val->id() > 0) {
@@ -352,7 +352,7 @@ function run_value_test(testing $t)
     $added_val = new value($t->usr1);
     $added_val->set_id($added_val_id);
     $added_val->load_obj_vars();
-    $result = $added_val->number;
+    $result = $added_val->number();
     $target = '987654321';
     $t->dsp(', value->load the value previous updated for "' . word::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
@@ -370,10 +370,10 @@ function run_value_test(testing $t)
     //$val_usr2->ids = $phr_lst->ids;
     $val_usr2->set_id($added_val_id);
     $val_usr2->load_obj_vars();
-    $val_usr2->number = 23456;
+    $val_usr2->set_number(23456);
     $result = $val_usr2->save();
     $target = '';
-    $t->dsp(', value->save ' . $val_usr2->number . ' for ' . $phr_lst->name() . ' and user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp(', value->save ' . $val_usr2->number() . ' for ' . $phr_lst->name() . ' and user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the value change for the other user has been logged
     $val_usr2 = new value($t->usr2);
@@ -394,7 +394,7 @@ function run_value_test(testing $t)
     $added_val_usr2 = new value($t->usr2);
     $added_val_usr2->grp = $phr_grp;
     $added_val_usr2->load_obj_vars();
-    $result = $added_val_usr2->number;
+    $result = $added_val_usr2->number();
     $target = '23456';
     $t->dsp(', value->load the value previous updated for "' . $phr_grp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
@@ -402,7 +402,7 @@ function run_value_test(testing $t)
     $added_val = new value($t->usr1);
     $added_val->grp = $phr_grp;
     $added_val->load_obj_vars();
-    $result = $added_val->number;
+    $result = $added_val->number();
     $target = '987654321';
     $t->dsp(', value->load for user "' . $t->usr1->name . '" is still', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
@@ -410,10 +410,10 @@ function run_value_test(testing $t)
     $added_val_usr2 = new value($t->usr2);
     $added_val_usr2->grp = $phr_grp;
     $added_val_usr2->load_obj_vars();
-    $added_val_usr2->number = 987654321;
+    $added_val_usr2->set_number(987654321);
     $result = $added_val_usr2->save();
     $target = '';
-    $t->dsp(', value->save change to ' . $val_usr2->number . ' for ' . $phr_grp->name() . ' and user "' . $t->usr2->name . '" should undo the user change', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp(', value->save change to ' . $val_usr2->number() . ' for ' . $phr_grp->name() . ' and user "' . $t->usr2->name . '" should undo the user change', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the value change for the other user has been logged
     $val_usr2 = new value($t->usr2);
@@ -434,7 +434,7 @@ function run_value_test(testing $t)
     $added_val_usr2 = new value($t->usr2);
     $added_val_usr2->grp = $phr_grp;
     $added_val_usr2->load_obj_vars();
-    $result = $added_val_usr2->number;
+    $result = $added_val_usr2->number();
     $target = '987654321';
     $t->dsp(', value->load the value previous updated for "' . $phr_grp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 

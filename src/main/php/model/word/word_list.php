@@ -1300,7 +1300,7 @@ class word_list
         $val->time_phr = $time_phr;
         $val->load_obj_vars();
 
-        log_debug(self::class . '->value "' . $val->name() . '" for "' . $this->user()->name . '" is ' . $val->number);
+        log_debug(self::class . '->value "' . $val->name() . '" for "' . $this->user()->name . '" is ' . $val->number());
         return $val;
     }
 
@@ -1500,7 +1500,7 @@ class word_list
         foreach ($val_lst->lst as $val) {
             $val->load_phrases();
             if (isset($val->time_phr)) {
-                log_debug(self::class . '->max_val_time ... value (' . $val->number . ' @ ' . $val->time_phr->name() . ')');
+                log_debug(self::class . '->max_val_time ... value (' . $val->number() . ' @ ' . $val->time_phr->name() . ')');
                 if ($val->time_phr->id() > 0) {
                     if (!in_array($val->time_phr->id(), $time_ids)) {
                         $time_ids[] = $val->time_phr->id();
@@ -1523,7 +1523,7 @@ class word_list
         $val->usr = $this->user();
         $val->load_by_wrd_lst();
         $value_lst = array();
-        $value_lst[$val->id] = $val->number;
+        $value_lst[$val->id] = $val->number();
         zu_debug('word_list->max_val_time -> ('.implode(",",$value_lst).')');
 
         if (sizeof($value_lst) > 0) {

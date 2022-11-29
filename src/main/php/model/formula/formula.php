@@ -653,7 +653,7 @@ class formula extends user_sandbox_named_with_type
             }
         }
 
-        log_debug("formula->special_result -> (" . $val->number . ")");
+        log_debug("formula->special_result -> (" . $val->number() . ")");
         return $val;
     }
 

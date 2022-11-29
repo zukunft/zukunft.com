@@ -39,6 +39,8 @@ use api\value_api;
 
 class value_dsp extends value_api
 {
+
+
     /**
      * @param phrase_list_api $phr_lst_exclude usually the context phrases that does not need to be repeated
      * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
@@ -71,12 +73,12 @@ class value_dsp extends value_api
 
         if (!$this->is_null()) {
             if ($this->is_percent()) {
-                $result = round($this->val() * 100, $this->usr->percent_decimals) . "%";
+                $result = round($this->number() * 100, $this->usr->percent_decimals) . "%";
             } else {
-                if ($this->val() >= 1000 or $this->val() <= -1000) {
-                    $result .= number_format($this->val(), 0, $this->usr->dec_point, $this->usr->thousand_sep);
+                if ($this->number() >= 1000 or $this->number() <= -1000) {
+                    $result .= number_format($this->number(), 0, $this->usr->dec_point, $this->usr->thousand_sep);
                 } else {
-                    $result = round($this->val(), 2);
+                    $result = round($this->number(), 2);
                 }
             }
         }
@@ -104,7 +106,7 @@ class value_dsp extends value_api
      */
     function is_null(): bool
     {
-        if ($this->val() == null) {
+        if ($this->number() == null) {
             return true;
         } else {
             return false;

@@ -35,27 +35,74 @@
 class user_sandbox_value extends user_sandbox
 {
 
-    /**
-     * reset the search values of this object
-     * needed to search for the standard object, because the search is work, value, formula or ... specific
+    /*
+     * object vars
      */
-    function reset(): void
-    {
-        parent::reset();
 
-        $this->number = null;
+    // database fields only used for the value object
+    protected ?float $number; // simply the numeric value
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * all value user specific, that's why the user is always set
+     */
+    function __construct(user $usr)
+    {
+        parent::__construct($usr);
+
+        $this->set_number(null);
+    }
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the numeric value of the user sandbox object
+     *
+     * @param float|null $number the numeric value that should be saved in the database
+     * @return void
+     */
+    function set_number(?float $number): void
+    {
+        $this->number = $number;
+    }
+
+    /**
+     * @return float|null the numeric value
+     */
+    function number(): ?float
+    {
+        return $this->number;
+    }
+
+    /*
+     * casting objects
+     */
+
+    /**
+     * @param object $api_obj frontend API object filled with the database id
+     */
+    function fill_api_obj(object $api_obj): void
+    {
+        parent::fill_api_obj($api_obj);
+
+        $api_obj->set_number($this->number);
     }
 
     /**
      * fill a similar object that is extended with display interface functions
      *
-     * @return object the object fill with all user sandbox value
+     * @param  object $dsp_obj the object fill with all user sandbox value
      */
     function fill_dsp_obj(object $dsp_obj): void
     {
         parent::fill_dsp_obj($dsp_obj);
 
-        $dsp_obj->number = $this->number;
+        $dsp_obj->set_number($this->number);
     }
 
     /**
@@ -138,10 +185,8 @@ class user_sandbox_value extends user_sandbox
      */
     function save_id_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
-        $result = '';
 
-        $result .= 'The user sandbox save_id_fields does not support ' . $this->obj_type . ' for ' . $this->obj_name;
-        return $result;
+        return 'The user sandbox save_id_fields does not support ' . $this->obj_type . ' for ' . $this->obj_name;
     }
 
 }

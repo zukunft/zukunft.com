@@ -57,7 +57,7 @@ class value_api extends user_sandbox_value_api implements \JsonSerializable
     {
         $dsp_obj = new value_dsp($this->id);
         $dsp_obj->set_grp($this->grp());
-        $dsp_obj->set_val($this->val());
+        $dsp_obj->set_number($this->number());
         return $dsp_obj;
     }
 
@@ -73,7 +73,7 @@ class value_api extends user_sandbox_value_api implements \JsonSerializable
         $vars = get_object_vars($this);
         // TODO fix
         //$vars['name'] = $this->grp()->name();
-        $vars['number'] = $this->val();
+        $vars['number'] = $this->number();
         return $vars;
     }
 }

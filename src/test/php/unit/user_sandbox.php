@@ -34,7 +34,7 @@ global $db_con;
 
 class user_sandbox_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;

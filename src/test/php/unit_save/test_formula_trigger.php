@@ -50,26 +50,26 @@ function run_formula_trigger_test(testing $t)
     // add a number to the test word
     $val_add1 = new value($usr);
     $val_add1->grp = $phr_lst1->get_grp();
-    $val_add1->number = TV_TEST_SALES_2016;
+    $val_add1->set_number(TV_TEST_SALES_2016);
     $result = $val_add1->save();
     // add a second number to the test word
     $val_add2 = new value($usr);
     $val_add2->grp = $phr_lst2->get_grp();
-    $val_add2->number = TV_TEST_SALES_2017;
+    $val_add2->set_number(TV_TEST_SALES_2017);
     $result = $val_add2->save();
 
     // check if the first number have been saved correctly
     $added_val = new value($usr);
     $added_val->grp = $phr_lst1->get_grp();
     $added_val->load_obj_vars();
-    $result = $added_val->number;
+    $result = $added_val->number();
     $target = TV_TEST_SALES_2016;
     $t->dsp('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     // check if the second number have been saved correctly
     $added_val2 = new value($usr);
     $added_val2->grp = $phr_lst2->get_grp();
     $added_val2->load_obj_vars();
-    $result = $added_val2->number;
+    $result = $added_val2->number();
     $target = TV_TEST_SALES_2017;
     $t->dsp('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
@@ -77,14 +77,14 @@ function run_formula_trigger_test(testing $t)
     $best_val = new value($usr);
     $best_val->grp = $phr_lst1->get_grp();
     $best_val->load_best();
-    $result = $best_val->number;
+    $result = $best_val->number();
     $target = TV_TEST_SALES_2016;
     $t->dsp('value->check best value for "' . $phr_lst1->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     // check if requesting the best number for the second number returns a useful value
     $best_val2 = new value($usr);
     $best_val2->grp = $phr_lst2->get_grp();
     $best_val2->load_best();
-    $result = $best_val2->number;
+    $result = $best_val2->number();
     $target = TV_TEST_SALES_2017;
     $t->dsp('value->check best value for "' . $phr_lst2->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 

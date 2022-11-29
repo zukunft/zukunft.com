@@ -55,8 +55,7 @@ if ($usr->id > 0) {
 
     if ($frm_id > 0) {
         $frm = new formula($usr);
-        $frm->id = $frm_id;
-        $frm->load_obj_vars();
+        $frm->load_by_id($frm_id);
         $result = $frm->api_obj();
     } else {
         $msg = 'formula id is missing';

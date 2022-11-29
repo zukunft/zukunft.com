@@ -36,7 +36,6 @@
  */
 
 
-
 class config
 {
 
@@ -98,6 +97,7 @@ class config
                 }
             }
         }
+
         log_debug('"' . $code_id . '": ' . $db_value, $debug - 1);
         return $db_value;
     }
@@ -122,7 +122,7 @@ class config
             // automatically add the config entry
             $result = $this->add($code_id, $value, $description, $db_con);
         } else {
-            if ($value != $db_row[sql_db::FLD_VALUE] OR $description != $db_row[sql_db::FLD_DESCRIPTION]) {
+            if ($value != $db_row[sql_db::FLD_VALUE] or $description != $db_row[sql_db::FLD_DESCRIPTION]) {
                 $result = $this->update($code_id, $value, $description, $db_con);
             }
         }
@@ -163,7 +163,8 @@ class config
      * @param sql_db $db_con the open database connection that should be used
      * @return bool if adding to the database was successful
      */
-    private function add(string $code_id, string $value, string $description, sql_db $db_con): bool {
+    private function add(string $code_id, string $value, string $description, sql_db $db_con): bool
+    {
         $result = false;
         $db_id = $db_con->insert(
             array(
@@ -188,7 +189,8 @@ class config
      * @param sql_db $db_con the open database connection that should be used
      * @return bool if updating in the database was successful
      */
-    private function update(string $code_id, string $value, string $description, sql_db $db_con): bool {
+    private function update(string $code_id, string $value, string $description, sql_db $db_con): bool
+    {
         $result = false;
         $db_id = $db_con->update(
             $code_id,
@@ -260,7 +262,6 @@ class config
         return $result;
     }
 }
-
 
 
 /**

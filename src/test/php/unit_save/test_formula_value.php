@@ -120,7 +120,7 @@ function run_formula_value_test(testing $t): void
     $val_best_guess = new value($usr);
     $val_best_guess->grp = $phr_lst->get_grp();
     $val_best_guess->load_obj_vars();
-    $result = $val_best_guess->number;
+    $result = $val_best_guess->number();
     // TODO check why this value sometimes switch
     /*
     $target = 0.18264281677284;

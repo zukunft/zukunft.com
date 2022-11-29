@@ -58,7 +58,7 @@ use export\exp_obj;
 use export\value_exp;
 use html\value_dsp;
 
-class value extends user_sandbox_display
+class value extends user_sandbox_value
 {
     /*
      * database link
@@ -147,12 +147,13 @@ class value extends user_sandbox_display
     function api_obj(): object
     {
         $api_obj = new value_api();
-        $api_obj->set_val($this->number);
+        $number = $this->number();
+        $this->fill_api_obj($api_obj);
+        $api_obj->set_number($this->number());
         if ($this->grp != null) {
             // TODO activate
             //$api_obj->set_grp($this->grp->api_obj());
         }
-        $this->fill_api_obj($api_obj);
         return $api_obj;
     }
 
@@ -187,7 +188,7 @@ class value extends user_sandbox_display
             $this->id = $id;
         }
         if ($num_val != null) {
-            $this->number = $num_val;
+            $this->set_number($num_val);
         }
         if ($phr_grp != null) {
             $this->set_grp($phr_grp);
@@ -228,7 +229,6 @@ class value extends user_sandbox_display
 
         parent::fill_dsp_obj($dsp_obj);
 
-        $dsp_obj->number = $this->number;
         $dsp_obj->source = $this->source;
         $dsp_obj->time_stamp = $this->time_stamp;
         $dsp_obj->last_update = $this->last_update;
@@ -321,7 +321,7 @@ class value extends user_sandbox_display
      */
     protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp = new sql_par($class);
         $qp->name .= $query_name;
 
         $db_con->set_type(sql_db::TBL_VALUE);
@@ -332,6 +332,20 @@ class value extends user_sandbox_display
         $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
 
         return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a value by id from the database
+     * added to value just to assign the class for the user sandbox object
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $id the id of the user sandbox object
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    {
+        return parent::load_sql_by_id($db_con, $id, $class);
     }
 
     /**
@@ -492,7 +506,7 @@ class value extends user_sandbox_display
             }
             */
         }
-        log_debug('got ' . $this->number . ' with id ' . $this->id, $debug - 1);
+        log_debug('got ' . $this->number() . ' with id ' . $this->id, $debug - 1);
         return $result;
     }
 
@@ -1200,7 +1214,7 @@ class value extends user_sandbox_display
         $fig = new figure($this->user());
         $fig->id = $this->id;
         $fig->type = figure::TYPE_VALUE;
-        $fig->number = $this->number;
+        $fig->number = $this->number();
         $fig->last_update = $this->last_update;
         $fig->obj = $this;
 
@@ -1728,15 +1742,17 @@ class value extends user_sandbox_display
         return $result;
     }
 
-// set the update parameters for the number
-    function save_field_number(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    /**
+     * set the update parameters for the number
+     */
+    function save_field_number(sql_db $db_con, user_sandbox_value $db_rec, user_sandbox_value $std_rec): string
     {
         $result = '';
-        if ($db_rec->number <> $this->number) {
+        if ($db_rec->number() <> $this->number()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->number;
-            $log->new_value = $this->number;
-            $log->std_value = $std_rec->number;
+            $log->old_value = $db_rec->number();
+            $log->new_value = $this->number();
+            $log->std_value = $std_rec->number();
             $log->row_id = $this->id;
             $log->field = self::FLD_VALUE;
             $result .= $this->save_field_do($db_con, $log);
@@ -1748,7 +1764,7 @@ class value extends user_sandbox_display
     }
 
 // set the update parameters for the source link
-    function save_field_source(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_field_source(sql_db $db_con, user_sandbox_value $db_rec, user_sandbox_value $std_rec): string
     {
         $result = '';
         if ($db_rec->get_source_id() <> $this->get_source_id()) {

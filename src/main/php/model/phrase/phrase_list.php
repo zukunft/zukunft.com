@@ -2010,7 +2010,7 @@ class phrase_list
     {
         $val = $this->value();
         $wrd_lst = $this->wrd_lst_all();
-        $val->number = $val->scale($wrd_lst);
+        $val->set_number($val->scale($wrd_lst));
 
         return $val;
     }

@@ -2,9 +2,9 @@
 
 /*
 
-  test_lib.php - TESTing the general zukunft.com Library functions
-  ------------
-  
+    test_lib.php - TESTing the general zukunft.com Library functions
+    ------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -35,7 +35,7 @@ global $db_con;
 
 class string_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         $t->header('Test the zukunft.com base functions (zu_lib.php)');
@@ -71,8 +71,6 @@ class string_unit_tests
 
         // test zu_str_left_of
         $text = "This is left of that, but not of that";
-        $maker = " of that";
-        $target = "This is left";
         $result = zu_str_left_of($text, $maker);
         $t->dsp(", zu_str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
 
@@ -98,20 +96,17 @@ class string_unit_tests
         $t->dsp(", zu_str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
 
         // test zu_str_between
-        $text = "The formula id of {f23}.";
         $maker_start = "{f";
         $maker_end = "}";
         $target = "23";
         $result = zu_str_between($text, $maker_start, $maker_end);
-        $t->dsp(", zu_str_between: " . $text . "", $target, $result);
+        $t->dsp(", zu_str_between: " . $text, $target, $result);
 
         // test zu_str_between
         $text = "The formula id of {f4} / {f5}.";
-        $maker_start = "{f";
-        $maker_end = "}";
         $target = "4";
         $result = zu_str_between($text, $maker_start, $maker_end);
-        $t->dsp(", zu_str_between: " . $text . "", $target, $result);
+        $t->dsp(", zu_str_between: " . $text, $target, $result);
 
         $t->subheader('arrays and lists');
 
@@ -132,7 +127,6 @@ class string_unit_tests
         $t->dsp(", dsp_array: ", $target, $result);
 
         $test_array = null;
-        $target = 'null';
         $result = dsp_array($test_array);
         $t->dsp(", dsp_array: ", $target, $result);
 
@@ -171,8 +165,7 @@ class string_unit_tests
         $json_array = json_decode($json_text, true);
         $json_clean = json_clean($json_array);
         $result = $json_clean == json_decode($json_target, true);
-        $target = true;
-        $t->dsp(", json_clean", $target, $result);
+        $t->dsp(", json_clean", true, $result);
 
         // ... plausibility check
         $result = $json_clean == json_decode($json_check, true);

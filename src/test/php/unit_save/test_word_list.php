@@ -267,20 +267,20 @@ function run_word_list_test(testing $t)
 
     // test word list value
     $val = $wrd_lst->value();
-    $result = $val->number;
+    $result = $val->number();
     $t->assert('word_list->value for ' . $wrd_lst->dsp_id(), $result, value::TEST_VALUE);
 
     // test word list value scaled
     // TODO review !!!
     $val = $wrd_lst->value_scaled();
-    $result = $val->number;
+    $result = $val->number();
     $t->assert('word_list->value_scaled for ' . $wrd_lst->dsp_id(), $result, value::TEST_VALUE);
 
     // test another group value
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_names(array(word::TN_CANTON, word::TN_2021, word::TN_CHF, word::TN_MIO));
     $val = $wrd_lst->value();
-    $result = $val->number;
+    $result = $val->number();
     $target = value::TEST_FLOAT;
     $t->dsp('word_list->value for ' . $wrd_lst->dsp_id(), $target, $result);
 

@@ -66,7 +66,7 @@ class phrase_unit_tests
         $file_name = $t->resource_path . $sql_name . test_base::FILE_EXT;
         $created_sql = $phr->sql_list($wrd_company);
         $expected_sql = $t->file($file_name);
-        $result = $t->assert_sql($t->name . $sql_name, $created_sql, $expected_sql
+        $t->assert_sql($t->name . $sql_name, $created_sql, $expected_sql
         );
 
     }

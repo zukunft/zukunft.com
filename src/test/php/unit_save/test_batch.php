@@ -54,7 +54,7 @@ function run_batch_job_test(testing $t)
     $val = new value($usr);
     $val->grp = $phr_lst->get_grp();
     $val->load_obj_vars();
-    $result = $val->number;
+    $result = $val->number();
     $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
     $t->dsp('batch_job->value to link', $target, $result);
 

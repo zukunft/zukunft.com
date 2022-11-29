@@ -324,7 +324,7 @@ class formula_element_group
                 $fig = $wrd_val->figure();
                 $fig->symbol = $frm_elm->symbol;
                 $fig_lst->lst[] = $fig;
-                log_debug('formula_element_group->figures -> value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number . ' (symbol ' . $fig->symbol . ')');
+                log_debug('formula_element_group->figures -> value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->symbol . ')');
             } else {
                 // if there is no number that the user has entered for the word list, try to get the most useful formula result
 

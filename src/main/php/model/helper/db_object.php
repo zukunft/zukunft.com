@@ -2,7 +2,7 @@
 
 /*
 
-  db_object.php - a base object for all model database objects
+  db_object.php - a base object for all model database objects which just contains the unique id
   -------------
 
 
@@ -37,9 +37,9 @@ class db_object
      * object vars
      */
 
-    // database fields that are used in all objects and that have a specific behavior
-    // the database id of the object, which is the same for the standard and the user specific object
-    protected ?int $id = null;
+    // database fields that are used in all model objects
+    // the database id is the unique prime key
+    protected ?int $id;
 
     /*
      * construct and map
@@ -50,7 +50,7 @@ class db_object
      */
     function __construct()
     {
-        $this->id = null;
+        $this->set_id(null);
     }
 
     /*
@@ -59,7 +59,7 @@ class db_object
 
     /**
      * set the unique database id of a database object
-     * @param int|null $id mainly for test creation the database id of the database model object
+     * @param int|null $id used in the row mapper and to set a dummy database id for unit tests
      */
     public function set_id(?int $id): void
     {
@@ -80,7 +80,7 @@ class db_object
      */
 
     /**
-     * @return bool true if the object has a database id
+     * @return bool true if the object has a valid database id
      */
     public function isset(): bool
     {

@@ -78,7 +78,7 @@ function run_formula_test(testing $t): void
             $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2019));
             $time_phr = $phr_lst->time_useful();
             $val = $elm_frm->special_result($phr_lst, $time_phr);
-            $result = $val->number;
+            $result = $val->number();
             $target = word::TN_2019;
             // TODO: get the best matching number
             //$t->dsp('formula->special_result for "'.$elm_frm->name.'"', $target, $result);

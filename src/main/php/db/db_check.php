@@ -47,14 +47,10 @@ function db_check($db_con): string
         if (prg_version_is_newer($db_version)) {
             log_warning('The zukunft.com backend is older than the database used. This may cause damage on the database. Please upgrade the backend program', 'db_check');
         } else {
-            switch ($db_version) {
-                case NEXT_VERSION:
-                    $result = db_upgrade_0_0_4($db_con);
-                    break;
-                default:
-                    $result = db_upgrade_0_0_3($db_con);
-                    break;
-            }
+            $result = match ($db_version) {
+                NEXT_VERSION => db_upgrade_0_0_4($db_con),
+                default => db_upgrade_0_0_3($db_con),
+            };
         }
     } else {
         $last_consistency_check = cfg_get(config::LAST_CONSISTENCY_CHECK, $db_con);
@@ -68,7 +64,7 @@ function db_check($db_con): string
     if ($do_consistency_check) {
         db_fill_code_links($db_con);
         db_check_missing_owner($db_con);
-        cfg_set(config::LAST_CONSISTENCY_CHECK, strtotime("now"), $db_con);
+        cfg_set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con);
     }
 
     return $result;
@@ -310,6 +306,15 @@ function db_upgrade_0_0_4($db_con): string
     return $result;
 }
 
+function db_fill_code_link_sql(string $table_name, string $id_col_name, int $id): sql_par
+{
+    $qp = new sql_par('db_check');
+    $qp->name .= 'fill_' . $id_col_name;
+    $qp->sql = "PREPARE " . $qp->name . " (int) AS select * from " . $table_name . " where " . $id_col_name . " = $1;";
+    $qp->par = array($id);
+    return $qp;
+}
+
 // create the database and fill it with the base configuration data
 //function db_create() {}
 
@@ -360,8 +365,8 @@ function db_fill_code_links(sql_db $db_con)
                         // get the row id which is expected to be always in the first column
                         $id = $data[0];
                         // check if the row id exists
-                        $sql = "select * from " . $table_name . " where " . $id_col_name . " = " . $id . ";";
-                        $db_row = $db_con->get1_old($sql);
+                        $qp = db_fill_code_link_sql($table_name, $id_col_name, $id);
+                        $db_row = $db_con->get1($qp);
                         // check if the db row needs to be added
                         if ($db_row == null) {
                             // add the row

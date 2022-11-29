@@ -33,9 +33,22 @@
 function run_value_unit_db_tests(testing $t): void
 {
 
+    global $usr;
+
+    // init
+    $t->name = 'value->';
+
     $t->header('Unit database tests of the value class (src/main/php/model/value/value.php)');
 
     $t->subheader('Frontend API tests');
+
+    $val = new value($usr);
+    $val->load_by_id(1, value::class);
+    $val->load_objects();
+    $api_val = $val->api_obj();
+    $t->assert($t->name . 'api->id', $api_val->id, $val->id());
+    $t->assert($t->name . 'api->number', $api_val->number(), $val->number());
+
 
     $phr_grp = $t->add_phrase_group(array(triple::TN_READ_NAME),phrase_group::TN_READ);
     $val = $t->load_value_by_phr_grp($phr_grp);

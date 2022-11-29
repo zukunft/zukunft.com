@@ -872,7 +872,7 @@ class test_base
                 $val->grp = $phr_grp;
             }
             $val->time_phr = $time_phr;
-            $val->number = $target;
+            $val->set_number($target);
             $val->save();
         }
 
@@ -882,7 +882,7 @@ class test_base
     function test_value(array $array_of_word_str, float $target): value
     {
         $val = $this->add_value($array_of_word_str, $target);
-        $result = $val->number;
+        $result = $val->number();
         $this->dsp(', value->load for ' . $val->name(), $target, $result);
         return $val;
     }
@@ -902,7 +902,7 @@ class test_base
         $val = $this->load_value_by_phr_grp($phr_grp);
         if ($val->id() == 0) {
             $val->grp = $phr_grp;
-            $val->number = $target;
+            $val->set_number($target);
             $val->save();
         }
 
@@ -912,7 +912,7 @@ class test_base
     function test_value_by_phr_grp(phrase_group $phr_grp, float $target): value
     {
         $val = $this->add_value_by_phr_grp($phr_grp, $target);
-        $result = $val->number;
+        $result = $val->number();
         $this->dsp(', value->load for ' . $val->name(), $target, $result);
         return $val;
     }

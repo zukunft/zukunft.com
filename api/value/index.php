@@ -55,8 +55,7 @@ if ($usr->id > 0) {
 
     if ($val_id > 0) {
         $val = new value($usr);
-        $val->id = $val_id;
-        $val->load_obj_vars();
+        $val->load_by_id($val_id);
         $val->load_objects();
         $result = $val->api_obj();
     } else {

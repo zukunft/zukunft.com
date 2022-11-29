@@ -55,8 +55,7 @@ if ($usr->id > 0) {
 
     if ($wrd_id > 0) {
         $wrd = new word($usr);
-        $wrd->set_id($wrd_id);
-        $wrd->load_obj_vars();
+        $wrd->load_by_id($wrd_id);
         $result = $wrd->api_obj();
     } else {
         $msg = 'word id is missing';

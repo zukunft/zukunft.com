@@ -79,7 +79,7 @@ class value_list_dsp_old extends value_list
 
             //$val_lst->load_phrases();
             /*foreach ($val_lst->lst AS $val) {
-              zu_debug('value_list_dsp->dsp_table value: '.$val->number.' (group '.$val->grp_id.' and time '.$val->time_id.')');
+              zu_debug('value_list_dsp->dsp_table value: '.$val->number().' (group '.$val->grp_id.' and time '.$val->time_id.')');
             }*/
 
             // get all words related to the value list to be able to define the column and the row names
@@ -180,7 +180,7 @@ class value_list_dsp_old extends value_list
                 $grp->load_by_ids(new phr_ids($wrd_ids));
                 foreach ($time_lst->lst as $time_wrd) {
                     $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
-                    if ($tbl_value->number <> "") {
+                    if ($tbl_value->number() <> "") {
                         $row_has_value = true;
                         $val_main = $tbl_value;
                     }
@@ -205,7 +205,7 @@ class value_list_dsp_old extends value_list
                         log_debug("val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id() . ".");
 
                         $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
-                        if ($tbl_value->number == "") {
+                        if ($tbl_value->number() == "") {
                             $result .= '      <td class="right_ref">' . "\n";
 
                             // to review
@@ -306,7 +306,7 @@ class value_list_dsp_old extends value_list
                                 log_debug("val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id() . ".");
 
                                 $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
-                                if ($tbl_value->number == "") {
+                                if ($tbl_value->number() == "") {
                                     $result .= '      <td class="right_ref">' . "\n";
 
                                     // to review

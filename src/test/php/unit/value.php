@@ -33,7 +33,7 @@
 class value_unit_tests
 {
 
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;
@@ -47,12 +47,14 @@ class value_unit_tests
 
         $t->header('Unit tests of the value class (src/main/php/model/value/value.php)');
 
-        $t->subheader('Database query creation tests');
 
-        // sql to load a user specific value by id
+        $t->subheader('SQL user sandbox statement tests');
+
         $val = new value($usr);
-        $val->set_id(1);
-        $t->assert_load_sql($db_con, $val);
+        $t->assert_load_sql_id($db_con, $val);
+
+
+        $t->subheader('Database query creation tests');
 
         // sql to load a user specific value by phrase group id
         $val->reset($usr);
@@ -79,12 +81,13 @@ class value_unit_tests
         $t->assert_not_changed_sql($db_con, $val);
         $t->assert_user_config_sql($db_con, $val);
 
+
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new value($usr), $json_file);
 
 
-        $t->subheader('Convert tests');
+        $t->subheader('Convert and API unit tests');
 
         // casting API
         $grp = new phrase_group($usr, 1,  array(phrase_group::TN_READ));
@@ -93,9 +96,9 @@ class value_unit_tests
 
         // casting figure
         $val = new value($usr);
-        $val->number = value::TEST_PCT;
+        $val->set_number(value::TEST_PCT);
         $fig = $val->figure();
-        $t->assert($t->name . ' get figure',$fig->number, $val->number);
+        $t->assert($t->name . ' get figure',$fig->number, $val->number());
 
 
         $t->header('Unit tests of the value time series class (src/main/php/model/value/value_time_series.php)');

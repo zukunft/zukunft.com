@@ -113,9 +113,6 @@ class user_sandbox extends db_object
     // when loading the word and saving the excluded field is handled as a normal user sandbox field,
     // but for calculation, use and display an excluded should not be used
 
-    // database fields only used for the value object
-    public ?float $number = null; // simply the numeric value
-
     // database fields only used for objects that link two objects
     // TODO create a more specific object that covers all the objects that could be linked e.g. linkable_object
     public ?string $from_name = null;  // the name of the from object type e.g. view for view_component_links
@@ -379,6 +376,7 @@ class user_sandbox extends db_object
 
     /**
      * create the SQL to load a single user specific value
+     * TODO replace by load_sql or do it in the child objects
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $class the name of the child class from where the call has been triggered
