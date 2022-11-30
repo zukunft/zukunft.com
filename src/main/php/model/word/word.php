@@ -309,6 +309,7 @@ class word extends user_sandbox_named_with_type
         return $result;
     }
 
+
     /*
      * set and get
      */
@@ -357,6 +358,32 @@ class word extends user_sandbox_named_with_type
     {
         return $this->values;
     }
+
+
+    /*
+     * get preloaded information
+     */
+
+    /**
+     * get the name of the word type
+     * @return string the name of the word type
+     */
+    public function type_name(): string
+    {
+        global $phrase_types;
+        return $phrase_types->name($this->type_id);
+    }
+
+    /**
+     * get the code_id of the word type
+     * @return string the code_id of the word type
+     */
+    function type_code_id(): string
+    {
+        global $phrase_types;
+        return $phrase_types->code_id($this->type_id);
+    }
+
 
     /*
      * casting objects
@@ -669,7 +696,7 @@ class word extends user_sandbox_named_with_type
         $val_lst->phr = $this->phrase();
         $val_lst->page_size = SQL_ROW_MAX;
         $val_lst->load();
-        log_debug('got ' . dsp_count($val_lst->lst));
+        log_debug('got ' . dsp_count($val_lst->lst()));
         return $val_lst;
     }
 
@@ -904,7 +931,7 @@ class word extends user_sandbox_named_with_type
         // display the words
         $row_nbr = 0;
         $result .= dsp_tbl_start();
-        foreach ($row_lst->lst as $row_phr) {
+        foreach ($row_lst->lst() as $row_phr) {
             // display the column headers
             // not needed any more if wrd lst is created based on word_display elements
             // to review
@@ -914,7 +941,7 @@ class word extends user_sandbox_named_with_type
                 $result .= '  <tr>' . "\n";
                 $result .= '    <th>' . "\n";
                 $result .= '    </th>' . "\n";
-                foreach ($col_lst->lst as $col_lst_wrd) {
+                foreach ($col_lst->lst() as $col_lst_wrd) {
                     log_debug('word_dsp->dsp_val_list -> column ' . $col_lst_wrd->name);
                     $result .= $col_lst_wrd->dsp_obj()->dsp_th($back, api::STYLE_RIGHT);
                 }
@@ -925,7 +952,7 @@ class word extends user_sandbox_named_with_type
             log_debug('word_dsp->dsp_val_list -> row');
             $result .= '  <tr>' . "\n";
             $result .= '      ' . $row_phr_dsp->dsp_obj()->td($back);
-            foreach ($col_lst->lst as $col_lst_wrd) {
+            foreach ($col_lst->lst() as $col_lst_wrd) {
                 $result .= '    <td>' . "\n";
                 $val_wrd_ids = array();
                 $val_wrd_ids[] = $row_phr->id;
@@ -1234,26 +1261,6 @@ class word extends user_sandbox_named_with_type
     }
 
     /**
-     * get the name of the word type
-     * @return string the name of the word type
-     */
-    function type_name(): string
-    {
-        global $phrase_types;
-        return $phrase_types->name($this->type_id);
-    }
-
-    /**
-     * get the code_id of the word type
-     * @return string the code_id of the word type
-     */
-    function type_code_id(): string
-    {
-        global $phrase_types;
-        return $phrase_types->code_id($this->type_id);
-    }
-
-    /**
      * @param string $type the ENUM string of the fixed type
      * @returns bool true if the word has the given type
      */
@@ -1400,8 +1407,8 @@ class word extends user_sandbox_named_with_type
     {
         $result = null;
         $is_phr_lst = $this->is();
-        if (count($is_phr_lst->lst) >= 1) {
-            $result = $is_phr_lst->lst[0];
+        if (!$is_phr_lst->is_empty()) {
+            $result = $is_phr_lst->lst()[0];
         }
         log_debug($this->dsp_id() . ' is a ' . $result->name());
         return $result;
@@ -1478,12 +1485,12 @@ class word extends user_sandbox_named_with_type
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
                 $added_lst->diff($phr_lst);
-                if (count($added_lst->lst) > 0) {
+                if (!$added_lst->is_empty()) {
                     log_debug('add ' . $added_lst->dsp_id() . ' to ' . $phr_lst->dsp_id());
                 }
                 $phr_lst->merge($added_lst);
                 $loops++;
-            } while (count($added_lst->lst) > 0 and $loops < MAX_LOOP);
+            } while (count($added_lst->lst()) > 0 and $loops < MAX_LOOP);
         }
         log_debug($this->dsp_id() . ' are_and_contains ' . $phr_lst->dsp_id());
         return $phr_lst;

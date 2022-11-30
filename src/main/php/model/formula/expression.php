@@ -593,17 +593,26 @@ class expression
             if ($elm->type == 'formula') {
                 if (isset($elm->wrd_obj)) {
                     $phr = $elm->wrd_obj->phrase();
-                    $phr_lst->lst[] = $phr;
+                    $phr_lst->add($phr);
                 } else {
                     log_err('Word missing for formula element ' . $elm->dsp_id . '.', 'expression->phr_verb_lst');
                 }
+            } elseif ($elm->type == formula_element::TYPE_WORD)  {
+                if (isset($elm->obj)) {
+                    $phr = $elm->obj->phrase();
+                    $phr_lst->add($phr);
+                } else {
+                    log_err('Word missing for formula element ' . $elm->dsp_id . '.', 'expression->phr_verb_lst');
+                }
+            } elseif ($elm->type == formula_element::TYPE_VERB)  {
+                log_err('Use Formula element ' . $elm->dsp_id . ' has an unexpected type.', 'expression->phr_verb_lst');
             } else {
-                $phr_lst->lst[] = $elm;
+                log_err('Formula element ' . $elm->dsp_id . ' has an unexpected type.', 'expression->phr_verb_lst');
             }
         }
         // TODO check if the phrases are already loaded
         //$phr_lst->load();
-        log_debug('expression->phr_verb_lst -> ' . dsp_count($phr_lst->lst));
+        log_debug('expression->phr_verb_lst -> ' . dsp_count($phr_lst->lst()));
         return $phr_lst;
     }
 
@@ -619,7 +628,7 @@ class expression
                 if ($elm->frm_type == formula_type::THIS
                     or $elm->frm_type == formula_type::NEXT
                     or $elm->frm_type == formula_type::PREV) {
-                    $phr_lst->lst[] = $elm->wrd_obj;
+                    $phr_lst->add($elm->wrd_obj);
                 }
             }
             /* TODO check if the phrases are already loaded
@@ -629,7 +638,7 @@ class expression
             */
         }
 
-        log_debug('expression->element_special_following -> ' . dsp_count($phr_lst->lst));
+        log_debug('expression->element_special_following -> ' . dsp_count($phr_lst->lst()));
         return $phr_lst;
     }
 

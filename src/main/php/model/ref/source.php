@@ -324,9 +324,10 @@ class source extends user_sandbox_named_with_type
     }
 
 
-    // read the source type name from the database
-    // TODO integrate this into the load
-    private function type_name(): string
+    /**
+     * @return string the source type name from the array preloaded from the database
+     */
+    public function type_name(): string
     {
         global $source_types;
 

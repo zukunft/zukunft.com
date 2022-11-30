@@ -65,6 +65,16 @@ class user_sandbox_named_with_type extends user_sandbox_named
         return $this->type_id;
     }
 
+    /**
+     * dummy function that should be overwritten by the child object
+     * @return string the name of the object type
+     */
+    public function type_name(): string
+    {
+        $msg = 'ERROR: the type name function should have been overwritten by the child object';
+        return log_err($msg);
+    }
+
     /*
      * casting objects
      */
@@ -87,6 +97,37 @@ class user_sandbox_named_with_type extends user_sandbox_named
         parent::fill_api_obj($dsp_obj);
 
         $dsp_obj->set_type_id($this->type_id());
+    }
+
+    /*
+     * write to database
+     */
+
+    /**
+     * set the update parameters for the word, triple or formula type
+     * TODO: log the ref
+     */
+    function save_field_type(
+        sql_db $db_con,
+        user_sandbox_named_with_type $db_rec,
+        user_sandbox_named_with_type $std_rec
+    ): string
+    {
+        $result = '';
+        if ($db_rec->type_id <> $this->type_id) {
+            $log = $this->log_upd();
+            $log->old_value = $db_rec->type_name();
+            $log->old_id = $db_rec->type_id;
+            $log->new_value = $this->type_name();
+            $log->new_id = $this->type_id;
+            $log->std_value = $std_rec->type_name();
+            $log->std_id = $std_rec->type_id;
+            $log->row_id = $this->id;
+            $log->field = 'word_type_id';
+            $result .= $this->save_field_do($db_con, $log);
+            log_debug('word->save_field_type changed type to "' . $log->new_value . '" (' . $log->new_id . ')');
+        }
+        return $result;
     }
 
 }

@@ -456,7 +456,7 @@ class phrase_group_list
                 // add the phrase group of the value or formula result add the time using a combined index
                 // because a time word should never be part of a phrase group to have a useful number of groups
                 log_debug('phr_grp_lst->add_grp_by_phr -> add id ' . $val_row['phrase_group_id']);
-                log_debug('phr_grp_lst->add_grp_by_phr -> add time id ' . $val_row['time_word_id']);
+                log_debug('phr_grp_lst->add_grp_by_phr -> add time id ' . $val_row[value::FLD_TIME_WORD]);
                 // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and
                 $val_grp = new phrase_group($this->usr);
                 $val_grp->set_id($val_row['phrase_group_id']);
@@ -479,7 +479,7 @@ class phrase_group_list
                     log_debug('phr_grp_lst->add_grp_by_phr -> group ' . $grp_to_add->dsp_id() . ' used instead of ' . $val_grp->dsp_id() . ' because ' . $phr_frm->dsp_id() . ' and  ' . $phr_lst_fv_name . ' are part of the formula and have been remove from the phrase group selection');
                     $changed++;
                 }
-                if ($this->add_grp_time_id($grp_to_add->id(), $val_row['time_word_id'])) {
+                if ($this->add_grp_time_id($grp_to_add->id(), $val_row[value::FLD_TIME_WORD])) {
                     $added++;
                     $changed++;
                     log_debug('phr_grp_lst->add_grp_by_phr -> added ' . $added . ' in ' . dsp_count($this->grp_time_ids));
@@ -554,7 +554,7 @@ class phrase_group_list
             log_debug('phrase_group_list->common_phrases ' . $result->dsp_name());
             $pos++;
         }
-        log_debug('phrase_group_list->common_phrases (' . dsp_count($result->lst) . ')');
+        log_debug('phrase_group_list->common_phrases (' . dsp_count($result->lst()) . ')');
         return $result;
     }
 

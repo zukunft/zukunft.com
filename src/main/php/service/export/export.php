@@ -78,7 +78,7 @@ class export
         $export_obj = (object)[];
 
         if ($phr_lst != null) {
-            if (count($phr_lst->lst) <= 0) {
+            if ($phr_lst->is_empty()) {
                 log_warning("No words to filter the export are defined.", "export->get");
             } else {
 
@@ -162,7 +162,7 @@ class export
                 // 8. add all values to the export object
                 log_debug('export->get values');
                 $exp_values = array();
-                foreach ($val_lst->lst as $val) {
+                foreach ($val_lst->lst() as $val) {
                     if (isset($val)) {
                         $exp_val = $val->export_obj();
                         if (isset($exp_val)) {

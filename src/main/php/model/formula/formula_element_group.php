@@ -297,7 +297,9 @@ class formula_element_group
             $val_phr_lst->ex_time();
 
             // get the word group
-            usort($val_phr_lst->lst, array("phrase", "cmp"));
+            $val_phr_lst_sort = $val_phr_lst->lst();
+            usort($val_phr_lst_sort, array("phrase", "cmp"));
+            $val_phr_lst->set_lst($val_phr_lst_sort);
 
             //asort($val_phr_lst);
             $val_phr_grp = $val_phr_lst->get_grp();
@@ -330,7 +332,7 @@ class formula_element_group
 
                 // temp solution only for the link
                 if ($lead_wrd_id <= 0) {
-                    $lead_wrd = $val_phr_lst->lst[0];
+                    $lead_wrd = $val_phr_lst->lst()[0];
                     $lead_wrd_id = 1;
                 }
 

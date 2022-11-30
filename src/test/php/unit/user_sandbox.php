@@ -494,7 +494,7 @@ class user_sandbox_unit_tests
 
         // ... same for the special case of a table without name e.g. the value table
         $db_con->set_type(sql_db::TBL_VALUE);
-        $db_con->set_fields(array('phrase_group_id', 'time_word_id'));
+        $db_con->set_fields(array('phrase_group_id', value::FLD_TIME_WORD));
         $db_con->set_usr_num_fields(array('word_value', 'source_id', user_sandbox::FLD_PROTECT, 'last_update'));
         $db_con->set_usr_bool_fields(array(user_sandbox::FLD_EXCLUDED));
         $db_con->set_usr_only_fields(array(user_sandbox::FLD_SHARE));
@@ -918,7 +918,7 @@ class user_sandbox_unit_tests
 
         // ... same for the special case of a table without name e.g. the value table
         $db_con->set_type(sql_db::TBL_VALUE);
-        $db_con->set_fields(array('phrase_group_id', 'time_word_id'));
+        $db_con->set_fields(array('phrase_group_id', value::FLD_TIME_WORD));
         $db_con->set_usr_fields(array('word_value', 'source_id', 'last_update', user_sandbox::FLD_PROTECT, user_sandbox::FLD_EXCLUDED));
         $db_con->set_usr_only_fields(array(user_sandbox::FLD_SHARE));
         $db_con->set_where_text('s.phrase_group_id = 1');

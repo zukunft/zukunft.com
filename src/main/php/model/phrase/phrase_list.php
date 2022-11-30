@@ -46,51 +46,14 @@ use api\phrase_list_api;
 use cfg\phrase_type;
 use html\word_dsp;
 
-class phrase_list
+class phrase_list extends sandbox_list
 {
 
-    // array of the loaded phrase objects
+    // $lst of base_list is used as array of the loaded phrase objects
     // (key is at the moment the database id, but it looks like this has no advantages,
     // so a normal 0 to n order could have more advantages)
-    public array $lst;
-    private user $usr;  // the user object of the person for whom the phrase list is loaded, so to say the viewer
+    // $usr of sandbox list is the user object of the person for whom the phrase list is loaded, so to say the viewer
 
-    /*
-     * construct and map
-     */
-
-    /**
-     * always set the user because a phrase list is always user specific
-     * @param user $usr the user who requested to see this phrase list
-     */
-    function __construct(user $usr)
-    {
-        $this->lst = array();
-        $this->set_user($usr);
-    }
-
-    /*
-     * get and set
-     */
-
-    /**
-     * set the user of the phrase list
-     *
-     * @param user $usr the person who wants to access the phrases
-     * @return void
-     */
-    function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    /**
-     * @return user the person who wants to see the phrases
-     */
-    function user(): user
-    {
-        return $this->usr;
-    }
 
     /*
      * casting objects
@@ -113,10 +76,11 @@ class phrase_list
      */
     function dsp_obj(): object
     {
-        $dsp_obj = new phrase_list_dsp_old($this->usr);
+        $dsp_obj = new phrase_list_dsp_old($this->user());
         $dsp_obj->lst = $this->lst;
         return $dsp_obj;
     }
+
 
     /*
      * load function
@@ -175,7 +139,7 @@ class phrase_list
 
     /**
      * load the phrases selected by the id of the list entries
-     * TODO use load_byids instead
+     * TODO use load_by_ids instead
      *
      * @return bool true if at least one phrase has been loaded
      */
@@ -202,7 +166,7 @@ class phrase_list
             if (!$db_con->connected()) {
                 // add the words just with the id for unit testing
                 foreach ($wrd_ids as $id) {
-                    $wrd = new word($this->usr);
+                    $wrd = new word($this->user());
                     $wrd->set_id($id);
                     $this->lst[] = $wrd->phrase();
                     $result = true;
@@ -213,7 +177,7 @@ class phrase_list
                 $db_wrd_lst = $db_con->get($qp);
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
-                        $wrd = new word($this->usr);
+                        $wrd = new word($this->user());
                         $wrd->row_mapper($db_wrd);
                         $this->lst[] = $wrd->phrase();
                         $result = true;
@@ -226,7 +190,7 @@ class phrase_list
             if (!$db_con->connected()) {
                 // add the triple just with the id for unit testing
                 foreach ($lnk_ids as $id) {
-                    $trp = new triple($this->usr);
+                    $trp = new triple($this->user());
                     $trp->set_id($id);
                     $this->lst[] = $trp->phrase();
                     $result = true;
@@ -237,7 +201,7 @@ class phrase_list
                 $db_trp_lst = $db_con->get($qp);
                 foreach ($db_trp_lst as $db_trp) {
                     if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
-                        $trp = new triple($this->usr);
+                        $trp = new triple($this->user());
                         $trp->row_mapper($db_trp);
                         $this->lst[] = $trp->phrase();
                         $result = true;
@@ -278,7 +242,7 @@ class phrase_list
             if (!$db_con->connected()) {
                 // add the words just with the id for unit testing
                 foreach ($wrd_ids as $id) {
-                    $wrd = new word($this->usr);
+                    $wrd = new word($this->user());
                     $wrd->set_id($id);
                     $this->lst[] = $wrd->phrase();
                     $result = true;
@@ -289,7 +253,7 @@ class phrase_list
                 $db_wrd_lst = $db_con->get($qp);
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
-                        $wrd = new word($this->usr);
+                        $wrd = new word($this->user());
                         $wrd->row_mapper($db_wrd);
                         $this->lst[] = $wrd->phrase();
                         $result = true;
@@ -302,7 +266,7 @@ class phrase_list
             if (!$db_con->connected()) {
                 // add the triple just with the id for unit testing
                 foreach ($lnk_ids as $id) {
-                    $wrd = new triple($this->usr);
+                    $wrd = new triple($this->user());
                     $wrd->set_id($id);
                     $this->lst[] = $wrd->phrase();
                     $result = true;
@@ -313,7 +277,7 @@ class phrase_list
                 $db_trp_lst = $db_con->get($qp);
                 foreach ($db_trp_lst as $db_trp) {
                     if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
-                        $trp = new triple($this->usr);
+                        $trp = new triple($this->user());
                         $trp->row_mapper($db_trp);
                         $this->lst[] = $trp->phrase();
                         $result = true;
@@ -341,12 +305,12 @@ class phrase_list
 
         if (count($names) > 0) {
             foreach ($names as $name) {
-                $wrd = new word($this->usr);
+                $wrd = new word($this->user());
                 $wrd->load_by_name($name, word::class);
                 if ($wrd->id() <> 0) {
                     $this->lst[] = $wrd->phrase();
                 } else {
-                    $trp = new triple($this->usr);
+                    $trp = new triple($this->user());
                     $trp->load_by_name($name, triple::class);
                     if ($trp->id() <> 0) {
                         $this->lst[] = $trp->phrase();
@@ -368,7 +332,7 @@ class phrase_list
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param phrase $phr the base phrase which should be used for the selection
-     * @param phrase $grp_phr to define the preferred phrase for the selection
+     * @param phrase|null $grp_phr to define the preferred phrase for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_related_sql(sql_db $db_con, phrase $phr, ?phrase $grp_phr = null): sql_par
@@ -544,8 +508,8 @@ class phrase_list
 
         // get group phrase if needed
         if ($grp_phr == null) {
-            $grp_lst = new phrase_list($this->usr);
-
+            $grp_lst = new phrase_list($this->user());
+            $result = true;
         }
 
         return $result;
@@ -564,11 +528,11 @@ class phrase_list
     {
         $this->lst = array();
 
-        $wrd_lst = new word_list($this->usr);
+        $wrd_lst = new word_list($this->user());
         $wrd_lst->load_linked_words($vrb->id, $direction);
         $wrd_added = $this->add_wrd_lst($wrd_lst);
 
-        $trp_lst = new triple_list($this->usr);
+        $trp_lst = new triple_list($this->user());
         $trp_lst->load_by_phr($phr, $vrb, $direction);
         $trp_added = $this->add_trp_lst($trp_lst);
 
@@ -599,7 +563,7 @@ class phrase_list
         word_type_list $wrd_types,
         string         $direction = triple_list::DIRECTION_BOTH): phrase_list
     {
-        $result = new phrase_list($this->usr);
+        $result = new phrase_list($this->user());
         /*
          * if ($pos > 0) {
             $field_name = "phrase" . $pos;
@@ -649,7 +613,7 @@ class phrase_list
      * @param string|null $trp_ids_txt with comma seperated triple ids
      * @return void
      */
-    function add_by_ids(?string $wrd_ids_txt, ?string $trp_ids_txt)
+    function add_by_ids(?string $wrd_ids_txt, ?string $trp_ids_txt): void
     {
         // add the word ids
         $ids = $this->id_lst();
@@ -658,7 +622,7 @@ class phrase_list
                 $wrd_ids = explode(",", $wrd_ids_txt);
                 foreach ($wrd_ids as $id) {
                     if (!in_array($id, $ids)) {
-                        $phr = new phrase($this->usr);
+                        $phr = new phrase($this->user());
                         $phr->set_id($id);
                         $this->lst[] = $phr;
                         $ids[] = $id;
@@ -674,7 +638,7 @@ class phrase_list
                 foreach ($trp_ids as $id) {
                     $id = $id * -1;
                     if (!in_array($id, $ids)) {
-                        $phr = new phrase($this->usr);
+                        $phr = new phrase($this->user());
                         $phr->set_id($id);
                         $this->lst[] = $phr;
                         $ids[] = $id;
@@ -692,7 +656,7 @@ class phrase_list
     {
         log_debug('phrase_list->wrd_lst_all for ' . $this->dsp_id());
 
-        $wrd_lst = new word_list($this->usr);
+        $wrd_lst = new word_list($this->user());
 
         // check the basic settings
         if (!$this->user()->is_set()) {
@@ -741,7 +705,7 @@ class phrase_list
      */
     function wrd_lst(): word_list
     {
-        $wrd_lst = new word_list($this->usr);
+        $wrd_lst = new word_list($this->user());
         foreach ($this->lst as $phr) {
             if ($phr->id() > 0) {
                 if (isset($phr->obj)) {
@@ -758,7 +722,7 @@ class phrase_list
      */
     function trp_lst(): triple_list
     {
-        $trp_lst = new triple_list($this->usr);
+        $trp_lst = new triple_list($this->user());
         foreach ($this->lst as $phr) {
             if ($phr->id() < 0) {
                 if (isset($phr->obj)) {
@@ -1036,11 +1000,11 @@ class phrase_list
         $result = new user_message();
         foreach ($json_obj as $value) {
             if ($value != '') {
-                $phr = new phrase($this->usr);
+                $phr = new phrase($this->user());
                 if ($result->is_ok() and $do_save) {
                     $phr->load_by_name($value);
                     if ($phr->id() == 0) {
-                        $wrd = new word($this->usr);
+                        $wrd = new word($this->user());
                         $wrd->load_by_name($value, word::class);
                         if ($wrd->id() == 0) {
                             $wrd->set_name($value);
@@ -1375,7 +1339,7 @@ class phrase_list
         log_debug('phrase_list->add_id (' . $phr_id_to_add . ')');
         if ($phr_id_to_add <> 0) {
             if (!in_array($phr_id_to_add, $this->id_lst())) {
-                $phr_to_add = new phrase($this->usr);
+                $phr_to_add = new phrase($this->user());
                 $phr_to_add->set_id($phr_id_to_add);
 
                 $this->add($phr_to_add);
@@ -1392,7 +1356,7 @@ class phrase_list
         if (is_null($this->user()->id)) {
             log_err("The user must be set.", "phrase_list->add_name");
         } else {
-            $phr_to_add = new phrase($this->usr);
+            $phr_to_add = new phrase($this->user());
             $phr_to_add->load_by_name($phr_name_to_add);
 
             if ($phr_to_add->id() <> 0) {
@@ -1563,7 +1527,7 @@ class phrase_list
         foreach ($this->lst as $phr) {
             // temp workaround utils the reason is found, why the user is sometimes not set
             if (!isset($phr->usr)) {
-                $phr->set_user($this->usr);
+                $phr->set_user($this->user());
             }
             $phr_lst_is = $phr->is();
             if (isset($phr_lst_is)) {
@@ -1645,7 +1609,7 @@ class phrase_list
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
             // temp solution for testing
-            $phr->set_user($this->usr);
+            $phr->set_user($this->user());
             log_debug('phrase_list->has_percent -> check ' . $phr->dsp_id());
             if ($result == false) {
                 if ($phr->is_percent()) {
@@ -1689,7 +1653,7 @@ class phrase_list
 
         $wrd_lst = $this->wrd_lst_all();
         $result = $wrd_lst->time_lst();
-        $result->set_user($this->usr);
+        $result->set_user($this->user());
         return $result;
     }
 
@@ -1708,7 +1672,7 @@ class phrase_list
         log_debug('phrase_list->time_useful times ' . implode(",", $time_wrds->ids()));
         foreach ($time_wrds->ids() as $time_id) {
             if (is_null($result)) {
-                $time_wrd = new word($this->usr);
+                $time_wrd = new word($this->user());
                 $time_wrd->load_by_id($time_id, word::class);
                 // return a phrase not a word because "Q1" can be also a wikidata Qualifier and to differentiate this, "Q1 (Quarter)" should be returned
                 $result = $time_wrd->phrase();
@@ -1762,7 +1726,7 @@ class phrase_list
     {
         log_debug('phrase_list->measure_lst(' . $this->dsp_id());
 
-        $result = new phrase_list($this->usr);
+        $result = new phrase_list($this->user());
         $measure_type = cl(db_cl::PHRASE_TYPE, phrase_type::MEASURE);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
@@ -1790,7 +1754,7 @@ class phrase_list
     {
         log_debug('phrase_list->scaling_lst(' . $this->dsp_id());
 
-        $result = new phrase_list($this->usr);
+        $result = new phrase_list($this->user());
         $scale_type = cl(db_cl::PHRASE_TYPE, phrase_type::SCALING);
         $scale_hidden_type = cl(db_cl::PHRASE_TYPE, phrase_type::SCALING_HIDDEN);
         // loop over the phrase ids and add only the time ids to the result array
@@ -1879,7 +1843,7 @@ class phrase_list
     function max_time(): phrase
     {
         log_debug('phrase_list->max_time (' . $this->dsp_id() . ' and user ' . $this->user()->name . ')');
-        $max_phr = new phrase($this->usr);
+        $max_phr = new phrase($this->user());
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {
                 // to be replaced by "is following"
@@ -1905,7 +1869,7 @@ class phrase_list
         if (count($this->id_lst()) <= 0) {
             log_err('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
         } else {
-            $grp = new phrase_group($this->usr);
+            $grp = new phrase_group($this->user());
             $grp->phr_lst = $this;
             $grp->get();
         }
@@ -1962,7 +1926,7 @@ class phrase_list
      */
     function val_lst(): value_list
     {
-        $val_lst = new value_list($this->usr);
+        $val_lst = new value_list($this->user());
         $val_lst->phr_lst = $this;
         $val_lst->load_all();
 
@@ -1974,7 +1938,7 @@ class phrase_list
      */
     function frm_lst(): formula_list
     {
-        $frm_lst = new formula_list($this->usr);
+        $frm_lst = new formula_list($this->user());
         $frm_lst->load_by_phr_lst($this);
 
         return $frm_lst;
@@ -1996,7 +1960,7 @@ class phrase_list
      */
     function value(): value
     {
-        $val = new value($this->usr);
+        $val = new value($this->user());
         $val->grp = $this->get_grp();
         $val->load_obj_vars();
 

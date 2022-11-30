@@ -18,6 +18,7 @@
     TODO add the view result at least as simple text to the JSON export
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO use the sandbox list for all user lists
     TODO use in the frontend only the code id of types
     TODO use in the backend always the type object instead of the db type id
     TODO always use the frontend path CONST instead of 'http'
@@ -268,6 +269,7 @@ include_once $path_php . 'model/sandbox/user_sandbox_named_with_type.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp_named.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp_link.php';
+include_once $path_php . 'model/sandbox/user_sandbox_list.php';
 include_once $path_php . 'model/sandbox/share_type.php';
 include_once $path_php . 'model/sandbox/share_type_list.php';
 include_once $path_php . 'model/sandbox/protection_type.php';
@@ -658,15 +660,17 @@ function log_debug(string $msg_text = '', int $debug_overwrite = null): string
     return $msg_text;
 }
 
-// for system messages no debug calls to avoid loops
-// $msg_text        is a short description that is used to group and limit the number of error messages
-// $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
-// $msg_type_id     is the criticality level e.g. debug, info, warning, error or fatal error
-// $function_name   is the function name which has most likely caused the error
-// $function_trace  is the complete system trace to get more details
-// $usr             is the user id who has probably seen the error message
-// return           the text that can be shown to the user in the navigation bar
-// TODO return the link to the log message so that the user can trace the bug fixing
+/**
+ * for system messages no debug calls to avoid loops
+ * @param string $msg_text        is a short description that is used to group and limit the number of error messages
+ * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
+ * @param string $msg_type_id     is the criticality level e.g. debug, info, warning, error or fatal error
+ * @param string $function_name   is the function name which has most likely caused the error
+ * @param string $function_trace  is the complete system trace to get more details
+ * @param int $user_id            is the user id who has probably seen the error message
+ * return           the text that can be shown to the user in the navigation bar
+ * TODO return the link to the log message so that the user can trace the bug fixing
+ */
 function log_msg(string $msg_text,
                  string $msg_description,
                  string $msg_log_level,

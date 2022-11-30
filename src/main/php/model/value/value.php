@@ -262,7 +262,7 @@ class value extends user_sandbox_value
         if ($result) {
             $this->number = $db_row[self::FLD_VALUE];
             // TODO check if phrase_group_id and time_word_id are user specific or time series specific
-            $this->grp->id = $db_row[phrase_group::FLD_ID];
+            $this->grp->set_id($db_row[phrase_group::FLD_ID]);
             $this->set_source_id($db_row[source::FLD_ID]);
             $this->set_time_id($db_row[self::FLD_TIME_WORD]);
             $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE]);
@@ -379,7 +379,7 @@ class value extends user_sandbox_value
             }
             $phr_lst->ex_time();
             $pos = 1;
-            foreach ($phr_lst->lst as $phr) {
+            foreach ($phr_lst->lst() as $phr) {
                 $pos++;
             }
             if ($pos > 1) {
@@ -420,7 +420,7 @@ class value extends user_sandbox_value
             $sql_grp_from = '';
             $sql_grp_where = '';
             $pos = 1;
-            foreach ($phr_lst->lst as $phr) {
+            foreach ($phr_lst->lst() as $phr) {
                 if ($sql_grp_from <> '') {
                     $sql_grp_from .= ',';
                 }
@@ -1096,8 +1096,8 @@ class value extends user_sandbox_value
         $phr_lst = array();
         // TODO use either word and triple export_obj function or phrase
         if ($this->phr_lst != null) {
-            if (count($this->phr_lst->lst) > 0) {
-                foreach ($this->phr_lst->lst as $phr) {
+            if (!$this->phr_lst->is_empty()) {
+                foreach ($this->phr_lst->lst() as $phr) {
                     $phr_lst[] = $phr->name();
                 }
                 if (count($phr_lst) > 0) {
@@ -1846,7 +1846,7 @@ class value extends user_sandbox_value
                 $log->std_value = $std_rec->time_phr->name();
                 $log->std_id = $std_rec->get_time_id();
                 $log->row_id = $this->id;
-                $log->field = 'time_word_id';
+                $log->field = value::FLD_TIME_WORD;
                 if ($log->add()) {
                     $db_con->set_type(sql_db::TBL_VALUE);
                     if (!$db_con->update(

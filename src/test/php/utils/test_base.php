@@ -1700,7 +1700,7 @@ class test_base
      */
     function assert_greater_zero(string $name, int $received): bool
     {
-        $expected = null;
+        $expected = 0;
         if ($received > 0) {
             $expected = $received;
         }

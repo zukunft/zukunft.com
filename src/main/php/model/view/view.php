@@ -228,6 +228,41 @@ class view extends user_sandbox_named_with_type
 
 
     /*
+     * get preloaded information
+     */
+
+    /**
+     * @return string the name of the view type
+     */
+    public function type_name(): string
+    {
+        global $view_types;
+        return $view_types->name($this->type_id);
+    }
+
+    /**
+     * get the view type code id based on the database id set in this object
+     * @return string
+     */
+    private function type_code_id(): string
+    {
+        global $view_types;
+        return $view_types->code_id($this->type_id);
+    }
+
+    /**
+     * get the view type database id based on the code id
+     * @param string $code_id
+     * @return int
+     */
+    private function type_id_by_code_id(string $code_id): int
+    {
+        global $view_types;
+        return $view_types->id($code_id);
+    }
+
+
+    /*
      * casting objects
      */
 
@@ -254,6 +289,7 @@ class view extends user_sandbox_named_with_type
 
         return $dsp_obj;
     }
+
 
     /*
      * loading
@@ -524,38 +560,8 @@ class view extends user_sandbox_named_with_type
     }
 
     /*
-    object display functions
-    */
-
-    /**
-     * @return string the name of the view type
+     * display function
      */
-    private function type_name(): string
-    {
-        global $view_types;
-        return $view_types->name($this->type_id);
-    }
-
-    /**
-     * get the view type code id based on the database id set in this object
-     * @return string
-     */
-    private function type_code_id(): string
-    {
-        global $view_types;
-        return $view_types->code_id($this->type_id);
-    }
-
-    /**
-     * get the view type database id based on the code id
-     * @param string $code_id
-     * @return int
-     */
-    private function type_id_by_code_id(string $code_id): int
-    {
-        global $view_types;
-        return $view_types->id($code_id);
-    }
 
     /**
      * return the html code to display a view name with the link

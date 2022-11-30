@@ -38,6 +38,11 @@ class user_sandbox_link extends user_sandbox
     public ?object $fob = null;        // the object from which this linked object is creating the connection
     public ?object $tob = null;        // the object to   which this linked object is creating the connection
 
+    // database fields only used for objects that link two objects
+    // TODO create a more specific object that covers all the objects that could be linked e.g. linkable_object
+    public ?string $from_name = null;  // the name of the from object type e.g. view for view_component_links
+    public ?string $to_name = '';      // the name of the  to  object type e.g. view for view_component_links
+
     /**
      * reset the search values of this object
      * needed to search for the standard object, because the search is work, value, formula or ... specific

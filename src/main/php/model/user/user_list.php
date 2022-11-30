@@ -39,7 +39,7 @@ class user_list
 
     // fill the user objects of the list based on a sql
     // TODO review
-    private function load_sql($sql, sql_db $db_con)
+    private function load_sql($sql, sql_db $db_con): void
     {
 
         $db_usr_lst = $db_con->get_old($sql);
@@ -93,7 +93,7 @@ class user_list
     /**
      * load all system users that have a code id
      */
-    function load_system(sql_db $db_con)
+    function load_system(sql_db $db_con): void
     {
         global $system_users;
 
@@ -109,7 +109,7 @@ class user_list
     /**
      * add an usr with just the id for later mass load
      */
-    function add_by_id($usr_id)
+    function add_by_id($usr_id): void
     {
         $usr = new user;
         $usr->id = $usr_id;
@@ -117,7 +117,7 @@ class user_list
     }
 
     // fill the user objects of the list based on the id
-    function load_by_id()
+    function load_by_id(): void
     {
 
         global $db_con;
@@ -146,7 +146,7 @@ class user_list
     /**
      * fill the hash based on the code id
      */
-    function set_hash()
+    function set_hash(): void
     {
         $this->code_id_hash = [];
         if ($this->lst != null) {
@@ -180,7 +180,7 @@ class user_list
     /**
      * create dummy system user list for the unit tests without database connection
      */
-    function load_dummy()
+    function load_dummy(): void
     {
         $this->lst = array();
         $this->code_id_hash = array();

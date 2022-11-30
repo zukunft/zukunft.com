@@ -165,7 +165,7 @@ class formula_unit_tests
         $target = new phrase_list($usr);
         $wrd = new word($usr);
         $wrd->set_id(205);
-        $target->lst[] = $wrd->phrase();
+        $target->add($wrd->phrase());
         $t->assert('Expression->fv_phr_lst for ' . formula::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
 
         // get the special formulas used in a formula to calculate the result

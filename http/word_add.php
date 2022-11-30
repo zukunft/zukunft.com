@@ -68,7 +68,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::WORD_ADD);
+    $dsp->set_id(cl(db_cl::VIEW, view::WORD_ADD));
     $dsp->load_obj_vars();
     $back = $_GET['back']; // the calling page which should be displayed after saving
 
@@ -112,7 +112,7 @@ if ($usr->id > 0) {
         // check if a word, verb or formula with the same name already exists
         if ($wrd->name() <> "") {
             $trm = new term($usr);
-            $trm->load_by_name($wrd->name);
+            $trm->load_by_name($wrd->name());
             if ($trm->id_obj() > 0) {
                 /*
                 // TODO: if a formula exists, suggest to create a word as a formula link, so that the formula results can be shown in parallel to the entered values
@@ -131,21 +131,21 @@ if ($usr->id > 0) {
         } elseif ($wrd_id > 0) {
             // check link of the existing word already exists
             $lnk_test = new triple($usr);
-            $lnk_test->from->id = $wrd_id;
+            $lnk_test->from->set_id($wrd_id);
             $lnk_test->verb->id = $vrb_id;
-            $lnk_test->to->id = $wrd_to;
+            $lnk_test->to->set_id($wrd_to);
             $lnk_test->load_obj_vars();
-            if ($lnk_test->id > 0) {
+            if ($lnk_test->id() > 0) {
                 $lnk_test->load_objects();
                 log_debug('check forward link ' . $wrd_id . ' ' . $vrb_id . ' ' . $wrd_to . '');
                 $msg .= '"' . $lnk_test->from_name . ' ' . $lnk_test->verb->name . ' ' . $lnk_test->to_name . '" already exists. ';
             }
             $lnk_rev = new triple($usr);
-            $lnk_rev->from->id = $wrd_to;
+            $lnk_rev->from->set_id($wrd_to);
             $lnk_rev->verb->id = $vrb_id;
-            $lnk_rev->to->id = $wrd_id;
+            $lnk_rev->to->set_id($wrd_id);
             $lnk_rev->load_obj_vars();
-            if ($lnk_rev->id > 0) {
+            if ($lnk_rev->id() > 0) {
                 $lnk_rev->load_objects();
                 $msg .= 'The reverse of "' . $lnk_rev->from_name . ' ' . $lnk_rev->verb->name . ' ' . $lnk_rev->to_name . '" already exists. Do you really want to add both sides? ';
             }
@@ -159,17 +159,16 @@ if ($usr->id > 0) {
             if ($wrd->name() <> "") {
                 $add_result .= $wrd->save();
             } else {
-                $wrd->id = $wrd_id;
-                $wrd->load_obj_vars();
+                $wrd->load_by_id($wrd_id);
             }
             log_debug('test word');
-            if ($wrd->id > 0 and $vrb_id <> 0 and $wrd_to > 0) {
+            if ($wrd->isset() and $vrb_id <> 0 and $wrd_to > 0) {
                 // ... and link it to an existing word
-                log_debug('word ' . $wrd->id . ' linked via ' . $vrb_id . ' to ' . $wrd_to . ': ' . $add_result);
+                log_debug('word ' . $wrd->id() . ' linked via ' . $vrb_id . ' to ' . $wrd_to . ': ' . $add_result);
                 $lnk = new triple($usr);
-                $lnk->from->id = $wrd->id;
+                $lnk->from->set_id($wrd->id());
                 $lnk->verb->id = $vrb_id;
-                $lnk->to->id = $wrd_to;
+                $lnk->to->set_id($wrd_to);
                 $add_result .= $lnk->save();
             }
 

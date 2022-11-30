@@ -185,6 +185,7 @@ class formula extends user_sandbox_named_with_type
         $this->ref_text_r = '';
     }
 
+
     /*
      * set and get
      */
@@ -233,6 +234,21 @@ class formula extends user_sandbox_named_with_type
     {
         return 0;
     }
+
+    /*
+     * get preloaded information
+     */
+
+    /**
+     * get the name of the formula type
+     * @return string the name of the formula type
+     */
+    public function type_name(): string
+    {
+        global $formula_types;
+        return $formula_types->name($this->type_id);
+    }
+
 
     /*
      * casting objects
@@ -699,7 +715,7 @@ class formula extends user_sandbox_named_with_type
         log_debug(self::class . '->special_phr_lst for ' . $phr_lst->dsp_id());
         $result = clone $phr_lst;
 
-        foreach ($phr_lst->lst as $phr) {
+        foreach ($phr_lst->lst() as $phr) {
             // temp solution utils the real reason is found why the phrase list elements are missing the user settings
             if (!isset($phr->usr)) {
                 $phr->set_user($this->user());
@@ -732,7 +748,7 @@ class formula extends user_sandbox_named_with_type
             if (count($phr_ids->lst) > 0) {
                 $phr_lst = new phrase_list($this->user());
                 $phr_lst->load_by_ids($phr_ids);
-                log_debug("formula->assign_phr_glst_direct -> number of words " . dsp_count($phr_lst->lst));
+                log_debug("formula->assign_phr_glst_direct -> number of words " . dsp_count($phr_lst->lst()));
             }
         } else {
             log_err("The user id must be set to list the formula links.", "formula->assign_phr_glst_direct");
@@ -768,7 +784,7 @@ class formula extends user_sandbox_named_with_type
         if ($this->id > 0 and $this->user()->is_set()) {
             $direct_phr_lst = $this->assign_phr_glst_direct($sbx);
             if ($direct_phr_lst != null) {
-                if (count($direct_phr_lst->lst) > 0) {
+                if (!$direct_phr_lst->is_empty()) {
                     log_debug(self::class . '->assign_phr_glst -> ' . $this->dsp_id() . ' direct assigned words and triples ' . $direct_phr_lst->dsp_id());
 
                     //$indirect_phr_lst = $direct_phr_lst->is();
@@ -780,7 +796,7 @@ class formula extends user_sandbox_named_with_type
                     $phr_ids = array_unique($phr_ids);
 
                     $phr_lst->load_by_ids((new phr_ids($phr_ids)));
-                    log_debug(self::class . '->assign_phr_glst -> number of words and triples ' . dsp_count($phr_lst->lst));
+                    log_debug(self::class . '->assign_phr_glst -> number of words and triples ' . dsp_count($phr_lst->lst()));
                 } else {
                     log_debug(self::class . '->assign_phr_glst -> no words are assigned to ' . $this->dsp_id());
                 }
@@ -1206,7 +1222,7 @@ class formula extends user_sandbox_named_with_type
                             // e.g. in the increase formula "percent" should be on the left side of the equation because the result is supposed to be in percent
                             if (isset($fv_add_phr_lst)) {
                                 log_debug(self::class . '->calc -> add words ' . $fv_add_phr_lst->dsp_id() . ' to the result');
-                                foreach ($fv_add_phr_lst->lst as $frm_result_wrd) {
+                                foreach ($fv_add_phr_lst->lst() as $frm_result_wrd) {
                                     $fv->phr_lst->add($frm_result_wrd);
                                 }
                                 log_debug(self::class . '->calc -> added words ' . $fv_add_phr_lst->dsp_id() . ' to the result ' . $fv->phr_lst->dsp_id());
@@ -1381,7 +1397,7 @@ class formula extends user_sandbox_named_with_type
 
         if ($do_load) {
             $phr_lst = $this->assign_phr_lst_direct();
-            foreach ($phr_lst->lst as $phr) {
+            foreach ($phr_lst->lst() as $phr) {
                 // TODO add the link type
                 $result->assigned_word = $phr->name();
             }
@@ -1392,13 +1408,13 @@ class formula extends user_sandbox_named_with_type
     }
 
     /*
-    probably to be replaced with expression functions
-    */
+     * probably to be replaced with expression functions
+     */
 
     /**
-     * returns a positive word id if the formula string in the database format contains a word link
+     * @return int a positive word id if the formula string in the database format contains a word link
      */
-    function get_word($formula)
+    function get_word($formula): int
     {
         log_debug("formula->get_word (" . $formula . ")");
         $result = 0;

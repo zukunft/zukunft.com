@@ -328,6 +328,22 @@ class triple extends user_sandbox_link_named_with_type implements \JsonSerializa
         return $this->description();
     }
 
+
+    /*
+     * get preloaded information
+     */
+
+    /**
+     * get the name of the triple type
+     * @return string the name of the triple type
+     */
+    public function type_name(): string
+    {
+        global $phrase_types;
+        return $phrase_types->name($this->type_id);
+    }
+
+
     /*
      * casting objects
      */

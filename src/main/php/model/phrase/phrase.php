@@ -769,7 +769,7 @@ class phrase extends db_object
         $val_lst->phr = $this;
         $val_lst->page_size = SQL_ROW_MAX;
         $val_lst->load();
-        log_debug('got ' . dsp_count($val_lst->lst));
+        log_debug('got ' . dsp_count($val_lst->lst()));
         return $val_lst;
     }
 
@@ -1126,8 +1126,8 @@ class phrase extends db_object
     {
         $result = null;
         $is_wrd_lst = $this->is();
-        if (count($is_wrd_lst->lst) >= 1) {
-            $result = $is_wrd_lst->lst[0];
+        if (!$is_wrd_lst->is_empty()) {
+            $result = $is_wrd_lst->lst()[0];
             log_debug($this->dsp_id() . ' is a ' . $result->name());
         }
         return $result;

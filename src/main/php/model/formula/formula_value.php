@@ -448,11 +448,13 @@ class formula_value extends db_object
             $phr_grp = null;
             if ($this->phr_grp_id <= 0) {
                 $phr_lst = null;
-                if (!empty($this->phr_lst->lst)) {
-                    $phr_lst = clone $this->phr_lst;
-                    $phr_lst->ex_time();
-                    log_debug('get group by ' . $phr_lst->dsp_name());
-                    // ... or based on the phrase ids
+                if ($this->phr_lst != null) {
+                    if (!$this->phr_lst->is_empty()) {
+                        $phr_lst = clone $this->phr_lst;
+                        $phr_lst->ex_time();
+                        log_debug('get group by ' . $phr_lst->dsp_name());
+                        // ... or based on the phrase ids
+                    }
                 } elseif (!empty($this->phr_ids())) {
                     $phr_lst = new phrase_list($this->user());
                     $phr_lst->load_by_ids(new phr_ids($this->phr_ids()));
@@ -508,18 +510,20 @@ class formula_value extends db_object
             }
 
             // set the source group id if the source list is set, but not the group id
-            if ($this->src_phr_grp_id <= 0 and !empty($this->src_phr_lst->lst)) {
+            if ($this->src_phr_grp_id <= 0 and $this->src_phr_lst != null) {
 
-                $work_phr_lst = clone $this->src_phr_lst;
-                $work_phr_lst->ex_time();
-                $this->src_phr_lst = $work_phr_lst;
-                $phr_grp = $work_phr_lst->get_grp();
-                if (isset($phr_grp)) {
-                    if ($phr_grp->id() > 0) {
-                        $this->src_phr_grp_id = $phr_grp->id();
+                if (!$this->src_phr_lst->is_empty()) {
+                    $work_phr_lst = clone $this->src_phr_lst;
+                    $work_phr_lst->ex_time();
+                    $this->src_phr_lst = $work_phr_lst;
+                    $phr_grp = $work_phr_lst->get_grp();
+                    if (isset($phr_grp)) {
+                        if ($phr_grp->id() > 0) {
+                            $this->src_phr_grp_id = $phr_grp->id();
+                        }
                     }
+                    log_debug('source group ' . $this->src_phr_grp_id . ' found for ' . $work_phr_lst->dsp_name());
                 }
-                log_debug('source group ' . $this->src_phr_grp_id . ' found for ' . $work_phr_lst->dsp_name());
             }
 
             // assume the result time if the result phrase list is set, but not the result time
@@ -932,8 +936,8 @@ class formula_value extends db_object
         $phr_lst = array();
         // TODO use either word and triple export_obj function or phrase
         if ($this->phr_lst != null) {
-            if (count($this->phr_lst->lst) > 0) {
-                foreach ($this->phr_lst->lst as $phr) {
+            if (!$this->phr_lst->is_empty()) {
+                foreach ($this->phr_lst->lst() as $phr) {
                     $phr_lst[] = $phr->name();
                 }
                 if (count($phr_lst) > 0) {
@@ -1601,7 +1605,7 @@ class formula_value extends db_object
                 $field_values[] = $this->value;
                 $field_names[] = 'phrase_group_id';
                 $field_values[] = $this->phr_grp_id;
-                $field_names[] = 'time_word_id';
+                $field_names[] = value::FLD_TIME_WORD;
                 $field_values[] = $this->time_id;
                 $field_names[] = 'source_phrase_group_id';
                 $field_values[] = $this->src_phr_grp_id;

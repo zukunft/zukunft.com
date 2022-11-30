@@ -1270,17 +1270,17 @@ class word_list
     {
         log_debug(self::class . '->phrase_lst ' . $this->dsp_id());
         $phr_lst = new phrase_list($this->user());
-        foreach ($this->lst as $wrd) {
-            if (get_class($wrd) == word::class or get_class($wrd) == word_dsp::class) {
-                $phr_lst->lst[] = $wrd->phrase();
-            } elseif (get_class($wrd) == phrase::class) {
-                $phr_lst->lst[] = $wrd;
+        foreach ($this->lst as $phr) {
+            if (get_class($phr) == word::class or get_class($phr) == word_dsp::class) {
+                $phr_lst->add($phr->phrase());
+            } elseif (get_class($phr) == phrase::class) {
+                $phr_lst->add($phr);
             } else {
-                log_err('unexpected object type ' . get_class($wrd));
+                log_err('unexpected object type ' . get_class($phr));
             }
         }
         $phr_lst->id_lst();
-        log_debug(self::class . '->phrase_lst -> done (' . dsp_count($phr_lst->lst) . ')');
+        log_debug(self::class . '->phrase_lst -> done (' . dsp_count($phr_lst->lst()) . ')');
         return $phr_lst;
     }
 
@@ -1493,11 +1493,11 @@ class word_list
         // load the list of all value related to the word list
         $val_lst = new value_list($this->user());
         $val_lst->phr_lst = $this->phrase_lst();
-        $val_lst->load_by_phr_lst();
-        log_debug(self::class . '->max_val_time ... ' . dsp_count($val_lst->lst) . ' values for ' . $this->dsp_id());
+        $val_lst->load_by_phr_lst_old();
+        log_debug(self::class . '->max_val_time ... ' . dsp_count($val_lst->lst()) . ' values for ' . $this->dsp_id());
 
         $time_ids = array();
-        foreach ($val_lst->lst as $val) {
+        foreach ($val_lst->lst() as $val) {
             $val->load_phrases();
             if (isset($val->time_phr)) {
                 log_debug(self::class . '->max_val_time ... value (' . $val->number() . ' @ ' . $val->time_phr->name() . ')');

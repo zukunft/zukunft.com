@@ -552,7 +552,7 @@ class user_dsp_old extends user
                 $val_usr->set_source_id($val_row['usr_source']);
                 $val_usr->excluded = $val_row['usr_excluded'];
                 $val_usr->grp->set_id($val_row['phrase_group_id']);
-                $val_usr->set_time_id($val_row['time_word_id']);
+                $val_usr->set_time_id($val_row[value::FLD_TIME_WORD]);
                 $val_usr->load_phrases();
 
                 // to review: try to avoid using load_test_user

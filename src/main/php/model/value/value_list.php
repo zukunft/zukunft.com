@@ -2,31 +2,31 @@
 
 /*
 
-  value_list.php - to show or modify a list of values
-  --------------
-  
-  This file is part of zukunft.com - calc with words
+    value_list.php - to show or modify a list of values
+    --------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
 use api\value_list_api;
@@ -37,14 +37,11 @@ use export\exp_obj;
 use export\value_list_exp;
 use html\button;
 use html\html_base;
-use html\word_list_dsp;
 
-class value_list
+class value_list extends sandbox_list
 {
 
-    public array $lst;                       // the list of values
-    private ?user $usr = null;               // the person who wants to see ths value list
-
+    // to deprecate
     // fields to select the values
     public ?phrase $phr = null;              // show the values related to this phrase
     public ?phrase_list $phr_lst = null;     // show the values related to these phrases
@@ -71,31 +68,9 @@ class value_list
      */
     function __construct(user $usr)
     {
+        parent::__construct($usr);
         $this->lst = array();
         $this->set_user($usr);
-    }
-
-    /*
-     * get and set
-     */
-
-    /**
-     * set the user of the value list
-     *
-     * @param user|null $usr the person who wants to access the values
-     * @return void
-     */
-    function set_user(?user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    /**
-     * @return user|null the person who wants to see the values
-     */
-    function user(): ?user
-    {
-        return $this->usr;
     }
 
     /*
@@ -143,7 +118,7 @@ class value_list
         if ($this->phr != null) {
             if ($this->phr->id() <> 0) {
                 if ($this->phr->is_word()) {
-                    $sql_name_ext .= 'word_id';
+                    $sql_name_ext .= word::FLD_ID;
                 } else {
                     $sql_name_ext .= triple::FLD_ID;
                 }
@@ -170,10 +145,10 @@ class value_list
                 if ($this->phr->id() <> 0) {
                     if ($this->phr->is_word()) {
                         $db_con->add_par(sql_db::PAR_INT, $this->phr->id());
-                        $sql_where = 'l2.word_id = ' . $db_con->par_name();
+                        $sql_where = 'l2.' . word::FLD_ID . ' = ' . $db_con->par_name();
                     } else {
                         $db_con->add_par(sql_db::PAR_INT, $this->phr->id() * -1);
-                        $sql_where = 'l2.triple_id = ' . $db_con->par_name();
+                        $sql_where = 'l2.' . triple::FLD_ID . ' = ' . $db_con->par_name();
                     }
                 }
             }
@@ -214,12 +189,12 @@ class value_list
                 $db_val_lst = $db_con->get($qp);
                 foreach ($db_val_lst as $db_val) {
                     if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
-                        $val = new value($this->usr);
+                        $val = new value($this->user());
                         $val->row_mapper($db_val);
                         // TODO either integrate this in the query or load this with one sql for all values
-                        if ($db_val['time_word_id'] <> 0) {
-                            $time_phr = new phrase($this->usr);
-                            $time_phr->set_id($db_val['time_word_id']);
+                        if ($db_val[value::FLD_TIME_WORD] <> 0) {
+                            $time_phr = new phrase($this->user());
+                            $time_phr->set_id($db_val[value::FLD_TIME_WORD]);
                             if ($time_phr->load_by_obj_par()) {
                                 $val->time_phr = $time_phr;
                             }
@@ -284,7 +259,7 @@ class value_list
         $db_val_lst = $db_con->get($qp);
         foreach ($db_val_lst as $db_val) {
             if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
-                $val = new value($this->usr);
+                $val = new value($this->user());
                 $val->row_mapper($db_val);
                 $this->lst[] = $val;
                 log_debug(dsp_count($this->lst));
@@ -320,7 +295,7 @@ class value_list
     /**
      * load a list of values that are related to one
      */
-    function load_all()
+    function load_all(): void
     {
 
         global $db_con;
@@ -335,7 +310,7 @@ class value_list
                 if ($db_val_lst != false) {
                     foreach ($db_val_lst as $db_val) {
                         if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
-                            $val = new value($this->usr);
+                            $val = new value($this->user());
                             $val->row_mapper($db_val);
                             $this->lst[] = $val;
                         }
@@ -409,8 +384,10 @@ class value_list
         return $result;
     }
 
-    // load a list of values that are related to all words of the list
-    function load_by_phr_lst()
+    /**
+     * load a list of values that are related to all words of the list
+     */
+    function load_by_phr_lst_old(): void
     {
 
         global $db_con;
@@ -425,14 +402,15 @@ class value_list
                 if ($db_val_lst != false) {
                     foreach ($db_val_lst as $db_val) {
                         if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
-                            $val = new value($this->usr);
+                            $val = new value($this->user());
+                            //$val->row_mapper($db_val);
                             $val->set_id($db_val[value::FLD_ID]);
                             $val->owner_id = $db_val[user_sandbox::FLD_USER];
                             $val->set_number($db_val['word_value']);
                             $val->set_source_id($db_val['source_id']);
                             $val->last_update = get_datetime($db_val['last_update']);
                             $val->grp->set_id($db_val['phrase_group_id']);
-                            $val->set_time_id($db_val['time_word_id']);
+                            $val->set_time_id($db_val[value::FLD_TIME_WORD]);
                             $this->lst[] = $val;
                         }
                     }
@@ -442,9 +420,11 @@ class value_list
         }
     }
 
-    // set the word objects for all value in the list if needed
-    // not included in load, because sometimes loading of the word objects is not needed
-    function load_phrases()
+    /**
+     * set the word objects for all value in the list if needed
+     * not included in load, because sometimes loading of the word objects is not needed
+     */
+    function load_phrases(): void
     {
         // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
         foreach ($this->lst as $val) {
@@ -471,13 +451,13 @@ class value_list
         log_debug();
         $result = new user_message();
 
-        $val = new value($this->usr);
-        $phr_lst = new phrase_list($this->usr);
+        $val = new value($this->user());
+        $phr_lst = new phrase_list($this->user());
 
         foreach ($json_obj as $key => $value) {
 
             if ($key == self::FLD_EX_CONTEXT) {
-                $phr_lst = new phrase_list($this->usr);
+                $phr_lst = new phrase_list($this->user());
                 $result->add($phr_lst->import_lst($value, $do_save));
                 $val->phr_lst = clone $phr_lst;
             }
@@ -491,7 +471,7 @@ class value_list
             }
 
             if ($key == exp_obj::FLD_TIME) {
-                $phr = new phrase($this->usr);
+                $phr = new phrase($this->user());
                 $result->add($phr->import_obj($value, $do_save));
                 $val->time_phr = $phr;
             }
@@ -505,7 +485,7 @@ class value_list
             }
 
             if ($key == source_exp::FLD_REF) {
-                $src = new source($this->usr);
+                $src = new source($this->user());
                 $src->set_name($value);
                 if ($result->is_ok() and $do_save) {
                     $src->load_obj_vars();
@@ -521,7 +501,7 @@ class value_list
                     foreach ($val_entry as $val_key => $val_number) {
                         $val_to_add = clone $val;
                         $val_to_add->phr_lst = clone $phr_lst;
-                        $val_phr = new phrase($this->usr);
+                        $val_phr = new phrase($this->user());
                         if ($do_save) {
                             $val_phr->load_by_name($val_key);
                         } else {
@@ -617,14 +597,16 @@ class value_list
      * data retrieval functions
      */
 
-    // get a list with all time phrase used in the complete value list
+    /**
+     * get a list with all time phrase used in the complete value list
+     */
     function time_lst(): phrase_list
     {
         $all_ids = array();
         foreach ($this->lst as $val) {
             $all_ids = array_unique(array_merge($all_ids, array($val->time_id)));
         }
-        $phr_lst = new phrase_list($this->usr);
+        $phr_lst = new phrase_list($this->user());
         if (count($all_ids) > 0) {
             $phr_lst->load_by_ids(new phr_ids($all_ids));
         }
@@ -638,7 +620,7 @@ class value_list
     function phr_lst(): phrase_list
     {
         log_debug('by ids (needs review)');
-        $phr_lst = new phrase_list($this->usr);
+        $phr_lst = new phrase_list($this->user());
 
         foreach ($this->lst as $val) {
             if (!isset($val->phr_lst)) {
@@ -680,8 +662,10 @@ class value_list
         return $wrd_lst;
     }
 
-    // get a list of all words used for the value list
-    function source_lst()
+    /**
+     * get a list of all words used for the value list
+     */
+    function source_lst(): array
     {
         log_debug();
         $result = array();
@@ -746,8 +730,10 @@ class value_list
         return $result;
     }
 
-    // return a value list object that contains only values that match at least one phrase from the phrase list
-    function filter_by_phrase_lst($phr_lst)
+    /**
+     * return a value list object that contains only values that match at least one phrase from the phrase list
+     */
+    function filter_by_phrase_lst($phr_lst): value_list
     {
         log_debug(dsp_count($this->lst) . ' values by ' . $phr_lst->name());
         $result = array();
@@ -781,9 +767,11 @@ class value_list
         return $this;
     }
 
-    // selects from a val_lst_phr the best matching value
-    // best matching means that all words from word_ids must be matching and the least additional words, because this would be a more specific value
-    // used by value_list_dsp->dsp_table
+    /**
+     * selects from a val_lst_phr the best matching value
+     * best matching means that all words from word_ids must be matching and the least additional words, because this would be a more specific value
+     * used by value_list_dsp->dsp_table
+     */
     function get_from_lst($word_ids)
     {
         asort($word_ids);
@@ -815,9 +803,11 @@ class value_list
         return $result;
     }
 
-    // selects from a val_lst_wrd the best matching value
-    // best matching means that all words from word_ids must be matching and the least additional words, because this would be a more specific value
-    // used by value_list_dsp->dsp_table
+    /**
+     * selects from a val_lst_wrd the best matching value
+     * best matching means that all words from word_ids must be matching and the least additional words, because this would be a more specific value
+     * used by value_list_dsp->dsp_table
+     */
     function get_by_grp($grp, $time)
     {
         log_debug("value_list->get_by_grp " . $grp->auto_name . ".");
@@ -883,7 +873,7 @@ class value_list
     function phrase_groups(): phrase_group_list
     {
         log_debug();
-        $grp_lst = new phrase_group_list($this->usr);
+        $grp_lst = new phrase_group_list($this->user());
         foreach ($this->lst as $val) {
             if (!isset($val->grp)) {
                 $val->load_grp_by_id();
@@ -900,8 +890,10 @@ class value_list
     }
 
 
-    // return a list of phrases used for each value
-    function common_phrases()
+    /**
+     * return a list of phrases used for each value
+     */
+    function common_phrases(): phrase_list
     {
         $grp_lst = $this->phrase_groups();
         $phr_lst = $grp_lst->common_phrases();
@@ -910,13 +902,15 @@ class value_list
     }
 
     /*
-    check / database consistency functions
-    */
+     * check / database consistency functions
+     */
 
-    // check the consistency for all values
-    // so get the words and triples linked from the word group
-    //    and update the slave table value_phrase_links (which should be renamed to value_phrase_links)
-    // TODO split into smaller sections by adding LIMIT to the query and start a loop
+    /**
+     * check the consistency for all values
+     * so get the words and triples linked from the word group
+     *    and update the slave table value_phrase_links (which should be renamed to value_phrase_links)
+     * TODO split into smaller sections by adding LIMIT to the query and start a loop
+     */
     function check_all(): bool
     {
 
@@ -929,7 +923,7 @@ class value_list
         $sql = $db_con->select_by_set_id();
         $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {
-            $val = new value($this->usr);
+            $val = new value($this->user());
             $val->load_by_id($db_val[value::FLD_ID], value::class);
             if (!$val->check()) {
                 $result = false;
@@ -940,10 +934,12 @@ class value_list
         return $result;
     }
 
-    // to be integrated into load
-    // list of values related to a formula
-    // described by the word to which the formula is assigned
-    // and the words used in the formula
+    /**
+     * to be integrated into load
+     * list of values related to a formula
+     * described by the word to which the formula is assigned
+     * and the words used in the formula
+     */
     function load_frm_related($phr_id, $phr_ids, $user_id)
     {
         log_debug("value_list->load_frm_related (" . $phr_id . ",ft" . implode(",", $phr_ids) . ",u" . $user_id . ")");
@@ -970,9 +966,11 @@ class value_list
         return $result;
     }
 
-    // group words
-    // kind of similar to zu_sql_val_lst_wrd
-    function load_frm_related_grp_phrs_part($val_ids, $phr_id, $phr_ids, $user_id)
+    /**
+     * group words
+     * kind of similar to zu_sql_val_lst_wrd
+     */
+    function load_frm_related_grp_phrs_part($val_ids, $phr_id, $phr_ids, $user_id): array
     {
         log_debug("value_list->load_frm_related_grp_phrs_part (v" . implode(",", $val_ids) . ",t" . $phr_id . ",ft" . implode(",", $phr_ids) . ",u" . $user_id . ")");
 
@@ -1027,7 +1025,9 @@ class value_list
         return $result;
     }
 
-    // to be integrated into load
+    /**
+     * to be integrated into load
+     */
     function load_frm_related_grp_phrs($phr_id, $phr_ids, $user_id)
     {
         log_debug("value_list->load_frm_related_grp_phrs (" . $phr_id . ",ft" . implode(",", $phr_ids) . ",u" . $user_id . ")");
@@ -1053,11 +1053,13 @@ class value_list
     }
     */
 
-    // return the html code to display all values related to a given word
-    // $phr->id is the related word that should not be included in the display
-    // $this->user()->id is a parameter, because the viewer must not be the owner of the value
-    // TODO add back
-    function html($back)
+    /**
+     * return the html code to display all values related to a given word
+     * $phr->id is the related word that should not be included in the display
+     * $this->user()->id is a parameter, because the viewer must not be the owner of the value
+     * TODO add back
+     */
+    function html($back): string
     {
         log_debug(dsp_count($this->lst));
         $result = '';
@@ -1092,7 +1094,7 @@ class value_list
         // display the common words
         log_debug('common dsp');
         if (!empty($common_phr_ids)) {
-            $common_phr_lst = new word_list($this->usr);
+            $common_phr_lst = new word_list($this->user());
             $common_phr_lst->load_by_ids($common_phr_ids);
             $common_phr_lst_dsp = $common_phr_lst->dsp_obj();
             $result .= ' in (' . implode(",", $common_phr_lst_dsp->names_linked()) . ')<br>';
@@ -1110,7 +1112,7 @@ class value_list
 
         log_debug('add new button');
         foreach ($this->lst as $val) {
-            //$this->user()->id  = $val->usr->id;
+            //$this->user()->id  = $val->user()->id;
 
             // get the words
             $val->load_phrases();
@@ -1137,7 +1139,7 @@ class value_list
                 log_debug('add time ' . $val->id);
                 if ($val->time_phr != null) {
                     if ($val->time_phr->id > 0) {
-                        $time_phr = new phrase($val->usr);
+                        $time_phr = new phrase($val->user());
                         $time_phr->set_id($val->time_phr->id);
                         $time_phr->load_by_obj_par();
                         $val->time_phr = $time_phr;
@@ -1154,7 +1156,7 @@ class value_list
                 log_debug('linked words ' . $val->id . ' done');
                 // to review
                 // list the related formula values
-                $fv_lst = new formula_value_list($this->usr);
+                $fv_lst = new formula_value_list($this->user());
                 $fv_lst->load_by_val($val);
                 $result .= $fv_lst->frm_links_html();
                 $result .= '    </td>';
@@ -1183,7 +1185,7 @@ class value_list
         // allow the user to add a completely new value
         log_debug('new');
         if (empty($common_phr_ids)) {
-            $common_phr_lst_new = new word_list($this->usr);
+            $common_phr_lst_new = new word_list($this->user());
             $common_phr_ids[] = $this->phr->id();
             $common_phr_lst_new->load_by_ids($common_phr_ids);
         }

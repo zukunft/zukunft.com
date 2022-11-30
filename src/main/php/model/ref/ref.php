@@ -164,6 +164,23 @@ class ref
         return $this->usr;
     }
 
+
+    /*
+     * get preloaded information
+     */
+
+    /**
+     * get the name of the reference type
+     * @return string the name of the reference type
+     */
+    public function type_name(): string
+    {
+        //global $reference_types;
+        //return $reference_types->name($this->ref_type->name());
+        return $this->ref_type->name();
+    }
+
+
     /*
      * loading
      */

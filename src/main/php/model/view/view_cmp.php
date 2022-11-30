@@ -266,6 +266,21 @@ class view_cmp extends user_sandbox_named_with_type
         $this->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, $type_code_id);
     }
 
+
+    /*
+     * get preloaded information
+     */
+
+    /**
+     * @return string the name of the view type
+     */
+    public function type_name(): string
+    {
+        global $view_component_types;
+        return $view_component_types->name($this->type_id);
+    }
+
+
     /*
      * loading
      */
@@ -516,15 +531,6 @@ class view_cmp extends user_sandbox_named_with_type
     {
 
         return '<a href="/http/view_component_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
-    }
-
-    /**
-     * @return string the name of the view type
-     */
-    function type_name(): string
-    {
-        global $view_component_types;
-        return $view_component_types->name($this->type_id);
     }
 
     /*

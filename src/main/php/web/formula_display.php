@@ -182,7 +182,7 @@ class formula_dsp_old extends formula
 
         // list all linked words
         $result .= dsp_tbl_start_half();
-        foreach ($phr_lst->lst as $phr_linked) {
+        foreach ($phr_lst->lst() as $phr_linked) {
             $result .= '  <tr>' . "\n";
             $result .= $phr_linked->dsp_tbl(0);
             $result .= $this->dsp_unlink_phr($phr_linked->id, $back);

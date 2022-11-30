@@ -32,7 +32,6 @@
 
 */
 
-// TODO split the object into user_sandbox_base, user_sandbox_named and user_sandbox_link to reduce the object size to to minimum
 // TODO align the function return types with the source (ref) object
 // TODO use the user sandbox also for the word object
 // TODO check if handling of negative ids is correct
@@ -112,11 +111,6 @@ class user_sandbox extends db_object
     // but for calculation, use and display an excluded should not be used
     // when loading the word and saving the excluded field is handled as a normal user sandbox field,
     // but for calculation, use and display an excluded should not be used
-
-    // database fields only used for objects that link two objects
-    // TODO create a more specific object that covers all the objects that could be linked e.g. linkable_object
-    public ?string $from_name = null;  // the name of the from object type e.g. view for view_component_links
-    public ?string $to_name = '';      // the name of the  to  object type e.g. view for view_component_links
 
 
     /*
@@ -272,9 +266,10 @@ class user_sandbox extends db_object
      * map the standard user sandbox database fields to this user specific object
      *
      * @param array $db_row with the data loaded from the database
+     * @param string $id_fld the name of the id field as set in the child class
      * @return void
      */
-    public function row_mapper_usr(array $db_row, $id_fld): void
+    public function row_mapper_usr(array $db_row, string $id_fld): void
     {
         $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
         $this->share_id = $db_row[self::FLD_SHARE];
@@ -405,13 +400,9 @@ class user_sandbox extends db_object
             } else {
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
                 $db_con->set_type($this->obj_name);
-                if ($this->usr == null) {
-                    log_err('Cannot set owner, because not user is set');
-                } else {
-                    $db_con->set_usr($this->user()->id);
-                    if ($db_con->update($this->id, self::FLD_USER, $this->user()->id)) {
-                        $result = true;
-                    }
+                $db_con->set_usr($this->user()->id);
+                if ($db_con->update($this->id, self::FLD_USER, $this->user()->id)) {
+                    $result = true;
                 }
             }
         }
@@ -635,7 +626,7 @@ class user_sandbox extends db_object
         $db_con->set_usr($this->user()->id);
         $qp = $this->changer_sql($db_con);
         $db_row = $db_con->get1($qp);
-        if ($db_row != false) {
+        if ($db_row) {
             $user_id = $db_row[self::FLD_USER];
         }
 
@@ -643,7 +634,9 @@ class user_sandbox extends db_object
         return $user_id;
     }
 
-    // a list of all user that have ever changed the object
+    /**
+     * a list of all user that have ever changed the object
+     */
     function usr_lst(): user_list
     {
         log_debug($this->obj_name . '->usr_lst ' . $this->dsp_id());
@@ -745,9 +738,11 @@ class user_sandbox extends db_object
         return $result;
     }
 
-    // remove all user setting that are not needed any more based on the new standard object
-    // TODO review
-    function usr_cfg_cleanup($std)
+    /**
+     * remove all user setting that are not needed any more based on the new standard object
+     * TODO review
+     */
+    function usr_cfg_cleanup(user_sandbox $std): string
     {
         $result = '';
         log_debug($this->obj_name . '->usr_cfg_cleanup ' . $this->dsp_id());
@@ -763,8 +758,10 @@ class user_sandbox extends db_object
         return $result;
     }
 
-    // if the user is an admin the user can force to be the owner of this object
-    // TODO review
+    /**
+     * if the user is an admin the user can force to be the owner of this object
+     * TODO review
+     */
     function take_ownership(): bool
     {
         $result = false;
@@ -780,11 +777,13 @@ class user_sandbox extends db_object
         return $result;
     }
 
-    // change the owner of the object
-    // any calling function should make sure that taking setting the owner is allowed
-    // and that all user values
-    // TODO review sql and object field compare of user and standard
-    function set_owner($new_owner_id): bool
+    /**
+     * change the owner of the object
+     * any calling function should make sure that taking setting the owner is allowed
+     * and that all user values
+     * TODO review sql and object field compare of user and standard
+     */
+    function set_owner(int $new_owner_id): bool
     {
         log_debug($this->obj_name . '->set_owner ' . $this->dsp_id() . ' to ' . $new_owner_id);
 
@@ -835,8 +834,10 @@ class user_sandbox extends db_object
         return $result;
     }
 
-    // true if no one has used the object
-    // TODO if this has been used for calculation, this is also used
+    /**
+     * true if no one has used the object
+     * TODO if this has been used for calculation, this is also used
+     */
     function not_used(): bool
     {
         $result = true;
@@ -851,8 +852,10 @@ class user_sandbox extends db_object
         return $result;
     }
 
-    // true if no else one has used the object
-    // TODO if this should be true if no one else has been used this object e.g. for calculation
+    /**
+     * true if no else one has used the object
+     * TODO if this should be true if no one else has been used this object e.g. for calculation
+     */
     function used_by_someone_else(): bool
     {
         $result = true;
@@ -872,8 +875,10 @@ class user_sandbox extends db_object
         return $result;
     }
 
-    // true if the user is the owner and no one else has changed the object
-    // because if another user has changed the object and the original value is changed, maybe the user object also needs to be updated
+    /**
+     * true if the user is the owner and no one else has changed the object
+     * because if another user has changed the object and the original value is changed, maybe the user object also needs to be updated
+     */
     function can_change(): bool
     {
         $result = false;
@@ -889,7 +894,9 @@ class user_sandbox extends db_object
         return $result;
     }
 
-    // true if a record for a user specific configuration already exists in the database
+    /**
+     * @return bool true if a record for a user specific configuration already exists in the database
+     */
     function has_usr_cfg(): bool
     {
         $result = false;
@@ -952,7 +959,9 @@ class user_sandbox extends db_object
         return $result;
     }
 
-    // remove user adjustment and log it (used by user.php to undo the user changes)
+    /**
+     * remove user adjustment and log it (used by user.php to undo the user changes)
+     */
     function del_usr_cfg(): bool
     {
         log_debug($this->obj_name . '->del_usr_cfg ' . $this->dsp_id());
@@ -974,8 +983,10 @@ class user_sandbox extends db_object
         return $result;
     }
 
-    // dummy function to create a database record to save user specific settings that is always overwritten by the child class
-    // returns false if the creation has failed and true if it was successful or not needed
+    /**
+     * dummy function to create a database record to save user specific settings that is always overwritten by the child class
+     * @return bool false if the creation has failed and true if it was successful or not needed
+     */
     function add_usr_cfg(): bool
     {
         global $db_con;
@@ -1015,16 +1026,16 @@ class user_sandbox extends db_object
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $this->obj_name . ' failed.');
                     $result = false;
-                } else {
-                    $result = true;
                 }
             }
         }
         return $result;
     }
 
-    // dummy function to check if the database record for the user specific settings can be removed that is always overwritten by the child class
-    // returns false if the deletion has failed and true if it was successful or not needed
+    /**
+     * dummy function to check if the database record for the user specific settings can be removed that is always overwritten by the child class
+     * @return bool false if the deletion has failed and true if it was successful or not needed
+     */
     function del_usr_cfg_if_not_needed(): bool
     {
         return true;
@@ -1144,29 +1155,6 @@ class user_sandbox extends db_object
         return '';
     }
 
-
-    /**
-     * set the update parameters for the word type
-     * TODO: log the ref
-     */
-    function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
-    {
-        $result = '';
-        if ($db_rec->type_id <> $this->type_id) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->type_name();
-            $log->old_id = $db_rec->type_id;
-            $log->new_value = $this->type_name();
-            $log->new_id = $this->type_id;
-            $log->std_value = $std_rec->type_name();
-            $log->std_id = $std_rec->type_id;
-            $log->row_id = $this->id;
-            $log->field = 'word_type_id';
-            $result .= $this->save_field_do($db_con, $log);
-            log_debug('word->save_field_type changed type to "' . $log->new_value . '" (' . $log->new_id . ')');
-        }
-        return $result;
-    }
 
     /**
      * dummy function to save all updated word fields, which is always overwritten by the child class
@@ -1457,7 +1445,7 @@ class user_sandbox extends db_object
                             log_debug($this->obj_name . '->save_id_if_updated found a ' . $this->obj_name . ' target ' . $db_chk->dsp_id() . ', so del ' . $db_rec->dsp_id() . ' and add ' . $this->dsp_id());
                         } else {
                             //$result = 'Failed to exclude the unused ' . $this->obj_name;
-                            $result .= 'A ' . $this->obj_name . ' with the name "' . $this->name . '" already exists. Please use another name or merge with this ' . $this->obj_name . '.';
+                            $result .= 'A ' . $this->obj_name . ' with the name "' . $this->name() . '" already exists. Please use another name or merge with this ' . $this->obj_name . '.';
                         }
                     }
                 } else {
