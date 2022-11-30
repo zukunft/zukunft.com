@@ -39,20 +39,36 @@ class expression_unit_tests
 
         global $usr;
 
+        // init
+        $t->name = 'expression->';
+
         $t->header('Unit tests of the formula expression class (src/main/php/model/formula/expression.php)');
 
-        $test_name = 'expression->source phrase list with id from the reference text';
+        // create expressions for testing
+        $exp = new expression($usr);
+        $exp->usr_text = formula::TF_INCREASE;
+        $exp->ref_text = $exp->get_ref_text();
+
+        /*
+        $test_name = 'getting phrases that should be added to the result of a formula for "' . $exp->dsp_id() . '"';
+        $phr_lst_fv = $exp->fv_phr_lst();
+        $result = $phr_lst_fv->dsp_name();
+        $target = '"' . word::TN_READ_PERCENT . '"';
+        $t->assert($test_name, $result, $target);
+        */
+
+        $test_name = 'source phrase list with id from the reference text';
         $exp_sector = new expression($usr);
-        $exp_sector->ref_text =  formula_api::TF_SECTOR_REF;
-        $phr_lst = $exp_sector->phr_id_lst($exp_sector->r_part());
+        $exp_sector->ref_text = formula_api::TF_SECTOR_REF;
+        $phr_lst = $exp_sector->phr_id_lst_as_phr_lst($exp_sector->r_part());
         $result = $phr_lst->dsp_id();
         $target = '"","","" (1,2,3)';
         $t->assert($test_name, $result, $target);
 
-        $test_name = 'expression->result phrase list with id from the reference text';
+        $test_name = 'result phrase list with id from the reference text';
         $exp_scale = new expression($usr);
-        $exp_scale->ref_text =  formula_api::TF_SCALE_MIO_REF;
-        $phr_lst = $exp_scale->phr_id_lst($exp_scale->fv_part());
+        $exp_scale->ref_text = formula_api::TF_SCALE_MIO_REF;
+        $phr_lst = $exp_scale->phr_id_lst_as_phr_lst($exp_scale->fv_part());
         $result = $phr_lst->dsp_id();
         $target = '1';
         $t->assert($test_name, $result, $target);

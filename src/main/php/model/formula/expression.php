@@ -110,7 +110,7 @@ class expression
 
     Parser
 
-    The persing is done in two steps:
+    The parsing is done in two steps:
 
     1. add default words and replace the words with value
     2. calc the result
@@ -169,10 +169,6 @@ class expression
     const FUNC_SUM = 'sum';    //
     const FUNC_ISNUM = 'is.numeric';    //
 
-    // text conversion const (used to convert word, formula or verbs text to a reference)
-    const CHAR_BRAKET_OPEN = '(';    //
-    const CHAR_BRAKET_CLOSE = ')';    //
-    const CHAR_TXT_FIELD = '"';    // don't look for math symbols in text that is a high quotes
 
     /*
      * object vars
@@ -199,8 +195,9 @@ class expression
      */
     function phr_lst(): phrase_list
     {
-        $phr_lst = $this->phr_id_lst($this->r_part());
-        $phr_lst->load_by_ids_already_set();
+        $phr_lst = new phrase_list($this->usr);
+        $phr_ids = $this->phr_id_lst($this->r_part());
+        $phr_lst->load_by_ids($phr_ids);
 
         return $phr_lst;
     }
@@ -211,8 +208,9 @@ class expression
      */
     function fv_phr_lst(): phrase_list
     {
-        $phr_lst = $this->phr_id_lst($this->fv_part());
-        $phr_lst->load_by_ids_already_set();
+        $phr_lst = new phrase_list($this->usr);
+        $phr_ids = $this->phr_id_lst($this->fv_part());
+        $phr_lst->load_by_ids($phr_ids);
 
         return $phr_lst;
     }
@@ -239,9 +237,29 @@ class expression
      */
 
     /**
+     * @returns phr_ids with the word and triple ids from a given formula text and without loading the objects from the database
+     */
+    function phr_id_lst(string $ref_text): phr_ids
+    {
+        $id_lst = [];
+
+        if ($ref_text <> "") {
+            // add phrase ids to selection
+            $new_phr_id = $this->get_phr_id($ref_text);
+            while ($new_phr_id != 0) {
+                $id_lst[] = $new_phr_id;
+                $ref_text = zu_str_right_of($ref_text, self::WORD_START . $new_phr_id . self::WORD_END);
+                $new_phr_id = $this->get_phr_id($ref_text);
+            }
+        }
+
+        return new phr_ids($id_lst);
+    }
+
+    /**
      * @returns phrase_list with the word and triple ids from a given formula text and without loading the objects from the database
      */
-    function phr_id_lst(string $ref_text): phrase_list
+    function phr_id_lst_as_phr_lst(string $ref_text): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
 
@@ -741,8 +759,13 @@ class expression
     /**
      * converts a formula from the user text format to the database reference format
      * e.g. converts "='Sales' 'differentiator'/'Total Sales'" to "={t6}{l12}/{f19}"
+     *
+     * TODO split into three steps
+     *      1. get the names from the text
+     *      2. load the terms by the names
+     *      3. replace the names with the term ids
      */
-    private function get_ref_part($formula)
+    private function get_ref_part(string $formula): string
     {
         log_debug('expression->get_ref_part "' . $formula . ',' . $this->usr->name . '"');
         $result = $formula;

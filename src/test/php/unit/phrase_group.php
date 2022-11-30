@@ -82,13 +82,13 @@ class phrase_group_unit_tests
         $wrd_lst = new word_list($usr);
         $wrd1 = new word($usr);
         $wrd1->set_id(1);
-        $wrd_lst->lst[] = $wrd1;
+        $wrd_lst->add($wrd1);
         $wrd2 = new word($usr);
         $wrd2->set_id(2);
-        $wrd_lst->lst[] = $wrd2;
+        $wrd_lst->add($wrd2);
         $wrd3 = new word($usr);
         $wrd3->set_id(3);
-        $wrd_lst->lst[] = $wrd3;
+        $wrd_lst->add($wrd3);
         $phr_grp = new phrase_group($usr);
         $phr_grp->set_id(null);
         $phr_grp->phr_lst = $wrd_lst->phrase_lst();

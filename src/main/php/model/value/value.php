@@ -927,11 +927,11 @@ class value extends user_sandbox_value
                 log_debug('value->scale value words have a scaling words');
                 // get any scaling words related to the value
                 $scale_wrd_lst = $this->wrd_lst->scaling_lst();
-                if (count($scale_wrd_lst->lst) > 1) {
+                if (count($scale_wrd_lst->lst()) > 1) {
                     log_warning('Only one scale word can be taken into account in the current version, but not a list like ' . $scale_wrd_lst->name() . '.', "value->scale");
                 } else {
-                    if (count($scale_wrd_lst->lst) == 1) {
-                        $scale_wrd = $scale_wrd_lst->lst[0];
+                    if (count($scale_wrd_lst->lst()) == 1) {
+                        $scale_wrd = $scale_wrd_lst->lst()[0];
                         log_debug('value->scale -> word (' . $scale_wrd->name() . ')');
                         if ($scale_wrd->id > 0) {
                             $frm = $scale_wrd->formula();
@@ -951,9 +951,9 @@ class value extends user_sandbox_value
                                     if (isset($fv_phr_lst)) {
                                         $fv_wrd_lst = $fv_phr_lst->wrd_lst_all();
                                         $wrd_lst = $phr_lst->wrd_lst_all();
-                                        if (count($fv_wrd_lst->lst) == 1 and count($wrd_lst->lst) == 1) {
-                                            $fv_wrd = $fv_wrd_lst->lst[0];
-                                            $r_wrd = $wrd_lst->lst[0];
+                                        if (count($fv_wrd_lst->lst()) == 1 and count($wrd_lst->lst()) == 1) {
+                                            $fv_wrd = $fv_wrd_lst->lst()[0];
+                                            $r_wrd = $wrd_lst->lst()[0];
 
                                             // test if it is a valid scale formula
                                             if ($fv_wrd->is_type(phrase_type::SCALING_HIDDEN)
@@ -1111,8 +1111,8 @@ class value extends user_sandbox_value
         $wrd_lst = array();
         // TODO use the triple export_obj function
         if ($this->wrd_lst != null) {
-            if (count($this->wrd_lst->lst) > 0) {
-                foreach ($this->wrd_lst->lst as $wrd) {
+            if (!$this->wrd_lst->is_empty()) {
+                foreach ($this->wrd_lst->lst() as $wrd) {
                     $wrd_lst[] = $wrd->name();
                 }
                 if (count($wrd_lst) > 0) {

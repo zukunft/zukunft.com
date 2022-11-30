@@ -175,13 +175,13 @@ class math
         $pos = -1;
 
         if ($pos < 0) {
-            $pos = $this->pos_separator($formula, ZUP_FUNC_IF, 0);
+            $pos = $this->pos_separator($formula, expression::FUNC_IF, 0);
         }
         if ($pos < 0) {
-            $pos = $this->pos_separator($formula, ZUP_FUNC_SUM, 0);
+            $pos = $this->pos_separator($formula, expression::FUNC_SUM, 0);
         }
         if ($pos < 0) {
-            $pos = $this->pos_separator($formula, ZUP_FUNC_ISNUM, 0);
+            $pos = $this->pos_separator($formula, expression::FUNC_ISNUM, 0);
         }
 
         log_debug("pos_function -> " . $pos);
@@ -214,14 +214,14 @@ class math
         // if not found return -1 because the separator can also be on position 0
         $result = '';
 
-        if (str_starts_with($formula, ZUP_FUNC_IF)) {
-            $result = ZUP_FUNC_IF;
+        if (str_starts_with($formula, expression::FUNC_IF)) {
+            $result = expression::FUNC_IF;
         }
-        if (str_starts_with($formula, ZUP_FUNC_SUM)) {
-            $result = ZUP_FUNC_SUM;
+        if (str_starts_with($formula, expression::FUNC_SUM)) {
+            $result = expression::FUNC_SUM;
         }
-        if (str_starts_with($formula, ZUP_FUNC_ISNUM)) {
-            $result = ZUP_FUNC_ISNUM;
+        if (str_starts_with($formula, expression::FUNC_ISNUM)) {
+            $result = expression::FUNC_ISNUM;
         }
 
         log_debug("get_function -> " . $result);
@@ -238,28 +238,28 @@ class math
         // if not found return -1 because the separator can also be on position 0
         $next_pos = -1;
 
-        $pos = $this->pos_separator($formula, ZUP_OPER_ADD, 0);
+        $pos = $this->pos_separator($formula, expression::OPER_ADD, 0);
         if ($pos >= 0 and ($pos < $next_pos or $next_pos < 0)) {
             $next_pos = $pos;
         }
-        $pos = $this->pos_separator($formula, ZUP_OPER_SUB, 0);
+        $pos = $this->pos_separator($formula, expression::OPER_SUB, 0);
         if ($pos >= 0 and ($pos < $next_pos or $next_pos < 0)) {
             $next_pos = $pos;
         }
-        $pos = $this->pos_separator($formula, ZUP_OPER_MUL, 0);
+        $pos = $this->pos_separator($formula, expression::OPER_MUL, 0);
         if ($pos >= 0 and ($pos < $next_pos or $next_pos < 0)) {
             $next_pos = $pos;
         }
-        $pos = $this->pos_separator($formula, ZUP_OPER_DIV, 0);
+        $pos = $this->pos_separator($formula, expression::OPER_DIV, 0);
         if ($pos >= 0 and ($pos < $next_pos or $next_pos < 0)) {
             $next_pos = $pos;
         }
 
-        $pos = $this->pos_separator($formula, ZUP_OPER_AND, 0);
+        $pos = $this->pos_separator($formula, expression::OPER_AND, 0);
         if ($pos >= 0 and ($pos < $next_pos or $next_pos < 0)) {
             $next_pos = $pos;
         }
-        $pos = $this->pos_separator($formula, ZUP_OPER_OR, 0);
+        $pos = $this->pos_separator($formula, expression::OPER_OR, 0);
         if ($pos >= 0 and ($pos < $next_pos or $next_pos < 0)) {
             $next_pos = $pos;
         }
@@ -292,23 +292,23 @@ class math
         log_debug("get_operator (" . $formula . ")");
 
         $result = '';
-        if ($formula[0] == ZUP_OPER_ADD) {
-            $result = ZUP_OPER_ADD;
+        if ($formula[0] == expression::OPER_ADD) {
+            $result = expression::OPER_ADD;
         } else {
-            if ($formula[0] == ZUP_OPER_SUB) {
-                $result = ZUP_OPER_SUB;
+            if ($formula[0] == expression::OPER_SUB) {
+                $result = expression::OPER_SUB;
             } else {
-                if ($formula[0] == ZUP_OPER_MUL) {
-                    $result = ZUP_OPER_MUL;
+                if ($formula[0] == expression::OPER_MUL) {
+                    $result = expression::OPER_MUL;
                 } else {
-                    if ($formula[0] == ZUP_OPER_DIV) {
-                        $result = ZUP_OPER_DIV;
+                    if ($formula[0] == expression::OPER_DIV) {
+                        $result = expression::OPER_DIV;
                     } else {
-                        if ($formula[0] == ZUP_OPER_AND) {
-                            $result = ZUP_OPER_AND;
+                        if ($formula[0] == expression::OPER_AND) {
+                            $result = expression::OPER_AND;
                         } else {
-                            if ($formula[0] == ZUP_OPER_OR) {
-                                $result = ZUP_OPER_OR;
+                            if ($formula[0] == expression::OPER_OR) {
+                                $result = expression::OPER_OR;
                             }
                         }
                     }
@@ -327,18 +327,18 @@ class math
 
         $result = '';
         $pos = $this->pos_operator($formula);
-        if ($formula[$pos] == ZUP_OPER_ADD) {
-            $result = ZUP_OPER_ADD;
-        } elseif ($formula[$pos] == ZUP_OPER_SUB) {
-            $result = ZUP_OPER_SUB;
-        } elseif ($formula[$pos] == ZUP_OPER_MUL) {
-            $result = ZUP_OPER_MUL;
-        } elseif ($formula[$pos] == ZUP_OPER_DIV) {
-            $result = ZUP_OPER_DIV;
-        } elseif ($formula[$pos] == ZUP_OPER_AND) {
-            $result = ZUP_OPER_AND;
-        } elseif ($formula[$pos] == ZUP_OPER_OR) {
-            $result = ZUP_OPER_OR;
+        if ($formula[$pos] == expression::OPER_ADD) {
+            $result = expression::OPER_ADD;
+        } elseif ($formula[$pos] == expression::OPER_SUB) {
+            $result = expression::OPER_SUB;
+        } elseif ($formula[$pos] == expression::OPER_MUL) {
+            $result = expression::OPER_MUL;
+        } elseif ($formula[$pos] == expression::OPER_DIV) {
+            $result = expression::OPER_DIV;
+        } elseif ($formula[$pos] == expression::OPER_AND) {
+            $result = expression::OPER_AND;
+        } elseif ($formula[$pos] == expression::OPER_OR) {
+            $result = expression::OPER_OR;
         }
         return $result;
     }
@@ -486,10 +486,10 @@ class math
 
                 //echo "calc op ".$operator."<br>";
                 switch ($operator) {
-                    case ZUP_OPER_MUL:
+                    case expression::OPER_MUL:
                         $result = $result_l * $result_r;
                         break;
-                    case ZUP_OPER_DIV:
+                    case expression::OPER_DIV:
                         if ($result_r <> 0) {
                             log_debug("math -> result " . $result_l . " / " . $result_r);
                             $result = $result_l / $result_r;
@@ -497,10 +497,10 @@ class math
                             $result = 0;
                         }
                         break;
-                    case ZUP_OPER_ADD:
+                    case expression::OPER_ADD:
                         $result = $result_l + $result_r;
                         break;
-                    case ZUP_OPER_SUB:
+                    case expression::OPER_SUB:
                         log_debug("math -> result " . $result_l . " / " . $result_r);
                         $result = $result_l - $result_r;
                         break;
@@ -522,7 +522,7 @@ class math
      */
     private function math_mul(string $formula): string
     {
-        return $this->calc($formula, ZUP_OPER_MUL);
+        return $this->calc($formula, expression::OPER_MUL);
     }
 
     /**
@@ -530,7 +530,7 @@ class math
      */
     private function math_div(string $formula): string
     {
-        return $this->calc($formula, ZUP_OPER_DIV);
+        return $this->calc($formula, expression::OPER_DIV);
     }
 
     /**
@@ -538,7 +538,7 @@ class math
      */
     private function math_add(string $formula): string
     {
-        return $this->calc($formula, ZUP_OPER_ADD);
+        return $this->calc($formula, expression::OPER_ADD);
     }
 
     /**
@@ -546,7 +546,7 @@ class math
      */
     private function math_sub(string $formula): string
     {
-        return $this->calc($formula, ZUP_OPER_SUB);
+        return $this->calc($formula, expression::OPER_SUB);
     }
 
     /**
@@ -602,7 +602,7 @@ class math
 
         // get the position of the next bracket
         log_debug("math_if -> separate ");
-        $if_start_pos = $this->pos_separator($result, ZUP_FUNC_IF, 0);
+        $if_start_pos = $this->pos_separator($result, expression::FUNC_IF, 0);
         $inner_start_pos = $this->pos_separator($result, expression::BRACKET_OPEN, 0);
         log_debug("math_if -> separate ");
         // if there is a bracket ...
@@ -629,19 +629,19 @@ class math
                 // depending on the operator split the inner part if needed
                 $operator = $this->get_operator_pos($inner_part);
                 log_debug('math_if -> operator "' . $operator . '" in "' . $inner_part . '"');
-                if ($operator == ZUP_OPER_AND or $operator == ZUP_OPER_OR) {
+                if ($operator == expression::OPER_AND or $operator == expression::OPER_OR) {
                     $result = null; // by default no result
                     $inner_left_part = zu_str_left_of($inner_part, $operator);
                     $inner_right_part = zu_str_right_of($inner_part, $operator);
                     $inner_left_part = $this->parse($inner_left_part);
                     $inner_right_part = $this->parse($inner_right_part);
-                    if ($operator == ZUP_OPER_AND) {
+                    if ($operator == expression::OPER_AND) {
                         if ($inner_left_part and $inner_right_part) {
                             log_debug('if: get logical result for "' . $inner_part . '" is "true"');
                             $result = $this->parse($right_part);
                         }
                     }
-                    if ($operator == ZUP_OPER_OR) {
+                    if ($operator == expression::OPER_OR) {
                         if ($inner_left_part or $inner_right_part) {
                             log_debug('if: get logical result for "' . $inner_part . '" is "true"');
                             $result = $this->parse($right_part);

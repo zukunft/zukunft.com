@@ -156,7 +156,7 @@ class phrase_group extends db_object
     {
         $api_obj = new phrase_group_api();
         $api_obj->reset_lst();
-        foreach ($this->phr_lst->lst as $phr) {
+        foreach ($this->phr_lst->lst() as $phr) {
             $api_obj->add($phr->api_obj());
         }
         $api_obj->set_id($this->id);
@@ -396,8 +396,8 @@ class phrase_group extends db_object
         $sql_name = 'phrase_group_by_';
         if ($this->id != 0) {
             $sql_name .= 'id';
-        } elseif (count($wrd_lst->lst) > 0) {
-            $sql_name .= count($wrd_lst->lst) . 'word_id';
+        } elseif (!$wrd_lst->is_empty()) {
+            $sql_name .= count($wrd_lst->lst()) . 'word_id';
         } else {
             log_err("Either the database ID (" . $this->id . ") or a word list and the user (" . $this->user()->id . ") must be set to load a phrase list.", "phrase_list->load");
         }
@@ -412,7 +412,7 @@ class phrase_group extends db_object
             $pos = 1;
             $prev_pos = 1;
             $sql_from_prefix = 'l1.';
-            foreach ($wrd_lst->lst as $wrd) {
+            foreach ($wrd_lst->lst() as $wrd) {
                 if ($wrd != null) {
                     if ($wrd->id() <> 0) {
                         if ($sql_from == '') {
@@ -616,7 +616,7 @@ class phrase_group extends db_object
         $val->grp = $this;
         $val->load_obj_vars();
 
-        log_debug('phrase_group->value ' . $val->wrd_lst->name() . ' for "' . $this->user()->name . '" is ' . $val->number);
+        log_debug('phrase_group->value ' . $val->wrd_lst->name() . ' for "' . $this->user()->name . '" is ' . $val->number());
         return $val;
     }
 

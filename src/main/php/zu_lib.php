@@ -12,6 +12,7 @@
     4. commit
 
     but first this needs to be fixed:
+    TODO create a unit test for all possible class functions next to review: formula expression
     TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample
     TODO fix error in upgrade process for MySQL
     TODO fix syntax suggestions in existing code
@@ -19,6 +20,7 @@
 
     after that this should be done while keeping step 1. to 4. for each commit:
     TODO use the sandbox list for all user lists
+    TODO replace the load_by_vars with more specific load_by_ functions
     TODO use in the frontend only the code id of types
     TODO use in the backend always the type object instead of the db type id
     TODO always use the frontend path CONST instead of 'http'
@@ -512,23 +514,6 @@ const DEFAULT_THOUSAND_SEP = "'";
 const DEFAULT_PERCENT_DECIMALS = 2;
 
 const ZUC_MAX_CALC_LAYERS = '10000';    // max number of calculation layers
-
-// math calc (probably not needed any more if r-project.org is used)
-const ZUP_OPER_ADD = '+';    //
-const ZUP_OPER_SUB = '-';    //
-const ZUP_OPER_MUL = '*';    //
-const ZUP_OPER_DIV = '/';    //
-
-const ZUP_OPER_AND = '&';    //
-const ZUP_OPER_OR = '|';    //
-
-// fixed functions
-const ZUP_FUNC_IF = 'if';    //
-const ZUP_FUNC_SUM = 'sum';    //
-const ZUP_FUNC_ISNUM = 'is.numeric';    //
-
-// text conversion const (used to convert word, formula or verbs text to a reference)
-const ZUP_CHAR_TXT_FIELD = '"';    // don't look for math symbols in text that is a high quotes
 
 
 // file links used

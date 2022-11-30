@@ -238,6 +238,7 @@ class phrase_list extends sandbox_list
             }
         }
 
+        // load the words
         if (count($wrd_ids) > 0) {
             if (!$db_con->connected()) {
                 // add the words just with the id for unit testing
@@ -262,6 +263,7 @@ class phrase_list extends sandbox_list
             }
         }
 
+        // load the triples
         if (count($lnk_ids) > 0) {
             if (!$db_con->connected()) {
                 // add the triple just with the id for unit testing

@@ -54,14 +54,13 @@ class formula_value_unit_tests
 
         // check the sql to load a formula value by the id
         $fv = new formula_value($usr);
-        $fv->set_id(1);
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $fv->load_by_id_sql($db_con);
+        $qp = $fv->load_sql_by_id($db_con, 1);
         $t->assert_qp($qp, sql_db::POSTGRES);
 
         // ... and the same for MySQL databases instead of PostgreSQL
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $fv->load_by_id_sql($db_con);
+        $qp = $fv->load_sql_by_id($db_con, 1);
         $t->assert_qp($qp, sql_db::MYSQL);
 
         // check the sql to load a formula value by the phrase group

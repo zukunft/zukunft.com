@@ -68,12 +68,12 @@ class formula_dsp_old extends formula
      * display the most interesting formula result for one word
      * TODO define the criteria and review the formula value loading
      */
-    function dsp_result($wrd, $back): string
+    function dsp_result(phrase $phr, $back): string
     {
-        log_debug('for "' . $wrd->name() . '" and formula ' . $this->dsp_id());
+        log_debug('for "' . $phr->name() . '" and formula ' . $this->dsp_id());
         $fv = new formula_value($this->user());
         $fv->frm = $this;
-        $fv->wrd = $wrd;
+        $fv->phr = $phr;
         log_debug('load fv');
         $fv->load_by_vars();
         log_debug('display');

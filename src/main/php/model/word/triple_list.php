@@ -824,7 +824,7 @@ class triple_list
     {
         $phr_lst = new phrase_list($this->user());
         foreach ($this->lst as $lnk) {
-            $phr_lst->lst[] = $lnk->phrase();
+            $phr_lst->add($lnk->phrase());
         }
         return $phr_lst;
     }

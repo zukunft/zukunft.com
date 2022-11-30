@@ -39,7 +39,7 @@ function create_test_sources(testing $t)
 
 }
 
-function run_source_test(testing $t)
+function run_source_test(testing $t): void
 {
    $t->header('Test the source class (src/main/php/model/ref/source.php)');
 

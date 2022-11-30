@@ -43,50 +43,12 @@ use api\word_list_api;
 use html\word_dsp;
 use html\word_list_dsp;
 
-class word_list
+class word_list extends sandbox_list
 {
-    // array of the loaded word objects
+    // $lst of base_list is the array of the loaded word objects
     // (key is at the moment the database id, but it looks like this has no advantages,
     // so a normal 0 to n order could have more advantages)
-    public array $lst;
-    private user $usr;    // the user object of the person for whom the word list is loaded, so to say the viewer
-
-    /*
-     * construct and map
-     */
-
-    /**
-     * always set the user because a word list is always user specific
-     * @param user $usr the user who requested to see this word list
-     */
-    function __construct(user $usr)
-    {
-        $this->lst = array();
-        $this->set_user($usr);
-    }
-
-    /*
-     * get and set
-     */
-
-    /**
-     * set the user of the word list
-     *
-     * @param user $usr the person who wants to access the words
-     * @return void
-     */
-    function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    /**
-     * @return user the person who wants to see the words
-     */
-    function user(): user
-    {
-        return $this->usr;
-    }
+    // $usr of sandbox list is the user object of the person for whom the word list is loaded, so to say the viewer
 
     /*
      * casting objects
@@ -803,7 +765,7 @@ class word_list
     /**
      * merge as a function, because the array_merge does not create an object
      * @param word_list $new_wrd_lst with the words that should be added
-     * @return bool true if a least one word has been added that has not yet been in the list
+     * @return bool true if at least one word has been added that has not yet been in the list
      */
     function merge(word_list $new_wrd_lst): bool
     {
@@ -1355,7 +1317,7 @@ class word_list
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
             log_debug(self::class . '->has_time -> check (' . $wrd->name() . ')');
-            if ($result == false) {
+            if (!$result) {
                 if ($wrd->is_time()) {
                     $result = true;
                 }
@@ -1374,7 +1336,7 @@ class word_list
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
             log_debug(self::class . '->has_measure -> check (' . $wrd->name() . ')');
-            if ($result == false) {
+            if (!$result) {
                 if ($wrd->is_measure()) {
                     $result = true;
                 }
@@ -1393,7 +1355,7 @@ class word_list
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
             log_debug(self::class . '->has_scaling -> check (' . $wrd->name() . ')');
-            if ($result == false) {
+            if (!$result) {
                 if ($wrd->is_scaling()) {
                     $result = true;
                 }
@@ -1413,7 +1375,7 @@ class word_list
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
             log_debug(self::class . '->has_percent -> check (' . $wrd->name() . ')');
-            if ($result == false) {
+            if (!$result) {
                 if ($wrd->is_percent()) {
                     $result = true;
                 }

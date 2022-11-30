@@ -74,6 +74,7 @@ class formula_value extends db_object
         self::FLD_DIRTY
     );
 
+
     /*
      * object vars
      */
@@ -107,7 +108,8 @@ class formula_value extends db_object
     //                                            if this is later than the last update the result needs to be updated
 
     // to be dismissed
-    public ?word $wrd = null;  // to get the most interesting result for this word
+    public ?phrase $phr = null;  // to get the most interesting result for this word
+
 
     /*
      * construct and map
@@ -157,6 +159,7 @@ class formula_value extends db_object
         return $result;
     }
 
+
     /*
      * get and set
      */
@@ -180,6 +183,7 @@ class formula_value extends db_object
         return $this->usr;
     }
 
+
     /*
      * casting objects
      */
@@ -194,6 +198,7 @@ class formula_value extends db_object
         return $api_obj;
     }
 
+
     /*
      * loading
      */
@@ -202,12 +207,16 @@ class formula_value extends db_object
      * create the SQL to load a formula values
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $query_name the unique name of the query e.g. id or name
+     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con): sql_par
+    function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
     {
+        $qp = new sql_par($class);
+        $qp->name .= $query_name;
+
         $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
-        $qp = new sql_par(self::class);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
         $db_con->set_fields(self::FLD_NAMES);
@@ -219,15 +228,15 @@ class formula_value extends db_object
      * create the SQL to load a formula values by the id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $id the id of the formula value
+     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_id_sql(sql_db $db_con): sql_par
+    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con);
-        $qp->name .= 'id';
-        $db_con->set_name($qp->name);
-        $db_con->add_par(sql_db::PAR_INT, $this->id);
-        $qp->sql = $db_con->select_by_set_id();
+        $qp = $this->load_sql($db_con, 'id', $class);
+        $db_con->add_par_int($id);
+        $qp->sql = $db_con->select_by_field($this->id_field());
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -241,8 +250,7 @@ class formula_value extends db_object
      */
     private function load_by_grp_sql_prepare(sql_db $db_con): sql_par
     {
-        $qp = $this->load_sql($db_con);
-        $qp->name .= 'grp';
+        $qp = $this->load_sql($db_con, 'grp');
         $db_con->set_name($qp->name);
         // select the result based on the phrase group e.g. a more complex word list
         $db_con->add_par(sql_db::PAR_INT, $this->phr_grp_id);
@@ -327,7 +335,7 @@ class formula_value extends db_object
                     'to load a ' . self::class, self::class . '->load_by_id');
             }
         }
-        $qp = $this->load_by_id_sql($db_con);
+        $qp = $this->load_sql_by_id($db_con, $id);
         if ($qp->name != '') {
             $db_row = $db_con->get1($qp);
             $this->row_mapper($db_row);
@@ -439,7 +447,7 @@ class formula_value extends db_object
     {
         $sql_where = "";
         if ($this->id > 0) {
-            $qp = $this->load_by_id_sql($db_con);
+            $qp = $this->load_sql_by_id($db_con, $this->id);
         } else {
             // prepare the search by getting the word group based on the word list
             log_debug('not by id');
@@ -459,11 +467,11 @@ class formula_value extends db_object
                     $phr_lst = new phrase_list($this->user());
                     $phr_lst->load_by_ids(new phr_ids($this->phr_ids()));
                     // ... or to get the most interesting result for this word
-                } elseif ($this->wrd != null and isset($this->frm)) {
-                    if ($this->wrd->id() > 0 and $this->frm->id() > 0 and isset($this->frm->name_wrd)) {
+                } elseif ($this->phr != null and isset($this->frm)) {
+                    if ($this->phr->id() > 0 and $this->frm->id() > 0 and isset($this->frm->name_wrd)) {
                         // get the best matching word group
                         $phr_lst = new phrase_list($this->user());
-                        $phr_lst->add($this->wrd->phrase());
+                        $phr_lst->add($this->phr);
                         $phr_lst->add($this->frm->name_wrd->phrase());
                         log_debug('get group by words ' . $phr_lst->dsp_name());
                     }
@@ -491,8 +499,8 @@ class formula_value extends db_object
             if ($this->src_time_id <= 0 and is_null($this->src_time_phr) and !empty($this->src_phr_lst)) {
                 $work_phr_lst = clone $this->src_phr_lst;
                 $src_time_phr_lst = $work_phr_lst->time_lst();
-                if (count($src_time_phr_lst->lst) > 0) {
-                    $src_time_phr = $src_time_phr_lst->lst[0];
+                if (!$src_time_phr_lst->is_empty()) {
+                    $src_time_phr = $src_time_phr_lst->lst()[0];
                     $this->src_time_id = $src_time_phr->id();
                     log_debug('source time ' . $this->src_time_id . ' found for ' . $src_time_phr_lst->name());
                 }
@@ -501,10 +509,10 @@ class formula_value extends db_object
             }
 
             // create the source phrase list if just the word is given
-            if ($this->phr_lst == null and $this->wrd != null) {
-                if ($this->wrd->id() > 0 or $this->wrd->name() != '') {
+            if ($this->phr_lst == null and $this->phr != null) {
+                if ($this->phr->id() > 0 or $this->phr->name() != '') {
                     $new_phr_lst = new phrase_list($this->user());
-                    $new_phr_lst->add($this->wrd->phrase());
+                    $new_phr_lst->add($this->phr->phrase());
                     $this->phr_lst = $new_phr_lst;
                 }
             }
@@ -530,8 +538,8 @@ class formula_value extends db_object
             if ($this->time_id <= 0 and is_null($this->time_phr) and !empty($this->phr_lst)) {
                 $work_phr_lst = clone $this->phr_lst;
                 $time_phr_lst = $work_phr_lst->time_lst();
-                if (count($time_phr_lst->lst) > 0) {
-                    $time_wrd = $time_phr_lst->lst[0];
+                if (!$time_phr_lst->is_empty()) {
+                    $time_wrd = $time_phr_lst->lst()[0];
                     $this->time_id = $time_wrd->id();
                     log_debug('time ' . $this->time_id . ' found for ' . $time_phr_lst->name());
                 }
@@ -719,6 +727,11 @@ class formula_value extends db_object
             log_debug('got id ' . $this->id() . ': ' . $this->value);
         }
         return $result;
+    }
+
+    function id_field(): string
+    {
+        return self::FLD_ID;
     }
 
     /*
@@ -967,11 +980,11 @@ class formula_value extends db_object
             // remember the time if needed (but don't assume the time, because a value can be saved without timestamp)
             // separate the time word if not done already to reduce the number of word groups created and increase the request speed
             $time_phr_lst = $this->src_phr_lst->time_lst();
-            if (count($time_phr_lst->lst) > 1) {
+            if (count($time_phr_lst->lst()) > 1) {
                 log_warning('More than one time word is not yet supported ' . $time_phr_lst->name() . ' (' . $this->id() . ') is empty.', 'formula_value->save_prepare_phr_lst_src');
             }
-            if (count($time_phr_lst->lst) == 1) {
-                $time_wrd = $time_phr_lst->lst[0];
+            if (count($time_phr_lst->lst()) == 1) {
+                $time_wrd = $time_phr_lst->lst()[0];
                 if (isset($this->src_time_phr)) {
                     if ($this->src_time_phr->id() <> $time_wrd->id()) {
                         log_warning('The word list suggested "' . $time_wrd->name . '", but the time is already set to  "' . $this->src_time_phr->name() . '" (' . $this->id() . ').', 'formula_value->save_prepare_phr_lst_src');
@@ -1001,11 +1014,11 @@ class formula_value extends db_object
             // remember the time if needed (but don't assume the time, because a value can be saved without timestamp)
             // separate the time word if not done already to reduce the number of word groups created and increase the request speed
             $time_phr_lst = $this->phr_lst->time_lst();
-            if (count($time_phr_lst->lst) > 1) {
+            if (count($time_phr_lst->lst()) > 1) {
                 log_warning('More than one time word is not yet supported ' . $time_phr_lst->name() . ' (' . $this->id() . ') is empty.', 'formula_value->save_prepare_phr_lst');
             }
-            if (count($time_phr_lst->lst) == 1) {
-                $time_wrd = $time_phr_lst->lst[0];
+            if (count($time_phr_lst->lst()) == 1) {
+                $time_wrd = $time_phr_lst->lst()[0];
                 if (isset($this->time_phr)) {
                     if ($this->time_phr->id() <> $time_wrd->id()) {
                         log_warning('The word list suggested "' . $time_wrd->name . '", but the time is already set to  "' . $this->time_phr->name() . '" (' . $this->id() . ').', 'formula_value->save_prepare_phr_lst');
@@ -1477,7 +1490,7 @@ class formula_value extends db_object
 
                 // e.g. if the formula is a division and the values used have a measure word like meter or CHF, the result is only in percent, but not in meter or CHF
                 // simplified version, that needs to be review to handle more complex formulas
-                if (strpos($this->frm->ref_text_r, ZUP_OPER_DIV) !== false) {
+                if (strpos($this->frm->ref_text_r, expression::OPER_DIV) !== false) {
                     log_debug('formula_value->save_if_updated -> check measure ' . $this->phr_lst->dsp_id());
                     if ($this->phr_lst->has_measure()) {
                         $this->phr_lst->ex_measure();
@@ -1506,7 +1519,7 @@ class formula_value extends db_object
                     // save the default value if the result time is the "newest"
                     if (isset($fv_default_time)) {
                         log_debug('check if result time ' . $this->time_phr->dsp_id() . ' is the default time ' . $fv_default_time->dsp_id());
-                        if ($this->time_phr->id == $fv_default_time->id) {
+                        if ($this->time_phr->id() == $fv_default_time->id()) {
                             // if there is not yet a general value for all user, save it now
                             $result .= $this->save_without_time();
                         }
