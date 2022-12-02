@@ -325,7 +325,7 @@ class formula_element_group
                 // save the value to the result
                 $fig = $wrd_val->figure();
                 $fig->symbol = $frm_elm->symbol;
-                $fig_lst->lst[] = $fig;
+                $fig_lst->add($fig);
                 log_debug('formula_element_group->figures -> value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->symbol . ')');
             } else {
                 // if there is no number that the user has entered for the word list, try to get the most useful formula result
@@ -357,7 +357,7 @@ class formula_element_group
                 if ($grp_fv->id() > 0) {
                     $fig = $grp_fv->figure();
                     $fig->symbol = $this->symbol;
-                    $fig_lst->lst[] = $fig;
+                    $fig_lst->add($fig);
 
                     log_debug('formula_element_group->figures -> formula value for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name() . '" (word group ' . $val_phr_grp->id() . ', user ' . $this->usr->id . ') = ' . $grp_fv->value);
                 } else {
@@ -368,7 +368,7 @@ class formula_element_group
             }
         }
 
-        log_debug('formula_element_group->figures -> ' . dsp_count($fig_lst->lst) . ' found');
+        log_debug('formula_element_group->figures -> ' . dsp_count($fig_lst->lst()) . ' found');
         return $fig_lst;
     }
 
@@ -386,7 +386,7 @@ class formula_element_group
 
         // show the time if adjusted by a special formula element
         // build the html code to display the value with the link
-        foreach ($fig_lst->lst as $fig) {
+        foreach ($fig_lst->lst() as $fig) {
             log_debug('formula_element_group->dsp_values -> display figure');
             $result .= $fig->display_linked($back);
         }

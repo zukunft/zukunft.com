@@ -29,7 +29,7 @@
 
 */
 
-class figure
+class figure extends db_object
 {
     /*
      * types
@@ -43,7 +43,6 @@ class figure
      * object vars
      */
 
-    public ?int $id = null;               // the database id of the value or formula result
     public user $usr;                     // the person who wants to see the figure (value or formula result)
     public string $type;                  // either "value" or "result"
     public ?float $number = null;         // the numeric value
@@ -62,6 +61,7 @@ class figure
      */
     function __construct(user $usr)
     {
+        parent::__construct();
         $this->usr = $usr;
         $this->type = self::TYPE_RESULT;
         $this->last_update = new DateTime();

@@ -29,7 +29,7 @@
   
 */
 
-class formula_link_list extends link_list
+class formula_link_list extends sandbox_list
 {
 
     public array $lst; // the list of formula word link objects

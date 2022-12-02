@@ -29,23 +29,12 @@
   
 */
 
-class figure_list
+class figure_list extends sandbox_list
 {
 
-    public array $lst;  // the list of figures
-    public user $usr;   // the user for whom the list has been created
+    // array $lst is the list of figures
     public ?phrase $time_phr = null;     // the time word object, if the figure value time is adjusted by a special formula
     public ?bool $fig_missing = false; // true if at least one of the formula values is not set which means is NULL (but zero is a value)
-
-    /**
-     * always set the user because a formula element list is always user specific
-     * @param user $usr the user who requested to see the formula with the formula elements
-     */
-    function __construct(user $usr)
-    {
-        $this->lst = array();
-        $this->usr = $usr;
-    }
 
     function get_first_id(): int
     {
@@ -54,7 +43,7 @@ class figure_list
             if (count($this->lst) > 0) {
                 $fig = $this->lst[0];
                 if ($fig != null) {
-                    $result = $fig->id;
+                    $result = $fig->id();
                 }
             }
         }
@@ -63,8 +52,29 @@ class figure_list
 
 
     /*
-    display functions
-    */
+     * modification function
+     */
+
+    /**
+     * add one figure to the figure list, but only if it is not yet part of the figure list
+     * @returns bool true the term has been added
+     */
+    function add(?figure $fig_to_add): bool
+    {
+        $result = false;
+        // check parameters
+        if ($fig_to_add != null) {
+            log_debug($fig_to_add->dsp_id());
+            if ($fig_to_add->id() <> 0 or $fig_to_add->name() != '') {
+                $result = parent::add_obj($fig_to_add);
+            }
+        }
+        return $result;
+    }
+
+    /*
+     * display functions
+     */
 
     /**
      * display the unique id fields
@@ -114,8 +124,8 @@ class figure_list
         $result = array();
         foreach ($this->lst as $fig) {
             // use only valid ids
-            if ($fig->id <> 0) {
-                $result[] = $fig->id;
+            if ($fig->id() <> 0) {
+                $result[] = $fig->id();
             }
         }
         return $result;

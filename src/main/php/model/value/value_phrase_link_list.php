@@ -32,7 +32,7 @@
   
 */
 
-class value_phrase_link_list extends link_list
+class value_phrase_link_list extends sandbox_list
 {
 
     /**

@@ -1776,8 +1776,8 @@ class test_base
                 } else {
                     $diff = str_diff($result, $target);
                     if ($diff == '') {
-                        $target = $result;
                         log_err('Unexpected diff ' . $diff);
+                        $target = $result;
                     }
                 }
             }

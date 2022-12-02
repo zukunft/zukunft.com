@@ -203,8 +203,8 @@ function run_value_test(testing $t)
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1" title="1.55">1.55</a>';
     $diff = str_diff($result, $target);
     if ($diff != '') {
-        $target = $result;
         log_err('Unexpected diff ' . $diff);
+        $target = $result;
     }
     $t->dsp(', value->figure->display_linked for word list ' . $phr_lst->dsp_id() . '', $target, $result);
 

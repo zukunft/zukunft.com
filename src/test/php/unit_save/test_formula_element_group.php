@@ -105,12 +105,12 @@ function run_formula_element_group_test(testing $t)
         // get the figures (a value added by a user or a calculated formula result) for this element group and a context defined by a phrase list
         $fig_count = 0;
         if (isset($fig_lst)) {
-            if (isset($fig_lst->lst)) {
-                $fig_count = count($fig_lst->lst);
+            if (!$fig_lst->is_empty()) {
+                $fig_count = count($fig_lst->lst());
             }
         }
         if ($fig_count > 0) {
-            $fig = $fig_lst->lst[0];
+            $fig = $fig_lst->lst()[0];
 
             if (isset($fig)) {
                 $result = $fig->display();
@@ -119,7 +119,7 @@ function run_formula_element_group_test(testing $t)
 
                 $result = $fig->display_linked();
                 //$target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
-                $target = '<a href="/http/value_edit.php?id='.$fig->id.'" title="8.51">8.51</a>';
+                $target = '<a href="/http/value_edit.php?id='.$fig->id().'" title="8.51">8.51</a>';
                 $t->dsp('figure->display_linked', $target, $result);
             }
         } else {
@@ -140,8 +140,8 @@ function run_formula_element_group_test(testing $t)
         // to overwrite any special char
         $diff = str_diff($result, $target);
         if ($diff != '') {
-            $target = $result;
             log_err('Unexpected diff ' . $diff);
+            $target = $result;
         }
         /*
         echo "*".implode("*",$diff['values'])."*";

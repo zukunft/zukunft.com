@@ -242,7 +242,6 @@ include_once $path_php . 'model/system/ip_range.php';
 include_once $path_php . 'model/system/ip_range_list.php';
 include_once $path_php . 'model/log/log_table.php';
 include_once $path_php . 'model/log/error_log.php';
-include_once $path_php . 'model/helper/link_list.php';
 // service
 include_once $path_php . 'service/import/import_file.php';
 include_once $path_php . 'service/import/import.php';

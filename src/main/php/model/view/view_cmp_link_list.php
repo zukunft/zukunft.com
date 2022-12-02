@@ -31,7 +31,7 @@
   
 */
 
-class view_cmp_link_list extends link_list
+class view_cmp_link_list extends sandbox_list
 {
 
     /**

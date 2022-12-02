@@ -922,11 +922,11 @@ class formula extends user_sandbox_named_with_type
             $elm_grp->build_symbol();
             $fig_lst = $elm_grp->figures();
             log_debug(self::class . '->to_num -> figures ');
-            log_debug(self::class . '->to_num -> figures ' . $fig_lst->dsp_id() . ' (' . dsp_count($fig_lst->lst) . ') for ' . $elm_grp->dsp_id());
+            log_debug(self::class . '->to_num -> figures ' . $fig_lst->dsp_id() . ' (' . dsp_count($fig_lst->lst()) . ') for ' . $elm_grp->dsp_id());
 
             // fill the figure into the formula text and create as much formula values / results as needed
-            if ($fig_lst->lst != null) {
-                if (count($fig_lst->lst) == 1) {
+            if ($fig_lst->lst() != null) {
+                if (count($fig_lst->lst()) == 1) {
                     // if no figure is found use the master result as placeholder
                     if ($fv_lst->lst != null) {
                         if (count($fv_lst->lst) == 0) {
@@ -943,7 +943,7 @@ class formula extends user_sandbox_named_with_type
                                 log_debug(self::class . '->to_num -> figure missing');
                                 $fv->val_missing = True;
                             } else {
-                                $fig = $fig_lst->lst[0];
+                                $fig = $fig_lst->lst()[0];
                                 $fv->num_text = str_replace($fig->symbol, $fig->number, $fv->num_text);
                                 if ($fv->last_val_update < $fig->last_update) {
                                     $fv->last_val_update = $fig->last_update;
@@ -952,7 +952,7 @@ class formula extends user_sandbox_named_with_type
                             }
                         }
                     }
-                } elseif (count($fig_lst->lst) > 1) {
+                } elseif (count($fig_lst->lst()) > 1) {
                     // create the formula result object only if at least one figure if found
                     if (count($fv_lst->lst) == 0) {
                         $fv_lst->lst[] = $fv_init;
@@ -961,7 +961,7 @@ class formula extends user_sandbox_named_with_type
                     foreach ($fv_lst->lst as $fv) {
                         $fv_master = clone $fv;
                         $fig_nbr = 1;
-                        foreach ($fig_lst->lst as $fig) {
+                        foreach ($fig_lst->lst() as $fig) {
                             if ($fv->val_missing == False) {
                                 if ($fig_lst->fig_missing and $this->need_all_val) {
                                     log_debug(self::class . '->to_num -> figure missing');
