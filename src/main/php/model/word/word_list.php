@@ -872,6 +872,7 @@ class word_list extends sandbox_list
 
     /**
      * sort a word list by name
+     * TODO use the user:sandbox_list_named function
      */
     function wlsort(): array
     {

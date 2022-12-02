@@ -147,9 +147,9 @@ class expression
 
     // text conversion syntax elements
     // used to convert word, triple, verb or formula name to a database reference
-    const WORD_DELIMITER = '"';    // or a zukunft verb or a zukunft formula
-    const WORD_LIST_START = '[';    //
-    const WORD_LIST_END = ']';    //
+    const TERM_DELIMITER = '"';    // or a zukunft verb or a zukunft formula
+    const TERM_LIST_START = '[';    //
+    const TERM_LIST_END = ']';    //
     const SEPARATOR = ',';    //
     const RANGE = ':';    //
     const CONCAT = '&';    //
@@ -216,7 +216,8 @@ class expression
     }
 
     /**
-     * get a list of all formula elements (don't use for number retrieval, use element_grp_lst instead, because )
+     * @return formula_element_list a list of all formula elements
+     * (don't use for number retrieval, use element_grp_lst instead, because )
      */
     function element_lst(): formula_element_list|formula_element_group_list
     {
@@ -279,9 +280,10 @@ class expression
 
     /**
      * convert the user text to the database reference format
+     * @param term_list $trm_lst a list of preloaded terms that should be used for the transformation
      * @returns string the expression in the database reference format
      */
-    function get_ref_text(): string
+    function get_ref_text(term_list $trm_lst = null): string
     {
         $result = '';
 
@@ -290,13 +292,37 @@ class expression
         if ($pos >= 0) {
             $left_part = $this->fv_part_usr();
             $right_part = $this->r_part_usr();
-            $left_part = $this->get_ref_part($left_part);
-            $right_part = $this->get_ref_part($right_part);
+            $left_part = $this->get_ref_part($left_part, $trm_lst);
+            $right_part = $this->get_ref_part($right_part, $trm_lst);
             $result = $left_part . self::CHAR_CALC . $right_part;
         }
 
         // remove all spaces because they are not relevant for calculation and to avoid too much recalculation
         return str_replace(" ", "", $result);
+    }
+
+    /**
+     * @return string the formula expression converted to the user text from the database reference format
+     * e.g. converts "{t5}={t6}{l12}/{f19}" to "'percent' = 'Sales' 'differentiator'/'Total Sales'"
+     */
+    function get_usr_text(): string
+    {
+        log_debug('expression->get_usr_text >' . $this->ref_text . '< and user ' . $this->usr->name);
+        $result = '';
+
+        // check the formula indicator "=" and convert the left and right part separately
+        $pos = strpos($this->ref_text, self::CHAR_CALC);
+        if ($pos > 0) {
+            $left_part = $this->fv_part();
+            $right_part = $this->r_part();
+            log_debug('expression->get_usr_text -> (l:' . $left_part . ',r:' . $right_part . '"');
+            $left_part = $this->get_usr_part($left_part);
+            $right_part = $this->get_usr_part($right_part);
+            $result = $left_part . self::CHAR_CALC . $right_part;
+        }
+
+        log_debug('expression->get_usr_text ... done "' . $result . '"');
+        return $result;
     }
 
     /**
@@ -615,14 +641,14 @@ class expression
                 } else {
                     log_err('Word missing for formula element ' . $elm->dsp_id . '.', 'expression->phr_verb_lst');
                 }
-            } elseif ($elm->type == formula_element::TYPE_WORD)  {
+            } elseif ($elm->type == formula_element::TYPE_WORD) {
                 if (isset($elm->obj)) {
                     $phr = $elm->obj->phrase();
                     $phr_lst->add($phr);
                 } else {
                     log_err('Word missing for formula element ' . $elm->dsp_id . '.', 'expression->phr_verb_lst');
                 }
-            } elseif ($elm->type == formula_element::TYPE_VERB)  {
+            } elseif ($elm->type == formula_element::TYPE_VERB) {
                 log_err('Use Formula element ' . $elm->dsp_id . ' has an unexpected type.', 'expression->phr_verb_lst');
             } else {
                 log_err('Formula element ' . $elm->dsp_id . ' has an unexpected type.', 'expression->phr_verb_lst');
@@ -690,7 +716,7 @@ class expression
 
     /**
      * converts a formula from the database reference format to the human-readable format
-     * e.g. converts "={t6}{l12}/{f19}" to "='Sales' 'differentiator'/'Total Sales'"
+     * e.g. converts "{t6}{l12}/{f19}" to "'Sales' 'differentiator'/'Total Sales'"
      */
     private function get_usr_part($formula)
     {
@@ -703,7 +729,7 @@ class expression
             $db_sym = self::WORD_START . $id . self::WORD_END;
             $wrd = new word($this->usr);
             $wrd->load_by_id($id, word::class);
-            $result = str_replace($db_sym, self::WORD_DELIMITER . $wrd->name() . self::WORD_DELIMITER, $result);
+            $result = str_replace($db_sym, self::TERM_DELIMITER . $wrd->name() . self::TERM_DELIMITER, $result);
             $id = zu_str_between($result, self::WORD_START, self::WORD_END);
         }
 
@@ -713,7 +739,7 @@ class expression
             $db_sym = self::FORMULA_START . $id . self::FORMULA_END;
             $frm = new formula($this->usr);
             $frm->load_by_id($id, formula::class);
-            $result = str_replace($db_sym, self::WORD_DELIMITER . $frm->name() . self::WORD_DELIMITER, $result);
+            $result = str_replace($db_sym, self::TERM_DELIMITER . $frm->name() . self::TERM_DELIMITER, $result);
             $id = zu_str_between($result, self::FORMULA_START, self::FORMULA_END);
         }
 
@@ -725,7 +751,7 @@ class expression
             $vrb->id = $id;
             $vrb->set_user($this->usr);
             $vrb->load_by_vars();
-            $result = str_replace($db_sym, self::WORD_DELIMITER . $vrb->name . self::WORD_DELIMITER, $result);
+            $result = str_replace($db_sym, self::TERM_DELIMITER . $vrb->name . self::TERM_DELIMITER, $result);
             $id = zu_str_between($result, self::TRIPLE_START, self::TRIPLE_END);
         }
 
@@ -734,47 +760,28 @@ class expression
     }
 
     /**
-     * convert the database reference format to the user text
-     */
-    function get_usr_text(): string
-    {
-        log_debug('expression->get_usr_text >' . $this->ref_text . '< and user ' . $this->usr->name);
-        $result = '';
-
-        // check the formula indicator "=" and convert the left and right part separately
-        $pos = strpos($this->ref_text, self::CHAR_CALC);
-        if ($pos > 0) {
-            $left_part = $this->fv_part();
-            $right_part = $this->r_part();
-            log_debug('expression->get_usr_text -> (l:' . $left_part . ',r:' . $right_part . '"');
-            $left_part = $this->get_usr_part($left_part);
-            $right_part = $this->get_usr_part($right_part);
-            $result = $left_part . self::CHAR_CALC . $right_part;
-        }
-
-        log_debug('expression->get_usr_text ... done "' . $result . '"');
-        return $result;
-    }
-
-    /**
      * converts a formula from the user text format to the database reference format
      * e.g. converts "='Sales' 'differentiator'/'Total Sales'" to "={t6}{l12}/{f19}"
+     *
+     * @param string $frm_part_text the expression text in user format that should be converted
+     * @param term_list|null $trm_lst a list of preloaded terms that should be prevered used for the convesion
+     * @return string the expression text in the database ref format
      *
      * TODO split into three steps
      *      1. get the names from the text
      *      2. load the terms by the names
      *      3. replace the names with the term ids
      */
-    private function get_ref_part(string $formula): string
+    private function get_ref_part(string $frm_part_text, term_list $trm_lst = null): string
     {
-        log_debug('expression->get_ref_part "' . $formula . ',' . $this->usr->name . '"');
-        $result = $formula;
+        log_debug('expression->get_ref_part "' . $frm_part_text . ',' . $this->usr->name . '"');
+        $result = $frm_part_text;
 
-        if ($formula != '') {
+        if ($frm_part_text != '') {
             // find the first word
             $start = 0;
-            $pos = strpos($result, self::WORD_DELIMITER, $start);
-            $end = strpos($result, self::WORD_DELIMITER, $pos + 1);
+            $pos = strpos($result, self::TERM_DELIMITER, $start);
+            $end = strpos($result, self::TERM_DELIMITER, $pos + 1);
             while ($end !== False) {
                 // for 12'45'78: pos = 2, end = 5, name = 45, left = 12. right = 78
                 $name = substr($result, $pos + 1, $end - $pos - 1);
@@ -783,6 +790,17 @@ class expression
                 log_debug('expression->get_ref_part -> name "' . $name . '" (' . $end . ') left "' . $left . '" (' . $pos . ') right "' . $right . '"');
 
                 $db_sym = '';
+
+                // check if the preloaded terms can be used for the conversion
+                if ($trm_lst != null) {
+                    $trm = $trm_lst->get_by_name($name);
+                    if ($trm != null) {
+                        if ($trm->id() > 0) {
+                            $db_sym = self::FORMULA_START . $trm->id() . self::FORMULA_END;
+                        }
+                    }
+                }
+
 
                 // check for formulas first, because for every formula a word is also existing
                 // similar to a part in get_usr_part, maybe combine
@@ -828,15 +846,52 @@ class expression
                 $end = false;
                 if ($start < strlen($result)) {
                     log_debug('expression->get_ref_part -> start "' . $start . '"');
-                    $pos = strpos($result, self::WORD_DELIMITER, $start);
+                    $pos = strpos($result, self::TERM_DELIMITER, $start);
                     if ($pos !== false) {
                         log_debug('expression->get_ref_part -> pos "' . $pos . '"');
-                        $end = strpos($result, self::WORD_DELIMITER, $pos + 1);
+                        $end = strpos($result, self::TERM_DELIMITER, $pos + 1);
                     }
                 }
             }
 
             log_debug('expression->get_ref_part -> done "' . $result . '"');
+        }
+        return $result;
+    }
+
+    /**
+     * @return array of the term names used in the expression based on the user text
+     * e.g. converts "'Sales' 'differentiator' / 'Total Sales'" to "Sales, differentiator, Total Sales"
+     */
+    public function get_usr_names(): array
+    {
+        $result = [];
+        $remaining = $this->usr_text;
+
+        if ($remaining != '') {
+            // find the first word
+            $start = 0;
+            $pos = strpos($remaining, self::TERM_DELIMITER, $start);
+            $end = strpos($remaining, self::TERM_DELIMITER, $pos + 1);
+            while ($end !== False) {
+                // for 12'45'78: pos = 2, end = 5, name = 45, left = 12. right = 78
+                $name = substr($remaining, $pos + 1, $end - $pos - 1);
+                if (!in_array($name, $result)) {
+                    $result[] = $name;
+                }
+                $remaining = substr($remaining, $end + 1);
+
+                // find the next word
+                $end = false;
+                if ($start < strlen($remaining)) {
+                    log_debug('expression->get_ref_part -> start "' . $start . '"');
+                    $pos = strpos($remaining, self::TERM_DELIMITER, $start);
+                    if ($pos !== false) {
+                        log_debug('expression->get_ref_part -> pos "' . $pos . '"');
+                        $end = strpos($remaining, self::TERM_DELIMITER, $pos + 1);
+                    }
+                }
+            }
         }
         return $result;
     }

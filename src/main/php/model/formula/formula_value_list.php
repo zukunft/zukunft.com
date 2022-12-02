@@ -672,7 +672,7 @@ class formula_value_list
         // combine all used predefined phrases/formulas
         $phr_lst_preset = $phr_lst_preset_following;
         $frm_lst_preset = $frm_lst_preset_following;
-        if (!empty($phr_lst_preset->lst)) {
+        if (!empty($phr_lst_preset->lst())) {
             log_debug('predefined are ' . $phr_lst_preset->dsp_name());
         }
 

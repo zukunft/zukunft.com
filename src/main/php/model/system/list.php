@@ -91,12 +91,22 @@ class base_list
     }
 
     /**
-     * @returns true if the list has been replaced
+     * to be called after the lists have been updated
+     * but the index list have not yet been updated
+     * is overwritten by the child user_sandbox_list_named
      */
-    protected function set_lst_dirty(): bool
+    protected function set_lst_dirty(): void
     {
         $this->lst_dirty = true;
-        return true;
+    }
+
+    /**
+     * to be called after the index lists have been updated
+     * is overwritten by the child user_sandbox_list_named
+     */
+    protected function set_lst_clean(): void
+    {
+        $this->lst_dirty = false;
     }
 
     /*
@@ -104,7 +114,7 @@ class base_list
      */
 
     /**
-     * add a phrase or ... to the list
+     * add a object to the list
      * @returns bool true if the object has been added
      */
     protected function add_obj(object $obj): bool
@@ -112,7 +122,7 @@ class base_list
         $result = false;
         if (!in_array($obj->id(), $this->id_lst())) {
             $this->lst[] = $obj;
-            $this->lst_dirty = true;
+            $this->set_lst_dirty();
             $result = true;
         }
         return $result;
@@ -125,9 +135,9 @@ class base_list
     {
         $result = array();
         if ($this->lst_dirty) {
-            foreach ($this->lst as $val) {
-                if (!in_array($val->id(), $result)) {
-                    $result[] = $val->id();
+            foreach ($this->lst as $obj) {
+                if (!in_array($obj->id(), $result)) {
+                    $result[] = $obj->id();
                 }
             }
             $this->id_lst = $result;

@@ -401,6 +401,27 @@ class testing extends test_base
     }
 
     /**
+     * create a dummy term list based on the given names
+     * @param array $names the names that should be used to create the word list
+     * @return term_list
+     */
+    public function dummy_term_list(array $names): term_list
+    {
+        global $usr;
+
+        $trm_lst = new term_list($usr);
+        $pos = 1;
+        foreach ($names as $name) {
+            $trm = new term($usr);
+            $trm->set_id($pos);
+            $trm->set_name($name);
+            $trm_lst->add($trm);
+            $pos++;
+        }
+        return $trm_lst;
+    }
+
+    /**
      * to check if there are any system test rows still in the database (e.g. to missing foreign key cleanup)
      * @return bool true if no system test rows remain in the database
      */

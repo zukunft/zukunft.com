@@ -33,46 +33,12 @@
 use api\term_list_api;
 use html\term_list_dsp;
 
-class term_list
+class term_list extends user_sandbox_list_named
 {
 
-    // array of the loaded phrase objects
+    // array $lst is the array of the loaded term objects
     // (key is at the moment the database id, but it looks like this has no advantages,
     // so a normal 0 to n order could have more advantages)
-    public array $lst;
-    public user $usr;  // the user object of the person for whom the phrase list is loaded, so to say the viewer
-
-    /**
-     * always set the user because a phrase list is always user specific
-     * @param user $usr the user who requested to see this phrase list
-     */
-    function __construct(user $usr)
-    {
-        $this->lst = array();
-        $this->set_user($usr);
-    }
-
-    /*
-     * get, set and debug functions
-     */
-
-    /**
-     * set the user of the term list
-     * because of this object retrieval set and get of the user is needed for all linked objects
-     *
-     * @param user $usr the name of the term set in the related object
-     * @return void
-     */
-    public function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    public function user(): user
-    {
-        return $this->usr;
-    }
-
 
     /*
      * casting objects
@@ -173,7 +139,7 @@ class term_list
 
         $trm_lst = $db_con->get($qp);
         foreach ($trm_lst as $db_row) {
-            $trm = new term($this->usr);
+            $trm = new term($this->user());
             $trm->row_mapper($db_row);
             if ($trm->id() != 0) {
                 $this->add($trm);
@@ -228,15 +194,7 @@ class term_list
         if ($trm_to_add != null) {
             log_debug($trm_to_add->dsp_id());
             if ($trm_to_add->id() <> 0 or $trm_to_add->name() != '') {
-                if (count($this->id_lst()) > 0) {
-                    if (!in_array($trm_to_add->id(), $this->id_lst())) {
-                        $this->lst[] = $trm_to_add;
-                        $result = true;
-                    }
-                } else {
-                    $this->lst[] = $trm_to_add;
-                    $result = true;
-                }
+                $result = parent::add_obj($trm_to_add);
             }
         }
         return $result;

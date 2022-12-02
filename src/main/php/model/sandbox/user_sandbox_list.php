@@ -47,9 +47,9 @@ class sandbox_list extends base_list
      * always set the user because a link list is always user specific
      * @param user $usr the user who requested to see e.g. the formula links
      */
-    function __construct(user $usr)
+    function __construct(user $usr, array $lst = array())
     {
-        parent::__construct();
+        parent::__construct($lst);
         $this->set_user($usr);
     }
 
