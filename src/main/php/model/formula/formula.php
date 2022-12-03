@@ -1414,9 +1414,9 @@ class formula extends user_sandbox_named_with_type
     /**
      * @return int a positive word id if the formula string in the database format contains a word link
      */
-    function get_word($formula): int
+    function get_formula_word($formula): int
     {
-        log_debug("formula->get_word (" . $formula . ")");
+        log_debug($formula);
         $result = 0;
 
         $pos_start = strpos($formula, expression::WORD_START);
@@ -1427,11 +1427,11 @@ class formula extends user_sandbox_named_with_type
             $l_part = zu_str_left_of($r_part, expression::WORD_END);
             if (is_numeric($l_part)) {
                 $result = $l_part;
-                log_debug("formula->get_word -> " . $result);
+                log_debug($result);
             }
         }
 
-        log_debug("formula->get_word -> (" . $result . ")");
+        log_debug($result);
         return $result;
     }
 
@@ -1465,13 +1465,13 @@ class formula extends user_sandbox_named_with_type
         $result = array();
 
         // add words to selection
-        $new_wrd_id = $this->get_word($frm_text);
+        $new_wrd_id = $this->get_formula_word($frm_text);
         while ($new_wrd_id > 0) {
             if (!in_array($new_wrd_id, $result)) {
                 $result[] = $new_wrd_id;
             }
             $frm_text = zu_str_right_of($frm_text, expression::WORD_START . $new_wrd_id . expression::WORD_END);
-            $new_wrd_id = $this->get_word($frm_text);
+            $new_wrd_id = $this->get_formula_word($frm_text);
         }
 
         log_debug(self::class . '->wrd_ids -> (' . dsp_array($result) . ')');

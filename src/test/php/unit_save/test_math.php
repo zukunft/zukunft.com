@@ -92,7 +92,7 @@ function run_math_test(testing $t)
 
 
     // test zuc_pos_word
-    $formula_text = "{t6}";
+    $formula_text = "{w6}";
     $target = "0";
     $result = $calc->pos_word($formula_text);
     $t->dsp(", zuc_pos_word: the result for formula \"" . $formula_text . "\"", $target, $result);
@@ -175,7 +175,7 @@ function run_math_test(testing $t)
     echo "zuc_frm3:".$in_result[0];
       $in_result = zuc_frm(5, "", $wrd_ids, 0, 14, 8);
     echo "zuc_frm5:".$in_result[0];
-      $in_result = zuc_frm(52, "{t19}=({f3}-{f5})/{f5}", $wrd_ids, 0, 14, 8);
+      $in_result = zuc_frm(52, "{w19}=({f3}-{f5})/{f5}", $wrd_ids, 0, 14, 8);
     echo "zuc_frm:".$in_result[0];
     */
     /*

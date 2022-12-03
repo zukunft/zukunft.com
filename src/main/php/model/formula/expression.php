@@ -133,12 +133,14 @@ class expression
 
     // text maker to convert phrase, formula or verb database reference to
     // a phrase or phrase list and in a second step to a value or value list
-    const WORD_START = '{t';   //
+    const WORD_START = '{w';   //
     const WORD_END = '}';    //
-    const TRIPLE_START = '{l';   //
+    const TRIPLE_START = '{t';   //
     const TRIPLE_END = '}';    //
     const FORMULA_START = '{f';   //
     const FORMULA_END = '}';    //
+    const VERB_START = '{v';   //
+    const VERB_END = '}';    //
 
     // text conversion const (used to convert word, formula or verbs text to a reference)
     const BRACKET_OPEN = '(';    //
@@ -303,9 +305,9 @@ class expression
 
     /**
      * @return string the formula expression converted to the user text from the database reference format
-     * e.g. converts "{t5}={t6}{l12}/{f19}" to "'percent' = 'Sales' 'differentiator'/'Total Sales'"
+     * e.g. converts "{w5}={w6}{l12}/{f19}" to "'percent' = 'Sales' 'differentiator'/'Total Sales'"
      */
-    function get_usr_text(): string
+    function get_usr_text(?term_list $trm_lst = null): string
     {
         log_debug('expression->get_usr_text >' . $this->ref_text . '< and user ' . $this->usr->name);
         $result = '';
@@ -316,8 +318,8 @@ class expression
             $left_part = $this->fv_part();
             $right_part = $this->r_part();
             log_debug('expression->get_usr_text -> (l:' . $left_part . ',r:' . $right_part . '"');
-            $left_part = $this->get_usr_part($left_part);
-            $right_part = $this->get_usr_part($right_part);
+            $left_part = $this->get_usr_part($left_part, $trm_lst);
+            $right_part = $this->get_usr_part($right_part, $trm_lst);
             $result = $left_part . self::CHAR_CALC . $right_part;
         }
 
@@ -716,43 +718,84 @@ class expression
 
     /**
      * converts a formula from the database reference format to the human-readable format
-     * e.g. converts "{t6}{l12}/{f19}" to "'Sales' 'differentiator'/'Total Sales'"
+     * e.g. converts "{w6}{l12}/{f19}" to "'Sales' 'differentiator'/'Total Sales'"
+     * @param string $frm_part_text the expression text in user format that should be converted
+     * @param term_list|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
+     * @return string the expression text in the database ref format
      */
-    private function get_usr_part($formula)
+    private function get_usr_part(string $frm_part_text, ?term_list $trm_lst = null): string
     {
-        log_debug('expression->get_usr_part >' . $formula . '< and user ' . $this->usr->name);
-        $result = $formula;
+        log_debug('expression->get_usr_part >' . $frm_part_text . '< and user ' . $this->usr->name);
+        $result = $frm_part_text;
 
         // replace the words
         $id = zu_str_between($result, self::WORD_START, self::WORD_END);
         while ($id > 0) {
             $db_sym = self::WORD_START . $id . self::WORD_END;
-            $wrd = new word($this->usr);
-            $wrd->load_by_id($id, word::class);
-            $result = str_replace($db_sym, self::TERM_DELIMITER . $wrd->name() . self::TERM_DELIMITER, $result);
-            $id = zu_str_between($result, self::WORD_START, self::WORD_END);
+            $wrd = $trm_lst?->word_by_id($id);
+            if ($wrd == null) {
+                $wrd = new word($this->usr);
+                $wrd->load_by_id($id, word::class);
+            }
+            if ($wrd == null) {
+                log_err('Word with id ' . $id . ' not found');
+            } else {
+                $result = str_replace($db_sym, self::TERM_DELIMITER . $wrd->name() . self::TERM_DELIMITER, $result);
+                $id = zu_str_between($result, self::WORD_START, self::WORD_END);
+            }
+        }
+
+        // replace the triple
+        $id = zu_str_between($result, self::TRIPLE_START, self::TRIPLE_END);
+        while ($id > 0) {
+            $db_sym = self::TRIPLE_START . $id . self::TRIPLE_END;
+            $trp = $trm_lst?->triple_by_id($id);
+            if ($trp == null) {
+                $trp = new triple($this->usr);
+                $trp->load_by_id($id);
+            }
+            if ($trp == null) {
+                log_err('Triple with id ' . $id . ' not found');
+            } else {
+                $result = str_replace($db_sym, self::TERM_DELIMITER . $trp->name() . self::TERM_DELIMITER, $result);
+                $id = zu_str_between($result, self::TRIPLE_START, self::TRIPLE_END);
+            }
         }
 
         // replace the formulas
         $id = zu_str_between($result, self::FORMULA_START, self::FORMULA_END);
         while ($id > 0) {
             $db_sym = self::FORMULA_START . $id . self::FORMULA_END;
-            $frm = new formula($this->usr);
-            $frm->load_by_id($id, formula::class);
-            $result = str_replace($db_sym, self::TERM_DELIMITER . $frm->name() . self::TERM_DELIMITER, $result);
-            $id = zu_str_between($result, self::FORMULA_START, self::FORMULA_END);
+            $frm = $trm_lst?->formula_by_id($id);
+            if ($frm == null) {
+                $frm = new formula($this->usr);
+                $frm->load_by_id($id, formula::class);
+            }
+            if ($frm == null) {
+                log_err('Formula with id ' . $id . ' not found');
+            } else {
+                $result = str_replace($db_sym, self::TERM_DELIMITER . $frm->name() . self::TERM_DELIMITER, $result);
+                $id = zu_str_between($result, self::FORMULA_START, self::FORMULA_END);
+            }
         }
 
         // replace the verbs
-        $id = zu_str_between($result, self::TRIPLE_START, self::TRIPLE_END);
+        $id = zu_str_between($result, self::VERB_START, self::VERB_END);
         while ($id > 0) {
-            $db_sym = self::TRIPLE_START . $id . self::TRIPLE_END;
-            $vrb = new verb;
-            $vrb->id = $id;
-            $vrb->set_user($this->usr);
-            $vrb->load_by_vars();
-            $result = str_replace($db_sym, self::TERM_DELIMITER . $vrb->name . self::TERM_DELIMITER, $result);
-            $id = zu_str_between($result, self::TRIPLE_START, self::TRIPLE_END);
+            $db_sym = self::VERB_START . $id . self::VERB_END;
+            $vrb = $trm_lst?->verb_by_id($id);
+            if ($vrb == null) {
+                $vrb = new verb;
+                $vrb->id = $id;
+                $vrb->set_user($this->usr);
+                $vrb->load_by_vars();
+            }
+            if ($vrb == null) {
+                log_err('Verb with id ' . $id . ' not found');
+            } else {
+                $result = str_replace($db_sym, self::TERM_DELIMITER . $vrb->name() . self::TERM_DELIMITER, $result);
+                $id = zu_str_between($result, self::TRIPLE_START, self::TRIPLE_END);
+            }
         }
 
         log_debug('expression->get_usr_part -> "' . $result . '"');
@@ -761,16 +804,11 @@ class expression
 
     /**
      * converts a formula from the user text format to the database reference format
-     * e.g. converts "='Sales' 'differentiator'/'Total Sales'" to "={t6}{l12}/{f19}"
+     * e.g. converts "='Sales' 'differentiator'/'Total Sales'" to "={w6}{l12}/{f19}"
      *
      * @param string $frm_part_text the expression text in user format that should be converted
-     * @param term_list|null $trm_lst a list of preloaded terms that should be prevered used for the convesion
+     * @param term_list|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
      * @return string the expression text in the database ref format
-     *
-     * TODO split into three steps
-     *      1. get the names from the text
-     *      2. load the terms by the names
-     *      3. replace the names with the term ids
      */
     private function get_ref_part(string $frm_part_text, term_list $trm_lst = null): string
     {
@@ -795,8 +833,16 @@ class expression
                 if ($trm_lst != null) {
                     $trm = $trm_lst->get_by_name($name);
                     if ($trm != null) {
-                        if ($trm->id() > 0) {
-                            $db_sym = self::FORMULA_START . $trm->id() . self::FORMULA_END;
+                        if ($trm->id_obj() > 0) {
+                            if ($trm->is_word()) {
+                                $db_sym = self::WORD_START . $trm->id_obj() . self::WORD_END;
+                            } elseif ($trm->is_triple()) {
+                                $db_sym = self::TRIPLE_START . $trm->id_obj() . self::TRIPLE_END;
+                            } elseif ($trm->is_formula()) {
+                                $db_sym = self::FORMULA_START . $trm->id_obj() . self::FORMULA_END;
+                            } elseif ($trm->is_verb()) {
+                                $db_sym = self::VERB_START . $trm->id_obj() . self::VERB_END;
+                            }
                         }
                     }
                 }

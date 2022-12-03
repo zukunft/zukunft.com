@@ -34,7 +34,7 @@ class user_sandbox_list_named extends sandbox_list
 {
 
     // memory vs speed optimize vars
-    private array $name_lst;
+    private array $name_pos_lst;
     private bool $lst_name_dirty;
 
     /*
@@ -47,7 +47,7 @@ class user_sandbox_list_named extends sandbox_list
      */
     function __construct(user $usr, array $lst = array())
     {
-        $this->name_lst = array();
+        $this->name_pos_lst = array();
         $this->lst_name_dirty = false;
 
         parent::__construct($usr, $lst);
@@ -89,10 +89,10 @@ class user_sandbox_list_named extends sandbox_list
      */
     public function get_by_name(string $name): ?object
     {
-        $key_lst = $this->name_lst();
-        $id = $key_lst[$name];
-        if ($id !== null) {
-            return $this->lst[$id];
+        $key_lst = $this->name_pos_lst();
+        $pos = $key_lst[$name];
+        if ($pos !== null) {
+            return $this->lst[$pos];
         } else {
             return null;
         }
@@ -110,7 +110,7 @@ class user_sandbox_list_named extends sandbox_list
     protected function add_obj(object $obj): bool
     {
         $result = false;
-        if (!in_array($obj->name(), $this->name_lst())) {
+        if (!in_array($obj->name(), $this->name_pos_lst())) {
             $result = parent::add_obj($obj);
         }
         return $result;
@@ -119,7 +119,7 @@ class user_sandbox_list_named extends sandbox_list
     /**
      * @returns array with all unique names of this list
      */
-    protected function name_lst(): array
+    protected function name_pos_lst(): array
     {
         $pos = 0;
         $result = array();
@@ -130,10 +130,10 @@ class user_sandbox_list_named extends sandbox_list
                     $pos++;
                 }
             }
-            $this->name_lst = $result;
+            $this->name_pos_lst = $result;
             $this->lst_name_dirty = false;
         } else {
-            $result = $this->name_lst;
+            $result = $this->name_pos_lst;
         }
         return $result;
     }

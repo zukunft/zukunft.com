@@ -213,7 +213,7 @@ function run_formula_test(testing $t): void
     $frm_dsp = $frm->dsp_obj_old();
     $exp = $frm->expression();
     $result = $exp->dsp_id();
-    $target = '""percent" = ( "this" - "prior" ) / "prior"" ({t'.$wrd_percent->id().'}=({f'.$frm_this->id().'}-{f'.$frm_prior->id().'})/{f'.$frm_prior->id().'})';
+    $target = '""percent" = ( "this" - "prior" ) / "prior"" ({w'.$wrd_percent->id().'}=({f'.$frm_this->id().'}-{f'.$frm_prior->id().'})/{f'.$frm_prior->id().'})';
     $t->dsp('formula->expression for ' . $frm->dsp_id(), $target, $result);
 
     // ... the formula name
@@ -383,8 +383,8 @@ function run_formula_test(testing $t): void
     $log->field = 'formula_text';
     $result = $log->dsp_last(true);
     // use the next line if system config is non-standard
-    $target = 'zukunft.com system test changed {t'.$wrd_percent->id().'}=( {f'.$frm_this->id().'} - {f5} ) / {f5} to ={f3}';
-    $target = 'zukunft.com system test changed {t'.$wrd_percent->id().'}=1-({f'.$frm_this->id().'}/{f'.$frm_prior->id().'}) to ={f'.$frm_this->id().'}';
+    $target = 'zukunft.com system test changed {w'.$wrd_percent->id().'}=( {f'.$frm_this->id().'} - {f5} ) / {f5} to ={f3}';
+    $target = 'zukunft.com system test changed {w'.$wrd_percent->id().'}=1-({f'.$frm_this->id().'}/{f'.$frm_prior->id().'}) to ={f'.$frm_this->id().'}';
     $t->dsp('formula->load formula_text for "' . formula::TN_RENAMED . '" logged', $target, $result);
     $log->field = 'description';
     $result = $log->dsp_last(true);
@@ -419,7 +419,7 @@ function run_formula_test(testing $t): void
     $target = '"percent" = ( "this" - "prior" ) / "prior"';
     $t->dsp('formula->load usr_text for "' . formula::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->ref_text;
-    $target = '{t'.$wrd_percent->id().'}=({f'.$frm_this->id().'}-{f'.$frm_prior->id().'})/{f'.$frm_prior->id().'}';
+    $target = '{w'.$wrd_percent->id().'}=({f'.$frm_this->id().'}-{f'.$frm_prior->id().'})/{f'.$frm_prior->id().'}';
     $t->dsp('formula->load ref_text for "' . formula::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->description;
     $target = formula::TN_RENAMED . ' description2';

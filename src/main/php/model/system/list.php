@@ -37,7 +37,7 @@ class base_list
     protected array $lst;
 
     // memory vs speed optimize vars
-    private array $id_lst;
+    private array $id_pos_lst;
     private bool $lst_dirty;
 
     /*
@@ -48,7 +48,7 @@ class base_list
     {
         $this->lst = array();
 
-        $this->id_lst = array();
+        $this->id_pos_lst = array();
         $this->lst_dirty = false;
 
         if (count($lst) > 0) {
@@ -110,6 +110,26 @@ class base_list
     }
 
     /*
+     * search functions
+     */
+
+    /**
+     * @param int $id the unique database id of the object that should be returned
+     * @return user_sandbox|null the found user sandbox object or null if no id is found
+     */
+    public function get_by_id(int $id): ?object
+    {
+        $key_lst = $this->id_pos_lst();
+        $pos = $key_lst[$id];
+        if ($pos !== null) {
+            return $this->lst[$pos];
+        } else {
+            return null;
+        }
+    }
+
+
+    /*
      * modify functions
      */
 
@@ -120,7 +140,7 @@ class base_list
     protected function add_obj(object $obj): bool
     {
         $result = false;
-        if (!in_array($obj->id(), $this->id_lst())) {
+        if (!in_array($obj->id(), $this->id_pos_lst())) {
             $this->lst[] = $obj;
             $this->set_lst_dirty();
             $result = true;
@@ -131,19 +151,21 @@ class base_list
     /**
      * @returns array with all unique ids of this list
      */
-    protected function id_lst(): array
+    protected function id_pos_lst(): array
     {
+        $pos = 0;
         $result = array();
         if ($this->lst_dirty) {
             foreach ($this->lst as $obj) {
                 if (!in_array($obj->id(), $result)) {
-                    $result[] = $obj->id();
+                    $result[$obj->id()] = $pos;
+                    $pos++;
                 }
             }
-            $this->id_lst = $result;
+            $this->id_pos_lst = $result;
             $this->lst_dirty = false;
         } else {
-            $result = $this->id_lst;
+            $result = $this->id_pos_lst;
         }
         return $result;
     }

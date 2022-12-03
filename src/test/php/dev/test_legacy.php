@@ -46,7 +46,7 @@ function run_legacy_test (testing $t) {
   $t->dsp(", zuc_get_formula: the result for formula \"".$formula_part_text."\"", $target, $result);
 
   // test zuf_2num_value
-  $formula_part_text = "{t6}{l12}";
+  $formula_part_text = "{w6}{t12}";
   $context_word_lst = array();
   $context_word_lst[] = $word_nesn;
   $time_word_id = $word_2016;
@@ -55,7 +55,7 @@ function run_legacy_test (testing $t) {
   $t->dsp(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result);
 
   // test zuf_2num_value
-  $formula_part_text = "{t6}{l12}{t83}";
+  $formula_part_text = "{w6}{t12}{w83}";
   $context_word_lst = array();
   $context_word_lst[] = $word_nesn;
   $time_word_id = $word_2016;
@@ -110,7 +110,7 @@ function run_legacy_test (testing $t) {
 
   // test zuf_2num
   $frm_id = 0;
-  $math_text = "={t6}{l12}/{f19}";
+  $math_text = "={w6}{t12}/{f19}";
   $target = 1;
   $word_array = array($word_nesn);
   $time_word_id = $word_2016;

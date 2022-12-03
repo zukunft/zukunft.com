@@ -240,6 +240,79 @@ class term_list extends user_sandbox_list_named
     }
 
     /**
+     * @param int $id the word id (not the term id!)
+     * @return word|null the word object from the list or null
+     */
+    function word_by_id(int $id): ?word
+    {
+        $wrd = null;
+        $trm = new term($this->user());
+        $trm->set_id_from_obj($id, word::class);
+        $trm_id = $trm->id();
+        if ($trm_id != 0) {
+            $trm = $this->get_by_id($trm_id);
+            $wrd = $trm->get_word();
+        }
+        return $wrd;
+    }
+
+    /**
+     * @param int $id the triple id (not the term id!)
+     * @return triple|null the triple object from the list or null
+     */
+    function triple_by_id(int $id): ?triple
+    {
+        $trp = null;
+        $trm = new term($this->user());
+        $trm->set_id_from_obj($id, triple::class);
+        $trm_id = $trm->id();
+        if ($trm_id != 0) {
+            $trm = $this->get_by_id($trm_id);
+            $trp = $trm->get_triple();
+        }
+        return $trp;
+    }
+
+    /**
+     * @param int $id the formula id (not the term id!)
+     * @return formula|null the formula object from the list or null
+     */
+    function formula_by_id(int $id): ?formula
+    {
+        $frm = null;
+        $trm = new term($this->user());
+        $trm->set_id_from_obj($id, formula::class);
+        $trm_id = $trm->id();
+        if ($trm_id != 0) {
+            $trm = $this->get_by_id($trm_id);
+            $frm = $trm->get_formula();
+        }
+        return $frm;
+    }
+
+    /**
+     * @param int $id the verb id (not the term id!)
+     * @return verb|null the verb object from the list or null
+     */
+    function verb_by_id(int $id): ?verb
+    {
+        $vrb = null;
+        $trm = new term($this->user());
+        $trm->set_id_from_obj($id, verb::class);
+        $trm_id = $trm->id();
+        if ($trm_id != 0) {
+            $trm = $this->get_by_id($trm_id);
+            $vrb = $trm->get_verb();
+        }
+        return $vrb;
+    }
+
+
+    /*
+     * display functions
+     */
+
+    /**
      * @return string with the best possible id for this element mainly used for debugging
      */
     function dsp_id(): string

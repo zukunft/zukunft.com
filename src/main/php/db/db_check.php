@@ -269,7 +269,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $sys_usr->name = user::SYSTEM;
     $sys_usr->load($db_con);
 
-    // refresh the formula ref_text, because the coding has changed (use "{p" instead of "{t")
+    // refresh the formula ref_text, because the coding has changed (use "{w" instead of "{t")
     $frm_lst = new formula_list($sys_usr);
     $frm_lst->db_ref_refresh($db_con);
 

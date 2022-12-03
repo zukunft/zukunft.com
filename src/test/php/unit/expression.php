@@ -44,12 +44,20 @@ class expression_unit_tests
 
         $t->header('Unit tests of the formula expression class (src/main/php/model/formula/expression.php)');
 
-        // test the conversion of the user text to the database reference text
+        $test_name = 'test the conversion of the user text to the database reference text';
         $exp = new expression($usr);
         $exp->usr_text = formula::TF_INCREASE;
         $trm_names = $exp->get_usr_names();
         $trm_lst = $t->dummy_term_list($trm_names);
         $exp->ref_text = $exp->get_ref_text($trm_lst);
+        $result = $exp->ref_text;
+        $target = '{w1}=({w2}-{w3})/{w3}';
+        $t->assert($test_name, $result, $target);
+
+        $test_name = 'test the conversion of the database reference text to the user text';
+        $result = $exp->get_usr_text($trm_lst);
+        $target = $t->trim_all_spaces(formula::TF_INCREASE);
+        $t->assert($test_name, $result, $target);
 
         /*
         $test_name = 'getting phrases that should be added to the result of a formula for "' . $exp->dsp_id() . '"';

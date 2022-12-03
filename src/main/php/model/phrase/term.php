@@ -764,7 +764,7 @@ class term extends db_object
      * conversion
      */
 
-    private function get_word(): word
+    public function get_word(): word
     {
         $wrd = new word($this->user());
         if (get_class($this->obj) == word::class) {
@@ -773,7 +773,7 @@ class term extends db_object
         return $wrd;
     }
 
-    private function get_triple(): triple
+    public function get_triple(): triple
     {
         $lnk = new triple($this->user());
         if (get_class($this->obj) == triple::class) {
@@ -782,7 +782,7 @@ class term extends db_object
         return $lnk;
     }
 
-    private function get_formula(): formula
+    public function get_formula(): formula
     {
         $frm = new formula($this->user());
         if (get_class($this->obj) == formula::class) {
@@ -791,7 +791,7 @@ class term extends db_object
         return $frm;
     }
 
-    private function get_verb(): verb
+    public function get_verb(): verb
     {
         $vrb = new verb();
         if (get_class($this->obj) == verb::class) {

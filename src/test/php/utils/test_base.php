@@ -1115,6 +1115,14 @@ class test_base
     }
 
     /**
+     * @return string text without any single spaces
+     */
+    function trim_all_spaces(string $string_with_multiple_spaces): string
+    {
+        return trim(preg_replace('/\s+/', '', $string_with_multiple_spaces));
+    }
+
+    /**
      * @return string text with just single spaces and without line feeds
      */
     function trim_lines(string $string_with_new_lines): string

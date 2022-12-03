@@ -412,8 +412,14 @@ class testing extends test_base
         $trm_lst = new term_list($usr);
         $pos = 1;
         foreach ($names as $name) {
+            $class = match ($name) {
+                triple::TN_READ => triple::class,
+                formula::TN_READ => formula::class,
+                verb::TN_READ => verb::class,
+                default => word::class,
+            };
             $trm = new term($usr);
-            $trm->set_id($pos);
+            $trm->set_id_from_obj($pos, $class);
             $trm->set_name($name);
             $trm_lst->add($trm);
             $pos++;
