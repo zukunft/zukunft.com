@@ -192,6 +192,11 @@ const DB_FIELD_EXT_NAME = '_name';
 // the fixed system user
 const SYSTEM_USER_ID = 1; //
 
+// parameters for internal testing and debugging
+const LIST_MIN_NAMES = 4; // number of object names that should al least be shown
+const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
+
+
 // the main global vars to shorten the code by avoiding them in many function calls as parameter
 global $db_com; // the database connection
 global $usr;    // the session user

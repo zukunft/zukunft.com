@@ -67,8 +67,8 @@ function run_expression_test(testing $t): void
 
     // load the test ids
     $wrd_percent = $t->load_word('percent');
-    $frm_this = $t->load_formula('this');
-    $frm_prior = $t->load_formula('prior');
+    $frm_this = $t->load_formula(formula::TN_READ_THIS);
+    $frm_prior = $t->load_formula(formula::TN_READ_PRIOR);
 
     // test the expression processing of the user readable part
     $target = '"percent"';
@@ -110,13 +110,13 @@ function run_expression_test(testing $t): void
     // ... and all elements used in the formula
     $elm_lst = $exp_sector->element_lst($back,);
     $result = $elm_lst->name();
-    $target = 'System Test Word Parent e.g. Country can be used as a differentiator for System Test Word Category e.g. Canton System Test Word Total ';
+    $target = 'System Test Word Parent e.g. Country, can be used as a differentiator for, System Test Word Category e.g. Canton, System Test Word Total';
     $t->assert('element_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
     // ... and all element groups used in the formula
     $elm_grp_lst = $exp_sector->element_grp_lst($back);
     $result = $elm_grp_lst->name();
-    $target = 'System Test Word Parent e.g. Country,can be used as a differentiator for,System Test Word Category e.g. Canton / System Test Word Total';
+    $target = 'System Test Word Parent e.g. Country,can be used as a differentiator for,System Test Word Category e.g. Canton, System Test Word Total';
     $t->assert('element_grp_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
     // test getting the phrases if the formula contains a verb

@@ -151,7 +151,7 @@ class phrase_list extends sandbox_list
         // split the ids by type
         $wrd_ids = [];
         $lnk_ids = [];
-        foreach ($this->ids()->lst as $id) {
+        foreach ($this->phrase_ids()->lst as $id) {
             if ($id > 0) {
                 $wrd_ids[] = $id;
             } elseif ($id < 0) {
@@ -1094,13 +1094,13 @@ class phrase_list extends sandbox_list
      */
     function id_lst(): array
     {
-        return $this->ids()->lst;
+        return $this->phrase_ids()->lst;
     }
 
     /**
      * @return phr_ids with the sorted phrase ids where a triple has a negative id
      */
-    function ids(): phr_ids
+    function phrase_ids(): phr_ids
     {
         $lst = array();
         if (count($this->lst) > 0) {

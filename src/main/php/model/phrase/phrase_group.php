@@ -277,7 +277,7 @@ class phrase_group extends db_object
     private function load_lst():void
     {
         if (!$this->phr_lst->loaded()) {
-            $ids = $this->phr_lst->ids();
+            $ids = $this->phr_lst->phrase_ids();
             $this->phr_lst->load_by_ids($ids);
         }
     }

@@ -96,6 +96,10 @@ class formula extends user_sandbox_named_with_type
     const TN_READ_TEST = 'increase';
     const TN_ADD = 'System Test Formula';
     const TN_RENAMED = 'System Test Formula Renamed';
+    const TN_READ_THIS = 'this';
+    const TN_READ_PRIOR = 'prior';
+    const TN_DIAMETER = 'diameter';
+    const TF_DIAMETER = '= "circumference" / "Pi"';
     const TN_THIS = 'System Test Formula This'; // to test if another formula of the functional type "this" can be created
     const TF_THIS = '= "System Test Formula This"';
     const TN_RATIO = 'System Test Formula PE Ratio'; // to test a simple ration calculation like how many times Switzerland is bigger than the canton zurich or the price to earning ration for equity
@@ -905,13 +909,13 @@ class formula extends user_sandbox_named_with_type
         //      the element group "Sales differentiator Sector" has the elements: "Sales" (of type word), "differentiator" (verb), "Sector" (word)
         $exp = $this->expression();
         $elm_grp_lst = $exp->element_grp_lst();
-        log_debug(self::class . '->to_num -> in ' . $exp->ref_text . ' ' . dsp_count($elm_grp_lst->lst) . ' element groups found');
+        log_debug(self::class . '->to_num -> in ' . $exp->ref_text . ' ' . dsp_count($elm_grp_lst->lst()) . ' element groups found');
 
         // to check if all needed value are given
         $all_elm_grp_filled = true;
 
         // loop over the element groups and replace the symbol with a number
-        foreach ($elm_grp_lst->lst as $elm_grp) {
+        foreach ($elm_grp_lst->lst() as $elm_grp) {
 
             // get the figures based on the context e.g. the formula element "Share Price" for the context "ABB" can be 23.11
             // a figure is either the user edited value or a calculated formula result

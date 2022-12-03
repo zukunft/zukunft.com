@@ -29,48 +29,10 @@
 
 */
 
-class formula_element_list
+class formula_element_list extends sandbox_list
 {
 
-    public array $lst; // the list of formula elements
-    private user $usr;  // the person who has requested the formula elements
-
-    /*
-     * construct and map
-     */
-
-    /**
-     * always set the user because a formula element list is always user specific
-     * @param user $usr the user who requested to see the formula with the formula elements
-     */
-    function __construct(user $usr)
-    {
-        $this->lst = array();
-        $this->set_user($usr);
-    }
-
-    /*
-     * get and set
-     */
-
-    /**
-     * set the user of the formula element list
-     *
-     * @param user $usr the person who wants to access the formula elements
-     * @return void
-     */
-    function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    /**
-     * @return user the person who wants to see the formula elements
-     */
-    function user(): user
-    {
-        return $this->usr;
-    }
+    // array $lst is the list of formula elements
 
     /*
      * load functions
@@ -146,64 +108,13 @@ class formula_element_list
         $db_rows = $db_con->get($qp);
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
-                $elm = new formula_element($this->usr);
+                $elm = new formula_element($this->user());
                 $elm->row_mapper($db_row);
                 $this->lst[] = $elm;
                 $result = true;
             }
         }
 
-        return $result;
-    }
-
-    /*
-     * display functions
-     */
-
-    /**
-     * return best possible identification for this element list mainly used for debugging
-     */
-    function dsp_id(): string
-    {
-        $id = dsp_array($this->ids());
-        $name = $this->name();
-        if ($name <> '""') {
-            $result = $name . ' (' . $id . ')';
-        } else {
-            $result = $id;
-        }
-        if ($this->user()->is_set()) {
-            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
-        }
-
-        return $result;
-    }
-
-    /**
-     * to show the element name to the user in the most simple form (without any ids)
-     * this function is called from dsp_id, so no other call is allowed
-     */
-    function name(): string
-    {
-        $result = '';
-        foreach ($this->lst as $elm) {
-            $result .= $elm->name() . ' ';
-        }
-        return $result;
-    }
-
-    /**
-     * this function is called from dsp_id, so no other call is allowed
-     */
-    function ids(): array
-    {
-        $result = array();
-        foreach ($this->lst as $elm) {
-            // use only valid ids
-            if ($elm->id <> 0) {
-                $result[] = $elm->id;
-            }
-        }
         return $result;
     }
 

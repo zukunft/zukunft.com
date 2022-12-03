@@ -51,7 +51,7 @@ function run_formula_element_test(testing $t)
     if (isset($elm_lst)) {
         $pos = 0;
         $target = '';
-        foreach ($elm_lst->lst as $elm) {
+        foreach ($elm_lst->lst() as $elm) {
             if ($elm->obj == null) {
                 log_err('object of formula element ' . $elm->dsp_id() . ' missing');
             } else {
@@ -117,8 +117,8 @@ function run_formula_element_list_test(testing $t): void
     $elm_lst = $exp->element_lst($back);
 
     if (isset($elm_lst)) {
-        $result = $elm_lst->dsp_id();
-        $target = 'System Test Word Parent e.g. Country can be used as a differentiator for System Test Word Category e.g. Canton System Test Word Total';
+        $result = $elm_lst->name();
+        $target = 'System Test Word Parent e.g. Country, can be used as a differentiator for, System Test Word Category e.g. Canton, System Test Word Total';
         $t->dsp_contains(', formula_element_list->dsp_id', $target, $result);
     } else {
         $result = 'formula element list not set';

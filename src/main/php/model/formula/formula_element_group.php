@@ -42,10 +42,10 @@
 class formula_element_group
 {
 
-    public ?array $lst = null;     // array of formula elements such as a word, verb or formula
+    public ?array $lst = null;           // array of formula elements such as a word, verb or formula
     public ?phrase_list $phr_lst = null; // phrase list object with the context to retrieve the element number
-    public ?phrase $time_phr = null; // the time word for the element number selection
-    public ?user $usr = null;      // the formula values can differ for each user; this is the user who wants to see the result
+    public ?phrase $time_phr = null;     // the time word for the element number selection
+    public ?user $usr = null;            // the formula values can differ for each user; this is the user who wants to see the result
 
     public ?string $symbol = null; // the formula reference text for this element group; used to fill in the numbers into the formula
 
@@ -103,14 +103,19 @@ class formula_element_group
         return $result;
     }
 
+    public function id(): int
+    {
+        return 0;
+    }
+
     private function ids(): array
     {
         $result = array();
         if (isset($this->lst)) {
             foreach ($this->lst as $frm_elm) {
                 // use only valid ids
-                if ($frm_elm->id <> 0) {
-                    $result[] = $frm_elm->id;
+                if ($frm_elm->id() <> 0) {
+                    $result[] = $frm_elm->id();
                 } else {
                     if ($frm_elm->obj != null) {
                         if ($frm_elm->obj->id() <> 0) {
@@ -265,7 +270,7 @@ class formula_element_group
 
             // get the element word to be able to add it later to the value selection (differs for the element type)
             if ($frm_elm->type == 'word') {
-                if ($frm_elm->id > 0) {
+                if ($frm_elm->id() > 0) {
                     $val_phr_lst->add($frm_elm->obj->phrase());
                     log_debug('formula_element_group->figures -> include ' . $frm_elm->dsp_id() . ' in value selection');
                 }

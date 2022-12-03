@@ -96,6 +96,22 @@ class sandbox_list extends base_list
         return $result;
     }
 
+    /**
+     * @return array with the database ids of all objects of this list
+     */
+    function ids(): array
+    {
+        $result = array();
+        foreach ($this->lst as $sbx_obj) {
+            // use only valid ids
+            if ($sbx_obj->id() <> 0) {
+                $result[] = $sbx_obj->id();
+            }
+        }
+        return $result;
+    }
+
+
     /*
      * debug functions
      */
@@ -108,23 +124,53 @@ class sandbox_list extends base_list
         global $debug;
         $result = '';
 
+        // show at least 4 elements by name
+        $min_names = $debug;
+        if ($min_names < LIST_MIN_NAMES) {
+            $min_names = LIST_MIN_NAMES;
+        }
+
+
         if ($this->lst != null) {
             $pos = 0;
             foreach ($this->lst as $sbx_obj) {
-                if ($debug > $pos) {
-                    if ($result <> '') {
-                        $result .= ' / ';
+                if ($min_names > $pos) {
+                    if ($result <> '') $result .= ' / ';
+                    $name = $sbx_obj->name();
+                    if ($name <> '""') {
+                        $name = $name . ' (' . $sbx_obj->id() . ')';
+                    } else {
+                        $name = $sbx_obj->id();
                     }
-                    $result .= $sbx_obj->name();
+                    $result .= $name;
                     $pos++;
                 }
             }
             if (count($this->lst) > $pos) {
                 $result .= ' ... total ' . dsp_count($this->lst);
             }
+            if ($debug > DEBUG_SHOW_USER) {
+                if ($this->user()->is_set()) {
+                    $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+                }
+            }
         }
         return $result;
     }
 
+    /**
+     * to show the list name to the user in the most simple form (without any ids)
+     * this function is called from dsp_id, so no other call is allowed
+     * @return string a simple name of the list
+     */
+    function name(): string
+    {
+        $result = '';
+        foreach ($this->lst as $sbx_obj) {
+            if ($result <> '') $result .= ', ';
+            $result .= $sbx_obj->name();
+        }
+        return $result;
+    }
 
 }

@@ -1292,7 +1292,7 @@ class formula_value extends db_object
         $exp = $frm->expression();
         //$elm_lst = $exp->element_lst ($back);
         $elm_grp_lst = $exp->element_grp_lst($back);
-        log_debug("formula_value->explain -> elements loaded (" . dsp_count($elm_grp_lst->lst) . " for " . $frm->ref_text . ")");
+        log_debug("formula_value->explain -> elements loaded (" . dsp_count($elm_grp_lst->lst()) . " for " . $frm->ref_text . ")");
 
         $result .= ' where</br>';
 
@@ -1302,7 +1302,7 @@ class formula_value extends db_object
         } else {
 
             $elm_nbr = 0;
-            foreach ($elm_grp_lst->lst as $elm_grp) {
+            foreach ($elm_grp_lst->lst() as $elm_grp) {
 
                 // display the formula element names and create the element group object
                 $result .= $elm_grp->dsp_names($back) . ' ';
@@ -1490,7 +1490,7 @@ class formula_value extends db_object
 
                 // e.g. if the formula is a division and the values used have a measure word like meter or CHF, the result is only in percent, but not in meter or CHF
                 // simplified version, that needs to be review to handle more complex formulas
-                if (strpos($this->frm->ref_text_r, expression::OPER_DIV) !== false) {
+                if (strpos($this->frm->ref_text_r, expression::DIV) !== false) {
                     log_debug('formula_value->save_if_updated -> check measure ' . $this->phr_lst->dsp_id());
                     if ($this->phr_lst->has_measure()) {
                         $this->phr_lst->ex_measure();

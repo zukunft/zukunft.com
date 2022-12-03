@@ -948,7 +948,7 @@ class value extends user_sandbox_value
                                     $exp->ref_text = $frm->ref_text;
                                     $fv_phr_lst = $exp->fv_phr_lst();
                                     $phr_lst = $exp->phr_lst();
-                                    if (isset($fv_phr_lst)) {
+                                    if (!$fv_phr_lst->is_empty()) {
                                         $fv_wrd_lst = $fv_phr_lst->wrd_lst_all();
                                         $wrd_lst = $phr_lst->wrd_lst_all();
                                         if (count($fv_wrd_lst->lst()) == 1 and count($wrd_lst->lst()) == 1) {

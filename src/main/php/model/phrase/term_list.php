@@ -210,7 +210,7 @@ class term_list extends user_sandbox_list_named
      */
     function id_lst(): array
     {
-        return $this->ids()->lst;
+        return $this->term_ids()->lst;
     }
 
     /**
@@ -224,7 +224,7 @@ class term_list extends user_sandbox_list_named
     /**
      * @return trm_ids with the sorted term ids where a triple has a negative id
      */
-    function ids(): trm_ids
+    function term_ids(): trm_ids
     {
         $lst = array();
         if (count($this->lst) > 0) {

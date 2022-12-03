@@ -707,7 +707,7 @@ class term extends db_object
     /**
      * @return bool true if this term is a word or supposed to be a word
      */
-    function is_word(): bool
+    public function is_word(): bool
     {
         $result = false;
         if (isset($this->obj)) {
@@ -721,7 +721,7 @@ class term extends db_object
     /**
      * @return bool true if this term is a triple or supposed to be a triple
      */
-    private function is_triple(): bool
+    public function is_triple(): bool
     {
         $result = false;
         if (isset($this->obj)) {
@@ -735,7 +735,7 @@ class term extends db_object
     /**
      * @return bool true if this term is a formula or supposed to be a triple
      */
-    private function is_formula(): bool
+    public function is_formula(): bool
     {
         $result = false;
         if (isset($this->obj)) {
@@ -749,7 +749,7 @@ class term extends db_object
     /**
      * @return bool true if this term is a verb or supposed to be a triple
      */
-    private function is_verb(): bool
+    public function is_verb(): bool
     {
         $result = false;
         if (isset($this->obj)) {

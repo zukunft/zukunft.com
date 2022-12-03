@@ -418,7 +418,7 @@ class testing extends test_base
                 verb::TN_READ => verb::class,
                 default => word::class,
             };
-            $trm = new term($usr);
+            $trm = new term($usr, $class);
             $trm->set_id_from_obj($pos, $class);
             $trm->set_name($name);
             $trm_lst->add($trm);

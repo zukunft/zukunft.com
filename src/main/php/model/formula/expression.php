@@ -158,18 +158,18 @@ class expression
 
     // math calc (probably not needed any more if r-project.org is used)
     const CHAR_CALC = '=';    //
-    const OPER_ADD = '+';    //
-    const OPER_SUB = '-';    //
-    const OPER_MUL = '*';    //
-    const OPER_DIV = '/';    //
+    const ADD = '+';    //
+    const SUB = '-';    //
+    const MUL = '*';    //
+    const DIV = '/';    //
 
-    const OPER_AND = '&';    //
-    const OPER_OR = '|';    //
+    const AND = '&';   //
+    const OR = '|';    // probably not needed because can and should be solved by triples
 
     // fixed functions
     const FUNC_IF = 'if';    //
     const FUNC_SUM = 'sum';    //
-    const FUNC_ISNUM = 'is.numeric';    //
+    const FUNC_IS_NUM = 'is.numeric';    //
 
 
     /*
@@ -194,6 +194,7 @@ class expression
 
     /**
      * @returns phrase_list with the phrases from a given formula text and load the phrases
+     * used to detect if the phrases should trigger predefined function e.g. to scale the values
      */
     function phr_lst(): phrase_list
     {
@@ -218,7 +219,7 @@ class expression
     }
 
     /**
-     * @return formula_element_list a list of all formula elements
+     * @return formula_element_list|formula_element_group_list a list of all formula elements
      * (don't use for number retrieval, use element_grp_lst instead, because )
      */
     function element_lst(): formula_element_list|formula_element_group_list
@@ -240,19 +241,31 @@ class expression
      */
 
     /**
-     * @returns phr_ids with the word and triple ids from a given formula text and without loading the objects from the database
+     * @returns phr_ids with the word and triple ids from a given formula text
+     * and without loading the objects from the database
      */
     function phr_id_lst(string $ref_text): phr_ids
     {
         $id_lst = [];
 
         if ($ref_text <> "") {
-            // add phrase ids to selection
-            $new_phr_id = $this->get_phr_id($ref_text);
-            while ($new_phr_id != 0) {
-                $id_lst[] = $new_phr_id;
-                $ref_text = zu_str_right_of($ref_text, self::WORD_START . $new_phr_id . self::WORD_END);
-                $new_phr_id = $this->get_phr_id($ref_text);
+            // add word ids to selection
+            $new_wrd_id = $this->get_word_id($ref_text);
+            while ($new_wrd_id != 0) {
+                if (!in_array($new_wrd_id, $id_lst)) {
+                    $id_lst[] = $new_wrd_id;
+                }
+                $ref_text = zu_str_right_of($ref_text, self::WORD_START . $new_wrd_id . self::WORD_END);
+                $new_wrd_id = $this->get_word_id($ref_text);
+            }
+            // add triple ids to selection
+            $new_trp_id = $this->get_triple_id($ref_text);
+            while ($new_trp_id != 0) {
+                if (!in_array($new_wrd_id, $id_lst)) {
+                    $id_lst[] = $new_trp_id * -1;
+                }
+                $ref_text = zu_str_right_of($ref_text, self::TRIPLE_START . $new_trp_id . self::TRIPLE_END);
+                $new_trp_id = $this->get_triple_id($ref_text);
             }
         }
 
@@ -260,20 +273,15 @@ class expression
     }
 
     /**
-     * @returns phrase_list with the word and triple ids from a given formula text and without loading the objects from the database
+     * @returns phrase_list with the word and triple ids from a given formula text
+     * and without loading the objects from the database
      */
     function phr_id_lst_as_phr_lst(string $ref_text): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
-
-        if ($ref_text <> "") {
-            // add phrases to selection
-            $new_phr_id = $this->get_phr_id($ref_text);
-            while ($new_phr_id != 0) {
-                $phr_lst->add_id($new_phr_id);
-                $ref_text = zu_str_right_of($ref_text, self::WORD_START . $new_phr_id . self::WORD_END);
-                $new_phr_id = $this->get_phr_id($ref_text);
-            }
+        $id_lst = $this->phr_id_lst($ref_text)->lst;
+        foreach ($id_lst as $id) {
+            $phr_lst->add_id($id);
         }
 
         $this->phr_lst = $phr_lst;
@@ -282,10 +290,10 @@ class expression
 
     /**
      * convert the user text to the database reference format
-     * @param term_list $trm_lst a list of preloaded terms that should be used for the transformation
-     * @returns string the expression in the database reference format
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return string the expression in the formula reference format
      */
-    function get_ref_text(term_list $trm_lst = null): string
+    function get_ref_text(?term_list $trm_lst = null): string
     {
         $result = '';
 
@@ -363,10 +371,10 @@ class expression
         log_debug($this->dsp_id());
         $result = false;
 
-        if ($this->get_phr_id($this->ref_text) > 0
-            or $this->get_frm_id($this->ref_text) > 0
-            or $this->get_ref_id($this->ref_text, self::WORD_START, self::WORD_END) > 0
-            or $this->get_ref_id($this->ref_text, self::FORMULA_START, self::FORMULA_END) > 0) {
+        if ($this->get_word_id($this->ref_text) > 0
+            or $this->get_triple_id($this->ref_text) > 0
+            or $this->get_formula_id($this->ref_text) > 0
+            or $this->get_verb_id($this->ref_text) > 0) {
             $result = true;
         }
 
@@ -399,18 +407,43 @@ class expression
      */
 
     /**
-     * returns a phrase id if the formula string in the database format contains a phrase link
-     * @param string $ref_text with the formula reference text e.g. ={f203}
-     * @return int the phrase id found in the reference text or zero if no phrase id is found
+     * returns a word id if the formula string in the database format contains a word link
+     * @param string $ref_text with the formula reference text e.g. ={w203}
+     * @return int the word id found in the reference text or zero if no word id is found
      */
-    private function get_phr_id(string $ref_text): int
+    private function get_word_id(string $ref_text): int
     {
         return $this->get_ref_id($ref_text, self::WORD_START, self::WORD_END);
     }
 
-    private function get_frm_id(string $ref_text): int
+    /**
+     * returns a triple id if the formula string in the database format contains a triple link
+     * @param string $ref_text with the formula reference text e.g. ={t42}
+     * @return int the word id found in the reference text or zero if no triple id is found
+     */
+    private function get_triple_id(string $ref_text): int
+    {
+        return $this->get_ref_id($ref_text, self::TRIPLE_START, self::TRIPLE_END);
+    }
+
+    /**
+     * returns a formula id if the formula string in the database format contains a triple link
+     * @param string $ref_text with the formula reference text e.g. ={f42}
+     * @return int the word id found in the reference text or zero if no formula id is found
+     */
+    private function get_formula_id(string $ref_text): int
     {
         return $this->get_ref_id($ref_text, self::FORMULA_START, self::FORMULA_END);
+    }
+
+    /**
+     * returns a verb id if the formula string in the database format contains a triple link
+     * @param string $ref_text with the formula reference text e.g. ={v42}
+     * @return int the word id found in the reference text or zero if no verb id is found
+     */
+    private function get_verb_id(string $ref_text): int
+    {
+        return $this->get_ref_id($ref_text, self::VERB_START, self::VERB_END);
     }
 
     /**
@@ -617,9 +650,9 @@ class expression
                 }
             }
         }
-        $result->lst = $lst;
+        $result->set_lst($lst);
 
-        log_debug('expression->element_lst_all got -> ' . dsp_count($result->lst) . ' elements');
+        log_debug('expression->element_lst_all got -> ' . dsp_count($result->lst()) . ' elements');
         return $result;
     }
 
@@ -632,9 +665,9 @@ class expression
     {
         log_debug('expression->phr_verb_lst');
         $elm_lst = $this->element_lst_all(expression::SELECT_PHRASE, FALSE);
-        log_debug('expression->phr_verb_lst -> got ' . dsp_count($elm_lst->lst) . ' formula elements');
+        log_debug('expression->phr_verb_lst -> got ' . dsp_count($elm_lst->lst()) . ' formula elements');
         $phr_lst = new phrase_list($this->usr);
-        foreach ($elm_lst->lst as $elm) {
+        foreach ($elm_lst->lst() as $elm) {
             log_debug('expression->phr_verb_lst -> check elements ' . $elm->name());
             if ($elm->type == 'formula') {
                 if (isset($elm->wrd_obj)) {
@@ -669,8 +702,8 @@ class expression
     {
         $phr_lst = new phrase_list($this->usr);
         $elm_lst = $this->element_lst_all(expression::SELECT_ALL, FALSE);
-        if (!empty($elm_lst->lst)) {
-            foreach ($elm_lst->lst as $elm) {
+        if (!$elm_lst->is_empty()) {
+            foreach ($elm_lst->lst() as $elm) {
                 if ($elm->frm_type == formula_type::THIS
                     or $elm->frm_type == formula_type::NEXT
                     or $elm->frm_type == formula_type::PREV) {
@@ -695,13 +728,13 @@ class expression
     {
         $frm_lst = new formula_list($this->usr);
         $elm_lst = $this->element_lst_all(expression::SELECT_ALL, FALSE);
-        if (!empty($elm_lst->lst)) {
-            foreach ($elm_lst->lst as $elm) {
+        if (!$elm_lst->is_empty()) {
+            foreach ($elm_lst->lst() as $elm) {
                 if ($elm->frm_type == formula_type::THIS
                     or $elm->frm_type == formula_type::NEXT
                     or $elm->frm_type == formula_type::PREV) {
                     $frm_lst->lst[] = $elm->obj;
-                    $frm_lst->ids[] = $elm->id;
+                    $frm_lst->ids[] = $elm->id();
                 }
             }
             log_debug('expression->element_special_following_frm -> pre load ' . dsp_count($frm_lst->lst));

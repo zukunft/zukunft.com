@@ -37,7 +37,7 @@
 
 */
 
-function run_formula_element_group_test(testing $t)
+function run_formula_element_group_test(testing $t): void
 {
 
     global $usr;
@@ -45,8 +45,8 @@ function run_formula_element_group_test(testing $t)
     $t->header('Test the formula element group list class (classes/formula_element_group_list.php)');
 
     // load the test ids
-    $frm_this = $t->load_formula('this');
-    $frm_prior = $t->load_formula('prior');
+    $frm_this = $t->load_formula(formula::TN_READ_THIS);
+    $frm_prior = $t->load_formula(formula::TN_READ_PRIOR);
 
     // load increase formula for testing
     $frm = $t->load_formula(formula::TN_INCREASE);
@@ -58,13 +58,14 @@ function run_formula_element_group_test(testing $t)
 
     $result = $elm_grp_lst->dsp_id();
     $target = '"this" ('.$frm_this->id().'),"prior" ('.$frm_prior->id().') for user 2 (zukunft.com system test)';
+    $target = 'this (0) / prior (0)';
     $t->dsp_contains(', formula_element_group_list->dsp_id', $target, $result);
 
 
     $t->header('Test the formula element group class (classes/formula_element_group.php)');
 
     // define the element group object to retrieve the value
-    if (count($elm_grp_lst->lst) > 0) {
+    if (count($elm_grp_lst->lst()) > 0) {
 
         // prepare the phrase list for the formula element selection
         // means "get all numbers related to the Swiss inhabitants for 2019 and 2020"
@@ -72,7 +73,7 @@ function run_formula_element_group_test(testing $t)
         $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO));
 
         // get "this" from the formula element group list
-        $elm_grp = $elm_grp_lst->lst[0];
+        $elm_grp = $elm_grp_lst->lst()[0];
         $elm_grp->phr_lst = clone $phr_lst;
 
         // test debug id first
@@ -131,6 +132,7 @@ function run_formula_element_group_test(testing $t)
 
         $t->header('Test the figure list class (classes/figure_lst.php)');
 
+        // TODO fix it
         $result = htmlspecialchars($fig_lst->dsp_id());
         //$target = htmlspecialchars("<font class=\"user_specific\">35'481</font> (438)");
         $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));

@@ -76,27 +76,6 @@ class figure_list extends sandbox_list
      * display functions
      */
 
-    /**
-     * display the unique id fields
-     */
-    function dsp_id(): string
-    {
-        $id = $this->ids_txt();
-        $name = $this->display();
-        if ($name <> '""') {
-            $result = $name . ' (' . $id . ')';
-        } else {
-            $result = $id;
-        }
-        /*
-        if ($this->user()->is_set()) {
-          $result .= ' for user '.$this->user()->name;
-        }
-        */
-
-        return $result;
-    }
-
     function name(): string
     {
         $result = '';

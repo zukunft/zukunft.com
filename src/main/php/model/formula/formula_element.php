@@ -2,10 +2,11 @@
 
 /*
 
-    formula_element.php - either a word, verb or formula link
+    formula_element.php - either a word, triple, verb or formula with a link to a formula
     -------------------
 
     The formula elements are saved in the database for fast detection of dependencies
+    formula elements are terms with a link to a formula
 
     This file is part of zukunft.com - calc with words
 
@@ -31,11 +32,12 @@
 
 */
 
-class formula_element
+class formula_element extends db_object
 {
 
     // the allowed objects types for a formula element
     const TYPE_WORD = word::class;        // a word is used for an AND selection of values
+    const TYPE_TRIPLE = triple::class;    // a triple is used for an AND selection of values
     const TYPE_VERB = verb::class;        // a verb is used for dynamic usage of linked words for an AND selection
     const TYPE_FORMULA = formula::class;  // a formula is used to include formula results of another formula
 
@@ -55,7 +57,6 @@ class formula_element
         self::FLD_REF_ID
     );
 
-    public ?int $id = null;          // the database id of the word, verb or formula
     public user $usr;                // the person who has requested the formula element
     public string $type = '';        // either "word", "verb" or "formula" to direct the links
     public ?string $name = null;     // the username of the formula element
@@ -74,6 +75,7 @@ class formula_element
      */
     function __construct(user $usr)
     {
+        parent::__construct();
         $this->usr = $usr;
     }
 
@@ -100,13 +102,16 @@ class formula_element
 
     /**
      * get the name and other parameters from the database
+     * @param int $id the id of the formula element
+     * @param string $class the name of the class which is 'formula_element'
+     * @return int the id of the formula_element found and zero if nothing is found
      */
-    function load_by_id(int $ref_id): void
+    function load_by_id(int $id, string $class = self::class): int
     {
-        if ($ref_id != 0 and $this->usr->is_set()) {
+        if ($id != 0 and $this->usr->is_set()) {
             if ($this->type == self::TYPE_WORD) {
                 $wrd = new word($this->usr);
-                $wrd->load_by_id($ref_id, word::class);
+                $wrd->load_by_id($id, word::class);
                 $this->name = $wrd->name();
                 $this->dsp_name = $wrd->dsp_obj()->dsp_link($this->back);
                 $this->symbol = expression::WORD_START . $wrd->id() . expression::WORD_END;
@@ -114,7 +119,7 @@ class formula_element
             }
             if ($this->type == self::TYPE_VERB) {
                 $lnk = new verb;
-                $lnk->id = $ref_id;
+                $lnk->id = $id;
                 $lnk->set_user($this->usr);
                 $lnk->load_by_vars();
                 $this->name = $lnk->name;
@@ -124,7 +129,7 @@ class formula_element
             }
             if ($this->type == self::TYPE_FORMULA) {
                 $frm = new formula($this->usr);
-                $frm->load_by_id($ref_id, formula::class);
+                $frm->load_by_id($id, formula::class);
                 $this->name = $frm->name();
                 $this->dsp_name = $frm->dsp_obj_old()->name_linked($this->back);
                 $this->symbol = expression::FORMULA_START . $frm->id() . expression::FORMULA_END;
@@ -142,6 +147,7 @@ class formula_element
             }
             log_debug("formula_element->load got " . $this->dsp_id() . " (" . $this->symbol . ").");
         }
+        return $id;
     }
 
     /*

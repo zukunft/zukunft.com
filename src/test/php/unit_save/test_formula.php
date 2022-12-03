@@ -205,8 +205,8 @@ function run_formula_test(testing $t): void
 
     // load the test ids
     $wrd_percent = $t->load_word('percent');
-    $frm_this = $t->load_formula('this');
-    $frm_prior = $t->load_formula('prior');
+    $frm_this = $t->load_formula(formula::TN_READ_THIS);
+    $frm_prior = $t->load_formula(formula::TN_READ_PRIOR);
 
     // test the formula display functions
     $frm = $t->load_formula(formula::TN_INCREASE);
