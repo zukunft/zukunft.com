@@ -50,6 +50,8 @@ class dsp_list extends html_base
     {
         $result = '';
 
+        $lib = new library();
+
         // set the default values
         $row_nbr = 0;
         $num_rows = count($this->lst);
@@ -75,7 +77,7 @@ class dsp_list extends html_base
                 $result .= '</td><td>';
             }
             $result .= ' ';
-            $result .= \html\btn_del('Delete ' . zu_str_left_of($this->id_field, "_id"), $this->script_name . '?id=' . $this->script_parameter . '&del=' . $entry->id);
+            $result .= \html\btn_del('Delete ' . $lib->str_left_of($this->id_field, "_id"), $this->script_name . '?id=' . $this->script_parameter . '&del=' . $entry->id);
             if (UI_USE_BOOTSTRAP) {
                 $result .= '</td></tr>';
             }

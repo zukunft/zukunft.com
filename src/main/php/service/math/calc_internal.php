@@ -459,6 +459,8 @@ class math
     {
         $result = $formula;
 
+        $lib = new library();
+
         // check the parameters
         if ($formula == '') {
             log_warning('Formula is missing in math', 'math');
@@ -472,11 +474,11 @@ class math
             // echo substr($result, $pos - 1, 1)."<br>";
             // if ($pos > 1 && has_operator(substr($result, $pos - 1, 1)) == false) {
             if ($pos > 0) {
-                $part_l = zu_str_left($result, $pos);
+                $part_l = $lib->str_left($result, $pos);
                 log_debug("math -> left part of " . $operator . ": " . $part_l . ".");
                 $part_l = $this->parse($part_l);
                 log_debug("math -> left part result " . $part_l . ": ");
-                $part_r = zu_str_right($result, ($pos + 1) * -1);
+                $part_r = $lib->str_right($result, ($pos + 1) * -1);
                 log_debug("math -> right part " . $operator . ": " . $part_r . ".");
                 $part_r = $this->parse($part_r);
                 log_debug("math -> right part result " . $part_r . ": ");
@@ -507,7 +509,7 @@ class math
                 }
             } else {
                 if ($pos == 0) {
-                    $part_r = zu_str_right($result, $pos * -1);
+                    $part_r = $lib->str_right($result, $pos * -1);
                     $part_r = $this->parse($part_r);
                     $result = $operator . $part_r;
                 }
@@ -556,6 +558,8 @@ class math
     {
         $result = $formula;
 
+        $lib = new library();
+
         // get the position of the next bracket
         $inner_start_pos = $this->pos_separator($result, expression::BRACKET_OPEN, 0);
         // if there is a bracket ...
@@ -573,7 +577,7 @@ class math
             log_debug("math_bracket -> inner_part " . $inner_part);
 
             // get the right part, but don't get the result of the right part because will be done by the calling function
-            $right_part = zu_str_right_of($result, $left_part . expression::BRACKET_OPEN . $inner_part . expression::BRACKET_CLOSE);
+            $right_part = $lib->str_right_of($result, $left_part . expression::BRACKET_OPEN . $inner_part . expression::BRACKET_CLOSE);
             log_debug("math_bracket -> right_part " . $right_part);
 
             // ... and something needs to be calculated
@@ -600,6 +604,8 @@ class math
     {
         $result = $formula;
 
+        $lib = new library();
+
         // get the position of the next bracket
         log_debug("math_if -> separate ");
         $if_start_pos = $this->pos_separator($result, expression::FUNC_IF, 0);
@@ -620,7 +626,7 @@ class math
             log_debug('math_if -> inner_part "' . $inner_part . '"');
 
             // get the right part, but don't get the result of the right part because will be done by the calling function
-            $right_part = zu_str_right_of($result, $left_part . expression::BRACKET_OPEN . $inner_part . expression::BRACKET_CLOSE);
+            $right_part = $lib->str_right_of($result, $left_part . expression::BRACKET_OPEN . $inner_part . expression::BRACKET_CLOSE);
             log_debug("math_if -> right_part " . $right_part);
 
             // ... and something needs to be looked at
@@ -631,8 +637,8 @@ class math
                 log_debug('math_if -> operator "' . $operator . '" in "' . $inner_part . '"');
                 if ($operator == expression::AND or $operator == expression::OR) {
                     $result = null; // by default no result
-                    $inner_left_part = zu_str_left_of($inner_part, $operator);
-                    $inner_right_part = zu_str_right_of($inner_part, $operator);
+                    $inner_left_part = $lib->str_left_of($inner_part, $operator);
+                    $inner_right_part = $lib->str_right_of($inner_part, $operator);
                     $inner_left_part = $this->parse($inner_left_part);
                     $inner_right_part = $this->parse($inner_right_part);
                     if ($operator == expression::AND) {

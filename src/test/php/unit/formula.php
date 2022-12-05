@@ -160,7 +160,7 @@ class formula_unit_tests
 
         // get the id of the phrases that should be added to the result based on the formula reference text
         $exp = new expression($usr);
-        $exp->ref_text = '{w205}={w203}*1000000';
+        $exp->set_ref_text('{w205}={w203}*1000000');
         $result = $exp->fv_phr_lst();
         $target = new phrase_list($usr);
         $wrd = new word($usr);

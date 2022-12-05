@@ -903,11 +903,13 @@ class value extends user_sandbox_value
      *      if the target words are empty convert "2.1 mio" to "2'100'000"
      * once this is working switch on the call in word_list->value_scaled
      */
-    function scale($target_wrd_lst)
+    function scale($target_wrd_lst): ?float
     {
         log_debug('value->scale ' . $this->number);
         // fallback value
         $result = $this->number;
+
+        $lib = new library();
 
         $this->load_phrases();
 
@@ -942,10 +944,10 @@ class value extends user_sandbox_value
                                 $formula_text = $frm->ref_text;
                                 log_debug('value->scale -> scaling formula "' . $frm->name() . '" (' . $frm->id . '): ' . $formula_text);
                                 if ($formula_text <> "") {
-                                    $l_part = zu_str_left_of($formula_text, expression::CHAR_CALC);
-                                    $r_part = zu_str_right_of($formula_text, expression::CHAR_CALC);
+                                    $l_part = $lib->str_left_of($formula_text, expression::CHAR_CALC);
+                                    $r_part = $lib->str_right_of($formula_text, expression::CHAR_CALC);
                                     $exp = new expression($this->user());
-                                    $exp->ref_text = $frm->ref_text;
+                                    $exp->set_ref_text($frm->ref_text);
                                     $fv_phr_lst = $exp->fv_phr_lst();
                                     $phr_lst = $exp->phr_lst();
                                     if (!$fv_phr_lst->is_empty()) {

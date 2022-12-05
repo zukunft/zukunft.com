@@ -42,6 +42,7 @@ class user_log_unit_tests
         $t->subheader('SQL statement tests');
 
         // init
+        $lib = new library();
         $db_con = new sql_db();
         $t->name = 'word->';
         $t->resource_path = 'db/user/';
@@ -54,7 +55,7 @@ class user_log_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $log_dsp->dsp_hist_links_sql($db_con);
         $expected_sql = $t->file('db/user/user_log.sql');
-        $t->dsp('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type, $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type, $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));

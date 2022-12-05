@@ -38,6 +38,7 @@ class view_unit_tests
         global $usr;
 
         // init
+        $lib = new library();
         $db_con = new sql_db();
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
@@ -80,7 +81,7 @@ class view_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $dsp->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/view/view_components_by_view_id.sql');
-        $t->dsp('view->load_components_sql by view id', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('view->load_components_sql by view id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($dsp->load_components_sql($db_con)->name);
@@ -89,7 +90,7 @@ class view_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $dsp->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/view/view_components_by_view_id_mysql.sql');
-        $t->dsp('view->load_components_sql for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('view->load_components_sql for MySQL', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         $t->subheader('Convert tests');
 

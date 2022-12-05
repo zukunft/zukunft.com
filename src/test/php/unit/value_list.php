@@ -47,6 +47,7 @@ class value_list_unit_tests
         global $usr;
 
         // init
+        $lib = new library();
         $db_con = new sql_db();
         $t->name = 'value_list->';
         $t->resource_path = 'db/value/';
@@ -69,14 +70,14 @@ class value_list_unit_tests
         $val_lst->phr = $wrd->phrase();
         $created_sql = $val_lst->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/value/value_list_by_word_id.sql');
-        $t->assert('value_list->load_sql by phrase id', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('value_list->load_sql by phrase id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // sql to load a list of value by the phrase ids
         $val_lst = new value_list($usr);
         $val_lst->phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
         $created_sql = $val_lst->load_by_phr_lst_sql($db_con);
         $expected_sql = $t->file('db/value/value_list_by_triple_id_list.sql');
-        $t->assert('value_list->load_by_phr_lst_sql by group and time', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('value_list->load_by_phr_lst_sql by group and time', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($val_lst->load_by_phr_lst_sql($db_con, true));
@@ -85,7 +86,7 @@ class value_list_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $val_lst->load_by_phr_lst_sql($db_con);
         $expected_sql = $t->file('db/value/value_list_by_triple_id_list_mysql.sql');
-        $t->assert('value_list->load_by_phr_lst_sql by group and time for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('value_list->load_by_phr_lst_sql by group and time for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 
 
         // sql to load a list of value by the phrase id
@@ -114,6 +115,8 @@ class value_list_unit_tests
     {
         global $usr;
 
+        $lib = new library();
+
         $lst = new value_list($usr);
         $db_con = new sql_db();
         $db_con->db_type = $dialect;
@@ -125,8 +128,8 @@ class value_list_unit_tests
         $expected_sql = $this->test->file(self::PATH . $qp->name . $dialect_ext . self::FILE_EXT);
         $this->test->assert(
             self::TEST_NAME . $qp->name . $dialect,
-            $this->test->trim($qp->sql),
-            $this->test->trim($expected_sql)
+            $lib->trim($qp->sql),
+            $lib->trim($expected_sql)
         );
         return $qp;
     }

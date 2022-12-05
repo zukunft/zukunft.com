@@ -57,10 +57,15 @@ class formula_element extends db_object
         self::FLD_REF_ID
     );
 
+
+    /*
+     * object vars
+     */
+
+    // TODO should be actually just the linked formula id that extends the term
+
     public user $usr;                // the person who has requested the formula element
     public string $type = '';        // either "word", "verb" or "formula" to direct the links
-    public ?string $name = null;     // the username of the formula element
-    public ?string $dsp_name = null; // the username of the formula element with the HTML link
     public ?string $symbol = null;   // the database reference symbol for formula expressions
     public ?object $obj = null;      // the word, verb or formula object
     public ?word $wrd_obj = null;    // in case of a formula the corresponding word object
@@ -68,6 +73,11 @@ class formula_element extends db_object
 
     // TODO move to the display object
     public ?string $back = null;     // link to what should be display after this action is finished
+
+
+    /*
+     * construct and map
+     */
 
     /**
      * always set the user because a formula element is always user specific
@@ -100,6 +110,36 @@ class formula_element extends db_object
         return $result;
     }
 
+
+    /*
+     * set and get
+     */
+
+    /**
+     * @return string the element name to the user in the most simple form (without any ids)
+     */
+    public function name(): string
+    {
+        if ($this->obj != null) {
+            return $this->obj->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * @return int|null the database id of the related object
+     */
+    public function id(): ?int
+    {
+        return $this->obj?->id;
+    }
+
+
+    /*
+     * load
+     */
+
     /**
      * get the name and other parameters from the database
      * @param int $id the id of the formula element
@@ -112,8 +152,6 @@ class formula_element extends db_object
             if ($this->type == self::TYPE_WORD) {
                 $wrd = new word($this->usr);
                 $wrd->load_by_id($id, word::class);
-                $this->name = $wrd->name();
-                $this->dsp_name = $wrd->dsp_obj()->dsp_link($this->back);
                 $this->symbol = expression::WORD_START . $wrd->id() . expression::WORD_END;
                 $this->obj = $wrd;
             }
@@ -122,16 +160,12 @@ class formula_element extends db_object
                 $lnk->id = $id;
                 $lnk->set_user($this->usr);
                 $lnk->load_by_vars();
-                $this->name = $lnk->name;
-                $this->dsp_name = $lnk->display($this->back);
                 $this->symbol = expression::TRIPLE_START . $lnk->id . expression::TRIPLE_END;
                 $this->obj = $lnk;
             }
             if ($this->type == self::TYPE_FORMULA) {
                 $frm = new formula($this->usr);
                 $frm->load_by_id($id, formula::class);
-                $this->name = $frm->name();
-                $this->dsp_name = $frm->dsp_obj_old()->name_linked($this->back);
                 $this->symbol = expression::FORMULA_START . $frm->id() . expression::FORMULA_END;
                 $this->obj = $frm;
                 /*
@@ -182,29 +216,6 @@ class formula_element extends db_object
     }
 
     /**
-     * to show the element name to the user in the most simple form (without any ids)
-     */
-    function name(): string
-    {
-        $result = '';
-
-        if ($this->obj != null) {
-            if ($this->obj->id() != 0) {
-                // TODO replace with phrase
-                if ($this->type == 'word') {
-                    $result = $this->obj->name();
-                } elseif ($this->type == verb::class) {
-                    $result = $this->name;
-                } elseif ($this->type == formula::class) {
-                    $result = $this->obj->name();
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * return the HTML code for the element name including a link to inspect the element
      *
      * @param string $back
@@ -221,7 +232,7 @@ class formula_element extends db_object
                     $result = $this->obj->dsp_obj()->dsp_link($back);
                 }
                 if ($this->type == verb::class) {
-                    $result = $this->name;
+                    $result = $this->name();
                 }
                 if ($this->type == formula::class) {
                     $result = $this->obj->dsp_obj()->name_linked($back);

@@ -38,6 +38,7 @@ class system_unit_tests
         global $sql_names;
 
         // init
+        $lib = new library();
         $db_con = new sql_db();
         $t->name = 'system->';
         $t->resource_path = 'db/system/';
@@ -73,7 +74,7 @@ class system_unit_tests
         $ip_range->set_user($usr);
         $created_sql = $ip_range->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/ip_blocked.sql');
-        $t->assert('ip_range->load_sql by id', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('ip_range->load_sql by id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $result = false;
@@ -88,7 +89,7 @@ class system_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $ip_range->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/ip_blocked_mysql.sql');
-        $t->assert('ip_range->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('ip_range->load_sql by id for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // sql to load by ip range
         $db_con->db_type = sql_db::POSTGRES;
@@ -98,7 +99,7 @@ class system_unit_tests
         $ip_range->set_user($usr);
         $created_sql = $ip_range->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/ip_range.sql');
-        $t->assert('ip_range->load_sql by ip range', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('ip_range->load_sql by ip range', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $result = false;
@@ -113,7 +114,7 @@ class system_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $ip_range->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/ip_range_mysql.sql');
-        $t->assert('ip_range->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('ip_range->load_sql by id for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 
 
         $t->subheader('ip list sql tests');
@@ -158,12 +159,12 @@ class system_unit_tests
         $cfg = new config();
         $created_sql = $cfg->get_sql($db_con, config::VERSION_DB)->sql;
         $expected_sql = $t->file('db/system/cfg_get.sql');
-        $t->assert('config->get_sql', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('config->get_sql', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $cfg->get_sql($db_con, config::VERSION_DB)->sql;
         $expected_sql = $t->file('db/system/cfg_get_mysql.sql');
-        $t->assert('config->get_sql for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('config->get_sql for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         /*
          * these tests are probably not needed because not problem is expected
@@ -221,7 +222,7 @@ class system_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $db_con->missing_owner_sql();
         $expected_sql = $t->file('db/system/missing_owner_by_formula.sql');
-        $t->assert('system_consistency->missing_owner_sql by formula', $t->trim($qp->sql), $t->trim($expected_sql));
+        $t->assert('system_consistency->missing_owner_sql by formula', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         if (!in_array($qp->name, $sql_names)) {
@@ -234,7 +235,7 @@ class system_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $qp = $db_con->missing_owner_sql();
         $expected_sql = $t->file('db/system/missing_owner_by_formula_mysql.sql');
-        $t->assert('system_error_log->load_sql by id for MySQL', $t->trim($qp->sql), $t->trim($expected_sql));
+        $t->assert('system_error_log->load_sql by id for MySQL', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
         /*
          * database upgrade SQL creation tests
@@ -246,7 +247,7 @@ class system_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $db_con->remove_prefix_sql(sql_db::TBL_VERB, 'code_id');
         $expected_sql = $t->file('db/system/remove_prefix_by_verb_code_id.sql');
-        $t->assert('database_upgrade->remove_prefix of verb code_id', $t->trim($qp->sql), $t->trim($expected_sql));
+        $t->assert('database_upgrade->remove_prefix of verb code_id', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         if (!in_array($qp->name, $sql_names)) {
@@ -259,7 +260,7 @@ class system_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $qp = $db_con->remove_prefix_sql(sql_db::TBL_VERB, 'code_id');
         $expected_sql = $t->file('db/system/remove_prefix_by_verb_code_id_mysql.sql');
-        $t->assert('database_upgrade->remove_prefix of verb code_id for MySQL', $t->trim($qp->sql), $t->trim($expected_sql));
+        $t->assert('database_upgrade->remove_prefix of verb code_id for MySQL', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
         /*
          * system log SQL creation tests
@@ -274,7 +275,7 @@ class system_unit_tests
         $log->id = 1;
         $created_sql = $log->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/error_log.sql');
-        $t->assert('system_error_log->load_sql by id', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('system_error_log->load_sql by id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $result = false;
@@ -289,7 +290,7 @@ class system_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $log->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/error_log_mysql.sql');
-        $t->assert('system_error_log->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('system_error_log->load_sql by id for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         $t->subheader('System log list tests');
 
@@ -301,7 +302,7 @@ class system_unit_tests
         $log_lst->dsp_type = system_error_log_list::DSP_ALL;
         $created_sql = $log_lst->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/error_log_list.sql');
-        $t->assert('system_error_log_list->load_sql by id', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('system_error_log_list->load_sql by id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $result = false;
@@ -316,7 +317,7 @@ class system_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $log_lst->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/error_log_list_mysql.sql');
-        $t->assert('system_error_log_list->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('system_error_log_list->load_sql by id for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         /*
          * system log frontend API tests
@@ -336,11 +337,11 @@ class system_unit_tests
         $log_dsp = $log->get_dsp_obj();
         $created = $log_dsp->get_json();
         $expected = file_get_contents(PATH_TEST_FILES . 'api/system/error_log.json');
-        $t->assert('system_error_log_dsp->get_json', $t->trim_json($created), $t->trim_json($expected));
+        $t->assert('system_error_log_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
         $created = $log_dsp->get_html($usr, '');
         $expected = file_get_contents(PATH_TEST_FILES . 'web/system/error_log.html');
-        $t->assert('system_error_log_dsp->get_json', $t->trim_html($created), $t->trim_html($expected));
+        $t->assert('system_error_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 
         // create a second system log entry to create a list
         $log2 = new system_error_log();
@@ -360,15 +361,15 @@ class system_unit_tests
         $log_lst_dsp = $log_lst->dsp_obj();
         $created = $log_lst_dsp->get_json();
         $expected = file_get_contents(PATH_TEST_FILES . 'api/system/error_log_list.json');
-        $t->assert('system_error_log_list_dsp->get_json', $t->trim_json($created), $t->trim_json($expected));
+        $t->assert('system_error_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
         $created = $log_lst_dsp->get_html();
         $expected = file_get_contents(PATH_TEST_FILES . 'web/system/error_log_list.html');
-        $t->assert('system_error_log_list_dsp->display', $t->trim_html($created), $t->trim_html($expected));
+        $t->assert('system_error_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
 
         $created = $log_lst_dsp->get_html_page();
         $expected = file_get_contents(PATH_TEST_FILES . 'web/system/error_log_list_page.html');
-        $t->assert('system_error_log_list_dsp->display', $t->trim_html($created), $t->trim_html($expected));
+        $t->assert('system_error_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
 
 
         /*

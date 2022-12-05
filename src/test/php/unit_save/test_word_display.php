@@ -41,6 +41,8 @@ function run_word_display_test(testing $t)
 
     global $usr;
 
+    $lib = new library();
+
     $t->header('Test the word display class (classes/word_display.php)');
 
     // check the upward graph display
@@ -96,8 +98,8 @@ function run_word_display_test(testing $t)
 ';
     $link_types = $wrd_2020->link_types($direction);
     $result = $wrd_2020->dsp_graph($direction, $link_types, 0);
-    $result = $t->trim_html($result);
-    $target = $t->trim_html($target);
+    $result = $lib->trim_html($result);
+    $target = $lib->trim_html($target);
     $diff = str_diff($result, $target);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);
@@ -147,8 +149,8 @@ function run_word_display_test(testing $t)
 ';
     $link_types = $wrd_2020->link_types($direction);
     $result = $wrd_2020->dsp_graph($direction, $link_types, 0);
-    $result = $t->trim_html($result);
-    $target = $t->trim_html($target);
+    $result = $lib->trim_html($result);
+    $target = $lib->trim_html($target);
     $diff = str_diff($result, $target);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);

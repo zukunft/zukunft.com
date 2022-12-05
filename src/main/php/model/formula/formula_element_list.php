@@ -118,6 +118,21 @@ class formula_element_list extends sandbox_list
         return $result;
     }
 
+    /*
+     * modification function
+     */
+
+    /**
+     * add one formula element to the list and keep the order (contrary to the parent function)
+     * @returns bool true the term has been added
+     */
+    function add(?formula_element $elm_to_add): bool
+    {
+        $this->lst[] = $elm_to_add;
+        $this->set_lst_dirty();
+        return true;
+    }
+
 }
 
 class formula_element_type extends BasicEnum

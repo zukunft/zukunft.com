@@ -162,6 +162,8 @@ class phrase_list_unit_tests
     {
         global $usr;
 
+        $lib = new library();
+
         $lst = new phrase_list($usr);
         $db_con = new sql_db();
         $db_con->db_type = $dialect;
@@ -173,15 +175,15 @@ class phrase_list_unit_tests
         $expected_sql = $this->test->file(self::PATH . $qp->name . $dialect_ext . self::FILE_EXT);
         $this->test->assert(
             self::TEST_NAME . $qp->name . $dialect,
-            $this->test->trim($qp->sql),
-            $this->test->trim($expected_sql)
+            $lib->trim($qp->sql),
+            $lib->trim($expected_sql)
         );
         $qp = $lst->load_by_trp_ids_sql($db_con, $ids);
         $expected_sql = $this->test->file(self::PATH . $qp->name . $dialect_ext . self::FILE_EXT);
         $this->test->assert(
             self::TEST_NAME . $qp->name . $dialect,
-            $this->test->trim($qp->sql),
-            $this->test->trim($expected_sql)
+            $lib->trim($qp->sql),
+            $lib->trim($expected_sql)
         );
         return $qp;
     }

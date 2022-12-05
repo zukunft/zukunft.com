@@ -13,6 +13,7 @@
 
     but first this needs to be fixed:
     TODO create a unit test for all possible class functions next to review: formula expression
+    TODO replace the load_by_vars with more specific load_by_ functions
     TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample
     TODO fix error in upgrade process for MySQL
     TODO fix syntax suggestions in existing code
@@ -20,7 +21,6 @@
 
     after that this should be done while keeping step 1. to 4. for each commit:
     TODO use the sandbox list for all user lists
-    TODO replace the load_by_vars with more specific load_by_ functions
     TODO use in the frontend only the code id of types
     TODO use in the backend always the type object instead of the db type id
     TODO always use the frontend path CONST instead of 'http'
@@ -58,7 +58,7 @@
     TODO create unit tests
     TODO cleanup object by removing duplicates
     TODO call include only if needed
-    TODO use the git concept of merge and rebase for group changes e.g. if some formulas are assinged to a group these formulas can be used by all members of a group
+    TODO use the git concept of merge and rebase for group changes e.g. if some formulas are assigned to a group these formulas can be used by all members of a group
     TODO additional to the git concept of merge allow also subscribe or auto merge
     TODO create a simple value table with the compressed phrase ids as a key and the value as a key-value table
     TODO check that all class function follow the setup suggested in user_message
@@ -234,6 +234,7 @@ include_once ROOT_PATH . 'database/sql_db.php';
 include_once $path_php . 'db/db_check.php';
 // utils
 include_once $path_php . 'utils/json_utils.php';
+include_once $path_php . 'model/helper/library.php';
 include_once $path_php . 'model/helper/object_type.php';
 include_once $path_php . 'model/helper/db_object.php';
 include_once $path_php . 'model/helper/db_object_named.php';
@@ -679,14 +680,16 @@ function log_msg(string $msg_text,
     } else {
 
 
+        $lib = new library();
+
         // fill up fields with default values
         if ($msg_description == '') {
             $msg_description = $msg_text;
         }
         if ($function_name == '' or $function_name == null) {
             $function_name = (new Exception)->getTraceAsString();
-            $function_name = zu_str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
-            $function_name = zu_str_left_of($function_name, ': log_');
+            $function_name = $lib->str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
+            $function_name = $lib->str_left_of($function_name, ': log_');
         }
         if ($function_trace == '') {
             $function_trace = (new Exception)->getTraceAsString();
@@ -1142,68 +1145,11 @@ function zu_trim($text): string
     return trim(preg_replace('!\s+!', ' ', $text));
 }
 
-// 
-function zu_str_left_of(string $text, string $maker): string
-{
-    $result = "";
-    $pos = strpos($text, $maker);
-    if ($pos > 0) {
-        $result = substr($text, 0, strpos($text, $maker));
-    }
-    return $result;
-}
-
-function zu_str_right_of(?string $text, ?string $maker): string
-{
-    $result = "";
-    if ($text == null) {
-        $text = "";
-    }
-    if ($maker == null) {
-        $maker = "";
-    }
-    if ($text !== $maker) {
-        if (substr($text, strpos($text, $maker), strlen($maker)) === $maker) {
-            $result = substr($text, strpos($text, $maker) + strlen($maker));
-        }
-    }
-    return $result;
-}
-
-function zu_str_between($text, $maker_start, $maker_end)
-{
-    log_debug('zu_str_between "' . $text . '", start "' . $maker_start . '" end "' . $maker_end . '"');
-    $result = zu_str_right_of($text, $maker_start);
-    log_debug('zu_str_between -> "' . $result . '" is right of "' . $maker_start . '"');
-    $result = zu_str_left_of($result, $maker_end);
-    log_debug('zu_str_between -> "' . $result . '"');
-    return $result;
-}
 
 /*
 string functions (to be dismissed)
 */
 
-// some small string related functions to shorten code and make the code clearer
-function zu_str_left($text, $pos)
-{
-    return substr($text, 0, $pos);
-}
-
-function zu_str_right($text, $pos)
-{
-    return substr($text, $pos * -1);
-}
-
-// TODO rename to the php 8.0 function str_starts_with
-function zu_str_is_left(string $text, string $maker): string
-{
-    $result = false;
-    if (substr($text, 0, strlen($maker)) == $maker) {
-        $result = true;
-    }
-    return $result;
-}
 
 function zu_str_compute_diff($from, $to): array
 {

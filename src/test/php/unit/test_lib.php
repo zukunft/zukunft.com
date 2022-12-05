@@ -38,75 +38,77 @@ class string_unit_tests
     function run(testing $t): void
     {
 
-        $t->header('Test the zukunft.com base functions (zu_lib.php)');
+        $t->header('Test the zukunft.com base functions (model/helper/library.php)');
 
         $t->subheader('strings');
+
+        $lib = new library();
 
         // test zu_trim
         $text = "  This  text  has  many  spaces  ";
         $target = "This text has many spaces";
-        $result = $t->trim($text);
+        $result = $lib->trim($text);
         $t->dsp(", zu_trim", $target, $result);
 
-        // test zu_str_left
+        // test str_left
         $text = "This are the left 4";
         $pos = 4;
         $target = "This";
-        $result = zu_str_left($text, $pos);
-        $t->dsp(", zu_str_left: What are the left \"" . $pos . "\" chars of \"" . $text . "\"", $target, $result);
+        $result = $lib->str_left($text, $pos);
+        $t->dsp(", str_left: What are the left \"" . $pos . "\" chars of \"" . $text . "\"", $target, $result);
 
-        // test zu_str_right
+        // test str_right
         $text = "This are the right 7";
         $pos = 7;
         $target = "right 7";
-        $result = zu_str_right($text, $pos);
-        $t->dsp(", zu_str_right: What are the right \"" . $pos . "\" chars of \"" . $text . "\"", $target, $result);
+        $result = $lib->str_right($text, $pos);
+        $t->dsp(", str_right: What are the right \"" . $pos . "\" chars of \"" . $text . "\"", $target, $result);
 
-        // test zu_str_left_of
+        // test str_left_of
         $text = "This is left of that ";
         $maker = " of that";
         $target = "This is left";
-        $result = zu_str_left_of($text, $maker);
-        $t->dsp(", zu_str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
+        $result = $lib->str_left_of($text, $maker);
+        $t->dsp(", str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
 
-        // test zu_str_left_of
+        // test str_left_of
         $text = "This is left of that, but not of that";
-        $result = zu_str_left_of($text, $maker);
-        $t->dsp(", zu_str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
+        $result = $lib->str_left_of($text, $maker);
+        $t->dsp(", str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
 
-        // test zu_str_right_of
+        // test str_right_of
         $text = "That is right of this";
         $maker = "That is right ";
         $target = "of this";
-        $result = zu_str_right_of($text, $maker);
-        $t->dsp(", zu_str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
+        $result = $lib->str_right_of($text, $maker);
+        $t->dsp(", str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
 
-        // test zu_str_right_of
+        // test str_right_of
         $text = "00000";
         $maker = "0";
         $target = "0000";
-        $result = zu_str_right_of($text, $maker);
-        $t->dsp(", zu_str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
+        $result = $lib->str_right_of($text, $maker);
+        $t->dsp(", str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
 
-        // test zu_str_right_of
+        // test str_right_of
         $text = "The formula id of {f23}.";
         $maker = "{f";
         $target = "23}.";
-        $result = zu_str_right_of($text, $maker);
-        $t->dsp(", zu_str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
+        $result = $lib->str_right_of($text, $maker);
+        $t->dsp(", str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
 
-        // test zu_str_between
+        // test str_between
         $maker_start = "{f";
         $maker_end = "}";
         $target = "23";
-        $result = zu_str_between($text, $maker_start, $maker_end);
-        $t->dsp(", zu_str_between: " . $text, $target, $result);
+        $result = $lib->str_between($text, $maker_start, $maker_end);
+        $t->dsp(", str_between: " . $text, $target, $result);
 
-        // test zu_str_between
+        // test str_between
         $text = "The formula id of {f4} / {f5}.";
         $target = "4";
-        $result = zu_str_between($text, $maker_start, $maker_end);
-        $t->dsp(", zu_str_between: " . $text, $target, $result);
+        $result = $lib->str_between($text, $maker_start, $maker_end);
+        $t->dsp(", str_between: " . $text, $target, $result);
 
         $t->subheader('arrays and lists');
 

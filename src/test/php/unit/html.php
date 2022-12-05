@@ -39,10 +39,11 @@ use html\view_dsp;
 
 class html_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;
+        $lib = new library();
         $html = new html_base();
 
         $t->header('Unit tests of the html classes (src/main/php/web/html/*)');
@@ -52,7 +53,7 @@ class html_unit_tests
 
         $created_html = $html->about();
         $expected_html = $t->file('web/html/about.html');
-        $t->dsp('html_selector', $t->trim_html($expected_html), $t->trim_html($created_html));
+        $t->dsp('html_selector', $lib->trim_html($expected_html), $lib->trim_html($created_html));
 
 
         $t->subheader('Selector tests');

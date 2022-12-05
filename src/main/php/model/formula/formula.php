@@ -865,7 +865,7 @@ class formula extends user_sandbox_named_with_type
         // check
         if ($this->ref_text_r == '' and $this->ref_text <> '') {
             $exp = new expression($this->user());
-            $exp->ref_text = $this->ref_text;
+            $exp->set_ref_text($this->ref_text);
             $this->ref_text_r = expression::CHAR_CALC . $exp->r_part();
         }
 
@@ -909,7 +909,7 @@ class formula extends user_sandbox_named_with_type
         //      the element group "Sales differentiator Sector" has the elements: "Sales" (of type word), "differentiator" (verb), "Sector" (word)
         $exp = $this->expression();
         $elm_grp_lst = $exp->element_grp_lst();
-        log_debug(self::class . '->to_num -> in ' . $exp->ref_text . ' ' . dsp_count($elm_grp_lst->lst()) . ' element groups found');
+        log_debug(self::class . '->to_num -> in ' . $exp->ref_text() . ' ' . dsp_count($elm_grp_lst->lst()) . ' element groups found');
 
         // to check if all needed value are given
         $all_elm_grp_filled = true;
@@ -1154,7 +1154,7 @@ class formula extends user_sandbox_named_with_type
 
             // build the formula expression for calculating the result
             $exp = new expression($this->user());
-            $exp->ref_text = $this->ref_text;
+            $exp->set_ref_text($this->ref_text);
 
             // the phrase left of the equation sign should be added to the result
             // e.g. percent for the increase formula
@@ -1256,9 +1256,9 @@ class formula extends user_sandbox_named_with_type
     function expression(): expression
     {
         $exp = new expression($this->user());
-        $exp->ref_text = $this->ref_text;
-        $exp->usr_text = $this->usr_text;
-        log_debug(self::class . '->expression ' . $exp->ref_text . ' for user ' . $exp->usr->name);
+        $exp->set_ref_text($this->ref_text);
+        $exp->set_user_text($this->usr_text);
+        log_debug(self::class . '->expression ' . $exp->ref_text() . ' for user ' . $exp->usr->name);
         return $exp;
     }
 
@@ -1418,8 +1418,10 @@ class formula extends user_sandbox_named_with_type
     /**
      * @return int a positive word id if the formula string in the database format contains a word link
      */
-    function get_formula_word($formula): int
+    function get_word_id(string $formula): int
     {
+        $lib = new library();
+
         log_debug($formula);
         $result = 0;
 
@@ -1427,8 +1429,8 @@ class formula extends user_sandbox_named_with_type
         if ($pos_start === false) {
             $result = 0;
         } else {
-            $r_part = zu_str_right_of($formula, expression::WORD_START);
-            $l_part = zu_str_left_of($r_part, expression::WORD_END);
+            $r_part = $lib->str_right_of($formula, expression::WORD_START);
+            $l_part = $lib->str_left_of($r_part, expression::WORD_END);
             if (is_numeric($l_part)) {
                 $result = $l_part;
                 log_debug($result);
@@ -1439,17 +1441,19 @@ class formula extends user_sandbox_named_with_type
         return $result;
     }
 
-    function get_formula($formula)
+    function get_formula_id(string $formula): int
     {
         log_debug("formula->get_formula (" . $formula . ")");
         $result = 0;
+
+        $lib = new library();
 
         $pos_start = strpos($formula, expression::FORMULA_START);
         if ($pos_start === false) {
             $result = 0;
         } else {
-            $r_part = zu_str_right_of($formula, expression::FORMULA_START);
-            $l_part = zu_str_left_of($r_part, expression::FORMULA_END);
+            $r_part = $lib->str_right_of($formula, expression::FORMULA_START);
+            $l_part = $lib->str_left_of($r_part, expression::FORMULA_END);
             if (is_numeric($l_part)) {
                 $result = $l_part;
                 log_debug("formula->get_formula -> " . $result);
@@ -1468,14 +1472,16 @@ class formula extends user_sandbox_named_with_type
         log_debug(self::class . '->wrd_ids (' . $frm_text . ',u' . $user_id . ')');
         $result = array();
 
+        $lib = new library();
+
         // add words to selection
-        $new_wrd_id = $this->get_formula_word($frm_text);
+        $new_wrd_id = $this->get_word_id($frm_text);
         while ($new_wrd_id > 0) {
             if (!in_array($new_wrd_id, $result)) {
                 $result[] = $new_wrd_id;
             }
-            $frm_text = zu_str_right_of($frm_text, expression::WORD_START . $new_wrd_id . expression::WORD_END);
-            $new_wrd_id = $this->get_formula_word($frm_text);
+            $frm_text = $lib->str_right_of($frm_text, expression::WORD_START . $new_wrd_id . expression::WORD_END);
+            $new_wrd_id = $this->get_word_id($frm_text);
         }
 
         log_debug(self::class . '->wrd_ids -> (' . dsp_array($result) . ')');
@@ -1490,14 +1496,16 @@ class formula extends user_sandbox_named_with_type
         log_debug(self::class . '->ids (' . $frm_text . ',u' . $user_id . ')');
         $result = array();
 
+        $lib = new library();
+
         // add words to selection
-        $new_frm_id = $this->get_formula($frm_text);
+        $new_frm_id = $this->get_formula_id($frm_text);
         while ($new_frm_id > 0) {
             if (!in_array($new_frm_id, $result)) {
                 $result[] = $new_frm_id;
             }
-            $frm_text = zu_str_right_of($frm_text, expression::FORMULA_START . $new_frm_id . expression::FORMULA_END);
-            $new_frm_id = $this->get_formula($frm_text);
+            $frm_text = $lib->str_right_of($frm_text, expression::FORMULA_START . $new_frm_id . expression::FORMULA_END);
+            $new_frm_id = $this->get_formula_id($frm_text);
         }
 
         log_debug(self::class . '->ids -> (' . dsp_array($result) . ')');
@@ -1704,8 +1712,8 @@ class formula extends user_sandbox_named_with_type
     {
         $result = '';
         $exp = new expression($this->user());
-        $exp->usr_text = $this->usr_text;
-        $this->ref_text = $exp->get_ref_text();
+        $exp->set_user_text($this->usr_text);
+        $this->ref_text = $exp->ref_text();
         $result .= $exp->err_text;
         return $result;
     }

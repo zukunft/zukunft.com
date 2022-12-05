@@ -40,7 +40,7 @@ function run_formula_element_test(testing $t)
     // load increase formula for testing
     $frm = $t->load_formula(formula::TN_SECTOR);
     $exp = $frm->expression();
-    $elm_lst = $exp->element_lst($back);
+    $elm_lst = $exp->element_list();
 
     // get the test word ids
     $wrd_country = $t->load_word(word::TN_COUNTRY);
@@ -114,9 +114,9 @@ function run_formula_element_list_test(testing $t): void
     // load increase formula for testing
     $frm = $t->load_formula(formula::TN_SECTOR);
     $exp = $frm->expression();
-    $elm_lst = $exp->element_lst($back);
+    $elm_lst = $exp->element_list();
 
-    if (isset($elm_lst)) {
+    if (!$elm_lst->is_empty()) {
         $result = $elm_lst->name();
         $target = 'System Test Word Parent e.g. Country, can be used as a differentiator for, System Test Word Category e.g. Canton, System Test Word Total';
         $t->dsp_contains(', formula_element_list->dsp_id', $target, $result);

@@ -765,11 +765,11 @@ class phrase_group extends db_object
 
                 if (strlen($wrd_id_txt) > 255) {
                     log_err('Too many words assigned to one value ("' . $wrd_id_txt . '" is longer than the max database size of 255).', "phrase_group->set_wrd_id_txt");
-                    $wrd_id_txt = zu_str_left($wrd_id_txt, 255);
+                    $wrd_id_txt = substr($wrd_id_txt, 0, 255);
                 }
                 if (strlen($trp_id_txt) > 255) {
                     log_err('Too many triple assigned to one value ("' . $wrd_id_txt . '" is longer than the max database size of 255).', "phrase_group->set_wrd_id_txt");
-                    $trp_id_txt = zu_str_left($trp_id_txt, 255);
+                    $trp_id_txt = substr($trp_id_txt, 0, 255);
                 }
 
                 $db_con->set_type(sql_db::TBL_PHRASE_GROUP);

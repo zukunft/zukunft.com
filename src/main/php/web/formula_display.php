@@ -54,7 +54,7 @@ class formula_dsp_old extends formula
         $result = $this->usr_text;
 
         $exp = $this->expression();
-        $elm_lst = $exp->element_lst($back);
+        $elm_lst = $exp->element_list();
         foreach ($elm_lst->lst() as $elm) {
             log_debug("replace " . $elm->name . " with " . $elm->name_linked($back) . ".");
             $result = str_replace('"' . $elm->name . '"', $elm->name_linked($back), $result);

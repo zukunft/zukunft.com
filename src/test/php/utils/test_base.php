@@ -1103,87 +1103,6 @@ class test_base
     }
 
     /*
-     * Format functions
-     */
-
-    /**
-     * @return string text with just single spaces
-     */
-    function trim(string $string_with_multiple_spaces): string
-    {
-        return trim(preg_replace('!\s+!', ' ', $string_with_multiple_spaces));
-    }
-
-    /**
-     * @return string text without any single spaces
-     */
-    function trim_all_spaces(string $string_with_multiple_spaces): string
-    {
-        return trim(preg_replace('/\s+/', '', $string_with_multiple_spaces));
-    }
-
-    /**
-     * @return string text with just single spaces and without line feeds
-     */
-    function trim_lines(string $string_with_new_lines): string
-    {
-        return $this->trim(preg_replace('/[\n\r]/', ' ', $string_with_new_lines));
-    }
-
-    /**
-     * @return string text with just single spaces and all spaces removed not needed in a SQL
-     */
-    function trim_sql(string $sql_string): string
-    {
-        $result = $this->trim_lines($sql_string);
-        $result = preg_replace('/\( /', '(', $result);
-        $result = preg_replace('/ \)/', ')', $result);
-        return preg_replace('/, /', ',', $result);
-    }
-
-    /**
-     * @return string text with just single spaces and all spaces removed not needed in a JSON
-     */
-    function trim_json(string $json_string): string
-    {
-        $result = $this->trim_lines($json_string);
-        $result = preg_replace('/\[ {/', '[{', $result);
-        $result = preg_replace('/] }/', ']}', $result);
-        $result = preg_replace('/{ \[/', '{[', $result);
-        $result = preg_replace('/} ]/', '}]', $result);
-        $result = preg_replace('/" }/', '"}', $result);
-        $result = preg_replace('/": /', '":', $result);
-        $result = preg_replace('/, "/', ',"', $result);
-        $result = preg_replace('/{ "/', '{"', $result);
-        return preg_replace('/}, {/', '},{', $result);
-    }
-
-    /**
-     * @return string text with just single spaces and all spaces removed not needed for HTML
-     */
-    function trim_html(string $html_string): string
-    {
-        $result = $this->trim_lines($html_string);
-        $result = preg_replace('/ <td>/', '<td>', $result);
-        $result = preg_replace('/ <\/td>/', '</td>', $result);
-        $result = preg_replace('/ <th>/', '<th>', $result);
-        $result = preg_replace('/ <\/th>/', '</th>', $result);
-        $result = preg_replace('/ <tr>/', '<tr>', $result);
-        $result = preg_replace('/ <\/tr>/', '</tr>', $result);
-        $result = preg_replace('/> <div/', '><div', $result);
-        $result = preg_replace('/> <\/div/', '></div', $result);
-        $result = preg_replace('/> <table/', '><table', $result);
-        $result = preg_replace('/> <\/table/', '></table', $result);
-        $result = preg_replace('/> <footer/', '><footer', $result);
-        $result = preg_replace('/> <\/footer/', '></footer', $result);
-        $result = preg_replace('/" \/>/', '"/>', $result);
-        $result = preg_replace('/" </', '"<', $result);
-        $result = preg_replace('/ >/', '>', $result);
-        $result = preg_replace('/ </', '<', $result);
-        return preg_replace('/> </', '><', $result);
-    }
-
-    /*
      * Display functions
      */
 
@@ -1697,7 +1616,8 @@ class test_base
      */
     function assert_sql(string $name, string $created, string $expected): bool
     {
-        return $this->assert($name, $this->trim_sql($created), $this->trim_sql($expected));
+        $lib = new library();
+        return $this->assert($name, $lib->trim_sql($created), $lib->trim_sql($expected));
     }
 
     /**

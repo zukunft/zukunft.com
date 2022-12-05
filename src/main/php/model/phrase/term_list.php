@@ -240,6 +240,26 @@ class term_list extends user_sandbox_list_named
     }
 
     /**
+     * get a term from the term list selected by the word, triple, formula or verb id
+     *
+     * @param int $id the word, triple, formula or verb id (not the term id!)
+     * @param string $class the word, triple, formula or verb class name
+     * @return term|null the word object from the list or null
+     */
+    function term_by_obj_id(int $id, string $class): ?term
+    {
+        $trm = new term($this->user());
+        $trm->set_id_from_obj($id, $class);
+        $trm_id = $trm->id();
+        if ($trm_id != 0) {
+            $trm = $this->get_by_id($trm_id);
+        }
+        return $trm;
+    }
+
+    /**
+     * get a word from the term list selected by the word id
+     *
      * @param int $id the word id (not the term id!)
      * @return word|null the word object from the list or null
      */
@@ -257,6 +277,8 @@ class term_list extends user_sandbox_list_named
     }
 
     /**
+     * get a triple from the term list selected by the triple id
+     *
      * @param int $id the triple id (not the term id!)
      * @return triple|null the triple object from the list or null
      */
@@ -274,6 +296,8 @@ class term_list extends user_sandbox_list_named
     }
 
     /**
+     * get a formula from the term list selected by the formula id
+     *
      * @param int $id the formula id (not the term id!)
      * @return formula|null the formula object from the list or null
      */
@@ -291,6 +315,8 @@ class term_list extends user_sandbox_list_named
     }
 
     /**
+     * get a verb from the term list selected by the verb id
+     *
      * @param int $id the verb id (not the term id!)
      * @return verb|null the verb object from the list or null
      */

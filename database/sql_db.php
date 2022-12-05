@@ -1319,11 +1319,13 @@ class sql_db
 
     public function get_id_field_name($type): string
     {
+        $lib = new library();
+
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
-        if (zu_str_is_left($type, sql_db::TBL_USER_PREFIX)
+        if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
             and $type != sql_db::TBL_USER_TYPE) {
-            $type = zu_str_right_of($type, sql_db::TBL_USER_PREFIX);
+            $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . '_id';
         // exceptions for nice english
@@ -1356,10 +1358,13 @@ class sql_db
     private function set_name_field(): void
     {
         global $debug;
+
+        $lib = new library();
+
         $type = $this->type;
         // exceptions for user overwrite tables
-        if (zu_str_is_left($type, sql_db::TBL_USER_PREFIX)) {
-            $type = zu_str_right_of($type, sql_db::TBL_USER_PREFIX);
+        if (str_starts_with($type, sql_db::TBL_USER_PREFIX)) {
+            $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . '_name';
         // exceptions to be adjusted
@@ -4057,6 +4062,8 @@ class sql_db
     {
         $result = false;
 
+        $lib = new library();
+
         // adjust the parameters to the used database name
         $table_name = $this->get_table_name($type_name);
 
@@ -4064,7 +4071,7 @@ class sql_db
         $db_row_lst = $this->get($qp);
         foreach ($db_row_lst as $db_row) {
             $db_row_name = $db_row[$column_name];
-            $new_name = zu_str_right_of($db_row_name, $prefix_name);
+            $new_name = $lib->str_right_of($db_row_name, $prefix_name);
             if ($new_name != '' and $new_name != $db_row_name) {
                 $result = $this->change_code_id($table_name, $db_row_name, $new_name);
             }

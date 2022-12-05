@@ -133,6 +133,12 @@ class expression
 
     // text maker to convert phrase, formula or verb database reference to
     // a phrase or phrase list and in a second step to a value or value list
+    const TERM_START = '{'; //
+    const TERM_END = '}'; //
+    const WORD_SYMBOL = 'w'; //
+    const TRIPLE_SYMBOL = 't'; //
+    const FORMULA_SYMBOL = 'f'; //
+    const VERB_SYMBOL = 'v'; //
     const WORD_START = '{w';   //
     const WORD_END = '}';    //
     const TRIPLE_START = '{t';   //
@@ -176,20 +182,96 @@ class expression
      * object vars
      */
 
-    public ?string $usr_text = null;   // the formula expression in the human-readable format
-    public ?string $ref_text = null;   // the formula expression with the database references
+    private ?string $usr_text;         // the formula expression in the human-readable format
+    private bool $usr_text_dirty;      // true if the reference text has been updated and not yet converted
+    private ?string $ref_text;         // the formula expression with the database references
+    private bool $ref_text_dirty;      // true if the human-readable text has been updated and not yet converted
     public ?string $err_text = null;   // description of the problems that appeared during the conversion from the human-readable to the database reference format
     public user $usr;                  // to get the user settings for the conversion
     public ?phrase_list $fv_phr_lst = null;  // list object of the words that should be added to the formula result
     public ?phrase_list $phr_lst = null;     // list of the phrase ids that are used for the formula result
 
+
+    /*
+     * construct and map
+     */
+
     function __construct(user $usr)
     {
         $this->usr = $usr;
+        $this->usr_text = null;
+        $this->usr_text_dirty = false;
+        $this->ref_text = null;
+        $this->ref_text_dirty = false;
+    }
+
+
+    /*
+     * get and set
+     */
+
+    /**
+     * update the expression by setting the human-readable format and try to update the database reference format
+     * @param string $usr_txt the formula expression in the human-readable format
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return void
+     */
+    public function set_user_text(string $usr_txt, ?term_list $trm_lst = null): void
+    {
+        $this->usr_text = $usr_txt;
+        $this->usr_text_dirty = false;
+        $this->ref_text_dirty = true;
+        $this->ref_text($trm_lst);
+    }
+
+    /**
+     * update the expression by setting the database reference format and try to update the human-readable format
+     * @param string $ref_txt the formula expression in the database reference format
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return void
+     */
+    public function set_ref_text(string $ref_txt, ?term_list $trm_lst = null): void
+    {
+        $this->ref_text = $ref_txt;
+        $this->ref_text_dirty = false;
+        $this->usr_text_dirty = true;
+        $this->user_text($trm_lst);
+    }
+
+    /**
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return string|null the recreated expression in the human-readable format or null if an error has occurred
+     */
+    public function user_text(?term_list $trm_lst = null): ?string
+    {
+        if ($this->usr_text_dirty) {
+            $this->usr_text = $this->get_usr_text($trm_lst);
+        }
+        if (!$this->usr_text_dirty) {
+            return $this->usr_text;
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return string|null the recreated expression in the database reference format or null if an error has occurred
+     */
+    public function ref_text(?term_list $trm_lst = null): ?string
+    {
+        if ($this->ref_text_dirty) {
+            $this->ref_text = $this->get_ref_text($trm_lst);
+        }
+        if (!$this->ref_text_dirty) {
+            return $this->ref_text;
+        } else {
+            return '';
+        }
     }
 
     /*
-     * the main interface functions
+     * other interface functions
      */
 
     /**
@@ -219,34 +301,128 @@ class expression
     }
 
     /**
-     * @return formula_element_list|formula_element_group_list a list of all formula elements
-     * (don't use for number retrieval, use element_grp_lst instead, because )
+     * a formula element group is a group of words, verbs, phrases or formula that retrieve a value or a list of values
+     * e.g. with "Sector" "differentiator" all
+     *
      */
-    function element_lst(): formula_element_list|formula_element_group_list
+    function element_grp_lst(?term_list $trm_lst = null): formula_element_list|formula_element_group_list
     {
-        return $this->element_lst_all(expression::SELECT_ALL, FALSE);
+        return $this->element_lst_all(expression::SELECT_ALL, TRUE, $trm_lst);
     }
 
     /**
-     * a formula element group is a group of words, verbs, phrases or formula that retrieve a value or a list of values
-     * e.g. with "Sector" "differentiator" all
+     * @return formula_element_list a list of all formula elements
+     * (don't use for number retrieval, use element_grp_lst instead, because )
      */
-    function element_grp_lst(): formula_element_list|formula_element_group_list
+    public function element_list(?term_list $trm_lst = null): formula_element_list
     {
-        return $this->element_lst_all(expression::SELECT_ALL, TRUE);
+        $lib = new library();
+
+        $elm_lst = new formula_element_list($this->usr);
+        $work = $this->r_part();
+
+        $obj_sym = $lib->str_between($work, self::TERM_START, self::TERM_END);
+        while ($obj_sym != '') {
+            $elm = $this->element_by_symbol($obj_sym, $trm_lst);
+            $elm_lst->add($elm);
+            $work = $lib->str_right_of($work, self::TERM_END);
+            $obj_sym = $lib->str_between($work, self::TERM_START, self::TERM_END);
+        }
+        return $elm_lst;
     }
 
     /*
-     * functions public just for testing
+     * display functions
+     */
+
+    /**
+     * format the expression name to use it for debugging
+     */
+    public function dsp_id(): string
+    {
+        // $result = '"' . $this->usr_text . '" (' . $this->ref_text . ')';
+        // the user is no most cases no extra info
+        // $result .= ' for user '.$this->usr->name.'';
+        return '"' . $this->user_text() . '" (' . $this->ref_text() . ')';
+    }
+
+    public function name(): string
+    {
+        return $this->usr_text;
+    }
+
+
+    /*
+     * convert from reference text to user text and back
+     */
+
+    /**
+     * convert the user text to the database reference format
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return string the expression in the formula reference format
+     */
+    private function get_ref_text(?term_list $trm_lst = null): string
+    {
+        $result = '';
+
+        // check the formula indicator "=" and convert the left and right part separately
+        $pos = strpos($this->usr_text, self::CHAR_CALC);
+        if ($pos >= 0) {
+            $left_part = $this->fv_part_usr();
+            $right_part = $this->r_part_usr();
+            $left_part = $this->get_ref_part($left_part, $trm_lst);
+            // continue with the right part of the expression only if the left part has been fine
+            if (!$this->usr_text_dirty) {
+                $right_part = $this->get_ref_part($right_part, $trm_lst);
+            }
+            $result = $left_part . self::CHAR_CALC . $right_part;
+        }
+
+        // remove all spaces because they are not relevant for calculation and to avoid too much recalculation
+        return str_replace(" ", "", $result);
+    }
+
+    /**
+     * @return string the formula expression converted to the user text from the database reference format
+     * e.g. converts "{w5}={w6}{l12}/{f19}" to "'percent' = 'Sales' 'differentiator'/'Total Sales'"
+     */
+    private function get_usr_text(?term_list $trm_lst = null): string
+    {
+        log_debug($this->ref_text() . '< and user ' . $this->usr->name);
+        $result = '';
+
+        // check the formula indicator "=" and convert the left and right part separately
+        $pos = strpos($this->ref_text, self::CHAR_CALC);
+        if ($pos > 0) {
+            $left_part = $this->fv_part();
+            $right_part = $this->r_part();
+            log_debug('(l:' . $left_part . ',r:' . $right_part . '"');
+            $left_part = $this->get_usr_part($left_part, $trm_lst);
+            // continue with the right part of the expression only if the left part has been fine
+            if (!$this->usr_text_dirty) {
+                $right_part = $this->get_usr_part($right_part, $trm_lst);
+            }
+            $result = $left_part . self::CHAR_CALC . $right_part;
+        }
+
+        log_debug('done "' . $result . '"');
+        return $result;
+    }
+
+
+    /*
+     * internal functions public just for testing
      */
 
     /**
      * @returns phr_ids with the word and triple ids from a given formula text
      * and without loading the objects from the database
      */
-    function phr_id_lst(string $ref_text): phr_ids
+    public function phr_id_lst(string $ref_text): phr_ids
     {
         $id_lst = [];
+
+        $lib = new library();
 
         if ($ref_text <> "") {
             // add word ids to selection
@@ -255,7 +431,7 @@ class expression
                 if (!in_array($new_wrd_id, $id_lst)) {
                     $id_lst[] = $new_wrd_id;
                 }
-                $ref_text = zu_str_right_of($ref_text, self::WORD_START . $new_wrd_id . self::WORD_END);
+                $ref_text = $lib->str_right_of($ref_text, self::WORD_START . $new_wrd_id . self::WORD_END);
                 $new_wrd_id = $this->get_word_id($ref_text);
             }
             // add triple ids to selection
@@ -264,7 +440,7 @@ class expression
                 if (!in_array($new_wrd_id, $id_lst)) {
                     $id_lst[] = $new_trp_id * -1;
                 }
-                $ref_text = zu_str_right_of($ref_text, self::TRIPLE_START . $new_trp_id . self::TRIPLE_END);
+                $ref_text = $lib->str_right_of($ref_text, self::TRIPLE_START . $new_trp_id . self::TRIPLE_END);
                 $new_trp_id = $this->get_triple_id($ref_text);
             }
         }
@@ -276,7 +452,7 @@ class expression
      * @returns phrase_list with the word and triple ids from a given formula text
      * and without loading the objects from the database
      */
-    function phr_id_lst_as_phr_lst(string $ref_text): phrase_list
+    public function phr_id_lst_as_phr_lst(string $ref_text): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
         $id_lst = $this->phr_id_lst($ref_text)->lst;
@@ -289,84 +465,41 @@ class expression
     }
 
     /**
-     * convert the user text to the database reference format
-     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
-     * @return string the expression in the formula reference format
-     */
-    function get_ref_text(?term_list $trm_lst = null): string
-    {
-        $result = '';
-
-        // check the formula indicator "=" and convert the left and right part separately
-        $pos = strpos($this->usr_text, self::CHAR_CALC);
-        if ($pos >= 0) {
-            $left_part = $this->fv_part_usr();
-            $right_part = $this->r_part_usr();
-            $left_part = $this->get_ref_part($left_part, $trm_lst);
-            $right_part = $this->get_ref_part($right_part, $trm_lst);
-            $result = $left_part . self::CHAR_CALC . $right_part;
-        }
-
-        // remove all spaces because they are not relevant for calculation and to avoid too much recalculation
-        return str_replace(" ", "", $result);
-    }
-
-    /**
-     * @return string the formula expression converted to the user text from the database reference format
-     * e.g. converts "{w5}={w6}{l12}/{f19}" to "'percent' = 'Sales' 'differentiator'/'Total Sales'"
-     */
-    function get_usr_text(?term_list $trm_lst = null): string
-    {
-        log_debug('expression->get_usr_text >' . $this->ref_text . '< and user ' . $this->usr->name);
-        $result = '';
-
-        // check the formula indicator "=" and convert the left and right part separately
-        $pos = strpos($this->ref_text, self::CHAR_CALC);
-        if ($pos > 0) {
-            $left_part = $this->fv_part();
-            $right_part = $this->r_part();
-            log_debug('expression->get_usr_text -> (l:' . $left_part . ',r:' . $right_part . '"');
-            $left_part = $this->get_usr_part($left_part, $trm_lst);
-            $right_part = $this->get_usr_part($right_part, $trm_lst);
-            $result = $left_part . self::CHAR_CALC . $right_part;
-        }
-
-        log_debug('expression->get_usr_text ... done "' . $result . '"');
-        return $result;
-    }
-
-    /**
      * find the position of the formula indicator "="
      * use the part left of it to add the words to the result
      */
     public function fv_part(): string
     {
-        $result = zu_str_left_of($this->ref_text, self::CHAR_CALC);
+        $lib = new library();
+        $result = $lib->str_left_of($this->ref_text, self::CHAR_CALC);
         return trim($result);
     }
 
-    function fv_part_usr(): string
+    public function fv_part_usr(): string
     {
-        $result = zu_str_left_of($this->usr_text, self::CHAR_CALC);
+        $lib = new library();
+        $result = $lib->str_left_of($this->usr_text, self::CHAR_CALC);
         return trim($result);
     }
 
-    function r_part(): string
+    public function r_part(): string
     {
-        $result = zu_str_right_of($this->ref_text, self::CHAR_CALC);
+        $lib = new library();
+        $result = $lib->str_right_of($this->ref_text, self::CHAR_CALC);
         return trim($result);
     }
 
-    function r_part_usr(): string
+    public function r_part_usr(): string
     {
-        $result = zu_str_right_of($this->usr_text, self::CHAR_CALC);
+        $lib = new library();
+        $result = $lib->str_right_of($this->usr_text, self::CHAR_CALC);
         return trim($result);
     }
 
     /**
      * @returns bool true if the formula contains a word, verb or formula link
      */
-    function has_ref(): bool
+    public function has_ref(): bool
     {
         log_debug($this->dsp_id());
         $result = false;
@@ -382,25 +515,43 @@ class expression
         return $result;
     }
 
-    /*
-     * display functions
-     */
-
     /**
-     * format the expression name to use it for debugging
+     * @return array of the term names used in the expression based on the user text
+     * e.g. converts "'Sales' 'differentiator' / 'Total Sales'" to "Sales, differentiator, Total Sales"
      */
-    function dsp_id(): string
+    public function get_usr_names(): array
     {
-        // $result = '"' . $this->usr_text . '" (' . $this->ref_text . ')';
-        // the user is no most cases no extra info
-        // $result .= ' for user '.$this->usr->name.'';
-        return '"' . $this->usr_text . '" (' . $this->ref_text . ')';
+        $result = [];
+        $remaining = $this->user_text();
+
+        if ($remaining != '') {
+            // find the first word
+            $start = 0;
+            $pos = strpos($remaining, self::TERM_DELIMITER, $start);
+            $end = strpos($remaining, self::TERM_DELIMITER, $pos + 1);
+            while ($end !== False) {
+                // for 12'45'78: pos = 2, end = 5, name = 45, left = 12. right = 78
+                $name = substr($remaining, $pos + 1, $end - $pos - 1);
+                if (!in_array($name, $result)) {
+                    $result[] = $name;
+                }
+                $remaining = substr($remaining, $end + 1);
+
+                // find the next word
+                $end = false;
+                if ($start < strlen($remaining)) {
+                    log_debug('start "' . $start . '"');
+                    $pos = strpos($remaining, self::TERM_DELIMITER, $start);
+                    if ($pos !== false) {
+                        log_debug('pos "' . $pos . '"');
+                        $end = strpos($remaining, self::TERM_DELIMITER, $pos + 1);
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
-    function name(): string
-    {
-        return $this->usr_text;
-    }
 
     /*
      * internal functions
@@ -459,10 +610,12 @@ class expression
     {
         $result = 0;
 
+        $lib = new library();
+
         $pos_start = strpos($ref_text, $start_maker);
         if ($pos_start !== false) {
-            $r_part = zu_str_right_of($ref_text, $start_maker);
-            $l_part = zu_str_left_of($r_part, $end_maker);
+            $r_part = $lib->str_right_of($ref_text, $start_maker);
+            $l_part = $lib->str_left_of($r_part, $end_maker);
             if (is_numeric($l_part)) {
                 $result = $l_part;
             }
@@ -472,14 +625,57 @@ class expression
     }
 
     /**
+     * create a formula element based on the id symbol e.g. w2 for word with id 2
+     * and get the word, triple, formula or verb either from the given preloaded term list
+     * or load the object from the database
+     *
+     * @param string $obj_sym the formula element symbol e.g. t2 for triple with id 2
+     * @param term_list|null $trm_lst a list of preloaded terms
+     * @return formula_element the filled formula element
+     */
+    private function element_by_symbol(string $obj_sym, ?term_list $trm_lst = null): formula_element
+    {
+        $elm = new formula_element($this->usr);
+        $elm->type = match ($obj_sym[0]) {
+            self::WORD_SYMBOL => formula_element::TYPE_WORD,
+            self::TRIPLE_SYMBOL => formula_element::TYPE_TRIPLE,
+            self::FORMULA_SYMBOL => formula_element::TYPE_FORMULA,
+            self::VERB_SYMBOL => formula_element::TYPE_VERB,
+        };
+        $id = substr($obj_sym, 1);
+        $trm = $trm_lst?->term_by_obj_id($id, $elm->type);
+        if ($trm == null) {
+            $trm = new term($this->usr);
+            $trm->load_by_obj_id($id, $elm->type);
+        }
+        if ($trm != null) {
+            if ($trm->id() != 0) {
+                $elm->obj = $trm->obj;
+                $elm->symbol = $this->get_db_sym($trm);
+            } else {
+                log_warning($elm->type . ' with id ' . $id . ' not found');
+            }
+        }
+
+        return $elm;
+    }
+
+    /**
      * create a list of all formula elements
      * with the $type parameter the result list can be filtered
      * the filter is done within this function, because e.g. a verb can increase the number of words to return
      * if group it is true, element groups instead of single elements are returned
+     * the order of the formula elements is relevant because the elements can influence each other
      */
-    private function element_lst_all(string $type = self::SELECT_ALL, bool $group_it = false): formula_element_list|formula_element_group_list
+    private function element_lst_all(
+        string     $type = self::SELECT_ALL,
+        bool       $group_it = false,
+        ?term_list $trm_lst = null
+    ): formula_element_list|formula_element_group_list
     {
-        log_debug('expression->element_lst_all get ' . $type . ' out of "' . $this->ref_text . '" for user ' . $this->usr->name);
+        log_debug('get ' . $type . ' out of "' . $this->ref_text() . '" for user ' . $this->usr->name);
+
+        $lib = new library();
 
         // init result and work vars
         $lst = array();
@@ -498,49 +694,48 @@ class expression
 
         if ($work == '') {
             // zu_warning ???
-            log_warning('expression->element_lst_all -> work is empty', '', ' work is empty', (new Exception)->getTraceAsString(), $this->usr);
+            log_warning('work is empty', '', ' work is empty', (new Exception)->getTraceAsString(), $this->usr);
         } else {
             // loop over the formula text and replace ref by ref from left to right
             $found = true;
             $nbr = 0;
             while ($found and $nbr < MAX_LOOP) {
-                log_debug('expression->element_lst_all -> in "' . $work . '"');
+                log_debug('in "' . $work . '"');
                 $found = false;
 
                 // $pos is the position von the next element
                 // to list the elements from left to right, set it to the right most position at the beginning of each replacement
                 $pos = strlen($work);
                 $elm = new formula_element($this->usr);
+                $obj_sym = $lib->str_between($work, self::TERM_START, self::TERM_END);
+                if ($obj_sym != '') {
+                    $elm = $this->element_by_symbol($obj_sym, $trm_lst);
+                }
+
 
                 // find the next word reference
                 if ($type == expression::SELECT_ALL or $type == expression::SELECT_PHRASE or $type == expression::SELECT_VERB_WORD) {
-                    $obj_id = zu_str_between($work, self::WORD_START, self::WORD_END);
-                    if (is_numeric($obj_id)) {
-                        if ($obj_id > 0) {
-                            $elm->type = formula_element::TYPE_WORD;
-                            $wrd = new word($this->usr);
-                            $wrd->set_id($obj_id);
-                            $elm->obj = $wrd;
-                            $pos = strpos($work, self::WORD_START);
-                            log_debug('expression->element_lst_all -> wrd pos ' . $pos);
-                        }
+                    if ($elm->type == formula_element::TYPE_WORD) {
+                        $pos = strpos($work, self::WORD_START);
+                        log_debug('word pos ' . $pos);
+                    }
+                }
+
+                // find the next triple reference
+                if ($type == expression::SELECT_ALL or $type == expression::SELECT_PHRASE or $type == expression::SELECT_VERB_WORD) {
+                    if ($elm->type == formula_element::TYPE_TRIPLE) {
+                        $pos = strpos($work, self::TRIPLE_START);
+                        log_debug('triple pos ' . $pos);
                     }
                 }
 
                 // find the next verb reference
                 if ($type == expression::SELECT_ALL or $type == expression::SELECT_VERB) {
-                    $new_pos = strpos($work, self::TRIPLE_START);
-                    log_debug('expression->element_lst_all -> verb pos ' . $new_pos);
+                    $new_pos = strpos($work, self::VERB_START);
+                    log_debug('verb pos ' . $new_pos);
                     if ($new_pos < $pos) {
-                        $obj_id = zu_str_between($work, self::TRIPLE_START, self::TRIPLE_END);
-                        if (is_numeric($obj_id)) {
-                            if ($obj_id > 0) {
-                                $elm->type = formula_element::TYPE_VERB;
-                                $vrb = new verb();
-                                $vrb->id = $obj_id;
-                                $elm->obj = $vrb;
-                                $pos = $new_pos;
-                            }
+                        if ($elm->type == formula_element::TYPE_VERB) {
+                            $pos = $new_pos;
                         }
                     }
                 }
@@ -548,17 +743,10 @@ class expression
                 // find the next formula reference
                 if ($type == expression::SELECT_ALL or $type == expression::SELECT_FORMULA or $type == expression::SELECT_PHRASE or $type == expression::SELECT_VERB_WORD) {
                     $new_pos = strpos($work, self::FORMULA_START);
-                    log_debug('expression->element_lst_all -> frm pos ' . $new_pos);
+                    log_debug('formula pos ' . $new_pos);
                     if ($new_pos < $pos) {
-                        $obj_id = zu_str_between($work, self::FORMULA_START, self::FORMULA_END);
-                        if (is_numeric($obj_id)) {
-                            if ($obj_id > 0) {
-                                $elm->type = formula_element::TYPE_FORMULA;
-                                $frm = new verb();
-                                $frm->id = $obj_id;
-                                $elm->obj = $frm;
-                                $pos = $new_pos;
-                            }
+                        if ($elm->type == formula_element::TYPE_VERB) {
+                            $pos = $new_pos;
                         }
                     }
                 }
@@ -566,72 +754,74 @@ class expression
                 // add reference to result
                 if ($elm->obj != null) {
                     if ($elm->obj->id() > 0) {
-                        $elm->usr = $this->usr;
-                        $elm->load_by_id($elm->obj->id());
+                        if ($elm->obj->name() == '') {
+                            $elm->usr = $this->usr;
+                            $elm->load_by_id($elm->obj->id());
+                        }
 
                         // update work text
-                        $changed = str_replace($elm->symbol, $elm->name, $work);
-                        log_debug('expression->element_lst_all -> found "' . $elm->name . '" for ' . $elm->symbol . ', so "' . $work . '" is now "' . $changed . '"');
+                        $changed = str_replace($elm->symbol, $elm->name(), $work);
+                        log_debug('found "' . $elm->name() . '" for ' . $elm->symbol . ', so "' . $work . '" is now "' . $changed . '"');
                         if ($changed <> $work) {
                             $work = $changed;
                             $found = true;
-                            $pos = $pos + strlen($elm->name);
+                            $pos = $pos + strlen($elm->name());
                         }
 
                         // group the references if needed
                         if ($group_it) {
                             $elm_grp->lst[] = $elm;
-                            log_debug('expression->element_lst_all -> new group element "' . $elm->name . '"');
+                            log_debug('new group element "' . $elm->name() . '"');
 
                             $txt_between_elm = '';
                             $next_pos = 0;
                             if ($pos > 0) {
                                 // get the position of the next element to check if a new group should be created or added to the same
                                 $next_pos = strlen($work);
-                                log_debug('expression->element_lst_all -> next_pos ' . $next_pos);
+                                log_debug('next_pos ' . $next_pos);
                                 $new_pos = strpos($work, self::WORD_START);
                                 if ($new_pos < $next_pos) {
-                                    $obj_id = zu_str_between($work, self::WORD_START, self::WORD_END);
+                                    $obj_id = $lib->str_between($work, self::WORD_START, self::WORD_END);
                                     if (is_numeric($obj_id)) {
                                         if ($obj_id > 0) {
                                             $next_pos = $new_pos;
-                                            log_debug('expression->element_lst_all -> next_pos shorter by word ' . $next_pos);
+                                            log_debug('next_pos shorter by word ' . $next_pos);
                                         }
                                     }
                                 }
                                 $new_pos = strpos($work, self::TRIPLE_START);
                                 if ($new_pos < $next_pos) {
-                                    $obj_id = zu_str_between($work, self::TRIPLE_START, self::TRIPLE_END);
+                                    $obj_id = $lib->str_between($work, self::TRIPLE_START, self::TRIPLE_END);
                                     if (is_numeric($obj_id)) {
                                         if ($obj_id > 0) {
                                             $next_pos = $new_pos;
-                                            log_debug('expression->element_lst_all -> next_pos shorter by verb ' . $next_pos);
+                                            log_debug('next_pos shorter by verb ' . $next_pos);
                                         }
                                     }
                                 }
                                 $new_pos = strpos($work, self::FORMULA_START);
                                 if ($new_pos < $next_pos) {
-                                    $obj_id = zu_str_between($work, self::FORMULA_START, self::FORMULA_END);
+                                    $obj_id = $lib->str_between($work, self::FORMULA_START, self::FORMULA_END);
                                     if (is_numeric($obj_id)) {
                                         if ($obj_id > 0) {
                                             $next_pos = $new_pos;
-                                            log_debug('expression->element_lst_all -> next_pos shorter by formula  ' . $next_pos);
+                                            log_debug('next_pos shorter by formula  ' . $next_pos);
                                         }
                                     }
                                 }
 
                                 // get the text between the references
                                 $len = $next_pos - $pos;
-                                log_debug('expression->element_lst_all -> in "' . $work . '" after ' . $pos . ' len ' . $len . ' "' . $next_pos . ' - ' . $pos . ')');
+                                log_debug('in "' . $work . '" after ' . $pos . ' len ' . $len . ' "' . $next_pos . ' - ' . $pos . ')');
                                 $txt_between_elm = substr($work, $pos, $len);
-                                log_debug('expression->element_lst_all -> between elements "' . $txt_between_elm . '" ("' . $work . '" from ' . $pos . ' to ' . $next_pos . ')');
+                                log_debug('between elements "' . $txt_between_elm . '" ("' . $work . '" from ' . $pos . ' to ' . $next_pos . ')');
                                 $txt_between_elm = str_replace('"', '', $txt_between_elm);
                                 $txt_between_elm = trim($txt_between_elm);
                             }
                             // check if the references does not have any math symbol in between and therefore are used to retrieve one value
                             if (strlen($txt_between_elm) > 0 or $next_pos == strlen($work)) {
                                 $lst[] = $elm_grp;
-                                log_debug('expression->element_lst_all -> group finished with ' . $elm->name);
+                                log_debug('group finished with ' . $elm->name());
                                 $elm_grp = new formula_element_group;
                                 $elm_grp->usr = $this->usr;
                             }
@@ -652,101 +842,8 @@ class expression
         }
         $result->set_lst($lst);
 
-        log_debug('expression->element_lst_all got -> ' . dsp_count($result->lst()) . ' elements');
+        log_debug(dsp_count($result->lst()) . ' elements');
         return $result;
-    }
-
-    /**
-     * similar to phr_lst, but
-     * e.g. for "Sales" "differentiator" "Country" all "Country" words should be included
-     * TODO should also include the words implied by the verbs
-     */
-    function phr_verb_lst(): phrase_list
-    {
-        log_debug('expression->phr_verb_lst');
-        $elm_lst = $this->element_lst_all(expression::SELECT_PHRASE, FALSE);
-        log_debug('expression->phr_verb_lst -> got ' . dsp_count($elm_lst->lst()) . ' formula elements');
-        $phr_lst = new phrase_list($this->usr);
-        foreach ($elm_lst->lst() as $elm) {
-            log_debug('expression->phr_verb_lst -> check elements ' . $elm->name());
-            if ($elm->type == 'formula') {
-                if (isset($elm->wrd_obj)) {
-                    $phr = $elm->wrd_obj->phrase();
-                    $phr_lst->add($phr);
-                } else {
-                    log_err('Word missing for formula element ' . $elm->dsp_id . '.', 'expression->phr_verb_lst');
-                }
-            } elseif ($elm->type == formula_element::TYPE_WORD) {
-                if (isset($elm->obj)) {
-                    $phr = $elm->obj->phrase();
-                    $phr_lst->add($phr);
-                } else {
-                    log_err('Word missing for formula element ' . $elm->dsp_id . '.', 'expression->phr_verb_lst');
-                }
-            } elseif ($elm->type == formula_element::TYPE_VERB) {
-                log_err('Use Formula element ' . $elm->dsp_id . ' has an unexpected type.', 'expression->phr_verb_lst');
-            } else {
-                log_err('Formula element ' . $elm->dsp_id . ' has an unexpected type.', 'expression->phr_verb_lst');
-            }
-        }
-        // TODO check if the phrases are already loaded
-        //$phr_lst->load();
-        log_debug('expression->phr_verb_lst -> ' . dsp_count($phr_lst->lst()));
-        return $phr_lst;
-    }
-
-    /**
-     * list of elements (in this case only formulas) that are of the predefined type "following", e.g. "this", "next" and "prior"
-     */
-    function element_special_following(): phrase_list
-    {
-        $phr_lst = new phrase_list($this->usr);
-        $elm_lst = $this->element_lst_all(expression::SELECT_ALL, FALSE);
-        if (!$elm_lst->is_empty()) {
-            foreach ($elm_lst->lst() as $elm) {
-                if ($elm->frm_type == formula_type::THIS
-                    or $elm->frm_type == formula_type::NEXT
-                    or $elm->frm_type == formula_type::PREV) {
-                    $phr_lst->add($elm->wrd_obj);
-                }
-            }
-            /* TODO check if the phrases are already loaded
-            if (!empty($phr_lst->lst)) {
-                $phr_lst->load();
-            }
-            */
-        }
-
-        log_debug('expression->element_special_following -> ' . dsp_count($phr_lst->lst()));
-        return $phr_lst;
-    }
-
-    /**
-     * similar to element_special_following, but returns the formula and not the word
-     */
-    function element_special_following_frm(): formula_list
-    {
-        $frm_lst = new formula_list($this->usr);
-        $elm_lst = $this->element_lst_all(expression::SELECT_ALL, FALSE);
-        if (!$elm_lst->is_empty()) {
-            foreach ($elm_lst->lst() as $elm) {
-                if ($elm->frm_type == formula_type::THIS
-                    or $elm->frm_type == formula_type::NEXT
-                    or $elm->frm_type == formula_type::PREV) {
-                    $frm_lst->lst[] = $elm->obj;
-                    $frm_lst->ids[] = $elm->id();
-                }
-            }
-            log_debug('expression->element_special_following_frm -> pre load ' . dsp_count($frm_lst->lst));
-            /*
-            if (!empty($frm_lst->lst)) {
-              $frm_lst->load();
-            }
-            */
-        }
-
-        log_debug('expression->element_special_following_frm -> ' . dsp_count($frm_lst->lst));
-        return $frm_lst;
     }
 
     /**
@@ -758,80 +855,23 @@ class expression
      */
     private function get_usr_part(string $frm_part_text, ?term_list $trm_lst = null): string
     {
-        log_debug('expression->get_usr_part >' . $frm_part_text . '< and user ' . $this->usr->name);
+        $lib = new library();
+
+        log_debug($frm_part_text . '< and user ' . $this->usr->name);
         $result = $frm_part_text;
 
-        // replace the words
-        $id = zu_str_between($result, self::WORD_START, self::WORD_END);
-        while ($id > 0) {
-            $db_sym = self::WORD_START . $id . self::WORD_END;
-            $wrd = $trm_lst?->word_by_id($id);
-            if ($wrd == null) {
-                $wrd = new word($this->usr);
-                $wrd->load_by_id($id, word::class);
-            }
-            if ($wrd == null) {
-                log_err('Word with id ' . $id . ' not found');
-            } else {
-                $result = str_replace($db_sym, self::TERM_DELIMITER . $wrd->name() . self::TERM_DELIMITER, $result);
-                $id = zu_str_between($result, self::WORD_START, self::WORD_END);
-            }
+        // if everything works fine the user text is not dirty anymore
+        $this->usr_text_dirty = false;
+
+        // replace the database references with the names
+        $trm = $this->get_next_term_from_ref($result, $trm_lst);
+        while ($trm != null) {
+            $db_sym = $this->get_db_sym($trm);
+            $result = str_replace($db_sym, self::TERM_DELIMITER . $trm->name() . self::TERM_DELIMITER, $result);
+            $trm = $this->get_next_term_from_ref($result, $trm_lst);
         }
 
-        // replace the triple
-        $id = zu_str_between($result, self::TRIPLE_START, self::TRIPLE_END);
-        while ($id > 0) {
-            $db_sym = self::TRIPLE_START . $id . self::TRIPLE_END;
-            $trp = $trm_lst?->triple_by_id($id);
-            if ($trp == null) {
-                $trp = new triple($this->usr);
-                $trp->load_by_id($id);
-            }
-            if ($trp == null) {
-                log_err('Triple with id ' . $id . ' not found');
-            } else {
-                $result = str_replace($db_sym, self::TERM_DELIMITER . $trp->name() . self::TERM_DELIMITER, $result);
-                $id = zu_str_between($result, self::TRIPLE_START, self::TRIPLE_END);
-            }
-        }
-
-        // replace the formulas
-        $id = zu_str_between($result, self::FORMULA_START, self::FORMULA_END);
-        while ($id > 0) {
-            $db_sym = self::FORMULA_START . $id . self::FORMULA_END;
-            $frm = $trm_lst?->formula_by_id($id);
-            if ($frm == null) {
-                $frm = new formula($this->usr);
-                $frm->load_by_id($id, formula::class);
-            }
-            if ($frm == null) {
-                log_err('Formula with id ' . $id . ' not found');
-            } else {
-                $result = str_replace($db_sym, self::TERM_DELIMITER . $frm->name() . self::TERM_DELIMITER, $result);
-                $id = zu_str_between($result, self::FORMULA_START, self::FORMULA_END);
-            }
-        }
-
-        // replace the verbs
-        $id = zu_str_between($result, self::VERB_START, self::VERB_END);
-        while ($id > 0) {
-            $db_sym = self::VERB_START . $id . self::VERB_END;
-            $vrb = $trm_lst?->verb_by_id($id);
-            if ($vrb == null) {
-                $vrb = new verb;
-                $vrb->id = $id;
-                $vrb->set_user($this->usr);
-                $vrb->load_by_vars();
-            }
-            if ($vrb == null) {
-                log_err('Verb with id ' . $id . ' not found');
-            } else {
-                $result = str_replace($db_sym, self::TERM_DELIMITER . $vrb->name() . self::TERM_DELIMITER, $result);
-                $id = zu_str_between($result, self::TRIPLE_START, self::TRIPLE_END);
-            }
-        }
-
-        log_debug('expression->get_usr_part -> "' . $result . '"');
+        log_debug($result);
         return $result;
     }
 
@@ -845,8 +885,11 @@ class expression
      */
     private function get_ref_part(string $frm_part_text, term_list $trm_lst = null): string
     {
-        log_debug('expression->get_ref_part "' . $frm_part_text . ',' . $this->usr->name . '"');
+        log_debug('"' . $frm_part_text . ',' . $this->usr->name . '"');
         $result = $frm_part_text;
+
+        // if everything works fine the user text is not dirty anymore
+        $this->ref_text_dirty = false;
 
         if ($frm_part_text != '') {
             // find the first word
@@ -858,7 +901,7 @@ class expression
                 $name = substr($result, $pos + 1, $end - $pos - 1);
                 $left = substr($result, 0, $pos);
                 $right = substr($result, $end + 1);
-                log_debug('expression->get_ref_part -> name "' . $name . '" (' . $end . ') left "' . $left . '" (' . $pos . ') right "' . $right . '"');
+                log_debug('name "' . $name . '" (' . $end . ') left "' . $left . '" (' . $pos . ') right "' . $right . '"');
 
                 $db_sym = '';
 
@@ -867,15 +910,7 @@ class expression
                     $trm = $trm_lst->get_by_name($name);
                     if ($trm != null) {
                         if ($trm->id_obj() > 0) {
-                            if ($trm->is_word()) {
-                                $db_sym = self::WORD_START . $trm->id_obj() . self::WORD_END;
-                            } elseif ($trm->is_triple()) {
-                                $db_sym = self::TRIPLE_START . $trm->id_obj() . self::TRIPLE_END;
-                            } elseif ($trm->is_formula()) {
-                                $db_sym = self::FORMULA_START . $trm->id_obj() . self::FORMULA_END;
-                            } elseif ($trm->is_verb()) {
-                                $db_sym = self::VERB_START . $trm->id_obj() . self::VERB_END;
-                            }
+                            $db_sym = $this->get_db_sym($trm);
                         }
                     }
                 }
@@ -883,11 +918,13 @@ class expression
 
                 // check for formulas first, because for every formula a word is also existing
                 // similar to a part in get_usr_part, maybe combine
-                $frm = new formula($this->usr);
-                $frm->load_by_name($name, formula::class);
-                if ($frm->id() > 0) {
-                    $db_sym = self::FORMULA_START . $frm->id() . self::FORMULA_END;
-                    log_debug('expression->get_ref_part -> found formula "' . $db_sym . '" for "' . $name . '"');
+                if ($db_sym == '') {
+                    $frm = new formula($this->usr);
+                    $frm->load_by_name($name, formula::class);
+                    if ($frm->id() > 0) {
+                        $db_sym = self::FORMULA_START . $frm->id() . self::FORMULA_END;
+                        log_debug('found formula "' . $db_sym . '" for "' . $name . '"');
+                    }
                 }
 
                 // check for words
@@ -896,7 +933,17 @@ class expression
                     $wrd->load_by_name($name, word::class);
                     if ($wrd->id() > 0) {
                         $db_sym = self::WORD_START . $wrd->id() . self::WORD_END;
-                        log_debug('expression->get_ref_part -> found word "' . $db_sym . '" for "' . $name . '"');
+                        log_debug('found word "' . $db_sym . '" for "' . $name . '"');
+                    }
+                }
+
+                // check for triple
+                if ($db_sym == '') {
+                    $trp = new triple($this->usr);
+                    $trp->load_by_name($name, triple::class);
+                    if ($trp->id() > 0) {
+                        $db_sym = self::TRIPLE_START . $trp->id() . self::TRIPLE_END;
+                        log_debug('found triple "' . $db_sym . '" for "' . $name . '"');
                     }
                 }
 
@@ -907,72 +954,263 @@ class expression
                     $vrb->set_user($this->usr);
                     $vrb->load_by_vars();
                     if ($vrb->id > 0) {
-                        $db_sym = self::TRIPLE_START . $vrb->id . self::TRIPLE_END;
-                        log_debug('expression->get_ref_part -> found verb "' . $db_sym . '" for "' . $name . '"');
+                        $db_sym = self::VERB_START . $vrb->id . self::VERB_END;
+                        log_debug('found verb "' . $db_sym . '" for "' . $name . '"');
                     }
                 }
 
                 // if still not found report the missing link
                 if ($db_sym == '' and $name <> '') {
+                    $this->ref_text_dirty = true;
                     $this->err_text .= 'No word, triple, formula or verb found for "' . $name . '". ';
                 }
 
                 $result = $left . $db_sym . $right;
-                log_debug('expression->get_ref_part -> changed to "' . $result . '"');
+                log_debug('exchanged to "' . $result . '"');
 
                 // find the next word
                 $start = strlen($left) + strlen($db_sym);
                 $end = false;
                 if ($start < strlen($result)) {
-                    log_debug('expression->get_ref_part -> start "' . $start . '"');
+                    log_debug('start "' . $start . '"');
                     $pos = strpos($result, self::TERM_DELIMITER, $start);
                     if ($pos !== false) {
-                        log_debug('expression->get_ref_part -> pos "' . $pos . '"');
+                        log_debug('pos "' . $pos . '"');
                         $end = strpos($result, self::TERM_DELIMITER, $pos + 1);
                     }
                 }
             }
 
-            log_debug('expression->get_ref_part -> done "' . $result . '"');
+            log_debug('done "' . $result . '"');
         }
         return $result;
     }
 
     /**
-     * @return array of the term names used in the expression based on the user text
-     * e.g. converts "'Sales' 'differentiator' / 'Total Sales'" to "Sales, differentiator, Total Sales"
+     * @param term $trm
+     * @return string
      */
-    public function get_usr_names(): array
+    private function get_db_sym(term $trm): string
     {
-        $result = [];
-        $remaining = $this->usr_text;
+        $db_sym = '';
+        if ($trm->is_word()) {
+            $db_sym = self::WORD_START . $trm->id_obj() . self::WORD_END;
+        } elseif ($trm->is_triple()) {
+            $db_sym = self::TRIPLE_START . $trm->id_obj() . self::TRIPLE_END;
+        } elseif ($trm->is_formula()) {
+            $db_sym = self::FORMULA_START . $trm->id_obj() . self::FORMULA_END;
+        } elseif ($trm->is_verb()) {
+            $db_sym = self::VERB_START . $trm->id_obj() . self::VERB_END;
+        }
+        return $db_sym;
+    }
 
-        if ($remaining != '') {
-            // find the first word
-            $start = 0;
-            $pos = strpos($remaining, self::TERM_DELIMITER, $start);
-            $end = strpos($remaining, self::TERM_DELIMITER, $pos + 1);
-            while ($end !== False) {
-                // for 12'45'78: pos = 2, end = 5, name = 45, left = 12. right = 78
-                $name = substr($remaining, $pos + 1, $end - $pos - 1);
-                if (!in_array($name, $result)) {
-                    $result[] = $name;
+    /**
+     * get the next term from the expression part in the database reference format
+     *
+     * @param string $frm_part_ref_text
+     * @param term_list|null $trm_lst
+     * @return term|null
+     */
+    private function get_next_term_from_ref(string $frm_part_ref_text, term_list $trm_lst = null): ?term
+    {
+        $trm = null;
+
+        $lib = new library();
+
+        // get a word
+        $id = $lib->str_between($frm_part_ref_text, self::WORD_START, self::WORD_END);
+        if ($id > 0) {
+            $wrd = $trm_lst?->word_by_id($id);
+            if ($wrd == null) {
+                $wrd = new word($this->usr);
+                $wrd->load_by_id($id, word::class);
+                if ($wrd->id() == 0) {
+                    $wrd = null;
                 }
-                $remaining = substr($remaining, $end + 1);
+            }
+            if ($wrd == null) {
+                $this->usr_text_dirty = true;
+                log_warning('Word with id ' . $id . ' not found');
+            } else {
+                $trm = $wrd->term();
+            }
+        }
 
-                // find the next word
-                $end = false;
-                if ($start < strlen($remaining)) {
-                    log_debug('expression->get_ref_part -> start "' . $start . '"');
-                    $pos = strpos($remaining, self::TERM_DELIMITER, $start);
-                    if ($pos !== false) {
-                        log_debug('expression->get_ref_part -> pos "' . $pos . '"');
-                        $end = strpos($remaining, self::TERM_DELIMITER, $pos + 1);
+        // get a triple
+        if ($id == "") {
+            $id = $lib->str_between($frm_part_ref_text, self::TRIPLE_START, self::TRIPLE_END);
+            if ($id > 0) {
+                $trp = $trm_lst?->triple_by_id($id);
+                if ($trp == null) {
+                    $trp = new triple($this->usr);
+                    $trp->load_by_id($id);
+                    if ($trp->id() == 0) {
+                        $trp = null;
                     }
+                }
+                if ($trp == null) {
+                    $this->usr_text_dirty = true;
+                    log_warning('Triple with id ' . $id . ' not found');
+                } else {
+                    $trm = $trp->term();
                 }
             }
         }
-        return $result;
+
+        // get a formulas
+        if ($id == "") {
+            $id = $lib->str_between($frm_part_ref_text, self::FORMULA_START, self::FORMULA_END);
+            if ($id > 0) {
+                $frm = $trm_lst?->formula_by_id($id);
+                if ($frm == null) {
+                    $frm = new formula($this->usr);
+                    $frm->load_by_id($id, formula::class);
+                    if ($frm->id() == 0) {
+                        $frm = null;
+                    }
+                }
+                if ($frm == null) {
+                    $this->usr_text_dirty = true;
+                    log_warning('Formula with id ' . $id . ' not found');
+                } else {
+                    $trm = $frm->term();
+                }
+            }
+        }
+
+        // get a verbs
+        if ($id == "") {
+            $id = $lib->str_between($frm_part_ref_text, self::VERB_START, self::VERB_END);
+            if ($id > 0) {
+                $vrb = $trm_lst?->verb_by_id($id);
+                if ($vrb == null) {
+                    $vrb = new verb;
+                    $vrb->id = $id;
+                    $vrb->set_user($this->usr);
+                    $vrb->load_by_vars();
+                    if ($vrb->id() == 0) {
+                        $vrb = null;
+                    }
+                }
+                if ($vrb == null) {
+                    $this->usr_text_dirty = true;
+                    log_warning('Verb with id ' . $id . ' not found');
+                } else {
+                    $trm = $vrb->term();
+                }
+            }
+        }
+
+        return $trm;
+    }
+
+
+    /*
+     * to review
+     */
+
+    /**
+     * similar to phr_lst, but
+     * e.g. for "Sales" "differentiator" "Country" all "Country" words should be included
+     * TODO should also include the words implied by the verbs
+     */
+    function phr_verb_lst(): phrase_list
+    {
+        log_debug();
+        $elm_lst = $this->element_lst_all(expression::SELECT_PHRASE, FALSE);
+        log_debug('got ' . dsp_count($elm_lst->lst()) . ' formula elements');
+        $phr_lst = new phrase_list($this->usr);
+        foreach ($elm_lst->lst() as $elm) {
+            log_debug('check elements ' . $elm->name());
+            if ($elm->type == formula_element::TYPE_FORMULA) {
+                if (isset($elm->wrd_obj)) {
+                    $phr = $elm->wrd_obj->phrase();
+                    $phr_lst->add($phr);
+                } else {
+                    log_err('Word missing for formula element ' . $elm->dsp_id() . '.', 'expression->phr_verb_lst');
+                }
+            } elseif ($elm->type == formula_element::TYPE_WORD) {
+                if (isset($elm->obj)) {
+                    $phr = $elm->obj->phrase();
+                    $phr_lst->add($phr);
+                } else {
+                    log_err('Word missing for formula element ' . $elm->dsp_id() . '.', 'expression->phr_verb_lst');
+                }
+            } elseif ($elm->type == formula_element::TYPE_VERB) {
+                log_warning('Use Formula element ' . $elm->dsp_id() . ' has an unexpected type.', 'expression->phr_verb_lst');
+            } else {
+                log_err('Formula element ' . $elm->dsp_id() . ' has an unexpected type.', 'expression->phr_verb_lst');
+            }
+        }
+        // TODO check if the phrases are already loaded
+        //$phr_lst->load();
+        log_debug(dsp_count($phr_lst->lst()));
+        return $phr_lst;
+    }
+
+    /**
+     * list of elements (in this case only formulas) that are of the predefined type "following", e.g. "this", "next" and "prior"
+     */
+    function element_special_following(?term_list $trm_lst = null): phrase_list
+    {
+        $phr_lst = new phrase_list($this->usr);
+        $elm_lst = $this->element_list($trm_lst);
+        if (!$elm_lst->is_empty()) {
+            foreach ($elm_lst->lst() as $elm) {
+                if ($elm->type == formula_element::TYPE_FORMULA) {
+                    if ($elm->obj != null) {
+                        if ($elm->obj->type_cl == formula_type::THIS
+                            or $elm->obj->type_cl == formula_type::NEXT
+                            or $elm->obj->type_cl == formula_type::PREV) {
+                            if ($elm->obj->name_wrd != null) {
+                                $phr_lst->add($elm->obj->name_wrd->phrase());
+                            }
+                        }
+                    }
+                }
+            }
+            /* TODO check if the phrases are already loaded
+            if (!empty($phr_lst->lst)) {
+                $phr_lst->load();
+            }
+            */
+        }
+
+        log_debug(dsp_count($phr_lst->lst()));
+        return $phr_lst;
+    }
+
+    /**
+     * similar to element_special_following, but returns the formula and not the word
+     */
+    function element_special_following_frm(?term_list $trm_lst = null): formula_list
+    {
+        $frm_lst = new formula_list($this->usr);
+        $elm_lst = $this->element_list($trm_lst);
+        if (!$elm_lst->is_empty()) {
+            foreach ($elm_lst->lst() as $elm) {
+                if ($elm->type == formula_element::TYPE_FORMULA) {
+                    if ($elm->obj != null) {
+                        if ($elm->obj->type_cl == formula_type::THIS
+                            or $elm->obj->type_cl == formula_type::NEXT
+                            or $elm->obj->type_cl == formula_type::PREV) {
+                            $frm_lst->lst[] = $elm->obj;
+                            $frm_lst->ids[] = $elm->id();
+                        }
+                    }
+                }
+            }
+            log_debug('pre load ' . dsp_count($frm_lst->lst));
+            /*
+            if (!empty($frm_lst->lst)) {
+              $frm_lst->load();
+            }
+            */
+        }
+
+        log_debug(dsp_count($frm_lst->lst));
+        return $frm_lst;
     }
 
 }

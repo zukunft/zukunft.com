@@ -54,16 +54,13 @@ function run_expression_test(testing $t): void
 
     // create expressions for testing
     $exp = new expression($usr);
-    $exp->usr_text = $frm->usr_text;
-    $exp->ref_text = $exp->get_ref_text();
+    $exp->set_user_text($frm->usr_text);
 
     $exp_pe = new expression($usr);
-    $exp_pe->usr_text = $frm_pe->usr_text;
-    $exp_pe->ref_text = $exp_pe->get_ref_text();
+    $exp_pe->set_user_text($frm_pe->usr_text);
 
     $exp_sector = new expression($usr);
-    $exp_sector->usr_text = $frm_sector->usr_text;
-    $exp_sector->ref_text = $exp_sector->get_ref_text();
+    $exp_sector->set_user_text($frm_sector->usr_text);
 
     // load the test ids
     $wrd_percent = $t->load_word('percent');
@@ -81,15 +78,15 @@ function run_expression_test(testing $t): void
     $result = zu_dsp_bool($exp->has_ref());
     $t->assert('has_ref for "' . $frm->usr_text . '"', $result, $target);
     $target = '{w' . $wrd_percent->id() . '}=({f' . $frm_this->id() . '}-{f' . $frm_prior->id() . '})/{f' . $frm_prior->id() . '}';
-    $result = $exp->get_ref_text();
+    $result = $exp->ref_text();
     $t->assert('get_ref_text for "' . $frm->usr_text . '"', $result, $target);
 
     // test the expression processing of the database reference
     $exp_db = new expression($usr);
-    $exp_db->ref_text = '{w' . $wrd_percent->id() . '} = ( is.numeric( {f' . $frm_this->id() . '} ) & is.numeric( {f' . $frm_prior->id() . '} ) ) ( {f' . $frm_this->id() . '} - {f' . $frm_prior->id() . '} ) / {f' . $frm_prior->id() . '}';
+    $exp_db->set_ref_text('{w' . $wrd_percent->id() . '} = ( is.numeric( {f' . $frm_this->id() . '} ) & is.numeric( {f' . $frm_prior->id() . '} ) ) ( {f' . $frm_this->id() . '} - {f' . $frm_prior->id() . '} ) / {f' . $frm_prior->id() . '}');
     $target = '"percent"=( is.numeric( "this" ) & is.numeric( "prior" ) ) ( "this" - "prior" ) / "prior"';
-    $result = $exp_db->get_usr_text();
-    $t->assert('get_usr_text for "' . $exp_db->ref_text . '"', $result, $target);
+    $result = $exp_db->user_text();
+    $t->assert('get_usr_text for "' . $exp_db->ref_text() . '"', $result, $target);
 
     // test getting phrases that should be added to the result of a formula
     $phr_lst_fv = $exp->fv_phr_lst();
@@ -108,32 +105,32 @@ function run_expression_test(testing $t): void
     $t->assert('phr_lst for "' . $exp_pe->dsp_id() . '"', $result, $target);
 
     // ... and all elements used in the formula
-    $elm_lst = $exp_sector->element_lst($back,);
+    $elm_lst = $exp_sector->element_list();
     $result = $elm_lst->name();
     $target = 'System Test Word Parent e.g. Country, can be used as a differentiator for, System Test Word Category e.g. Canton, System Test Word Total';
     $t->assert('element_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
     // ... and all element groups used in the formula
-    $elm_grp_lst = $exp_sector->element_grp_lst($back);
+    $elm_grp_lst = $exp_sector->element_grp_lst();
     $result = $elm_grp_lst->name();
-    $target = 'System Test Word Parent e.g. Country,can be used as a differentiator for,System Test Word Category e.g. Canton, System Test Word Total';
+    $target = 'System Test Word Parent e.g. Country, can be used as a differentiator for, System Test Word Category e.g. Canton, System Test Word Total';
     $t->assert('element_grp_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
     // test getting the phrases if the formula contains a verb
     // not sure if test is correct!
-    $phr_lst = $exp_sector->phr_verb_lst($back);
+    $phr_lst = $exp_sector->phr_verb_lst();
     $result = $phr_lst->dsp_name();
     $target = '"System Test Word Category e.g. Canton","System Test Word Parent e.g. Country","System Test Word Total"';
-    $t->assert('phr_verb_lst for "' . $exp_sector->ref_text . '"', $result, $target);
+    $t->assert('phr_verb_lst for "' . $exp_sector->ref_text() . '"', $result, $target);
 
     // test getting special phrases
-    $phr_lst = $exp->element_special_following($back);
+    $phr_lst = $exp->element_special_following();
     $result = $phr_lst->dsp_name();
     $target = '"this","prior"';
     // TODO $t->assert('element_special_following for "'.$exp->dsp_id().'"', $result, $target, TIMEOUT_LIMIT_LONG);
 
     // test getting for special phrases the related formula
-    $frm_lst = $exp->element_special_following_frm($back);
+    $frm_lst = $exp->element_special_following_frm();
     $result = $frm_lst->name();
     $target = 'this,prior';
     // TODO $t->assert('element_special_following_frm for "'.$exp->dsp_id().'"', $result, $target, TIMEOUT_LIMIT_LONG);

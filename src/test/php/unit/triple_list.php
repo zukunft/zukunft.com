@@ -38,6 +38,7 @@ class triple_list_unit_tests
         global $usr;
 
         // init
+        $lib = new library();
         $db_con = new sql_db();
         $t->name = 'triple_list->';
         $t->resource_path = 'db/triple/';
@@ -125,7 +126,7 @@ class triple_list_unit_tests
                       AND l.to_phrase_id   = t2.word_id 
                       AND l.triple_id  IN (1,2,3)                        
                  ORDER BY l.verb_id, name_given;"; // order adjusted based on the number of usage
-        $t->dsp('triple_list->load_sql by IDs', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('triple_list->load_sql by IDs', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         //$t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
@@ -180,7 +181,7 @@ class triple_list_unit_tests
                       AND l.to_phrase_id   = t2.word_id 
                       AND l.from_phrase_id = 1                        
                  ORDER BY l.verb_id, name_given;"; // order adjusted based on the number of usage
-        $t->dsp('triple_list->load_sql by word and up', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('triple_list->load_sql by word and up', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
@@ -235,7 +236,7 @@ class triple_list_unit_tests
                       AND l.from_phrase_id   = t2.word_id 
                       AND l.to_phrase_id = 2                        
                  ORDER BY l.verb_id, name_given;"; // order adjusted based on the number of usage
-        $t->dsp('triple_list->load_sql by word and down', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('triple_list->load_sql by word and down', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
@@ -307,7 +308,7 @@ class triple_list_unit_tests
                       AND l.to_phrase_id   = t2.word_id 
                       AND l.from_phrase_id IN (1,2)
                  ORDER BY l.verb_id, name_given;"; // order adjusted based on the number of usage
-        $t->dsp('triple_list->load_sql by word list and up', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('triple_list->load_sql by word list and up', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
@@ -379,7 +380,7 @@ class triple_list_unit_tests
                       AND l.from_phrase_id = t2.word_id 
                       AND l.to_phrase_id   IN (2,3)
                  ORDER BY l.verb_id, name_given;"; // order adjusted based on the number of usage
-        $t->dsp('triple_list->load_sql by word list and down', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('triple_list->load_sql by word list and down', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
@@ -455,7 +456,7 @@ class triple_list_unit_tests
                       AND l.to_phrase_id   IN (2,3)
                       AND l.verb_id = 2 
                  ORDER BY l.verb_id, name_given;"; // order adjusted based on the number of usage
-        $t->dsp('triple_list->load_sql by word list and down filtered by a verb', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('triple_list->load_sql by word list and down filtered by a verb', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
@@ -531,7 +532,7 @@ class triple_list_unit_tests
                       AND l.to_phrase_id   IN (2,3)
                       AND l.verb_id IN (1,2) 
                  ORDER BY l.verb_id, name_given;"; // order adjusted based on the number of usage
-        $t->dsp('triple_list->load_sql by word list and down filtered by a verb list', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('triple_list->load_sql by word list and down filtered by a verb list', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());

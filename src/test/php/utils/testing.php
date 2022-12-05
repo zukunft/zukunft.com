@@ -30,6 +30,7 @@
 
 */
 
+use cfg\formula_type;
 use html\html_base;
 
 class testing extends test_base
@@ -414,13 +415,30 @@ class testing extends test_base
         foreach ($names as $name) {
             $class = match ($name) {
                 triple::TN_READ => triple::class,
-                formula::TN_READ => formula::class,
+                formula::TN_READ, formula::TN_READ_THIS, formula::TN_READ_PRIOR => formula::class,
                 verb::TN_READ => verb::class,
                 default => word::class,
             };
             $trm = new term($usr, $class);
             $trm->set_id_from_obj($pos, $class);
             $trm->set_name($name);
+
+            // ste types of some special terms
+            If ($name == formula::TN_READ_THIS) {
+                $trm->obj->type_cl = formula_type::THIS;
+                $trm->set_id_from_obj(18, $class);
+                $wrd = new word($usr);
+                $wrd->set(174, formula_type::THIS);
+                $trm->obj->name_wrd = $wrd;
+            }
+            If ($name == formula::TN_READ_PRIOR) {
+                $trm->obj->type_cl = formula_type::PREV;
+                $trm->set_id_from_obj(20, $class);
+                $wrd = new word($usr);
+                $wrd->set(176, formula_type::PREV);
+                $trm->obj->name_wrd = $wrd;
+            }
+
             $trm_lst->add($trm);
             $pos++;
         }
@@ -466,9 +484,11 @@ class testing extends test_base
 
     public function html_test(string $body, string $filename, testing $t)
     {
+        $lib = new library();
+
         $created_html = $this->html_page($body);
         $expected_html = $t->file('web/html/' . $filename . '.html');
-        $t->dsp($filename, $t->trim_html($expected_html), $t->trim_html($created_html));
+        $t->dsp($filename, $lib->trim_html($expected_html), $lib->trim_html($created_html));
     }
 
     private function html_page(string $body): string

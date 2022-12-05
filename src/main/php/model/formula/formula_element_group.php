@@ -5,7 +5,8 @@
   formula_element_group.php - a group of formula elements that, in combination, return a value or a list of values
   -------------------------
   
-  e.g. for for "ABB", "differentiator" and "Sector" a list of all sector values is returned
+  e.g. for for "ABB", "differentiator" and "Sector" (or "Sectors" "of" "ABB")
+       a list of all sector values is returned
   or in other words for each element group a where clause for value retrieval is created
   
   phrases are always used to select the smallest set of value (in SQL by using "AND" in the where clause)
@@ -49,6 +50,7 @@ class formula_element_group
 
     public ?string $symbol = null; // the formula reference text for this element group; used to fill in the numbers into the formula
 
+
     /*
     display functions
     */
@@ -83,7 +85,9 @@ class formula_element_group
         return $result;
     }
 
-    // show the element group name to the user in the most simple form (without any ids)
+    /**
+     * show the element group name to the user in the most simple form (without any ids)
+     */
     function name(): string
     {
         return dsp_array($this->names());
@@ -97,7 +101,7 @@ class formula_element_group
 
         foreach ($this->lst as $frm_elm) {
             // display the formula element name
-            $result[] .= $frm_elm->name;
+            $result[] .= $frm_elm->name();
         }
 
         return $result;
@@ -105,7 +109,11 @@ class formula_element_group
 
     public function id(): int
     {
-        return 0;
+        if (count($this->lst) == 1) {
+            return $this->lst[0]->obj->id();
+        } else {
+            return 0;
+        }
     }
 
     private function ids(): array

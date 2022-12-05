@@ -38,6 +38,7 @@ class phrase_group_unit_tests
         global $usr;
 
         // init
+        $lib = new library();
         $db_con = new sql_db();
         $t->name = 'phrase_group->';
         $t->resource_path = 'db/phrase/';
@@ -95,7 +96,7 @@ class phrase_group_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $phr_grp->get_by_wrd_lst_sql();
         $expected_sql = $t->file('db/phrase/phrase_group_by_id_list.sql');
-        $t->assert('phrase_group->get_by_wrd_lst_sql by word list ids', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('phrase_group->get_by_wrd_lst_sql by word list ids', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($phr_grp->get_by_wrd_lst_sql(true));
@@ -118,7 +119,7 @@ class phrase_group_unit_tests
         $phr_grp_lst->phr = $wrd->phrase();
         $created_sql = $phr_grp_lst->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/phrase/phrase_group_list_by_word.sql');
-        $t->assert('phrase_group_list->load_all_tripleed', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('phrase_group_list->load_all_tripleed', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // sql to load all phrase groups linked to a triple
         $lnk = $t->load_triple(word::TN_ZH, verb::IS_A, word::TN_CITY);
@@ -127,7 +128,7 @@ class phrase_group_unit_tests
         $phr_grp_lst->phr = $lnk->phrase();
         $created_sql = $phr_grp_lst->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/phrase/phrase_group_list_by_triple.sql');
-        $t->assert('phrase_group_list->load_all_triple_linked', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert('phrase_group_list->load_all_triple_linked', $lib->trim($created_sql), $lib->trim($expected_sql));
 
 
         $t->header('Unit tests of the phrase group word link class (src/main/php/model/phrase/phrase_group_triple.php)');
