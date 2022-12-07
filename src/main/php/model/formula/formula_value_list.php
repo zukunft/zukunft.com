@@ -683,7 +683,7 @@ class formula_value_list
         }
 
         // convert the special formulas to normal phrases e.g. use "2018" instead of "this" if the formula is assigned to "Year"
-        foreach ($frm_lst_preset_following->lst as $frm_special) {
+        foreach ($frm_lst_preset_following->lst() as $frm_special) {
             $frm_special->load();
             log_debug('fv_lst->frm_upd_lst -> get preset phrases for formula ' . $frm_special->dsp_id() . ' and phrases ' . $phr_lst_frm_assigned->dsp_name());
             $phr_lst_preset = $frm_special->special_phr_lst($phr_lst_frm_assigned);

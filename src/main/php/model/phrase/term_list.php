@@ -176,28 +176,35 @@ class term_list extends user_sandbox_list_named
         return $this->load($qp);
     }
 
+
     /*
-     * modification function
+     * search
+     */
+
+    /**
+     * cast the finding by name for terms
+     *
+     * @param string $name the term name that should be returned
+     * @return term|null the found term or null if no name is found
+     */
+    public function get_by_name(string $name): ?term
+    {
+        return parent::get_obj_by_name($name);
+    }
+
+
+    /*
+     * modification
      */
 
     /**
      * add one term to the term list, but only if it is not yet part of the term list
+     * @param term|null $trm_to_add the term backend object that should be added
      * @returns bool true the term has been added
      */
     function add(?term $trm_to_add): bool
     {
-        $result = false;
-        // check parameters
-        if ($trm_to_add->user() == null) {
-            $trm_to_add->set_user($this->user());
-        }
-        if ($trm_to_add != null) {
-            log_debug($trm_to_add->dsp_id());
-            if ($trm_to_add->id() <> 0 or $trm_to_add->name() != '') {
-                $result = parent::add_obj($trm_to_add);
-            }
-        }
-        return $result;
+        return parent::add_obj($trm_to_add);
     }
 
     /*

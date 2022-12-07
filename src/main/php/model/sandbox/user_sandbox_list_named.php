@@ -84,10 +84,13 @@ class user_sandbox_list_named extends sandbox_list
      */
 
     /**
+     * find an object from the loaded list by name using the hash
+     * should be cast by the child function get_by_name
+     *
      * @param string $name the unique name of the object that should be returned
-     * @return user_sandbox|null the found user sandbox object or null if no name is found
+     * @return object|null the found user sandbox object or null if no name is found
      */
-    public function get_by_name(string $name): ?object
+    public function get_obj_by_name(string $name): ?object
     {
         $key_lst = $this->name_pos_lst();
         $pos = $key_lst[$name];
@@ -107,7 +110,7 @@ class user_sandbox_list_named extends sandbox_list
      * add a named object to the list
      * @returns bool true if the object has been added
      */
-    protected function add_obj(object $obj): bool
+    public function add_obj(object $obj): bool
     {
         $result = false;
         if (!in_array($obj->name(), $this->name_pos_lst())) {

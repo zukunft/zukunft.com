@@ -271,7 +271,7 @@ class expression
     }
 
     /*
-     * other interface functions
+     * interface
      */
 
     /**
@@ -331,6 +331,63 @@ class expression
         return $elm_lst;
     }
 
+    /**
+     * list of elements (in this case only formulas) that are of the predefined type "following", e.g. "this", "next" and "prior"
+     * @param term_list|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
+     * @return phrase_list a list of all formulas words that are using hardcoded functions
+     */
+    function element_special_following(?term_list $trm_lst = null): phrase_list
+    {
+        $phr_lst = new phrase_list($this->usr);
+        $elm_lst = $this->element_list($trm_lst);
+        if (!$elm_lst->is_empty()) {
+            foreach ($elm_lst->lst() as $elm) {
+                if ($elm->type == formula_element::TYPE_FORMULA) {
+                    if ($elm->obj != null) {
+                        if ($elm->obj->type_cl == formula_type::THIS
+                            or $elm->obj->type_cl == formula_type::NEXT
+                            or $elm->obj->type_cl == formula_type::PREV) {
+                            if ($elm->obj->name_wrd != null) {
+                                $phr_lst->add($elm->obj->name_wrd->phrase());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        log_debug(dsp_count($phr_lst->lst()));
+        return $phr_lst;
+    }
+
+    /**
+     * similar to element_special_following, but returns the formula and not the word
+     * @param term_list|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
+     * @return formula_list a list of all formulas that are using hardcoded functions
+     */
+    function element_special_following_frm(?term_list $trm_lst = null): formula_list
+    {
+        $frm_lst = new formula_list($this->usr);
+        $elm_lst = $this->element_list($trm_lst);
+        if (!$elm_lst->is_empty()) {
+            foreach ($elm_lst->lst() as $elm) {
+                if ($elm->type == formula_element::TYPE_FORMULA) {
+                    if ($elm->obj != null) {
+                        if ($elm->obj->type_cl == formula_type::THIS
+                            or $elm->obj->type_cl == formula_type::NEXT
+                            or $elm->obj->type_cl == formula_type::PREV) {
+                            $frm_lst->add($elm->obj);
+                        }
+                    }
+                }
+            }
+        }
+
+        log_debug(dsp_count($frm_lst->lst()));
+        return $frm_lst;
+    }
+
+
     /*
      * display functions
      */
@@ -353,7 +410,8 @@ class expression
 
 
     /*
-     * convert from reference text to user text and back
+     * convert
+     * from reference text to user text and back
      */
 
     /**
@@ -411,7 +469,8 @@ class expression
 
 
     /*
-     * internal functions public just for testing
+     * internal
+     * functions public just for testing
      */
 
     /**
@@ -1147,70 +1206,6 @@ class expression
         //$phr_lst->load();
         log_debug(dsp_count($phr_lst->lst()));
         return $phr_lst;
-    }
-
-    /**
-     * list of elements (in this case only formulas) that are of the predefined type "following", e.g. "this", "next" and "prior"
-     */
-    function element_special_following(?term_list $trm_lst = null): phrase_list
-    {
-        $phr_lst = new phrase_list($this->usr);
-        $elm_lst = $this->element_list($trm_lst);
-        if (!$elm_lst->is_empty()) {
-            foreach ($elm_lst->lst() as $elm) {
-                if ($elm->type == formula_element::TYPE_FORMULA) {
-                    if ($elm->obj != null) {
-                        if ($elm->obj->type_cl == formula_type::THIS
-                            or $elm->obj->type_cl == formula_type::NEXT
-                            or $elm->obj->type_cl == formula_type::PREV) {
-                            if ($elm->obj->name_wrd != null) {
-                                $phr_lst->add($elm->obj->name_wrd->phrase());
-                            }
-                        }
-                    }
-                }
-            }
-            /* TODO check if the phrases are already loaded
-            if (!empty($phr_lst->lst)) {
-                $phr_lst->load();
-            }
-            */
-        }
-
-        log_debug(dsp_count($phr_lst->lst()));
-        return $phr_lst;
-    }
-
-    /**
-     * similar to element_special_following, but returns the formula and not the word
-     */
-    function element_special_following_frm(?term_list $trm_lst = null): formula_list
-    {
-        $frm_lst = new formula_list($this->usr);
-        $elm_lst = $this->element_list($trm_lst);
-        if (!$elm_lst->is_empty()) {
-            foreach ($elm_lst->lst() as $elm) {
-                if ($elm->type == formula_element::TYPE_FORMULA) {
-                    if ($elm->obj != null) {
-                        if ($elm->obj->type_cl == formula_type::THIS
-                            or $elm->obj->type_cl == formula_type::NEXT
-                            or $elm->obj->type_cl == formula_type::PREV) {
-                            $frm_lst->lst[] = $elm->obj;
-                            $frm_lst->ids[] = $elm->id();
-                        }
-                    }
-                }
-            }
-            log_debug('pre load ' . dsp_count($frm_lst->lst));
-            /*
-            if (!empty($frm_lst->lst)) {
-              $frm_lst->load();
-            }
-            */
-        }
-
-        log_debug(dsp_count($frm_lst->lst));
-        return $frm_lst;
     }
 
 }

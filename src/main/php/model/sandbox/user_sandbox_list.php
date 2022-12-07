@@ -113,6 +113,32 @@ class sandbox_list extends base_list
 
 
     /*
+     * modification
+     */
+
+    /**
+     * add one object to the list of user sandbox objects, but only if it is not yet part of the list
+     * @param object $obj_to_add the formula backend object that should be added
+     * @returns bool true the formula has been added
+     */
+    function add_obj(object $obj_to_add): bool
+    {
+        $result = false;
+        // check parameters
+        if ($obj_to_add->user() == null) {
+            $obj_to_add->set_user($this->user());
+        }
+        if ($obj_to_add != null) {
+            log_debug($obj_to_add->dsp_id());
+            if ($obj_to_add->id() <> 0 or $obj_to_add->name() != '') {
+                $result = parent::add_obj($obj_to_add);
+            }
+        }
+        return $result;
+    }
+
+
+    /*
      * debug functions
      */
 

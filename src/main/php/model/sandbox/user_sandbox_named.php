@@ -108,9 +108,35 @@ class user_sandbox_named extends user_sandbox
         return $this->name;
     }
 
+
     /*
-     * casting objects
+     * cast
      */
+
+    /**
+     * get the term corresponding to this word or formula name
+     * so in this case, if a formula or verb with the same name already exists, get it
+     * @return term
+     */
+    function term(): term
+    {
+        $trm = new term($this->user());
+        $trm->set_id($this->id());
+        $trm->obj = $this;
+        return $trm;
+    }
+
+    /**
+     * get the term corresponding to this word or formula name
+     * so in this case, if a formula or verb with the same name already exists, get it
+     * @return term
+     */
+    function get_term(): term
+    {
+        $trm = new term($this->user());
+        $trm->load_by_name($this->name());
+        return $trm;
+    }
 
     /**
      * @param object $api_obj frontend API objects that should be filled with unique object name
@@ -137,17 +163,6 @@ class user_sandbox_named extends user_sandbox
         $dsp_obj->description =  $this->description;
     }
 
-    /**
-     * get the term corresponding to this word or formula name
-     * so in this case, if a formula or verb with the same name already exists, get it
-     * @return term
-     */
-    function get_term(): term
-    {
-        $trm = new term($this->user());
-        $trm->load_by_name($this->name());
-        return $trm;
-    }
 
     /*
      * loading

@@ -32,14 +32,13 @@
 use api\formula_list_api;
 use html\formula_list_dsp;
 
-class formula_list
+class formula_list extends sandbox_list
 {
     // the number of formulas that should be updated with one commit if no dependency calculations are expected
     const UPDATE_BLOCK_SIZE = 100;
 
-    // array of the loaded formula objects
-    public array $lst;
-    private user $usr; // if id is 0 (not NULL) for standard formulas, otherwise for a user specific formulas
+    // array $lst are the loaded formula objects
+    // if user $usr->id() is 0 (not NULL) for standard formulas, otherwise for a user specific formulas
 
     // TODO deprecate: fields to select the formulas
     public ?word $wrd = null;            // show the formulas related to this word
@@ -54,16 +53,6 @@ class formula_list
      */
 
     /**
-     * always set the user because a formula list is always user specific
-     * @param user $usr the user who requested to see the formulas
-     */
-    function __construct(user $usr)
-    {
-        $this->lst = array();
-        $this->set_user($usr);
-    }
-
-    /**
      * fill the formula list based on a database records
      * @param array $db_rows is an array of an array with the database values
      * @return bool true if at least one formula has been loaded
@@ -75,11 +64,11 @@ class formula_list
             foreach ($db_rows as $db_row) {
                 if (is_null($db_row[user_sandbox::FLD_EXCLUDED]) or $db_row[user_sandbox::FLD_EXCLUDED] == 0) {
                     if ($db_row[formula::FLD_ID] > 0) {
-                        $frm = new formula($this->usr);
+                        $frm = new formula($this->user());
                         $frm->row_mapper($db_row);
                         // TODO check if this is really needed
                         if ($frm->name() <> '') {
-                            $name_wrd = new word($this->usr);
+                            $name_wrd = new word($this->user());
                             $name_wrd->load_by_name($frm->name(), word::class);
                             $frm->name_wrd = $name_wrd;
                         }
@@ -92,28 +81,6 @@ class formula_list
         return $result;
     }
 
-    /*
-     * get and set
-     */
-
-    /**
-     * set the user of the formula list
-     *
-     * @param user $usr the person who wants to access the formulas
-     * @return void
-     */
-    function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    /**
-     * @return user the person who wants to see the formulas
-     */
-    function user(): user
-    {
-        return $this->usr;
-    }
 
     /*
      * casting objects
@@ -368,6 +335,25 @@ class formula_list
         $qp = $this->load_sql_all($db_con, $limit, $page);
         return $this->load_int($qp);
     }
+
+    /*
+     * modification
+     */
+
+    /**
+     * add one formula to the formula list, but only if it is not yet part of the list
+     * @param formula|null $obj_to_add the formula backend object that should be added
+     * @returns bool true the formula has been added
+     */
+    function add(?formula $obj_to_add): bool
+    {
+        return parent::add_obj($obj_to_add);
+    }
+
+
+    /*
+     * information
+     */
 
     /**
      * @param sql_db $db_con the active database connection
