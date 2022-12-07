@@ -116,10 +116,10 @@ class phrase extends db_object
     function __construct(
         user   $usr,
         int    $id = 0,
+        string $name = '',
         string $from = '',
         string $verb = '',
-        string $to = '',
-        string $name = '')
+        string $to = '')
     {
         parent::__construct();
         $this->set_user($usr);
@@ -131,9 +131,9 @@ class phrase extends db_object
             $this->obj = new triple($usr);
             $this->obj->set($id * -1, $from, $verb, $to, $name);
         } else {
-            if ($from != '') {
+            if ($name != '') {
                 $this->obj = new word($usr);
-                $this->obj->set($id, $from);
+                $this->obj->set($id, $name);
             }
         }
     }

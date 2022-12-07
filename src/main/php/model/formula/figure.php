@@ -67,6 +67,29 @@ class figure extends db_object
         $this->last_update = new DateTime();
     }
 
+    /*
+     * set and get
+     */
+
+    /**
+     * set the user of the user sandbox object
+     *
+     * @param user $usr the person who wants to access the object e.g. the word
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
+        $this->usr = $usr;
+    }
+
+    /**
+     * @return user the person who wants to see a word, verb, triple, formula or view
+     */
+    function user(): user
+    {
+        return $this->usr;
+    }
+
     /**
      * @return bool true if the user has done no overwrites either of the value direct
      * or the formula or the formula assignment

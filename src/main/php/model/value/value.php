@@ -661,9 +661,9 @@ class value extends user_sandbox_value
      */
 
     /**
-     * @return int the id of the time phrase or zero if no time phrase is defined
+     * @return int|null the id of the time phrase or zero if no time phrase is defined
      */
-    function get_time_id(): int
+    function get_time_id(): ?int
     {
         $result = 0;
         if ($this->time_phr != null) {

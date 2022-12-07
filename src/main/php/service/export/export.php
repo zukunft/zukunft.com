@@ -130,8 +130,8 @@ class export
                 log_debug('export->get formulas');
                 $frm_lst = $phr_lst->frm_lst();
                 $exp_formulas = array();
-                if ($frm_lst->lst != null) {
-                    foreach ($frm_lst->lst as $frm) {
+                if (!$frm_lst->is_empty()) {
+                    foreach ($frm_lst->lst() as $frm) {
                         $exp_frm = $frm->export_obj();
                         if (isset($exp_frm)) {
                             $exp_formulas[] = $exp_frm;
@@ -187,8 +187,8 @@ class export
                 log_debug('export->get formula results');
                 $exp_formula_values = array();
                 $frm_lst = $phr_lst->frm_lst();
-                if ($frm_lst->lst != null) {
-                    foreach ($frm_lst->lst as $frm) {
+                if (!$frm_lst->is_empty()) {
+                    foreach ($frm_lst->lst() as $frm) {
                         $fv_lst = $frm->get_fv_lst();
                         if ($fv_lst->lst != null) {
                             foreach ($fv_lst->lst as $fv) {

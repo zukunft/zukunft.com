@@ -68,9 +68,9 @@ function run_formula_test(testing $t): void
     $exp = $frm->expression();
     $frm_lst = $exp->element_special_following_frm();
     $phr_lst = new phrase_list($t->usr1);
-    if ($frm_lst->lst != null) {
-        if (count($frm_lst->lst) > 0) {
-            $elm_frm = $frm_lst->lst[0];
+    if (!$frm_lst->is_empty()) {
+        if (count($frm_lst->lst()) > 0) {
+            $elm_frm = $frm_lst->lst()[0];
             $result = zu_dsp_bool($elm_frm->is_special());
             $target = zu_dsp_bool(true);
             $t->dsp('formula->is_special for "' . $elm_frm->name() . '"', $target, $result);
@@ -83,7 +83,7 @@ function run_formula_test(testing $t): void
             // TODO: get the best matching number
             //$t->dsp('formula->special_result for "'.$elm_frm->name.'"', $target, $result);
 
-            if (count($frm_lst->lst) > 1) {
+            if (count($frm_lst->lst()) > 1) {
                 //$elm_frm_next = $frm_lst->lst[1];
                 $elm_frm_next = $elm_frm;
             } else {

@@ -5,7 +5,8 @@
     formula_element.php - either a word, triple, verb or formula with a link to a formula
     -------------------
 
-    The formula elements are saved in the database for fast detection of dependencies
+    formula elements are terms, expression operators such as add or brakets
+    The term formula elements are saved in the database for fast detection of dependencies
     formula elements are terms with a link to a formula
 
     This file is part of zukunft.com - calc with words

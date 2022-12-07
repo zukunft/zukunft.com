@@ -179,6 +179,26 @@ class formula_unit_tests
         $frm_has_next->usr_text = '=next';
         $t->assert('Expression->fv_phr_lst for ' . formula::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
         */
+
+        // test the calculation of one value
+        $phr_lst = $t->phrase_list_for_tests(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020, word::TN_MIO));
+
+        $frm = $t->new_formula(formula::TN_INCREASE, 1);
+        $frm->usr_text = formula::TF_INCREASE;
+        $frm->set_ref_text();
+        $fv_lst = $frm->to_num($phr_lst);
+        if ($fv_lst->lst != null) {
+            $fv = $fv_lst->lst[0];
+            $result = $fv->num_text;
+        } else {
+            $fv = null;
+            $result = 'result list is empty';
+        }
+        $target = '=(8.505251-8.438822)/8.438822';
+        // TODO fix it
+        //$t->dsp('formula->to_num "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
+
+
     }
 
 }

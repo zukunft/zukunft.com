@@ -858,7 +858,7 @@ class formula extends user_sandbox_named_with_type
      * fill the formula in the reference format with numbers
      * TODO verbs
      */
-    function to_num($phr_lst, $back): formula_value_list
+    function to_num($phr_lst, $back = 0): formula_value_list
     {
         log_debug('get numbers for ' . $this->dsp_id() . ' and ' . $phr_lst->dsp_id());
 
@@ -975,9 +975,9 @@ class formula extends user_sandbox_named_with_type
                                     if ($fig_nbr == 1) {
 
                                         // if the result has been the standard result utils now
-                                        if ($fv->is_std) {
+                                        if ($fv->is_std()) {
                                             // ... and the value is user specific
-                                            if (!$fig->is_std) {
+                                            if (!$fig->is_std()) {
                                                 // split the result into a standard
                                                 // get the standard value
                                                 // $fig_std = ...;
@@ -1000,9 +1000,9 @@ class formula extends user_sandbox_named_with_type
                                         log_debug(self::class . '->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
                                     } else {
                                         // if the result has been the standard result utils now
-                                        if ($fv_master->is_std) {
+                                        if ($fv_master->is_std()) {
                                             // ... and the value is user specific
-                                            if (!$fig->is_std) {
+                                            if (!$fig->is_std()) {
                                                 // split the result into a standard
                                                 // get the standard value
                                                 // $fig_std = ...;

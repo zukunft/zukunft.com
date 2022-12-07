@@ -50,7 +50,7 @@ class expression_unit_tests
         $exp = new expression($usr);
         $exp->set_user_text(formula::TF_INCREASE);
         $trm_names = $exp->get_usr_names();
-        $trm_lst = $t->dummy_term_list($trm_names);
+        $trm_lst = $t->term_list_for_tests($trm_names);
         $result = $exp->ref_text($trm_lst);
         $target = '{w1}=({f18}-{f20})/{f20}';
         $t->assert($test_name, $result, $target);
@@ -94,7 +94,7 @@ class expression_unit_tests
         $exp = new expression($usr);
         $exp->set_user_text(formula::TF_DIAMETER);
         $trm_names = $exp->get_usr_names();
-        $trm_lst = $t->dummy_term_list($trm_names);
+        $trm_lst = $t->term_list_for_tests($trm_names);
         $result = $exp->ref_text($trm_lst);
         $target = '={w1}/{t2}';
         $t->assert($test_name, $result, $target);

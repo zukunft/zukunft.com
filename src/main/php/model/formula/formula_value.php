@@ -183,6 +183,11 @@ class formula_value extends db_object
         return $this->usr;
     }
 
+    function is_std(): bool
+    {
+        return $this->is_std;
+    }
+
 
     /*
      * casting objects
@@ -512,7 +517,7 @@ class formula_value extends db_object
             if ($this->phr_lst == null and $this->phr != null) {
                 if ($this->phr->id() > 0 or $this->phr->name() != '') {
                     $new_phr_lst = new phrase_list($this->user());
-                    $new_phr_lst->add($this->phr->phrase());
+                    $new_phr_lst->add($this->phr);
                     $this->phr_lst = $new_phr_lst;
                 }
             }

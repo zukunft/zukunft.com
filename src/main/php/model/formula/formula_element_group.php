@@ -207,8 +207,11 @@ class formula_element_group
                     $val_time = $frm_elm->obj->special_time_phr($this->time_phr);
                     if ($val_time->id() > 0) {
                         $val_time_phr = $val_time;
-                        if ($val_time_phr->id() == 0 or $val_time_phr->name() == '') {
-                            $val_time_phr->load();
+                        if ($val_time_phr->id() == 0) {
+                            $val_time_phr->load_by_name($val_time_phr->name());
+                        }
+                        if ($val_time_phr->name() == '') {
+                            $val_time_phr->load_by_id($val_time_phr->id());
                         }
                         log_debug('formula_element_group->set_formula_time_phrase -> add element word for special formula result ' . $val_phr_lst->dsp_id() . ' taken from the result');
                     }

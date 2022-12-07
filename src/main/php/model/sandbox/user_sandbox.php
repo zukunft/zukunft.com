@@ -144,6 +144,7 @@ class user_sandbox extends db_object
         $this->excluded = null;
     }
 
+
     /*
      * set and get
      */
@@ -167,8 +168,9 @@ class user_sandbox extends db_object
         return $this->usr;
     }
 
+
     /*
-     * internal check function
+     * internal check
      */
 
     /**

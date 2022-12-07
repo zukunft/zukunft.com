@@ -29,6 +29,7 @@
     TODO make all vars of display objects private or protected
     TODO move display functions to frontend objects
     TODO check that all queries are parameterized by setting $db_con->set_name
+    TODO add text report table to save a text related to a phrase group (and a timestamp)
     TODO check that all load function have an API and are added in the OpenAPI document
     TODO use the api functions and the html frontend function
     TODO create a vue.js based frontend
