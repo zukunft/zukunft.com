@@ -125,10 +125,10 @@ class expression
      */
 
     // predefined type selectors potentially used also in other classes
-    const SELECT_ALL = "all";        // to get all formula elements
-    const SELECT_PHRASE = "phrases";    // to filter only the words from the expression element list
-    const SELECT_VERB = "verbs";      // to filter only the verbs from the expression element list
-    const SELECT_FORMULA = "formulas";   // to filter only the formulas from the expression element list
+    const SELECT_ALL = "all";              // to get all formula elements
+    const SELECT_PHRASE = "phrases";       // to filter only the words from the expression element list
+    const SELECT_VERB = "verbs";           // to filter only the verbs from the expression element list
+    const SELECT_FORMULA = "formulas";     // to filter only the formulas from the expression element list
     const SELECT_VERB_WORD = "verb_words"; // to filter the words and the words implied by the verbs from the expression element list
 
     // text maker to convert phrase, formula or verb database reference to
@@ -765,120 +765,52 @@ class expression
                 // $pos is the position von the next element
                 // to list the elements from left to right, set it to the right most position at the beginning of each replacement
                 $pos = strlen($work);
-                $elm = new formula_element($this->usr);
                 $obj_sym = $lib->str_between($work, self::TERM_START, self::TERM_END);
                 if ($obj_sym != '') {
                     $elm = $this->element_by_symbol($obj_sym, $trm_lst);
-                }
 
-
-                // find the next word reference
-                if ($type == expression::SELECT_ALL or $type == expression::SELECT_PHRASE or $type == expression::SELECT_VERB_WORD) {
-                    if ($elm->type == formula_element::TYPE_WORD) {
-                        $pos = strpos($work, self::WORD_START);
-                        log_debug('word pos ' . $pos);
-                    }
-                }
-
-                // find the next triple reference
-                if ($type == expression::SELECT_ALL or $type == expression::SELECT_PHRASE or $type == expression::SELECT_VERB_WORD) {
-                    if ($elm->type == formula_element::TYPE_TRIPLE) {
-                        $pos = strpos($work, self::TRIPLE_START);
-                        log_debug('triple pos ' . $pos);
-                    }
-                }
-
-                // find the next verb reference
-                if ($type == expression::SELECT_ALL or $type == expression::SELECT_VERB) {
-                    $new_pos = strpos($work, self::VERB_START);
-                    log_debug('verb pos ' . $new_pos);
-                    if ($new_pos < $pos) {
-                        if ($elm->type == formula_element::TYPE_VERB) {
-                            $pos = $new_pos;
+                    // filter the elements if requested
+                    if ($type == self::SELECT_PHRASE) {
+                        if ($elm->type != formula_element::TYPE_WORD AND $elm->type != formula_element::TYPE_TRIPLE) {
+                            $elm->obj = null;
                         }
                     }
-                }
-
-                // find the next formula reference
-                if ($type == expression::SELECT_ALL or $type == expression::SELECT_FORMULA or $type == expression::SELECT_PHRASE or $type == expression::SELECT_VERB_WORD) {
-                    $new_pos = strpos($work, self::FORMULA_START);
-                    log_debug('formula pos ' . $new_pos);
-                    if ($new_pos < $pos) {
-                        if ($elm->type == formula_element::TYPE_VERB) {
-                            $pos = $new_pos;
+                    if ($type == self::SELECT_FORMULA) {
+                        if ($elm->type != formula_element::TYPE_FORMULA) {
+                            $elm->obj = null;
                         }
                     }
-                }
-
-                // add reference to result
-                if ($elm->obj != null) {
-                    if ($elm->obj->id() > 0) {
-                        if ($elm->obj->name() == '') {
-                            $elm->usr = $this->usr;
-                            $elm->load_by_id($elm->obj->id());
+                    if ($type == self::SELECT_VERB) {
+                        if ($elm->type != formula_element::TYPE_VERB) {
+                            $elm->obj = null;
                         }
-
-                        // update work text
-                        $changed = str_replace($elm->symbol, $elm->name(), $work);
-                        log_debug('found "' . $elm->name() . '" for ' . $elm->symbol . ', so "' . $work . '" is now "' . $changed . '"');
-                        if ($changed <> $work) {
-                            $work = $changed;
-                            $found = true;
-                            $pos = $pos + strlen($elm->name());
+                    }
+                    if ($type == self::SELECT_VERB_WORD) {
+                        if ($elm->type != formula_element::TYPE_WORD AND $elm->type != formula_element::TYPE_VERB) {
+                            $elm->obj = null;
                         }
+                    }
+
+                    // update work text
+                    $work = $lib->str_right_of($work, self::TERM_END);
+
+                    // add reference to result
+                    if ($elm->obj != null) {
+
+                        $found = true;
 
                         // group the references if needed
                         if ($group_it) {
                             $elm_grp->lst[] = $elm;
                             log_debug('new group element "' . $elm->name() . '"');
 
-                            $txt_between_elm = '';
-                            $next_pos = 0;
-                            if ($pos > 0) {
-                                // get the position of the next element to check if a new group should be created or added to the same
-                                $next_pos = strlen($work);
-                                log_debug('next_pos ' . $next_pos);
-                                $new_pos = strpos($work, self::WORD_START);
-                                if ($new_pos < $next_pos) {
-                                    $obj_id = $lib->str_between($work, self::WORD_START, self::WORD_END);
-                                    if (is_numeric($obj_id)) {
-                                        if ($obj_id > 0) {
-                                            $next_pos = $new_pos;
-                                            log_debug('next_pos shorter by word ' . $next_pos);
-                                        }
-                                    }
-                                }
-                                $new_pos = strpos($work, self::TRIPLE_START);
-                                if ($new_pos < $next_pos) {
-                                    $obj_id = $lib->str_between($work, self::TRIPLE_START, self::TRIPLE_END);
-                                    if (is_numeric($obj_id)) {
-                                        if ($obj_id > 0) {
-                                            $next_pos = $new_pos;
-                                            log_debug('next_pos shorter by verb ' . $next_pos);
-                                        }
-                                    }
-                                }
-                                $new_pos = strpos($work, self::FORMULA_START);
-                                if ($new_pos < $next_pos) {
-                                    $obj_id = $lib->str_between($work, self::FORMULA_START, self::FORMULA_END);
-                                    if (is_numeric($obj_id)) {
-                                        if ($obj_id > 0) {
-                                            $next_pos = $new_pos;
-                                            log_debug('next_pos shorter by formula  ' . $next_pos);
-                                        }
-                                    }
-                                }
+                            // find the next term reference
+                            $txt_between_elm = $lib->str_left_of($work, self::TERM_START);
+                            $txt_between_elm = trim($txt_between_elm);
 
-                                // get the text between the references
-                                $len = $next_pos - $pos;
-                                log_debug('in "' . $work . '" after ' . $pos . ' len ' . $len . ' "' . $next_pos . ' - ' . $pos . ')');
-                                $txt_between_elm = substr($work, $pos, $len);
-                                log_debug('between elements "' . $txt_between_elm . '" ("' . $work . '" from ' . $pos . ' to ' . $next_pos . ')');
-                                $txt_between_elm = str_replace('"', '', $txt_between_elm);
-                                $txt_between_elm = trim($txt_between_elm);
-                            }
-                            // check if the references does not have any math symbol in between and therefore are used to retrieve one value
-                            if (strlen($txt_between_elm) > 0 or $next_pos == strlen($work)) {
+                            // check if the references does not have any math symbol in between
+                            // and therefore are used to retrieve one value
+                            if (strlen($txt_between_elm) > 0) {
                                 $lst[] = $elm_grp;
                                 log_debug('group finished with ' . $elm->name());
                                 $elm_grp = new formula_element_group;

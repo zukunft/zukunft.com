@@ -57,8 +57,7 @@ function run_formula_element_group_test(testing $t): void
     $elm_grp_lst = $exp->element_grp_lst();
 
     $result = $elm_grp_lst->dsp_id();
-    $target = '"this" ('.$frm_this->id().'),"prior" ('.$frm_prior->id().') for user 2 (zukunft.com system test)';
-    $target = 'this (0) / prior (0)';
+    $target = 'this ('.$frm_this->id().') / prior ('.$frm_prior->id().') / prior ('.$frm_prior->id().')';
     $t->dsp_contains(', formula_element_group_list->dsp_id', $target, $result);
 
 

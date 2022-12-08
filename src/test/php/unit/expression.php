@@ -85,9 +85,7 @@ class expression_unit_tests
         $frm_prior = $trm_lst->get_by_name(formula::TN_READ_PRIOR);
 
         $result = $elm_grp_lst->dsp_id();
-        $target = '"this" ('.$frm_this->id().'),"prior" ('.$frm_prior->id().') for user 2 (zukunft.com system test)';
-        // TODO fix it
-        $target = 'this,prior (0)';
+        $target = 'this ('.$frm_this->id_obj().') / prior ('.$frm_prior->id_obj().') / prior ('.$frm_prior->id_obj().')';
         $t->dsp_contains(', formula_element_group_list->dsp_id', $target, $result);
 
         $test_name = 'test the user text conversion with a triple';

@@ -113,7 +113,7 @@ function run_expression_test(testing $t): void
     // ... and all element groups used in the formula
     $elm_grp_lst = $exp_sector->element_grp_lst();
     $result = $elm_grp_lst->name();
-    $target = 'System Test Word Parent e.g. Country, can be used as a differentiator for, System Test Word Category e.g. Canton, System Test Word Total';
+    $target = 'System Test Word Parent e.g. Country,can be used as a differentiator for,System Test Word Category e.g. Canton, System Test Word Total';
     $t->assert('element_grp_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
     // test getting the phrases if the formula contains a verb
