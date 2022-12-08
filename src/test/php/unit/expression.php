@@ -46,7 +46,19 @@ class expression_unit_tests
         $t->header('Unit tests of the formula expression class (src/main/php/model/formula/expression.php)');
 
         // TODO use a formula with words, triple, formulas and verbs within one formula
-        $test_name = 'test the conversion of the user text to the database reference text';
+        $this->frm_exp_convert($t,
+            'including a triple',
+            formula::TF_DIAMETER,
+            '={w1}/{t2}',
+        );
+        $this->frm_exp_convert($t,
+            'including fixed formulas',
+            formula::TF_INCREASE,
+            '{w1}=({f18}-{f20})/{f20}',
+        );
+
+
+        $test_name = 'test the conversion of the user text to the database reference text with fixed formulas';
         $exp = new expression($usr);
         $exp->set_user_text(formula::TF_INCREASE);
         $trm_names = $exp->get_usr_names();
@@ -131,6 +143,37 @@ class expression_unit_tests
         $t->assert('expression->is_std if formula is changed by the user', $result, $target);
         */
 
+    }
+
+    /**
+     * @param testing $t just the testing object to count the
+     * @param string $test_name which part should be tested e.g. with fixed formulas
+     * @param string $usr_frm_exp the formula expression in the human-readable format
+     * @param string $db_ref_frm_exp the formula expression in the database reference format
+     * @return void
+     */
+    private function frm_exp_convert(
+        testing $t,
+        string $test_name,
+        string $usr_frm_exp,
+        string $db_ref_frm_exp
+    ): void
+    {
+        global $usr;
+
+        $test_name = 'conversion of the user text to the database reference text ' . $test_name;
+        $exp = new expression($usr);
+        $exp->set_user_text($usr_frm_exp);
+        $trm_names = $exp->get_usr_names();
+        $trm_lst = $t->term_list_for_tests($trm_names);
+        $result = $exp->ref_text($trm_lst);
+        $target = $db_ref_frm_exp;
+        $t->assert($test_name, $result, $target);
+
+        $test_name = 'conversion of the database reference text to the user text ' . $test_name;
+        $result = $exp->user_text($trm_lst);
+        $target = $usr_frm_exp;
+        $t->assert($test_name, $result, $target);
     }
 
 }
