@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
+use api\formula_api;
 use cfg\formula_type;
 
 function run_formula_unit_db_tests(testing $t)
@@ -55,7 +56,7 @@ function run_formula_unit_db_tests(testing $t)
 
     $t->subheader('Frontend API tests');
 
-    $frm = $t->load_formula(formula::TN_READ_TEST);
+    $frm = $t->load_formula(formula_api::TN_INCREASE);
     $t->assert_api_exp($frm);
 
 }

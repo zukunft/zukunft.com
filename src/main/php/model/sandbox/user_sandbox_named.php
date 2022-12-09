@@ -32,6 +32,8 @@
 
 */
 
+use api\formula_api;
+
 class user_sandbox_named extends user_sandbox
 {
     /*
@@ -355,7 +357,7 @@ class user_sandbox_named extends user_sandbox
                         $result = '"' . $this->name . '" is a reserved phrase name for system testing. Please use another name';
                     }
                 } elseif ($this->obj_name == sql_db::TBL_FORMULA) {
-                    if (in_array($this->name, formula::RESERVED_FORMULAS)) {
+                    if (in_array($this->name, formula_api::RESERVED_FORMULAS)) {
                         $result = '"' . $this->name . '" is a reserved formula name for system testing. Please use another name';
                     }
                 } elseif ($this->obj_name == sql_db::TBL_VIEW) {

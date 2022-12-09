@@ -30,6 +30,8 @@
 
 */
 
+use api\formula_api;
+
 function run_batch_job_test(testing $t)
 {
 
@@ -78,7 +80,7 @@ function run_batch_job_list_test(testing $t)
     $t->header('Test the batch job list class (classes/batch_job_list.php)');
 
     // prepare test adding a batch job via a list
-    $frm = $t->load_formula(formula::TN_INCREASE);
+    $frm = $t->load_formula(formula_api::TN_ADD);
     $phr_lst = new phrase_list($usr);
     $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
 

@@ -30,21 +30,23 @@
 
 */
 
-function create_test_formula_links(testing $t)
+use api\formula_api;
+
+function create_test_formula_links(testing $t): void
 {
     $t->header('Check if all base formulas link correctly');
 
-    $t->test_formula_link(formula::TN_RATIO, word::TN_SHARE);
-    $t->test_formula_link(formula::TN_SECTOR, word::TN_SHARE);
-    $t->test_formula_link(formula::TN_INCREASE, word::TN_YEAR);
-    $t->test_formula_link(formula::TN_SCALE_K, word::TN_IN_K);
-    $t->test_formula_link(formula::TN_SCALE_TO_K, word::TN_ONE);
-    $t->test_formula_link(formula::TN_SCALE_MIO, word::TN_MIO);
-    $t->test_formula_link(formula::TN_SCALE_BIL, word::TN_BIL);
+    $t->test_formula_link(formula_api::TN_RATIO, word::TN_SHARE);
+    $t->test_formula_link(formula_api::TN_SECTOR, word::TN_SHARE);
+    $t->test_formula_link(formula_api::TN_ADD, word::TN_YEAR);
+    $t->test_formula_link(formula_api::TN_SCALE_K, word::TN_IN_K);
+    $t->test_formula_link(formula_api::TN_SCALE_TO_K, word::TN_ONE);
+    $t->test_formula_link(formula_api::TN_SCALE_MIO, word::TN_MIO);
+    $t->test_formula_link(formula_api::TN_SCALE_BIL, word::TN_BIL);
 
 }
 
-function run_formula_link_test(testing $t)
+function run_formula_link_test(testing $t): void
 {
     $t->header('Test the formula link class (classes/formula_link.php)');
 
@@ -52,7 +54,7 @@ function run_formula_link_test(testing $t)
     $t->test_word(word::TN_RENAMED);
 
     // link the test formula to another word
-    $frm = $t->load_formula(formula::TN_RENAMED);
+    $frm = $t->load_formula(formula_api::TN_RENAMED);
     $phr = new phrase($t->usr1);
     $phr->load_by_name(word::TN_RENAMED);
     $result = $frm->link_phr($phr);
@@ -94,7 +96,7 @@ function run_formula_link_test(testing $t)
     $t->dsp('formula_link->load by phrase id and link id "' . $phr->dsp_name(), $target, $result);
 
     // ... check if the link is shown correctly
-    $frm = $t->load_formula(formula::TN_RENAMED);
+    $frm = $t->load_formula(formula_api::TN_RENAMED);
     $phr_lst = $frm->assign_phr_ulst();
     echo $phr_lst->dsp_id() . '<br>';
     $result = $phr_lst->does_contain($phr);
@@ -105,7 +107,7 @@ function run_formula_link_test(testing $t)
     // ... the second user has excluded the word at this point, so even if the word is linked the word link is nevertheless false
     // TODO check what that the word is linked if the second user activates the word
     $frm = new formula($t->usr2);
-    $frm->load_by_name(formula::TN_RENAMED, formula::class);
+    $frm->load_by_name(formula_api::TN_RENAMED, formula::class);
     $phr_lst = $frm->assign_phr_ulst();
     $result = $phr_lst->does_contain($phr);
     $target = false;
@@ -115,7 +117,7 @@ function run_formula_link_test(testing $t)
 
     // if second user removes the new link
     $frm = new formula($t->usr2);
-    $frm->load_by_name(formula::TN_RENAMED, formula::class);
+    $frm->load_by_name(formula_api::TN_RENAMED, formula::class);
     $phr = new phrase($t->usr2);
     $phr->load_by_name(word::TN_RENAMED);
     $result = $frm->unlink_phr($phr);
@@ -135,7 +137,7 @@ function run_formula_link_test(testing $t)
 
     // ... check if the link is really not used any more for the second user
     $frm = new formula($t->usr2);
-    $frm->load_by_name(formula::TN_RENAMED, formula::class);
+    $frm->load_by_name(formula_api::TN_RENAMED, formula::class);
     $phr_lst = $frm->assign_phr_ulst();
     $result = $phr_lst->does_contain($phr);
     $target = false;
@@ -145,7 +147,7 @@ function run_formula_link_test(testing $t)
     // ... check if the value update for the second user has been triggered
 
     // ... check if the link is still used for the first user
-    $frm = $t->load_formula(formula::TN_RENAMED);
+    $frm = $t->load_formula(formula_api::TN_RENAMED);
     $phr_lst = $frm->assign_phr_ulst();
     $result = $phr_lst->does_contain($phr);
     $target = true;
@@ -169,7 +171,7 @@ function run_formula_link_test(testing $t)
     $t->dsp('formula_link->unlink_phr logged of "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result);
 
     // check if the formula is not used any more for both users
-    $frm = $t->load_formula(formula::TN_RENAMED);
+    $frm = $t->load_formula(formula_api::TN_RENAMED);
     $phr_lst = $frm->assign_phr_ulst();
     $result = $phr_lst->does_contain($phr);
     $target = false;
@@ -180,7 +182,7 @@ function run_formula_link_test(testing $t)
 
     // insert the link again for the first user
     /*
-    $frm = $t->load_formula(formula::TN_RENAMED);
+    $frm = $t->load_formula(formula_api::TN_RENAMED);
     $phr = New phrase($t->usr2);
     $phr->load_by_name(word::TEST_NAME_CHANGED);
     $result = $frm->link_phr($phr);
@@ -202,12 +204,17 @@ function run_formula_link_test(testing $t)
 
 }
 
-function run_formula_link_list_test(testing $t)
+function run_formula_link_list_test(testing $t): void
 {
 
     $t->header('Test the formula link list class (classes/formula_link_list.php)');
 
-    $frm = $t->load_formula(formula::TN_INCREASE);
+    // prepare
+    $frm = $t->add_formula(formula_api::TN_ADD, formula_api::TF_INCREASE);
+    $phr = $t->add_word(word::TN_YEAR)->phrase();
+    $frm->link_phr($phr);
+
+    // test
     $frm_lnk_lst = new formula_link_list($t->usr1);
     $frm_lnk_lst->load_by_frm_id($frm->id());
     $phr_ids = $frm_lnk_lst->phrase_ids(false);

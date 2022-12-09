@@ -13,6 +13,7 @@
 
     but first this needs to be fixed:
     TODO create a unit test for all possible class functions next to review: formula expression
+    TODO move test names and restricted names from the backend object to the API object simply to make the backend object smaller
     TODO replace the load_by_vars with more specific load_by_ functions
     TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample
     TODO fix error in upgrade process for MySQL

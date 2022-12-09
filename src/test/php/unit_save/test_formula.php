@@ -30,24 +30,29 @@
 
 */
 
+use api\formula_api;
 use cfg\formula_type;
 
 function create_test_formulas(testing $t): void
 {
     $t->header('Check if all base formulas are correct');
 
-    $t->test_formula(formula::TN_RATIO, formula::TF_RATIO);
-    $t->test_formula(formula::TN_SECTOR, formula::TF_SECTOR);
-    //$t->test_formula(formula::TN_THIS, formula::TF_THIS);
-    $t->test_formula(formula::TN_INCREASE, formula::TF_INCREASE);
-    $t->test_formula(formula::TN_SCALE_K, formula::TF_SCALE_K);
-    $t->test_formula(formula::TN_SCALE_TO_K, formula::TF_SCALE_TO_K);
-    $t->test_formula(formula::TN_SCALE_MIO, formula::TF_SCALE_MIO);
-    $t->test_formula(formula::TN_SCALE_BIL, formula::TF_SCALE_BIL);
+    $t->test_formula(formula_api::TN_RATIO, formula_api::TF_RATIO);
+    $t->test_formula(formula_api::TN_SECTOR, formula_api::TF_SECTOR);
+    //$t->test_formula(formula_api::TN_THIS, formula_api::TF_THIS);
+    $t->test_formula(formula_api::TN_ADD, formula_api::TF_INCREASE);
+    $t->test_formula(formula_api::TN_SCALE_K, formula_api::TF_SCALE_K);
+    $t->test_formula(formula_api::TN_SCALE_TO_K, formula_api::TF_SCALE_TO_K);
+    $t->test_formula(formula_api::TN_READ_SCALE_MIO, formula_api::TF_READ_SCALE_MIO);
+    $t->test_formula(formula_api::TN_SCALE_MIO, formula_api::TF_SCALE_MIO);
+    $t->test_formula(formula_api::TN_SCALE_BIL, formula_api::TF_SCALE_BIL);
 }
 
 function run_formula_test(testing $t): void
 {
+
+    // init
+    $t->name = 'expression->';
 
     $t->header('Test the formula class (classes/formula.php)');
 
@@ -55,9 +60,9 @@ function run_formula_test(testing $t): void
 
     // test loading of one formula
     $frm = new formula($t->usr1);
-    $frm->load_by_name(formula::TN_INCREASE, formula::class);
+    $frm->load_by_name(formula_api::TN_ADD, formula::class);
     $result = $frm->usr_text;
-    $target = '"percent" = ( "this" - "prior" ) / "prior"';
+    $target = formula_api::TF_INCREASE;
     $t->dsp('formula->load for "' . $frm->name() . '"', $target, $result);
 
     // test the formula type
@@ -124,7 +129,7 @@ function run_formula_test(testing $t): void
     $t->dsp('formula->assign_phr_ulst_direct for "' . $frm->name() . '"', $target, $result);
 
     // loading another formula (Price Earning ratio ) to have more test cases
-    $frm_pe = $t->load_formula(formula::TN_RATIO);
+    $frm_pe = $t->load_formula(formula_api::TN_RATIO);
 
     $phr_lst = new phrase_list($t->usr1);
     $phr_lst->load_by_names(array(word::TN_SHARE, word::TN_CHF));
@@ -146,7 +151,7 @@ function run_formula_test(testing $t): void
     // TODO check why is this word MIO is needed??
     $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020, word::TN_MIO));
 
-    $frm = $t->load_formula(formula::TN_INCREASE);
+    $frm = $t->load_formula(formula_api::TN_ADD);
     $fv_lst = $frm->to_num($phr_lst, $back);
     if ($fv_lst->lst != null) {
         $fv = $fv_lst->lst[0];
@@ -177,7 +182,7 @@ function run_formula_test(testing $t): void
     // test the scaling mainly to check the scaling handling of the results later
     // TODO remove any scaling words from the phrase list if the result word is of type scaling
     // TODO automatically check the fastest way to scale and avoid double scaling calculations
-    $frm_scale_mio_to_one = $t->load_formula(formula::TN_SCALE_MIO);
+    $frm_scale_mio_to_one = $t->load_formula(formula_api::TN_SCALE_MIO);
     $fv_lst = $frm_scale_mio_to_one->calc($phr_lst, $back);
     if ($fv_lst != null) {
         $result = $fv_lst[0]->value;
@@ -192,7 +197,7 @@ function run_formula_test(testing $t): void
     // TODO check why is this word ONE needed?? scale shout assume one if no scaling word is set or implied
     //$phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020));
     $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020, word::TN_ONE));
-    $frm_scale_one_to_k = $t->load_formula(formula::TN_SCALE_TO_K);
+    $frm_scale_one_to_k = $t->load_formula(formula_api::TN_SCALE_TO_K);
     $fv_lst = $frm_scale_one_to_k->calc($phr_lst, $back);
     if ($fv_lst != null) {
         $result = $fv_lst[0]->value;
@@ -205,11 +210,11 @@ function run_formula_test(testing $t): void
 
     // load the test ids
     $wrd_percent = $t->load_word('percent');
-    $frm_this = $t->load_formula(formula::TN_READ_THIS);
-    $frm_prior = $t->load_formula(formula::TN_READ_PRIOR);
+    $frm_this = $t->load_formula(formula_api::TN_READ_THIS);
+    $frm_prior = $t->load_formula(formula_api::TN_READ_PRIOR);
 
     // test the formula display functions
-    $frm = $t->load_formula(formula::TN_INCREASE);
+    $frm = $t->load_formula(formula_api::TN_ADD);
     $frm_dsp = $frm->dsp_obj_old();
     $exp = $frm->expression();
     $result = $exp->dsp_id();
@@ -218,7 +223,7 @@ function run_formula_test(testing $t): void
 
     // ... the formula name
     $result = $frm->name();
-    $target = 'System Test Formula Increase';
+    $target = 'System Test Formula';
     $t->dsp('formula->name for ' . $frm->dsp_id(), $target, $result);
 
     // ... in HTML format
@@ -227,9 +232,9 @@ function run_formula_test(testing $t): void
     $t->dsp('formula->dsp_text for ' . $frm->dsp_id(), $target, $result);
 
     // ... in HTML format with link
-    $frm_increase = $t->load_formula(formula::TN_INCREASE);
+    $frm_increase = $t->load_formula(formula_api::TN_ADD);
     $result = $frm_dsp->name_linked($back);
-    $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id() . '&back=0">' . formula::TN_INCREASE . '</a>';
+    $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id() . '&back=0">' . formula_api::TN_ADD . '</a>';
     $t->dsp('formula->display for ' . $frm->dsp_id(), $target, $result);
 
     // ... the formula result selected by the word and in percent
@@ -266,34 +271,34 @@ function run_formula_test(testing $t): void
 
     $add = 0;
     $result = $frm_dsp->dsp_edit($add, $wrd, $back);
-    $target = 'Formula "System Test Formula Increase"';
+    $target = 'Formula "System Test Formula"';
     //$result = $edit_page;
-    $t->dsp_contains(', formula->dsp_edit for ' . $frm->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', formula->dsp_edit for ' . $frm->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test formula refresh functions
 
     $result = $frm->element_refresh($frm->ref_text);
     $target = true;
-    $t->dsp('formula->element_refresh for ' . $frm->dsp_id() . '', $target, $result);
+    $t->dsp('formula->element_refresh for ' . $frm->dsp_id(), $target, $result);
 
 
     // to link and unlink a formula is tested in the formula_link section
 
     // test adding of one formula
     $frm = new formula($t->usr1);
-    $frm->set_name(formula::TN_ADD);
-    $frm->usr_text = '"percent" = ( "this" - "prior" ) / "prior"';
+    $frm->set_name(formula_api::TN_ADD);
+    $frm->usr_text = formula_api::TF_INCREASE;
     $result = $frm->save();
     if ($frm->id() > 0) {
         $result = $frm->usr_text;
     }
-    $target = '"percent" = ( "this" - "prior" ) / "prior"';
+    $target = formula_api::TF_INCREASE;
     $t->dsp('formula->save for adding "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if the formula name has been saved
-    $frm = $t->load_formula(formula::TN_ADD);
+    $frm = $t->load_formula(formula_api::TN_ADD);
     $result = $frm->usr_text;
-    $target = '"percent" = ( "this" - "prior" ) / "prior"';
+    $target = formula_api::TF_INCREASE;
     $t->dsp('formula->load the added "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); // time limit???
 
     // ... check the correct logging
@@ -304,33 +309,33 @@ function run_formula_test(testing $t): void
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added System Test Formula';
-    $t->dsp('formula->save adding logged for "' . formula::TN_ADD . '"', $target, $result);
+    $t->dsp('formula->save adding logged for "' . formula_api::TN_ADD . '"', $target, $result);
 
     // check if adding the same formula again creates a correct error message
     $frm = new formula($t->usr1);
-    $frm->set_name(formula::TN_ADD);
-    $frm->usr_text = '"percent" = 1 - ( "this" / "prior" )';
+    $frm->set_name(formula_api::TN_ADD);
+    $frm->usr_text = formula_api::TF_INCREASE_ALTERNATIVE;
     $result = $frm->save();
     // use the next line if system config is non-standard
-    //$target = 'A formula with the name "'.formula::TN_ADD.'" already exists. Please use another name.';
+    //$target = 'A formula with the name "'.formula_api::TN_ADD.'" already exists. Please use another name.';
     $target = '';
     $t->dsp('formula->save adding "' . $frm->name() . '" again', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if the formula can be renamed
-    $frm = $t->load_formula(formula::TN_ADD);
-    $frm->set_name(formula::TN_RENAMED);
+    $frm = $t->load_formula(formula_api::TN_ADD);
+    $frm->set_name(formula_api::TN_RENAMED);
     $result = $frm->save();
     $target = '';
-    $t->dsp('formula->save rename "' . formula::TN_ADD . '" to "' . formula::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp('formula->save rename "' . formula_api::TN_ADD . '" to "' . formula_api::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... and if the formula renaming was successful
     $frm_renamed = new formula($t->usr1);
-    $frm_renamed->load_by_name(formula::TN_RENAMED, formula::class);
+    $frm_renamed->load_by_name(formula_api::TN_RENAMED, formula::class);
     if ($frm_renamed->id() > 0) {
         $result = $frm_renamed->name();
     }
-    $target = formula::TN_RENAMED;
-    $t->dsp('formula->load renamed formula "' . formula::TN_RENAMED . '"', $target, $result);
+    $target = formula_api::TN_RENAMED;
+    $t->dsp('formula->load renamed formula "' . formula_api::TN_RENAMED . '"', $target, $result);
 
     // ... and if the formula renaming has been logged
     $log = new user_log_named;
@@ -340,34 +345,34 @@ function run_formula_test(testing $t): void
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test changed System Test Formula to System Test Formula Renamed';
-    $t->dsp('formula->save rename logged for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->save rename logged for "' . formula_api::TN_RENAMED . '"', $target, $result);
 
     // check if the formula parameters can be added
     $frm_renamed->usr_text = '= "this"';
-    $frm_renamed->description = formula::TN_RENAMED . ' description';
+    $frm_renamed->description = formula_api::TN_RENAMED . ' description';
     $frm_renamed->type_id = cl(db_cl::FORMULA_TYPE, formula_type::THIS);
     $frm_renamed->need_all_val = True;
     $result = $frm_renamed->save();
     $target = '';
-    $t->dsp('formula->save all formula fields beside the name for "' . formula::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp('formula->save all formula fields beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... and if the formula parameters have been added
-    $frm_reloaded = $t->load_formula(formula::TN_RENAMED);
+    $frm_reloaded = $t->load_formula(formula_api::TN_RENAMED);
     $result = $frm_reloaded->usr_text;
     $target = '= "this"';
-    $t->dsp('formula->load usr_text for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load usr_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->ref_text;
     $target = '={f'.$frm_this->id().'}';
-    $t->dsp('formula->load ref_text for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load ref_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->description;
-    $target = formula::TN_RENAMED . ' description';
-    $t->dsp('formula->load description for "' . formula::TN_RENAMED . '"', $target, $result);
+    $target = formula_api::TN_RENAMED . ' description';
+    $t->dsp('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->type_id;
     $target = cl(db_cl::FORMULA_TYPE, formula_type::THIS);
-    $t->dsp('formula->load type_id for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->need_all_val;
     $target = True;
-    $t->dsp('formula->load need_all_val for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load need_all_val for "' . formula_api::TN_RENAMED . '"', $target, $result);
 
     // ... and if the formula parameter adding have been logged
     $log = new user_log_named;
@@ -379,105 +384,105 @@ function run_formula_test(testing $t): void
     // use the next line if system config is non-standard
     $target = 'zukunft.com system test changed "percent" = ( "this" - "prior" ) / "prior" to = "this"';
     $target = 'zukunft.com system test changed "percent" = 1 - ( "this" / "prior" ) to = "this"';
-    $t->dsp('formula->load resolved_text for "' . formula::TN_RENAMED . '" logged', $target, $result);
+    $t->dsp('formula->load resolved_text for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
     $log->field = 'formula_text';
     $result = $log->dsp_last(true);
     // use the next line if system config is non-standard
     $target = 'zukunft.com system test changed {w'.$wrd_percent->id().'}=( {f'.$frm_this->id().'} - {f5} ) / {f5} to ={f3}';
     $target = 'zukunft.com system test changed {w'.$wrd_percent->id().'}=1-({f'.$frm_this->id().'}/{f'.$frm_prior->id().'}) to ={f'.$frm_this->id().'}';
-    $t->dsp('formula->load formula_text for "' . formula::TN_RENAMED . '" logged', $target, $result);
+    $t->dsp('formula->load formula_text for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
     $log->field = 'description';
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added System Test Formula Renamed description';
-    $t->dsp('formula->load description for "' . formula::TN_RENAMED . '" logged', $target, $result);
+    $t->dsp('formula->load description for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
     $log->field = 'formula_type_id';
     $result = $log->dsp_last(true);
     // to review what is correct
     $target = 'zukunft.com system test changed calc to this';
     $target = 'zukunft.com system test added this';
-    $t->dsp('formula->load formula_type_id for "' . formula::TN_RENAMED . '" logged', $target, $result);
+    $t->dsp('formula->load formula_type_id for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
     $log->field = 'all_values_needed';
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test changed 0 to 1';
-    $t->dsp('formula->load all_values_needed for "' . formula::TN_RENAMED . '" logged', $target, $result);
+    $t->dsp('formula->load all_values_needed for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
 
     // check if a user specific formula is created if another user changes the formula
     $frm_usr2 = new formula($t->usr2);
-    $frm_usr2->load_by_name(formula::TN_RENAMED, formula::class);
+    $frm_usr2->load_by_name(formula_api::TN_RENAMED, formula::class);
     $frm_usr2->usr_text = '"percent" = ( "this" - "prior" ) / "prior"';
-    $frm_usr2->description = formula::TN_RENAMED . ' description2';
+    $frm_usr2->description = formula_api::TN_RENAMED . ' description2';
     $frm_usr2->type_id = cl(db_cl::FORMULA_TYPE, formula_type::NEXT);
     $frm_usr2->need_all_val = False;
     $result = $frm_usr2->save();
     $target = '';
-    $t->dsp('formula->save all formula fields for user 2 beside the name for "' . formula::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp('formula->save all formula fields for user 2 beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... and if a user specific formula changes have been saved
     $frm_usr2_reloaded = new formula($t->usr2);
-    $frm_usr2_reloaded->load_by_name(formula::TN_RENAMED, formula::class);
+    $frm_usr2_reloaded->load_by_name(formula_api::TN_RENAMED, formula::class);
     $result = $frm_usr2_reloaded->usr_text;
     $target = '"percent" = ( "this" - "prior" ) / "prior"';
-    $t->dsp('formula->load usr_text for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load usr_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->ref_text;
     $target = '{w'.$wrd_percent->id().'}=({f'.$frm_this->id().'}-{f'.$frm_prior->id().'})/{f'.$frm_prior->id().'}';
-    $t->dsp('formula->load ref_text for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load ref_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->description;
-    $target = formula::TN_RENAMED . ' description2';
-    $t->dsp('formula->load description for "' . formula::TN_RENAMED . '"', $target, $result);
+    $target = formula_api::TN_RENAMED . ' description2';
+    $t->dsp('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->type_id;
     $target = cl(db_cl::FORMULA_TYPE, formula_type::NEXT);
-    $t->dsp('formula->load type_id for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->need_all_val;
     $target = False;
-    $t->dsp('formula->load need_all_val for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load need_all_val for "' . formula_api::TN_RENAMED . '"', $target, $result);
 
     // ... and the formula for the original user remains unchanged
-    $frm_reloaded = $t->load_formula(formula::TN_RENAMED);
+    $frm_reloaded = $t->load_formula(formula_api::TN_RENAMED);
     $result = $frm_reloaded->usr_text;
     $target = '= "this"';
-    $t->dsp('formula->load usr_text for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load usr_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->ref_text;
     $target = '={f'.$frm_this->id().'}';
-    $t->dsp('formula->load ref_text for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load ref_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->description;
-    $target = formula::TN_RENAMED . ' description';
-    $t->dsp('formula->load description for "' . formula::TN_RENAMED . '"', $target, $result);
+    $target = formula_api::TN_RENAMED . ' description';
+    $t->dsp('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->type_id;
     $target = cl(db_cl::FORMULA_TYPE, formula_type::THIS);
-    $t->dsp('formula->load type_id for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->need_all_val;
     $target = True;
-    $t->dsp('formula->load need_all_val for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load need_all_val for "' . formula_api::TN_RENAMED . '"', $target, $result);
 
     // check if undo all specific changes removes the user formula
     $frm_usr2 = new formula($t->usr2);
-    $frm_usr2->load_by_name(formula::TN_RENAMED, formula::class);
+    $frm_usr2->load_by_name(formula_api::TN_RENAMED, formula::class);
     $frm_usr2->usr_text = '= "this"';
-    $frm_usr2->description = formula::TN_RENAMED . ' description';
+    $frm_usr2->description = formula_api::TN_RENAMED . ' description';
     $frm_usr2->type_id = cl(db_cl::FORMULA_TYPE, formula_type::THIS);
     $frm_usr2->need_all_val = True;
     $result = $frm_usr2->save();
     $target = '';
-    $t->dsp('formula->save undo the user formula fields beside the name for "' . formula::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp('formula->save undo the user formula fields beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... and if a user specific formula changes have been saved
     $frm_usr2_reloaded = new formula($t->usr2);
-    $frm_usr2_reloaded->load_by_name(formula::TN_RENAMED, formula::class);
+    $frm_usr2_reloaded->load_by_name(formula_api::TN_RENAMED, formula::class);
     $result = $frm_usr2_reloaded->usr_text;
     $target = '= "this"';
-    $t->dsp('formula->load usr_text for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load usr_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->ref_text;
     $target = '={f'.$frm_this->id().'}';
-    $t->dsp('formula->load ref_text for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load ref_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->description;
-    $target = formula::TN_RENAMED . ' description';
-    $t->dsp('formula->load description for "' . formula::TN_RENAMED . '"', $target, $result);
+    $target = formula_api::TN_RENAMED . ' description';
+    $t->dsp('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->type_id;
     $target = cl(db_cl::FORMULA_TYPE, formula_type::THIS);
-    $t->dsp('formula->load type_id for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->need_all_val;
     $target = True;
-    $t->dsp('formula->load need_all_val for "' . formula::TN_RENAMED . '"', $target, $result);
+    $t->dsp('formula->load need_all_val for "' . formula_api::TN_RENAMED . '"', $target, $result);
 
     // redo the user specific formula changes
     // check if the user specific changes can be removed with one click
@@ -502,7 +507,7 @@ function run_formula_list_test(testing $t): void
     $frm_lst->back = $wrd->id();
     $frm_lst->load_by_phr($wrd->phrase());
     $result = $frm_lst->display();
-    $target = formula::TN_RATIO;
+    $target = formula_api::TN_RATIO;
     $t->dsp_contains(', formula_list->load formula for word "' . $wrd->dsp_id() . '" should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
 }

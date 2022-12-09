@@ -30,6 +30,8 @@
 
 */
 
+use api\formula_api;
+
 class term_unit_tests
 {
     function run(testing $t): void
@@ -60,7 +62,7 @@ class term_unit_tests
         $t->assert($t->name . 'triple name', $trm->name(), $trp->name());
 
         $frm = new formula($usr);
-        $frm->set(1, formula::TN_READ);
+        $frm->set(1, formula_api::TN_READ);
         $trm = $frm->term();
         $t->assert($t->name . 'formula id', $trm->id_obj(), $frm->id());
         $t->assert($t->name . 'formula name', $trm->name(), $frm->name());

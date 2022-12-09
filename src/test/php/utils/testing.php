@@ -30,6 +30,7 @@
 
 */
 
+use api\formula_api;
 use cfg\formula_type;
 use cfg\phrase_type;
 use html\html_base;
@@ -293,7 +294,7 @@ class testing extends test_base
         }
 
         // request to delete the added test formulas
-        foreach (formula::RESERVED_FORMULAS as $frm_name) {
+        foreach (formula_api::RESERVED_FORMULAS as $frm_name) {
             $dsp = $this->load_formula($frm_name);
             if ($dsp->id() > 0) {
                 $msg = $dsp->del();
@@ -445,8 +446,8 @@ class testing extends test_base
         foreach ($names as $name) {
             $class = match ($name) {
                 triple::TN_READ => triple::class,
-                formula::TN_READ, formula::TN_READ_THIS, formula::TN_READ_PRIOR => formula::class,
-                verb::TN_READ => verb::class,
+                formula_api::TN_READ, formula_api::TN_READ_THIS, formula_api::TN_READ_PRIOR => formula::class,
+                verb::TN_READ, verb::CAN_CONTAIN_NAME => verb::class,
                 default => word::class,
             };
             $trm = new term($usr, $class);
@@ -454,14 +455,14 @@ class testing extends test_base
             $trm->set_name($name);
 
             // ste types of some special terms
-            If ($name == formula::TN_READ_THIS) {
+            If ($name == formula_api::TN_READ_THIS) {
                 $trm->obj->type_cl = formula_type::THIS;
                 $trm->set_id_from_obj(18, $class);
                 $wrd = new word($usr);
                 $wrd->set(174, formula_type::THIS);
                 $trm->obj->name_wrd = $wrd;
             }
-            If ($name == formula::TN_READ_PRIOR) {
+            If ($name == formula_api::TN_READ_PRIOR) {
                 $trm->obj->type_cl = formula_type::PREV;
                 $trm->set_id_from_obj(20, $class);
                 $wrd = new word($usr);

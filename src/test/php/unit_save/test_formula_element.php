@@ -30,6 +30,8 @@
 
 */
 
+use api\formula_api;
+
 function run_formula_element_test(testing $t)
 {
 
@@ -38,7 +40,7 @@ function run_formula_element_test(testing $t)
     $t->header('Test the formula element class (classes/formula_element.php)');
 
     // load increase formula for testing
-    $frm = $t->load_formula(formula::TN_SECTOR);
+    $frm = $t->load_formula(formula_api::TN_SECTOR);
     $exp = $frm->expression();
     $elm_lst = $exp->element_list();
 
@@ -112,7 +114,7 @@ function run_formula_element_list_test(testing $t): void
     $t->header('Test the formula element list class (classes/formula_element_list.php)');
 
     // load increase formula for testing
-    $frm = $t->load_formula(formula::TN_SECTOR);
+    $frm = $t->load_formula(formula_api::TN_SECTOR);
     $exp = $frm->expression();
     $elm_lst = $exp->element_list();
 

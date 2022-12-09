@@ -1194,6 +1194,23 @@ class phrase_list extends sandbox_list
     }
 
     /**
+     * return one string with all names of the list with the link
+     */
+    function name_linked(): string
+    {
+        $result = '';
+        foreach ($this->lst as $phr) {
+            if ($phr != null) {
+                if ($result != '') {
+                    $result .= ', ';
+                }
+                $result .= $phr->name_linked();
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @return string one string with all names of the list and reduced in size mainly for debugging
      * this function is called from dsp_id, so no other call is allowed
      */

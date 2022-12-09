@@ -48,8 +48,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::FORMULA_DEL);
-    $dsp->load_obj_vars();
+    $dsp->load_by_id(cl(db_cl::VIEW, view::FORMULA_DEL));
     $back = $_GET['back'];
 
     // get the parameters
@@ -61,8 +60,7 @@ if ($usr->id > 0) {
 
         // init the formula object
         $frm = new formula($usr);
-        $frm->id = $formula_id;
-        $frm->load_obj_vars();
+        $frm->load_by_id($formula_id);
 
         if ($confirm == 1) {
             $frm->del();
@@ -73,9 +71,9 @@ if ($usr->id > 0) {
             $result .= $dsp->dsp_navbar($back);
 
             if ($frm->is_used()) {
-                $result .= \html\btn_yesno("Exclude \"" . $frm->name . "\" ", "/http/formula_del.php?id=" . $formula_id . "&back=" . $back);
+                $result .= \html\btn_yesno("Exclude \"" . $frm->name() . "\" ", "/http/formula_del.php?id=" . $formula_id . "&back=" . $back);
             } else {
-                $result .= \html\btn_yesno("Delete \"" . $frm->name . "\" ", "/http/formula_del.php?id=" . $formula_id . "&back=" . $back);
+                $result .= \html\btn_yesno("Delete \"" . $frm->name() . "\" ", "/http/formula_del.php?id=" . $formula_id . "&back=" . $back);
             }
         }
     } else {

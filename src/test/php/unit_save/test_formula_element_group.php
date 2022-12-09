@@ -37,6 +37,8 @@
 
 */
 
+use api\formula_api;
+
 function run_formula_element_group_test(testing $t): void
 {
 
@@ -45,11 +47,11 @@ function run_formula_element_group_test(testing $t): void
     $t->header('Test the formula element group list class (classes/formula_element_group_list.php)');
 
     // load the test ids
-    $frm_this = $t->load_formula(formula::TN_READ_THIS);
-    $frm_prior = $t->load_formula(formula::TN_READ_PRIOR);
+    $frm_this = $t->load_formula(formula_api::TN_READ_THIS);
+    $frm_prior = $t->load_formula(formula_api::TN_READ_PRIOR);
 
     // load increase formula for testing
-    $frm = $t->load_formula(formula::TN_INCREASE);
+    $frm = $t->load_formula(formula_api::TN_ADD);
 
     // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
     $exp = $frm->expression();

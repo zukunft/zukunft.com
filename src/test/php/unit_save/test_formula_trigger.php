@@ -30,6 +30,8 @@
 
 */
 
+use api\formula_api;
+
 function run_formula_trigger_test(testing $t)
 {
 
@@ -45,7 +47,7 @@ function run_formula_trigger_test(testing $t)
     $phr_lst2 = clone $phr_lst1;
     $phr_lst1->add_name(word::TN_2019);
     $phr_lst2->add_name(word::TN_2020);
-    $frm = $t->load_formula(formula::TN_INCREASE);
+    $frm = $t->load_formula(formula_api::TN_ADD);
 
     // add a number to the test word
     $val_add1 = new value($usr);

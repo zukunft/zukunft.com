@@ -411,7 +411,7 @@ class expression
 
     /*
      * convert
-     * from reference text to user text and back
+     * internal function to convert from reference text to user text and back
      */
 
     /**

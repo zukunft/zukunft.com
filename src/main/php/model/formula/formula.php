@@ -41,11 +41,13 @@ use html\word_dsp;
 
 class formula extends user_sandbox_named_with_type
 {
+
     /*
      * default startup values
      */
 
     const AVG_CALC_TIME = 1000; // the default time in milliseconds for updating all results of on formula
+
 
     /*
      * database link
@@ -87,50 +89,6 @@ class formula extends user_sandbox_named_with_type
         user_sandbox::FLD_PROTECT
     );
 
-    /*
-     * for system testing
-     */
-
-    // persevered formula names for unit and integration tests
-    const TN_READ = 'scale minute to sec';
-    const TN_READ_TEST = 'increase';
-    const TN_ADD = 'System Test Formula';
-    const TN_RENAMED = 'System Test Formula Renamed';
-    const TN_READ_THIS = 'this';
-    const TN_READ_PRIOR = 'prior';
-    const TN_DIAMETER = 'diameter';
-    const TF_DIAMETER = '= "circumference" / "Pi"';
-    const TN_THIS = 'System Test Formula This'; // to test if another formula of the functional type "this" can be created
-    const TF_THIS = '= "System Test Formula This"';
-    const TN_RATIO = 'System Test Formula PE Ratio'; // to test a simple ration calculation like how many times Switzerland is bigger than the canton zurich or the price to earning ration for equity
-    const TF_RATIO = '"System Test Word PE Ratio" = "System Test Word Share Price" / "System Test Word Earnings"';
-    const TN_SECTOR = 'System Test Formula Sector'; // to test the selection by a phrases and parents e.g. split all country totals by canton
-    const TF_SECTOR = '= "System Test Word Parent e.g. Country" "differentiator" "System Test Word Category e.g. Canton" / "System Test Word Total"';
-    // TODO use system test words to test the recreation of the increase formula
-    const TN_INCREASE = 'System Test Formula Increase'; // to test the selection using the words and word types "this" and "prior"
-    const TF_INCREASE = '"percent" = ( "this" - "prior" ) / "prior"';
-    const TN_SCALE_K = 'System Test Formula scale thousand to one';
-    const TF_SCALE_K = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. thousands" * 1000';
-    const TN_SCALE_TO_K = 'System Test Formula scale one to thousand';
-    const TF_SCALE_TO_K = '"System Test Scaling Word e.g. thousands" = "System Test Scaling Word e.g. one" / 1000';
-    const TN_SCALE_MIO = 'System Test Formula scale millions to one';
-    const TF_SCALE_MIO = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. millions" * 1000000';
-    const TN_SCALE_BIL = 'System Test Formula scale billions to one';
-    const TF_SCALE_BIL = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. billions" * 1000000000';
-
-    // word groups for creating the test words and remove them after the test
-    const RESERVED_FORMULAS = array(
-        self::TN_ADD,
-        self::TN_RENAMED,
-        self::TN_THIS,
-        self::TN_RATIO,
-        self::TN_SECTOR,
-        self::TN_INCREASE,
-        self::TN_SCALE_K,
-        self::TN_SCALE_TO_K,
-        self::TN_SCALE_MIO,
-        self::TN_SCALE_BIL
-    );
 
     /*
      * object vars
@@ -517,6 +475,8 @@ class formula extends user_sandbox_named_with_type
 
     /**
      * load the corresponding name word for the formula name
+     * @param bool $with_automatic_error_fixing to add any missing words automatically
+     * @return bool true if the word has been loaded
      */
     function load_wrd(bool $with_automatic_error_fixing = true): bool
     {
@@ -640,7 +600,7 @@ class formula extends user_sandbox_named_with_type
      * return the result of a special formula
      * e.g. "this" or "next" where the value of this or the following time word is returned
      */
-    function special_result($phr_lst, $time_phr)
+    function special_result(phrase_list $phr_lst, phrase $time_phr): value
     {
         log_debug("formula->special_result (" . $this->id . ",t" . $phr_lst->dsp_id() . ",time" . $time_phr->name() . " and user " . $this->user()->name . ")");
         $val = null;
@@ -681,7 +641,7 @@ class formula extends user_sandbox_named_with_type
      * return the time word id used for the special formula results
      * e.g. "this" or "next" where the value of this or the following time word is returned
      */
-    function special_time_phr($time_phr)
+    function special_time_phr(phrase $time_phr): phrase
     {
         log_debug(self::class . '->special_time_phr "' . $this->type_cl . '" for ' . $time_phr->dsp_id());
         $result = $time_phr;
@@ -714,7 +674,7 @@ class formula extends user_sandbox_named_with_type
      * get all phrases included by a special formula element for a list of phrases
      * e.g. if the list of phrases is "2016" and "2017" and the special formulas are "prior" and "next" the result should be "2015", "2016","2017" and "2018"
      */
-    function special_phr_lst($phr_lst)
+    function special_phr_lst(phrase_list $phr_lst): phrase_list
     {
         log_debug(self::class . '->special_phr_lst for ' . $phr_lst->dsp_id());
         $result = clone $phr_lst;
@@ -1667,11 +1627,11 @@ class formula extends user_sandbox_named_with_type
     /**
      * link this formula to a word or triple
      */
-    function link_phr($phr): string
+    function link_phr(phrase $phr): string
     {
         $result = '';
-        if (isset($phr) and $this->user()->is_set()) {
-            log_debug(self::class . '->link_phr link ' . $this->dsp_id() . ' to "' . $phr->name() . '" for user "' . $this->user()->name . '"');
+        if ($this->user()->is_set()) {
+            log_debug('link ' . $this->dsp_id() . ' to ' . $phr->dsp_id());
             $frm_lnk = new formula_link($this->user());
             $frm_lnk->fob = $this;
             $frm_lnk->tob = $phr;
@@ -2431,7 +2391,7 @@ class formula extends user_sandbox_named_with_type
 
     }
 
-// TODO user specific???
+    // TODO user specific???
     function del_links(): user_message
     {
         $result = new user_message();

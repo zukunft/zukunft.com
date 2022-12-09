@@ -39,12 +39,17 @@ use html\verb_dsp;
 class verb
 {
 
+    /*
+     * code links
+     */
+
     // predefined word link types or verbs
-    const TN_READ = "not set";
     const IS_A = "is";
     const IS_PART_OF = "contains";
     const FOLLOW = "follow";
     const CAN_CONTAIN = "can_contain";
+    const CAN_CONTAIN_NAME = "differentiator";
+    const CAN_CONTAIN_NAME_REVERSE = "of";
     const CAN_BE = "can_be";
     const CAN_USE = "can_use";
 
@@ -52,6 +57,11 @@ class verb
     const DIRECTION_NO = '';
     const DIRECTION_DOWN = 'down';    // or forward  to get a list of 'to' phrases
     const DIRECTION_UP = 'up';        // or backward to get a list of 'from' phrases based on a given to phrase
+
+
+    /*
+     * database link
+     */
 
     // object specific database and JSON object field names
     const FLD_ID = 'verb_id';
@@ -73,6 +83,19 @@ class verb
         self::FLD_WORDS
     );
 
+
+    /*
+     * for system testing
+     */
+
+    // already coded verb names or persevered verbs names for unit and integration tests
+    const TN_READ = "not set";
+
+
+    /*
+     * object vars
+     */
+
     public ?int $id = null;           // the database id of the word link type (verb)
     private ?user $usr = null;         // not used at the moment, because there should not be any user specific verbs
     //                                   otherwise if id is 0 (not NULL) the standard word link type, otherwise the user specific verb
@@ -88,6 +111,7 @@ class verb
     public ?string $frm_name = '';    // short name of the verb for the use in formulas, because there both sides are combined
     public ?string $description = ''; // for the mouse over explain
     public int $usage = 0; // how often this current used has used the verb (until now just the usage of all users)
+
 
     /*
      * construct and map

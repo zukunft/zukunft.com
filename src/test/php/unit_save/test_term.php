@@ -30,6 +30,8 @@
 
 */
 
+use api\formula_api;
+
 function run_term_test(testing $t): void
 {
 
@@ -63,9 +65,9 @@ function run_term_test(testing $t): void
 
     // ... check also for a formula
     $term = new term($usr);
-    $term->load_by_obj_name(formula::TN_INCREASE);
+    $term->load_by_obj_name(formula_api::TN_ADD);
     // each formula name has also a word
-    $target = 'A formula with the name "' . formula::TN_INCREASE . '" already exists. Please use another name.';
+    $target = 'A formula with the name "' . formula_api::TN_ADD . '" already exists. Please use another name.';
     $result = $term->id_used_msg();
     $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 

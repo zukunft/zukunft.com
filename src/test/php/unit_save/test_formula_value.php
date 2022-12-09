@@ -32,6 +32,8 @@
 
 */
 
+use api\formula_api;
+
 function run_formula_value_test(testing $t): void
 {
 
@@ -42,7 +44,7 @@ function run_formula_value_test(testing $t): void
     // test load result without time
     $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(word::TN_CH);
-    $phr_lst->add_name(formula::TN_INCREASE);
+    $phr_lst->add_name(formula_api::TN_ADD);
     $phr_lst->add_name(word::TN_READ_PERCENT);
     $phr_lst->add_name(word::TN_INHABITANT);
     $ch_up_grp = $phr_lst->get_grp();
@@ -54,7 +56,7 @@ function run_formula_value_test(testing $t): void
             $result = '';
         }
     } else {
-        $result = 'no ' . word::TN_INHABITANT . ' ' . formula::TN_INCREASE . ' value found for ' . word::TN_CH;
+        $result = 'no ' . word::TN_INHABITANT . ' ' . formula_api::TN_ADD . ' value found for ' . word::TN_CH;
     }
     // TODO review
     $target = formula_value_unit_tests::TN_INCREASE_CH_CAPITA_2020;
@@ -73,7 +75,7 @@ function run_formula_value_test(testing $t): void
             $result = '';
         }
     } else {
-        $result = 'no ' . word::TN_2020 . ' ' . word::TN_INHABITANT . ' ' . formula::TN_INCREASE . ' value found for ' . word::TN_CH;
+        $result = 'no ' . word::TN_2020 . ' ' . word::TN_INHABITANT . ' ' . formula_api::TN_ADD . ' value found for ' . word::TN_CH;
     }
     //$result = $ch_increase->phr_grp_id;
     $target = formula_value_unit_tests::TN_INCREASE_CH_CAPITA_2020;
@@ -152,7 +154,7 @@ function run_formula_value_list_test(testing $t)
     $t->header('Test the formula value list class (classes/formula_value_list.php)');
 
     // load results by formula
-    $frm = $t->load_formula(formula::TN_INCREASE);
+    $frm = $t->load_formula(formula_api::TN_ADD);
     $fv_lst = new formula_value_list($usr);
     $fv_lst->load($frm);
     $result = $fv_lst->dsp_id();
@@ -199,7 +201,7 @@ function run_formula_value_list_test(testing $t)
 
     // TODO add PE frm test
     //$frm = $t->load_formula(TF_PE);
-    $frm = $t->load_formula(formula::TN_INCREASE);
+    $frm = $t->load_formula(formula_api::TN_ADD);
     $fv_lst = new formula_value_list($usr);
     $fv_lst->load($frm);
     $result = $fv_lst->dsp_id();

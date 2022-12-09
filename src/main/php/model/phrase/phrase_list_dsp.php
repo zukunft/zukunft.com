@@ -92,7 +92,7 @@ class phrase_list_dsp_old extends phrase_list
     }
 
     // return one string with all names of the list with the link
-    function name_linked()
+    function name_linked(): string
     {
         $result = dsp_array($this->names_linked());
         return $result;

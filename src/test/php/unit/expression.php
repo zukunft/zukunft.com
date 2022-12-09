@@ -45,22 +45,26 @@ class expression_unit_tests
 
         $t->header('Unit tests of the formula expression class (src/main/php/model/formula/expression.php)');
 
-        // TODO use a formula with words, triple, formulas and verbs within one formula
         $this->frm_exp_convert($t,
             'including a triple',
-            formula::TF_DIAMETER,
-            '={w1}/{t2}',
+            formula_api::TF_DIAMETER,
+            formula_api::TR_DIAMETER
         );
         $this->frm_exp_convert($t,
             'including fixed formulas',
-            formula::TF_INCREASE,
-            '{w1}=({f18}-{f20})/{f20}',
+            formula_api::TF_INCREASE,
+            formula_api::TR_INCREASE
+        );
+        $this->frm_exp_convert($t,
+            'including verbs',
+            formula_api::TF_CANTON_WEIGHT,
+            formula_api::TR_CANTON_WEIGHT
         );
 
 
         $test_name = 'test the conversion of the user text to the database reference text with fixed formulas';
         $exp = new expression($usr);
-        $exp->set_user_text(formula::TF_INCREASE);
+        $exp->set_user_text(formula_api::TF_INCREASE);
         $trm_names = $exp->get_usr_names();
         $trm_lst = $t->term_list_for_tests($trm_names);
         $result = $exp->ref_text($trm_lst);
@@ -74,7 +78,7 @@ class expression_unit_tests
 
         $test_name = 'test the conversion of the database reference text to the user text';
         $result = $exp->user_text($trm_lst);
-        $target = formula::TF_INCREASE;
+        $target = formula_api::TF_INCREASE;
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the formula element list';
@@ -93,8 +97,8 @@ class expression_unit_tests
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
 
         // create the formulas for testing
-        $frm_this = $trm_lst->get_by_name(formula::TN_READ_THIS);
-        $frm_prior = $trm_lst->get_by_name(formula::TN_READ_PRIOR);
+        $frm_this = $trm_lst->get_by_name(formula_api::TN_READ_THIS);
+        $frm_prior = $trm_lst->get_by_name(formula_api::TN_READ_PRIOR);
 
         $result = $elm_grp_lst->dsp_id();
         $target = 'this ('.$frm_this->id_obj().') / prior ('.$frm_prior->id_obj().') / prior ('.$frm_prior->id_obj().')';
@@ -102,7 +106,7 @@ class expression_unit_tests
 
         $test_name = 'test the user text conversion with a triple';
         $exp = new expression($usr);
-        $exp->set_user_text(formula::TF_DIAMETER);
+        $exp->set_user_text(formula_api::TF_DIAMETER);
         $trm_names = $exp->get_usr_names();
         $trm_lst = $t->term_list_for_tests($trm_names);
         $result = $exp->ref_text($trm_lst);
@@ -119,15 +123,15 @@ class expression_unit_tests
 
         $test_name = 'source phrase list with id from the reference text';
         $exp_sector = new expression($usr);
-        $exp_sector->set_ref_text(formula_api::TF_SECTOR_REF);
+        $exp_sector->set_ref_text(formula_api::TR_CANTON_WEIGHT);
         $phr_lst = $exp_sector->phr_id_lst_as_phr_lst($exp_sector->r_part());
         $result = $phr_lst->dsp_id();
-        $target = '"","","" (1,2,3)';
+        $target = '"","","" (1,3,4)';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'result phrase list with id from the reference text';
         $exp_scale = new expression($usr);
-        $exp_scale->set_ref_text(formula_api::TF_SCALE_MIO_REF);
+        $exp_scale->set_ref_text(formula_api::TR_SCALE_MIO);
         $phr_lst = $exp_scale->phr_id_lst_as_phr_lst($exp_scale->fv_part());
         $result = $phr_lst->dsp_id();
         $target = '1';
@@ -135,7 +139,7 @@ class expression_unit_tests
 
         /*
         $frm = new formula($usr);
-        $frm->name = formula::TN_SECTOR;
+        $frm->name = formula_api::TN_SECTOR;
         $frm->ref_text = formula_api::TF_SECTOR_REF;
         $frm->set_ref_text();
         $result = $frm->usr_text;

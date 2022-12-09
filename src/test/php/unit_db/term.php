@@ -30,6 +30,8 @@
 
 */
 
+use api\formula_api;
+
 class term_unit_db_tests
 {
     function run(testing $t): void
@@ -71,10 +73,10 @@ class term_unit_db_tests
         $db_row = $db_con->get1($qp);
         $trm = new term($usr, formula::class);
         $trm->row_mapper_obj($db_row, formula::class);
-        $t->assert($t->name . ' formula row mapper', $trm->name(), formula::TN_READ);
+        $t->assert($t->name . ' formula row mapper', $trm->name(), formula_api::TN_READ);
         $trm_by_obj_id = new term($usr);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), formula::class);
-        $t->assert($t->name . ' formula by object id', $trm_by_obj_id->name(), formula::TN_READ);
+        $t->assert($t->name . ' formula by object id', $trm_by_obj_id->name(), formula_api::TN_READ);
 
         // test load by term by a verb db row
         $vrb = new verb();

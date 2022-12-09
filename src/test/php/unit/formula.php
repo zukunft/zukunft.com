@@ -30,6 +30,7 @@
 
 */
 
+use api\formula_api;
 use cfg\formula_type;
 
 class formula_unit_tests
@@ -68,7 +69,7 @@ class formula_unit_tests
 
         // sql to load the formula by name
         $frm = new formula($usr);
-        $frm->set_name(formula::TF_SCALE_MIO);
+        $frm->set_name(formula_api::TF_READ_SCALE_MIO);
         //$t->assert_load_sql($db_con, $frm);
         $t->assert_load_standard_sql($db_con, $frm);
 
@@ -88,7 +89,7 @@ class formula_unit_tests
 
         // casting API
         $frm = new formula($usr);
-        $frm->set(1,  formula::TN_READ, formula_type::CALC);
+        $frm->set(1,  formula_api::TN_READ, formula_type::CALC);
         $t->assert_api($frm);
 
 
@@ -109,12 +110,12 @@ class formula_unit_tests
 
         // check the PostgreSQL query syntax to load a list of formulas by the names
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $frm_lst->load_sql_by_names($db_con, array(formula::TN_READ_TEST, formula::TN_ADD));
+        $qp = $frm_lst->load_sql_by_names($db_con, array(formula_api::TN_INCREASE, formula_api::TN_ADD));
         $t->assert_qp($qp, sql_db::POSTGRES);
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $frm_lst->load_sql_by_names($db_con, array(formula::TN_READ_TEST, formula::TN_ADD));
+        $qp = $frm_lst->load_sql_by_names($db_con, array(formula_api::TN_INCREASE, formula_api::TN_ADD));
         $t->assert_qp($qp, sql_db::MYSQL);
 
         // check the PostgreSQL query syntax to load a list of formulas by phrase
@@ -166,7 +167,7 @@ class formula_unit_tests
         $wrd = new word($usr);
         $wrd->set_id(205);
         $target->add($wrd->phrase());
-        $t->assert('Expression->fv_phr_lst for ' . formula::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
+        $t->assert('Expression->fv_phr_lst for ' . formula_api::TF_READ_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
 
         // get the special formulas used in a formula to calculate the result
         // e.g. "next" is a special formula to get the following values
@@ -177,14 +178,14 @@ class formula_unit_tests
         $frm_next->id = 1;
         $frm_has_next = new formula($usr);
         $frm_has_next->usr_text = '=next';
-        $t->assert('Expression->fv_phr_lst for ' . formula::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
+        $t->assert('Expression->fv_phr_lst for ' . formula_api::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
         */
 
         // test the calculation of one value
         $phr_lst = $t->phrase_list_for_tests(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020, word::TN_MIO));
 
-        $frm = $t->new_formula(formula::TN_INCREASE, 1);
-        $frm->usr_text = formula::TF_INCREASE;
+        $frm = $t->new_formula(formula_api::TN_ADD, 1);
+        $frm->usr_text = formula_api::TF_INCREASE;
         $frm->set_ref_text();
         $fv_lst = $frm->to_num($phr_lst);
         if ($fv_lst->lst != null) {

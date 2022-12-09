@@ -30,6 +30,8 @@
 
 */
 
+use api\formula_api;
+
 function run_expression_test(testing $t): void
 {
 
@@ -43,10 +45,10 @@ function run_expression_test(testing $t): void
     $back = '';
 
     // load formulas for expression testing
-    $frm_this = $t->load_formula(formula::TN_THIS);
-    $frm = $t->load_formula(formula::TN_INCREASE);
-    $frm_pe = $t->load_formula(formula::TN_RATIO);
-    $frm_sector = $t->load_formula(formula::TN_SECTOR);
+    $frm_this = $t->load_formula(formula_api::TN_THIS);
+    $frm = $t->load_formula(formula_api::TN_ADD);
+    $frm_pe = $t->load_formula(formula_api::TN_RATIO);
+    $frm_sector = $t->load_formula(formula_api::TN_SECTOR);
 
     $result = $frm_sector->usr_text;
     $target = '= "' . word::TN_COUNTRY . '" "differentiator" "' . word::TN_CANTON . '" / "' . word::TN_TOTAL . '"';
@@ -64,8 +66,8 @@ function run_expression_test(testing $t): void
 
     // load the test ids
     $wrd_percent = $t->load_word('percent');
-    $frm_this = $t->load_formula(formula::TN_READ_THIS);
-    $frm_prior = $t->load_formula(formula::TN_READ_PRIOR);
+    $frm_this = $t->load_formula(formula_api::TN_READ_THIS);
+    $frm_prior = $t->load_formula(formula_api::TN_READ_PRIOR);
 
     // test the expression processing of the user readable part
     $target = '"percent"';
