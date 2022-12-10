@@ -297,7 +297,7 @@ class phrase_list extends user_sandbox_list_named
 
         // build the final array in the same order as the received id list
         if ($phr_lst == null) {
-            foreach ($wrd_ids as $id) {
+            foreach ($ids->lst as $id) {
                 $phr = $phr_lst_loaded->get_by_id($id);
                 if ($phr != null) {
                     $this->lst[] = $phr;
@@ -306,7 +306,7 @@ class phrase_list extends user_sandbox_list_named
                 }
             }
         } else {
-            foreach ($wrd_ids as $id) {
+            foreach ($ids->lst as $id) {
                 $phr = $phr_lst->get_by_id($id);
                 if ($phr != null) {
                     $this->lst[] = $phr;

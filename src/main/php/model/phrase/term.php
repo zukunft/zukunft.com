@@ -392,6 +392,23 @@ class term extends db_object
         }
     }
 
+    /**
+     * @return phrase the word or triple cast as a phrase
+     */
+    public function phrase(): phrase
+    {
+        $phr = new phrase($this->user());
+        if ($this->is_word()) {
+            $phr->set_id_from_obj($this->id_obj(), word::class);
+            $phr->obj = $this->obj;
+        }
+        if ($this->is_triple()) {
+            $phr->set_id_from_obj($this->id_obj(), triple::class);
+            $phr->obj = $this->obj;
+        }
+        return $phr;
+    }
+
     /*
      * load functions
      */

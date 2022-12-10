@@ -61,7 +61,7 @@ class expression_unit_tests
             formula_api::TR_CANTON_WEIGHT
         );
 
-
+        // tests based on the increase formula
         $test_name = 'test the conversion of the user text to the database reference text with fixed formulas';
         $exp = new expression($usr);
         $exp->set_user_text(formula_api::TF_INCREASE);
@@ -104,6 +104,13 @@ class expression_unit_tests
         $target = 'this ('.$frm_this->id_obj().') / prior ('.$frm_prior->id_obj().') / prior ('.$frm_prior->id_obj().')';
         $t->dsp_contains(', formula_element_group_list->dsp_id', $target, $result);
 
+        $test_name = 'getting phrases that should be added to the result of a formula for "' . $exp->dsp_id() . '"';
+        $phr_lst_fv = $exp->fv_phr_lst($trm_lst);
+        $result = $phr_lst_fv->dsp_name();
+        $target = '"' . word::TN_READ_PERCENT . '"';
+        $t->assert($test_name, $result, $target);
+
+        // tests based on the pi formula
         $test_name = 'test the user text conversion with a triple';
         $exp = new expression($usr);
         $exp->set_user_text(formula_api::TF_DIAMETER);
@@ -112,14 +119,6 @@ class expression_unit_tests
         $result = $exp->ref_text($trm_lst);
         $target = '={w1}/{t2}';
         $t->assert($test_name, $result, $target);
-
-        /*
-        $test_name = 'getting phrases that should be added to the result of a formula for "' . $exp->dsp_id() . '"';
-        $phr_lst_fv = $exp->fv_phr_lst();
-        $result = $phr_lst_fv->dsp_name();
-        $target = '"' . word::TN_READ_PERCENT . '"';
-        $t->assert($test_name, $result, $target);
-        */
 
         $test_name = 'source phrase list with id from the reference text';
         $exp_sector = new expression($usr);
