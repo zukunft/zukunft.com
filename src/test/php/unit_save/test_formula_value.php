@@ -205,7 +205,7 @@ function run_formula_value_list_test(testing $t)
     $fv_lst = new formula_value_list($usr);
     $fv_lst->load($frm);
     $result = $fv_lst->dsp_id();
-    $target = '"Sales","percent","increase","' . word::TN_RENAMED . '","2017"';
+    $target = '"Sales","' . word::TN_READ_PERCENT . '","increase","' . word::TN_RENAMED . '","2017"';
     $target = word::TN_INHABITANT;
     $t->dsp_contains(', formula_value_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 

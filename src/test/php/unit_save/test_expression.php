@@ -65,12 +65,12 @@ function run_expression_test(testing $t): void
     $exp_sector->set_user_text($frm_sector->usr_text);
 
     // load the test ids
-    $wrd_percent = $t->load_word('percent');
+    $wrd_percent = $t->load_word(word::TN_READ_PERCENT);
     $frm_this = $t->load_formula(formula_api::TN_READ_THIS);
     $frm_prior = $t->load_formula(formula_api::TN_READ_PRIOR);
 
     // test the expression processing of the user readable part
-    $target = '"percent"';
+    $target = '"' . word::TN_READ_PERCENT . '"';
     $result = $exp->fv_part_usr();
     $t->assert('fv_part_usr for "' . $frm->usr_text . '"', $result, $target, TIMEOUT_LIMIT_LONG); // ??? why???
     $target = '( "this" - "prior" ) / "prior"';

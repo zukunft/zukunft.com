@@ -288,14 +288,21 @@ class expression
     }
 
     /**
+     * get the phrases that should be added to the result of a formula
+     *
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @returns phrase_list with the phrases that should be added to the result of a formula
      * e.g. for >"percent" = ( "this" - "prior" ) / "prior"< a list with the phrase "percent" will be returned
      */
-    function fv_phr_lst(): phrase_list
+    function fv_phr_lst(?term_list $trm_lst = null): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
         $phr_ids = $this->phr_id_lst($this->fv_part());
-        $phr_lst->load_by_ids($phr_ids);
+        if ($trm_lst == null) {
+            $phr_lst->load_by_ids($phr_ids);
+        } else {
+            $phr_lst->load_by_ids($phr_ids, $trm_lst->phrase_list());
+        }
 
         return $phr_lst;
     }
@@ -311,6 +318,9 @@ class expression
     }
 
     /**
+     * get a list of all formula elements
+     *
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return formula_element_list a list of all formula elements
      * (don't use for number retrieval, use element_grp_lst instead, because )
      */
@@ -978,8 +988,8 @@ class expression
     }
 
     /**
-     * @param term $trm
-     * @return string
+     * @param term $trm the term that should be used to create the database reference symbol
+     * @return string the database reference symbol e.g. {w1} for word with the id 1
      */
     private function get_db_sym(term $trm): string
     {

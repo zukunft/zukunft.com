@@ -43,7 +43,7 @@ class user_sandbox_list_named extends sandbox_list
 
     /**
      * @param array $lst object array that could be set with the construction
-     * the parent constructor is called after the reseting of lst_name_dirty to enable setting by adding the list
+     * the parent constructor is called after the reset of lst_name_dirty to enable setting by adding the list
      */
     function __construct(user $usr, array $lst = array())
     {
@@ -108,13 +108,15 @@ class user_sandbox_list_named extends sandbox_list
 
     /**
      * add a named object to the list
+     * @param object $obj_to_add the named user sandbox object that should be added
      * @returns bool true if the object has been added
      */
-    public function add_obj(object $obj): bool
+    public function add_obj(object $obj_to_add): bool
     {
         $result = false;
-        if (!in_array($obj->name(), $this->name_pos_lst())) {
-            $result = parent::add_obj($obj);
+        // TODO if an sandbox object has a name, but not (yet) an id, add it nevertheless to the list
+        if (!in_array($obj_to_add->name(), $this->name_pos_lst())) {
+            $result = parent::add_obj($obj_to_add);
         }
         return $result;
     }

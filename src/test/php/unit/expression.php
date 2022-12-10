@@ -68,7 +68,7 @@ class expression_unit_tests
         $trm_names = $exp->get_usr_names();
         $trm_lst = $t->term_list_for_tests($trm_names);
         $result = $exp->ref_text($trm_lst);
-        $target = '{w1}=({f18}-{f20})/{f20}';
+        $target = formula_api::TR_INCREASE;
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test getting the phrase ids';
@@ -113,13 +113,11 @@ class expression_unit_tests
         $target = '={w1}/{t2}';
         $t->assert($test_name, $result, $target);
 
-        /*
         $test_name = 'getting phrases that should be added to the result of a formula for "' . $exp->dsp_id() . '"';
         $phr_lst_fv = $exp->fv_phr_lst();
         $result = $phr_lst_fv->dsp_name();
         $target = '"' . word::TN_READ_PERCENT . '"';
         $t->assert($test_name, $result, $target);
-        */
 
         $test_name = 'source phrase list with id from the reference text';
         $exp_sector = new expression($usr);

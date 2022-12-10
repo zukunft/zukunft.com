@@ -43,7 +43,6 @@ function create_test_formulas(testing $t): void
     $t->test_formula(formula_api::TN_ADD, formula_api::TF_INCREASE);
     $t->test_formula(formula_api::TN_SCALE_K, formula_api::TF_SCALE_K);
     $t->test_formula(formula_api::TN_SCALE_TO_K, formula_api::TF_SCALE_TO_K);
-    $t->test_formula(formula_api::TN_READ_SCALE_MIO, formula_api::TF_READ_SCALE_MIO);
     $t->test_formula(formula_api::TN_SCALE_MIO, formula_api::TF_SCALE_MIO);
     $t->test_formula(formula_api::TN_SCALE_BIL, formula_api::TF_SCALE_BIL);
 }
@@ -52,7 +51,7 @@ function run_formula_test(testing $t): void
 {
 
     // init
-    $t->name = 'expression->';
+    $t->name = 'formula->';
 
     $t->header('Test the formula class (classes/formula.php)');
 
@@ -63,7 +62,7 @@ function run_formula_test(testing $t): void
     $frm->load_by_name(formula_api::TN_ADD, formula::class);
     $result = $frm->usr_text;
     $target = formula_api::TF_INCREASE;
-    $t->dsp('formula->load for "' . $frm->name() . '"', $target, $result);
+    $t->assert('load for "' . $frm->name() . '"', $result, $target);
 
     // test the formula type
     $result = zu_dsp_bool($frm->is_special());

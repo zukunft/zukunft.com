@@ -46,7 +46,7 @@ use api\phrase_list_api;
 use cfg\phrase_type;
 use html\word_dsp;
 
-class phrase_list extends sandbox_list
+class phrase_list extends user_sandbox_list_named
 {
 
     // $lst of base_list is used as array of the loaded phrase objects
@@ -217,20 +217,27 @@ class phrase_list extends sandbox_list
      * load the phrases selected by the id
      *
      * @param phr_ids $ids of phrase ids that should be loaded
+     * @param phrase_list|null $phr_lst a list of preloaded phrase that should not be loaded again
      * @return bool true if at least one phrase has been loaded
      */
-    function load_by_ids(phr_ids $ids): bool
+    function load_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
     {
         global $db_con;
         $result = false;
 
         // clear list before loading
         $this->lst = array();
+        $phr_lst_loaded = new phrase_list($this->user());
 
-        // split the ids by type
+        // split the ids to be loaded from the database by type
         $wrd_ids = [];
         $lnk_ids = [];
-        foreach ($ids->lst as $id) {
+        if ($phr_lst != null) {
+            $ids_to_load = array_diff($ids->lst, $phr_lst->ids());
+        } else {
+            $ids_to_load = $ids->lst;
+        }
+        foreach ($ids_to_load as $id) {
             if ($id > 0) {
                 $wrd_ids[] = $id;
             } elseif ($id < 0) {
@@ -245,7 +252,7 @@ class phrase_list extends sandbox_list
                 foreach ($wrd_ids as $id) {
                     $wrd = new word($this->user());
                     $wrd->set_id($id);
-                    $this->lst[] = $wrd->phrase();
+                    $phr_lst_loaded->add($wrd->phrase());
                     $result = true;
                 }
             } else {
@@ -256,7 +263,7 @@ class phrase_list extends sandbox_list
                     if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
                         $wrd = new word($this->user());
                         $wrd->row_mapper($db_wrd);
-                        $this->lst[] = $wrd->phrase();
+                        $phr_lst_loaded->add($wrd->phrase());
                         $result = true;
                     }
                 }
@@ -270,7 +277,7 @@ class phrase_list extends sandbox_list
                 foreach ($lnk_ids as $id) {
                     $wrd = new triple($this->user());
                     $wrd->set_id($id);
-                    $this->lst[] = $wrd->phrase();
+                    $phr_lst_loaded->add($wrd->phrase());
                     $result = true;
                 }
             } else {
@@ -281,8 +288,34 @@ class phrase_list extends sandbox_list
                     if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
                         $trp = new triple($this->user());
                         $trp->row_mapper($db_trp);
-                        $this->lst[] = $trp->phrase();
+                        $phr_lst_loaded->add($trp->phrase());
                         $result = true;
+                    }
+                }
+            }
+        }
+
+        // build the final array in the same order as the received id list
+        if ($phr_lst == null) {
+            foreach ($wrd_ids as $id) {
+                $phr = $phr_lst_loaded->get_by_id($id);
+                if ($phr != null) {
+                    $this->lst[] = $phr;
+                } else {
+                    log_err('Cannot load phrase with id ' . $id . ' while creating a phrase list');
+                }
+            }
+        } else {
+            foreach ($wrd_ids as $id) {
+                $phr = $phr_lst->get_by_id($id);
+                if ($phr != null) {
+                    $this->lst[] = $phr;
+                } else {
+                    $phr = $phr_lst_loaded->get_by_id($id);
+                    if ($phr != null) {
+                        $this->lst[] = $phr;
+                    } else {
+                        log_err('Cannot load phrase with id ' . $id . ' while creating a phrase list');
                     }
                 }
             }
@@ -1291,11 +1324,11 @@ class phrase_list extends sandbox_list
                 if ($phr_to_add->id() <> 0 or $phr_to_add->name() != '') {
                     if (count($this->id_lst()) > 0) {
                         if (!in_array($phr_to_add->id(), $this->id_lst())) {
-                            $this->lst[] = $phr_to_add;
+                            parent::add_obj($phr_to_add);
                             $result = true;
                         }
                     } else {
-                        $this->lst[] = $phr_to_add;
+                        parent::add_obj($phr_to_add);
                         $result = true;
                     }
                 }

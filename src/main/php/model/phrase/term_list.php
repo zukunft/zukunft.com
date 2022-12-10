@@ -68,6 +68,21 @@ class term_list extends user_sandbox_list_named
         return $dsp_obj;
     }
 
+    /**
+     * get the phrases out of a term list
+     * @return phrase_list the list of phrases picked from the term list
+     */
+    public function phrase_list(): phrase_list
+    {
+        $phr_lst = new phrase_list($this->user());
+        foreach ($this->lst() as $trm) {
+            if ($trm->is_word() or $trm->is_triple()) {
+                $phr_lst->add($trm->phrase());
+            }
+        }
+        return $phr_lst;
+    }
+
     /*
      * load function
      */

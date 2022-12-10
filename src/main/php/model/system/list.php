@@ -137,11 +137,11 @@ class base_list
      * add a object to the list
      * @returns bool true if the object has been added
      */
-    protected function add_obj(object $obj): bool
+    protected function add_obj(object $obj_to_add): bool
     {
         $result = false;
-        if (!in_array($obj->id(), $this->id_pos_lst())) {
-            $this->lst[] = $obj;
+        if (!in_array($obj_to_add->id(), $this->id_pos_lst())) {
+            $this->lst[] = $obj_to_add;
             $this->set_lst_dirty();
             $result = true;
         }
