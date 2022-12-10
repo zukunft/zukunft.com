@@ -302,7 +302,7 @@ class phrase_list extends user_sandbox_list_named
                 if ($phr != null) {
                     $this->lst[] = $phr;
                 } else {
-                    log_err('Cannot load phrase with id ' . $id . ' while creating a phrase list');
+                    log_warning('Cannot load phrase with id ' . $id . ' while creating a phrase list');
                 }
             }
         } else {
