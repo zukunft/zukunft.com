@@ -54,7 +54,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::LINK_ADD);
+    $dsp->set_id(cl(db_cl::VIEW, view::LINK_ADD));
     $dsp->load_obj_vars();
     $back = $_GET['back'];      // the calling word which should be displayed after saving
 
@@ -63,20 +63,20 @@ if ($usr->id > 0) {
 
     // load the parameters to the triple object to display it again in case of an error
     if (isset($_GET['from'])) {
-        $lnk->from->id = $_GET['from'];
+        $lnk->from->set_id($_GET['from']);
     }   // the word or triple to be linked
     if (isset($_GET['verb'])) {
-        $lnk->verb->id = $_GET['verb'];
+        $lnk->verb->set_id($_GET['verb']);
     }   // the link type (verb)
     if (isset($_GET['phrase'])) {
-        $lnk->to->id = $_GET['phrase'];
+        $lnk->to->set_id($_GET['phrase']);
     }
 
     // if the user has pressed save at least once
     if ($_GET['confirm'] == 1) {
 
         // check essential parameters
-        if ($lnk->from->id == 0 or $lnk->verb->id == 0 or $lnk->to->id == 0) {
+        if ($lnk->from->id() == 0 or $lnk->verb->id() == 0 or $lnk->to->id() == 0) {
             $msg .= 'Please select two words and a verb.';
         } else {
 

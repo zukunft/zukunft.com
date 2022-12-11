@@ -147,9 +147,9 @@ class expression_unit_tests
      */
     private function frm_exp_convert(
         testing $t,
-        string $test_name,
-        string $usr_frm_exp,
-        string $db_ref_frm_exp
+        string  $test_name,
+        string  $usr_frm_exp,
+        string  $db_ref_frm_exp
     ): void
     {
         global $usr;

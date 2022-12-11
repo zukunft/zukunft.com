@@ -43,11 +43,11 @@ function run_phrase_list_test(testing $t)
     // prepare test by loading Insurance Zurich
     $wrd_zh = $t->load_word(word::TN_ZH);
     $lnk_company = new triple($usr);
-    $lnk_company->from->id = $wrd_zh->id;
-    $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
-    $lnk_company->to->id = $wrd_company->id;
+    $lnk_company->from->set_id($wrd_zh->id());
+    $lnk_company->verb->set_id(cl(db_cl::VERB, verb::IS_A));
+    $lnk_company->to->set_id($wrd_company->id());
     $lnk_company->load_obj_vars();
-    $triple_sample_id = $lnk_company->id;
+    $triple_sample_id = $lnk_company->id();
 
     // test the phrase loading via id
     $wrd_lst = new word_list($usr);

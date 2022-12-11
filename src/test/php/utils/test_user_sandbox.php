@@ -32,7 +32,7 @@
 
 use cfg\phrase_type;
 
-function run_user_sandbox_test(testing $t)
+function run_user_sandbox_test(testing $t): void
 {
 
     global $phrase_types;

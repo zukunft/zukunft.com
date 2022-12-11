@@ -51,7 +51,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::VALUE_ADD);
+    $dsp->set_id(cl(db_cl::VIEW, view::VALUE_ADD));
     $dsp->load_obj_vars();
     $back = $_GET['back'];     // the word id from which this value change has been called (maybe later any page)
 
@@ -100,7 +100,7 @@ if ($usr->id > 0) {
         $upd_result = $val->save();
 
         // if update was successful ...
-        if ($val->id > 0 and str_replace('1', '', $upd_result) == '') {
+        if ($val->id() > 0 and str_replace('1', '', $upd_result) == '') {
             log_debug("save value done.");
             // update the parameters on the object, so that the object save can update the database
             // save the source id as changed by the user

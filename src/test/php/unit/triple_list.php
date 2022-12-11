@@ -394,7 +394,7 @@ class triple_list_unit_tests
         $wrd->set_id(3);
         $wrd_lst->add($wrd);
         $vrb = new verb();
-        $vrb->id = 2;
+        $vrb->set_id(2);
         $wrd_lnk_lst = new triple_list($usr);
         $wrd_lnk_lst->wrd_lst = $wrd_lst;
         $wrd_lnk_lst->vrb = $vrb;
@@ -575,12 +575,12 @@ class triple_list_unit_tests
      * @return void
      */
     private function assert_sql_by_phr(
-        testing $t,
-        sql_db $db_con,
+        testing     $t,
+        sql_db      $db_con,
         triple_list $lst,
-        phrase $phr,
-        ?verb $vrb = null,
-        string $direction = triple_list::DIRECTION_BOTH)
+        phrase      $phr,
+        ?verb       $vrb = null,
+        string      $direction = triple_list::DIRECTION_BOTH)
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;

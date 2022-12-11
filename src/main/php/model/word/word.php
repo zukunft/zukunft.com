@@ -110,6 +110,9 @@ class word extends user_sandbox_named_with_type
     const TD_READ = 'A mathematical constant that never changes e.g. Pi';
     const TN_READ_SCALE = 'million';
     const TN_READ_PERCENT = 'percent';
+    const TN_READ_COUNTRY = 'Country';
+    const TN_READ_SWITZERLAND = 'Switzerland';
+    const TN_READ_GERMANY = 'Germany';
     const TN_ADD = 'System Test Word';
     const TN_RENAMED = 'System Test Word Renamed';
     const TN_PARENT = 'System Test Word Parent';

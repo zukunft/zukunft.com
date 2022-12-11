@@ -36,7 +36,7 @@ use export\exp_obj;
 use html\html_selector;
 use html\verb_dsp;
 
-class verb
+class verb extends db_object
 {
 
     /*
@@ -97,11 +97,10 @@ class verb
      * object vars
      */
 
-    public ?int $id = null;           // the database id of the word link type (verb)
     private ?user $usr = null;         // not used at the moment, because there should not be any user specific verbs
     //                                   otherwise if id is 0 (not NULL) the standard word link type, otherwise the user specific verb
     public ?string $code_id = '';     // the main id to detect verbs that have a special behavior
-    public ?string $name = '';        // the verb name to build the "sentence" for the user, which cannot be empty
+    private ?string $name = '';        // the verb name to build the "sentence" for the user, which cannot be empty
     public ?string $plural = '';      // name used if more than one word is shown
     //                                   e.g. instead of "ABB" "is a" "company"
     //                                        use "ABB", Nestlé" "are" "companies"
@@ -120,11 +119,12 @@ class verb
 
     function __construct(int $id = 0, string $name = '', string $code_id = '')
     {
+        parent::__construct();
         if ($id > 0) {
-            $this->id = $id;
+            $this->set_id($id);
         }
         if ($name != '') {
-            $this->name = $name;
+            $this->set_name($name);
         }
         if ($code_id != '') {
             $this->code_id = $code_id;
@@ -134,7 +134,7 @@ class verb
     function reset(): void
     {
         $this->id = null;
-        $this->usr = null;
+        $this->set_user(null);
         $this->code_id = null;
         $this->name = null;
         $this->plural = null;
@@ -156,9 +156,9 @@ class verb
         $result = false;
         if ($db_row != null) {
             if ($db_row[self::FLD_ID] > 0) {
-                $this->id = $db_row[self::FLD_ID];
+                $this->set_id($db_row[self::FLD_ID]);
                 $this->code_id = $db_row[sql_db::FLD_CODE_ID];
-                $this->name = $db_row[self::FLD_NAME];
+                $this->set_name($db_row[self::FLD_NAME]);
                 $this->plural = $db_row[self::FLD_PLURAL];
                 $this->reverse = $db_row[self::FLD_REVERSE];
                 $this->rev_plural = $db_row[self::FLD_PLURAL_REVERSE];
@@ -178,6 +178,7 @@ class verb
         }
         return $result;
     }
+
 
     /*
      * set and get
@@ -266,8 +267,8 @@ class verb
     function api_obj(): verb_api
     {
         $api_obj = new verb_api();
-        $api_obj->set_id($this->id);
-        $api_obj->set_name($this->name);
+        $api_obj->set_id($this->id());
+        $api_obj->set_name($this->name());
         return $api_obj;
     }
 
@@ -277,8 +278,8 @@ class verb
     function dsp_obj(): verb_dsp
     {
         $dsp_obj = new verb_dsp();
-        $dsp_obj->set_id($this->id);
-        $dsp_obj->set_name($this->name);
+        $dsp_obj->set_id($this->id());
+        $dsp_obj->set_name($this->name());
         return $dsp_obj;
     }
 
@@ -352,7 +353,7 @@ class verb
     function load_sql_by_code_id(sql_db $db_con, string $code_id): sql_par
     {
         $qp = $this->load_sql($db_con, 'code_id');
-        $db_con->add_par(sql_db::PAR_TEXT, $this->code_id);
+        $db_con->add_par(sql_db::PAR_TEXT, $code_id);
         $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();
 
@@ -378,7 +379,7 @@ class verb
      * @param int $id the id of the verb
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id): int
+    function load_by_id(int $id, string $class = self::class): int
     {
         global $db_con;
 
@@ -392,7 +393,7 @@ class verb
      * @param string $name the name of the verb
      * @return int the id of the verb found and zero if nothing is found
      */
-    function load_by_name(string $name): int
+    function load_by_name(string $name, string $class = self::class): int
     {
         global $db_con;
 

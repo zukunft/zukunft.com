@@ -65,7 +65,7 @@ if ($usr->id > 0) {
         }
     }
 
-    if (count($phr_lst->lst) > 0) {
+    if (count($phr_lst->lst()) > 0) {
         $phr_lst = $phr_lst->are();
 
         log_debug("get_json.php ... phrase loaded.");

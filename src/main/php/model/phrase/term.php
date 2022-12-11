@@ -623,10 +623,10 @@ class term extends db_object
     {
         $result = false;
         $vrb = new verb;
-        $vrb->name = $this->name();
+        $vrb->set_name($this->name());
         $vrb->set_user($this->user());
         if ($vrb->load_by_id($id)) {
-            $this->set_id_from_obj($vrb->id, verb::class);
+            $this->set_id_from_obj($vrb->id() , verb::class);
             $this->obj = $vrb;
             $result = true;
         }
@@ -723,10 +723,10 @@ class term extends db_object
     {
         $result = false;
         $vrb = new verb;
-        $vrb->name = $this->name();
+        $vrb->set_name($this->name());
         $vrb->set_user($this->user());
         if ($vrb->load_by_name($name)) {
-            $this->set_id_from_obj($vrb->id, verb::class);
+            $this->set_id_from_obj($vrb->id() , verb::class);
             $this->obj = $vrb;
             $result = true;
         }

@@ -53,30 +53,30 @@ class triple_unit_tests_old
 
         // sql to load a triple by id
         $trp = new triple($usr);
-        $trp->id = 1;
+        $trp->set_id(1);
         $t->assert_load_sql($db_con, $trp);
         $t->assert_load_standard_sql($db_con, $trp);
 
         // sql to load a triple by name
         $trp = new triple($usr);
-        $trp->name = phrase::TN_ZH_COMPANY;
+        $trp->set_name(phrase::TN_ZH_COMPANY);
         $t->assert_load_sql($db_con, $trp);
         $t->assert_load_standard_sql($db_con, $trp);
 
         // sql to load a triple by link ids
         $trp = new triple($usr);
         $wrd_from = new word($usr);
-        $wrd_from->id = 2;
+        $wrd_from->set_id(2);
         $vrb = new verb();
-        $vrb->id = 3;
+        $vrb->set_id(3);
         $wrd_to = new word($usr);
-        $wrd_to->id = 4;
+        $wrd_to->set_id(4);
         $trp->from = $wrd_from->phrase();
         $trp->verb = $vrb;
         $trp->to = $wrd_to->phrase();
         $t->assert_load_sql($db_con, $trp);
         $t->assert_load_standard_sql($db_con, $trp);
-        $trp->id = 5;
+        $trp->set_id(5);
         $t->assert_not_changed_sql($db_con, $trp);
         $t->assert_user_config_sql($db_con, $trp);
 

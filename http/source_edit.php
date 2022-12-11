@@ -51,16 +51,16 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::SOURCE_EDIT);
+    $dsp->set_id(cl(db_cl::VIEW, view::SOURCE_EDIT));
     $dsp->load_obj_vars();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // create the source object to have an place to update the parameters
     $src = new source($usr);
-    $src->id = $_GET['id'];
+    $src->set_id($_GET['id']);
     $src->load_obj_vars();
 
-    if ($src->id <= 0) {
+    if ($src->id() <= 0) {
         $result .= log_err("No source found to change because the id is missing.", "source_edit.php");
     } else {
 
@@ -69,7 +69,7 @@ if ($usr->id > 0) {
 
             // get the parameters (but if not set, use the database value)
             if (isset($_GET['name'])) {
-                $src->name = $_GET['name'];
+                $src->set_name($_GET['name']);
             }
             if (isset($_GET['url'])) {
                 $src->url = $_GET['url'];
@@ -84,7 +84,7 @@ if ($usr->id > 0) {
             // if update was successful ...
             if (str_replace('1', '', $upd_result) == '') {
                 // remember the source for the next values to add
-                $usr->set_source($src->id);
+                $usr->set_source($src->id());
 
                 // ... and display the calling view
                 $result .= dsp_go_back($back, $usr);

@@ -82,8 +82,8 @@ class user_type_list
      */
     function add_verb(verb $vrb): void
     {
-        $type_obj = new user_type($vrb->code_id, $vrb->name);
-        $type_obj->id = $vrb->id;
+        $type_obj = new user_type($vrb->code_id, $vrb->name());
+        $type_obj->id = $vrb->id() ;
         $this->add($type_obj);
     }
 

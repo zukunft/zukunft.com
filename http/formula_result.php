@@ -49,7 +49,7 @@ if ($session_usr->id > 0) {
 
     // show the header
     $dsp = new view_dsp_old($session_usr);
-    $dsp->id = cl(db_cl::VIEW, view::FORMULA_EXPLAIN);
+    $dsp->set_id(cl(db_cl::VIEW, view::FORMULA_EXPLAIN));
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
     $result .= $dsp->dsp_navbar($back);
 
@@ -64,12 +64,12 @@ if ($session_usr->id > 0) {
     if ($frm_val_id > 0 or $frm_id > 0) {
         $fv = new formula_value($session_usr);
         $fv->load_by_id($frm_val_id);
-        if ($fv->id > 0) {
+        if ($fv->id() > 0) {
             $result .= $fv->explain($phr_id, $back);
         } else {
             $result .= log_err("Formula result with id " . $frm_val_id . ' not found.', "formula_result.php");
         }
-        log_debug('formula_result.php explained (id' . $fv->id . ' for user ' . $session_usr->name . ')');
+        log_debug('formula_result.php explained (id' . $fv->id() . ' for user ' . $session_usr->name . ')');
     } else {
         // ... or complain about a wrong call
         $url_txt = "";

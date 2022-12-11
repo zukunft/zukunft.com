@@ -30,7 +30,7 @@
 
 */
 
-function run_db_link_test(testing $t)
+function run_db_link_test(testing $t): void
 {
 
     $t->header('Test database link functions (zu_lib_sql_code_link.php)');

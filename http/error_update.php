@@ -53,7 +53,7 @@ if ($usr->id > 0) {
     load_usr_data();
 
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::ERR_UPD);
+    $dsp->set_id(cl(db_cl::VIEW, view::ERR_UPD));
     $result .= $dsp->dsp_navbar($back);
 
     if ($usr->id > 0 and $usr->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {

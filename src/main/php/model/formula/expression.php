@@ -953,8 +953,8 @@ class expression
                     $vrb = new verb;
                     $vrb->set_user($this->usr);
                     $vrb->load_by_name($name);
-                    if ($vrb->id > 0) {
-                        $db_sym = self::VERB_START . $vrb->id . self::VERB_END;
+                    if ($vrb->id()  > 0) {
+                        $db_sym = self::VERB_START . $vrb->id()  . self::VERB_END;
                         log_debug('found verb "' . $db_sym . '" for "' . $name . '"');
                     }
                 }

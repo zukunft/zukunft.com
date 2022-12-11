@@ -30,7 +30,7 @@
 
 */
 
-function run_system_test(testing $t)
+function run_system_test(testing $t): void
 {
 
     global $usr;

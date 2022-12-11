@@ -150,8 +150,7 @@ class value_list_dsp extends value_list_api
                 if ($val->time_phr != null) {
                     if ($val->time_phr->id > 0) {
                         $time_phr = new phrase($val->usr);
-                        $time_phr->id = $val->time_phr->id;
-                        $time_phr->load_by_obj_par();
+                        $time_phr->load_by_id($val->time_phr->id());
                         $val->time_phr = $time_phr;
                         $dsp_phr_lst->add($time_phr);
                         log_debug('add time word ' . $val->time_phr->name());
@@ -208,7 +207,7 @@ class value_list_dsp extends value_list_api
         }
         */
         if (isset($common_phr_lst)) {
-            if (!empty($common_phr_lst->lst)) {
+            if (!empty($common_phr_lst->lst())) {
                 $common_phr_lst->add($this->phr);
                 $phr_lst_dsp = $common_phr_lst->dsp_obj();
                 $result .= $phr_lst_dsp->btn_add_value($back);

@@ -23,16 +23,18 @@ class triple_unit_tests
 
         $t->subheader('SQL statement tests');
 
+        $trp = new triple($usr);
+        $t->assert_load_sql_id($db_con, $trp);
+        $t->assert_load_sql_name($db_con, $trp);
+
         // sql to load the triple by id
         $trp = new triple($usr);
         $trp->set_id(2);
-        $t->assert_load_sql($db_con, $trp);
         $t->assert_load_standard_sql($db_con, $trp);
 
         // sql to load the triple by name
         $trp = new triple($usr);
         $trp->set_name(triple::TN_READ);
-        $t->assert_load_sql($db_con, $trp);
         $t->assert_load_standard_sql($db_con, $trp);
 
 

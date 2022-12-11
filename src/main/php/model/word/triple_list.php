@@ -200,8 +200,8 @@ class triple_list
                 $fields[] = triple::FLD_TO;
             }
             if ($vrb != null) {
-                if ($vrb->id > 0) {
-                    $db_con->add_par(sql_db::PAR_INT, $vrb->id);
+                if ($vrb->id()  > 0) {
+                    $db_con->add_par(sql_db::PAR_INT, $vrb->id() );
                     $fields[] = verb::FLD_ID;
                     $qp->name .= '_and_vrb';
                 }
@@ -354,7 +354,7 @@ class triple_list
         }
         // with additional verb selection
         if (isset($this->vrb)) {
-            if ($this->vrb->id > 0) {
+            if ($this->vrb->id()  > 0) {
                 $sql_name_type = '_and_vrb';
             }
         }
@@ -446,8 +446,8 @@ class triple_list
 
         // if a verb is set, select only the word links with the given verb
         if (isset($this->vrb)) {
-            if ($this->vrb->id > 0) {
-                $sql_type = 'AND l.verb_id = ' . $this->vrb->id;
+            if ($this->vrb->id()  > 0) {
+                $sql_type = 'AND l.verb_id = ' . $this->vrb->id() ;
             }
         }
         // if a list of verb is set, select the word links included in the list
@@ -535,7 +535,7 @@ class triple_list
                         $new_link->row_mapper($db_lnk);
                         if ($new_link->id() > 0) {
                             // fill the verb
-                            if ($new_link->verb->id > 0) {
+                            if ($new_link->verb->id()  > 0) {
                                 $new_verb = new verb;
                                 $new_verb->set_user($this->user());
                                 $new_verb->row_mapper($db_lnk);
@@ -686,18 +686,18 @@ class triple_list
                 if ($lnk->verb == null) {
                     log_warning('graph->display type is missing');
                 } else {
-                    if ($lnk->verb->id <> $prev_verb_id) {
-                        log_debug('graph->display type "' . $lnk->verb->name . '"');
+                    if ($lnk->verb->id()  <> $prev_verb_id) {
+                        log_debug('graph->display type "' . $lnk->verb->name() . '"');
 
                         // select the same side of the verb
                         if ($this->direction == word_select_direction::DOWN) {
-                            $directional_link_type_id = $lnk->verb->id;
+                            $directional_link_type_id = $lnk->verb->id() ;
                         } else {
-                            $directional_link_type_id = $lnk->verb->id * -1;
+                            $directional_link_type_id = $lnk->verb->id()  * -1;
                         }
 
                         // display the link type
-                        if ($lnk->verb->id == $next_lnk->verb->id) {
+                        if ($lnk->verb->id()  == $next_lnk->verb->id() ) {
                             $result .= $this->wrd->plural;
                             if ($this->direction == word_select_direction::DOWN) {
                                 $result .= " " . $lnk->verb->rev_plural;
@@ -714,7 +714,7 @@ class triple_list
                         }
                     }
                     $result .= dsp_tbl_start_half();
-                    $prev_verb_id = $lnk->verb->id;
+                    $prev_verb_id = $lnk->verb->id() ;
 
                     // display the word
                     if ($lnk->from == null) {
@@ -736,13 +736,13 @@ class triple_list
 
                     // use the last word as a sample for the new word type
                     $last_linked_word_id = 0;
-                    if ($lnk->verb->id == cl(db_cl::VERB, verb::FOLLOW)) {
+                    if ($lnk->verb->id()  == cl(db_cl::VERB, verb::FOLLOW)) {
                         $last_linked_word_id = $lnk->to->id;
                     }
 
                     // in case of the verb "following" continue the series after the last element
                     $start_id = 0;
-                    if ($lnk->verb->id == cl(db_cl::VERB, verb::FOLLOW)) {
+                    if ($lnk->verb->id()  == cl(db_cl::VERB, verb::FOLLOW)) {
                         $start_id = $last_linked_word_id;
                         // and link with the same direction (looks like not needed!)
                         /* if ($directional_link_type_id > 0) {
@@ -756,7 +756,7 @@ class triple_list
                         }
                     }
 
-                    if ($lnk->verb->id <> $next_lnk->verb->id) {
+                    if ($lnk->verb->id()  <> $next_lnk->verb->id() ) {
                         if ($lnk->from == null) {
                             log_warning('graph->display from is missing');
                         } else {

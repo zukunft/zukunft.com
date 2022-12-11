@@ -51,7 +51,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::DEL);
+    $dsp->set_id(cl(db_cl::VIEW, view::DEL));
     $dsp->load_obj_vars();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
@@ -63,8 +63,7 @@ if ($usr->id > 0) {
 
         // create the view object to have an object to update the parameters
         $cmp_del = new view_cmp($usr);
-        $cmp_del->id = $cmp_del_id;
-        $cmp_del->load_obj_vars();
+        $cmp_del->load_by_id($cmp_del_id);
 
         if ($confirm == 1) {
             $cmp_del->del();
@@ -76,7 +75,7 @@ if ($usr->id > 0) {
 
             // TODO: display how the views would be changed
 
-            $result .= \html\btn_yesno('Delete the view element "' . $cmp_del->name . '"? ', '/http/view_component_del.php?id=' . $cmp_del_id . '&back=' . $back);
+            $result .= \html\btn_yesno('Delete the view element "' . $cmp_del->name() . '"? ', '/http/view_component_del.php?id=' . $cmp_del_id . '&back=' . $back);
         }
     } else {
         $result .= dsp_go_back($back, $usr);

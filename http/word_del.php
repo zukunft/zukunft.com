@@ -51,7 +51,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::WORD_DEL);
+    $dsp->set_id(cl(db_cl::VIEW, view::WORD_DEL));
     $dsp->load_obj_vars();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
@@ -63,8 +63,7 @@ if ($usr->id > 0) {
 
         // create the word object to have an object to update the parameters
         $wrd = new word($usr);
-        $wrd->id = $wrd_id;
-        $wrd->load_obj_vars();
+        $wrd->load_by_id($wrd_id);
 
         if ($confirm == 1) {
             $wrd->del();

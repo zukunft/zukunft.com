@@ -52,7 +52,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::SOURCE_ADD);
+    $dsp->set_id(cl(db_cl::VIEW, view::SOURCE_ADD));
     $dsp->load_obj_vars();
     $back = $_GET['back'];      // the calling word which should be displayed after saving
 
@@ -61,7 +61,7 @@ if ($usr->id > 0) {
 
     // load the parameters to the view object to display the user input again in case of an error
     if (isset($_GET['name'])) {
-        $src->name = $_GET['name'];
+        $src->set_name($_GET['name']);
     }    // name of the new source to add
     if (isset($_GET['url'])) {
         $src->url = $_GET['url'];
@@ -74,16 +74,16 @@ if ($usr->id > 0) {
     if ($_GET['confirm'] > 0) {
 
         // check essential parameters
-        if ($src->name == "") {
+        if ($src->name() == "") {
             $msg .= 'Name missing; Please press back and enter a source name.';
         } else {
 
             // check if source name already exists (move this part to the save function??)
             $db_src = new source($usr);
-            $db_src->name = $src->name;
+            $db_src->set_name($src->name());
             $db_src->load_obj_vars();
-            if ($db_src->id > 0) {
-                $msg .= 'Name ' . $src->name . ' is already existing. Please enter another name or use the existing source.';
+            if ($db_src->id() > 0) {
+                $msg .= 'Name ' . $src->name() . ' is already existing. Please enter another name or use the existing source.';
             }
 
             // if the parameters are fine
@@ -94,7 +94,7 @@ if ($usr->id > 0) {
                 // if adding was successful ...
                 if (str_replace('1', '', $add_result) == '') {
                     // remember the source for the next values to add
-                    $usr->set_source($src->id);
+                    $usr->set_source($src->id());
 
                     // ... and display the calling view
                     $result .= dsp_go_back($back, $usr);

@@ -156,8 +156,8 @@ class verb_list extends user_type_list
                             $vrb->row_mapper($db_vrb);
                             $vrb->set_user($this->usr);
                             $vrb_lst[] = $vrb;
-                            $vrb_id_lst[] = $vrb->id;
-                            log_debug('verb_list->load added (' . $vrb->name . ')');
+                            $vrb_id_lst[] = $vrb->id() ;
+                            log_debug('verb_list->load added (' . $vrb->name() . ')');
                         }
                     }
                 }
@@ -243,14 +243,14 @@ class verb_list extends user_type_list
     function load_dummy(): void
     {
         $type = new verb();
-        $type->id = 1;
-        $type->name = verb::IS_A;
+        $type->set_id(1);
+        $type->set_name(verb::IS_A);
         $type->code_id = verb::IS_A;
         $this->lst[1] = $type;
         $this->hash[verb::IS_A] = 1;
         $type = new verb();
-        $type->id = 2;
-        $type->name = verb::FOLLOW;
+        $type->set_id(2);
+        $type->set_name(verb::FOLLOW);
         $type->code_id = verb::FOLLOW;
         $this->lst[2] = $type;
         $this->hash[verb::FOLLOW] = 2;
@@ -286,8 +286,8 @@ class verb_list extends user_type_list
         $result = array();
         if ($this->lst != null) {
             foreach ($this->lst as $vrb) {
-                if ($vrb->id > 0) {
-                    $result[] = $vrb->id;
+                if ($vrb->id()  > 0) {
+                    $result[] = $vrb->id() ;
                 }
             }
         }
@@ -372,15 +372,15 @@ class verb_list extends user_type_list
             // create a list with the forward and backward version of the verb
             $combined_list = array();
             foreach ($this->lst as $vrb) {
-                if ($vrb->id > 0) {
+                if ($vrb->id()  > 0) {
                     $select_row = array();
-                    $select_name = $vrb->name;
+                    $select_name = $vrb->name();
                     /* has been an idea, but has actually caused more confusion
                     if ($vrb->reverse != '' and $select_name != '') {
                         $select_name .= ' (' . $vrb->reverse . ')';
                     }
                     */
-                    $id = $vrb->id;
+                    $id = $vrb->id() ;
                     $select_row[] = $id;
                     $select_row[] = $select_name;
                     $select_row[] = $vrb->usage;
@@ -389,12 +389,12 @@ class verb_list extends user_type_list
                     $select_row = array();
                     $select_name = $vrb->reverse;
                     /* like above ...
-                    if ($vrb->name != '' and $select_name != '') {
-                        $select_name .= ' (' . $vrb->name . ')';
+                    if ($vrb->name() != '' and $select_name != '') {
+                        $select_name .= ' (' . $vrb->name() . ')';
                     }
                     */
                     if (trim($select_name) != '') {
-                        $id = $vrb->id * -1;
+                        $id = $vrb->id()  * -1;
                         $select_row[] = $id;
                         $select_row[] = $select_name;
                         $select_row[] = $vrb->usage; // TODO separate the backward usage or separate the reverse form

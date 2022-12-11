@@ -52,7 +52,7 @@ function run_triple_test(testing $t)
     // ... now test the Canton Zurich
     $lnk_canton = new triple($t->usr1);
     $lnk_canton->from->set_id($wrd_zh->id());
-    $lnk_canton->verb->id = cl(db_cl::VERB, verb::IS_A);
+    $lnk_canton->verb->set_id(cl(db_cl::VERB, verb::IS_A));
     $lnk_canton->to->set_id($wrd_canton->id());
     $lnk_canton->load_obj_vars();
     $target = word::TN_ZH . ' (' . word::TN_CANTON . ')';
@@ -67,7 +67,7 @@ function run_triple_test(testing $t)
     // ... now test the Insurance Zurich
     $lnk_company = new triple($t->usr1);
     $lnk_company->from->set_id($wrd_zh->id());
-    $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
+    $lnk_company->verb->set_id(cl(db_cl::VERB, verb::IS_A));
     $lnk_company->to->set_id($wrd_company->id());
     $lnk_company->load_obj_vars();
     $target = phrase::TN_ZH_COMPANY;
@@ -88,7 +88,7 @@ function run_triple_test(testing $t)
     $vrb->load_by_id(cl(db_cl::VERB, verb::IS_A));
     $lnk = new triple($t->usr1);
     $lnk->from->set_id($wrd_added->id());
-    $lnk->verb->id = $vrb->id;
+    $lnk->verb->set_id($vrb->id());
     $lnk->to->set_id($wrd->id());
     if ($wrd->id() <> 0) {
         $result = $lnk->save();
@@ -96,7 +96,7 @@ function run_triple_test(testing $t)
         $result = 'id missing';
     }
     $target = '';
-    $t->dsp('triple->save "' . $wrd_added->name() . '" ' . $vrb->name . ' "' . $wrd->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp('triple->save "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     echo "... and also testing the user log link class (classes/user_log_link.php)<br>";
 
@@ -104,18 +104,18 @@ function run_triple_test(testing $t)
     $log = new user_log_link;
     $log->table = 'triples';
     $log->new_from_id = $wrd_added->id();
-    $log->new_link_id = $vrb->id;
+    $log->new_link_id = $vrb->id() ;
     $log->new_to_id = $wrd->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test linked ' . word::TN_RENAMED . ' to ' . TEST_WORD . '';
-    $t->dsp('triple->save logged for "' . $wrd_added->name() . '" ' . $vrb->name . ' "' . $wrd->name() . '"', $target, $result);
+    $t->dsp('triple->save logged for "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '"', $target, $result);
 
     // ... check if the link is shown correctly
 
     $lnk = new triple($t->usr1);
     $lnk->from->set_id($wrd_added->id());
-    $lnk->verb->id = $vrb->id;
+    $lnk->verb->set_id($vrb->id());
     $lnk->to->set_id($wrd->id());
     $lnk->load_obj_vars();
     $result = $lnk->name();
@@ -124,7 +124,7 @@ function run_triple_test(testing $t)
     // ... check if the link is shown correctly also for the second user
     $lnk2 = new triple($t->usr2);
     $lnk2->from->set_id($wrd_added->id());
-    $lnk2->verb->id = $vrb->id;
+    $lnk2->verb->set_id($vrb->id());
     $lnk2->to->set_id($wrd->id());
     $lnk2->load_obj_vars();
     $result = $lnk2->name();
@@ -136,35 +136,35 @@ function run_triple_test(testing $t)
     // if second user removes the new link
     $lnk = new triple($t->usr2);
     $lnk->from->set_id($wrd_added->id());
-    $lnk->verb->id = $vrb->id;
+    $lnk->verb->set_id($vrb->id());
     $lnk->to->set_id($wrd->id());
     $lnk->load_obj_vars();
     $msg = $lnk->del();
     $result = $msg->get_last_message();
     $target = '';
-    $t->dsp('triple->del "' . $wrd_added->name() . '" ' . $vrb->name . ' "' . $wrd->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp('triple->del "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the removal of the link for the second user has been logged
     $log = new user_log_link;
     $log->table = 'triples';
     $log->old_from_id = $wrd_added->id();
-    $log->old_link_id = $vrb->id;
+    $log->old_link_id = $vrb->id() ;
     $log->old_to_id = $wrd->id();
     $log->usr = $t->usr2;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test partner unlinked ' . word::TN_RENAMED . ' from ' . TEST_WORD . '';
-    $t->dsp('triple->del logged for "' . $wrd_added->name() . '" ' . $vrb->name . ' "' . $wrd->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
+    $t->dsp('triple->del logged for "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
 
 
     // ... check if the link is really not used any more for the second user
     $lnk2 = new triple($t->usr2);
     $lnk2->from->set_id($wrd_added->id());
-    $lnk2->verb->id = $vrb->id;
+    $lnk2->verb->set_id($vrb->id());
     $lnk2->to->set_id($wrd->id());
     $lnk2->load_obj_vars();
     $result = $lnk2->name();
     $target = '';
-    $t->dsp('triple->load "' . $wrd_added->name() . '" ' . $vrb->name . ' "' . $wrd->name() . '" for user "' . $t->usr2->name . '" not any more', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+    $t->dsp('triple->load "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '" for user "' . $t->usr2->name . '" not any more', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // ... check if the value update for the second user has been triggered
 
@@ -173,46 +173,46 @@ function run_triple_test(testing $t)
     // ... check if the link is still used for the first user
     $lnk = new triple($t->usr1);
     $lnk->from->set_id($wrd_added->id());
-    $lnk->verb->id = $vrb->id;
+    $lnk->verb->set_id($vrb->id());
     $lnk->to->set_id($wrd->id());
     $lnk->load_obj_vars();
     $result = $lnk->name();
     $target = '' . word::TN_RENAMED . ' (' . TEST_WORD . ')';
-    $t->dsp('triple->load of "' . $wrd_added->name() . '" ' . $vrb->name . ' "' . $wrd->name() . '" is still used for user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+    $t->dsp('triple->load of "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '" is still used for user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // ... check if the values for the first user are still the same
 
     // if the first user also removes the link, both records should be deleted
     $lnk = new triple($t->usr1);
     $lnk->from->set_id($wrd_added->id());
-    $lnk->verb->id = $vrb->id;
+    $lnk->verb->set_id($vrb->id());
     $lnk->to->set_id($wrd->id());
     $lnk->load_obj_vars();
     $msg = $lnk->del();
     $result = $msg->get_last_message();
     $target = '';
-    $t->dsp('triple->del "' . $wrd_added->name() . '" ' . $vrb->name . ' "' . $wrd->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp('triple->del "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check the correct logging
     $log = new user_log_link;
     $log->table = 'triples';
     $log->old_from_id = $wrd_added->id();
-    $log->old_link_id = $vrb->id;
+    $log->old_link_id = $vrb->id() ;
     $log->old_to_id = $wrd->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test unlinked ' . word::TN_RENAMED . ' from ' . TEST_WORD . '';
-    $t->dsp('triple->del logged for "' . $wrd_added->name() . '" ' . $vrb->name . ' "' . $wrd->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
+    $t->dsp('triple->del logged for "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
 
     // check if the formula is not used any more for both users
     $lnk = new triple($t->usr1);
     $lnk->from->set_id($wrd_added->id());
-    $lnk->verb->id = $vrb->id;
+    $lnk->verb->set_id($vrb->id());
     $lnk->to->set_id($wrd->id());
     $lnk->load_obj_vars();
     $result = $lnk->name();
     $target = '';
-    $t->dsp('triple->load of "' . $wrd_added->name() . '" ' . $vrb->name . ' "' . $wrd->name() . '" for user "' . $t->usr1->name . '" not used any more', $target, $result);
+    $t->dsp('triple->load of "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '" for user "' . $t->usr1->name . '" not used any more', $target, $result);
 
 
     // ... and the values have been updated

@@ -50,7 +50,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::VALUE_ADD);
+    $dsp->set_id(cl(db_cl::VIEW, view::VALUE_ADD));
     $dsp->load_obj_vars();
     /*
         // get the fixed parameters

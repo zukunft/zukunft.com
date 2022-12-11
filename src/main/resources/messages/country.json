@@ -5,6 +5,39 @@
   "selection": [
     "country base setup"
   ],
+  "description": "preloaded sample data to demonstrate how countries can be handled in zukunft.com",
+  "words": [
+    { "name": "Country"},
+    { "name": "Switzerland", "refs": [ { "name": "Switzerland", "type": "wikipedia" } ] },
+    { "name": "Canton"},
+    { "name": "City"},
+    { "name": "Zurich"},
+    { "name": "Germany", "refs": [ { "name": "Germany", "type": "wikipedia" } ] },
+    { "name": "Inhabitants"},
+    { "name": "2015", "type": "time"},
+    { "name": "Year", "type": "time"}
+  ],
+  "triples": [
+    {"name": "", "from": "Switzerland", "verb": "is a", "to": "Country"},
+    {"name": "", "from": "Germany", "verb": "is a", "to": "Country"},
+    {"name": "Zurich (City)", "from": "Zurich", "verb": "is a", "to": "City",
+      "refs": [ { "name": "Zürich", "type": "wikipedia" } ]
+    },
+    {"name": "Zurich (Canton)", "from": "Zurich", "verb": "is a", "to": "Canton",
+      "refs": [ { "name": "Canton of Zürich", "type": "wikipedia" } ]
+    },
+    {"name": "", "from": "2015", "verb": "is a", "to": "Year"}
+  ],
+  "values": [
+    {
+      "words": [
+        "Switzerland",
+        "Inhabitants",
+        "2015"
+      ],
+      "number": "8327126"
+    }
+  ],
   "views": [
     {
       "name": "Country ratios",

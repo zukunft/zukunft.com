@@ -34,7 +34,7 @@
 // start testing the user permission functionality
 // -----------------------------------------------
 
-function run_user_test(testing $t)
+function run_user_test(testing $t): void
 {
 
     global $usr;

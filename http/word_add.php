@@ -132,22 +132,22 @@ if ($usr->id > 0) {
             // check link of the existing word already exists
             $lnk_test = new triple($usr);
             $lnk_test->from->set_id($wrd_id);
-            $lnk_test->verb->id = $vrb_id;
+            $lnk_test->verb->set_id($vrb_id);
             $lnk_test->to->set_id($wrd_to);
             $lnk_test->load_obj_vars();
             if ($lnk_test->id() > 0) {
                 $lnk_test->load_objects();
                 log_debug('check forward link ' . $wrd_id . ' ' . $vrb_id . ' ' . $wrd_to . '');
-                $msg .= '"' . $lnk_test->from_name . ' ' . $lnk_test->verb->name . ' ' . $lnk_test->to_name . '" already exists. ';
+                $msg .= '"' . $lnk_test->from_name . ' ' . $lnk_test->verb->name() . ' ' . $lnk_test->to_name . '" already exists. ';
             }
             $lnk_rev = new triple($usr);
             $lnk_rev->from->set_id($wrd_to);
-            $lnk_rev->verb->id = $vrb_id;
+            $lnk_rev->verb->set_id($vrb_id);
             $lnk_rev->to->set_id($wrd_id);
             $lnk_rev->load_obj_vars();
             if ($lnk_rev->id() > 0) {
                 $lnk_rev->load_objects();
-                $msg .= 'The reverse of "' . $lnk_rev->from_name . ' ' . $lnk_rev->verb->name . ' ' . $lnk_rev->to_name . '" already exists. Do you really want to add both sides? ';
+                $msg .= 'The reverse of "' . $lnk_rev->from_name . ' ' . $lnk_rev->verb->name() . ' ' . $lnk_rev->to_name . '" already exists. Do you really want to add both sides? ';
             }
         }
 
@@ -167,7 +167,7 @@ if ($usr->id > 0) {
                 log_debug('word ' . $wrd->id() . ' linked via ' . $vrb_id . ' to ' . $wrd_to . ': ' . $add_result);
                 $lnk = new triple($usr);
                 $lnk->from->set_id($wrd->id());
-                $lnk->verb->id = $vrb_id;
+                $lnk->verb->set_id($vrb_id);
                 $lnk->to->set_id($wrd_to);
                 $add_result .= $lnk->save();
             }

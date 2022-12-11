@@ -49,18 +49,18 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::FORMULA_EDIT);
+    $dsp->set_id(cl(db_cl::VIEW, view::FORMULA_EDIT));
     $dsp->load_obj_vars();
     $back = $_GET['back'];
 
     // create the formula object to have an place to update the parameters
     $frm = new formula($usr);
-    $frm->id = $_GET['id']; // id of the formula that can be changed
+    $frm->set_id($_GET['id']); // id of the formula that can be changed
     $frm->load_obj_vars();
 
     // load the parameters to the formula object to display the user input again in case of an error
     if (isset($_GET['formula_name'])) {
-        $frm->name = $_GET['formula_name'];
+        $frm->set_name($_GET['formula_name']);
     } // the new formula name
     if (isset($_GET['formula_text'])) {
         $frm->usr_text = $_GET['formula_text'];
@@ -80,7 +80,7 @@ if ($usr->id > 0) {
     }
     //if (isset($_GET['need_all_val']))  { if ($_GET['need_all_val'] == 'on') { $frm->need_all_val = true; } else { $frm->need_all_val = false; } }
 
-    if ($frm->id <= 0) {
+    if ($frm->id() <= 0) {
         $result .= log_err("No formula found to change because the id is missing.", "/http/formula_edit.php");
     } else {
 
@@ -88,7 +88,7 @@ if ($usr->id > 0) {
         // to link the formula to another word
         if ($_GET['link_phrase'] > 0) {
             $phr = new phrase($usr);
-            $phr->id = $_GET['link_phrase'];
+            $phr->set_id($_GET['link_phrase']);
             $phr->load_by_obj_par();
             $upd_result = $frm->link_phr($phr);
         }
@@ -96,7 +96,7 @@ if ($usr->id > 0) {
         // to unlink a word from the formula
         if ($_GET['unlink_phrase'] > 0) {
             $phr = new phrase($usr);
-            $phr->id = $_GET['unlink_phrase'];
+            $phr->set_id($_GET['unlink_phrase']);
             $phr->load_by_obj_par();
             $upd_result = $frm->unlink_phr($phr);
         }

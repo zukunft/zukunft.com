@@ -113,7 +113,7 @@ class value_dsp_old extends value
         $url_phr = '';
         $this->load_phrases();
         if (isset($this->phr_lst)) {
-            if (!empty($this->phr_lst->lst)) {
+            if (!empty($this->phr_lst->lst())) {
                 $val_btn_title = "add new value similar to " . htmlentities($this->phr_lst->dsp_name());
             } else {
                 $val_btn_title = "add new value";
@@ -404,7 +404,7 @@ class value_dsp_old extends value
       */
 
             // assign the type to the phrases
-            foreach ($phr_lst->lst as $phr) {
+            foreach ($phr_lst->lst() as $phr) {
                 $phr->set_user($this->user());
                 foreach (array_keys($this->ids) as $pos) {
                     if ($phr->id == $this->ids[$pos]) {
@@ -429,7 +429,7 @@ class value_dsp_old extends value
             // show first the phrases, that are not supposed to be changed
             //foreach (array_keys($this->ids) AS $pos) {
             log_debug('value->dsp_edit -> show fixed phrases');
-            foreach ($phr_lst->lst as $phr) {
+            foreach ($phr_lst->lst() as $phr) {
                 //if ($type_ids[$pos] < 0) {
                 if ($phr->is_wrd_id < 0) {
                     log_debug('value->dsp_edit -> show fixed phrase "' . $phr->name() . '"');
@@ -449,7 +449,7 @@ class value_dsp_old extends value
             // and new phrases at the end
             log_debug('value->dsp_edit -> show phrases');
             for ($dsp_type = 0; $dsp_type <= 1; $dsp_type++) {
-                foreach ($phr_lst->lst as $phr) {
+                foreach ($phr_lst->lst() as $phr) {
                     /*
           // build a list of suggested phrases
           $phr_lst_sel_old = array();

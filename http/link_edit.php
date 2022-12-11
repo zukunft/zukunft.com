@@ -50,26 +50,26 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::LINK_EDIT);
+    $dsp->set_id(cl(db_cl::VIEW, view::LINK_EDIT));
     $dsp->load_obj_vars();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // create the link object to have an place to update the parameters
     $lnk = new triple($usr);
-    $lnk->id = $_GET['id'];
+    $lnk->set_id($_GET['id']);
     $lnk->load_obj_vars();
 
     // edit the link or ask for confirmation
-    if ($lnk->id <= 0) {
+    if ($lnk->id() <= 0) {
         $result .= log_err("No triple found to change because the id is missing.", "link_edit.php");
     } else {
 
         if ($_GET['confirm'] == 1) {
 
             // get the parameters
-            $lnk->from->id = $_GET['phrase1']; // the word or triple linked from
-            $lnk->verb->id = $_GET['verb'];    // the link type (verb)
-            $lnk->to->id = $_GET['phrase2']; // the word or triple linked to
+            $lnk->from->set_id($_GET['phrase1']); // the word or triple linked from
+            $lnk->verb->set_id($_GET['verb']);    // the link type (verb)
+            $lnk->to->set_id($_GET['phrase2']); // the word or triple linked to
 
             // save the changes
             $upd_result = $lnk->save();

@@ -578,7 +578,7 @@ class phrase_list extends user_sandbox_list_named
         $this->lst = array();
 
         $wrd_lst = new word_list($this->user());
-        $wrd_lst->load_linked_words($vrb->id, $direction);
+        $wrd_lst->load_linked_words($vrb->id() , $direction);
         $wrd_added = $this->add_wrd_lst($wrd_lst);
 
         $trp_lst = new triple_list($this->user());
@@ -847,7 +847,7 @@ class phrase_list extends user_sandbox_list_named
     {
         log_debug($vrb->dsp_id());
         $wrd_lst = $this->wrd_lst_all();
-        $added_wrd_lst = $wrd_lst->parents($vrb->id, $level);
+        $added_wrd_lst = $wrd_lst->parents($vrb->id() , $level);
         $added_phr_lst = $added_wrd_lst->phrase_lst();
 
         log_debug('phrase_list->parents -> (' . $added_phr_lst->name() . ')');
@@ -876,9 +876,9 @@ class phrase_list extends user_sandbox_list_named
     // ex foaf_child_step
     function children(?verb $vrb = null, int $level = 0): phrase_list
     {
-        log_debug('phrase_list->children type ' . $vrb->id);
+        log_debug('phrase_list->children type ' . $vrb->id() );
         $wrd_lst = $this->wrd_lst_all();
-        $added_wrd_lst = $wrd_lst->children($vrb->id, $level);
+        $added_wrd_lst = $wrd_lst->children($vrb->id() , $level);
         $added_phr_lst = $added_wrd_lst->phrase_lst();
 
         log_debug('phrase_list->children -> (' . $added_phr_lst->name() . ')');

@@ -174,7 +174,7 @@ class user_dsp_old extends user
                 $wrd_usr = new triple($this);
                 $wrd_usr->set_id($sbx_row['id']);
                 $wrd_usr->from->set_id($sbx_row['from_phrase_id']);
-                $wrd_usr->verb->id = $sbx_row[verb::FLD_ID];
+                $wrd_usr->verb->set_id($sbx_row[verb::FLD_ID]);
                 $wrd_usr->to->set_id($sbx_row['to_phrase_id']);
                 $wrd_usr->set_name($sbx_row['usr_name']);
                 $wrd_usr->excluded = $sbx_row['usr_excluded'];

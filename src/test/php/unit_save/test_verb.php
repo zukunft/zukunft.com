@@ -42,7 +42,7 @@ function run_verb_test(testing $t): void
     $vrb->set_user($usr);
     $vrb->load_by_id(cl(db_cl::VERB, verb::IS_A));
     $target = 'is a';
-    $result = $vrb->name;
+    $result = $vrb->name();
     $t->dsp('verb->load ', $target, $result);
 
 
@@ -56,7 +56,7 @@ function run_verb_test(testing $t): void
     // select the first verb
     foreach ($vrb_lst->lst as $vrb) {
         if ($result == '') {
-            $result = $vrb->name;
+            $result = $vrb->name();
         }
     }
     $t->dsp('verb_list->load ', $target, $result);

@@ -74,7 +74,7 @@ if ($usr->id > 0) {
             // display the view header
             $result .= $dsp->dsp_navbar($back);
 
-            $result .= \html\btn_yesno("Delete " . $vrb->name . "? ", "/http/verb_del.php?id=" . $vrb_id . "&back=" . $back);
+            $result .= \html\btn_yesno("Delete " . $vrb->name() . "? ", "/http/verb_del.php?id=" . $vrb_id . "&back=" . $back);
         }
     } else {
         $result .= dsp_go_back($back, $usr);

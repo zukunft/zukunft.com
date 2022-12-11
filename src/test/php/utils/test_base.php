@@ -70,7 +70,7 @@ include_once $path_utils . 'test_system.php';
 include_once $path_utils . 'test_db_link.php';
 include_once $path_utils . 'test_user.php';
 include_once $path_utils . 'test_user_sandbox.php';
-include_once $path_utils . 'testing.php';
+include_once $path_utils . 'test_cleanup.php';
 
 // load the unit testing modules
 include_once $path_unit . 'test_unit.php';
@@ -932,8 +932,8 @@ class test_base
         }
 
         $vrb = new verb();
-        $vrb->id = $id;
-        $vrb->name = $vrb_name;
+        $vrb->set_id($id);
+        $vrb->set_name($vrb_name);
         $vrb->set_user($usr);
 
         return $vrb;

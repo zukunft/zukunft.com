@@ -69,7 +69,7 @@ function run_phrase_test(testing $t)
     $wrd_zh = $t->load_word(word::TN_ZH);
     $lnk_company = new triple($usr);
     $lnk_company->from->set_id($wrd_zh->id());
-    $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
+    $lnk_company->verb->set_id(cl(db_cl::VERB, verb::IS_A));
     $lnk_company->to->set_id($wrd_company->id());
     $lnk_company->load_obj_vars();
 

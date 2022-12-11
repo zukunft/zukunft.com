@@ -60,7 +60,7 @@ if ($usr->id > 0) {
     $vrb->set_user($usr);
     $vrb->load_by_id($_GET['id']);
 
-    if ($vrb->id <= 0) {
+    if ($vrb->id() <= 0) {
         $result .= log_err("No verb found to change because the id is missing.", "verb_edit.php");
     } else {
 
@@ -69,7 +69,7 @@ if ($usr->id > 0) {
 
             // get the parameters (but if not set, use the database value)
             if (isset($_GET['name'])) {
-                $vrb->name = $_GET['name'];
+                $vrb->set_name($_GET['name']);
             }
             if (isset($_GET['plural'])) {
                 $vrb->plural = $_GET['plural'];
@@ -87,7 +87,7 @@ if ($usr->id > 0) {
             // if update was successful ...
             if (str_replace('1', '', $upd_result) == '') {
                 // remember the verb for the next values to add
-                $usr->set_verb($vrb->id);
+                $usr->set_verb($vrb->id());
 
                 // ... and display the calling view
                 $result .= dsp_go_back($back, $usr);

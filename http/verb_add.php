@@ -52,7 +52,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::VERB_ADD);
+    $dsp->set_id(cl(db_cl::VIEW, view::VERB_ADD));
     $dsp->load_obj_vars();
     $back = $_GET['back']; // the calling word which should be displayed after saving
 
@@ -66,7 +66,7 @@ if ($usr->id > 0) {
 
         // load the parameters to the verb object to display it again in case of an error
         if (isset($_GET['name'])) {
-            $vrb->name = $_GET['name'];
+            $vrb->set_name($_GET['name']);
         }
         if (isset($_GET['plural'])) {
             $vrb->plural = $_GET['plural'];
@@ -81,13 +81,13 @@ if ($usr->id > 0) {
         if ($_GET['confirm'] > 0) {
 
             // check essential parameters
-            if ($vrb->name == "") {
+            if ($vrb->name() == "") {
                 $msg .= 'Name missing; Please press back and enter a verb name.';
             } else {
 
                 // check if a verb, formula or word with the same name is already in the database
                 $trm = new term($usr);
-                $trm->load_by_name($vrb->name);
+                $trm->load_by_name($vrb->name());
                 if ($trm->id_obj() > 0) {
                     $msg .= $trm->id_used_msg();
                 }

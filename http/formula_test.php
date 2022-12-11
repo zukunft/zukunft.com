@@ -56,7 +56,7 @@ if ($session_usr->id > 0) {
 
     // show the header even if all parameters are wrong
     $dsp = new view_dsp_old($session_usr);
-    $dsp->id = cl(db_cl::VIEW, view::FORMULA_TEST);
+    $dsp->set_id(cl(db_cl::VIEW, view::FORMULA_TEST));
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
     echo $dsp->dsp_navbar($back);
 
@@ -89,7 +89,7 @@ if ($session_usr->id > 0) {
         $frm_lst->load_by_frm_ids(explode(",", $frm_id));
 
         // display the first formula name as a sample
-        $frm1 = $frm_lst->lst[0]; // just as a sample to display some info to the user
+        $frm1 = $frm_lst->lst()[0]; // just as a sample to display some info to the user
 
         // delete all formula results if requested
         if ($refresh == 1) {
@@ -115,7 +115,7 @@ if ($session_usr->id > 0) {
         // if a single calculation is selected by the user, show only this
         if (!empty($phr_ids)) {
 
-            foreach ($frm_lst->lst as $frm) {
+            foreach ($frm_lst->lst() as $frm) {
                 log_debug('calculate "' . $frm->dsp_text() . '" for ' . $phr_lst->name_linked());
                 $fv_lst = $frm->calc($phr_lst);
 
@@ -149,7 +149,7 @@ if ($session_usr->id > 0) {
             // and after that the user specific value will be calculated if needed
             // TODO: but only if the user has done some changes
             $calc_fv_lst = new formula_value_list($usr);
-            foreach ($frm_lst->lst as $frm) {
+            foreach ($frm_lst->lst() as $frm) {
                 $calc_lst = $calc_fv_lst->frm_upd_lst($frm, $back);
             }
 

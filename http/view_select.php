@@ -51,7 +51,7 @@ if ($usr->id > 0) {
 
     // in view edit views the view cannot be changed
     $dsp = new view_dsp_old($usr);
-    //$dsp->id = cl(SQL_VIEW_FORMULA_EXPLAIN);
+    //$dsp->set_id(cl(SQL_VIEW_FORMULA_EXPLAIN));
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
     $result .= $dsp->dsp_navbar_no_view($back);
     $view_id = 0;
@@ -68,8 +68,7 @@ if ($usr->id > 0) {
     // show the word name
     $wrd = new word($usr);
     if ($word_id > 0) {
-        $wrd->id = $word_id;
-        $wrd->load_obj_vars();
+        $wrd->load_by_id($word_id);
         $result .= dsp_text_h2('Select the display format for "' . $wrd->name() . '"');
     } else {
         $result .= dsp_text_h2('The word is missing for which the display format should be changed. If you can explain how to reproduce this error message, please report the steps on https://github.com/zukunft/zukunft.com/issues.');
@@ -77,7 +76,7 @@ if ($usr->id > 0) {
 
     // allow to change to type
     $dsp = new view($usr);
-    $dsp->id = $view_id;
+    $dsp->set_id($view_id);
     $result .= $dsp->selector_page($word_id, $back);
 
     // show the changes

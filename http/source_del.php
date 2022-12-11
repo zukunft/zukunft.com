@@ -51,7 +51,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::SOURCE_DEL);
+    $dsp->set_id(cl(db_cl::VIEW, view::SOURCE_DEL));
     $dsp->load_obj_vars();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
@@ -63,7 +63,7 @@ if ($usr->id > 0) {
 
         // create the source object to have an object to update the parameters
         $src = new source($usr);
-        $src->id = $src_id;
+        $src->set_id($src_id);
         $src->load_obj_vars();
 
         if ($confirm == 1) {
@@ -74,7 +74,7 @@ if ($usr->id > 0) {
             // display the view header
             $result .= $dsp->dsp_navbar($back);
 
-            $result .= \html\btn_yesno("Delete " . $src->name . "? ", "/http/source_del.php?id=" . $src_id . "&back=" . $back);
+            $result .= \html\btn_yesno("Delete " . $src->name() . "? ", "/http/source_del.php?id=" . $src_id . "&back=" . $back);
         }
     } else {
         $result .= dsp_go_back($back, $usr);

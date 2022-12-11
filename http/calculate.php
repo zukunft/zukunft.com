@@ -66,7 +66,7 @@ if ($usr->id > 0) {
         // load the formulas to calculate
         $frm_lst = new formula_list($usr);
         $frm_lst->load_all($block_size, $page);
-        echo "Calculate " . dsp_count($frm_lst->lst) . " formulas<br>";
+        echo "Calculate " . dsp_count($frm_lst->lst()) . " formulas<br>";
 
         foreach ($frm_lst as $frm_request) {
 

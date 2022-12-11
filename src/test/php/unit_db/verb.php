@@ -44,6 +44,25 @@ class verb_unit_db_tests
 
         $t->header('Unit database tests of the verb class (src/main/php/model/verb/verb.php)');
 
+        $t->subheader('Verb tests');
+
+        // test if loading by code id and id result in the same name
+        $vrb = new verb();
+        $vrb->load_by_code_id(verb::IS_A);
+        $vrb_id = new verb();
+        $vrb_id->load_by_id($vrb->id());
+        $t->assert('load' . verb::IS_A, $vrb->name(), $vrb_id->name());
+
+        // test the selection of the members via 'is a' verb
+        $country = new word($usr);
+        $country->load_by_name(word::TN_READ_COUNTRY);
+        $countries = $country->children();
+        $t->assert_contains('is a based on ' . word::TN_READ_COUNTRY,
+            $countries->names(),
+            array(word::TN_READ_SWITZERLAND, word::TN_READ_GERMANY)
+        );
+
+
         $t->subheader('Verb list tests');
         $t->name = 'verb list read db->';
 

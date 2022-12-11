@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit_db/protection.php - database unit testing of the protection handling
-  ---------------------
+    test/unit_db/protection.php - database unit testing of the protection handling
+    ---------------------------
 
 
     This file is part of zukunft.com - calc with words

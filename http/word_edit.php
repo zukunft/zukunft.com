@@ -51,16 +51,15 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::WORD_EDIT);
+    $dsp->set_id(cl(db_cl::VIEW, view::WORD_EDIT));
     $dsp->load_obj_vars();
     $back = $_GET['back']; // the word id from which this value change has been called (maybe later any page)
 
     // create the word object to have an place to update the parameters
     $wrd = new word($usr);
-    $wrd->id = $_GET['id'];
-    $wrd->load_obj_vars();
+    $wrd->load_by_id($_GET['id']);
 
-    if ($wrd->id <= 0) {
+    if ($wrd->id() <= 0) {
         $result .= log_info("The word id must be set to display a word.", "word_edit.php", '', (new Exception)->getTraceAsString(), $usr);
     } else {
 

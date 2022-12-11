@@ -62,15 +62,8 @@ class word_unit_tests
         // sql to load the word by id
         $wrd = new word($usr);
         $wrd->set_id(2);
-        //$t->assert_load_sql($db_con, $wrd);
         $t->assert_load_standard_sql($db_con, $wrd);
         $t->assert_not_changed_sql($db_con, $wrd);
-
-        // sql to load the word by name
-        $wrd = new word($usr);
-        $wrd->set_id(0);
-        $wrd->set_name(word::TN_READ);
-        //$t->assert_load_sql($db_con, $wrd);
 
         // get the most often used view
         $db_con->db_type = sql_db::POSTGRES;

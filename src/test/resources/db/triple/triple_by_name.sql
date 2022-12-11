@@ -20,4 +20,5 @@ PREPARE triple_by_name (int, text) AS
            FROM triples s
       LEFT JOIN user_triples u ON s.triple_id = u.triple_id
             AND u.user_id = $1
-          WHERE s.triple_name = $2;
+          WHERE (u.triple_name = $2
+             OR (s.triple_name = $2 AND u.triple_name IS NULL));

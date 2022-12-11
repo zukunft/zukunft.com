@@ -103,11 +103,11 @@ class formula_element_unit_tests
      * @param int $frm_id id of the formula to be used for the query creation
      * @return void
      */
-    private function assert_sql_by_frm_and_type_id(testing $t,
-                                                   sql_db $db_con,
+    private function assert_sql_by_frm_and_type_id(testing              $t,
+                                                   sql_db               $db_con,
                                                    formula_element_list $lst,
-                                                   int $frm_id,
-                                                   int $elm_type_id)
+                                                   int                  $frm_id,
+                                                   int                  $elm_type_id)
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;
