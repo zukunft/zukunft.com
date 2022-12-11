@@ -718,9 +718,8 @@ class triple extends user_sandbox_link_named_with_type implements \JsonSerializa
         } else {
             if ($this->verb->id <> 0 and !is_null($this->user()->id)) {
                 $vrb = new verb;
-                $vrb->id = $this->verb->id;
                 $vrb->set_user($this->user());
-                $vrb->load_by_vars();
+                $vrb->load_by_id($this->verb->id);
                 $this->verb = $vrb;
                 $this->verb->name = $vrb->name;
                 log_debug('triple->load_objects -> verb ' . $this->verb->name);
@@ -970,16 +969,17 @@ class triple extends user_sandbox_link_named_with_type implements \JsonSerializa
             }
             if ($key == self::FLD_EX_VERB) {
                 $vrb = new verb;
-                $vrb->name = $value;
                 $vrb->set_user($this->user());
                 if ($result->is_ok() and $do_save) {
-                    $vrb->load_by_vars();
+                    $vrb->load_by_name($value);
                     if ($vrb->id <= 0) {
                         $result->add_message('verb "' . $value . '" not found');
                         if ($this->name <> '') {
                             $result->add_message('for triple "' . $this->name . '"');
                         }
                     }
+                } else {
+                    $vrb->name = $value;
                 }
                 $this->verb = $vrb;
             }

@@ -92,9 +92,8 @@ function run_graph_test(testing $t)
     $ZH = new word($usr);
     $ZH->load_by_name(word::TN_ZH, word::class);
     $is = new verb;
-    $is->id = cl(db_cl::VERB, verb::IS_A);
     $is->set_user($usr);
-    $is->load_by_vars();
+    $is->load_by_code_id(verb::IS_A);
     $graph = new triple_list($usr);
     $graph->wrd = $ZH;
     $graph->vrb = $is;

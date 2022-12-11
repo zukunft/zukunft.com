@@ -51,15 +51,14 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::VERB_EDIT);
+    $dsp->set_id(cl(db_cl::VIEW, view::VERB_EDIT));
     $dsp->load_obj_vars();
     $back = $_GET['back']; // the original calling page that should be shown after the change is finished
 
     // create the verb object to have an place to update the parameters
     $vrb = new verb;
-    $vrb->id = $_GET['id'];
     $vrb->set_user($usr);
-    $vrb->load_by_vars();
+    $vrb->load_by_id($_GET['id']);
 
     if ($vrb->id <= 0) {
         $result .= log_err("No verb found to change because the id is missing.", "verb_edit.php");

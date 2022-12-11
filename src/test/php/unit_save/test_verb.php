@@ -30,7 +30,7 @@
 
 */
 
-function run_verb_test(testing $t)
+function run_verb_test(testing $t): void
 {
 
     global $usr;
@@ -39,9 +39,8 @@ function run_verb_test(testing $t)
 
     // check the loading of the "is a" verb
     $vrb = new verb;
-    $vrb->id = cl(db_cl::VERB, verb::IS_A);
     $vrb->set_user($usr);
-    $vrb->load_by_vars();
+    $vrb->load_by_id(cl(db_cl::VERB, verb::IS_A));
     $target = 'is a';
     $result = $vrb->name;
     $t->dsp('verb->load ', $target, $result);

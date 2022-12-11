@@ -151,41 +151,44 @@ class term extends db_object
     /**
      * set the term id based id the word, triple, verb or formula id
      *
-     * @param int $id the object id that is converted to the term id
+     * @param int|null $id the object id that is converted to the term id
      * @param string $class the class of the term object
      * @return void
      */
-    function set_id_from_obj(int $id, string $class): void
+    function set_id_from_obj(?int $id, string $class): void
     {
-        if ($class == word::class) {
-            if ($this->obj == null) {
-                $this->obj = new word($this->user());
+        if ($id != null) {
+            if ($class == word::class) {
+                if ($this->obj == null) {
+                    $this->obj = new word($this->user());
+                }
+                $this->id = ($id * 2) - 1;
+            } elseif ($class == triple::class) {
+                if ($this->obj == null) {
+                    $this->obj = new triple($this->user());
+                }
+                $this->id = ($id * -2) + 1;
+            } elseif ($class == formula::class) {
+                if ($this->obj == null) {
+                    $this->obj = new formula($this->user());
+                }
+                $this->id = ($id * 2);
+            } elseif ($class == verb::class) {
+                if ($this->obj == null) {
+                    $this->obj = new verb();
+                }
+                $this->id = ($id * -2);
             }
-            $this->id = ($id * 2) - 1;
-        } elseif ($class == triple::class) {
-            if ($this->obj == null) {
-                $this->obj = new triple($this->user());
-            }
-            $this->id = ($id * -2) + 1;
-        } elseif ($class == formula::class) {
-            if ($this->obj == null) {
-                $this->obj = new formula($this->user());
-            }
-            $this->id = ($id * 2);
-        } elseif ($class == verb::class) {
-            if ($this->obj == null) {
-                $this->obj = new verb();
-            }
-            $this->id = ($id * -2);
+            $this->obj->set_id($id);
         }
-        $this->obj->set_id($id);
     }
 
     /**
      * set the id of the word, triple, formula or verb object based on the term id
      * @return void
      */
-    private function set_obj_id(): void
+    private
+    function set_obj_id(): void
     {
         $this->obj->id = $this->id_obj();
     }
@@ -194,7 +197,8 @@ class term extends db_object
      * create the expected object based on the id
      * @return void
      */
-    private function set_obj_from_id(): void
+    private
+    function set_obj_from_id(): void
     {
         if ($this->id > 0) {
             if ($this->id % 2 == 0) {
@@ -218,7 +222,8 @@ class term extends db_object
      * @param string $class the calling class name
      * @return void
      */
-    private function set_obj(string $class): void
+    private
+    function set_obj(string $class): void
     {
         if ($class == word::class) {
             $this->obj = new word($this->user());
@@ -395,7 +400,8 @@ class term extends db_object
     /**
      * @return phrase the word or triple cast as a phrase
      */
-    public function phrase(): phrase
+    public
+    function phrase(): phrase
     {
         $phr = new phrase($this->user());
         if ($this->is_word()) {
@@ -421,7 +427,8 @@ class term extends db_object
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql_db $db_con, string $query_name): sql_par
+    private
+    function load_sql(sql_db $db_con, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -474,7 +481,8 @@ class term extends db_object
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
-    private function load(sql_par $qp): int
+    private
+    function load(sql_par $qp): int
     {
         global $db_con;
 
@@ -554,7 +562,8 @@ class term extends db_object
      * simply load a word
      * (separate functions for loading  for a better overview)
      */
-    private function load_word_by_id(int $id): bool
+    private
+    function load_word_by_id(int $id): bool
     {
         $result = false;
         $wrd = new word($this->user());
@@ -574,7 +583,8 @@ class term extends db_object
     /**
      * simply load a triple
      */
-    private function load_triple_by_id(int $id, bool $including_triples): bool
+    private
+    function load_triple_by_id(int $id, bool $including_triples): bool
     {
         $result = false;
         if ($including_triples) {
@@ -592,7 +602,8 @@ class term extends db_object
      * simply load a formula
      * without fixing any missing related word issues
      */
-    private function load_formula_by_id(int $id): bool
+    private
+    function load_formula_by_id(int $id): bool
     {
         $result = false;
         $frm = new formula($this->user());
@@ -607,7 +618,8 @@ class term extends db_object
     /**
      * simply load a verb
      */
-    private function load_verb_by_id(int $id): bool
+    private
+    function load_verb_by_id(int $id): bool
     {
         $result = false;
         $vrb = new verb;
@@ -650,7 +662,8 @@ class term extends db_object
      * simply load a word by name
      * (separate functions for loading  for a better overview)
      */
-    private function load_word_by_name(string $name): bool
+    private
+    function load_word_by_name(string $name): bool
     {
         $result = false;
         $wrd = new word($this->user());
@@ -670,7 +683,8 @@ class term extends db_object
     /**
      * simply load a triple by name
      */
-    private function load_triple_by_name(string $name, bool $including_triples): bool
+    private
+    function load_triple_by_name(string $name, bool $including_triples): bool
     {
         $result = false;
         if ($including_triples) {
@@ -688,7 +702,8 @@ class term extends db_object
      * simply load a formula by name
      * without fixing any missing related word issues
      */
-    private function load_formula_by_name(string $name): bool
+    private
+    function load_formula_by_name(string $name): bool
     {
         $result = false;
         $frm = new formula($this->user());
@@ -703,7 +718,8 @@ class term extends db_object
     /**
      * simply load a verb by name
      */
-    private function load_verb_by_name(string $name): bool
+    private
+    function load_verb_by_name(string $name): bool
     {
         $result = false;
         $vrb = new verb;
@@ -724,7 +740,8 @@ class term extends db_object
     /**
      * @return bool true if this term is a word or supposed to be a word
      */
-    public function is_word(): bool
+    public
+    function is_word(): bool
     {
         $result = false;
         if (isset($this->obj)) {
@@ -738,7 +755,8 @@ class term extends db_object
     /**
      * @return bool true if this term is a triple or supposed to be a triple
      */
-    public function is_triple(): bool
+    public
+    function is_triple(): bool
     {
         $result = false;
         if (isset($this->obj)) {
@@ -752,7 +770,8 @@ class term extends db_object
     /**
      * @return bool true if this term is a formula or supposed to be a triple
      */
-    public function is_formula(): bool
+    public
+    function is_formula(): bool
     {
         $result = false;
         if (isset($this->obj)) {
@@ -766,7 +785,8 @@ class term extends db_object
     /**
      * @return bool true if this term is a verb or supposed to be a triple
      */
-    public function is_verb(): bool
+    public
+    function is_verb(): bool
     {
         $result = false;
         if (isset($this->obj)) {
@@ -781,7 +801,8 @@ class term extends db_object
      * conversion
      */
 
-    public function get_word(): word
+    public
+    function get_word(): word
     {
         $wrd = new word($this->user());
         if (get_class($this->obj) == word::class) {
@@ -790,7 +811,8 @@ class term extends db_object
         return $wrd;
     }
 
-    public function get_triple(): triple
+    public
+    function get_triple(): triple
     {
         $lnk = new triple($this->user());
         if (get_class($this->obj) == triple::class) {
@@ -799,7 +821,8 @@ class term extends db_object
         return $lnk;
     }
 
-    public function get_formula(): formula
+    public
+    function get_formula(): formula
     {
         $frm = new formula($this->user());
         if (get_class($this->obj) == formula::class) {
@@ -808,7 +831,8 @@ class term extends db_object
         return $frm;
     }
 
-    public function get_verb(): verb
+    public
+    function get_verb(): verb
     {
         $vrb = new verb();
         if (get_class($this->obj) == verb::class) {

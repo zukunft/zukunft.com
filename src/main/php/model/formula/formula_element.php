@@ -158,9 +158,8 @@ class formula_element extends db_object
             }
             if ($this->type == self::TYPE_VERB) {
                 $lnk = new verb;
-                $lnk->id = $id;
                 $lnk->set_user($this->usr);
-                $lnk->load_by_vars();
+                $lnk->load_by_id($id);
                 $this->symbol = expression::TRIPLE_START . $lnk->id . expression::TRIPLE_END;
                 $this->obj = $lnk;
             }

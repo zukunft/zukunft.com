@@ -951,9 +951,8 @@ class expression
                 // check for verbs
                 if ($db_sym == '') {
                     $vrb = new verb;
-                    $vrb->name = $name;
                     $vrb->set_user($this->usr);
-                    $vrb->load_by_vars();
+                    $vrb->load_by_name($name);
                     if ($vrb->id > 0) {
                         $db_sym = self::VERB_START . $vrb->id . self::VERB_END;
                         log_debug('found verb "' . $db_sym . '" for "' . $name . '"');
@@ -1087,9 +1086,8 @@ class expression
                 $vrb = $trm_lst?->verb_by_id($id);
                 if ($vrb == null) {
                     $vrb = new verb;
-                    $vrb->id = $id;
                     $vrb->set_user($this->usr);
-                    $vrb->load_by_vars();
+                    $vrb->load_by_id($id);
                     if ($vrb->id() == 0) {
                         $vrb = null;
                     }

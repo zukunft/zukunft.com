@@ -50,22 +50,13 @@ class verb_unit_tests
 
         $vrb = new verb();
         $t->assert_load_sql_id($db_con, $vrb);
-        //$t->assert_load_sql_name($db_con, $vrb);
+        $t->assert_load_sql_name($db_con, $vrb);
+        $t->assert_load_sql_code_id($db_con, $vrb);
 
         // sql to load a verb by id
         //$vrb = new verb();
         //$vrb->id = 4;
         //$t->assert_load_sql($db_con, $vrb);
-
-        // sql to load a verb by code id
-        $vrb = new verb();
-        $vrb->code_id = verb::FOLLOW;
-        $t->assert_load_sql($db_con, $vrb);
-
-        // sql to load a source by name
-        $vrb = new verb();
-        $vrb->name = verb::FOLLOW;
-        $t->assert_load_sql($db_con, $vrb);
 
 
         $t->header('Unit tests of the verb list class (src/main/php/model/verb/verb_list.php)');
@@ -96,7 +87,9 @@ class verb_unit_tests
      * @param phrase $phr the phrase used for testing
      * @param string $direction
      */
-    private function assert_load_by_linked_phrases_sql(testing $t, sql_db $db_con, verb_list $vrb_lst, phrase $phr, string $direction)
+    private function assert_load_by_linked_phrases_sql(
+        testing $t, sql_db $db_con, verb_list $vrb_lst, phrase $phr, string $direction
+    ): void
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;

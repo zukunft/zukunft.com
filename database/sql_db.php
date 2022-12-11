@@ -3138,10 +3138,11 @@ class sql_db
     /**
      * create a SQL select statement for the connected database
      * to detect if someone else has used the object
-     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
-     * @return string the created SQL statement in the previous set dialect
+     * @param int|null $id the unique database id if the object to check
+     * @param int $owner_id the user id of the owner of the object
+     * @return sql_par the created SQL statement in the previous set dialect
      */
-    function not_changed_sql(int $id, int $owner_id = 0): sql_par
+    function not_changed_sql(?int $id, int $owner_id = 0): sql_par
     {
         $qp = new sql_par($this->type);
         $qp->name .= 'not_changed';
@@ -3153,7 +3154,7 @@ class sql_db
         $this->set_table();
         $this->set_id_field();
         $this->set_fields(array(sql_db::FLD_USER_ID));
-        if ($id == 0) {
+        if ($id == 0 or $id == null) {
             log_err('The id must be set to detect if the link has been changed');
         } else {
             $this->add_par(sql_db::PAR_INT, $id);

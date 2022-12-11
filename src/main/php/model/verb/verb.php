@@ -2,33 +2,33 @@
 
 /*
 
-  verb.php - predicate object to link two words
-  --------
+    verb.php - predicate object to link two words
+    --------
 
-  TODO maybe move the reverse to a linked predicate
-  
-  This file is part of zukunft.com - calc with words
+    TODO maybe move the reverse to a linked predicate
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
 use api\verb_api;
@@ -185,8 +185,8 @@ class verb
 
     /**
      * set the most used object vars with one set statement
-     * @param int $id mainly for test creation the database id of the word
-     * @param string $name mainly for test creation the name of the word
+     * @param int $id mainly for test creation the database id of the verb
+     * @param string $name mainly for test creation the name of the verb
      */
     public function set(int $id = 0, string $name = ''): void
     {
@@ -325,7 +325,7 @@ class verb
      * create an SQL statement to retrieve a verb by name from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param string $name the name of the term and the related word, triple, formula or verb
+     * @param string $name the name of the verb
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_name(sql_db $db_con, string $name): sql_par
@@ -343,68 +343,20 @@ class verb
     }
 
     /**
-     * create the SQL to load a verb by one of the object vars which means id, name or code_id
+     * create an SQL statement to retrieve a verb by code id from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $code_id the code id of the verb
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_by_code_id(sql_db $db_con, string $code_id): sql_par
     {
-        global $usr;
-
-        $db_con->set_type(sql_db::TBL_VERB);
-        $qp = new sql_par($class);
-        if ($this->id != 0) {
-            $qp->name .= 'id';
-        } elseif ($this->code_id != '') {
-            $qp->name .= 'code_id';
-        } elseif ($this->name != '') {
-            $qp->name .= 'name';
-        } else {
-            log_err('Either the id, code_id or name must be set to load a verb');
-            $qp->name = '';
-        }
-
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($usr->id);
-        $db_con->set_fields(self::FLD_NAMES);
-        if ($this->id != 0) {
-            $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select_by_set_id();
-        } elseif ($this->code_id != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, $this->code_id);
-            $qp->sql = $db_con->select_by_code_id();
-        } else {
-            $db_con->add_par(sql_db::PAR_TEXT, $this->name);
-            $sql_where = '( ' . self::FLD_NAME . ' = ' . $db_con->par_name();
-            $db_con->add_par(sql_db::PAR_TEXT, $this->name);
-            $sql_where .= ' OR ' . self::FLD_FORMULA . ' = ' . $db_con->par_name() . ')';
-            $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select_by_set_id();
-        }
+        $qp = $this->load_sql($db_con, 'code_id');
+        $db_con->add_par(sql_db::PAR_TEXT, $this->code_id);
+        $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
-    }
-
-    /**
-     * load the missing verb parameters from the database
-     * @returns bool true if the verbs object is successfully filled from database
-     */
-    function load_by_vars(): bool
-    {
-
-        global $db_con;
-        $result = false;
-
-        $qp = $this->load_sql_obj_vars($db_con);
-
-        if ($qp->name != '') {
-            $db_row = $db_con->get1($qp);
-            $result = $this->row_mapper($db_row);
-            log_debug('verb->load (' . $this->dsp_id() . ')');
-        }
-        return $result;
     }
 
     /**
@@ -423,7 +375,7 @@ class verb
 
     /**
      * load a verb by database id
-     * @param int $id the id of the word, triple, formula, verb, view or view component
+     * @param int $id the id of the verb
      * @return int the id of the object found and zero if nothing is found
      */
     function load_by_id(int $id): int
@@ -446,6 +398,20 @@ class verb
 
         log_debug($name);
         $qp = $this->load_sql_by_name($db_con, $name);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a verb by the verb name
+     * @param string $code_id the code id of the verb
+     * @return int the id of the verb found and zero if nothing is found
+     */
+    function load_by_code_id(string $code_id): int
+    {
+        global $db_con;
+
+        log_debug($code_id);
+        $qp = $this->load_sql_by_code_id($db_con, $code_id);
         return $this->load($qp);
     }
 
@@ -495,7 +461,7 @@ class verb
             }
         }
 
-        // save the word in the database
+        // save the verb in the database
         if ($do_save) {
             $result->add_message($this->save());
         }
@@ -539,7 +505,7 @@ class verb
         return '<a href="/http/verb_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
     }
 
-    // returns the html code to select a word link type
+    // returns the html code to select a verb link type
     // database link must be open
     function dsp_selector($side, $form, $class, $back): string
     {
@@ -1061,9 +1027,8 @@ class verb
             // read the database values to be able to check if something has been changed; done first,
             // because it needs to be done for user and general formulas
             $db_rec = new verb;
-            $db_rec->id = $this->id;
             $db_rec->usr = $this->usr;
-            $db_rec->load_by_vars();
+            $db_rec->load_by_id($this->id);
             log_debug("verb->save -> database verb loaded (" . $db_rec->name . ")");
 
             // if the name has changed, check if verb, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
@@ -1111,23 +1076,34 @@ class verb
         global $db_con;
         $result = '';
 
-        if ($this->load_by_vars()) {
+        // reload only if needed
+        if ($this->name == '') {
             if ($this->id > 0) {
-                log_debug('verb->del ' . $this->dsp_id());
-                if ($this->can_change()) {
-                    $log = $this->log_del();
-                    if ($log->id > 0) {
-                        //$db_con = new mysql;
-                        $db_con->usr_id = $this->user()->id;
-                        $db_con->set_type(sql_db::TBL_VERB);
-                        $result = $db_con->delete(self::FLD_ID, $this->id);
-                    }
-                } else {
-                    // TODO: create a new verb and request to delete the old
-                    log_err('Creating a new verb is not yet possible');
-                }
+                $this->load_by_id($this->id);
+            } else {
+                log_err('Cannot delete verb, because neither the id or name is given');
+            }
+        } else {
+            if ($this->id == 0) {
+                $this->load_by_name($this->name);
             }
         }
+
+        if ($this->id > 0) {
+            log_debug('verb->del ' . $this->dsp_id());
+            if ($this->can_change()) {
+                $log = $this->log_del();
+                if ($log->id > 0) {
+                    $db_con->usr_id = $this->user()->id;
+                    $db_con->set_type(sql_db::TBL_VERB);
+                    $result = $db_con->delete(self::FLD_ID, $this->id);
+                }
+            } else {
+                // TODO: create a new verb and request to delete the old
+                log_err('Creating a new verb is not yet possible');
+            }
+        }
+
         return $result;
     }
 

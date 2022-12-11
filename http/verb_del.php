@@ -51,7 +51,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->id = cl(db_cl::VIEW, view::VERB_DEL);
+    $dsp->set_id(cl(db_cl::VIEW, view::VERB_DEL));
     $dsp->load_obj_vars();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
@@ -63,9 +63,8 @@ if ($usr->id > 0) {
 
         // create the verb object to have an object to update the parameters
         $vrb = new verb;
-        $vrb->id = $vrb_id;
         $vrb->set_user($usr);
-        $vrb->load_by_vars();
+        $vrb->load_by_id($vrb_id);
 
         if ($confirm == 1) {
             $vrb->del();
