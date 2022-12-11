@@ -67,12 +67,12 @@ if ($usr->id > 0) {
         // --------------------------------------------------
 
         // prepare testing
-        $t = new testing();
-        init_unit_db_tests($t);
+        $t = new test_unit_read_db();
+        $t->init_unit_db_tests();
 
         load_usr_data();
 
-        run_unit_db_tests($t);
+        $t->run_unit_db_tests();
 
         // display the test results
         $t->dsp_result_html();

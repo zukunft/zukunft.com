@@ -30,26 +30,33 @@
 
 */
 
-function run_sql_db_unit_db_tests(testing $t)
+class sql_db_unit_db_tests
 {
 
-    global $db_con;
+    function run(testing $t): void
+    {
 
-    $t->header('Unit database tests of the SQL abstraction layer class (database/sql_db.php)');
+        global $db_con;
 
-    $t->subheader('Database upgrade functions');
+        // init
+        $t->name = 'sql read db->';
 
-    $result = $db_con->has_column('user_values','user_value');
-    $target = false;
-    $t->dsp('sql_db->change_column_name', $target, $result);
+        $t->header('Unit database tests of the SQL abstraction layer class (database/sql_db.php)');
 
-    $result = $db_con->has_column('user_values','word_value');
-    $target = true;
-    $t->dsp('sql_db->change_column_name', $target, $result);
+        $t->subheader('Database upgrade functions');
 
-    $result = $db_con->change_column_name('user_values','user_value','word_value');
-    $target = '';
-    $t->dsp('sql_db->change_column_name', $target, $result);
+        $result = $db_con->has_column('user_values', 'user_value');
+        $t->assert('change_column_name', $result, false);
+
+        $result = $db_con->has_column('user_values', 'word_value');
+        $t->assert('change_column_name', $result, true);
+
+        $result = $db_con->change_column_name(
+            'user_values', 'user_value', 'word_value'
+        );
+        $t->assert('change_column_name', $result, '');
+
+    }
 
 }
 

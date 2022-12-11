@@ -32,39 +32,43 @@
 
 use cfg\phrase_type;
 
-function run_ref_unit_db_tests(testing $t): void
+class ref_unit_db_tests
 {
 
-    global $db_con;
+    function run(testing $t): void
+    {
 
-    // init
-    $t->header('Unit database tests of the ref class (src/main/php/model/ref/ref.php)');
-    $t->name = 'unit_db_ref->';
+        global $db_con;
 
-    $t->subheader('Reference types tests');
+        // init
+        $t->header('Unit database tests of the ref class (src/main/php/model/ref/ref.php)');
+        $t->name = 'ref read db->';
 
-    // load the ref types
-    $lst = new ref_type_list();
-    $result = $lst->load($db_con);
-    $t->dsp('unit_db_ref->load_types', true, $result);
+        $t->subheader('Reference types tests');
 
-    // ... and check if at least the most critical is loaded
-    // TODO check
-    $result = cl(db_cl::PHRASE_TYPE, phrase_type::NORMAL);
-    $target = 1;
-    $t->dsp('unit_db_ref->check ' . phrase_type::NORMAL, $result, $target);
+        // load the ref types
+        $lst = new ref_type_list();
+        $result = $lst->load($db_con);
+        $t->assert('load_types', $result, true);
+
+        // ... and check if at least the most critical is loaded
+        // TODO check
+        $result = cl(db_cl::PHRASE_TYPE, phrase_type::NORMAL);
+        $t->assert('check ' . phrase_type::NORMAL, $result, 1);
 
 
-    $t->subheader('Source types tests');
+        $t->subheader('Source types tests');
+        $t->name = 'source read db->';
 
-    // load the source types
-    $lst = new source_type_list();
-    $result = $lst->load($db_con);
-    $t->assert('load_source_types', $result, true);
+        // load the source types
+        $lst = new source_type_list();
+        $result = $lst->load($db_con);
+        $t->assert('load_source_types', $result, true);
 
-    // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::SOURCE_TYPE, source_type::XBRL);
-    $t->assert('check ' . source_type::XBRL, $result, 2);
+        // ... and check if at least the most critical is loaded
+        $result = cl(db_cl::SOURCE_TYPE, source_type::XBRL);
+        $t->assert('check ' . source_type::XBRL, $result, 2);
+    }
 
 }
 

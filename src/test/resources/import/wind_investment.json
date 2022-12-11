@@ -199,7 +199,7 @@
     {
       "name": "Full load hours",
       "from": "hour",
-      "verb": "of",
+      "verb": "with",
       "to": "full load"
     },
     {

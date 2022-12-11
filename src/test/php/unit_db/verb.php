@@ -30,40 +30,52 @@
 
 */
 
-function run_verb_unit_db_tests(testing $t)
+class verb_unit_db_tests
 {
 
-    global $db_con;
-    global $usr;
+    function run(testing $t): void
+    {
 
-    $t->header('Unit database tests of the verb class (src/main/php/model/verb/verb.php)');
+        global $db_con;
+        global $usr;
 
-    $t->subheader('Verb list tests');
+        // init
+        $t->name = 'verb read db->';
 
-    // load the verb types
-    $lst = new verb_list($usr);
-    $result = $lst->load($db_con);
-    $target = true;
-    $t->dsp('unit_db_verb_list->load', $target, $result);
+        $t->header('Unit database tests of the verb class (src/main/php/model/verb/verb.php)');
 
-    // ... and check if at least the most critical verb is loaded
-    $result = cl(db_cl::VERB, verb::IS_A);
-    // just check if the verb is around, because the posiion may vary depending on the historic creation of the database
-    if ($result > 0) {
-        $target = $result;
+        $t->subheader('Verb list tests');
+        $t->name = 'verb list read db->';
+
+        // load the verb types
+        $lst = new verb_list($usr);
+        $result = $lst->load($db_con);
+        $t->assert('load', $result, true);
+
+        // ... and check if at least the most critical verb is loaded
+        $result = cl(db_cl::VERB, verb::IS_A);
+        // just check if the verb is around, because the position may vary depending on the historic creation of the database
+        $target = 0;
+        if ($result > 0) {
+            $target = $result;
+        }
+        $t->assert('check ' . verb::IS_A, $result, $target);
+
+        $select_list = $lst->selector_list();
+        $top_verb = $select_list[0]; // the most often verb should be on the top
+        $result = $top_verb[1]; // the name of the verb is always on second place
+        // TODO check why this differs depending on the database used
+        if ($result == 'is an acronym for') {
+            $target = 'is an acronym for';
+        } else {
+            if ($result == 'is a') {
+                $target = 'is a';
+            } else {
+                $target = 'not set';
+            }
+        }
+        $t->assert('selector list ' . verb::IS_A, $result, $target);
     }
-    $t->dsp('unit_db_verb_list->check ' . verb::IS_A, $result, $target);
-
-    $select_list = $lst->selector_list('forward');
-    $top_verb = $select_list[0]; // the most often verb should be on the top
-    $result = $top_verb[1]; // the name of the verb is always on second place
-    // TODO check why this differs depending on the database used
-    if ($result = 'is a') {
-        $target = 'is a';
-    } else {
-        $target = 'not set';
-    }
-    $t->dsp('unit_db_verb_list->selector_list ' . verb::IS_A, $result, $target);
 
 }
 

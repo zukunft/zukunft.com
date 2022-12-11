@@ -61,6 +61,14 @@
       "name_reverse": "contains"
     },
     {
+      "name": "with",
+      "code_id": "with",
+      "description": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load",
+      "name_plural": "with",
+      "name_plural_reverse": "",
+      "name_reverse": ""
+    },
+    {
       "name": "uses",
       "code_id": "",
       "name_plural_reverse": "are used by",
@@ -142,14 +150,6 @@
       "code_id": "per",
       "description": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty",
       "name_plural": "per",
-      "name_plural_reverse": "",
-      "name_reverse": ""
-    },
-    {
-      "name": "of",
-      "code_id": "of",
-      "description": "the time duration of a status for comparing same by same e.g. 1 hour of full load is the same as 2 hours of half load",
-      "name_plural": "of",
       "name_plural_reverse": "",
       "name_reverse": ""
     }

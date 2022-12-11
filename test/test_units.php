@@ -2,10 +2,13 @@
 
 /*
 
-    test_units.php - for fast internal code consistency TESTing of the technical library functions without database connection
-    ------------
+    test_units.php - interface for fast internal code consistency TESTing
+    --------------
 
-    because these tests are done without the database, we don't care if the is called by anybody, so we don't need the admin user test
+    the technical library functions without database connection
+    because these tests are done without the database,
+    we don't care if the is called by anybody,
+    so we don't need the admin user test
 
 
     This file is part of zukunft.com - calc with words

@@ -2,8 +2,8 @@
 
 /*
 
-    test/php/api/word.php - TESTing of the API U
-    ---------------------
+    /test/php/unit_save/expression.php - TESTing of the expression function that only read from the database
+    ----------------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -30,24 +30,29 @@
 
 */
 
-// --------------------------------------
-// start testing the system functionality 
-// --------------------------------------
+use api\formula_api;
 
-function run_api_test(testing $t): void
+class expression_unit_db_tests
 {
-    global $usr;
+    function run(testing $t): void
+    {
 
-    $t->assert_api_get(word::class);
-    $t->assert_api_get(verb::class);
-    $t->assert_api_get(triple::class);
-    $t->assert_api_get(value::class);
-    $t->assert_api_get(formula::class);
-    $t->assert_api_get(view::class);
-    $t->assert_api_get(view_cmp::class);
+        global $db_con;
+        global $usr;
 
-    $t->assert_api_get_list(phrase_list::class);
-    $t->assert_api_get_list(term_list::class, [1,-1]);
-    // $t->assert_rest(new word($usr, word::TN_READ));
+        // init
+        $t->name = 'expression->';
 
+        $t->header('Test the term class (src/main/php/model/formula/expression.php)');
+
+        /*
+        $frm = new formula($usr);
+        $frm->load_by_name(formula_api::TN_SECTOR, formula::class);
+        $result = $frm->usr_text;
+        $target = '= "' . word::TN_COUNTRY . '" "differentiator" "' . word::TN_CANTON . '" / "' . word::TN_TOTAL . '"';
+        $t->assert('expression->is_std if formula is changed by the user', $result, $target);
+        */
+
+    }
 }
+

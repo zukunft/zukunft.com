@@ -29,35 +29,41 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 use api\formula_api;
 use cfg\formula_type;
 
-function run_formula_unit_db_tests(testing $t)
+class formula_unit_db_tests
 {
 
-    global $db_con;
-    global $usr;
+    function run(testing $t): void
+    {
 
-    $t->header('Unit database tests of the formula class (src/main/php/model/formula/formula.php)');
+        global $db_con;
+        global $usr;
 
-    $t->subheader('formula types tests');
+        // init
+        $t->name = 'formula read db->';
 
-    // load the formula types
-    $lst = new formula_type_list();
-    $result = $lst->load($db_con);
-    $target = true;
-    $t->dsp('unit_db_formula->load_types', $target, $result);
+        $t->header('Unit database tests of the formula class (src/main/php/model/formula/formula.php)');
 
-    // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::FORMULA_TYPE, formula_type::CALC);
-    $target = 1;
-    $t->dsp('unit_db_formula->check ' . formula_type::CALC, $result, $target);
+        $t->subheader('formula types tests');
 
-    // check the estimates for the calculation blocks
-    $calc_blocks = (new formula_list($usr))->calc_blocks($db_con);
-    $t->assert_greater_zero('unit_db_formula->calc_blocks', $calc_blocks);
+        // load the formula types
+        $lst = new formula_type_list();
+        $result = $lst->load($db_con);
+        $t->assert('load_types', $result, true);
 
-    $t->subheader('Frontend API tests');
+        // ... and check if at least the most critical is loaded
+        $result = cl(db_cl::FORMULA_TYPE, formula_type::CALC);
+        $target = 1;
+        $t->assert('check ' . formula_type::CALC, $result, 1);
 
-    $frm = $t->load_formula(formula_api::TN_INCREASE);
-    $t->assert_api_exp($frm);
+        // check the estimates for the calculation blocks
+        $calc_blocks = (new formula_list($usr))->calc_blocks($db_con);
+        $t->assert_greater_zero('calc_blocks', $calc_blocks);
+
+        $t->subheader('Frontend API tests');
+
+        $frm = $t->load_formula(formula_api::TN_INCREASE);
+        $t->assert_api_exp($frm);
+    }
 
 }
 

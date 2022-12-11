@@ -34,19 +34,26 @@
 // start testing the system functionality 
 // --------------------------------------
 
-function run_term_list_test(testing $t): void
+class term_list_test
 {
 
-    global $usr;
+    function run(testing $t): void
+    {
 
-    $t->header('Test the term list class (classes/term_list.php)');
+        global $usr;
 
-    // test load by term list by ids
-    $trm_lst = new term_list($usr);
-    $trm_lst->load_by_ids((new trm_ids([1,-1])));
-    $result = $trm_lst->name();
-    $target = '"' . triple::TN_READ_NAME . '","' . word::TN_READ . '"'; // order adjusted based on the number of usage
-    $t->assert('term_list->load by ids for ' . $trm_lst->dsp_id(), $result, $target);
+        // init
+        $t->name = 'term list read db->';
+
+        $t->header('Test the term list class (classes/term_list.php)');
+
+        // test load by term list by ids
+        $trm_lst = new term_list($usr);
+        $trm_lst->load_by_ids((new trm_ids([1, -1])));
+        $result = $trm_lst->name();
+        $target = '"' . triple::TN_READ_NAME . '","' . word::TN_READ . '"'; // order adjusted based on the number of usage
+        $t->assert('load by ids for ' . $trm_lst->dsp_id(), $result, $target);
+    }
 
 }
 

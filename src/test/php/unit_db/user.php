@@ -30,25 +30,30 @@
 
 */
 
-function run_user_unit_db_tests(testing $t)
+class user_unit_db_tests
 {
 
-    global $db_con;
+    function run(testing $t): void
+    {
 
-    $t->header('Unit database tests of the user profile handling');
+        global $db_con;
 
-    $t->subheader('User profile tests');
+        // init
+        $t->name = 'unit read db->';
 
-    // load the user_profile types
-    $lst = new user_profile_list();
-    $result = $lst->load($db_con);
-    $target = true;
-    $t->dsp('unit_db_user_profile->load_types', $target, $result);
+        $t->header('Unit database tests of the user profile handling');
 
-    // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
-    $target = 1;
-    $t->dsp('unit_db_user_profile->check ' . user_profile::NORMAL, $result, $target);
+        $t->subheader('User profile tests');
+
+        // load the user_profile types
+        $lst = new user_profile_list();
+        $result = $lst->load($db_con);
+        $t->assert('user profile load types', $result, true);
+
+        // ... and check if at least the most critical is loaded
+        $result = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
+        $t->assert('user profile check ' . user_profile::NORMAL, $result, 1);
+    }
 
 }
 

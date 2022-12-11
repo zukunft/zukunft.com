@@ -30,29 +30,33 @@
 
 */
 
-function run_value_unit_db_tests(testing $t): void
+class value_unit_db_tests
 {
 
-    global $usr;
+    function run(testing $t): void
+    {
 
-    // init
-    $t->name = 'value->';
+        global $usr;
 
-    $t->header('Unit database tests of the value class (src/main/php/model/value/value.php)');
+        // init
+        $t->name = 'value->';
 
-    $t->subheader('Frontend API tests');
+        $t->header('Unit database tests of the value class (src/main/php/model/value/value.php)');
 
-    $val = new value($usr);
-    $val->load_by_id(1, value::class);
-    $val->load_objects();
-    $api_val = $val->api_obj();
-    $t->assert($t->name . 'api->id', $api_val->id, $val->id());
-    $t->assert($t->name . 'api->number', $api_val->number(), $val->number());
+        $t->subheader('Frontend API tests');
+
+        $val = new value($usr);
+        $val->load_by_id(1, value::class);
+        $val->load_objects();
+        $api_val = $val->api_obj();
+        $t->assert($t->name . 'api->id', $api_val->id, $val->id());
+        $t->assert($t->name . 'api->number', $api_val->number(), $val->number());
 
 
-    $phr_grp = $t->add_phrase_group(array(triple::TN_READ_NAME),phrase_group::TN_READ);
-    $val = $t->load_value_by_phr_grp($phr_grp);
-    $t->assert_api_exp($val);
+        $phr_grp = $t->add_phrase_group(array(triple::TN_READ_NAME), phrase_group::TN_READ);
+        $val = $t->load_value_by_phr_grp($phr_grp);
+        $t->assert_api_exp($val);
+    }
 
 }
 

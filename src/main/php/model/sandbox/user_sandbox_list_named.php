@@ -115,7 +115,7 @@ class user_sandbox_list_named extends sandbox_list
     {
         $result = false;
         if (!in_array($obj_to_add->name(), $this->name_pos_lst())) {
-            // if an sandbox object has a name, but not (yet) an id, add it nevertheless to the list
+            // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             if ($obj_to_add->id() == null) {
                 $this->lst[] = $obj_to_add;
                 $this->set_lst_dirty();

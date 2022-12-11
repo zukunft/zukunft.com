@@ -56,7 +56,6 @@ $path_test = $root_path . 'src/test/php/';     // the test base path
 $path_utils = $path_test . 'utils/';           // for the general tests and test setup
 $path_unit = $path_test . 'unit/';             // for unit tests
 $path_unit_db = $path_test . 'unit_db/';       // for the unit tests with database real only
-$path_unit_api = $path_test . 'api/';          // for the unit tests of the frontend API
 $path_unit_dsp = $path_test . 'unit_display/'; // for the unit tests that create HTML code
 $path_unit_ui = $path_test . 'unit_ui/';       // for the unit tests that create JSON messages for the frontend
 $path_unit_save = $path_test . 'unit_save/';   // for the unit tests that save to database (and cleanup the test data after completion)
@@ -110,7 +109,6 @@ include_once $path_unit . 'word_display.php';
 include_once $path_unit . 'word_list_display.php';
 include_once $path_unit . 'triple_display.php';
 include_once $path_unit . 'phrase_list_display.php';
-include_once $path_unit_api . 'word.php';
 include_once $path_unit_dsp . 'test_display.php';
 include_once $path_unit_dsp . 'type_lists.php';
 
@@ -125,6 +123,7 @@ include_once $path_unit_db . 'verb.php';
 include_once $path_unit_db . 'term.php';
 include_once $path_unit_db . 'value.php';
 include_once $path_unit_db . 'formula.php';
+include_once $path_unit_db . 'expression.php';
 include_once $path_unit_db . 'view.php';
 include_once $path_unit_db . 'ref.php';
 include_once $path_unit_db . 'share.php';
@@ -1101,6 +1100,36 @@ class test_base
         }
         return $result;
     }
+
+
+    /*
+     * do it
+     */
+
+
+    /**
+     * execute the API test using localhost
+     *
+     * @param testing $t
+     * @return void
+     */
+    function run_api_test(): void
+    {
+
+        $this->assert_api_get(word::class);
+        $this->assert_api_get(verb::class);
+        $this->assert_api_get(triple::class);
+        $this->assert_api_get(value::class);
+        $this->assert_api_get(formula::class);
+        $this->assert_api_get(view::class);
+        $this->assert_api_get(view_cmp::class);
+
+        $this->assert_api_get_list(phrase_list::class);
+        $this->assert_api_get_list(term_list::class, [1,-1]);
+        // $this->assert_rest(new word($usr, word::TN_READ));
+
+    }
+
 
     /*
      * Display functions

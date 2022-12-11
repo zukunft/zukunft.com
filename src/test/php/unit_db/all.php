@@ -2,10 +2,10 @@
 
 /*
 
-  all.php - run all unit database read only tests in a useful order
-  -----------------
-
-  the zukunft.com unit tests should test all class methods, that can be tested without writing to the database
+    /test/php/unit/test_unit_db.php - add tests to the unit test that read only from the database in a useful order
+    -------------------------------
+    
+    the zukunft.com unit tests should test all class methods, that can be tested without writing to the database
 
 
     This file is part of zukunft.com - calc with words
@@ -32,40 +32,44 @@
 
 */
 
-function init_unit_db_tests(testing $t): void
+class test_unit_read_db extends test_unit
 {
 
-    // add the database rows for read testing
-    $t->test_triple(
-        triple::TN_READ, verb::IS_A, word::TN_READ,
-        triple::TN_READ_NAME, triple::TN_READ_NAME
-    );
-    $phr_grp = $t->add_phrase_group(array(triple::TN_READ_NAME),phrase_group::TN_READ);
-    $t->test_value_by_phr_grp($phr_grp, value::TV_READ);
+    function run_unit_db_tests(): void
+    {
+        $this->header('Start the zukunft.com unit database read only tests');
 
-}
+        // do the database unit tests
+        (new system_unit_db_tests)->run($this);
+        (new sql_db_unit_db_tests)->run($this);
+        (new user_unit_db_tests)->run($this);
+        (new protection_unit_db_tests)->run($this);
+        (new share_unit_db_tests)->run($this);
+        (new word_unit_db_tests)->run($this);
+        (new verb_unit_db_tests)->run($this);
+        (new term_unit_db_tests)->run($this);
+        (new term_list_test)->run($this);
+        (new value_unit_db_tests)->run($this);
+        (new formula_unit_db_tests)->run($this);
+        (new expression_unit_db_tests)->run($this);
+        (new view_unit_db_tests)->run($this);
+        (new ref_unit_db_tests)->run($this);
 
-function run_unit_db_tests(testing $t): void
-{
-    $t->header('Start the zukunft.com unit database read only tests');
+        $this->run_api_test();
 
-    // do the database unit tests
-    run_system_unit_db_tests($t);
-    run_sql_db_unit_db_tests($t);
-    run_formula_unit_db_tests($t);
-    run_protection_unit_db_tests($t);
-    run_ref_unit_db_tests($t);
-    run_share_unit_db_tests($t);
-    run_user_unit_db_tests($t);
-    run_verb_unit_db_tests($t);
-    run_view_unit_db_tests($t);
-    run_word_unit_db_tests($t);
-    run_value_unit_db_tests($t);
+    }
 
-    (new term_unit_db_tests)->run($t);
-    run_term_list_test($t);
-    run_api_test($t);
+    function init_unit_db_tests(): void
+    {
 
-    run_value_unit_db_tests($t);
+        // add the database rows for read testing
+        $this->test_triple(
+            triple::TN_READ, verb::IS_A, word::TN_READ,
+            triple::TN_READ_NAME, triple::TN_READ_NAME
+        );
+        $phr_grp = $this->add_phrase_group(array(triple::TN_READ_NAME), phrase_group::TN_READ);
+        $this->test_value_by_phr_grp($phr_grp, value::TV_READ);
+
+    }
 
 }

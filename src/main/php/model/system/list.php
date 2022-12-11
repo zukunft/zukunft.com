@@ -120,10 +120,11 @@ class base_list
     public function get_by_id(int $id): ?object
     {
         $key_lst = $this->id_pos_lst();
-        $pos = $key_lst[$id];
-        if ($pos !== null) {
+        if (array_key_exists($id, $key_lst)) {
+            $pos = $key_lst[$id];
             return $this->lst[$pos];
         } else {
+            log_err($id . ' not found in ' . dsp_array($key_lst));
             return null;
         }
     }

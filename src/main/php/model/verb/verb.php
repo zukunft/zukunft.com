@@ -46,6 +46,7 @@ class verb
     // predefined word link types or verbs
     const IS_A = "is";
     const IS_PART_OF = "contains";
+    const IS_WITH = "with";
     const FOLLOW = "follow";
     const CAN_CONTAIN = "can_contain";
     const CAN_CONTAIN_NAME = "differentiator";

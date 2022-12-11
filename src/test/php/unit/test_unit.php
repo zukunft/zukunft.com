@@ -2,8 +2,8 @@
 
 /*
 
-    test_unit.php - add the unit tests to the main test class
-    -------------
+    /test/php/unit/test_unit.php - add the unit tests to the main test class
+    ----------------------------
 
     run all unit tests in a useful order
     the zukunft.com unit tests should test all class methods, that can be tested without database access
@@ -96,16 +96,16 @@ class test_unit extends testing
         (new phrase_group_unit_tests)->run($this);
         (new term_unit_tests)->run($this);
         (new term_list_unit_tests)->run($this);
-        (new view_unit_tests)->run($this);
         (new value_unit_tests)->run($this);
         (new value_list_unit_tests)->run($this);
         (new value_phrase_link_unit_tests)->run($this);
         (new formula_unit_tests)->run($this);
         (new formula_link_unit_tests)->run($this);
         (new formula_value_unit_tests)->run($this);
-        (new formula_element_unit_tests)->run($this);
         (new figure_unit_tests)->run($this);
+        (new formula_element_unit_tests)->run($this);
         (new expression_unit_tests)->run($this);
+        (new view_unit_tests)->run($this);
         (new view_component_unit_tests())->run($this);
         (new view_component_link_unit_tests)->run($this);
         (new ref_unit_tests)->run($this);

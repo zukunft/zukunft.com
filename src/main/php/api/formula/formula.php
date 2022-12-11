@@ -60,9 +60,9 @@ class formula_api extends user_sandbox_named_with_type_api
     const TN_READ_SCALE_MIO = 'scale millions to one';
     const TF_READ_SCALE_MIO = '"one" = "millions" * 1000000';
     const TR_SCALE_MIO = '{w1} = {w2} * 1000000';
-    const TN_CANTON_WEIGHT = 'weight of canton';
-    const TF_CANTON_WEIGHT = '= "Country" "differentiator" "Canton" / "Total"';
-    const TR_CANTON_WEIGHT = '={w1}{v2}{w3}/{w4}';
+    const TN_PARTS_IN_PERCENT = 'parts in percent';
+    const TF_PARTS_IN_PERCENT = '"percent" = "parts" "of" / "total"';
+    const TR_PARTS_IN_PERCENT = '{w1}={w2}{w3}/{w4}';
 
     // persevered formula names for unit and integration tests
     const TN_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula

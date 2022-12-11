@@ -30,55 +30,59 @@
 
 */
 
-function run_system_unit_db_tests(testing $t): void
+class system_unit_db_tests
 {
 
-    global $db_con;
+    function run(testing $t): void
+    {
 
-    $t->header('Unit database tests of the system functions');
+        global $db_con;
 
-    $t->subheader('System error log tests');
+        // init
+        $t->name = 'system read db->';
 
-    // load the log status list
-    $lst = new sys_log_status();
-    $result = $lst->load($db_con);
-    $target = true;
-    $t->dsp('unit_db_sys_log->load_stati', $target, $result);
+        $t->header('Unit database tests of the system functions');
 
-    // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::LOG_STATUS, sys_log_status::NEW);
-    $target = 1;
-    $t->dsp('unit_db_sys_log->check ' . sys_log_status::NEW, $result, $target);
+        $t->subheader('System error log tests');
 
-    $t->subheader('System batch job type tests');
+        // load the log status list
+        $lst = new sys_log_status();
+        $result = $lst->load($db_con);
+        $t->assert('load status', $result, true);
 
-    // load the batch job type list
-    $lst = new job_type_list();
-    $result = $lst->load($db_con);
-    $target = true;
-    $t->dsp('unit_db_sys_job_type->load', $target, $result);
+        // ... and check if at least the most critical is loaded
+        $result = cl(db_cl::LOG_STATUS, sys_log_status::NEW);
+        $t->assert('check status ' . sys_log_status::NEW, $result, 1);
 
-    // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::JOB_TYPE, job_type_list::VALUE_UPDATE);
-    $target = 1;
-    $t->dsp('unit_db_sys_job_type->check ' . job_type_list::VALUE_UPDATE, $result, $target);
+        $t->subheader('System batch job type tests');
 
-    /*
-     * SQL database read unit tests
-     */
+        // load the batch job type list
+        $lst = new job_type_list();
+        $result = $lst->load($db_con);
+        $t->assert('load batch job', $result, true);
 
-    $t->subheader('SQL database read tests');
+        // ... and check if at least the most critical is loaded
+        $result = cl(db_cl::JOB_TYPE, job_type_list::VALUE_UPDATE);
+        $t->assert('check batch job ' . job_type_list::VALUE_UPDATE, $result, 1);
 
-    $t->assert_greater_zero('sql_db->count', $db_con->count(sql_db::TBL_FORMULA));
+        /*
+         * SQL database read unit tests
+         */
 
-    /*
-     * SQL database consistency tests
-     */
+        $t->subheader('SQL database read tests');
 
-    $t->subheader('SQL database consistency tests');
+        $t->assert_greater_zero('sql_db->count', $db_con->count(sql_db::TBL_FORMULA));
 
-    $result = db_check_missing_owner($db_con);
-    $t->dsp('db_consistency->check ', $result, true);
+        /*
+         * SQL database consistency tests
+         */
+
+        $t->subheader('SQL database consistency tests');
+
+        $result = db_check_missing_owner($db_con);
+        $t->assert('db_consistency->check ', $result, true);
+
+    }
 
 }
 

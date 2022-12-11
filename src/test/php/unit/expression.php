@@ -57,8 +57,8 @@ class expression_unit_tests
         );
         $this->frm_exp_convert($t,
             'including verbs',
-            formula_api::TF_CANTON_WEIGHT,
-            formula_api::TR_CANTON_WEIGHT
+            formula_api::TF_PARTS_IN_PERCENT,
+            formula_api::TR_PARTS_IN_PERCENT
         );
 
         // tests based on the increase formula
@@ -122,10 +122,10 @@ class expression_unit_tests
 
         $test_name = 'source phrase list with id from the reference text';
         $exp_sector = new expression($usr);
-        $exp_sector->set_ref_text(formula_api::TR_CANTON_WEIGHT);
+        $exp_sector->set_ref_text(formula_api::TR_PARTS_IN_PERCENT);
         $phr_lst = $exp_sector->phr_id_lst_as_phr_lst($exp_sector->r_part());
         $result = $phr_lst->dsp_id();
-        $target = '"","","" (1,3,4)';
+        $target = '"","","" (2,3,4)';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'result phrase list with id from the reference text';
@@ -135,16 +135,6 @@ class expression_unit_tests
         $result = $phr_lst->dsp_id();
         $target = '1';
         $t->assert($test_name, $result, $target);
-
-        /*
-        $frm = new formula($usr);
-        $frm->name = formula_api::TN_SECTOR;
-        $frm->ref_text = formula_api::TF_SECTOR_REF;
-        $frm->set_ref_text();
-        $result = $frm->usr_text;
-        $target = '= "' . word::TN_COUNTRY . '" "differentiator" "' . word::TN_CANTON . '" / "' . word::TN_TOTAL . '"';
-        $t->assert('expression->is_std if formula is changed by the user', $result, $target);
-        */
 
     }
 

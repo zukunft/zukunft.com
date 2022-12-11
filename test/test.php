@@ -156,8 +156,8 @@ if ($start_usr->id > 0) {
 
         // prepare testing
         $usr = $start_usr;
-        $t = new test_unit();
-        init_unit_db_tests($t);
+        $t = new test_unit_read_db();
+        $t->init_unit_db_tests();
 
         // run the unit tests without database connection
         $t->run_unit();
@@ -188,7 +188,7 @@ if ($start_usr->id > 0) {
             // --------------------------------------
 
             load_usr_data();
-            run_unit_db_tests($t);
+            $t->run_unit_db_tests($t);
 
             run_system_test($t);
             run_user_test($t);
@@ -209,7 +209,7 @@ if ($start_usr->id > 0) {
             (new string_unit_tests)->run($t); // test functions not yet split into single unit tests
             run_math_test($t);
             run_word_tests($t);
-            run_api_test($t);
+            $t->run_api_test();
             //run_word_ui_test($t);
             run_word_display_test($t);
             run_word_list_test($t);
@@ -221,7 +221,7 @@ if ($start_usr->id > 0) {
             run_graph_test($t);
             run_verb_test($t);
             run_term_test($t);
-            run_term_list_test($t);
+            (new term_list_test)->run($t);
             run_value_test($t);
             //run_value_ui_test($t);
             run_source_test($t);

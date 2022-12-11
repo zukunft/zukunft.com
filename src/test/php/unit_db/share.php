@@ -32,24 +32,30 @@
 
 use cfg\share_type;
 
-function run_share_unit_db_tests(testing $t): void
+class share_unit_db_tests
 {
 
-    global $db_con;
+    function run(testing $t): void
+    {
 
-    $t->header('Unit database tests of the share handling');
+        global $db_con;
 
-    $t->subheader('Protection types tests');
+        // init
+        $t->name = 'share read db->';
 
-    // load the share types
-    $lst = new share_type_list();
-    $result = $lst->load($db_con);
-    $t->dsp('unit_db_share->load_types', true, $result);
+        $t->header('Unit database tests of the share handling');
 
-    // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::SHARE_TYPE, share_type::PUBLIC);
-    $target = 1;
-    $t->dsp('unit_db_share->check ' . share_type::PUBLIC, $result, $target);
+        $t->subheader('Share types tests');
+
+        // load the share types
+        $lst = new share_type_list();
+        $result = $lst->load($db_con);
+        $t->assert('load types', $result, true);
+
+        // ... and check if at least the most critical is loaded
+        $result = cl(db_cl::SHARE_TYPE, share_type::PUBLIC);
+        $t->assert('check ' . share_type::PUBLIC, $result, 1);
+    }
 
 }
 
