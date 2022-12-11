@@ -970,7 +970,7 @@ function prg_start_api($code_name): sql_db
  * load the user specific data that is not supposed to be changed very rarely user
  * so if changed all data is reloaded once
  */
-function load_usr_data()
+function load_usr_data(): void
 {
     global $db_con;
     global $usr;
@@ -988,7 +988,7 @@ function load_usr_data()
 /**
  * write the execution time to the database if it is long
  */
-function prg_end_write_time($db_con)
+function prg_end_write_time($db_con): void
 {
     global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 

@@ -231,7 +231,9 @@ class phrase_list extends user_sandbox_list_named
 
         // split the ids to be loaded from the database by type
         $wrd_ids = [];
-        $lnk_ids = [];
+        $trp_ids = [];
+        $wrd_ids_excluded = [];
+        $trp_ids_excluded = [];
         if ($phr_lst != null) {
             $ids_to_load = array_diff($ids->lst, $phr_lst->ids());
         } else {
@@ -241,7 +243,7 @@ class phrase_list extends user_sandbox_list_named
             if ($id > 0) {
                 $wrd_ids[] = $id;
             } elseif ($id < 0) {
-                $lnk_ids[] = $id;
+                $trp_ids[] = $id * -1;
             }
         }
 
@@ -265,23 +267,25 @@ class phrase_list extends user_sandbox_list_named
                         $wrd->row_mapper($db_wrd);
                         $phr_lst_loaded->add($wrd->phrase());
                         $result = true;
+                    } else {
+                        $wrd_ids_excluded[] = $db_wrd[word::FLD_ID];
                     }
                 }
             }
         }
 
         // load the triples
-        if (count($lnk_ids) > 0) {
+        if (count($trp_ids) > 0) {
             if (!$db_con->connected()) {
                 // add the triple just with the id for unit testing
-                foreach ($lnk_ids as $id) {
+                foreach ($trp_ids as $id) {
                     $wrd = new triple($this->user());
                     $wrd->set_id($id);
                     $phr_lst_loaded->add($wrd->phrase());
                     $result = true;
                 }
             } else {
-                $qp = $this->load_by_trp_ids_sql($db_con, $lnk_ids);
+                $qp = $this->load_by_trp_ids_sql($db_con, $trp_ids);
                 $db_con->usr_id = $this->user()->id;
                 $db_trp_lst = $db_con->get($qp);
                 foreach ($db_trp_lst as $db_trp) {
@@ -290,6 +294,8 @@ class phrase_list extends user_sandbox_list_named
                         $trp->row_mapper($db_trp);
                         $phr_lst_loaded->add($trp->phrase());
                         $result = true;
+                    } else {
+                        $trp_ids_excluded[] = $db_trp[triple::FLD_ID];
                     }
                 }
             }
@@ -298,11 +304,15 @@ class phrase_list extends user_sandbox_list_named
         // build the final array in the same order as the received id list
         if ($phr_lst == null) {
             foreach ($ids->lst as $id) {
-                $phr = $phr_lst_loaded->get_by_id($id);
-                if ($phr != null) {
-                    $this->lst[] = $phr;
+                if (in_array($id, $wrd_ids_excluded) or in_array($id, $trp_ids_excluded)) {
+                    log_info('Phrase with id ' . $id . ' has been excluded');
                 } else {
-                    log_warning('Cannot load phrase with id ' . $id . ' while creating a phrase list');
+                    $phr = $phr_lst_loaded->get_by_id($id);
+                    if ($phr != null) {
+                        $this->lst[] = $phr;
+                    } else {
+                        log_err('Cannot load phrase with id ' . $id . ' while creating a phrase list');
+                    }
                 }
             }
         } else {
@@ -311,11 +321,15 @@ class phrase_list extends user_sandbox_list_named
                 if ($phr != null) {
                     $this->lst[] = $phr;
                 } else {
-                    $phr = $phr_lst_loaded->get_by_id($id);
-                    if ($phr != null) {
-                        $this->lst[] = $phr;
+                    if (in_array($id, $wrd_ids_excluded) or in_array($id, $trp_ids_excluded)) {
+                        log_info('Phrase with id ' . $id . ' has been excluded');
                     } else {
-                        log_err('Cannot load phrase with id ' . $id . ' while creating a phrase list');
+                        $phr = $phr_lst_loaded->get_by_id($id);
+                        if ($phr != null) {
+                            $this->lst[] = $phr;
+                        } else {
+                            log_err('Cannot load phrase with id ' . $id . ' while creating a phrase list');
+                        }
                     }
                 }
             }

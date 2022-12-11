@@ -39,6 +39,7 @@
 
 // TODO move the names and values for testing to the single objects and check that they cannot be used by an user
 // TODO add checks that all id (name or link) changing return the correct error message if the new id already exists
+// TODO build a cascading test classes and split the classes to sections less than 1000 lines of code
 
 CONST HOST_TESTING = 'http://localhost';
 

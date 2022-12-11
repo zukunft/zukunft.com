@@ -43,6 +43,23 @@ class formula_unit_db_tests
 
         $t->header('Unit database tests of the formula class (src/main/php/model/formula/formula.php)');
 
+        $t->subheader('formula tests');
+
+        /*
+        // ... check if the link is shown correctly also for the second user
+        // ... the second user has excluded the word at this point, so even if the word is linked the word link is nevertheless false
+        // TODO check what that the word is linked if the second user activates the word
+        $phr = new phrase($usr);
+        $phr->load_by_name(word::TN_READ);
+        $frm = new formula($t->usr2);
+        $frm->load_by_name(formula_api::TN_RENAMED, formula::class);
+        $phr_lst = $frm->assign_phr_ulst();
+        $result = $phr_lst->does_contain($phr);
+        $target = false;
+        $t->dsp('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr2->name . '"', $target, $result);
+        */
+
+
         $t->subheader('formula types tests');
 
         // load the formula types
