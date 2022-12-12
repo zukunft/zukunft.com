@@ -47,6 +47,12 @@ class phrase_list_unit_tests
     function run(testing $t): void
     {
 
+        global $usr;
+
+        // init
+        $db_con = new sql_db();
+        $t->name = 'phrase_list->';
+
         $t->header('Unit tests of the phrase list class (src/main/php/model/phrase/phrase_list.php)');
 
         $t->subheader('SQL statement creation tests');
@@ -58,6 +64,15 @@ class phrase_list_unit_tests
         $qp = $this->assert_by_ids_sql($ids, sql_db::POSTGRES);
         $this->assert_by_ids_sql($ids, sql_db::MYSQL);
         $this->test->assert_sql_name_unique($qp->name);
+
+        $phr_lst = new phrase_list($usr);
+        $wrd = new word($usr);
+        $wrd->set(1, word::TN_READ_SWITZERLAND);
+        $phr_lst->add($wrd->phrase());
+        $this->assert_load_sql_linked_phrases(
+            $db_con, $t, $phr_lst, 3, word_select_direction::UP
+        );
+
 
         $t->subheader('Selection tests');
 
@@ -186,6 +201,38 @@ class phrase_list_unit_tests
             $lib->trim($expected_sql)
         );
         return $qp;
+    }
+
+    /**
+     * similar to assert_load_sql_name from test_base but to test the SQL statement creation
+     * to get the linked phrases
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param testing $t the testing object with the error counting of this test run
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param int $verb_id to select only words linked with this verb
+     * @param string $direction to define the link direction
+     * @return bool true if all tests are fine
+     */
+    function assert_load_sql_linked_phrases(
+        sql_db $db_con,
+        testing $t,
+        object $usr_obj,
+        int $verb_id,
+        string $direction): bool
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_linked_phrases($db_con, $verb_id, $direction);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_linked_phrases($db_con, $verb_id, $direction);
+            $result = $t->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
     }
 
 }

@@ -112,6 +112,8 @@ class word extends user_sandbox_named_with_type
     const TN_READ_PERCENT = 'percent';
     const TN_READ_COUNTRY = 'Country';
     const TN_READ_SWITZERLAND = 'Switzerland';
+    const TN_READ_ZURICH_CANTON = 'Zurich (Canton)';
+    const TN_READ_ZURICH_CITY = 'Zurich (City)';
     const TN_READ_GERMANY = 'Germany';
     const TN_ADD = 'System Test Word';
     const TN_RENAMED = 'System Test Word Renamed';
@@ -1368,6 +1370,7 @@ class word extends user_sandbox_named_with_type
 
     /**
      * helper function that returns a phrase list object just with the word object
+     * @return phrase_list a new phrase list just with this word as an entry
      */
     function lst(): phrase_list
     {
@@ -1449,7 +1452,7 @@ class word extends user_sandbox_named_with_type
     {
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id);
         $phr_lst = $this->lst();
-        $child_phr_lst = $phr_lst->foaf_children(cl(db_cl::VERB, verb::IS_A));
+        $child_phr_lst = $phr_lst->foaf_all_children(cl(db_cl::VERB, verb::IS_A));
         log_debug('are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
         return $child_phr_lst;
     }
@@ -1464,6 +1467,19 @@ class word extends user_sandbox_named_with_type
         $wrd_lst = $this->children();
         $wrd_lst->add($this->phrase());
         return $wrd_lst;
+    }
+
+    /**
+     * @return phrase_list a list of phrases that are 'part of'/'contain' this phrase
+     * e.g. for "Switzerland" it will return "Zurich (Canton)" and "Zurich (City)" which is part of the Canton
+     */
+    function parts(): phrase_list
+    {
+        log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id);
+        $phr_lst = $this->lst();
+        $child_phr_lst = $phr_lst->foaf_children(cl(db_cl::VERB, verb::IS_PART_OF));
+        log_debug('are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
+        return $child_phr_lst;
     }
 
     /**

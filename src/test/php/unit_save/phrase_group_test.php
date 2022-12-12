@@ -69,7 +69,10 @@ function run_phrase_group_test(testing $t)
         $phr_grp_reload->set_id($phr_grp->id());
         $phr_grp_reload->load();
         $wrd_lst_reloaded = $phr_grp_reload->phr_lst->wrd_lst();
-        $result = array_diff($wrd_lst_reloaded->names(), array(word::TN_MIO, word::TN_ZH, word::TN_CANTON, word::TN_INHABITANT, word::TN_CH));
+        $result = array_diff(
+            array(word::TN_MIO, word::TN_ZH, word::TN_CANTON, word::TN_INHABITANT, word::TN_CH),
+            $wrd_lst_reloaded->names()
+        );
     }
     $target = array(word::TN_CH) ;
     $t->dsp('phrase_group->load for id ' . $phr_grp->id(), $target, $result);

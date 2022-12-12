@@ -1735,8 +1735,8 @@ class test_base
             sort($result);
             // in an array each value needs to be the same
             $test_result = true;
-            foreach ($result as $key => $value) {
-                if ($value != $target[$key]) {
+            foreach ($target as $key => $value) {
+                if ($value != $result[$key]) {
                     $test_result = false;
                 }
             }

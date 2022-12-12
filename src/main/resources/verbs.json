@@ -18,6 +18,22 @@
       "name_reverse": "are"
     },
     {
+      "name": "is part of",
+      "code_id": "contains",
+      "description": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or Sectors and Regions are different splittings",
+      "name_plural_reverse": "contains",
+      "name_plural": "is part of",
+      "name_reverse": "contains"
+    },
+    {
+      "name": "with",
+      "code_id": "with",
+      "description": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load",
+      "name_plural": "with",
+      "name_plural_reverse": "",
+      "name_reverse": ""
+    },
+    {
       "name": "has a",
       "code_id": "",
       "name_plural_reverse": "is used for",
@@ -51,22 +67,6 @@
       "name_plural_reverse": "is followed by",
       "name_plural": "is follower of",
       "name_reverse": "is followed by"
-    },
-    {
-      "name": "is part of",
-      "code_id": "contains",
-      "description": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or Sectors and Regions are different splittings",
-      "name_plural_reverse": "contains",
-      "name_plural": "is part of",
-      "name_reverse": "contains"
-    },
-    {
-      "name": "with",
-      "code_id": "with",
-      "description": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load",
-      "name_plural": "with",
-      "name_plural_reverse": "",
-      "name_reverse": ""
     },
     {
       "name": "uses",

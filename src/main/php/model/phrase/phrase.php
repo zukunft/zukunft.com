@@ -76,6 +76,10 @@ class phrase extends db_object
         phrase::FLD_NAME,
         sql_db::FLD_DESCRIPTION
     );
+    // list of the common user specific database field names of phrases
+    const FLD_NAMES_USR_NO_NAME = array(
+        sql_db::FLD_DESCRIPTION
+    );
     // list of the common user specific numeric database field names of phrases
     const FLD_NAMES_NUM_USR = array(
         self::FLD_VALUES,

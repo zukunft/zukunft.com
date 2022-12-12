@@ -18,15 +18,17 @@
     { "name": "Year", "type": "time"}
   ],
   "triples": [
-    {"name": "", "from": "Switzerland", "verb": "is a", "to": "Country"},
-    {"name": "", "from": "Germany", "verb": "is a", "to": "Country"},
-    {"name": "Zurich (City)", "from": "Zurich", "verb": "is a", "to": "City",
-      "refs": [ { "name": "Zürich", "type": "wikipedia" } ]
-    },
+    {"from": "Switzerland", "verb": "is a", "to": "Country"},
+    {"from": "Germany", "verb": "is a", "to": "Country"},
     {"name": "Zurich (Canton)", "from": "Zurich", "verb": "is a", "to": "Canton",
       "refs": [ { "name": "Canton of Zürich", "type": "wikipedia" } ]
     },
-    {"name": "", "from": "2015", "verb": "is a", "to": "Year"}
+    {"name": "Zurich (City)", "from": "Zurich", "verb": "is a", "to": "City",
+      "refs": [ { "name": "Zürich", "type": "wikipedia" } ]
+    },
+    {"from": "Zurich (Canton)", "verb": "is part of", "to": "Switzerland"},
+    {"from": "Zurich (City)", "verb": "is part of", "to": "Zurich (Canton)"},
+    {"from": "2015", "verb": "is a", "to": "Year"}
   ],
   "values": [
     {
