@@ -97,10 +97,8 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
     // TODO check if change has been successful
     // rename word_link to triple
-    $result .= $db_con->change_table_name('phrase_group_word_link', sql_db::TBL_PHRASE_GROUP_TRIPLE);
-    $result .= $db_con->change_column_name(sql_db::TBL_PHRASE_GROUP_TRIPLE, 'phrase_group_word_link_id', 'phrase_group_triple_id');
-    $result .= $db_con->change_table_name(sql_db::TBL_USER_PREFIX . 'phrase_group_word_link', sql_db::TBL_USER_PREFIX . sql_db::TBL_PHRASE_GROUP_TRIPLE);
-    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_PHRASE_GROUP_TRIPLE, 'phrase_group_word_link_id', sql_db::TBL_USER_PREFIX . 'phrase_group_triple_id');
+    $result .= $db_con->change_table_name('phrase_group_word_link', sql_db::TBL_PHRASE_GROUP_WORD_LINK);
+    $result .= $db_con->change_table_name(sql_db::TBL_USER_PREFIX . 'phrase_group_word_link', sql_db::TBL_USER_PREFIX . sql_db::TBL_PHRASE_GROUP_WORD_LINK);
     $result .= $db_con->change_table_name('word_link', sql_db::TBL_TRIPLE);
     $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'word_link_id', 'triple_id');
     $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'word_link_condition_id', 'triple_condition_id');

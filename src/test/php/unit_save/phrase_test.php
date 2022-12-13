@@ -48,14 +48,14 @@ function create_test_phrases(testing $t)
     $t->test_phrase(phrase::TN_ZH_COMPANY);
 }
 
-function create_base_times(testing $t)
+function create_base_times(testing $t): void
 {
     $t->header('Check if base time words are correct');
 
     zu_test_time_setup($t);
 }
 
-function run_phrase_test(testing $t)
+function run_phrase_test(testing $t): void
 {
 
     global $usr;

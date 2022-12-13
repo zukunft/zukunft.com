@@ -416,9 +416,9 @@ class phrase_group extends db_object
                 if ($wrd != null) {
                     if ($wrd->id() <> 0) {
                         if ($sql_from == '') {
-                            $sql_from .= 'phrase_group_triples l' . $pos;
+                            $sql_from .= 'phrase_group_word_links l' . $pos;
                         } else {
-                            $sql_from .= ', phrase_group_triples l' . $pos;
+                            $sql_from .= ', phrase_group_word_links l' . $pos;
                         }
                         if ($sql_where == '') {
                             $sql_where .= 'l' . $pos . '.word_id = ' . $wrd->id();
@@ -465,9 +465,9 @@ class phrase_group extends db_object
                 $sql_where = '';
                 foreach ($wrd_lst->ids as $wrd_id) {
                     if ($sql_from == '') {
-                        $sql_from .= 'phrase_group_triples l' . $pos;
+                        $sql_from .= 'phrase_group_word_links l' . $pos;
                     } else {
-                        $sql_from .= ', phrase_group_triples l' . $pos;
+                        $sql_from .= ', phrase_group_word_links l' . $pos;
                     }
                     if ($sql_where == '') {
                         $sql_where .= 'l' . $pos . '.word_id = ' . $wrd_id;
@@ -809,9 +809,9 @@ class phrase_group extends db_object
 
         // switch between the word and triple settings
         if ($type == sql_db::TBL_WORD) {
-            $lnk = new phrase_group_triple();
+            $lnk = new phrase_group_word_link();
             $qp = $lnk->load_by_group_id_sql($db_con, $this);
-            $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_TRIPLE);
+            $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
             $field_name = word::FLD_ID;
         } else {
             $lnk = new phrase_group_triple_link();
@@ -889,7 +889,7 @@ class phrase_group extends db_object
         global $db_con;
         $result = new user_message();
 
-        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_TRIPLE);
+        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
         $db_con->usr_id = $this->user()->id;
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
@@ -938,18 +938,22 @@ class phrase_group extends db_object
     /**
      * internal function for testing the link for fast search
      */
-    function load_link_ids(): array
+    function load_link_ids_for_testing(): array
     {
 
         global $db_con;
         $result = array();
 
-        $sql = 'SELECT phrase_id 
-              FROM phrase_group_phrase_links
-             WHERE phrase_group_id = ' . $this->id . ';';
-        //$db_con = New mysql;
+        $db_con->set_type(sql_db::VT_PHRASE_GROUP_LINK);
         $db_con->usr_id = $this->user()->id;
-        $lnk_id_lst = $db_con->get_old($sql);
+        $qp = new sql_par(self::class);
+        $qp->name .= 'test_link_ids';
+        $db_con->set_name($qp->name);
+        $db_con->set_fields(array(phrase::FLD_ID));
+        $db_con->add_par(sql_db::PAR_INT, $this->id);
+        $qp->sql = $db_con->select_by_field(phrase_group::FLD_ID);
+        $qp->par = $db_con->get_par();
+        $lnk_id_lst = $db_con->get($qp);
         foreach ($lnk_id_lst as $db_row) {
             $result[] = $db_row[phrase::FLD_ID];
         }

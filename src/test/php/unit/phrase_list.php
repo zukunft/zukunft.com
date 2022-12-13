@@ -67,7 +67,7 @@ class phrase_list_unit_tests
 
         $phr_lst = new phrase_list($usr);
         $wrd = new word($usr);
-        $wrd->set(1, word::TN_READ_SWITZERLAND);
+        $wrd->set(1, word::TN_CH);
         $phr_lst->add($wrd->phrase());
         $this->assert_load_sql_linked_phrases(
             $db_con, $t, $phr_lst, 3, word_select_direction::UP

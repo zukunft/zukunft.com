@@ -98,7 +98,7 @@ class sql_db
     const TBL_VERB = 'verb';
     const TBL_PHRASE = 'phrase';
     const TBL_PHRASE_GROUP = 'phrase_group';
-    const TBL_PHRASE_GROUP_TRIPLE = 'phrase_group_triple';
+    const TBL_PHRASE_GROUP_WORD_LINK = 'phrase_group_word_link';
     const TBL_PHRASE_GROUP_TRIPLE_LINK = 'phrase_group_triple_link';
     const TBL_VALUE = 'value';
     const TBL_VALUE_TIME_SERIES = 'value_time_series';
@@ -148,6 +148,7 @@ class sql_db
     // the synthetic view tables (VT) for union query creation
     const VT_PHRASE = 'phrase';
     const VT_TERM = 'term';
+    const VT_PHRASE_GROUP_LINK = 'phrase_group_phrase_link';
 
     // the parameter types for prepared queries independent of the SQL dialect
     const PAR_INT = 'int';
@@ -183,13 +184,14 @@ class sql_db
         sql_db::TBL_FORMULA_ELEMENT,
         sql_db::TBL_VIEW_COMPONENT_LINK,
         sql_db::TBL_VALUE_PHRASE_LINK,
-        sql_db::TBL_PHRASE_GROUP_TRIPLE,
+        sql_db::TBL_PHRASE_GROUP_WORD_LINK,
         sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
         sql_db::TBL_REF,
         sql_db::TBL_IP,
         sql_db::TBL_CHANGE,
         sql_db::TBL_CHANGE_LINK,
-        sql_db::TBL_SYS_LOG
+        sql_db::TBL_SYS_LOG,
+        sql_db::VT_PHRASE_GROUP_LINK
     ];
     // tables that link two named tables
     // TODO set automatically by set_link_fields???

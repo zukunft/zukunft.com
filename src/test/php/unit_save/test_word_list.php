@@ -63,7 +63,7 @@ function run_word_list_test(testing $t)
     $wrd_lst->load_by_names(array(word::TN_ZH));
     $wrd_lst_linked = $wrd_lst->load_linked_words(cl(db_cl::VERB, verb::IS_A), word_select_direction::UP);
     $result = dsp_array($wrd_lst_linked->names());
-    $target = word::TN_CITY . "," . word::TN_CANTON . "," . word::TN_COMPANY; // order adjusted based on the number of usage
+    $target = word::TN_CANTON . "," . word::TN_CITY . "," . word::TN_COMPANY; // order adjusted based on the number of usage
     $t->assert('word_list->load_linked_words for "' . word::TN_ZH . '" "' . verb::IS_A . '" up', $result, $target);
 
     // test getting all parents e.g. "Cash" is part of "Current Assets" and "Assets"
@@ -111,7 +111,7 @@ function run_word_list_test(testing $t)
     $wrd_lst->load_by_names(array(word::TN_ZH));
     $lst_is = $wrd_lst->is();
     $result = dsp_array($lst_is->names());
-    $target = dsp_array(array(word::TN_CITY, word::TN_CANTON, word::TN_COMPANY)); // order adjusted based on the number of usage
+    $target = dsp_array(array(word::TN_CANTON, word::TN_CITY, word::TN_COMPANY)); // order adjusted based on the number of usage
     $t->assert('word_list->is for ' . $wrd_lst->name() . ' up', $result, $target);
 
     // test "are" e.g. "Cantons are Zurich and ..."
@@ -297,7 +297,7 @@ function run_word_list_test(testing $t)
     $wrd_ZH = $t->load_word(word::TN_ZH);
     $wrd_lst = $wrd_ZH->parents();
     $wrd_lst->name_sort();
-    $target = '"' . word::TN_CITY . '","' . word::TN_CANTON . '","' . word::TN_COMPANY . '"';
+    $target = '"' . word::TN_CANTON . '","' . word::TN_CITY . '","' . word::TN_COMPANY . '"';
     $result = $wrd_lst->dsp_name();
     $t->dsp('word_list->sort for "' . word::TN_ZH . '"', $target, $result);
 

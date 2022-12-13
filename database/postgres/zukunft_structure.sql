@@ -386,6 +386,21 @@ COMMENT ON COLUMN phrase_groups.id_order is 'the phrase ids in the order that th
 -- --------------------------------------------------------
 
 --
+-- Table structure for table phrase_group_word_links
+--
+
+CREATE TABLE IF NOT EXISTS phrase_group_word_links
+(
+    phrase_group_word_link_id BIGSERIAL PRIMARY KEY,
+    phrase_group_id           bigint NOT NULL,
+    word_id                   bigint NOT NULL
+);
+
+COMMENT ON TABLE phrase_group_word_links is 'link words to a phrase_group for database based selections';
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table phrase_group_triple_links
 --
 
@@ -396,22 +411,7 @@ CREATE TABLE IF NOT EXISTS phrase_group_triple_links
     triple_id                   bigint NOT NULL
 );
 
-COMMENT ON TABLE phrase_group_triple_links is 'view for fast group selection based on a triple';
-
--- --------------------------------------------------------
-
---
--- Table structure for table phrase_group_triples
---
-
-CREATE TABLE IF NOT EXISTS phrase_group_triples
-(
-    phrase_group_triple_id BIGSERIAL PRIMARY KEY,
-    phrase_group_id           bigint NOT NULL,
-    word_id                   bigint NOT NULL
-);
-
-COMMENT ON TABLE phrase_group_triples is 'master to link words to a term_group';
+COMMENT ON TABLE phrase_group_triple_links is 'link phrases to a phrase_group for database based selections';
 
 -- --------------------------------------------------------
 
@@ -808,6 +808,21 @@ COMMENT ON COLUMN user_phrase_groups.id_order is 'the phrase ids in the order th
 -- --------------------------------------------------------
 
 --
+-- Table structure for table user_phrase_group_word_links
+--
+
+CREATE TABLE IF NOT EXISTS user_phrase_group_word_links
+(
+    phrase_group_word_link_id BIGSERIAL PRIMARY KEY,
+    user_id                   bigint   DEFAULT NULL,
+    excluded                  smallint DEFAULT NULL
+);
+
+COMMENT ON TABLE user_phrase_group_word_links is 'view for fast group selection based on a triple';
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table user_phrase_group_triple_links
 --
 
@@ -819,21 +834,6 @@ CREATE TABLE IF NOT EXISTS user_phrase_group_triple_links
 );
 
 COMMENT ON TABLE user_phrase_group_triple_links is 'view for fast group selection based on a triple';
-
--- --------------------------------------------------------
-
---
--- Table structure for table user_phrase_group_triples
---
-
-CREATE TABLE IF NOT EXISTS user_phrase_group_triples
-(
-    phrase_group_triple_id BIGSERIAL PRIMARY KEY,
-    user_id                   bigint   DEFAULT NULL,
-    excluded                  smallint DEFAULT NULL
-);
-
-COMMENT ON TABLE user_phrase_group_triples is 'view for fast group selection based on a triple';
 
 -- --------------------------------------------------------
 
@@ -1649,10 +1649,10 @@ SELECT (v.verb_id * -2) AS term_id,
 --
 
 CREATE OR REPLACE VIEW phrase_group_phrase_links AS
-SELECT w.phrase_group_triple_id AS phrase_group_phrase_link_id,
+SELECT w.phrase_group_word_link_id AS phrase_group_phrase_link_id,
        w.phrase_group_id           AS phrase_group_id,
        w.word_id                   AS phrase_id
-FROM phrase_group_triples AS w
+FROM phrase_group_word_links AS w
 UNION
 SELECT t.phrase_group_triple_link_id AS phrase_group_phrase_link_id,
        t.phrase_group_id             AS phrase_group_id,
@@ -1666,10 +1666,10 @@ FROM phrase_group_triple_links AS t;
 --
 
 CREATE OR REPLACE VIEW user_phrase_group_phrase_links AS
-SELECT w.phrase_group_triple_id AS phrase_group_phrase_link_id,
+SELECT w.phrase_group_word_link_id AS phrase_group_phrase_link_id,
        w.user_id                   AS user_id,
        w.excluded                  AS excluded
-FROM user_phrase_group_triples AS w
+FROM user_phrase_group_word_links AS w
 UNION
 SELECT t.phrase_group_triple_link_id AS phrase_group_phrase_link_id,
        t.user_id                     AS user_id,
@@ -1737,16 +1737,16 @@ CREATE INDEX formula_value_user_idx ON formula_values (user_id);
 CREATE UNIQUE INDEX phrase_group_term_idx ON phrase_groups (word_ids, triple_ids);
 
 --
+-- Indexes for table phrase_group_word_links
+--
+CREATE INDEX phrase_group_word_link_group_idx ON phrase_group_word_links (phrase_group_id);
+CREATE INDEX phrase_group_word_link_idx ON phrase_group_word_links (word_id);
+
+--
 -- Indexes for table phrase_group_triple_links
 --
 CREATE INDEX phrase_group_triple_link_group_idx ON phrase_group_triple_links (phrase_group_id);
 CREATE INDEX phrase_group_triple_link_idx ON phrase_group_triple_links (triple_id);
-
---
--- Indexes for table phrase_group_triples
---
-CREATE INDEX phrase_group_triple_idx ON phrase_group_triples (phrase_group_id);
-CREATE INDEX phrase_group_triple_word_idx ON phrase_group_triples (word_id);
 
 --
 -- Indexes for table protection_types
@@ -1815,18 +1815,18 @@ CREATE INDEX user_phrase_group_idx ON user_phrase_groups (phrase_group_id);
 CREATE INDEX user_phrase_group_user_idx ON user_phrase_groups (user_id);
 
 --
+-- Indexes for table user_phrase_group_word_links
+--
+CREATE UNIQUE INDEX user_phrase_group_word_link_unique_idx ON user_phrase_group_word_links (phrase_group_word_link_id, user_id);
+CREATE INDEX user_phrase_group_word_link_idx ON user_phrase_group_word_links (phrase_group_word_link_id);
+CREATE INDEX user_phrase_group_word_user_idx ON user_phrase_group_word_links (user_id);
+
+--
 -- Indexes for table user_phrase_group_triple_links
 --
 CREATE UNIQUE INDEX user_phrase_group_triple_link_unique_idx ON user_phrase_group_triple_links (phrase_group_triple_link_id, user_id);
 CREATE INDEX user_phrase_group_triple_link_idx ON user_phrase_group_triple_links (phrase_group_triple_link_id);
 CREATE INDEX user_phrase_group_triple_user_idx ON user_phrase_group_triple_links (user_id);
-
---
--- Indexes for table user_phrase_group_triples
---
-CREATE UNIQUE INDEX user_phrase_group_triple_unique_idx ON user_phrase_group_triples (phrase_group_triple_id, user_id);
-CREATE INDEX user_phrase_group_triple_idx ON user_phrase_group_triples (phrase_group_triple_id);
-CREATE INDEX user_phrase_group_word_user_idx ON user_phrase_group_triples (user_id);
 
 --
 -- Indexes for table user_sources
@@ -2009,17 +2009,18 @@ ALTER TABLE formula_values
     ADD CONSTRAINT formula_values_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
+-- Constraints for table phrase_group_word_links
+--
+ALTER TABLE phrase_group_word_links
+    ADD CONSTRAINT phrase_group_word_links_fk_1 FOREIGN KEY (phrase_group_id) REFERENCES phrase_groups (phrase_group_id),
+    ADD CONSTRAINT phrase_group_word_links_fk_2 FOREIGN KEY (word_id) REFERENCES words (word_id);
+
+--
 -- Constraints for table phrase_group_triple_links
 --
 ALTER TABLE phrase_group_triple_links
     ADD CONSTRAINT phrase_group_triple_links_fk_1 FOREIGN KEY (phrase_group_id) REFERENCES phrase_groups (phrase_group_id),
     ADD CONSTRAINT phrase_group_triple_links_fk_2 FOREIGN KEY (triple_id) REFERENCES triples (triple_id);
-
---
--- Constraints for table phrase_group_triples
---
-ALTER TABLE phrase_group_triples
-    ADD CONSTRAINT phrase_group_triples_fk_1 FOREIGN KEY (phrase_group_id) REFERENCES phrase_groups (phrase_group_id);
 
 --
 -- Constraints for table refs
@@ -2081,18 +2082,18 @@ ALTER TABLE user_phrase_groups
     ADD CONSTRAINT user_phrase_groups_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
+-- Constraints for table user_phrase_group_word_links
+--
+ALTER TABLE user_phrase_group_word_links
+    ADD CONSTRAINT user_phrase_group_word_links_fk_1 FOREIGN KEY (phrase_group_word_link_id) REFERENCES phrase_group_word_links (phrase_group_word_link_id),
+    ADD CONSTRAINT user_phrase_group_word_links_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
 -- Constraints for table user_phrase_group_triple_links
 --
 ALTER TABLE user_phrase_group_triple_links
     ADD CONSTRAINT user_phrase_group_triple_links_fk_1 FOREIGN KEY (phrase_group_triple_link_id) REFERENCES phrase_group_triple_links (phrase_group_triple_link_id),
     ADD CONSTRAINT user_phrase_group_triple_links_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- Constraints for table user_phrase_group_triples
---
-ALTER TABLE user_phrase_group_triples
-    ADD CONSTRAINT user_phrase_group_triples_fk_1 FOREIGN KEY (phrase_group_triple_id) REFERENCES phrase_group_triples (phrase_group_triple_id),
-    ADD CONSTRAINT user_phrase_group_triples_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- Constraints for table user_sources

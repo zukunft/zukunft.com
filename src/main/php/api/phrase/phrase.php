@@ -42,8 +42,15 @@ class phrase_api extends user_sandbox_named_api
 
     // phrase names for stand-alone unit tests
     // for database based test words see model/phrase/phrase.php
-    const TN_ZH_CITY = 'City of Zurich';
-    const TN_ZH_CANTON = 'Canton Zurich';
+    const TN_ZH_CITY_NAME = 'City of Zurich';
+    const TN_ZH_CITY = 'Zurich (City)';
+    const TN_ZH_CANTON_NAME = 'Canton Zurich';
+    const TN_ZH_CANTON = 'Zurich (Canton)';
+
+    const TEST_TRIPLE_STANDARD = array(
+        self::TN_ZH_CANTON,
+        self::TN_ZH_CITY
+    );
 
     // used only if the phrase is a triple
     private ?triple_api $triple;

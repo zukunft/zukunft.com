@@ -110,19 +110,18 @@ class word extends user_sandbox_named_with_type
     const TD_READ = 'A mathematical constant that never changes e.g. Pi';
     const TN_READ_SCALE = 'million';
     const TN_READ_PERCENT = 'percent';
-    const TN_READ_COUNTRY = 'Country';
-    const TN_READ_SWITZERLAND = 'Switzerland';
-    const TN_READ_ZURICH_CANTON = 'Zurich (Canton)';
-    const TN_READ_ZURICH_CITY = 'Zurich (City)';
+    const TN_COUNTRY = 'Country';
+    const TN_CANTON = 'Canton';
+    const TN_CITY = 'City';
+    const TN_CH = 'Switzerland';
+    const TN_ZH = 'Zurich';
+    const TN_ZH_CANTON = 'Zurich (Canton)';
+    const TN_ZH_CITY = 'Zurich (City)';
+    const TN_INHABITANT = 'inhabitants';
     const TN_READ_GERMANY = 'Germany';
     const TN_ADD = 'System Test Word';
     const TN_RENAMED = 'System Test Word Renamed';
     const TN_PARENT = 'System Test Word Parent';
-    const TN_CH = 'System Test Word Parent e.g. Switzerland';
-    const TN_ZH = 'System Test Word Member e.g. Zurich';
-    const TN_COUNTRY = 'System Test Word Parent e.g. Country';
-    const TN_CANTON = 'System Test Word Category e.g. Canton';
-    const TN_CITY = 'System Test Word Another Category e.g. City';
     const TN_COMPANY = 'System Test Word Group e.g. Company';
     const TN_FIN_REPORT = 'System Test Word with many relations e.g. Financial Report';
     const TN_CASH_FLOW = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
@@ -152,7 +151,6 @@ class word extends user_sandbox_named_with_type
     const TN_INCREASE = 'System Test Word Increase';
     const TN_THIS = 'System Test Word This';
     const TN_PRIOR = 'System Test Word Prior';
-    const TN_INHABITANT = 'System Test Word Unit e.g. inhabitant';
     const TN_CONST = 'System Test Word Math Const e.g. Pi';
     const TN_TIME_JUMP = 'System Test Word Time Jump e.g. yearly';
     const TN_LATEST = 'System Test Word Latest';
@@ -168,11 +166,6 @@ class word extends user_sandbox_named_with_type
         self::TN_ADD,
         self::TN_RENAMED,
         self::TN_PARENT,
-        self::TN_CH,
-        self::TN_ZH,
-        self::TN_COUNTRY,
-        self::TN_CANTON,
-        self::TN_CITY,
         self::TN_COMPANY,
         self::TN_FIN_REPORT,
         self::TN_CASH_FLOW,
@@ -202,7 +195,6 @@ class word extends user_sandbox_named_with_type
         self::TN_INCREASE,
         self::TN_THIS,
         self::TN_PRIOR,
-        self::TN_INHABITANT,
         self::TN_CONST,
         self::TN_TIME_JUMP,
         self::TN_LATEST,
@@ -214,7 +206,6 @@ class word extends user_sandbox_named_with_type
     const TEST_WORDS_STANDARD = array(
         self::TN_PARENT,
         self::TN_CH,
-        self::TN_ZH,
         self::TN_COUNTRY,
         self::TN_CANTON,
         self::TN_CITY,
@@ -1475,11 +1466,18 @@ class word extends user_sandbox_named_with_type
      */
     function parts(): phrase_list
     {
-        log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id);
         $phr_lst = $this->lst();
-        $child_phr_lst = $phr_lst->foaf_children(cl(db_cl::VERB, verb::IS_PART_OF));
-        log_debug('are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
-        return $child_phr_lst;
+        return $phr_lst->foaf_children(cl(db_cl::VERB, verb::IS_PART_OF));
+    }
+
+    /**
+     * @return phrase_list a list of phrases that are 'part of'/'contain' this phrase
+     * e.g. for "Switzerland" it will return "Zurich (Canton)" but not "Zurich (City)"
+     */
+    function direct_parts(): phrase_list
+    {
+        $phr_lst = $this->lst();
+        return $phr_lst->foaf_children(cl(db_cl::VERB, verb::IS_PART_OF), 1);
     }
 
     /**

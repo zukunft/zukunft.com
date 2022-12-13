@@ -102,7 +102,7 @@ class phrase_group_unit_tests
         $t->assert_sql_name_unique($phr_grp->get_by_wrd_lst_sql(true));
 
         // sql to load the phrase group word link by id
-        $grp_wrd_lnk = new phrase_group_triple();
+        $grp_wrd_lnk = new phrase_group_word_link();
         $grp_wrd_lnk->set_id(11);
         $t->assert_load_sql($db_con, $grp_wrd_lnk);
 
@@ -136,7 +136,7 @@ class phrase_group_unit_tests
         $t->subheader('SQL statement tests');
 
         // sql to load the phrase group word links related to a group
-        $grp_wrd_lnk = new phrase_group_triple();
+        $grp_wrd_lnk = new phrase_group_word_link();
         $phr_grp = new phrase_group($usr);
         $phr_grp->set_id(13);
         $this->assert_load_by_group_id_sql($t, $db_con, $grp_wrd_lnk, $phr_grp);

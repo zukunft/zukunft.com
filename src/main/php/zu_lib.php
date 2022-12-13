@@ -126,6 +126,8 @@
     TODO for fail over in the underlying technologies, create a another backend in python and java  and allow the user to select or auto select the backend technology
     TODO for fail over in the underlying database technologies, auto sync the casandra, hadoop, postgreSQL and mariaDB databases
     TODO auto create two triple for an OR condition in a value selection; this implies that to select a list of values only AND needs to be used and brackets are also not needed
+    TODO add a phrase group to sources and allow to import it with "keys:"
+    TODO allow to assign more phrases to a source for better suggestion of sources
 
 
     TODO create a table startup page with a
@@ -308,7 +310,7 @@ include_once $path_php . 'model/phrase/phrase_list_dsp.php';
 include_once $path_php . 'model/phrase/phrase_group.php';
 include_once $path_php . 'model/phrase/phrase_group_list.php';
 include_once $path_php . 'model/phrase/phrase_group_link.php';
-include_once $path_php . 'model/phrase/phrase_group_triple.php';
+include_once $path_php . 'model/phrase/phrase_group_word_link.php';
 include_once $path_php . 'model/phrase/phrase_group_triple_link.php';
 include_once $path_php . 'model/phrase/phrase_type.php';
 include_once $path_php . 'model/phrase/term.php';

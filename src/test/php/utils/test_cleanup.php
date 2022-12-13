@@ -366,7 +366,7 @@ class testing extends test_base
         // TODO better use a info system log message
         echo $db_con->seq_reset(sql_db::TBL_VALUE) . '<br>';
         echo $db_con->seq_reset(sql_db::TBL_WORD) . '<br>';
-        echo $db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_TRIPLE) . '<br>';
+        echo $db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_WORD_LINK) . '<br>';
         echo $db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK) . '<br>';
         echo $db_con->seq_reset(sql_db::TBL_FORMULA) . '<br>';
         echo $db_con->seq_reset(sql_db::TBL_FORMULA_LINK) . '<br>';

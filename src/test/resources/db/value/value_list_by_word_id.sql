@@ -14,6 +14,6 @@ PREPARE value_list_by_word_id (int, int) AS
            u.share_type_id
       FROM values s
  LEFT JOIN user_values u               ON s.value_id = u.value_id AND u.user_id = $1
- LEFT JOIN phrase_groups l    ON s.phrase_group_id = l.phrase_group_id
- LEFT JOIN phrase_group_triples l2  ON s.phrase_group_id = l2.phrase_group_id
+ LEFT JOIN phrase_groups l             ON s.phrase_group_id = l.phrase_group_id
+ LEFT JOIN phrase_group_word_links l2  ON s.phrase_group_id = l2.phrase_group_id
      WHERE l2.word_id = $2;

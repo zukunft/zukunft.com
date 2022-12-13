@@ -13,6 +13,6 @@ PREPARE value_by_2phrase_id_and_time_word_id (int, int, int) AS
       FROM values s
  LEFT JOIN user_values u ON s.value_id = u.value_id AND u.user_id = $1
      WHERE s.phrase_group_id IN (SELECT l1.phrase_group_id
-                                  FROM phrase_group_triples l1
+                                  FROM phrase_group_word_links l1
                                  WHERE l1.word_id = $2)
        AND time_word_id = $3 ;

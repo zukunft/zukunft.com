@@ -121,6 +121,7 @@ include_once $path_unit_db . 'sql_db.php';
 include_once $path_unit_db . 'user.php';
 include_once $path_unit_db . 'word.php';
 include_once $path_unit_db . 'verb.php';
+include_once $path_unit_db . 'phrase_group.php';
 include_once $path_unit_db . 'term.php';
 include_once $path_unit_db . 'value.php';
 include_once $path_unit_db . 'formula.php';
@@ -1203,6 +1204,29 @@ class test_base
         string $test_type = ''): bool
     {
         $result = array_intersect($result, $target);
+        return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
+    }
+
+    /**
+     * check if the test results contains at least all expected results
+     *
+     * @param string $msg (unique) description of the test
+     * @param array $result the actual result
+     * @param array $target the expected result
+     * @param float $exe_max_time the expected max time to create the result
+     * @param string $comment
+     * @param string $test_type
+     * @return bool true is the result is fine
+     */
+    function assert_contains_not(
+        string $msg,
+        array $result,
+        array $target,
+        float $exe_max_time = TIMEOUT_LIMIT,
+        string $comment = '',
+        string $test_type = ''): bool
+    {
+        $result = array_diff($target, $result);
         return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
     }
 

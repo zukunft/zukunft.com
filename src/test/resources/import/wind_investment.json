@@ -114,7 +114,7 @@
       "name": "Power density"
     },
     {
-      "name": "Vestas"
+      "name": "Vestas (Company)"
     },
     {
       "name": "Company"
@@ -484,7 +484,7 @@
     },
     {
       "words": [
-        "Vestas",
+        "Vestas (Company)",
         "Equity ",
         "Price",
         "DKK"
@@ -493,7 +493,7 @@
     },
     {
       "words": [
-        "Vestas",
+        "Vestas (Company)",
         "Outstanding ",
         "Share"
       ],
@@ -507,7 +507,7 @@
     },
     {
       "words": [
-        "Vestas",
+        "Vestas (Company)",
         "Production per year",
         "MW",
         "Power rating"

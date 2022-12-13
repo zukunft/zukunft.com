@@ -178,7 +178,7 @@ class formula_value_list
                     $db_con->add_par(sql_db::PAR_INT, $obj->id(), false, true);
                     $db_con->set_join_fields(
                         array(formula_value::FLD_GRP),
-                        sql_db::TBL_PHRASE_GROUP_TRIPLE,
+                        sql_db::TBL_PHRASE_GROUP_WORD_LINK,
                         formula_value::FLD_GRP,
                         formula_value::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(word::FLD_ID));

@@ -31,7 +31,7 @@
 
 */
 
-class phrase_group_triple extends phrase_group_link
+class phrase_group_word_link extends phrase_group_link
 {
     // object specific database and JSON object field names
     const FLD_ID = 'phrase_group_triple_id';
@@ -72,7 +72,7 @@ class phrase_group_triple extends phrase_group_link
      */
     function load_by_group_id_sql(sql_db $db_con, phrase_group $grp): sql_par
     {
-        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_TRIPLE);
+        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
         $qp = new sql_par(self::class);
 
         if ($grp->id > 0) {
@@ -99,7 +99,7 @@ class phrase_group_triple extends phrase_group_link
      */
     function load_sql_obj_vars(sql_db $db_con): sql_par
     {
-        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_TRIPLE);
+        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
         $qp = new sql_par(self::class);
 
         if ($this->id > 0) {

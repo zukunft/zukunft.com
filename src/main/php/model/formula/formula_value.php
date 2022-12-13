@@ -679,7 +679,7 @@ class formula_value extends db_object
                                 if ($sql_grp_from <> '') {
                                     $sql_grp_from .= ',';
                                 }
-                                $sql_grp_from .= 'phrase_group_triples l' . $pos;
+                                $sql_grp_from .= 'phrase_group_word_links l' . $pos;
                                 $pos_prior = $pos - 1;
                                 if ($sql_grp_where <> '') {
                                     $sql_grp_where .= ' AND l' . $pos_prior . '.phrase_group_id = l' . $pos . '.phrase_group_id AND ';

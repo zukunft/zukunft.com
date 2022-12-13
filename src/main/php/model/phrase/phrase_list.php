@@ -907,10 +907,12 @@ class phrase_list extends user_sandbox_list_named
      * @param phrase_list $added_phr_lst list of the added phrase during the foaf selection process
      * @param int $verb_id id of the verb that is used to select the parents
      * @param string $direction to select if the parents or children should be selected - "up" to select the parents
-     * @param int $max_level the max $level that should be used for the selection
+     * @param int $max_level the max level that should be used for the selection; if 0 the technical max level ist used
      * @return phrase_list the accumulated list of added phrases
      */
-    private function foaf_level(int $level, phrase_list $added_phr_lst, int $verb_id, string $direction, int $max_level): phrase_list
+    private function foaf_level(
+        int $level, phrase_list $added_phr_lst, int $verb_id, string $direction, int $max_level
+    ): phrase_list
     {
         log_debug(self::class . '->foaf_level (type id ' . $verb_id . ' level ' . $level . ' ' . $direction . ' added ' . $added_phr_lst->name() . ')');
         if ($max_level > 0) {
@@ -1016,7 +1018,7 @@ class phrase_list extends user_sandbox_list_named
      * ex foaf_child
      * @param int $verb_id the id of the verb that should be used to filter the children
      */
-    function foaf_all_children(int $verb_id)
+    function foaf_all_children(int $verb_id): phrase_list
     {
         log_debug('phrase_list->foaf_children type ' . $verb_id);
         $added_phr_lst = null;
@@ -1039,20 +1041,24 @@ class phrase_list extends user_sandbox_list_named
      * ex foaf_child
      * @param int $verb_id the id of the verb that should be used to filter the children
      */
-    function foaf_children(int $verb_id)
+    function foaf_children(int $verb_id, int $max_level = 0): phrase_list
     {
         log_debug('phrase_list->foaf_children type ' . $verb_id);
         $level = 0;
         $added_phr_lst = new phrase_list($this->user()); // list of the added phrases
-        $added_phr_lst = $this->foaf_level($level, $added_phr_lst, $verb_id, word_select_direction::DOWN, 0);
+        $added_phr_lst = $this->foaf_level(
+            $level, $added_phr_lst, $verb_id, word_select_direction::DOWN, $max_level
+        );
 
         log_debug(self::class . '->foaf_children -> (' . $added_phr_lst->name() . ')');
         return $added_phr_lst;
     }
 
-    // similar to foaf_child, but for only one level
-    // $level is the number of levels that should be looked into
-    // ex foaf_child_step
+    /**
+     * similar to foaf_children, but for only one level
+     * $level is the number of levels that should be looked into
+     * ex foaf_child_step
+     */
     function children(?verb $vrb = null, int $level = 0): phrase_list
     {
         log_debug('phrase_list->children type ' . $vrb->id() );

@@ -2,7 +2,7 @@
 
 /*
 
-    phrase_group_link.php - the parent object for phrase_group_triple and phrase_group_triple_link
+    phrase_group_link.php - the parent object for phrase_group_word_link and phrase_group_triple_link
     ---------------------
 
     contains the common parts for the two phrase group link objects

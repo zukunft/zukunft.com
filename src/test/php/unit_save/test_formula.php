@@ -106,7 +106,7 @@ function run_formula_test(testing $t): void
     } else {
         $result = $phr_lst->name();
     }
-    $target = '"' . word::TN_2019 . '","' . word::TN_CH . '","' . word::TN_INHABITANT . '"';
+    $target = '"' . word::TN_CH . '","' . word::TN_2019 . '","' . word::TN_INHABITANT . '"';
     $t->dsp('formula->special_phr_lst for "' . $frm->name() . '"', $target, $result);
 
     $phr_lst = $frm->assign_phr_lst_direct();
@@ -194,7 +194,7 @@ function run_formula_test(testing $t): void
     // test the scaling back to a thousand
     $phr_lst = new phrase_list($t->usr1);
     // TODO check why is this word ONE needed?? scale shout assume one if no scaling word is set or implied
-    //$phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020));
+    //$phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANTS, word::TN_2020));
     $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020, word::TN_ONE));
     $frm_scale_one_to_k = $t->load_formula(formula_api::TN_SCALE_TO_K);
     $fv_lst = $frm_scale_one_to_k->calc($phr_lst, $back);

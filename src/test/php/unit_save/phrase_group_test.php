@@ -99,7 +99,7 @@ function run_phrase_group_test(testing $t)
     $grp_check = new phrase_group($usr);
     $grp_check->set_id($grp->id());
     $grp_check->load();
-    $result = $grp_check->load_link_ids();
+    $result = $grp_check->load_link_ids_for_testing();
     $target = $grp->phr_lst->id_lst();
     $t->dsp('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
@@ -110,7 +110,7 @@ function run_phrase_group_test(testing $t)
     $grp_check = new phrase_group($usr);
     $grp_check->set_id($grp->id());
     $grp_check->load();
-    $result = $grp_check->load_link_ids();
+    $result = $grp_check->load_link_ids_for_testing();
     $target = $grp->phr_lst->id_lst();
     $t->dsp('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 

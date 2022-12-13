@@ -53,29 +53,40 @@ class verb_unit_db_tests
         $vrb_id->load_by_id($vrb->id());
         $t->assert('load' . verb::IS_A, $vrb->name(), $vrb_id->name());
 
-        // test the selection of the members via 'is a' verb
+        // prepare the words for testing
         $country = new word($usr);
-        $country->load_by_name(word::TN_READ_COUNTRY);
-        $countries = $country->children();
-        $t->assert_contains('is a based on ' . word::TN_READ_COUNTRY,
-            $countries->names(),
-            array(word::TN_READ_SWITZERLAND, word::TN_READ_GERMANY)
-        );
-
-        // test the recursive selection of the members via 'is part of' verb
+        $country->load_by_name(word::TN_COUNTRY);
         $switzerland = new word($usr);
-        $switzerland->load_by_name(word::TN_READ_SWITZERLAND);
+        $switzerland->load_by_name(word::TN_CH);
 
-        $parts = $switzerland->parts();
-        $t->assert_contains('is a based on ' . word::TN_READ_COUNTRY,
+        // 'is a' - test the selection of the members via 'is a' verb
+        $countries = $country->children();
+        $t->assert_contains('is a based on ' . word::TN_COUNTRY,
+            $countries->names(),
+            array(word::TN_CH, word::TN_READ_GERMANY)
+        );
+
+        // 'is part of' - test the direct selection of the members via 'is part of' verb
+        //                e.g. for Switzerland get at least 'Zurich (Canton)' but not 'Zurich (City)'
+        $parts = $switzerland->direct_parts();
+        $t->assert_contains('direct parts of ' . word::TN_CH,
             $parts->names(),
-            array(word::TN_READ_ZURICH_CANTON, word::TN_READ_ZURICH_CITY)
+            array(word::TN_ZH_CANTON)
+        );
+        $t->assert_contains_not('direct parts of ' . word::TN_CH,
+            $parts->names(),
+            array(word::TN_ZH_CITY)
+        );
+
+        // 'is part of' - test the recursive selection of the members via 'is part of' verb
+        //                e.g. for Switzerland get at least 'Zurich (Canton)' and 'Zurich (City)'
+        $parts = $switzerland->parts();
+        $t->assert_contains('parts of ' . word::TN_CH . ' and parts of the parts',
+            $parts->names(),
+            array(word::TN_ZH_CANTON, word::TN_ZH_CITY)
         );
 
 
-        // TODO add to phrase, triple and word the methodes
-        //      ->parts() to get 'Zurich (Canton)' and 'Zurich (City)' for Switzerland
-        //      ->direct_parts() to get 'Zurich (Canton)' but not 'Zurich (City)' for Switzerland
         // TODO add to phrase and triple the methode
         //      ->all_parents to get Canton, City and Company for Zurich (Canton)
         //      whereas ->parents just return Canton for Zurich (Canton) because the word splitting is not done

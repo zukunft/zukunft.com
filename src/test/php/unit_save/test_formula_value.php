@@ -93,7 +93,7 @@ function run_formula_value_test(testing $t): void
     $ch_k_grp = $phr_lst->get_grp();
     /*
     $dest_wrd_lst = new word_list($usr);
-    $dest_wrd_lst->add_name(word::TN_INHABITANT);
+    $dest_wrd_lst->add_name(word::TN_INHABITANTS);
     $dest_wrd_lst->load();
     $mio_val = new value($usr);
     $mio_val->ids = $wrd_lst->ids;

@@ -60,9 +60,9 @@ function run_phrase_group_list_test(testing $t)
     $grp_lst->add($canton_grp);
     $grp_lst->add($city_grp);
     $result = $grp_lst->name();
-    $target = word::TN_MIO . ',' . word::TN_CH . ',' . word::TN_INHABITANT .
-        ' and ' . word::TN_MIO . ',' . word::TN_CANTON . ',' . word::TN_ZH . ',' . word::TN_INHABITANT .
-        ' and ' . word::TN_MIO . ',' . word::TN_CITY . ',' . word::TN_ZH . ',' . word::TN_INHABITANT;
+    $target = word::TN_CH . ',' . word::TN_MIO . ',' . word::TN_INHABITANT .
+        ' and ' . word::TN_CANTON . ',' . word::TN_MIO . ',' . word::TN_ZH . ',' . word::TN_INHABITANT .
+        ' and ' . word::TN_CITY . ',' . word::TN_MIO . ',' . word::TN_ZH . ',' . word::TN_INHABITANT;
     $t->dsp('phrase_group_list->add of ' . $country_grp->dsp_id() . ', ' . $country_grp->dsp_id() . ', ' . $city_grp->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
 

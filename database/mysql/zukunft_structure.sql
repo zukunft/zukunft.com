@@ -383,6 +383,21 @@ CREATE TABLE IF NOT EXISTS `phrase_group_phrase_links`
 -- --------------------------------------------------------
 
 --
+-- Table structure for table`phrase_group_word_links`
+--
+
+CREATE TABLE IF NOT EXISTS `phrase_group_word_links`
+(
+    `phrase_group_word_link_id` int(11) NOT NULL,
+    `phrase_group_id`           int(11) NOT NULL,
+    `word_id`                   int(11) NOT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8 COMMENT ='link words to a phrase_group for database based selections';
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table`phrase_group_triple_links`
 --
 
@@ -392,22 +407,7 @@ CREATE TABLE IF NOT EXISTS `phrase_group_triple_links`
     `phrase_group_id`             int(11) NOT NULL,
     `triple_id`                   int(11) NOT NULL
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='view for fast group selection based on a triple';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`phrase_group_triples`
---
-
-CREATE TABLE IF NOT EXISTS `phrase_group_triples`
-(
-    `phrase_group_triple_id` int(11) NOT NULL,
-    `phrase_group_id`           int(11) NOT NULL,
-    `word_id`                   int(11) NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='master to link words to a term_group';
+  DEFAULT CHARSET = utf8 COMMENT ='link phrases to a phrase_group for database based selections';
 
 -- --------------------------------------------------------
 
@@ -797,6 +797,20 @@ CREATE TABLE IF NOT EXISTS `user_phrase_group_phrase_links`
 -- --------------------------------------------------------
 
 --
+-- Table structure for table`user_phrase_group_word_links`
+--
+
+CREATE TABLE IF NOT EXISTS `user_phrase_group_word_links`
+(
+    `phrase_group_word_link_id` int(11) NOT NULL,
+    `user_id`                   int(11)    DEFAULT NULL,
+    `excluded`                  tinyint(4) DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT ='view for fast group selection based on a triple';
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table`user_phrase_group_triple_links`
 --
 
@@ -805,20 +819,6 @@ CREATE TABLE IF NOT EXISTS `user_phrase_group_triple_links`
     `phrase_group_triple_link_id` int(11) NOT NULL,
     `user_id`                     int(11)    DEFAULT NULL,
     `excluded`                    tinyint(4) DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='view for fast group selection based on a triple';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_phrase_group_triples`
---
-
-CREATE TABLE IF NOT EXISTS `user_phrase_group_triples`
-(
-    `phrase_group_triple_id` int(11) NOT NULL,
-    `user_id`                   int(11)    DEFAULT NULL,
-    `excluded`                  tinyint(4) DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='view for fast group selection based on a triple';
 
@@ -1615,10 +1615,10 @@ DROP TABLE IF EXISTS `phrase_group_phrase_links`;
 
 CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
     SECURITY DEFINER VIEW `phrase_group_phrase_links` AS
-select `phrase_group_triples`.`phrase_group_triple_id` AS `phrase_group_phrase_link_id`,
-       `phrase_group_triples`.`phrase_group_id`           AS `phrase_group_id`,
-       `phrase_group_triples`.`word_id`                   AS `phrase_id`
-from `phrase_group_triples`
+select `phrase_group_word_links`.`phrase_group_word_link_id` AS `phrase_group_phrase_link_id`,
+       `phrase_group_word_links`.`phrase_group_id`           AS `phrase_group_id`,
+       `phrase_group_word_links`.`word_id`                   AS `phrase_id`
+from `phrase_group_word_links`
 union
 select `phrase_group_triple_links`.`phrase_group_triple_link_id` AS `phrase_group_phrase_link_id`,
        `phrase_group_triple_links`.`phrase_group_id`             AS `phrase_group_id`,
@@ -1634,10 +1634,10 @@ DROP TABLE IF EXISTS `user_phrase_group_phrase_links`;
 
 CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
     SECURITY DEFINER VIEW `user_phrase_group_phrase_links` AS
-select `user_phrase_group_triples`.`phrase_group_triple_id` AS `phrase_group_phrase_link_id`,
-       `user_phrase_group_triples`.`user_id`                   AS `user_id`,
-       `user_phrase_group_triples`.`excluded`                  AS `excluded`
-from `user_phrase_group_triples`
+select `user_phrase_group_word_links`.`phrase_group_word_link_id` AS `phrase_group_phrase_link_id`,
+       `user_phrase_group_word_links`.`user_id`                   AS `user_id`,
+       `user_phrase_group_word_links`.`excluded`                  AS `excluded`
+from `user_phrase_group_word_links`
 union
 select `user_phrase_group_triple_links`.`phrase_group_triple_link_id` AS `phrase_group_phrase_link_id`,
        `user_phrase_group_triple_links`.`user_id`                     AS `user_id`,
@@ -1784,20 +1784,20 @@ ALTER TABLE `phrase_groups`
     ADD UNIQUE KEY `term_ids` (`word_ids`, `triple_ids`);
 
 --
+-- Indexes for table`phrase_group_word_links`
+--
+ALTER TABLE `phrase_group_word_links`
+    ADD PRIMARY KEY (`phrase_group_word_link_id`),
+    ADD KEY `phrase_group_id` (`phrase_group_id`),
+    ADD KEY `word_id` (`word_id`);
+
+--
 -- Indexes for table`phrase_group_triple_links`
 --
 ALTER TABLE `phrase_group_triple_links`
     ADD PRIMARY KEY (`phrase_group_triple_link_id`),
     ADD KEY `phrase_group_id` (`phrase_group_id`),
     ADD KEY `triple_id` (`triple_id`);
-
---
--- Indexes for table`phrase_group_triples`
---
-ALTER TABLE `phrase_group_triples`
-    ADD PRIMARY KEY (`phrase_group_triple_id`),
-    ADD KEY `phrase_group_id` (`phrase_group_id`),
-    ADD KEY `word_id` (`word_id`);
 
 --
 -- Indexes for table`protection_types`
@@ -1949,19 +1949,19 @@ ALTER TABLE `user_phrase_groups`
     ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table`user_phrase_group_word_links`
+--
+ALTER TABLE `user_phrase_group_word_links`
+    ADD UNIQUE KEY `phrase_group_word_link_id` (`phrase_group_word_link_id`, `user_id`),
+    ADD KEY `phrase_group_word_link_id_2` (`phrase_group_word_link_id`),
+    ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table`user_phrase_group_triple_links`
 --
 ALTER TABLE `user_phrase_group_triple_links`
     ADD UNIQUE KEY `phrase_group_triple_link_id` (`phrase_group_triple_link_id`, `user_id`),
     ADD KEY `phrase_group_triple_link_id_2` (`phrase_group_triple_link_id`),
-    ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table`user_phrase_group_triples`
---
-ALTER TABLE `user_phrase_group_triples`
-    ADD UNIQUE KEY `phrase_group_triple_id` (`phrase_group_triple_id`, `user_id`),
-    ADD KEY `phrase_group_triple_id_2` (`phrase_group_triple_id`),
     ADD KEY `user_id` (`user_id`);
 
 --
@@ -2306,15 +2306,15 @@ ALTER TABLE `language_forms`
 ALTER TABLE `phrase_groups`
     MODIFY `phrase_group_id` int(11) NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT for table`phrase_group_word_links`
+--
+ALTER TABLE `phrase_group_word_links`
+    MODIFY `phrase_group_word_link_id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table`phrase_group_triple_links`
 --
 ALTER TABLE `phrase_group_triple_links`
     MODIFY `phrase_group_triple_link_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`phrase_group_triples`
---
-ALTER TABLE `phrase_group_triples`
-    MODIFY `phrase_group_triple_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`protection_types`
 --
@@ -2561,17 +2561,18 @@ ALTER TABLE `formula_values`
     ADD CONSTRAINT `formula_values_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
+-- Constraints for table`phrase_group_word_links`
+--
+ALTER TABLE `phrase_group_word_links`
+    ADD CONSTRAINT `phrase_group_word_links_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`),
+    ADD CONSTRAINT `phrase_group_word_links_fk_2` FOREIGN KEY (`word_id`) REFERENCES `words` (`word_id`);
+
+--
 -- Constraints for table`phrase_group_triple_links`
 --
 ALTER TABLE `phrase_group_triple_links`
     ADD CONSTRAINT `phrase_group_triple_links_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`),
     ADD CONSTRAINT `phrase_group_triple_links_fk_2` FOREIGN KEY (`triple_id`) REFERENCES `triples` (`triple_id`);
-
---
--- Constraints for table`phrase_group_triples`
---
-ALTER TABLE `phrase_group_triples`
-    ADD CONSTRAINT `phrase_group_triples_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`);
 
 --
 -- Constraints for table`refs`
@@ -2633,18 +2634,18 @@ ALTER TABLE `user_phrase_groups`
     ADD CONSTRAINT `user_phrase_groups_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
+-- Constraints for table`user_phrase_group_word_links`
+--
+ALTER TABLE `user_phrase_group_word_links`
+    ADD CONSTRAINT `user_phrase_group_word_links_fk_1` FOREIGN KEY (`phrase_group_word_link_id`) REFERENCES `user_phrase_group_word_links` (`phrase_group_word_link_id`),
+    ADD CONSTRAINT `user_phrase_group_word_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+--
 -- Constraints for table`user_phrase_group_triple_links`
 --
 ALTER TABLE `user_phrase_group_triple_links`
     ADD CONSTRAINT `user_phrase_group_triple_links_fk_1` FOREIGN KEY (`phrase_group_triple_link_id`) REFERENCES `phrase_group_triple_links` (`phrase_group_triple_link_id`),
     ADD CONSTRAINT `user_phrase_group_triple_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
-
---
--- Constraints for table`user_phrase_group_triples`
---
-ALTER TABLE `user_phrase_group_triples`
-    ADD CONSTRAINT `user_phrase_group_triples_fk_1` FOREIGN KEY (`phrase_group_triple_id`) REFERENCES `phrase_group_triples` (`phrase_group_triple_id`),
-    ADD CONSTRAINT `user_phrase_group_triples_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table`user_sources`

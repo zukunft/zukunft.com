@@ -109,20 +109,20 @@ function run_expression_test(testing $t): void
     // ... and all elements used in the formula
     $elm_lst = $exp_sector->element_list();
     $result = $elm_lst->name();
-    $target = 'System Test Word Parent e.g. Country, can be used as a differentiator for, System Test Word Category e.g. Canton, System Test Word Total';
+    $target = 'Country, can be used as a differentiator for, Canton, System Test Word Total';
     $t->assert('element_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
     // ... and all element groups used in the formula
     $elm_grp_lst = $exp_sector->element_grp_lst();
     $result = $elm_grp_lst->name();
-    $target = 'System Test Word Parent e.g. Country,can be used as a differentiator for,System Test Word Category e.g. Canton, System Test Word Total';
+    $target = 'Country,can be used as a differentiator for,Canton, System Test Word Total';
     $t->assert('element_grp_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
     // test getting the phrases if the formula contains a verb
     // not sure if test is correct!
     $phr_lst = $exp_sector->phr_verb_lst();
     $result = $phr_lst->dsp_name();
-    $target = '"System Test Word Category e.g. Canton","System Test Word Parent e.g. Country","System Test Word Total"';
+    $target = '"Canton","Country","System Test Word Total"';
     // TODO $t->assert('phr_verb_lst for "' . $exp_sector->ref_text() . '"', $result, $target);
 
     // test getting special phrases

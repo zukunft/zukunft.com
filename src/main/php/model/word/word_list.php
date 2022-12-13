@@ -155,7 +155,7 @@ class word_list extends sandbox_list
             $qp->name .= 'group';
             $db_con->set_name($qp->name);
             $db_con->add_par(sql_db::PAR_INT, $grp_id);
-            $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_TRIPLE);
+            $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
             $sql_where = sql_db::STD_TBL . '.' . word::FLD_ID . ' IN ( SELECT ' . word::FLD_ID . ' 
                                     FROM ' . $table_name . '
                                     WHERE ' . phrase_group::FLD_ID . ' = ' . $db_con->par_name() . ')';

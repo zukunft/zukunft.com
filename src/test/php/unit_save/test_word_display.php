@@ -61,7 +61,7 @@ function run_word_display_test(testing $t)
     $wrd_ZH = new word($usr);
     $wrd_ZH->load_by_name(word::TN_ZH, word::class);
     $direction = 'down';
-    $target = 'Nothing linked to "System Test Word Member e.g. Zurich" until now. Click here to link it.';
+    $target = 'Nothing linked to "Zurich" until now. Click here to link it.';
     $link_types = $wrd_ZH->link_types($direction);
     $result = $wrd_ZH->dsp_graph($direction, $link_types, 0);
     $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_ZH->name(), $target, $result);

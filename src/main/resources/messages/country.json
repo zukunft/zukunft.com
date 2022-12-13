@@ -13,9 +13,17 @@
     { "name": "City"},
     { "name": "Zurich"},
     { "name": "Germany", "refs": [ { "name": "Germany", "type": "wikipedia" } ] },
-    { "name": "Inhabitants"},
+    { "name": "inhabitants"},
     { "name": "2015", "type": "time"},
-    { "name": "Year", "type": "time"}
+    { "name": "2016", "type": "time"},
+    { "name": "Year", "type": "time"},
+    {
+      "name": "thousand",
+      "comment": "to specify numbers in thousand",
+      "type": "scaling",
+      "protection": "admin_protection"
+    },
+    { "name": "k" }
   ],
   "triples": [
     {"from": "Switzerland", "verb": "is a", "to": "Country"},
@@ -28,16 +36,40 @@
     },
     {"from": "Zurich (Canton)", "verb": "is part of", "to": "Switzerland"},
     {"from": "Zurich (City)", "verb": "is part of", "to": "Zurich (Canton)"},
-    {"from": "2015", "verb": "is a", "to": "Year"}
+    {"from": "2015", "verb": "is a", "to": "Year"},
+    {"from": "2016", "verb": "is a", "to": "Year"},
+    {"from": "k", "verb": "is a shortcut of", "to": "thousand", "type": "scaling"}
   ],
   "values": [
     {
       "words": [
         "Switzerland",
-        "Inhabitants",
+        "inhabitants",
         "2015"
       ],
       "number": "8327126"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "inhabitants",
+        "k",
+        "2016"
+      ],
+      "number": "8419.55"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "scale thousand to one",
+      "expression": "\"one\" = \"thousand\" * 1000",
+      "assigned_word": "thousand"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Bundesamt für Statistik",
+      "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/23328853/master"
     }
   ],
   "views": [

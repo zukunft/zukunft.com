@@ -47,6 +47,7 @@ class test_unit_read_db extends test_unit
         (new share_unit_db_tests)->run($this);
         (new word_unit_db_tests)->run($this);
         (new verb_unit_db_tests)->run($this);
+        (new phrase_group_unit_db_tests)->run($this);
         (new term_unit_db_tests)->run($this);
         (new term_list_test)->run($this);
         (new value_unit_db_tests)->run($this);

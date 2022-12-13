@@ -84,7 +84,7 @@ function run_graph_test(testing $t)
     $lnk_lst->load_old();
     $result = $lnk_lst->name();
     // to be reviewed
-    $target = 'System Test Phrase: Zurich (City),System Test Phrase: Zurich Insurance,System Test Word Member e.g. Zurich (System Test Word Category e.g. Canton)';
+    $target = 'System Test Phrase: Zurich Insurance,Zurich (Canton),Zurich (City)';
     $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
 

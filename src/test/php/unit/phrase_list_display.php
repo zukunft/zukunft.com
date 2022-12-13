@@ -48,9 +48,9 @@ class phrase_list_display_unit_tests
 
         // create the phrase list test set
         $lst = new phrase_list_dsp();
-        $phr_city = new phrase_dsp(-1,  phrase_api::TN_ZH_CITY,
+        $phr_city = new phrase_dsp(-1,  phrase_api::TN_ZH_CITY_NAME,
             word_api::TN_ZH, verb::IS_A, word_api::TN_CITY);
-        $phr_canton = new phrase_dsp(-2,  phrase_api::TN_ZH_CANTON,
+        $phr_canton = new phrase_dsp(-2,  phrase_api::TN_ZH_CANTON_NAME,
             word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON);
         $phr_ch = new phrase_dsp(1, word_api::TN_CH);
         $lst->add($phr_city);

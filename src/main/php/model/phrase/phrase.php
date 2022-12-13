@@ -89,8 +89,8 @@ class phrase extends db_object
     );
 
     // persevered word names for unit and integration tests
-    const TN_ZH_CANTON = "System Test Word Member e.g. Zurich (System Test Word Category e.g. Canton)"; // for testing the generic name creation
-    const TN_ZH_CITY = "System Test Phrase: Zurich (City)"; // to test the named phrase
+    const TN_ZH_CANTON = "Zurich (Canton)"; // for testing the generic name creation
+    const TN_ZH_CITY = "Zurich (City)"; // to test the named phrase
     const TN_ZH_COMPANY = "System Test Phrase: Zurich Insurance";
     const RESERVED_PHRASES = array(
         self::TN_ZH_CANTON,

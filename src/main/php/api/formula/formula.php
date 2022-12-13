@@ -72,7 +72,7 @@ class formula_api extends user_sandbox_named_with_type_api
     const TN_RATIO = 'System Test Formula PE Ratio'; // to test a simple ration calculation like how many times Switzerland is bigger than the canton zurich or the price to earning ration for equity
     const TF_RATIO = '"System Test Word PE Ratio" = "System Test Word Share Price" / "System Test Word Earnings"';
     const TN_SECTOR = 'System Test Formula Sector'; // to test the selection by a phrases and parents e.g. split all country totals by canton
-    const TF_SECTOR = '= "System Test Word Parent e.g. Country" "differentiator" "System Test Word Category e.g. Canton" / "System Test Word Total"';
+    const TF_SECTOR = '= "Country" "differentiator" "Canton" / "System Test Word Total"';
     const TN_SCALE_K = 'System Test Formula scale thousand to one';
     const TF_SCALE_K = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. thousands" * 1000';
     const TN_SCALE_TO_K = 'System Test Formula scale one to thousand';
