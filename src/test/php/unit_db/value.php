@@ -43,6 +43,31 @@ class value_unit_db_tests
 
         $t->header('Unit database tests of the value class (src/main/php/model/value/value.php)');
 
+        $t->subheader('Value load tests');
+
+        $test_name = 'load a value by phrase group';
+        $phr_lst = new phrase_list($usr);
+        $phr_lst->load_by_names(
+            array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020)
+        );
+        $val = new value($usr);
+        $val->grp = $phr_lst->get_grp();
+        $val->load_obj_vars();
+        $result = $val->number();
+        $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
+        $t->assert($test_name, $result, $target);
+
+        /*
+        $test_name = 'load the latest value by phrase group';
+        $phr_lst->ex_time();
+        $val = new value($usr);
+        $val->grp = $phr_lst->get_grp();
+        $val->load_obj_vars();
+        $result = $val->number();
+        $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
+        $t->assert($test_name, $result, $target);
+        */
+
         $t->subheader('Frontend API tests');
 
         $val = new value($usr);

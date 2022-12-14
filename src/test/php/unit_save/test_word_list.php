@@ -246,7 +246,7 @@ function run_word_list_test(testing $t)
     $wrd_lst_ex = clone $wrd_lst;
     $wrd_lst_ex->ex_time();
     $result = $wrd_lst_ex->name();
-    $target = '"' . word::TN_CHF . '","' . word::TN_MIO . '","' . word::TN_ZH . '"'; // the creation should be tested, but how?
+    $target = '"' . word::TN_MIO . '","' . word::TN_CHF . '","' . word::TN_ZH . '"'; // the creation should be tested, but how?
     $t->dsp('word_list->ex_time for ' . $wrd_lst->name(), $target, $result);
 
     // add a test value

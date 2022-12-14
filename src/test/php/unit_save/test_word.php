@@ -460,6 +460,9 @@ function run_word_tests(testing $t): void
     $result = $wrd_usr1_reloaded->name_dsp();
     $t->dsp('but the word "' . word::TN_RENAMED . '" is still the same for user 1', $target, $result);
 
+    // TODO test the creation of a new scaling word e.g. dozen for 12
+    //      and adding a related formula and calculating values based on the added formula
+    // TODO test the creation of a new time word e.g. year 2042
 
     // TODO redo the user specific word changes including changing the default view
     // check if the user specific changes can be removed with one click

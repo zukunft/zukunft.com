@@ -16,10 +16,20 @@
     { "name": "inhabitants"},
     { "name": "2015", "type": "time"},
     { "name": "2016", "type": "time"},
+    { "name": "2017", "type": "time"},
+    { "name": "2018", "type": "time"},
+    { "name": "2019", "type": "time"},
+    { "name": "2020", "type": "time"},
     { "name": "Year", "type": "time"},
     {
       "name": "thousand",
       "comment": "to specify numbers in thousand",
+      "type": "scaling",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "million",
+      "comment": "to specify numbers in millions",
       "type": "scaling",
       "protection": "admin_protection"
     },
@@ -38,6 +48,15 @@
     {"from": "Zurich (City)", "verb": "is part of", "to": "Zurich (Canton)"},
     {"from": "2015", "verb": "is a", "to": "Year"},
     {"from": "2016", "verb": "is a", "to": "Year"},
+    {"from": "2017", "verb": "is a", "to": "Year"},
+    {"from": "2018", "verb": "is a", "to": "Year"},
+    {"from": "2019", "verb": "is a", "to": "Year"},
+    {"from": "2020", "verb": "is a", "to": "Year"},
+    {"from": "2016", "verb": "is follower of", "to": "2015"},
+    {"from": "2017", "verb": "is follower of", "to": "2016"},
+    {"from": "2018", "verb": "is follower of", "to": "2017"},
+    {"from": "2019", "verb": "is follower of", "to": "2018"},
+    {"from": "2020", "verb": "is follower of", "to": "2019"},
     {"from": "k", "verb": "is a shortcut of", "to": "thousand", "type": "scaling"}
   ],
   "values": [
@@ -57,6 +76,15 @@
         "2016"
       ],
       "number": "8419.55"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "inhabitants",
+        "million",
+        "2020"
+      ],
+      "number": "8.505251"
     }
   ],
   "formulas": [

@@ -78,7 +78,7 @@ class formula_api extends user_sandbox_named_with_type_api
     const TN_SCALE_TO_K = 'System Test Formula scale one to thousand';
     const TF_SCALE_TO_K = '"System Test Scaling Word e.g. thousands" = "System Test Scaling Word e.g. one" / 1000';
     const TN_SCALE_MIO = 'System Test Formula scale millions to one';
-    const TF_SCALE_MIO = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. millions" * 1000000';
+    const TF_SCALE_MIO = '"System Test Scaling Word e.g. one" = "million" * 1000000';
     const TN_SCALE_BIL = 'System Test Formula scale billions to one';
     const TF_SCALE_BIL = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. billions" * 1000000000';
 

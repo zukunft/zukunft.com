@@ -79,7 +79,7 @@ function run_formula_element_group_test(testing $t): void
 
         // test debug id first
         $result = $elm_grp->dsp_id();
-        $target = '"this" ('.$frm_this->id().') and "Switzerland","System Test Scaling Word e.g. millions","inhabitants"';
+        $target = '"this" ('.$frm_this->id().') and "Switzerland","inhabitants","million"';
         $t->dsp('formula_element_group->dsp_id', $target, $result);
 
         // test symbol for text replacement in the formula expression text

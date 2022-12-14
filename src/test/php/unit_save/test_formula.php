@@ -106,7 +106,7 @@ function run_formula_test(testing $t): void
     } else {
         $result = $phr_lst->name();
     }
-    $target = '"' . word::TN_CH . '","' . word::TN_2019 . '","' . word::TN_INHABITANT . '"';
+    $target = '"' . word::TN_2019 . '","' . word::TN_CH . '","' . word::TN_INHABITANT . '"';
     $t->dsp('formula->special_phr_lst for "' . $frm->name() . '"', $target, $result);
 
     $phr_lst = $frm->assign_phr_lst_direct();
@@ -115,7 +115,7 @@ function run_formula_test(testing $t): void
     } else {
         $result = $phr_lst->dsp_name();
     }
-    $target = '"System Test Time Word Category e.g. Year"';
+    $target = '"Year"';
     $t->dsp('formula->assign_phr_lst_direct for "' . $frm->name() . '"', $target, $result);
 
     $phr_lst = $frm->assign_phr_ulst_direct();
@@ -124,7 +124,7 @@ function run_formula_test(testing $t): void
     } else {
         $result = $phr_lst->dsp_name();
     }
-    $target = '"System Test Time Word Category e.g. Year"';
+    $target = '"Year"';
     $t->dsp('formula->assign_phr_ulst_direct for "' . $frm->name() . '"', $target, $result);
 
     // loading another formula (Price Earning ratio ) to have more test cases

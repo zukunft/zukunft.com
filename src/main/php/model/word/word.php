@@ -118,6 +118,14 @@ class word extends user_sandbox_named_with_type
     const TN_ZH_CANTON = 'Zurich (Canton)';
     const TN_ZH_CITY = 'Zurich (City)';
     const TN_INHABITANT = 'inhabitants';
+    const TN_MIO = 'million';
+    const TN_2015 = '2015';
+    const TN_2016 = '2016';
+    const TN_2017 = '2017';
+    const TN_2018 = '2018';
+    const TN_2019 = '2019';
+    const TN_2020 = '2020';
+    const TN_YEAR = 'Year';
     const TN_READ_GERMANY = 'Germany';
     const TN_ADD = 'System Test Word';
     const TN_RENAMED = 'System Test Word Renamed';
@@ -132,9 +140,6 @@ class word extends user_sandbox_named_with_type
     const TN_ENERGY = 'System Test Word usage as differentiator e.g. Energy';
     const TN_WIND_ENERGY = 'System Test Word usage as differentiator e.g. Wind Energy';
     const TN_CASH = 'System Test Word multi levels e.g. Cash';
-    const TN_YEAR = 'System Test Time Word Category e.g. Year';
-    const TN_2019 = 'System Test Another Time Word e.g. 2019';
-    const TN_2020 = 'System Test Another Time Word e.g. 2020';
     const TN_2021 = 'System Test Time Word e.g. 2021';
     const TN_2022 = 'System Test Another Time Word e.g. 2022';
     const TN_CHF = 'System Test Measure Word e.g. CHF';
@@ -144,7 +149,6 @@ class word extends user_sandbox_named_with_type
     const TN_PE = 'System Test Word PE Ratio';
     const TN_ONE = 'System Test Scaling Word e.g. one';
     const TN_IN_K = 'System Test Scaling Word e.g. thousands';
-    const TN_MIO = 'System Test Scaling Word e.g. millions';
     const TN_BIL = 'System Test Scaling Word e.g. billions';
     const TN_PCT = 'System Test Percent Word';
     const TN_TOTAL = 'System Test Word Total';
@@ -176,9 +180,6 @@ class word extends user_sandbox_named_with_type
         self::TN_ENERGY,
         self::TN_WIND_ENERGY,
         self::TN_CASH,
-        self::TN_YEAR,
-        self::TN_2019,
-        self::TN_2020,
         self::TN_2021,
         self::TN_2022,
         self::TN_CHF,
@@ -188,7 +189,6 @@ class word extends user_sandbox_named_with_type
         self::TN_PE,
         self::TN_ONE,
         self::TN_IN_K,
-        self::TN_MIO,
         self::TN_BIL,
         self::TN_PCT,
         self::TN_TOTAL,
@@ -213,8 +213,10 @@ class word extends user_sandbox_named_with_type
         self::TN_CASH_FLOW,
         self::TN_TAX_REPORT,
         self::TN_INHABITANT,
+        self::TN_MIO,
         self::TN_INCREASE,
         self::TN_YEAR,
+        self::TN_2020,
         self::TN_SHARE,
         self::TN_PRICE,
         self::TN_EARNING,

@@ -106,8 +106,8 @@ function run_value_test(testing $t)
 
         // ... and check the words loaded
         $result = $chk_val->name();
-        //$target = 'System Test Scaling Word e.g. millions,System Test Word Category e.g. Canton,System Test Word Member e.g. Zurich,System Test Word Unit e.g. inhabitant';
-        $target = 'Canton,System Test Scaling Word e.g. millions,Zurich,inhabitants,System Test Another Time Word e.g. 2020';
+        //$target = 'million,System Test Word Category e.g. Canton,System Test Word Member e.g. Zurich,System Test Word Unit e.g. inhabitant';
+        $target = 'Canton,Zurich,inhabitants,million,2020';
         $t->dsp(', value->load words', $target, $result);
 
         // ... and check the time word
@@ -127,8 +127,8 @@ function run_value_test(testing $t)
             } else {
                 $result = '';
             }
-            //$target = 'System Test Word Unit e.g. inhabitant,System Test Word Member e.g. Zurich,System Test Scaling Word e.g. millions,System Test Word Category e.g. Canton';
-            $target = 'Canton,System Test Scaling Word e.g. millions,Zurich,inhabitants';
+            //$target = 'System Test Word Unit e.g. inhabitant,System Test Word Member e.g. Zurich,million,System Test Word Category e.g. Canton';
+            $target = 'Canton,Zurich,inhabitants,million';
             $t->dsp(', value->load_phrases reloaded words', $target, $result);
 
             // ... and check the time word reloading

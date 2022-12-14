@@ -1175,12 +1175,17 @@ class test_base
      */
     function assert(
         string $msg,
-        string|array $result,
+        string|array|null $result,
         string|array $target,
         float $exe_max_time = TIMEOUT_LIMIT,
         string $comment = '',
         string $test_type = ''): bool
     {
+        // the result should never be null, but if, check it here not on each call
+        if ($result == null) {
+           $result = '';
+           log_warning('result of test ' . $msg . ' has been null');
+        }
         return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
     }
 
