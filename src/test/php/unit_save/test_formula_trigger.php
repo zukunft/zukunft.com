@@ -91,7 +91,7 @@ function run_formula_trigger_test(testing $t)
     $t->dsp('value->check best value for "' . $phr_lst2->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // calculate the increase and check the result
-    $fv_lst = $frm->calc($phr_lst2, 0);
+    $fv_lst = $frm->calc($phr_lst2);
     if ($fv_lst != null) {
         if (count($fv_lst) > 0) {
             $fv = $fv_lst[0];

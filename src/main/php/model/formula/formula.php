@@ -816,9 +816,10 @@ class formula extends user_sandbox_named_with_type
 
     /**
      * fill the formula in the reference format with numbers
+     * @param phrase_list $phr_lst
      * TODO verbs
      */
-    function to_num($phr_lst, $back = 0): formula_value_list
+    function to_num(phrase_list $phr_lst): formula_value_list
     {
         log_debug('get numbers for ' . $this->dsp_id() . ' and ' . $phr_lst->dsp_id());
 
@@ -1035,9 +1036,9 @@ class formula extends user_sandbox_named_with_type
                                 log_debug('got some numbers for ' . $this->dsp_id() . ' and ' . dsp_array($fv->phr_ids()));
                             } else {
                                 if ($fv->is_std) {
-                                    log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $fv->name_linked($back) . ': ' . $fv->num_text);
+                                    log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $fv->name_linked() . ': ' . $fv->num_text);
                                 } else {
-                                    log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $fv->name_linked($back) . ': ' . $fv->num_text . ' (user specific)');
+                                    log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $fv->name_linked() . ': ' . $fv->num_text . ' (user specific)');
                                 }
                                 $can_calc = true;
                             }
@@ -1080,14 +1081,14 @@ class formula extends user_sandbox_named_with_type
     /**
      * calculate the result for one formula for one user
      * and save the result in the database
-     * the $phr_lst is the context for the value retrieval and it also contains any time words
+     * @param phrase_list $phr_lst is the context for the value retrieval and it also contains any time words
      * the time words are only separated right before saving to the database
      * always returns an array of formula values
      * TODO check if calculation is really needed
      *      if one of the result words is a scaling word, remove all value scaling words
      *      always create a default result (for the user 0)
      */
-    function calc($phr_lst, string $back): ?array
+    function calc(phrase_list $phr_lst): ?array
     {
         $result = null;
 
@@ -1130,7 +1131,7 @@ class formula extends user_sandbox_named_with_type
 
             // get the list of the numeric results
             // $fv_lst is a list of all results saved in the database
-            $fv_lst = $this->to_num($phr_lst, $back);
+            $fv_lst = $this->to_num($phr_lst);
             if (isset($fv_add_phr_lst)) {
                 log_debug(self::class . '->calc -> ' . dsp_count($fv_lst->lst) . ' formula results to save');
             }
@@ -1208,6 +1209,17 @@ class formula extends user_sandbox_named_with_type
 
         log_debug(self::class . '->calc -> done');
         return $result;
+    }
+
+    /**
+     * calculate the formula results based on a given figure list
+     *
+     * @param figure_list $fig_lst the value and results that should be used for the calculation
+     * @return figure_list the received figure list with the additions forlua results
+     */
+    public function calc_with(figure_list $fig_lst): figure_list
+    {
+        return $fig_lst;
     }
 
     /**

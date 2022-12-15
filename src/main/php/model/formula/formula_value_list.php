@@ -805,7 +805,7 @@ class formula_value_list
                 $frm->set_id($frm_id);
                 $frm->load_obj_vars();
                 $back = '';
-                $fv_list = $frm->to_num($phr_lst_used, $back);
+                $fv_list = $frm->to_num($phr_lst_used);
                 $formula_value = $fv_list->get_first();
                 // if the formula value is empty use the id to be able to select the formula
                 if ($formula_value == '') {
