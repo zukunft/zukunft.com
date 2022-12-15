@@ -92,6 +92,19 @@
       "name": "scale thousand to one",
       "expression": "\"one\" = \"thousand\" * 1000",
       "assigned_word": "thousand"
+    },
+    {
+      "name": "scale million to one",
+      "expression": "\"one\" = \"million\" * 1000000",
+      "comment": "to specify numbers in millions",
+      "type": "scaling",
+      "assigned_word": "million",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "increase",
+      "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+      "assigned_word": "\"inhabitants\""
     }
   ],
   "sources": [

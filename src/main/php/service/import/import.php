@@ -88,6 +88,8 @@ class file_import
      */
     function put(): user_message
     {
+        global $usr;
+
         log_debug();
         $result = new user_message();
         $this->last_display_time = microtime(true);
@@ -95,6 +97,36 @@ class file_import
         $json_array = json_decode($this->json_str, true);
         if ($json_array != null) {
             $total = count_recursive($json_array, 1);
+
+            // get the user first to allow user specific validation
+            $usr_import = null;
+            foreach ($json_array as $key => $json_obj) {
+                if ($usr_import == null) {
+                    if ($key == export::USERS) {
+                        $import_result = new user_message();
+                        foreach ($json_obj as $user) {
+                            // TODO check if the constructor is always used
+                            $usr_import = new user;
+                            $import_result = $usr_import->import_obj($user, $this->usr->profile_id);
+                            if ($import_result->is_ok()) {
+                                $this->users_done++;
+                            } else {
+                                $this->users_failed++;
+                            }
+                        }
+                        $result->add($import_result);
+                    }
+                }
+            }
+            // if no user is defined in the json to import use the active user
+            if ($usr_import == null) {
+                $usr_import = $usr;
+            }
+
+            // remember the result and view that should be validated after the import
+            $fv_to_validate = new formula_value_list($usr_import);
+            $frm_to_calc = new formula_list($usr_import);
+            $dsp_to_validate = new view_list($usr_import);
             $pos = 0;
             $this->display_progress($pos, $total);
             foreach ($json_array as $key => $json_obj) {
@@ -111,19 +143,6 @@ class file_import
                     // TODO set the selection as context
                 } elseif ($key == export::USER) {
                     // TODO set the user that has created the export
-                } elseif ($key == export::USERS) {
-                    $import_result = new user_message();
-                    foreach ($json_obj as $user) {
-                        // TODO check if the constructor is always used
-                        $usr = new user;
-                        $import_result = $usr->import_obj($user, $this->usr->profile_id);
-                        if ($import_result->is_ok()) {
-                            $this->users_done++;
-                        } else {
-                            $this->users_failed++;
-                        }
-                    }
-                    $result->add($import_result);
                 } elseif ($key == export::VERBS) {
                     $import_result = new user_message();
                     foreach ($json_obj as $verb) {
@@ -165,6 +184,7 @@ class file_import
                         $import_result = $frm->import_obj($formula);
                         if ($import_result->is_ok()) {
                             $this->formulas_done++;
+                            $frm_to_calc->add($frm);
                         } else {
                             $this->formulas_failed++;
                         }
@@ -222,6 +242,7 @@ class file_import
                         $import_result = $fv->import_obj($value);
                         if ($import_result->is_ok()) {
                             $this->calc_validations_done++;
+                            $fv_to_validate->add($fv);
                         } else {
                             $this->calc_validations_failed++;
                         }
@@ -231,10 +252,11 @@ class file_import
                     // TODO switch to view result
                     // TODO add a unit test
                     foreach ($json_obj as $value) {
-                        $fv = new view($this->usr);
-                        $import_result = $fv->import_obj($value);
+                        $dsp = new view($this->usr);
+                        $import_result = $dsp->import_obj($value);
                         if ($import_result->is_ok()) {
                             $this->view_validations_done++;
+                            $dsp_to_validate->add($dsp);
                         } else {
                             $this->view_validations_failed++;
                         }
@@ -254,6 +276,21 @@ class file_import
                     }
                 } else {
                     $result->add_message('Unknown element ' . $key);
+                }
+            }
+
+            // validate the import
+            if (!$frm_to_calc->is_empty()) {
+                foreach ($frm_to_calc as $frm) {
+                    //$frm->calc();
+                    if ($frm != null) {
+                        log_debug($frm->dsp_id());
+                    }
+                }
+            }
+            if (!$fv_to_validate->is_empty()) {
+                foreach ($fv_to_validate as $fv) {
+                    log_debug($fv->dsp_id());
                 }
             }
         }

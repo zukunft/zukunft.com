@@ -56,7 +56,7 @@
       "assigned_word": "thousand"
     },
     {
-      "name": "scale millions to one",
+      "name": "scale million to one",
       "expression": "\"one\" = \"million\" * 1000000",
       "assigned_word": "million"
     },
