@@ -478,7 +478,7 @@ class user
                     $this->id = $_SESSION['usr_id'];
                     global $db_con;
                     $this->load($db_con);
-                    log_debug(' -> use (' . $this->id . ')');
+                    log_debug('use (' . $this->id . ')');
                 }
             } else {
                 // else use the IP address (for testing don't overwrite any testing ip)
@@ -780,14 +780,14 @@ class user
         $db_usr = new user;
         $db_usr->id = $this->id;
         $db_row = $db_usr->load_db($db_con);
-        log_debug(' -> database user loaded "' . $db_row['name'] . '"');
+        log_debug('database user loaded "' . $db_row['name'] . '"');
 
         $this->upd_par($db_con, $usr_par, $db_row, self::FLD_NAME, 'name');
         $this->upd_par($db_con, $usr_par, $db_row, self::FLD_EMAIL, 'email');
         $this->upd_par($db_con, $usr_par, $db_row, self::FLD_FIRST_NAME, 'fname');
         $this->upd_par($db_con, $usr_par, $db_row, self::FLD_LAST_NAME, 'lname');
 
-        log_debug(' -> done');
+        log_debug('done');
         return $result;
     }
 

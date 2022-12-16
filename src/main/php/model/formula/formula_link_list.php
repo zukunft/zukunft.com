@@ -170,7 +170,7 @@ class formula_link_list extends sandbox_list
             }
         }
 
-        log_debug('formula_link_list->ids -> got ' . dsp_count($result));
+        log_debug('got ' . dsp_count($result));
         return (new phr_ids($result));
     }
 
@@ -203,7 +203,7 @@ class formula_link_list extends sandbox_list
             }
         }
 
-        log_debug('formula_link_list->del_without_log -> done');
+        log_debug('done');
         return $result;
     }
 

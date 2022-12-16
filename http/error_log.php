@@ -92,7 +92,7 @@ $wrd->load_obj_vars();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
     if ($err_id > 0) {
-        log_debug("error_log -> (" . $err_id . ")");
+        log_debug("error_log (" . $err_id . ")");
 
         load_usr_data();
 

@@ -657,7 +657,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             $this->from = $to;
             $this->from->id = $to_id;
             $this->from->set_name($to_name);
-            log_debug('triple->check_order -> reversed');
+            log_debug('reversed');
         }
     }
 
@@ -667,7 +667,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      */
     function load_objects(): bool
     {
-        log_debug('triple->load_objects.' . $this->from->id . ' ' . $this->verb->id()  . ' ' . $this->to->id);
+        log_debug($this->from->id . ' ' . $this->verb->id()  . ' ' . $this->to->id);
         $result = true;
 
         // after every load call from outside the class the order should be checked and reversed if needed
@@ -703,7 +703,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
                     $phr = new phrase($this->user());
                     $this->from = $phr;
                 }
-                log_debug('triple->load_objects -> from ' . $this->from->name());
+                log_debug('from ' . $this->from->name());
             }
         }
 
@@ -717,7 +717,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
                 $vrb->load_by_id($this->verb->id() );
                 $this->verb = $vrb;
                 $this->verb->set_name($vrb->name());
-                log_debug('triple->load_objects -> verb ' . $this->verb->name());
+                log_debug('verb ' . $this->verb->name());
             }
         }
 
@@ -755,7 +755,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
                     $phr_to = new phrase($this->user());
                     $this->to = $phr_to;
                 }
-                log_debug('triple->load_objects -> to ' . $this->to->name());
+                log_debug('to ' . $this->to->name());
             }
         }
         return $result;
@@ -866,7 +866,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             }
         }
 
-        log_debug('triple->wrd_lst -> (' . $wrd_lst->name() . ')');
+        log_debug($wrd_lst->name());
         return $wrd_lst;
     }
 
@@ -1013,7 +1013,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         $result->verb = $this->verb->name();
         $result->to = $this->to->name();
 
-        log_debug('triple->export_obj -> ' . json_encode($result));
+        log_debug(json_encode($result));
         return $result;
     }
 
@@ -1349,12 +1349,12 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      */
     function can_change(): bool
     {
-        log_debug('triple->can_change ' . $this->dsp_id() . ' by user "' . $this->user()->name . '" (id ' . $this->user()->id . ', owner id ' . $this->owner_id . ')');
+        log_debug($this->dsp_id() . ' by user "' . $this->user()->name . '" (id ' . $this->user()->id . ', owner id ' . $this->owner_id . ')');
         $can_change = false;
         if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
             $can_change = true;
         }
-        log_debug('triple->can_change -> (' . zu_dsp_bool($can_change) . ')');
+        log_debug(zu_dsp_bool($can_change));
         return $can_change;
     }
 
@@ -1796,7 +1796,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      */
     function save(): string
     {
-        log_debug('triple->save "' . $this->description . '" for user ' . $this->user()->id);
+        log_debug($this->description . '" for user ' . $this->user()->id);
 
         global $db_con;
         $result = '';
@@ -1810,7 +1810,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
 
         // check if the opposite triple already exists and if yes, ask for confirmation
         if ($this->id <= 0) {
-            log_debug('triple->save check if a new triple for "' . $this->from->name() . '" and "' . $this->to->name() . '" needs to be created');
+            log_debug('check if a new triple for "' . $this->from->name() . '" and "' . $this->to->name() . '" needs to be created');
             // check if the reverse triple is already in the database
             $db_chk_rev = clone $this;
             $db_chk_rev->from = $this->to;
@@ -1828,7 +1828,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
 
         // check if the triple already exists and if yes, update it if needed
         if ($this->id <= 0 and $result == '') {
-            log_debug('triple->save check if a new triple for "' . $this->from->name() . '" and "' . $this->to->name() . '" needs to be created');
+            log_debug('check if a new triple for "' . $this->from->name() . '" and "' . $this->to->name() . '" needs to be created');
             // check if the same triple is already in the database
             $db_chk = clone $this;
             $db_chk->load_standard();
@@ -1843,7 +1843,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             if ($this->id <= 0) {
                 $result .= $this->add()->get_last_message();
             } else {
-                log_debug('triple->save update "' . $this->id . '"');
+                log_debug('update "' . $this->id . '"');
                 // read the database values to be able to check if something has been changed;
                 // done first, because it needs to be done for user and general phrases
                 $db_rec = new triple($this->user());
@@ -1851,13 +1851,13 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
                 if (!$db_rec->load_obj_vars()) {
                     $result .= 'Reloading of triple failed';
                 }
-                log_debug('triple->save -> database triple "' . $db_rec->name . '" (' . $db_rec->id . ') loaded');
+                log_debug('database triple "' . $db_rec->name . '" (' . $db_rec->id . ') loaded');
                 $std_rec = new triple($this->user()); // the user must also be set to allow to take the ownership
                 $std_rec->id = $this->id;
                 if (!$std_rec->load_standard()) {
                     $result .= 'Reloading of the default values for triple failed';
                 }
-                log_debug('triple->save -> standard triple settings for "' . $std_rec->name . '" (' . $std_rec->id . ') loaded');
+                log_debug('standard triple settings for "' . $std_rec->name . '" (' . $std_rec->id . ') loaded');
 
                 // for a correct user word link detection (function can_change) set the owner even if the word link has not been loaded before the save
                 if ($this->owner_id <= 0) {

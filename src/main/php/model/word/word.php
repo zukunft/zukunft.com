@@ -782,7 +782,7 @@ class word extends user_sandbox_named_with_type
      */
     function dsp_val_list(word $col_wrd, phrase $is_part_of, string $back): string
     {
-        log_debug('word_dsp->dsp_val_list for ' . $this->dsp_id() . ' with "' . $col_wrd->name . '"');
+        log_debug('for ' . $this->dsp_id() . ' with "' . $col_wrd->name . '"');
 
         $is_part_of_dsp = $is_part_of->get_dsp_obj();
         $result = $this->dsp_obj()->header($is_part_of_dsp);
@@ -792,7 +792,7 @@ class word extends user_sandbox_named_with_type
 
         $row_lst = $this->children();    // not $this->are(), because e.g. for "Company" the word "Company" itself should not be included in the list
         $col_lst = $col_wrd->children();
-        log_debug('word_dsp->dsp_val_list -> columns ' . $col_lst->dsp_id());
+        log_debug('columns ' . $col_lst->dsp_id());
 
         $row_lst->name_sort();
         $col_lst->name_sort();
@@ -802,7 +802,7 @@ class word extends user_sandbox_named_with_type
         $row_lst_dsp = $row_lst->dsp_obj();
         $result .= $row_lst_dsp->dsp_val_matrix($val_matrix);
 
-        log_debug('word_dsp->dsp_val_list -> table');
+        log_debug();
 
         // display the words
         $row_nbr = 0;
@@ -818,14 +818,14 @@ class word extends user_sandbox_named_with_type
                 $result .= '    <th>' . "\n";
                 $result .= '    </th>' . "\n";
                 foreach ($col_lst->lst() as $col_lst_wrd) {
-                    log_debug('word_dsp->dsp_val_list -> column ' . $col_lst_wrd->name);
+                    log_debug('column ' . $col_lst_wrd->name);
                     $result .= $col_lst_wrd->dsp_obj()->dsp_th($back, api::STYLE_RIGHT);
                 }
                 $result .= '  </tr>' . "\n";
             }
 
             // display the rows
-            log_debug('word_dsp->dsp_val_list -> row');
+            log_debug('row');
             $result .= '  <tr>' . "\n";
             $result .= '      ' . $row_phr_dsp->dsp_obj()->td($back);
             foreach ($col_lst->lst() as $col_lst_wrd) {
@@ -836,10 +836,10 @@ class word extends user_sandbox_named_with_type
                 asort($val_wrd_ids);
                 $val_wrd_lst = new word_list($this->user());
                 $val_wrd_lst->load_by_ids($val_wrd_ids);
-                log_debug('word_dsp->dsp_val_list -> get group ' . dsp_array($val_wrd_ids));
+                log_debug('get group ' . dsp_array($val_wrd_ids));
                 $wrd_grp = $val_wrd_lst->get_grp();
                 if ($wrd_grp->id > 0) {
-                    log_debug('word_dsp->dsp_val_list -> got group ' . $wrd_grp->id);
+                    log_debug('got group ' . $wrd_grp->id);
                     $in_value = $wrd_grp->result(0);
                     $fv_text = '';
                     // temp solution to be reviewed
@@ -885,7 +885,7 @@ class word extends user_sandbox_named_with_type
      */
     function selector_link($id, $form, $back): string
     {
-        log_debug('word_dsp->selector_link ... verb id ' . $id);
+        log_debug('verb id ' . $id);
         global $db_con;
 
         $result = '';
@@ -1545,7 +1545,7 @@ class word extends user_sandbox_named_with_type
         $log_dsp->back = $back;
         $result .= $log_dsp->dsp_hist();
 
-        log_debug('word_dsp->dsp_hist -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -1554,7 +1554,7 @@ class word extends user_sandbox_named_with_type
      */
     function dsp_hist_links($page, $size, $call, $back): string
     {
-        log_debug("word_dsp->dsp_hist_links (" . $this->id . ",size" . $size . ",b" . $size . ")");
+        log_debug($this->id . ",size" . $size . ",b" . $size);
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($this->user());
@@ -1566,7 +1566,7 @@ class word extends user_sandbox_named_with_type
         $log_dsp->back = $back;
         $result .= $log_dsp->dsp_hist_links();
 
-        log_debug('word_dsp->dsp_hist_links -> done');
+        log_debug('done');
         return $result;
     }
 

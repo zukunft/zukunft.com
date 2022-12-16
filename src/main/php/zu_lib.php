@@ -13,7 +13,6 @@
 
     but first this needs to be fixed:
     TODO unit test: create a unit test for all possible class functions next to review: formula expression
-    TODO test names: move test names and restricted names from the backend object to the API object simply to make the backend object smaller
     TODO load_by_vars: replace the load_by_vars with more specific load_by_ functions
     TODO api load: expose all load functions to the api (with security check!)
     TODO log_debug: remove the class and function from the log_debug call
@@ -1389,7 +1388,7 @@ function zu_lst_not_in_no_key(array $in_lst, array $exclude_lst): array
             $result[] = $lst_entry;
         }
     }
-    log_debug('zu_lst_not_in_no_key -> (' . dsp_array($result) . ')');
+    log_debug(dsp_array($result));
     return $result;
 }
 
@@ -1517,7 +1516,7 @@ function zu_lst_get_common_ids($val_lst, $sub_array_pos)
         }
     }
 
-    log_debug("zu_lst_get_common_ids -> (" . dsp_array($result) . ")");
+    log_debug(dsp_array($result));
     return $result;
 }
 
@@ -1525,7 +1524,7 @@ function zu_lst_get_common_ids($val_lst, $sub_array_pos)
 // if this is used for a val_lst_wrd and the sub_array_pos is 1 the common list of word ids is returned
 function zu_lst_all_ids($val_lst, $sub_array_pos)
 {
-    log_debug("zu_lst_all_ids (" . zu_lst_dsp($val_lst) . ",pos" . $sub_array_pos . ")");
+    log_debug(zu_lst_dsp($val_lst) . ",pos" . $sub_array_pos);
     $result = array();
     foreach ($val_lst as $val_entry) {
         if (is_array($val_entry)) {
@@ -1560,10 +1559,10 @@ function zu_lst_id_filter($val_lst, $id_lst, $sub_array_pos): array
             $found = false;
             foreach ($wrd_ids as $wrd_id) {
                 if (!$found) {
-                    log_debug("zu_lst_id_filter -> test (" . $wrd_id . " in " . zu_lst_dsp($id_lst) . ")");
+                    log_debug("test (" . $wrd_id . " in " . zu_lst_dsp($id_lst) . ")");
                     if (array_key_exists($wrd_id, $id_lst)) {
                         $found = true;
-                        log_debug("zu_lst_id_filter -> found (" . $wrd_id . " in " . zu_lst_dsp($id_lst) . ")");
+                        log_debug("found (" . $wrd_id . " in " . zu_lst_dsp($id_lst) . ")");
                     }
                 }
             }
@@ -1573,7 +1572,7 @@ function zu_lst_id_filter($val_lst, $id_lst, $sub_array_pos): array
         }
     }
 
-    log_debug("zu_lst_id_filter -> (" . zu_lst_dsp($result) . ")");
+    log_debug(zu_lst_dsp($result));
     return $result;
 }
 

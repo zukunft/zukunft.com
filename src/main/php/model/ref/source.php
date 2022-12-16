@@ -451,7 +451,7 @@ class source extends user_sandbox_named_with_type
             $this->id = $this->user()->source_id;
         }
 
-        log_debug("source->dsp_select -> source id used (" . $this->id . ")");
+        log_debug("source id used (" . $this->id . ")");
         $sel = new html_selector;
         $sel->form = $form_name;
         $sel->name = "source";
@@ -506,7 +506,7 @@ class source extends user_sandbox_named_with_type
         //$result .= dsp_tbl_end ();
         $result .= dsp_form_end('', $back);
 
-        log_debug('source->dsp_edit -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -563,13 +563,13 @@ class source extends user_sandbox_named_with_type
     // because if another user has changed the source and the original value is changed, maybe the user source also needs to be updated
     function can_change(): bool
     {
-        log_debug('source->can_change (' . $this->id . ',u' . $this->user()->id . ')');
+        log_debug($this->id . ',u' . $this->user()->id);
         $can_change = false;
         if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
             $can_change = true;
         }
 
-        log_debug('source->can_change -> (' . zu_dsp_bool($can_change) . ')');
+        log_debug(zu_dsp_bool($can_change));
         return $can_change;
     }
 
@@ -580,7 +580,7 @@ class source extends user_sandbox_named_with_type
         $result = true;
 
         if (!$this->has_usr_cfg()) {
-            log_debug('source->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
+            log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
             // check again if there ist not yet a record
             $db_con->set_type(sql_db::TBL_SOURCE, true);

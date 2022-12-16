@@ -517,7 +517,7 @@ class phrase_list extends user_sandbox_list_named
               FROM ( ' . $sql_words . ' UNION ' . $sql_triples . ' ) AS p
              WHERE excluded = 0
           ORDER BY p.name;';
-        log_debug('phrase->sql_list -> ' . $sql);
+        log_debug($sql);
 
         $qp->sql = $sql;
         /*
@@ -824,7 +824,7 @@ class phrase_list extends user_sandbox_list_named
             }
         }
 
-        log_debug('phrase_list->wrd_lst_all -> ' . $wrd_lst->dsp_id());
+        log_debug($wrd_lst->dsp_id());
         return $wrd_lst;
     }
 
@@ -914,7 +914,7 @@ class phrase_list extends user_sandbox_list_named
         int $level, phrase_list $added_phr_lst, int $verb_id, string $direction, int $max_level
     ): phrase_list
     {
-        log_debug(self::class . '->foaf_level (type id ' . $verb_id . ' level ' . $level . ' ' . $direction . ' added ' . $added_phr_lst->name() . ')');
+        log_debug('->foaf_level (type id ' . $verb_id . ' level ' . $level . ' ' . $direction . ' added ' . $added_phr_lst->name() . ')');
         if ($max_level > 0) {
             $max_loops = $max_level;
         } else {
@@ -935,7 +935,7 @@ class phrase_list extends user_sandbox_list_named
                 log_fatal("max number (" . $loops . ") of loops for phrase " . $verb_id . " reached.", "phrase_list->tree_up_level");
             }
         } while (!empty($additional_added->lst) and $loops < $max_loops);
-        log_debug(self::class . '->foaf_level done');
+        log_debug('->foaf_level done');
         return $added_phr_lst;
     }
 
@@ -960,18 +960,18 @@ class phrase_list extends user_sandbox_list_named
             $db_con->usr_id = $this->user()->id;
             $db_phr_lst = $db_con->get($qp);
             if ($db_phr_lst) {
-                log_debug(self::class . '->add_by_type -> got ' . dsp_count($db_phr_lst));
+                log_debug('got ' . dsp_count($db_phr_lst));
                 foreach ($db_phr_lst as $db_phr) {
                     if (is_null($db_phr[user_sandbox::FLD_EXCLUDED]) or $db_phr[user_sandbox::FLD_EXCLUDED] == 0) {
                         if ($db_phr[phrase::FLD_ID] != 0 and !in_array($db_phr[phrase::FLD_ID], $this->ids())) {
                             $new_phrase = new phrase($this->user());
                             $new_phrase->row_mapper($db_phr);
                             $additional_added->add($new_phrase);
-                            log_debug(self::class . '->add_by_type -> added "' . $new_phrase->dsp_id() . '" for verb (' . $db_phr[verb::FLD_ID] . ')');
+                            log_debug('added "' . $new_phrase->dsp_id() . '" for verb (' . $db_phr[verb::FLD_ID] . ')');
                         }
                     }
                 }
-                log_debug(self::class . '->add_by_type -> added (' . $additional_added->dsp_id() . ')');
+                log_debug('added (' . $additional_added->dsp_id() . ')');
             }
         }
         return $additional_added;
@@ -990,7 +990,7 @@ class phrase_list extends user_sandbox_list_named
         $added_wrd_lst = $wrd_lst->foaf_parents($verb_id);
         $added_phr_lst = $added_wrd_lst->phrase_lst();
 
-        log_debug('phrase_list->foaf_parents -> (' . $added_phr_lst->dsp_name() . ')');
+        log_debug($added_phr_lst->dsp_name());
         return $added_phr_lst;
     }
 
@@ -1007,7 +1007,7 @@ class phrase_list extends user_sandbox_list_named
         $added_wrd_lst = $wrd_lst->parents($vrb->id() , $level);
         $added_phr_lst = $added_wrd_lst->phrase_lst();
 
-        log_debug('phrase_list->parents -> (' . $added_phr_lst->name() . ')');
+        log_debug($added_phr_lst->name());
         return $added_phr_lst;
     }
 
@@ -1028,7 +1028,7 @@ class phrase_list extends user_sandbox_list_named
             $added_wrd_lst = $wrd_lst->foaf_children($verb_id);
             $added_phr_lst = $added_wrd_lst->phrase_lst();
 
-            log_debug('phrase_list->foaf_children -> (' . $added_phr_lst->name() . ')');
+            log_debug($added_phr_lst->name());
         }
         return $added_phr_lst;
     }
@@ -1050,7 +1050,7 @@ class phrase_list extends user_sandbox_list_named
             $level, $added_phr_lst, $verb_id, word_select_direction::DOWN, $max_level
         );
 
-        log_debug(self::class . '->foaf_children -> (' . $added_phr_lst->name() . ')');
+        log_debug($added_phr_lst->name());
         return $added_phr_lst;
     }
 
@@ -1066,7 +1066,7 @@ class phrase_list extends user_sandbox_list_named
         $added_wrd_lst = $wrd_lst->children($vrb->id() , $level);
         $added_phr_lst = $added_wrd_lst->phrase_lst();
 
-        log_debug('phrase_list->children -> (' . $added_phr_lst->name() . ')');
+        log_debug($added_phr_lst->name());
         return $added_phr_lst;
     }
 
@@ -1074,7 +1074,7 @@ class phrase_list extends user_sandbox_list_named
     function is(): phrase_list
     {
         $phr_lst = $this->foaf_parents(cl(db_cl::VERB, verb::IS_A));
-        log_debug('phrase_list->is -> (' . $this->dsp_id() . ' is ' . $phr_lst->dsp_name() . ')');
+        log_debug($this->dsp_id() . ' is ' . $phr_lst->dsp_name());
         return $phr_lst;
     }
 
@@ -1082,11 +1082,11 @@ class phrase_list extends user_sandbox_list_named
     // e.g. to get all related values
     function are(): phrase_list
     {
-        log_debug('phrase_list->are -> ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         $phr_lst = $this->foaf_all_children(cl(db_cl::VERB, verb::IS_A));
-        log_debug('phrase_list->are -> ' . $this->dsp_id() . ' are ' . $phr_lst->dsp_id());
+        log_debug($this->dsp_id() . ' are ' . $phr_lst->dsp_id());
         $phr_lst->merge($this);
-        log_debug('phrase_list->are -> ' . $this->dsp_id() . ' merged into ' . $phr_lst->dsp_id());
+        log_debug($this->dsp_id() . ' merged into ' . $phr_lst->dsp_id());
         return $phr_lst;
     }
 
@@ -1097,7 +1097,7 @@ class phrase_list extends user_sandbox_list_named
     {
         $phr_lst = $this->foaf_all_children(cl(db_cl::VERB, verb::IS_PART_OF));
         $phr_lst->merge($this);
-        log_debug('phrase_list->contains -> (' . $this->dsp_id() . ' contains ' . $phr_lst->name() . ')');
+        log_debug($this->dsp_id() . ' contains ' . $phr_lst->name());
         return $phr_lst;
     }
 
@@ -1149,38 +1149,38 @@ class phrase_list extends user_sandbox_list_named
         // ... and after that get only for the new
         if ($added_lst->count() > 0) {
             $loops = 0;
-            log_debug('phrase_list->are_and_contains -> added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
+            log_debug('added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
             do {
                 $next_lst = clone $added_lst;
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
                 $added_lst->diff($phr_lst);
                 if ($added_lst->count() > 0) {
-                    log_debug('phrase_list->are_and_contains -> add ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
+                    log_debug('add ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
                 }
                 $phr_lst->merge($added_lst);
                 $loops++;
             } while ($added_lst->count() > 0 and $loops < MAX_LOOP);
         }
-        log_debug('phrase_list->are_and_contains -> ' . $this->dsp_id() . ' are_and_contains ' . $phr_lst->name());
+        log_debug($this->dsp_id() . ' are_and_contains ' . $phr_lst->name());
         return $phr_lst;
     }
 
     // add all potential differentiator phrases of the phrase lst e.g. get "energy" for "sector"
     function differentiators()
     {
-        log_debug('phrase_list->differentiators for ' . $this->dsp_id());
+        log_debug('for ' . $this->dsp_id());
         $phr_lst = $this->foaf_all_children(cl(db_cl::VERB, verb::CAN_CONTAIN));
-        log_debug('phrase_list->differentiators merge ' . $this->dsp_id());
+        log_debug('merge ' . $this->dsp_id());
         $this->merge($phr_lst);
-        log_debug('phrase_list->differentiators -> ' . $phr_lst->dsp_id() . ' for ' . $this->dsp_id());
+        log_debug($phr_lst->dsp_id() . ' for ' . $this->dsp_id());
         return $phr_lst;
     }
 
     // same as differentiators, but including the subtypes e.g. get "energy" and "wind energy" for "sector" if "wind energy" is part of "energy"
     function differentiators_all()
     {
-        log_debug('phrase_list->differentiators_all for ' . $this->dsp_id());
+        log_debug('for ' . $this->dsp_id());
         // this first time get all related items
         $phr_lst = $this->foaf_all_children(cl(db_cl::VERB, verb::CAN_CONTAIN));
         $phr_lst = $phr_lst->are();
@@ -1189,30 +1189,30 @@ class phrase_list extends user_sandbox_list_named
         // ... and after that get only for the new
         if ($added_lst->count() > 0) {
             $loops = 0;
-            log_debug('phrase_list->differentiators -> added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
+            log_debug('added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
             do {
                 $next_lst = $added_lst->foaf_all_children(cl(db_cl::VERB, verb::CAN_CONTAIN));
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
                 $added_lst->diff($phr_lst);
                 if ($added_lst->count() > 0) {
-                    log_debug('phrase_list->differentiators -> add ' . $added_lst->name() . ' to ' . $phr_lst->name());
+                    log_debug('add ' . $added_lst->name() . ' to ' . $phr_lst->name());
                 }
                 $phr_lst->merge($added_lst);
                 $loops++;
             } while ($added_lst->count() > 0 and $loops < MAX_LOOP);
         }
-        log_debug('phrase_list->differentiators -> ' . $phr_lst->name() . ' for ' . $this->dsp_id());
+        log_debug($phr_lst->name() . ' for ' . $this->dsp_id());
         return $phr_lst;
     }
 
     // similar to differentiators, but only a filtered list of differentiators is viewed to increase speed
     function differentiators_filtered($filter_lst)
     {
-        log_debug('phrase_list->differentiators_filtered for ' . $this->dsp_id());
+        log_debug('for ' . $this->dsp_id());
         $result = $this->differentiators_all();
         $result = $result->filter($filter_lst);
-        log_debug('phrase_list->differentiators_filtered -> ' . $result->dsp_id());
+        log_debug($result->dsp_id());
         return $result;
     }
 
@@ -1616,7 +1616,7 @@ class phrase_list extends user_sandbox_list_named
                 log_err('"' . $phr_name_to_add . '" not found.', "phrase_list->add_name");
             }
         }
-        log_debug('phrase_list->add_name -> added "' . $phr_name_to_add . '" to ' . $this->dsp_id() . ')');
+        log_debug('added "' . $phr_name_to_add . '" to ' . $this->dsp_id() . ')');
     }
 
     // del one phrase to the phrase list, but only if it is not yet part of the phrase list
@@ -1641,17 +1641,17 @@ class phrase_list extends user_sandbox_list_named
      */
     function merge($new_phr_lst): phrase_list
     {
-        log_debug('phrase_list->merge ' . $new_phr_lst->dsp_id() . ' to ' . $this->dsp_id());
+        log_debug($new_phr_lst->dsp_id() . ' to ' . $this->dsp_id());
         if (isset($new_phr_lst->lst)) {
-            log_debug('phrase_list->merge -> do');
+            log_debug('do');
             foreach ($new_phr_lst->lst as $new_phr) {
-                log_debug('phrase_list->merge -> add');
-                log_debug('phrase_list->merge add ' . $new_phr->dsp_id());
+                log_debug('add');
+                log_debug('add ' . $new_phr->dsp_id());
                 $this->add($new_phr);
-                log_debug('phrase_list->merge -> added');
+                log_debug('added');
             }
         }
-        log_debug('phrase_list->merge -> to ' . $this->dsp_id());
+        log_debug('to ' . $this->dsp_id());
         return $this;
     }
 
@@ -1689,7 +1689,7 @@ class phrase_list extends user_sandbox_list_named
                 }
             }
             $result->lst = $phr_lst;
-            log_debug('phrase_list->filter -> ' . $result->dsp_id());
+            log_debug($result->dsp_id());
         }
         return $result;
     }
@@ -1718,7 +1718,7 @@ class phrase_list extends user_sandbox_list_named
             $this->lst = $result;
         }
 
-        log_debug('phrase_list->diff -> ' . $this->dsp_id());
+        log_debug($this->dsp_id());
     }
 
     /**
@@ -1764,7 +1764,7 @@ class phrase_list extends user_sandbox_list_named
             }
         }
         //$this->ids = array_diff($this->ids, $del_phr_ids);
-        log_debug('phrase_list->diff_by_ids -> ' . $this->dsp_id());
+        log_debug($this->dsp_id());
     }
 
     /**
@@ -1784,12 +1784,12 @@ class phrase_list extends user_sandbox_list_named
             if (isset($phr_lst_is)) {
                 if (!empty($phr_lst_is->ids)) {
                     $result = zu_lst_not_in_no_key($result, $phr_lst_is->ids);
-                    log_debug('phrase_list->keep_only_specific -> "' . $phr->name() . '" is of type ' . $phr_lst_is->dsp_id());
+                    log_debug($phr->name() . ' is of type ' . $phr_lst_is->dsp_id());
                 }
             }
         }
 
-        log_debug('phrase_list->keep_only_specific -> (' . implode(",", $result) . ')');
+        log_debug(implode(",", $result));
         return $result;
     }
 
@@ -1801,14 +1801,14 @@ class phrase_list extends user_sandbox_list_named
         $result = false;
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
-            log_debug('phrase_list->has_time -> check (' . $phr->name() . ')');
+            log_debug('check (' . $phr->name() . ')');
             if ($result == false) {
                 if ($phr->is_time()) {
                     $result = true;
                 }
             }
         }
-        log_debug('phrase_list->has_time -> (' . zu_dsp_bool($result) . ')');
+        log_debug(zu_dsp_bool($result));
         return $result;
     }
 
@@ -1817,18 +1817,18 @@ class phrase_list extends user_sandbox_list_named
      */
     function has_measure(): bool
     {
-        log_debug('phrase_list->has_measure for ' . $this->dsp_id());
+        log_debug('for ' . $this->dsp_id());
         $result = false;
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
-            log_debug('phrase_list->has_measure -> check ' . $phr->dsp_id());
+            log_debug('check ' . $phr->dsp_id());
             if ($result == false) {
                 if ($phr->is_measure()) {
                     $result = true;
                 }
             }
         }
-        log_debug('phrase_list->has_measure -> (' . zu_dsp_bool($result) . ')');
+        log_debug(zu_dsp_bool($result));
         return $result;
     }
 
@@ -1840,14 +1840,14 @@ class phrase_list extends user_sandbox_list_named
         $result = false;
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
-            log_debug('phrase_list->has_scaling -> check ' . $phr->dsp_id());
+            log_debug('check ' . $phr->dsp_id());
             if ($result == false) {
                 if ($phr->is_scaling()) {
                     $result = true;
                 }
             }
         }
-        log_debug('phrase_list->has_scaling -> (' . zu_dsp_bool($result) . ')');
+        log_debug(zu_dsp_bool($result));
         return $result;
     }
 
@@ -1861,14 +1861,14 @@ class phrase_list extends user_sandbox_list_named
         foreach ($this->lst as $phr) {
             // temp solution for testing
             $phr->set_user($this->user());
-            log_debug('phrase_list->has_percent -> check ' . $phr->dsp_id());
+            log_debug('check ' . $phr->dsp_id());
             if ($result == false) {
                 if ($phr->is_percent()) {
                     $result = true;
                 }
             }
         }
-        log_debug('phrase_list->has_percent -> (' . zu_dsp_bool($result) . ')');
+        log_debug(zu_dsp_bool($result));
         return $result;
     }
 
@@ -1879,7 +1879,7 @@ class phrase_list extends user_sandbox_list_named
      */
     function time_lst_old(): array
     {
-        log_debug('phrase_list->time_lst_old(' . $this->dsp_id() . ')');
+        log_debug($this->dsp_id());
 
         $result = array();
         $time_type = cl(db_cl::PHRASE_TYPE, phrase_type::TIME);
@@ -1987,13 +1987,13 @@ class phrase_list extends user_sandbox_list_named
             } else {
                 if ($phr->type_id() == $measure_type) {
                     $result->add($phr);
-                    log_debug('phrase_list->measure_lst -> found (' . $phr->name() . ')');
+                    log_debug('found (' . $phr->name() . ')');
                 } else {
-                    log_debug('phrase_list->measure_lst -> ' . $phr->name() . ' has type id ' . $phr->type_id() . ', which is not the measure type id ' . $measure_type);
+                    log_debug($phr->name() . ' has type id ' . $phr->type_id() . ', which is not the measure type id ' . $measure_type);
                 }
             }
         }
-        log_debug('phrase_list->measure_lst -> (' . dsp_count($result->lst) . ')');
+        log_debug(dsp_count($result->lst));
         return $result;
     }
 
@@ -2012,12 +2012,12 @@ class phrase_list extends user_sandbox_list_named
         foreach ($this->lst as $phr) {
             if ($phr->type_id() == $scale_type or $phr->type_id() == $scale_hidden_type) {
                 $result->add($phr);
-                log_debug('phrase_list->scaling_lst -> found (' . $phr->name() . ')');
+                log_debug('found (' . $phr->name() . ')');
             } else {
-                log_debug('phrase_list->scaling_lst -> not found (' . $phr->name() . ')');
+                log_debug('not found (' . $phr->name() . ')');
             }
         }
-        log_debug('phrase_list->scaling_lst -> (' . dsp_count($result->lst) . ')');
+        log_debug(dsp_count($result->lst));
         return $result;
     }
 
@@ -2031,7 +2031,7 @@ class phrase_list extends user_sandbox_list_named
         $del_phr_lst = $del_wrd_lst->phrase_lst();
         $this->diff($del_phr_lst);
         //$this->diff_by_ids($del_phr_lst->ids);
-        log_debug('phrase_list->ex_time ' . $this->dsp_name() . ' (exclude times ' . $del_phr_lst->name() . ')');
+        log_debug($this->dsp_name() . ' (exclude times ' . $del_phr_lst->name() . ')');
     }
 
     /**
@@ -2041,7 +2041,7 @@ class phrase_list extends user_sandbox_list_named
     {
         $del_phr_lst = $this->measure_lst();
         $this->diff($del_phr_lst);
-        log_debug('phrase_list->ex_measure ' . $this->dsp_name() . ' (exclude measure ' . $del_phr_lst->dsp_name() . ')');
+        log_debug($this->dsp_name() . ' (exclude measure ' . $del_phr_lst->dsp_name() . ')');
     }
 
     /**
@@ -2051,7 +2051,7 @@ class phrase_list extends user_sandbox_list_named
     {
         $del_phr_lst = $this->scaling_lst();
         $this->diff($del_phr_lst);
-        log_debug('phrase_list->ex_scaling ' . $this->dsp_name() . ' (exclude scaling ' . $del_phr_lst->dsp_name() . ')');
+        log_debug($this->dsp_name() . ' (exclude scaling ' . $del_phr_lst->dsp_name() . ')');
     }
 
     /**
@@ -2060,7 +2060,7 @@ class phrase_list extends user_sandbox_list_named
      */
     function name_sort(): array
     {
-        log_debug('phrase_list->wlsort ' . $this->dsp_id() . ' and user ' . $this->user()->name);
+        log_debug($this->dsp_id() . ' and user ' . $this->user()->name);
         $name_lst = array();
         $result = array();
         $pos = 0;
@@ -2069,11 +2069,11 @@ class phrase_list extends user_sandbox_list_named
             $pos++;
         }
         asort($name_lst);
-        log_debug('phrase_list->wlsort names sorted "' . implode('","', $name_lst) . '" (' . dsp_array(array_keys($name_lst)) . ')');
+        log_debug('sorted "' . implode('","', $name_lst) . '" (' . dsp_array(array_keys($name_lst)) . ')');
         foreach (array_keys($name_lst) as $sorted_id) {
-            log_debug('phrase_list->wlsort get ' . $sorted_id);
+            log_debug('get ' . $sorted_id);
             $phr_to_add = $this->lst[$sorted_id];
-            log_debug('phrase_list->wlsort got ' . $phr_to_add->name());
+            log_debug('got ' . $phr_to_add->name());
             $result[] = $phr_to_add;
         }
         // check
@@ -2083,7 +2083,7 @@ class phrase_list extends user_sandbox_list_named
             $this->lst = $result;
             $this->id_lst();
         }
-        log_debug('phrase_list->wlsort sorted ' . $this->dsp_id());
+        log_debug('sorted ' . $this->dsp_id());
         return $result;
     }
 
@@ -2093,13 +2093,13 @@ class phrase_list extends user_sandbox_list_named
      */
     function max_time(): phrase
     {
-        log_debug('phrase_list->max_time (' . $this->dsp_id() . ' and user ' . $this->user()->name . ')');
+        log_debug($this->dsp_id() . ' and user ' . $this->user()->name);
         $max_phr = new phrase($this->user());
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {
                 // to be replaced by "is following"
                 if ($phr->name() > $max_phr->name()) {
-                    log_debug('phrase_list->max_time -> select (' . $phr->name() . ' instead of ' . $max_phr->name() . ')');
+                    log_debug('select (' . $phr->name() . ' instead of ' . $max_phr->name() . ')');
                     $max_phr = clone $phr;
                 }
             }
@@ -2113,7 +2113,7 @@ class phrase_list extends user_sandbox_list_named
      */
     function get_grp(): ?phrase_group
     {
-        log_debug('phrase_list->get_grp ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         $grp = null;
 
         // get or create the group
@@ -2125,7 +2125,7 @@ class phrase_list extends user_sandbox_list_named
             $grp->get();
         }
 
-        log_debug('phrase_list->get_grp -> ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         return $grp;
     }
 
@@ -2135,11 +2135,11 @@ class phrase_list extends user_sandbox_list_named
     function common(phrase_list $filter_lst): array
     {
         $result = array();
-        log_debug('phrase_list->common of ' . $this->dsp_name() . ' and ' . $filter_lst->name());
+        log_debug('of ' . $this->dsp_name() . ' and ' . $filter_lst->name());
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {
                 if (isset($phr)) {
-                    log_debug('phrase_list->common check if "' . $phr->name() . '" is in ' . $filter_lst->name());
+                    log_debug('check if "' . $phr->name() . '" is in ' . $filter_lst->name());
                     if (in_array($phr, $filter_lst->lst)) {
                         $result[] = $phr;
                     }
@@ -2148,7 +2148,7 @@ class phrase_list extends user_sandbox_list_named
             $this->lst = $result;
             $this->id_lst();
         }
-        log_debug('phrase_list->common (' . dsp_count($this->lst) . ')');
+        log_debug(dsp_count($this->lst));
         return $result;
     }
 
@@ -2157,14 +2157,14 @@ class phrase_list extends user_sandbox_list_named
      */
     function concat_unique($join_phr_lst): phrase_list
     {
-        log_debug('phrase_list->concat_unique');
+        log_debug();
         $result = clone $this;
         foreach ($join_phr_lst->lst as $phr) {
             if (!in_array($phr, $result->lst)) {
                 $result->lst[] = $phr;
             }
         }
-        log_debug('phrase_list->concat_unique (' . dsp_count($result->lst) . ')');
+        log_debug(dsp_count($result->lst));
         return $result;
     }
 

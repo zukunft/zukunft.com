@@ -571,7 +571,7 @@ class view_cmp extends user_sandbox_named_with_type
             $result->comment = $this->description;
         }
 
-        log_debug('view_component->export_obj -> ' . json_encode($result));
+        log_debug(json_encode($result));
         return $result;
     }
 
@@ -636,7 +636,7 @@ class view_cmp extends user_sandbox_named_with_type
             }
         }
 
-        log_debug("view_component->next_nbr -> (" . $result . ")");
+        log_debug($result);
         return $result;
     }
 
@@ -653,14 +653,14 @@ class view_cmp extends user_sandbox_named_with_type
         $log->row_id = $this->id;
         $result = $log->add_link_ref();
 
-        log_debug('view_component -> link logged ' . $log->id);
+        log_debug('logged ' . $log->id);
         return $result;
     }
 
     // set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
     function log_unlink($dsp): bool
     {
-        log_debug('view_component->log_unlink ' . $this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id);
+        log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id);
         $log = new user_log_link;
         $log->usr = $this->user();
         $log->action = user_log::ACTION_DELETE;
@@ -670,14 +670,14 @@ class view_cmp extends user_sandbox_named_with_type
         $log->row_id = $this->id;
         $result = $log->add_link_ref();
 
-        log_debug('view_component -> unlink logged ' . $log->id);
+        log_debug('logged ' . $log->id);
         return $result;
     }
 
 // link a view component to a view
     function link($dsp, $order_nbr): string
     {
-        log_debug('view_component->link ' . $this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
+        log_debug($this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
 
         $dsp_lnk = new view_cmp_link($this->user());
         $dsp_lnk->fob = $dsp;
@@ -695,7 +695,7 @@ class view_cmp extends user_sandbox_named_with_type
         $result = '';
 
         if (isset($dsp) and $this->user()->is_set()) {
-            log_debug('view_component->unlink ' . $this->dsp_id() . ' from "' . $dsp->name . '" (' . $dsp->id . ')');
+            log_debug($this->dsp_id() . ' from "' . $dsp->name . '" (' . $dsp->id . ')');
             $dsp_lnk = new view_cmp_link($this->user());
             $dsp_lnk->fob = $dsp;
             $dsp_lnk->tob = $this;
@@ -715,7 +715,7 @@ class view_cmp extends user_sandbox_named_with_type
         $result = true;
 
         if (!$this->has_usr_cfg()) {
-            log_debug('view_component->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
+            log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
             // check again if there ist not yet a record
             $db_con->set_type(sql_db::TBL_VIEW_COMPONENT, true);

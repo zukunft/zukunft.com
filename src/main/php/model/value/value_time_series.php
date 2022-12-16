@@ -206,7 +206,7 @@ class value_time_series extends user_sandbox_display
         if (!$this->user()->is_set()) {
             log_err('The user must be set to load a time series for a user', self::class . '->load');
         } else {
-            log_debug(self::class . '->load');
+            log_debug();
 
             $qp = $this->load_sql_obj_vars($db_con);
             $db_val = $db_con->get1($qp);
@@ -225,7 +225,7 @@ class value_time_series extends user_sandbox_display
      */
     function add(): user_message
     {
-        log_debug(self::class . '->add');
+        log_debug('->add');
 
         global $db_con;
         $result = new user_message();
@@ -267,7 +267,7 @@ class value_time_series extends user_sandbox_display
      */
     function save(): string
     {
-        log_debug(self::class . '->save');
+        log_debug('->save');
 
         global $db_con;
         $result = '';

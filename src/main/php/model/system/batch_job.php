@@ -110,28 +110,28 @@ class batch_job
         global $db_con;
 
         $result = 0;
-        log_debug('batch_job->add');
+        log_debug();
         // create first the database entry to make sure the update is done
         if ($this->type <= 0) {
             // invalid type?
-            log_debug('batch_job->type invalid');
+            log_debug('invalid');
         } else {
-            log_debug('batch_job->type ok');
+            log_debug('ok');
             if ($this->row_id <= 0) {
                 if (isset($this->obj)) {
                     $this->row_id = $this->obj->id();
                 }
             }
             if ($this->row_id <= 0) {
-                log_debug('batch_job->add row id missing?');
+                log_debug('row id missing?');
             } else {
-                log_debug('batch_job->row_id ok');
+                log_debug('row_id ok');
                 if (isset($this->obj)) {
                     if (!isset($this->usr)) {
                         $this->usr = $this->obj->usr;
                     }
                     $this->row_id = $this->obj->id();
-                    log_debug('batch_job->add connect');
+                    log_debug('connect');
                     //$db_con = New mysql;
                     $db_type = $db_con->get_type();
                     $db_con->set_type(sql_db::TBL_TASK);
@@ -150,27 +150,27 @@ class batch_job
                 }
             }
         }
-        log_debug('batch_job->add done');
+        log_debug('done');
         return $result;
     }
 
     // update all result depending on one value
     function exe_val_upd()
     {
-        log_debug('batch_job->exe_val_upd ...');
+        log_debug();
         global $db_con;
 
         // load all depending formula results
         if (isset($this->obj)) {
-            log_debug('batch_job->exe_val_upd -> get list for user ' . $this->obj->user()->name);
+            log_debug('get list for user ' . $this->obj->user()->name);
             $fv_lst = $this->obj->fv_lst_depending();
             if ($fv_lst != null) {
-                log_debug('batch_job->exe_val_upd -> got ' . $fv_lst->dsp_id());
+                log_debug('got ' . $fv_lst->dsp_id());
                 if ($fv_lst->lst != null) {
                     foreach ($fv_lst->lst as $fv) {
-                        log_debug('batch_job->exe_val_upd -> update ' . get_class($fv) . ' ' . $fv->dsp_id());
+                        log_debug('update ' . get_class($fv) . ' ' . $fv->dsp_id());
                         $fv->update();
-                        log_debug('batch_job->exe_val_upd -> update ' . get_class($fv) . ' ' . $fv->dsp_id() . ' done');
+                        log_debug('update ' . get_class($fv) . ' ' . $fv->dsp_id() . ' done');
                     }
                 }
             }
@@ -183,7 +183,7 @@ class batch_job
         $result = $db_con->update($this->id, 'end_time', 'Now()');
         $db_con->set_type($db_type);
 
-        log_debug('batch_job->exe_val_upd -> done with ' . $result);
+        log_debug('done with ' . $result);
     }
 
     // execute all open requests
@@ -196,7 +196,7 @@ class batch_job
         $db_con->set_type(sql_db::TBL_TASK);
         $result = $db_con->update($this->id, 'start_time', 'Now()');
 
-        log_debug('batch_job->exe -> ' . $this->type . ' with ' . $result);
+        log_debug($this->type . ' with ' . $result);
         if ($this->type == cl(db_cl::JOB_TYPE, job_type_list::VALUE_UPDATE)) {
             $this->exe_val_upd();
         } else {

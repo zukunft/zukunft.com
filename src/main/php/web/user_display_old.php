@@ -50,7 +50,7 @@ class user_dsp_old extends user
         $log_dsp->back = $back;
         $result .= $log_dsp->dsp_hist();
 
-        log_debug('user_dsp->dsp_changes -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -58,7 +58,7 @@ class user_dsp_old extends user
     // or display the error that are related to the user, so that he can track when they are closed
     function dsp_errors($dsp_type, $size, $page, $back): string
     {
-        log_debug('user_dsp->dsp_errors ' . $dsp_type . ' errors for user ' . $this->name);
+        log_debug($dsp_type . ' errors for user ' . $this->name);
 
         $result = '';
         $err_lst = new system_error_log_list;
@@ -71,7 +71,7 @@ class user_dsp_old extends user
             $result = $err_lst->dsp_obj()->get_html();
         }
 
-        log_debug('user_dsp->dsp_errors -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -80,7 +80,7 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_wrd($back): string
     {
-        log_debug('user_dsp->dsp_sandbox_wrd(u' . $this->id . ')');
+        log_debug($this->id);
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -113,7 +113,7 @@ class user_dsp_old extends user
         }
         $result .= dsp_tbl_end();
 
-        log_debug('user_dsp->dsp_sandbox_wrd -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -122,7 +122,7 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_wrd_link($back): string
     {
-        log_debug('user_dsp->dsp_sandbox_wrd_link(u' . $this->id . ')');
+        log_debug($this->id);
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -276,7 +276,7 @@ class user_dsp_old extends user
             $result .= dsp_tbl_end();
         }
 
-        log_debug('user_dsp->dsp_sandbox_wrd_link -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -324,7 +324,7 @@ class user_dsp_old extends user
         }
         $result .= dsp_tbl_end();
 
-        log_debug('user_dsp->dsp_sandbox_frm -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -333,7 +333,7 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_frm_link($back): string
     {
-        log_debug('user_dsp->dsp_sandbox_frm_link(u' . $this->id . ')');
+        log_debug($this->id);
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -485,7 +485,7 @@ class user_dsp_old extends user
             $result .= dsp_tbl_end();
         }
 
-        log_debug('user_dsp->dsp_sandbox_frm_link -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -494,7 +494,7 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_val($back): string
     {
-        log_debug('user_dsp->dsp_sandbox_val(u' . $this->id . ')');
+        log_debug($this->id);
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -656,7 +656,7 @@ class user_dsp_old extends user
             $result .= dsp_tbl_end();
         }
 
-        log_debug('user_dsp->dsp_sandbox_val -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -665,7 +665,7 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_view($back): string
     {
-        log_debug('user_dsp->dsp_sandbox_view(u' . $this->id . ')');
+        log_debug($this->id);
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -717,7 +717,7 @@ class user_dsp_old extends user
                 $row_nbr++;
 
                 // create the view objects with the minimal parameter needed
-                $dsp_usr = new view_dsp_old();
+                $dsp_usr = new view_dsp_old($this);
                 $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->comment = $sbx_row['usr_comment'];
@@ -823,7 +823,7 @@ class user_dsp_old extends user
             $result .= dsp_tbl_end();
         }
 
-        log_debug('user_dsp->dsp_sandbox_view -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -832,7 +832,7 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_view_component($back): string
     {
-        log_debug('user_dsp->dsp_sandbox_view_component(u' . $this->id . ')');
+        log_debug($this->id);
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -989,7 +989,7 @@ class user_dsp_old extends user
             $result .= dsp_tbl_end();
         }
 
-        log_debug('user_dsp->dsp_sandbox_view_component -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -998,7 +998,7 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_view_link($back): string
     {
-        log_debug('user_dsp->dsp_sandbox_view_link(u' . $this->id . ')');
+        log_debug($this->id);
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -1126,7 +1126,7 @@ class user_dsp_old extends user
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $sandbox_other .= $dsp_lnk_other->name;
+                        $sandbox_other .= $dsp_lnk_other->name();
                     }
                     $sandbox_other = '<a href="/http/user_view_component_link.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
@@ -1160,7 +1160,7 @@ class user_dsp_old extends user
             $result .= dsp_tbl_end();
         }
 
-        log_debug('user_dsp->dsp_sandbox_view_link -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -1169,7 +1169,7 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_source($back): string
     {
-        log_debug('user_dsp->dsp_sandbox_source(u' . $this->id . ')');
+        log_debug($this->id);
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -1337,7 +1337,7 @@ class user_dsp_old extends user
             $result .= dsp_tbl_end();
         }
 
-        log_debug('user_dsp->dsp_sandbox_source -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -1346,7 +1346,7 @@ class user_dsp_old extends user
      */
     function dsp_sandbox($back): string
     {
-        log_debug('user_dsp->dsp_sandbox(u' . $this->id . ',b' . $back . ')');
+        log_debug($this->id . ',b' . $back);
         $result = $this->dsp_sandbox_val($back);
         $result .= $this->dsp_sandbox_frm($back);
         $result .= $this->dsp_sandbox_frm_link($back);

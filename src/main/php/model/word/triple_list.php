@@ -582,7 +582,7 @@ class triple_list
                                 $new_word->type_id = $db_lnk['word_type_id2'];
                                 $new_word->link_type_id = $db_lnk[verb::FLD_ID];
                                 //$added_wrd2_lst->add($new_word);
-                                log_debug('triple_list->load -> added word "' . $new_word->name() . '" for verb (' . $db_lnk[verb::FLD_ID] . ')');
+                                log_debug('added word "' . $new_word->name() . '" for verb (' . $db_lnk[verb::FLD_ID] . ')');
                                 $new_link->to = $new_word->phrase();
                                 $new_link->to_name = $new_word->name();
                             } elseif ($db_lnk['word_id2'] < 0) {

@@ -389,7 +389,7 @@ class user_log_link extends user_log
         // restore the type before saving the log
         $db_con->set_type($db_type);
 
-        log_debug('user_log_link->add_link -> (' . zu_dsp_bool($result) . ')');
+        log_debug(zu_dsp_bool($result));
         return $result;
     }
 
@@ -429,7 +429,7 @@ class user_log_link extends user_log
     // $link_text is used for fixed links such as the source for values
     function add(): bool
     {
-        log_debug('user_log_link->add do "' . $this->action . '" of "' . $this->table . '" for user ' . $this->usr->dsp_id());
+        log_debug('do "' . $this->action . '" of "' . $this->table . '" for user ' . $this->usr->dsp_id());
 
         global $db_con;
 
@@ -437,7 +437,7 @@ class user_log_link extends user_log
         $this->set_action();
 
         // set the table specific references
-        log_debug('user_log_link->add -> set fields');
+        log_debug('set fields');
         if ($this->table == "words"
             or $this->table == "triples") {
             if ($this->action == "add" or $this->action == "update") {
@@ -523,7 +523,7 @@ class user_log_link extends user_log
                 $this->new_text_to = $this->source_name($this->new_to);
             }
         }
-        log_debug('user_log_link->add -> set fields done');
+        log_debug('set fields done');
 
         $sql_fields = array();
         $sql_values = array();
@@ -587,7 +587,7 @@ class user_log_link extends user_log
         // restore the type before saving the log
         $db_con->set_type($db_type);
 
-        log_debug('user_log_link->add -> (' . zu_dsp_bool($result) . ')');
+        log_debug(zu_dsp_bool($result));
         return $result;
     }
 
@@ -596,7 +596,7 @@ class user_log_link extends user_log
     // but the log entry has been created upfront to make sure that logging is complete
     function add_ref($row_id): bool
     {
-        log_debug("user_log_link->add_ref (" . $row_id . " to " . $this->id . " for user " . $this->usr->dsp_id() . ")");
+        log_debug($row_id . " to " . $this->id . " for user " . $this->usr->dsp_id());
 
         global $db_con;
 

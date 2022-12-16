@@ -799,7 +799,7 @@ class value_list extends sandbox_list
             }
         }
 
-        log_debug("value_list->get_from_lst -> done (" . $result->number . ")");
+        log_debug("done " . $result->number);
         return $result;
     }
 
@@ -827,7 +827,7 @@ class value_list extends sandbox_list
                     $result = $val;
                 } else {
                     if (!isset($val->grp)) {
-                        log_debug("value_list->get_by_grp -> load group");
+                        log_debug("load group");
                         $val->load_phrases();
                     }
                     if (isset($val->grp)) {
@@ -846,7 +846,7 @@ class value_list extends sandbox_list
             $row++;
         }
 
-        log_debug("value_list->get_by_grp -> done (" . $result->number . ")");
+        log_debug("done " . $result->number);
         return $result;
     }
 
@@ -962,7 +962,7 @@ class value_list extends sandbox_list
             }
         }
 
-        log_debug("value_list->load_frm_related -> (" . implode(",", $result) . ")");
+        log_debug(implode(",", $result));
         return $result;
     }
 
@@ -972,7 +972,7 @@ class value_list extends sandbox_list
      */
     function load_frm_related_grp_phrs_part($val_ids, $phr_id, $phr_ids, $user_id): array
     {
-        log_debug("value_list->load_frm_related_grp_phrs_part (v" . implode(",", $val_ids) . ",t" . $phr_id . ",ft" . implode(",", $phr_ids) . ",u" . $user_id . ")");
+        log_debug("(v" . implode(",", $val_ids) . ",t" . $phr_id . ",ft" . implode(",", $phr_ids) . ",u" . $user_id . ")");
 
         global $db_con;
         $result = array();
@@ -1021,7 +1021,7 @@ class value_list extends sandbox_list
             }
         }
 
-        log_debug("value_list->load_frm_related_grp_phrs_part -> (" . zu_lst_dsp($result) . ")");
+        log_debug(zu_lst_dsp($result));
         return $result;
     }
 
@@ -1030,7 +1030,7 @@ class value_list extends sandbox_list
      */
     function load_frm_related_grp_phrs($phr_id, $phr_ids, $user_id)
     {
-        log_debug("value_list->load_frm_related_grp_phrs (" . $phr_id . ",ft" . implode(",", $phr_ids) . ",u" . $user_id . ")");
+        log_debug($phr_id . ",ft" . implode(",", $phr_ids) . ",u" . $user_id);
         $result = array();
 
         if ($phr_id > 0 and !empty($phr_ids)) {
@@ -1042,7 +1042,7 @@ class value_list extends sandbox_list
             $result = $this->load_frm_related_grp_phrs_part($val_ids, $phr_id, $phr_ids, $user_id);
         }
 
-        log_debug("value_list->load_frm_related_grp_phrs -> (" . zu_lst_dsp($result) . ")");
+        log_debug(zu_lst_dsp($result));
         return $result;
     }
 

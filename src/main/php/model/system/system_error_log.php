@@ -266,7 +266,7 @@ class system_error_log
      */
     function save(): string
     {
-        log_debug('system_error_log->save');
+        log_debug();
 
         global $db_con;
         $result = '';
@@ -280,7 +280,7 @@ class system_error_log
             $db_rec->id = $this->id;
             $db_rec->set_user($this->user());
             if ($db_rec->load()) {
-                log_debug("system_error_log->save -> database entry loaded");
+                log_debug("database entry loaded");
             }
 
             if (!$this->save_field_status($db_con, $db_rec)) {

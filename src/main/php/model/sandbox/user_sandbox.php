@@ -736,7 +736,7 @@ class user_sandbox extends db_object
                 }
             }
         }
-        log_debug($this->obj_name . '->median_user for ' . $this->dsp_id() . ' -> ' . $result);
+        log_debug('for ' . $this->dsp_id() . ': ' . $result);
         return $result;
     }
 
@@ -756,7 +756,7 @@ class user_sandbox extends db_object
             $this->del_usr_cfg_if_not_needed();
         }
 
-        log_debug($this->obj_name . '->usr_cfg_cleanup for ' . $this->dsp_id() . ' -> ' . $result);
+        log_debug('for ' . $this->dsp_id() . ': ' . $result);
         return $result;
     }
 
@@ -775,7 +775,7 @@ class user_sandbox extends db_object
             // TODO activate $result .= $this->usr_cfg_cleanup();
         }
 
-        log_debug($this->obj_name . '->take_ownership ' . $this->dsp_id() . ' -> done');
+        log_debug($this->dsp_id() . ' done');
         return $result;
     }
 
@@ -815,7 +815,7 @@ class user_sandbox extends db_object
                 $result = false;
             }
 
-            log_debug($this->obj_name . '->set_owner for ' . $this->dsp_id() . ' to ' . $new_owner_id . ' -> number of db updates: ' . $result);
+            log_debug('for ' . $this->dsp_id() . ' to ' . $new_owner_id . ': number of db updates: ' . $result);
         }
         return $result;
     }
@@ -825,14 +825,14 @@ class user_sandbox extends db_object
     function not_changed(): bool
     {
         $result = true;
-        log_debug($this->obj_name . '->not_changed (' . $this->id . ') by someone else than the owner (' . $this->owner_id . ')');
+        log_debug($this->id . ' by someone else than the owner ' . $this->owner_id);
 
         $other_usr_id = $this->changer();
         if ($other_usr_id > 0) {
             $result = false;
         }
 
-        log_debug($this->obj_name . '->not_changed -> (' . $this->id . ' is ' . zu_dsp_bool($result) . ')');
+        log_debug($this->id . ' is ' . zu_dsp_bool($result));
         return $result;
     }
 
@@ -850,7 +850,7 @@ class user_sandbox extends db_object
             $result = false;
         }
 
-        log_debug($this->obj_name . '->not_used -> (' . zu_dsp_bool($result) . ')');
+        log_debug(zu_dsp_bool($result));
         return $result;
     }
 
@@ -861,9 +861,9 @@ class user_sandbox extends db_object
     function used_by_someone_else(): bool
     {
         $result = true;
-        log_debug($this->obj_name . '->used_by_someone_else (' . $this->id . ')');
+        log_debug($this->id);
 
-        log_debug($this->obj_name . '->used_by_someone_else owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id);
+        log_debug('owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id);
         if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
             $changer_id = $this->changer();
             // removed "OR $changer_id <= 0" because if no one has changed the object jet does not mean that it can be changed
@@ -873,7 +873,7 @@ class user_sandbox extends db_object
             }
         }
 
-        log_debug($this->obj_name . '->used_by_someone_else -> (' . zu_dsp_bool($result) . ')');
+        log_debug(': ' . zu_dsp_bool($result));
         return $result;
     }
 
@@ -892,7 +892,7 @@ class user_sandbox extends db_object
             $result = true;
         }
 
-        log_debug($this->obj_name . '->can_change -> (' . zu_dsp_bool($result) . ')');
+        log_debug($this->obj_name .zu_dsp_bool($result));
         return $result;
     }
 
@@ -906,7 +906,7 @@ class user_sandbox extends db_object
             $result = true;
         }
 
-        log_debug($this->obj_name . '->has_usr_cfg -> (' . zu_dsp_bool($result) . ')');
+        log_debug(zu_dsp_bool($result));
         return $result;
     }
 

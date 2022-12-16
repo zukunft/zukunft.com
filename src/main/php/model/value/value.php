@@ -835,7 +835,7 @@ class value extends user_sandbox_value
                 }
             }
         }
-        log_debug('value->set_grp_by_ids -> group set to id ' . $this->grp->id);
+        log_debug('group set to id ' . $this->grp->id);
         return $result;
     }
 
@@ -844,7 +844,7 @@ class value extends user_sandbox_value
      */
     function set_phr_lst_ex_time()
     {
-        log_debug('value->set_phr_lst_ex_time for "' . $this->phr_lst->dsp_name() . '" for "' . $this->user()->name . '"');
+        log_debug('for "' . $this->phr_lst->dsp_name() . '" for "' . $this->user()->name . '"');
         $result = '';
         $this->phr_lst->ex_time();
         return $result;
@@ -905,11 +905,11 @@ class value extends user_sandbox_value
         } elseif (is_null($this->wrd_lst)) {
             log_warning("To scale a value the word list should be loaded by the calling method.", "value->scale");
         } else {
-            log_debug('value->scale ' . $this->number . ' for ' . $this->wrd_lst->name() . ' (user ' . $this->user()->id . ')');
+            log_debug($this->number . ' for ' . $this->wrd_lst->name() . ' (user ' . $this->user()->id . ')');
 
             // if it has a scaling word, scale it to one
             if ($this->wrd_lst->has_scaling()) {
-                log_debug('value->scale value words have a scaling words');
+                log_debug('value words have a scaling words');
                 // get any scaling words related to the value
                 $scale_wrd_lst = $this->wrd_lst->scaling_lst();
                 if (count($scale_wrd_lst->lst()) > 1) {
@@ -917,7 +917,7 @@ class value extends user_sandbox_value
                 } else {
                     if (count($scale_wrd_lst->lst()) == 1) {
                         $scale_wrd = $scale_wrd_lst->lst()[0];
-                        log_debug('value->scale -> word (' . $scale_wrd->name() . ')');
+                        log_debug('word (' . $scale_wrd->name() . ')');
                         if ($scale_wrd->id > 0) {
                             $frm = $scale_wrd->formula();
                             $frm->usr = $this->user(); // temp solution utils the bug of not setting is found
@@ -925,7 +925,7 @@ class value extends user_sandbox_value
                                 log_warning('No scaling formula defined for "' . $scale_wrd->name() . '".', "value->scale");
                             } else {
                                 $formula_text = $frm->ref_text;
-                                log_debug('value->scale -> scaling formula "' . $frm->name() . '" (' . $frm->id . '): ' . $formula_text);
+                                log_debug('scaling formula "' . $frm->name() . '" (' . $frm->id . '): ' . $formula_text);
                                 if ($formula_text <> "") {
                                     $l_part = $lib->str_left_of($formula_text, expression::CHAR_CALC);
                                     $r_part = $lib->str_right_of($formula_text, expression::CHAR_CALC);
@@ -944,9 +944,9 @@ class value extends user_sandbox_value
                                             if ($fv_wrd->is_type(phrase_type::SCALING_HIDDEN)
                                                 and $r_wrd->is_type(phrase_type::SCALING)) {
                                                 $wrd_symbol = expression::WORD_START . $r_wrd->id . expression::WORD_END;
-                                                log_debug('value->scale -> replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->number . ')');
+                                                log_debug('replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->number . ')');
                                                 $r_part = str_replace($wrd_symbol, $this->number, $r_part);
-                                                log_debug('value->scale -> replace done (' . $r_part . ')');
+                                                log_debug('replace done (' . $r_part . ')');
                                                 // TODO separate time from value words
                                                 $calc = new math();
                                                 $result = $calc->parse($r_part);
@@ -1239,7 +1239,7 @@ class value extends user_sandbox_value
         $fv_lst = new formula_value_list($this->user());
         $fv_lst->load($this->grp, null, true);
 
-        log_debug('value->fv_lst_depending -> done');
+        log_debug('done');
         return $fv_lst;
     }
 
@@ -1356,7 +1356,7 @@ class value extends user_sandbox_value
             $result = true;
         }
 
-        log_debug('value->is_std -> (' . zu_dsp_bool($result) . ')');
+        log_debug(zu_dsp_bool($result));
         return $result;
     }
 
@@ -1365,14 +1365,14 @@ class value extends user_sandbox_value
      */
     function can_change(): bool
     {
-        log_debug('value->can_change id ' . $this->id . ' by user ' . $this->user()->name);
+        log_debug('id ' . $this->id . ' by user ' . $this->user()->name);
         $can_change = false;
-        log_debug('value->can_change id ' . $this->id . ' owner ' . $this->owner_id . ' = ' . $this->user()->id . '?');
+        log_debug('id ' . $this->id . ' owner ' . $this->owner_id . ' = ' . $this->user()->id . '?');
         if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
             $can_change = true;
         }
 
-        log_debug('value->can_change -> (' . zu_dsp_bool($can_change) . ')');
+        log_debug(zu_dsp_bool($can_change));
         return $can_change;
     }
 
@@ -1541,11 +1541,11 @@ class value extends user_sandbox_value
             $db_ids = $lst->phr_ids();
 
             // get what needs to be added or removed
-            log_debug('value->upd_phr_links -> should have phrase ids ' . implode(",", $grp_ids));
+            log_debug('should have phrase ids ' . implode(",", $grp_ids));
             $add_ids = array_diff($grp_ids, $db_ids);
             $del_ids = array_diff($db_ids, $grp_ids);
-            log_debug('value->upd_phr_links -> add ids ' . implode(",", $add_ids));
-            log_debug('value->upd_phr_links -> del ids ' . implode(",", $del_ids));
+            log_debug('add ids ' . implode(",", $add_ids));
+            log_debug('del ids ' . implode(",", $del_ids));
 
 
             // create the db link object for all actions
@@ -1572,7 +1572,7 @@ class value extends user_sandbox_value
                         }
                     }
                 }
-                log_debug('value->upd_phr_links -> add sql');
+                log_debug('add sql');
                 if ($sql <> '') {
                     //$sql_result = $db_con->exe($sql, "value->upd_phr_links", array());
                     try {
@@ -1589,11 +1589,11 @@ class value extends user_sandbox_value
                     }
                 }
             }
-            log_debug('value->upd_phr_links -> added links "' . dsp_array($add_ids) . '" lead to ' . implode(",", $db_ids));
+            log_debug('added links "' . dsp_array($add_ids) . '" lead to ' . implode(",", $db_ids));
 
             // remove the links not needed any more
             if (count($del_ids) > 0) {
-                log_debug('value->upd_phr_links -> del ' . implode(",", $del_ids) . '');
+                log_debug('del ' . implode(",", $del_ids) . '');
                 $del_nbr = 0;
                 $sql = 'DELETE FROM ' . $table_name . ' 
                WHERE value_id = ' . $this->id . '
@@ -1612,7 +1612,7 @@ class value extends user_sandbox_value
                 }
             }
 
-            log_debug('value->upd_phr_links -> done');
+            log_debug('done');
         }
         return $result;
     }
@@ -1723,7 +1723,7 @@ class value extends user_sandbox_value
         } else {
             $result = 'initiating of value update job failed';
         }
-        log_debug('value->save_field_trigger_update -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -1742,7 +1742,7 @@ class value extends user_sandbox_value
             $log->field = self::FLD_VALUE;
             $result .= $this->save_field_do($db_con, $log);
             // updating the number is definitely relevant for calculation, so force to update the timestamp
-            log_debug('value->save_field_number -> trigger update');
+            log_debug('trigger update');
             $result .= $this->save_field_trigger_update($db_con);
         }
         return $result;
@@ -1983,7 +1983,7 @@ class value extends user_sandbox_value
      */
     function save(): string
     {
-        log_debug(self::class . '->save');
+        log_debug('->save');
 
         global $db_con;
         $result = '';
@@ -2028,11 +2028,11 @@ class value extends user_sandbox_value
             $db_rec = new value($this->user());
             $db_rec->id = $this->id;
             $db_rec->load_obj_vars();
-            log_debug("value->save -> old database value loaded (" . $db_rec->number . ") with group " . $db_rec->grp->id . ".");
+            log_debug("old database value loaded (" . $db_rec->number . ") with group " . $db_rec->grp->id . ".");
             $std_rec = new value($this->user()); // user must also be set to allow to take the ownership
             $std_rec->id = $this->id;
             $std_rec->load_standard();
-            log_debug("value->save -> standard value settings loaded (" . $std_rec->number . ")");
+            log_debug("standard value settings loaded (" . $std_rec->number . ")");
 
             // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save
             if ($this->owner_id <= 0) {

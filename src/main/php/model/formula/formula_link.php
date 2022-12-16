@@ -509,7 +509,7 @@ class formula_link extends user_sandbox_link_with_type
         if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
             $can_change = true;
         }
-        log_debug('formula_link->can_change -> (' . zu_dsp_bool($can_change) . ')');
+        log_debug(zu_dsp_bool($can_change));
         return $can_change;
     }
 
@@ -660,9 +660,9 @@ class formula_link extends user_sandbox_link_with_type
 
         // check if the required parameters are set
         if (isset($this->fob) and isset($this->tob)) {
-            log_debug('formula_link->save "' . $this->fob->name() . '" to "' . $this->tob->name() . '" (id ' . $this->id . ') for user ' . $this->user()->name);
+            log_debug('"' . $this->fob->name() . '" to "' . $this->tob->name() . '" (id ' . $this->id . ') for user ' . $this->user()->name);
         } elseif ($this->id > 0) {
-            log_debug('formula_link->save id ' . $this->id . ' for user ' . $this->user()->name);
+            log_debug('id ' . $this->id . ' for user ' . $this->user()->name);
         } else {
             log_err("Either the formula and the word or the id must be set to link a formula to a word.", "formula_link->save");
         }
@@ -676,7 +676,7 @@ class formula_link extends user_sandbox_link_with_type
 
         // check if a new value is supposed to be added
         if ($this->id <= 0) {
-            log_debug('formula_link->save check if a new formula_link for "' . $this->fob->name() . '" and "' . $this->tob->name() . '" needs to be created');
+            log_debug('check if a new formula_link for "' . $this->fob->name() . '" and "' . $this->tob->name() . '" needs to be created');
             // check if a formula_link with the same formula and word is already in the database
             $db_chk = new formula_link($this->user());
             $db_chk->fob = $this->fob;
@@ -688,10 +688,10 @@ class formula_link extends user_sandbox_link_with_type
         }
 
         if ($this->id <= 0) {
-            log_debug('formula_link->save new link from "' . $this->fob->name() . '" to "' . $this->tob->name() . '"');
+            log_debug('new link from "' . $this->fob->name() . '" to "' . $this->tob->name() . '"');
             $result .= $this->add()->get_last_message();
         } else {
-            log_debug('formula_link->save update "' . $this->id . '"');
+            log_debug('update "' . $this->id . '"');
             // read the database values to be able to check if something has been changed; done first,
             // because it needs to be done for user and general formulas
             $db_rec = new formula_link($this->user());
@@ -699,11 +699,11 @@ class formula_link extends user_sandbox_link_with_type
             $db_rec->load_obj_vars();
             $db_rec->load_objects();
             $db_con->set_type(sql_db::TBL_FORMULA_LINK);
-            log_debug("formula_link->save -> database formula loaded (" . $db_rec->id . ")");
+            log_debug("database formula loaded (" . $db_rec->id . ")");
             $std_rec = new formula_link($this->user()); // must also be set to allow to take the ownership
             $std_rec->id = $this->id;
             $std_rec->load_standard();
-            log_debug("formula_link->save -> standard formula settings loaded (" . $std_rec->id . ")");
+            log_debug("standard formula settings loaded (" . $std_rec->id . ")");
 
             // for a correct user formula link detection (function can_change) set the owner even if the formula link has not been loaded before the save
             if ($this->owner_id <= 0) {
@@ -715,7 +715,7 @@ class formula_link extends user_sandbox_link_with_type
             if ($db_rec->fob != null) {
                 if ($db_rec->fob->id <> $this->fob->id
                     or $db_rec->tob->id <> $this->tob->id) {
-                    log_debug("formula_link->save -> update link settings for id " . $this->id . ": change formula " . $db_rec->formula_id() . " to " . $this->formula_id() . " and " . $db_rec->phrase_id() . " to " . $this->phrase_id());
+                    log_debug("update link settings for id " . $this->id . ": change formula " . $db_rec->formula_id() . " to " . $this->formula_id() . " and " . $db_rec->phrase_id() . " to " . $this->phrase_id());
                     $result .= log_info('The formula link "' . $db_rec->fob->name . '" with "' . $db_rec->tob->name . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->fob->name . '" with "' . $this->tob->name . '" (id ' . $this->fob->id . ',' . $this->tob->id . '). Instead the program should have created a new link.', "formula_link->save");
                 }
             }

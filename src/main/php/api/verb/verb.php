@@ -38,6 +38,15 @@ use verb;
 
 class verb_api extends user_sandbox_named_api
 {
+
+    /*
+     * const for system testing
+     */
+
+    // already coded verb names or persevered verbs names for unit and integration tests
+    const TN_READ = "not set";
+
+
     /*
      * casting objects
      */

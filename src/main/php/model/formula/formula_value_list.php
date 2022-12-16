@@ -402,7 +402,7 @@ class formula_value_list
                 $fv->load_phrases(); // load any missing objects if needed
                 $phr_lst = clone $fv->phr_lst;
                 if (isset($fv->time_phr)) {
-                    log_debug("fv_lst->display -> add time " . $fv->time_phr->name() . ".");
+                    log_debug("add time " . $fv->time_phr->name() . ".");
                     $phr_lst->add($fv->time_phr);
                 }
                 $phr_lst_dsp = $phr_lst->dsp_obj();
@@ -414,7 +414,7 @@ class formula_value_list
         }
         $result .= dsp_tbl_end();
 
-        log_debug("fv_lst->display -> done");
+        log_debug("done");
         return $result;
     }
 
@@ -471,7 +471,7 @@ class formula_value_list
                     $debug_txt .= ", " . $debug_wrd->name();
                 }
             }
-            log_debug('fv_lst->add_frm_val -> calc ' . $frm_row['formula_name'] . ' for ' . $wrd->name() . ' (' . $phr_id . ')' . $debug_txt);
+            log_debug('calc ' . $frm_row['formula_name'] . ' for ' . $wrd->name() . ' (' . $phr_id . ')' . $debug_txt);
 
             // get the group words
             $phr_ids = $value_lst[$val_id][1];
@@ -490,7 +490,7 @@ class formula_value_list
             $result[] = $calc_row;
         }
 
-        log_debug('fv_lst->add_frm_val -> number of values added (' . dsp_count($result) . ')');
+        log_debug('number of values added (' . dsp_count($result) . ')');
         return $result;
     }
 
@@ -527,7 +527,7 @@ class formula_value_list
             log_debug('remove the formula words "' . $phr_lst->name() . '" from the request word list ' . $phr_lst->name());
             //$phr_lst->remove_wrd_lst($phr_lst_frm_used);
             $phr_lst->diff($phr_lst_frm_used);
-            log_debug('removed -> ' . $phr_lst->name() . ')');
+            log_debug('removed ' . $phr_lst->name() . ')');
 
             // remove double requests
 
@@ -631,7 +631,7 @@ class formula_value_list
         //}
 
         //print_r($result);
-        log_debug('fv_lst->frm_upd_lst_usr -> (' . dsp_count($result->lst) . ')');
+        log_debug(dsp_count($result->lst));
         return $result;
     }
 
@@ -685,9 +685,9 @@ class formula_value_list
         // convert the special formulas to normal phrases e.g. use "2018" instead of "this" if the formula is assigned to "Year"
         foreach ($frm_lst_preset_following->lst() as $frm_special) {
             $frm_special->load();
-            log_debug('fv_lst->frm_upd_lst -> get preset phrases for formula ' . $frm_special->dsp_id() . ' and phrases ' . $phr_lst_frm_assigned->dsp_name());
+            log_debug('get preset phrases for formula ' . $frm_special->dsp_id() . ' and phrases ' . $phr_lst_frm_assigned->dsp_name());
             $phr_lst_preset = $frm_special->special_phr_lst($phr_lst_frm_assigned);
-            log_debug('fv_lst->frm_upd_lst -> got phrases ' . $phr_lst_preset->dsp_id());
+            log_debug('got phrases ' . $phr_lst_preset->dsp_id());
         }
         log_debug('the used ' . $phr_lst_frm_used->name_linked() . ' are taken from ' . $frm->usr_text);
         if ($phr_lst_preset->dsp_name() <> '""') {
@@ -750,7 +750,7 @@ class formula_value_list
         }
 
         //flush();
-        log_debug('fv_lst->frm_upd_lst -> (' . dsp_count($result->lst) . ')');
+        log_debug(dsp_count($result->lst));
         return $result;
     }
 
@@ -862,14 +862,14 @@ class formula_value_list
      */
     function merge(formula_value_list $lst_to_merge): formula_value_list
     {
-        log_debug('fv_lst->merge ' . $lst_to_merge->dsp_id() . ' to ' . $this->dsp_id());
+        log_debug($lst_to_merge->dsp_id() . ' to ' . $this->dsp_id());
         if (isset($lst_to_merge->lst)) {
             foreach ($lst_to_merge->lst as $new_fv) {
-                log_debug('fv_lst->merge add ' . $new_fv->dsp_id());
+                log_debug('add ' . $new_fv->dsp_id());
                 $this->add($new_fv);
             }
         }
-        log_debug('fv_lst->merge -> to ' . $this->dsp_id());
+        log_debug('to ' . $this->dsp_id());
         return $this;
     }
 

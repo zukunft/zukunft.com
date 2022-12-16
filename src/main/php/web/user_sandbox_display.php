@@ -52,7 +52,7 @@ class user_sandbox_display extends user_sandbox_value
             $result .= 'share type ' . $sel->display() . ' ';
         }
 
-        log_debug($this->obj_name . '->dsp_share ' . $this->dsp_id() . ' -> done');
+        log_debug($this->dsp_id() . ' done');
         return $result;
     }
 
@@ -74,7 +74,7 @@ class user_sandbox_display extends user_sandbox_value
             $result .= 'protection ' . $sel->display() . ' ';
         }
 
-        log_debug($this->obj_name . '->dsp_protection ' . $this->dsp_id() . ' -> done');
+        log_debug($this->dsp_id() . ' done');
         return $result;
     }
 
@@ -115,7 +115,7 @@ class user_sandbox_display extends user_sandbox_value
         }
         $result .= '</table>';
 
-        log_debug('dsp_sandbox_wrd -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -161,7 +161,7 @@ class user_sandbox_display extends user_sandbox_value
         }
         $result .= '</table>';
 
-        log_debug('dsp_sandbox_frm -> done');
+        log_debug('done');
         return $result;
     }
 }

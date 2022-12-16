@@ -342,13 +342,13 @@ class value_phrase_link
                     }
                 }
             } else {
-                log_debug('val_lnk->save update "' . $this->id . '"');
+                log_debug('update "' . $this->id . '"');
                 // read the database values to be able to check if something has been changed; done first,
                 // because it needs to be done for user and general formulas
                 $db_rec = new value_phrase_link($this->usr);
                 $db_rec->id = $this->id;
                 $db_rec->load();
-                log_debug("val_lnk->save -> database value_phrase_link loaded (" . $db_rec->id . ")");
+                log_debug("database value_phrase_link loaded (" . $db_rec->id . ")");
 
                 // update the linked word
                 $result = $this->save_field_wrd($db_con, $db_rec);
@@ -360,9 +360,9 @@ class value_phrase_link
         } else {
             // try to create a new value and link all words
             // if the value already exist, create a user entry
-            log_warning('val_lnk->save creating of a new value for "' . $this->id . '" not yet coded');
+            log_warning('creating of a new value for "' . $this->id . '" not yet coded');
         }
-        log_debug("val_lnk->save ... done");
+        log_debug("done");
     }
 
     /**
@@ -372,7 +372,7 @@ class value_phrase_link
      */
     function del($user_id): string
     {
-        log_debug("val_lnk->del (v" . $this->val->dsp_id() . ",t" . $this->phr->id() . ",u" . $user_id . ")");
+        log_debug("(v" . $this->val->dsp_id() . ",t" . $this->phr->id() . ",u" . $user_id . ")");
 
         global $db_con;
         $result = '';
@@ -389,10 +389,10 @@ class value_phrase_link
             // check if removing a word link is matching another value
             // if yes merge value with this value
             // if no create a new value
-            log_warning('val_lnk->del check if removing a word link is matching another value for "' . $this->id . '" not yet coded');
+            log_warning('check if removing a word link is matching another value for "' . $this->id . '" not yet coded');
         }
 
-        log_debug("val_lnk->del -> (" . $result . ")");
+        log_debug($result);
         return $result;
     }
 

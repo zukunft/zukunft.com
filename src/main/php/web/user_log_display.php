@@ -278,7 +278,7 @@ class user_log_display
             $result .= dsp_tbl_end();
         }
 
-        log_debug("user_log_display->dsp_hist -> done");
+        log_debug("done");
         return $result;
     }
 
@@ -433,7 +433,7 @@ class user_log_display
         }
         $result .= dsp_tbl_end();
 
-        log_debug("formula->dsp_hist_links -> done");
+        log_debug("done");
         return $result;
     }
 

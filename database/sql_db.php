@@ -3624,7 +3624,7 @@ class sql_db
                 $result = strval($result);
             }
         }
-        log_debug("sql_db->postgres_format -> done (" . $result . ")", $debug - 25);
+        log_debug("done (" . $result . ")", $debug - 25);
 
         return $result;
     }
@@ -3666,7 +3666,7 @@ class sql_db
             $result = "Now()";
         }
 
-        log_debug("mysqli_format -> done (" . $result . ")");
+        log_debug("done (" . $result . ")");
 
         return $result;
     }

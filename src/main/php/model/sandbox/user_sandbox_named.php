@@ -448,14 +448,14 @@ class user_sandbox_named extends user_sandbox
     function is_id_updated(user_sandbox $db_rec): bool
     {
         $result = False;
-        log_debug($this->obj_name . '->is_id_updated ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
-        log_debug($this->obj_name . '->is_id_updated compare name ' . $db_rec->name . ' with ' . $this->name);
+        log_debug('compare name ' . $db_rec->name . ' with ' . $this->name);
         if ($db_rec->name <> $this->name) {
             $result = True;
         }
 
-        log_debug($this->obj_name . '->is_id_updated -> (' . zu_dsp_bool($result) . ')');
+        log_debug(zu_dsp_bool($result));
         return $result;
     }
 

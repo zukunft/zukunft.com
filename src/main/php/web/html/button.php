@@ -158,7 +158,7 @@ class button {
             }
         }
 
-        log_debug("button->add_value -> type URL");
+        log_debug("type URL");
         $url_type = '';
         if (isset($type_ids)) {
             $url_type = zu_ids_to_url($type_ids,"type");
@@ -167,7 +167,7 @@ class button {
         $this->call  = '/http/value_add.php?back='.$back.$url_phr.$url_type;
         $result = $this->add();
 
-        log_debug("button->add_value -> (".$result.")");
+        log_debug($result);
         return $result;
     }
 
@@ -175,7 +175,7 @@ class button {
     * similar to btn_add_value, but uses a simple modal box
     */
     function add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back): string {
-        log_debug("button->add_value");
+        log_debug();
         $result = '';
 
         // group the modal box with the button
@@ -227,7 +227,7 @@ class button {
         // close the modal group
         $result .= '</div>';
 
-        log_debug("button->add_value -> (".$result.")");
+        log_debug($result);
         return $result;
     }
 
@@ -235,7 +235,7 @@ class button {
     * display a button to adjust a value
     */
     function edit_value ($phr_lst, $value_id, $back): string {
-        log_debug("button->edit_value (".$phr_lst->name().",v".$value_id.",b".$back.")");
+        log_debug($phr_lst->name().",v".$value_id.",b".$back);
 
         if (!empty($phr_lst->ids)) {
             $this->title = "change the value for ".$phr_lst->name();
@@ -244,7 +244,7 @@ class button {
         }
         $this->call  = '/http/value_edit.php?id='.$value_id.'&back='.$back;
         $result = $this->edit();
-        log_debug("button->edit_value -> (".$result.")");
+        log_debug($result);
         return $result;
     }
 
@@ -252,7 +252,7 @@ class button {
     * display a button to exclude a value
     */
     function del_value ($phr_lst, $value_id, $back): string {
-        log_debug("button->del_value (".$phr_lst->name().",v".$value_id.",b".$back.")");
+        log_debug($phr_lst->name().",v".$value_id.",b".$back);
 
         if (!empty($phr_lst->ids)) {
             $this->title = "delete the value for ".$phr_lst->name();
@@ -261,7 +261,7 @@ class button {
         }
         $this->call  = '/http/value_del.php?id='.$value_id.'&back='.$back;
         $result = $this->del();
-        log_debug("button->del_value -> (".$result.")");
+        log_debug($result);
         return $result;
     }
 

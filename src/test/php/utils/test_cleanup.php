@@ -34,6 +34,7 @@ use api\formula_api;
 use api\phrase_api;
 use api\source_api;
 use api\triple_api;
+use api\verb_api;
 use api\view_api;
 use api\view_cmp_api;
 use api\word_api;
@@ -453,7 +454,7 @@ class testing extends test_base
             $class = match ($name) {
                 triple_api::TN_READ => triple::class,
                 formula_api::TN_READ, formula_api::TN_READ_THIS, formula_api::TN_READ_PRIOR => formula::class,
-                verb::TN_READ, verb::CAN_CONTAIN_NAME => verb::class,
+                verb_api::TN_READ, verb::CAN_CONTAIN_NAME => verb::class,
                 default => word::class,
             };
             $trm = new term($usr, $class);

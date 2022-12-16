@@ -86,14 +86,6 @@ class verb extends db_object
 
 
     /*
-     * const for system testing
-     */
-
-    // already coded verb names or persevered verbs names for unit and integration tests
-    const TN_READ = "not set";
-
-
-    /*
      * object vars
      */
 
@@ -512,7 +504,7 @@ class verb extends db_object
     {
         global $verbs;
 
-        log_debug('verb->dsp_selector -> for verb id ' . $this->id);
+        log_debug('for verb id ' . $this->id);
         $result = '';
 
         $sel = new html_selector;
@@ -530,7 +522,7 @@ class verb extends db_object
         $sel->dummy_text = '';
         $result .= $sel->display();
 
-        log_debug('verb->dsp_selector -> admin id ' . $this->id);
+        log_debug('admin id ' . $this->id);
         if ($this->user()->is_set()) {
             if ($this->user()->is_admin()) {
                 // admin users should always have the possibility to create a new verb / link type
@@ -538,7 +530,7 @@ class verb extends db_object
             }
         }
 
-        log_debug('verb->dsp_selector -> done verb id ' . $this->id);
+        log_debug('done verb id ' . $this->id);
         return $result;
     }
 
@@ -704,7 +696,7 @@ class verb extends db_object
             $can_change = true;
         }
 
-        log_debug('verb->can_change -> (' . zu_dsp_bool($can_change) . ')');
+        log_debug(zu_dsp_bool($can_change));
         return $can_change;
     }
 
@@ -1024,13 +1016,13 @@ class verb extends db_object
         if ($this->id <= 0) {
             $result .= $this->add($db_con);
         } else {
-            log_debug('verb->save update "' . $this->id . '"');
+            log_debug('update "' . $this->id . '"');
             // read the database values to be able to check if something has been changed; done first,
             // because it needs to be done for user and general formulas
             $db_rec = new verb;
             $db_rec->usr = $this->usr;
             $db_rec->load_by_id($this->id);
-            log_debug("verb->save -> database verb loaded (" . $db_rec->name . ")");
+            log_debug("database verb loaded (" . $db_rec->name . ")");
 
             // if the name has changed, check if verb, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
             if ($db_rec->name <> $this->name) {

@@ -114,7 +114,7 @@ class ref
                 $this->ref_type = get_ref_type_by_id($db_row[self::FLD_TYPE]);
                 if ($this->load_objects()) {
                     $result = true;
-                    log_debug('ref->load -> done ' . $this->dsp_id());
+                    log_debug('done ' . $this->dsp_id());
                 }
             } else {
                 $this->id = 0;
@@ -343,14 +343,14 @@ class ref
                 $phr = new phrase($this->user());
                 if ($phr->load_by_id($this->phr->id())) {
                     $this->phr = $phr;
-                    log_debug('ref->load_objects -> phrase ' . $this->phr->dsp_id() . ' loaded');
+                    log_debug('phrase ' . $this->phr->dsp_id() . ' loaded');
                 } else {
                     $result = false;
                 }
             }
         }
 
-        log_debug('ref->load_objects -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -659,7 +659,7 @@ class ref
                     $db_con->set_type(sql_db::TBL_REF);
                     $del_result = $db_con->delete(self::FLD_ID, $this->id);
                     if ($del_result == '') {
-                        log_debug('ref->del update -> done.');
+                        log_debug('done.');
                     } else {
                         $result->add_message($del_result);
                     }

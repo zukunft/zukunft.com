@@ -967,7 +967,7 @@ class formula_value extends db_object
         // add the value itself
         $result->number = $this->value;
 
-        log_debug(formula_value::class . '->export_obj -> ' . json_encode($result));
+        log_debug(json_encode($result));
         return $result;
     }
 
@@ -1003,12 +1003,12 @@ class formula_value extends db_object
             // get the word group id (and create the group if needed)
             // TODO include triples
             if (count($this->src_phr_lst->id_lst()) > 0) {
-                log_debug("formula_value->save_prepare_phr_lst_src -> source group for " . $this->src_phr_lst->dsp_id() . ".");
+                log_debug("source group for " . $this->src_phr_lst->dsp_id() . ".");
                 $grp = new phrase_group($this->user());
                 $grp->load_by_lst($this->src_phr_lst);
                 $this->src_phr_grp_id = $grp->get_id();
             }
-            log_debug("formula_value->save_prepare_phr_lst_src -> source group id " . $this->src_phr_grp_id . " for " . $this->src_phr_lst->dsp_name() . ".");
+            log_debug("source group id " . $this->src_phr_grp_id . " for " . $this->src_phr_lst->dsp_name() . ".");
         }
     }
 
@@ -1039,7 +1039,7 @@ class formula_value extends db_object
             $grp = new phrase_group($this->user());
             $grp->load_by_lst($this->phr_lst);
             $this->phr_grp_id = $grp->get_id();
-            log_debug("formula_value->save_prepare_phr_lst -> group id " . $this->phr_grp_id . " for " . $this->phr_lst->dsp_name() . ".");
+            log_debug("group id " . $this->phr_grp_id . " for " . $this->phr_lst->dsp_name() . ".");
         }
     }
 
@@ -1271,7 +1271,7 @@ class formula_value extends db_object
         // add the value  to the title
         $title .= $this->display($back);
         $result .= dsp_text_h1($title);
-        log_debug('formula_value->explain -> explain the value for ' . $val_phr_lst->dsp_name() . ' based on ' . $this->src_phr_lst->dsp_name());
+        log_debug('explain the value for ' . $val_phr_lst->dsp_name() . ' based on ' . $this->src_phr_lst->dsp_name());
 
         // display the measure and scaling of the value
         if ($val_wrd_lst->has_percent()) {
@@ -1297,7 +1297,7 @@ class formula_value extends db_object
         $exp = $frm->expression();
         //$elm_lst = $exp->element_lst ($back);
         $elm_grp_lst = $exp->element_grp_lst($back);
-        log_debug("formula_value->explain -> elements loaded (" . dsp_count($elm_grp_lst->lst()) . " for " . $frm->ref_text . ")");
+        log_debug("elements loaded (" . dsp_count($elm_grp_lst->lst()) . " for " . $frm->ref_text . ")");
 
         $result .= ' where</br>';
 
@@ -1311,7 +1311,7 @@ class formula_value extends db_object
 
                 // display the formula element names and create the element group object
                 $result .= $elm_grp->dsp_names($back) . ' ';
-                log_debug('formula_value->explain -> elm grp name "' . $elm_grp->dsp_names($back) . '" with back "' . $back . '"');
+                log_debug('elm grp name "' . $elm_grp->dsp_names($back) . '" with back "' . $back . '"');
 
 
                 // exclude the formula word from the words used to select the formula element values
@@ -1319,32 +1319,32 @@ class formula_value extends db_object
                 $src_phr_lst = clone $this->src_phr_lst;
                 $frm_wrd_id = $frm->name_wrd->id();
                 $src_phr_lst->diff_by_ids(array($frm_wrd_id));
-                log_debug('formula_value->explain -> formula word "' . $frm->name_wrd->name() . '" excluded from ' . $src_phr_lst->dsp_name());
+                log_debug('formula word "' . $frm->name_wrd->name() . '" excluded from ' . $src_phr_lst->dsp_name());
 
                 // select or guess the element time word if needed
-                log_debug('formula_value->explain -> guess the time ... ');
+                log_debug('guess the time ... ');
                 if ($this->src_time_id <= 0) {
                     if ($this->time_id > 0) {
                         $elm_time_phr = $this->time_phr;
-                        log_debug('formula_value->explain -> time ' . $this->time_phr->name() . ' taken from the result');
+                        log_debug('time ' . $this->time_phr->name() . ' taken from the result');
                     } else {
                         $elm_time_phr = $src_phr_lst->assume_time();
-                        log_debug('formula_value->explain -> time ' . $elm_time_phr->name() . ' assumed');
+                        log_debug('time ' . $elm_time_phr->name() . ' assumed');
                     }
                 } else {
                     $elm_time_phr = $this->src_time_phr;
-                    log_debug('formula_value->explain -> time ' . $elm_time_phr->name() . ' taken from the source');
+                    log_debug('time ' . $elm_time_phr->name() . ' taken from the source');
                 }
 
                 $elm_grp->phr_lst = $src_phr_lst;
                 $elm_grp->time_phr = $elm_time_phr;
                 $elm_grp->usr = $this->user();
-                log_debug('formula_value->explain -> words set ' . $elm_grp->phr_lst->dsp_name() . ' taken from the source and user "' . $elm_grp->usr->name . '"');
+                log_debug('words set ' . $elm_grp->phr_lst->dsp_name() . ' taken from the source and user "' . $elm_grp->usr->name . '"');
 
                 // finally, display the value used in the formula
                 $result .= ' = ' . $elm_grp->dsp_values($this->time_phr, $back);
                 $result .= '</br>';
-                log_debug('formula_value->explain -> next element');
+                log_debug('next element');
                 $elm_nbr++;
             }
         }
@@ -1359,7 +1359,7 @@ class formula_value extends db_object
     //      based on the frm id and the word group
     function update_depending(): array
     {
-        log_debug("formula_value->update_depending (f" . $this->frm->id() . ",t" . dsp_array($this->phr_ids()) . ",tt" . $this->time_id . ",v" . $this->value . " and user " . $this->user()->name . ")");
+        log_debug("(f" . $this->frm->id() . ",t" . dsp_array($this->phr_ids()) . ",tt" . $this->time_id . ",v" . $this->value . " and user " . $this->user()->name . ")");
 
         global $db_con;
         $result = array();
@@ -1458,20 +1458,20 @@ class formula_value extends db_object
             // save only if any parameter has been updated since last calculation
             if ($this->last_val_update <= $this->last_update) {
                 if (isset($this->last_val_update) and isset($this->last_update)) {
-                    log_debug('formula_value->save_if_updated -> ' . $this->dsp_id() . ' not saved because the result has been calculated at ' . $this->last_update->format('Y-m-d H:i:s') . ' and after the last parameter update ' . $this->last_val_update->format('Y-m-d H:i:s'));
+                    log_debug($this->dsp_id() . ' not saved because the result has been calculated at ' . $this->last_update->format('Y-m-d H:i:s') . ' and after the last parameter update ' . $this->last_val_update->format('Y-m-d H:i:s'));
                 } else {
-                    log_debug('formula_value->save_if_updated -> ' . $this->dsp_id() . ' not saved because the result has been calculated after the last parameter update ');
+                    log_debug($this->dsp_id() . ' not saved because the result has been calculated after the last parameter update ');
                 }
                 //zu_debug('formula_value->save_if_updated -> save '.$this->dsp_id().' not saved because the result has been calculated at '.$this->last_update.' which is after the last parameter update at '.$this->last_update);
             } else {
                 if (isset($this->last_val_update) and isset($this->last_update)) {
-                    log_debug('formula_value->save_if_updated -> save ' . $this->dsp_id() . ' because parameters have been updated at ' . $this->last_val_update->format('Y-m-d H:i:s') . ' and the formula result update is from ' . $this->last_update->format('Y-m-d H:i:s'));
+                    log_debug('save ' . $this->dsp_id() . ' because parameters have been updated at ' . $this->last_val_update->format('Y-m-d H:i:s') . ' and the formula result update is from ' . $this->last_update->format('Y-m-d H:i:s'));
                 } else {
                     if (isset($this->last_val_update)) {
-                        log_debug('formula_value->save_if_updated -> save ' . $this->dsp_id() . ' and result update time is set to ' . $this->last_val_update->format('Y-m-d H:i:s'));
+                        log_debug('save ' . $this->dsp_id() . ' and result update time is set to ' . $this->last_val_update->format('Y-m-d H:i:s'));
                         $this->last_update = $this->last_val_update;
                     } else {
-                        log_debug('formula_value->save_if_updated -> save ' . $this->dsp_id() . ' but times are missing');
+                        log_debug('save ' . $this->dsp_id() . ' but times are missing');
                     }
                 }
                 // check the formula result consistency
@@ -1485,7 +1485,7 @@ class formula_value extends db_object
                 // add the formula name word, but not is the result words are defined in the formula
                 // e.g. if the formula "country weight" is calculated the word "country weight" should be added to the result values
                 if (!$has_result_phrases) {
-                    log_debug('formula_value->save_if_updated -> add the formula name ' . $this->frm->dsp_id() . ' to the result phrases ' . $this->phr_lst->dsp_id());
+                    log_debug('add the formula name ' . $this->frm->dsp_id() . ' to the result phrases ' . $this->phr_lst->dsp_id());
                     if ($this->frm != null) {
                         if ($this->frm->name_wrd != null) {
                             $this->phr_lst->add($this->frm->name_wrd->phrase());
@@ -1496,26 +1496,26 @@ class formula_value extends db_object
                 // e.g. if the formula is a division and the values used have a measure word like meter or CHF, the result is only in percent, but not in meter or CHF
                 // simplified version, that needs to be review to handle more complex formulas
                 if (strpos($this->frm->ref_text_r, expression::DIV) !== false) {
-                    log_debug('formula_value->save_if_updated -> check measure ' . $this->phr_lst->dsp_id());
+                    log_debug('check measure ' . $this->phr_lst->dsp_id());
                     if ($this->phr_lst->has_measure()) {
                         $this->phr_lst->ex_measure();
-                        log_debug('formula_value->save_if_updated -> measure removed from words ' . $this->phr_lst->dsp_id());
+                        log_debug('measure removed from words ' . $this->phr_lst->dsp_id());
                     }
                 }
 
                 // build the formula result object
                 //$this->frm_id = $this->frm->id();
                 //$this->user()->id = $frm_result->result_user;
-                log_debug('formula_value->save_if_updated -> save "' . $this->value . '" for ' . $this->phr_lst->dsp_id());
+                log_debug('save "' . $this->value . '" for ' . $this->phr_lst->dsp_id());
 
                 // get the default time for the words e.g. if the increase for ABB sales is calculated the last reported sales increase is assumed
                 $lst_ex_time = $this->phr_lst->wrd_lst_all();
                 $lst_ex_time->ex_time();
                 $fv_default_time = $lst_ex_time->assume_time(); // must be the same function called used in 2num
                 if (isset($fv_default_time)) {
-                    log_debug('formula_value->save_if_updated -> save "' . $this->value . '" for ' . $this->phr_lst->dsp_id() . ' and default time ' . $fv_default_time->dsp_id());
+                    log_debug('save "' . $this->value . '" for ' . $this->phr_lst->dsp_id() . ' and default time ' . $fv_default_time->dsp_id());
                 } else {
-                    log_debug('formula_value->save_if_updated -> save "' . $this->value . '" for ' . $this->phr_lst->dsp_id());
+                    log_debug('save "' . $this->value . '" for ' . $this->phr_lst->dsp_id());
                 }
 
                 if (!isset($this->value)) {
@@ -1592,7 +1592,7 @@ class formula_value extends db_object
 
             // build the word list if needed to separate the time word from the word list
             $this->save_prepare_wrds();
-            log_debug("formula_value->save -> word list prepared (group id " . $this->phr_grp_id . " and source group id " . $this->src_phr_grp_id . ")");
+            log_debug("group id " . $this->phr_grp_id . " and source group id " . $this->src_phr_grp_id);
 
             // to check if a database update is needed to create a second fv object with the database values
             $fv_db = clone $this;
@@ -1608,11 +1608,11 @@ class formula_value extends db_object
                         $this->id = $row_id;
                         $result = $row_id;
                     }
-                    log_debug("formula_value->save -> update (" . $db_val . " to " . $this->value . " for " . $row_id . ")");
+                    log_debug("update (" . $db_val . " to " . $this->value . " for " . $row_id . ")");
                 } else {
                     $this->id = $row_id;
                     $result = $row_id;
-                    log_debug("formula_value->save -> not update (" . $db_val . " to " . $this->value . " for " . $row_id . ")");
+                    log_debug("not update (" . $db_val . " to " . $this->value . " for " . $row_id . ")");
                 }
             } else {
                 $field_names = array();

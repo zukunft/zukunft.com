@@ -377,7 +377,7 @@ class view_cmp_dsp_old extends view_cmp
         $sel->dummy_text = 'not set';
         $sel->name = 'word_row';
         if (isset($this->wrd_row)) {
-            $sel->label = "Rows taken from " . $this->wrd_row->dsp_link() . ":";
+            $sel->label = "Rows taken from " . $this->wrd_row->dsp_obj()->dsp_link() . ":";
         } else {
             $sel->label = "Take rows from:";
         }
@@ -397,7 +397,7 @@ class view_cmp_dsp_old extends view_cmp
         $sel->dummy_text = 'not set';
         $sel->name = 'word_col';
         if (isset($this->wrd_col)) {
-            $sel->label = "Columns taken from " . $this->wrd_col->dsp_link() . ":";
+            $sel->label = "Columns taken from " . $this->wrd_col->dsp_obj()->dsp_link() . ":";
         } else {
             $sel->label = "Take columns from:";
         }
@@ -443,7 +443,7 @@ class view_cmp_dsp_old extends view_cmp
         $log_dsp->back = $back;
         $result .= $log_dsp->dsp_hist_links();
 
-        log_debug("view_component_dsp->dsp_hist_links -> done");
+        log_debug("done");
         return $result;
     }
 

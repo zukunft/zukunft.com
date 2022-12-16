@@ -434,7 +434,7 @@ class formula extends user_sandbox_named_with_type
                 $this->row_mapper($db_frm);
                 if ($this->id > 0) {
                     // TODO check the exclusion handling
-                    log_debug(self::class . '->load ' . $this->dsp_id() . ' not excluded');
+                    log_debug('->load ' . $this->dsp_id() . ' not excluded');
 
                     // load the formula name word object
                     // a word (TODO triple)
@@ -448,7 +448,7 @@ class formula extends user_sandbox_named_with_type
                 }
             }
         }
-        log_debug(self::class . '->load -> done ' . $this->dsp_id());
+        log_debug('done ' . $this->dsp_id());
         return $result;
     }
 
@@ -489,7 +489,7 @@ class formula extends user_sandbox_named_with_type
             }
         }
         if ($do_load) {
-            log_debug(self::class . '->load_wrd load ' . $this->dsp_id());
+            log_debug('->load_wrd load ' . $this->dsp_id());
             $name_wrd = new word($this->user());
             $name_wrd->load_by_name($this->name, word::class);
             if ($name_wrd->id > 0) {
@@ -551,7 +551,7 @@ class formula extends user_sandbox_named_with_type
      */
     function create_wrd(): bool
     {
-        log_debug(self::class . '->create_wrd create formula linked word ' . $this->dsp_id());
+        log_debug('->create_wrd create formula linked word ' . $this->dsp_id());
         $result = false;
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
@@ -591,7 +591,7 @@ class formula extends user_sandbox_named_with_type
         $result = false;
         if ($this->type_cl <> "") {
             $result = true;
-            log_debug(self::class . '->is_special -> ' . $this->dsp_id());
+            log_debug($this->dsp_id());
         }
         return $result;
     }
@@ -606,11 +606,11 @@ class formula extends user_sandbox_named_with_type
         $val = null;
 
         if ($this->type_id > 0) {
-            log_debug("formula->special_result -> type (" . $this->type_cl . ")");
+            log_debug("type (" . $this->type_cl . ")");
             if ($this->type_cl == formula_type::THIS) {
                 $val_phr_lst = clone $phr_lst;
                 $val_phr_lst->add($time_phr); // the time word should be added at the end, because ...
-                log_debug("formula->special_result -> this (" . $time_phr->name() . ")");
+                log_debug("this (" . $time_phr->name() . ")");
                 $val = $val_phr_lst->value_scaled();
             }
             if ($this->type_cl == formula_type::NEXT) {
@@ -618,7 +618,7 @@ class formula extends user_sandbox_named_with_type
                 $next_wrd = $time_phr->next();
                 if ($next_wrd->id > 0) {
                     $val_phr_lst->add($next_wrd); // the time word should be added at the end, because ...
-                    log_debug("formula->special_result -> next (" . $next_wrd->name . ")");
+                    log_debug("next (" . $next_wrd->name . ")");
                     $val = $val_phr_lst->value_scaled();
                 }
             }
@@ -627,13 +627,13 @@ class formula extends user_sandbox_named_with_type
                 $prior_wrd = $time_phr->prior();
                 if ($prior_wrd->id > 0) {
                     $val_phr_lst->add($prior_wrd); // the time word should be added at the end, because ...
-                    log_debug("formula->special_result -> prior (" . $prior_wrd->name . ")");
+                    log_debug("prior (" . $prior_wrd->name . ")");
                     $val = $val_phr_lst->value_scaled();
                 }
             }
         }
 
-        log_debug("formula->special_result -> (" . $val->number() . ")");
+        log_debug('result: ' . $val->number());
         return $val;
     }
 
@@ -643,7 +643,7 @@ class formula extends user_sandbox_named_with_type
      */
     function special_time_phr(phrase $time_phr): phrase
     {
-        log_debug(self::class . '->special_time_phr "' . $this->type_cl . '" for ' . $time_phr->dsp_id());
+        log_debug($this->type_cl . ' for ' . $time_phr->dsp_id());
         $result = $time_phr;
 
         if ($this->type_id > 0) {
@@ -666,7 +666,7 @@ class formula extends user_sandbox_named_with_type
             }
         }
 
-        log_debug(self::class . '->special_time_phr got ' . $result->dsp_id());
+        log_debug('got ' . $result->dsp_id());
         return $result;
     }
 
@@ -676,7 +676,7 @@ class formula extends user_sandbox_named_with_type
      */
     function special_phr_lst(phrase_list $phr_lst): phrase_list
     {
-        log_debug(self::class . '->special_phr_lst for ' . $phr_lst->dsp_id());
+        log_debug('for ' . $phr_lst->dsp_id());
         $result = clone $phr_lst;
 
         foreach ($phr_lst->lst() as $phr) {
@@ -688,11 +688,11 @@ class formula extends user_sandbox_named_with_type
             $time_phr = $this->special_time_phr($phr);
             if (isset($time_phr)) {
                 $result->add($time_phr);
-                log_debug(self::class . '->special_phr_lst -> added time ' . $time_phr->dsp_id() . ' to ' . $result->dsp_id());
+                log_debug('added time ' . $time_phr->dsp_id() . ' to ' . $result->dsp_id());
             }
         }
 
-        log_debug(self::class . '->special_phr_lst -> ' . $result->dsp_id());
+        log_debug($result->dsp_id());
         return $result;
     }
 
@@ -704,7 +704,7 @@ class formula extends user_sandbox_named_with_type
         $phr_lst = null;
 
         if ($this->id > 0 and $this->user()->is_set()) {
-            log_debug(self::class . '->assign_phr_glst_direct for formula ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
+            log_debug('for formula ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
             $frm_lnk_lst = new formula_link_list($this->user());
             $frm_lnk_lst->load_by_frm_id($this->id);
             $phr_ids = $frm_lnk_lst->phrase_ids($sbx);
@@ -712,7 +712,7 @@ class formula extends user_sandbox_named_with_type
             if (count($phr_ids->lst) > 0) {
                 $phr_lst = new phrase_list($this->user());
                 $phr_lst->load_by_ids($phr_ids);
-                log_debug("formula->assign_phr_glst_direct -> number of words " . dsp_count($phr_lst->lst()));
+                log_debug("number of words " . dsp_count($phr_lst->lst()));
             }
         } else {
             log_err("The user id must be set to list the formula links.", "formula->assign_phr_glst_direct");
@@ -749,20 +749,20 @@ class formula extends user_sandbox_named_with_type
             $direct_phr_lst = $this->assign_phr_glst_direct($sbx);
             if ($direct_phr_lst != null) {
                 if (!$direct_phr_lst->is_empty()) {
-                    log_debug(self::class . '->assign_phr_glst -> ' . $this->dsp_id() . ' direct assigned words and triples ' . $direct_phr_lst->dsp_id());
+                    log_debug($this->dsp_id() . ' direct assigned words and triples ' . $direct_phr_lst->dsp_id());
 
                     //$indirect_phr_lst = $direct_phr_lst->is();
                     $indirect_phr_lst = $direct_phr_lst->are();
-                    log_debug(self::class . '->assign_phr_glst -> indirect assigned words and triples ' . $indirect_phr_lst->dsp_id());
+                    log_debug('indirect assigned words and triples ' . $indirect_phr_lst->dsp_id());
 
                     // merge direct and indirect assigns (maybe later using phrase_list->merge)
                     $phr_ids = array_merge($direct_phr_lst->id_lst(), $indirect_phr_lst->id_lst());
                     $phr_ids = array_unique($phr_ids);
 
                     $phr_lst->load_by_ids((new phr_ids($phr_ids)));
-                    log_debug(self::class . '->assign_phr_glst -> number of words and triples ' . dsp_count($phr_lst->lst()));
+                    log_debug('number of words and triples ' . dsp_count($phr_lst->lst()));
                 } else {
-                    log_debug(self::class . '->assign_phr_glst -> no words are assigned to ' . $this->dsp_id());
+                    log_debug( 'no words are assigned to ' . $this->dsp_id());
                 }
             }
         } else {
@@ -842,7 +842,7 @@ class formula extends user_sandbox_named_with_type
         }
         $phr_lst_ex = clone $phr_lst;
         $phr_lst_ex->ex_time();
-        log_debug(self::class . '->to_num -> the phrases excluded time are ' . $phr_lst_ex->dsp_id());
+        log_debug('the phrases excluded time are ' . $phr_lst_ex->dsp_id());
 
         // create the formula value list
         $fv_lst = new formula_value_list($this->user());
@@ -870,7 +870,7 @@ class formula extends user_sandbox_named_with_type
         //      the element group "Sales differentiator Sector" has the elements: "Sales" (of type word), "differentiator" (verb), "Sector" (word)
         $exp = $this->expression();
         $elm_grp_lst = $exp->element_grp_lst();
-        log_debug(self::class . '->to_num -> in ' . $exp->ref_text() . ' ' . dsp_count($elm_grp_lst->lst()) . ' element groups found');
+        log_debug('in ' . $exp->ref_text() . ' ' . dsp_count($elm_grp_lst->lst()) . ' element groups found');
 
         // to check if all needed value are given
         $all_elm_grp_filled = true;
@@ -886,8 +886,8 @@ class formula extends user_sandbox_named_with_type
             }
             $elm_grp->build_symbol();
             $fig_lst = $elm_grp->figures();
-            log_debug(self::class . '->to_num -> figures ');
-            log_debug(self::class . '->to_num -> figures ' . $fig_lst->dsp_id() . ' (' . dsp_count($fig_lst->lst()) . ') for ' . $elm_grp->dsp_id());
+            log_debug('figures ');
+            log_debug('figures ' . $fig_lst->dsp_id() . ' (' . dsp_count($fig_lst->lst()) . ') for ' . $elm_grp->dsp_id());
 
             // fill the figure into the formula text and create as much formula values / results as needed
             if ($fig_lst->lst() != null) {
@@ -905,7 +905,7 @@ class formula extends user_sandbox_named_with_type
                         // fill each formula values created by any previous number filling
                         if ($fv->val_missing == False) {
                             if ($fig_lst->fig_missing and $this->need_all_val) {
-                                log_debug(self::class . '->to_num -> figure missing');
+                                log_debug('figure missing');
                                 $fv->val_missing = True;
                             } else {
                                 $fig = $fig_lst->lst()[0];
@@ -913,7 +913,7 @@ class formula extends user_sandbox_named_with_type
                                 if ($fv->last_val_update < $fig->last_update) {
                                     $fv->last_val_update = $fig->last_update;
                                 }
-                                log_debug(self::class . '->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                log_debug('one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
                             }
                         }
                     }
@@ -929,7 +929,7 @@ class formula extends user_sandbox_named_with_type
                         foreach ($fig_lst->lst() as $fig) {
                             if ($fv->val_missing == False) {
                                 if ($fig_lst->fig_missing and $this->need_all_val) {
-                                    log_debug(self::class . '->to_num -> figure missing');
+                                    log_debug('figure missing');
                                     $fv->val_missing = True;
                                 } else {
                                     // for the first previous result, just fill in the first number
@@ -947,7 +947,7 @@ class formula extends user_sandbox_named_with_type
                                                 if ($fv_std->last_val_update < $fig->last_update) {
                                                     $fv_std->last_val_update = $fig->last_update;
                                                 }
-                                                log_debug(self::class . '->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                                log_debug('one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
                                                 $fv_lst->lst[] = $fv_std;
                                                 // ... and split into a user specific part
                                                 $fv->is_std = false;
@@ -958,7 +958,7 @@ class formula extends user_sandbox_named_with_type
                                         if ($fv->last_val_update < $fig->last_update) {
                                             $fv->last_val_update = $fig->last_update;
                                         }
-                                        log_debug(self::class . '->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                        log_debug('one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
                                     } else {
                                         // if the result has been the standard result utils now
                                         if ($fv_master->is_std()) {
@@ -972,7 +972,7 @@ class formula extends user_sandbox_named_with_type
                                                 if ($fv_std->last_val_update < $fig->last_update) {
                                                     $fv_std->last_val_update = $fig->last_update;
                                                 }
-                                                log_debug(self::class . '->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                                log_debug('one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
                                                 $fv_lst->lst[] = $fv_std;
                                                 // ... and split into a user specific part
                                                 $fv_master->is_std = false;
@@ -985,10 +985,10 @@ class formula extends user_sandbox_named_with_type
                                         if ($fv->last_val_update < $fig->last_update) {
                                             $fv->last_val_update = $fig->last_update;
                                         }
-                                        log_debug(self::class . '->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                        log_debug('one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
                                         $fv_lst->lst[] = $fv_new;
                                     }
-                                    log_debug(self::class . '->to_num -> figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                    log_debug('figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
                                     $fig_nbr++;
                                 }
                             }
@@ -996,7 +996,7 @@ class formula extends user_sandbox_named_with_type
                     }
                 } else {
                     // if not figure found remember to switch off the result if needed
-                    log_debug(self::class . '->to_num -> no figures found for ' . $elm_grp->dsp_id() . ' and ' . $phr_lst_ex->dsp_id());
+                    log_debug('no figures found for ' . $elm_grp->dsp_id() . ' and ' . $phr_lst_ex->dsp_id());
                     $all_elm_grp_filled = false;
                 }
             }
@@ -1004,13 +1004,13 @@ class formula extends user_sandbox_named_with_type
 
         // if some values are not filled and all are needed, switch off the incomplete formula results
         if ($this->need_all_val) {
-            log_debug(self::class . '->to_num -> for ' . $phr_lst_ex->dsp_id() . ' all value are needed');
+            log_debug('for ' . $phr_lst_ex->dsp_id() . ' all value are needed');
             if ($all_elm_grp_filled) {
-                log_debug(self::class . '->to_num -> for ' . $phr_lst_ex->dsp_id() . ' all value are filled');
+                log_debug('for ' . $phr_lst_ex->dsp_id() . ' all value are filled');
             } else {
-                log_debug(self::class . '->to_num -> some needed values missing for ' . $phr_lst_ex->dsp_id());
+                log_debug('some needed values missing for ' . $phr_lst_ex->dsp_id());
                 foreach ($fv_lst->lst as $fv) {
-                    log_debug(self::class . '->to_num -> some needed values missing for ' . $fv->dsp_id() . ' so switch off');
+                    log_debug('some needed values missing for ' . $fv->dsp_id() . ' so switch off');
                     $fv->val_missing = True;
                 }
             }
@@ -1096,7 +1096,7 @@ class formula extends user_sandbox_named_with_type
         if (!isset($phr_lst)) {
             log_warning('The calculation context for ' . $this->dsp_id() . ' is empty.', 'formula->calc');
         } else {
-            log_debug(self::class . '->calc ' . $this->dsp_id() . ' for ' . $phr_lst->dsp_id());
+            log_debug('->calc ' . $this->dsp_id() . ' for ' . $phr_lst->dsp_id());
 
             // check if an update of the result is needed
             /*
@@ -1122,18 +1122,18 @@ class formula extends user_sandbox_named_with_type
             $has_result_phrases = false;
             $fv_add_phr_lst = $exp->fv_phr_lst();
             if (isset($fv_add_phr_lst)) {
-                log_debug(self::class . '->calc -> use words ' . $fv_add_phr_lst->dsp_id() . ' for the result');
+                log_debug('use words ' . $fv_add_phr_lst->dsp_id() . ' for the result');
                 $has_result_phrases = true;
             }
             // use only the part right of the equation sign for the result calculation
             $this->ref_text_r = expression::CHAR_CALC . $exp->r_part();
-            log_debug(self::class . '->calc got result words of ' . $this->ref_text_r);
+            log_debug('->calc got result words of ' . $this->ref_text_r);
 
             // get the list of the numeric results
             // $fv_lst is a list of all results saved in the database
             $fv_lst = $this->to_num($phr_lst);
             if (isset($fv_add_phr_lst)) {
-                log_debug(self::class . '->calc -> ' . dsp_count($fv_lst->lst) . ' formula results to save');
+                log_debug(dsp_count($fv_lst->lst) . ' formula results to save');
             }
 
             // save the numeric results
@@ -1152,14 +1152,14 @@ class formula extends user_sandbox_named_with_type
                             if (isset($fv_add_phr_lst)) {
 
                                 // add the phrases left of the equal sign to the result e.g. percent for the increase formula
-                                log_debug(self::class . '->calc -> result words "' . $fv_add_phr_lst->dsp_id() . '" defined for ' . $fv->phr_lst->dsp_id());
+                                log_debug('result words "' . $fv_add_phr_lst->dsp_id() . '" defined for ' . $fv->phr_lst->dsp_id());
                                 $fv_add_wrd_lst = $fv_add_phr_lst->wrd_lst_all();
 
                                 // if the result words contains "percent" remove any measure word from the list, because a relative value is expected without measure
                                 if ($fv_add_wrd_lst->has_percent()) {
-                                    log_debug(self::class . '->calc -> has percent');
+                                    log_debug('has percent');
                                     $fv->phr_lst->ex_measure();
-                                    log_debug(self::class . '->calc -> measure words removed from ' . $fv->phr_lst->dsp_id());
+                                    log_debug('measure words removed from ' . $fv->phr_lst->dsp_id());
                                 }
 
                                 // if in the formula is defined, that the result is in percent
@@ -1167,7 +1167,7 @@ class formula extends user_sandbox_named_with_type
                                 // TODO check that all value have the same scaling and adjust the scaling if needed
                                 if ($fv_add_wrd_lst->has_percent()) {
                                     $fv->phr_lst->ex_scaling();
-                                    log_debug(self::class . '->calc -> scaling words removed from ' . $fv->phr_lst->dsp_id());
+                                    log_debug('scaling words removed from ' . $fv->phr_lst->dsp_id());
                                     // maybe add the scaling word to the result words to remember based on which words the result has been created,
                                     // but probably this is not needed, because the source words are also saved
                                     //$scale_wrd_lst = $fv_add_wrd_lst->scaling_lst ();
@@ -1178,7 +1178,7 @@ class formula extends user_sandbox_named_with_type
                                 // if the formula is a scaling formula, remove the obsolete scaling word from the source words
                                 if ($fv_add_wrd_lst->has_scaling()) {
                                     $fv->phr_lst->ex_scaling();
-                                    log_debug(self::class . '->calc -> scaling words removed from ' . $fv->phr_lst->dsp_id());
+                                    log_debug('scaling words removed from ' . $fv->phr_lst->dsp_id());
                                 }
 
                             }
@@ -1186,11 +1186,11 @@ class formula extends user_sandbox_named_with_type
                             // add the formula result word
                             // e.g. in the increase formula "percent" should be on the left side of the equation because the result is supposed to be in percent
                             if (isset($fv_add_phr_lst)) {
-                                log_debug(self::class . '->calc -> add words ' . $fv_add_phr_lst->dsp_id() . ' to the result');
+                                log_debug('add words ' . $fv_add_phr_lst->dsp_id() . ' to the result');
                                 foreach ($fv_add_phr_lst->lst() as $frm_result_wrd) {
                                     $fv->phr_lst->add($frm_result_wrd);
                                 }
-                                log_debug(self::class . '->calc -> added words ' . $fv_add_phr_lst->dsp_id() . ' to the result ' . $fv->phr_lst->dsp_id());
+                                log_debug('added words ' . $fv_add_phr_lst->dsp_id() . ' to the result ' . $fv->phr_lst->dsp_id());
                             }
 
                             // add the formula name also to the result phrase e.g. increase
@@ -1207,7 +1207,7 @@ class formula extends user_sandbox_named_with_type
             $result = $fv_lst->lst;
         }
 
-        log_debug(self::class . '->calc -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -1230,7 +1230,7 @@ class formula extends user_sandbox_named_with_type
         $exp = new expression($this->user());
         $exp->set_ref_text($this->ref_text);
         $exp->set_user_text($this->usr_text);
-        log_debug(self::class . '->expression ' . $exp->ref_text() . ' for user ' . $exp->usr->name);
+        log_debug('->expression ' . $exp->ref_text() . ' for user ' . $exp->usr->name);
         return $exp;
     }
 
@@ -1343,7 +1343,7 @@ class formula extends user_sandbox_named_with_type
     {
         global $formula_types;
 
-        log_debug(self::class . '->export_obj');
+        log_debug('->export_obj');
         $result = new formula_exp();
 
         if ($this->name <> '') {
@@ -1379,7 +1379,7 @@ class formula extends user_sandbox_named_with_type
             }
         }
 
-        log_debug(self::class . '->export_obj -> ' . json_encode($result));
+        log_debug(json_encode($result));
         return $result;
     }
 
@@ -1428,11 +1428,11 @@ class formula extends user_sandbox_named_with_type
             $l_part = $lib->str_left_of($r_part, expression::FORMULA_END);
             if (is_numeric($l_part)) {
                 $result = $l_part;
-                log_debug("formula->get_formula -> " . $result);
+                log_debug($result);
             }
         }
 
-        log_debug("formula->get_formula -> (" . $result . ")");
+        log_debug($result);
         return $result;
     }
 
@@ -1441,7 +1441,7 @@ class formula extends user_sandbox_named_with_type
      */
     function wrd_ids($frm_text, $user_id): array
     {
-        log_debug(self::class . '->wrd_ids (' . $frm_text . ',u' . $user_id . ')');
+        log_debug($frm_text . ',u' . $user_id);
         $result = array();
 
         $lib = new library();
@@ -1456,7 +1456,7 @@ class formula extends user_sandbox_named_with_type
             $new_wrd_id = $this->get_word_id($frm_text);
         }
 
-        log_debug(self::class . '->wrd_ids -> (' . dsp_array($result) . ')');
+        log_debug(dsp_array($result));
         return $result;
     }
 
@@ -1465,7 +1465,7 @@ class formula extends user_sandbox_named_with_type
      */
     function frm_ids($frm_text, $user_id): array
     {
-        log_debug(self::class . '->ids (' . $frm_text . ',u' . $user_id . ')');
+        log_debug('->ids (' . $frm_text . ',u' . $user_id . ')');
         $result = array();
 
         $lib = new library();
@@ -1480,7 +1480,7 @@ class formula extends user_sandbox_named_with_type
             $new_frm_id = $this->get_formula_id($frm_text);
         }
 
-        log_debug(self::class . '->ids -> (' . dsp_array($result) . ')');
+        log_debug(dsp_array($result));
         return $result;
     }
 
@@ -1491,7 +1491,7 @@ class formula extends user_sandbox_named_with_type
      */
     function element_refresh_type($frm_text, $element_type, $frm_usr_id, $db_usr_id): bool
     {
-        log_debug(self::class . '->element_refresh_type (f' . $this->id . '' . $frm_text . ',' . $element_type . ',u' . $frm_usr_id . ')');
+        log_debug('->element_refresh_type (f' . $this->id . '' . $frm_text . ',' . $element_type . ',u' . $frm_usr_id . ')');
 
         global $db_con;
         $result = true;
@@ -1506,7 +1506,7 @@ class formula extends user_sandbox_named_with_type
                 $elm_ids = $this->wrd_ids($frm_text, $frm_usr_id);
                 break;
         }
-        log_debug(self::class . '->element_refresh_type -> got (' . dsp_array($elm_ids) . ') of type ' . $element_type . ' from text');
+        log_debug('got (' . dsp_array($elm_ids) . ') of type ' . $element_type . ' from text');
 
         // read the existing elements from the database
         $frm_elm_lst = new formula_element_list($this->user());
@@ -1519,12 +1519,12 @@ class formula extends user_sandbox_named_with_type
                 $elm_db_ids[] = $db_row['ref_id'];
             }
         }
-        log_debug(self::class . '->element_refresh_type -> got (' . dsp_array($elm_db_ids) . ') of type ' . $element_type . ' from database');
+        log_debug('got (' . dsp_array($elm_db_ids) . ') of type ' . $element_type . ' from database');
 
         // add missing links
         $elm_add_ids = array_diff($elm_ids, $elm_db_ids);
         $elm_order_nbr = 1;
-        log_debug(self::class . '->element_refresh_type -> add ' . $element_type . ' (' . dsp_array($elm_add_ids) . ')');
+        log_debug('add ' . $element_type . ' (' . dsp_array($elm_add_ids) . ')');
         foreach ($elm_add_ids as $elm_add_id) {
             $field_names = array();
             $field_values = array();
@@ -1553,7 +1553,7 @@ class formula extends user_sandbox_named_with_type
 
         // delete links not needed any more
         $elm_del_ids = array_diff($elm_db_ids, $elm_ids);
-        log_debug(self::class . '->element_refresh_type -> del ' . $element_type . ' (' . dsp_array($elm_del_ids) . ')');
+        log_debug('del ' . $element_type . ' (' . dsp_array($elm_del_ids) . ')');
         foreach ($elm_del_ids as $elm_del_id) {
             $field_names = array();
             $field_values = array();
@@ -1574,7 +1574,7 @@ class formula extends user_sandbox_named_with_type
             }
         }
 
-        log_debug(self::class . '->element_refresh_type -> (' . zu_dsp_bool($result) . ')');
+        log_debug(zu_dsp_bool($result));
         return $result;
     }
 
@@ -1583,7 +1583,7 @@ class formula extends user_sandbox_named_with_type
      */
     function element_refresh($frm_text): bool
     {
-        log_debug(self::class . '->element_refresh (f' . $this->id . '' . $frm_text . ',u' . $this->user()->id . ')');
+        log_debug('->element_refresh (f' . $this->id . '' . $frm_text . ',u' . $this->user()->id . ')');
 
         global $db_con;
         $result = true;
@@ -1612,7 +1612,7 @@ class formula extends user_sandbox_named_with_type
             }
         }
 
-        log_debug(self::class . '->element_refresh -> done' . $result);
+        log_debug('done' . $result);
         return $result;
     }
 
@@ -1659,7 +1659,7 @@ class formula extends user_sandbox_named_with_type
     {
         $result = '';
         if (isset($phr) and $this->user()->is_set()) {
-            log_debug(self::class . '->unlink_phr unlink ' . $this->dsp_id() . ' from "' . $phr->name() . '" for user "' . $this->user()->name . '"');
+            log_debug('->unlink_phr unlink ' . $this->dsp_id() . ' from "' . $phr->name() . '" for user "' . $this->user()->name . '"');
             $frm_lnk = new formula_link($this->user());
             $frm_lnk->fob = $this;
             $frm_lnk->tob = $phr;
@@ -1741,7 +1741,7 @@ class formula extends user_sandbox_named_with_type
      */
     function not_changed(): bool
     {
-        log_debug(self::class . '->not_changed (' . $this->id . ')');
+        log_debug('->not_changed (' . $this->id . ')');
 
         global $db_con;
         $result = true;
@@ -1757,7 +1757,7 @@ class formula extends user_sandbox_named_with_type
                 }
             }
         }
-        log_debug(self::class . '->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result));
+        log_debug('->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result));
         return $result;
     }
 
@@ -1767,12 +1767,12 @@ class formula extends user_sandbox_named_with_type
      */
     function can_change(): bool
     {
-        log_debug(self::class . '->can_change ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
+        log_debug('->can_change ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $can_change = false;
         if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
             $can_change = true;
         }
-        log_debug(self::class . '->can_change -> (' . zu_dsp_bool($can_change) . ')');
+        log_debug(zu_dsp_bool($can_change));
         return $can_change;
     }
 
@@ -1798,7 +1798,7 @@ class formula extends user_sandbox_named_with_type
         $result = true;
 
         if (!$this->has_usr_cfg()) {
-            log_debug(self::class . '->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
+            log_debug('->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
             // check again if there ist not yet a record
             $db_con->set_type(sql_db::TBL_FORMULA, true);
@@ -1890,7 +1890,7 @@ class formula extends user_sandbox_named_with_type
      */
     function del_usr_cfg_exe($db_con): bool
     {
-        log_debug(self::class . '->del_usr_cfg_exe ' . $this->dsp_id());
+        log_debug('->del_usr_cfg_exe ' . $this->dsp_id());
 
         $result = false;
         $action = 'Deletion of user formula ';
@@ -1937,7 +1937,7 @@ class formula extends user_sandbox_named_with_type
         $result = '';
 
         if ($this->id > 0 and $this->user()->id > 0) {
-            log_debug(self::class . '->del_usr_cfg  "' . $this->id . ' und user ' . $this->user()->name);
+            log_debug('->del_usr_cfg  "' . $this->id . ' und user ' . $this->user()->name);
 
             $log = $this->log_del();
             if ($log->id > 0) {
@@ -1964,7 +1964,7 @@ class formula extends user_sandbox_named_with_type
             $result = 'saving the update trigger for formula ' . $this->dsp_id() . ' failed';
         }
 
-        log_debug(self::class . '->save_field_trigger_update timestamp of ' . $this->id . ' updated to "' . $this->last_update->format('Y-m-d H:i:s') . '" with ' . $result);
+        log_debug('->save_field_trigger_update timestamp of ' . $this->id . ' updated to "' . $this->last_update->format('Y-m-d H:i:s') . '" with ' . $result);
 
         // save the pending update to the database for the batch calculation
         return $result;
@@ -2081,7 +2081,7 @@ class formula extends user_sandbox_named_with_type
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_need_all($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        log_debug(self::class . '->save_fields "' . $result . '" fields for ' . $this->dsp_id() . ' has been saved');
+        log_debug('->save_fields "' . $result . '" fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }
 
@@ -2092,7 +2092,7 @@ class formula extends user_sandbox_named_with_type
     {
         $result = '';
         if ($db_rec->name <> $this->name) {
-            log_debug(self::class . '->save_field_name to ' . $this->dsp_id() . ' from "' . $db_rec->name . '"');
+            log_debug('->save_field_name to ' . $this->dsp_id() . ' from "' . $db_rec->name . '"');
             $this->needs_fv_upd = true;
             if ($this->can_change() and $this->not_changed()) {
                 $log = $this->log_upd();
@@ -2126,14 +2126,14 @@ class formula extends user_sandbox_named_with_type
     {
         $result = '';
         if ($db_rec->name <> $this->name) {
-            log_debug(self::class . '->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
+            log_debug('->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
             // in case a word link exist, change also the name of the word
             $wrd = new word($this->user());
             $wrd->load_by_name($db_rec->name, word::class);
             $wrd->set_name($this->name);
             $add_result = $wrd->save();
             if ($add_result == '') {
-                log_debug(self::class . '->save_id_fields word "' . $db_rec->name . '" renamed to ' . $wrd->dsp_id());
+                log_debug('->save_id_fields word "' . $db_rec->name . '" renamed to ' . $wrd->dsp_id());
             } else {
                 $result .= 'formula ' . $db_rec->name . ' cannot ba renamed to ' . $this->name . ', because' . $add_result;
             }
@@ -2154,7 +2154,7 @@ class formula extends user_sandbox_named_with_type
                 }
             }
         }
-        log_debug(self::class . '->save_id_fields for ' . $this->dsp_id() . ' has been done');
+        log_debug('->save_id_fields for ' . $this->dsp_id() . ' has been done');
         return $result;
     }
 
@@ -2184,7 +2184,7 @@ class formula extends user_sandbox_named_with_type
      */
     function save_id_if_updated(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
-        log_debug(self::class . '->save_id_if_updated has name changed from "' . $db_rec->name . '" to ' . $this->dsp_id());
+        log_debug('->save_id_if_updated has name changed from "' . $db_rec->name . '" to ' . $this->dsp_id());
         $result = '';
 
         // if the name has changed, check if word, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
@@ -2193,16 +2193,16 @@ class formula extends user_sandbox_named_with_type
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and !$this->is_term_the_same($trm)) {
                 $result .= $trm->id_used_msg();
-                log_debug(self::class . '->save_id_if_updated name "' . $trm->name() . '" used already as "' . $trm->type() . '"');
+                log_debug('->save_id_if_updated name "' . $trm->name() . '" used already as "' . $trm->type() . '"');
             } else {
 
                 // check if target formula already exists
-                log_debug(self::class . '->save_id_if_updated check if target formula already exists ' . $this->dsp_id() . ' (has been ' . $db_rec->dsp_id() . ')');
+                log_debug('->save_id_if_updated check if target formula already exists ' . $this->dsp_id() . ' (has been ' . $db_rec->dsp_id() . ')');
                 $db_chk = clone $this;
                 $db_chk->id = 0; // to force the load by the id fields
                 $db_chk->load_standard();
                 if ($db_chk->id > 0) {
-                    log_debug(self::class . '->save_id_if_updated target formula name already exists ' . $db_chk->dsp_id());
+                    log_debug('->save_id_if_updated target formula name already exists ' . $db_chk->dsp_id());
                     if (UI_CAN_CHANGE_FORMULA_NAME) {
                         // ... if yes request to delete or exclude the record with the id parameters before the change
                         $to_del = clone $db_rec;
@@ -2215,15 +2215,15 @@ class formula extends user_sandbox_named_with_type
                         $this->excluded = null;
                         $db_rec->excluded = '1';
                         $this->save_field_excluded($db_con, $db_rec, $std_rec);
-                        log_debug(self::class . '->save_id_if_updated found a display component link with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id());
+                        log_debug('->save_id_if_updated found a display component link with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id());
                     } else {
                         $result .= 'A view component with the name "' . $this->name . '" already exists. Please use another name.';
                     }
                 } else {
-                    log_debug(self::class . '->save_id_if_updated target formula name does not yet exists ' . $db_chk->dsp_id());
+                    log_debug('->save_id_if_updated target formula name does not yet exists ' . $db_chk->dsp_id());
                     if ($this->can_change() and $this->not_used()) {
                         // in this case change is allowed and done
-                        log_debug(self::class . '->save_id_if_updated change the existing display component link ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
+                        log_debug('->save_id_if_updated change the existing display component link ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
                         //$this->load_objects();
                         $result .= $this->save_id_fields($db_con, $db_rec, $std_rec);
                     } else {
@@ -2239,13 +2239,13 @@ class formula extends user_sandbox_named_with_type
                         $this->owner_id = $this->user()->id;
                         // TODO check the result values and if the id is needed
                         $result .= $this->add()->get_last_message();
-                        log_debug(self::class . '->save_id_if_updated recreate the display component link del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
+                        log_debug('->save_id_if_updated recreate the display component link del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                     }
                 }
             }
         }
 
-        log_debug(self::class . '->save_id_if_updated for ' . $this->dsp_id() . ' has been done');
+        log_debug('->save_id_if_updated for ' . $this->dsp_id() . ' has been done');
         return $result;
     }
 
@@ -2260,7 +2260,7 @@ class formula extends user_sandbox_named_with_type
      */
     function add(): user_message
     {
-        log_debug(self::class . '->add ' . $this->dsp_id());
+        log_debug('->add ' . $this->dsp_id());
 
         global $db_con;
         $result = new user_message();
@@ -2275,7 +2275,7 @@ class formula extends user_sandbox_named_with_type
                 array(self::FLD_NAME, self::FLD_USER, self::FLD_LAST_UPDATE, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT),
                 array($this->name, $this->user()->id, "Now()", $this->ref_text, $this->usr_text));
             if ($this->id > 0) {
-                log_debug(self::class . '->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id);
+                log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id);
                 // update the id in the log for the correct reference
                 if (!$log->add_ref($this->id)) {
                     $result->add_message('Updating the reference in the log failed');
@@ -2311,7 +2311,7 @@ class formula extends user_sandbox_named_with_type
      */
     function save(): string
     {
-        log_debug(self::class . '->save >' . $this->usr_text . '< (id ' . $this->id . ') as ' . $this->dsp_id() . ' for user ' . $this->user()->name);
+        log_debug('->save >' . $this->usr_text . '< (id ' . $this->id . ') as ' . $this->dsp_id() . ' for user ' . $this->user()->name);
 
         global $db_con;
 
@@ -2327,7 +2327,7 @@ class formula extends user_sandbox_named_with_type
             // check if a new formula is supposed to be added
             if ($this->id <= 0) {
                 // check if a verb, formula or word with the same name is already in the database
-                log_debug(self::class . '->save -> add ' . $this->dsp_id());
+                log_debug('add ' . $this->dsp_id());
                 $trm = $this->get_term();
                 if ($trm->id_obj() > 0) {
                     if ($trm->type() <> formula::class) {
@@ -2342,7 +2342,7 @@ class formula extends user_sandbox_named_with_type
                         }
                     } else {
                         $this->id = $trm->id_obj();
-                        log_debug(self::class . '->save adding formula name ' . $this->dsp_id() . ' is OK');
+                        log_debug('->save adding formula name ' . $this->dsp_id() . ' is OK');
                     }
                 }
             }
@@ -2355,16 +2355,16 @@ class formula extends user_sandbox_named_with_type
                     $result .= $this->add()->get_last_message();
                 }
             } else {
-                log_debug(self::class . '->save -> update ' . $this->id);
+                log_debug('update ' . $this->id);
                 // read the database values to be able to check if something has been changed; done first,
                 // because it needs to be done for user and general formulas
                 $db_rec = new formula($this->user());
                 $db_rec->load_by_id($this->id, formula::class);
-                log_debug(self::class . '->save -> database formula "' . $db_rec->name . '" (' . $db_rec->id . ') loaded');
+                log_debug('database formula "' . $db_rec->name . '" (' . $db_rec->id . ') loaded');
                 $std_rec = new formula($this->user()); // must also be set to allow to take the ownership
                 $std_rec->id = $this->id;
                 $std_rec->load_standard();
-                log_debug(self::class . '->save -> standard formula "' . $std_rec->name . '" (' . $std_rec->id . ') loaded');
+                log_debug('standard formula "' . $std_rec->name . '" (' . $std_rec->id . ') loaded');
 
                 // for a correct user formula detection (function can_change) set the owner even if the formula has not been loaded before the save
                 if ($this->owner_id <= 0) {

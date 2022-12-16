@@ -90,7 +90,7 @@ class value_dsp_old extends value
             // to review
             $result .= '<a href="/http/value_edit.php?id=' . $this->id . '&back=' . $back . '" ' . $link_format . ' >' . $num_text . '</a>';
         }
-        log_debug('value->display_linked -> done');
+        log_debug('done');
         return $result;
     }
 
@@ -215,14 +215,14 @@ class value_dsp_old extends value
         $log_dsp->back = $back;
         $result .= $log_dsp->dsp_hist();
 
-        log_debug("value->dsp_hist -> done");
+        log_debug("done");
         return $result;
     }
 
     // display the history of a value
     function dsp_hist_links($page, $size, $call, $back): string
     {
-        log_debug("value->dsp_hist_links (" . $this->id . ",size" . $size . ",b" . $size . ")");
+        log_debug($this->id . ",size" . $size . ",b" . $size);
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($this->user());
@@ -234,7 +234,7 @@ class value_dsp_old extends value
         $log_dsp->back = $back;
         $result .= $log_dsp->dsp_hist_links();
 
-        log_debug("value->dsp_hist_links -> done");
+        log_debug("done");
         return $result;
     }
 
@@ -320,7 +320,7 @@ class value_dsp_old extends value
         }
         $result .= dsp_tbl_end();
 
-        log_debug("value->dsp_samples -> done.");
+        log_debug("done.");
         return $result;
     }
 
@@ -417,22 +417,22 @@ class value_dsp_old extends value
                 }
                 // guess the missing phrase types
                 if ($phr->is_wrd_id == 0) {
-                    log_debug('value->dsp_edit -> guess type for "' . $phr->name() . '"');
+                    log_debug('guess type for "' . $phr->name() . '"');
                     $phr->is_wrd = $phr->is_mainly();
                     if ($phr->is_wrd->id > 0) {
                         $phr->is_wrd_id = $phr->is_wrd->id;
-                        log_debug('value->dsp_edit -> guessed type for ' . $phr->name() . ': ' . $phr->is_wrd->name);
+                        log_debug('guessed type for ' . $phr->name() . ': ' . $phr->is_wrd->name);
                     }
                 }
             }
 
             // show first the phrases, that are not supposed to be changed
             //foreach (array_keys($this->ids) AS $pos) {
-            log_debug('value->dsp_edit -> show fixed phrases');
+            log_debug('show fixed phrases');
             foreach ($phr_lst->lst() as $phr) {
                 //if ($type_ids[$pos] < 0) {
                 if ($phr->is_wrd_id < 0) {
-                    log_debug('value->dsp_edit -> show fixed phrase "' . $phr->name() . '"');
+                    log_debug('show fixed phrase "' . $phr->name() . '"');
                     // allow the user to change also the fixed phrases
                     $type_ids_adj = $type_ids;
                     $type_ids_adj[$phr->dsp_pos] = 0;
@@ -447,7 +447,7 @@ class value_dsp_old extends value
             // show the phrases that the user can change:
             // first the non-specific ones, that the phrases of a selective type
             // and new phrases at the end
-            log_debug('value->dsp_edit -> show phrases');
+            log_debug('show phrases');
             for ($dsp_type = 0; $dsp_type <= 1; $dsp_type++) {
                 foreach ($phr_lst->lst() as $phr) {
                     /*
@@ -469,7 +469,7 @@ class value_dsp_old extends value
           } */
 
                     // build the url for the case that this phrase should be removed
-                    log_debug('value->dsp_edit -> build url');
+                    log_debug('build url');
                     $phr_ids_adj = $this->ids;
                     $type_ids_adj = $type_ids;
                     array_splice($phr_ids_adj, $phr->dsp_pos, 1);
@@ -491,7 +491,7 @@ class value_dsp_old extends value
                     // show the phrases that have a type
                     if ($dsp_type == 0) {
                         if ($phr->is_wrd->id > 0) {
-                            log_debug('value->dsp_edit -> id ' . $phr->id . ' has a type');
+                            log_debug('id ' . $phr->id . ' has a type');
                             $result .= '    <td>';
                             $result .= $phr->is_wrd->name . ':';
                             $result .= '    </td>';
@@ -513,7 +513,7 @@ class value_dsp_old extends value
                     // show the phrases that don't have a type
                     if ($dsp_type == 1) {
                         if ($phr->is_wrd->id == 0 and $phr->id > 0) {
-                            log_debug('value->dsp_edit -> id ' . $phr->id . ' has no type');
+                            log_debug('id ' . $phr->id . ' has no type');
                             if (!isset($main_wrd)) {
                                 $main_wrd = $phr;
                             }
@@ -534,14 +534,14 @@ class value_dsp_old extends value
             }
 
             // show the time word
-            log_debug('value->dsp_edit -> show time');
+            log_debug('show time');
             if ($this->get_time_id() <> 0) {
                 if (isset($this->time_phr)) {
                     $result .= '  <tr>';
                     if ($this->time_phr->id == 0) {
                         $result .= '    <td colspan="2">';
 
-                        log_debug('value->dsp_edit -> show time selector');
+                        log_debug('show time selector');
                         $result .= $this->time_phr->dsp_time_selector(0, $script, $url_pos, $back);
                         $url_pos++;
 
@@ -553,7 +553,7 @@ class value_dsp_old extends value
             }
 
             // show the new phrases
-            log_debug('value->dsp_edit -> show new phrases');
+            log_debug('show new phrases');
             foreach ($this->ids as $phr_id) {
                 $result .= '  <tr>';
                 if ($phr_id == 0) {
@@ -572,7 +572,7 @@ class value_dsp_old extends value
 
         $result .= dsp_tbl_end();
 
-        log_debug('value->dsp_edit -> table ended');
+        log_debug('table ended');
         $phr_ids_new = $this->ids;
         //$phr_ids_new[]  = $new_phrase_default;
         $phr_ids_new[] = 0;
@@ -590,7 +590,7 @@ class value_dsp_old extends value
         }
         $result .= dsp_form_end("Save", $back);
         $result .= '<br><br>';
-        log_debug('value->dsp_edit -> load source');
+        log_debug('load source');
         $src = $this->load_source();
         if (isset($src)) {
             $result .= $src->dsp_select($script, $back);
@@ -607,7 +607,7 @@ class value_dsp_old extends value
         $result .= \html\btn_back($back);
 
         // display the user changes
-        log_debug('value->dsp_edit -> user changes');
+        log_debug('user changes');
         if ($this->id > 0) {
             $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
@@ -632,7 +632,7 @@ class value_dsp_old extends value
             }
         }
 
-        log_debug("value->dsp_edit -> done");
+        log_debug("done");
         return $result;
     }
 

@@ -355,7 +355,7 @@ class ip_range
      */
     function log_add(): user_log_named
     {
-        log_debug(self::class . '->log_add ' . $this->dsp_id());
+        log_debug('->log_add ' . $this->dsp_id());
 
         $log = new user_log_named;
         $log->usr = $this->user();
@@ -371,7 +371,7 @@ class ip_range
     // set the main log entry parameters for updating one verb field
     private function log_upd(): user_log_named
     {
-        log_debug(self::class . '->log_upd ' . $this->dsp_id());
+        log_debug('->log_upd ' . $this->dsp_id());
         $log = new user_log_named;
         $log->usr = $this->user();
         $log->action = user_log::ACTION_UPDATE;
@@ -440,7 +440,7 @@ class ip_range
         $db_chk->set_user($this->user());
         $db_chk->load();
         if ($db_chk->id > 0) {
-            log_debug(self::class . '->get_similar an ' . $this->dsp_id() . ' already exists');
+            log_debug('->get_similar an ' . $this->dsp_id() . ' already exists');
             $result = $db_chk;
         }
 
@@ -465,7 +465,7 @@ class ip_range
         // check if the external reference is supposed to be added
         if ($this->id <= 0) {
             // check possible duplicates before adding
-            log_debug(self::class . '->save check possible duplicates before adding ' . $this->dsp_id());
+            log_debug('->save check possible duplicates before adding ' . $this->dsp_id());
             $similar = $this->get_similar();
             if (isset($similar)) {
                 if ($similar->id <> 0) {
@@ -478,7 +478,7 @@ class ip_range
         if ($this->id <= 0) {
             $result .= $this->add();
         } else {
-            log_debug(self::class . '->save update');
+            log_debug('->save update');
 
             // read the database values to be able to check if something has been changed;
             // done first, because it needs to be done for user and general object values

@@ -159,7 +159,7 @@ class math
             $pos = -1;
         }
 
-        log_debug("pos_separator -> " . $pos);
+        log_debug($pos);
         return $pos;
     }
 
@@ -169,7 +169,7 @@ class math
      */
     private function pos_function(string $formula): int
     {
-        log_debug("pos_function (" . $formula . ")");
+        log_debug($formula);
 
         // if not found return -1 because the separator can also be on position 0
         $pos = -1;
@@ -184,7 +184,7 @@ class math
             $pos = $this->pos_separator($formula, expression::FUNC_IS_NUM, 0);
         }
 
-        log_debug("pos_function -> " . $pos);
+        log_debug($pos);
         return $pos;
     }
 
@@ -193,7 +193,7 @@ class math
      */
     private function has_function_pos(string $formula): bool
     {
-        log_debug("has_function_pos (" . $formula . ")");
+        log_debug($formula);
 
         $result = False;
         $pos = $this->pos_function($formula);
@@ -224,7 +224,7 @@ class math
             $result = expression::FUNC_IS_NUM;
         }
 
-        log_debug("get_function -> " . $result);
+        log_debug($result);
         return $result;
     }
 
@@ -264,7 +264,7 @@ class math
             $next_pos = $pos;
         }
 
-        log_debug("pos_operator -> " . $next_pos);
+        log_debug($next_pos);
         return $next_pos;
     }
 
@@ -273,7 +273,7 @@ class math
      */
     private function has_operator(string $formula): bool
     {
-        log_debug("has_operator (" . $formula . ")");
+        log_debug($formula);
 
         $result = False;
         $pos = $this->pos_operator($formula);
@@ -289,7 +289,7 @@ class math
      */
     private function get_operator(string $formula): string
     {
-        log_debug("get_operator (" . $formula . ")");
+        log_debug($formula);
 
         $result = '';
         if ($formula[0] == expression::ADD) {
@@ -323,7 +323,7 @@ class math
      */
     private function get_operator_pos(string $formula): string
     {
-        log_debug("get_operator_pos (" . $formula . ")");
+        log_debug($formula);
 
         $result = '';
         $pos = $this->pos_operator($formula);
@@ -348,7 +348,7 @@ class math
      */
     private function get_bracket(string $formula): string
     {
-        log_debug("get_bracket (" . $formula . ")");
+        log_debug($formula);
 
         // if not found return -1 because the separator can also be on position 0
         $result = '';
@@ -360,7 +360,7 @@ class math
             $result = expression::BRACKET_CLOSE;
         }
 
-        log_debug("get_bracket -> " . $result);
+        log_debug( $result);
         return $result;
     }
 
@@ -369,7 +369,7 @@ class math
      */
     public function has_bracket(string $formula): bool
     {
-        log_debug("has_bracket (" . $formula . ")");
+        log_debug($formula);
 
         if (str_starts_with($formula, expression::BRACKET_OPEN)) {
             return true;
@@ -442,7 +442,7 @@ class math
             $result = $pos;
         }
 
-        log_debug("zuc_pos_word ->  (" . $result . ")");
+        log_debug($result);
         return $result;
     }
 
@@ -475,13 +475,13 @@ class math
             // if ($pos > 1 && has_operator(substr($result, $pos - 1, 1)) == false) {
             if ($pos > 0) {
                 $part_l = $lib->str_left($result, $pos);
-                log_debug("math -> left part of " . $operator . ": " . $part_l . ".");
+                log_debug("left part of " . $operator . ": " . $part_l . ".");
                 $part_l = $this->parse($part_l);
-                log_debug("math -> left part result " . $part_l . ": ");
+                log_debug("left part result " . $part_l . ": ");
                 $part_r = $lib->str_right($result, ($pos + 1) * -1);
-                log_debug("math -> right part " . $operator . ": " . $part_r . ".");
+                log_debug("right part " . $operator . ": " . $part_r . ".");
                 $part_r = $this->parse($part_r);
-                log_debug("math -> right part result " . $part_r . ": ");
+                log_debug("right part result " . $part_r . ": ");
 
                 $result_l = floatval($part_l);
                 $result_r = floatval($part_r);
@@ -493,7 +493,7 @@ class math
                         break;
                     case expression::DIV:
                         if ($result_r <> 0) {
-                            log_debug("math -> result " . $result_l . " / " . $result_r);
+                            log_debug("result " . $result_l . " / " . $result_r);
                             $result = $result_l / $result_r;
                         } else {
                             $result = 0;
@@ -503,7 +503,7 @@ class math
                         $result = $result_l + $result_r;
                         break;
                     case expression::SUB:
-                        log_debug("math -> result " . $result_l . " / " . $result_r);
+                        log_debug("result " . $result_l . " / " . $result_r);
                         $result = $result_l - $result_r;
                         break;
                 }
@@ -571,28 +571,28 @@ class math
 
             // get the left part, but don't get the result of the left part because this can cause loops
             $left_part = substr($result, 0, $inner_start_pos);
-            log_debug("math_bracket -> left_part " . $left_part);
+            log_debug("left_part " . $left_part);
 
             $inner_part = substr($result, $inner_start_pos + 1, $inner_end_pos - $inner_start_pos - 1);
-            log_debug("math_bracket -> inner_part " . $inner_part);
+            log_debug("inner_part " . $inner_part);
 
             // get the right part, but don't get the result of the right part because will be done by the calling function
             $right_part = $lib->str_right_of($result, $left_part . expression::BRACKET_OPEN . $inner_part . expression::BRACKET_CLOSE);
-            log_debug("math_bracket -> right_part " . $right_part);
+            log_debug("right_part " . $right_part);
 
             // ... and something needs to be calculated
             if ($this->has_operator($inner_part)) {
 
                 // calculate the inner part
                 $inner_part = $this->parse($inner_part);
-                log_debug("math_bracket -> inner_part result " . $inner_part);
+                log_debug("inner_part result " . $inner_part);
 
                 // combine the result
                 $result = $left_part . $inner_part . $right_part;
             }
         }
 
-        log_debug("math_bracket -> done (" . $result . ")");
+        log_debug("done " . $result);
         return $result;
     }
 
@@ -607,10 +607,10 @@ class math
         $lib = new library();
 
         // get the position of the next bracket
-        log_debug("math_if -> separate ");
+        log_debug("separate ");
         $if_start_pos = $this->pos_separator($result, expression::FUNC_IF, 0);
         $inner_start_pos = $this->pos_separator($result, expression::BRACKET_OPEN, 0);
-        log_debug("math_if -> separate ");
+        log_debug("separate ");
         // if there is a bracket ...
         if ($if_start_pos >= 0 and $inner_start_pos >= 0 and $if_start_pos < $inner_start_pos) {
             // ... and a closing bracket ...
@@ -620,21 +620,21 @@ class math
 
             // get the left part, but don't get the result of the left part because this can cause loops
             $left_part = substr($result, 0, $inner_start_pos);
-            log_debug("math_if -> left_part " . $left_part);
+            log_debug("left_part " . $left_part);
 
             $inner_part = substr($result, $inner_start_pos + 1, $inner_end_pos - $inner_start_pos - 1);
-            log_debug('math_if -> inner_part "' . $inner_part . '"');
+            log_debug('inner_part "' . $inner_part . '"');
 
             // get the right part, but don't get the result of the right part because will be done by the calling function
             $right_part = $lib->str_right_of($result, $left_part . expression::BRACKET_OPEN . $inner_part . expression::BRACKET_CLOSE);
-            log_debug("math_if -> right_part " . $right_part);
+            log_debug("right_part " . $right_part);
 
             // ... and something needs to be looked at
             if ($this->has_operator($inner_part) or $this->has_function_pos($inner_part)) {
 
                 // depending on the operator split the inner part if needed
                 $operator = $this->get_operator_pos($inner_part);
-                log_debug('math_if -> operator "' . $operator . '" in "' . $inner_part . '"');
+                log_debug('operator "' . $operator . '" in "' . $inner_part . '"');
                 if ($operator == expression::AND or $operator == expression::OR) {
                     $result = null; // by default no result
                     $inner_left_part = $lib->str_left_of($inner_part, $operator);
@@ -656,7 +656,7 @@ class math
                 } else {
                     // calculate the inner part
                     $inner_part_result = $this->parse($inner_part);
-                    log_debug("math_if -> inner_part result " . $inner_part);
+                    log_debug("inner_part result " . $inner_part);
                     log_debug('if: get logical result for "' . $inner_part . '" is "' . $inner_part_result . '"');
                     // combine the result
                     $result = $left_part . $inner_part_result . $right_part;
@@ -664,7 +664,7 @@ class math
             }
         }
 
-        log_debug("math_if ... done (" . $result . ")");
+        log_debug("done " . $result);
         return $result;
     }
 
@@ -674,28 +674,28 @@ class math
      */
     private function is_math_symbol(string $formula): bool
     {
-        log_debug("is_math_symbol (" . $formula . ")");
+        log_debug($formula);
         $result = false;
         if ($this->has_operator($formula[0])) {
-            log_debug("is_math_symbol -> operator");
+            log_debug("operator");
             $result = True;
         } else {
             if ($this->has_bracket($formula[0])) {
-                log_debug("is_math_symbol -> bracket");
+                log_debug("bracket");
                 $result = True;
             } else {
                 if ($this->has_bracket_close($formula[0])) {
-                    log_debug("is_math_symbol -> close");
+                    log_debug("close");
                     $result = True;
                 } else {
                     if ($this->pos_function($formula) == 0) {
-                        log_debug("is_math_symbol -> func");
+                        log_debug("func");
                         $result = True;
                     }
                 }
             }
         }
-        log_debug("is_math_symbol ... (" . zu_dsp_bool($result) . ")");
+        log_debug(zu_dsp_bool($result));
         return $result;
     }
 
@@ -723,14 +723,14 @@ class math
 
     public function is_math_symbol_or_num(string $formula): bool
     {
-        log_debug("is_math_symbol_or_num (" . $formula . ")");
+        log_debug($formula);
         if ($this->is_math_symbol($formula)) {
-            log_debug("is_math_symbol_or_num -> math");
+            log_debug("math");
             $result = True;
         } else {
             $result = $this->next_char_is_num($formula);
         }
-        log_debug("is_math_symbol_or_num ... (" . zu_dsp_bool($result) . ")");
+        log_debug(zu_dsp_bool($result));
         return $result;
     }
 
@@ -739,7 +739,7 @@ class math
      */
     public function get_math_symbol(string $formula): string
     {
-        log_debug("get_math_symbol (" . $formula . ")");
+        log_debug($formula);
 
         $result = $this->get_operator($formula);
         if ($result == '') {
@@ -754,7 +754,7 @@ class math
             }
           }  */
 
-        log_debug("get_math_symbol -> (" . $result . ")");
+        log_debug($result);
         return $result;
     }
 
