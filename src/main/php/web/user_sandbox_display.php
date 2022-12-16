@@ -38,7 +38,7 @@ class user_sandbox_display extends user_sandbox_value
     // create the HTML code to display the protection setting (but only if allowed)
     function dsp_share($form_name, $back): string
     {
-        log_debug($this->obj_name . '->dsp_share ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         $result = ''; // reset the html code var
 
         // only the owner can change the share type (TODO or an admin)
@@ -59,7 +59,7 @@ class user_sandbox_display extends user_sandbox_value
     // create the HTML code to display the protection setting (but only if allowed)
     function dsp_protection($form_name, $back): string
     {
-        log_debug($this->obj_name . '->dsp_protection ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         $result = ''; // reset the html code var
 
         // only the owner can change the protection level (TODO or an admin)
@@ -69,7 +69,7 @@ class user_sandbox_display extends user_sandbox_value
             $sel->name = "protection";
             $sel->sql = sql_lst("protection_type");
             $sel->selected = $this->protection_id;
-            log_debug($this->obj_name . '->dsp_protection ' . $this->dsp_id() . ' id ' . $this->protection_id);
+            log_debug($this->dsp_id() . ' id ' . $this->protection_id);
             $sel->dummy_text = 'please define the protection level';
             $result .= 'protection ' . $sel->display() . ' ';
         }

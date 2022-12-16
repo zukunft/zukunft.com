@@ -1643,7 +1643,7 @@ class formula extends user_sandbox_named_with_type
     {
         $result = '';
         if ($this->user()->is_set()) {
-            log_debug('link ' . $this->dsp_id() . ' to ' . $phr->dsp_id());
+            log_debug($this->dsp_id() . ' to ' . $phr->dsp_id());
             $frm_lnk = new formula_link($this->user());
             $frm_lnk->fob = $this;
             $frm_lnk->tob = $phr;
@@ -1659,10 +1659,11 @@ class formula extends user_sandbox_named_with_type
     {
         $result = '';
         if (isset($phr) and $this->user()->is_set()) {
-            log_debug('->unlink_phr unlink ' . $this->dsp_id() . ' from "' . $phr->name() . '" for user "' . $this->user()->name . '"');
+            log_debug($this->dsp_id() . ' from "' . $phr->name() . '" for user "' . $this->user()->name . '"');
             $frm_lnk = new formula_link($this->user());
             $frm_lnk->fob = $this;
             $frm_lnk->tob = $phr;
+            $frm_lnk->load_obj_vars();
             $msg = $frm_lnk->del();
             $result = $msg->get_message();
         } else {

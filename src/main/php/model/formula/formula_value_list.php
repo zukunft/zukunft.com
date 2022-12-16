@@ -443,18 +443,17 @@ class formula_value_list
      *       if the value has been update, create a calculation request
      * ex zuc_upd_lst_val
      */
-    function add_frm_val($phr_id, $frm_phr_ids, $frm_row, $usr_id)
+    function add_frm_val(int $phr_id, $frm_phr_ids, $frm_row, $usr_id)
     {
-        log_debug('fv_lst->add_frm_val(t' . $phr_id . ',' . dsp_array($frm_phr_ids) . ',u' . $this->user()->id . ')');
+        log_debug($phr_id . ',' . dsp_array($frm_phr_ids) . ',u' . $this->user()->id . ')');
 
         global $debug;
 
         $result = array();
 
         // temp utils the call is reviewed
-        $wrd = new word($this->usr);
-        $wrd->set_id($phr_id);
-        $wrd->load_obj_vars();
+        $phr = new phrase($this->usr);
+        $phr->load_by_id($phr_id);
 
         $val_lst = new value_list($this->usr);
         $value_lst = $val_lst->load_frm_related_grp_phrs($phr_id, $frm_phr_ids, $this->user()->id);
@@ -465,13 +464,12 @@ class formula_value_list
                 $debug_txt = "";
                 $debug_phr_ids = $value_lst[$val_id][1];
                 foreach ($debug_phr_ids as $debug_phr_id) {
-                    $debug_wrd = new word($this->usr);
-                    $debug_wrd->set_id($debug_phr_id);
-                    $debug_wrd->load_obj_vars();
-                    $debug_txt .= ", " . $debug_wrd->name();
+                    $debug_phr = new phrase($this->usr);
+                    $debug_phr->load_by_id($debug_phr_id);
+                    $debug_txt .= ", " . $debug_phr->name();
                 }
             }
-            log_debug('calc ' . $frm_row['formula_name'] . ' for ' . $wrd->name() . ' (' . $phr_id . ')' . $debug_txt);
+            log_debug('calc ' . $frm_row['formula_name'] . ' for ' . $phr->name() . ' (' . $phr_id . ')' . $debug_txt);
 
             // get the group words
             $phr_ids = $value_lst[$val_id][1];

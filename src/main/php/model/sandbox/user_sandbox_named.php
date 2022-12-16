@@ -299,7 +299,7 @@ class user_sandbox_named extends user_sandbox
      */
     function log_add(): user_log_named
     {
-        log_debug($this->obj_name . '->log_add ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         $log = new user_log_named;
         $log->field = $this->obj_name . '_name';
@@ -322,7 +322,7 @@ class user_sandbox_named extends user_sandbox
      */
     function log_del(): user_log_named
     {
-        log_debug($this->obj_name . '->log_del ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         $log = new user_log_named;
         $log->field = $this->obj_name . '_name';
@@ -396,7 +396,7 @@ class user_sandbox_named extends user_sandbox
      */
     function add(): user_message
     {
-        log_debug($this->obj_name . '->add ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         global $db_con;
         $result = new user_message();
@@ -413,7 +413,7 @@ class user_sandbox_named extends user_sandbox
 
             // save the object fields if saving the key was successful
             if ($this->id > 0) {
-                log_debug($this->obj_name . '->add ' . $this->obj_type . ' ' . $this->dsp_id() . ' has been added');
+                log_debug($this->obj_type . ' ' . $this->dsp_id() . ' has been added');
                 // update the id in the log
                 if (!$log->add_ref($this->id)) {
                     $result->add_message('Updating the reference in the log failed');
@@ -500,10 +500,10 @@ class user_sandbox_named extends user_sandbox
     function save_id_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
-        log_debug($this->obj_name . '->save_id_fields ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         if ($this->is_id_updated($db_rec)) {
-            log_debug($this->obj_name . '->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
+            log_debug('to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
 
             $log = $this->log_upd_field();
             $log->old_value = $db_rec->name;
@@ -522,7 +522,7 @@ class user_sandbox_named extends user_sandbox
                 }
             }
         }
-        log_debug($this->obj_name . '->save_id_fields for ' . $this->dsp_id() . ' done');
+        log_debug('for ' . $this->dsp_id() . ' done');
         return $result;
     }
 
@@ -603,7 +603,7 @@ class user_sandbox_named extends user_sandbox
             // check with the standard namespace
             if ($db_chk->load_standard()) {
                 if ($db_chk->id > 0) {
-                    log_debug($this->obj_name . '->get_similar "' . $this->dsp_id() . '" has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
+                    log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
                     $result = $db_chk;
                 }
             }
@@ -611,7 +611,7 @@ class user_sandbox_named extends user_sandbox
             $db_chk->set_user($this->user());
             if ($db_chk->load_obj_vars()) {
                 if ($db_chk->id > 0) {
-                    log_debug($this->obj_name . '->get_similar "' . $this->dsp_id() . '" has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                    log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
                     $result = $db_chk;
                 }
             }

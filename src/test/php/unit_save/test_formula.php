@@ -240,8 +240,7 @@ function run_formula_test(testing $t): void
     // ... the formula result selected by the word and in percent
     // TODO defined the criteria for selecting the formula value
     $wrd = new word($t->usr1);
-    $wrd->set_name(word_api::TN_CH);
-    $wrd->load_obj_vars();
+    $wrd->load_by_name(word_api::TN_CH);
     /*
     $result = trim($frm_dsp->dsp_result($wrd, $back));
     $target = '0.79 %';

@@ -64,8 +64,7 @@ if ($usr->id > 0) {
     // get the word used as a sample the illustrate the changes
     $wrd = new word($usr);
     if (isset($_GET['word'])) {
-        $wrd->set_id($_GET['word']);
-        $result .= $wrd->load_obj_vars();
+        $result .= $wrd->load_by_id($_GET['word']);
     } else {
         // get the default word for the view $dsp
     }

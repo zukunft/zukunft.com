@@ -699,6 +699,7 @@ class view_cmp extends user_sandbox_named_with_type
             $dsp_lnk = new view_cmp_link($this->user());
             $dsp_lnk->fob = $dsp;
             $dsp_lnk->tob = $this;
+            $dsp_lnk->load_obj_vars();
             $msg = $dsp_lnk->del();
             $result .= $msg->get_last_message();
         } else {

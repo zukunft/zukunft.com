@@ -413,8 +413,7 @@ class test_base
             $test_usr = $usr;
         }
         $wrd = new word($test_usr);
-        $wrd->set_name($wrd_name);
-        $wrd->load_obj_vars();
+        $wrd->load_by_name($wrd_name);
         return $wrd;
     }
 
@@ -549,13 +548,13 @@ class test_base
         if ($wrd_from->id() <= 0 and $autocreate) {
             $wrd_from->set_name($from_name);
             $wrd_from->save();
-            $wrd_from->load_obj_vars();
+            $wrd_from->load_by_name($from_name);
         }
         $wrd_to = $this->load_word($to_name);
         if ($wrd_to->id() <= 0 and $autocreate) {
             $wrd_to->set_name($to_name);
             $wrd_to->save();
-            $wrd_to->load_obj_vars();
+            $wrd_to->load_by_name($to_name);
         }
         $from = $wrd_from->phrase();
         $to = $wrd_to->phrase();

@@ -220,8 +220,7 @@ class phrase_group_list
         }
         $time = new word($this->usr);
         if ($time_id > 0) {
-            $time->set_id($time_id);
-            $time->load_obj_vars();
+            $time->load_by_id($time_id);
             log_debug('found time ' . $time->dsp_id());
         }
         return $this->add_with_time($grp, $time);

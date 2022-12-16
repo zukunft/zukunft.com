@@ -303,8 +303,7 @@ class user_log_link extends user_log
         if ($id > 0) {
             $this->set_usr();
             $wrd = new word($this->usr);
-            $wrd->set_id($id);
-            $wrd->load_obj_vars();
+            $wrd->load_by_id($id);
             $result = $wrd->name();
             log_debug('user_log_link->word_name got ' . $result);
         }

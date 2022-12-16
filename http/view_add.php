@@ -93,10 +93,9 @@ if ($usr->id > 0) {
     if ($result == '') {
         // sample word that is used to simulate the view changes
         $wrd = new word($usr);
-        $wrd->set_id($_GET['word']);
         //$wrd->type_id = $view_type;
-        if ($wrd->id() > 0) {
-            $wrd->load_obj_vars();
+        if ($_GET['word'] > 0) {
+            $wrd->load_by_id($_GET['word']);
         }
 
         // show the header (in view edit views the view cannot be changed)

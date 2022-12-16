@@ -39,7 +39,7 @@ class hist_log_dsp
     // show the changes of the view
     function dsp_log_view(word $wrd, string $back = ''): string
     {
-        log_debug('word_dsp->dsp_log_view (' . $wrd->id() . ')');
+        log_debug($wrd->id());
         $result = '';
 
         // if ($this->id <= 0 OR !is_null($this->usr_id)) {
@@ -48,7 +48,7 @@ class hist_log_dsp
         } else {
             // load the word parameters if not yet done
             if ($wrd->name() == "") {
-                $wrd->load_obj_vars();
+                $wrd->load_by_id($wrd->id());
             }
 
             $changes = $wrd->dsp_hist(1, 20, '', $back);

@@ -135,7 +135,7 @@ class user_sandbox_value extends user_sandbox
      */
     function log_add(): user_log_named
     {
-        log_debug($this->obj_name . '->log_add ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         $log = new user_log_named;
         $log->field = 'word_value';
@@ -158,7 +158,7 @@ class user_sandbox_value extends user_sandbox
      */
     function log_del(): user_log_named
     {
-        log_debug($this->obj_name . '->log_del ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         $log = new user_log_named;
         $log->field = 'word_value';

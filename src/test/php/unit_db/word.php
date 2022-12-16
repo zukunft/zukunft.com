@@ -48,6 +48,18 @@ class word_unit_db_tests
         $t->name = 'word read db->';
         $t->resource_path = 'db/word/';
 
+        $t->subheader('Word db read tests');
+
+        $test_name = 'load word ' . word_api::TN_READ . ' by name and id';
+        $wrd = new word($usr);
+        $wrd->load_by_name(word_api::TN_READ, word::class);
+        $wrd_by_id = new word($usr);
+        $wrd_by_id->load_by_id($wrd->id(), word::class);
+        $t->assert($test_name, $wrd_by_id->name(), word_api::TN_READ);
+
+        // TODO load description, plural, type and view
+
+
         $t->subheader('Word types tests');
 
         // load the word types

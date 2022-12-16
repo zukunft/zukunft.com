@@ -144,8 +144,7 @@ if ($usr->id > 0) {
             if ($wrd->name() <> "") {
                 $add_result .= $wrd->save();
             } else {
-                $wrd->set_id($wrd_id);
-                $wrd->load_obj_vars();
+                $wrd->load_by_id($wrd_id);
             }
             log_debug('test word');
             if ($wrd->id() > 0 and $vrb_id <> 0 and $wrd_to > 0) {

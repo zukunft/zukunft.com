@@ -86,8 +86,7 @@ if ($back <= 0) {
     $back = 1; // replace with the fallback word id
 }
 $wrd = new word($usr);
-$wrd->set_id($back);
-$wrd->load_obj_vars();
+$wrd->load_by_id($back);
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {

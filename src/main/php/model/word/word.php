@@ -372,73 +372,6 @@ class word extends user_sandbox_named_with_type
         return $qp;
     }
 
-    /**
-     * create an SQL statement to retrieve the parameters of a word from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
-    {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
-        if ($this->id != 0) {
-            $qp->name .= 'id';
-        } elseif ($this->name != '') {
-            $qp->name .= 'name';
-        } else {
-            log_err("Either the database ID (" . $this->id . ") or the word name (" . $this->name . ") and the user (" . $this->user()->id . ") must be set to load a word.", "word->load");
-        }
-
-        $db_con->set_type(sql_db::TBL_WORD);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        $db_con->set_where_std($this->id, $this->name);
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * load the missing word parameters from the database
-     */
-    function load_obj_vars(): bool
-    {
-        global $db_con;
-        $result = false;
-
-        // check the all minimal input parameters
-        if (!$this->user()->is_set()) {
-            // don't use too specific error text, because for each unique error text a new message is created
-            //log_err('The user id must be set to load word '.$this->dsp_id().'.', "word->load");
-            log_err('The user id must be set to load word.', "word->load");
-        } elseif ($this->id <= 0 and $this->name == '') {
-            log_err("Either the database ID (" . $this->id . ") or the word name (" . $this->name . ") and the user (" . $this->user()->id . ") must be set to load a word.", "word->load");
-        } else {
-
-            $qp = $this->load_sql_obj_vars($db_con);
-
-            if ($db_con->get_where() <> '') {
-                // similar statement used in triple_list->load, check if changes should be repeated in triple_list.php
-                $db_wrd = $db_con->get1($qp);
-                $this->row_mapper($db_wrd);
-                if ($this->id <> 0) {
-                    if (is_null($db_wrd[self::FLD_EXCLUDED]) or $db_wrd[self::FLD_EXCLUDED] == 0) {
-                        // additional user sandbox fields
-                        $this->type_name();
-                    }
-                    log_debug($this->dsp_id());
-                    $result = true;
-                }
-            }
-        }
-        return $result;
-    }
-
     function id_field(): string
     {
         return self::FLD_ID;
@@ -460,13 +393,12 @@ class word extends user_sandbox_named_with_type
             $wrd_ids = explode(",", $id_txt);
             log_debug('check if "' . $wrd_ids[0] . '" is a number');
             if (is_numeric($wrd_ids[0])) {
-                $this->id = $wrd_ids[0];
+                $this->load_by_id($wrd_ids[0]);
                 log_debug('from "' . $id_txt . '" got id ' . $this->id);
             } else {
-                $this->name = $wrd_ids[0];
+                $this->load_by_name($wrd_ids[0]);
                 log_debug('from "' . $id_txt . '" got name ' . $this->name);
             }
-            $this->load_obj_vars();
         }
     }
 
@@ -494,7 +426,7 @@ class word extends user_sandbox_named_with_type
     {
         $result = null;
 
-        $this->load_obj_vars();
+        //$this->load_obj_vars();
 
         if ($this->view != null) {
             $result = $this->view;
@@ -1409,10 +1341,10 @@ class word extends user_sandbox_named_with_type
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
-            $result->id = intval($key_result);
-        }
-        if ($result->id > 0) {
-            $result->load_obj_vars();
+            $id = intval($key_result);
+            if ($id > 0) {
+                $result->load_by_id($id);
+            }
         }
         return $result;
     }
@@ -1433,10 +1365,10 @@ class word extends user_sandbox_named_with_type
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
-            $result->id = intval($key_result);
-        }
-        if ($result->id > 0) {
-            $result->load_obj_vars();
+            $id = intval($key_result);
+            if ($id > 0) {
+                $result->load_by_id($id);
+            }
         }
         return $result;
     }

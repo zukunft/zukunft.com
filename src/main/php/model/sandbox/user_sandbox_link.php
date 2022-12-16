@@ -192,7 +192,7 @@ class user_sandbox_link extends user_sandbox
      */
     function log_link_add(): user_log_link
     {
-        log_debug($this->obj_name . '->log_add ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         $log = new user_log_link;
         $log->new_from = $this->fob;
@@ -214,7 +214,7 @@ class user_sandbox_link extends user_sandbox
      */
     function log_del_link(): user_log_link
     {
-        log_debug($this->obj_name . '->log_del ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         $log = new user_log_link;
         $log->old_from = $this->fob;
@@ -251,7 +251,7 @@ class user_sandbox_link extends user_sandbox
      */
     function add(): user_message
     {
-        log_debug($this->obj_name . '->add ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         global $db_con;
         $result = new user_message();
@@ -268,7 +268,7 @@ class user_sandbox_link extends user_sandbox
 
             // save the object fields if saving the key was successful
             if ($this->id > 0) {
-                log_debug($this->obj_name . '->add ' . $this->obj_type . ' ' . $this->dsp_id() . ' has been added');
+                log_debug($this->obj_type . ' ' . $this->dsp_id() . ' has been added');
                 // update the id in the log
                 if (!$log->add_ref($this->id)) {
                     $result->add_message('Updating the reference in the log failed');
@@ -304,7 +304,7 @@ class user_sandbox_link extends user_sandbox
     function is_id_updated_link(user_sandbox $db_rec): bool
     {
         $result = False;
-        log_debug($this->obj_name . '->is_id_updated ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         if ($db_rec->fob->id <> $this->fob->id
             or $db_rec->tob->id <> $this->tob->id) {
@@ -336,10 +336,10 @@ class user_sandbox_link extends user_sandbox
     function save_id_fields_link(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
-        log_debug($this->obj_name . '->save_id_fields_link ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         if ($this->is_id_updated_link($db_rec)) {
-            log_debug($this->obj_name . '->save_id_fields_link to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
+            log_debug('to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
 
             $log = $this->log_upd_link();
             $log->old_from = $db_rec->fob;
@@ -360,7 +360,7 @@ class user_sandbox_link extends user_sandbox
                 }
             }
         }
-        log_debug($this->obj_name . '->save_id_fields_link for ' . $this->dsp_id() . ' done');
+        log_debug('for ' . $this->dsp_id() . ' done');
         return $result;
     }
 
@@ -411,7 +411,7 @@ class user_sandbox_link extends user_sandbox
             $db_chk->tob = $this->tob;
             if ($db_chk->load_standard()) {
                 if ($db_chk->id > 0) {
-                    log_debug($this->obj_name . '->get_similar the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard linkspace');
+                    log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard linkspace');
                     $result = $db_chk;
                 }
             }
@@ -419,7 +419,7 @@ class user_sandbox_link extends user_sandbox
             $db_chk->set_user($this->user());
             if ($db_chk->load_obj_vars()) {
                 if ($db_chk->id > 0) {
-                    log_debug($this->obj_name . '->get_similar the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user linkspace');
+                    log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user linkspace');
                     $result = $db_chk;
                 }
             }

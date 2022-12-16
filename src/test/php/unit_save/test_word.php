@@ -76,8 +76,7 @@ function run_word_tests(testing $t): void
     // check if loading a word by name and id works
     $wrd_by_name = $t->add_word(word_api::TN_READ, null, $t->usr1);
     $wrd_by_id = new word($t->usr1);
-    $wrd_by_id->set_id($wrd_by_name->id());
-    $wrd_by_id->load_obj_vars();
+    $wrd_by_id->load_by_id($wrd_by_name->id());
     $target = word_api::TN_READ;
     $result = $wrd_by_id->name();
     $t->dsp('word->load of ' . $wrd_read->id() . ' by id ' . $wrd_by_name->id(), $target, $result);
@@ -312,7 +311,7 @@ function run_word_tests(testing $t): void
 
     // ... test if the new word has been created
     $wrd_added = $t->load_word(word_api::TN_ADD);
-    $wrd_added->load_obj_vars();
+    $wrd_added->load_by_name(word_api::TN_ADD);
     if ($wrd_added->id() > 0) {
         $result = $wrd_added->name();
     }
