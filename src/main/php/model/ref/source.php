@@ -66,7 +66,7 @@ class source extends user_sandbox_named_with_type
     );
 
     /*
-     * for system testing
+     * const for system testing
      */
 
     // persevered source names for unit and integration tests

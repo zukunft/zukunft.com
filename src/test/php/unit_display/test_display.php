@@ -30,6 +30,7 @@
 
 */
 
+use api\view_api;
 use api\word_api;
 use html\button;
 use html\html_base;
@@ -47,7 +48,7 @@ function run_display_test(testing $t): void
     // test the usage of a view to create the HTML code
     $wrd = $t->load_word(word_api::TN_READ);
     $dsp = new view($usr);
-    $dsp->load_by_name(view::TN_READ_RATIO, view::class);
+    $dsp->load_by_name(view_api::TN_READ_RATIO, view::class);
     //$result = $dsp->display($wrd, $back);
     $target = true;
     //$t->dsp_contains(', view_dsp->display is "'.$result.'" which should contain '.$wrd_abb->name.'', $target, $result);
@@ -59,9 +60,9 @@ function run_display_test(testing $t): void
     $cmp = new view_cmp_dsp_old($usr);
     $cmp->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::TEXT);
     $cmp->set_id(1);
-    $cmp->set_name(view::TN_READ_NESN_2016);
+    $cmp->set_name(view_api::TN_READ_NESN_2016);
     $result = $cmp->dsp_obj()->html();
-    $target = view::TN_READ_NESN_2016;
+    $target = view_api::TN_READ_NESN_2016;
     $t->dsp('view_component_dsp->text', $target, $result);
 
 

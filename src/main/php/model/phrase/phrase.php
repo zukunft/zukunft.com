@@ -58,6 +58,11 @@ use html\word_dsp;
 
 class phrase extends db_object
 {
+
+    /*
+     * database link
+     */
+
     // the database and JSON object duplicate field names for combined word and triples mainly to link phrases
     const FLD_ID = 'phrase_id';
     const FLD_NAME = 'phrase_name';
@@ -88,15 +93,10 @@ class phrase extends db_object
         user_sandbox::FLD_PROTECT
     );
 
-    // persevered word names for unit and integration tests
-    const TN_ZH_CANTON = "Zurich (Canton)"; // for testing the generic name creation
-    const TN_ZH_CITY = "Zurich (City)"; // to test the named phrase
-    const TN_ZH_COMPANY = "System Test Phrase: Zurich Insurance";
-    const RESERVED_PHRASES = array(
-        self::TN_ZH_CANTON,
-        self::TN_ZH_CITY,
-        self::TN_ZH_COMPANY
-    );
+
+    /*
+     * object vars
+     */
 
     // database duplicate fields
     public ?object $obj = null;        // if loaded the linked word or triple object
@@ -108,6 +108,7 @@ class phrase extends db_object
     // in memory only fields
     public ?string $type_name = null;  //
     public ?int $link_type_id = null;  // used in the word list to know based on which relation the word was added to the list
+
 
     /*
      * construct and map
@@ -191,6 +192,7 @@ class phrase extends db_object
         }
         return $result;
     }
+
 
     /*
      * get and set
@@ -286,6 +288,7 @@ class phrase extends db_object
         return $this->usr;
     }
 
+
     /*
      * casting objects
      */
@@ -313,6 +316,7 @@ class phrase extends db_object
             return $this->get_triple()->dsp_obj()->phrase_dsp();
         }
     }
+
 
     /*
      * loading / database access object (DAO) functions

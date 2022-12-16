@@ -54,7 +54,7 @@ function create_test_words(testing $t): void
         $t->test_word($word_name, phrase_type::PERCENT);
     }
     $prev_word_name = null;
-    foreach (word_api::TEST_WORDS_TIME as $word_name) {
+    foreach (word_api::TEST_WORDS_TIME_YEAR as $word_name) {
         $t->test_triple($word_name, verb::IS_A, word_api::TN_YEAR);
         $t->test_word($word_name, phrase_type::TIME);
         if ($prev_word_name != null) {

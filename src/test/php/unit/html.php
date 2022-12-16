@@ -31,6 +31,8 @@
 */
 
 use api\phrase_list_api;
+use api\value_api;
+use api\view_cmp_api;
 use api\word_api;
 use html\button;
 use html\html_base;
@@ -95,7 +97,7 @@ class html_unit_tests
         $dsp->set_id(1);
         $cmp1 = new view_cmp($usr);
         $cmp1->set_id(1);
-        $cmp1->set_name(view_cmp::TN_READ);
+        $cmp1->set_name(view_cmp_api::TN_READ);
         $cmp1->set_type(view_cmp_type::TEXT);
         $dsp->add_cmp($cmp1);
         $t->html_test($dsp->dsp_obj()->list_sort(), 'list_view_cmp', $t);
@@ -151,29 +153,29 @@ class html_unit_tests
         $val_id = 1;
         $val_city = new \api\value_api($val_id); $val_id++;
         $val_city->set_grp($phr_grp_city);
-        $val_city->set_number(value::TV_CITY_ZH_INHABITANTS_2019);
+        $val_city->set_number(value_api::TV_CITY_ZH_INHABITANTS_2019);
 
         // create the value for the inhabitants of the city of zurich
         $val_canton = new \api\value_api($val_id); $val_id++;
         $val_canton->set_grp($phr_grp_canton);
-        $val_canton->set_number(value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
+        $val_canton->set_number(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
         // create the value for the inhabitants of Switzerland
         $val_ch = new \api\value_api($val_id);
         $val_ch->set_grp($phr_grp_ch);
-        $val_ch->set_number(value::TV_CH_INHABITANTS_2019_IN_MIO);
+        $val_ch->set_number(value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 
         // create the formula result for the inhabitants of the city of zurich
         $fv_id = 1;
         $fv_city = new \api\formula_value_api($fv_id); $fv_id++;
         $fv_city->set_grp($phr_grp_city_pct);
-        $ch_val_scaled = value::TV_CH_INHABITANTS_2019_IN_MIO * 1000000;
-        $fv_city->set_number(value::TV_CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
+        $ch_val_scaled = value_api::TV_CH_INHABITANTS_2019_IN_MIO * 1000000;
+        $fv_city->set_number(value_api::TV_CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
 
         // create the formula result for the inhabitants of the city of zurich
         $fv_canton = new \api\formula_value_api($fv_id); $fv_id++;
         $fv_canton->set_grp($phr_grp_canton_pct);
-        $fv_canton->set_number(value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO / value::TV_CH_INHABITANTS_2019_IN_MIO);
+        $fv_canton->set_number(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO / value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 
         // create the formula result list and the table to display the results
         $fv_lst = new \api\formula_value_list_api();
@@ -188,7 +190,7 @@ class html_unit_tests
         $t->subheader('View component tests');
 
         $cmp = new view_cmp($usr);
-        $cmp->set(1, view_cmp::TN_ADD, view_cmp_type::TEXT);
+        $cmp->set(1, view_cmp_api::TN_ADD, view_cmp_type::TEXT);
         $t->html_test($cmp->dsp_obj()->html(), 'view_cmp_text', $t);
 
         $wrd = new \api\word_api();

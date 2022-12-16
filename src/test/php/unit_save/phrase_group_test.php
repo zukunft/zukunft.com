@@ -30,6 +30,7 @@
 
 */
 
+use api\phrase_api;
 use api\word_api;
 
 function run_phrase_group_test(testing $t): void
@@ -81,7 +82,7 @@ function run_phrase_group_test(testing $t): void
 
     // test getting the phrase group id based on word and word link ids
     $phr_lst = new phrase_list($usr);
-    $phr_lst->load_by_names(array(phrase::TN_ZH_CITY, word_api::TN_INHABITANTS));
+    $phr_lst->load_by_names(array(phrase_api::TN_ZH_CITY, word_api::TN_INHABITANTS));
     $zh_city_grp = $phr_lst->get_grp();
     $result = $zh_city_grp->get_id();
     if ($result > 0) {
@@ -91,7 +92,7 @@ function run_phrase_group_test(testing $t): void
 
     // test names
     $result = implode(",", $zh_city_grp->names());
-    $target = phrase::TN_ZH_CITY . ',' . word_api::TN_INHABITANTS;
+    $target = phrase_api::TN_ZH_CITY . ',' . word_api::TN_INHABITANTS;
     $t->dsp('phrase_group->names', $target, $result);
 
     // test if the phrase group links are correctly recreated when a group is updated

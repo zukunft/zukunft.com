@@ -44,6 +44,7 @@ use api\phrase_group_api;
 
 class phrase_group extends db_object
 {
+
     /*
      * database link
      */
@@ -64,15 +65,6 @@ class phrase_group extends db_object
         self::FLD_ORDER
     );
 
-    // persevered phrase group names for unit and integration tests
-    const TN_ZH_2019 = 'inhabitant in the city of Zurich (2019)';
-    const TN_CH_2019 = 'inhabitant of Switzerland in Mio (2019)';
-
-    /*
-     * for system testing
-     */
-
-    const TN_READ = 'Pi (math)';
 
     /*
      * object vars
@@ -89,6 +81,7 @@ class phrase_group extends db_object
     // in memory only fields
     private user $usr;             // the user object of the person for whom the word and triple list is loaded, so to say the viewer
     public ?array $id_order = array();       // the ids from above in the order that the user wants to see them
+
 
     /*
      * construct and map
@@ -122,6 +115,27 @@ class phrase_group extends db_object
         $this->id_order = array();
     }
 
+    function row_mapper(array $db_row): bool
+    {
+        $result = false;
+        $this->id = 0;
+        if ($db_row != null) {
+            if ($db_row[self::FLD_ID] > 0) {
+                $this->id = $db_row[self::FLD_ID];
+                $this->grp_name = $db_row[self::FLD_NAME];
+                $this->auto_name = $db_row[self::FLD_DESCRIPTION];
+                $this->phr_lst->add_by_ids(
+                    $db_row[self::FLD_WORD_IDS],
+                    $db_row[self::FLD_TRIPLE_IDS]
+                );
+                $this->load_lst();
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+
     /*
      * get and set
      */
@@ -145,6 +159,7 @@ class phrase_group extends db_object
         return $this->usr;
     }
 
+
     /*
      * casting objects
      */
@@ -164,25 +179,6 @@ class phrase_group extends db_object
         return $api_obj;
     }
 
-    function row_mapper(array $db_row): bool
-    {
-        $result = false;
-        $this->id = 0;
-        if ($db_row != null) {
-            if ($db_row[self::FLD_ID] > 0) {
-                $this->id = $db_row[self::FLD_ID];
-                $this->grp_name = $db_row[self::FLD_NAME];
-                $this->auto_name = $db_row[self::FLD_DESCRIPTION];
-                $this->phr_lst->add_by_ids(
-                    $db_row[self::FLD_WORD_IDS],
-                    $db_row[self::FLD_TRIPLE_IDS]
-                );
-                $this->load_lst();
-                $result = true;
-            }
-        }
-        return $result;
-    }
 
     /*
      * set and get function
@@ -201,9 +197,10 @@ class phrase_group extends db_object
         }
     }
 
+
     /*
-    load functions - the set functions are used to define the loading selection criteria
-    */
+     * load functions - the set functions are used to define the loading selection criteria
+     */
 
     /**
      * create an SQL statement to retrieve a phrase groups from the database

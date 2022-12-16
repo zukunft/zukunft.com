@@ -38,6 +38,28 @@ class value_api extends user_sandbox_value_api implements \JsonSerializable
 {
 
     /*
+     * const for system testing
+     */
+
+    // a list of dummy values that are used for system tests
+    const TV_READ = 3.14159265358979323846264338327950288419716939937510; // pi
+    const TV_INT = 123456;
+    const TV_FLOAT = 123.456;
+    const TV_BIG = 123456789;
+    const TV_BIGGER = 234567890;
+    const TV_USER_HIGH_QUOTE = "123'456";
+    const TV_USER_SPACE = "123 456";
+    const TV_PCT = 0.182642816772838; // to test the percentage calculation by the percent of Swiss inhabitants living in Canton Zurich
+    const TV_INCREASE = 0.007871833296164; // to test the increase calculation by the increase of inhabitants in Switzerland from 2019 to 2020
+    const TV_CANTON_ZH_INHABITANTS_2020_IN_MIO = 1.553423;
+    const TV_CITY_ZH_INHABITANTS_2019 = 415367;
+    const TV_CH_INHABITANTS_2019_IN_MIO = 8.438822;
+    const TV_CH_INHABITANTS_2020_IN_MIO = 8.505251;
+    const TV_SHARE_PRICE = 17.08;
+    const TV_EARNINGS_PER_SHARE = 1.22;
+
+
+    /*
      * construct and map
      */
 

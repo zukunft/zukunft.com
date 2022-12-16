@@ -39,11 +39,9 @@ use cfg\share_type;
 use cfg\protection_type;
 use export\exp_obj;
 use export\triple_exp;
-use html\api;
-use html\button;
 use html\triple_dsp;
 
-class triple extends user_sandbox_link_named_with_type implements \JsonSerializable
+class triple extends user_sandbox_link_named_with_type implements JsonSerializable
 {
 
     /*
@@ -89,6 +87,7 @@ class triple extends user_sandbox_link_named_with_type implements \JsonSerializa
         user_sandbox::FLD_PROTECT
     );
 
+
     /*
      * im- and export link
      */
@@ -98,12 +97,6 @@ class triple extends user_sandbox_link_named_with_type implements \JsonSerializa
     const FLD_EX_TO = 'to';
     const FLD_EX_VERB = 'verb';
 
-    /*
-     * for system testing
-     */
-
-    const TN_READ = 'Pi';
-    const TN_READ_NAME = 'Pi (math)';
 
     /*
      * object vars
@@ -116,6 +109,7 @@ class triple extends user_sandbox_link_named_with_type implements \JsonSerializa
     private ?string $name_given;     // the name manually set by the user, which can be empty
     private string $name_generated; // the generated name based on the linked objects and saved in the database for faster searching
     public ?int $values;            // the total number of values linked to this triple as an indication how common the triple is and to sort the triples
+
 
     /*
      * construct and map
@@ -194,6 +188,7 @@ class triple extends user_sandbox_link_named_with_type implements \JsonSerializa
         }
         return $result;
     }
+
 
     /*
      * set and get
@@ -1100,7 +1095,7 @@ class triple extends user_sandbox_link_named_with_type implements \JsonSerializa
 
     /**
      * get the database id of the word link type
-     * @return int the id of the word type
+     * @return int|null the id of the word type
      */
     function type_id(): ?int
     {
@@ -1894,7 +1889,6 @@ class triple extends user_sandbox_link_named_with_type implements \JsonSerializa
      */
     function del_links(): user_message
     {
-        global $db_con;
         $result = new user_message();
 
         // collect all phrase groups where this triple is used

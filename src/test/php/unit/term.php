@@ -31,6 +31,7 @@
 */
 
 use api\formula_api;
+use api\triple_api;
 use api\word_api;
 
 class term_unit_tests
@@ -57,7 +58,7 @@ class term_unit_tests
         $t->assert($t->name . 'word name', $trm->name(), $wrd->name_dsp());
 
         $trp = new triple($usr);
-        $trp->set(1, triple::TN_READ);
+        $trp->set(1, triple_api::TN_READ);
         $trm = $trp->term();
         $t->assert($t->name . 'triple id', $trm->id_obj(), $trp->id());
         $t->assert($t->name . 'triple name', $trm->name(), $trp->name());

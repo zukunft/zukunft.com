@@ -36,6 +36,7 @@ use html\view_dsp;
 
 class view extends user_sandbox_named_with_type
 {
+
     /*
      * database link
      */
@@ -107,33 +108,6 @@ class view extends user_sandbox_named_with_type
     const COMPONENT_EDIT = "view_entry_edit";
     const COMPONENT_DEL = "view_entry_del";
 
-    /*
-     * for system testing
-     */
-
-    // persevered view names for unit and integration tests (TN means TEST NAME)
-    const TN_READ = 'Word';
-    const TN_ADD = 'System Test View';
-    const TN_RENAMED = 'System Test View Renamed';
-    const TN_COMPLETE = 'System Test View Complete';
-    const TN_TABLE = 'System Test View Table';
-
-    const TN_READ_RATIO = 'Company ratios';
-    const TN_READ_NESN_2016 = 'Nestlé Financial Statement 2016';
-
-    // array of view names that used for testing and remove them after the test
-    const RESERVED_VIEWS = array(
-        self::TN_ADD,
-        self::TN_RENAMED,
-        self::TN_COMPLETE,
-        self::TN_TABLE
-    );
-
-    // array of test view names create before the test
-    const TEST_VIEWS = array(
-        self::TN_COMPLETE,
-        self::TN_TABLE
-    );
 
     /*
      * object vars

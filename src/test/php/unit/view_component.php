@@ -30,6 +30,9 @@
 
 */
 
+use api\view_api;
+use api\view_cmp_api;
+
 class view_component_unit_tests
 {
     function run(testing $t): void
@@ -65,7 +68,7 @@ class view_component_unit_tests
 
         // sql to load the view components by name
         $cmp = new view_cmp($usr);
-        $cmp->set_name(view::TN_ADD);
+        $cmp->set_name(view_api::TN_ADD);
         //$t->assert_load_sql($db_con, $cmp);
         $t->assert_load_standard_sql($db_con, $cmp);
 
@@ -74,8 +77,8 @@ class view_component_unit_tests
 
         // casting API
         $cmp = new view_cmp($usr);
-        $cmp->set(1, view_cmp::TN_READ, view_cmp_type::PHRASE_NAME);
-        $cmp->description = view_cmp::TD_READ;
+        $cmp->set(1, view_cmp_api::TN_READ, view_cmp_type::PHRASE_NAME);
+        $cmp->description = view_cmp_api::TD_READ;
         $t->assert_api($cmp);
 
 

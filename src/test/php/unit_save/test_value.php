@@ -30,6 +30,8 @@
 
 */
 
+use api\phrase_api;
+use api\value_api;
 use api\word_api;
 
 function create_test_values(testing $t): void
@@ -43,7 +45,7 @@ function create_test_values(testing $t): void
         word_api::TN_INHABITANTS,
         word_api::TN_MIO
         ),
-        value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
+        value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
     // ... same with the concrete year
     $t->test_value(array(
@@ -53,22 +55,22 @@ function create_test_values(testing $t): void
         word_api::TN_MIO,
         word_api::TN_2020
     ),
-        value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
+        value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
     // add the number of inhabitants in the city of zurich without time definition using the phrase zurich (city) instead of two single words
     $t->test_value(array(
-        phrase::TN_ZH_CITY,
+        phrase_api::TN_ZH_CITY,
         word_api::TN_INHABITANTS
     ),
-        value::TV_CITY_ZH_INHABITANTS_2019);
+        value_api::TV_CITY_ZH_INHABITANTS_2019);
 
     // ... same with the concrete year
     $t->test_value(array(
-        phrase::TN_ZH_CITY,
+        phrase_api::TN_ZH_CITY,
         word_api::TN_INHABITANTS,
         word_api::TN_2019
     ),
-        value::TV_CITY_ZH_INHABITANTS_2019);
+        value_api::TV_CITY_ZH_INHABITANTS_2019);
 
     // add the number of inhabitants in switzerland without time definition
     $t->test_value(array(
@@ -76,7 +78,7 @@ function create_test_values(testing $t): void
         word_api::TN_INHABITANTS,
         word_api::TN_MIO
     ),
-        value::TV_CH_INHABITANTS_2020_IN_MIO);
+        value_api::TV_CH_INHABITANTS_2020_IN_MIO);
 
     // ... same with the concrete year
     $t->test_value(array(
@@ -85,7 +87,7 @@ function create_test_values(testing $t): void
         word_api::TN_MIO,
         word_api::TN_2020
     ),
-        value::TV_CH_INHABITANTS_2020_IN_MIO);
+        value_api::TV_CH_INHABITANTS_2020_IN_MIO);
 
     // ... same with the previous year
     $t->test_value(array(
@@ -94,7 +96,7 @@ function create_test_values(testing $t): void
         word_api::TN_MIO,
         word_api::TN_2019
     ),
-        value::TV_CH_INHABITANTS_2019_IN_MIO);
+        value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 
     // add the percentage of inhabitants in Canton Zurich compared to Switzerland for calculation validation
     $t->test_value(array(
@@ -105,7 +107,7 @@ function create_test_values(testing $t): void
         word_api::TN_PCT,
         word_api::TN_2020
     ),
-        value::TEST_PCT);
+        value_api::TV_PCT);
 
     // add the increase of inhabitants in Switzerland from 2019 to 2020 for calculation validation
     $t->test_value(array(
@@ -115,19 +117,19 @@ function create_test_values(testing $t): void
         word_api::TN_PCT,
         word_api::TN_2020
     ),
-        value::TEST_INCREASE);
+        value_api::TV_INCREASE);
 
     // add some simple number for formula testing
     $t->test_value(array(
         word_api::TN_SHARE,
         word_api::TN_CHF
     ),
-        value::TV_SHARE_PRICE);
+        value_api::TV_SHARE_PRICE);
 
     $t->test_value(array(
         word_api::TN_EARNING,
         word_api::TN_CHF
     ),
-        value::TV_EARNINGS_PER_SHARE);
+        value_api::TV_EARNINGS_PER_SHARE);
 
 }

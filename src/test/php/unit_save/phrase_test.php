@@ -30,15 +30,16 @@
 
 */
 
+use api\phrase_api;
 use api\word_api;
 
-function create_test_phrases(testing $t)
+function create_test_phrases(testing $t): void
 {
     $t->header('Check if all base phrases are correct');
 
-    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON, phrase::TN_ZH_CANTON);
-    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CITY, phrase::TN_ZH_CITY, phrase::TN_ZH_CITY);
-    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_COMPANY, phrase::TN_ZH_COMPANY, phrase::TN_ZH_COMPANY);
+    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON, phrase_api::TN_ZH_CANTON);
+    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CITY, phrase_api::TN_ZH_CITY, phrase_api::TN_ZH_CITY);
+    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_COMPANY, phrase_api::TN_ZH_COMPANY, phrase_api::TN_ZH_COMPANY);
 
     $t->test_triple(TW_ABB, verb::IS_A, TEST_WORD, TP_ABB);
     $t->test_triple(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
@@ -47,7 +48,7 @@ function create_test_phrases(testing $t)
     $t->test_triple(TW_TAX, verb::IS_PART_OF, TW_CF, TP_TAXES);
 
     $t->header('Check if all base phrases are correct');
-    $t->test_phrase(phrase::TN_ZH_COMPANY);
+    $t->test_phrase(phrase_api::TN_ZH_COMPANY);
 }
 
 function create_base_times(testing $t): void
@@ -107,11 +108,11 @@ function run_phrase_test(testing $t): void
     $phr->set_id($zh_company_id * -1);
     $phr->load_by_obj_par();
     $result = $phr->name();
-    $target = phrase::TN_ZH_COMPANY;
+    $target = phrase_api::TN_ZH_COMPANY;
     $t->dsp('phrase->load triple by id ' . $zh_company_id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
-    $target = ' <td> <a href="/http/view.php?link=' . $lnk_company->id() . '" title="' . phrase::TN_ZH_COMPANY . '">' . phrase::TN_ZH_COMPANY . '</a></td> ';
+    $target = ' <td> <a href="/http/view.php?link=' . $lnk_company->id() . '" title="' . phrase_api::TN_ZH_COMPANY . '">' . phrase_api::TN_ZH_COMPANY . '</a></td> ';
     $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
     $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
     $result = trim_all($result);
@@ -132,8 +133,8 @@ function run_phrase_test(testing $t): void
     $phr->set_id($zh_company_id * -1);
     $phr->load_by_obj_par();
     $result = $phr->dsp_selector(Null, $form_name, $pos, '', $back);
-    $target = phrase::TN_ZH_COMPANY;
-    $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' . phrase::TN_ZH_COMPANY . ' selected contains ' . phrase::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $target = phrase_api::TN_ZH_COMPANY;
+    $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' . phrase_api::TN_ZH_COMPANY . ' selected contains ' . phrase_api::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test the phrase selector of type company
     $wrd_ABB = new word($usr);
@@ -143,7 +144,7 @@ function run_phrase_test(testing $t): void
     $wrd_company->load_by_name(TEST_WORD, word::class);
     $result = $phr->dsp_selector($wrd_company, $form_name, $pos, '', $back);
     $target = TW_ABB;
-    $t->dsp_contains(', phrase->dsp_selector of type ' . TEST_WORD . ': ' . $result . ' with ABB selected contains ' . phrase::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+    $t->dsp_contains(', phrase->dsp_selector of type ' . TEST_WORD . ': ' . $result . ' with ABB selected contains ' . phrase_api::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // test getting the parent for phrase Vestas
     $phr = $t->load_phrase(TW_VESTAS);

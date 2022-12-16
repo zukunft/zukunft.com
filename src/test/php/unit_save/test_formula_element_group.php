@@ -162,7 +162,7 @@ function run_formula_element_group_test(testing $t): void
 
     } else {
         $result = 'formula element group list is empty';
-        $target = 'this (3) and "ABB","Sales","CHF","million","2015"@';
+        $target = 'this (3) and "ABB","Sales","CHF","million","' . word_api::TN_2015 . '"@';
         $t->dsp('formula_element_group->dsp_names', $target, $result);
     }
 

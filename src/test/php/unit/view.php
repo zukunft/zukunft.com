@@ -30,6 +30,8 @@
 
 */
 
+use api\view_api;
+
 class view_unit_tests
 {
     function run(testing $t): void
@@ -66,7 +68,7 @@ class view_unit_tests
 
         // sql to load the view by name
         $dsp = new view($usr);
-        $dsp->set_name(view::TN_ADD);
+        $dsp->set_name(view_api::TN_ADD);
         //$t->assert_load_sql($db_con, $dsp);
         $t->assert_load_standard_sql($db_con, $dsp);
 
@@ -96,7 +98,7 @@ class view_unit_tests
 
         // casting API
         $dsp = new view($usr);
-        $dsp->set(1, view::TN_READ);
+        $dsp->set(1, view_api::TN_READ);
         $t->assert_api($dsp);
 
         /*

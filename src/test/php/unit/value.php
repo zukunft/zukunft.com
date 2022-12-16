@@ -30,6 +30,9 @@
 
 */
 
+use api\phrase_group_api;
+use api\value_api;
+
 class value_unit_tests
 {
 
@@ -90,13 +93,13 @@ class value_unit_tests
         $t->subheader('Convert and API unit tests');
 
         // casting API
-        $grp = new phrase_group($usr, 1,  array(phrase_group::TN_READ));
-        $val = new value($usr, 1, round(value::TV_READ, 13), $grp);
+        $grp = new phrase_group($usr, 1,  array(phrase_group_api::TN_READ));
+        $val = new value($usr, 1, round(value_api::TV_READ, 13), $grp);
         $t->assert_api($val);
 
         // casting figure
         $val = new value($usr);
-        $val->set_number(value::TEST_PCT);
+        $val->set_number(value_api::TV_PCT);
         $fig = $val->figure();
         $t->assert($t->name . ' get figure',$fig->number, $val->number());
 

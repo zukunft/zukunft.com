@@ -32,6 +32,9 @@
 
 */
 
+use api\phrase_group_api;
+use api\triple_api;
+use api\value_api;
 use api\word_api;
 
 class test_unit_read_db extends test_unit
@@ -68,11 +71,11 @@ class test_unit_read_db extends test_unit
 
         // add the database rows for read testing
         $this->test_triple(
-            triple::TN_READ, verb::IS_A, word_api::TN_READ,
-            triple::TN_READ_NAME, triple::TN_READ_NAME
+            triple_api::TN_READ, verb::IS_A, word_api::TN_READ,
+            triple_api::TN_READ_NAME, triple_api::TN_READ_NAME
         );
-        $phr_grp = $this->add_phrase_group(array(triple::TN_READ_NAME), phrase_group::TN_READ);
-        $this->test_value_by_phr_grp($phr_grp, value::TV_READ);
+        $phr_grp = $this->add_phrase_group(array(triple_api::TN_READ_NAME), phrase_group_api::TN_READ);
+        $this->test_value_by_phr_grp($phr_grp, value_api::TV_READ);
 
     }
 

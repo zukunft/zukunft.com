@@ -30,6 +30,9 @@
 
 */
 
+use api\phrase_group_api;
+use api\triple_api;
+use api\value_api;
 use api\word_api;
 
 class value_unit_db_tests
@@ -56,7 +59,7 @@ class value_unit_db_tests
         $val->grp = $phr_lst->get_grp();
         $val->load_obj_vars();
         $result = $val->number();
-        $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
+        $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->assert($test_name, $result, $target);
 
         /*
@@ -66,7 +69,7 @@ class value_unit_db_tests
         $val->grp = $phr_lst->get_grp();
         $val->load_obj_vars();
         $result = $val->number();
-        $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
+        $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->assert($test_name, $result, $target);
         */
 
@@ -80,7 +83,7 @@ class value_unit_db_tests
         $t->assert($t->name . 'api->number', $api_val->number(), $val->number());
 
 
-        $phr_grp = $t->add_phrase_group(array(triple::TN_READ_NAME), phrase_group::TN_READ);
+        $phr_grp = $t->add_phrase_group(array(triple_api::TN_READ_NAME), phrase_group_api::TN_READ);
         $val = $t->load_value_by_phr_grp($phr_grp);
         $t->assert_api_exp($val);
     }

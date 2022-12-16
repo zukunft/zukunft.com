@@ -109,7 +109,7 @@ function run_value_ui_test(testing $t): void
     if ($val != null) {
         $result = $val->number();
     }
-    $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
+    $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
     $t->dsp('value_list->get_by_grp for ' . $wrd_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_DB);
 
     // ... get all times of the Switzerland values

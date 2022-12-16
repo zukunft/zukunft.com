@@ -169,7 +169,17 @@ class word_api extends user_sandbox_named_with_type_api
     const TEST_WORDS_SCALING = array(self::TN_IN_K, self::TN_MIO, self::TN_BIL);
     const TEST_WORDS_PERCENT = array(self::TN_PCT);
     // the time words must be in correct order because the following is set during creation
-    const TEST_WORDS_TIME = array(self::TN_2019, self::TN_2020, self::TN_2021, self::TN_2022);
+    const TEST_WORDS_TIME_YEAR = array(
+        self::TN_2015,
+        self::TN_2016,
+        self::TN_2017,
+        self::TN_2018,
+        self::TN_2019,
+        self::TN_2020,
+        self::TN_2021,
+        self::TN_2022
+    );
+
 
     /*
      * object vars

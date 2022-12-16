@@ -30,6 +30,7 @@
 
 */
 
+use api\phrase_group_api;
 use api\word_api;
 
 class phrase_group_unit_tests
@@ -78,7 +79,7 @@ class phrase_group_unit_tests
 
         // sql to load the phrase group by name
         $phr_grp = new phrase_group($usr);
-        $phr_grp->grp_name = phrase_group::TN_READ;
+        $phr_grp->grp_name = phrase_group_api::TN_READ;
         $t->assert_load_sql($db_con, $phr_grp);
 
         // sql to load the word list ids

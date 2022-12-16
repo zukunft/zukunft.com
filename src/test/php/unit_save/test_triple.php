@@ -36,6 +36,7 @@
 // start testing the system functionality 
 // --------------------------------------
 
+use api\phrase_api;
 use api\word_api;
 
 function run_triple_test(testing $t): void
@@ -72,14 +73,14 @@ function run_triple_test(testing $t): void
     $lnk_company->verb->set_id(cl(db_cl::VERB, verb::IS_A));
     $lnk_company->to->set_id($wrd_company->id());
     $lnk_company->load_obj_vars();
-    $target = phrase::TN_ZH_COMPANY;
+    $target = phrase_api::TN_ZH_COMPANY;
     $result = $lnk_company->name();
-    $t->dsp('triple->load for ' . phrase::TN_ZH_COMPANY . '', $target, $result);
+    $t->dsp('triple->load for ' . phrase_api::TN_ZH_COMPANY, $target, $result);
 
     // ... now test the Insurance Zurich using the name function
-    $target = phrase::TN_ZH_COMPANY;
+    $target = phrase_api::TN_ZH_COMPANY;
     $result = $lnk_company->name();
-    $t->dsp('triple->load for ' . phrase::TN_ZH_COMPANY . ' using the function', $target, $result);
+    $t->dsp('triple->load for ' . phrase_api::TN_ZH_COMPANY . ' using the function', $target, $result);
 
     // link the added word to the test word
     $wrd_added = $t->load_word(word_api::TN_RENAMED);

@@ -26,6 +26,7 @@
 
 */
 
+use api\triple_api;
 use api\word_api;
 use cfg\phrase_type;
 
@@ -118,7 +119,7 @@ class phrase_list_unit_tests
         global $usr;
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($this->get_phrase(1, word_api::TN_READ));
-        $phr_lst->add($this->get_phrase(2, triple::TN_READ));
+        $phr_lst->add($this->get_phrase(2, triple_api::TN_READ));
         return $phr_lst;
     }
 

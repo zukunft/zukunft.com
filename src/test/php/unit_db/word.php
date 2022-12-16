@@ -30,6 +30,7 @@
 
 */
 
+use api\triple_api;
 use api\word_api;
 use cfg\phrase_type;
 
@@ -75,8 +76,8 @@ class word_unit_db_tests
         $wrd_scale = new word($usr);
         $wrd_scale->load_by_name(word_api::TN_MIO, word::class);
         $phr = new phrase($usr);
-        $phr->load_by_name(triple::TN_READ_NAME);
-        $phr_grp = $t->load_phrase_group(array(triple::TN_READ));
+        $phr->load_by_name(triple_api::TN_READ_NAME);
+        $phr_grp = $t->load_phrase_group(array(triple_api::TN_READ));
 
         // load a word list by the word id
         $wrd_lst = new word_list($usr);
@@ -101,7 +102,7 @@ class word_unit_db_tests
         // load a word list by the phrase group
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_grp_id($phr_grp->id());
-        $t->assert('load_by_group', $wrd_lst->name(), '"' . triple::TN_READ . '"');
+        $t->assert('load_by_group', $wrd_lst->name(), '"' . triple_api::TN_READ . '"');
 
         // load a word list by type
         $wrd_lst = new word_list($usr);
@@ -131,7 +132,7 @@ class word_unit_db_tests
 
         $t->subheader('Frontend API tests');
 
-        $trp = $t->load_triple(triple::TN_READ, verb::IS_A, word_api::TN_READ);
+        $trp = $t->load_triple(triple_api::TN_READ, verb::IS_A, word_api::TN_READ);
         $t->assert_api_exp($trp);
     }
 

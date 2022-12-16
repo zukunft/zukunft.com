@@ -30,6 +30,7 @@
 
 */
 
+use api\value_api;
 use api\word_api;
 
 function run_value_test(testing $t): void
@@ -46,7 +47,7 @@ function run_value_test(testing $t): void
         word_api::TN_MIO,
         word_api::TN_2019
     ),
-        value::TV_CH_INHABITANTS_2019_IN_MIO);
+        value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 
     if ($ch_inhabitants->id() <= 0) {
         log_err('Loading of test value ' . $ch_inhabitants->dsp_id() . ' failed');
@@ -54,7 +55,7 @@ function run_value_test(testing $t): void
         // test load by value id
         $val = $t->load_value_by_id($t->usr1, $ch_inhabitants->id());
         $result = $val->number();
-        $target = value::TV_CH_INHABITANTS_2019_IN_MIO;
+        $target = value_api::TV_CH_INHABITANTS_2019_IN_MIO;
         $t->assert(', value->load for value id "' . $ch_inhabitants->id() . '"', $result, $target);
 
         // test load by phrase list first to get the value id
@@ -66,7 +67,7 @@ function run_value_test(testing $t): void
         $val_by_phr_lst->time_phr = $time_phr;
         $val_by_phr_lst->load_obj_vars();
         $result = $val_by_phr_lst->number();
-        $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
+        $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->dsp(', value->load for another word list ' . $phr_lst->dsp_name(), $target, $result);
 
         // test load by value id
@@ -74,7 +75,7 @@ function run_value_test(testing $t): void
         if ($val_by_phr_lst->id() <> 0) {
             $val->load_by_id($val_by_phr_lst->id(), value::class);
             $result = $val->number();
-            $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
+            $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
             $t->dsp(', value->load for value id "' . $ch_inhabitants->id() . '"', $target, $result);
 
             // test rebuild_grp_id by value id
@@ -103,7 +104,7 @@ function run_value_test(testing $t): void
 
         // ... and check the number
         $result = $chk_val->number();
-        $target = value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO;
+        $target = value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO;
         $t->dsp(', value->load for "' . $chk_phr_grp->dsp_id() . '"', $target, $result);
 
         // ... and check the words loaded
@@ -175,7 +176,7 @@ function run_value_test(testing $t): void
     // test the formatting of a value (percent)
     $pct_val = $t->load_value(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_PCT, word_api::TN_2020));
     $result = $pct_val->dsp_obj_old()->display(0);
-    $target = number_format(round(value::TEST_PCT * 100, 2), 2) . '%';
+    $target = number_format(round(value_api::TV_PCT * 100, 2), 2) . '%';
     $t->dsp(', value->val_formatted for ' . $pct_val->dsp_id(), $target, $result);
 
     // test the scaling of a value
@@ -189,7 +190,7 @@ function run_value_test(testing $t): void
     $mio_val->grp = $phr_lst->get_grp();
     $mio_val->load_obj_vars();
     $result = $mio_val->scale($dest_phr_lst);
-    $target = value::TV_CH_INHABITANTS_2020_IN_MIO * 1000000;
+    $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO * 1000000;
     $t->dsp(', value->val_scaling for a word list ' . $phr_lst->dsp_id() . '', $target, $result);
 
     // test the figure object creation
@@ -212,7 +213,7 @@ function run_value_test(testing $t): void
 
     // test the HTML code creation
     $result = $mio_val->display();
-    $target = number_format(value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, DEFAULT_DEC_POINT, DEFAULT_THOUSAND_SEP);
+    $target = number_format(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, DEFAULT_DEC_POINT, DEFAULT_THOUSAND_SEP);
     $t->dsp(', value->display', $target, $result);
 
     // test the HTML code creation including the hyperlink
@@ -227,7 +228,7 @@ function run_value_test(testing $t): void
     $t->dsp(', value->display_linked', $target, $result);
 
     // change the number to force using the thousand separator
-    $mio_val->set_number(value::TEST_VALUE);
+    $mio_val->set_number(value_api::TV_INT);
     $result = $mio_val->display_linked('1');
     //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1"  >123\'456</a>';
@@ -239,15 +240,15 @@ function run_value_test(testing $t): void
     $t->dsp(', value->display_linked', $target, $result);
 
     // convert the user input for the database
-    $mio_val->usr_value = value::TEST_USER_HIGH_QUOTE;
+    $mio_val->usr_value = value_api::TV_USER_HIGH_QUOTE;
     $result = $mio_val->convert();
-    $target = value::TEST_VALUE;
+    $target = value_api::TV_INT;
     $t->dsp(', value->convert user input', $target, $result);
 
     // convert the user input with space for the database
-    $mio_val->usr_value = value::TEST_USER_SPACE;
+    $mio_val->usr_value = value_api::TV_USER_SPACE;
     $result = $mio_val->convert();
-    $target = value::TEST_VALUE;
+    $target = value_api::TV_INT;
     $t->dsp(', value->convert user input', $target, $result);
 
     // test adding a value in the database
@@ -256,7 +257,7 @@ function run_value_test(testing $t): void
     $phr_grp = $t->load_phrase_group(array(word_api::TN_RENAMED, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
     $add_val = new value($t->usr1);
     $add_val->grp = $phr_grp;
-    $add_val->set_number(value::TEST_BIG);
+    $add_val->set_number(value_api::TV_BIG);
     $result = $add_val->save();
     $target = '';
     $t->dsp(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -290,7 +291,7 @@ function run_value_test(testing $t): void
     $phr_grp2 = $t->load_phrase_group(array(word_api::TN_RENAMED, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2019));
     $add_val2 = new value($t->usr1);
     $add_val2->grp = $phr_grp2;
-    $add_val2->set_number(value::TEST_BIGGER);
+    $add_val2->set_number(value_api::TV_BIGGER);
     $result = $add_val2->save();
     $target = '';
     $t->dsp(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);

@@ -51,6 +51,10 @@ use html\word_dsp;
 class term extends db_object
 {
 
+    /*
+     * database link
+     */
+
     // field names of the database view for terms
     // the database view is used e.g. for a fast check of a new term name
     const FLD_ID = 'term_id';
@@ -68,6 +72,11 @@ class term extends db_object
         user_sandbox::FLD_SHARE,
         user_sandbox::FLD_PROTECT
     );
+
+
+    /*
+     * object vars
+     */
 
     // the term vars, which is probably just the related object
     public ?object $obj = null;  // the word, triple, formula or verb object

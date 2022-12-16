@@ -38,6 +38,20 @@ use html\phrase_list_dsp;
 class phrase_group_api extends user_sandbox_named_api
 {
 
+    /*
+     * const for system testing
+     */
+
+    // persevered phrase group names for unit and integration tests
+    const TN_READ = 'Pi (math)';
+
+    const TN_ZH_2019 = 'inhabitant in the city of Zurich (2019)';
+    const TN_CH_2019 = 'inhabitant of Switzerland in Mio (2019)';
+
+    /*
+     * object vars
+     */
+
     // list of word_min and triple_min objects
     private array $lst;
 

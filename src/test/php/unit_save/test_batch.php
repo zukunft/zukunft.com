@@ -31,6 +31,7 @@
 */
 
 use api\formula_api;
+use api\value_api;
 use api\word_api;
 
 function run_batch_job_test(testing $t): void
@@ -47,7 +48,7 @@ function run_batch_job_test(testing $t): void
         word_api::TN_MIO,
         word_api::TN_2020
     ),
-        value::TV_CH_INHABITANTS_2020_IN_MIO);
+        value_api::TV_CH_INHABITANTS_2020_IN_MIO);
 
 
     // prepare test adding a batch job via a list
@@ -58,7 +59,7 @@ function run_batch_job_test(testing $t): void
     $val->grp = $phr_lst->get_grp();
     $val->load_obj_vars();
     $result = $val->number();
-    $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
+    $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
     $t->dsp('batch_job->value to link', $target, $result);
 
     // test adding a batch job

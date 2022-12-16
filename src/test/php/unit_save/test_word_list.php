@@ -34,6 +34,7 @@
 // start testing the system functionality 
 // --------------------------------------
 
+use api\value_api;
 use api\word_api;
 
 function run_word_list_test(testing $t): void
@@ -252,8 +253,8 @@ function run_word_list_test(testing $t): void
     $t->dsp('word_list->ex_time for ' . $wrd_lst->name(), $target, $result);
 
     // add a test value
-    $t->test_value(array(word_api::TN_ZH, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO), value::TEST_VALUE);
-    $t->test_value(array(word_api::TN_CANTON, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO), value::TEST_FLOAT);
+    $t->test_value(array(word_api::TN_ZH, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO), value_api::TV_INT);
+    $t->test_value(array(word_api::TN_CANTON, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO), value_api::TV_FLOAT);
 
     // test group id
     $wrd_lst = new word_list($usr);
@@ -270,20 +271,20 @@ function run_word_list_test(testing $t): void
     // test word list value
     $val = $wrd_lst->value();
     $result = $val->number();
-    $t->assert('word_list->value for ' . $wrd_lst->dsp_id(), $result, value::TEST_VALUE);
+    $t->assert('word_list->value for ' . $wrd_lst->dsp_id(), $result, value_api::TV_INT);
 
     // test word list value scaled
     // TODO review !!!
     $val = $wrd_lst->value_scaled();
     $result = $val->number();
-    $t->assert('word_list->value_scaled for ' . $wrd_lst->dsp_id(), $result, value::TEST_VALUE);
+    $t->assert('word_list->value_scaled for ' . $wrd_lst->dsp_id(), $result, value_api::TV_INT);
 
     // test another group value
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_names(array(word_api::TN_CANTON, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO));
     $val = $wrd_lst->value();
     $result = $val->number();
-    $target = value::TEST_FLOAT;
+    $target = value_api::TV_FLOAT;
     $t->dsp('word_list->value for ' . $wrd_lst->dsp_id(), $target, $result);
 
     // test assume time

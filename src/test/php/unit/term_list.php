@@ -27,6 +27,7 @@
 */
 
 use api\formula_api;
+use api\triple_api;
 use api\word_api;
 use html\html_base;
 
@@ -86,8 +87,8 @@ class term_list_unit_tests
         $lst = new term_list($usr);
         $lst->add($this->t->new_word(word_api::TN_READ)->term());
         $lst->add($this->t->new_triple(
-            triple::TN_READ_NAME,
-            triple::TN_READ, verb::IS_A, word_api::TN_READ)->term());
+            triple_api::TN_READ_NAME,
+            triple_api::TN_READ, verb::IS_A, word_api::TN_READ)->term());
         $lst->add($this->t->new_formula(formula_api::TN_INCREASE)->term());
         $lst->add($this->t->new_verb(verb::IS_A)->term());
         return $lst;
@@ -101,7 +102,7 @@ class term_list_unit_tests
     {
         global $usr;
         $trm_lst = new term_list($usr);
-        $trm_lst->add($this->get_term(1, triple::TN_READ_NAME, 2));
+        $trm_lst->add($this->get_term(1, triple_api::TN_READ_NAME, 2));
         $trm_lst->add($this->get_term(1, word_api::TN_READ, 1));
         return $trm_lst;
     }

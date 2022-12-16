@@ -31,6 +31,7 @@
 */
 
 use api\formula_api;
+use api\triple_api;
 use api\word_api;
 
 class term_unit_db_tests
@@ -63,10 +64,10 @@ class term_unit_db_tests
         $db_row = $db_con->get1($qp);
         $trm = new term($usr, triple::class);
         $trm->row_mapper_obj($db_row, triple::class);
-        $t->assert($t->name . ' triple row mapper', $trm->name(), triple::TN_READ_NAME);
+        $t->assert($t->name . ' triple row mapper', $trm->name(), triple_api::TN_READ_NAME);
         $trm_by_obj_id = new term($usr);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), triple::class);
-        $t->assert($t->name . ' triple by object id', $trm_by_obj_id->name(), triple::TN_READ_NAME);
+        $t->assert($t->name . ' triple by object id', $trm_by_obj_id->name(), triple_api::TN_READ_NAME);
 
         // test load by term by a formula db row
         $frm = new formula($usr);

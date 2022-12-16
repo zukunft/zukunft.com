@@ -86,7 +86,7 @@ class verb extends db_object
 
 
     /*
-     * for system testing
+     * const for system testing
      */
 
     // already coded verb names or persevered verbs names for unit and integration tests

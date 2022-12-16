@@ -33,6 +33,9 @@
 */
 
 use api\formula_api;
+use api\phrase_api;
+use api\view_api;
+use api\view_cmp_api;
 use api\word_api;
 
 class user_sandbox_named extends user_sandbox
@@ -354,7 +357,7 @@ class user_sandbox_named extends user_sandbox
                         }
                     }
                 } elseif ($this->obj_name == sql_db::TBL_PHRASE) {
-                    if (in_array($this->name, phrase::RESERVED_PHRASES)) {
+                    if (in_array($this->name, phrase_api::RESERVED_PHRASES)) {
                         $result = '"' . $this->name . '" is a reserved phrase name for system testing. Please use another name';
                     }
                 } elseif ($this->obj_name == sql_db::TBL_FORMULA) {
@@ -362,11 +365,11 @@ class user_sandbox_named extends user_sandbox
                         $result = '"' . $this->name . '" is a reserved formula name for system testing. Please use another name';
                     }
                 } elseif ($this->obj_name == sql_db::TBL_VIEW) {
-                    if (in_array($this->name, view::RESERVED_VIEWS)) {
+                    if (in_array($this->name, view_api::RESERVED_VIEWS)) {
                         $result = '"' . $this->name . '" is a reserved view name for system testing. Please use another name';
                     }
                 } elseif ($this->obj_name == sql_db::TBL_VIEW_COMPONENT) {
-                    if (in_array($this->name, view_cmp::RESERVED_VIEW_COMPONENTS)) {
+                    if (in_array($this->name, view_cmp_api::RESERVED_VIEW_COMPONENTS)) {
                         $result = '"' . $this->name . '" is a reserved view component name for system testing. Please use another name';
                     }
                 } elseif ($this->obj_name == sql_db::TBL_SOURCE) {

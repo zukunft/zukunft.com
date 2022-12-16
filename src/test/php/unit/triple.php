@@ -4,6 +4,7 @@
 //use PHPUnit\Framework\TestCase;
 
 //class triple_unit_tests extends TestCase
+use api\triple_api;
 use api\word_api;
 
 class triple_unit_tests
@@ -36,14 +37,14 @@ class triple_unit_tests
 
         // sql to load the triple by name
         $trp = new triple($usr);
-        $trp->set_name(triple::TN_READ);
+        $trp->set_name(triple_api::TN_READ);
         $t->assert_load_standard_sql($db_con, $trp);
 
 
         $t->subheader('API unit tests');
 
         $trp = new triple($usr);
-        $trp->set(1, triple::TN_READ, triple::TN_READ, verb::IS_A, word_api::TN_READ);
+        $trp->set(1, triple_api::TN_READ, triple_api::TN_READ, verb::IS_A, word_api::TN_READ);
         $trp->description = 'The mathematical constant Pi';
         $api_trp = $trp->api_obj();
         $t->assert($t->name . 'api->id', $api_trp->id, $trp->id());
