@@ -31,6 +31,7 @@
 */
 
 use api\formula_api;
+use api\word_api;
 
 class expression_unit_tests
 {
@@ -107,7 +108,7 @@ class expression_unit_tests
         $test_name = 'getting phrases that should be added to the result of a formula for "' . $exp->dsp_id() . '"';
         $phr_lst_fv = $exp->fv_phr_lst($trm_lst);
         $result = $phr_lst_fv->dsp_name();
-        $target = '"' . word::TN_READ_PERCENT . '"';
+        $target = '"' . word_api::TN_PCT . '"';
         $t->assert($test_name, $result, $target);
 
         // tests based on the pi formula

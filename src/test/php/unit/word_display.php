@@ -43,7 +43,7 @@ class word_display_unit_tests
 
         $t->subheader('Word tests');
 
-        $wrd = new word_dsp(1, word::TN_READ);
+        $wrd = new word_dsp(1, word_api::TN_READ);
         $wrd_pi = new word_dsp(2, word_api::TN_CONST);
         $test_page = $html->text_h2('Word display test');
         $test_page .= 'with tooltip: ' . $wrd->dsp() . '<br>';

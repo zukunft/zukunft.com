@@ -47,11 +47,11 @@ class word_list_display_unit_tests
         // create the word list test set
         $lst = new word_list_dsp();
         $lst_long = new word_list_dsp();
-        $wrd = new word_dsp(1, word::TN_READ);
+        $wrd = new word_dsp(1, word_api::TN_READ);
         $wrd_pi = new word_dsp(2, word_api::TN_CONST);
         $wrd_time = new word_dsp(3, word_api::TN_2019);
         $wrd_one = new word_dsp(4, word_api::TN_ONE);
-        $wrd_mio = new word_dsp(5, word_api::TN_MIO);
+        $wrd_mio = new word_dsp(5, word_api::TN_MIO_SHORT);
         $wrd_pct = new word_dsp(6, word_api::TN_PCT);
         $wrd_time->set_type(phrase_type::TIME);
         $wrd_one->set_type(phrase_type::SCALING_HIDDEN);

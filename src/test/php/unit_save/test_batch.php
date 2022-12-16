@@ -31,8 +31,9 @@
 */
 
 use api\formula_api;
+use api\word_api;
 
-function run_batch_job_test(testing $t)
+function run_batch_job_test(testing $t): void
 {
 
     global $usr;
@@ -41,17 +42,17 @@ function run_batch_job_test(testing $t)
 
     // make sure that the test value is set independent of any previous database tests
     $t->test_value(array(
-        word::TN_CH,
-        word::TN_INHABITANT,
-        word::TN_MIO,
-        word::TN_2020
+        word_api::TN_CH,
+        word_api::TN_INHABITANTS,
+        word_api::TN_MIO,
+        word_api::TN_2020
     ),
         value::TV_CH_INHABITANTS_2020_IN_MIO);
 
 
     // prepare test adding a batch job via a list
     $phr_lst = new phrase_list($usr);
-    $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
+    $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
     $phr_lst->ex_time();
     $val = new value($usr);
     $val->grp = $phr_lst->get_grp();
@@ -72,7 +73,7 @@ function run_batch_job_test(testing $t)
 
 }
 
-function run_batch_job_list_test(testing $t)
+function run_batch_job_list_test(testing $t): void
 {
 
     global $usr;
@@ -82,7 +83,7 @@ function run_batch_job_list_test(testing $t)
     // prepare test adding a batch job via a list
     $frm = $t->load_formula(formula_api::TN_ADD);
     $phr_lst = new phrase_list($usr);
-    $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
+    $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
 
     // test adding a batch job via a list
     $job_lst = new batch_job_list($usr);

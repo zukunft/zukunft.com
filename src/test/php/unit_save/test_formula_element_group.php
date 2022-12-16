@@ -38,6 +38,7 @@
 */
 
 use api\formula_api;
+use api\word_api;
 
 function run_formula_element_group_test(testing $t): void
 {
@@ -71,7 +72,7 @@ function run_formula_element_group_test(testing $t): void
         // prepare the phrase list for the formula element selection
         // means "get all numbers related to the Swiss inhabitants for 2019 and 2020"
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO));
+        $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO));
 
         // get "this" from the formula element group list
         $elm_grp = $elm_grp_lst->lst()[0];

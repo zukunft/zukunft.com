@@ -31,6 +31,7 @@
 */
 
 use api\formula_api;
+use api\word_api;
 use cfg\formula_type;
 
 function create_test_formulas(testing $t): void
@@ -79,11 +80,11 @@ function run_formula_test(testing $t): void
             $target = zu_dsp_bool(true);
             $t->dsp('formula->is_special for "' . $elm_frm->name() . '"', $target, $result);
 
-            $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2019));
+            $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2019));
             $time_phr = $phr_lst->time_useful();
             $val = $elm_frm->special_result($phr_lst, $time_phr);
             $result = $val->number();
-            $target = word::TN_2019;
+            $target = word_api::TN_2019;
             // TODO: get the best matching number
             //$t->dsp('formula->special_result for "'.$elm_frm->name.'"', $target, $result);
 
@@ -95,7 +96,7 @@ function run_formula_test(testing $t): void
             }
             $time_phr = $elm_frm_next->special_time_phr($time_phr);
             $result = $time_phr->name();
-            $target = word::TN_2019;
+            $target = word_api::TN_2019;
             $t->dsp('formula->special_time_phr for "' . $elm_frm_next->name() . '"', $target, $result);
         }
     }
@@ -106,7 +107,7 @@ function run_formula_test(testing $t): void
     } else {
         $result = $phr_lst->name();
     }
-    $target = '"' . word::TN_2019 . '","' . word::TN_CH . '","' . word::TN_INHABITANT . '"';
+    $target = '"' . word_api::TN_2019 . '","' . word_api::TN_CH . '","' . word_api::TN_INHABITANTS . '"';
     $t->dsp('formula->special_phr_lst for "' . $frm->name() . '"', $target, $result);
 
     $phr_lst = $frm->assign_phr_lst_direct();
@@ -131,24 +132,24 @@ function run_formula_test(testing $t): void
     $frm_pe = $t->load_formula(formula_api::TN_RATIO);
 
     $phr_lst = new phrase_list($t->usr1);
-    $phr_lst->load_by_names(array(word::TN_SHARE, word::TN_CHF));
+    $phr_lst->load_by_names(array(word_api::TN_SHARE, word_api::TN_CHF));
 
     $phr_lst_all = $frm_pe->assign_phr_lst();
     $phr_lst = $phr_lst_all->filter($phr_lst);
     $result = $phr_lst->dsp_name();
-    $target = '"' . word::TN_SHARE . '"';
+    $target = '"' . word_api::TN_SHARE . '"';
     $t->dsp('formula->assign_phr_lst for "' . $frm->name() . '"', $target, $result);
 
     $phr_lst_all = $frm_pe->assign_phr_ulst();
     $phr_lst = $phr_lst_all->filter($phr_lst);
     $result = $phr_lst->dsp_name();
-    $target = '"' . word::TN_SHARE . '"';
+    $target = '"' . word_api::TN_SHARE . '"';
     $t->dsp('formula->assign_phr_ulst for "' . $frm->name() . '"', $target, $result);
 
     // test the calculation of one value
     $phr_lst = new phrase_list($t->usr1);
     // TODO check why is this word MIO is needed??
-    $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020, word::TN_MIO));
+    $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020, word_api::TN_MIO));
 
     $frm = $t->load_formula(formula_api::TN_ADD);
     $fv_lst = $frm->to_num($phr_lst);
@@ -194,8 +195,8 @@ function run_formula_test(testing $t): void
     // test the scaling back to a thousand
     $phr_lst = new phrase_list($t->usr1);
     // TODO check why is this word ONE needed?? scale shout assume one if no scaling word is set or implied
-    //$phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANTS, word::TN_2020));
-    $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020, word::TN_ONE));
+    //$phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020));
+    $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020, word_api::TN_ONE));
     $frm_scale_one_to_k = $t->load_formula(formula_api::TN_SCALE_TO_K);
     $fv_lst = $frm_scale_one_to_k->calc($phr_lst);
     if ($fv_lst != null) {
@@ -239,7 +240,7 @@ function run_formula_test(testing $t): void
     // ... the formula result selected by the word and in percent
     // TODO defined the criteria for selecting the formula value
     $wrd = new word($t->usr1);
-    $wrd->set_name(word::TN_CH);
+    $wrd->set_name(word_api::TN_CH);
     $wrd->load_obj_vars();
     /*
     $result = trim($frm_dsp->dsp_result($wrd, $back));
@@ -498,7 +499,7 @@ function run_formula_list_test(testing $t): void
     $t->header('est the formula list class (classes/formula_list.php)');
 
     // load the main test word
-    $wrd_share = $t->test_word(word::TN_SHARE);
+    $wrd_share = $t->test_word(word_api::TN_SHARE);
 
     $wrd = new word($t->usr1);
     $wrd->load_by_id($wrd_share->id(), word::class);

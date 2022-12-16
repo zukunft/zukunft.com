@@ -2,8 +2,8 @@
 
 /*
 
-    /test/php/unit_save/term_list.php - TESTing of the TERM LIST functions
-    ---------------------------------
+    /test/php/unit_db/term_list.php - TESTing of the TERM LIST functions that only read from the database
+    -------------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -30,11 +30,9 @@
 
 */
 
-// --------------------------------------
-// start testing the system functionality 
-// --------------------------------------
+use api\word_api;
 
-class term_list_test
+class term_list_unit_db_tests
 {
 
     function run(testing $t): void
@@ -51,7 +49,7 @@ class term_list_test
         $trm_lst = new term_list($usr);
         $trm_lst->load_by_ids((new trm_ids([1, -1])));
         $result = $trm_lst->name();
-        $target = '"' . triple::TN_READ_NAME . '","' . word::TN_READ . '"'; // order adjusted based on the number of usage
+        $target = '"' . triple::TN_READ_NAME . '","' . word_api::TN_READ . '"'; // order adjusted based on the number of usage
         $t->assert('load by ids for ' . $trm_lst->dsp_id(), $result, $target);
     }
 

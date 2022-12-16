@@ -31,6 +31,7 @@
 */
 
 use api\formula_api;
+use api\word_api;
 
 function run_expression_test(testing $t): void
 {
@@ -51,7 +52,7 @@ function run_expression_test(testing $t): void
     $frm_sector = $t->load_formula(formula_api::TN_SECTOR);
 
     $result = $frm_sector->usr_text;
-    $target = '= "' . word::TN_COUNTRY . '" "differentiator" "' . word::TN_CANTON . '" / "' . word::TN_TOTAL . '"';
+    $target = '= "' . word_api::TN_COUNTRY . '" "differentiator" "' . word_api::TN_CANTON . '" / "' . word_api::TN_TOTAL . '"';
     $t->assert('user text', $result, $target, TIMEOUT_LIMIT_PAGE_LONG);
 
     // create expressions for testing
@@ -65,12 +66,12 @@ function run_expression_test(testing $t): void
     $exp_sector->set_user_text($frm_sector->usr_text);
 
     // load the test ids
-    $wrd_percent = $t->load_word(word::TN_READ_PERCENT);
+    $wrd_percent = $t->load_word(word_api::TN_PCT);
     $frm_this = $t->load_formula(formula_api::TN_READ_THIS);
     $frm_prior = $t->load_formula(formula_api::TN_READ_PRIOR);
 
     // test the expression processing of the user readable part
-    $target = '"' . word::TN_READ_PERCENT . '"';
+    $target = '"' . word_api::TN_PCT . '"';
     $result = $exp->fv_part_usr();
     $t->assert('fv_part_usr for "' . $frm->usr_text . '"', $result, $target, TIMEOUT_LIMIT_LONG); // ??? why???
     $target = '( "this" - "prior" ) / "prior"';
@@ -95,7 +96,7 @@ function run_expression_test(testing $t): void
     if ($phr_lst_fv != null) {
         $result = $phr_lst_fv->dsp_name();
     }
-    $target = '"' . word::TN_READ_PERCENT . '"';
+    $target = '"' . word_api::TN_PCT . '"';
     $t->assert('fv_phr_lst for "' . $exp->dsp_id() . '"', $result, $target, TIMEOUT_LIMIT_LONG); // ??? why???
 
     // ... and the phrases used in the formula
@@ -103,7 +104,7 @@ function run_expression_test(testing $t): void
     if ($phr_lst_fv != null) {
         $result = $phr_lst_fv->dsp_name();
     }
-    $target = '"' . word::TN_EARNING . '","' . word::TN_PRICE . '"';
+    $target = '"' . word_api::TN_EARNING . '","' . word_api::TN_PRICE . '"';
     $t->assert('phr_lst for "' . $exp_pe->dsp_id() . '"', $result, $target);
 
     // ... and all elements used in the formula

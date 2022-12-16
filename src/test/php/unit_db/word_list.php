@@ -2,14 +2,14 @@
 
 /*
 
-    test/unit/triple_display.php - TESTing of the TRIPLE DISPLAY functions
-    ----------------------------
+    /test/php/unit_db/word_list.php - TESTing of the WORD LIST functions that only read from the database
+    -------------------------------
   
 
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as
+    under the words of the GNU General Public License as
     published by the Free Software Foundation, either version 3 of
     the License, or (at your option) any later version.
     zukunft.com is distributed in the hope that it will be useful,
@@ -31,25 +31,27 @@
 */
 
 use api\word_api;
-use html\html_base;
-use html\triple_dsp;
-use html\word_dsp;
 
-class triple_display_unit_tests
+class word_list_unit_db_tests
 {
+
     function run(testing $t): void
     {
+
         global $usr;
-        $html = new html_base();
 
-        $t->subheader('Triple tests');
+        // init
+        $t->name = 'word list read db->';
 
-        $trp = new triple_dsp(-1, word_api::TN_READ);
-        $wrd = new word_dsp(1, word_api::TN_READ);
-        $test_page = $html->text_h2('Triple display test');
-        $test_page .= 'with tooltip: ' . $trp->dsp() . '<br>';
-        $test_page .= 'edit button: ' . $trp->btn_edit($wrd->phrase()) . '<br>';
-        $t->html_test($test_page, 'triple', $t);
+        $t->header('Test the word list class (classes/word_list.php)');
+
+        // test load by word list by ids
+        $wrd_lst = new word_list($usr);
+        $wrd_lst->load_by_ids(array(1,2));
+        $result = $wrd_lst->name();
+        $target = '"' . word_api::TN_READ . '","' . word_api::TN_CONST . '"'; // order adjusted based on the number of usage
+        $t->assert('load by ids for ' . $wrd_lst->dsp_id(), $result, $target);
     }
 
 }
+

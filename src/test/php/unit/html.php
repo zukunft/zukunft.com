@@ -111,7 +111,7 @@ class html_unit_tests
         $phr_ch = new \api\phrase_api($phr_id, word_api::TN_CH); $phr_id++;
         $phr_inhabitant = new \api\phrase_api($phr_id, word_api::TN_INHABITANT); $phr_id++;
         $phr_2019 = new \api\phrase_api($phr_id, word_api::TN_2019); $phr_id++;
-        $phr_mio = new \api\phrase_api($phr_id, word_api::TN_MIO);
+        $phr_mio = new \api\phrase_api($phr_id, word_api::TN_MIO_SHORT);
         $phr_pct = new \api\phrase_api($phr_id, word_api::TN_PCT);
 
         // create a test set of phrase groups
@@ -192,7 +192,7 @@ class html_unit_tests
         $t->html_test($cmp->dsp_obj()->html(), 'view_cmp_text', $t);
 
         $wrd = new \api\word_api();
-        $wrd->set_name(word::TN_ADD);
+        $wrd->set_name(word_api::TN_ADD);
         $cmp->obj = $wrd;
 
     }

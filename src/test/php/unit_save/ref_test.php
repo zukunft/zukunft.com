@@ -30,7 +30,9 @@
 
 */
 
-function run_ref_test(testing $t)
+use api\word_api;
+
+function run_ref_test(testing $t): void
 {
 
     global $usr;
@@ -38,8 +40,8 @@ function run_ref_test(testing $t)
     dsp_test_header('Test the ref class (src/main/php/model/ref/ref.php)');
 
     // create the test ref
-    $wrd = $t->test_word(word::TN_ADD);
-    $t->test_ref(word::TN_ADD, ref::TEST_REF_NAME, ref_type::WIKIDATA);
+    $wrd = $t->test_word(word_api::TN_ADD);
+    $t->test_ref(word_api::TN_ADD, ref::TEST_REF_NAME, ref_type::WIKIDATA);
 
     // load by phrase and type
     $ref_type = get_ref_type(ref_type::WIKIDATA);
@@ -49,14 +51,14 @@ function run_ref_test(testing $t)
     $ref->load_obj_vars();
     $result = $ref->external_key;
     $target = ref::TEST_REF_NAME;
-    $t->dsp('ref->load "' . word::TN_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
+    $t->dsp('ref->load "' . word_api::TN_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
 
     if ($ref->id > 0) {
         // load by id and test the loading of the objects
         $ref2 = new ref($usr);
         $ref2->load_by_id($ref->id);
         $result = $ref2->phr->name();
-        $target = word::TN_ADD;
+        $target = word_api::TN_ADD;
         $t->dsp('ref->load_object word', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
         $result = $ref2->ref_type->name;
         $target = ref_type::WIKIDATA;

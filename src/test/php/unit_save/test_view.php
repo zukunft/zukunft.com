@@ -30,7 +30,9 @@
 
 */
 
-function create_test_views(testing $t)
+use api\word_api;
+
+function create_test_views(testing $t): void
 {
     $t->header('Check if all base views are existing');
 
@@ -40,7 +42,7 @@ function create_test_views(testing $t)
 
 }
 
-function run_view_test(testing $t)
+function run_view_test(testing $t): void
 {
 
     $back = 0;
@@ -57,10 +59,10 @@ function run_view_test(testing $t)
 
     // test the complete view for one word
     $wrd = new word($t->usr1);
-    $wrd->load_by_name(word::TN_CH);
+    $wrd->load_by_name(word_api::TN_CH);
     $result = $dsp->display($wrd, $back);
     // check if the view contains the word name
-    $target = word::TN_CH;
+    $target = word_api::TN_CH;
     $t->dsp_contains(', view->display "' . $dsp->name() . '" for "' . $wrd->name() . '" contains', $target, $result, TIMEOUT_LIMIT_LONG);
     // check if the view contains at least one value
     $target = 'back='.$wrd->id().'">8.51</a>';

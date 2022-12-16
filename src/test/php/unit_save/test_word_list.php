@@ -34,7 +34,9 @@
 // start testing the system functionality 
 // --------------------------------------
 
-function run_word_list_test(testing $t)
+use api\word_api;
+
+function run_word_list_test(testing $t): void
 {
 
     global $usr;
@@ -43,9 +45,9 @@ function run_word_list_test(testing $t)
 
     // test load by word list by names
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_ZH, word::TN_2021, word::TN_MIO));
+    $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_2021, word_api::TN_MIO));
     $result = $wrd_lst->name();
-    $target = '"' . word::TN_MIO . '","' . word::TN_2021 . '","' . word::TN_ZH . '"'; // order adjusted based on the number of usage
+    $target = '"' . word_api::TN_MIO . '","' . word_api::TN_2021 . '","' . word_api::TN_ZH . '"'; // order adjusted based on the number of usage
     $t->assert('word_list->load by names for ' . $wrd_lst->dsp_id(), $result, $target);
 
     // test load by word list by group id
@@ -60,181 +62,181 @@ function run_word_list_test(testing $t)
 
     // test add by verb e.g. "Zurich" "is a" "Canton", "City" or "Company"
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_ZH));
+    $wrd_lst->load_by_names(array(word_api::TN_ZH));
     $wrd_lst_linked = $wrd_lst->load_linked_words(cl(db_cl::VERB, verb::IS_A), word_select_direction::UP);
     $result = dsp_array($wrd_lst_linked->names());
-    $target = word::TN_CANTON . "," . word::TN_CITY . "," . word::TN_COMPANY; // order adjusted based on the number of usage
-    $t->assert('word_list->load_linked_words for "' . word::TN_ZH . '" "' . verb::IS_A . '" up', $result, $target);
+    $target = word_api::TN_CANTON . "," . word_api::TN_CITY . "," . word_api::TN_COMPANY; // order adjusted based on the number of usage
+    $t->assert('word_list->load_linked_words for "' . word_api::TN_ZH . '" "' . verb::IS_A . '" up', $result, $target);
 
     // test getting all parents e.g. "Cash" is part of "Current Assets" and "Assets"
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_CASH));
+    $wrd_lst->load_by_names(array(word_api::TN_CASH));
     $parents = $wrd_lst->foaf_parents(cl(db_cl::VERB, verb::IS_PART_OF));
     $result = dsp_array($parents->names());
-    $target = word::TN_ASSETS_CURRENT . "," . word::TN_ASSETS;
-    $t->assert('word_list->foaf_parent for "' . word::TN_ZH . '" "' . verb::IS_A . '" up', $result, $target);
+    $target = word_api::TN_ASSETS_CURRENT . "," . word_api::TN_ASSETS;
+    $t->assert('word_list->foaf_parent for "' . word_api::TN_ZH . '" "' . verb::IS_A . '" up', $result, $target);
 
     // test add parent step 1
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_CASH));
+    $wrd_lst->load_by_names(array(word_api::TN_CASH));
     $parents = $wrd_lst->parents(cl(db_cl::VERB, verb::IS_PART_OF), 1);
     $result = dsp_array($parents->names());
-    $target = word::TN_ASSETS_CURRENT;
-    $t->assert('word_list->parents for "' . word::TN_CASH . '" "' . verb::IS_PART_OF . '" up', $result, $target);
+    $target = word_api::TN_ASSETS_CURRENT;
+    $t->assert('word_list->parents for "' . word_api::TN_CASH . '" "' . verb::IS_PART_OF . '" up', $result, $target);
 
     // test add parent step 2
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_CASH));
+    $wrd_lst->load_by_names(array(word_api::TN_CASH));
     $parents = $wrd_lst->parents(cl(db_cl::VERB, verb::IS_PART_OF), 2);
     $result = dsp_array($parents->names());
-    $target = word::TN_ASSETS_CURRENT . "," . word::TN_ASSETS;
-    $t->assert('word_list->parents for "' . word::TN_CASH . '" "' . verb::IS_PART_OF . '" up', $result, $target);
+    $target = word_api::TN_ASSETS_CURRENT . "," . word_api::TN_ASSETS;
+    $t->assert('word_list->parents for "' . word_api::TN_CASH . '" "' . verb::IS_PART_OF . '" up', $result, $target);
 
     // test add child and contains
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_CANTON));
+    $wrd_lst->load_by_names(array(word_api::TN_CANTON));
     $children = $wrd_lst->foaf_children(cl(db_cl::VERB, verb::IS_A));
-    $wrd = $t->load_word(word::TN_ZH);
+    $wrd = $t->load_word(word_api::TN_ZH);
     $result = $children->does_contain($wrd);
-    $t->assert('word_list->foaf_children is "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_ZH . ' ', $result, true);
+    $t->assert('word_list->foaf_children is "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TN_ZH . ' ', $result, true);
 
     // test direct children
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_CANTON));
+    $wrd_lst->load_by_names(array(word_api::TN_CANTON));
     $children = $wrd_lst->children(cl(db_cl::VERB, verb::IS_A), 1);
-    $wrd = $t->load_word(word::TN_ZH);
+    $wrd = $t->load_word(word_api::TN_ZH);
     $result = $children->does_contain($wrd);
-    $t->assert('word_list->children is "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_ZH . ' ', $result, true);
+    $t->assert('word_list->children is "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TN_ZH . ' ', $result, true);
 
     // test is
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_ZH));
+    $wrd_lst->load_by_names(array(word_api::TN_ZH));
     $lst_is = $wrd_lst->is();
     $result = dsp_array($lst_is->names());
-    $target = dsp_array(array(word::TN_CANTON, word::TN_CITY, word::TN_COMPANY)); // order adjusted based on the number of usage
+    $target = dsp_array(array(word_api::TN_CANTON, word_api::TN_CITY, word_api::TN_COMPANY)); // order adjusted based on the number of usage
     $t->assert('word_list->is for ' . $wrd_lst->name() . ' up', $result, $target);
 
     // test "are" e.g. "Cantons are Zurich and ..."
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_CANTON));
+    $wrd_lst->load_by_names(array(word_api::TN_CANTON));
     $lst_are = $wrd_lst->are();
-    $wrd = $t->load_word(word::TN_ZH);
+    $wrd = $t->load_word(word_api::TN_ZH);
     $result = $lst_are->does_contain($wrd);
-    $t->assert('word_list->are "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_ZH . ' ', $result, true);
+    $t->assert('word_list->are "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TN_ZH . ' ', $result, true);
 
     // test "contains" e.g. "Cash Flow Statement contains Taxes and ..."
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_CASH_FLOW));
+    $wrd_lst->load_by_names(array(word_api::TN_CASH_FLOW));
     $lst_contains = $wrd_lst->contains();
-    $wrd = $t->load_word(word::TN_TAX_REPORT);
+    $wrd = $t->load_word(word_api::TN_TAX_REPORT);
     $result = $lst_contains->does_contain($wrd);
-    $t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_TAX_REPORT, $result, true);
+    $t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TN_TAX_REPORT, $result, true);
 
     // test "are and contains"
     // e.g. "a Cash Flow Statement is a Financial Report, and it contains the tax statement ..."
     // so the words related to "Financial Report" are "Cash Flow Statement" and "Tax Statement"
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_FIN_REPORT));
+    $wrd_lst->load_by_names(array(word_api::TN_FIN_REPORT));
     $lst_related = $wrd_lst->are_and_contains();
-    $wrd_cf = $t->load_word(word::TN_CASH_FLOW);
+    $wrd_cf = $t->load_word(word_api::TN_CASH_FLOW);
     $result = $lst_related->does_contain($wrd_cf);
-    $t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_CASH_FLOW, $result, true);
-    $wrd_tax = $t->load_word(word::TN_TAX_REPORT);
+    $t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TN_CASH_FLOW, $result, true);
+    $wrd_tax = $t->load_word(word_api::TN_TAX_REPORT);
     $result = $lst_related->does_contain($wrd_tax);
-    $t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_TAX_REPORT, $result, true);
+    $t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TN_TAX_REPORT, $result, true);
 
     // test "differentiators"
     // e.g. a "Sector" "can contain" "Energy"
     // or the other way round "Energy" "can be a (differentiator for)" "Sector"
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_SECTOR));
+    $wrd_lst->load_by_names(array(word_api::TN_SECTOR));
     $lst_differentiators = $wrd_lst->differentiators();
-    $wrd_energy = $t->load_word(word::TN_ENERGY);
+    $wrd_energy = $t->load_word(word_api::TN_ENERGY);
     $result = $lst_differentiators->does_contain($wrd_energy);
-    $t->assert('word_list->differentiators "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_ENERGY, $result, true);
+    $t->assert('word_list->differentiators "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TN_ENERGY, $result, true);
 
     // test "differentiators_all"
     // e.g. a "Sector" "can contain" "Energy" and "Wind Energy"
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_SECTOR));
+    $wrd_lst->load_by_names(array(word_api::TN_SECTOR));
     $lst_differentiators = $wrd_lst->differentiators_all();
-    $wrd_wind = $t->load_word(word::TN_WIND_ENERGY);
+    $wrd_wind = $t->load_word(word_api::TN_WIND_ENERGY);
     $result = $lst_differentiators->does_contain($wrd_wind);
-    $t->assert('word_list->differentiators_all "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_WIND_ENERGY, $result, true);
+    $t->assert('word_list->differentiators_all "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TN_WIND_ENERGY, $result, true);
 
     // test "differentiators_filtered"
     // e.g. a "Sector" "can contain" "Wind Energy" and "Energy" can be filtered
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_SECTOR));
+    $wrd_lst->load_by_names(array(word_api::TN_SECTOR));
     $wrd_lst_filter = new word_list($usr);
-    $wrd_lst_filter->load_by_names(array(word::TN_ENERGY));
+    $wrd_lst_filter->load_by_names(array(word_api::TN_ENERGY));
     $lst_differentiators = $wrd_lst->differentiators_filtered($wrd_lst_filter);
     $result = $lst_differentiators->does_contain($wrd_energy);
-    $t->assert('word_list->differentiators_filtered "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_ENERGY, $result, true);
-    $wrd_wind = $t->load_word(word::TN_WIND_ENERGY);
+    $t->assert('word_list->differentiators_filtered "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TN_ENERGY, $result, true);
+    $wrd_wind = $t->load_word(word_api::TN_WIND_ENERGY);
     $result = $lst_differentiators->does_contain($wrd_wind);
-    $t->assert('word_list->differentiators_filtered "' . implode('","', $wrd_lst->names()) . '", which contains not ' . word::TN_WIND_ENERGY, $result, false);
-    $wrd_energy = $t->load_word(word::TN_ENERGY);
+    $t->assert('word_list->differentiators_filtered "' . implode('","', $wrd_lst->names()) . '", which contains not ' . word_api::TN_WIND_ENERGY, $result, false);
+    $wrd_energy = $t->load_word(word_api::TN_ENERGY);
 
     // test "keep_only_specific" e.g. keep "Zurich" but remove "Canton"
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_CANTON, word::TN_ZH));
+    $wrd_lst->load_by_names(array(word_api::TN_CANTON, word_api::TN_ZH));
     $lst_specific = $wrd_lst->keep_only_specific();
-    $wrd_specific = $t->load_word(word::TN_ZH);
+    $wrd_specific = $t->load_word(word_api::TN_ZH);
     $result = $lst_specific->does_contain($wrd_specific);
-    $t->assert('word_list->are "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_ZH . ' ', $result, true);
-    $wrd = $t->load_word(word::TN_CANTON);
+    $t->assert('word_list->are "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TN_ZH . ' ', $result, true);
+    $wrd = $t->load_word(word_api::TN_CANTON);
     $result = $lst_specific->does_contain($wrd);
-    $t->assert('word_list->keep_only_specific "' . implode('","', $wrd_lst->names()) . '", which contains not ' . word::TN_CANTON . ' ', $result, false);
+    $t->assert('word_list->keep_only_specific "' . implode('","', $wrd_lst->names()) . '", which contains not ' . word_api::TN_CANTON . ' ', $result, false);
 
 
     $t->subheader('Test info functions');
 
     // test "has time" for 2020 is supposed to be true
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_2020));
+    $wrd_lst->load_by_names(array(word_api::TN_2020));
     $result = $wrd_lst->has_time();
     $t->assert('word_list->has_time ' . $wrd_lst->dsp_id(), $result, true);
 
     // test "has time" for Canton is supposed to be false
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_CANTON));
+    $wrd_lst->load_by_names(array(word_api::TN_CANTON));
     $result = $wrd_lst->has_time();
     $t->assert('word_list->has_time ' . $wrd_lst->dsp_id(), $result, false);
 
     // test "has_measure" for CHF is supposed to be true
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_CHF));
+    $wrd_lst->load_by_names(array(word_api::TN_CHF));
     $result = $wrd_lst->has_measure();
     $t->assert('word_list->has_measure ' . $wrd_lst->dsp_id(), $result, true);
 
     // test "has_measure" for Canton is supposed to be false
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_CANTON));
+    $wrd_lst->load_by_names(array(word_api::TN_CANTON));
     $result = $wrd_lst->has_measure();
     $t->assert('word_list->has_measure ' . $wrd_lst->dsp_id(), $result, false);
 
     // test "has_scaling" for CHF is supposed to be true
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_MIO));
+    $wrd_lst->load_by_names(array(word_api::TN_MIO));
     $result = $wrd_lst->has_scaling();
     $t->assert('word_list->has_scaling ' . $wrd_lst->dsp_id(), $result, true);
 
     // test "has_scaling" for Canton is supposed to be false
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_CANTON));
+    $wrd_lst->load_by_names(array(word_api::TN_CANTON));
     $result = $wrd_lst->has_scaling();
     $t->assert('word_list->has_scaling ' . $wrd_lst->dsp_id(), $result, false);
 
     // test "has_percent" for CHF is supposed to be true
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_PCT));
+    $wrd_lst->load_by_names(array(word_api::TN_PCT));
     $result = $wrd_lst->has_percent();
     $t->assert('word_list->has_percent ' . $wrd_lst->dsp_id(), $result, true);
 
     // test "has_percent" for Canton is supposed to be false
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_CANTON));
+    $wrd_lst->load_by_names(array(word_api::TN_CANTON));
     $result = $wrd_lst->has_percent();
     $t->assert('word_list->has_percent ' . $wrd_lst->dsp_id(), $result, false);
 
@@ -242,20 +244,20 @@ function run_word_list_test(testing $t)
 
     // exclude types
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_ZH, word::TN_2021, word::TN_CHF, word::TN_MIO));
+    $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO));
     $wrd_lst_ex = clone $wrd_lst;
     $wrd_lst_ex->ex_time();
     $result = $wrd_lst_ex->name();
-    $target = '"' . word::TN_MIO . '","' . word::TN_CHF . '","' . word::TN_ZH . '"'; // the creation should be tested, but how?
+    $target = '"' . word_api::TN_MIO . '","' . word_api::TN_CHF . '","' . word_api::TN_ZH . '"'; // the creation should be tested, but how?
     $t->dsp('word_list->ex_time for ' . $wrd_lst->name(), $target, $result);
 
     // add a test value
-    $t->test_value(array(word::TN_ZH, word::TN_2021, word::TN_CHF, word::TN_MIO), value::TEST_VALUE);
-    $t->test_value(array(word::TN_CANTON, word::TN_2021, word::TN_CHF, word::TN_MIO), value::TEST_FLOAT);
+    $t->test_value(array(word_api::TN_ZH, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO), value::TEST_VALUE);
+    $t->test_value(array(word_api::TN_CANTON, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO), value::TEST_FLOAT);
 
     // test group id
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_ZH, word::TN_2021, word::TN_CHF, word::TN_MIO));
+    $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO));
     $grp = new phrase_group($usr);
     $grp->load_by_ids((new phr_ids($wrd_lst->ids())));
     $result = $grp->get_id();
@@ -278,7 +280,7 @@ function run_word_list_test(testing $t)
 
     // test another group value
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_CANTON, word::TN_2021, word::TN_CHF, word::TN_MIO));
+    $wrd_lst->load_by_names(array(word_api::TN_CANTON, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO));
     $val = $wrd_lst->value();
     $result = $val->number();
     $target = value::TEST_FLOAT;
@@ -286,20 +288,20 @@ function run_word_list_test(testing $t)
 
     // test assume time
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(word::TN_ZH, word::TN_2021, word::TN_MIO));
+    $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_2021, word_api::TN_MIO));
     $abb_last_year = $wrd_lst->assume_time();
     $result = $abb_last_year->name();
-    $target = word::TN_2021;
+    $target = word_api::TN_2021;
     $t->dsp('word_list->assume_time for ' . $wrd_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_DB);
 
 
     // word sort
-    $wrd_ZH = $t->load_word(word::TN_ZH);
+    $wrd_ZH = $t->load_word(word_api::TN_ZH);
     $wrd_lst = $wrd_ZH->parents();
     $wrd_lst->name_sort();
-    $target = '"' . word::TN_CANTON . '","' . word::TN_CITY . '","' . word::TN_COMPANY . '"';
+    $target = '"' . word_api::TN_CANTON . '","' . word_api::TN_CITY . '","' . word_api::TN_COMPANY . '"';
     $result = $wrd_lst->dsp_name();
-    $t->dsp('word_list->sort for "' . word::TN_ZH . '"', $target, $result);
+    $t->dsp('word_list->sort for "' . word_api::TN_ZH . '"', $target, $result);
 
     /*
      * test the class functions not yet tested above

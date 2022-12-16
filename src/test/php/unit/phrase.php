@@ -30,6 +30,8 @@
 
 */
 
+use api\word_api;
+
 class phrase_unit_tests
 {
 
@@ -60,7 +62,7 @@ class phrase_unit_tests
 
         // check the PostgreSQL query syntax
         $wrd_company = new word($usr);
-        $wrd_company->set(2, word::TN_COMPANY);
+        $wrd_company->set(2, word_api::TN_COMPANY);
         $sql_name = 'phrase_list_related';
         $db_con->db_type = sql_db::POSTGRES;
         $file_name = $t->resource_path . $sql_name . test_base::FILE_EXT;

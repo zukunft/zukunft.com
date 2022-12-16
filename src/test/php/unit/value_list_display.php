@@ -52,7 +52,7 @@ class value_list_display_unit_tests
         $phr_ch = new phrase_api($phr_id, word_api::TN_CH); $phr_id++;
         $phr_inhabitant = new phrase_api($phr_id, word_api::TN_INHABITANT); $phr_id++;
         $phr_2019 = new phrase_api($phr_id, word_api::TN_2019); $phr_id++;
-        $phr_mio = new phrase_api($phr_id, word_api::TN_MIO);
+        $phr_mio = new phrase_api($phr_id, word_api::TN_MIO_SHORT);
 
         // create a test set of phrase groups
         $grp_id = 1;

@@ -30,6 +30,8 @@
 
 */
 
+use api\word_api;
+
 function run_phrase_list_test(testing $t)
 {
 
@@ -38,10 +40,10 @@ function run_phrase_list_test(testing $t)
     $t->header('Test the phrase list class (src/main/php/model/phrase/phrase_list.php)');
 
     // load the main test word
-    $wrd_company = $t->test_word(word::TN_READ);
+    $wrd_company = $t->test_word(word_api::TN_READ);
 
     // prepare test by loading Insurance Zurich
-    $wrd_zh = $t->load_word(word::TN_ZH);
+    $wrd_zh = $t->load_word(word_api::TN_ZH);
     $lnk_company = new triple($usr);
     $lnk_company->from->set_id($wrd_zh->id());
     $lnk_company->verb->set_id(cl(db_cl::VERB, verb::IS_A));
@@ -62,7 +64,7 @@ function run_phrase_list_test(testing $t)
 
     // ... the complete word list, which means split the triples into single words
     $wrd_lst_all = $phr_lst->wrd_lst_all();
-    $target = '"' . TW_ABB . '","' . TW_VESTAS . '","' . word::TN_ZH . '","' . TEST_WORD . '"';
+    $target = '"' . TW_ABB . '","' . TW_VESTAS . '","' . word_api::TN_ZH . '","' . TEST_WORD . '"';
     $result = $wrd_lst_all->name();
     $t->dsp('phrase->wrd_lst_all of list above', $target, $result);
 

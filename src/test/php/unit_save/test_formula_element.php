@@ -31,8 +31,9 @@
 */
 
 use api\formula_api;
+use api\word_api;
 
-function run_formula_element_test(testing $t)
+function run_formula_element_test(testing $t): void
 {
 
     $back = 0;
@@ -45,9 +46,9 @@ function run_formula_element_test(testing $t)
     $elm_lst = $exp->element_list();
 
     // get the test word ids
-    $wrd_country = $t->load_word(word::TN_COUNTRY);
-    $wrd_canton = $t->load_word(word::TN_CANTON);
-    $wrd_total = $t->load_word(word::TN_TOTAL);
+    $wrd_country = $t->load_word(word_api::TN_COUNTRY);
+    $wrd_canton = $t->load_word(word_api::TN_CANTON);
+    $wrd_total = $t->load_word(word_api::TN_TOTAL);
     $vrb_id = cl(db_cl::VERB, verb::CAN_CONTAIN);
 
     if (isset($elm_lst)) {

@@ -50,7 +50,7 @@ class formula_unit_db_tests
         // ... the second user has excluded the word at this point, so even if the word is linked the word link is nevertheless false
         // TODO check what that the word is linked if the second user activates the word
         $phr = new phrase($usr);
-        $phr->load_by_name(word::TN_READ);
+        $phr->load_by_name(word_api::TN_READ);
         $frm = new formula($t->usr2);
         $frm->load_by_name(formula_api::TN_RENAMED, formula::class);
         $phr_lst = $frm->assign_phr_ulst();

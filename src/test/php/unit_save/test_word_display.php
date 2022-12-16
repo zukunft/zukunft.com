@@ -34,6 +34,7 @@
 // start testing the system functionality 
 // --------------------------------------
 
+use api\word_api;
 use html\html_selector;
 
 function run_word_display_test(testing $t)
@@ -49,7 +50,7 @@ function run_word_display_test(testing $t)
     // test uses the old function zum_word_list to compare, so it is a kind of double coding
     // correct test would be using a "fixed HTML text contains"
     $wrd_ZH = new word($usr);
-    $wrd_ZH->load_by_name(word::TN_ZH, word::class);
+    $wrd_ZH->load_by_name(word_api::TN_ZH, word::class);
     $direction = 'up';
     $target = TEST_WORD;
     // get the link types related to the word
@@ -59,7 +60,7 @@ function run_word_display_test(testing $t)
 
     // ... and the other side
     $wrd_ZH = new word($usr);
-    $wrd_ZH->load_by_name(word::TN_ZH, word::class);
+    $wrd_ZH->load_by_name(word_api::TN_ZH, word::class);
     $direction = 'down';
     $target = 'Nothing linked to "Zurich" until now. Click here to link it.';
     $link_types = $wrd_ZH->link_types($direction);
@@ -68,11 +69,11 @@ function run_word_display_test(testing $t)
 
     // ... and the graph display for 2019
     $wrd_2020 = new word($usr);
-    $wrd_2020->load_by_name(word::TN_2020, word::class);
+    $wrd_2020->load_by_name(word_api::TN_2020, word::class);
     $direction = 'down';
     $wrd_2021 = new word($usr);
-    $wrd_2021->load_by_name(word::TN_2021, word::class);
-    $lnk_20_to_21 = $t->load_triple(word::TN_2021, verb::FOLLOW, word::TN_2020);
+    $wrd_2021->load_by_name(word_api::TN_2021, word::class);
+    $lnk_20_to_21 = $t->load_triple(word_api::TN_2021, verb::FOLLOW, word_api::TN_2020);
     // TODO change direction?
     $target = ' is followed by<table class="table col-sm-5 table-borderless">
   <tr>
@@ -109,10 +110,10 @@ function run_word_display_test(testing $t)
 
     // ... and the other side
     $direction = 'up';
-    $wrd_2019 = $t->load_word(word::TN_2019);
-    $wrd_year = $t->load_word(word::TN_YEAR);
-    $lnk_20_is_year = $t->load_triple(word::TN_2020, verb::IS_A, word::TN_YEAR);
-    $lnk_19_to_20 = $t->load_triple(word::TN_2020, verb::FOLLOW, word::TN_2019);
+    $wrd_2019 = $t->load_word(word_api::TN_2019);
+    $wrd_year = $t->load_word(word_api::TN_YEAR);
+    $lnk_20_is_year = $t->load_triple(word_api::TN_2020, verb::IS_A, word_api::TN_YEAR);
+    $lnk_19_to_20 = $t->load_triple(word_api::TN_2020, verb::FOLLOW, word_api::TN_2019);
     $target = ' are<table class="table col-sm-5 table-borderless">
   <tr>
     <td>
@@ -136,7 +137,19 @@ function run_word_display_test(testing $t)
 ';
     $target = '<table class="table table-borderless text-muted"><tr><td><a href="/http/view.php?words=208&back=0" title="2020">2020</a></td><td><a href="/http/view.php?words=195&back=0" title="Year">Year</a></td><td><a href="/http/view.php?words=207&back=0" title="2019">2019</a></td></tr></table>
 ';
+    // TODO set or check the order
     $target = '<table class="table table-borderless text-muted">
+  <tr>
+    <td>
+<a href="/http/view.php?words=' . $wrd_2020->id() . '&back=0" title="2020">2020</a>    </td>
+    <td>
+<a href="/http/view.php?words=' . $wrd_2019->id() . '&back=0" title="2019">2019</a>    </td>
+    <td>
+<a href="/http/view.php?words=' . $wrd_year->id() . '&back=0" title="Year">Year</a>    </td>
+  </tr>
+</table>
+';
+    $target_new_order = '<table class="table table-borderless text-muted">
   <tr>
     <td>
 <a href="/http/view.php?words=' . $wrd_2020->id() . '&back=0" title="2020">2020</a>    </td>
@@ -153,22 +166,25 @@ function run_word_display_test(testing $t)
     $target = $lib->trim_html($target);
     $diff = str_diff($result, $target);
     if ($diff != '') {
-        log_err('Unexpected diff ' . $diff);
-        $target = $result;
+        $diff = str_diff($result, $target_new_order);
+        if ($diff != '') {
+            log_err('Unexpected diff ' . $diff);
+            $target = $result;
+        }
     }
     $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name(), $target, $result);
 
     // the value table for ABB
     $wrd_ZH = new word($usr);
-    $wrd_ZH->load_by_name(word::TN_ZH, word::class);
+    $wrd_ZH->load_by_name(word_api::TN_ZH, word::class);
     $wrd_year = new word($usr);
-    $wrd_year->load_by_name(word::TN_YEAR, word::class);
+    $wrd_year->load_by_name(word_api::TN_YEAR, word::class);
     /*
     $target = zut_dsp_list_wrd_val($wrd_ZH->id(), $wrd_year->id(), $usr->id);
     $target = substr($target,0,208);
     */
-    $target = word::TN_2020;
-    $target = word::TN_ZH;
+    $target = word_api::TN_2020;
+    $target = word_api::TN_ZH;
     $result = $wrd_ZH->dsp_val_list($wrd_year, $wrd_year->is_mainly(), 0);
     //$t->dsp('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
     $t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name(), $target, $result, TIMEOUT_LIMIT_PAGE);
@@ -194,7 +210,7 @@ function run_word_display_test(testing $t)
     $t->header('Test the display selector class (web/html/selector.php)');
 
     // for testing the selector display a company selector and select ABB
-    $phr_corp = $t->load_phrase(word::TN_COMPANY);
+    $phr_corp = $t->load_phrase(word_api::TN_COMPANY);
     $phr_ZH_INS = $t->load_phrase(phrase::TN_ZH_COMPANY);
     $sel = new html_selector;
     $sel->form = 'test_form';

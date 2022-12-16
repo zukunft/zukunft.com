@@ -74,13 +74,13 @@ class formula_api extends user_sandbox_named_with_type_api
     const TN_SECTOR = 'System Test Formula Sector'; // to test the selection by a phrases and parents e.g. split all country totals by canton
     const TF_SECTOR = '= "Country" "differentiator" "Canton" / "System Test Word Total"';
     const TN_SCALE_K = 'System Test Formula scale thousand to one';
-    const TF_SCALE_K = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. thousands" * 1000';
+    const TF_SCALE_K = '"one" = "System Test Scaling Word e.g. thousands" * 1000';
     const TN_SCALE_TO_K = 'System Test Formula scale one to thousand';
-    const TF_SCALE_TO_K = '"System Test Scaling Word e.g. thousands" = "System Test Scaling Word e.g. one" / 1000';
+    const TF_SCALE_TO_K = '"System Test Scaling Word e.g. thousands" = "one" / 1000';
     const TN_SCALE_MIO = 'System Test Formula scale millions to one';
-    const TF_SCALE_MIO = '"System Test Scaling Word e.g. one" = "million" * 1000000';
+    const TF_SCALE_MIO = '"one" = "million" * 1000000';
     const TN_SCALE_BIL = 'System Test Formula scale billions to one';
-    const TF_SCALE_BIL = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. billions" * 1000000000';
+    const TF_SCALE_BIL = '"one" = "System Test Scaling Word e.g. billions" * 1000000000';
 
     // formula names that are reserved for creating the test formulas, that are removed after the test
     // so these formula names cannot be used for user formulas
@@ -96,8 +96,13 @@ class formula_api extends user_sandbox_named_with_type_api
     );
 
 
+    /*
+     * object vars
+     */
+
     // the formula expression as shown to the user
     private string $usr_text;
+
 
     /*
      * construct and map

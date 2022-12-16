@@ -31,6 +31,7 @@
 */
 
 use api\formula_api;
+use api\word_api;
 
 class term_unit_db_tests
 {
@@ -51,10 +52,10 @@ class term_unit_db_tests
         $db_row = $db_con->get1($qp);
         $trm = new term($usr);
         $trm->row_mapper_obj($db_row, word::class);
-        $t->assert($t->name . ' word row mapper', $trm->name(), word::TN_READ);
+        $t->assert($t->name . ' word row mapper', $trm->name(), word_api::TN_READ);
         $trm_by_obj_id = new term($usr);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), word::class);
-        $t->assert($t->name . ' word by object id', $trm_by_obj_id->name(), word::TN_READ);
+        $t->assert($t->name . ' word by object id', $trm_by_obj_id->name(), word_api::TN_READ);
 
         // test load by term by a triple db row
         $trp = new triple($usr);
@@ -91,7 +92,7 @@ class term_unit_db_tests
 
         // test loading by term by id and name
         $trm = new term($usr, word::class);
-        $t->assert_load($trm, word::TN_READ);
+        $t->assert_load($trm, word_api::TN_READ);
 
 
     }

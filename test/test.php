@@ -221,7 +221,7 @@ if ($start_usr->id > 0) {
             run_graph_test($t);
             run_verb_test($t);
             run_term_test($t);
-            (new term_list_test)->run($t);
+            (new term_list_unit_db_tests)->run($t);
             run_value_test($t);
             //run_value_ui_test($t);
             run_source_test($t);

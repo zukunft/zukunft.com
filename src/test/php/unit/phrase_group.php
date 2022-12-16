@@ -30,6 +30,8 @@
 
 */
 
+use api\word_api;
+
 class phrase_group_unit_tests
 {
     function run(testing $t): void
@@ -113,7 +115,7 @@ class phrase_group_unit_tests
 
         // sql to load all phrase groups linked to a word
         $db_con->db_type = sql_db::POSTGRES;
-        $wrd = $t->load_word(word::TN_CITY);
+        $wrd = $t->load_word(word_api::TN_CITY);
         $wrd->set_id(1); // dummy number just to test the SQL creation
         $phr_grp_lst = new phrase_group_list($usr);
         $phr_grp_lst->phr = $wrd->phrase();
@@ -122,7 +124,7 @@ class phrase_group_unit_tests
         $t->assert('phrase_group_list->load_all_tripleed', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // sql to load all phrase groups linked to a triple
-        $lnk = $t->load_triple(word::TN_ZH, verb::IS_A, word::TN_CITY);
+        $lnk = $t->load_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CITY);
         $lnk->set_id(2); // dummy number just to test the SQL creation
         $phr_grp_lst = new phrase_group_list($usr);
         $phr_grp_lst->phr = $lnk->phrase();

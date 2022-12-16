@@ -49,7 +49,7 @@ class expression_unit_db_tests
         $frm = new formula($usr);
         $frm->load_by_name(formula_api::TN_SECTOR, formula::class);
         $result = $frm->usr_text;
-        $target = '= "' . word::TN_COUNTRY . '" "differentiator" "' . word::TN_CANTON . '" / "' . word::TN_TOTAL . '"';
+        $target = '= "' . word_api::TN_COUNTRY . '" "differentiator" "' . word_api::TN_CANTON . '" / "' . word_api::TN_TOTAL . '"';
         $t->assert('expression->is_std if formula is changed by the user', $result, $target);
         */
 

@@ -31,6 +31,7 @@
 */
 
 use api\formula_api;
+use api\word_api;
 
 function run_term_test(testing $t): void
 {
@@ -40,12 +41,12 @@ function run_term_test(testing $t): void
     $t->header('est the term class (classes/term.php)');
 
     // load the main test word
-    $wrd_zh = $t->test_word(word::TN_ZH);
+    $wrd_zh = $t->test_word(word_api::TN_ZH);
 
     // check that adding the predefined word "Company" creates an error message
     $term = new term($usr);
-    $term->load_by_obj_name(word::TN_ZH);
-    $target = 'A word with the name "' . word::TN_ZH . '" already exists. Please use another name.';
+    $term->load_by_obj_name(word_api::TN_ZH);
+    $target = 'A word with the name "' . word_api::TN_ZH . '" already exists. Please use another name.';
     $result = $term->id_used_msg();
     $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 

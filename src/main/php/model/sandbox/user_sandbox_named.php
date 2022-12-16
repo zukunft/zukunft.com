@@ -33,6 +33,7 @@
 */
 
 use api\formula_api;
+use api\word_api;
 
 class user_sandbox_named extends user_sandbox
 {
@@ -346,9 +347,9 @@ class user_sandbox_named extends user_sandbox
         if (!$usr->is_system()) {
             if ($this->obj_type == user_sandbox::TYPE_NAMED) {
                 if ($this->obj_name == sql_db::TBL_WORD) {
-                    if (in_array($this->name, word::RESERVED_WORDS)) {
+                    if (in_array($this->name, word_api::RESERVED_WORDS)) {
                         // the admin user needs to add the read test word during initial load
-                        if ($usr->is_admin() and $this->name != word::TN_READ) {
+                        if ($usr->is_admin() and $this->name != word_api::TN_READ) {
                             $result = '"' . $this->name . '" is a reserved name for system testing. Please use another name';
                         }
                     }

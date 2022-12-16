@@ -842,17 +842,18 @@ class formula_value_list
     }
 
     /**
-     * add one phrase to the phrase list, but only if it is not yet part of the phrase list
+     * add one formula value to the formula value list, but only if it is not yet part of the phrase list
+     * @param formula_value $fv_to_add the calculation result that should be added to the list
      */
-    function add($fv_to_add)
+    function add(formula_value $fv_to_add): void
     {
-        log_debug('phrase_list->add ' . $fv_to_add->dsp_id());
-        if (!in_array($fv_to_add->id, $this->ids())) {
-            if ($fv_to_add->id <> 0) {
+        log_debug($fv_to_add->dsp_id());
+        if (!in_array($fv_to_add->id(), $this->ids())) {
+            if ($fv_to_add->id() <> 0) {
                 $this->lst[] = $fv_to_add;
             }
         } else {
-            log_debug('phrase_list->add ' . $fv_to_add->dsp_id() . ' not added, because it is already in the list');
+            log_debug($fv_to_add->dsp_id() . ' not added, because it is already in the list');
         }
     }
 

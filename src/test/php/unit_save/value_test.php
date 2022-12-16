@@ -30,7 +30,9 @@
 
 */
 
-function run_value_test(testing $t)
+use api\word_api;
+
+function run_value_test(testing $t): void
 {
 
     global $test_val_lst;
@@ -39,10 +41,10 @@ function run_value_test(testing $t)
 
     // test load by phrase list first to get the value id
     $ch_inhabitants = $t->test_value(array(
-        word::TN_CH,
-        word::TN_INHABITANT,
-        word::TN_MIO,
-        word::TN_2019
+        word_api::TN_CH,
+        word_api::TN_INHABITANTS,
+        word_api::TN_MIO,
+        word_api::TN_2019
     ),
         value::TV_CH_INHABITANTS_2019_IN_MIO);
 
@@ -56,7 +58,7 @@ function run_value_test(testing $t)
         $t->assert(', value->load for value id "' . $ch_inhabitants->id() . '"', $result, $target);
 
         // test load by phrase list first to get the value id
-        $phr_lst = $t->load_phrase_list(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
+        $phr_lst = $t->load_phrase_list(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
         $val_by_phr_lst = new value($t->usr1);
         $time_phr = $phr_lst->time_useful();
         $phr_lst->ex_time();
@@ -83,8 +85,8 @@ function run_value_test(testing $t)
     }
 
     // test another rebuild_grp_id by value id
-    $chk_phr_grp = $t->load_word_list(array(word::TN_CANTON, word::TN_ZH, word::TN_INHABITANT, word::TN_MIO))->get_grp();
-    $time_phr = $t->load_phrase(word::TN_2020);
+    $chk_phr_grp = $t->load_word_list(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO))->get_grp();
+    $time_phr = $t->load_phrase(word_api::TN_2020);
     $chk_val = new value($t->usr1);
     if ($chk_phr_grp != null) {
         $chk_val->grp = $chk_phr_grp;
@@ -115,7 +117,7 @@ function run_value_test(testing $t)
             //log_err('Time word not seperated');
         //} else {
             $result = $chk_val->time_phr->name();
-            $target = word::TN_2020;
+            $target = word_api::TN_2020;
             $t->dsp(', value->load time word', $target, $result);
 
             // ... and check the word reloading by group
@@ -139,14 +141,14 @@ function run_value_test(testing $t)
             } else {
                 $result = '';
             }
-            //$target = word::TN_2020;
+            //$target = word_api::TN_2020;
             $target = '';
             $t->dsp(', value->load_phrases reloaded time word', $target, $result);
         }
     }
 
     // test load the word list object
-    $phr_lst = $t->load_word_list(array(word::TN_CANTON, word::TN_ZH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
+    $phr_lst = $t->load_word_list(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
     $phr_lst->ex_time();
     $grp = $phr_lst->get_grp();
     if ($grp->id() == 0) {
@@ -171,17 +173,17 @@ function run_value_test(testing $t)
     $t->dsp(', value->load for group id "' . $grp->id() . '"', $target, $result);
 
     // test the formatting of a value (percent)
-    $pct_val = $t->load_value(array(word::TN_CANTON, word::TN_ZH, word::TN_CH, word::TN_INHABITANT, word::TN_PCT, word::TN_2020));
+    $pct_val = $t->load_value(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_PCT, word_api::TN_2020));
     $result = $pct_val->dsp_obj_old()->display(0);
     $target = number_format(round(value::TEST_PCT * 100, 2), 2) . '%';
     $t->dsp(', value->val_formatted for ' . $pct_val->dsp_id(), $target, $result);
 
     // test the scaling of a value
-    $phr_lst = $t->load_phrase_list(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
+    $phr_lst = $t->load_phrase_list(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
     $time_phr = $phr_lst->time_useful();
     $phr_lst->ex_time();
     $dest_phr_lst = new phrase_list($t->usr1);
-    $dest_phr_lst->load_by_names(array(word::TN_INHABITANT, word::TN_ONE));
+    $dest_phr_lst->load_by_names(array(word_api::TN_INHABITANTS, word_api::TN_ONE));
     $mio_val = new value($t->usr1);
     $mio_val->time_phr = $time_phr;
     $mio_val->grp = $phr_lst->get_grp();
@@ -191,7 +193,7 @@ function run_value_test(testing $t)
     $t->dsp(', value->val_scaling for a word list ' . $phr_lst->dsp_id() . '', $target, $result);
 
     // test the figure object creation
-    $phr_lst = $t->load_phrase_list(array(word::TN_CANTON, word::TN_ZH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
+    $phr_lst = $t->load_phrase_list(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
     $time_phr = $phr_lst->time_useful();
     $phr_lst->ex_time();
     $mio_val = new value_dsp_old($t->usr1);
@@ -251,7 +253,7 @@ function run_value_test(testing $t)
     // test adding a value in the database
     // as it is call from value_add.php with all phrases in an id list including the time phrase,
     // so the time phrase must be excluded
-    $phr_grp = $t->load_phrase_group(array(word::TN_RENAMED, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
+    $phr_grp = $t->load_phrase_group(array(word_api::TN_RENAMED, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
     $add_val = new value($t->usr1);
     $add_val->grp = $phr_grp;
     $add_val->set_number(value::TEST_BIG);
@@ -285,7 +287,7 @@ function run_value_test(testing $t)
     $test_val_lst[] = $added_val->id();
 
     // test if a value with the same phrases, but different time can be added
-    $phr_grp2 = $t->load_phrase_group(array(word::TN_RENAMED, word::TN_INHABITANT, word::TN_MIO, word::TN_2019));
+    $phr_grp2 = $t->load_phrase_group(array(word_api::TN_RENAMED, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2019));
     $add_val2 = new value($t->usr1);
     $add_val2->grp = $phr_grp2;
     $add_val2->set_number(value::TEST_BIGGER);
@@ -295,7 +297,7 @@ function run_value_test(testing $t)
 
     // test if a value with time stamp can be saved
     /*
-    $phr_lst_ts = test_phrase_list(array(word::TN_RENAMED, word::TN_INHABITANTS, word::TN_MIO));
+    $phr_lst_ts = test_phrase_list(array(word_api::TN_RENAMED, word_api::TN_INHABITANTS, word_api::TN_MIO));
     $add_val_ts = new value($t->usr1);
     $add_val_ts->ids = $phr_lst_ts->ids;
     $add_val_ts->set_number(TV_ABB_PRICE_20200515;
@@ -346,7 +348,7 @@ function run_value_test(testing $t)
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system test changed 123456789 to 987654321';
-    $t->dsp(', value->save logged for "' . word::TN_RENAMED . '"', $target, $result);
+    $t->dsp(', value->save logged for "' . word_api::TN_RENAMED . '"', $target, $result);
 
     // ... check if the value has really been updated
     $added_val = new value($t->usr1);
@@ -354,7 +356,7 @@ function run_value_test(testing $t)
     $added_val->load_obj_vars();
     $result = $added_val->number();
     $target = '987654321';
-    $t->dsp(', value->load the value previous updated for "' . word::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp(', value->load the value previous updated for "' . word_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if a user specific value is created if another user changes the value
     /*$wrd_lst = New word_list;

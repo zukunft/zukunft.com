@@ -30,6 +30,8 @@
 
 */
 
+use api\word_api;
+
 class value_unit_db_tests
 {
 
@@ -48,7 +50,7 @@ class value_unit_db_tests
         $test_name = 'load a value by phrase group';
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(
-            array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020)
+            array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020)
         );
         $val = new value($usr);
         $val->grp = $phr_lst->get_grp();

@@ -30,6 +30,7 @@
 
 */
 
+use api\word_api;
 use cfg\phrase_type;
 
 class word_list_unit_tests
@@ -56,7 +57,7 @@ class word_list_unit_tests
 
         // load by word names
         $wrd_lst = new word_list($usr);
-        $wrd_names = array(word::TN_READ, word::TN_ADD);
+        $wrd_names = array(word_api::TN_READ, word_api::TN_ADD);
         $this->assert_sql_by_names($t, $db_con, $wrd_lst, $wrd_names);
 
         // load by phrase group

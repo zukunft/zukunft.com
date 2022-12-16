@@ -4,6 +4,8 @@
 //use PHPUnit\Framework\TestCase;
 
 //class triple_unit_tests extends TestCase
+use api\word_api;
+
 class triple_unit_tests
 {
     function run(testing $t): void
@@ -41,7 +43,7 @@ class triple_unit_tests
         $t->subheader('API unit tests');
 
         $trp = new triple($usr);
-        $trp->set(1, triple::TN_READ, triple::TN_READ, verb::IS_A, word::TN_READ);
+        $trp->set(1, triple::TN_READ, triple::TN_READ, verb::IS_A, word_api::TN_READ);
         $trp->description = 'The mathematical constant Pi';
         $api_trp = $trp->api_obj();
         $t->assert($t->name . 'api->id', $api_trp->id, $trp->id());

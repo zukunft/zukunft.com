@@ -30,6 +30,8 @@
 
 */
 
+use api\word_api;
+
 function run_math_test(testing $t)
 {
 
@@ -108,7 +110,7 @@ function run_math_test(testing $t)
     $t->dsp(", zut_keep_only_specific: the result for word array \"".implode(",",$word_array)."\"", $target, $result);
     */
 
-    $time_phr = $t->load_phrase(word::TN_2020);
+    $time_phr = $t->load_phrase(word_api::TN_2020);
 
     // test zuc_math_bracket
     $math_text = "(3 - 1) * 2";

@@ -229,7 +229,7 @@ class test_unit extends testing
     {
         global $system_views;
 
-        $system_views = new view_list($usr);
+        $system_views = new view_sys_list($usr);
         $system_views->load_dummy();
 
     }

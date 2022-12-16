@@ -30,7 +30,7 @@
 
 */
 
-function create_test_sources(testing $t)
+function create_test_sources(testing $t): void
 {
 
     $t->header('Check if all base sources are exist');

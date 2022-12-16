@@ -60,7 +60,7 @@ class view_unit_db_tests
         $t->name = 'view list read db->';
 
         // load the views used by the system e.g. change word
-        $lst = new view_list($usr);
+        $lst = new view_sys_list($usr);
         $lst->usr = $usr;
         $result = $lst->load($db_con);
         $t->assert('load', $result, true);

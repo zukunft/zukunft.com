@@ -12,9 +12,10 @@
     4. commit
 
     but first this needs to be fixed:
-    TODO create a unit test for all possible class functions next to review: formula expression
-    TODO move test names and restricted names from the backend object to the API object simply to make the backend object smaller
-    TODO replace the load_by_vars with more specific load_by_ functions
+    TODO unit test: create a unit test for all possible class functions next to review: formula expression
+    TODO test names: move test names and restricted names from the backend object to the API object simply to make the backend object smaller
+    TODO load_by_vars: replace the load_by_vars with more specific load_by_ functions
+    TODO log_debug: remove the class and function from the log_debug call
     TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample
     TODO fix error in upgrade process for MySQL
     TODO fix syntax suggestions in existing code
@@ -355,6 +356,7 @@ include_once $path_php . 'model/formula/figure_list.php';
 include_once $path_php . 'model/view/view.php';
 include_once $path_php . 'model/view/view_exp.php';
 include_once $path_php . 'model/view/view_list.php';
+include_once $path_php . 'model/view/view_sys_list.php';
 include_once $path_php . 'model/view/view_type_list.php';
 include_once $path_php . 'model/view/view_cmp.php';
 include_once $path_php . 'model/view/view_cmp_exp.php';
@@ -982,7 +984,7 @@ function load_usr_data(): void
     $verbs = new verb_list($usr);
     $verbs->load($db_con);
 
-    $system_views = new view_list($usr);
+    $system_views = new view_sys_list($usr);
     $system_views->load($db_con);
 
 }

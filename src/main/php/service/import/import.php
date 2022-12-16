@@ -36,8 +36,6 @@
   
 */
 
-use export\exp_obj;
-
 class file_import
 {
 
@@ -71,7 +69,7 @@ class file_import
 
     public float $last_display_time;
 
-    function display_progress(int $pos, int $total)
+    function display_progress(int $pos, int $total): void
     {
         $check_time = microtime(true);
         $time_since_last_display = $check_time - $this->last_display_time;
@@ -128,8 +126,8 @@ class file_import
             $frm_to_calc = new formula_list($usr_import);
             $dsp_to_validate = new view_list($usr_import);
             $pos = 0;
-            $this->display_progress($pos, $total);
             foreach ($json_array as $key => $json_obj) {
+                $this->display_progress($pos, $total);
                 $pos++;
                 if ($key == export::VERSION) {
                     if (prg_version_is_newer($json_obj)) {

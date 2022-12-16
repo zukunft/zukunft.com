@@ -30,7 +30,7 @@
 
 */
 
-function create_test_view_component_links(testing $t)
+function create_test_view_component_links(testing $t): void
 {
     $t->header('Check if all base view component links are existing');
 
@@ -42,7 +42,7 @@ function create_test_view_component_links(testing $t)
     $t->test_view_cmp_lnk(view::TN_TABLE, view_cmp::TN_TABLE, 2);
 }
 
-function run_view_component_link_test(testing $t)
+function run_view_component_link_test(testing $t): void
 {
 
     $t->header('Test the view component link class (classes/view_component_link.php)');

@@ -29,7 +29,9 @@
 
 */
 
-function run_graph_test(testing $t)
+use api\word_api;
+
+function run_graph_test(testing $t): void
 {
 
     global $usr;
@@ -43,7 +45,7 @@ function run_graph_test(testing $t)
 
     // step 1: define the phrase list e.g. in this case only the test word for city
     $phr_lst = new phrase_list($usr);
-    $phr_lst->load_by_names(array(word::TN_CITY));
+    $phr_lst->load_by_names(array(word_api::TN_CITY));
 
     // step 2: get all values related to the phrases
     $val_lst = new value_list($usr);
@@ -67,7 +69,7 @@ function run_graph_test(testing $t)
     $result = $lnk_lst->name();
     // check if at least the basic relations are in the database
     /*
-    $target = '' . word::TN_CITY_AS_CATEGORY . ' has a balance sheet';
+    $target = '' . word_api::TN_CITY_AS_CATEGORY . ' has a balance sheet';
     $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
     $target = 'Company has a forecast';
     $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
@@ -77,7 +79,7 @@ function run_graph_test(testing $t)
 
     // similar to above, but just for the zurich
     $phr_lst = new phrase_list($usr);
-    $phr_lst->load_by_names(array(word::TN_ZH, word::TN_INHABITANT, word::TN_MIO));
+    $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO));
     $lnk_lst = new triple_list($usr);
     $lnk_lst->wrd_lst = $phr_lst->wrd_lst_all();
     $lnk_lst->direction = 'up';
@@ -90,7 +92,7 @@ function run_graph_test(testing $t)
 
     // the other side
     $ZH = new word($usr);
-    $ZH->load_by_name(word::TN_ZH, word::class);
+    $ZH->load_by_name(word_api::TN_ZH, word::class);
     $is = new verb;
     $is->set_user($usr);
     $is->load_by_code_id(verb::IS_A);
@@ -112,7 +114,7 @@ function run_graph_test(testing $t)
             }
         }
     } */
-    $target = word::TN_COMPANY;
+    $target = word_api::TN_COMPANY;
     $t->dsp_contains('graph->load for ZH up is', $target, $result);
 
 }

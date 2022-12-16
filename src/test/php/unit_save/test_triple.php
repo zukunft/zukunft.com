@@ -36,18 +36,20 @@
 // start testing the system functionality 
 // --------------------------------------
 
-function run_triple_test(testing $t)
+use api\word_api;
+
+function run_triple_test(testing $t): void
 {
 
     $t->header('Test the word link class (classes/triple.php)');
 
     // create the group test word
-    $wrd_company = $t->test_word(word::TN_COMPANY);
+    $wrd_company = $t->test_word(word_api::TN_COMPANY);
 
     // check the triple usage for Zurich (City) and Zurich (Canton)
-    $wrd_zh = $t->load_word(word::TN_ZH);
-    $wrd_city = $t->load_word(word::TN_CITY);
-    $wrd_canton = $t->load_word(word::TN_CANTON);
+    $wrd_zh = $t->load_word(word_api::TN_ZH);
+    $wrd_city = $t->load_word(word_api::TN_CITY);
+    $wrd_canton = $t->load_word(word_api::TN_CANTON);
 
     // ... now test the Canton Zurich
     $lnk_canton = new triple($t->usr1);
@@ -55,12 +57,12 @@ function run_triple_test(testing $t)
     $lnk_canton->verb->set_id(cl(db_cl::VERB, verb::IS_A));
     $lnk_canton->to->set_id($wrd_canton->id());
     $lnk_canton->load_obj_vars();
-    $target = word::TN_ZH . ' (' . word::TN_CANTON . ')';
+    $target = word_api::TN_ZH . ' (' . word_api::TN_CANTON . ')';
     $result = $lnk_canton->name();
     $t->dsp('triple->load for Canton Zurich', $target, $result, TIMEOUT_LIMIT_DB);
 
     // ... now test the Canton Zurich using the name function
-    $target = word::TN_ZH . ' (' . word::TN_CANTON . ')';
+    $target = word_api::TN_ZH . ' (' . word_api::TN_CANTON . ')';
     $result = $lnk_canton->name();
     $t->dsp('triple->load for Canton Zurich using the function', $target, $result);
 
@@ -80,7 +82,7 @@ function run_triple_test(testing $t)
     $t->dsp('triple->load for ' . phrase::TN_ZH_COMPANY . ' using the function', $target, $result);
 
     // link the added word to the test word
-    $wrd_added = $t->load_word(word::TN_RENAMED);
+    $wrd_added = $t->load_word(word_api::TN_RENAMED);
     $wrd = $t->load_word(TEST_WORD);
     $vrb = new verb;
     $vrb->set_user($t->usr1);
@@ -108,7 +110,7 @@ function run_triple_test(testing $t)
     $log->new_to_id = $wrd->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system test linked ' . word::TN_RENAMED . ' to ' . TEST_WORD . '';
+    $target = 'zukunft.com system test linked ' . word_api::TN_RENAMED . ' to ' . TEST_WORD . '';
     $t->dsp('triple->save logged for "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '"', $target, $result);
 
     // ... check if the link is shown correctly
@@ -119,7 +121,7 @@ function run_triple_test(testing $t)
     $lnk->to->set_id($wrd->id());
     $lnk->load_obj_vars();
     $result = $lnk->name();
-    $target = '' . word::TN_RENAMED . ' (' . TEST_WORD . ')';
+    $target = '' . word_api::TN_RENAMED . ' (' . TEST_WORD . ')';
     $t->dsp('triple->load', $target, $result);
     // ... check if the link is shown correctly also for the second user
     $lnk2 = new triple($t->usr2);
@@ -128,7 +130,7 @@ function run_triple_test(testing $t)
     $lnk2->to->set_id($wrd->id());
     $lnk2->load_obj_vars();
     $result = $lnk2->name();
-    $target = '' . word::TN_RENAMED . ' (' . TEST_WORD . ')';
+    $target = '' . word_api::TN_RENAMED . ' (' . TEST_WORD . ')';
     $t->dsp('triple->load for user "' . $t->usr2->name . '"', $target, $result);
 
     // ... check if the value update has been triggered
@@ -152,7 +154,7 @@ function run_triple_test(testing $t)
     $log->old_to_id = $wrd->id();
     $log->usr = $t->usr2;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system test partner unlinked ' . word::TN_RENAMED . ' from ' . TEST_WORD . '';
+    $target = 'zukunft.com system test partner unlinked ' . word_api::TN_RENAMED . ' from ' . TEST_WORD . '';
     $t->dsp('triple->del logged for "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
 
 
@@ -177,7 +179,7 @@ function run_triple_test(testing $t)
     $lnk->to->set_id($wrd->id());
     $lnk->load_obj_vars();
     $result = $lnk->name();
-    $target = '' . word::TN_RENAMED . ' (' . TEST_WORD . ')';
+    $target = '' . word_api::TN_RENAMED . ' (' . TEST_WORD . ')';
     $t->dsp('triple->load of "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '" is still used for user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // ... check if the values for the first user are still the same
@@ -201,7 +203,7 @@ function run_triple_test(testing $t)
     $log->old_to_id = $wrd->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system test unlinked ' . word::TN_RENAMED . ' from ' . TEST_WORD . '';
+    $target = 'zukunft.com system test unlinked ' . word_api::TN_RENAMED . ' from ' . TEST_WORD . '';
     $t->dsp('triple->del logged for "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
 
     // check if the formula is not used any more for both users

@@ -348,19 +348,19 @@ class phrase_group extends db_object
      */
     function get(): string
     {
-        log_debug('phrase_group->get ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         $result = '';
 
         // get the id based on the given parameters
         $test_load = clone $this;
         $result .= $test_load->load();
-        log_debug('phrase_group->get loaded ' . $this->dsp_id());
+        log_debug('loaded ' . $this->dsp_id());
 
         // use the loaded group or create the word group if it is missing
         if ($test_load->id > 0) {
             $this->id = $test_load->id;
         } else {
-            log_debug('phrase_group->get save ' . $this->dsp_id());
+            log_debug('save ' . $this->dsp_id());
             $this->load();
             $result .= $this->save_id();
         }
@@ -371,7 +371,7 @@ class phrase_group extends db_object
             $result .= $this->generic_name(); // update the generic name if needed
         }
 
-        log_debug('phrase_group->get -> got ' . $this->dsp_id());
+        log_debug('got ' . $this->dsp_id());
         return $result;
     }
 
@@ -381,7 +381,7 @@ class phrase_group extends db_object
      */
     function get_id(): ?int
     {
-        log_debug('phrase_group->get_id ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         $this->get();
         return $this->id;
     }
@@ -435,7 +435,7 @@ class phrase_group extends db_object
                   FROM " . $sql_from . "
                  WHERE " . $sql_where . "
               GROUP BY " . $sql_from_prefix . "phrase_group_id;";
-        log_debug('phrase_group->get_by_wrd_lst sql ' . $sql);
+        log_debug('sql ' . $sql);
 
         if ($get_name) {
             $result = $sql_name;
@@ -598,7 +598,7 @@ class phrase_group extends db_object
      */
     function names(): array
     {
-        log_debug('phrase_group->names');
+        log_debug();
 
         // if not yet done, load, the words and triple list
         $this->load_lst();
@@ -616,7 +616,7 @@ class phrase_group extends db_object
         $val->grp = $this;
         $val->load_obj_vars();
 
-        log_debug('phrase_group->value ' . $val->wrd_lst->name() . ' for "' . $this->user()->name . '" is ' . $val->number());
+        log_debug($val->wrd_lst->name() . ' for "' . $this->user()->name . '" is ' . $val->number());
         return $val;
     }
 
@@ -626,7 +626,7 @@ class phrase_group extends db_object
      */
     function result($time_wrd_id): ?array
     {
-        log_debug("phrase_group->result (" . $this->id . ",time" . $time_wrd_id . ",u" . $this->user()->name . ")");
+        log_debug($this->id . ",time" . $time_wrd_id . ",u" . $this->user()->name);
 
         global $db_con;
 
@@ -670,12 +670,12 @@ class phrase_group extends db_object
                  WHERE phrase_group_id = " . $this->id . "
                    AND (user_id = 0 OR user_id IS NULL);";
                 $result = $db_con->get1_old($sql);
-                log_debug("phrase_group->result -> (" . $result['num'] . ")");
+                log_debug( $result['num']);
             } else {
-                log_debug("phrase_group->result -> (" . $result['num'] . ")");
+                log_debug( $result['num']);
             }
         } else {
-            log_debug("phrase_group->result -> (" . $result['num'] . " for " . $this->user()->id . ")");
+            log_debug($result['num'] . " for " . $this->user()->id);
         }
 
         return $result;
@@ -687,7 +687,7 @@ class phrase_group extends db_object
      */
     private function generic_name(): string
     {
-        log_debug('phrase_group->generic_name');
+        log_debug();
 
         global $db_con;
         $result = '';
@@ -707,11 +707,11 @@ class phrase_group extends db_object
                 if ($db_con->update($this->id, self::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
                 }
-                log_debug('phrase_group->generic_name updated to ' . $group_name);
+                log_debug('updated to ' . $group_name);
             }
             $this->auto_name = $group_name;
         }
-        log_debug('phrase_group->generic_name ... group name ' . $group_name);
+        log_debug('group name ' . $group_name);
 
         return $result;
     }
@@ -750,7 +750,7 @@ class phrase_group extends db_object
      */
     private function save_id(): ?int
     {
-        log_debug('phrase_group->save_id ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         global $db_con;
 
@@ -799,7 +799,7 @@ class phrase_group extends db_object
      */
     private function save_phr_links($type): string
     {
-        log_debug('phrase_group->save_phr_links');
+        log_debug();
 
         global $db_con;
         $result = '';
@@ -827,7 +827,7 @@ class phrase_group extends db_object
             foreach ($grp_lnk_rows as $grp_lnk_row) {
                 $db_ids[] = $grp_lnk_row[$field_name];
             }
-            log_debug('phrase_group->save_phr_links -> found ' . implode(",", $db_ids));
+            log_debug('found ' . implode(",", $db_ids));
         }
 
         // switch between the word and triple settings
@@ -863,11 +863,11 @@ class phrase_group extends db_object
                     $sql);
             }
         }
-        log_debug('phrase_group->save_phr_links -> added links "' . dsp_array($add_ids) . '" lead to ' . implode(",", $db_ids));
+        log_debug('added links "' . dsp_array($add_ids) . '" lead to ' . implode(",", $db_ids));
 
         // remove the links not needed any more
         if (count($del_ids) > 0) {
-            log_debug('phrase_group->save_phr_links -> del ' . implode(",", $del_ids));
+            log_debug('del ' . implode(",", $del_ids));
             $sql = 'DELETE FROM ' . $table_name . ' 
                WHERE phrase_group_id = ' . $this->id . '
                  AND ' . $field_name . ' IN (' . sql_array($del_ids) . ');';
@@ -875,7 +875,7 @@ class phrase_group extends db_object
             $result = $db_con->exe_try('Removing of group links "' . dsp_array($del_ids) . '" from ' . $this->id,
                 $sql);
         }
-        log_debug('phrase_group->save_phr_links -> deleted links "' . dsp_array($del_ids) . '" lead to ' . implode(",", $db_ids));
+        log_debug('deleted links "' . dsp_array($del_ids) . '" lead to ' . implode(",", $db_ids));
 
         return $result;
     }

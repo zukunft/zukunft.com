@@ -26,6 +26,7 @@
 
 */
 
+use api\word_api;
 use cfg\phrase_type;
 
 class phrase_list_unit_tests
@@ -67,7 +68,7 @@ class phrase_list_unit_tests
 
         $phr_lst = new phrase_list($usr);
         $wrd = new word($usr);
-        $wrd->set(1, word::TN_CH);
+        $wrd->set(1, word_api::TN_CH);
         $phr_lst->add($wrd->phrase());
         $this->assert_load_sql_linked_phrases(
             $db_con, $t, $phr_lst, 3, word_select_direction::UP
@@ -116,7 +117,7 @@ class phrase_list_unit_tests
     {
         global $usr;
         $phr_lst = new phrase_list($usr);
-        $phr_lst->add($this->get_phrase(1, word::TN_READ));
+        $phr_lst->add($this->get_phrase(1, word_api::TN_READ));
         $phr_lst->add($this->get_phrase(2, triple::TN_READ));
         return $phr_lst;
     }
@@ -139,7 +140,7 @@ class phrase_list_unit_tests
     {
         global $usr;
         $wrd = new word($usr);
-        $wrd->set(1, word::TN_ADD);
+        $wrd->set(1, word_api::TN_ADD);
         return $wrd->phrase();
     }
 
@@ -150,7 +151,7 @@ class phrase_list_unit_tests
     {
         global $usr;
         $wrd = new word($usr);
-        $wrd->set(2, word::TN_RENAMED);
+        $wrd->set(2, word_api::TN_RENAMED);
         $wrd->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::TIME);
         return $wrd->phrase();
     }

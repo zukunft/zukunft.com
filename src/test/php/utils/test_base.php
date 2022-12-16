@@ -120,9 +120,11 @@ include_once $path_unit_db . 'system.php';
 include_once $path_unit_db . 'sql_db.php';
 include_once $path_unit_db . 'user.php';
 include_once $path_unit_db . 'word.php';
+include_once $path_unit_db . 'word_list.php';
 include_once $path_unit_db . 'verb.php';
 include_once $path_unit_db . 'phrase_group.php';
 include_once $path_unit_db . 'term.php';
+include_once $path_unit_db . 'term_list.php';
 include_once $path_unit_db . 'value.php';
 include_once $path_unit_db . 'formula.php';
 include_once $path_unit_db . 'expression.php';
@@ -151,7 +153,6 @@ include_once $path_unit_save . 'ref_test.php';
 include_once $path_unit_save . 'test_graph.php';
 include_once $path_unit_save . 'test_verb.php';
 include_once $path_unit_save . 'test_term.php';
-include_once $path_unit_save . 'term_list.php';
 include_once $path_unit_save . 'value_test.php';
 include_once $path_unit_save . 'test_source.php';
 include_once $path_unit_save . 'test_expression.php';
@@ -1128,7 +1129,7 @@ class test_base
 
         $this->assert_api_get_list(phrase_list::class);
         $this->assert_api_get_list(term_list::class, [1,-1]);
-        // $this->assert_rest(new word($usr, word::TN_READ));
+        // $this->assert_rest(new word($usr, word_api::TN_READ));
 
     }
 

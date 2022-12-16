@@ -30,13 +30,15 @@
 
 */
 
+use api\word_api;
+
 function create_test_phrases(testing $t)
 {
     $t->header('Check if all base phrases are correct');
 
-    $t->test_triple(word::TN_ZH, verb::IS_A, word::TN_CANTON, phrase::TN_ZH_CANTON);
-    $t->test_triple(word::TN_ZH, verb::IS_A, word::TN_CITY, phrase::TN_ZH_CITY, phrase::TN_ZH_CITY);
-    $t->test_triple(word::TN_ZH, verb::IS_A, word::TN_COMPANY, phrase::TN_ZH_COMPANY, phrase::TN_ZH_COMPANY);
+    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON, phrase::TN_ZH_CANTON);
+    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CITY, phrase::TN_ZH_CITY, phrase::TN_ZH_CITY);
+    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_COMPANY, phrase::TN_ZH_COMPANY, phrase::TN_ZH_COMPANY);
 
     $t->test_triple(TW_ABB, verb::IS_A, TEST_WORD, TP_ABB);
     $t->test_triple(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
@@ -63,10 +65,10 @@ function run_phrase_test(testing $t): void
     $t->header('Test the phrase class (src/main/php/model/phrase/phrase.php)');
 
     // load the main test word
-    $wrd_company = $t->test_word(word::TN_COMPANY);
+    $wrd_company = $t->test_word(word_api::TN_COMPANY);
 
     // prepare the Insurance Zurich
-    $wrd_zh = $t->load_word(word::TN_ZH);
+    $wrd_zh = $t->load_word(word_api::TN_ZH);
     $lnk_company = new triple($usr);
     $lnk_company->from->set_id($wrd_zh->id());
     $lnk_company->verb->set_id(cl(db_cl::VERB, verb::IS_A));
@@ -83,11 +85,11 @@ function run_phrase_test(testing $t): void
     $phr->set_user($usr);
     $phr->load_by_obj_par();
     $result = $phr->name();
-    $target = word::TN_COMPANY;
+    $target = word_api::TN_COMPANY;
     $t->dsp('phrase->load word by id ' . $wrd_company->id(), $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
-    $target = ' <td><a href="/http/view.php?words=' . $wrd_company->id() . '" title="System Test Word Group e.g. Company">' . word::TN_COMPANY . '</a></td> ';
+    $target = ' <td><a href="/http/view.php?words=' . $wrd_company->id() . '" title="System Test Word Group e.g. Company">' . word_api::TN_COMPANY . '</a></td> ';
     $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
     $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
     $result = trim_all($result);

@@ -32,6 +32,8 @@
 
 */
 
+use api\word_api;
+
 class test_unit_read_db extends test_unit
 {
 
@@ -46,10 +48,11 @@ class test_unit_read_db extends test_unit
         (new protection_unit_db_tests)->run($this);
         (new share_unit_db_tests)->run($this);
         (new word_unit_db_tests)->run($this);
+        (new word_list_unit_db_tests)->run($this);
         (new verb_unit_db_tests)->run($this);
         (new phrase_group_unit_db_tests)->run($this);
         (new term_unit_db_tests)->run($this);
-        (new term_list_test)->run($this);
+        (new term_list_unit_db_tests)->run($this);
         (new value_unit_db_tests)->run($this);
         (new formula_unit_db_tests)->run($this);
         (new expression_unit_db_tests)->run($this);
@@ -65,7 +68,7 @@ class test_unit_read_db extends test_unit
 
         // add the database rows for read testing
         $this->test_triple(
-            triple::TN_READ, verb::IS_A, word::TN_READ,
+            triple::TN_READ, verb::IS_A, word_api::TN_READ,
             triple::TN_READ_NAME, triple::TN_READ_NAME
         );
         $phr_grp = $this->add_phrase_group(array(triple::TN_READ_NAME), phrase_group::TN_READ);

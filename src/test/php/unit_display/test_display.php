@@ -30,6 +30,7 @@
 
 */
 
+use api\word_api;
 use html\button;
 use html\html_base;
 
@@ -44,7 +45,7 @@ function run_display_test(testing $t): void
     $t->header('Test the view_display class (classes/view_display.php)');
 
     // test the usage of a view to create the HTML code
-    $wrd = $t->load_word(word::TN_READ);
+    $wrd = $t->load_word(word_api::TN_READ);
     $dsp = new view($usr);
     $dsp->load_by_name(view::TN_READ_RATIO, view::class);
     //$result = $dsp->display($wrd, $back);

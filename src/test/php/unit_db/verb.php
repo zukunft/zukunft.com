@@ -30,6 +30,8 @@
 
 */
 
+use api\word_api;
+
 class verb_unit_db_tests
 {
 
@@ -55,35 +57,35 @@ class verb_unit_db_tests
 
         // prepare the words for testing
         $country = new word($usr);
-        $country->load_by_name(word::TN_COUNTRY);
+        $country->load_by_name(word_api::TN_COUNTRY);
         $switzerland = new word($usr);
-        $switzerland->load_by_name(word::TN_CH);
+        $switzerland->load_by_name(word_api::TN_CH);
 
         // 'is a' - test the selection of the members via 'is a' verb
         $countries = $country->children();
-        $t->assert_contains('is a based on ' . word::TN_COUNTRY,
+        $t->assert_contains('is a based on ' . word_api::TN_COUNTRY,
             $countries->names(),
-            array(word::TN_CH, word::TN_READ_GERMANY)
+            array(word_api::TN_CH, word_api::TN_READ_GERMANY)
         );
 
         // 'is part of' - test the direct selection of the members via 'is part of' verb
         //                e.g. for Switzerland get at least 'Zurich (Canton)' but not 'Zurich (City)'
         $parts = $switzerland->direct_parts();
-        $t->assert_contains('direct parts of ' . word::TN_CH,
+        $t->assert_contains('direct parts of ' . word_api::TN_CH,
             $parts->names(),
-            array(word::TN_ZH_CANTON)
+            array(word_api::TN_ZH_CANTON)
         );
-        $t->assert_contains_not('direct parts of ' . word::TN_CH,
+        $t->assert_contains_not('direct parts of ' . word_api::TN_CH,
             $parts->names(),
-            array(word::TN_ZH_CITY)
+            array(word_api::TN_ZH_CITY)
         );
 
         // 'is part of' - test the recursive selection of the members via 'is part of' verb
         //                e.g. for Switzerland get at least 'Zurich (Canton)' and 'Zurich (City)'
         $parts = $switzerland->parts();
-        $t->assert_contains('parts of ' . word::TN_CH . ' and parts of the parts',
+        $t->assert_contains('parts of ' . word_api::TN_CH . ' and parts of the parts',
             $parts->names(),
-            array(word::TN_ZH_CANTON, word::TN_ZH_CITY)
+            array(word_api::TN_ZH_CANTON, word_api::TN_ZH_CITY)
         );
 
 

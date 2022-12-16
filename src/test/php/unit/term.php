@@ -31,6 +31,7 @@
 */
 
 use api\formula_api;
+use api\word_api;
 
 class term_unit_tests
 {
@@ -50,7 +51,7 @@ class term_unit_tests
         $t->subheader('Set and get of the grouped object tests');
 
         $wrd = new word($usr);
-        $wrd->set(1, word::TN_READ);
+        $wrd->set(1, word_api::TN_READ);
         $trm = $wrd->term();
         $t->assert($t->name . 'word id', $trm->id_obj(), $wrd->id());
         $t->assert($t->name . 'word name', $trm->name(), $wrd->name_dsp());

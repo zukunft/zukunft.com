@@ -31,8 +31,9 @@
 */
 
 use api\formula_api;
+use api\word_api;
 
-function run_formula_trigger_test(testing $t)
+function run_formula_trigger_test(testing $t): void
 {
 
     global $usr;
@@ -41,12 +42,12 @@ function run_formula_trigger_test(testing $t)
 
     // prepare the calculation trigger test
     $phr_lst1 = new phrase_list($usr);
-    $phr_lst1->add_name(word::TN_CH);
-    $phr_lst1->add_name(word::TN_INHABITANT);
-    $phr_lst1->add_name(word::TN_MIO);
+    $phr_lst1->add_name(word_api::TN_CH);
+    $phr_lst1->add_name(word_api::TN_INHABITANTS);
+    $phr_lst1->add_name(word_api::TN_MIO);
     $phr_lst2 = clone $phr_lst1;
-    $phr_lst1->add_name(word::TN_2019);
-    $phr_lst2->add_name(word::TN_2020);
+    $phr_lst1->add_name(word_api::TN_2019);
+    $phr_lst2->add_name(word_api::TN_2020);
     $frm = $t->load_formula(formula_api::TN_ADD);
 
     // add a number to the test word

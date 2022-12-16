@@ -34,6 +34,7 @@
 // start testing the system functionality 
 // --------------------------------------
 
+use api\word_api;
 use html\word_dsp;
 
 function run_word_ui_test(testing $t): void
@@ -46,21 +47,21 @@ function run_word_ui_test(testing $t): void
 
     // call the add word page and check if at least some keywords are returned
     $wrd = new word($usr);
-    $wrd->load_by_name(word::TN_READ);
+    $wrd->load_by_name(word_api::TN_READ);
     $vrb_is = cl(db_cl::VERB, verb::IS_A);
     $wrd_type = $phrase_types->default_id();
     $result = file_get_contents('https://zukunft.com/http/word_add.php?verb=' . $vrb_is . '&word=' . $wrd->id() . '&type=1&back=' . $wrd->id());
-    $target = word::TN_READ;
+    $target = word_api::TN_READ;
     $t->dsp_contains(', frontend word_add.php ' . $result . ' contains at least ' . $wrd->name(), $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // test the edit word frontend
     $result = file_get_contents('https://zukunft.com/http/word_edit.php?id=' . $wrd->id() . '&back=' . $wrd->id());
-    $target = word::TN_READ;
+    $target = word_api::TN_READ;
     $t->dsp_contains(', frontend word_edit.php ' . $result . ' contains at least ' . $wrd->name(), $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // test the del word frontend
     $result = file_get_contents('https://zukunft.com/http/word_del.php?id=' . $wrd->id() . '&back=' . $wrd->id());
-    $target = word::TN_READ;
+    $target = word_api::TN_READ;
     $t->dsp_contains(', frontend word_del.php ' . $result . ' contains at least ' . $wrd->name(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     $t->header('Test the display list class (classes/display_list.php)');

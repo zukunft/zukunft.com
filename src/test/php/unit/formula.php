@@ -31,6 +31,7 @@
 */
 
 use api\formula_api;
+use api\word_api;
 use cfg\formula_type;
 
 class formula_unit_tests
@@ -120,7 +121,7 @@ class formula_unit_tests
 
         // check the PostgreSQL query syntax to load a list of formulas by phrase
         $wrd = new word($usr);
-        $wrd->set(1,word::TN_ADD);
+        $wrd->set(1,word_api::TN_ADD);
         $phr = $wrd->phrase();
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $frm_lst->load_sql_by_phr($db_con, $phr);
@@ -182,7 +183,7 @@ class formula_unit_tests
         */
 
         // test the calculation of one value
-        $phr_lst = $t->phrase_list_for_tests(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020, word::TN_MIO));
+        $phr_lst = $t->phrase_list_for_tests(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020, word_api::TN_MIO));
 
         $frm = $t->new_formula(formula_api::TN_ADD, 1);
         $frm->usr_text = formula_api::TF_INCREASE;

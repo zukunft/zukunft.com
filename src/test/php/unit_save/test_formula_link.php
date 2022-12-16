@@ -31,18 +31,19 @@
 */
 
 use api\formula_api;
+use api\word_api;
 
 function create_test_formula_links(testing $t): void
 {
     $t->header('Check if all base formulas link correctly');
 
-    $t->test_formula_link(formula_api::TN_RATIO, word::TN_SHARE);
-    $t->test_formula_link(formula_api::TN_SECTOR, word::TN_SHARE);
-    $t->test_formula_link(formula_api::TN_ADD, word::TN_YEAR);
-    $t->test_formula_link(formula_api::TN_SCALE_K, word::TN_IN_K);
-    $t->test_formula_link(formula_api::TN_SCALE_TO_K, word::TN_ONE);
-    $t->test_formula_link(formula_api::TN_SCALE_MIO, word::TN_MIO);
-    $t->test_formula_link(formula_api::TN_SCALE_BIL, word::TN_BIL);
+    $t->test_formula_link(formula_api::TN_RATIO, word_api::TN_SHARE);
+    $t->test_formula_link(formula_api::TN_SECTOR, word_api::TN_SHARE);
+    $t->test_formula_link(formula_api::TN_ADD, word_api::TN_YEAR);
+    $t->test_formula_link(formula_api::TN_SCALE_K, word_api::TN_IN_K);
+    $t->test_formula_link(formula_api::TN_SCALE_TO_K, word_api::TN_ONE);
+    $t->test_formula_link(formula_api::TN_SCALE_MIO, word_api::TN_MIO);
+    $t->test_formula_link(formula_api::TN_SCALE_BIL, word_api::TN_BIL);
 
 }
 
@@ -51,12 +52,12 @@ function run_formula_link_test(testing $t): void
     $t->header('Test the formula link class (classes/formula_link.php)');
 
     // make sure that the word for testing exists even if the word test didn't run before
-    $t->test_word(word::TN_RENAMED);
+    $t->test_word(word_api::TN_RENAMED);
 
     // link the test formula to another word
     $frm = $t->load_formula(formula_api::TN_RENAMED);
     $phr = new phrase($t->usr1);
-    $phr->load_by_name(word::TN_RENAMED);
+    $phr->load_by_name(word_api::TN_RENAMED);
     $result = $frm->link_phr($phr);
     $target = '';
     $t->dsp('formula_link->link_phr "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -68,7 +69,7 @@ function run_formula_link_test(testing $t): void
     $log->new_to_id = $phr->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system test linked System Test Formula Renamed to ' . word::TN_RENAMED;
+    $target = 'zukunft.com system test linked System Test Formula Renamed to ' . word_api::TN_RENAMED;
     $t->dsp('formula_link->link_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result);
 
     // ... check if the link can be loaded by formula and phrase id and base on the id the correct formula and phrase objects are loaded
@@ -119,7 +120,7 @@ function run_formula_link_test(testing $t): void
     $frm = new formula($t->usr2);
     $frm->load_by_name(formula_api::TN_RENAMED, formula::class);
     $phr = new phrase($t->usr2);
-    $phr->load_by_name(word::TN_RENAMED);
+    $phr->load_by_name(word_api::TN_RENAMED);
     $result = $frm->unlink_phr($phr);
     $target = '';
     $t->dsp('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -131,7 +132,7 @@ function run_formula_link_test(testing $t): void
     $log->old_to_id = $phr->id();
     $log->usr = $t->usr2;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system test partner unlinked System Test Formula Renamed from ' . word::TN_RENAMED . '';
+    $target = 'zukunft.com system test partner unlinked System Test Formula Renamed from ' . word_api::TN_RENAMED . '';
     $t->dsp('formula_link->unlink_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
 
 
@@ -167,7 +168,7 @@ function run_formula_link_test(testing $t): void
     $log->old_to_id = $phr->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system test unlinked System Test Formula Renamed from ' . word::TN_RENAMED . '';
+    $target = 'zukunft.com system test unlinked System Test Formula Renamed from ' . word_api::TN_RENAMED . '';
     $t->dsp('formula_link->unlink_phr logged of "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result);
 
     // check if the formula is not used any more for both users
@@ -211,7 +212,7 @@ function run_formula_link_list_test(testing $t): void
 
     // prepare
     $frm = $t->add_formula(formula_api::TN_ADD, formula_api::TF_INCREASE);
-    $phr = $t->add_word(word::TN_YEAR)->phrase();
+    $phr = $t->add_word(word_api::TN_YEAR)->phrase();
     $frm->link_phr($phr);
 
     // test
@@ -221,7 +222,7 @@ function run_formula_link_list_test(testing $t): void
     $phr_lst = new phrase_list($t->usr1);
     $phr_lst->load_by_ids($phr_ids);
     $result = $phr_lst->dsp_id();
-    $target = word::TN_YEAR;
+    $target = word_api::TN_YEAR;
     $t->dsp_contains(', formula_link_list->load phrase linked to ' . $frm->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
 
 }

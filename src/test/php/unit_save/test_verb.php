@@ -30,6 +30,8 @@
 
 */
 
+use api\word_api;
+
 function run_verb_test(testing $t): void
 {
 
@@ -49,7 +51,7 @@ function run_verb_test(testing $t): void
     $t->header('Test the verb list class (classes/verb_list.php)');
 
     // check the loading of the "is a" verb
-    $wrd_ZH = $t->load_word(word::TN_ZH);
+    $wrd_ZH = $t->load_word(word_api::TN_ZH);
     $vrb_lst = $wrd_ZH->link_types(word_select_direction::UP);
     $target = 'is a';
     $result = '';
