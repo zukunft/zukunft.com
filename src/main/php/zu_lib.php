@@ -404,6 +404,7 @@ include_once $path_php . 'api/formula/formula_value_list.php';
 include_once $path_php . 'api/view/view.php';
 include_once $path_php . 'api/view/view_cmp.php';
 include_once $path_php . 'api/view/view_cmp_list.php';
+include_once $path_php . 'api/ref/source.php';
 // general HTML frontend classes
 include_once $path_php . 'web/back_trace.php';
 include_once $path_php . 'web/user_display_old.php';

@@ -32,6 +32,7 @@
 
 use api\formula_api;
 use api\phrase_api;
+use api\source_api;
 use api\triple_api;
 use api\view_api;
 use api\view_cmp_api;
@@ -268,17 +269,17 @@ class testing extends test_base
         }
 
         // request to delete the renamed test source
-        $src = $this->load_source(source::TN_RENAMED);
+        $src = $this->load_source(source_api::TN_RENAMED);
         if ($src->id() > 0) {
             $msg = $src->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->dsp('source->del of "' . source::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB);
+            $this->dsp('source->del of "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the added test sources
-        foreach (source::RESERVED_SOURCES as $src_name) {
-            if ($src_name != source::TN_READ) {
+        foreach (source_api::RESERVED_SOURCES as $src_name) {
+            if ($src_name != source_api::TN_READ) {
                 $src = $this->load_source($src_name);
                 if ($src->id() > 0) {
                     $msg = $src->del();

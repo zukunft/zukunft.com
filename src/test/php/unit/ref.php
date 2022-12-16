@@ -30,6 +30,8 @@
 
 */
 
+use api\source_api;
+
 class ref_unit_tests
 {
     function run(testing $t): void
@@ -79,12 +81,12 @@ class ref_unit_tests
 
         // sql to load a source by code id
         $src = new source($usr);
-        $src->code_id = source::TN_READ;
+        $src->code_id = source_api::TN_READ;
         $t->assert_load_sql($db_con, $src);
 
         // sql to load a source by name
         $src = new source($usr);
-        $src->set_name(source::TN_READ);
+        $src->set_name(source_api::TN_READ);
         //$t->assert_load_sql($db_con, $src);
         $t->assert_load_standard_sql($db_con, $src);
         $src->set_id(5);

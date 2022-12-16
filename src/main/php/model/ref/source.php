@@ -65,27 +65,6 @@ class source extends user_sandbox_named_with_type
         self::FLD_EXCLUDED
     );
 
-    /*
-     * const for system testing
-     */
-
-    // persevered source names for unit and integration tests
-    const TN_READ = 'wikidata';
-    const TN_ADD = 'System Test Source';
-    const TN_RENAMED = 'System Test Source Renamed';
-
-    // parameters used for unit and integration tests
-    const TEST_URL = 'https://www.zukunft.com/';
-    const TEST_URL_CHANGED = 'https://api.zukunft.com/';
-    const TEST_DESCRIPTION = 'System Test Source Description';
-    const TEST_DESCRIPTION_CHANGED = 'System Test Source Description Changed';
-
-    // source group for creating the test sources and remove them after the test
-    const RESERVED_SOURCES = array(
-        self::TN_READ, // the source for all data imported from wikidata that does not yet have a source defined in wikidata
-        self::TN_ADD,
-        self::TN_RENAMED
-    );
 
     /*
      * object vars

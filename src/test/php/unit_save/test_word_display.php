@@ -165,9 +165,11 @@ function run_word_display_test(testing $t): void
     $result = $wrd_2020->dsp_graph($direction, $link_types, 0);
     $result = $lib->trim_html($result);
     $target = $lib->trim_html($target);
+    $target_new_order = $lib->trim_html($target_new_order);
     $diff = str_diff($result, $target);
     if ($diff != '') {
-        $diff = str_diff($result, $target_new_order);
+        $target = $target_new_order;
+        $diff = str_diff($result, $target);
         if ($diff != '') {
             log_err('Unexpected diff ' . $diff);
             $target = $result;

@@ -34,6 +34,7 @@
 
 use api\formula_api;
 use api\phrase_api;
+use api\source_api;
 use api\view_api;
 use api\view_cmp_api;
 use api\word_api;
@@ -373,9 +374,9 @@ class user_sandbox_named extends user_sandbox
                         $result = '"' . $this->name . '" is a reserved view component name for system testing. Please use another name';
                     }
                 } elseif ($this->obj_name == sql_db::TBL_SOURCE) {
-                    if (in_array($this->name, source::RESERVED_SOURCES)) {
+                    if (in_array($this->name, source_api::RESERVED_SOURCES)) {
                         // the admin user needs to add the read test source during initial load
-                        if ($usr->is_admin() and $this->name != source::TN_READ) {
+                        if ($usr->is_admin() and $this->name != source_api::TN_READ) {
                             $result = '"' . $this->name . '" is a reserved source name for system testing. Please use another name';
                         }
                     }
