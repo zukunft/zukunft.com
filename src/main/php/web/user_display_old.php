@@ -1229,7 +1229,7 @@ class user_dsp_old extends user
                 $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->url = $sbx_row['usr_url'];
-                $dsp_usr->comment = $sbx_row['usr_comment'];
+                $dsp_usr->description = $sbx_row['usr_comment'];
                 $dsp_usr->type_id = $sbx_row['usr_type'];
                 $dsp_usr->excluded = $sbx_row['usr_excluded'];
 
@@ -1242,14 +1242,14 @@ class user_dsp_old extends user
                 $dsp_std->set_user($usr_std);
                 $dsp_std->set_name($sbx_row['std_name']);
                 $dsp_std->url = $sbx_row['std_url'];
-                $dsp_std->comment = $sbx_row['std_comment'];
+                $dsp_std->description = $sbx_row['std_comment'];
                 $dsp_std->type_id = $sbx_row['std_type'];
                 $dsp_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
                 if ($dsp_usr->name() == $dsp_std->name()
                     and $dsp_usr->url == $dsp_std->url
-                    and $dsp_usr->comment == $dsp_std->comment
+                    and $dsp_usr->description == $dsp_std->description
                     and $dsp_usr->type_id == $dsp_std->type_id
                     and $dsp_usr->excluded == $dsp_std->excluded) {
                     // TODO: add user config also to source?
@@ -1299,7 +1299,7 @@ class user_dsp_old extends user
                         $dsp_other->set_user($usr_other);
                         $dsp_other->set_name($dsp_other_row['source_name']);
                         $dsp_other->url = $dsp_other_row['url'];
-                        $dsp_other->comment = $dsp_other_row['comment'];
+                        $dsp_other->description = $dsp_other_row['comment'];
                         $dsp_other->type_id = $dsp_other_row['source_type_id'];
                         $dsp_other->excluded = $dsp_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {

@@ -75,7 +75,7 @@ if ($usr->id > 0) {
                 $src->url = $_GET['url'];
             }
             if (isset($_GET['comment'])) {
-                $src->comment = $_GET['comment'];
+                $src->description = $_GET['comment'];
             }
 
             // save the changes
@@ -102,7 +102,7 @@ if ($usr->id > 0) {
             $result .= dsp_err($msg);
 
             // show the source and its relations, so that the user can change it
-            $result .= $src->dsp_edit($back);
+            $result .= $src->dsp_obj()->dsp_edit($back);
         }
     }
 }

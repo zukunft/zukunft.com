@@ -593,7 +593,7 @@ class value_dsp_old extends value
         log_debug('load source');
         $src = $this->load_source();
         if (isset($src)) {
-            $result .= $src->dsp_select($script, $back);
+            $result .= $src->dsp_obj()->dsp_select($script, $back);
             $result .= '<br><br>';
         }
 

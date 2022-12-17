@@ -294,6 +294,7 @@ class word extends user_sandbox_named_with_type
         return $dsp_obj;
     }
 
+
     /*
      * loading / database access object (DAO) functions
      */

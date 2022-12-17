@@ -2,8 +2,8 @@
 
 /*
 
-    source.php - the source object to define the source for the values
-    ----------
+    model/ref/source.php - the source object to define the source for the values
+    --------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,9 +29,10 @@
 
 */
 
+use api\source_api;
+use html\source_dsp;
 use export\source_exp;
 use export\exp_obj;
-use html\html_selector;
 
 class source extends user_sandbox_named_with_type
 {
@@ -71,12 +72,13 @@ class source extends user_sandbox_named_with_type
      */
 
     // database fields additional to the user sandbox fields
-    public ?string $url = null;      // the internet link to the source
-    public ?string $comment = null;  // the source description that is shown as a mouseover explain to the user
-    public ?string $code_id = null;  // to select internal predefined sources
+    public ?string $url = null;          // the internet link to the source
+    public ?string $description = null;  // the source description that is shown as a mouseover explain to the user
+    public ?string $code_id = null;      // to select internal predefined sources
 
     // in memory only fields
     public ?string $back = null; // the calling stack
+
 
     /*
      * construct and map
@@ -98,7 +100,7 @@ class source extends user_sandbox_named_with_type
         $this->name = '';
 
         $this->url = '';
-        $this->comment = '';
+        $this->description = '';
         $this->type_id = null;
         $this->code_id = '';
 
@@ -119,12 +121,13 @@ class source extends user_sandbox_named_with_type
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
             $this->url = $db_row[self::FLD_URL];
-            $this->comment = $db_row[self::FLD_COMMENT];
+            $this->description = $db_row[self::FLD_COMMENT];
             $this->type_id = $db_row[self::FLD_TYPE];
             $this->code_id = $db_row[sql_db::FLD_CODE_ID];
         }
         return $result;
     }
+
 
     /*
      * set and get
@@ -156,8 +159,39 @@ class source extends user_sandbox_named_with_type
         $this->type_id = cl(db_cl::SOURCE_TYPE, $type_code_id);
     }
 
+
     /*
-     * loading
+     * cast
+     */
+
+    /**
+     * @return source_api the source frontend api object
+     */
+    function api_obj(): source_api
+    {
+        $api_obj = new source_api();
+        if (!$this->excluded) {
+            parent::fill_api_obj($api_obj);
+        }
+        return $api_obj;
+    }
+
+    /**
+     * @return source_dsp the source object with the display interface functions
+     */
+    function dsp_obj(): source_dsp
+    {
+        $dsp_obj = new source_dsp();
+        if (!$this->excluded) {
+            parent::fill_dsp_obj($dsp_obj);
+        }
+
+        return $dsp_obj;
+    }
+
+
+    /*
+     * load
      */
 
     /**
@@ -317,6 +351,11 @@ class source extends user_sandbox_named_with_type
         return $type_name;
     }
 
+
+    /*
+     * im- and export
+     */
+
     /**
      * import a source from an object
      *
@@ -338,7 +377,7 @@ class source extends user_sandbox_named_with_type
                 $this->url = $value;
             }
             if ($key == exp_obj::FLD_DESCRIPTION) {
-                $this->comment = $value;
+                $this->description = $value;
             }
             /* TODO
             if ($key == exp_obj::FLD_TYPE)    { $this->type_id = cl($value); }
@@ -354,7 +393,11 @@ class source extends user_sandbox_named_with_type
         return $result;
     }
 
-    // create an object for the export
+    /**
+     * create an object for the export
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return exp_obj the filled object used to create the json
+     */
     function export_obj(bool $do_load = true): exp_obj
     {
         log_debug();
@@ -365,8 +408,8 @@ class source extends user_sandbox_named_with_type
         if ($this->url <> '') {
             $result->url = $this->url;
         }
-        if ($this->comment <> '') {
-            $result->comment = $this->comment;
+        if ($this->description <> '') {
+            $result->comment = $this->description;
         }
         if ($this->type_name() <> '') {
             $result->type = $this->type_name();
@@ -379,11 +422,14 @@ class source extends user_sandbox_named_with_type
         return $result;
     }
 
-    /*
-    display functions
-    */
 
-    // display the unique id fields
+    /*
+     * debug
+     */
+
+    /**
+     * @return string the unique description of a source
+     */
     function dsp_id(): string
     {
         $result = '';
@@ -402,116 +448,9 @@ class source extends user_sandbox_named_with_type
         return $result;
     }
 
-    function name(): string
-    {
-        return $this->name;
-    }
-
-    // return the html code to display a source name with the link
-    function name_linked($wrd, $back): string
-    {
-        return '<a href="/http/source_edit.php?id=' . $this->id . '&word=' . $wrd->id . '&back=' . $back . '">' . $this->name . '</a>';
-    }
 
     /*
-     * TODO check if this is still needed (at least use the idea)
-     *
-    // returns the html code for a source: this is the main function of this lib
-    // source_id is used to force the display to a set form; e.g. display the sectors of a company instead of the balance sheet
-    // source_type_id is used to .... remove???
-    // word_id - id of the starting word to display; can be a single word, a comma separated list of word ids, a word group or a word triple
-    function display($wrd): string
-    {
-        log_debug('source->display "' . $wrd->name() . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id . ')  for user "' . $this->user()->name . '"');
-        $result = '';
-
-        if ($this->id <= 0) {
-            log_err("The source id must be loaded to display it.", "source->display");
-        } else {
-            // display always the source name in the top right corner and allow the user to edit the source
-            $result .= $this->dsp_type_open();
-            $result .= $this->dsp_navbar($wrd->id);
-            $result .= $this->dsp_entries($wrd);
-            $result .= $this->dsp_type_close();
-        }
-        log_debug('source->display ... done');
-
-        return $result;
-    }
-    */
-
-    // display a selector for the value source
-    function dsp_select($form_name, $back): string
-    {
-        log_debug($this->dsp_id());
-        $result = ''; // reset the html code var
-
-        // for new values assume the last source used, but not for existing values to enable only changing the value, but not setting the source
-        if ($this->id <= 0 and $form_name == "value_add") {
-            $this->id = $this->user()->source_id;
-        }
-
-        log_debug("source id used (" . $this->id . ")");
-        $sel = new html_selector;
-        $sel->form = $form_name;
-        $sel->name = "source";
-        $sel->sql = sql_lst_usr("source", $this->user());
-        $sel->selected = $this->id;
-        $sel->dummy_text = 'please define the source';
-        $result .= '      taken from ' . $sel->display() . ' ';
-        $result .= '    <td>' . \html\btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id . '&back=' . $back) . '</td>';
-        $result .= '    <td>' . \html\btn_add("Add new source", '/http/source_add.php?back=' . $back) . '</td>';
-        return $result;
-    }
-
-    // display a selector for the source type
-    private function dsp_select_type($form_name, $back): string
-    {
-        log_debug("source->dsp_select_type (" . $this->id . "," . $form_name . ",b" . $back . " and user " . $this->user()->name . ")");
-
-        $result = ''; // reset the html code var
-
-        $sel = new html_selector;
-        $sel->form = $form_name;
-        $sel->name = "source_type";
-        $sel->sql = sql_lst("source_type");
-        $sel->selected = $this->type_id;
-        $sel->dummy_text = 'please select the source type';
-        $result .= $sel->display();
-        return $result;
-    }
-
-    // display a html view to change the source name and url
-    function dsp_edit(string $back = ''): string
-    {
-        log_debug('source->dsp_edit ' . $this->dsp_id() . ' by user ' . $this->user()->name);
-        $result = '';
-
-        if ($this->id <= 0) {
-            $script = "source_add";
-            $result .= dsp_text_h2("Add source");
-        } else {
-            $script = "source_edit";
-            $result .= dsp_text_h2('Edit source "' . $this->name . '"');
-        }
-        $result .= dsp_form_start($script);
-        //$result .= dsp_tbl_start();
-        $result .= dsp_form_hidden("id", $this->id);
-        $result .= dsp_form_hidden("back", $back);
-        $result .= dsp_form_hidden("confirm", 1);
-        $result .= dsp_form_fld("name", $this->name, "Source name:");
-        $result .= '<tr><td>type   </td><td>' . $this->dsp_select_type($script, $back) . '</td></tr>';
-        $result .= dsp_form_fld("url", $this->url, "URL:");
-        $result .= dsp_form_fld("comment", $this->comment, "Comment:");
-        //$result .= dsp_tbl_end ();
-        $result .= dsp_form_end('', $back);
-
-        log_debug('done');
-        return $result;
-    }
-
-    /*
-     * save functions
+     * save
      */
 
     /**
@@ -559,8 +498,11 @@ class source extends user_sandbox_named_with_type
         return $result;
     }
 
-    // true if the user is the owner and no one else has changed the source
-    // because if another user has changed the source and the original value is changed, maybe the user source also needs to be updated
+    /**
+     * @return bool true if the user is the owner and no one else has changed the source
+     *              because if another user has changed the source and the original value is changed,
+     *              maybe the user source also needs to be updated
+     */
     function can_change(): bool
     {
         log_debug($this->id . ',u' . $this->user()->id);
@@ -573,7 +515,10 @@ class source extends user_sandbox_named_with_type
         return $can_change;
     }
 
-    // create a database record to save user specific settings for this source
+    /**
+     * create a database record to save user specific settings for this source
+     * @return bool false if the adding has failed and true if it was successful or not needed
+     */
     function add_usr_cfg(): bool
     {
         global $db_con;
@@ -602,8 +547,6 @@ class source extends user_sandbox_named_with_type
                 if ($log_id <= 0) {
                     log_err('Insert of user_source failed.');
                     $result = false;
-                } else {
-                    $result = true;
                 }
             }
         }
@@ -629,7 +572,7 @@ class source extends user_sandbox_named_with_type
 
     /**
      * check if the database record for the user specific settings can be removed
-     * @returns bool false if the deletion has failed and true if it was successful or not needed
+     * @return bool false if the deletion has failed and true if it was successful or not needed
      */
     function del_usr_cfg_if_not_needed(): bool
     {
@@ -667,7 +610,13 @@ class source extends user_sandbox_named_with_type
         return $result;
     }
 
-    // set the update parameters for the source url
+    /**
+     * set the update parameters for the source url
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param user_sandbox $db_rec the database record before the saving
+     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
+     */
     private function save_field_url(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
@@ -683,15 +632,21 @@ class source extends user_sandbox_named_with_type
         return $result;
     }
 
-    // set the update parameters for the source comment
+    /**
+     * set the update parameters for the source comment
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param user_sandbox $db_rec the database record before the saving
+     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
+     */
     private function save_field_comment(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
-        if ($db_rec->comment <> $this->comment) {
+        if ($db_rec->description <> $this->description) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->comment;
-            $log->new_value = $this->comment;
-            $log->std_value = $std_rec->comment;
+            $log->old_value = $db_rec->description;
+            $log->new_value = $this->description;
+            $log->std_value = $std_rec->description;
             $log->row_id = $this->id;
             $log->field = 'comment';
             $result = $this->save_field_do($db_con, $log);
@@ -701,6 +656,10 @@ class source extends user_sandbox_named_with_type
 
     /**
      * set the update parameters for the word type
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param user_sandbox $db_rec the database record before the saving
+     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
      */
     function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
@@ -722,6 +681,10 @@ class source extends user_sandbox_named_with_type
 
     /**
      * save all updated source fields excluding the name, because already done when adding a source
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param user_sandbox $db_rec the database record before the saving
+     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
      */
     function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {

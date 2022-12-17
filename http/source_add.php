@@ -67,7 +67,7 @@ if ($usr->id > 0) {
         $src->url = $_GET['url'];
     }     // url of the new source to add
     if (isset($_GET['comment'])) {
-        $src->comment = $_GET['comment'];
+        $src->description = $_GET['comment'];
     }
 
     // if the user has pressed save at least once
@@ -113,7 +113,7 @@ if ($usr->id > 0) {
         $result .= dsp_err($msg);
 
         // display the add source view
-        $result .= $src->dsp_edit($back);
+        $result .= $src->dsp_obj()->dsp_edit($back);
     }
 }
 

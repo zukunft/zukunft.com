@@ -916,11 +916,11 @@ class view extends user_sandbox_named_with_type
     function save_field_comment(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
-        if ($db_rec->comment <> $this->comment) {
+        if ($db_rec->description <> $this->comment) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->comment;
+            $log->old_value = $db_rec->description;
             $log->new_value = $this->comment;
-            $log->std_value = $std_rec->comment;
+            $log->std_value = $std_rec->description;
             $log->row_id = $this->id;
             $log->field = self::FLD_COMMENT;
             $result = $this->save_field_do($db_con, $log);

@@ -113,7 +113,7 @@ function run_source_test(testing $t): void
 
     // check if the source parameters can be added
     $src_renamed->url = source_api::TEST_URL;
-    $src_renamed->comment = source_api::TEST_DESCRIPTION;
+    $src_renamed->description = source_api::TEST_DESCRIPTION;
     $result = $src_renamed->save();
     $target = '';
     $t->dsp('source->save all source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -123,7 +123,7 @@ function run_source_test(testing $t): void
     $result = $src_reloaded->url;
     $target = source_api::TEST_URL;
     $t->dsp('source->load url for "' . source_api::TN_RENAMED . '"', $target, $result);
-    $result = $src_reloaded->comment;
+    $result = $src_reloaded->description;
     $target = source_api::TEST_DESCRIPTION;
     $t->dsp('source->load description for "' . source_api::TN_RENAMED . '"', $target, $result);
 
@@ -147,7 +147,7 @@ function run_source_test(testing $t): void
     $src_usr2 = new source($t->usr2);
     $src_usr2->load_by_name(source_api::TN_RENAMED, source::class);
     $src_usr2->url = source_api::TEST_URL_CHANGED;
-    $src_usr2->comment = source_api::TEST_DESCRIPTION_CHANGED;
+    $src_usr2->description = source_api::TEST_DESCRIPTION_CHANGED;
     $result = $src_usr2->save();
     $target = '';
     $t->dsp('source->save all source fields for user 2 beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -158,7 +158,7 @@ function run_source_test(testing $t): void
     $result = $src_usr2_reloaded->url;
     $target = source_api::TEST_URL_CHANGED;
     $t->dsp('source->load url for "' . source_api::TN_RENAMED . '"', $target, $result);
-    $result = $src_usr2_reloaded->comment;
+    $result = $src_usr2_reloaded->description;
     $target = source_api::TEST_DESCRIPTION_CHANGED;
     $t->dsp('source->load description for "' . source_api::TN_RENAMED . '"', $target, $result);
 
@@ -167,7 +167,7 @@ function run_source_test(testing $t): void
     $result = $src_reloaded->url;
     $target = source_api::TEST_URL;
     $t->dsp('source->load url for "' . source_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
-    $result = $src_reloaded->comment;
+    $result = $src_reloaded->description;
     $target = source_api::TEST_DESCRIPTION;
     $t->dsp('source->load description for "' . source_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
 
@@ -175,7 +175,7 @@ function run_source_test(testing $t): void
     $src_usr2 = new source($t->usr2);
     $src_usr2->load_by_name(source_api::TN_RENAMED, source::class);
     $src_usr2->url = source_api::TEST_URL;
-    $src_usr2->comment = source_api::TEST_DESCRIPTION;
+    $src_usr2->description = source_api::TEST_DESCRIPTION;
     $result = $src_usr2->save();
     $target = '';
     $t->dsp('source->save undo the user source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -186,7 +186,7 @@ function run_source_test(testing $t): void
     $result = $src_usr2_reloaded->url;
     $target = source_api::TEST_URL;
     $t->dsp('source->load url for "' . source_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
-    $result = $src_usr2_reloaded->comment;
+    $result = $src_usr2_reloaded->description;
     $target = source_api::TEST_DESCRIPTION;
     $t->dsp('source->load description for "' . source_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
 
