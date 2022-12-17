@@ -41,6 +41,8 @@
 // TODO add checks that all id (name or link) changing return the correct error message if the new id already exists
 // TODO build a cascading test classes and split the classes to sections less than 1000 lines of code
 
+use api\word_api;
+
 CONST HOST_TESTING = 'http://localhost';
 
 global $debug;
@@ -1119,6 +1121,7 @@ class test_base
     {
 
         $this->assert_api_get(word::class);
+        $this->assert_api_get_by_name(word::class, word_api::TN_READ);
         $this->assert_api_get(verb::class);
         $this->assert_api_get(triple::class);
         $this->assert_api_get(value::class);
@@ -1288,6 +1291,23 @@ class test_base
         $data = array("id" => $id);
         // TODO check why for formula a double call is needed
         $actual = json_decode($this->api_call("GET", $url, $data), true);
+        $actual = json_decode($this->api_call("GET", $url, $data), true);
+        $expected = json_decode($this->api_json_expected($class), true);
+        return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
+    }
+
+    /**
+     * check if the REST GET call by name returns the expected JSON message
+     * for testing the local deployments needs to be updated using an external script
+     *
+     * @param string $class the class name of the object to test
+     * @param string $name the unique name of the db row that should be used for testing
+     * @return bool true if the json has no relevant differences
+     */
+    function assert_api_get_by_name(string $class, string $name = ''): bool
+    {
+        $url = HOST_TESTING . '/api/' . $class;
+        $data = array("name" => $name);
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         $expected = json_decode($this->api_json_expected($class), true);
         return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);

@@ -42,6 +42,7 @@ $db_con = prg_start("api/word", "", false);
 
 // get the parameters
 $wrd_id = $_GET['id'] ?? 0;
+$wrd_name = $_GET['name'] ?? '';
 
 $msg = '';
 $result = new word_api(); // reset the html code var
@@ -57,8 +58,12 @@ if ($usr->id > 0) {
         $wrd = new word($usr);
         $wrd->load_by_id($wrd_id);
         $result = $wrd->api_obj();
+    } elseif ($wrd_name != '') {
+        $wrd = new word($usr);
+        $wrd->load_by_name($wrd_name);
+        $result = $wrd->api_obj();
     } else {
-        $msg = 'word id is missing';
+        $msg = 'word id or name is missing';
     }
 }
 
