@@ -39,14 +39,14 @@ class ref_unit_tests
 
         global $usr;
 
-        // init
+        // init for reference
         $db_con = new sql_db();
         $t->name = 'ref->';
         $t->resource_path = 'db/ref/';
         $json_file = 'unit/ref/wikipedia.json';
         $usr->id = 1;
 
-        $t->header('Unit tests of the Ref class (src/main/php/model/ref/ref.php)');
+        $t->header('Unit tests of the reference class (src/main/php/model/ref/ref.php)');
 
         $t->subheader('SQL user sandbox statement tests');
 
@@ -54,15 +54,22 @@ class ref_unit_tests
         $t->assert_load_sql_id($db_con, $ref);
         $t->assert_load_sql_name($db_con, $ref);
 
-
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new ref($usr), $json_file);
 
+        $t->subheader('SQL statement tests');
 
+        // sql to load the ref types
+        $ref_type_list = new ref_type_list();
+        $t->assert_load_sql($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);
+
+
+        // init for source
         $t->resource_path = 'db/ref/';
-        $t->header('Unit tests of the source class (src/main/php/model/ref/source.php)');
+        $json_file = 'unit/ref/bipm.json';
 
+        $t->header('Unit tests of the source class (src/main/php/model/ref/source.php)');
 
         $t->subheader('SQL user sandbox statement tests');
 
@@ -70,8 +77,12 @@ class ref_unit_tests
         $t->assert_load_sql_id($db_con, $src);
         $t->assert_load_sql_name($db_con, $src);
 
+        $t->subheader('Im- and Export tests');
+
+        $t->assert_json(new source($usr), $json_file);
 
         $t->subheader('SQL statement tests');
+
 
         // sql to load a source by id
         $src = new source($usr);
@@ -92,10 +103,6 @@ class ref_unit_tests
         $src->set_id(5);
         $t->assert_not_changed_sql($db_con, $src);
         $t->assert_user_config_sql($db_con, $src);
-
-        // sql to load the ref types
-        $ref_type_list = new ref_type_list();
-        $t->assert_load_sql($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);
 
         // sql to load the source types
         $source_type_list = new source_type_list();

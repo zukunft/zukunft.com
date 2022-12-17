@@ -36,6 +36,7 @@
 class source_type extends user_type
 {
     // list of the source types that have a coded functionality
+    const PDF = "pdf";
     const XBRL = "xbrl";
 
     public int $id = 0;

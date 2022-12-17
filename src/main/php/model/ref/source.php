@@ -365,6 +365,8 @@ class source extends user_sandbox_named_with_type
      */
     function import_obj(array $json_obj, bool $do_save = true): user_message
     {
+        global $source_types;
+
         log_debug();
         $result = new user_message();
 
@@ -379,11 +381,9 @@ class source extends user_sandbox_named_with_type
             if ($key == exp_obj::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
-            /* TODO
-            if ($key == exp_obj::FLD_TYPE)    { $this->type_id = cl($value); }
-            if ($key == sql_db::FLD_CODE_ID) {
+            if ($key == exp_obj::FLD_TYPE) {
+                $this->type_id = $source_types->id($value);
             }
-            */
         }
 
         if ($result->is_ok() and $do_save) {
@@ -409,7 +409,7 @@ class source extends user_sandbox_named_with_type
             $result->url = $this->url;
         }
         if ($this->description <> '') {
-            $result->comment = $this->description;
+            $result->description = $this->description;
         }
         if ($this->type_name() <> '') {
             $result->type = $this->type_name();
@@ -639,7 +639,7 @@ class source extends user_sandbox_named_with_type
      * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    private function save_field_comment(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    public function save_field_description(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->description <> $this->description) {
@@ -689,7 +689,7 @@ class source extends user_sandbox_named_with_type
     function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = $this->save_field_url($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_comment($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_description($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         log_debug('source->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
