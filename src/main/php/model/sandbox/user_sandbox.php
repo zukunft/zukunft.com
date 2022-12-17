@@ -1927,7 +1927,8 @@ class user_sandbox extends db_object
         // refresh the object with the database to include all updates utils now (TODO start of lock for commit here)
         // TODO it seems that the owner is not updated
         $reloaded = false;
-        if ($this->obj_name == sql_db::TBL_WORD) {
+        if ($this->obj_name == sql_db::TBL_WORD
+            or $this->obj_name == sql_db::TBL_SOURCE) {
             $reloaded_id = $this->load_by_id($this->id());
             if ($reloaded_id != 0) {
                 $reloaded = true;

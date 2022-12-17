@@ -78,7 +78,7 @@ function run_source_test(testing $t): void
 
     // ... test if the new source has been created
     $src_added = $t->load_source(source_api::TN_ADD);
-    $src_added->load_obj_vars();
+    $src_added->load_by_name(source_api::TN_ADD);
     if ($src_added->id() > 0) {
         $result = $src_added->name();
     }

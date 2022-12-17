@@ -488,7 +488,7 @@ class value_list extends sandbox_list
                 $src = new source($this->user());
                 $src->set_name($value);
                 if ($result->is_ok() and $do_save) {
-                    $src->load_obj_vars();
+                    $src->load_by_name($value);
                     if ($src->id() == 0) {
                         $result->add_message($src->save());
                     }

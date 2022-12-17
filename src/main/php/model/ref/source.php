@@ -255,75 +255,60 @@ class source extends user_sandbox_named_with_type
     }
 
     /**
-     * create an SQL statement to retrieve the parameters of a source from the database
+     * create an SQL statement to retrieve a source by code id from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $code_id the code id of the source
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_by_code_id(sql_db $db_con, string $code_id, string $class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
-        if ($this->id != 0) {
-            $qp->name .= 'id';
-        } elseif ($this->code_id != '') {
-            $qp->name .= sql_db::FLD_CODE_ID;
-        } elseif ($this->name != '') {
-            $qp->name .= 'name';
-        } else {
-            log_err('Either the database ID (' . $this->id . ') or the ' .
-                $class . ' name (' . $this->name . ') and the user (' . $this->user()->id . ') must be set to load a ' .
-                $class, $class . '->load');
-        }
-
-        $db_con->set_type(sql_db::TBL_SOURCE);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        if ($this->id != 0) {
-            $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select_by_set_id();
-        } elseif ($this->code_id != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, $this->code_id);
-            $qp->sql = $db_con->select_by_code_id();
-        } elseif ($this->name != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, $this->name);
-            $qp->sql = $db_con->select_by_set_name();
-        }
+        $qp = $this->load_sql($db_con, 'code_id', $class);
+        $db_con->add_par(sql_db::PAR_TEXT, $code_id);
+        $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
     }
 
     /**
-     * load the missing source parameters from the database
+     * load a source by code id
+     * @param string $code_id the code id of the source
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
      */
-    function load_obj_vars(): bool
+    function load_by_code_id(string $code_id, string $class = self::class): int
     {
         global $db_con;
-        $result = false;
 
-        // check the all minimal input parameters
-        if (!$this->user()->is_set()) {
-            log_err("The user id must be set to load a source.", "source->load");
-        } elseif ($this->id <= 0 and $this->code_id == '' and $this->name == '') {
-            log_err("Either the database ID (" . $this->id . "), the name (" . $this->name . ") or the code_id (" . $this->code_id . ") and the user (" . $this->user()->id . ") must be set to load a source.", "source->load");
-        } else {
+        log_debug($code_id);
+        $qp = $this->load_sql_by_code_id($db_con, $code_id, $class);
+        return parent::load($qp);
+    }
 
-            $qp = $this->load_sql_obj_vars($db_con);
+    /**
+     * just set the class name for the user sandbox function
+     * load a source object by database id
+     * @param int $id the id of the source
+     * @param string $class the source class name
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id, string $class = self::class): int
+    {
+        return parent::load_by_id($id, $class);
+    }
 
-            if ($db_con->get_where() <> '') {
-                $db_row = $db_con->get1($qp);
-                $this->row_mapper($db_row);
-                if ($this->id > 0) {
-                    log_debug('source->load (' . $this->dsp_id() . ')');
-                    $result = true;
-                }
-            }
-        }
-        return $result;
+    /**
+     * just set the class name for the user sandbox function
+     * load a source object by name
+     * @param string $name the name source
+     * @param string $class the source class name
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_name(string $name, string $class = self::class): int
+    {
+        return parent::load_by_name($name, $class);
     }
 
     function id_field(): string

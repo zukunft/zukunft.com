@@ -63,8 +63,7 @@ if ($usr->id > 0) {
 
         // create the source object to have an object to update the parameters
         $src = new source($usr);
-        $src->set_id($src_id);
-        $src->load_obj_vars();
+        $src->load_by_id($src_id);
 
         if ($confirm == 1) {
             $src->del();

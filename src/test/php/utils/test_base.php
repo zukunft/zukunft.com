@@ -946,8 +946,7 @@ class test_base
     {
         global $usr;
         $src = new source($usr);
-        $src->set_name($src_name);
-        $src->load_obj_vars();
+        $src->load_by_name($src_name);
         return $src;
     }
 

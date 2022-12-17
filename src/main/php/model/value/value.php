@@ -583,7 +583,7 @@ class value extends user_sandbox_value
 
         if ($this->get_source_id() > 0) {
             $this->source->set_user($this->user());
-            $this->source->load_obj_vars();
+            $this->source->load_by_id($this->get_source_id());
             $src = $this->source;
         } else {
             $this->source = null;
@@ -1038,7 +1038,7 @@ class value extends user_sandbox_value
                 $src = new source($this->user());
                 $src->set_name($value);
                 if ($result->is_ok() and $do_save) {
-                    $src->load_obj_vars();
+                    $src->load_by_name($value);
                     if ($src->id == 0) {
                         $src->save();
                     }

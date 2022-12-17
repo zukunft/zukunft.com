@@ -80,8 +80,7 @@ if ($usr->id > 0) {
 
             // check if source name already exists (move this part to the save function??)
             $db_src = new source($usr);
-            $db_src->set_name($src->name());
-            $db_src->load_obj_vars();
+            $db_src->load_by_name($src->name());
             if ($db_src->id() > 0) {
                 $msg .= 'Name ' . $src->name() . ' is already existing. Please enter another name or use the existing source.';
             }

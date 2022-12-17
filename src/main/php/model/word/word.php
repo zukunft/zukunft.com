@@ -373,6 +373,30 @@ class word extends user_sandbox_named_with_type
         return $qp;
     }
 
+    /**
+     * just set the class name for the user sandbox function
+     * load a word object by database id
+     * @param int $id the id of the word
+     * @param string $class the word class name
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id, string $class = self::class): int
+    {
+        return parent::load_by_id($id, $class);
+    }
+
+    /**
+     * just set the class name for the user sandbox function
+     * load a word object by name
+     * @param string $name the name word
+     * @param string $class the word class name
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_name(string $name, string $class = self::class): int
+    {
+        return parent::load_by_name($name, $class);
+    }
+
     function id_field(): string
     {
         return self::FLD_ID;

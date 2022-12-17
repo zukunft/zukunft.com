@@ -450,6 +450,30 @@ class view_cmp extends user_sandbox_named_with_type
         return $result;
     }
 
+    /**
+     * just set the class name for the user sandbox function
+     * load a view component object by database id
+     * @param int $id the id of the view component
+     * @param string $class the view component class name
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id, string $class = self::class): int
+    {
+        return parent::load_by_id($id, $class);
+    }
+
+    /**
+     * just set the class name for the user sandbox function
+     * load a view component object by name
+     * @param string $name the name view component
+     * @param string $class the view component class name
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_name(string $name, string $class = self::class): int
+    {
+        return parent::load_by_name($name, $class);
+    }
+
     function id_field(): string
     {
         return self::FLD_ID;

@@ -153,7 +153,7 @@ class user_sandbox_named extends user_sandbox
         parent::fill_api_obj($api_obj);
 
         $api_obj->set_name($this->name());
-        $api_obj->description =  $this->description;
+        $api_obj->description = $this->description;
     }
 
     /**
@@ -167,7 +167,7 @@ class user_sandbox_named extends user_sandbox
         parent::fill_dsp_obj($dsp_obj);
 
         $dsp_obj->set_name($this->name());
-        $dsp_obj->description =  $this->description;
+        $dsp_obj->description = $this->description;
     }
 
 
@@ -609,10 +609,25 @@ class user_sandbox_named extends user_sandbox
             }
             // check with the user namespace
             $db_chk->set_user($this->user());
-            if ($db_chk->load_obj_vars()) {
-                if ($db_chk->id > 0) {
-                    log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
-                    $result = $db_chk;
+            if ($this->obj_name == sql_db::TBL_WORD
+                or $this->obj_name == sql_db::TBL_SOURCE) {
+                if ($this->name != '') {
+                    if ($db_chk->load_by_name($this->name())) {
+                        if ($db_chk->id() > 0) {
+                            log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                            $result = $db_chk;
+                        }
+                    }
+                } else {
+                    log_err('The name must be set to check if a similar obejct exists');
+                }
+            } else {
+                // for all other objects still use the deprecated load_by_vars method
+                if ($db_chk->load_obj_vars()) {
+                    if ($db_chk->id > 0) {
+                        log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                        $result = $db_chk;
+                    }
                 }
             }
         }

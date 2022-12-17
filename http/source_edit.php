@@ -57,8 +57,7 @@ if ($usr->id > 0) {
 
     // create the source object to have an place to update the parameters
     $src = new source($usr);
-    $src->set_id($_GET['id']);
-    $src->load_obj_vars();
+    $src->load_by_id($_GET['id']);
 
     if ($src->id() <= 0) {
         $result .= log_err("No source found to change because the id is missing.", "source_edit.php");

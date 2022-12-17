@@ -76,6 +76,7 @@ class ref_unit_tests
         $src = new source($usr);
         $t->assert_load_sql_id($db_con, $src);
         $t->assert_load_sql_name($db_con, $src);
+        $t->assert_load_sql_code_id($db_con, $src);
 
         $t->subheader('Im- and Export tests');
 
@@ -83,22 +84,14 @@ class ref_unit_tests
 
         $t->subheader('SQL statement tests');
 
-
         // sql to load a source by id
         $src = new source($usr);
         $src->set_id(4);
-        //$t->assert_load_sql($db_con, $src);
         $t->assert_load_standard_sql($db_con, $src);
-
-        // sql to load a source by code id
-        $src = new source($usr);
-        $src->code_id = source_api::TN_READ;
-        $t->assert_load_sql($db_con, $src);
 
         // sql to load a source by name
         $src = new source($usr);
         $src->set_name(source_api::TN_READ);
-        //$t->assert_load_sql($db_con, $src);
         $t->assert_load_standard_sql($db_con, $src);
         $src->set_id(5);
         $t->assert_not_changed_sql($db_con, $src);

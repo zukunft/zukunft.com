@@ -74,8 +74,7 @@ function run_user_sandbox_test(testing $t): void
 
     // check if the source has been saved (check user_sandbox->save case 1)
     $src = new source($t->usr1);
-    $src->set_id($src_id);
-    if ($src->load_obj_vars()) {
+    if ($src->load_by_id($src_id)) {
         $result = $src->name();
     }
     $target = TS_IPCC_AR6_SYNTHESIS;
@@ -97,8 +96,7 @@ function run_user_sandbox_test(testing $t): void
 
     // check if the source url has been updates (check user_sandbox->save case 2)
     $src = new source($t->usr1);
-    $src->set_id($src_id);
-    if ($src->load_obj_vars()) {
+    if ($src->load_by_id($src_id)) {
         $result = $src->url;
     }
     $target = TS_IPCC_AR6_SYNTHESIS_URL;
