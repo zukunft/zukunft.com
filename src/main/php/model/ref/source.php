@@ -46,9 +46,6 @@ class source extends user_sandbox_named_with_type
     const FLD_NAME = 'source_name';
     const FLD_TYPE = 'source_type_id';
     const FLD_URL = 'url';
-    const FLD_DESCRIPTION = 'description';
-
-    const FLD_EX_URL = 'url';
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
@@ -58,7 +55,7 @@ class source extends user_sandbox_named_with_type
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
         self::FLD_URL,
-        self::FLD_DESCRIPTION
+        user_sandbox_named::FLD_DESCRIPTION
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
@@ -94,7 +91,6 @@ class source extends user_sandbox_named_with_type
         parent::reset();
 
         $this->url = '';
-        $this->type_id = null;
         $this->code_id = '';
     }
 
@@ -112,7 +108,7 @@ class source extends user_sandbox_named_with_type
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
             $this->url = $db_row[self::FLD_URL];
-            $this->description = $db_row[self::FLD_DESCRIPTION];
+            $this->description = $db_row[user_sandbox_named::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_TYPE];
             $this->code_id = $db_row[sql_db::FLD_CODE_ID];
         }
@@ -353,7 +349,7 @@ class source extends user_sandbox_named_with_type
             if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == self::FLD_EX_URL) {
+            if ($key == self::FLD_URL) {
                 $this->url = $value;
             }
             if ($key == exp_obj::FLD_DESCRIPTION) {
@@ -402,32 +398,6 @@ class source extends user_sandbox_named_with_type
 
 
     /*
-     * debug
-     */
-
-    /**
-     * @return string the unique description of a source
-     */
-    function dsp_id(): string
-    {
-        $result = '';
-
-        if ($this->name <> '') {
-            $result .= $this->name . ' ';
-            if ($this->id > 0) {
-                $result .= '(' . $this->id . ')';
-            }
-        } else {
-            $result .= $this->id;
-        }
-        if ($this->user()->is_set()) {
-            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
-        }
-        return $result;
-    }
-
-
-    /*
      * save
      */
 
@@ -436,7 +406,7 @@ class source extends user_sandbox_named_with_type
      */
     public function not_used(): bool
     {
-        log_debug('source->not_used (' . $this->id . ')');
+        log_debug($this->id);
 
         // to review: maybe replace by a database foreign key check
         return $this->not_changed();
@@ -483,7 +453,7 @@ class source extends user_sandbox_named_with_type
      */
     function can_change(): bool
     {
-        log_debug($this->id . ',u' . $this->user()->id);
+        log_debug($this->dsp_id() . ' by user ' . $this->user()->id);
         $can_change = false;
         if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
             $can_change = true;
@@ -516,12 +486,12 @@ class source extends user_sandbox_named_with_type
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
-                $this->usr_cfg_id = $db_row['source_id'];
+                $this->usr_cfg_id = $db_row[self::FLD_ID];
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE);
-                $log_id = $db_con->insert(array('source_id', user_sandbox::FLD_USER), array($this->id, $this->user()->id));
+                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_source failed.');
                     $result = false;
@@ -570,7 +540,7 @@ class source extends user_sandbox_named_with_type
             // TODO define for each user sandbox object a list with all user fields and loop here over this array
             if ($usr_src_cfg[self::FLD_NAME] == ''
                 and $usr_src_cfg[self::FLD_URL] == ''
-                and $usr_src_cfg[self::FLD_DESCRIPTION] == ''
+                and $usr_src_cfg[user_sandbox_named::FLD_DESCRIPTION] == ''
                 and $usr_src_cfg[self::FLD_TYPE] == Null
                 and $usr_src_cfg[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
@@ -619,7 +589,7 @@ class source extends user_sandbox_named_with_type
     function save_fields(sql_db $db_con, source|user_sandbox $db_rec, source|user_sandbox $std_rec): string
     {
         $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
-        $result = $this->save_field_url($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_url($db_con, $db_rec, $std_rec);
         log_debug('source->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }

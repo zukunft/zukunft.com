@@ -33,6 +33,10 @@
 class user_sandbox_named_with_type extends user_sandbox_named
 {
 
+    /*
+     * object vars
+     */
+
     // database id of the type used for named user sandbox objects with predefined functionality
     // such as words, formulas, values, terms and view component links
     // because all types are preloaded with the database id the name and code id can fast be received
@@ -41,6 +45,18 @@ class user_sandbox_named_with_type extends user_sandbox_named
     // the id of the source type, view type, view component type or word type e.g. to classify measure words
     // or the formula type to link special behavior to special formulas like "this" or "next"
     public ?int $type_id = null;
+
+
+    /*
+     * construct and map
+     */
+
+    function reset(): void
+    {
+        parent::reset();
+        $this->type_id = null;
+    }
+
 
     /*
      * set and get
@@ -75,8 +91,9 @@ class user_sandbox_named_with_type extends user_sandbox_named
         return log_err($msg);
     }
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**
@@ -98,6 +115,7 @@ class user_sandbox_named_with_type extends user_sandbox_named
 
         $dsp_obj->set_type_id($this->type_id());
     }
+
 
     /*
      * write to database

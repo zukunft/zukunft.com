@@ -273,11 +273,11 @@ class user_sandbox_named extends user_sandbox
 
 
     /*
-     * information
+     * debug
      */
 
     /**
-     * return best possible identification for this object mainly used for debugging
+     * @return string the best possible identification for this object mainly used for debugging
      */
     function dsp_id(): string
     {
@@ -290,7 +290,7 @@ class user_sandbox_named extends user_sandbox
         } else {
             $result .= $this->id;
         }
-        if ($this->user()->id > 0) {
+        if ($this->user()->is_set()) {
             $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
         }
         return $result;
