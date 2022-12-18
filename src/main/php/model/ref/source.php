@@ -110,9 +110,9 @@ class source extends user_sandbox_named_with_type
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the source is loaded and valid
      */
-    function row_mapper(array $db_row, bool $map_usr_fields = false, string $id_fld = self::FLD_ID): bool
+    function row_mapper(array $db_row, bool $map_usr_fields = false, string $id_fld = ''): bool
     {
-        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
+        $result = parent::row_mapper($db_row, $map_usr_fields, $id_fld);
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
             $this->url = $db_row[self::FLD_URL];
@@ -308,11 +308,6 @@ class source extends user_sandbox_named_with_type
         return parent::load_by_name($name, $class);
     }
 
-    function id_field(): string
-    {
-        return self::FLD_ID;
-    }
-
     function name_field(): string
     {
         return self::FLD_NAME;
@@ -460,23 +455,6 @@ class source extends user_sandbox_named_with_type
     }
 
     /**
-     * @return bool true if the user is the owner and no one else has changed the source
-     *              because if another user has changed the source and the original value is changed,
-     *              maybe the user source also needs to be updated
-     */
-    function can_change(): bool
-    {
-        log_debug($this->dsp_id() . ' by user ' . $this->user()->id);
-        $can_change = false;
-        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
-            $can_change = true;
-        }
-
-        log_debug(zu_dsp_bool($can_change));
-        return $can_change;
-    }
-
-    /**
      * create a database record to save user specific settings for this source
      * @return bool false if the adding has failed and true if it was successful or not needed
      */
@@ -499,12 +477,12 @@ class source extends user_sandbox_named_with_type
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
-                $this->usr_cfg_id = $db_row[self::FLD_ID];
+                $this->usr_cfg_id = $db_row[$this->id_field()];
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE);
-                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id));
+                $log_id = $db_con->insert(array($this->id_field(), user_sandbox::FLD_USER), array($this->id, $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_source failed.');
                     $result = false;
@@ -524,7 +502,6 @@ class source extends user_sandbox_named_with_type
     function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_SOURCE);
-        $db_con->set_fields(self::ALL_FLD_NAMES);
         return parent::usr_cfg_sql($db_con, $class);
     }
 

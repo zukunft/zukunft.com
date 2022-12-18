@@ -1704,7 +1704,6 @@ class word extends user_sandbox_named_with_type
     function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_WORD);
-        $db_con->set_fields(self::ALL_FLD_NAMES);
         return parent::usr_cfg_sql($db_con, $class);
     }
 

@@ -1360,21 +1360,6 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     }
 
     /**
-     * true if the user is the owner and no one else has changed the triple
-     * because if another user has changed the triple and the original value is changed, maybe the user triple also needs to be updated
-     */
-    function can_change(): bool
-    {
-        log_debug($this->dsp_id() . ' by user "' . $this->user()->name . '" (id ' . $this->user()->id . ', owner id ' . $this->owner_id . ')');
-        $can_change = false;
-        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
-            $can_change = true;
-        }
-        log_debug(zu_dsp_bool($can_change));
-        return $can_change;
-    }
-
-    /**
      * true if a record for a user specific configuration already exists in the database
      */
     function has_usr_cfg(): bool

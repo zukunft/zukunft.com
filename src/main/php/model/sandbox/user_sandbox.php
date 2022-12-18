@@ -248,6 +248,9 @@ class user_sandbox extends db_object
      */
     function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = ''): bool
     {
+        if ($id_fld == '') {
+            $id_fld = $this->id_field();
+        }
         $this->id = 0;
         $result = false;
         if ($db_row != null) {
@@ -944,8 +947,9 @@ class user_sandbox extends db_object
     }
 
     /**
-     * true if the user is the owner and no one else has changed the object
-     * because if another user has changed the object and the original value is changed, maybe the user object also needs to be updated
+     * @return bool true if the user is the owner and no one else has changed the object
+     *              because if another user has changed the object and the original value is changed,
+     *              maybe the user object also needs to be updated
      */
     function can_change(): bool
     {
@@ -958,7 +962,7 @@ class user_sandbox extends db_object
             $result = true;
         }
 
-        log_debug($this->obj_name .zu_dsp_bool($result));
+        log_debug($this->obj_name . zu_dsp_bool($result));
         return $result;
     }
 

@@ -507,20 +507,6 @@ class formula_link extends user_sandbox_link_with_type
     }
 
     /**
-     * @return bool true if the user is the owner and no one else has changed the formula_link
-     * because if another user has changed the formula_link and the original value is changed, maybe the user formula_link also needs to be updated
-     */
-    function can_change(): bool
-    {
-        $can_change = false;
-        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
-            $can_change = true;
-        }
-        log_debug(zu_dsp_bool($can_change));
-        return $can_change;
-    }
-
-    /**
      * @return bool true if a record for a user specific configuration already exists in the database
      */
     function has_usr_cfg(): bool

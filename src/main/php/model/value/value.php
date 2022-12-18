@@ -1375,22 +1375,6 @@ class value extends user_sandbox_value
     }
 
     /**
-     * true if the user is the owner and no one else has changed the value
-     */
-    function can_change(): bool
-    {
-        log_debug('id ' . $this->id . ' by user ' . $this->user()->name);
-        $can_change = false;
-        log_debug('id ' . $this->id . ' owner ' . $this->owner_id . ' = ' . $this->user()->id . '?');
-        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
-            $can_change = true;
-        }
-
-        log_debug(zu_dsp_bool($can_change));
-        return $can_change;
-    }
-
-    /**
      * true if a record for a user specific configuration already exists in the database
      */
     function has_usr_cfg(): bool

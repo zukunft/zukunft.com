@@ -1805,21 +1805,6 @@ class formula extends user_sandbox_named_with_type
     }
 
     /**
-     * true if the user is the owner and no one else has changed the formula
-     * because if another user has changed the formula and the original value is changed, maybe the user formula also needs to be updated
-     */
-    function can_change(): bool
-    {
-        log_debug('->can_change ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
-        $can_change = false;
-        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
-            $can_change = true;
-        }
-        log_debug(zu_dsp_bool($can_change));
-        return $can_change;
-    }
-
-    /**
      * true if a record for a user specific configuration already exists in the database
      */
     function has_usr_cfg(): bool
