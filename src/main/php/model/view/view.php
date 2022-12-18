@@ -65,6 +65,14 @@ class view extends user_sandbox_named_with_type
         user_sandbox::FLD_SHARE,
         user_sandbox::FLD_PROTECT
     );
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const ALL_FLD_NAMES = array(
+        self::FLD_COMMENT,
+        self::FLD_TYPE,
+        self::FLD_EXCLUDED,
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
+    );
 
     /*
      * code links
@@ -557,6 +565,12 @@ class view extends user_sandbox_named_with_type
         return self::FLD_NAME;
     }
 
+    function all_fields(): array
+    {
+        return self::ALL_FLD_NAMES;
+    }
+
+
     /*
      * display function
      */
@@ -901,37 +915,6 @@ class view extends user_sandbox_named_with_type
             self::FLD_NAMES_NUM_USR
         ));
         return parent::usr_cfg_sql($db_con, $class);
-    }
-
-    /**
-     * check if the database record for the user specific settings can be removed
-     */
-    function del_usr_cfg_if_not_needed(): bool
-    {
-        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-
-        global $db_con;
-        $result = true;
-
-        //if ($this->has_usr_cfg) {
-
-        // check again if there ist not yet a record
-        $qp = $this->usr_cfg_sql($db_con);
-        $db_con->usr_id = $this->user()->id;
-        $usr_cfg = $db_con->get1($qp);
-
-        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
-        if ($usr_cfg[self::FLD_ID] > 0) {
-            if ($usr_cfg[self::FLD_COMMENT] == ''
-                and $usr_cfg[self::FLD_TYPE] == Null
-                and $usr_cfg[self::FLD_EXCLUDED] == Null) {
-                // delete the entry in the user sandbox
-                log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-                $result = $this->del_usr_cfg_exe($db_con);
-            }
-        }
-        //}
-        return $result;
     }
 
     /**

@@ -60,6 +60,14 @@ class view_cmp_link extends user_sandbox_link_with_type
         user_sandbox::FLD_SHARE,
         user_sandbox::FLD_PROTECT
     );
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const ALL_FLD_NAMES = array(
+        self::FLD_ORDER_NBR,
+        self::FLD_POS_TYPE,
+        self::FLD_EXCLUDED,
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
+    );
 
     /*
      * code links
@@ -355,6 +363,12 @@ class view_cmp_link extends user_sandbox_link_with_type
         return view_cmp::FLD_ID;
     }
 
+    function all_fields(): array
+    {
+        return self::ALL_FLD_NAMES;
+    }
+
+
     /*
      * display functions
      */
@@ -599,39 +613,7 @@ class view_cmp_link extends user_sandbox_link_with_type
     function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
-        $db_con->set_fields(self::FLD_NAMES_NUM_USR);
         return parent::usr_cfg_sql($db_con, $class);
-    }
-
-    /**
-     * check if the database record for the user specific settings can be removed
-     * @return bool true if the checking and the potential removing has been successful, which does not mean, that the user sandbox database row has actually been removed
-     */
-    function del_usr_cfg_if_not_needed(): bool
-    {
-        log_debug('pre check for ' . $this->dsp_id());
-
-        global $db_con;
-        $result = true;
-
-        //if ($this->has_usr_cfg) {
-
-        // check again if there ist not yet a record
-        $qp = $this->usr_cfg_sql($db_con);
-        $db_con->usr_id = $this->user()->id;
-        $usr_cfg = $db_con->get1($qp);
-        if ($usr_cfg) {
-            if ($usr_cfg[self::FLD_ID] > 0) {
-                if ($usr_cfg[self::FLD_ORDER_NBR] == Null
-                    and $usr_cfg[self::FLD_POS_TYPE] == Null
-                    and $usr_cfg[self::FLD_EXCLUDED] == Null) {
-                    // delete the entry in the user sandbox
-                    $result = $this->del_usr_cfg_exe($db_con);
-                }
-            }
-        }
-        //}
-        return $result;
     }
 
     // set the update parameters for the view component order_nbr
@@ -688,7 +670,7 @@ class view_cmp_link extends user_sandbox_link_with_type
     {
         global $db_con;
         return $db_con->insert(
-            array($this->from_name . '_id', $this->to_name . '_id', "user_id", 'order_nbr'),
+            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id", 'order_nbr'),
             array($this->fob->id, $this->tob->id, $this->user()->id, $this->order_nbr));
     }
 

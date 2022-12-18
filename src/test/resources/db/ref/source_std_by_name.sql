@@ -1,7 +1,6 @@
 PREPARE source_std_by_name (text) AS
     SELECT source_id,
            source_name,
-           source_name,
            code_id,
            url,
            description,

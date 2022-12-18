@@ -88,6 +88,19 @@ class formula extends user_sandbox_named_with_type
         user_sandbox::FLD_SHARE,
         user_sandbox::FLD_PROTECT
     );
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const ALL_FLD_NAMES = array(
+        self::FLD_NAME,
+        self::FLD_FORMULA_TEXT,
+        self::FLD_FORMULA_USER_TEXT,
+        self::FLD_DESCRIPTION,
+        self::FLD_FORMULA_TYPE,
+        self::FLD_ALL_NEEDED,
+        self::FLD_LAST_UPDATE,
+        self::FLD_EXCLUDED,
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
+    );
 
 
     /*
@@ -544,6 +557,11 @@ class formula extends user_sandbox_named_with_type
     function name_field(): string
     {
         return self::FLD_NAME;
+    }
+
+    function all_fields(): array
+    {
+        return self::ALL_FLD_NAMES;
     }
 
     /**
@@ -1868,41 +1886,6 @@ class formula extends user_sandbox_named_with_type
             self::FLD_NAMES_NUM_USR
         ));
         return parent::usr_cfg_sql($db_con, $class);
-    }
-
-    /**
-     * check if the database record for the user specific settings can be removed
-     */
-    function del_usr_cfg_if_not_needed(): bool
-    {
-        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-
-        global $db_con;
-        $result = true;
-
-
-        // check again if the user config is still needed (don't use $this->has_usr_cfg to include all updated)
-        $qp = $this->usr_cfg_sql($db_con);
-        $db_con->usr_id = $this->user()->id;
-        $usr_cfg = $db_con->get1($qp);
-        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
-        if ($usr_cfg[$this->fld_id()] > 0) {
-            if ($usr_cfg[self::FLD_NAME] == ''
-                and $usr_cfg[self::FLD_FORMULA_TEXT] == ''
-                and $usr_cfg[self::FLD_FORMULA_USER_TEXT] == ''
-                and $usr_cfg[self::FLD_DESCRIPTION] == ''
-                and $usr_cfg[self::FLD_FORMULA_TYPE] == Null
-                and $usr_cfg[self::FLD_ALL_NEEDED] == Null
-                and $usr_cfg[self::FLD_EXCLUDED] == Null) {
-                // delete the entry in the user sandbox
-                log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-                $result = $this->del_usr_cfg_exe($db_con);
-            } else {
-                log_debug('not true for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-            }
-        }
-
-        return $result;
     }
 
     /**

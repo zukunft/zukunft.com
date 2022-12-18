@@ -1027,7 +1027,9 @@ class sql_db
 
             // add the given fields at the end
             foreach ($this->field_lst as $field) {
-                $field_lst[] = $field;
+                if (!in_array($field, $field_lst)) {
+                    $field_lst[] = $field;
+                }
             }
             $this->field_lst = $field_lst;
 
@@ -1330,7 +1332,7 @@ class sql_db
             and $type != sql_db::TBL_USER_TYPE) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
-        $result = $type . '_id';
+        $result = $type . sql_db::FLD_EXT_ID;
         // exceptions for nice english
         if ($type == 'view_entrie') {
             $result = 'view_entry_id';

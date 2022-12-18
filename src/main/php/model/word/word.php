@@ -89,11 +89,14 @@ class word extends user_sandbox_named_with_type
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_FLD_NAMES = array(
         self::FLD_NAME,
+        self::FLD_VALUES,
         self::FLD_PLURAL,
         self::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_VIEW,
-        self::FLD_EXCLUDED
+        self::FLD_EXCLUDED,
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
     );
 
 
@@ -405,6 +408,11 @@ class word extends user_sandbox_named_with_type
     function name_field(): string
     {
         return self::FLD_NAME;
+    }
+
+    function all_fields(): array
+    {
+        return self::ALL_FLD_NAMES;
     }
 
     /**
@@ -1686,54 +1694,18 @@ class word extends user_sandbox_named_with_type
         return $has_cfg;
     }
 
-    private function no_usr_fld_used($db_row): bool
-    {
-        $result = true;
-        foreach (self::ALL_FLD_NAMES as $field_name) {
-            if ($db_row[$field_name] != '') {
-                $result = false;
-            }
-        }
-        return $result;
-    }
-
     /**
-     * check if the database record for the user specific settings can be removed
-     * TODO separate the query parameter creation and add a unit test
-     * @return bool true if the checking and the potential removing has been successful, which does not mean, that the user sandbox database row has actually been removed
+     * create an SQL statement to retrieve the user changes of the current word
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function del_usr_cfg_if_not_needed(): bool
+    function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-
-        global $db_con;
-        $result = true;
-
-        //if ($this->has_usr_cfg) {
-
-        // check again if there ist not yet a record
-        // TODO add user id to where
         $db_con->set_type(sql_db::TBL_WORD);
-        $qp = new sql_par(self::class);
-        $qp->name = 'word_del_usr_cfg_if';
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(self::ALL_FLD_NAMES);
-        $db_con->set_where_std($this->id);
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
-        $usr_wrd_cfg = $db_con->get1($qp);
-        if ($usr_wrd_cfg != null) {
-            log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
-            if ($usr_wrd_cfg[self::FLD_ID] > 0) {
-                if ($this->no_usr_fld_used($usr_wrd_cfg)) {
-                    // delete the entry in the user sandbox
-                    log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-                    $result = $this->del_usr_cfg_exe($db_con);
-                }
-            }
-        }
-        //}
-        return $result;
+        return parent::usr_cfg_sql($db_con, $class);
     }
 
     /**

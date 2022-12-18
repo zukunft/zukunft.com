@@ -190,9 +190,6 @@
 
 use html\html_base;
 
-const DB_FIELD_EXT_ID = '_id';
-const DB_FIELD_EXT_NAME = '_name';
-
 // the fixed system user
 const SYSTEM_USER_ID = 1; //
 

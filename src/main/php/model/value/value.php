@@ -84,6 +84,14 @@ class value extends user_sandbox_value
         self::FLD_EXCLUDED,
         user_sandbox::FLD_PROTECT
     );
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const ALL_FLD_NAMES = array(
+        self::FLD_VALUE,
+        source::FLD_ID,
+        self::FLD_LAST_UPDATE,
+        self::FLD_EXCLUDED,
+        user_sandbox::FLD_PROTECT
+    );
     // list of field names that are only on the user sandbox row
     // e.g. the standard value does not need the share type, because it is by definition public (even if share types within a group of users needs to be defined, the value for the user group are also user sandbox table)
     const FLD_NAMES_USR_ONLY = array(
@@ -540,6 +548,12 @@ class value extends user_sandbox_value
     {
         return self::FLD_ID;
     }
+
+    function all_fields(): array
+    {
+        return self::ALL_FLD_NAMES;
+    }
+
 
     /*
      * load object functions that extend the database load functions
@@ -1431,40 +1445,7 @@ class value extends user_sandbox_value
     function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_VALUE);
-        $db_con->set_fields(self::FLD_NAMES_NUM_USR);
         return parent::usr_cfg_sql($db_con, $class);
-    }
-
-    /**
-     * check if the database record for the user specific settings can be removed
-     * exposed at the moment to user_display.php for consistency check, but this should not be needed
-     */
-    function del_usr_cfg_if_not_needed(): bool
-    {
-        log_debug('pre check for "' . $this->id . ' und user ' . $this->user()->name);
-
-        global $db_con;
-        $result = true;
-
-        // check again if the user config is still needed (don't use $this->has_usr_cfg to include all updated)
-        $qp = $this->usr_cfg_sql($db_con);
-        $db_con->usr_id = $this->user()->id;
-        $usr_cfg = $db_con->get1($qp);
-
-        log_debug('check for "' . $this->id . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
-        if ($usr_cfg != false) {
-            if ($usr_cfg[self::FLD_ID] > 0) {
-                if ($usr_cfg['word_value'] == Null
-                    and $usr_cfg[source::FLD_ID] == Null
-                    and $usr_cfg[self::FLD_EXCLUDED] == Null) {
-                    // delete the entry in the user sandbox
-                    log_debug('any more for "' . $this->id . ' und user ' . $this->user()->name);
-                    $result = $this->del_usr_cfg_exe($db_con);
-                }
-            }
-        }
-
-        return $result;
     }
 
     /**

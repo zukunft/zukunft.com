@@ -62,6 +62,14 @@ class source extends user_sandbox_named_with_type
         self::FLD_TYPE,
         self::FLD_EXCLUDED
     );
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const ALL_FLD_NAMES = array(
+        self::FLD_NAME,
+        user_sandbox_named::FLD_DESCRIPTION,
+        self::FLD_TYPE,
+        self::FLD_EXCLUDED,
+        self::FLD_URL
+    );
 
 
     /*
@@ -310,6 +318,11 @@ class source extends user_sandbox_named_with_type
         return self::FLD_NAME;
     }
 
+    function all_fields(): array
+    {
+        return self::ALL_FLD_NAMES;
+    }
+
 
     /**
      * @return string the source type name from the array preloaded from the database
@@ -511,50 +524,8 @@ class source extends user_sandbox_named_with_type
     function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_SOURCE);
-        $db_con->set_fields(array_merge(
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR
-        ));
+        $db_con->set_fields(self::ALL_FLD_NAMES);
         return parent::usr_cfg_sql($db_con, $class);
-    }
-
-    /**
-     * check if the database record for the user specific settings can be removed
-     * @return bool false if the deletion has failed and true if it was successful or not needed
-     */
-    function del_usr_cfg_if_not_needed(): bool
-    {
-
-        global $db_con;
-        $result = true;
-
-        //if ($this->has_usr_cfg) {
-
-        // check again if there ist not yet a record
-        $qp = $this->usr_cfg_sql($db_con);
-        $db_con->usr_id = $this->user()->id;
-        $usr_src_cfg = $db_con->get1($qp);
-        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
-        if ($usr_src_cfg[self::FLD_ID] > 0) {
-            // TODO check that this converts all fields for all types
-            // TODO define for each user sandbox object a list with all user fields and loop here over this array
-            if ($usr_src_cfg[self::FLD_NAME] == ''
-                and $usr_src_cfg[self::FLD_URL] == ''
-                and $usr_src_cfg[user_sandbox_named::FLD_DESCRIPTION] == ''
-                and $usr_src_cfg[self::FLD_TYPE] == Null
-                and $usr_src_cfg[self::FLD_EXCLUDED] == Null) {
-                // delete the entry in the user sandbox
-                log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE);
-                $del_result = $db_con->delete(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id));
-                if ($del_result != '') {
-                    $result = false;
-                    log_err('Deletion of user_source failed.');
-                }
-            }
-        }
-        //}
-        return $result;
     }
 
     /**

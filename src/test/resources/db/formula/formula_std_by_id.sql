@@ -1,7 +1,6 @@
 PREPARE formula_std_by_id (int) AS
     SELECT formula_id,
            formula_name,
-           formula_name,
            formula_text,
            resolved_text,
            description,

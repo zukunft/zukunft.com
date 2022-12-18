@@ -47,6 +47,13 @@ class formula_link extends user_sandbox_link_with_type
         user_sandbox::FLD_SHARE,
         user_sandbox::FLD_PROTECT
     );
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const ALL_FLD_NAMES = array(
+        self::FLD_TYPE,
+        user_sandbox::FLD_EXCLUDED,
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
+    );
 
     // database fields additional to the user sandbox fields
     public ?int $order_nbr = null;    // to set the priority of the formula links
@@ -115,10 +122,10 @@ class formula_link extends user_sandbox_link_with_type
      * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
      * @return sql_par the SQL statement base on the parameters set in $this
      */
-    function load_user_sql(sql_db $db_con, bool $get_name = false): sql_par
+    function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_FORMULA_LINK, true);
-        $qp = new sql_par(self::class);
+        $qp = new sql_par($class);
         $sql_name = self::class . '_add_usr_cfg';
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
@@ -536,7 +543,7 @@ class formula_link extends user_sandbox_link_with_type
 
         if (!$this->has_usr_cfg()) {
             // check again if there ist not yet a record
-            $qp = $this->load_user_sql($db_con);
+            $qp = $this->usr_cfg_sql($db_con);
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[formula_link::FLD_ID];
@@ -547,35 +554,6 @@ class formula_link extends user_sandbox_link_with_type
             if ($log_id <= 0) {
                 log_err('Insert of user_formula_link failed.');
                 $result = false;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * check if the database record for the user specific settings can be removed
-     * @return bool true  if the checking and the potential removing has been successful,
-     *                       which does not mean, that the user sandbox database row has actually been removed
-     *              false if the deleting has cause an internal error
-     */
-    function del_usr_cfg_if_not_needed(): bool
-    {
-        log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-
-        global $db_con;
-        $result = true;
-
-        // check again if there ist not yet a record
-        $qp = $this->load_user_sql($db_con);
-        $db_con->usr_id = $this->user()->id;
-        $db_row = $db_con->get1($qp);
-        if ($db_row) {
-            if ($db_row[formula_link::FLD_ID] > 0) {
-                // check if all fields are null
-                if (!$this->is_usr_cfg_used($db_row, array_merge(self::FLD_NAMES_NUM_USR))) {
-                    // actually delete the entry in the user sandbox
-                    $result = $this->del_usr_cfg_exe($db_con);
-                }
             }
         }
         return $result;
@@ -644,7 +622,7 @@ class formula_link extends user_sandbox_link_with_type
     {
         global $db_con;
         return $db_con->insert(
-            array($this->from_name . '_id', $this->to_name . '_id', "user_id", 'order_nbr'),
+            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id", 'order_nbr'),
             array($this->fob->id, $this->tob->id, $this->user()->id, $this->order_nbr));
     }
 

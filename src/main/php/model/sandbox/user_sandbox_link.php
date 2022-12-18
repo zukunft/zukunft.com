@@ -237,7 +237,7 @@ class user_sandbox_link extends user_sandbox
     {
         global $db_con;
         return $db_con->insert(
-            array($this->from_name . '_id', $this->to_name . '_id', "user_id"),
+            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id"),
             array($this->fob->id, $this->tob->id, $this->user()->id));
     }
 
@@ -354,7 +354,7 @@ class user_sandbox_link extends user_sandbox
                 $db_con->set_type($this->obj_name);
                 $db_con->set_usr($this->user()->id);
                 if (!$db_con->update($this->id,
-                    array($this->from_name . '_id', $this->from_name . '_id'),
+                    array($this->from_name . sql_db::FLD_EXT_ID, $this->from_name . sql_db::FLD_EXT_ID),
                     array($this->fob->id, $this->tob->id))) {
                     $result .= 'update from link to ' . $this->from_name . 'failed';
                 }

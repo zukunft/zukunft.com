@@ -86,6 +86,17 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         user_sandbox::FLD_SHARE,
         user_sandbox::FLD_PROTECT
     );
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const ALL_FLD_NAMES = array(
+        self::FLD_NAME,
+        self::FLD_NAME_GIVEN,
+        self::FLD_NAME_AUTO,
+        sql_db::FLD_DESCRIPTION,
+        self::FLD_VALUES,
+        user_sandbox::FLD_EXCLUDED,
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
+    );
 
 
     /*
@@ -635,6 +646,11 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     function name_field(): string
     {
         return self::FLD_NAME;
+    }
+
+    function all_fields(): array
+    {
+        return self::ALL_FLD_NAMES;
     }
 
     /**
@@ -1428,47 +1444,6 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             self::FLD_NAMES_NUM_USR
         ));
         return parent::usr_cfg_sql($db_con, $class);
-    }
-
-    /**
-     * check if the database record for the user specific settings can be removed
-     * @returns bool true if the unneeded user sandbox record has been deleted
-     */
-    function del_usr_cfg_if_not_needed(): bool
-    {
-        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-
-        global $db_con;
-        $result = false;
-
-        // check again if there is user sandbox row
-        if ($this->id == 0) {
-            log_err('cannot delete user sandbox if id is missing');
-        } else {
-            $qp = $this->usr_cfg_sql($db_con);
-            $db_con->usr_id = $this->user()->id;
-            $usr_cfg = $db_con->get1($qp);
-            log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
-            if ($usr_cfg) {
-                if ($usr_cfg[self::FLD_ID] > 0) {
-                    // TODO use the FLD_NAMES array with all relevant field names
-                    if ($usr_cfg[self::FLD_NAME_GIVEN] == Null
-                        and $usr_cfg[sql_db::FLD_DESCRIPTION] == Null
-                        and $usr_cfg[self::FLD_EXCLUDED] == Null) {
-                        // delete the entry in the user sandbox
-                        log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-                        $result = $this->del_usr_cfg_exe($db_con);
-                    }
-                }
-            }
-        }
-
-        // don't throw an error message if another account has removed the user sandbox row in the meantime
-        if (!$this->has_usr_cfg()) {
-            $result = true;
-        }
-
-        return $result;
     }
 
     /**

@@ -72,6 +72,20 @@ class view_cmp extends user_sandbox_named_with_type
         user_sandbox::FLD_SHARE,
         user_sandbox::FLD_PROTECT
     );
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const ALL_FLD_NAMES = array(
+        self::FLD_NAME,
+        self::FLD_COMMENT,
+        self::FLD_TYPE,
+        self::FLD_ROW_PHRASE,
+        self::FLD_LINK_TYPE,
+        formula::FLD_ID,
+        self::FLD_COL_PHRASE,
+        self::FLD_COL2_PHRASE,
+        self::FLD_EXCLUDED,
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
+    );
 
 
     /*
@@ -484,6 +498,11 @@ class view_cmp extends user_sandbox_named_with_type
         return self::FLD_NAME;
     }
 
+    function all_fields(): array
+    {
+        return self::ALL_FLD_NAMES;
+    }
+
     /**
      * get the view component type database id based on the code id
      * @param string $code_id
@@ -788,45 +807,6 @@ class view_cmp extends user_sandbox_named_with_type
             self::FLD_NAMES_NUM_USR
         ));
         return parent::usr_cfg_sql($db_con, $class);
-    }
-
-    /**
-     * check if the database record for the user specific settings can be removed
-     * @returns bool true if a user specific view component has been removed
-     */
-    function del_usr_cfg_if_not_needed(): bool
-    {
-        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-
-        global $db_con;
-        $result = true;
-
-        //if ($this->has_usr_cfg) {
-
-        // check again if there is not yet a record
-        $qp = $this->usr_cfg_sql($db_con);
-        $db_con->usr_id = $this->user()->id;
-        $usr_cfg = $db_con->get1($qp);
-
-        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
-        if ($usr_cfg != null) {
-            if ($usr_cfg['view_component_id'] > 0) {
-                if ($usr_cfg[self::FLD_NAME] == ''
-                    and $usr_cfg[self::FLD_COMMENT] == ''
-                    and $usr_cfg[self::FLD_TYPE] == Null
-                    and $usr_cfg[self::FLD_ROW_PHRASE] == Null
-                    and $usr_cfg[self::FLD_LINK_TYPE] == Null
-                    and $usr_cfg[formula::FLD_ID] == Null
-                    and $usr_cfg[self::FLD_COL_PHRASE] == Null
-                    and $usr_cfg[self::FLD_COL2_PHRASE] == Null
-                    and $usr_cfg[self::FLD_EXCLUDED] == Null) {
-                    // delete the entry in the user sandbox
-                    log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-                    $result = $this->del_usr_cfg_exe($db_con);
-                }
-            }
-        }
-        return $result;
     }
 
     /**

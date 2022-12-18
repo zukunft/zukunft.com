@@ -44,6 +44,7 @@ use export\exp_obj;
 
 class user_sandbox extends db_object
 {
+
     /*
      * types
      */
@@ -52,6 +53,7 @@ class user_sandbox extends db_object
     const TYPE_NAMED = 'named';  // for user sandbox objects which have a unique name like formulas
     const TYPE_LINK = 'link';    // for user sandbox objects that link two objects like formula links
     const TYPE_VALUE = 'value';  // for user sandbox objects that are used to save values
+
 
     /*
      * database link
@@ -363,12 +365,21 @@ class user_sandbox extends db_object
     }
 
     /**
-     * dummy function that should always be overwritten by the child object
-     * @return string
+     * function that can be overwritten by the child object
+     * @return string the field name of the prime database index of the object
      */
-    function id_field(): string
+    protected function id_field(): string
     {
-        return '';
+        return $this->obj_name . sql_db::FLD_EXT_ID;
+    }
+
+    /**
+     * function that must be overwritten by the child object
+     * @return array with all field names of the user sandbox object excluding the prime id field
+     */
+    protected function all_fields(): array
+    {
+        return array();
     }
 
     /**
@@ -473,9 +484,46 @@ class user_sandbox extends db_object
         $qp->name .= 'usr_cfg';
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
+        $db_con->set_fields($this->all_fields());
         $qp->sql = $db_con->select_by_id_and_user($this->id, $this->user()->id);
         $qp->par = $db_con->get_par();
         return $qp;
+    }
+
+    /**
+     * check if the database record for the user specific settings can be removed
+     * TODO separate the query parameter creation and add a unit test
+     * @return bool false if the deletion has failed and true if it was successful or not needed
+     */
+    protected function del_usr_cfg_if_not_needed(): bool
+    {
+
+        global $db_con;
+        $result = true;
+
+        // TODO check if next line is working
+        //if ($this->has_usr_cfg) {
+
+        // check again if there ist not yet a record
+        $qp = $this->usr_cfg_sql($db_con);
+        $db_con->usr_id = $this->user()->id;
+        $usr_cfg_row = $db_con->get1($qp);
+        if ($usr_cfg_row) {
+            log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
+            if ($usr_cfg_row[$this->id_field()] > 0) {
+                if ($this->no_usr_fld_used($this->all_fields(), $usr_cfg_row)) {
+                    $result = $this->del_usr_cfg_exe($db_con);
+                }
+            }
+        }
+        //}
+
+        // don't throw an error message if another account has removed the user sandbox row in the meantime
+        if (!$this->has_usr_cfg()) {
+            $result = true;
+        }
+
+        return $result;
     }
 
     /**
@@ -741,6 +789,24 @@ class user_sandbox extends db_object
     }
 
     /**
+     * check if the database row with the user specific data is still needed
+     *
+     * @param array $fld_lst all potential user specific fields of the object
+     * @param array $db_row the database record of the user table
+     * @return bool true if no field contain any user overwrite
+     */
+    protected function no_usr_fld_used(array $fld_lst, array $db_row): bool
+    {
+        $result = true;
+        foreach ($fld_lst as $field_name) {
+            if ($db_row[$field_name] != '') {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * remove all user setting that are not needed any more based on the new standard object
      * TODO review
      */
@@ -753,7 +819,7 @@ class user_sandbox extends db_object
         $usr_lst = $this->usr_lst();
         foreach ($usr_lst as $usr) {
             // remove the usr cfg if not needed any more
-            $this->del_usr_cfg_if_not_needed();
+            $this->del_usr_cfg_if_not_needed($this->id_field(), $this->all_fields());
         }
 
         log_debug('for ' . $this->dsp_id() . ': ' . $result);
@@ -911,26 +977,6 @@ class user_sandbox extends db_object
     }
 
     /**
-     * check if any of the object fields including the name and the excluding flag is changed by the user
-     * changed means the user value differs from the standard value
-     *
-     * @return bool true if the user sandbox database row for this user is used
-     */
-    function is_usr_cfg_used(array $db_row, array $fld_names): bool
-    {
-        $result = false;
-        if ($db_row != null) {
-            foreach ($fld_names as $fld_name) {
-                if ($db_row[$fld_name] == Null) {
-                    $result = true;
-                }
-            }
-        }
-        return $result;
-    }
-
-
-    /**
      * simply remove a user adjustment without check
      * log a system error if a technical error has occurred
      *
@@ -938,7 +984,7 @@ class user_sandbox extends db_object
      */
     function del_usr_cfg_exe($db_con): bool
     {
-        log_debug($this->dsp_id());
+        log_debug($this->dsp_id() . ' und user ' . $this->user()->name);
 
         $result = false;
         $action = 'Deletion of user ' . $this->obj_name . ' ';
@@ -947,7 +993,7 @@ class user_sandbox extends db_object
         $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
         try {
             $msg = $db_con->delete(
-                array($this->obj_name . '_id', self::FLD_USER),
+                array($this->id_field(), self::FLD_USER),
                 array($this->id, $this->user()->id));
             if ($msg == '') {
                 $this->usr_cfg_id = null;
@@ -1032,15 +1078,6 @@ class user_sandbox extends db_object
             }
         }
         return $result;
-    }
-
-    /**
-     * dummy function to check if the database record for the user specific settings can be removed that is always overwritten by the child class
-     * @return bool false if the deletion has failed and true if it was successful or not needed
-     */
-    function del_usr_cfg_if_not_needed(): bool
-    {
-        return true;
     }
 
     /**
@@ -1846,7 +1883,7 @@ class user_sandbox extends db_object
                 if ($result->is_ok()) {
                     $db_con->set_type(sql_db::TBL_FORMULA_ELEMENT);
                     $db_con->set_usr($this->user()->id);
-                    $msg = $db_con->delete(sql_db::TBL_FORMULA . DB_FIELD_EXT_ID, $this->id);
+                    $msg = $db_con->delete(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);
                 }
 
@@ -1854,7 +1891,7 @@ class user_sandbox extends db_object
                 if ($result->is_ok()) {
                     $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
                     $db_con->set_usr($this->user()->id);
-                    $msg = $db_con->delete(sql_db::TBL_FORMULA . DB_FIELD_EXT_ID, $this->id);
+                    $msg = $db_con->delete(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);
                 }
 
@@ -1886,7 +1923,7 @@ class user_sandbox extends db_object
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
                 $db_con->set_usr($this->user()->id);
                 $msg = $db_con->delete(
-                    array($this->obj_name . DB_FIELD_EXT_ID, 'excluded'),
+                    array($this->obj_name . sql_db::FLD_EXT_ID, 'excluded'),
                     array($this->id, '1'));
                 $result->add_message($msg);
             }
@@ -1894,7 +1931,7 @@ class user_sandbox extends db_object
                 // finally, delete the object
                 $db_con->set_type($this->obj_name);
                 $db_con->set_usr($this->user()->id);
-                $msg = $db_con->delete($this->obj_name . '_id', $this->id);
+                $msg = $db_con->delete($this->id_field(), $this->id);
                 $result->add_message($msg);
                 log_debug('of ' . $this->dsp_id() . ' done');
             } else {
