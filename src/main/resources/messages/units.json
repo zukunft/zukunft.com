@@ -1160,12 +1160,14 @@
   ],
   "sources": [
     {
-      "name": "The On-Line Encyclopedia of Integer Sequences",
-      "url": "https://oeis.org/"
+      "name": "The International System of Units",
+      "description": "Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards",
+      "url": "https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf",
+      "type": "pdf"
     },
     {
-      "name": "The International System of Units",
-      "url": "https://www.bipm.org/utils/common/pdf/si_brochure_8_en.pdf"
+      "name": "The On-Line Encyclopedia of Integer Sequences",
+      "url": "https://oeis.org/"
     }
   ],
   "values": [
@@ -1175,7 +1177,7 @@
       ],
       "number": "3.14159265358979323846264338327950288419716939937510",
       "share": "public",
-      "source": "The On-Line Encyclopedia of Integer Sequences"
+      "source": "The International System of Units"
     },
     {
       "words": [

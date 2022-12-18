@@ -172,6 +172,7 @@ class source extends user_sandbox_named_with_type
         $api_obj = new source_api();
         if (!$this->excluded) {
             parent::fill_api_obj($api_obj);
+            $api_obj->url = $this->url;
         }
         return $api_obj;
     }
@@ -184,6 +185,7 @@ class source extends user_sandbox_named_with_type
         $dsp_obj = new source_dsp();
         if (!$this->excluded) {
             parent::fill_dsp_obj($dsp_obj);
+            $dsp_obj->url = $this->url;
         }
 
         return $dsp_obj;

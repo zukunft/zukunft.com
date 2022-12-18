@@ -78,6 +78,18 @@ class ref_unit_tests
         $t->assert_load_sql_name($db_con, $src);
         $t->assert_load_sql_code_id($db_con, $src);
 
+        $t->subheader('API unit tests');
+
+        $src = new source($usr);
+        $src->set(1, source_api::TN_READ, source_type::PDF);
+        $src->description = source_api::TD_READ_API;
+        $src->url = source_api::TU_READ_API;
+        $api_src = $src->api_obj();
+        $t->assert($t->name . 'api->id', $api_src->id, $src->id());
+        $t->assert($t->name . 'api->name', $api_src->name, $src->name());
+        $t->assert($t->name . 'api->description', $api_src->description, $src->description);
+        $t->assert($t->name . 'api->url', $api_src->url, $src->url);
+
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new source($usr), $json_file);

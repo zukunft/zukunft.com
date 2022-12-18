@@ -41,6 +41,7 @@
 // TODO add checks that all id (name or link) changing return the correct error message if the new id already exists
 // TODO build a cascading test classes and split the classes to sections less than 1000 lines of code
 
+use api\source_api;
 use api\word_api;
 
 CONST HOST_TESTING = 'http://localhost';
@@ -1127,6 +1128,8 @@ class test_base
         $this->assert_api_get(formula::class);
         $this->assert_api_get(view::class);
         $this->assert_api_get(view_cmp::class);
+        $this->assert_api_get(source::class);
+        $this->assert_api_get_by_name(source::class, source_api::TN_READ_API);
 
         $this->assert_api_get_list(phrase_list::class);
         $this->assert_api_get_list(term_list::class, [1,-1]);

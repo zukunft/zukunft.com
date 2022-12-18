@@ -43,6 +43,7 @@ $db_con = prg_start("api/ref", "", false);
 // get the parameters
 $src_id = $_GET['id'] ?? 0;
 $src_name = $_GET['name'] ?? '';
+$src_code_id = $_GET['code_id'] ?? '';
 
 $msg = '';
 $result = new word_api(); // reset the html code var
@@ -62,8 +63,12 @@ if ($usr->id > 0) {
         $src = new source($usr);
         $src->load_by_name($src_name);
         $result = $src->api_obj();
+    } elseif ($src_code_id != '') {
+        $src = new source($usr);
+        $src->load_by_code_id($src_code_id);
+        $result = $src->api_obj();
     } else {
-        $msg = 'source id or name is missing';
+        $msg = 'Cannot load source because id, name and code id is missing';
     }
 }
 

@@ -41,6 +41,9 @@ class source_api extends user_sandbox_named_with_type_api
 
     // persevered source names for unit and integration tests (TN means TEST NAME)
     const TN_READ = 'wikidata';
+    const TN_READ_API = 'The International System of Units';
+    const TD_READ_API = 'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards';
+    const TU_READ_API = 'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf';
     const TN_ADD = 'System Test Source';
     const TN_RENAMED = 'System Test Source Renamed';
 
@@ -56,5 +59,12 @@ class source_api extends user_sandbox_named_with_type_api
         self::TN_ADD,
         self::TN_RENAMED
     );
+
+
+    /*
+     * object vars
+     */
+
+    public ?string $url;
 
 }
