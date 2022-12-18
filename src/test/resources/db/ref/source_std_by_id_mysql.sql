@@ -4,7 +4,7 @@ PREPARE source_std_by_id FROM
             source_name,
             code_id,
             `url`,
-            comment,
+            description,
             source_type_id,
             excluded,
             user_id

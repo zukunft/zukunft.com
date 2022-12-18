@@ -503,7 +503,7 @@ CREATE TABLE IF NOT EXISTS `sources`
     `user_id`        int(11)      DEFAULT NULL,
     `source_name`    varchar(200) NOT NULL,
     `url`            text,
-    `comment`        text,
+    `description`        text,
     `source_type_id` int(11)      DEFAULT NULL,
     `code_id`        varchar(100) DEFAULT NULL,
     `excluded`       tinyint(4)   DEFAULT NULL
@@ -866,7 +866,7 @@ CREATE TABLE IF NOT EXISTS `user_sources`
     `user_id`        int(11) NOT NULL,
     `source_name`    varchar(200) DEFAULT NULL,
     `url`            text         DEFAULT NULL,
-    `comment`        text,
+    `description`        text,
     `source_type_id` int(11)      DEFAULT NULL,
     `excluded`       tinyint(4)   DEFAULT NULL
 ) ENGINE = InnoDB

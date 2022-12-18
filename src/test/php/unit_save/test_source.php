@@ -137,7 +137,7 @@ function run_source_test(testing $t): void
     $target = 'zukunft.com system test added ' . source_api::TEST_URL;
     //$target = 'zukunft.com system test partner changed ' . source_api::TEST_URL_CHANGED . ' to ' . source_api::TEST_URL;
     $t->dsp('source->load url for "' . source_api::TN_RENAMED . '" logged', $target, $result);
-    $log->field = 'comment';
+    $log->field = 'description';
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added ' . source_api::TEST_DESCRIPTION;
     //$target = 'zukunft.com system test partner changed System Test Source Description Changed to System Test Source Description';

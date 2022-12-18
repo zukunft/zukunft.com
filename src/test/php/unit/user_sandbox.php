@@ -368,7 +368,7 @@ class user_sandbox_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(sql_db::TBL_SOURCE);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
-        $db_con->set_usr_fields(array('url', 'comment'));
+        $db_con->set_usr_fields(array(source::FLD_URL, sql_db::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
         $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_set_id();
@@ -379,7 +379,7 @@ class user_sandbox_unit_tests
                         s.code_id,
                         CASE WHEN (u.source_name    <> '' IS NOT TRUE) THEN s.source_name    ELSE u.source_name    END AS source_name,
                         CASE WHEN (u.url            <> '' IS NOT TRUE) THEN s.url            ELSE u.url            END AS url,
-                        CASE WHEN (u.comment        <> '' IS NOT TRUE) THEN s.comment        ELSE u.comment        END AS comment,
+                        CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,
                         CASE WHEN (u.source_type_id IS           NULL) THEN s.source_type_id ELSE u.source_type_id END AS source_type_id
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
@@ -390,7 +390,7 @@ class user_sandbox_unit_tests
         // ... same for search by name
         $db_con->set_type(sql_db::TBL_SOURCE);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
-        $db_con->set_usr_fields(array('url', 'comment'));
+        $db_con->set_usr_fields(array(source::FLD_URL, sql_db::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
         $db_con->set_where_std(0, 'wikidata');
         $created_sql = $db_con->select_by_set_id();
@@ -401,7 +401,7 @@ class user_sandbox_unit_tests
                         s.code_id,
                         CASE WHEN (u.source_name    <> '' IS NOT TRUE) THEN s.source_name    ELSE u.source_name    END AS source_name,
                         CASE WHEN (u.url            <> '' IS NOT TRUE) THEN s.url            ELSE u.url            END AS url,
-                        CASE WHEN (u.comment        <> '' IS NOT TRUE) THEN s.comment        ELSE u.comment        END AS comment,
+                        CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,
                         CASE WHEN (u.source_type_id IS           NULL) THEN s.source_type_id ELSE u.source_type_id END AS source_type_id
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
@@ -413,7 +413,7 @@ class user_sandbox_unit_tests
         // ... same for search by code_id
         $db_con->set_type(sql_db::TBL_SOURCE);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
-        $db_con->set_usr_fields(array('url', 'comment'));
+        $db_con->set_usr_fields(array(source::FLD_URL, sql_db::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
         $db_con->set_where_std(0, '', 'wikidata');
         $created_sql = $db_con->select_by_set_id();
@@ -424,7 +424,7 @@ class user_sandbox_unit_tests
                         s.code_id,
                         CASE WHEN (u.source_name    <> '' IS NOT TRUE) THEN s.source_name    ELSE u.source_name    END AS source_name,
                         CASE WHEN (u.url            <> '' IS NOT TRUE) THEN s.url            ELSE u.url            END AS url,
-                        CASE WHEN (u.comment        <> '' IS NOT TRUE) THEN s.comment        ELSE u.comment        END AS comment,
+                        CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,
                         CASE WHEN (u.source_type_id IS           NULL) THEN s.source_type_id ELSE u.source_type_id END AS source_type_id
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
@@ -434,7 +434,7 @@ class user_sandbox_unit_tests
 
         // ... same for all users by id
         $db_con->set_type(sql_db::TBL_SOURCE);
-        $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'url', 'comment', 'source_type_id'));
+        $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'url', sql_db::FLD_DESCRIPTION, 'source_type_id'));
         $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT
@@ -442,7 +442,7 @@ class user_sandbox_unit_tests
                         source_name,
                         code_id,
                         url,
-                        comment,
+                        description,
                         source_type_id
                    FROM sources 
                   WHERE source_id = $1;";
@@ -788,7 +788,7 @@ class user_sandbox_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $db_con->set_type(sql_db::TBL_SOURCE);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
-        $db_con->set_usr_fields(array('url', 'comment'));
+        $db_con->set_usr_fields(array('url', sql_db::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
         $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_set_id();
@@ -800,7 +800,7 @@ class user_sandbox_unit_tests
                         s.code_id,
                         IF(u.source_name    IS NULL, s.source_name,    u.source_name)    AS source_name,
                         IF(u.`url`          IS NULL, s.`url`,          u.`url`)          AS `url`,
-                        IF(u.comment        IS NULL, s.comment,        u.comment)        AS comment,
+                        IF(u.description    IS NULL, s.description,    u.description)    AS description,
                         IF(u.source_type_id IS NULL, s.source_type_id, u.source_type_id) AS source_type_id
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
@@ -811,7 +811,7 @@ class user_sandbox_unit_tests
         // ... same for search by name
         $db_con->set_type(sql_db::TBL_SOURCE);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
-        $db_con->set_usr_fields(array('url', 'comment'));
+        $db_con->set_usr_fields(array('url', sql_db::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
         $db_con->set_where_std(0, 'wikidata');
         $created_sql = $db_con->select_by_set_id();
@@ -823,7 +823,7 @@ class user_sandbox_unit_tests
                         s.code_id,
                         IF(u.source_name    IS NULL, s.source_name,    u.source_name)    AS source_name,
                         IF(u.`url`          IS NULL, s.`url`,          u.`url`)          AS `url`,
-                        IF(u.comment        IS NULL, s.comment,        u.comment)        AS comment,
+                        IF(u.description    IS NULL, s.description,    u.description)    AS description,
                         IF(u.source_type_id IS NULL, s.source_type_id, u.source_type_id) AS source_type_id
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
@@ -835,7 +835,7 @@ class user_sandbox_unit_tests
         // ... same for search by code_id
         $db_con->set_type(sql_db::TBL_SOURCE);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
-        $db_con->set_usr_fields(array('url', 'comment'));
+        $db_con->set_usr_fields(array('url', sql_db::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
         $db_con->set_where_std(0, '', 'wikidata');
         $created_sql = $db_con->select_by_set_id();
@@ -847,7 +847,7 @@ class user_sandbox_unit_tests
                         s.code_id,
                         IF(u.source_name    IS NULL, s.source_name,    u.source_name)    AS source_name,
                         IF(u.`url`          IS NULL, s.`url`,          u.`url`)          AS `url`,
-                        IF(u.comment        IS NULL, s.comment,        u.comment)        AS comment,
+                        IF(u.description    IS NULL, s.description,    u.description)    AS description,
                         IF(u.source_type_id IS NULL, s.source_type_id, u.source_type_id) AS source_type_id
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
@@ -857,7 +857,7 @@ class user_sandbox_unit_tests
 
         // ... same for all users by id
         $db_con->set_type(sql_db::TBL_SOURCE);
-        $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'url', 'comment', 'source_type_id'));
+        $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'url', sql_db::FLD_DESCRIPTION, 'source_type_id'));
         $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT
@@ -865,7 +865,7 @@ class user_sandbox_unit_tests
                         source_name,
                         code_id,
                         `url`,
-                        comment,
+                        description,
                         source_type_id
                    FROM sources 
                   WHERE source_id = ?;";

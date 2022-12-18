@@ -46,7 +46,7 @@ class source extends user_sandbox_named_with_type
     const FLD_NAME = 'source_name';
     const FLD_TYPE = 'source_type_id';
     const FLD_URL = 'url';
-    const FLD_COMMENT = 'comment';
+    const FLD_DESCRIPTION = 'description';
 
     const FLD_EX_URL = 'url';
 
@@ -58,7 +58,7 @@ class source extends user_sandbox_named_with_type
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
         self::FLD_URL,
-        self::FLD_COMMENT
+        self::FLD_DESCRIPTION
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
@@ -73,11 +73,7 @@ class source extends user_sandbox_named_with_type
 
     // database fields additional to the user sandbox fields
     public ?string $url = null;          // the internet link to the source
-    public ?string $description = null;  // the source description that is shown as a mouseover explain to the user
     public ?string $code_id = null;      // to select internal predefined sources
-
-    // in memory only fields
-    public ?string $back = null; // the calling stack
 
 
     /*
@@ -97,14 +93,9 @@ class source extends user_sandbox_named_with_type
     {
         parent::reset();
 
-        $this->name = '';
-
         $this->url = '';
-        $this->description = '';
         $this->type_id = null;
         $this->code_id = '';
-
-        $this->back = null;
     }
 
     /**
@@ -121,7 +112,7 @@ class source extends user_sandbox_named_with_type
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
             $this->url = $db_row[self::FLD_URL];
-            $this->description = $db_row[self::FLD_COMMENT];
+            $this->description = $db_row[self::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_TYPE];
             $this->code_id = $db_row[sql_db::FLD_CODE_ID];
         }
@@ -563,7 +554,6 @@ class source extends user_sandbox_named_with_type
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
         global $db_con;
         $result = true;
@@ -575,18 +565,18 @@ class source extends user_sandbox_named_with_type
         $db_con->usr_id = $this->user()->id;
         $usr_src_cfg = $db_con->get1($qp);
         log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
-        if ($usr_src_cfg['source_id'] > 0) {
+        if ($usr_src_cfg[self::FLD_ID] > 0) {
             // TODO check that this converts all fields for all types
             // TODO define for each user sandbox object a list with all user fields and loop here over this array
-            if ($usr_src_cfg['source_name'] == ''
-                and $usr_src_cfg['url'] == ''
-                and $usr_src_cfg['comment'] == ''
-                and $usr_src_cfg['source_type_id'] == Null
+            if ($usr_src_cfg[self::FLD_NAME] == ''
+                and $usr_src_cfg[self::FLD_URL] == ''
+                and $usr_src_cfg[self::FLD_DESCRIPTION] == ''
+                and $usr_src_cfg[self::FLD_TYPE] == Null
                 and $usr_src_cfg[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
                 log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE);
-                $del_result = $db_con->delete(array('source_id', user_sandbox::FLD_USER), array($this->id, $this->user()->id));
+                $del_result = $db_con->delete(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id));
                 if ($del_result != '') {
                     $result = false;
                     log_err('Deletion of user_source failed.');
@@ -600,11 +590,11 @@ class source extends user_sandbox_named_with_type
     /**
      * set the update parameters for the source url
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param user_sandbox $db_rec the database record before the saving
-     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param source $db_rec the database record before the saving
+     * @param source $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    private function save_field_url(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    private function save_field_url(sql_db $db_con, source $db_rec, source $std_rec): string
     {
         $result = '';
         if ($db_rec->url <> $this->url) {
@@ -613,54 +603,7 @@ class source extends user_sandbox_named_with_type
             $log->new_value = $this->url;
             $log->std_value = $std_rec->url;
             $log->row_id = $this->id;
-            $log->field = 'url';
-            $result = $this->save_field_do($db_con, $log);
-        }
-        return $result;
-    }
-
-    /**
-     * set the update parameters for the source comment
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param user_sandbox $db_rec the database record before the saving
-     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
-     */
-    public function save_field_description(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
-    {
-        $result = '';
-        if ($db_rec->description <> $this->description) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->description;
-            $log->new_value = $this->description;
-            $log->std_value = $std_rec->description;
-            $log->row_id = $this->id;
-            $log->field = 'comment';
-            $result = $this->save_field_do($db_con, $log);
-        }
-        return $result;
-    }
-
-    /**
-     * set the update parameters for the word type
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param user_sandbox $db_rec the database record before the saving
-     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
-     */
-    function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
-    {
-        $result = '';
-        if ($db_rec->type_id <> $this->type_id) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->type_name();
-            $log->old_id = $db_rec->type_id;
-            $log->new_value = $this->type_name();
-            $log->new_id = $this->type_id;
-            $log->std_value = $std_rec->type_name();
-            $log->std_id = $std_rec->type_id;
-            $log->row_id = $this->id;
-            $log->field = 'source_type_id';
+            $log->field = self::FLD_URL;
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -669,16 +612,14 @@ class source extends user_sandbox_named_with_type
     /**
      * save all updated source fields excluding the name, because already done when adding a source
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param user_sandbox $db_rec the database record before the saving
-     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param source|user_sandbox $db_rec the database record before the saving
+     * @param source|user_sandbox $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_fields(sql_db $db_con, source|user_sandbox $db_rec, source|user_sandbox $std_rec): string
     {
+        $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
         $result = $this->save_field_url($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_description($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         log_debug('source->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }

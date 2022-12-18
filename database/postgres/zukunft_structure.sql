@@ -503,7 +503,7 @@ CREATE TABLE IF NOT EXISTS sources
     user_id        bigint       DEFAULT NULL,
     source_name    varchar(200) NOT NULL,
     url            text         DEFAULT NULL,
-    comment        text,
+    description    text,
     source_type_id bigint       DEFAULT NULL,
     code_id        varchar(100) DEFAULT NULL,
     excluded       smallint     DEFAULT NULL
@@ -876,7 +876,7 @@ CREATE TABLE IF NOT EXISTS user_sources
     user_id        bigint NOT NULL,
     source_name    varchar(200) DEFAULT NULL,
     url            text         DEFAULT NULL,
-    comment        text,
+    description    text,
     source_type_id bigint       DEFAULT NULL,
     excluded       smallint     DEFAULT NULL
 );

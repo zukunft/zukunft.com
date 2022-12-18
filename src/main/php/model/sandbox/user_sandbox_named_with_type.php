@@ -106,6 +106,10 @@ class user_sandbox_named_with_type extends user_sandbox_named
     /**
      * set the update parameters for the word, triple or formula type
      * TODO: log the ref
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param user_sandbox_named_with_type $db_rec the database record before the saving
+     * @param user_sandbox_named_with_type $std_rec the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
      */
     function save_field_type(
         sql_db $db_con,
@@ -123,10 +127,24 @@ class user_sandbox_named_with_type extends user_sandbox_named
             $log->std_value = $std_rec->type_name();
             $log->std_id = $std_rec->type_id;
             $log->row_id = $this->id;
-            $log->field = 'word_type_id';
+            $log->field = $this->obj_name . sql_db::FLD_EXT_TYPE_ID;
             $result .= $this->save_field_do($db_con, $log);
-            log_debug('word->save_field_type changed type to "' . $log->new_value . '" (' . $log->new_id . ')');
+            log_debug('changed type to "' . $log->new_value . '" (from ' . $log->new_id . ')');
         }
+        return $result;
+    }
+
+    /**
+     * save all updated source fields excluding the name, because already done when adding a source
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param source $db_rec the database record before the saving
+     * @param source $std_rec the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
+     */
+    function save_fields_typed(sql_db $db_con, user_sandbox_named_with_type $db_rec, user_sandbox_named_with_type $std_rec): string
+    {
+        $result = parent::save_fields_named($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
         return $result;
     }
 

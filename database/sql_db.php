@@ -204,6 +204,7 @@ class sql_db
 
     const FLD_EXT_ID = '_id';
     const FLD_EXT_NAME = '_name';
+    const FLD_EXT_TYPE_ID = '_type_id';
 
     const USER_PREFIX = "user_";                  // prefix used for tables where the user sandbox values are stored
 

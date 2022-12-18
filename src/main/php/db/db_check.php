@@ -157,6 +157,8 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_TYPE, 'name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_REF_TYPE, 'ref_type_name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_REF_TYPE, 'source_type_name', 'type_name');
+    $result .= $db_con->change_column_name(sql_db::TBL_SOURCE, 'comment', 'description');
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, 'comment', 'description');
     $result .= $db_con->change_column_name(sql_db::TBL_SHARE, 'share_type_name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_PROTECTION, 'protection_type_name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_USER_PROFILE, 'user_profile_name', 'type_name');

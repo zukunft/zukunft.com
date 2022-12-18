@@ -6,7 +6,7 @@ PREPARE source_by_id FROM
             s.code_id,
             IF(u.source_name    IS NULL, s.source_name,    u.source_name)    AS source_name,
             IF(u.`url`          IS NULL, s.`url`,          u.`url`)          AS `url`,
-            IF(u.comment        IS NULL, s.comment,        u.comment)        AS comment,
+            IF(u.description    IS NULL, s.description,    u.description)    AS description,
             IF(u.source_type_id IS NULL, s.source_type_id, u.source_type_id) AS source_type_id,
             IF(u.excluded       IS NULL, s.excluded,       u.excluded)       AS excluded
        FROM sources s

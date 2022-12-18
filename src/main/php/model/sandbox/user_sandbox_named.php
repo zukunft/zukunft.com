@@ -41,6 +41,7 @@ use api\word_api;
 
 class user_sandbox_named extends user_sandbox
 {
+
     /*
      * database link
      */
@@ -48,6 +49,7 @@ class user_sandbox_named extends user_sandbox
     // object specific database and JSON object field names
     const FLD_NAME = 'name';
     const FLD_DESCRIPTION = 'description';
+
 
     /*
      * object vars
@@ -57,6 +59,7 @@ class user_sandbox_named extends user_sandbox
     protected string $name = '';        // simply the object name, which cannot be empty if it is a named object
     public ?string $description = null; // the object description that is shown as a mouseover explain to the user
     //                                     if description is NULL the database value should not be updated
+
 
     /*
      * construct and map
@@ -70,7 +73,7 @@ class user_sandbox_named extends user_sandbox
     {
         parent::reset();
 
-        $this->name = '';
+        $this->set_name('');
         $this->description = null;
     }
 
@@ -186,7 +189,7 @@ class user_sandbox_named extends user_sandbox
         $qp = new sql_par($class, true);
         if ($this->id != 0) {
             $qp->name .= 'id';
-        } elseif ($this->name != '') {
+        } elseif ($this->name() != '') {
             $qp->name .= 'name';
         } else {
             log_err('Either the id or name must be set to get a named user sandbox object');
@@ -217,7 +220,7 @@ class user_sandbox_named extends user_sandbox
         global $db_con;
         $result = false;
 
-        if ($this->id == 0 and $this->name == '') {
+        if ($this->id == 0 and $this->name() == '') {
             log_err('The ' . $class . ' id or name must be set to load ' . $class, $class . '->load_standard');
         } else {
             $db_row = $db_con->get1($qp);
@@ -268,8 +271,9 @@ class user_sandbox_named extends user_sandbox
         return '';
     }
 
+
     /*
-     * information function
+     * information
      */
 
     /**
@@ -278,8 +282,8 @@ class user_sandbox_named extends user_sandbox
     function dsp_id(): string
     {
         $result = '';
-        if ($this->name <> '') {
-            $result .= '"' . $this->name . '"';
+        if ($this->name() <> '') {
+            $result .= '"' . $this->name() . '"';
             if ($this->id > 0) {
                 $result .= ' (' . $this->id . ')';
             }
@@ -291,6 +295,10 @@ class user_sandbox_named extends user_sandbox
         }
         return $result;
     }
+
+    /*
+     * save
+     */
 
     /**
      * set the log entry parameter for a new named object
@@ -304,7 +312,7 @@ class user_sandbox_named extends user_sandbox
         $log = new user_log_named;
         $log->field = $this->obj_name . '_name';
         $log->old_value = '';
-        $log->new_value = $this->name;
+        $log->new_value = $this->name();
 
         $log->usr = $this->user();
         $log->action = user_log::ACTION_ADD;
@@ -326,7 +334,7 @@ class user_sandbox_named extends user_sandbox
 
         $log = new user_log_named;
         $log->field = $this->obj_name . '_name';
-        $log->old_value = $this->name;
+        $log->old_value = $this->name();
         $log->new_value = '';
 
         $log->usr = $this->user();
@@ -353,31 +361,31 @@ class user_sandbox_named extends user_sandbox
                 if ($this->obj_name == sql_db::TBL_WORD) {
                     if (in_array($this->name, word_api::RESERVED_WORDS)) {
                         // the admin user needs to add the read test word during initial load
-                        if ($usr->is_admin() and $this->name != word_api::TN_READ) {
-                            $result = '"' . $this->name . '" is a reserved name for system testing. Please use another name';
+                        if ($usr->is_admin() and $this->name() != word_api::TN_READ) {
+                            $result = '"' . $this->name() . '" is a reserved name for system testing. Please use another name';
                         }
                     }
                 } elseif ($this->obj_name == sql_db::TBL_PHRASE) {
                     if (in_array($this->name, phrase_api::RESERVED_PHRASES)) {
-                        $result = '"' . $this->name . '" is a reserved phrase name for system testing. Please use another name';
+                        $result = '"' . $this->name() . '" is a reserved phrase name for system testing. Please use another name';
                     }
                 } elseif ($this->obj_name == sql_db::TBL_FORMULA) {
                     if (in_array($this->name, formula_api::RESERVED_FORMULAS)) {
-                        $result = '"' . $this->name . '" is a reserved formula name for system testing. Please use another name';
+                        $result = '"' . $this->name() . '" is a reserved formula name for system testing. Please use another name';
                     }
                 } elseif ($this->obj_name == sql_db::TBL_VIEW) {
                     if (in_array($this->name, view_api::RESERVED_VIEWS)) {
-                        $result = '"' . $this->name . '" is a reserved view name for system testing. Please use another name';
+                        $result = '"' . $this->name() . '" is a reserved view name for system testing. Please use another name';
                     }
                 } elseif ($this->obj_name == sql_db::TBL_VIEW_COMPONENT) {
                     if (in_array($this->name, view_cmp_api::RESERVED_VIEW_COMPONENTS)) {
-                        $result = '"' . $this->name . '" is a reserved view component name for system testing. Please use another name';
+                        $result = '"' . $this->name() . '" is a reserved view component name for system testing. Please use another name';
                     }
                 } elseif ($this->obj_name == sql_db::TBL_SOURCE) {
                     if (in_array($this->name, source_api::RESERVED_SOURCES)) {
                         // the admin user needs to add the read test source during initial load
-                        if ($usr->is_admin() and $this->name != source_api::TN_READ) {
-                            $result = '"' . $this->name . '" is a reserved source name for system testing. Please use another name';
+                        if ($usr->is_admin() and $this->name() != source_api::TN_READ) {
+                            $result = '"' . $this->name() . '" is a reserved source name for system testing. Please use another name';
                         }
                     }
                 }
@@ -424,7 +432,7 @@ class user_sandbox_named extends user_sandbox
                     // create an empty db_rec element to force saving of all set fields
                     $db_rec = clone $this;
                     $db_rec->reset();
-                    $db_rec->name = $this->name;
+                    $db_rec->name = $this->name();
                     $db_rec->set_user($this->user());
                     $std_rec = clone $db_rec;
                     // save the object fields
@@ -450,8 +458,8 @@ class user_sandbox_named extends user_sandbox
         $result = False;
         log_debug($this->dsp_id());
 
-        log_debug('compare name ' . $db_rec->name . ' with ' . $this->name);
-        if ($db_rec->name <> $this->name) {
+        log_debug('compare name ' . $db_rec->name() . ' with ' . $this->name());
+        if ($db_rec->name() <> $this->name()) {
             $result = True;
         }
 
@@ -464,13 +472,17 @@ class user_sandbox_named extends user_sandbox
      */
     function msg_id_already_used(): string
     {
-        return 'A ' . $this->obj_name . ' with the name "' . $this->name . '" already exists. Please use another name.';
+        return 'A ' . $this->obj_name . ' with the name "' . $this->name() . '" already exists. Please use another name.';
     }
 
     /**
      * set the update parameters for the word description
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param user_sandbox_named $db_rec the database record before the saving
+     * @param user_sandbox_named $std_rec the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
      */
-    function save_field_description(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_field_description(sql_db $db_con, user_sandbox_named $db_rec, user_sandbox_named $std_rec): string
     {
         $result = '';
         // if the description is not set, don't overwrite any db entry
@@ -485,6 +497,20 @@ class user_sandbox_named extends user_sandbox
                 $result = $this->save_field_do($db_con, $log);
             }
         }
+        return $result;
+    }
+
+    /**
+     * save all updated source fields excluding the name, because already done when adding a source
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param user_sandbox_named $db_rec the database record before the saving
+     * @param user_sandbox_named $std_rec the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
+     */
+    function save_fields_named(sql_db $db_con, user_sandbox_named $db_rec, user_sandbox_named $std_rec): string
+    {
+        $result = $this->save_field_description($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         return $result;
     }
 
@@ -506,9 +532,9 @@ class user_sandbox_named extends user_sandbox
             log_debug('to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
 
             $log = $this->log_upd_field();
-            $log->old_value = $db_rec->name;
-            $log->new_value = $this->name;
-            $log->std_value = $std_rec->name;
+            $log->old_value = $db_rec->name();
+            $log->new_value = $this->name();
+            $log->std_value = $std_rec->name();
             $log->field = $this->obj_name . '_name';
 
             $log->row_id = $this->id;
@@ -518,7 +544,7 @@ class user_sandbox_named extends user_sandbox
                 if (!$db_con->update($this->id,
                     array($this->obj_name . '_name'),
                     array($this->name))) {
-                    $result .= 'update of name to ' . $this->name . 'failed';
+                    $result .= 'update of name to ' . $this->name() . 'failed';
                 }
             }
         }
@@ -599,7 +625,7 @@ class user_sandbox_named extends user_sandbox
             $db_chk = clone $this;
             $db_chk->reset();
             $db_chk->set_user($this->user());
-            $db_chk->name = $this->name;
+            $db_chk->name = $this->name();
             // check with the standard namespace
             if ($db_chk->load_standard()) {
                 if ($db_chk->id > 0) {
@@ -611,7 +637,7 @@ class user_sandbox_named extends user_sandbox
             $db_chk->set_user($this->user());
             if ($this->obj_name == sql_db::TBL_WORD
                 or $this->obj_name == sql_db::TBL_SOURCE) {
-                if ($this->name != '') {
+                if ($this->name() != '') {
                     if ($db_chk->load_by_name($this->name())) {
                         if ($db_chk->id() > 0) {
                             log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
