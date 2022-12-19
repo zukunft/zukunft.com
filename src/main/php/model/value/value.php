@@ -1706,7 +1706,7 @@ class value extends user_sandbox_value
     /**
      * set the update parameters for the number
      */
-    function save_field_number(sql_db $db_con, user_sandbox_value $db_rec, user_sandbox_value $std_rec): string
+    function save_field_number(sql_db $db_con, value $db_rec, value $std_rec): string
     {
         $result = '';
         if ($db_rec->number() <> $this->number()) {
@@ -1724,8 +1724,11 @@ class value extends user_sandbox_value
         return $result;
     }
 
-// set the update parameters for the source link
-    function save_field_source(sql_db $db_con, user_sandbox_value $db_rec, user_sandbox_value $std_rec): string
+
+    /**
+     * set the update parameters for the source link
+     */
+    function save_field_source(sql_db $db_con, value $db_rec, value $std_rec): string
     {
         $result = '';
         if ($db_rec->get_source_id() <> $this->get_source_id()) {
@@ -1743,8 +1746,14 @@ class value extends user_sandbox_value
         return $result;
     }
 
-// save the value number and the source
-    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    /**
+     * save the value number and the source
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param value|user_sandbox $db_rec the database record before the saving
+     * @param value|user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
+     */
+    function save_fields(sql_db $db_con, value|user_sandbox $db_rec, value|user_sandbox $std_rec): string
     {
         $result = $this->save_field_number($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_source($db_con, $db_rec, $std_rec);

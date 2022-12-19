@@ -192,6 +192,21 @@ class formula_link extends user_sandbox_link_with_type
     }
 
     /*
+     * get preloaded information
+     */
+
+    /**
+     * get the name of the formula link type
+     * @return string the name of the formula link type
+     */
+    public function type_name(): string
+    {
+        global $formula_link_types;
+        return $formula_link_types->name($this->type_id);
+    }
+
+
+    /*
      * load functions
      */
 
@@ -365,7 +380,6 @@ class formula_link extends user_sandbox_link_with_type
                 }
             }
         }
-        $this->link_type_name();
         return $result;
     }
 
@@ -435,18 +449,6 @@ class formula_link extends user_sandbox_link_with_type
         }
 
         return $result;
-    }
-
-    /**
-     * @return string the name of the formula link e.g. to describe to the user what can be done with undo
-     */
-    function link_type_name(): string
-    {
-        if ($this->link_type_id > 0) {
-            return cl_name(db_cl::FORMULA_LINK_TYPE, $this->link_type_id);
-        } else {
-            return '';
-        }
     }
 
     /**
@@ -572,37 +574,18 @@ class formula_link extends user_sandbox_link_with_type
     }
 
     /**
-     * set the update parameters for the formula type
-     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
-     */
-    function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
-    {
-        $result = '';
-        if ($db_rec->link_type_id <> $this->link_type_id) {
-            $log = $this->log_upd_field();
-            $log->old_value = $db_rec->link_type_name();
-            $log->old_id = $db_rec->link_type_id;
-            $log->new_value = $this->link_type_name();
-            $log->new_id = $this->link_type_id;
-            $log->std_value = $std_rec->link_type_name();
-            $log->std_id = $std_rec->link_type_id;
-            $log->row_id = $this->id;
-            $log->field = formula_link::FLD_TYPE;
-            $result .= $this->save_field_do($db_con, $log);
-        }
-        return $result;
-    }
-
-    /**
      * save all updated formula_link fields excluding the name, because already done when adding a formula_link
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param formula_link|user_sandbox $db_rec the database record before the saving
+     * @param formula_link|user_sandbox $std_rec the database record defined as standard because it is used by most users
      * @return string the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_fields(sql_db $db_con, formula_link|user_sandbox $db_rec, formula_link|user_sandbox $std_rec): string
     {
         // link type not used at the moment
         $result = $this->save_field_type($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        log_debug('formula_link->save_fields all fields for "' . $this->fob->name() . '" to "' . $this->tob->name() . '" has been saved');
+        log_debug('all fields for "' . $this->fob->name() . '" to "' . $this->tob->name() . '" has been saved');
         return $result;
     }
 

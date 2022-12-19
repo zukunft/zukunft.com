@@ -1792,7 +1792,7 @@ class word extends user_sandbox_named_with_type
     /**
      * set the update parameters for the word plural
      */
-    private function save_field_plural(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    private function save_field_plural(sql_db $db_con, word $db_rec, word $std_rec): string
     {
         $result = '';
         // if the plural is not set, don't overwrite any db entry
@@ -1824,10 +1824,13 @@ class word extends user_sandbox_named_with_type
 
     /**
      * save all updated word fields
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param word|user_sandbox $db_rec the database record before the saving
+     * @param word|user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
      */
-    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_fields(sql_db $db_con, word|user_sandbox $db_rec, word|user_sandbox $std_rec): string
     {
-        log_debug();
         $result = $this->save_field_plural($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_description($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
@@ -1852,7 +1855,7 @@ class word extends user_sandbox_named_with_type
 
     /**
      * delete the references to this word which includes the phrase groups, the triples and values
-     *
+     * @return user_message of the link removal and if needed the error messages that should be shown to the user
      */
     function del_links(): user_message
     {

@@ -621,9 +621,16 @@ class view_cmp_link extends user_sandbox_link_with_type
         return parent::usr_cfg_sql($db_con, $class);
     }
 
-    // set the update parameters for the view component order_nbr
+    /**
+     * set the update parameters for the view component order_nbr
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param view_cmp_link $db_rec the view component link as saved in the database before the update
+     * @param view_cmp_link $std_rec the default parameter used for this view component link
+     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     */
     private
-    function save_field_order_nbr(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_field_order_nbr(sql_db $db_con, view_cmp_link $db_rec, view_cmp_link $std_rec): string
     {
         $result = '';
         if ($db_rec->order_nbr <> $this->order_nbr) {
@@ -638,32 +645,20 @@ class view_cmp_link extends user_sandbox_link_with_type
         return $result;
     }
 
-    // set the update parameters for the word type
-    function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
-    {
-        $result = '';
-        if ($db_rec->pos_type_id <> $this->pos_type_id) {
-            $log = $this->log_upd_field();
-            $log->old_value = $db_rec->pos_type_name();
-            $log->old_id = $db_rec->pos_type_id;
-            $log->new_value = $this->pos_type_name();
-            $log->new_id = $this->pos_type_id;
-            $log->std_value = $std_rec->pos_type_name();
-            $log->std_id = $std_rec->pos_type_id;
-            $log->row_id = $this->id;
-            $log->field = self::FLD_POS_TYPE;
-            $result .= $this->save_field_do($db_con, $log);
-        }
-        return $result;
-    }
-
-    // save all updated view_component_link fields excluding the name, because already done when adding a view_component_link
-    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    /**
+     * save all updated view_component_link fields excluding the name, because already done when adding a view_component_link
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param view_cmp_link|user_sandbox $db_rec the view component link as saved in the database before the update
+     * @param view_cmp_link|user_sandbox $std_rec the default parameter used for this view component link
+     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     */
+    function save_fields(sql_db $db_con, view_cmp_link|user_sandbox $db_rec, view_cmp_link|user_sandbox $std_rec): string
     {
         $result = $this->save_field_order_nbr($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        log_debug('view_component_link->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
+        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }
 
