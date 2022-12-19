@@ -680,8 +680,8 @@ class user_dsp_old extends user
                     m.user_id AS owner_id, 
                     CASE WHEN (u.view_name    <> '' IS NOT TRUE) THEN m.view_name    ELSE u.view_name    END AS usr_name, 
                     m.view_name                                                               AS std_name, 
-                    CASE WHEN (u.comment      <> '' IS NOT TRUE) THEN m.comment      ELSE u.comment      END AS usr_comment, 
-                    m.comment                                                                 AS std_comment, 
+                    CASE WHEN (u.description  <> '' IS NOT TRUE) THEN m.description  ELSE u.description      END AS usr_description, 
+                    m.description                                                             AS std_description, 
                     CASE WHEN (u.view_type_id <> '' IS NOT TRUE) THEN m.view_type_id ELSE u.view_type_id END AS usr_type, 
                     m.view_type_id                                                            AS std_type, 
                     CASE WHEN (u.excluded     <> '' IS NOT TRUE) THEN m.excluded     ELSE u.excluded     END AS usr_excluded,
@@ -696,8 +696,8 @@ class user_dsp_old extends user
                     m.user_id AS owner_id, 
                     IF(u.view_name    IS NULL, m.view_name,    u.view_name)    AS usr_name, 
                     m.view_name                                                AS std_name, 
-                    IF(u.comment      IS NULL, m.comment,      u.comment  )    AS usr_comment, 
-                    m.comment                                                  AS std_comment, 
+                    IF(u.description  IS NULL, m.description,  u.description ) AS usr_description, 
+                    m.description                                              AS std_description, 
                     IF(u.view_type_id IS NULL, m.view_type_id, u.view_type_id) AS usr_type, 
                     m.view_type_id                                             AS std_type, 
                     IF(u.excluded     IS NULL, m.excluded,     u.excluded)     AS usr_excluded,
@@ -720,7 +720,7 @@ class user_dsp_old extends user
                 $dsp_usr = new view_dsp_old($this);
                 $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->set_name($sbx_row['usr_name']);
-                $dsp_usr->comment = $sbx_row['usr_comment'];
+                $dsp_usr->description = $sbx_row['usr_description'];
                 $dsp_usr->type_id = $sbx_row['usr_type'];
                 $dsp_usr->excluded = $sbx_row['usr_excluded'];
                 $dsp_usr->set_user($this);
@@ -733,13 +733,13 @@ class user_dsp_old extends user
                 $dsp_std = clone $dsp_usr;
                 $dsp_std->set_user($usr_std);
                 $dsp_std->set_name($sbx_row['std_name']);
-                $dsp_std->comment = $sbx_row['std_comment'];
+                $dsp_std->description = $sbx_row['std_description'];
                 $dsp_std->type_id = $sbx_row['std_type'];
                 $dsp_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
                 if ($dsp_usr->set_name($dsp_std->name())
-                    and $dsp_usr->comment == $dsp_std->comment
+                    and $dsp_usr->description == $dsp_std->description
                     and $dsp_usr->type_id == $dsp_std->type_id
                     and $dsp_usr->excluded == $dsp_std->excluded) {
                     $dsp_usr->del_usr_cfg();
@@ -765,7 +765,7 @@ class user_dsp_old extends user
                     $sql_other = "SELECT m.view_id, 
                                u.user_id, 
                                u.view_name, 
-                               u.comment, 
+                               u.description, 
                                u.view_type_id, 
                                u.excluded
                           FROM user_views u,
@@ -785,7 +785,7 @@ class user_dsp_old extends user
                         $dsp_other = clone $dsp_usr;
                         $dsp_other->set_user($usr_other);
                         $dsp_other->set_name($dsp_other_row[view::FLD_NAME]);
-                        $dsp_other->comment = $dsp_other_row['comment'];
+                        $dsp_other->description = $dsp_other_row[user_sandbox_named::FLD_DESCRIPTION];
                         $dsp_other->type_id = $dsp_other_row[view::FLD_TYPE];
                         $dsp_other->excluded = $dsp_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
@@ -847,8 +847,8 @@ class user_dsp_old extends user
                     m.user_id AS owner_id, 
                     CASE WHEN (u.view_component_name    <> '' IS NOT TRUE) THEN m.view_component_name    ELSE u.view_component_name    END AS usr_name, 
                     m.view_component_name                                                                                   AS std_name, 
-                    CASE WHEN (u.comment                <> '' IS NOT TRUE) THEN m.comment                ELSE u.comment                END AS usr_comment, 
-                    m.comment                                                                                               AS std_comment, 
+                    CASE WHEN (u.description            <> '' IS NOT TRUE) THEN m.description            ELSE u.description            END AS usr_description, 
+                    m.description                                                                                           AS std_description, 
                     CASE WHEN (u.view_component_type_id <> '' IS NOT TRUE) THEN m.view_component_type_id ELSE u.view_component_type_id END AS usr_type, 
                     m.view_component_type_id                                                                                AS std_type, 
                     CASE WHEN (u.excluded               <> '' IS NOT TRUE) THEN m.excluded               ELSE u.excluded               END AS usr_excluded,
@@ -863,8 +863,8 @@ class user_dsp_old extends user
                     m.user_id AS owner_id, 
                     IF(u.view_component_name    IS NULL, m.view_component_name,    u.view_component_name)    AS usr_name, 
                     m.view_component_name                                                                    AS std_name, 
-                    IF(u.comment                IS NULL, m.comment,                u.comment)                AS usr_comment, 
-                    m.comment                                                                                AS std_comment, 
+                    IF(u.description            IS NULL, m.description,            u.description)            AS usr_description, 
+                    m.description                                                                            AS std_description, 
                     IF(u.view_component_type_id IS NULL, m.view_component_type_id, u.view_component_type_id) AS usr_type, 
                     m.view_component_type_id                                                                 AS std_type, 
                     IF(u.excluded               IS NULL, m.excluded,               u.excluded)               AS usr_excluded,
@@ -951,7 +951,7 @@ class user_dsp_old extends user
                         $cmp_other = clone $dsp_usr;
                         $cmp_other->set_user($usr_other);
                         $cmp_other->set_name($cmp_other_row[view_cmp::FLD_NAME]);
-                        $cmp_other->description = $cmp_other_row['comment'];
+                        $cmp_other->description = $cmp_other_row[user_sandbox_named::FLD_DESCRIPTION];
                         $cmp_other->type_id = $cmp_other_row['view_component_type_id'];
                         $cmp_other->excluded = $cmp_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
@@ -1299,7 +1299,7 @@ class user_dsp_old extends user
                         $dsp_other->set_user($usr_other);
                         $dsp_other->set_name($dsp_other_row['source_name']);
                         $dsp_other->url = $dsp_other_row['url'];
-                        $dsp_other->description = $dsp_other_row['comment'];
+                        $dsp_other->description = $dsp_other_row[user_sandbox_named::FLD_DESCRIPTION];
                         $dsp_other->type_id = $dsp_other_row['source_type_id'];
                         $dsp_other->excluded = $dsp_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {

@@ -2,7 +2,7 @@ PREPARE view_std_by_id (int) AS
     SELECT view_id,
            view_name,
            code_id,
-           comment,
+           description,
            view_type_id,
            excluded,
            share_type_id,

@@ -603,13 +603,13 @@ class view_dsp_old extends view
             $result .= dsp_form_text("name", $this->name, "Name:", "col-sm-8", "disabled");
             $result .= $this->dsp_type_selector($script, "col-sm-4", "disabled");
             $result .= '</div>';
-            $result .= dsp_form_text_big("comment", $this->comment, "Comment:", "", "disabled");
+            $result .= dsp_form_text_big("description", $this->description, "Comment:", "", "disabled");
         } else {
             // show the fields inactive, because the assign fields are active
             $result .= dsp_form_text("name", $this->name, "Name:", "col-sm-8");
             $result .= $this->dsp_type_selector($script, "col-sm-4", "");
             $result .= '</div>';
-            $result .= dsp_form_text_big("comment", $this->comment, "Comment:");
+            $result .= dsp_form_text_big("description", $this->description, "Comment:");
             $result .= dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id . "&back=" . $back);
         }
 

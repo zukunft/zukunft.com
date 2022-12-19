@@ -46,7 +46,7 @@ class view extends user_sandbox_named_with_type
     const FLD_NAME = 'view_name';
     const FLD_TYPE = 'view_type_id';
     const FLD_CODE_ID = 'code_id';
-    const FLD_COMMENT = 'comment';
+    const FLD_DESCRIPTION = 'description';
     // the JSON object field names
     const FLD_COMPONENT = 'view_components';
 
@@ -56,7 +56,7 @@ class view extends user_sandbox_named_with_type
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
-        self::FLD_COMMENT
+        self::FLD_DESCRIPTION
     );
     // list of the user specific database field names
     const FLD_NAMES_NUM_USR = array(
@@ -67,7 +67,7 @@ class view extends user_sandbox_named_with_type
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_FLD_NAMES = array(
-        self::FLD_COMMENT,
+        self::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_EXCLUDED,
         user_sandbox::FLD_SHARE,
@@ -122,12 +122,12 @@ class view extends user_sandbox_named_with_type
      */
 
     // database fields additional to the user sandbox fields for the view component
-    public ?string $comment = null; // the view description that is shown as a mouseover explain to the user
+    public ?string $description = null; // the view description that is shown as a mouseover explain to the user
     public ?string $code_id = null;   // to select internal predefined views
 
     // in memory only fields
     public ?array $cmp_lst = null;  // array of the view component objects in correct order
-    public ?string $back = null;    // the calling stack
+
 
     /*
      * construct and map
@@ -149,12 +149,11 @@ class view extends user_sandbox_named_with_type
     {
         parent::reset();
 
-        $this->comment = '';
+        $this->description = '';
         $this->type_id = null;
         $this->code_id = '';
 
         $this->cmp_lst = null;
-        $this->back = null;
     }
 
     // TODO check if there is any case where the user fields should not be set
@@ -176,7 +175,7 @@ class view extends user_sandbox_named_with_type
         $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
-            $this->comment = $db_row[self::FLD_COMMENT];
+            $this->description = $db_row[self::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_TYPE];
             $this->code_id = $db_row[self::FLD_CODE_ID];
         }
@@ -767,7 +766,7 @@ class view extends user_sandbox_named_with_type
                 }
             }
             if ($key == exp_obj::FLD_DESCRIPTION) {
-                $this->comment = $value;
+                $this->description = $value;
             }
             if ($key == user_type::FLD_CODE_ID) {
                 if ($this->user()->is_admin()) {
@@ -824,7 +823,7 @@ class view extends user_sandbox_named_with_type
 
         // add the view parameters
         $result->name = $this->name();
-        $result->description = $this->comment;
+        $result->description = $this->description;
         $result->type = $this->type_code_id();
 
         // add the view components used
@@ -929,13 +928,13 @@ class view extends user_sandbox_named_with_type
     function save_field_comment(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
-        if ($db_rec->description <> $this->comment) {
+        if ($db_rec->description <> $this->description) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->description;
-            $log->new_value = $this->comment;
+            $log->new_value = $this->description;
             $log->std_value = $std_rec->description;
             $log->row_id = $this->id;
-            $log->field = self::FLD_COMMENT;
+            $log->field = self::FLD_DESCRIPTION;
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;

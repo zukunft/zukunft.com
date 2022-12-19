@@ -99,6 +99,7 @@ class view_unit_tests
         // casting API
         $dsp = new view($usr);
         $dsp->set(1, view_api::TN_READ);
+        $dsp->description = view_api::TD_READ;
         $t->assert_api($dsp);
 
         /*

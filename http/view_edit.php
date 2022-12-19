@@ -132,7 +132,7 @@ if ($usr->id > 0) {
                 $dsp_edit->set_name($_GET['name']);
             }
             if (isset($_GET['comment'])) {
-                $dsp_edit->comment = $_GET['comment'];
+                $dsp_edit->description = $_GET['comment'];
             }
             if (isset($_GET['type'])) {
                 $dsp_edit->type_id = $_GET['type'];

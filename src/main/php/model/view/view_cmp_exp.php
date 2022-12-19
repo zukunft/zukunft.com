@@ -40,7 +40,7 @@ class view_cmp_exp extends user_sandbox_exp_named
     public ?string $row = '';
     public ?string $column = '';
     public ?string $column2 = '';
-    public ?string $comment = '';
+    public ?string $description = '';
 
     function reset()
     {
@@ -51,7 +51,7 @@ class view_cmp_exp extends user_sandbox_exp_named
         $this->row = '';
         $this->column = '';
         $this->column2 = '';
-        $this->comment = '';
+        $this->description = '';
     }
 
 }

@@ -142,7 +142,7 @@ class source_dsp extends source_api
         $result .= dsp_form_fld("name", $this->name, "Source name:");
         $result .= '<tr><td>type   </td><td>' . $this->dsp_select_type($script, $back) . '</td></tr>';
         $result .= dsp_form_fld("url", $this->url, "URL:");
-        $result .= dsp_form_fld("comment", $this->comment, "Comment:");
+        $result .= dsp_form_fld("comment", $this->description, "Comment:");
         //$result .= dsp_tbl_end ();
         $result .= dsp_form_end('', $back);
 

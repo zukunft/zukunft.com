@@ -9,7 +9,7 @@ PREPARE view_cmp_by_view_id (int, int) AS
                 CASE WHEN (u.excluded                   IS     NULL) THEN s.excluded                ELSE u.excluded                 END AS excluded,
                 CASE WHEN (u.share_type_id              IS     NULL) THEN s.share_type_id           ELSE u.share_type_id            END AS share_type_id,
                 CASE WHEN (u.protect_id                 IS     NULL) THEN s.protect_id              ELSE u.protect_id               END AS protect_id,
-                CASE WHEN (ul.comment             <> '' IS NOT TRUE) THEN l.comment                 ELSE ul.comment                 END AS comment,
+                CASE WHEN (ul.description         <> '' IS NOT TRUE) THEN l.description             ELSE ul.description             END AS description,
                 CASE WHEN (ul.view_component_name <> '' IS NOT TRUE) THEN l.view_component_name     ELSE ul.view_component_name     END AS view_component_name,
                 CASE WHEN (ul2.view_component_type_id   IS     NULL) THEN l2.view_component_type_id ELSE ul2.view_component_type_id END AS view_component_type_id2,
                 CASE WHEN (ul2.word_id_row              IS     NULL) THEN l2.word_id_row            ELSE ul2.word_id_row            END AS word_id_row2,

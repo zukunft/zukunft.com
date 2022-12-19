@@ -244,17 +244,12 @@ class source extends user_sandbox_named_with_type
      */
     protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
-        $qp->name .= $query_name;
-
-        $db_con->set_type(sql_db::TBL_SOURCE);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-
-        return $qp;
+        return parent::load_sql_fields(
+            $db_con, $query_name, $class,
+            self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR
+        );
     }
 
     /**

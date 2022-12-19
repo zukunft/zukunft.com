@@ -373,7 +373,7 @@ function run_word_tests(testing $t): void
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added ' . word_api::TN_RENAMED . 's';
     $t->dsp('word->load plural for "' . word_api::TN_RENAMED . '" logged', $target, $result);
-    $log->field = 'description';
+    $log->field = user_sandbox_named::FLD_DESCRIPTION;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added ' . word_api::TN_RENAMED . ' description';
     $t->dsp('word->load description for "' . word_api::TN_RENAMED . '" logged', $target, $result);

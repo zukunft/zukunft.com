@@ -393,6 +393,35 @@ class user_sandbox extends db_object
     }
 
     /**
+     * prepare the SQL parameter to load a single user specific value
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_fields(
+        sql_db $db_con,
+        string $query_name,
+        string $class,
+        array $fields,
+        array $usr_fields,
+        array $usr_num_fields,
+    ): sql_par
+    {
+        $qp = new sql_par($class);
+        $qp->name .= $query_name;
+
+        $db_con->set_type(sql_db::TBL_SOURCE);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->user()->id);
+        $db_con->set_fields($fields);
+        $db_con->set_usr_fields($usr_fields);
+        $db_con->set_usr_num_fields($usr_num_fields);
+
+        return $qp;
+    }
+
+    /**
      * create the SQL to load a single user specific value
      * TODO replace by load_sql or do it in the child objects
      *

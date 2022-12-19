@@ -81,10 +81,10 @@ function run_view_test(testing $t): void
     // test adding of one view
     $dsp = new view($t->usr1);
     $dsp->set_name(view_api::TN_ADD);
-    $dsp->comment = 'Just added for testing';
+    $dsp->description = 'Just added for testing';
     $result = $dsp->save();
     if ($dsp->id() > 0) {
-        $result = $dsp->comment;
+        $result = $dsp->description;
     }
     $target = 'Just added for testing';
     $t->dsp('view->save for adding "' . $dsp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -92,7 +92,7 @@ function run_view_test(testing $t): void
     // check if the view name has been saved
     $dsp = new view($t->usr1);
     $dsp->load_by_name(view_api::TN_ADD, view::class);
-    $result = $dsp->comment;
+    $result = $dsp->description;
     $target = 'Just added for testing';
     $t->dsp('view->load the added "' . $dsp->name() . '"', $target, $result);
 
@@ -144,7 +144,7 @@ function run_view_test(testing $t): void
     $t->dsp('view->save rename logged for "' . view_api::TN_RENAMED . '"', $target, $result);
 
     // check if the view parameters can be added
-    $dsp_renamed->comment = 'Just added for testing the user sandbox';
+    $dsp_renamed->description = 'Just added for testing the user sandbox';
     $dsp_renamed->type_id = cl(db_cl::VIEW_TYPE, view_type::WORD_DEFAULT);
     $result = $dsp_renamed->save();
     $target = '';
@@ -153,7 +153,7 @@ function run_view_test(testing $t): void
     // check if the view parameters have been added
     $dsp_reloaded = new view($t->usr1);
     $dsp_reloaded->load_by_name(view_api::TN_RENAMED, view::class);
-    $result = $dsp_reloaded->comment;
+    $result = $dsp_reloaded->description;
     $target = 'Just added for testing the user sandbox';
     $t->dsp('view->load comment for "' . view_api::TN_RENAMED . '"', $target, $result);
     $result = $dsp_reloaded->type_id;
@@ -163,7 +163,7 @@ function run_view_test(testing $t): void
     // check if the view parameter adding have been logged
     $log = new user_log_named;
     $log->table = 'views';
-    $log->field = 'comment';
+    $log->field = user_sandbox_named::FLD_DESCRIPTION;
     $log->row_id = $dsp_reloaded->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
@@ -177,7 +177,7 @@ function run_view_test(testing $t): void
     // check if a user specific view is created if another user changes the view
     $dsp_usr2 = new view($t->usr2);
     $dsp_usr2->load_by_name(view_api::TN_RENAMED, view::class);
-    $dsp_usr2->comment = 'Just changed for testing the user sandbox';
+    $dsp_usr2->description = 'Just changed for testing the user sandbox';
     $dsp_usr2->type_id = cl(db_cl::VIEW_TYPE, view_type::ENTRY);
     $result = $dsp_usr2->save();
     $target = '';
@@ -186,7 +186,7 @@ function run_view_test(testing $t): void
     // check if a user specific view changes have been saved
     $dsp_usr2_reloaded = new view($t->usr2);
     $dsp_usr2_reloaded->load_by_name(view_api::TN_RENAMED, view::class);
-    $result = $dsp_usr2_reloaded->comment;
+    $result = $dsp_usr2_reloaded->description;
     $target = 'Just changed for testing the user sandbox';
     $t->dsp('view->load comment for "' . view_api::TN_RENAMED . '"', $target, $result);
     $result = $dsp_usr2_reloaded->type_id;
@@ -196,7 +196,7 @@ function run_view_test(testing $t): void
     // check the view for the original user remains unchanged
     $dsp_reloaded = new view($t->usr1);
     $dsp_reloaded->load_by_name(view_api::TN_RENAMED, view::class);
-    $result = $dsp_reloaded->comment;
+    $result = $dsp_reloaded->description;
     $target = 'Just added for testing the user sandbox';
     $t->dsp('view->load comment for "' . view_api::TN_RENAMED . '"', $target, $result);
     $result = $dsp_reloaded->type_id;
@@ -206,7 +206,7 @@ function run_view_test(testing $t): void
     // check if undo all specific changes removes the user view
     $dsp_usr2 = new view($t->usr2);
     $dsp_usr2->load_by_name(view_api::TN_RENAMED, view::class);
-    $dsp_usr2->comment = 'Just added for testing the user sandbox';
+    $dsp_usr2->description = 'Just added for testing the user sandbox';
     $dsp_usr2->type_id = cl(db_cl::VIEW_TYPE, view_type::WORD_DEFAULT);
     $result = $dsp_usr2->save();
     $target = '';
@@ -215,7 +215,7 @@ function run_view_test(testing $t): void
     // check if a user specific view changes have been saved
     $dsp_usr2_reloaded = new view($t->usr2);
     $dsp_usr2_reloaded->load_by_name(view_api::TN_RENAMED, view::class);
-    $result = $dsp_usr2_reloaded->comment;
+    $result = $dsp_usr2_reloaded->description;
     $target = 'Just added for testing the user sandbox';
     $t->dsp('view->load comment for "' . view_api::TN_RENAMED . '"', $target, $result);
     $result = $dsp_usr2_reloaded->type_id;

@@ -164,7 +164,7 @@ function run_view_component_test(testing $t): void
     // check if the view_component parameter adding have been logged
     $log = new user_log_named;
     $log->table = 'view_components';
-    $log->field = 'comment';
+    $log->field = user_sandbox_named::FLD_DESCRIPTION;
     $log->row_id = $cmp_reloaded->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);

@@ -9,7 +9,7 @@ PREPARE view_cmp_by_view_id FROM
                 IF(u.excluded                 IS NULL,  s.excluded,                u.excluded)                 AS excluded,
                 IF(u.share_type_id            IS NULL,  s.share_type_id,           u.share_type_id)            AS share_type_id,
                 IF(u.protect_id               IS NULL,  s.protect_id,              u.protect_id)               AS protect_id,
-                IF(ul.comment                 IS NULL, l.comment,                  ul.comment)                 AS comment,
+                IF(ul.description             IS NULL, l.description,              ul.description)             AS description,
                 IF(ul.view_component_name     IS NULL, l.view_component_name,      ul.view_component_name)     AS view_component_name,
                 IF(ul2.view_component_type_id IS NULL,  l2.view_component_type_id, ul2.view_component_type_id) AS view_component_type_id2,
                 IF(ul2.word_id_row            IS NULL,  l2.word_id_row,            ul2.word_id_row)            AS word_id_row2,

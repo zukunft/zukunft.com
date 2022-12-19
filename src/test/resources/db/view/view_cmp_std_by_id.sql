@@ -1,7 +1,7 @@
 PREPARE view_cmp_std_by_id (int) AS
     SELECT view_component_id,
            view_component_name,
-           comment,
+           description,
            view_component_type_id,
            word_id_row,
            link_type_id,

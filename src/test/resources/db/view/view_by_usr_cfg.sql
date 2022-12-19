@@ -1,7 +1,7 @@
 PREPARE view_by_usr_cfg (int, int) AS
     SELECT view_id,
            view_name,
-           comment,
+           description,
            view_type_id,
            excluded,
            share_type_id,

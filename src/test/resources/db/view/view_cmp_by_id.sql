@@ -3,7 +3,7 @@ PREPARE view_cmp_by_id (int, int) AS
                u.view_component_id AS user_view_component_id,
                s.user_id,
                CASE WHEN (u.view_component_name <> '' IS NOT TRUE) THEN s.view_component_name    ELSE u.view_component_name    END AS view_component_name,
-               CASE WHEN (u.comment             <> '' IS NOT TRUE) THEN s.comment                ELSE u.comment                END AS comment,
+               CASE WHEN (u.description         <> '' IS NOT TRUE) THEN s.description            ELSE u.description            END AS description,
                CASE WHEN (u.view_component_type_id    IS     NULL) THEN s.view_component_type_id ELSE u.view_component_type_id END AS view_component_type_id,
                CASE WHEN (u.word_id_row               IS     NULL) THEN s.word_id_row            ELSE u.word_id_row            END AS word_id_row,
                CASE WHEN (u.link_type_id              IS     NULL) THEN s.link_type_id           ELSE u.link_type_id           END AS link_type_id,

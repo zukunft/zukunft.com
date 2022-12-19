@@ -544,12 +544,12 @@ class user_sandbox_unit_tests
 
         // test the view load_standard SQL creation
         $db_con->set_type(sql_db::TBL_VIEW);
-        $db_con->set_fields(array('comment', view::FLD_TYPE, user_sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array(user_sandbox_named::FLD_DESCRIPTION, view::FLD_TYPE, user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT view_id,
                      view_name,
-                     comment,
+                     description,
                      view_type_id,
                      excluded
                 FROM views
@@ -558,7 +558,7 @@ class user_sandbox_unit_tests
 
         // test the view load SQL creation
         $db_con->set_type(sql_db::TBL_VIEW);
-        $db_con->set_usr_fields(array('comment'));
+        $db_con->set_usr_fields(array(user_sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array(view::FLD_TYPE, user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
@@ -566,10 +566,10 @@ class user_sandbox_unit_tests
                         s.view_id, 
                         u.view_id AS user_view_id, 
                         s.user_id, 
-                        CASE WHEN (u.view_name <> '' IS NOT TRUE) THEN s.view_name    ELSE u.view_name    END AS view_name, 
-                        CASE WHEN (u.comment <> ''   IS NOT TRUE) THEN s.comment      ELSE u.comment      END AS comment, 
-                        CASE WHEN (u.view_type_id    IS     NULL) THEN s.view_type_id ELSE u.view_type_id END AS view_type_id, 
-                        CASE WHEN (u.excluded        IS     NULL) THEN s.excluded     ELSE u.excluded     END AS excluded 
+                        CASE WHEN (u.view_name <> ''   IS NOT TRUE) THEN s.view_name    ELSE u.view_name    END AS view_name, 
+                        CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description  ELSE u.description  END AS description, 
+                        CASE WHEN (u.view_type_id      IS     NULL) THEN s.view_type_id ELSE u.view_type_id END AS view_type_id, 
+                        CASE WHEN (u.excluded          IS     NULL) THEN s.excluded     ELSE u.excluded     END AS excluded 
                    FROM views s 
               LEFT JOIN user_views u ON s.view_id = u.view_id 
                                     AND u.user_id = 1 
@@ -666,12 +666,12 @@ class user_sandbox_unit_tests
 
         // test the view_component load_standard SQL creation
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
-        $db_con->set_fields(array('comment', 'view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', user_sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array(user_sandbox_named::FLD_DESCRIPTION, 'view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT view_component_id,
                      view_component_name,
-                     comment,
+                     description,
                      view_component_type_id,
                      word_id_row,
                      link_type_id,
@@ -685,7 +685,7 @@ class user_sandbox_unit_tests
 
         // test the view_component load SQL creation
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
-        $db_con->set_usr_fields(array('comment'));
+        $db_con->set_usr_fields(array(user_sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
@@ -694,7 +694,7 @@ class user_sandbox_unit_tests
                         u.view_component_id AS user_view_component_id,  
                         s.user_id,  
                         CASE WHEN (u.view_component_name <> '' IS NOT TRUE) THEN s.view_component_name    ELSE u.view_component_name    END AS view_component_name,  
-                        CASE WHEN (u.comment             <> '' IS NOT TRUE) THEN s.comment                ELSE u.comment                END AS comment,   
+                        CASE WHEN (u.description         <> '' IS NOT TRUE) THEN s.description            ELSE u.description            END AS description,   
                         CASE WHEN (u.view_component_type_id    IS NULL)     THEN s.view_component_type_id ELSE u.view_component_type_id END AS view_component_type_id,  
                         CASE WHEN (u.word_id_row               IS NULL)     THEN s.word_id_row            ELSE u.word_id_row            END AS word_id_row,  
                         CASE WHEN (u.link_type_id              IS NULL)     THEN s.link_type_id           ELSE u.link_type_id           END AS link_type_id,  
@@ -1042,12 +1042,12 @@ class user_sandbox_unit_tests
 
         // test the view_component load_standard SQL creation
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
-        $db_con->set_fields(array('comment', 'view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', user_sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array(user_sandbox_named::FLD_DESCRIPTION, 'view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT view_component_id,
                      view_component_name,
-                     comment,
+                     description,
                      view_component_type_id,
                      word_id_row,
                      link_type_id,
@@ -1061,7 +1061,7 @@ class user_sandbox_unit_tests
 
         // test the view_component load SQL creation
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
-        $db_con->set_usr_fields(array('comment'));
+        $db_con->set_usr_fields(array(user_sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
@@ -1070,7 +1070,7 @@ class user_sandbox_unit_tests
                        u.view_component_id AS user_view_component_id,
                        s.user_id,
                        IF(u.view_component_name IS NULL,    s.view_component_name,    u.view_component_name)    AS view_component_name,
-                       IF(u.comment IS NULL,                s.comment,                u.comment)                AS comment,
+                       IF(u.description IS NULL,            s.description,            u.description)            AS description,
                        IF(u.view_component_type_id IS NULL, s.view_component_type_id, u.view_component_type_id) AS view_component_type_id,
                        IF(u.word_id_row IS NULL,            s.word_id_row,            u.word_id_row)            AS word_id_row,
                        IF(u.link_type_id IS NULL,           s.link_type_id,           u.link_type_id)           AS link_type_id,

@@ -49,7 +49,7 @@ class view_cmp extends user_sandbox_named_with_type
     const FLD_COL_PHRASE = 'word_id_col';
     const FLD_COL2_PHRASE = 'word_id_col2';
     const FLD_LINK_TYPE = 'link_type_id';
-    const FLD_COMMENT = 'comment';
+    const FLD_DESCRIPTION = 'description';
     // the JSON object field names
     const FLD_POSITION = 'position';
     const FLD_POSITION_OLD = 'pos';
@@ -58,7 +58,7 @@ class view_cmp extends user_sandbox_named_with_type
     const FLD_NAMES = array();
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
-        self::FLD_COMMENT
+        self::FLD_DESCRIPTION
     );
     // list of the user specific database field names
     const FLD_NAMES_NUM_USR = array(
@@ -75,7 +75,7 @@ class view_cmp extends user_sandbox_named_with_type
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_FLD_NAMES = array(
         self::FLD_NAME,
-        self::FLD_COMMENT,
+        self::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_ROW_PHRASE,
         self::FLD_LINK_TYPE,
@@ -209,7 +209,7 @@ class view_cmp extends user_sandbox_named_with_type
         $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
-            $this->description = $db_row[self::FLD_COMMENT];
+            $this->description = $db_row[self::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_TYPE];
             $this->word_id_row = $db_row[self::FLD_ROW_PHRASE];
             $this->link_type_id = $db_row[self::FLD_LINK_TYPE];
@@ -617,7 +617,7 @@ class view_cmp extends user_sandbox_named_with_type
             $result->column2 = $this->wrd_col2->name();
         }
         if ($this->description <> '') {
-            $result->comment = $this->description;
+            $result->description = $this->description;
         }
 
         log_debug(json_encode($result));
@@ -833,7 +833,7 @@ class view_cmp extends user_sandbox_named_with_type
             $log->new_value = $this->description;
             $log->std_value = $std_rec->description;
             $log->row_id = $this->id;
-            $log->field = self::FLD_COMMENT;
+            $log->field = self::FLD_DESCRIPTION;
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;

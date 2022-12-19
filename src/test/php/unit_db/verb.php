@@ -121,7 +121,11 @@ class verb_unit_db_tests
             if ($result == 'is a') {
                 $target = 'is a';
             } else {
-                $target = 'not set';
+                if ($result == 'is measure type for') {
+                    $target = 'is measure type for';
+                } else {
+                    $target = 'not set';
+                }
             }
         }
         $t->assert('selector list ' . verb::IS_A, $result, $target);

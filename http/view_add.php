@@ -62,7 +62,7 @@ if ($usr->id > 0) {
         $dsp_add->set_name($_GET['name']);
     }    // name of the new view to add
     if (isset($_GET['comment'])) {
-        $dsp_add->comment = $_GET['comment'];
+        $dsp_add->description = $_GET['comment'];
     }
     if (isset($_GET['type'])) {
         $dsp_add->type_id = $_GET['type'];
