@@ -602,9 +602,10 @@ class view extends user_sandbox_named_with_type
         return '"' . $this->name . '"';
     }
 
+
     /*
-    component functions
-    */
+     * components
+     */
 
     /**
      * add a new component to this view
@@ -840,9 +841,10 @@ class view extends user_sandbox_named_with_type
         return $result;
     }
 
+
     /*
-    logic functions
-    */
+     * logic functions
+     */
 
     /**
      * true if the view is part of the view element list
@@ -861,9 +863,10 @@ class view extends user_sandbox_named_with_type
         return $result;
     }
 
+
     /*
-    saving functions
-    */
+     * save
+     */
 
     /**
      * create a database record to save user specific settings for this view
@@ -897,8 +900,6 @@ class view extends user_sandbox_named_with_type
                 if ($log_id <= 0) {
                     log_err('Insert of user_view failed.');
                     $result = false;
-                } else {
-                    $result = true;
                 }
             }
         }
@@ -923,27 +924,13 @@ class view extends user_sandbox_named_with_type
     }
 
     /**
-     * set the update parameters for the view comment
-     */
-    function save_field_comment(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
-    {
-        $result = '';
-        if ($db_rec->description <> $this->description) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->description;
-            $log->new_value = $this->description;
-            $log->std_value = $std_rec->description;
-            $log->row_id = $this->id;
-            $log->field = self::FLD_DESCRIPTION;
-            $result = $this->save_field_do($db_con, $log);
-        }
-        return $result;
-    }
-
-    /**
      * set the update parameters for the view code_id (only allowed for admin)
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param view $db_rec the database record before the saving
+     * @param view $std_rec the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
      */
-    function save_field_code_id(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_field_code_id(sql_db $db_con, view $db_rec, view $std_rec): string
     {
         $result = '';
         // special case: do not remove a code id
@@ -962,41 +949,23 @@ class view extends user_sandbox_named_with_type
     }
 
     /**
-     * set the update parameters for the word type
-     */
-    function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
-    {
-        $result = '';
-        if ($db_rec->type_id <> $this->type_id) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->type_name();
-            $log->old_id = $db_rec->type_id;
-            $log->new_value = $this->type_name();
-            $log->new_id = $this->type_id;
-            $log->std_value = $std_rec->type_name();
-            $log->std_id = $std_rec->type_id;
-            $log->row_id = $this->id;
-            $log->field = self::FLD_TYPE;
-            $result = $this->save_field_do($db_con, $log);
-        }
-        return $result;
-    }
-
-    /**
      * save all updated view fields excluding the name, because already done when adding a view
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param view|user_sandbox $db_rec the database record before the saving
+     * @param view|user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
      */
-    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_fields(sql_db $db_con, view|user_sandbox $db_rec, view|user_sandbox $std_rec): string
     {
-        $result = $this->save_field_comment($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+        $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_code_id($db_con, $db_rec, $std_rec);
-        log_debug($this->dsp_id() . ' has been saved');
+        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }
 
     /**
      * delete the view component links of linked to this view
+     * @return user_message of the link removal and if needed the error messages that should be shown to the user
      */
     function del_links(): user_message
     {

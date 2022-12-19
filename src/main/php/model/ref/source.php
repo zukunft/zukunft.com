@@ -501,7 +501,7 @@ class source extends user_sandbox_named_with_type
     {
         $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_url($db_con, $db_rec, $std_rec);
-        log_debug('source->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
+        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }
 

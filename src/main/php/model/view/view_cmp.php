@@ -816,64 +816,14 @@ class view_cmp extends user_sandbox_named_with_type
     }
 
     /**
-     * save the comment field for the view component comment
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param user_sandbox $db_rec the view component as saved in the database before the update
-     * @param user_sandbox $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
-     */
-    function save_field_comment(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
-    {
-        $result = '';
-        // TODO check if everywhere null value on import does not lead to overwrite of existing values
-        if ($db_rec->description <> $this->description and $this->description != null) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->description;
-            $log->new_value = $this->description;
-            $log->std_value = $std_rec->description;
-            $log->row_id = $this->id;
-            $log->field = self::FLD_DESCRIPTION;
-            $result = $this->save_field_do($db_con, $log);
-        }
-        return $result;
-    }
-
-    /**
-     * set the update parameters for the word type
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param user_sandbox $db_rec the view component as saved in the database before the update
-     * @param user_sandbox $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
-     */
-    function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
-    {
-        $result = '';
-        if ($db_rec->type_id <> $this->type_id) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->type_name();
-            $log->old_id = $db_rec->type_id;
-            $log->new_value = $this->type_name();
-            $log->new_id = $this->type_id;
-            $log->std_value = $std_rec->type_name();
-            $log->std_id = $std_rec->type_id;
-            $log->row_id = $this->id;
-            $log->field = self::FLD_TYPE;
-            $result = $this->save_field_do($db_con, $log);
-        }
-        return $result;
-    }
-
-    /**
      * set the update parameters for the word row
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param user_sandbox $db_rec the view component as saved in the database before the update
-     * @param user_sandbox $std_rec the default parameter used for this view component
+     * @param view_cmp $db_rec the view component as saved in the database before the update
+     * @param view_cmp $std_rec the default parameter used for this view component
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
-    function save_field_wrd_row(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_field_wrd_row(sql_db $db_con, view_cmp $db_rec, view_cmp $std_rec): string
     {
         $result = '';
         if ($db_rec->word_id_row <> $this->word_id_row) {
@@ -895,11 +845,11 @@ class view_cmp extends user_sandbox_named_with_type
      * set the update parameters for the word col
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param user_sandbox $db_rec the view component as saved in the database before the update
-     * @param user_sandbox $std_rec the default parameter used for this view component
+     * @param view_cmp $db_rec the view component as saved in the database before the update
+     * @param view_cmp $std_rec the default parameter used for this view component
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
-    function save_field_wrd_col(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_field_wrd_col(sql_db $db_con, view_cmp $db_rec, view_cmp $std_rec): string
     {
         $result = '';
         if ($db_rec->word_id_col <> $this->word_id_col) {
@@ -921,11 +871,11 @@ class view_cmp extends user_sandbox_named_with_type
      * set the update parameters for the word col2
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param user_sandbox $db_rec the view component as saved in the database before the update
-     * @param user_sandbox $std_rec the default parameter used for this view component
+     * @param view_cmp $db_rec the view component as saved in the database before the update
+     * @param view_cmp $std_rec the default parameter used for this view component
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
-    function save_field_wrd_col2(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_field_wrd_col2(sql_db $db_con, view_cmp $db_rec, view_cmp $std_rec): string
     {
         $result = '';
         if ($db_rec->word_id_col2 <> $this->word_id_col2) {
@@ -947,11 +897,11 @@ class view_cmp extends user_sandbox_named_with_type
      * set the update parameters for the formula
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param user_sandbox $db_rec the view component as saved in the database before the update
-     * @param user_sandbox $std_rec the default parameter used for this view component
+     * @param view_cmp $db_rec the view component as saved in the database before the update
+     * @param view_cmp $std_rec the default parameter used for this view component
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
-    function save_field_formula(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_field_formula(sql_db $db_con, view_cmp $db_rec, view_cmp $std_rec): string
     {
         $result = '';
         if ($db_rec->formula_id <> $this->formula_id) {
@@ -973,25 +923,24 @@ class view_cmp extends user_sandbox_named_with_type
      * save all updated view_component fields excluding the name, because already done when adding a view_component
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param user_sandbox $db_rec the view component as saved in the database before the update
-     * @param user_sandbox $std_rec the default parameter used for this view component
+     * @param view_cmp|user_sandbox $db_rec the view component as saved in the database before the update
+     * @param view_cmp|user_sandbox $std_rec the default parameter used for this view component
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
-    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_fields(sql_db $db_con, view_cmp|user_sandbox $db_rec, view_cmp|user_sandbox $std_rec): string
     {
-        $result = $this->save_field_comment($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
+        $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_wrd_row($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_wrd_col($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_wrd_col2($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_formula($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        log_debug('view_component->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
+        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }
 
     /**
      * delete the view component links of linked to this view component
+     * @return user_message of the link removal and if needed the error messages that should be shown to the user
      */
     function del_links(): user_message
     {
