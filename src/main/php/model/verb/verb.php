@@ -249,8 +249,9 @@ class verb extends db_object
         return 0;
     }
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**
@@ -408,8 +409,9 @@ class verb extends db_object
         return $this->load($qp);
     }
 
+
     /*
-     * import and export functions
+     * im- and export
      */
 
     /**

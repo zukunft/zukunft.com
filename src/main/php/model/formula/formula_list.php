@@ -83,7 +83,7 @@ class formula_list extends sandbox_list
 
 
     /*
-     * casting objects
+     * cast
      */
 
     /**

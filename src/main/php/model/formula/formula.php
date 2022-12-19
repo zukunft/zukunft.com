@@ -160,6 +160,40 @@ class formula extends user_sandbox_named_with_type
         $this->ref_text_r = '';
     }
 
+    /**
+     * map the database fields to the object fields
+     *
+     * @param array $db_row with the data directly from the database
+     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the formula is loaded and valid
+     */
+    function row_mapper(
+        array  $db_row,
+        bool   $load_std = false,
+        bool   $allow_usr_protect = true,
+        string $id_fld = self::FLD_ID
+    ): bool
+    {
+        global $formula_types;
+        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        if ($result) {
+            $this->name = $db_row[self::FLD_NAME];
+            $this->ref_text = $db_row[self::FLD_FORMULA_TEXT];
+            $this->usr_text = $db_row[self::FLD_FORMULA_USER_TEXT];
+            $this->description = $db_row[self::FLD_DESCRIPTION];
+            $this->type_id = $db_row[self::FLD_FORMULA_TYPE];
+            $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
+            $this->need_all_val = $this->get_bool($db_row[self::FLD_ALL_NEEDED]);
+
+            if ($this->type_id > 0) {
+                $this->type_cl = $formula_types->code_id($this->type_id);
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * set and get
@@ -210,6 +244,12 @@ class formula extends user_sandbox_named_with_type
         return 0;
     }
 
+    public function name(): string
+    {
+        return $this->name;
+    }
+
+
     /*
      * get preloaded information
      */
@@ -226,7 +266,7 @@ class formula extends user_sandbox_named_with_type
 
 
     /*
-     * casting objects
+     * cast
      */
 
     /**
@@ -278,44 +318,6 @@ class formula extends user_sandbox_named_with_type
         $dsp_obj->set_usr_text($this->usr_text);
 
         return $dsp_obj;
-    }
-
-    /**
-     * map the database fields to the object fields
-     *
-     * @param array $db_row with the data directly from the database
-     * @param bool $map_usr_fields false for using the standard protection settings for the default formula used for all users
-     * @param string $id_fld the name of the id field as defined in this child and given to the parent
-     * @return bool true if the formula is loaded and valid
-     */
-    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
-    {
-        global $formula_types;
-        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
-        if ($result) {
-            $this->name = $db_row[self::FLD_NAME];
-            $this->ref_text = $db_row[self::FLD_FORMULA_TEXT];
-            $this->usr_text = $db_row[self::FLD_FORMULA_USER_TEXT];
-            $this->description = $db_row[self::FLD_DESCRIPTION];
-            $this->type_id = $db_row[self::FLD_FORMULA_TYPE];
-            $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
-            $this->need_all_val = $this->get_bool($db_row[self::FLD_ALL_NEEDED]);
-
-            if ($this->type_id > 0) {
-                $this->type_cl = $formula_types->code_id($this->type_id);
-            }
-        }
-        return $result;
-    }
-
-
-    /*
-     * set and get
-     */
-
-    public function name(): string
-    {
-        return $this->name;
     }
 
 
@@ -1286,6 +1288,11 @@ class formula extends user_sandbox_named_with_type
         return $fv_lst;
     }
 
+
+    /*
+     * im- and export
+     */
+
     /**
      * import a formula from a JSON object
      *
@@ -1820,7 +1827,7 @@ class formula extends user_sandbox_named_with_type
      * create a database record to save user specific settings for this formula
      * TODO combine the reread and the adding in a commit transaction; same for all db change transactions
      */
-    function add_usr_cfg(): bool
+    protected function add_usr_cfg(string $class = self::class): bool
     {
         global $db_con;
         $result = true;

@@ -136,13 +136,18 @@ class view_cmp_link extends user_sandbox_link_with_type
      * map the database fields to the object fields
      *
      * @param array $db_row with the data directly from the database
-     * @param bool $map_usr_fields false for using the standard protection settings for the default view component link used for all users
+     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the view component link is loaded and valid
      */
-    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
+    function row_mapper(
+        array  $db_row,
+        bool   $load_std = false,
+        bool   $allow_usr_protect = true,
+        string $id_fld = self::FLD_ID): bool
     {
-        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
+        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->dsp->id = $db_row[view::FLD_ID];
             $this->cmp->id = $db_row[view_cmp::FLD_ID];
@@ -213,7 +218,7 @@ class view_cmp_link extends user_sandbox_link_with_type
 
         if ($qp->has_par()) {
             $db_dsl = $db_con->get1($qp);
-            $result = $this->row_mapper($db_dsl, false);
+            $result = $this->row_mapper($db_dsl, true);
             if ($result) {
                 $result = $this->load_owner();
             }
@@ -561,7 +566,7 @@ class view_cmp_link extends user_sandbox_link_with_type
     }
 
     // create a database record to save user specific settings for this view_component_link
-    function add_usr_cfg(): bool
+    protected function add_usr_cfg(string $class = self::class): bool
     {
         global $db_con;
         $result = true;

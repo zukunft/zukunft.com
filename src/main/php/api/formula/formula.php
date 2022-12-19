@@ -128,8 +128,9 @@ class formula_api extends user_sandbox_named_with_type_api
         return $this->usr_text;
     }
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**

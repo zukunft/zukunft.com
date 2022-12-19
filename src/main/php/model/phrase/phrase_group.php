@@ -161,7 +161,7 @@ class phrase_group extends db_object
 
 
     /*
-     * casting objects
+     * cast
      */
 
     /**

@@ -71,8 +71,9 @@ class system_error_log_list
         return $this->usr;
     }
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**

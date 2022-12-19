@@ -56,7 +56,7 @@ class phrase_list extends user_sandbox_list_named
 
 
     /*
-     * casting objects
+     * cast
      */
 
     /**
@@ -1267,6 +1267,11 @@ class phrase_list extends user_sandbox_list_named
 
         return $result;
     }
+
+
+    /*
+     * im- and export
+     */
 
     /**
      * import a phrase list object from a JSON array object

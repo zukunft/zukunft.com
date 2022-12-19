@@ -290,7 +290,7 @@ class phrase extends db_object
 
 
     /*
-     * casting objects
+     * cast
      */
 
     /**
@@ -725,9 +725,10 @@ class phrase extends db_object
         return $obj;
     }
 
+
     /*
-      im- and export functions
-    */
+     * im- and export
+     */
 
     /**
      * import a phrase object from a JSON array object

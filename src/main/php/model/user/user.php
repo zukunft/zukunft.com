@@ -196,8 +196,9 @@ class user
         return $result;
     }
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**
@@ -537,6 +538,11 @@ class user
         log_debug(' "' . $this->name . '" (' . $this->id . ')');
         return $result;
     }
+
+
+    /*
+     * im- and export
+     */
 
     /**
      * import a user from a json data user object

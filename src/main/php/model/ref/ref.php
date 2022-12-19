@@ -365,6 +365,11 @@ class ref
         return self::FLD_ID;
     }
 
+
+    /*
+     * im- and export
+     */
+
     /**
      * import a link to external database from an imported json object
      *

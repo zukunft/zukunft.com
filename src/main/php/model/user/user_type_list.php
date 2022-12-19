@@ -46,8 +46,9 @@ class user_type_list
     public array $lst = [];  // a list of type objects
     public array $hash = []; // hash list with the code id for fast selection
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**

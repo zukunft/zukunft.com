@@ -195,6 +195,10 @@ class ip_range
         return $this->load();
     }
 
+    /*
+     * im- and export
+     */
+
     /**
      * import an ip range from an imported json object
      *

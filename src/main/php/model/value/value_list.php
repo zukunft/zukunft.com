@@ -73,8 +73,9 @@ class value_list extends sandbox_list
         $this->set_user($usr);
     }
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**
@@ -432,8 +433,9 @@ class value_list extends sandbox_list
         }
     }
 
+
     /*
-     * im- and export functions
+     * im- and export
      */
 
     /**

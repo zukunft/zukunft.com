@@ -106,15 +106,21 @@ class source extends user_sandbox_named_with_type
      * map the database object to this source class fields
      *
      * @param array $db_row with the data directly from the database
-     * @param bool $map_usr_fields false for using the standard protection settings for the default source used for all users
+     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the source is loaded and valid
      */
-    function row_mapper(array $db_row, bool $map_usr_fields = false, string $id_fld = ''): bool
+    function row_mapper(
+        array  $db_row,
+        bool   $load_std = false,
+        bool   $allow_usr_protect = false,
+        string $id_fld = ''
+    ): bool
     {
-        $result = parent::row_mapper($db_row, $map_usr_fields, $id_fld);
+        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
-            $this->name = $db_row[self::FLD_NAME];
+            $this->set_name($db_row[self::FLD_NAME]);
             $this->url = $db_row[self::FLD_URL];
             $this->description = $db_row[user_sandbox_named::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_TYPE];
@@ -451,44 +457,6 @@ class source extends user_sandbox_named_with_type
             }
         }
         log_debug('for ' . $this->id . ' is ' . zu_dsp_bool($result));
-        return $result;
-    }
-
-    /**
-     * create a database record to save user specific settings for this source
-     * @return bool false if the adding has failed and true if it was successful or not needed
-     */
-    function add_usr_cfg(): bool
-    {
-        global $db_con;
-        $result = true;
-
-        if (!$this->has_usr_cfg()) {
-            log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-
-            // check again if there ist not yet a record
-            $db_con->set_type(sql_db::TBL_SOURCE, true);
-            $qp = new sql_par(self::class);
-            $qp->name = 'source_add_usr_cfg';
-            $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
-            $db_con->set_where_std($this->id);
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
-            $db_row = $db_con->get1($qp);
-            if ($db_row != null) {
-                $this->usr_cfg_id = $db_row[$this->id_field()];
-            }
-            if (!$this->has_usr_cfg()) {
-                // create an entry in the user sandbox
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE);
-                $log_id = $db_con->insert(array($this->id_field(), user_sandbox::FLD_USER), array($this->id, $this->user()->id));
-                if ($log_id <= 0) {
-                    log_err('Insert of user_source failed.');
-                    $result = false;
-                }
-            }
-        }
         return $result;
     }
 

@@ -364,8 +364,9 @@ class term extends db_object
         return $this->obj->usage();
     }
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**

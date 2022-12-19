@@ -224,7 +224,7 @@ class user_sandbox_named extends user_sandbox
             log_err('The ' . $class . ' id or name must be set to load ' . $class, $class . '->load_standard');
         } else {
             $db_row = $db_con->get1($qp);
-            $result = $this->row_mapper($db_row, false);
+            $result = $this->row_mapper($db_row, true);
         }
         return $result;
     }

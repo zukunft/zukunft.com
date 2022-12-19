@@ -79,7 +79,7 @@ class user_sandbox_link_named_with_type extends user_sandbox_link_named
 
 
     /*
-     * casting objects
+     * cast
      */
 
     /**

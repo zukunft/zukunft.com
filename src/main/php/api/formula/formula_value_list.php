@@ -61,8 +61,9 @@ class formula_value_list_api extends list_value_api
         return $result;
     }
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**

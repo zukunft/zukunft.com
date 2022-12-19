@@ -243,13 +243,19 @@ class value extends user_sandbox_value
      * map the database fields to the object fields
      *
      * @param array $db_row with the data directly from the database
-     * @param bool $map_usr_fields false for using the standard protection settings for the default value used for all users
+     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the value is loaded and valid
      */
-    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
+    function row_mapper(
+        array  $db_row,
+        bool   $load_std = false,
+        bool   $allow_usr_protect = true,
+        string $id_fld =  self::FLD_ID
+    ): bool
     {
-        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
+        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->number = $db_row[self::FLD_VALUE];
             // TODO check if phrase_group_id and time_word_id are user specific or time series specific
@@ -987,6 +993,11 @@ class value extends user_sandbox_value
         return $result;
     }
 
+
+    /*
+     * im- and export
+     */
+
     /**
      * import a value from an external object
      *
@@ -1389,7 +1400,7 @@ class value extends user_sandbox_value
     /**
      * create a database record to save a user specific value
      */
-    function add_usr_cfg(): bool
+    protected function add_usr_cfg(string $class = self::class): bool
     {
         global $db_con;
         $result = true;

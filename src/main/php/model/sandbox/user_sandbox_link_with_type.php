@@ -71,8 +71,9 @@ class user_sandbox_link_with_type extends user_sandbox_link
         return log_err($msg);
     }
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**

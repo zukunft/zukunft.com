@@ -48,7 +48,7 @@ class verb_api extends user_sandbox_named_api
 
 
     /*
-     * casting objects
+     * cast
      */
 
     function term(): term_api|term_dsp

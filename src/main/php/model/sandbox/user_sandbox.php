@@ -242,11 +242,17 @@ class user_sandbox extends db_object
      * to be extended by the child functions
      *
      * @param array $db_row with the data directly from the database
-     * @param bool $map_usr_fields false for using the standard protection settings for the default object used for all users
+     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if the user sandbox object is loaded and valid
      */
-    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = ''): bool
+    function row_mapper(
+        array  $db_row,
+        bool   $load_std = false,
+        bool   $allow_usr_protect = true,
+        string $id_fld = ''
+    ): bool
     {
         if ($id_fld == '') {
             $id_fld = $this->id_field();
@@ -258,7 +264,10 @@ class user_sandbox extends db_object
                 $this->id = $db_row[$id_fld];
                 $this->owner_id = $db_row[self::FLD_USER];
                 $this->excluded = $db_row[self::FLD_EXCLUDED];
-                if ($map_usr_fields) {
+                if (!$load_std) {
+                    $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
+                }
+                if ($allow_usr_protect) {
                     $this->row_mapper_usr($db_row, $id_fld);
                 } else {
                     $this->row_mapper_std();
@@ -273,12 +282,10 @@ class user_sandbox extends db_object
      * map the standard user sandbox database fields to this user specific object
      *
      * @param array $db_row with the data loaded from the database
-     * @param string $id_fld the name of the id field as set in the child class
      * @return void
      */
-    public function row_mapper_usr(array $db_row, string $id_fld): void
+    public function row_mapper_usr(array $db_row): void
     {
-        $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
         $this->share_id = $db_row[self::FLD_SHARE];
         $this->protection_id = $db_row[self::FLD_PROTECT];
     }
@@ -329,7 +336,7 @@ class user_sandbox extends db_object
             log_err('The ' . $class . ' id must be set to load ' . $class, $class . '->load_standard');
         } else {
             $db_row = $db_con->get1($qp);
-            $result = $this->row_mapper($db_row, false);
+            $result = $this->row_mapper($db_row, true, false);
         }
         return $result;
     }
@@ -715,6 +722,10 @@ class user_sandbox extends db_object
     }
 
 
+    /*
+     * im- and export
+     */
+
     /**
      * dummy function to import a user sandbox object from a json string
      * to be overwritten by the child object
@@ -1036,10 +1047,10 @@ class user_sandbox extends db_object
     }
 
     /**
-     * dummy function to create a database record to save user specific settings that is always overwritten by the child class
+     * create a database record to save user specific settings for a user sandbox object
      * @return bool false if the creation has failed and true if it was successful or not needed
      */
-    function add_usr_cfg(): bool
+    protected function add_usr_cfg(string $class = self::class): bool
     {
         global $db_con;
         $result = true;
@@ -1059,8 +1070,8 @@ class user_sandbox extends db_object
 
             // check again if there ist not yet a record
             $db_con->set_type($this->obj_name, true);
-            $qp = new sql_par(self::class);
-            $qp->name = 'add_usr_cfg';
+            $qp = new sql_par($class);
+            $qp->name = $class . '_add_usr_cfg';
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id);
             $db_con->set_where_std($this->id);
@@ -1068,16 +1079,18 @@ class user_sandbox extends db_object
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
-                $this->usr_cfg_id = $db_row[$db_con->get_id_field()];
+                $this->usr_cfg_id = $db_row[$this->id_field()];
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
                 $db_con->set_usr($this->user()->id);
-                $log_id = $db_con->insert(array($db_con->get_id_field(), sql_db::FLD_USER_ID), array($this->id, $this->user()->id));
+                $log_id = $db_con->insert(array($this->id_field(), sql_db::FLD_USER_ID), array($this->id, $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $this->obj_name . ' failed.');
                     $result = false;
+                } else {
+                    $this->usr_cfg_id = $log_id;
                 }
             }
         }

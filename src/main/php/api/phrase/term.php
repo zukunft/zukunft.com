@@ -119,8 +119,9 @@ class term_api extends user_sandbox_named_api
         }
     }
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**

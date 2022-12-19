@@ -79,8 +79,9 @@ class user_sandbox_value extends user_sandbox
         return $this->number;
     }
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**

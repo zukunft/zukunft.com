@@ -40,8 +40,9 @@ class term_list extends user_sandbox_list_named
     // (key is at the moment the database id, but it looks like this has no advantages,
     // so a normal 0 to n order could have more advantages)
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**

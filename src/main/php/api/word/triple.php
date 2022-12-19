@@ -120,7 +120,7 @@ class triple_api extends user_sandbox_named_with_type_api
 
 
     /*
-     * casting objects
+     * cast
      */
 
     function term(): term_api|term_dsp

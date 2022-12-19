@@ -50,8 +50,9 @@ class word_list extends sandbox_list
     // so a normal 0 to n order could have more advantages)
     // $usr of sandbox list is the user object of the person for whom the word list is loaded, so to say the viewer
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**

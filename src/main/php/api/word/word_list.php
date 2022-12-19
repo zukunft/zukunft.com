@@ -56,8 +56,9 @@ class word_list_api extends list_api
         return parent::add_obj($phr);
     }
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**

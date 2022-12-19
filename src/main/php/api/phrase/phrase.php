@@ -107,8 +107,9 @@ class phrase_api extends user_sandbox_named_api
         return $this->description;
     }
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**

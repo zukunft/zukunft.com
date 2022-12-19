@@ -190,7 +190,7 @@ class formula_value extends db_object
 
 
     /*
-     * casting objects
+     * cast
      */
 
     /**
@@ -866,6 +866,7 @@ class formula_value extends db_object
             $this->frm = $frm;
         }
     }
+
 
     /*
      * im- and export

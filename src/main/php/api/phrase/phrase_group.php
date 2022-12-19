@@ -180,8 +180,9 @@ class phrase_group_api extends user_sandbox_named_api
         return $this->phr_lst()->has_percent();
     }
 
+
     /*
-     * casting objects
+     * cast
      */
 
     /**
