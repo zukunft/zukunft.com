@@ -53,8 +53,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->set_id(cl(db_cl::VIEW, view::FORMULA_ADD));
-    $dsp->load_obj_vars();
+    $dsp->load_by_code_id(view::FORMULA_ADD);
     $back = $_GET['back'];
 
     // init the formula object

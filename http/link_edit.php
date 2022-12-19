@@ -50,11 +50,10 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->set_id(cl(db_cl::VIEW, view::LINK_EDIT));
-    $dsp->load_obj_vars();
+    $dsp->load_by_code_id(view::LINK_EDIT);
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
-    // create the link object to have an place to update the parameters
+    // create the link object to have a place to update the parameters
     $lnk = new triple($usr);
     $lnk->set_id($_GET['id']);
     $lnk->load_obj_vars();

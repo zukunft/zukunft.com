@@ -32,6 +32,8 @@
 namespace html;
 
 use api\view_api;
+use api\view_cmp_api;
+use view;
 
 class view_dsp extends view_api
 {
@@ -41,6 +43,7 @@ class view_dsp extends view_api
         return $this->components()->dsp();
     }
 
+
     private function components(): view_cmp_list_dsp
     {
         $lst = new view_cmp_list_dsp();
@@ -48,5 +51,25 @@ class view_dsp extends view_api
             $lst->add($cmp->dsp_obj());
         }
         return $lst;
+    }
+
+    public function dsp_system_view(): string
+    {
+        $result = '';
+        switch ($this->code_id) {
+            case view::COMPONENT_ADD:
+                $cmp = new view_cmp_dsp(0);
+                $result = $cmp->form_edit('', '', '', '', '');
+                break;
+            case view::COMPONENT_EDIT:
+                $cmp = new view_cmp_dsp(1, view_cmp_api::TN_READ);
+                $result = $cmp->form_edit('', '', '', '', '');
+                break;
+            case view::COMPONENT_DEL:
+                // TODO fill
+                $result = 'del';
+                break;
+        }
+        return $result;
     }
 }

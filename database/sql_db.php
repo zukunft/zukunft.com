@@ -2447,6 +2447,19 @@ class sql_db
                                 }
                             }
                         }
+
+                        if ($par_type == self::PAR_TEXT) {
+                            if ($id_fields[$used_fields] == sql_db::FLD_CODE_ID) {
+                                if ($this->db_type == sql_db::POSTGRES) {
+                                    $this->where .= ' AND ';
+                                    if ($this->usr_query or $this->join <> '') {
+                                        $this->where .= sql_db::STD_TBL . '.';
+                                    }
+                                    $this->where .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
+                                }
+                            }
+                        }
+
                         $used_fields++;
                     }
                     $i++;
@@ -3006,7 +3019,7 @@ class sql_db
 
     /**
      * create the SQL parameters to count the number of rows related to a database table type
-     * @return sql_par the created SQL statement and the query name
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function count_qp(string $class_name = '', string $id_fld = ''): sql_par
     {
@@ -3145,7 +3158,8 @@ class sql_db
      * to detect if someone else has used the object
      * @param int|null $id the unique database id if the object to check
      * @param int $owner_id the user id of the owner of the object
-     * @return sql_par the created SQL statement in the previous set dialect
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 in the previous set dialect
      */
     function not_changed_sql(?int $id, int $owner_id = 0): sql_par
     {
@@ -4041,7 +4055,7 @@ class sql_db
      *
      * @param string $type_name
      * @param string $column_name the name of the column where the prefix should be removed
-     * @return sql_par the SQL statement and parameter
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function remove_prefix_sql(string $type_name, string $column_name): sql_par
     {

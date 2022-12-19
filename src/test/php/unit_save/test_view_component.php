@@ -129,7 +129,7 @@ function run_view_component_test(testing $t): void
             $result = $cmp_renamed->name();
         }
     }
-    $target = 13;
+    $target = 14;
     $t->dsp('view_component->load renamed view_component "' . view_cmp_api::TN_RENAMED . '"', $target, $result);
 
     // check if the view_component renaming has been logged

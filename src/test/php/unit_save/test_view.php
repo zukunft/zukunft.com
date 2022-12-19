@@ -54,9 +54,12 @@ function run_view_test(testing $t): void
 
     // test loading of one view
     $dsp = new view_dsp_old($t->usr1);
-    $dsp->set_name(view_api::TN_COMPLETE);
-    $result = $dsp->load_obj_vars();
-    $t->dsp('view->load of "' . $dsp->name() . '"', true, $result);
+    $result = $dsp->load_by_name(view_api::TN_COMPLETE);
+    $target = 0;
+    if ($result > 0) {
+        $target = $result;
+    }
+    $t->dsp('view->load of "' . $dsp->name() . '"', $target, $result);
 
     // test the complete view for one word
     $wrd = new word($t->usr1);

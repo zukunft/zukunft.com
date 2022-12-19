@@ -50,8 +50,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->set_id(cl(db_cl::VIEW, view::VALUE_ADD));
-    $dsp->load_obj_vars();
+    $dsp->load_by_code_id(view::VALUE_ADD);
     /*
         // get the fixed parameters
         $new_tbl   = $_GET['table'];    // the value table as pasted by the user

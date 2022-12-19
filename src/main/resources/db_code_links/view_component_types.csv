@@ -15,3 +15,4 @@ view_component_type_id, type_name, description, code_id
 14, 'XML export', 'offer to configure and start the XML export of a phrase and all related words, numbers and formulas', 'xml_export'
 15, 'CSV export', 'to define the main phrase, the column and row for the CSV export', 'csv_export'
 16, 'JSON Export', 'To start or configure the JSON export', 'json_export'
+16, 'system field', 'the internal component to display a system and allow the user to change the order', 'system_field'

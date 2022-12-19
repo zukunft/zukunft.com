@@ -398,7 +398,7 @@ function dsp_form_fld($field, $txt_value, $label, $class = "col-sm-4", $attribut
     if (UI_USE_BOOTSTRAP) {
         $result .= '<div class="form-group ' . $class . '">';
         $result .= '<label for="' . $field . '">' . $label . '</label>';
-        $result .= '<input class="form-control" name="' . $field . '" type="' . $field . '" id="' . $field . '" value="' . $txt_value . '" ' . $attribute . '>';
+        $result .= '<input class="form-control" name="' . $field . '" id="' . $field . '" value="' . $txt_value . '" ' . $attribute . '>';
         $result .= '</div>';
     } else {
         $result .= $label . ' <input name="' . $field . '" value="' . $txt_value . '">';

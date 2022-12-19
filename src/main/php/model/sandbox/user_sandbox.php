@@ -194,6 +194,7 @@ class user_sandbox extends db_object
     /**
      * simply return the id database field name of the object
      * should actually be static, but seems to be not yet possible
+     * TODO check if it can be combined with id_field()
      */
     function fld_id(): string
     {
@@ -432,7 +433,6 @@ class user_sandbox extends db_object
         $qp = new sql_par($class);
         $qp->name .= $query_name;
 
-        $db_con->set_type(sql_db::TBL_SOURCE);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
         $db_con->set_fields($fields);
@@ -1021,6 +1021,7 @@ class user_sandbox extends db_object
 
     /**
      * create a database record to save user specific settings for a user sandbox object
+     * TODO combine the reread and the adding in a commit transaction; same for all db change transactions
      * @return bool false if the creation has failed and true if it was successful or not needed
      */
     protected function add_usr_cfg(string $class = self::class): bool
@@ -2067,7 +2068,8 @@ class user_sandbox extends db_object
         // TODO it seems that the owner is not updated
         $reloaded = false;
         if ($this->obj_name == sql_db::TBL_WORD
-            or $this->obj_name == sql_db::TBL_SOURCE) {
+            or $this->obj_name == sql_db::TBL_SOURCE
+            or $this->obj_name == sql_db::TBL_VIEW) {
             $reloaded_id = $this->load_by_id($this->id());
             if ($reloaded_id != 0) {
                 $reloaded = true;

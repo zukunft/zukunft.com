@@ -65,10 +65,9 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->set_id(cl(db_cl::VIEW, view::USER));
-    $dsp->load_obj_vars();
+    $dsp->load_by_code_id(view::USER);
 
-    // do user changes
+    // do user change
     $result .= $usr->upd_pars($_GET);
 
     // undo user changes for values

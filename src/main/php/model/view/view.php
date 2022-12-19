@@ -30,9 +30,9 @@
 */
 
 use api\view_api;
+use html\view_dsp;
 use export\view_exp;
 use export\exp_obj;
-use html\view_dsp;
 
 class view extends user_sandbox_named_with_type
 {
@@ -73,6 +73,7 @@ class view extends user_sandbox_named_with_type
         user_sandbox::FLD_SHARE,
         user_sandbox::FLD_PROTECT
     );
+
 
     /*
      * code links
@@ -122,7 +123,6 @@ class view extends user_sandbox_named_with_type
      */
 
     // database fields additional to the user sandbox fields for the view component
-    public ?string $description = null; // the view description that is shown as a mouseover explain to the user
     public ?string $code_id = null;   // to select internal predefined views
 
     // in memory only fields
@@ -174,7 +174,7 @@ class view extends user_sandbox_named_with_type
     {
         $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            $this->name = $db_row[self::FLD_NAME];
+            $this->set_name($db_row[self::FLD_NAME]);
             $this->description = $db_row[self::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_TYPE];
             $this->code_id = $db_row[self::FLD_CODE_ID];
@@ -258,7 +258,12 @@ class view extends user_sandbox_named_with_type
     function api_obj(): view_api
     {
         $api_obj = new view_api();
+
         parent::fill_api_obj($api_obj);
+
+        $api_obj->set_type_id($this->type_id);
+        $api_obj->code_id = $this->code_id;
+
         return $api_obj;
     }
 
@@ -272,6 +277,7 @@ class view extends user_sandbox_named_with_type
         parent::fill_dsp_obj($dsp_obj);
 
         $dsp_obj->set_type_id($this->type_id);
+        $dsp_obj->code_id = $this->code_id;
 
         return $dsp_obj;
     }
@@ -329,50 +335,46 @@ class view extends user_sandbox_named_with_type
      */
     protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
-        $qp->name .= $query_name;
-
         $db_con->set_type(sql_db::TBL_VIEW);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        return parent::load_sql_fields(
+            $db_con, $query_name, $class,
+            self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR
+        );
+    }
+
+    /**
+     * create an SQL statement to retrieve a view by code id from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $code_id the code id of the view
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_code_id(sql_db $db_con, string $code_id, string $class): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'code_id', $class);
+        $db_con->add_par(sql_db::PAR_TEXT, $code_id);
+        $qp->sql = $db_con->select_by_code_id();
+        $qp->par = $db_con->get_par();
 
         return $qp;
     }
 
     /**
-     * create an SQL statement to retrieve the parameters of a view from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * load a view by code id
+     * @param string $code_id the code id of the view
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return int the id of the object found and zero if nothing is found
      */
-    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
+    function load_by_code_id(string $code_id, string $class = self::class): int
     {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
-        if ($this->id != 0) {
-            $qp->name .= 'id';
-        } elseif ($this->code_id != '') {
-            $qp->name .= sql_db::FLD_CODE_ID;
-        } elseif ($this->name != '') {
-            $qp->name .= 'name';
-        } else {
-            log_err('Either the id, code_id or name must be set to get a view');
-        }
+        global $db_con;
 
-        $db_con->set_type(sql_db::TBL_VIEW);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        $db_con->set_where_std($this->id, $this->name, $this->code_id);
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
-
-        return $qp;
+        log_debug($code_id);
+        $qp = $this->load_sql_by_code_id($db_con, $code_id, $class);
+        return parent::load($qp);
     }
 
     // TODO review and add a unit test
@@ -407,37 +409,6 @@ class view extends user_sandbox_named_with_type
     }
 
     /**
-     * load the missing view parameters from the database
-     * based either on the id or the view name
-     */
-    function load_obj_vars(): bool
-    {
-
-        global $db_con;
-        $result = false;
-
-        // check the all minimal input parameters
-        if (!$this->user()->is_set()) {
-            log_err("The user id must be set to load a view.", "view->load");
-        } elseif ($this->id <= 0 and $this->code_id == '' and $this->name == '') {
-            log_err("Either the database ID (" . $this->id . "), the name (" . $this->name . ") or the code_id (" . $this->code_id . ") and the user (" . $this->user()->id . ") must be set to load a view.", "view->load");
-        } else {
-
-            $qp = $this->load_sql_obj_vars($db_con);
-
-            if ($db_con->get_where() <> '') {
-                $db_view = $db_con->get1($qp);
-                $this->row_mapper($db_view);
-                if ($this->id > 0) {
-                    log_debug($this->dsp_id());
-                    $result = true;
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
      * load the suggested view for a phrase
      * @param phrase $phr the phrase for which the most often used view should be loaded
      * @return bool true if at least one view is found
@@ -457,7 +428,7 @@ class view extends user_sandbox_named_with_type
      * TODO make the order user specific
      *
      * @param sql_db $db_con as a function parameter for unit testing
-     * @return string the SQL statement base on the parameters set in $this
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_components_sql(sql_db $db_con): sql_par
     {
@@ -867,44 +838,6 @@ class view extends user_sandbox_named_with_type
     /*
      * save
      */
-
-    /**
-     * create a database record to save user specific settings for this view
-     */
-    protected function add_usr_cfg(string $class = self::class): bool
-    {
-        global $db_con;
-        $result = true;
-
-        log_debug($this->dsp_id());
-
-        if (!$this->has_usr_cfg()) {
-
-            // check again if there ist not yet a record
-            $db_con->set_type(sql_db::TBL_VIEW, true);
-            $qp = new sql_par(self::class);
-            $qp->name = 'view_add_usr_cfg';
-            $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
-            $db_con->set_where_std($this->id);
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
-            $db_row = $db_con->get1($qp);
-            if ($db_row != null) {
-                $this->usr_cfg_id = $db_row[self::FLD_ID];
-            }
-            if (!$this->has_usr_cfg()) {
-                // create an entry in the user sandbox
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW);
-                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id));
-                if ($log_id <= 0) {
-                    log_err('Insert of user_view failed.');
-                    $result = false;
-                }
-            }
-        }
-        return $result;
-    }
 
     /**
      * create an SQL statement to retrieve the user changes of the current view

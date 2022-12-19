@@ -5,4 +5,4 @@ PREPARE config_by_get (text) AS
            value,
            description
       FROM config
-     WHERE code_id = $1;
+     WHERE code_id = $1 AND code_id IS NOT NULL;

@@ -43,6 +43,7 @@
 
 use api\source_api;
 use api\word_api;
+use html\html_base;
 
 CONST HOST_TESTING = 'http://localhost';
 
@@ -101,6 +102,7 @@ include_once $path_unit . 'figure.php';
 include_once $path_unit . 'expression.php';
 include_once $path_unit . 'view.php';
 include_once $path_unit . 'view_component.php';
+include_once $path_unit . 'view_component_display.php';
 include_once $path_unit . 'view_component_link.php';
 include_once $path_unit . 'verb.php';
 include_once $path_unit . 'ref.php';
@@ -1354,6 +1356,25 @@ class test_base
     }
 
     /**
+     * test a system view with a sample user object
+     *
+     * @param string $dsp_code_id the code id of the view that should be tested
+     * @return bool true if the generated view matches the expected
+     */
+    function assert_view(string $dsp_code_id): bool
+    {
+        global $usr;
+
+        $filename = 'views/' . $dsp_code_id;
+
+        $dsp = new view($usr);
+        $dsp->load_by_code_id($dsp_code_id);
+
+        $actual = $dsp->dsp_obj()->dsp_system_view();
+        return $this->assert_html($this->name . ' view ' . $dsp_code_id, $actual, $filename);
+    }
+
+    /**
      * check if an object json file can be recreated by importing the object and recreating the json with the export function
      *
      * @param object $usr_obj the object which json im- and export functions should be tested
@@ -1367,6 +1388,23 @@ class test_base
         $json_ex = json_decode(json_encode($usr_obj->export_obj(false)), true);
         $result = json_is_similar($json_in, $json_ex);
         return $this->assert($this->name . 'import check name', $result, true);
+    }
+
+    /**
+     * check if the created html matches a defined html file
+     *
+     * @param string $test_name the description of the test
+     * @param string $body the body of a html page
+     * @param string $filename the filename of the expected html page
+     * @return bool true if the html has no relevant differences
+     */
+    public function assert_html(string $test_name, string $body, string $filename): bool
+    {
+        $lib = new library();
+
+        $actual = $this->html_page($body);
+        $expected = $this->file('web/html/' . $filename . '.html');
+        return $this->assert($test_name, $lib->trim_html($actual), $lib->trim_html($expected));
     }
 
     /**
@@ -2035,6 +2073,12 @@ class test_base
         curl_close($curl);
 
         return $result;
+    }
+
+    private function html_page(string $body): string
+    {
+        $html = new html_base();
+        return $html->header_test('test') . $body . $html->footer();
     }
 }
 

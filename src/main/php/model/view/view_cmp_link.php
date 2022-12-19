@@ -334,8 +334,7 @@ class view_cmp_link extends user_sandbox_link_with_type
         $result = true;
         if (!isset($this->fob) and $this->dsp->id > 0) {
             $dsp = new view_dsp_old($this->user());
-            $dsp->id = $this->dsp->id;
-            if ($dsp->load_obj_vars()) {
+            if ($dsp->load_by_id($this->dsp->id)) {
                 $this->fob = $dsp;
             } else {
                 $result = false;
@@ -343,8 +342,7 @@ class view_cmp_link extends user_sandbox_link_with_type
         }
         if (!isset($this->tob) and $this->cmp->id > 0) {
             $cmp = new view_dsp_old($this->user());
-            $cmp->id = $this->cmp->id;
-            if ($cmp->load_obj_vars()) {
+            if ($cmp->load_by_id($this->cmp->id)) {
                 $this->tob = $cmp;
             } else {
                 $result = false;

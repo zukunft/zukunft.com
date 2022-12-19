@@ -173,8 +173,7 @@ class formula extends user_sandbox_named_with_type
         array  $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = self::FLD_ID
-    ): bool
+        string $id_fld = self::FLD_ID): bool
     {
         global $formula_types;
         $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);

@@ -9,4 +9,4 @@ PREPARE verb_by_code_id (text) AS
            formula_name,
            words
       FROM verbs
-     WHERE code_id = $1;
+     WHERE code_id = $1 AND code_id IS NOT NULL;

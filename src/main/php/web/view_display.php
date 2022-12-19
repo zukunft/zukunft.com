@@ -363,7 +363,7 @@ class view_dsp_old extends view
             log_err("The display ID (" . $this->id . ") must be set to display a view.", "view_dsp->dsp_navbar");
         } else {
             if ($this->name == '') {
-                $this->load_obj_vars();
+                $this->load_by_id($this->id());
             }
             if (UI_USE_BOOTSTRAP) {
                 $result = $this->dsp_navbar_bs(TRUE, $back);

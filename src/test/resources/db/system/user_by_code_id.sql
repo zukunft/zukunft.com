@@ -10,4 +10,4 @@ PREPARE user_by_code_id (text) AS
            source_id,
            user_profile_id
       FROM users
-     WHERE code_id = $1;
+     WHERE code_id = $1 AND code_id IS NOT NULL;

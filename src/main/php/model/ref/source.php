@@ -244,6 +244,7 @@ class source extends user_sandbox_named_with_type
      */
     protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
     {
+        $db_con->set_type(sql_db::TBL_SOURCE);
         return parent::load_sql_fields(
             $db_con, $query_name, $class,
             self::FLD_NAMES,

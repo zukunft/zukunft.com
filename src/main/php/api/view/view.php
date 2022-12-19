@@ -71,6 +71,7 @@ class view_api extends user_sandbox_named_with_type_api
 
     // the mouse over tooltip for the word
     public ?string $description = null;
+    public ?string $code_id = null;
 
     // the components linked to this view
     public array $cmp_lst = [];

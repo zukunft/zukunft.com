@@ -57,8 +57,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->set_id(cl(db_cl::VIEW, view::VALUE_DEL));
-    $dsp->load_obj_vars();
+    $dsp->load_by_code_id(view::VALUE_DEL);
     $back = $_GET['back'];  // the page from which the value deletion has been called
 
     // get the parameters

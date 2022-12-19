@@ -50,8 +50,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->set_id(cl(db_cl::VIEW, view::LINK_DEL));
-    $dsp->load_obj_vars();
+    $dsp->load_by_code_id(view::LINK_DEL);
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // get the parameters

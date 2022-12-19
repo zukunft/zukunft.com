@@ -49,8 +49,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->set_id(cl(db_cl::VIEW, view::FORMULA_EDIT));
-    $dsp->load_obj_vars();
+    $dsp->load_by_code_id(view::FORMULA_EDIT);
     $back = $_GET['back'];
 
     // create the formula object to have an place to update the parameters

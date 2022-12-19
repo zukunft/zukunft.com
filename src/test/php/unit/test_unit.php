@@ -119,6 +119,7 @@ class test_unit extends testing
         (new word_list_display_unit_tests)->run($this);
         (new triple_display_unit_tests)->run($this);
         (new phrase_list_display_unit_tests)->run($this);
+        (new view_component_display_unit_tests)->run($this);
 
         // restore the global vars
         $db_con = $global_db_con;

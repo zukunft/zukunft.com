@@ -636,7 +636,8 @@ class user_sandbox_named extends user_sandbox
             // check with the user namespace
             $db_chk->set_user($this->user());
             if ($this->obj_name == sql_db::TBL_WORD
-                or $this->obj_name == sql_db::TBL_SOURCE) {
+                or $this->obj_name == sql_db::TBL_SOURCE
+                or $this->obj_name == sql_db::TBL_VIEW) {
                 if ($this->name() != '') {
                     if ($db_chk->load_by_name($this->name())) {
                         if ($db_chk->id() > 0) {
@@ -645,7 +646,7 @@ class user_sandbox_named extends user_sandbox
                         }
                     }
                 } else {
-                    log_err('The name must be set to check if a similar obejct exists');
+                    log_err('The name must be set to check if a similar object exists');
                 }
             } else {
                 // for all other objects still use the deprecated load_by_vars method

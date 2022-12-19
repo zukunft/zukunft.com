@@ -176,13 +176,13 @@ class word_dsp extends word_api
         return $result;
     }
 
-    function dsp_type_selector(string $back = ''): string
+    function dsp_type_selector(string $script, string $back = ''): string
     {
         $result = '';
         if ($this->type()->code_id() == phrase_type::FORMULA_LINK) {
             $result .= ' type: ' . $this->type()->name();
         } else {
-            $result .= $this->type_selector('word_edit', "col-sm-4");
+            $result .= $this->type_selector($script, "col-sm-4");
         }
         return $result;
     }

@@ -472,8 +472,7 @@ class word extends user_sandbox_named_with_type
             if ($this->view_id > 0) {
                 log_debug('got id ' . $this->view_id);
                 $result = new view($this->user());
-                $result->id = $this->view_id;
-                if ($result->load_obj_vars()) {
+                if ($result->load_by_id($this->view_id)) {
                     $this->view = $result;
                     log_debug('for ' . $this->dsp_id() . ' is ' . $result->dsp_id());
                 }
@@ -1055,7 +1054,7 @@ class word extends user_sandbox_named_with_type
             $dsp_graph,
             $dsp_log,
             $this->dsp_formula($back),
-            $this->dsp_type_selector($back),
+            $this->dsp_type_selector(word_dsp::FORM_EDIT, $back),
             $back);
     }
 
@@ -1725,8 +1724,7 @@ class word extends user_sandbox_named_with_type
     {
         log_debug($this->dsp_id() . ' for user ' . $this->user()->name);
         $dsp_new = new view_dsp_old($this->user());
-        $dsp_new->id = $view_id;
-        $dsp_new->load_obj_vars();
+        $dsp_new->load_by_id($view_id);
 
         $log = new user_log_named;
         $log->usr = $this->user();
@@ -1735,8 +1733,7 @@ class word extends user_sandbox_named_with_type
         $log->field = self::FLD_VIEW;
         if ($this->view_id > 0) {
             $dsp_old = new view_dsp_old($this->user());
-            $dsp_old->id = $this->view_id;
-            $dsp_old->load_obj_vars();
+            $dsp_old->load_by_id($this->view_id);
             $log->old_value = $dsp_old->name();
             $log->old_id = $dsp_old->id;
         } else {

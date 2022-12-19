@@ -52,8 +52,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->set_id(cl(db_cl::VIEW, view::VERB_ADD));
-    $dsp->load_obj_vars();
+    $dsp->load_by_code_id(view::VERB_ADD);
     $back = $_GET['back']; // the calling word which should be displayed after saving
 
     if (!$usr->is_admin()) {

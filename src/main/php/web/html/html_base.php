@@ -128,12 +128,12 @@ class html_base
         if (UI_USE_BOOTSTRAP) {
             // include the bootstrap stylesheets
             $result .= '  <link rel="stylesheet" href="https://www.zukunft.com/lib_external/bootstrap/4.3.1/css/bootstrap.css">';
-            $result .= '  <link rel="stylesheet" type="text/css" href="../../../../style/style_bs.css" />';
+            $result .= '  <link rel="stylesheet" type="text/css" href="/style/style_bs.css" />';
             // load the icon font
             $result .= '  <link rel="stylesheet" href="https://www.zukunft.com/lib_external/fontawesome/css/all.css">';
         } else {
             // use a simple stylesheet without Javascript
-            $result .= '  <link rel="stylesheet" type="text/css" href="../../../../style/style.css" />';
+            $result .= '  <link rel="stylesheet" type="text/css" href="/style/style.css" />';
         }
         $result .= '</head>';
         if (UI_USE_BOOTSTRAP) {
@@ -463,7 +463,12 @@ class html_base
     {
         // switch on post forms for private values
         // return '<form action="'.$form_name.'.php" method="post" id="'.$form_name.'">';
-        return '<form action="' . $form_name . '.php" id="' . $form_name . '">';
+        if ($form_name == 'user_edit') {
+            $script_name = 'user';
+        } else {
+            $script_name = $form_name;
+        }
+        return '<form action="/http/' . $script_name . '.php" id="' . $form_name . '">';
     }
 
     /**

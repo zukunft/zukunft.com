@@ -73,6 +73,12 @@ class view_unit_db_tests
         }
         $t->assert('check' . view::WORD, $result, $target);
 
+        // check all system views
+        $t->assert_view(view::COMPONENT_ADD);
+        $t->assert_view(view::COMPONENT_EDIT);
+        $t->assert_view(view::COMPONENT_DEL);
+
+
 
         $t->subheader('View component types tests');
         $t->name = 'view component read db->';
