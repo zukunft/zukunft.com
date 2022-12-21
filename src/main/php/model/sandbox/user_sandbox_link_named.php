@@ -90,7 +90,7 @@ class user_sandbox_link_named extends user_sandbox_link
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id;
-                $log->field = sql_db::FLD_DESCRIPTION;
+                $log->set_field(sql_db::FLD_DESCRIPTION);
                 $result = $this->save_field_do($db_con, $log);
             }
         }

@@ -709,8 +709,8 @@ class verb extends db_object
         $log = new user_log_named();
         $log->usr = $this->usr;
         $log->action = user_log::ACTION_ADD;
-        $log->table = 'verbs';
-        $log->field = self::FLD_NAME;
+        $log->set_table(change_log_table::VERB);
+        $log->set_field(self::FLD_NAME);
         $log->old_value = '';
         $log->new_value = $this->name;
         $log->row_id = 0;
@@ -726,7 +726,7 @@ class verb extends db_object
         $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = user_log::ACTION_UPDATE;
-        $log->table = 'verbs';
+        $log->set_table(change_log_table::VERB);
 
         return $log;
     }
@@ -738,8 +738,8 @@ class verb extends db_object
         $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = user_log::ACTION_DELETE;
-        $log->table = 'verbs';
-        $log->field = self::FLD_NAME;
+        $log->set_table(change_log_table::VERB);
+        $log->set_field(self::FLD_NAME);
         $log->old_value = $this->name;
         $log->new_value = '';
         $log->row_id = $this->id;
@@ -762,8 +762,8 @@ class verb extends db_object
         if ($log->add()) {
             if ($this->can_change()) {
                 $db_con->set_type(sql_db::TBL_VERB);
-                if (!$db_con->update($this->id, $log->field, $new_value)) {
-                    $result .= 'updating ' . $log->field . ' to ' . $new_value . ' for verb ' . $this->dsp_id() . ' failed';
+                if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                    $result .= 'updating ' . $log->field() . ' to ' . $new_value . ' for verb ' . $this->dsp_id() . ' failed';
                 }
 
             } else {
@@ -783,7 +783,7 @@ class verb extends db_object
             $log->new_value = $this->code_id;
             $log->std_value = $db_rec->code_id;
             $log->row_id = $this->id;
-            $log->field = 'code_id';
+            $log->set_field(sql_db::FLD_CODE_ID);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -800,7 +800,7 @@ class verb extends db_object
             $log->new_value = $this->name;
             $log->std_value = $db_rec->name;
             $log->row_id = $this->id;
-            $log->field = self::FLD_NAME;
+            $log->set_field(self::FLD_NAME);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -816,7 +816,7 @@ class verb extends db_object
             $log->new_value = $this->plural;
             $log->std_value = $db_rec->plural;
             $log->row_id = $this->id;
-            $log->field = self::FLD_PLURAL;
+            $log->set_field(self::FLD_PLURAL);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -832,7 +832,7 @@ class verb extends db_object
             $log->new_value = $this->reverse;
             $log->std_value = $db_rec->reverse;
             $log->row_id = $this->id;
-            $log->field = self::FLD_REVERSE;
+            $log->set_field(self::FLD_REVERSE);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -848,7 +848,7 @@ class verb extends db_object
             $log->new_value = $this->rev_plural;
             $log->std_value = $db_rec->rev_plural;
             $log->row_id = $this->id;
-            $log->field = self::FLD_PLURAL_REVERSE;
+            $log->set_field(self::FLD_PLURAL_REVERSE);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -864,7 +864,7 @@ class verb extends db_object
             $log->new_value = $this->description;
             $log->std_value = $db_rec->description;
             $log->row_id = $this->id;
-            $log->field = sql_db::FLD_DESCRIPTION;
+            $log->set_field(sql_db::FLD_DESCRIPTION);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -880,7 +880,7 @@ class verb extends db_object
             $log->new_value = $this->frm_name;
             $log->std_value = $db_rec->frm_name;
             $log->row_id = $this->id;
-            $log->field = self::FLD_FORMULA;
+            $log->set_field(self::FLD_FORMULA);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -963,7 +963,7 @@ class verb extends db_object
 
         // log the insert attempt first
         $log = $this->log_add();
-        if ($log->id > 0) {
+        if ($log->id() > 0) {
             // insert the new verb
             $db_con->set_type(sql_db::TBL_VERB);
             $this->id = $db_con->insert(self::FLD_NAME, $this->name);
@@ -1088,7 +1088,7 @@ class verb extends db_object
             log_debug('verb->del ' . $this->dsp_id());
             if ($this->can_change()) {
                 $log = $this->log_del();
-                if ($log->id > 0) {
+                if ($log->id() > 0) {
                     $db_con->usr_id = $this->user()->id;
                     $db_con->set_type(sql_db::TBL_VERB);
                     $result = $db_con->delete(self::FLD_ID, $this->id);

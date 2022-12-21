@@ -64,7 +64,7 @@ function run_formula_link_test(testing $t): void
 
     // ... check the correct logging
     $log = new user_log_link;
-    $log->table = 'formula_links';
+    $log->set_table(change_log_table::FORMULA_LINK);
     $log->new_from_id = $frm->id();
     $log->new_to_id = $phr->id();
     $log->usr = $t->usr1;
@@ -127,7 +127,7 @@ function run_formula_link_test(testing $t): void
 
     // ... check if the removal of the link for the second user has been logged
     $log = new user_log_link;
-    $log->table = 'formula_links';
+    $log->set_table(change_log_table::FORMULA_LINK);
     $log->old_from_id = $frm->id();
     $log->old_to_id = $phr->id();
     $log->usr = $t->usr2;
@@ -163,7 +163,7 @@ function run_formula_link_test(testing $t): void
 
     // check the correct logging
     $log = new user_log_link;
-    $log->table = 'formula_links';
+    $log->set_table(change_log_table::FORMULA_LINK);
     $log->old_from_id = $frm->id();
     $log->old_to_id = $phr->id();
     $log->usr = $t->usr1;

@@ -30,6 +30,8 @@
 
 */
 
+use controller\controller;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
@@ -47,7 +49,7 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // sample "Nestlé 2 country weight"
-    $words = $_GET['words'];
+    $words = $_GET[controller::URL_VAR_WORD];
     log_debug("get_csv(" . $words . ")");
     $word_names = explode(",", $words);
 

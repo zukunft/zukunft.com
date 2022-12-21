@@ -29,6 +29,8 @@
 
 */
 
+use api\user_log_named_api;
+
 class user_log_named extends user_log
 {
 
@@ -79,7 +81,7 @@ class user_log_named extends user_log
     function row_mapper(array $db_row): bool
     {
         if ($db_row[self::FLD_ID] > 0) {
-            $this->id = $db_row[self::FLD_ID];
+            $this->set_id($db_row[self::FLD_ID]);
             $this->field_id = $db_row[self::FLD_FIELD_ID];
             $this->row_id = $db_row[self::FLD_ROW_ID];
             $this->change_time = $db_row[self::FLD_CHANGE_TIME];
@@ -93,6 +95,26 @@ class user_log_named extends user_log
             return false;
         }
     }
+
+
+    /*
+     * cast
+     */
+
+    public function api_obj(): user_log_named_api
+    {
+        $api_obj = new user_log_named_api();
+        parent::fill_api_obj($api_obj);
+        $api_obj->old_value = $this->old_value;
+        $api_obj->old_id = $this->old_id;
+        $api_obj->new_value = $this->new_value;
+        $api_obj->new_id = $this->new_id;
+        $api_obj->std_value = $this->std_value;
+        $api_obj->std_id = $this->std_id;
+        return $api_obj;
+
+    }
+
 
     /*
      * loading
@@ -250,8 +272,8 @@ class user_log_named extends user_log
         global $db_con;
         $result = '';
 
-        parent::set_table();
-        parent::set_field();
+        //parent::add_table();
+        //parent::add_field();
 
         $db_type = $db_con->get_type();
         $qp = $this->load_sql_by_field_row($db_con, $this->field_id, $this->row_id);
@@ -286,17 +308,17 @@ class user_log_named extends user_log
     function add(): bool
     {
         log_debug(' do "' . $this->action
-            . '" in "' . $this->table
-            . ',' . $this->field
+            . '" in "' . $this->table()
+            . ',' . $this->field()
             . '" log change from "'
             . $this->old_value . '" (id ' . $this->old_id . ')' .
             ' to "' . $this->new_value . '" (id ' . $this->new_id . ') in row ' . $this->row_id);
 
         global $db_con;
 
-        parent::set_table();
-        parent::set_field();
-        parent::set_action();
+        //parent::add_table();
+        //parent::add_field();
+        parent::add_action();
 
         $sql_fields = array();
         $sql_values = array();
@@ -333,12 +355,12 @@ class user_log_named extends user_log
             if ($this->usr == null) {
                 log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString());
             } else {
-                log_fatal("Insert to change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table . "," . $this->field . ")", "user_log->add");
-                log_fatal("Insert to change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table . "," . $this->field . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
+                log_fatal("Insert to change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
+                log_fatal("Insert to change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
             }
             $result = False;
         } else {
-            $this->id = $log_id;
+            $this->set_id($log_id);
             // restore the type before saving the log
             $db_con->set_type($db_type);
             $result = True;
@@ -354,7 +376,7 @@ class user_log_named extends user_log
      */
     function add_ref($row_id): bool
     {
-        log_debug("user_log->add_ref (" . $row_id . " to " . $this->id . " for user " . $this->usr->dsp_id() . ")");
+        log_debug("user_log->add_ref (" . $row_id . " to " . $this->id() . " for user " . $this->usr->dsp_id() . ")");
 
         global $db_con;
         $result = false;
@@ -362,7 +384,7 @@ class user_log_named extends user_log
         $db_type = $db_con->get_type();
         $db_con->set_type(sql_db::TBL_CHANGE);
         $db_con->set_usr($this->usr->id);
-        if ($db_con->update($this->id, "row_id", $row_id)) {
+        if ($db_con->update($this->id(), "row_id", $row_id)) {
             // restore the type before saving the log
             $db_con->set_type($db_type);
             $result = True;
@@ -371,8 +393,8 @@ class user_log_named extends user_log
             if ($this->usr == null) {
                 log_fatal("Update of reference in the change log failed.", "user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString());
             } else {
-                log_fatal("Update of reference in the change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table . "," . $this->field . ")", "user_log->add_ref");
-                log_fatal("Update of reference in the change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table . "," . $this->field . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
+                log_fatal("Update of reference in the change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add_ref");
+                log_fatal("Update of reference in the change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
             }
         }
         return $result;

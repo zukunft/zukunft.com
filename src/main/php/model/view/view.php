@@ -874,7 +874,7 @@ class view extends user_sandbox_named_with_type
                 $log->new_value = $this->code_id;
                 $log->std_value = $std_rec->code_id;
                 $log->row_id = $this->id;
-                $log->field = self::FLD_CODE_ID;
+                $log->set_field(self::FLD_CODE_ID);
                 $result = $this->save_field_do($db_con, $log);
             }
         }

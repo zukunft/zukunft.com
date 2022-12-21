@@ -487,7 +487,7 @@ class ref
         $log = new user_log_link;
         $log->usr = $this->user();
         $log->action = user_log::ACTION_ADD;
-        $log->table = 'refs';
+        $log->set_table(change_log_table::REF);
         // TODO review in log_link
         // TODO object must be loaded before it can be logged
         $log->new_from = $this->phr;
@@ -506,7 +506,7 @@ class ref
         $log = new user_log_link;
         $log->usr = $this->user();
         $log->action = user_log::ACTION_UPDATE;
-        $log->table = 'refs';
+        $log->set_table(change_log_table::REF);
         $log->old_from = $db_rec->phr;
         $log->old_link = $db_rec->ref_type;
         $log->old_to = $db_rec;
@@ -535,7 +535,7 @@ class ref
         $log = new user_log_link;
         $log->usr = $this->user();
         $log->action = user_log::ACTION_DELETE;
-        $log->table = 'refs';
+        $log->set_table(change_log_table::REF);
         $log->old_from = $this->phr;
         $log->old_link = $this->ref_type;
         $log->old_to = $this;
@@ -556,7 +556,7 @@ class ref
 
         // log the insert attempt first
         $log = $this->log_add();
-        if ($log->id > 0) {
+        if ($log->id() > 0) {
             // insert the new reference
             $db_con->set_type(sql_db::TBL_REF);
             $db_con->set_usr($this->user()->id);
@@ -642,7 +642,7 @@ class ref
             // if needed log the change and update the database
             if ($this->external_key <> $db_rec->external_key) {
                 $log = $this->log_upd($db_rec);
-                if ($log->id > 0) {
+                if ($log->id() > 0) {
                     $db_con->set_type(sql_db::TBL_REF);
                     if ($db_con->update($this->id, self::FLD_EX_KEY, $this->external_key)) {
                         log_debug('ref->save update ... done.');
@@ -666,7 +666,7 @@ class ref
                 log_warning('Delete failed, because it seems that the ref ' . $this->dsp_id() . ' has been deleted in the meantime.', 'ref->del');
             } else {
                 $log = $this->log_del();
-                if ($log->id > 0) {
+                if ($log->id() > 0) {
                     $db_con->set_type(sql_db::TBL_REF);
                     $del_result = $db_con->delete(self::FLD_ID, $this->id);
                     if ($del_result == '') {

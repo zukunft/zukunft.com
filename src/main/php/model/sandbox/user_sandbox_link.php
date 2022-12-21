@@ -201,7 +201,7 @@ class user_sandbox_link extends user_sandbox
         $log->usr = $this->user();
         $log->action = user_log::ACTION_ADD;
         // TODO add the table exceptions from sql_db
-        $log->table = $this->obj_name . 's';
+        $log->set_table($this->obj_name . 's');
         $log->row_id = 0;
         $log->add();
 
@@ -217,12 +217,12 @@ class user_sandbox_link extends user_sandbox
         log_debug($this->dsp_id());
 
         $log = new user_log_link;
+        $log->usr = $this->user();
+        $log->action = user_log::ACTION_DELETE;
+        $log->set_table($this->obj_name . 's');
         $log->old_from = $this->fob;
         $log->old_to = $this->tob;
 
-        $log->usr = $this->user();
-        $log->action = user_log::ACTION_DELETE;
-        $log->table = $this->obj_name . 's';
         $log->row_id = $this->id;
         $log->add();
 
@@ -258,7 +258,7 @@ class user_sandbox_link extends user_sandbox
 
         // log the insert attempt first
         $log = $this->log_link_add();
-        if ($log->id > 0) {
+        if ($log->id() > 0) {
 
             // insert the new object and save the object key
             // TODO check that always before a db action is called the db type is set correctly

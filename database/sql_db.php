@@ -207,32 +207,32 @@ class sql_db
     const FLD_EXT_NAME = '_name';
     const FLD_EXT_TYPE_ID = '_type_id';
 
-    const USER_PREFIX = "user_";                  // prefix used for tables where the user sandbox values are stored
+    const USER_PREFIX = 'user_';                  // prefix used for tables where the user sandbox values are stored
 
-    const STD_TBL = "s";                          // prefix used for the standard table where data for all users are stored
-    const USR_TBL = "u";                          // prefix used for the standard table where the user sandbox data is stored
-    const LNK_TBL = "l";                          // prefix used for the table which should be joined in the result
-    const LNK2_TBL = "l2";                        // prefix used for the second table which should be joined in the result
-    const LNK3_TBL = "l3";                        // prefix used for the third table which should be joined in the result
-    const LNK4_TBL = "l4";                        // prefix used for the fourth table which should be joined in the result
-    const ULK_TBL = "ul";                         // prefix used for the table which should be joined in the result of the user sandbox data
-    const ULK2_TBL = "ul2";                       // prefix used for the second user table which should be joined in the result
-    const ULK3_TBL = "ul3";                       // prefix used for the third user table which should be joined in the result
-    const ULK4_TBL = "ul4";                       // prefix used for the fourth user table which should be joined in the result
+    const STD_TBL = 's';                          // prefix used for the standard table where data for all users are stored
+    const USR_TBL = 'u';                          // prefix used for the standard table where the user sandbox data is stored
+    const LNK_TBL = 'l';                          // prefix used for the table which should be joined in the result
+    const LNK2_TBL = 'l2';                        // prefix used for the second table which should be joined in the result
+    const LNK3_TBL = 'l3';                        // prefix used for the third table which should be joined in the result
+    const LNK4_TBL = 'l4';                        // prefix used for the fourth table which should be joined in the result
+    const ULK_TBL = 'ul';                         // prefix used for the table which should be joined in the result of the user sandbox data
+    const ULK2_TBL = 'ul2';                       // prefix used for the second user table which should be joined in the result
+    const ULK3_TBL = 'ul3';                       // prefix used for the third user table which should be joined in the result
+    const ULK4_TBL = 'ul4';                       // prefix used for the fourth user table which should be joined in the result
 
-    const FLD_CODE_ID = "code_id";                // field name for the code link
-    const FLD_USER_ID = "user_id";                // field name for the user table foreign key field
-    const FLD_VALUE = "value";                    // field name e.g. for the configuration value
-    const FLD_DESCRIPTION = "description";        // field name for any description
-    const FLD_TYPE_NAME = "type_name";            // field name for the user specific name of a type; types are used to assign code to a db row
-    const FLD_EXCLUDED = "excluded";              // field name used to delete the object only for one user
+    const FLD_CODE_ID = 'code_id';                // field name for the code link
+    const FLD_USER_ID = 'user_id';                // field name for the user table foreign key field
+    const FLD_VALUE = 'value';                    // field name e.g. for the configuration value
+    const FLD_DESCRIPTION = 'description';        // field name for any description
+    const FLD_TYPE_NAME = 'type_name';            // field name for the user specific name of a type; types are used to assign code to a db row
+    const FLD_EXCLUDED = 'excluded';              // field name used to delete the object only for one user
 
     // formats to force the formatting of a value for an SQL statement e.g. convert true to 1 when using tinyint to save boolean values
-    const FLD_FORMAT_TEXT = "text";               // to force the text formatting of a value for the SQL statement formatting
-    const FLD_FORMAT_VAL = "number";              // to force the numeric formatting of a value for the SQL statement formatting
-    const FLD_FORMAT_BOOL = "boolean";            // to force the boolean formatting of a value for the SQL statement formatting
+    const FLD_FORMAT_TEXT = 'text';               // to force the text formatting of a value for the SQL statement formatting
+    const FLD_FORMAT_VAL = 'number';              // to force the numeric formatting of a value for the SQL statement formatting
+    const FLD_FORMAT_BOOL = 'boolean';            // to force the boolean formatting of a value for the SQL statement formatting
 
-    const VAL_BOOL_TRUE = "1";
+    const VAL_BOOL_TRUE = '1';
 
     /*
      * object variables

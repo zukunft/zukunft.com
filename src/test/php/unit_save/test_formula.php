@@ -302,8 +302,8 @@ function run_formula_test(testing $t): void
 
     // ... check the correct logging
     $log = new user_log_named;
-    $log->table = 'formulas';
-    $log->field = 'formula_name';
+    $log->set_table(change_log_table::FORMULA);
+    $log->set_field(change_log_field::FLD_FORMULA_NAME);
     $log->row_id = $frm->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
@@ -338,8 +338,8 @@ function run_formula_test(testing $t): void
 
     // ... and if the formula renaming has been logged
     $log = new user_log_named;
-    $log->table = 'formulas';
-    $log->field = 'formula_name';
+    $log->set_table(change_log_table::FORMULA);
+    $log->set_field(change_log_field::FLD_FORMULA_NAME);
     $log->row_id = $frm_renamed->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
@@ -375,8 +375,8 @@ function run_formula_test(testing $t): void
 
     // ... and if the formula parameter adding have been logged
     $log = new user_log_named;
-    $log->table = 'formulas';
-    $log->field = 'resolved_text';
+    $log->set_table(change_log_table::FORMULA);
+    $log->set_field(change_log_field::FLD_FORMULA_USR_TEXT);
     $log->row_id = $frm_reloaded->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
@@ -384,23 +384,23 @@ function run_formula_test(testing $t): void
     $target = 'zukunft.com system test changed "percent" = ( "this" - "prior" ) / "prior" to = "this"';
     $target = 'zukunft.com system test changed "percent" = 1 - ( "this" / "prior" ) to = "this"';
     $t->dsp('formula->load resolved_text for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
-    $log->field = 'formula_text';
+    $log->set_field(change_log_field::FLD_FORMULA_REF_TEXT);
     $result = $log->dsp_last(true);
     // use the next line if system config is non-standard
     $target = 'zukunft.com system test changed {w'.$wrd_percent->id().'}=( {f'.$frm_this->id().'} - {f5} ) / {f5} to ={f3}';
     $target = 'zukunft.com system test changed {w'.$wrd_percent->id().'}=1-({f'.$frm_this->id().'}/{f'.$frm_prior->id().'}) to ={f'.$frm_this->id().'}';
     $t->dsp('formula->load formula_text for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
-    $log->field = user_sandbox_named::FLD_DESCRIPTION;
+    $log->set_field(user_sandbox_named::FLD_DESCRIPTION);
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added System Test Formula Renamed description';
     $t->dsp('formula->load description for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
-    $log->field = 'formula_type_id';
+    $log->set_field(change_log_field::FLD_FORMULA_TYPE);
     $result = $log->dsp_last(true);
     // to review what is correct
     $target = 'zukunft.com system test changed calc to this';
     $target = 'zukunft.com system test added this';
     $t->dsp('formula->load formula_type_id for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
-    $log->field = 'all_values_needed';
+    $log->set_field(change_log_field::FLD_FORMULA_ALL);
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test changed 0 to 1';
     $t->dsp('formula->load all_values_needed for "' . formula_api::TN_RENAMED . '" logged', $target, $result);

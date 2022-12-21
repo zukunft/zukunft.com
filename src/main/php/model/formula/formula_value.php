@@ -726,7 +726,7 @@ class formula_value extends db_object
                     }
                 }
 
-                log_debug('words');
+                log_debug(phrase_list::class);
                 $this->load_phrases();
             }
             log_debug('got id ' . $this->id() . ': ' . $this->value);

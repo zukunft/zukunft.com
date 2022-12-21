@@ -95,8 +95,8 @@ function run_view_component_test(testing $t): void
 
     // check if the view_component adding has been logged
     $log = new user_log_named;
-    $log->table = 'view_components';
-    $log->field = view_cmp::FLD_NAME;
+    $log->set_table(change_log_table::VIEW_COMPONENT);
+    $log->set_field(view_cmp::FLD_NAME);
     $log->row_id = $cmp->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
@@ -134,8 +134,8 @@ function run_view_component_test(testing $t): void
 
     // check if the view_component renaming has been logged
     $log = new user_log_named;
-    $log->table = 'view_components';
-    $log->field = view_cmp::FLD_NAME;
+    $log->set_table(change_log_table::VIEW_COMPONENT);
+    $log->set_field(view_cmp::FLD_NAME);
     $log->row_id = $cmp_renamed->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
@@ -163,15 +163,15 @@ function run_view_component_test(testing $t): void
 
     // check if the view_component parameter adding have been logged
     $log = new user_log_named;
-    $log->table = 'view_components';
-    $log->field = user_sandbox_named::FLD_DESCRIPTION;
+    $log->set_table(change_log_table::VIEW_COMPONENT);
+    $log->set_field(user_sandbox_named::FLD_DESCRIPTION);
     $log->row_id = $cmp_reloaded->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     //$target = 'zukunft.com system test added Just added for testing the user sandbox';
     $target = 'zukunft.com system test changed Just added for testing to Just added for testing the user sandbox';
     $t->dsp('view_component->load comment for "' . view_cmp_api::TN_RENAMED . '" logged', $target, $result);
-    $log->field = 'view_component_type_id';
+    $log->set_field(change_log_field::FLD_VIEW_CMP_TYPE);
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added word name';
     $t->dsp('view_component->load view_component_type_id for "' . view_cmp_api::TN_RENAMED . '" logged', $target, $result);

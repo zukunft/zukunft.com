@@ -65,6 +65,30 @@ class test_new_obj extends test_base
         return $trp;
     }
 
+    /**
+     * @return user_log_named a change log entry of a named user sandbox object with some dummy values
+     */
+    public function dummy_log_named(): user_log_named
+    {
+        global $usr;
+        $chg = new user_log_named();
+        $chg->set_table(change_log_table::WORD);
+        $chg->set_field(change_log_field::FLD_WORD_NAME);
+        $chg->row_id = 1;
+        $chg->usr = $usr;
+        return $chg;
+    }
+
+    /**
+     * @return change_log_list a list of change log entries with some dummy values
+     */
+    public function dummy_log_list_named(): change_log_list
+    {
+        $log_lst = new change_log_list();
+        $log_lst->add($this->dummy_log_named());
+        return $log_lst;
+    }
+
 
     /*
      * word

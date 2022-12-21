@@ -637,7 +637,7 @@ class view_cmp_link extends user_sandbox_link_with_type
             $log->new_value = $this->order_nbr;
             $log->std_value = $std_rec->order_nbr;
             $log->row_id = $this->id;
-            $log->field = self::FLD_ORDER_NBR;
+            $log->set_field(self::FLD_ORDER_NBR);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;

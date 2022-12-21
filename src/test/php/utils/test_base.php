@@ -529,6 +529,8 @@ class test_base
     function assert_api(object $usr_obj): bool
     {
         $api_obj = $usr_obj->api_obj();
+        // TODO remove, for fast debugging only
+        $json = json_encode($api_obj);
         $actual = json_decode(json_encode($api_obj), true);
         $expected = json_decode($this->api_json_expected($usr_obj::class), true);
         return $this->assert($usr_obj::class . ' API object', json_is_similar($actual, $expected), true);

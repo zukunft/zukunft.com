@@ -101,8 +101,8 @@ function run_view_test(testing $t): void
 
     // check if the view adding has been logged
     $log = new user_log_named;
-    $log->table = 'views';
-    $log->field = view::FLD_NAME;
+    $log->set_table(change_log_table::VIEW);
+    $log->set_field(view::FLD_NAME);
     $log->row_id = $dsp->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
@@ -138,8 +138,8 @@ function run_view_test(testing $t): void
 
     // check if the view renaming has been logged
     $log = new user_log_named;
-    $log->table = 'views';
-    $log->field = view::FLD_NAME;
+    $log->set_table(change_log_table::VIEW);
+    $log->set_field(view::FLD_NAME);
     $log->row_id = $dsp_renamed->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
@@ -165,8 +165,8 @@ function run_view_test(testing $t): void
 
     // check if the view parameter adding have been logged
     $log = new user_log_named;
-    $log->table = 'views';
-    $log->field = user_sandbox_named::FLD_DESCRIPTION;
+    $log->set_table(change_log_table::VIEW);
+    $log->set_field(user_sandbox_named::FLD_DESCRIPTION);
     $log->row_id = $dsp_reloaded->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
@@ -174,7 +174,7 @@ function run_view_test(testing $t): void
     $target = 'zukunft.com system test added Just added for testing the user sandbox';
     $target = 'zukunft.com system test changed Just added for testing to Just added for testing the user sandbox';
     $t->dsp('view->load comment for "' . view_api::TN_RENAMED . '" logged', $target, $result);
-    $log->field = view::FLD_TYPE;
+    $log->set_field(view::FLD_TYPE);
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added word default';
     $t->dsp('view->load view_type_id for "' . view_api::TN_RENAMED . '" logged', $target, $result);

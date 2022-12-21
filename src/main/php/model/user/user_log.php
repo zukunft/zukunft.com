@@ -51,7 +51,9 @@ cache table, field and action id to speed up, because this will never change
 */
 
 
-class user_log
+use api\user_log_api;
+
+class user_log extends db_object
 {
     // the basic change types that are logged
     const ACTION_ADD = 'add';
@@ -71,13 +73,10 @@ class user_log
      * object vars
      */
 
-    public ?int $id = null;            // the database id of the log entry (used to update a log entry in case of an insert where the ref id is not yet know at insert)
     public ?user $usr = null;          // the user who has done the change
     public ?string $action = null;     // text for the user action e.g. "add", "update" or "delete"
     protected ?int $action_id = null;  // database id for the action text
-    public ?string $table = null;      // name of the table that has been updated
     public ?int $table_id = null;     // database id for the table text
-    public ?string $field = null;      // name of the field that has been updated
     protected ?int $field_id = null;   // database id for the field text
     public ?int $row_id = null;        // the reference id of the row in the database table
 
@@ -85,42 +84,132 @@ class user_log
     protected ?string $change_time = null; //
 
 
+    /*
+     * cast
+     */
+
+    public function fill_api_obj($api_obj): user_log_api
+    {
+        $api_obj->usr_id = $this->usr->id;
+        $api_obj->action_id = $this->action_id;
+        $api_obj->table_id = $this->table_id;
+        $api_obj->field_id = $this->field_id;
+        $api_obj->row_id = $this->row_id;
+        $api_obj->change_time = $this->change_time;
+        return $api_obj;
+
+    }
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the table of this change log object and to add a new table to the database if needed
+     * @param string $table_name the name of the new table
+     * @return void
+     */
+    public function set_table(string $table_name): void
+    {
+        global $change_log_tables;
+        $this->table_id = $change_log_tables->id($table_name);
+        if ($this->table_id <= 0) {
+            $this->add_table($table_name);
+            if ($this->table_id <= 0) {
+                log_err("Cannot add table name " . $table_name);
+            } else {
+                $tbl = new user_type($table_name, $table_name);
+                $change_log_tables->add($tbl);
+                $change_log_tables->get_hash();
+            }
+        }
+    }
+
+    /**
+     * get the table name base on the table_id
+     * @return string
+     */
+    public function table(): string
+    {
+        global $change_log_tables;
+        return $change_log_tables->name($this->table_id);
+    }
+
+    /**
+     * set the field of this change log object and to add a new field to the database if needed
+     * @param string $field_name the name of the new field
+     * @return void
+     */
+    public function set_field(string $field_name): void
+    {
+        global $change_log_fields;
+        if ($this->table_id > 0) {
+            $this->field_id = $change_log_fields->id($this->table_id . $field_name);
+            if ($this->field_id <= 0) {
+                $this->add_field($field_name);
+                if ($this->field_id <= 0) {
+                    log_err("Cannot add field name " . $field_name);
+                } else {
+                    $tbl = new user_type($this->table_id . $field_name, $this->table_id . $field_name);
+                    $change_log_fields->add($tbl, $this->field_id);
+                    $change_log_fields->get_hash($change_log_fields->lst);
+                }
+            }
+        } else {
+            log_err('Table not yet set whe trying to set the field ' . $field_name);
+        }
+    }
+
+    /**
+     * get the field name base on the field_id
+     * @return string
+     */
+    public function field(): string
+    {
+        global $change_log_fields;
+
+        $lib = new library();
+
+        $field_key = $change_log_fields->name($this->field_id);
+        return $lib->str_right_of($field_key, $this->table_id);
+    }
+
     /**
      * to save database space the table name is saved as a reference id in the log table
      */
-    protected function set_table(): void
+    protected function add_table(string $table_name = ''): void
     {
         if ($this->usr == null) {
-            log_warning(' "' . $this->table . '" but user is missing');
+            log_warning(' "' . $table_name . '" but user is missing');
         } else {
-            log_debug(' "' . $this->table . '" for ' . $this->usr->dsp_id());
+            log_debug(' "' . $table_name . '" for ' . $this->usr->dsp_id());
         }
 
         global $db_con;
 
         // check parameter
-        if ($this->table == "") {
+        if ($table_name == "") {
             log_err("missing table name", "user_log->set_table");
         }
         if ($this->usr->id <= 0) {
             log_err("missing user", "user_log->set_table");
         }
 
-        // if e.g. a "value" is changed $this->table is "values" and the reference 1 is saved in the log to save space
+        // if e.g. a "value" is changed $table_name is "values" and the reference 1 is saved in the log to save space
         //$db_con = new mysql;
         $db_type = $db_con->get_type();
         $db_con->set_type(sql_db::TBL_CHANGE_TABLE);
         $db_con->set_usr($this->usr->id);
-        $table_id = $db_con->get_id($this->table);
+        $table_id = $db_con->get_id($table_name);
 
         // add new table name if needed
         if ($table_id <= 0) {
-            $table_id = $db_con->add_id($this->table);
+            $table_id = $db_con->add_id($table_name);
             // save also the code_id
             if ($table_id > 0) {
                 $db_con->set_type(sql_db::TBL_CHANGE_TABLE);
                 $db_con->set_usr($this->usr->id);
-                $db_con->update($table_id, array('code_id'), array($this->table));
+                $db_con->update($table_id, array('code_id'), array($table_name));
             }
         }
         if ($table_id > 0) {
@@ -135,12 +224,13 @@ class user_log
     /**
      * save the field name as a reference id in the log table
      */
-    protected function set_field(): void
+    protected function add_field(string $field_name = ''): void
     {
+        global $usr;
         if ($this->usr == null) {
-            log_warning('user_log->set_field "' . $this->table . '" but user is missing');
+            log_warning('user_log->set_field "' . $field_name . '" but user is missing');
         } else {
-            log_debug('user_log->set_field "' . $this->field . '" for table "' . $this->table . '" (' . $this->table_id . ') and user ' . $this->usr->dsp_id());
+            log_debug('user_log->set_field "' . $field_name . '" for table "' . $this->table() . '" (' . $this->table_id . ') and user ' . $this->usr->dsp_id());
         }
 
         global $db_con;
@@ -149,22 +239,24 @@ class user_log
         if ($this->table_id <= 0) {
             log_err("missing table_id", "user_log->set_field");
         }
-        if ($this->field == "") {
+        if ($field_name == "") {
             log_err("missing field name", "user_log->set_field");
         }
+        /*
         if ($this->usr->id <= 0) {
             log_err("missing user", "user_log->set_field");
         }
+        */
 
         //$db_con = new mysql;
         $db_type = $db_con->get_type();
         $db_con->set_type(sql_db::TBL_CHANGE_FIELD);
-        $db_con->usr_id = $this->usr->id;
-        $field_id = $db_con->get_id_2key($this->field, "table_id", $this->table_id);
+        $db_con->usr_id = $usr->id;
+        $field_id = $db_con->get_id_2key($field_name, "table_id", $this->table_id);
 
         // add new field name if needed
         if ($field_id <= 0) {
-            $field_id = $db_con->add_id_2key($this->field, "table_id", $this->table_id);
+            $field_id = $db_con->add_id_2key($field_name, "table_id", $this->table_id);
         }
         if ($field_id > 0) {
             $this->field_id = $field_id;
@@ -175,7 +267,7 @@ class user_log
         $db_con->set_type($db_type);
     }
 
-    protected function set_action(): void
+    protected function add_action(): void
     {
         log_debug('user_log->set_action "' . $this->action . '" for ' . $this->usr->id);
 

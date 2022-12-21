@@ -37,6 +37,9 @@ use api\user_sandbox_api;
 class controller
 {
 
+    // the parameter names used in the url
+    CONST URL_VAR_WORD = 'words';
+
     /**
      * response to a get request
      *

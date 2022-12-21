@@ -2,9 +2,8 @@
 
 /*
 
-    api/log/change_log_list.php - a list changes that can be shown in the frontend
+    api/log/change_log_list.php - a list function to create the HTML code to display a list of user changes
     ---------------------------
-
 
     This file is part of zukunft.com - calc with words
 
@@ -32,45 +31,8 @@
 
 namespace api;
 
-use cfg\phrase_type;
-use html\word_list_dsp;
-
-class change_log_list_api extends list_api implements \JsonSerializable
+class change_log_list_dsp extends change_log_list_api
 {
 
-    /*
-     * construct and map
-     */
-
-    function __construct(array $lst = array())
-    {
-        parent::__construct($lst);
-    }
-
-    /**
-     * add a word to the list
-     * @param user_log_named_api $chg one change of a user sandbox object
-     * @returns bool true if the word has been added
-     */
-    function add(user_log_named_api $chg): bool
-    {
-        return list_api::add_obj($chg);
-    }
-
-    /*
-     * interface
-     */
-
-    /**
-     * an array of the value vars including the private vars
-     */
-    public function jsonSerialize(): array
-    {
-        $vars = [];
-        foreach ($this->lst as $chg) {
-            $vars[] = json_decode(json_encode($chg));
-        }
-        return $vars;
-    }
 
 }

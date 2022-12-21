@@ -105,7 +105,7 @@ function run_triple_test(testing $t): void
 
     // ... check the correct logging
     $log = new user_log_link;
-    $log->table = 'triples';
+    $log->set_table(change_log_table::TRIPLE);
     $log->new_from_id = $wrd_added->id();
     $log->new_link_id = $vrb->id() ;
     $log->new_to_id = $wrd->id();
@@ -149,7 +149,7 @@ function run_triple_test(testing $t): void
 
     // ... check if the removal of the link for the second user has been logged
     $log = new user_log_link;
-    $log->table = 'triples';
+    $log->set_table(change_log_table::TRIPLE);
     $log->old_from_id = $wrd_added->id();
     $log->old_link_id = $vrb->id() ;
     $log->old_to_id = $wrd->id();
@@ -198,7 +198,7 @@ function run_triple_test(testing $t): void
 
     // check the correct logging
     $log = new user_log_link;
-    $log->table = 'triples';
+    $log->set_table(change_log_table::TRIPLE);
     $log->old_from_id = $wrd_added->id();
     $log->old_link_id = $vrb->id() ;
     $log->old_to_id = $wrd->id();

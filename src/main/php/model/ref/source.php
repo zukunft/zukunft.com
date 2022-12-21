@@ -485,7 +485,7 @@ class source extends user_sandbox_named_with_type
             $log->new_value = $this->url;
             $log->std_value = $std_rec->url;
             $log->row_id = $this->id;
-            $log->field = self::FLD_URL;
+            $log->set_field(self::FLD_URL);
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;

@@ -55,12 +55,23 @@ class user_log_unit_db_tests
 
         // check if loading the changes technically works
         $lst = new change_log_list();
-        $result = $lst->load_by_dsp_of_wrd($wrd);
-        $t->assert('word view change', $result, false);
+        $result = $lst->load_by_fld_of_wrd($wrd, change_log_field::FLD_WORD_NAME);
+        $t->assert('word view change', $result, true);
 
-        // ... and check if at least the most critical is loaded
-        //$result = cl(db_cl::VIEW_TYPE, view_type::DEFAULT);
-        //$t->assert('check type' . view_type::DEFAULT, $result, 1);
+        // check if the first entry is the adding of the word name
+        $first_change = $lst->lst()[0];
+        $t->assert('first word is adding', $first_change->old_value, '');
+        $t->assert('... the name', $first_change->new_value, word_api::TN_READ);
+
+        // ... same for triples
+        $lst = new change_log_list();
+        $result = $lst->load_by_fld_of_trp($trp, change_log_field::FLD_TRIPLE_NAME);
+        $t->assert('triple view change', $result, true);
+
+        // check if the first entry is the adding of the triple name
+        $first_change = $lst->lst()[0];
+        $t->assert('first triple is adding', $first_change->old_value, '');
+        $t->assert('... the name', $first_change->new_value, triple_api::TN_READ_NAME);
 
 
     }

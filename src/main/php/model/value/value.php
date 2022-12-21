@@ -1453,9 +1453,9 @@ class value extends user_sandbox_value
         $log->usr = $this->user();
         $log->action = user_log::ACTION_UPDATE;
         if ($this->can_change()) {
-            $log->table = 'values';
+            $log->set_table(change_log_table::VALUE);
         } else {
-            $log->table = 'user_values';
+            $log->set_table(change_log_table::VALUE_USR);
         }
 
         return $log;
@@ -1634,7 +1634,7 @@ class value extends user_sandbox_value
     if ($this->can_change()) {
       // log the insert attempt first
       $log = $this->log_add_link($phr_id);
-      if ($log->id > 0) {
+      if ($log->id() > 0) {
         // insert the link
         $db_con = new mysql;
         $db_con->usr_id = $this->user()->id;
@@ -1659,7 +1659,7 @@ class value extends user_sandbox_value
     if ($this->can_change()) {
       // log the delete attempt first
       $log = $this->log_del_link($wrd->id);
-      if ($log->id > 0) {
+      if ($log->id() > 0) {
         // remove the link
         $db_con = new mysql;
         $db_con->usr_id = $this->user()->id;
@@ -1715,7 +1715,7 @@ class value extends user_sandbox_value
             $log->new_value = $this->number();
             $log->std_value = $std_rec->number();
             $log->row_id = $this->id;
-            $log->field = self::FLD_VALUE;
+            $log->set_field(self::FLD_VALUE);
             $result .= $this->save_field_do($db_con, $log);
             // updating the number is definitely relevant for calculation, so force to update the timestamp
             log_debug('trigger update');
@@ -1740,7 +1740,7 @@ class value extends user_sandbox_value
             $log->std_value = $std_rec->source_name();
             $log->std_id = $std_rec->get_source_id();
             $log->row_id = $this->id;
-            $log->field = source::FLD_ID;
+            $log->set_field(source::FLD_ID);
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -1795,7 +1795,7 @@ class value extends user_sandbox_value
             $log->new_id = $this->grp->id;
             $log->std_id = $std_rec->grp->id;
             $log->row_id = $this->id;
-            $log->field = 'phrase_group_id';
+            $log->set_field(change_log_field::FLD_VALUE_GROUP);
             if ($log->add()) {
                 $db_con->set_type(sql_db::TBL_VALUE);
                 $result = $db_con->update($this->id,
@@ -1816,7 +1816,7 @@ class value extends user_sandbox_value
                 $log->std_value = $std_rec->time_phr->name();
                 $log->std_id = $std_rec->get_time_id();
                 $log->row_id = $this->id;
-                $log->field = value::FLD_TIME_WORD;
+                $log->set_field(value::FLD_TIME_WORD);
                 if ($log->add()) {
                     $db_con->set_type(sql_db::TBL_VALUE);
                     if (!$db_con->update(
@@ -1926,7 +1926,7 @@ class value extends user_sandbox_value
 
         // log the insert attempt first
         $log = $this->log_add();
-        if ($log->id > 0) {
+        if ($log->id() > 0) {
             // insert the value
             $db_con->set_type(sql_db::TBL_VALUE);
             $this->id = $db_con->insert(

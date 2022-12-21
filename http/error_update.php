@@ -61,7 +61,7 @@ if ($usr->id > 0) {
         if ($log_id > 0 and $status_id > 0) {
             $err_entry = new system_error_log;
             $err_entry->set_user($usr);
-            $err_entry->id = $log_id;
+            $err_entry->set_id($log_id);
             $err_entry->status_id = $status_id;
             $err_entry->save();
         }

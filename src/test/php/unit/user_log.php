@@ -96,6 +96,8 @@ class user_log_unit_tests
         $sql_expected = 'PREPARE user_log_named_by_field_row (int,int) AS ' . $log->load_sql_old(word::class, )->sql;
         $t->assert_sql('word', $qp->sql, $sql_expected);
 
+        $t->subheader('SQL list statement tests');
+
         // prepare the objects for the tests
         $wrd = $t->dummy_word();
         $trp = new triple($usr);
@@ -105,26 +107,51 @@ class user_log_unit_tests
         $db_con->set_usr($usr->id);
         $log_lst = new change_log_list();
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $log_lst->load_sql_dsp_of_wrd($db_con, $wrd);
+        $qp = $log_lst->load_sql_obj_fld(
+            $db_con,
+            change_log_table::WORD,
+            change_log_field::FLD_WORD_VIEW,
+            'dsp_of_wrd',
+            $wrd->id());;
         $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $log_lst->load_sql_dsp_of_wrd($db_con, $wrd);
+        $qp = $log_lst->load_sql_obj_fld(
+            $db_con,
+            change_log_table::WORD,
+            change_log_field::FLD_WORD_VIEW,
+            'dsp_of_wrd',
+            $wrd->id());;
         $t->assert_qp($qp, $db_con->db_type);
 
         // sql to load a list of log entry by phrase
         $db_con->set_usr($usr->id);
         $log_lst = new change_log_list();
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $log_lst->load_sql_dsp_of_trp($db_con, $trp);
+        $qp = $log_lst->load_sql_obj_fld(
+            $db_con,
+            change_log_table::TRIPLE,
+            change_log_field::FLD_TRIPLE_VIEW,
+            'dsp_of_trp',
+            $trp->id());
         $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $log_lst->load_sql_dsp_of_trp($db_con, $trp);
+        $qp = $log_lst->load_sql_obj_fld(
+            $db_con,
+            change_log_table::TRIPLE,
+            change_log_field::FLD_TRIPLE_VIEW,
+            'dsp_of_trp',
+            $trp->id());
         $t->assert_qp($qp, $db_con->db_type);
 
+
+        $t->subheader('API unit tests');
+
+        $log_lst = $t->dummy_log_list_named();
+        $t->assert_api($log_lst);
 
     }
 

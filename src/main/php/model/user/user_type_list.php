@@ -71,9 +71,9 @@ class user_type_list
      * interface get and set functions
      */
 
-    function add(user_type $item): void
+    function add(user_type $item, int $id): void
     {
-        $this->lst[] = $item;
+        $this->lst[$id] = $item;
     }
 
     /**
@@ -84,8 +84,8 @@ class user_type_list
     function add_verb(verb $vrb): void
     {
         $type_obj = new user_type($vrb->code_id, $vrb->name());
-        $type_obj->id = $vrb->id() ;
-        $this->add($type_obj);
+        $type_obj->id = $vrb->id();
+        $this->add($type_obj, $vrb->id());
     }
 
     /*

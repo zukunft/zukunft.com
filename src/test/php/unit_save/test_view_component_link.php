@@ -62,7 +62,7 @@ function run_view_component_link_test(testing $t): void
 
     // ... check the correct logging
     $log = new user_log_link;
-    $log->table = 'view_component_links';
+    $log->set_table(change_log_table::VIEW_LINK);
     $log->new_from_id = $dsp->id();
     $log->new_to_id = $cmp->id();
     $log->usr = $t->usr1;
@@ -96,7 +96,7 @@ function run_view_component_link_test(testing $t): void
 
     // ... check if the removal of the link for the second user has been logged
     $log = new user_log_link;
-    $log->table = 'view_component_links';
+    $log->set_table(change_log_table::VIEW_LINK);
     $log->old_from_id = $dsp->id();
     $log->old_to_id = $cmp->id();
     $log->usr = $t->usr2;
@@ -131,7 +131,7 @@ function run_view_component_link_test(testing $t): void
 
     // check the correct logging
     $log = new user_log_link;
-    $log->table = 'view_component_links';
+    $log->set_table(change_log_table::VIEW_LINK);
     $log->old_from_id = $dsp->id();
     $log->old_to_id = $cmp->id();
     $log->usr = $t->usr1;

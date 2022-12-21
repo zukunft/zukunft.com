@@ -67,13 +67,13 @@ function run_source_test(testing $t): void
     // ... check if the source creation has been logged
     if ($src_add->id() > 0) {
         $log = new user_log_named;
-        $log->table = 'sources';
-        $log->field = 'source_name';
+        $log->set_table(change_log_table::SOURCE);
+        $log->set_field(change_log_field::FLD_SOURCE_NAME);
         $log->row_id = $src_add->id();
         $log->usr = $t->usr1;
         $result = $log->dsp_last(true);
     }
-    $target = 'zukunft.com system test added ' . source_api::TN_ADD . '';
+    $target = 'zukunft.com system test added ' . source_api::TN_ADD;
     $t->dsp('source->save logged for "' . source_api::TN_ADD . '"', $target, $result);
 
     // ... test if the new source has been created
@@ -103,8 +103,8 @@ function run_source_test(testing $t): void
 
     // check if the source renaming has been logged
     $log = new user_log_named;
-    $log->table = 'sources';
-    $log->field = 'source_name';
+    $log->set_table(change_log_table::SOURCE);
+    $log->set_field(change_log_field::FLD_SOURCE_NAME);
     $log->row_id = $src_renamed->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
@@ -129,15 +129,15 @@ function run_source_test(testing $t): void
 
     // check if the source parameter adding have been logged
     $log = new user_log_named;
-    $log->table = 'sources';
-    $log->field = 'url';
+    $log->set_table(change_log_table::SOURCE);
+    $log->set_field(change_log_field::FLD_SOURCE_URL);
     $log->row_id = $src_reloaded->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added ' . source_api::TEST_URL;
     //$target = 'zukunft.com system test partner changed ' . source_api::TEST_URL_CHANGED . ' to ' . source_api::TEST_URL;
     $t->dsp('source->load url for "' . source_api::TN_RENAMED . '" logged', $target, $result);
-    $log->field = user_sandbox_named::FLD_DESCRIPTION;
+    $log->set_field(user_sandbox_named::FLD_DESCRIPTION);
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added ' . source_api::TEST_DESCRIPTION;
     //$target = 'zukunft.com system test partner changed System Test Source Description Changed to System Test Source Description';

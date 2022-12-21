@@ -79,8 +79,9 @@ class word_list extends sandbox_list
         return $dsp_obj;
     }
 
+
     /*
-     * load functions
+     * load
      */
 
     /**

@@ -300,8 +300,8 @@ function run_word_tests(testing $t): void
     // ... check if the word creation has been logged
     if ($wrd_add->id() > 0) {
         $log = new user_log_named;
-        $log->table = 'words';
-        $log->field = 'word_name';
+        $log->set_table(change_log_table::WORD);
+        $log->set_field(change_log_field::FLD_WORD_NAME);
         $log->row_id = $wrd_add->id();
         $log->usr = $t->usr1;
         $result = $log->dsp_last(true);
@@ -336,8 +336,8 @@ function run_word_tests(testing $t): void
 
     // check if the word renaming has been logged
     $log = new user_log_named;
-    $log->table = 'words';
-    $log->field = 'word_name';
+    $log->set_table(change_log_table::WORD);
+    $log->set_field(change_log_field::FLD_WORD_NAME);
     $log->row_id = $wrd_renamed->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
@@ -366,19 +366,19 @@ function run_word_tests(testing $t): void
 
     // check if the word parameter adding have been logged
     $log = new user_log_named;
-    $log->table = 'words';
-    $log->field = 'plural';
+    $log->set_table(change_log_table::WORD);
+    $log->set_field(change_log_field::FLD_WORD_PLURAL);
     $log->row_id = $wrd_reloaded->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added ' . word_api::TN_RENAMED . 's';
     $t->dsp('word->load plural for "' . word_api::TN_RENAMED . '" logged', $target, $result);
-    $log->field = user_sandbox_named::FLD_DESCRIPTION;
+    $log->set_field(user_sandbox_named::FLD_DESCRIPTION);
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added ' . word_api::TN_RENAMED . ' description';
     $t->dsp('word->load description for "' . word_api::TN_RENAMED . '" logged', $target, $result);
     $t->dsp('word->load ref_2 for "' . word_api::TN_RENAMED . '" logged', $target, $result);
-    $log->field = 'word_type_id';
+    $log->set_field(change_log_field::FLD_WORD_TYPE);
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added differentiator filler';
     $t->dsp('word->load type_id for "' . word_api::TN_RENAMED . '" logged', $target, $result);

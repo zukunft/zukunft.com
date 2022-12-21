@@ -30,6 +30,7 @@
 
 */
 
+use controller\controller;
 use export\json_io;
 
 $debug = $_GET['debug'] ?? 0;
@@ -49,7 +50,7 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // get the words that are supposed to be exported, sample "Nestlé 2 country weight"
-    $phrases = $_GET['words'];
+    $phrases = $_GET[controller::URL_VAR_WORD];
     log_debug("json_save(" . $phrases . ")");
     $phr_names = array_trim(explode(",", $phrases));
 

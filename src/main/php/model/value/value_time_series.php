@@ -237,7 +237,7 @@ class value_time_series extends user_sandbox_display
 
         // log the insert attempt first
         $log = $this->log_add();
-        if ($log->id > 0) {
+        if ($log->id() > 0) {
             $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
             $this->id = $db_con->insert(
                 array(phrase_group::FLD_ID, self::FLD_USER, self::FLD_LAST_UPDATE),

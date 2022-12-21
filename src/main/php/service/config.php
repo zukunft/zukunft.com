@@ -226,7 +226,9 @@ class config
 
         switch ($code_id) {
             case self::VERSION_DB:
+                // TODO activate on real update
                 $result = FIRST_VERSION;
+                $result = PRG_VERSION;
                 break;
             case self::AVG_CALC_TIME:
                 $result = formula::AVG_CALC_TIME;

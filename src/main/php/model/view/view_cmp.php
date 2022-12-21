@@ -696,13 +696,13 @@ class view_cmp extends user_sandbox_named_with_type
         $log = new user_log_link;
         $log->usr = $this->user();
         $log->action = user_log::ACTION_ADD;
-        $log->table = 'view_component_links';
+        $log->set_table(change_log_table::VIEW_LINK);
         $log->new_from = clone $this;
         $log->new_to = clone $dsp;
         $log->row_id = $this->id;
         $result = $log->add_link_ref();
 
-        log_debug('logged ' . $log->id);
+        log_debug('logged ' . $log->id());
         return $result;
     }
 
@@ -713,13 +713,13 @@ class view_cmp extends user_sandbox_named_with_type
         $log = new user_log_link;
         $log->usr = $this->user();
         $log->action = user_log::ACTION_DELETE;
-        $log->table = 'view_component_links';
+        $log->set_table(change_log_table::VIEW_LINK);
         $log->old_from = clone $this;
         $log->old_to = clone $dsp;
         $log->row_id = $this->id;
         $result = $log->add_link_ref();
 
-        log_debug('logged ' . $log->id);
+        log_debug('logged ' . $log->id());
         return $result;
     }
 
@@ -835,7 +835,7 @@ class view_cmp extends user_sandbox_named_with_type
             $log->std_value = $std_rec->load_wrd_row();
             $log->std_id = $std_rec->word_id_row;
             $log->row_id = $this->id;
-            $log->field = self::FLD_ROW_PHRASE;
+            $log->set_field(self::FLD_ROW_PHRASE);
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -861,7 +861,7 @@ class view_cmp extends user_sandbox_named_with_type
             $log->std_value = $std_rec->load_wrd_col();
             $log->std_id = $std_rec->word_id_col;
             $log->row_id = $this->id;
-            $log->field = self::FLD_COL_PHRASE;
+            $log->set_field(self::FLD_COL_PHRASE);
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -887,7 +887,7 @@ class view_cmp extends user_sandbox_named_with_type
             $log->std_value = $std_rec->load_wrd_col2();
             $log->std_id = $std_rec->word_id_col2;
             $log->row_id = $this->id;
-            $log->field = self::FLD_COL2_PHRASE;
+            $log->set_field(self::FLD_COL2_PHRASE);
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -913,7 +913,7 @@ class view_cmp extends user_sandbox_named_with_type
             $log->std_value = $std_rec->load_formula();
             $log->std_id = $std_rec->formula_id;
             $log->row_id = $this->id;
-            $log->field = formula::FLD_ID;
+            $log->set_field(formula::FLD_ID);
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;

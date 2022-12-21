@@ -1926,7 +1926,7 @@ class formula extends user_sandbox_named_with_type
             log_debug('->del_usr_cfg  "' . $this->id . ' und user ' . $this->user()->name);
 
             $log = $this->log_del();
-            if ($log->id > 0) {
+            if ($log->id() > 0) {
                 $db_con->usr_id = $this->user()->id;
                 $result = $this->del_usr_cfg_exe($db_con);
             }
@@ -1969,7 +1969,7 @@ class formula extends user_sandbox_named_with_type
             $log->new_value = $this->usr_text;
             $log->std_value = $std_rec->usr_text;
             $log->row_id = $this->id;
-            $log->field = self::FLD_FORMULA_USER_TEXT;
+            $log->set_field(self::FLD_FORMULA_USER_TEXT);
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -1988,7 +1988,7 @@ class formula extends user_sandbox_named_with_type
             $log->new_value = $this->ref_text;
             $log->std_value = $std_rec->ref_text;
             $log->row_id = $this->id;
-            $log->field = self::FLD_FORMULA_TEXT;
+            $log->set_field(self::FLD_FORMULA_TEXT);
             $result = $this->save_field_do($db_con, $log);
             // updating the reference expression is probably relevant for calculation, so force to update the timestamp
             if ($result == '') {
@@ -2023,7 +2023,7 @@ class formula extends user_sandbox_named_with_type
                 $log->std_value = '0';
             }
             $log->row_id = $this->id;
-            $log->field = self::FLD_ALL_NEEDED;
+            $log->set_field(self::FLD_ALL_NEEDED);
             $result = $this->save_field_do($db_con, $log);
             // if it is switch on that all fields are needed for the calculation, probably some formula results can be removed
             if ($result == '') {
@@ -2069,7 +2069,7 @@ class formula extends user_sandbox_named_with_type
                 $log->new_value = $this->name();
                 $log->std_value = $std_rec->name();
                 $log->row_id = $this->id;
-                $log->field = self::FLD_NAME;
+                $log->set_field(self::FLD_NAME);
                 $result .= $this->save_field_do($db_con, $log);
                 // in case a word link exist, change also the name of the word
                 $wrd = new word($this->user());
@@ -2113,7 +2113,7 @@ class formula extends user_sandbox_named_with_type
             $log->new_value = $this->name();
             $log->std_value = $std_rec->name();
             $log->row_id = $this->id;
-            $log->field = self::FLD_NAME;
+            $log->set_field(self::FLD_NAME);
             if ($log->add()) {
                 $db_con->set_type(sql_db::TBL_FORMULA);
                 if (!$db_con->update($this->id,
@@ -2236,7 +2236,7 @@ class formula extends user_sandbox_named_with_type
 
         // log the insert attempt first
         $log = $this->log_add();
-        if ($log->id > 0) {
+        if ($log->id() > 0) {
             // insert the new formula
             $db_con->set_type(sql_db::TBL_FORMULA);
             // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure

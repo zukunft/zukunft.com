@@ -274,7 +274,7 @@ class system_unit_tests
 
         // sql to load by id
         $db_con->db_type = sql_db::POSTGRES;
-        $log->id = 1;
+        $log->set_id(1);
         $created_sql = $log->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/error_log.sql');
         $t->assert('system_error_log->load_sql by id', $lib->trim($created_sql), $lib->trim($expected_sql));
@@ -328,7 +328,7 @@ class system_unit_tests
         $t->subheader('System log frontend API tests');
 
         $log = new system_error_log();
-        $log->id = 1;
+        $log->set_id(1);
         $log->log_time = new DateTime('2021-11-27 08:15:25');
         $log->usr_name = $usr->name;
         $log->log_text = 'system test text';
@@ -347,7 +347,7 @@ class system_unit_tests
 
         // create a second system log entry to create a list
         $log2 = new system_error_log();
-        $log2->id = 2;
+        $log2->set_id(2);
         $log2->log_time = new DateTime('2021-11-27 12:49:34');
         $log2->usr_name = $usr->name;
         $log2->log_text = 'system test text 2';

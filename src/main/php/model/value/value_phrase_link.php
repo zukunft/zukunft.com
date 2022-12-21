@@ -230,7 +230,7 @@ class value_phrase_link
         $log = new user_log_link;
         $log->usr = $this->usr;
         $log->action = user_log::ACTION_ADD;
-        $log->table = 'value_phrase_links';
+        $log->set_table(change_log_table::VALUE_PHRASE_LINK);
         $log->new_from = $this->val;
         $log->new_to = $this->phr;
         $log->row_id = 0;
@@ -247,8 +247,8 @@ class value_phrase_link
         $log = new user_log_link;
         $log->usr = $this->usr;
         $log->action = user_log::ACTION_UPDATE;
-        $log->table = 'value_phrase_links'; // no user sandbox for links, only the values itself can differ from user to user
-        //$log->field = phrase::FLD_ID;
+        $log->set_table(change_log_table::VALUE_PHRASE_LINK); // no user sandbox for links, only the values itself can differ from user to user
+        //$log->set_field(phrase::FLD_ID);
         $log->old_from = $db_rec->val;
         $log->old_to = $db_rec->wrd;
         $log->new_from = $this->val;
@@ -330,7 +330,7 @@ class value_phrase_link
                 log_debug('val_lnk->save add new value_phrase_link of "' . $this->phr->name() . '" to "' . $this->val->id() . '"');
                 // log the insert attempt first
                 $log = $this->log_add();
-                if ($log->id > 0) {
+                if ($log->id() > 0) {
                     // insert the new value_phrase_link
                     $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
                     $this->id = $db_con->insert(array("value_id", "word_id"), array($this->val->id(), $this->phr->id()));
@@ -379,7 +379,7 @@ class value_phrase_link
 
         if (!$this->used()) {
             $log = $this->log_add();
-            if ($log->id > 0) {
+            if ($log->id() > 0) {
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->user()->id;
                 $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);

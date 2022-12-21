@@ -1007,7 +1007,7 @@ class user_sandbox extends db_object
 
         if ($this->id > 0 and $this->user()->id > 0) {
             $log = $this->log_del();
-            if ($log->id > 0) {
+            if ($log->id() > 0) {
                 $db_con->usr_id = $this->user()->id;
                 $result = $this->del_usr_cfg_exe($db_con);
             }
@@ -1183,7 +1183,7 @@ class user_sandbox extends db_object
         $log->usr = $this->usr;
         $log->action = user_log::ACTION_ADD;
         // TODO add the table exceptions from sql_db
-        $log->table = $this->obj_name . 's';
+        $log->set_table($this->obj_name . 's');
         $log->row_id = 0;
         $log->add();
 
@@ -1209,9 +1209,9 @@ class user_sandbox extends db_object
         $log->action = user_log::ACTION_UPDATE;
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
-            $log->table = $this->obj_name . 's';
+            $log->set_table($this->obj_name . 's');
         } else {
-            $log->table = sql_db::TBL_USER_PREFIX . $this->obj_name . 's';
+            $log->set_table(sql_db::TBL_USER_PREFIX . $this->obj_name . 's');
         }
 
         return $log;
@@ -1318,22 +1318,22 @@ class user_sandbox extends db_object
                         log_debug('remove user change');
                         $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
                         $db_con->set_usr($this->user()->id);
-                        if (!$db_con->update($this->id, $log->field, Null)) {
-                            $result = 'remove of ' . $log->field . ' failed';
+                        if (!$db_con->update($this->id, $log->field(), Null)) {
+                            $result = 'remove of ' . $log->field() . ' failed';
                         }
                     }
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 } else {
                     $db_con->set_type($this->obj_name);
                     $db_con->set_usr($this->user()->id);
-                    if (!$db_con->update($this->id, $log->field, $new_value)) {
-                        $result = 'update of ' . $log->field . ' to ' . $new_value . ' failed';
+                    if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                        $result = 'update of ' . $log->field() . ' to ' . $new_value . ' failed';
                     }
                 }
             } else {
                 if (!$this->has_usr_cfg()) {
                     if (!$this->add_usr_cfg()) {
-                        $result = 'creation of user sandbox for ' . $log->field . ' failed';
+                        $result = 'creation of user sandbox for ' . $log->field() . ' failed';
                     }
                 }
                 if ($result == '') {
@@ -1341,12 +1341,12 @@ class user_sandbox extends db_object
                     $db_con->set_usr($this->user()->id);
                     if ($new_value == $std_value) {
                         log_debug('remove user change');
-                        if (!$db_con->update($this->id, $log->field, Null)) {
-                            $result = 'remove of user value for ' . $log->field . ' failed';
+                        if (!$db_con->update($this->id, $log->field(), Null)) {
+                            $result = 'remove of user value for ' . $log->field() . ' failed';
                         }
                     } else {
-                        if (!$db_con->update($this->id, $log->field, $new_value)) {
-                            $result = 'update of user value for ' . $log->field . ' to ' . $new_value . ' failed';
+                        if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                            $result = 'update of user value for ' . $log->field() . ' to ' . $new_value . ' failed';
                         }
                     }
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
@@ -1378,7 +1378,7 @@ class user_sandbox extends db_object
                 }
             }
         }
-        $log->field = self::FLD_EXCLUDED;
+        $log->set_field(self::FLD_EXCLUDED);
         return $log;
     }
 
@@ -1399,7 +1399,7 @@ class user_sandbox extends db_object
             if ($this->can_change()) {
                 $db_con->set_type($this->obj_name);
                 $db_con->set_usr($this->user()->id);
-                if (!$db_con->update($this->id, $log->field, $new_value)) {
+                if (!$db_con->update($this->id, $log->field(), $new_value)) {
                     $result .= 'excluding of ' . $this->obj_name . ' failed';
                 }
             } else {
@@ -1412,11 +1412,11 @@ class user_sandbox extends db_object
                     $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
                     $db_con->set_usr($this->user()->id);
                     if ($new_value == $std_value) {
-                        if (!$db_con->update($this->id, $log->field, Null)) {
+                        if (!$db_con->update($this->id, $log->field(), Null)) {
                             $result .= 'include of ' . $this->obj_name . ' for user failed';
                         }
                     } else {
-                        if (!$db_con->update($this->id, $log->field, $new_value)) {
+                        if (!$db_con->update($this->id, $log->field(), $new_value)) {
                             $result .= 'excluding of ' . $this->obj_name . ' for user failed';
                         }
                     }
@@ -1447,7 +1447,7 @@ class user_sandbox extends db_object
             $log->std_value = $std_rec->share_type_name();
             $log->std_id = $std_rec->share_id;
             $log->row_id = $this->id;
-            $log->field = self::FLD_SHARE;
+            $log->set_field(self::FLD_SHARE);
 
             // save_field_do is not used because the share type can only be set on the user record
             if ($log->new_id > 0) {
@@ -1466,7 +1466,7 @@ class user_sandbox extends db_object
                 if ($result == '') {
                     $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
                     $db_con->set_usr($this->user()->id);
-                    if (!$db_con->update($this->id, $log->field, $new_value)) {
+                    if (!$db_con->update($this->id, $log->field(), $new_value)) {
                         $result = 'setting of share type failed';
                     }
                 }
@@ -1495,7 +1495,7 @@ class user_sandbox extends db_object
             $log->std_value = $std_rec->protection_type_name();
             $log->std_id = $std_rec->protection_id;
             $log->row_id = $this->id;
-            $log->field = self::FLD_PROTECT;
+            $log->set_field(self::FLD_PROTECT);
             $result .= $this->save_field_do($db_con, $log);
         }
 
@@ -1962,7 +1962,7 @@ class user_sandbox extends db_object
         } else {
             $log = $this->log_del();
         }
-        if ($log->id > 0) {
+        if ($log->id() > 0) {
             $db_con->usr_id = $this->user()->id;
 
             // for words first delete all links
@@ -2241,9 +2241,9 @@ class user_sandbox extends db_object
             $log->row_id = $this->id;
             // special case just to shorten the field name
             if ($this->obj_name == sql_db::TBL_FORMULA_LINK) {
-                $log->field = formula_link::FLD_TYPE;
+                $log->set_field(formula_link::FLD_TYPE);
             } else {
-                $log->field = $this->obj_name . sql_db::FLD_EXT_TYPE_ID;
+                $log->set_field($this->obj_name . sql_db::FLD_EXT_TYPE_ID);
             }
             $result .= $this->save_field_do($db_con, $log);
             log_debug('changed type to "' . $log->new_value . '" (from ' . $log->new_id . ')');

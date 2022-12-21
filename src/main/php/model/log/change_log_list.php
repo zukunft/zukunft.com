@@ -31,11 +31,13 @@
   
 */
 
+use api\change_log_list_api;
+use api\change_log_list_dsp;
+
 class change_log_list extends base_list
 {
 
 
-    // TODO add db read test
     // TODO add cast
     // TODO add JSON export test
     // TODO add API controller
@@ -46,65 +48,74 @@ class change_log_list extends base_list
 
 
     /*
+     * cast
+     */
+
+    /**
+     * @return change_log_list_api the word list object with the display interface functions
+     */
+    function api_obj(): change_log_list_api
+    {
+        $api_obj = new change_log_list_api();
+        foreach ($this->lst as $chg) {
+            $api_obj->add($chg->api_obj());
+        }
+        return $api_obj;
+    }
+
+    /**
+     * @return change_log_list_dsp the word list object with the display interface functions
+     */
+    function dsp_obj(): change_log_list_dsp
+    {
+        $dsp_obj = new change_log_list_dsp();
+        foreach ($this->lst as $wrd) {
+            $dsp_obj->add($wrd->dsp_obj());
+        }
+        return $dsp_obj;
+    }
+
+
+    /*
      * load
      */
 
     /**
      * load a list of the view changes of a word
      * @param word $wrd the word to which the view changes should be loaded
+     * @param string $field_name the field that has been change e.g. 'view_id'
+     *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_dsp_of_wrd(word $wrd): bool
+    function load_by_fld_of_wrd(word $wrd, string $field_name = ''): bool
     {
         global $db_con;
-        $qp = $this->load_sql_dsp_of_wrd($db_con, $wrd);
+        $qp = $this->load_sql_obj_fld(
+            $db_con,
+            change_log_table::WORD,
+            $field_name,
+            $field_name . '_of_wrd',
+            $wrd->id());
         return $this->load($qp);
     }
 
     /**
      * load a list of the view changes of a word
      * @param triple $trp the triple to which the view changes should be loaded
+     * @param string $field_name the field that has been change e.g. 'view_id'
+     *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_dsp_of_trp(triple $trp): bool
+    function load_by_fld_of_trp(triple $trp, string $field_name = ''): bool
     {
         global $db_con;
-        $qp = $this->load_sql_dsp_of_trp($db_con, $trp);
-        return $this->load($qp);
-    }
-
-    /**
-     * prepare sql to get the view changes of a word
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param word $wrd the word to which the view changes should be loaded
-     * @return sql_par
-     */
-    public function load_sql_dsp_of_wrd(sql_db $db_con, word $wrd): sql_par
-    {
-        return $this->load_sql_obj_fld(
-            $db_con,
-            change_log_table::WORD,
-            change_log_field::FLD_WORD_VIEW,
-            'dsp_of_wrd',
-            $wrd->id());
-    }
-
-    /**
-     * prepare sql to get the view changes of a triple
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param triple $trp the triple to which the view changes should be loaded
-     * @return sql_par
-     */
-    public function load_sql_dsp_of_trp(sql_db $db_con, triple $trp): sql_par
-    {
-        return $this->load_sql_obj_fld(
+        $qp = $this->load_sql_obj_fld(
             $db_con,
             change_log_table::TRIPLE,
-            change_log_field::FLD_TRIPLE_VIEW,
-            'dsp_of_trp',
+            $field_name,
+            $field_name . '_of_trp',
             $trp->id());
+        return $this->load($qp);
     }
 
     /**
@@ -118,12 +129,12 @@ class change_log_list extends base_list
      * @param int $id the database id of the user sandbox object that has been changed
      * @return sql_par
      */
-    private function load_sql_obj_fld(
+    public function load_sql_obj_fld(
         sql_db $db_con,
         string $table_name,
         string $field_name,
         string $query_ext,
-        int $id): sql_par
+        int    $id): sql_par
     {
         global $usr;
         global $change_log_tables;
@@ -170,6 +181,25 @@ class change_log_list extends base_list
             }
         }
 
+        return $result;
+    }
+
+    /*
+     * modification functions
+     */
+
+    /**
+     * add one named change to the change list
+     * @param user_log_named|null $chg_to_add the change that should be added to the list
+     * @returns bool true the phrase has been added
+     */
+    function add(?user_log_named $chg_to_add): bool
+    {
+        $result = false;
+        if ($chg_to_add != null) {
+            parent::add_obj($chg_to_add);
+            $result = true;
+        }
         return $result;
     }
 

@@ -302,8 +302,8 @@ class ip_range
         $result = '';
         if ($log->add()) {
             $db_con->set_type(sql_db::TBL_IP);
-            if (!$db_con->update($this->id, $log->field, $log->new_value)) {
-                $result .= 'updating ' . $log->field . ' to ' . $log->new_value . ' for ' . self::OBJ_NAME . ' ' . $this->dsp_id() . ' failed';
+            if (!$db_con->update($this->id, $log->field(), $log->new_value)) {
+                $result .= 'updating ' . $log->field() . ' to ' . $log->new_value . ' for ' . self::OBJ_NAME . ' ' . $this->dsp_id() . ' failed';
             }
 
         }
@@ -325,7 +325,7 @@ class ip_range
             $log->new_value = $this->reason;
             $log->std_value = $db_rec->reason;
             $log->row_id = $this->id;
-            $log->field = self::FLD_REASON;
+            $log->set_field(self::FLD_REASON);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -346,7 +346,7 @@ class ip_range
             $log->new_value = $this->active;
             $log->std_value = $db_rec->active;
             $log->row_id = $this->id;
-            $log->field = self::FLD_ACTIVE;
+            $log->set_field(self::FLD_ACTIVE);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -364,8 +364,8 @@ class ip_range
         $log = new user_log_named;
         $log->usr = $this->user();
         $log->action = user_log::ACTION_ADD;
-        $log->table = sql_db::TBL_IP;
-        $log->field = $this->name();
+        $log->set_table(sql_db::TBL_IP);
+        $log->set_field($this->name());
         $log->row_id = 0;
         $log->add();
 
@@ -379,7 +379,7 @@ class ip_range
         $log = new user_log_named;
         $log->usr = $this->user();
         $log->action = user_log::ACTION_UPDATE;
-        $log->table = sql_db::TBL_IP;
+        $log->set_table(sql_db::TBL_IP);
 
         return $log;
     }
@@ -404,7 +404,7 @@ class ip_range
 
         // log the insert attempt first
         $log = $this->log_add();
-        if ($log->id > 0) {
+        if ($log->id() > 0) {
             // insert the new ip range
             $db_con->set_type(sql_db::TBL_IP);
             $db_con->set_usr($this->user()->id);

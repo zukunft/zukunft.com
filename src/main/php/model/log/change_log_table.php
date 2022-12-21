@@ -33,26 +33,29 @@ global $change_log_tables;
 
 class change_log_table extends user_type_list
 {
-    // list of log log table with linked functionalities
-    const USR = "users";
-    const VALUE = "values";
-    const VALUE_USR = "user_values";
-    const VALUE_LINK = "value_links";
-    const WORD = "words";
-    const WORD_USR = "user_words";
-    const TRIPLE = "triples";
-    const TRIPLE_USR = "user_triples";
-    const VERB = "verbs";
-    const FORMULA = "formulas";
-    const FORMULA_USR = "user_formulas";
-    const FORMULA_LINK = "formula_links";
-    const FORMULA_LINK_USR = "user_formula_links";
-    const VIEW = "views";
-    const VIEW_USR = "user_views";
-    const VIEW_LINK = "view_component_links";
-    const VIEW_LINK_USR = "user_view_component_links";
-    const VIEW_COMPONENT = "view_components";
-    const VIEW_COMPONENT_USR = "user_view_components";
+    // list of the log table with linked functionalities
+    const USR = 'users';
+    const VALUE = 'values';
+    const VALUE_USR = 'user_values';
+    const VALUE_LINK = 'value_links';
+    const VALUE_PHRASE_LINK = 'value_phrase_links';
+    const WORD = 'words';
+    const WORD_USR = 'user_words';
+    const TRIPLE = 'triples';
+    const TRIPLE_USR = 'user_triples';
+    const VERB = 'verbs';
+    const FORMULA = 'formulas';
+    const FORMULA_USR = 'user_formulas';
+    const FORMULA_LINK = 'formula_links';
+    const FORMULA_LINK_USR = 'user_formula_links';
+    const VIEW = 'views';
+    const VIEW_USR = 'user_views';
+    const VIEW_LINK = 'view_component_links';
+    const VIEW_LINK_USR = 'user_view_component_links';
+    const VIEW_COMPONENT = 'view_components';
+    const VIEW_COMPONENT_USR = 'user_view_components';
+    const REF = 'refs';
+    const SOURCE = 'sources';
 
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled

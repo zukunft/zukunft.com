@@ -310,14 +310,13 @@ class user_sandbox_named extends user_sandbox
         log_debug($this->dsp_id());
 
         $log = new user_log_named;
-        $log->field = $this->obj_name . '_name';
+        // TODO add the table exceptions from sql_db
+        $log->action = user_log::ACTION_ADD;
+        $log->set_table($this->obj_name . 's');
+        $log->set_field($this->obj_name . '_name');
+        $log->usr = $this->user();
         $log->old_value = '';
         $log->new_value = $this->name();
-
-        $log->usr = $this->user();
-        $log->action = user_log::ACTION_ADD;
-        // TODO add the table exceptions from sql_db
-        $log->table = $this->obj_name . 's';
         $log->row_id = 0;
         $log->add();
 
@@ -333,13 +332,13 @@ class user_sandbox_named extends user_sandbox
         log_debug($this->dsp_id());
 
         $log = new user_log_named;
-        $log->field = $this->obj_name . '_name';
+        $log->usr = $this->user();
+        $log->action = user_log::ACTION_DELETE;
+        $log->set_table($this->obj_name . 's');
+        $log->set_field($this->obj_name . '_name');
         $log->old_value = $this->name();
         $log->new_value = '';
 
-        $log->usr = $this->user();
-        $log->action = user_log::ACTION_DELETE;
-        $log->table = $this->obj_name . 's';
         $log->row_id = $this->id;
         $log->add();
 
@@ -411,7 +410,7 @@ class user_sandbox_named extends user_sandbox
 
         // log the insert attempt first
         $log = $this->log_add();
-        if ($log->id > 0) {
+        if ($log->id() > 0) {
 
             // insert the new object and save the object key
             // TODO check that always before a db action is called the db type is set correctly
@@ -493,7 +492,7 @@ class user_sandbox_named extends user_sandbox
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id;
-                $log->field = self::FLD_DESCRIPTION;
+                $log->set_field(self::FLD_DESCRIPTION);
                 $result = $this->save_field_do($db_con, $log);
             }
         }
@@ -535,7 +534,7 @@ class user_sandbox_named extends user_sandbox
             $log->old_value = $db_rec->name();
             $log->new_value = $this->name();
             $log->std_value = $std_rec->name();
-            $log->field = $this->obj_name . '_name';
+            $log->set_field($this->obj_name . '_name');
 
             $log->row_id = $this->id;
             if ($log->add()) {

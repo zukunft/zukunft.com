@@ -32,7 +32,7 @@
 
 use api\system_error_log_api;
 
-class system_error_log
+class system_error_log extends db_object
 {
 
     // database and export JSON object field names
@@ -63,7 +63,6 @@ class system_error_log
     );
 
     // object vars for the database fields
-    public ?int $id = null;             // the database id of the log entry
     private ?user $usr = null;           // the user who wants to see the error
     public ?int $usr_id = null;         // the user id who was logged in when the error happened
     public string $usr_name = '';       // the username who was logged in when the error happened
@@ -89,7 +88,7 @@ class system_error_log
     function row_mapper(array $db_row): bool
     {
         if ($db_row[self::FLD_ID] > 0) {
-            $this->id = $db_row[self::FLD_ID];
+            $this->set_id($db_row[self::FLD_ID]);
             $this->usr_id = $db_row[user_sandbox::FLD_USER];
             $this->usr_name = $db_row[user_sandbox::FLD_USER_NAME];
             $this->solver_id = $db_row[self::FLD_SOLVER];
@@ -141,7 +140,7 @@ class system_error_log
     function get_dsp_obj(): system_error_log_api
     {
         $dsp_obj = new system_error_log_api();
-        $dsp_obj->id = $this->id;
+        $dsp_obj->id = $this->id();
         $dsp_obj->time = $this->log_time->format('Y-m-d H:i:s');
         $dsp_obj->user = $this->usr_name;
         $dsp_obj->text = $this->log_text;
@@ -165,7 +164,7 @@ class system_error_log
     function load_sql(sql_db $db_con): sql_par
     {
         $qp = new sql_par(self::class);
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $qp->name .= 'id';
 
             $db_con->set_type(sql_db::TBL_SYS_LOG);
@@ -175,12 +174,12 @@ class system_error_log
             $db_con->set_join_fields(array(user_type::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
             $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), sql_db::TBL_USER);
             $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), sql_db::TBL_USER, self::FLD_SOLVER);
-            $db_con->set_where_std($this->id);
+            $db_con->set_where_std($this->id());
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
 
         } else {
-            log_err("The database ID (" . $this->id . ") must be set to load a log message.", "system_error_log->load_sql");
+            log_err("The database ID (" . $this->id() . ") must be set to load a log message.", "system_error_log->load_sql");
             $qp->sql = '';
         }
         return $qp;
@@ -199,7 +198,7 @@ class system_error_log
         // at the moment it is only possible to select the error by the id
         $qp = $this->load_sql($db_con);
         if ($qp->sql != '') {
-            $db_con->usr_id = $this->id;
+            $db_con->usr_id = $this->id();
             return $this->row_mapper($db_con->get1($qp));
         } else {
             return false;
@@ -216,7 +215,7 @@ class system_error_log
         $log = new user_log_named;
         $log->usr = $this->user();
         $log->action = user_log::ACTION_UPDATE;
-        $log->table = sql_db::TBL_SYS_LOG;
+        $log->set_table(sql_db::TBL_SYS_LOG);
 
         return $log;
     }
@@ -233,7 +232,7 @@ class system_error_log
         $result = true;
         if ($log->add()) {
             $db_con->set_type(sql_db::TBL_SYS_LOG);
-            $result = $db_con->update($this->id, $log->field, $log->new_id);
+            $result = $db_con->update($this->id(), $log->field(), $log->new_id);
         }
         return $result;
     }
@@ -254,8 +253,8 @@ class system_error_log
             $log->old_id = $db_rec->status_id;
             $log->new_value = $this->status_name;
             $log->new_id = $this->status_id;
-            $log->row_id = $this->id;
-            $log->field = self::FLD_STATUS;
+            $log->row_id = $this->id();
+            $log->set_field(self::FLD_STATUS);
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -275,9 +274,9 @@ class system_error_log
         $db_con->set_usr($this->user()->id);
         $db_con->set_type(sql_db::TBL_SYS_LOG);
 
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $db_rec = new system_error_log;
-            $db_rec->id = $this->id;
+            $db_rec->set_id($this->id());
             $db_rec->set_user($this->user());
             if ($db_rec->load()) {
                 log_debug("database entry loaded");

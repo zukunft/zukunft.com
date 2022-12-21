@@ -2,8 +2,8 @@
 
 /*
 
-    api/log/change_log_list.php - a list changes that can be shown in the frontend
-    ---------------------------
+    api/user/user_log_named_api.php - the change log object for the frontend API for named user sandbox objects
+    -------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,45 +32,19 @@
 
 namespace api;
 
-use cfg\phrase_type;
-use html\word_list_dsp;
-
-class change_log_list_api extends list_api implements \JsonSerializable
+class user_log_named_api extends user_log_api
 {
 
-    /*
-     * construct and map
-     */
-
-    function __construct(array $lst = array())
-    {
-        parent::__construct($lst);
-    }
-
-    /**
-     * add a word to the list
-     * @param user_log_named_api $chg one change of a user sandbox object
-     * @returns bool true if the word has been added
-     */
-    function add(user_log_named_api $chg): bool
-    {
-        return list_api::add_obj($chg);
-    }
 
     /*
-     * interface
+     * object vars
      */
 
-    /**
-     * an array of the value vars including the private vars
-     */
-    public function jsonSerialize(): array
-    {
-        $vars = [];
-        foreach ($this->lst as $chg) {
-            $vars[] = json_decode(json_encode($chg));
-        }
-        return $vars;
-    }
+    public ?string $old_value = null;      // the field value before the user change
+    public ?int $old_id = null;            // the reference id before the user change e.g. for fields using a sub table such as status
+    public ?string $new_value = null;      // the field value after the user change
+    public ?int $new_id = null;            // the reference id after the user change e.g. for fields using a sub table such as status
+    public ?string $std_value = null;  // the standard field value for all users that does not have changed it
+    public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
 
 }

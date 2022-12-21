@@ -139,14 +139,13 @@ class user_sandbox_value extends user_sandbox
         log_debug($this->dsp_id());
 
         $log = new user_log_named;
-        $log->field = 'word_value';
+        $log->usr = $this->user();
+        $log->action = user_log::ACTION_ADD;
+        $log->set_table($this->obj_name . 's');
+        $log->set_field(change_log_field::FLD_VALUE_NUMBER);
         $log->old_value = '';
         $log->new_value = $this->number;
 
-        $log->usr = $this->user();
-        $log->action = user_log::ACTION_ADD;
-        // TODO add the table exceptions from sql_db
-        $log->table = $this->obj_name . 's';
         $log->row_id = 0;
         $log->add();
 
@@ -162,13 +161,13 @@ class user_sandbox_value extends user_sandbox
         log_debug($this->dsp_id());
 
         $log = new user_log_named;
-        $log->field = 'word_value';
+        $log->usr = $this->user();
+        $log->action = user_log::ACTION_DELETE;
+        $log->set_table($this->obj_name . 's');
+        $log->set_field(change_log_field::FLD_VALUE_NUMBER);
         $log->old_value = $this->number;
         $log->new_value = '';
 
-        $log->usr = $this->user();
-        $log->action = user_log::ACTION_DELETE;
-        $log->table = $this->obj_name . 's';
         $log->row_id = $this->id;
         $log->add();
 

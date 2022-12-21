@@ -2,8 +2,8 @@
 
 /*
 
-    api/log/change_log_list.php - a list changes that can be shown in the frontend
-    ---------------------------
+    api/user/user_log.php - the common change log object for the frontend API
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,45 +32,19 @@
 
 namespace api;
 
-use cfg\phrase_type;
-use html\word_list_dsp;
-
-class change_log_list_api extends list_api implements \JsonSerializable
+class user_log_api extends user_sandbox_api
 {
 
-    /*
-     * construct and map
-     */
-
-    function __construct(array $lst = array())
-    {
-        parent::__construct($lst);
-    }
-
-    /**
-     * add a word to the list
-     * @param user_log_named_api $chg one change of a user sandbox object
-     * @returns bool true if the word has been added
-     */
-    function add(user_log_named_api $chg): bool
-    {
-        return list_api::add_obj($chg);
-    }
 
     /*
-     * interface
+     * object vars
      */
 
-    /**
-     * an array of the value vars including the private vars
-     */
-    public function jsonSerialize(): array
-    {
-        $vars = [];
-        foreach ($this->lst as $chg) {
-            $vars[] = json_decode(json_encode($chg));
-        }
-        return $vars;
-    }
+    public ?int $usr_id = null; // the user who has done the change
+    public ?int $action_id;   // database id for the change type (add, change or del)
+    public ?int $table_id;       // database id of the table
+    public ?int $field_id;       // database id of the table
+    public ?int $row_id;         // prime database key of the row that has been changed
+    public ?string $change_time; // the time of the change in ISO format
 
 }

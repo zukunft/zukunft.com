@@ -742,7 +742,7 @@ class user
         $log = new user_log_named;
         $log->usr = $this;
         $log->action = user_log::ACTION_UPDATE;
-        $log->table = 'users';
+        $log->set_table(change_log_table::USR);
 
         return $log;
     }
@@ -759,10 +759,10 @@ class user
             $log->old_value = $db_row[$fld_name];
             $log->new_value = $usr_par[$par_name];
             $log->row_id = $this->id;
-            $log->field = $fld_name;
+            $log->set_field($fld_name);
             if ($log->add()) {
                 $db_con->set_type(sql_db::TBL_USER);
-                $result = $db_con->update($this->id, $log->field, $log->new_value);
+                $result = $db_con->update($this->id, $log->field(), $log->new_value);
             }
         }
         return $result;

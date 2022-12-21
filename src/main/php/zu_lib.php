@@ -381,6 +381,8 @@ include_once $path_php . 'api/sandbox/list_value.php';
 include_once $path_php . 'api/user/user.php';
 include_once $path_php . 'api/user/user_type.php';
 include_once $path_php . 'api/user/user_type_list.php';
+include_once $path_php . 'api/user/user_log.php';
+include_once $path_php . 'api/user/user_log_named.php';
 include_once $path_php . 'api/log/change_log.php';
 include_once $path_php . 'api/log/change_log_list.php';
 // model frontend API classes

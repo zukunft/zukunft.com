@@ -2,7 +2,7 @@
 
 /*
 
-    api/word_word_list.php - a list object of minimal/api word objects
+    api/word/word_list.php - a list object of minimal/api word objects
     ----------------------
 
 
@@ -82,6 +82,7 @@ class word_list_api extends list_api
 
         return $dsp_obj;
     }
+
 
     /*
      * selection functions

@@ -1451,7 +1451,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         $log = new user_log_link;
         $log->usr = $this->user();
         $log->action = user_log::ACTION_ADD;
-        $log->table = 'triples';
+        $log->set_table(change_log_table::TRIPLE);
         $log->new_from = $this->from;
         $log->new_link = $this->verb;
         $log->new_to = $this->to;
@@ -1470,9 +1470,9 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         $log->usr = $this->user();
         $log->action = user_log::ACTION_UPDATE;
         if ($this->can_change()) {
-            $log->table = 'triples';
+            $log->set_table(change_log_table::TRIPLE);
         } else {
-            $log->table = 'user_triples';
+            $log->set_table(change_log_table::TRIPLE_USR);
         }
 
         return $log;
@@ -1488,7 +1488,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         $log = new user_log_link;
         $log->usr = $this->user();
         $log->action = user_log::ACTION_DELETE;
-        $log->table = 'triples';
+        $log->set_table(change_log_table::TRIPLE);
         $log->old_from = $this->from;
         $log->old_link = $this->verb;
         $log->old_to = $this->to;
@@ -1507,9 +1507,9 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         $log->usr = $this->user();
         $log->action = user_log::ACTION_UPDATE;
         if ($this->can_change()) {
-            $log->table = 'triples';
+            $log->set_table(change_log_table::TRIPLE);
         } else {
-            $log->table = 'user_triples';
+            $log->set_table(change_log_table::TRIPLE_USR);
         }
 
         return $log;
@@ -1532,7 +1532,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             $log->new_value = $this->name();
             $log->std_value = $std_rec->name();
             $log->row_id = $this->id;
-            $log->field = self::FLD_NAME;
+            $log->set_field(self::FLD_NAME);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -1552,7 +1552,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             $log->new_value = $this->name_given();
             $log->std_value = $std_rec->name_given();
             $log->row_id = $this->id;
-            $log->field = self::FLD_NAME_GIVEN;
+            $log->set_field(self::FLD_NAME_GIVEN);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -1572,7 +1572,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             $log->new_value = $this->name_generated();
             $log->std_value = $std_rec->name_generated;
             $log->row_id = $this->id;
-            $log->field = self::FLD_NAME_AUTO;
+            $log->set_field(self::FLD_NAME_AUTO);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -1590,7 +1590,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             $log->new_value = $this->description;
             $log->std_value = $std_rec->description;
             $log->row_id = $this->id;
-            $log->field = sql_db::FLD_DESCRIPTION;
+            $log->set_field(sql_db::FLD_DESCRIPTION);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -1633,7 +1633,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             $log->new_to = $this->to;
             $log->std_to = $std_rec->to;
             $log->row_id = $this->id;
-            //$log->field    = self::FLD_FROM;
+            //$log->set_field(self::FLD_FROM);
             if ($log->add()) {
                 $db_con->set_type(sql_db::TBL_TRIPLE);
                 if (!$db_con->update($this->id,
@@ -1728,7 +1728,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
 
         // log the insert attempt first
         $log = $this->log_link_add();
-        if ($log->id > 0) {
+        if ($log->id() > 0) {
             // insert the new triple
             $db_con->set_type(sql_db::TBL_TRIPLE);
             $this->id = $db_con->insert(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),

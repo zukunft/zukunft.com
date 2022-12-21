@@ -1729,8 +1729,8 @@ class word extends user_sandbox_named_with_type
         $log = new user_log_named;
         $log->usr = $this->user();
         $log->action = user_log::ACTION_UPDATE;
-        $log->table = 'words';
-        $log->field = self::FLD_VIEW;
+        $log->set_table(change_log_table::WORD);
+        $log->set_field(self::FLD_VIEW);
         if ($this->view_id > 0) {
             $dsp_old = new view_dsp_old($this->user());
             $dsp_old->load_by_id($this->view_id);
@@ -1800,7 +1800,7 @@ class word extends user_sandbox_named_with_type
                 $log->new_value = $this->plural;
                 $log->std_value = $std_rec->plural;
                 $log->row_id = $this->id;
-                $log->field = self::FLD_PLURAL;
+                $log->set_field(self::FLD_PLURAL);
                 $result = $this->save_field_do($db_con, $log);
             }
         }
