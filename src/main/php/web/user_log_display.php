@@ -301,8 +301,8 @@ class user_log_display
         } elseif ($this->type == 'word') {
             $sql_where = " ( c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD) . " 
                     OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::triple) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::triple_USR) . " ) AND ";
+                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::TRIPLE) . " 
+                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::TRIPLE_USR) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.old_to_id = ' . $this->id . ' OR

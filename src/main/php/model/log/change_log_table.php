@@ -40,8 +40,8 @@ class change_log_table extends user_type_list
     const VALUE_LINK = "value_links";
     const WORD = "words";
     const WORD_USR = "user_words";
-    const triple = "triples";
-    const triple_USR = "user_triples";
+    const TRIPLE = "triples";
+    const TRIPLE_USR = "user_triples";
     const VERB = "verbs";
     const FORMULA = "formulas";
     const FORMULA_USR = "user_formulas";
@@ -76,6 +76,9 @@ class change_log_table extends user_type_list
         $type = new user_type(change_log_table::USR, change_log_table::USR);
         $this->lst[3] = $type;
         $this->hash[change_log_table::USR] = 3;
+        $type = new user_type(change_log_table::WORD, change_log_table::WORD);
+        $this->lst[4] = $type;
+        $this->hash[change_log_table::WORD] = 4;
     }
 
     /**

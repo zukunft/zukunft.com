@@ -2,8 +2,9 @@
 
 /*
 
-    user_log_field.php - the const for the change log field table
-    -----------------
+    api/log/change_log.php - the minimal object to show one log entry in the frontend API transfer
+    ----------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -30,13 +31,15 @@
 */
 
 
-class user_log_field
+class change_log_api
 {
-    /*
-     * database link
-     */
+    public ?int $action_id = null;  // database id of the action used to get the name from the preloaded hash
+    public ?int $table_id = null;   // database id of the table used to get the name from the preloaded hash
+    public ?int $field_id = null;   // database id of the field used to get the name from the preloaded hash
 
-    // user log database and JSON object field names
-    const FLD_TABLE = 'table_id';
+    public ?int $row_id = null;     // the reference id of the row in the database table
+
+    protected ?string $user_name = null;   //
+    protected ?string $change_time = null; //
 
 }

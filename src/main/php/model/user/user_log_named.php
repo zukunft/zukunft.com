@@ -104,16 +104,16 @@ class user_log_named extends user_log
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con): sql_par
+    function load_sql(sql_db $db_con, string $name): sql_par
     {
         $qp = new sql_par(self::class);
-        $qp->name .= 'field_row';
         $db_con->set_type(sql_db::TBL_CHANGE);
+        $qp->name .= $name;
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
-        $db_con->set_join_fields(array(user_log_field::FLD_TABLE), sql_db::TBL_CHANGE_FIELD);
+        $db_con->set_join_fields(array(change_log_field::FLD_TABLE), sql_db::TBL_CHANGE_FIELD);
         $db_con->set_order(self::FLD_CHANGE_TIME, sql_db::ORDER_DESC);
 
         return $qp;
@@ -129,7 +129,7 @@ class user_log_named extends user_log
      */
     public function load_sql_by_field_row(sql_db $db_con, int $field_id, int $row_id): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql($db_con, 'field_row');
         $db_con->set_page();
         $db_con->add_par(sql_db::PAR_INT, $field_id);
         $db_con->add_par(sql_db::PAR_INT, $row_id);

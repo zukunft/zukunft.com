@@ -30,6 +30,8 @@
 
 */
 
+use api\word_api;
+
 class user_log_unit_tests
 {
     function run(testing $t)
@@ -92,6 +94,21 @@ class user_log_unit_tests
         $qp = $log->load_sql_by_field_row($db_con, 1, 2);
         $sql_expected = 'PREPARE user_log_named_by_field_row (int,int) AS ' . $log->load_sql_old(word::class, )->sql;
         $t->assert_sql('word', $qp->sql, $sql_expected);
+
+        // sql to load a list of log entry by phrase
+        $db_con->set_usr($usr->id);
+        $wrd = new word($usr);
+        $wrd->set(1, word_api::TN_READ);
+        $log_lst = new change_log_list();
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $log_lst->load_sql_dsp_of_phr($db_con, $wrd->phrase());
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $log_lst->load_sql_dsp_of_phr($db_con, $wrd->phrase());
+        $t->assert_qp($qp, $db_con->db_type);
+
 
     }
 

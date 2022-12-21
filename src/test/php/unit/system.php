@@ -195,6 +195,8 @@ class system_unit_tests
         $t->assert_load_sql($db_con, $job_types);
         $change_log_tables = new change_log_table();
         $t->assert_load_sql($db_con, $change_log_tables);
+        $change_log_fields = new change_log_field();
+        $t->assert_load_sql($db_con, $change_log_fields);
          */
 
         /*

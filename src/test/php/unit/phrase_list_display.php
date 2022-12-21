@@ -66,7 +66,7 @@ class phrase_list_display_unit_tests
         */
 
         $test_page .= 'selector: ' . '<br>';
-        $test_page .= $lst->selector() . '<br>';
+        $test_page .= $lst->selector('phrase list test selector', '', 'please select') . '<br>';
 
         $t->html_test($test_page, 'phrase_list', $t);
     }

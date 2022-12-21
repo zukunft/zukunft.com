@@ -80,7 +80,7 @@ if ($usr->id > 0) {
     $result .= $dsp->selector_page($word_id, $back);
 
     // show the changes
-    $result .= $wrd->dsp_obj()->dsp_log_view($back);
+    $result .= $wrd->dsp_obj()->log_view($back);
 }
 
 echo $result;

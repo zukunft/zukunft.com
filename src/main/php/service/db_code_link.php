@@ -51,6 +51,7 @@ class db_cl
     const USER_PROFILE = "user_profile_type";
     const LOG_STATUS = "system_log_status";
     const LOG_TABLE = "change_table";
+    const LOG_FIELD = "change_field";
     const JOB_TYPE = "job_type";
 
     /**
@@ -168,6 +169,12 @@ class db_cl
         return $change_log_tables->id($code_id);
     }
 
+    function log_field_id(string $code_id): int
+    {
+        global $change_log_fields;
+        return $change_log_fields->id($code_id);
+    }
+
     /**
      * the type object base on the given database row id
      *
@@ -250,6 +257,12 @@ class db_cl
     {
         global $change_log_tables;
         return $change_log_tables->get($id);
+    }
+
+    function log_field(int $id)
+    {
+        global $change_log_fields;
+        return $change_log_fields->get($id);
     }
 
     /**
@@ -366,6 +379,12 @@ class db_cl
         return $change_log_tables->name($id);
     }
 
+    function log_field_name(int $id): string
+    {
+        global $change_log_fields;
+        return $change_log_fields->name($id);
+    }
+
 }
 
 
@@ -436,6 +455,9 @@ function cl(string $type, string $code_id): int
             break;
         case db_cl::LOG_TABLE:
             $result = $db_code_link->log_table_id($code_id);
+            break;
+        case db_cl::LOG_FIELD:
+            $result = $db_code_link->log_field_id($code_id);
             break;
     }
     return $result;
@@ -508,6 +530,9 @@ function cl_name(string $type, int $id): string
         case db_cl::LOG_TABLE:
             $result = $db_code_link->log_table_name($id);
             break;
+        case db_cl::LOG_FIELD:
+            $result = $db_code_link->log_field_name($id);
+            break;
     }
     return $result;
 }
@@ -572,6 +597,9 @@ function get_type(string $type, string $code_id): user_type
             break;
         case db_cl::LOG_TABLE:
             $result = $db_code_link->log_table($db_code_link->log_table_id($code_id));
+            break;
+        case db_cl::LOG_FIELD:
+            $result = $db_code_link->log_field($db_code_link->log_field_id($code_id));
             break;
     }
     return $result;

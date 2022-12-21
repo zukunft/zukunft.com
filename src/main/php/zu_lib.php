@@ -247,7 +247,9 @@ include_once $path_php . 'model/system/system_utils.php';
 include_once $path_php . 'model/system/system_error_log_status_list.php';
 include_once $path_php . 'model/system/ip_range.php';
 include_once $path_php . 'model/system/ip_range_list.php';
-include_once $path_php . 'model/log/log_table.php';
+include_once $path_php . 'model/log/change_log_table.php';
+include_once $path_php . 'model/log/change_log_field.php';
+include_once $path_php . 'model/log/change_log_list.php';
 include_once $path_php . 'model/log/error_log.php';
 // service
 include_once $path_php . 'service/import/import_file.php';
@@ -265,7 +267,6 @@ include_once $path_php . 'model/user/user_list.php';
 include_once $path_php . 'model/user/user_log.php';
 include_once $path_php . 'model/user/user_log_named.php';
 include_once $path_php . 'model/user/user_log_link.php';
-include_once $path_php . 'model/user/user_log_field.php';
 include_once $path_php . 'model/sandbox/user_sandbox.php';
 include_once $path_php . 'model/sandbox/user_sandbox_named.php';
 include_once $path_php . 'model/sandbox/user_sandbox_value.php';
@@ -380,6 +381,8 @@ include_once $path_php . 'api/sandbox/list_value.php';
 include_once $path_php . 'api/user/user.php';
 include_once $path_php . 'api/user/user_type.php';
 include_once $path_php . 'api/user/user_type_list.php';
+include_once $path_php . 'api/log/change_log.php';
+include_once $path_php . 'api/log/change_log_list.php';
 // model frontend API classes
 include_once $path_php . 'api/word/word.php';
 include_once $path_php . 'api/word/word_list.php';
@@ -885,6 +888,7 @@ function prg_restart(string $code_name): sql_db
     global $sys_log_stati;
     global $job_types;
     global $change_log_tables;
+    global $change_log_fields;
 
     // link to database
     $db_con = new sql_db;
@@ -940,6 +944,8 @@ function prg_restart(string $code_name): sql_db
     $job_types->load($db_con);
     $change_log_tables = new change_log_table();
     $change_log_tables->load($db_con);
+    $change_log_fields = new change_log_field();
+    $change_log_fields->load($db_con);
 
     // preload the little more complex objects
     $verbs = new verb_list();

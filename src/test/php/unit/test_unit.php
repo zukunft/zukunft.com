@@ -81,6 +81,7 @@ class test_unit extends testing
         $this->init_protection_types();
         $this->init_job_types();
         $this->init_log_tables();
+        $this->init_log_fields();
 
         // do the unit tests
         (new string_unit_tests)->run($this); // test functions not yet split into single unit tests
@@ -352,6 +353,18 @@ class test_unit extends testing
 
         $change_log_tables = new change_log_table();
         $change_log_tables->load_dummy();
+
+    }
+
+    /**
+     * create log field array for the unit tests without database connection
+     */
+    function init_log_fields()
+    {
+        global $change_log_fields;
+
+        $change_log_fields = new change_log_field();
+        $change_log_fields->load_dummy();
 
     }
 

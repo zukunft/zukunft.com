@@ -5,6 +5,8 @@
     user_log.php - object to save the user changes in the database in a format, so that it can fast be displayed to the user
     ------------
 
+    for reading the user changes from the database and forwarding them to the API and frontend model/log/changeLog* should be used
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

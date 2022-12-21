@@ -136,7 +136,11 @@ class html_selector
             if ($label != "") {
                 $result .= '<label for="' . $field . '">' . $label . '</label>';
             }
-            $result .= '<select class="form-control" name="' . $field . '" form="' . $form . '" id="' . $field . '" ' . $attribute . '>';
+            if ($form != "") {
+                $result .= '<select class="form-control" name="' . $field . '" form="' . $form . '" id="' . $field . '" ' . $attribute . '>';
+            } else {
+                $result .= '<select class="form-control" name="' . $field . '" id="' . $field . '" ' . $attribute . '>';
+            }
         } else {
             $result .= $label . ' <select name="' . $field . '" form="' . $form . '">';
         }

@@ -149,6 +149,7 @@ class sql_db
     const VT_PHRASE = 'phrase';
     const VT_TERM = 'term';
     const VT_PHRASE_GROUP_LINK = 'phrase_group_phrase_link';
+    const VT_TABLE_FIELD = 'change_table_field';
 
     // the parameter types for prepared queries independent of the SQL dialect
     const PAR_INT = 'int';

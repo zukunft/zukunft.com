@@ -5,7 +5,10 @@
     back_trace.php - list of links that the user has called in the past
     --------------
 
-    used to impliment CTRL-Z
+    used to implement CTRL-Z
+
+    TODO if possible should be included in the request using a json body
+    TODO allow tree based back and force steps
 
     This file is part of zukunft.com - calc with words
 

@@ -84,11 +84,12 @@ class phrase_list_dsp extends phrase_list_api
     /**
      * @returns string the html code to select a phrase out of this list
      */
-    public function selector(string $name = '', string $form = '', int $selected = 0): string
+    public function selector(string $name = '', string $form = '', string $label = '', int $selected = 0): string
     {
         $sel = new html_selector;
         $sel->name = $name;
         $sel->form = $form;
+        $sel->label = $label;
         $sel->lst = $this->lst_key();
         $sel->selected = $selected;
 

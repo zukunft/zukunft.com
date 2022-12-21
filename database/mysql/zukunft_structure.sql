@@ -1645,6 +1645,21 @@ select `user_phrase_group_triple_links`.`phrase_group_triple_link_id` AS `phrase
 from `user_phrase_group_triple_links`;
 
 --
+-- Structure for view`change_table_fields`
+--
+DROP TABLE IF EXISTS `change_table_fields`;
+
+CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
+    SECURITY DEFINER VIEW `change_table_fields` AS
+select `change_fields`.`change_field_id`                                              AS `change_table_field_id`,
+       CONCAT(`change_tables`.`change_table_id`, `change_fields`.`change_field_name`) AS `change_table_field_name`,
+       `change_fields`.`description`                                                  AS `description`,
+       `change_fields`.`code_id`                                                      AS `code_id`
+from `change_fields`,
+     `change_tables`
+WHERE `change_fields`.table_id = `change_tables`.change_table_id;
+
+--
 -- Indexes for dumped tables
 --
 

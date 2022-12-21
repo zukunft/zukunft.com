@@ -1677,6 +1677,19 @@ SELECT t.phrase_group_triple_link_id AS phrase_group_phrase_link_id,
 FROM user_phrase_group_triple_links AS t;
 
 --
+-- Structure for view change_table_fields
+--
+
+CREATE OR REPLACE VIEW change_table_fields AS
+SELECT f.change_field_id                              AS change_table_field_id,
+       concat(t.change_table_id, f.change_field_name) AS change_table_field_name,
+       f.description,
+       f.code_id
+FROM change_fields AS f,
+     change_tables AS t
+WHERE f.table_id = t.change_table_id;
+
+--
 -- Indexes for dumped tables
 --
 

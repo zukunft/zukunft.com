@@ -124,6 +124,8 @@ class user_type_list
                 $type_name = '';
                 if ($db_type == db_cl::LOG_TABLE) {
                     $type_name = strval($db_entry['change_table_name']);
+                } elseif ($db_type == sql_db::VT_TABLE_FIELD) {
+                    $type_name = strval($db_entry['change_table_field_name']);
                 } else {
                     $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
                 }

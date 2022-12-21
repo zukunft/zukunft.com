@@ -33,6 +33,7 @@ namespace html;
 
 use api\word_api;
 use api\phrase_api;
+use back_trace;
 use cfg\phrase_type;
 use word;
 
@@ -45,6 +46,11 @@ class word_dsp extends word_api
     const TIME_FUT_PCT = 20; // the default number of future outlook e.g. if there are 10 years of hist and 3 years of outlook display 8 years of hist and 2 years outlook
 
     const FORM_EDIT = 'word_edit';
+
+
+    /*
+     * base elements
+     */
 
     /**
      * @returns string simply the word name, but later with mouse over that shows the description
@@ -134,27 +140,9 @@ class word_dsp extends word_api
     }
 
 
-    /**
-     * @returns string html code to display a single word in a column and allow to delete it
+    /*
+     * select
      */
-    function dsp_del(): string
-    {
-        $html = new html_base();
-        $name = $this->td();
-        $btn = $html->td($this->btn_del());
-        return $html->tr($name . $btn);
-    }
-
-    /**
-     * allow the user to unlink a word
-     */
-    function dsp_unlink(int $link_id): string
-    {
-        $html = new html_base();
-        $name = $this->td();
-        $btn = $html->td($this->btn_unlink($link_id));
-        return $html->tr($name . $btn);
-    }
 
     /**
      * @param string $script
@@ -186,6 +174,10 @@ class word_dsp extends word_api
         }
         return $result;
     }
+
+    /*
+     * change forms
+     */
 
     function form_add(string $back = ''): string
     {
@@ -235,6 +227,34 @@ class word_dsp extends word_api
         return $result;
     }
 
+
+    /*
+     * change action
+     */
+
+    /**
+     * @returns string html code to display a single word in a column and allow to delete it
+     */
+    function dsp_del(): string
+    {
+        $html = new html_base();
+        $name = $this->td();
+        $btn = $html->td($this->btn_del());
+        return $html->tr($name . $btn);
+    }
+
+    /**
+     * allow the user to unlink a word
+     */
+    function dsp_unlink(int $link_id): string
+    {
+        $html = new html_base();
+        $name = $this->td();
+        $btn = $html->td($this->btn_unlink($link_id));
+        return $html->tr($name . $btn);
+    }
+
+
     /*
      * buttons
      */
@@ -257,6 +277,21 @@ class word_dsp extends word_api
         $url = (new html_base())->url(api::LINK . api::REMOVE, $link_id, $this->id);
         return (new button((new msg())->txt(msg::WORD_UNLINK), $url))->del();
     }
+
+    /*
+     * change log
+     */
+
+    /**
+     * @param back_trace $back the last changes to allow undo actions by the user
+     * @return string with the HTML code to show the last changes of the view of this word
+     */
+    public function log_view(back_trace $back): string
+    {
+        $log_dsp = new change_log_dsp();
+        return '';
+    }
+
 
     /*
      * casting
