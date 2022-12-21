@@ -2,8 +2,8 @@
 
 /*
 
-    api\phrase_list.php - a list object of minimal/api phrase objects
-    -------------------
+    api/phrase/phrase_list.php - a list object of minimal/api phrase objects
+    --------------------------
 
 
     This file is part of zukunft.com - calc with words

@@ -2,8 +2,8 @@
 
 /*
 
-    api\view_cmp.php - the view component object for the frontend API
-    ----------------
+    api/view/view_cmp.php - the view component object for the frontend API
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words

@@ -39,10 +39,13 @@ class change_log_field extends user_type_list
      * database link
      */
 
-    // user log database and JSON object field names
+    // the field names in the log are for the current version the same as the field names of the single objects
+    // the field names are listed here again, so that the log can include all changes even if the field name has changed
     const FLD_TABLE = 'table_id';
     const FLD_WORD_NAME = 'word_name';
+    const FLD_WORD_VIEW = 'view_id';
     const FLD_TRIPLE_NAME = 'name_given';
+    const FLD_TRIPLE_VIEW = 'view_id';
     const FLD_TABLE_FIELD = 'table_field_name';
 
     /**

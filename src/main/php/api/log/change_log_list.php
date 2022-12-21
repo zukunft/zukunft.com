@@ -44,16 +44,16 @@ class change_log_list_api extends list_api
 
     function __construct(array $lst = array())
     {
-        list_api::__construct($lst);
+        parent::__construct($lst);
     }
 
     /**
      * add a word to the list
      * @returns bool true if the word has been added
      */
-    function add(\api\word_api $phr): bool
+    function add(word_api $phr): bool
     {
-        return \api\list_api::add_obj($phr);
+        return list_api::add_obj($phr);
     }
 
 
@@ -94,7 +94,7 @@ class change_log_list_api extends list_api
      * and delete list of "2016", "2017","2018"
      * the result is "2014", "2015"
      *
-     * @param \api\word_list_api $del_lst is the list of phrases that should be removed from this list object
+     * @param word_list_api $del_lst is the list of phrases that should be removed from this list object
      */
     private function diff(change_log_list_api $del_lst): void
     {
@@ -112,7 +112,7 @@ class change_log_list_api extends list_api
 
     /**
      * merge as a function, because the array_merge does not create an object
-     * @param \api\word_list_api $new_wrd_lst with the words that should be added
+     * @param word_list_api $new_wrd_lst with the words that should be added
      */
     function merge(change_log_list_api $new_wrd_lst)
     {
@@ -123,7 +123,7 @@ class change_log_list_api extends list_api
 
     /**
      * @param string $type the ENUM string of the fixed type
-     * @return \api\word_list_api with the all words of the give type
+     * @return word_list_api with the all words of the give type
      */
     private function filter(string $type): change_log_list_api
     {
@@ -168,7 +168,7 @@ class change_log_list_api extends list_api
 
     /**
      * get all measure and scaling words from this list of words
-     * @returns \api\word_list_api words that are usually shown after a number
+     * @returns word_list_api words that are usually shown after a number
      */
     function measure_scale_lst(): change_log_list_api
     {
@@ -190,7 +190,7 @@ class change_log_list_api extends list_api
      * like names_linked, but without measure and time words
      * because measure words are usually shown after the number
      * TODO call this from the display object t o avoid casting again
-     * @returns \api\word_list_api a word
+     * @returns word_list_api a word
      */
     function ex_measure_and_time_lst(): change_log_list_api
     {

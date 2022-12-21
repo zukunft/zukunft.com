@@ -2,8 +2,8 @@
 
 /*
 
-    api\formula_value_List.php - the minimal result value list object
-    --------------------------
+    api/formula/formula_value_List.php - the minimal result value list object
+    ----------------------------------
 
 
     This file is part of zukunft.com - calc with words

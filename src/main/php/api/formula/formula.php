@@ -2,8 +2,8 @@
 
 /*
 
-    api\formula.php - the minimal formula object for the frontend API
-    ---------------
+    api/formula/formula.php - the minimal formula object for the frontend API
+    -----------------------
 
 
     This file is part of zukunft.com - calc with words

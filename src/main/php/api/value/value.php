@@ -2,8 +2,8 @@
 
 /*
 
-    api\value.php - the minimal value object
-    -------------
+    api/value/value.php - the minimal value object
+    -------------------
 
 
     This file is part of zukunft.com - calc with words

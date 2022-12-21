@@ -2,8 +2,8 @@
 
 /*
 
-    api\batch_job.php - the simple object to create a batch job json for the frontend API
-    -----------------
+    api/system/batch_job.php - the simple object to create a batch job json for the frontend API
+    ------------------------
 
     This file is part of zukunft.com - calc with words
 

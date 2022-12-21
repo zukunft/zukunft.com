@@ -2,8 +2,8 @@
 
 /*
 
-    api\List.php - the minimal list object used for the api
-    ------------
+    api/sandbox/list.php - the minimal list object used for the api
+    --------------------
 
     e.g. used for the value and formula result api object
 

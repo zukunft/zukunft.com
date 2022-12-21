@@ -109,8 +109,9 @@ class base_list
         $this->lst_dirty = false;
     }
 
+
     /*
-     * search functions
+     * search
      */
 
     /**
@@ -131,11 +132,11 @@ class base_list
 
 
     /*
-     * modify functions
+     * modify
      */
 
     /**
-     * add a object to the list
+     * add an object to the list
      * @returns bool true if the object has been added
      */
     protected function add_obj(object $obj_to_add): bool

@@ -40,7 +40,7 @@ class controller
     /**
      * response to a get request
      *
-     * @param string $json the object as a json string that should be returned
+     * @param string $api_obj the object as a json string that should be returned
      * @param string $msg the message as a json string that should be returned
      * @return void
      */

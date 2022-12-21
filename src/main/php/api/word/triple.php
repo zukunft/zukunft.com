@@ -2,8 +2,8 @@
 
 /*
 
-    api\triple.php - the minimal triple (triple) object
-    --------------
+    api/word/triple.php - the minimal triple (triple) object
+    -------------------
 
 
     This file is part of zukunft.com - calc with words

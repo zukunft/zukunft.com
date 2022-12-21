@@ -2,8 +2,8 @@
 
 /*
 
-    api\formula_list.php - a list of minimal/api formula objects
-    --------------------
+    api/formula/formula_list.php - a list of minimal/api formula objects
+    ----------------------------
 
 
     This file is part of zukunft.com - calc with words

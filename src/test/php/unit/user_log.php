@@ -30,6 +30,7 @@
 
 */
 
+use api\triple_api;
 use api\word_api;
 
 class user_log_unit_tests
@@ -95,18 +96,33 @@ class user_log_unit_tests
         $sql_expected = 'PREPARE user_log_named_by_field_row (int,int) AS ' . $log->load_sql_old(word::class, )->sql;
         $t->assert_sql('word', $qp->sql, $sql_expected);
 
-        // sql to load a list of log entry by phrase
+        // prepare the objects for the tests
+        $wrd = $t->dummy_word();
+        $trp = new triple($usr);
+        $trp->set(1, triple_api::TN_READ);
+
+        // sql to load a list of log entry by word
         $db_con->set_usr($usr->id);
-        $wrd = new word($usr);
-        $wrd->set(1, word_api::TN_READ);
         $log_lst = new change_log_list();
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $log_lst->load_sql_dsp_of_phr($db_con, $wrd->phrase());
+        $qp = $log_lst->load_sql_dsp_of_wrd($db_con, $wrd);
         $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $log_lst->load_sql_dsp_of_phr($db_con, $wrd->phrase());
+        $qp = $log_lst->load_sql_dsp_of_wrd($db_con, $wrd);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // sql to load a list of log entry by phrase
+        $db_con->set_usr($usr->id);
+        $log_lst = new change_log_list();
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $log_lst->load_sql_dsp_of_trp($db_con, $trp);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $log_lst->load_sql_dsp_of_trp($db_con, $trp);
         $t->assert_qp($qp, $db_con->db_type);
 
 

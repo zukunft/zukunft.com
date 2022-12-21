@@ -2,8 +2,8 @@
 
 /*
 
-    api\phrase.php - the minimal phrase object for the frontend API
-    --------------
+    api/phrase/phrase.php - the minimal phrase object for the frontend API
+    ---------------------
 
     This file is part of zukunft.com - calc with words
 

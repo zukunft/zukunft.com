@@ -2,8 +2,8 @@
 
 /*
 
-    api\verb.php - the verb object for the frontend API
-    ------------
+    api/verb/verb.php - the verb object for the frontend API
+    -----------------
 
 
     This file is part of zukunft.com - calc with words

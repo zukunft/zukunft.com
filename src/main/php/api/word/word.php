@@ -2,7 +2,7 @@
 
 /*
 
-    api\word\word.php - the minimal word object for the backend to frontend API transfer
+    api/word/word.php - the minimal word object for the backend to frontend API transfer
     -----------------
 
 

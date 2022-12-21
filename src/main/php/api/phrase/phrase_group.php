@@ -2,8 +2,8 @@
 
 /*
 
-    api\phrase_group.php - the minimal phrase group object used for the back- to frontend api
-    --------------------
+    api/phrase/phrase_group.php - the minimal phrase group object used for the back- to frontend api
+    ---------------------------
 
 
     This file is part of zukunft.com - calc with words

@@ -42,7 +42,7 @@ use cfg\formula_type;
 use cfg\phrase_type;
 use html\html_base;
 
-class testing extends test_base
+class testing extends test_new_obj
 {
     // queries to check if removing of the test rows is complete
     const CLEAN_CHECK_WORDS = 'db/cleanup/test_words.sql';

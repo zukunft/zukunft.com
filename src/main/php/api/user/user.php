@@ -2,8 +2,8 @@
 
 /*
 
-    api\user.php - the simple object to export a user json for the frontend API
-    ------------
+    api/user/user.php - the simple object to export a user json for the frontend API
+    -----------------
 
     This file is part of zukunft.com - calc with words
 

@@ -51,8 +51,7 @@ class term_unit_tests
 
         $t->subheader('Set and get of the grouped object tests');
 
-        $wrd = new word($usr);
-        $wrd->set(1, word_api::TN_READ);
+        $wrd = $t->dummy_word();
         $trm = $wrd->term();
         $t->assert($t->name . 'word id', $trm->id_obj(), $wrd->id());
         $t->assert($t->name . 'word name', $trm->name(), $wrd->name_dsp());

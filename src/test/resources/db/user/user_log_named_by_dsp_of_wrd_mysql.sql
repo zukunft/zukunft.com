@@ -1,4 +1,4 @@
-PREPARE user_log_named_by_dsp_of_phr FROM
+PREPARE user_log_named_by_dsp_of_wrd FROM
     'SELECT s.change_id,
             s.user_id,
             s.change_time,
@@ -15,5 +15,6 @@ PREPARE user_log_named_by_dsp_of_phr FROM
   LEFT JOIN users l ON s.user_id = l.user_id
   LEFT JOIN change_fields l2 ON s.change_field_id = l2.change_field_id
       WHERE s.change_field_id = ?
+        AND s.row_id = ?
    ORDER BY s.change_time DESC
       LIMIT 20';

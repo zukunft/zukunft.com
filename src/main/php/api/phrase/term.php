@@ -2,8 +2,8 @@
 
 /*
 
-    api\term.php - the minimal term object for the frontend API
-    ------------
+    api/phrase/term.php - the minimal term object for the frontend API
+    -------------------
 
     This file is part of zukunft.com - calc with words
 

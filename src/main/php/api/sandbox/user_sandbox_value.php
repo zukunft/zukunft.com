@@ -2,7 +2,7 @@
 
 /*
 
-    api\user_sandbox_value.php - the minimal superclass for the frontend API
+    api/user/user_sandbox_value.php - the minimal superclass for the frontend API
     --------------------------
 
     This superclass should be used by the classes word_min, formula_min, ... to enable user specific values and links

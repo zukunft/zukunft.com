@@ -2,8 +2,8 @@
 
 /*
 
-    api\view.php - the view object for the frontend API
-    ------------
+    api/view/view.php - the view object for the frontend API
+    -----------------
 
 
     This file is part of zukunft.com - calc with words
