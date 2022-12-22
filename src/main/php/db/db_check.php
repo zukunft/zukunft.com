@@ -329,6 +329,10 @@ function db_fill_code_links(sql_db $db_con)
 {
     global $debug;
 
+    // first of all set the database version if not jet done
+    $cfg = new config();
+    $cfg->set(config::VERSION_DB, PRG_VERSION, $db_con);
+
     // get the list of CSV and loop
     $csv_file_list = unserialize(BASE_CODE_LINK_FILES);
     foreach ($csv_file_list as $csv_file_name) {
