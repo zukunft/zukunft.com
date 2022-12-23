@@ -158,6 +158,52 @@ function run_db_truncate()
     foreach ($table_names as $table_name) {
         run_table_truncate($table_name);
     }
+
+    // reset the preloaded data
+    run_preloaded_truncate();
+}
+
+function run_preloaded_truncate(): void
+{
+    global $system_users;
+    global $user_profiles;
+    global $phrase_types;
+    global $formula_types;
+    global $formula_link_types;
+    global $formula_element_types;
+    global $view_types;
+    global $view_component_types;
+    global $view_component_link_types;
+    global $view_component_position_types;
+    global $ref_types;
+    global $source_types;
+    global $share_types;
+    global $protection_types;
+    global $verbs;
+    global $system_views;
+    global $sys_log_stati;
+    global $job_types;
+    global $change_log_tables;
+    global $change_log_fields;
+
+    //$system_users =[];
+    //$user_profiles =[];
+    $phrase_types = new word_type_list();
+    $formula_types = new formula_type_list();
+    $formula_link_types = new formula_link_type_list();
+    $formula_element_types = new formula_element_type_list();
+    $view_types = new view_type_list();
+    $view_component_types = new view_cmp_type_list();
+    // not yet needed?
+    //$view_component_link_types = new view_component_link_type_list();
+    $view_component_position_types = new view_cmp_pos_type_list();
+    $ref_types = new ref_type_list();
+    $source_types = new source_type_list();
+    $share_types = new share_type_list();
+    $protection_types = new protection_type_list();
+    $job_types = new job_type_list();
+    $change_log_tables = new change_log_table();
+    $change_log_fields = new change_log_field();
 }
 
 function run_table_truncate(string $table_name)

@@ -119,8 +119,8 @@ class user_log extends db_object
                 log_err("Cannot add table name " . $table_name);
             } else {
                 $tbl = new user_type($table_name, $table_name);
-                $change_log_tables->add($tbl);
-                $change_log_tables->get_hash();
+                $change_log_tables->add($tbl, $this->table_id);
+                $change_log_tables->get_hash($change_log_tables->lst);
             }
         }
     }
@@ -177,7 +177,7 @@ class user_log extends db_object
     /**
      * to save database space the table name is saved as a reference id in the log table
      */
-    protected function add_table(string $table_name = ''): void
+    protected function add_table(string $table_name = ''): int
     {
         if ($this->usr == null) {
             log_warning(' "' . $table_name . '" but user is missing');
@@ -219,12 +219,13 @@ class user_log extends db_object
         }
         // restore the type before saving the log
         $db_con->set_type($db_type);
+        return $table_id;
     }
 
     /**
      * save the field name as a reference id in the log table
      */
-    protected function add_field(string $field_name = ''): void
+    protected function add_field(string $field_name = ''): int
     {
         global $usr;
         if ($this->usr == null) {
@@ -265,6 +266,7 @@ class user_log extends db_object
         }
         // restore the type before saving the log
         $db_con->set_type($db_type);
+        return $field_id;
     }
 
     protected function add_action(): void

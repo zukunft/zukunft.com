@@ -39,9 +39,13 @@ class view_api extends user_sandbox_named_with_type_api
      * const for system testing
      */
 
-    // persevered view names for unit and integration tests (TN means TEST NAME)
+    // persevered view names for unit and integration tests
+    // TN_* means 'test name'
+    // TD_* means 'description'
+    // TI_* means 'code id'
     const TN_READ = 'Word';
     const TD_READ = 'the default view for words';
+    const TI_READ = 'word';
     const TN_ADD = 'System Test View';
     const TN_RENAMED = 'System Test View Renamed';
     const TN_COMPLETE = 'System Test View Complete';

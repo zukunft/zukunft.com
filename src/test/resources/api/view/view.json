@@ -1,5 +1,6 @@
 {
   "id": 1,
   "name": "Word",
-  "description": "the default view for words"
+  "description": "the default view for words",
+  "code_id": "word"
 }

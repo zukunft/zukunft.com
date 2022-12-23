@@ -215,7 +215,7 @@ class user_log_link extends user_log
     }
 
     // identical to the functions in user_log (maybe move to a common object??)
-    protected function add_table(string $table_name = ''): void
+    protected function add_table(string $table_name = ''): int
     {
         log_debug('user_log_link->set_table "' . $this->table() . '" for ' . $this->usr->dsp_id());
 
@@ -247,6 +247,7 @@ class user_log_link extends user_log
         }
         // restore the type before saving the log
         $db_con->set_type($db_type);
+        return $table_id;
     }
 
     protected function add_action(): void
@@ -400,7 +401,7 @@ class user_log_link extends user_log
         global $db_con;
         $result = '';
 
-        $this->add_table();
+        //$this->add_table();
 
         $db_type = $db_con->get_type();
         $qp = $this->load_sql($db_con, $this->table_id);

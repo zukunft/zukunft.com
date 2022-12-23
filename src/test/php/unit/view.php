@@ -96,6 +96,7 @@ class view_unit_tests
         $dsp = new view($usr);
         $dsp->set(1, view_api::TN_READ);
         $dsp->description = view_api::TD_READ;
+        $dsp->code_id = view_api::TI_READ;
         $t->assert_api($dsp);
 
         /*
