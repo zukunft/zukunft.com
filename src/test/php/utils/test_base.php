@@ -72,6 +72,7 @@ include_once $root_path . 'src/main/php/service/config.php';
 // load the other test utility modules (beside this base configuration module)
 include_once $path_utils . 'create_test_objects.php';
 include_once $path_utils . 'test_system.php';
+include_once $path_utils . 'test_api.php';
 include_once $path_utils . 'test_db_link.php';
 include_once $path_utils . 'test_user.php';
 include_once $path_utils . 'test_user_sandbox.php';
