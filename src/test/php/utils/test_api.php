@@ -5,6 +5,13 @@
     test/utils/test_api.php - quick internal check of the open api definition versus the code
     -----------------------
 
+    to activate the yaml support on debian use
+    sudo apt-get update
+    sudo apt-get install php-yaml
+
+    and if needed for the api test
+    service apache2 restart
+
 
     This file is part of zukunft.com - calc with words
 

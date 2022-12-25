@@ -38,7 +38,16 @@ class controller
 {
 
     // the parameter names used in the url
+    CONST URL_VAR_DEBUG = 'debug';
     CONST URL_VAR_WORD = 'words';
+
+    // used for the change log
+    CONST URL_VAR_WORD_ID = 'word_id';
+    CONST URL_VAR_WORD_FLD = 'word_field';
+
+    // path parameters
+    CONST PATH_API_REDIRECT = '/../../'; // get from the __DIR__ to the php root path
+    CONST PATH_MAIN_LIB = 'src/main/php/zu_lib.php'; // the main php library the contains all other paths
 
     /**
      * response to a get request

@@ -82,7 +82,7 @@ class change_log_field extends user_type_list
         $table_field_name = $table_id . change_log_field::FLD_WORD_NAME;
         $type = new user_type($table_field_name, $table_field_name);
         $this->lst[2] = $type;
-        $this->hash[$table_field_name] = 2;
+        $this->hash[$table_field_name] = 16;
     }
 
     /**

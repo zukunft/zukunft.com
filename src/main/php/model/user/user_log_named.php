@@ -80,6 +80,7 @@ class user_log_named extends user_log
      */
     function row_mapper(array $db_row): bool
     {
+        global $change_log_fields;
         if ($db_row[self::FLD_ID] > 0) {
             $this->set_id($db_row[self::FLD_ID]);
             $this->field_id = $db_row[self::FLD_FIELD_ID];
@@ -89,6 +90,12 @@ class user_log_named extends user_log
             $this->old_id = $db_row[self::FLD_OLD_ID];
             $this->new_value = $db_row[self::FLD_NEW_VALUE];
             $this->new_id = $db_row[self::FLD_NEW_ID];
+
+            $fld_tbl = $change_log_fields->get_by_id($this->field_id);
+            $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
+            $usr = new user();
+            $usr->id = $db_row[user::FLD_ID];
+            $this->usr = $usr;
             $this->user_name = $db_row[user::FLD_NAME];
             return true;
         } else {

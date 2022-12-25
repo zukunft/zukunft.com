@@ -70,11 +70,13 @@ class test_new_obj extends test_base
      */
     public function dummy_log_named(): user_log_named
     {
-        global $usr;
         $chg = new user_log_named();
         $chg->set_table(change_log_table::WORD);
         $chg->set_field(change_log_field::FLD_WORD_NAME);
+        $chg->new_value = word_api::TN_READ;
         $chg->row_id = 1;
+        $usr = new user();
+        $usr->id = 4;
         $chg->usr = $usr;
         return $chg;
     }

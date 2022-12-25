@@ -43,9 +43,10 @@
 
 use api\source_api;
 use api\word_api;
+use controller\controller;
 use html\html_base;
 
-CONST HOST_TESTING = 'http://localhost';
+const HOST_TESTING = 'http://localhost';
 
 global $debug;
 global $root_path;
@@ -388,7 +389,11 @@ class test_base
         $this->assert_api_get_by_name(source::class, source_api::TN_READ_API);
 
         $this->assert_api_get_list(phrase_list::class);
-        $this->assert_api_get_list(term_list::class, [1,-1]);
+        $this->assert_api_get_list(term_list::class, [1, -1]);
+        $this->assert_api_chg_list(
+            change_log_list::class,
+            controller::URL_VAR_WORD_ID, 1,
+            controller::URL_VAR_WORD_FLD, change_log_field::FLD_WORD_NAME);
         // $this->assert_rest(new word($usr, word_api::TN_READ));
 
     }
@@ -435,17 +440,17 @@ class test_base
      * @return bool true is the result is fine
      */
     function assert(
-        string $msg,
+        string            $msg,
         string|array|null $result,
-        string|array $target,
-        float $exe_max_time = TIMEOUT_LIMIT,
-        string $comment = '',
-        string $test_type = ''): bool
+        string|array      $target,
+        float             $exe_max_time = TIMEOUT_LIMIT,
+        string            $comment = '',
+        string            $test_type = ''): bool
     {
         // the result should never be null, but if, check it here not on each call
         if ($result == null) {
-           $result = '';
-           log_warning('result of test ' . $msg . ' has been null');
+            $result = '';
+            log_warning('result of test ' . $msg . ' has been null');
         }
         return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
     }
@@ -463,9 +468,9 @@ class test_base
      */
     function assert_contains(
         string $msg,
-        array $result,
-        array $target,
-        float $exe_max_time = TIMEOUT_LIMIT,
+        array  $result,
+        array  $target,
+        float  $exe_max_time = TIMEOUT_LIMIT,
         string $comment = '',
         string $test_type = ''): bool
     {
@@ -486,9 +491,9 @@ class test_base
      */
     function assert_contains_not(
         string $msg,
-        array $result,
-        array $target,
-        float $exe_max_time = TIMEOUT_LIMIT,
+        array  $result,
+        array  $target,
+        float  $exe_max_time = TIMEOUT_LIMIT,
         string $comment = '',
         string $test_type = ''): bool
     {
@@ -527,13 +532,18 @@ class test_base
         return $this->file('api/' . $class . '/' . $class . '.json');
     }
 
+    /**
+     * @throws Exception
+     */
     function assert_api(object $usr_obj): bool
     {
         $api_obj = $usr_obj->api_obj();
-        // TODO remove, for fast debugging only
-        $json = json_encode($api_obj);
         $actual = json_decode(json_encode($api_obj), true);
         $expected = json_decode($this->api_json_expected($usr_obj::class), true);
+        $actual = $this->json_remove_volatile($actual);
+        // TODO remove, for faster debugging only
+        $json_actual = json_encode($actual);
+        $json_expected = json_encode($expected);
         return $this->assert($usr_obj::class . ' API object', json_is_similar($actual, $expected), true);
     }
 
@@ -574,20 +584,77 @@ class test_base
     }
 
     /**
-     * check if the REST GET call returns the expected JSON message
+     * check if the REST GET call of a user sandbox objects returns the expected JSON message
      * for testing the local deployments needs to be updated using an external script
      *
      * @param string $class the class name of the object to test
      * @param array $ids the database ids of the db rows that should be used for testing
      * @return bool true if the json has no relevant differences
      */
-    function assert_api_get_list(string $class, array $ids = [1,2]): bool
+    function assert_api_get_list(string $class, array $ids = [1, 2]): bool
     {
         $url = HOST_TESTING . '/api/' . camelize($class);
         $data = array("ids" => implode(",", $ids));
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         $expected = json_decode($this->api_json_expected($class), true);
         return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
+    }
+
+    /**
+     * check if the REST GET call of user changes returns the expected JSON message
+     * for testing the local deployments needs to be updated using an external script
+     *
+     * @param string $class the class name of the object to test
+     * @param string $id_fld the field name for the object id e.g. word_id
+     * @param int $id the database id of the object to which the changes should be listed
+     * @param string $fld_name the url api field name to select only some changes e.g. 'word_field'
+     * @param string $fld_value the database field name to select only some changes e.g. 'view_id'
+     * @return bool true if the json has no relevant differences
+     * @throws Exception
+     */
+    function assert_api_chg_list(string $class, string $id_fld = '', int $id = 1, string $fld_name = '', string $fld_value = ''): bool
+    {
+        $url = HOST_TESTING . '/api/' . camelize($class);
+        if ($fld_name != '') {
+            $data = array($id_fld => $id, $fld_name => $fld_value);
+        } else {
+            $data = array($id_fld => $id);
+        }
+        $actual = json_decode($this->api_call("GET", $url, $data), true);
+        $expected = json_decode($this->api_json_expected($class), true);
+
+        // remove the change time
+        $actual = $this->json_remove_volatile($actual);
+
+        // TODO remove, for faster debugging only
+        $json_actual = json_encode($actual);
+        $json_expected = json_encode($expected);
+        return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
+    }
+
+    /**
+     * remove all volatile fields from a given json array
+     *
+     * @param array $json a json array with volatile fields
+     * @return array a json array without volatile fields
+     * @throws Exception
+     */
+    private function json_remove_volatile(array $json): array
+    {
+        $i = 0;
+        foreach ($json as $chg) {
+            if (is_array($chg)) {
+                if (array_key_exists(user_log::FLD_CHANGE_TIME, $chg)) {
+                    $actual_time = new DateTime($chg[user_log::FLD_CHANGE_TIME]);
+                    $now = new DateTime('now');
+                    if ($actual_time < $now) {
+                        unset($json[$i][user_log::FLD_CHANGE_TIME]);
+                    }
+                }
+            }
+            $i++;
+        }
+        return $json;
     }
 
     /**
@@ -799,13 +866,13 @@ class test_base
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_link($db_con, 1,0,3, $usr_obj::class);
+        $qp = $usr_obj->load_sql_by_link($db_con, 1, 0, 3, $usr_obj::class);
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_link($db_con, 1,0,3, $usr_obj::class);
+            $qp = $usr_obj->load_sql_by_link($db_con, 1, 0, 3, $usr_obj::class);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;
@@ -1059,12 +1126,12 @@ class test_base
      * @return bool true if the test result is fine
      */
     function dsp(
-        string $msg,
+        string       $msg,
         string|array $target,
         string|array $result,
-        float $exe_max_time = TIMEOUT_LIMIT,
-        string $comment = '',
-        string $test_type = ''): bool
+        float        $exe_max_time = TIMEOUT_LIMIT,
+        string       $comment = '',
+        string       $test_type = ''): bool
     {
 
         // init the test result vars
@@ -1202,7 +1269,7 @@ class test_base
         string $test_text,
         string $target,
         string $result,
-        float $exe_max_time = TIMEOUT_LIMIT,
+        float  $exe_max_time = TIMEOUT_LIMIT,
         string $comment = ''): bool
     {
         if (!str_contains($result, $target) and $result != '' and $target != '') {
@@ -1300,8 +1367,7 @@ class test_base
     {
         $curl = curl_init();
 
-        switch ($method)
-        {
+        switch ($method) {
             case "POST":
                 curl_setopt($curl, CURLOPT_POST, 1);
 
