@@ -66,11 +66,11 @@ class test_new_obj extends test_base
     }
 
     /**
-     * @return user_log_named a change log entry of a named user sandbox object with some dummy values
+     * @return change_log_named a change log entry of a named user sandbox object with some dummy values
      */
-    public function dummy_log_named(): user_log_named
+    public function dummy_log_named(): change_log_named
     {
-        $chg = new user_log_named();
+        $chg = new change_log_named();
         $chg->set_table(change_log_table::WORD);
         $chg->set_field(change_log_field::FLD_WORD_NAME);
         $chg->new_value = word_api::TN_READ;

@@ -29,9 +29,10 @@
 
 */
 
-use api\user_log_named_api;
+use api\change_log_named_dsp;
+use controller\log\change_log_named_api;
 
-class user_log_named extends user_log
+class change_log_named extends change_log
 {
 
     /*
@@ -108,9 +109,23 @@ class user_log_named extends user_log
      * cast
      */
 
-    public function api_obj(): user_log_named_api
+    public function api_obj(): change_log_named_api
     {
-        $api_obj = new user_log_named_api();
+        $api_obj = new change_log_named_api();
+        parent::fill_api_obj($api_obj);
+        $api_obj->old_value = $this->old_value;
+        $api_obj->old_id = $this->old_id;
+        $api_obj->new_value = $this->new_value;
+        $api_obj->new_id = $this->new_id;
+        $api_obj->std_value = $this->std_value;
+        $api_obj->std_id = $this->std_id;
+        return $api_obj;
+
+    }
+
+    public function dsp_obj(): change_log_named_dsp
+    {
+        $api_obj = new change_log_named_dsp();
         parent::fill_api_obj($api_obj);
         $api_obj->old_value = $this->old_value;
         $api_obj->old_id = $this->old_id;
@@ -164,8 +179,8 @@ class user_log_named extends user_log
         $db_con->add_par(sql_db::PAR_INT, $row_id);
         $qp->sql = $db_con->select_by_field_list(
             array(
-                user_log_named::FLD_FIELD_ID,
-                user_log_named::FLD_ROW_ID,
+                change_log_named::FLD_FIELD_ID,
+                change_log_named::FLD_ROW_ID,
                 user_sandbox::FLD_USER
             ));
         $qp->par = $db_con->get_par();

@@ -1,4 +1,4 @@
-PREPARE user_log_named_by_dsp_of_trp FROM
+PREPARE change_log_named_by_dsp_of_wrd FROM
     'SELECT s.change_id,
             s.user_id,
             s.change_time,

@@ -53,8 +53,8 @@ use api\value_api;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
-use export\source_exp;
 use export\exp_obj;
+use export\source_exp;
 use export\value_exp;
 use html\value_dsp;
 
@@ -1446,12 +1446,12 @@ class value extends user_sandbox_value
     /**
      * set the log entry parameters for a value update
      */
-    function log_upd(): user_log_named
+    function log_upd(): change_log_named
     {
         log_debug('value->log_upd "' . $this->number . '" for user ' . $this->user()->id);
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_UPDATE;
+        $log->action = change_log::ACTION_UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::VALUE);
         } else {

@@ -2,8 +2,8 @@
 
 /*
 
-    api/user/user_log.php - the common change log object for the frontend API
-    ---------------------
+    api/user/user_log_named_api.php - the change log object for the frontend API for named user sandbox objects
+    -------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,9 +30,9 @@
 
 */
 
-namespace api;
+namespace controller\log;
 
-class user_log_api extends user_sandbox_api
+class change_log_named_api extends change_log_api
 {
 
 
@@ -40,11 +40,11 @@ class user_log_api extends user_sandbox_api
      * object vars
      */
 
-    public ?int $usr_id = null; // the user who has done the change
-    public ?int $action_id;   // database id for the change type (add, change or del)
-    public ?int $table_id;       // database id of the table
-    public ?int $field_id;       // database id of the table
-    public ?int $row_id;         // prime database key of the row that has been changed
-    public ?string $change_time; // the time of the change in ISO format
+    public ?string $old_value = null;      // the field value before the user change
+    public ?int $old_id = null;            // the reference id before the user change e.g. for fields using a sub table such as status
+    public ?string $new_value = null;      // the field value after the user change
+    public ?int $new_id = null;            // the reference id after the user change e.g. for fields using a sub table such as status
+    public ?string $std_value = null;  // the standard field value for all users that does not have changed it
+    public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
 
 }

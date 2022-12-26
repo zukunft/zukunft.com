@@ -94,7 +94,7 @@ function run_view_component_test(testing $t): void
     $t->dsp('view_component->load the added "' . $cmp_added->name() . '"', $target, $result);
 
     // check if the view_component adding has been logged
-    $log = new user_log_named;
+    $log = new change_log_named;
     $log->set_table(change_log_table::VIEW_COMPONENT);
     $log->set_field(view_cmp::FLD_NAME);
     $log->row_id = $cmp->id();
@@ -133,7 +133,7 @@ function run_view_component_test(testing $t): void
     $t->dsp('view_component->load renamed view_component "' . view_cmp_api::TN_RENAMED . '"', $target, $result);
 
     // check if the view_component renaming has been logged
-    $log = new user_log_named;
+    $log = new change_log_named;
     $log->set_table(change_log_table::VIEW_COMPONENT);
     $log->set_field(view_cmp::FLD_NAME);
     $log->row_id = $cmp_renamed->id();
@@ -162,7 +162,7 @@ function run_view_component_test(testing $t): void
     $t->dsp('view_component->load type_id for "' . view_cmp_api::TN_RENAMED . '"', $target, $result);
 
     // check if the view_component parameter adding have been logged
-    $log = new user_log_named;
+    $log = new change_log_named;
     $log->set_table(change_log_table::VIEW_COMPONENT);
     $log->set_field(user_sandbox_named::FLD_DESCRIPTION);
     $log->row_id = $cmp_reloaded->id();

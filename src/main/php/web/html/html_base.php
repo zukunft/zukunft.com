@@ -314,6 +314,20 @@ class html_base
     }
 
     /**
+     * create a header column text for each string of the given array
+     * @param array $header_cols array of the text or link that should be shown
+     * @return string the html code of the table header cell
+     */
+    function th_row(array $header_cols): string
+    {
+        $header_text = '';
+        foreach ($header_cols as $col_name) {
+            $header_text .= $this->th($col_name);
+        }
+        return $header_text;
+    }
+
+    /**
      * show the html code as a table row
      * @param string $row_text the text or link that should be shown
      * @return string the html code of the table row

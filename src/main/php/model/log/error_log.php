@@ -31,10 +31,10 @@
 
 class error_log
 {
-    public int $id;                 // the database id of the system error
-    public datetime $change_timel;  // the date and time of the log entry
-    public user $usr;               // the user that has caused the error
-    public string $description;     //
+    public int $id;                // the database id of the system error
+    public datetime $change_time;  // the date and time of the log entry
+    public user $usr;              // the user that has caused the error
+    public string $description;    //
 
 
 

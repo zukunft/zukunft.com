@@ -2,8 +2,8 @@
 
 /*
 
-    api/log/change_log.php - the minimal object to show one log entry in the frontend API transfer
-    ----------------------
+    api/user/user_log.php - the common change log object for the frontend API
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,16 +30,23 @@
 
 */
 
+namespace controller\log;
 
-class change_log_api
+use api\user_sandbox_api;
+
+class change_log_api extends user_sandbox_api
 {
-    public ?int $action_id = null;  // database id of the action used to get the name from the preloaded hash
-    public ?int $table_id = null;   // database id of the table used to get the name from the preloaded hash
-    public ?int $field_id = null;   // database id of the field used to get the name from the preloaded hash
 
-    public ?int $row_id = null;     // the reference id of the row in the database table
 
-    protected ?string $user_name = null;   //
-    protected ?string $change_time = null; //
+    /*
+     * object vars
+     */
+
+    public ?int $usr_id = null;  // the user who has done the change
+    public ?int $action_id;      // database id for the change type (add, change or del)
+    public ?int $table_id;       // database id of the table used to get the name from the preloaded hash
+    public ?int $field_id;       // database id of the table used to get the name from the preloaded hash
+    public ?int $row_id;         // prime database key of the row that has been changed
+    public ?string $change_time; // the time of the change in ISO format
 
 }

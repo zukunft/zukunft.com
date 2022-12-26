@@ -1720,15 +1720,15 @@ class word extends user_sandbox_named_with_type
      * set the log entry parameters for a value update
      */
     private
-    function log_upd_view($view_id): user_log_named
+    function log_upd_view($view_id): change_log_named
     {
         log_debug($this->dsp_id() . ' for user ' . $this->user()->name);
         $dsp_new = new view_dsp_old($this->user());
         $dsp_new->load_by_id($view_id);
 
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_UPDATE;
+        $log->action = change_log::ACTION_UPDATE;
         $log->set_table(change_log_table::WORD);
         $log->set_field(self::FLD_VIEW);
         if ($this->view_id > 0) {

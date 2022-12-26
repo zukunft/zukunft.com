@@ -188,18 +188,18 @@ class user_sandbox_link extends user_sandbox
      * set the log entry parameter for a new link object
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
-     * @returns user_log_link with the object presets e.g. th object name
+     * @returns change_log_link with the object presets e.g. th object name
      */
-    function log_link_add(): user_log_link
+    function log_link_add(): change_log_link
     {
         log_debug($this->dsp_id());
 
-        $log = new user_log_link;
+        $log = new change_log_link;
         $log->new_from = $this->fob;
         $log->new_to = $this->tob;
 
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_ADD;
+        $log->action = change_log::ACTION_ADD;
         // TODO add the table exceptions from sql_db
         $log->set_table($this->obj_name . 's');
         $log->row_id = 0;
@@ -210,15 +210,15 @@ class user_sandbox_link extends user_sandbox
 
     /**
      * set the log entry parameter to delete a object
-     * @returns user_log_link with the object presets e.g. th object name
+     * @returns change_log_link with the object presets e.g. th object name
      */
-    function log_del_link(): user_log_link
+    function log_del_link(): change_log_link
     {
         log_debug($this->dsp_id());
 
-        $log = new user_log_link;
+        $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_DELETE;
+        $log->action = change_log::ACTION_DELETE;
         $log->set_table($this->obj_name . 's');
         $log->old_from = $this->fob;
         $log->old_to = $this->tob;

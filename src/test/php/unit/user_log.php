@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit/user_log.php - unit testing of the user log functions
-  ----------------------
+    test/unit/user_log.php - unit testing of the user log functions
+    ----------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -31,11 +31,10 @@
 */
 
 use api\triple_api;
-use api\word_api;
 
 class user_log_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;
@@ -48,7 +47,7 @@ class user_log_unit_tests
         $lib = new library();
         $db_con = new sql_db();
         $t->name = 'word->';
-        $t->resource_path = 'db/user/';
+        $t->resource_path = 'db/log/';
         $usr->id = 1;
 
         // sql to load the word by id
@@ -57,7 +56,7 @@ class user_log_unit_tests
         $log_dsp->size = SQL_ROW_LIMIT;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $log_dsp->dsp_hist_links_sql($db_con);
-        $expected_sql = $t->file('db/user/user_log.sql');
+        $expected_sql = $t->file('db/log/change_log.sql');
         $t->dsp('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type, $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
@@ -65,7 +64,7 @@ class user_log_unit_tests
 
         // sql to load a log entry by field and row id
         // TODO check that user specific changes are included in the list of changes
-        $log = new user_log_named();
+        $log = new change_log_named();
         $log->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $log->load_sql_by_field_row($db_con, 1, 2);
@@ -77,7 +76,7 @@ class user_log_unit_tests
         $t->assert_qp($qp, $db_con->db_type);
 
         // sql to load a log entry by field and row id
-        $log = new user_log_link();
+        $log = new change_log_link();
         $log->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $log->load_sql($db_con, 1);
@@ -89,11 +88,11 @@ class user_log_unit_tests
         $t->assert_qp($qp, $db_con->db_type);
 
         // compare the new and the old query creation
-        $log = new user_log_named();
+        $log = new change_log_named();
         $log->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $log->load_sql_by_field_row($db_con, 1, 2);
-        $sql_expected = 'PREPARE user_log_named_by_field_row (int,int) AS ' . $log->load_sql_old(word::class, )->sql;
+        $sql_expected = 'PREPARE change_log_named_by_field_row (int,int) AS ' . $log->load_sql_old(word::class)->sql;
         $t->assert_sql('word', $qp->sql, $sql_expected);
 
         $t->subheader('SQL list statement tests');
@@ -112,7 +111,7 @@ class user_log_unit_tests
             change_log_table::WORD,
             change_log_field::FLD_WORD_VIEW,
             'dsp_of_wrd',
-            $wrd->id());;
+            $wrd->id());
         $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
@@ -122,7 +121,7 @@ class user_log_unit_tests
             change_log_table::WORD,
             change_log_field::FLD_WORD_VIEW,
             'dsp_of_wrd',
-            $wrd->id());;
+            $wrd->id());
         $t->assert_qp($qp, $db_con->db_type);
 
         // sql to load a list of log entry by phrase
@@ -151,6 +150,12 @@ class user_log_unit_tests
         $t->subheader('API unit tests');
 
         $log_lst = $t->dummy_log_list_named();
+        $t->assert_api($log_lst);
+
+
+        $t->subheader('Display user log unit tests');
+
+        $log_dsp = $log_lst->dsp_obj();
         $t->assert_api($log_lst);
 
     }

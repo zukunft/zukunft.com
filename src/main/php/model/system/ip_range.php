@@ -355,15 +355,15 @@ class ip_range
     /**
      * set the log entry parameter for a new ip range
      *
-     * @return user_log_named
+     * @return change_log_named
      */
-    function log_add(): user_log_named
+    function log_add(): change_log_named
     {
         log_debug('->log_add ' . $this->dsp_id());
 
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_ADD;
+        $log->action = change_log::ACTION_ADD;
         $log->set_table(sql_db::TBL_IP);
         $log->set_field($this->name());
         $log->row_id = 0;
@@ -373,12 +373,12 @@ class ip_range
     }
 
     // set the main log entry parameters for updating one verb field
-    private function log_upd(): user_log_named
+    private function log_upd(): change_log_named
     {
         log_debug('->log_upd ' . $this->dsp_id());
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_UPDATE;
+        $log->action = change_log::ACTION_UPDATE;
         $log->set_table(sql_db::TBL_IP);
 
         return $log;

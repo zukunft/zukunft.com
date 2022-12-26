@@ -1174,14 +1174,14 @@ class user_sandbox extends db_object
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      */
-    function log_add(): user_log_named
+    function log_add(): change_log_named
     {
         log_debug($this->dsp_id());
 
-        $log = new user_log_named;
+        $log = new change_log_named;
 
         $log->usr = $this->usr;
-        $log->action = user_log::ACTION_ADD;
+        $log->action = change_log::ACTION_ADD;
         // TODO add the table exceptions from sql_db
         $log->set_table($this->obj_name . 's');
         $log->row_id = 0;
@@ -1193,10 +1193,10 @@ class user_sandbox extends db_object
     /**
      * set the log entry parameter for a new link object
      */
-    function log_link_add(): user_log_link
+    function log_link_add(): change_log_link
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new user_log_link();
+        return new change_log_link();
     }
 
     /**
@@ -1206,7 +1206,7 @@ class user_sandbox extends db_object
     {
         log_debug($this->dsp_id());
         $log->usr = $this->usr;
-        $log->action = user_log::ACTION_UPDATE;
+        $log->action = change_log::ACTION_UPDATE;
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
             $log->set_table($this->obj_name . 's');
@@ -1220,20 +1220,20 @@ class user_sandbox extends db_object
     /**
      * create a log object for an update of an object field
      */
-    function log_upd_field(): user_log_named
+    function log_upd_field(): change_log_named
     {
         log_debug($this->dsp_id());
-        $log = new user_log_named;
+        $log = new change_log_named;
         return $this->log_upd_common($log);
     }
 
     /**
      * create a log object for an update of link
      */
-    function log_upd_link(): user_log_link
+    function log_upd_link(): change_log_link
     {
         log_debug($this->dsp_id());
-        $log = new user_log_link;
+        $log = new change_log_link;
         return $this->log_upd_common($log);
     }
 
@@ -1254,22 +1254,22 @@ class user_sandbox extends db_object
 
     /**
      * dummy function definition that will be overwritten by the child object
-     * @return user_log_link
+     * @return change_log_link
      */
-    function log_del_link(): user_log_link
+    function log_del_link(): change_log_link
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new user_log_link();
+        return new change_log_link();
     }
 
     /**
      * dummy function definition that will be overwritten by the child object
-     * @return user_log_named
+     * @return change_log_named
      */
-    function log_del(): user_log_named
+    function log_del(): change_log_named
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new user_log_named();
+        return new change_log_named();
     }
 
     /**
@@ -1358,11 +1358,11 @@ class user_sandbox extends db_object
 
     /**
      * @param user_sandbox $db_rec the object as saved in the database before the change
-     * @return user_log the log object predefined for excluding
+     * @return change_log the log object predefined for excluding
      */
-    function save_field_excluded_log(user_sandbox $db_rec): user_log
+    function save_field_excluded_log(user_sandbox $db_rec): change_log
     {
-        $log = new user_log();
+        $log = new change_log();
         if ($db_rec->excluded <> $this->excluded) {
             if ($this->excluded == 1) {
                 if ($this->obj_type == self::TYPE_LINK) {

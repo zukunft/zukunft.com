@@ -35,8 +35,8 @@
 global $phrase_types;
 
 use api\triple_api;
-use cfg\share_type;
 use cfg\protection_type;
+use cfg\share_type;
 use export\exp_obj;
 use export\triple_exp;
 use html\triple_dsp;
@@ -1445,12 +1445,12 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      * set the log entry parameter for a new value
      * e.g. that the user can see "added ABB is a Company"
      */
-    function log_link_add(): user_log_link
+    function log_link_add(): change_log_link
     {
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
-        $log = new user_log_link;
+        $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_ADD;
+        $log->action = change_log::ACTION_ADD;
         $log->set_table(change_log_table::TRIPLE);
         $log->new_from = $this->from;
         $log->new_link = $this->verb;
@@ -1464,11 +1464,11 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     /**
      * set the main log entry parameters for updating the triple itself
      */
-    function log_upd(): user_log_link
+    function log_upd(): change_log_link
     {
-        $log = new user_log_link;
+        $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_UPDATE;
+        $log->action = change_log::ACTION_UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::TRIPLE);
         } else {
@@ -1482,12 +1482,12 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      * set the log entry parameter to delete a triple
      * e.g. that the user can see "ABB is a Company not anymore"
      */
-    function log_del_link(): user_log_link
+    function log_del_link(): change_log_link
     {
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
-        $log = new user_log_link;
+        $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_DELETE;
+        $log->action = change_log::ACTION_DELETE;
         $log->set_table(change_log_table::TRIPLE);
         $log->old_from = $this->from;
         $log->old_link = $this->verb;
@@ -1501,11 +1501,11 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     /**
      * set the main log entry parameters for updating one display word link field
      */
-    function log_upd_field(): user_log_named
+    function log_upd_field(): change_log_named
     {
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_UPDATE;
+        $log->action = change_log::ACTION_UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::TRIPLE);
         } else {

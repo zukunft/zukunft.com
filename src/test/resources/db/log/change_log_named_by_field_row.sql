@@ -1,4 +1,4 @@
-PREPARE user_log_named_by_field_row (int,int) AS
+PREPARE change_log_named_by_field_row (int,int) AS
     SELECT s.change_id,
            s.user_id,
            s.change_time,

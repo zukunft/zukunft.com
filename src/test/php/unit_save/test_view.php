@@ -100,7 +100,7 @@ function run_view_test(testing $t): void
     $t->dsp('view->load the added "' . $dsp->name() . '"', $target, $result);
 
     // check if the view adding has been logged
-    $log = new user_log_named;
+    $log = new change_log_named;
     $log->set_table(change_log_table::VIEW);
     $log->set_field(view::FLD_NAME);
     $log->row_id = $dsp->id();
@@ -137,7 +137,7 @@ function run_view_test(testing $t): void
     $t->dsp('view->load renamed view "' . view_api::TN_RENAMED . '"', $target, $result);
 
     // check if the view renaming has been logged
-    $log = new user_log_named;
+    $log = new change_log_named;
     $log->set_table(change_log_table::VIEW);
     $log->set_field(view::FLD_NAME);
     $log->row_id = $dsp_renamed->id();
@@ -164,7 +164,7 @@ function run_view_test(testing $t): void
     $t->dsp('view->load type_id for "' . view_api::TN_RENAMED . '"', $target, $result);
 
     // check if the view parameter adding have been logged
-    $log = new user_log_named;
+    $log = new change_log_named;
     $log->set_table(change_log_table::VIEW);
     $log->set_field(user_sandbox_named::FLD_DESCRIPTION);
     $log->row_id = $dsp_reloaded->id();

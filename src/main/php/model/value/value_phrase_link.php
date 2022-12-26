@@ -224,12 +224,12 @@ class value_phrase_link
      * set the log entry parameter for a new value word link
      * TODO check if it is not better to log the deletion of a value and creation of a new value?
      */
-    private function log_add(): user_log_link
+    private function log_add(): change_log_link
     {
         log_debug('val_lnk->log_add for "' . $this->phr->id() . ' to ' . $this->val->id());
-        $log = new user_log_link;
+        $log = new change_log_link;
         $log->usr = $this->usr;
-        $log->action = user_log::ACTION_ADD;
+        $log->action = change_log::ACTION_ADD;
         $log->set_table(change_log_table::VALUE_PHRASE_LINK);
         $log->new_from = $this->val;
         $log->new_to = $this->phr;
@@ -241,12 +241,12 @@ class value_phrase_link
 
     // set the main log entry parameters for updating one value word link
     // e.g. if the entered the number for "interest income", but see that he has used the word "interest cost" and changes it to "interest income"
-    private function log_upd($db_rec): user_log_link
+    private function log_upd($db_rec): change_log_link
     {
         log_debug('val_lnk->log_upd for "' . $this->phr->id() . ' to ' . $this->val->id());
-        $log = new user_log_link;
+        $log = new change_log_link;
         $log->usr = $this->usr;
-        $log->action = user_log::ACTION_UPDATE;
+        $log->action = change_log::ACTION_UPDATE;
         $log->set_table(change_log_table::VALUE_PHRASE_LINK); // no user sandbox for links, only the values itself can differ from user to user
         //$log->set_field(phrase::FLD_ID);
         $log->old_from = $db_rec->val;

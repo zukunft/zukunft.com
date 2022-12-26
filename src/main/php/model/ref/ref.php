@@ -472,7 +472,7 @@ class ref
     }
 
     // set the log entry parameter for a new reference
-    function log_add(): user_log_link
+    function log_add(): change_log_link
     {
         log_debug('ref->log_add ' . $this->dsp_id());
 
@@ -484,9 +484,9 @@ class ref
             log_err('The reference type object must be set to log adding an external reference.', 'ref->log_add');
         }
 
-        $log = new user_log_link;
+        $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_ADD;
+        $log->action = change_log::ACTION_ADD;
         $log->set_table(change_log_table::REF);
         // TODO review in log_link
         // TODO object must be loaded before it can be logged
@@ -500,12 +500,12 @@ class ref
     }
 
     // set the main log entry parameters for updating one reference field
-    function log_upd($db_rec): user_log_link
+    function log_upd($db_rec): change_log_link
     {
         log_debug('ref->log_upd ' . $this->dsp_id());
-        $log = new user_log_link;
+        $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_UPDATE;
+        $log->action = change_log::ACTION_UPDATE;
         $log->set_table(change_log_table::REF);
         $log->old_from = $db_rec->phr;
         $log->old_link = $db_rec->ref_type;
@@ -520,7 +520,7 @@ class ref
     }
 
     // set the log entry parameter to delete a reference
-    function log_del(): user_log_link
+    function log_del(): change_log_link
     {
         log_debug('ref->log_del ' . $this->dsp_id());
 
@@ -532,9 +532,9 @@ class ref
             log_err('The reference type object must be set to log deletion of an external reference.', 'ref->log_del');
         }
 
-        $log = new user_log_link;
+        $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_DELETE;
+        $log->action = change_log::ACTION_DELETE;
         $log->set_table(change_log_table::REF);
         $log->old_from = $this->phr;
         $log->old_link = $this->ref_type;

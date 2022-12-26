@@ -51,9 +51,9 @@ cache table, field and action id to speed up, because this will never change
 */
 
 
-use api\user_log_api;
+use controller\log\change_log_api;
 
-class user_log extends db_object
+class change_log extends db_object
 {
     // the basic change types that are logged
     const ACTION_ADD = 'add';
@@ -88,7 +88,7 @@ class user_log extends db_object
      * cast
      */
 
-    public function fill_api_obj($api_obj): user_log_api
+    public function fill_api_obj($api_obj): change_log_api
     {
         $api_obj->usr_id = $this->usr->id;
         $api_obj->action_id = $this->action_id;

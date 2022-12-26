@@ -61,7 +61,7 @@ function run_view_component_link_test(testing $t): void
     $t->dsp('view component_link->link "' . $dsp->name() . '" to "' . $cmp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check the correct logging
-    $log = new user_log_link;
+    $log = new change_log_link;
     $log->set_table(change_log_table::VIEW_LINK);
     $log->new_from_id = $dsp->id();
     $log->new_to_id = $cmp->id();
@@ -95,7 +95,7 @@ function run_view_component_link_test(testing $t): void
     $t->dsp('view component_link->unlink "' . $dsp->name() . '" from "' . $cmp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the removal of the link for the second user has been logged
-    $log = new user_log_link;
+    $log = new change_log_link;
     $log->set_table(change_log_table::VIEW_LINK);
     $log->old_from_id = $dsp->id();
     $log->old_to_id = $cmp->id();
@@ -130,7 +130,7 @@ function run_view_component_link_test(testing $t): void
     $t->dsp('view component_link->unlink "' . $dsp->name() . '" from "' . $cmp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check the correct logging
-    $log = new user_log_link;
+    $log = new change_log_link;
     $log->set_table(change_log_table::VIEW_LINK);
     $log->old_from_id = $dsp->id();
     $log->old_to_id = $cmp->id();

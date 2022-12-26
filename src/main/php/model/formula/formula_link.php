@@ -557,13 +557,13 @@ class formula_link extends user_sandbox_link_with_type
     /**
      * set the main log entry parameters for updating one display word link field
      * e.g. that the user can see "moved formula list to position 3 in word view"
-     * @return user_log_named the change log object with the presets for formula links
+     * @return change_log_named the change log object with the presets for formula links
      */
-    function log_upd_field(): user_log_named
+    function log_upd_field(): change_log_named
     {
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_UPDATE;
+        $log->action = change_log::ACTION_UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::FORMULA_LINK);
         } else {

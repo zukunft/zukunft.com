@@ -703,12 +703,12 @@ class verb extends db_object
     }
 
     // set the log entry parameter for a new verb
-    private function log_add(): user_log_named
+    private function log_add(): change_log_named
     {
         log_debug('verb->log_add ' . $this->dsp_id());
-        $log = new user_log_named();
+        $log = new change_log_named();
         $log->usr = $this->usr;
-        $log->action = user_log::ACTION_ADD;
+        $log->action = change_log::ACTION_ADD;
         $log->set_table(change_log_table::VERB);
         $log->set_field(self::FLD_NAME);
         $log->old_value = '';
@@ -720,24 +720,24 @@ class verb extends db_object
     }
 
     // set the main log entry parameters for updating one verb field
-    private function log_upd(): user_log_named
+    private function log_upd(): change_log_named
     {
         log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->user()->name);
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->usr = $this->usr;
-        $log->action = user_log::ACTION_UPDATE;
+        $log->action = change_log::ACTION_UPDATE;
         $log->set_table(change_log_table::VERB);
 
         return $log;
     }
 
     // set the log entry parameter to delete a verb
-    private function log_del(): user_log_named
+    private function log_del(): change_log_named
     {
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->usr = $this->usr;
-        $log->action = user_log::ACTION_DELETE;
+        $log->action = change_log::ACTION_DELETE;
         $log->set_table(change_log_table::VERB);
         $log->set_field(self::FLD_NAME);
         $log->old_value = $this->name;

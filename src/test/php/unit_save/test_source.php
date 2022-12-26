@@ -66,7 +66,7 @@ function run_source_test(testing $t): void
 
     // ... check if the source creation has been logged
     if ($src_add->id() > 0) {
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->set_table(change_log_table::SOURCE);
         $log->set_field(change_log_field::FLD_SOURCE_NAME);
         $log->row_id = $src_add->id();
@@ -102,7 +102,7 @@ function run_source_test(testing $t): void
     $t->dsp('source->load renamed source "' . source_api::TN_RENAMED . '"', $target, $result);
 
     // check if the source renaming has been logged
-    $log = new user_log_named;
+    $log = new change_log_named;
     $log->set_table(change_log_table::SOURCE);
     $log->set_field(change_log_field::FLD_SOURCE_NAME);
     $log->row_id = $src_renamed->id();
@@ -128,7 +128,7 @@ function run_source_test(testing $t): void
     $t->dsp('source->load description for "' . source_api::TN_RENAMED . '"', $target, $result);
 
     // check if the source parameter adding have been logged
-    $log = new user_log_named;
+    $log = new change_log_named;
     $log->set_table(change_log_table::SOURCE);
     $log->set_field(change_log_field::FLD_SOURCE_URL);
     $log->row_id = $src_reloaded->id();

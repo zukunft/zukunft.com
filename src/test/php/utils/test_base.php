@@ -533,7 +533,6 @@ class test_base
     }
 
     /**
-     * @throws Exception
      */
     function assert_api(object $usr_obj): bool
     {
@@ -610,7 +609,6 @@ class test_base
      * @param string $fld_name the url api field name to select only some changes e.g. 'word_field'
      * @param string $fld_value the database field name to select only some changes e.g. 'view_id'
      * @return bool true if the json has no relevant differences
-     * @throws Exception
      */
     function assert_api_chg_list(string $class, string $id_fld = '', int $id = 1, string $fld_name = '', string $fld_value = ''): bool
     {
@@ -637,18 +635,22 @@ class test_base
      *
      * @param array $json a json array with volatile fields
      * @return array a json array without volatile fields
-     * @throws Exception
      */
     private function json_remove_volatile(array $json): array
     {
         $i = 0;
         foreach ($json as $chg) {
             if (is_array($chg)) {
-                if (array_key_exists(user_log::FLD_CHANGE_TIME, $chg)) {
-                    $actual_time = new DateTime($chg[user_log::FLD_CHANGE_TIME]);
+                if (array_key_exists(change_log::FLD_CHANGE_TIME, $chg)) {
+                    $actual_time = new DateTime('now');
+                    try {
+                        $actual_time = new DateTime($chg[change_log::FLD_CHANGE_TIME]);
+                    } catch (Exception $e) {
+                        log_warning($chg[change_log::FLD_CHANGE_TIME] . ' cannot be converted to a data');
+                    }
                     $now = new DateTime('now');
                     if ($actual_time < $now) {
-                        unset($json[$i][user_log::FLD_CHANGE_TIME]);
+                        unset($json[$i][change_log::FLD_CHANGE_TIME]);
                     }
                 }
             }

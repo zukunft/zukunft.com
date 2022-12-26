@@ -266,7 +266,7 @@ function run_value_test(testing $t): void
 
     // ... check if the value adding has been logged
     if ($add_val->id() > 0) {
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->set_table(change_log_table::VALUE);
         $log->set_field(change_log_field::FLD_VALUE_NUMBER);
         $log->row_id = $add_val->id();
@@ -310,7 +310,7 @@ function run_value_test(testing $t): void
 
     // ... check if the value adding has been logged
     if ($add_val->id() > 0) {
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->set_table(change_log_table::VALUE);
         $log->set_field(change_log_field::FLD_VALUE_NUMBER);
         $log->row_id = $add_val2->id();
@@ -341,7 +341,7 @@ function run_value_test(testing $t): void
 
     // ... check if the value change has been logged
     if ($added_val->id() > 0) {
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->set_table(change_log_table::VALUE);
         $log->set_field(change_log_field::FLD_VALUE_NUMBER);
         $log->row_id = $added_val->id();
@@ -383,7 +383,7 @@ function run_value_test(testing $t): void
     $val_usr2->set_id($added_val_id);
     $val_usr2->load_obj_vars();
     if ($val_usr2->id() > 0) {
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->set_table(change_log_table::VALUE_USR);
         $log->set_field(change_log_field::FLD_VALUE_NUMBER);
         $log->row_id = $val_usr2->id();
@@ -423,7 +423,7 @@ function run_value_test(testing $t): void
     $val_usr2->grp = $phr_grp;
     $val_usr2->load_obj_vars();
     if ($val_usr2->id() > 0) {
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->set_table(change_log_table::VALUE_USR);
         $log->set_field(change_log_field::FLD_VALUE_NUMBER);
         $log->row_id = $val_usr2->id();

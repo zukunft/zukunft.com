@@ -299,7 +299,7 @@ function run_word_tests(testing $t): void
 
     // ... check if the word creation has been logged
     if ($wrd_add->id() > 0) {
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->set_table(change_log_table::WORD);
         $log->set_field(change_log_field::FLD_WORD_NAME);
         $log->row_id = $wrd_add->id();
@@ -335,7 +335,7 @@ function run_word_tests(testing $t): void
     $t->dsp('word->load renamed word "' . word_api::TN_RENAMED . '"', $target, $result);
 
     // check if the word renaming has been logged
-    $log = new user_log_named;
+    $log = new change_log_named;
     $log->set_table(change_log_table::WORD);
     $log->set_field(change_log_field::FLD_WORD_NAME);
     $log->row_id = $wrd_renamed->id();
@@ -365,7 +365,7 @@ function run_word_tests(testing $t): void
     $t->dsp('word->load type_id for "' . word_api::TN_RENAMED . '"', $target, $result);
 
     // check if the word parameter adding have been logged
-    $log = new user_log_named;
+    $log = new change_log_named;
     $log->set_table(change_log_table::WORD);
     $log->set_field(change_log_field::FLD_WORD_PLURAL);
     $log->row_id = $wrd_reloaded->id();

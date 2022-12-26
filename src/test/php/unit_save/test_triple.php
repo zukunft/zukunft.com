@@ -104,7 +104,7 @@ function run_triple_test(testing $t): void
     echo "... and also testing the user log link class (classes/user_log_link.php)<br>";
 
     // ... check the correct logging
-    $log = new user_log_link;
+    $log = new change_log_link;
     $log->set_table(change_log_table::TRIPLE);
     $log->new_from_id = $wrd_added->id();
     $log->new_link_id = $vrb->id() ;
@@ -148,7 +148,7 @@ function run_triple_test(testing $t): void
     $t->dsp('triple->del "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the removal of the link for the second user has been logged
-    $log = new user_log_link;
+    $log = new change_log_link;
     $log->set_table(change_log_table::TRIPLE);
     $log->old_from_id = $wrd_added->id();
     $log->old_link_id = $vrb->id() ;
@@ -197,7 +197,7 @@ function run_triple_test(testing $t): void
     $t->dsp('triple->del "' . $wrd_added->name() . '" ' . $vrb->name() . ' "' . $wrd->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check the correct logging
-    $log = new user_log_link;
+    $log = new change_log_link;
     $log->set_table(change_log_table::TRIPLE);
     $log->old_from_id = $wrd_added->id();
     $log->old_link_id = $vrb->id() ;

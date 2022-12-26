@@ -207,14 +207,14 @@ class system_error_log extends db_object
 
     /**
      * set the main log entry parameters for updating one error field
-     * @return user_log_named the log object with the update presets
+     * @return change_log_named the log object with the update presets
      */
-    private function log_upd(): user_log_named
+    private function log_upd(): change_log_named
     {
         log_debug('system_error_log->log_upd');
-        $log = new user_log_named;
+        $log = new change_log_named;
         $log->usr = $this->user();
-        $log->action = user_log::ACTION_UPDATE;
+        $log->action = change_log::ACTION_UPDATE;
         $log->set_table(sql_db::TBL_SYS_LOG);
 
         return $log;
@@ -223,10 +223,10 @@ class system_error_log extends db_object
     /**
      * actually update an error field in the main database record or the user sandbox
      * @param sql_db $db_con the active database connection
-     * @param user_log_named $log the log object with the update presets
+     * @param change_log_named $log the log object with the update presets
      * @return bool true if the field has been updated
      */
-    private function save_field_do(sql_db $db_con, user_log_named $log): bool
+    private function save_field_do(sql_db $db_con, change_log_named $log): bool
     {
         log_debug('system_error_log->save_field_do');
         $result = true;

@@ -2,9 +2,8 @@
 
 /*
 
-    api/log/change_log_list.php - a list changes that can be shown in the frontend
+    api/log/change_log_list.php - a list function to create the HTML code to display a list of user changes
     ---------------------------
-
 
     This file is part of zukunft.com - calc with words
 
@@ -32,44 +31,35 @@
 
 namespace api;
 
+use back_trace;
 use controller\log\change_log_named_api;
+use html\html_base;
 
-class change_log_list_api extends list_api implements \JsonSerializable
+class change_log_named_dsp extends change_log_named_api
 {
 
-    /*
-     * construct and map
-     */
+    private bool $condensed = false;
+    private bool $with_users = false;
 
-    function __construct(array $lst = array())
-    {
-        parent::__construct($lst);
-    }
+
 
     /**
-     * add a word to the list
-     * @param change_log_named_api $chg one change of a user sandbox object
-     * @returns bool true if the word has been added
+     * @return string with the html code to show one row of the changes of sandbox objects e.g. a words
      */
-    function add(change_log_named_api $chg): bool
+    private function tr(): string
     {
-        return list_api::add_obj($chg);
-    }
-
-    /*
-     * interface
-     */
-
-    /**
-     * an array of the value vars including the private vars
-     */
-    public function jsonSerialize(): array
-    {
-        $vars = [];
-        foreach ($this->lst as $chg) {
-            $vars[] = json_decode(json_encode($chg));
+        $html = new html_base();
+        $head_text = $html->th('time');
+        if ($this->condensed) {
+            $head_text .= $html->th('changed to');
+        } else {
+            if ($this->with_users) {
+                $head_text .= $html->th('user');
+            }
+            $head_text .= $html->th_row(array('field','from','to'));
+            $head_text .= $html->th('');  // extra column for the undo icon
         }
-        return $vars;
+        return $head_text;
     }
 
 }

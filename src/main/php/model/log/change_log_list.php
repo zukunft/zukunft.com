@@ -69,8 +69,8 @@ class change_log_list extends base_list
     function dsp_obj(): change_log_list_dsp
     {
         $dsp_obj = new change_log_list_dsp();
-        foreach ($this->lst as $wrd) {
-            $dsp_obj->add($wrd->dsp_obj());
+        foreach ($this->lst as $chg) {
+            $dsp_obj->add($chg->dsp_obj());
         }
         return $dsp_obj;
     }
@@ -144,15 +144,15 @@ class change_log_list extends base_list
         $table_id = $change_log_tables->id($table_name);
         $table_field_name = $table_id . $field_name;
         $field_id = $change_log_fields->id($table_field_name);
-        $log_named = new user_log_named();
+        $log_named = new change_log_named();
         $log_named->usr = $usr;
         $qp = $log_named->load_sql($db_con, $query_ext);
         $db_con->set_page();
         $db_con->add_par(sql_db::PAR_INT, $field_id);
         $db_con->add_par(sql_db::PAR_INT, $id);
         $qp->sql = $db_con->select_by_field_list(array(
-            user_log_named::FLD_FIELD_ID,
-            user_log_named::FLD_ROW_ID));
+            change_log_named::FLD_FIELD_ID,
+            change_log_named::FLD_ROW_ID));
         $qp->par = $db_con->get_par();
         return $qp;
     }
@@ -173,7 +173,7 @@ class change_log_list extends base_list
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $wrd = new user_log_named();
+                    $wrd = new change_log_named();
                     $wrd->row_mapper($db_row);
                     $this->lst[] = $wrd;
                     $result = true;
@@ -190,10 +190,10 @@ class change_log_list extends base_list
 
     /**
      * add one named change to the change list
-     * @param user_log_named|null $chg_to_add the change that should be added to the list
+     * @param change_log_named|null $chg_to_add the change that should be added to the list
      * @returns bool true the phrase has been added
      */
-    function add(?user_log_named $chg_to_add): bool
+    function add(?change_log_named $chg_to_add): bool
     {
         $result = false;
         if ($chg_to_add != null) {
