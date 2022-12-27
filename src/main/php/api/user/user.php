@@ -36,7 +36,7 @@ class user_api
 
     // field names used for JSON creation
     public string $id;
-    public string $name;
+    public ?string $name;
     public ?string $description;
     public ?string $profile;
     public ?string $email;

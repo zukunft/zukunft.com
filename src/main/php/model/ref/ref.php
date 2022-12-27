@@ -486,7 +486,7 @@ class ref
 
         $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_ADD;
+        $log->action = change_log_action::ADD;
         $log->set_table(change_log_table::REF);
         // TODO review in log_link
         // TODO object must be loaded before it can be logged
@@ -505,7 +505,7 @@ class ref
         log_debug('ref->log_upd ' . $this->dsp_id());
         $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_UPDATE;
+        $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::REF);
         $log->old_from = $db_rec->phr;
         $log->old_link = $db_rec->ref_type;
@@ -534,7 +534,7 @@ class ref
 
         $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_DELETE;
+        $log->action = change_log_action::DELETE;
         $log->set_table(change_log_table::REF);
         $log->old_from = $this->phr;
         $log->old_link = $this->ref_type;

@@ -363,7 +363,7 @@ class ip_range
 
         $log = new change_log_named;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_ADD;
+        $log->action = change_log_action::ADD;
         $log->set_table(sql_db::TBL_IP);
         $log->set_field($this->name());
         $log->row_id = 0;
@@ -378,7 +378,7 @@ class ip_range
         log_debug('->log_upd ' . $this->dsp_id());
         $log = new change_log_named;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_UPDATE;
+        $log->action = change_log_action::UPDATE;
         $log->set_table(sql_db::TBL_IP);
 
         return $log;

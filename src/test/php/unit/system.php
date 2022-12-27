@@ -45,14 +45,6 @@ class system_unit_tests
         $usr->id = 1;
 
 
-        // TODO move to __construct of unit test
-        if ($usr->name == null) {
-            $usr->name = user::SYSTEM_TEST_OLD;
-        }
-        if ($usr->profile_id == null) {
-            $usr->profile_id = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
-        }
-
         $t->header('Unit tests of the system classes (src/main/php/model/system/ip_range.php)');
 
         $t->subheader('System function tests');
@@ -138,15 +130,15 @@ class system_unit_tests
         $test_usr->id = 1;
         $t->assert_load_sql($db_con, $test_usr);
         $test_usr->reset();
-        $test_usr->name = user::NAME_SYSTEM_TEST;
+        $test_usr->name = user::SYSTEM_NAME_TEST;
         $t->assert_load_sql($db_con, $test_usr);
-        $test_usr->email = user::NAME_SYSTEM_TEST;
-        $t->assert_load_sql($db_con, $test_usr);
-        $test_usr->reset();
-        $test_usr->code_id = user::NAME_SYSTEM_TEST;
+        $test_usr->email = user::SYSTEM_NAME_TEST;
         $t->assert_load_sql($db_con, $test_usr);
         $test_usr->reset();
-        $test_usr->ip_addr = user::NAME_SYSTEM_TEST;
+        $test_usr->code_id = user::SYSTEM_NAME_TEST;
+        $t->assert_load_sql($db_con, $test_usr);
+        $test_usr->reset();
+        $test_usr->ip_addr = user::SYSTEM_NAME_TEST;
         $t->assert_load_sql($db_con, $test_usr);
         $test_usr->reset();
         $test_usr->profile_id = 2;

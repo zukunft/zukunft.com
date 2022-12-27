@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/user_log.php - unit testing of the user log functions
-    ----------------------
+    test/unit/change_log.php - unit testing of the user log functions
+    ------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -32,14 +32,14 @@
 
 use api\triple_api;
 
-class user_log_unit_tests
+class change_log_unit_tests
 {
     function run(testing $t): void
     {
 
         global $usr;
 
-        $t->header('Unit tests of the user log display class (src/main/php/web/user_log_display.php)');
+        $t->header('Unit tests of the user log display class (src/main/php/log/change_log_*.php)');
 
         $t->subheader('SQL statement tests');
 
@@ -152,11 +152,6 @@ class user_log_unit_tests
         $log_lst = $t->dummy_log_list_named();
         $t->assert_api($log_lst);
 
-
-        $t->subheader('Display user log unit tests');
-
-        $log_dsp = $log_lst->dsp_obj();
-        $t->assert_api($log_lst);
 
     }
 

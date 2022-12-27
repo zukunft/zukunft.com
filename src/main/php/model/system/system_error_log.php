@@ -214,7 +214,7 @@ class system_error_log extends db_object
         log_debug('system_error_log->log_upd');
         $log = new change_log_named;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_UPDATE;
+        $log->action = change_log_action::UPDATE;
         $log->set_table(sql_db::TBL_SYS_LOG);
 
         return $log;

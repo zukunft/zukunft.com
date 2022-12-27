@@ -118,7 +118,7 @@ class change_log_link extends change_log
         if ($db_row[self::FLD_ID] > 0) {
             $this->set_id($db_row[self::FLD_ID]);
             $this->table_id = $db_row[self::FLD_TABLE_ID];
-            $this->change_time = $db_row[self::FLD_CHANGE_TIME];
+            $this->set_time_str($db_row[self::FLD_CHANGE_TIME]);
             $this->old_text_from = $db_row[self::FLD_OLD_FROM_TEXT];
             $this->old_from_id = $db_row[self::FLD_OLD_FROM_ID];
             $this->old_text_link = $db_row[self::FLD_OLD_LINK_TEXT];
@@ -131,7 +131,11 @@ class change_log_link extends change_log
             $this->new_link_id = $db_row[self::FLD_NEW_LINK_ID];
             $this->new_text_to = $db_row[self::FLD_NEW_TO_TEXT];
             $this->new_to_id = $db_row[self::FLD_NEW_TO_ID];
-            $this->user_name = $db_row[user::FLD_NAME];
+            // TODO check if not the complete user should be loaded
+            $usr = new user();
+            $usr->id = $db_row[user::FLD_ID];
+            $usr->name = $db_row[user::FLD_NAME];
+            $this->usr = $usr;
             return true;
         } else {
             return false;
@@ -440,7 +444,7 @@ class change_log_link extends change_log
         log_debug('set fields');
         if ($this->table() == change_log_table::WORD
             or $this->table() == change_log_table::TRIPLE) {
-            if ($this->action == change_log::ACTION_ADD or $this->action == change_log::ACTION_UPDATE) {
+            if ($this->action == change_log_action::ADD or $this->action == change_log_action::UPDATE) {
                 if ($this->new_from != null and $this->new_link != null and $this->new_to != null) {
                     $this->new_text_from = $this->new_from->name();
                     $this->new_text_link = $this->new_link->name();
@@ -452,7 +456,7 @@ class change_log_link extends change_log
                     log_err('Object(s) missing when trying to log a triple add action');
                 }
             }
-            if ($this->action == change_log::ACTION_DELETE or $this->action == change_log::ACTION_UPDATE) {
+            if ($this->action == change_log_action::DELETE or $this->action == change_log_action::UPDATE) {
                 if ($this->old_from != null and $this->old_link != null and $this->old_to != null) {
                     $this->old_text_from = $this->old_from->name();
                     $this->old_text_link = $this->old_link->name();
@@ -466,7 +470,7 @@ class change_log_link extends change_log
             }
         }
         if ($this->table() == change_log_table::REF) {
-            if ($this->action == change_log::ACTION_ADD or $this->action == change_log::ACTION_UPDATE) {
+            if ($this->action == change_log_action::ADD or $this->action == change_log_action::UPDATE) {
                 if ($this->new_from != null and $this->new_link != null and $this->new_to != null) {
                     $this->new_text_from = $this->new_from->name();
                     $this->new_text_link = $this->new_link->name();
@@ -478,7 +482,7 @@ class change_log_link extends change_log
                     log_err('Object(s) missing when trying to log a ref add action');
                 }
             }
-            if ($this->action == change_log::ACTION_DELETE or $this->action == change_log::ACTION_UPDATE) {
+            if ($this->action == change_log_action::DELETE or $this->action == change_log_action::UPDATE) {
                 if ($this->old_from != null and $this->old_link != null and $this->old_to != null) {
                     $this->old_text_from = $this->old_from->name();
                     $this->old_text_link = $this->old_link->name();
@@ -494,7 +498,7 @@ class change_log_link extends change_log
         if ($this->table() == change_log_table::VIEW_LINK
             or $this->table() == change_log_table::VALUE_PHRASE_LINK
             or $this->table() == change_log_table::FORMULA_LINK) {
-            if ($this->action == change_log::ACTION_ADD or $this->action == change_log::ACTION_UPDATE) {
+            if ($this->action == change_log_action::ADD or $this->action == change_log_action::UPDATE) {
                 if ($this->new_from != null and $this->new_to != null) {
                     $this->new_text_from = $this->new_from->name();
                     $this->new_text_to = $this->new_to->name();
@@ -504,7 +508,7 @@ class change_log_link extends change_log
                     log_err('Object(s) missing when trying to log an add action');
                 }
             }
-            if ($this->action == change_log::ACTION_DELETE or $this->action == change_log::ACTION_UPDATE) {
+            if ($this->action == change_log_action::DELETE or $this->action == change_log_action::UPDATE) {
                 if ($this->old_from != null and $this->old_to != null) {
                     $this->old_text_from = $this->old_from->name();
                     $this->old_text_to = $this->old_to->name();

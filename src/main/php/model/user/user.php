@@ -65,6 +65,7 @@ class user
     const FLD_LAST_NAME = 'last_name';
     const FLD_LAST_WORD = 'last_word_id';
     const FLD_SOURCE = 'source_id';
+    const FLD_CODE_ID = 'code_id';
     const FLD_USER_PROFILE = 'user_profile_id';
 
     // all database field names excluding the id
@@ -91,11 +92,14 @@ class user
      */
 
     // list of the system users that have a coded functionality as defined in src/main/resources/users.json
-    const SYSTEM = "zukunft.com system";                    // the system user used to log system tasks and as a fallback owner
-    const NAME_SYSTEM_TEST = "zukunft.com system test";          // to perform the system tests
-    const NAME_SYSTEM_TEST_PARTNER = "zukunft.com system test partner"; // to test that the user sandbox is working e.g. that changes of the main test user has no impact of another user simulated by this test user
-    const SYSTEM_OLD = "system";
-    const SYSTEM_TEST_OLD = "test";
+    const SYSTEM_ID = 1; //
+    const SYSTEM_NAME = "zukunft.com system";                    // the system user used to log system tasks and as a fallback owner
+    const SYSTEM_CODE_ID = "system";                    // unique id of the system user used to log system tasks
+    const SYSTEM_ID_TEST = 2; //
+    const SYSTEM_NAME_TEST = "zukunft.com system test";          // to perform the system tests
+    const SYSTEM_NAME_TEST_PARTNER = "zukunft.com system test partner"; // to test that the user sandbox is working e.g. that changes of the main test user has no impact of another user simulated by this test user
+    const SYSTEM_TEST_PROFILE_CODE_ID = "test";
+    const SYSTEM_LOCAL = 'localhost';
 
     /*
      * object vars
@@ -225,7 +229,11 @@ class user
     private function api_obj_fields(user_api|user_dsp $api_obj): user_api|user_dsp
     {
         $api_obj->id = $this->id;
-        $api_obj->name = $this->name;
+        if ($this->name != null) {
+            $api_obj->name = $this->name;
+        } else {
+            $api_obj->name = '';
+        }
         $api_obj->description = $this->description;
         $api_obj->profile = $this->profile;
         $api_obj->email = $this->email;
@@ -449,7 +457,7 @@ class user
             $this->ip_addr = $_SERVER['REMOTE_ADDR'];
         }
         if ($this->ip_addr == null) {
-            $this->ip_addr = 'localhost';
+            $this->ip_addr = self::SYSTEM_LOCAL;
         }
         return $this->ip_addr;
     }
@@ -493,7 +501,7 @@ class user
                     $this->name = $this->ip_addr;
 
                     // allow to fill the database only if a local user has logged in
-                    if ($this->name == 'localhost') {
+                    if ($this->name == self::SYSTEM_LOCAL) {
 
                         // TODO move to functions used here to check class
                         if ($user_profiles->is_empty()) {
@@ -516,11 +524,16 @@ class user
                         // add the local admin user to use it for the import
                         $upd_result = $this->save($db_con);
 
+                        // use the system user for the database initial load
+                        $sys_usr = new user;
+                        $sys_usr->id = SYSTEM_USER_ID;
+                        $sys_usr->load($db_con);
+
                         //
-                        import_verbs($this);
+                        import_verbs($sys_usr);
 
                         // reload the base configuration
-                        import_base_config();
+                        import_base_config($sys_usr);
 
                     } else {
                         $upd_result = $this->save($db_con);
@@ -570,6 +583,12 @@ class user
             }
             if ($key == self::FLD_EX_PROFILE) {
                 $this->profile_id = $user_profiles->id($value);
+            }
+            if ($key == user_type::FLD_CODE_ID) {
+                if ($profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)
+                    or $profile_id == cl(db_cl::USER_PROFILE, user_profile::SYSTEM)) {
+                    $this->code_id = $value;
+                }
             }
         }
 
@@ -741,7 +760,7 @@ class user
         log_debug(' user ' . $this->name);
         $log = new change_log_named;
         $log->usr = $this;
-        $log->action = change_log::ACTION_UPDATE;
+        $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::USR);
 
         return $log;
@@ -826,9 +845,14 @@ class user
             // log the changes???
             if ($this->id > 0) {
                 // add the profile of the user
-                if (!$db_con->update($this->id, "user_profile_id", $this->profile_id)) {
-                    $result = 'Saving of user ' . $this->id . ' failed.';
+                if (!$db_con->update($this->id, self::FLD_USER_PROFILE, $this->profile_id)) {
+                    $result = 'Saving of user profile ' . $this->id . ' failed.';
                 }
+                // add the code of the user
+                if ($this->code_id != '') {
+                if (!$db_con->update($this->id, self::FLD_CODE_ID, $this->code_id)) {
+                    $result = 'Saving of user code id ' . $this->id . ' failed.';
+                }}
                 // add the ip address to the user, but never for system users
                 if ($this->profile_id != cl(db_cl::USER_PROFILE, user_profile::SYSTEM)
                     and $this->profile_id != cl(db_cl::USER_PROFILE, user_profile::TEST)) {

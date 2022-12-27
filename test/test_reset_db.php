@@ -51,6 +51,7 @@ if ($usr->id > 0) {
         $usr = new user;
         $usr->id = SYSTEM_USER_ID;
         $usr->load($db_con);
+        $sys_usr = $usr;
 
         // run reset the main database tables
         run_db_truncate();
@@ -73,7 +74,7 @@ if ($usr->id > 0) {
         $db_con = prg_restart("test_reset_db");
 
         // reload the base configuration
-        import_base_config();
+        import_base_config($sys_usr);
 
         /*
          * For testing the system setup
@@ -183,6 +184,7 @@ function run_preloaded_truncate(): void
     global $system_views;
     global $sys_log_stati;
     global $job_types;
+    global $change_log_actions;
     global $change_log_tables;
     global $change_log_fields;
 
@@ -202,11 +204,12 @@ function run_preloaded_truncate(): void
     $share_types = new share_type_list();
     $protection_types = new protection_type_list();
     $job_types = new job_type_list();
+    $change_log_actions = new change_log_action();
     $change_log_tables = new change_log_table();
     $change_log_fields = new change_log_field();
 }
 
-function run_table_truncate(string $table_name)
+function run_table_truncate(string $table_name): void
 {
     global $db_con;
 

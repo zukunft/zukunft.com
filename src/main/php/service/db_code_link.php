@@ -50,6 +50,7 @@ class db_cl
     const PROTECTION_TYPE = "protection_type";
     const USER_PROFILE = "user_profile_type";
     const LOG_STATUS = "system_log_status";
+    const LOG_ACTION = "change_action";
     const LOG_TABLE = "change_table";
     const LOG_FIELD = "change_field";
     const JOB_TYPE = "job_type";
@@ -163,6 +164,12 @@ class db_cl
         return $job_types->id($code_id);
     }
 
+    function log_action_id(string $code_id): int
+    {
+        global $change_log_actions;
+        return $change_log_actions->id($code_id);
+    }
+
     function log_table_id(string $code_id): int
     {
         global $change_log_tables;
@@ -251,6 +258,12 @@ class db_cl
     {
         global $job_types;
         return $job_types->get_by_id($id);
+    }
+
+    function log_action(int $id)
+    {
+        global $change_log_actions;
+        return $change_log_actions->get($id);
     }
 
     function log_table(int $id)
@@ -373,6 +386,12 @@ class db_cl
         return $job_types->name($id);
     }
 
+    function log_action_name(int $id): string
+    {
+        global $change_log_actions;
+        return $change_log_actions->name($id);
+    }
+
     function log_table_name(int $id): string
     {
         global $change_log_tables;
@@ -453,6 +472,9 @@ function cl(string $type, string $code_id): int
         case db_cl::JOB_TYPE:
             $result = $db_code_link->job_type_id($code_id);
             break;
+        case db_cl::LOG_ACTION:
+            $result = $db_code_link->log_action_id($code_id);
+            break;
         case db_cl::LOG_TABLE:
             $result = $db_code_link->log_table_id($code_id);
             break;
@@ -527,6 +549,9 @@ function cl_name(string $type, int $id): string
         case db_cl::JOB_TYPE:
             $result = $db_code_link->job_type_name($id);
             break;
+        case db_cl::LOG_ACTION:
+            $result = $db_code_link->log_action_name($id);
+            break;
         case db_cl::LOG_TABLE:
             $result = $db_code_link->log_table_name($id);
             break;
@@ -594,6 +619,9 @@ function get_type(string $type, string $code_id): user_type
             break;
         case db_cl::JOB_TYPE:
             $result = $db_code_link->job_type($db_code_link->job_type_id($code_id));
+            break;
+        case db_cl::LOG_ACTION:
+            $result = $db_code_link->log_action($db_code_link->log_action_id($code_id));
             break;
         case db_cl::LOG_TABLE:
             $result = $db_code_link->log_table($db_code_link->log_table_id($code_id));

@@ -339,12 +339,13 @@ class html_base
 
     /**
      * show a text of link within a table cell
-     * @param string $cell_text the text or link that should be shown
+     * @param string|null $cell_text the text or link that should be shown or null to return an empty cell
      * @param int $intent the number of spaces on the left (or right e.g. for arabic) inside the table cell
      * @return string the html code of the table cell
      */
-    function td(string $cell_text, int $intent = 0): string
+    function td(?string $cell_text = '', int $intent = 0): string
     {
+        // just for formatting the html code
         while ($intent > 0) {
             $cell_text .= '&nbsp;';
             $intent = $intent - 1;

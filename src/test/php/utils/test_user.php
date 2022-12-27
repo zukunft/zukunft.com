@@ -45,7 +45,7 @@ function run_user_test(testing $t): void
     $t->header('Test the user display class (classes/user_display.php)');
 
     $result = $usr->dsp_obj()->form_edit($back);
-    $target = user::NAME_SYSTEM_TEST;
+    $target = user::SYSTEM_NAME_TEST;
     $t->dsp_contains(', user_display->dsp_edit', $target, $result);
 
     // display system usernames

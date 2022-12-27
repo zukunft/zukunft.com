@@ -695,7 +695,7 @@ class view_cmp extends user_sandbox_named_with_type
         log_debug('view_component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id);
         $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_ADD;
+        $log->action = change_log_action::ADD;
         $log->set_table(change_log_table::VIEW_LINK);
         $log->new_from = clone $this;
         $log->new_to = clone $dsp;
@@ -712,7 +712,7 @@ class view_cmp extends user_sandbox_named_with_type
         log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id);
         $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_DELETE;
+        $log->action = change_log_action::DELETE;
         $log->set_table(change_log_table::VIEW_LINK);
         $log->old_from = clone $this;
         $log->old_to = clone $dsp;

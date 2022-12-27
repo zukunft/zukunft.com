@@ -104,12 +104,13 @@ include_once $path_unit . 'formula_element.php';
 include_once $path_unit . 'figure.php';
 include_once $path_unit . 'expression.php';
 include_once $path_unit . 'view.php';
+include_once $path_unit . 'view_list.php';
 include_once $path_unit . 'view_component.php';
 include_once $path_unit . 'view_component_display.php';
 include_once $path_unit . 'view_component_link.php';
 include_once $path_unit . 'verb.php';
 include_once $path_unit . 'ref.php';
-include_once $path_unit . 'user_log.php';
+include_once $path_unit . 'change_log.php';
 
 // load the testing functions for creating HTML code
 include_once $path_unit . 'html.php';
@@ -118,6 +119,7 @@ include_once $path_unit . 'word_display.php';
 include_once $path_unit . 'word_list_display.php';
 include_once $path_unit . 'triple_display.php';
 include_once $path_unit . 'phrase_list_display.php';
+include_once $path_unit . 'change_log_display.php';
 include_once $path_unit_dsp . 'test_display.php';
 include_once $path_unit_dsp . 'type_lists.php';
 
@@ -127,7 +129,7 @@ include_once $path_unit_db . 'all.php';
 include_once $path_unit_db . 'system.php';
 include_once $path_unit_db . 'sql_db.php';
 include_once $path_unit_db . 'user.php';
-include_once $path_unit_db . 'user_log.php';
+include_once $path_unit_db . 'change_log.php';
 include_once $path_unit_db . 'word.php';
 include_once $path_unit_db . 'word_list.php';
 include_once $path_unit_db . 'verb.php';
@@ -352,11 +354,11 @@ class test_base
         // instead a user specific value is created
         // for testing $usr is the user who has started the test ans $usr1 and $usr2 are the users used for simulation
         $this->usr1 = new user_dsp_old;
-        $this->usr1->name = user::NAME_SYSTEM_TEST;
+        $this->usr1->name = user::SYSTEM_NAME_TEST;
         $this->usr1->load_test_user();
 
         $this->usr2 = new user_dsp_old;
-        $this->usr2->name = user::NAME_SYSTEM_TEST_PARTNER;
+        $this->usr2->name = user::SYSTEM_NAME_TEST_PARTNER;
         $this->usr2->load_test_user();
 
     }
@@ -622,7 +624,9 @@ class test_base
         $expected = json_decode($this->api_json_expected($class), true);
 
         // remove the change time
-        $actual = $this->json_remove_volatile($actual);
+        if ($actual != null) {
+            $actual = $this->json_remove_volatile($actual);
+        }
 
         // TODO remove, for faster debugging only
         $json_actual = json_encode($actual);
@@ -642,11 +646,11 @@ class test_base
         foreach ($json as $chg) {
             if (is_array($chg)) {
                 if (array_key_exists(change_log::FLD_CHANGE_TIME, $chg)) {
-                    $actual_time = new DateTime('now');
                     try {
-                        $actual_time = new DateTime($chg[change_log::FLD_CHANGE_TIME]);
+                        $actual_time = $chg[change_log::FLD_CHANGE_TIME];
                     } catch (Exception $e) {
                         log_warning($chg[change_log::FLD_CHANGE_TIME] . ' cannot be converted to a data');
+                        $actual_time = new DateTime('now');
                     }
                     $now = new DateTime('now');
                     if ($actual_time < $now) {

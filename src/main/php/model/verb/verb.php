@@ -708,7 +708,7 @@ class verb extends db_object
         log_debug('verb->log_add ' . $this->dsp_id());
         $log = new change_log_named();
         $log->usr = $this->usr;
-        $log->action = change_log::ACTION_ADD;
+        $log->action = change_log_action::ADD;
         $log->set_table(change_log_table::VERB);
         $log->set_field(self::FLD_NAME);
         $log->old_value = '';
@@ -725,7 +725,7 @@ class verb extends db_object
         log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new change_log_named;
         $log->usr = $this->usr;
-        $log->action = change_log::ACTION_UPDATE;
+        $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::VERB);
 
         return $log;
@@ -737,7 +737,7 @@ class verb extends db_object
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new change_log_named;
         $log->usr = $this->usr;
-        $log->action = change_log::ACTION_DELETE;
+        $log->action = change_log_action::DELETE;
         $log->set_table(change_log_table::VERB);
         $log->set_field(self::FLD_NAME);
         $log->old_value = $this->name;

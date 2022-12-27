@@ -62,8 +62,25 @@ class view_list extends sandbox_list
 
 
     /*
-     * loading functions
+     * load
      */
+
+    /**
+     * set the SQL query parameters to load a list of views
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    {
+        $qp = new sql_par($class);
+        $db_con->set_type(sql_db::TBL_VIEW);
+        $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $db_con->set_usr($this->user()->id);
+        $db_con->set_fields(view::FLD_NAMES);
+        $db_con->set_usr_fields(view::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(view::FLD_NAMES_NUM_USR);
+        return $qp;
+    }
 
     /**
      * add one formula value to the formula value list, but only if it is not yet part of the phrase list

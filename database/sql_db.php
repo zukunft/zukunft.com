@@ -1479,7 +1479,7 @@ class sql_db
     function exe(string $sql, string $sql_name = '', array $sql_array = array(), int $log_level = sys_log_level::ERROR)
     {
         global $debug;
-        log_debug('"' . $sql . '" named "' . $sql_name . '" for  user ' . $this->usr_id, $debug - 15);
+        log_debug('"' . $sql . '" with ' . dsp_array($sql_array) . ' named "' . $sql_name . '" for  user ' . $this->usr_id, $debug - 15);
 
         // PostgreSQL part
         if ($this->db_type == sql_db::POSTGRES) {
@@ -3234,7 +3234,7 @@ class sql_db
 
         // get the system user id
         $sys_usr = new user();
-        $sys_usr->name = user::SYSTEM;
+        $sys_usr->name = user::SYSTEM_NAME;
         $sys_usr->load($this);
 
         if ($sys_usr->id <= 0) {

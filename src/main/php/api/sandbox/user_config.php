@@ -35,6 +35,13 @@ namespace api;
 class user_config
 {
 
+    /**
+     * @return string with the date format as requested by the user
+     */
+    public function date_time_format(): string
+    {
+        return 'd-m-Y H:i';
+    }
 
 }
 

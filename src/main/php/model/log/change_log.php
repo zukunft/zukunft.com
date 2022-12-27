@@ -5,7 +5,8 @@
     user_log.php - object to save the user changes in the database in a format, so that it can fast be displayed to the user
     ------------
 
-    for reading the user changes from the database and forwarding them to the API and frontend model/log/changeLog* should be used
+    for reading the user changes from the database and forwarding them to
+    the API and frontend model/log/changeLog* should be used
 
     This file is part of zukunft.com - calc with words
 
@@ -55,10 +56,6 @@ use controller\log\change_log_api;
 
 class change_log extends db_object
 {
-    // the basic change types that are logged
-    const ACTION_ADD = 'add';
-    const ACTION_UPDATE = 'update';
-    const ACTION_DELETE = 'del';
 
     /*
      * database link
@@ -80,22 +77,23 @@ class change_log extends db_object
     protected ?int $field_id = null;   // database id for the field text
     public ?int $row_id = null;        // the reference id of the row in the database table
 
-    protected ?string $user_name = null;   //
-    protected ?string $change_time = null; //
+    protected DateTime $change_time; // the date and time of the change
 
 
     /*
      * cast
      */
 
-    public function fill_api_obj($api_obj): change_log_api
+    public function fill_api_obj(change_log_api $api_obj): change_log_api
     {
-        $api_obj->usr_id = $this->usr->id;
+        if ($this->usr != null) {
+            $api_obj->usr = $this->usr->api_obj();
+        }
         $api_obj->action_id = $this->action_id;
         $api_obj->table_id = $this->table_id;
         $api_obj->field_id = $this->field_id;
         $api_obj->row_id = $this->row_id;
-        $api_obj->change_time = $this->change_time;
+        $api_obj->change_time = $this->time();
         return $api_obj;
 
     }
@@ -103,6 +101,47 @@ class change_log extends db_object
     /*
      * set and get
      */
+
+    public function set_user(user $usr): void
+    {
+        $this->usr = $usr;
+    }
+
+    public function user(): user
+    {
+        return $this->usr;
+    }
+
+    /**
+     * set the action of this change log object and to add a new action to the database if needed
+     * @param string $action_name the name of the new action
+     * @return void
+     */
+    public function set_action(string $action_name): void
+    {
+        global $change_log_actions;
+        $this->action_id = $change_log_actions->id($action_name);
+        if ($this->action_id <= 0) {
+            $this->add_action($action_name);
+            if ($this->action_id <= 0) {
+                log_err("Cannot add action name " . $action_name);
+            } else {
+                $tbl = new user_type($action_name, $action_name);
+                $change_log_actions->add($tbl, $this->action_id);
+                $change_log_actions->get_hash($change_log_actions->lst);
+            }
+        }
+    }
+
+    /**
+     * get the action name base on the action_id
+     * @return string
+     */
+    public function action(): string
+    {
+        global $change_log_actions;
+        return $change_log_actions->name($this->action_id);
+    }
 
     /**
      * set the table of this change log object and to add a new table to the database if needed
@@ -173,6 +212,33 @@ class change_log extends db_object
         $field_key = $change_log_fields->name($this->field_id);
         return $lib->str_right_of($field_key, $this->table_id);
     }
+
+    public function set_time(DateTime $time): void
+    {
+        $this->change_time = $time;
+    }
+
+    public function set_time_str(string $time_str): void
+    {
+        global $debug;
+        try {
+            log_debug('Convert ' . $time_str . ' to time', $debug - 12);
+            $this->set_time((new DateTime($time_str)));
+            log_debug('Converted ' . $time_str . ' to time', $debug - 12);
+        } catch (Exception $e) {
+            log_err('Cannot convert ' . $time_str . ' to time');
+        }
+    }
+
+    public function time(): DateTime
+    {
+        return $this->change_time;
+    }
+
+
+    /*
+     * modify
+     */
 
     /**
      * to save database space the table name is saved as a reference id in the log table

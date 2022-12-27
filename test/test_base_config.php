@@ -70,7 +70,7 @@ if ($usr->id > 0) {
 
         ui_echo("loading of base configuration started<br>");
 
-        import_base_config();
+        import_base_config($usr);
 
         ui_echo("loading of base configuration finished<br>");
 

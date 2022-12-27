@@ -33,7 +33,7 @@
 use api\triple_api;
 use api\word_api;
 
-class user_log_unit_db_tests
+class change_log_unit_db_tests
 {
 
     function run(testing $t): void
@@ -73,6 +73,14 @@ class user_log_unit_db_tests
         $t->assert('first triple is adding', $first_change->old_value, '');
         $t->assert('... the name', $first_change->new_value, triple_api::TN_READ_NAME);
 
+
+        $t->subheader('API unit db tests');
+
+        $wrd = new word($usr);
+        $wrd->load_by_id(1);
+        $log_lst = new change_log_list();
+        $log_lst->load_by_fld_of_wrd($wrd, change_log_field::FLD_WORD_NAME);
+        $t->assert_api($log_lst);
 
     }
 

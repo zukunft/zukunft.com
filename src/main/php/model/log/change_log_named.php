@@ -30,6 +30,7 @@
 */
 
 use api\change_log_named_dsp;
+use api\user_config;
 use controller\log\change_log_named_api;
 
 class change_log_named extends change_log
@@ -81,12 +82,14 @@ class change_log_named extends change_log
      */
     function row_mapper(array $db_row): bool
     {
+        global $debug;
         global $change_log_fields;
         if ($db_row[self::FLD_ID] > 0) {
             $this->set_id($db_row[self::FLD_ID]);
+            $this->action_id = $db_row[self::FLD_ACTION];
             $this->field_id = $db_row[self::FLD_FIELD_ID];
             $this->row_id = $db_row[self::FLD_ROW_ID];
-            $this->change_time = $db_row[self::FLD_CHANGE_TIME];
+            $this->set_time_str($db_row[self::FLD_CHANGE_TIME]);
             $this->old_value = $db_row[self::FLD_OLD_VALUE];
             $this->old_id = $db_row[self::FLD_OLD_ID];
             $this->new_value = $db_row[self::FLD_NEW_VALUE];
@@ -94,10 +97,12 @@ class change_log_named extends change_log
 
             $fld_tbl = $change_log_fields->get_by_id($this->field_id);
             $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
+            // TODO check if not the complete user should be loaded
             $usr = new user();
             $usr->id = $db_row[user::FLD_ID];
+            $usr->name = $db_row[user::FLD_NAME];
             $this->usr = $usr;
-            $this->user_name = $db_row[user::FLD_NAME];
+            log_debug('Change ' . $this->id() . ' loaded', $debug - 8);
             return true;
         } else {
             return false;
@@ -112,29 +117,28 @@ class change_log_named extends change_log
     public function api_obj(): change_log_named_api
     {
         $api_obj = new change_log_named_api();
-        parent::fill_api_obj($api_obj);
-        $api_obj->old_value = $this->old_value;
-        $api_obj->old_id = $this->old_id;
-        $api_obj->new_value = $this->new_value;
-        $api_obj->new_id = $this->new_id;
-        $api_obj->std_value = $this->std_value;
-        $api_obj->std_id = $this->std_id;
+        $this->fill_obj($api_obj);
         return $api_obj;
 
     }
 
     public function dsp_obj(): change_log_named_dsp
     {
-        $api_obj = new change_log_named_dsp();
-        parent::fill_api_obj($api_obj);
-        $api_obj->old_value = $this->old_value;
-        $api_obj->old_id = $this->old_id;
-        $api_obj->new_value = $this->new_value;
-        $api_obj->new_id = $this->new_id;
-        $api_obj->std_value = $this->std_value;
-        $api_obj->std_id = $this->std_id;
-        return $api_obj;
+        $dsp_obj = new change_log_named_dsp();
+        $this->fill_obj($dsp_obj);
+        return $dsp_obj;
 
+    }
+
+    private function fill_obj(change_log_named_api|change_log_named_dsp $log_obj): void
+    {
+        parent::fill_api_obj($log_obj);
+        $log_obj->old_value = $this->old_value;
+        $log_obj->old_id = $this->old_id;
+        $log_obj->new_value = $this->new_value;
+        $log_obj->new_id = $this->new_id;
+        $log_obj->std_value = $this->std_value;
+        $log_obj->std_id = $this->std_id;
     }
 
 
@@ -297,16 +301,20 @@ class change_log_named extends change_log
         //parent::add_table();
         //parent::add_field();
 
+        $usr_cfg = new user_config();
+
         $db_type = $db_con->get_type();
         $qp = $this->load_sql_by_field_row($db_con, $this->field_id, $this->row_id);
         $db_row = $db_con->get1($qp);
         $this->row_mapper($db_row);
         if ($db_row) {
             if (!$ex_time) {
-                $result .= $this->change_time . ' ';
+                $result .= date_format($this->time(), $usr_cfg->date_time_format()) . ' ';
             }
-            if ($this->user_name <> '') {
-                $result .= $this->user_name . ' ';
+            if ($this->usr != null) {
+                if ($this->usr->name <> '') {
+                    $result .= $this->usr->name . ' ';
+                }
             }
             if ($this->old_value <> '') {
                 if ($this->new_value <> '') {

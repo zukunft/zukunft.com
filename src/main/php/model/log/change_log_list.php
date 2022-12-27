@@ -173,9 +173,9 @@ class change_log_list extends base_list
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $wrd = new change_log_named();
-                    $wrd->row_mapper($db_row);
-                    $this->lst[] = $wrd;
+                    $chg = new change_log_named();
+                    $chg->row_mapper($db_row);
+                    $this->lst[] = $chg;
                     $result = true;
                 }
             }

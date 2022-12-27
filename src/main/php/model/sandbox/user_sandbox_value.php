@@ -140,7 +140,7 @@ class user_sandbox_value extends user_sandbox
 
         $log = new change_log_named;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_ADD;
+        $log->action = change_log_action::ADD;
         $log->set_table($this->obj_name . 's');
         $log->set_field(change_log_field::FLD_VALUE_NUMBER);
         $log->old_value = '';
@@ -162,7 +162,7 @@ class user_sandbox_value extends user_sandbox
 
         $log = new change_log_named;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_DELETE;
+        $log->action = change_log_action::DELETE;
         $log->set_table($this->obj_name . 's');
         $log->set_field(change_log_field::FLD_VALUE_NUMBER);
         $log->old_value = $this->number;

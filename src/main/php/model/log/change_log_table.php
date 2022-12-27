@@ -80,7 +80,7 @@ class change_log_table extends user_type_list
         $this->lst[3] = $type;
         $this->hash[change_log_table::USR] = 3;
         $type = new user_type(change_log_table::WORD, change_log_table::WORD);
-        $this->lst[4] = $type;
+        $this->lst[5] = $type;
         $this->hash[change_log_table::WORD] = 5;
     }
 

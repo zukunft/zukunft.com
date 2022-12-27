@@ -122,7 +122,9 @@ class user_type_list
             foreach ($db_lst as $db_entry) {
                 $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
                 $type_name = '';
-                if ($db_type == db_cl::LOG_TABLE) {
+                if ($db_type == db_cl::LOG_ACTION) {
+                    $type_name = strval($db_entry['change_action_name']);
+                } elseif ($db_type == db_cl::LOG_TABLE) {
                     $type_name = strval($db_entry['change_table_name']);
                 } elseif ($db_type == sql_db::VT_TABLE_FIELD) {
                     $type_name = strval($db_entry['change_table_field_name']);
@@ -225,7 +227,7 @@ class user_type_list
             if (array_key_exists($id, $this->lst)) {
                 $result = $this->lst[$id];
             } else {
-                log_err('Type with is ' . $id . ' not found in ' . dsp_array($this->lst));
+                log_err('Type with is ' . $id . ' not found in ' . $this->dsp_id());
             }
         } else {
             log_debug('Type id not set');
@@ -248,7 +250,7 @@ class user_type_list
         if ($type != null) {
             $result = $type->code_id;
         } else {
-            log_err('Type code id not found for ' . $id . ' in ' . dsp_array($this->lst));
+            log_err('Type code id not found for ' . $id . ' in ' . $this->dsp_id());
         }
         return $result;
     }

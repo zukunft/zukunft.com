@@ -69,6 +69,24 @@ class view_sys_list extends user_type_list
      */
 
     /**
+     * set the SQL query parameters to load a list of views from the database that have a used code id
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    public function load_sql_list(sql_db $db_con): sql_par
+    {
+        $this->lst = [];
+        $dsp_lst = new view_list($this->user());
+        $qp = $dsp_lst->load_sql($db_con, self::class);
+        $qp->name .= 'sys_views';
+        $db_con->set_name($qp->name);
+        $db_con->set_where_text('code_id IS NOT NULL');
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
      * force to reload the list of views from the database that have a used code id
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param string $db_type the database name in this case view just for compatibility reasons
@@ -77,14 +95,8 @@ class view_sys_list extends user_type_list
     private function load_list(sql_db $db_con, string $db_type): array
     {
         $this->lst = [];
-        $db_con->set_type($db_type);
-        $db_con->set_usr($this->user()->id);
-        $db_con->set_fields(view::FLD_NAMES);
-        $db_con->set_usr_fields(view::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(view::FLD_NAMES_NUM_USR);
-        $db_con->set_where_text('code_id IS NOT NULL');
-        $sql = $db_con->select_by_set_id();
-        $db_lst = $db_con->get_old($sql);
+        $qp = $this->load_sql_list($db_con);
+        $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $vrb = new view($this->usr);

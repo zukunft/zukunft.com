@@ -1450,7 +1450,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_ADD;
+        $log->action = change_log_action::ADD;
         $log->set_table(change_log_table::TRIPLE);
         $log->new_from = $this->from;
         $log->new_link = $this->verb;
@@ -1468,7 +1468,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     {
         $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_UPDATE;
+        $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::TRIPLE);
         } else {
@@ -1487,7 +1487,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $log = new change_log_link;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_DELETE;
+        $log->action = change_log_action::DELETE;
         $log->set_table(change_log_table::TRIPLE);
         $log->old_from = $this->from;
         $log->old_link = $this->verb;
@@ -1505,7 +1505,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     {
         $log = new change_log_named;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_UPDATE;
+        $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::TRIPLE);
         } else {

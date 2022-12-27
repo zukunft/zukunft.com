@@ -32,7 +32,9 @@
 
 namespace controller\log;
 
+use api\user_api;
 use api\user_sandbox_api;
+use DateTime;
 
 class change_log_api extends user_sandbox_api
 {
@@ -42,11 +44,11 @@ class change_log_api extends user_sandbox_api
      * object vars
      */
 
-    public ?int $usr_id = null;  // the user who has done the change
-    public ?int $action_id;      // database id for the change type (add, change or del)
-    public ?int $table_id;       // database id of the table used to get the name from the preloaded hash
-    public ?int $field_id;       // database id of the table used to get the name from the preloaded hash
-    public ?int $row_id;         // prime database key of the row that has been changed
-    public ?string $change_time; // the time of the change in ISO format
+    public ?user_api $usr = null;  // the user who has done the change
+    public ?int $action_id;        // database id for the change type (add, change or del)
+    public ?int $table_id;         // database id of the table used to get the name from the preloaded hash
+    public ?int $field_id;         // database id of the table used to get the name from the preloaded hash
+    public ?int $row_id;           // prime database key of the row that has been changed
+    public DateTime $change_time;  // the time of the change
 
 }

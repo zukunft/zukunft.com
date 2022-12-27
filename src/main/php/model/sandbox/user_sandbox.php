@@ -1181,7 +1181,7 @@ class user_sandbox extends db_object
         $log = new change_log_named;
 
         $log->usr = $this->usr;
-        $log->action = change_log::ACTION_ADD;
+        $log->action = change_log_action::ADD;
         // TODO add the table exceptions from sql_db
         $log->set_table($this->obj_name . 's');
         $log->row_id = 0;
@@ -1206,7 +1206,7 @@ class user_sandbox extends db_object
     {
         log_debug($this->dsp_id());
         $log->usr = $this->usr;
-        $log->action = change_log::ACTION_UPDATE;
+        $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
             $log->set_table($this->obj_name . 's');

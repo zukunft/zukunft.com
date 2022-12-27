@@ -47,6 +47,7 @@ class test_unit extends testing
         global $db_con;
         global $sql_names;
         global $usr;
+        global $usr_sys;
         $global_db_con = $db_con;
         $global_sql_names = $sql_names;
         $global_usr = $usr;
@@ -56,15 +57,28 @@ class test_unit extends testing
         $db_con->db_type = SQL_DB_TYPE;
         // create a list with all prepared sql queries to check if the name is unique
         $sql_names = array();
-        // create a dummy user for unit testing
+
+        // create a dummy user for  testing
         $usr = new user;
-        $usr->id = SYSTEM_USER_ID;
+        $usr->id = user::SYSTEM_ID_TEST;
+        $usr->name = user::SYSTEM_NAME_TEST;
+
+        // create a dummy system user for unit testing
+        $usr_sys = new user;
+        $usr_sys->id = user::SYSTEM_ID;
+        $usr_sys->name = user::SYSTEM_NAME;
 
 
         // prepare the unit tests
         $this->init_sys_log_status();
         $this->init_sys_users();
         $this->init_user_profiles();
+
+        // set the profile of the test users
+        $usr->profile_id = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
+        $usr_sys->profile_id = cl(db_cl::USER_PROFILE, user_profile::SYSTEM);
+
+        // continue with preparing unit tests
         $this->init_word_types();
         $this->init_verbs();
         $this->init_formula_types();
@@ -80,6 +94,7 @@ class test_unit extends testing
         $this->init_share_types();
         $this->init_protection_types();
         $this->init_job_types();
+        $this->init_log_actions();
         $this->init_log_tables();
         $this->init_log_fields();
 
@@ -108,10 +123,11 @@ class test_unit extends testing
         (new formula_element_unit_tests)->run($this);
         (new expression_unit_tests)->run($this);
         (new view_unit_tests)->run($this);
+        (new view_list_unit_tests)->run($this);
         (new view_component_unit_tests())->run($this);
         (new view_component_link_unit_tests)->run($this);
         (new ref_unit_tests)->run($this);
-        (new user_log_unit_tests)->run($this);
+        (new change_log_unit_tests)->run($this);
 
         // do the UI unit tests
         (new html_unit_tests)->run($this);
@@ -122,6 +138,7 @@ class test_unit extends testing
         (new triple_display_unit_tests)->run($this);
         (new phrase_list_display_unit_tests)->run($this);
         (new view_component_display_unit_tests)->run($this);
+        (new change_log_display_unit_tests)->run($this);
 
         // restore the global vars
         $db_con = $global_db_con;
@@ -342,6 +359,18 @@ class test_unit extends testing
 
         $job_types = new job_type_list();
         $job_types->load_dummy();
+
+    }
+
+    /**
+     * create log table array for the unit tests without database connection
+     */
+    function init_log_actions()
+    {
+        global $change_log_actions;
+
+        $change_log_actions = new change_log_action();
+        $change_log_actions->load_dummy();
 
     }
 

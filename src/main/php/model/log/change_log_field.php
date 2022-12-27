@@ -2,8 +2,8 @@
 
 /*
 
-    user_log_field.php - the const for the change log field table
-    -----------------
+    model/log/change_log_field.php - the const for the change log field table
+    -------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -41,8 +41,11 @@ class change_log_field extends user_type_list
 
     // the field names in the log are for the current version the same as the field names of the single objects
     // the field names are listed here again, so that the log can include all changes even if the field name has changed
+    // *_NAME is the name as used in the program or as it has been used in a previous program version
+    // *_NAME_DSP is the description that should be shown to the user
     const FLD_TABLE = 'table_id';
     const FLD_WORD_NAME = 'word_name';
+    const FLD_WORD_NAME_DSP = 'name';
     const FLD_WORD_VIEW = 'view_id';
     const FLD_WORD_PLURAL = 'plural';
     const FLD_WORD_TYPE = 'word_type_id';
@@ -80,8 +83,11 @@ class change_log_field extends user_type_list
         parent::load_dummy();
         $table_id = $change_log_tables->id(change_log_table::WORD);
         $table_field_name = $table_id . change_log_field::FLD_WORD_NAME;
-        $type = new user_type($table_field_name, $table_field_name);
-        $this->lst[2] = $type;
+        $type = new user_type(
+            $table_field_name,
+            change_log_field::FLD_WORD_NAME,
+            change_log_field::FLD_WORD_NAME_DSP);
+        $this->lst[16] = $type;
         $this->hash[$table_field_name] = 16;
     }
 

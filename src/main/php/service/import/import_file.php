@@ -126,15 +126,15 @@ function import_verbs(user $usr): bool
     return $result;
 }
 
-# import all zukunft.com base configuration json files
-# for an import it can be assumed that this base configuration is loaded
-# even if a user has overwritten some of these definitions the technical import should be possible
-# TODO load this configuration on first start of zukunft
-# TODO add a check bottom for admin to reload the base configuration
-function import_base_config(): string
+/**
+ * import all zukunft.com base configuration json files
+ * for an import it can be assumed that this base configuration is loaded
+ * even if a user has overwritten some of these definitions the technical import should be possible
+ * TODO load this configuration on first start of zukunft
+ * TODO add a check bottom for admin to reload the base configuration
+ */
+function import_base_config(user $usr): string
 {
-    global $usr;
-
     $result = '';
     log_debug('load base config');
 

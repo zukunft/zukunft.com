@@ -740,8 +740,8 @@ class view extends user_sandbox_named_with_type
             if ($key == exp_obj::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == user_type::FLD_CODE_ID) {
-                if ($this->user()->is_admin()) {
+            if ($key == self::FLD_CODE_ID) {
+                if ($this->user()->is_admin() or $this->user()->is_system()) {
                     $this->code_id = $value;
                 }
             }

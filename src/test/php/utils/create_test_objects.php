@@ -45,6 +45,8 @@ use api\word_api;
 class test_new_obj extends test_base
 {
 
+    CONST DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
+
     /*
      * dummy objects for unit tests
      */
@@ -70,14 +72,16 @@ class test_new_obj extends test_base
      */
     public function dummy_log_named(): change_log_named
     {
+        global $usr_sys;
+
         $chg = new change_log_named();
+        $chg->set_time_str(self::DUMMY_DATETIME);
+        $chg->set_action(change_log_action::ADD);
         $chg->set_table(change_log_table::WORD);
         $chg->set_field(change_log_field::FLD_WORD_NAME);
         $chg->new_value = word_api::TN_READ;
         $chg->row_id = 1;
-        $usr = new user();
-        $usr->id = 4;
-        $chg->usr = $usr;
+        $chg->usr = $usr_sys;
         return $chg;
     }
 

@@ -1451,7 +1451,7 @@ class value extends user_sandbox_value
         log_debug('value->log_upd "' . $this->number . '" for user ' . $this->user()->id);
         $log = new change_log_named;
         $log->usr = $this->user();
-        $log->action = change_log::ACTION_UPDATE;
+        $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::VALUE);
         } else {

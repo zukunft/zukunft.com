@@ -250,6 +250,7 @@ include_once $path_php . 'model/system/ip_range_list.php';
 include_once $path_php . 'model/log/change_log.php';
 include_once $path_php . 'model/log/change_log_named.php';
 include_once $path_php . 'model/log/change_log_link.php';
+include_once $path_php . 'model/log/change_log_action.php';
 include_once $path_php . 'model/log/change_log_table.php';
 include_once $path_php . 'model/log/change_log_field.php';
 include_once $path_php . 'model/log/change_log_list.php';
@@ -890,6 +891,7 @@ function prg_restart(string $code_name): sql_db
     global $system_views;
     global $sys_log_stati;
     global $job_types;
+    global $change_log_actions;
     global $change_log_tables;
     global $change_log_fields;
 
@@ -945,6 +947,8 @@ function prg_restart(string $code_name): sql_db
     $protection_types->load($db_con);
     $job_types = new job_type_list();
     $job_types->load($db_con);
+    $change_log_actions = new change_log_action();
+    $change_log_actions->load($db_con);
     $change_log_tables = new change_log_table();
     $change_log_tables->load($db_con);
     $change_log_fields = new change_log_field();

@@ -2,8 +2,8 @@
 
 /*
 
-    expression.php - a text (usually in the database reference format) that implies a data selection and can calculate a number
-    --------------
+    model/log/expression.php - a text (usually in the database reference format) that implies a data selection and can calculate a number
+    ------------------------
 
     This file is part of zukunft.com - calc with words
 
