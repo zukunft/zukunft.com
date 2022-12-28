@@ -46,10 +46,6 @@ class value_list extends sandbox_list
     public ?phrase $phr = null;              // show the values related to this phrase
     public ?phrase_list $phr_lst = null;     // show the values related to these phrases
 
-    // display and select fields to increase the response time
-    public int $page_size = SQL_ROW_LIMIT;   // if not defined, use the default page size
-    public int $page = 0;                    // start to display with this page
-
     /*
      * im- and export link
      */

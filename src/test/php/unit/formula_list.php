@@ -1,0 +1,109 @@
+<?php
+
+/*
+
+    test/php/unit/formula_list.php - unit tests related to a formula list
+    ------------------------------
+
+
+    zukunft.com - calc with words
+
+    copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+*/
+
+use api\formula_api;
+use api\word_api;
+
+class formula_list_unit_tests
+{
+
+    /**
+     * execute all formula list unit tests and return the test result
+     */
+    function run(testing $t): void
+    {
+
+        global $usr;
+
+        // init
+        $db_con = new sql_db();
+        $t->name = 'formula_list->';
+        $t->resource_path = 'db/formula/';
+
+        $t->header('Unit tests of the formula list class (src/main/php/model/formula/formula_list.php)');
+
+        $t->subheader('SQL statement creation tests');
+
+        // sql to load a list of formulas by the id
+        $frm_lst = new formula_list($usr);
+        $t->assert_load_sql_ids($db_con, $frm_lst);
+
+        // check the PostgreSQL query syntax to load a list of formulas by the names
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $frm_lst->load_sql_by_names($db_con, array(formula_api::TN_INCREASE, formula_api::TN_ADD));
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // ... same for MySQL
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $frm_lst->load_sql_by_names($db_con, array(formula_api::TN_INCREASE, formula_api::TN_ADD));
+        $t->assert_qp($qp, sql_db::MYSQL);
+
+        // check the PostgreSQL query syntax to load a list of formulas by phrase
+        $wrd = new word($usr);
+        $wrd->set(1,word_api::TN_ADD);
+        $phr = $wrd->phrase();
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $frm_lst->load_sql_by_phr($db_con, $phr);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // ... same for MySQL
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $frm_lst->load_sql_by_phr($db_con, $phr);
+        $t->assert_qp($qp, sql_db::MYSQL);
+
+        // check the PostgreSQL query syntax to load a list of formulas by phrase list
+        $phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $frm_lst->load_sql_by_phr_lst($db_con, $phr_lst);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // ... same for MySQL
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $frm_lst->load_sql_by_phr_lst($db_con, $phr_lst);
+        $t->assert_qp($qp, sql_db::MYSQL);
+
+        // check the PostgreSQL query syntax to load a page of all formulas
+        $frm_lst = new formula_list($usr);
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $frm_lst->load_sql_all($db_con, 10, 2);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // ... same for MySQL
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $frm_lst->load_sql_all($db_con, 10, 2);
+        $t->assert_qp($qp, sql_db::MYSQL);
+
+
+        $t->subheader('API unit tests');
+
+        $frm_lst = $t->dummy_formula_list();
+        $t->assert_api($frm_lst);
+
+    }
+
+}

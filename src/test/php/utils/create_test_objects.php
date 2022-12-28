@@ -47,6 +47,7 @@ use api\verb_api;
 use api\view_api;
 use api\view_cmp_api;
 use api\word_api;
+use cfg\formula_type;
 
 class test_new_obj extends test_base
 {
@@ -89,7 +90,16 @@ class test_new_obj extends test_base
         global $usr;
         $frm = new formula($usr);
         $frm->set(1, formula_api::TN_READ);
+        $frm->set_type(formula_type::CALC);
         return $frm;
+    }
+
+    public function dummy_formula_list(): formula_list
+    {
+        global $usr;
+        $lst = new formula_list($usr);
+        $lst->add($this->dummy_formula());
+        return $lst;
     }
 
     public function dummy_source(): source

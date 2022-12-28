@@ -279,7 +279,7 @@ class file_import
 
             // validate the import
             if (!$frm_to_calc->is_empty()) {
-                foreach ($frm_to_calc as $frm) {
+                foreach ($frm_to_calc->lst() as $frm) {
                     //$frm->calc();
                     if ($frm != null) {
                         log_debug($frm->dsp_id());

@@ -98,6 +98,7 @@ include_once $path_unit . 'value_phrase_link.php';
 include_once $path_unit . 'value_list.php';
 include_once $path_unit . 'value_list_display.php';
 include_once $path_unit . 'formula.php';
+include_once $path_unit . 'formula_list.php';
 include_once $path_unit . 'formula_link.php';
 include_once $path_unit . 'formula_value.php';
 include_once $path_unit . 'formula_element.php';
@@ -138,6 +139,7 @@ include_once $path_unit_db . 'term.php';
 include_once $path_unit_db . 'term_list.php';
 include_once $path_unit_db . 'value.php';
 include_once $path_unit_db . 'formula.php';
+include_once $path_unit_db . 'formula_list.php';
 include_once $path_unit_db . 'expression.php';
 include_once $path_unit_db . 'view.php';
 include_once $path_unit_db . 'ref.php';
@@ -392,6 +394,7 @@ class test_base
 
         $this->assert_api_get_list(phrase_list::class);
         $this->assert_api_get_list(term_list::class, [1, -1]);
+        $this->assert_api_get_list(formula_list::class, [1]);
         $this->assert_api_chg_list(
             change_log_list::class,
             controller::URL_VAR_WORD_ID, 1,
@@ -598,6 +601,9 @@ class test_base
         $data = array("ids" => implode(",", $ids));
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         $expected = json_decode($this->api_json_expected($class), true);
+        // TODO remove, for faster debugging only
+        $json_actual = json_encode($actual);
+        $json_expected = json_encode($expected);
         return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
     }
 
@@ -797,6 +803,30 @@ class test_base
      * @return bool true if all tests are fine
      */
     function assert_load_sql_ids(sql_db $db_con, object $usr_obj): bool
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_ids($db_con, array(1,2));
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_ids($db_con, array(1,2));
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * similar to assert_load_sql_ids but for a term id list
+     * check the object load by id list SQL statements for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_load_sql_trm_ids(sql_db $db_con, object $usr_obj): bool
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;

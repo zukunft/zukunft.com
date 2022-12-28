@@ -54,6 +54,7 @@ class phrase_list_unit_tests
         // init
         $db_con = new sql_db();
         $t->name = 'phrase_list->';
+        $t->resource_path = 'db/phrase/';
 
         $t->header('Unit tests of the phrase list class (src/main/php/model/phrase/phrase_list.php)');
 

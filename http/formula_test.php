@@ -86,7 +86,7 @@ if ($session_usr->id > 0) {
 
         // load the formulas to calculate
         $frm_lst = new formula_list($usr);
-        $frm_lst->load_by_frm_ids(explode(",", $frm_id));
+        $frm_lst->load_by_ids(explode(",", $frm_id));
 
         // display the first formula name as a sample
         $frm1 = $frm_lst->lst()[0]; // just as a sample to display some info to the user

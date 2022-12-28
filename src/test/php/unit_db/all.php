@@ -58,6 +58,7 @@ class test_unit_read_db extends test_unit
         (new term_list_unit_db_tests)->run($this);
         (new value_unit_db_tests)->run($this);
         (new formula_unit_db_tests)->run($this);
+        (new formula_list_unit_db_tests)->run($this);
         (new expression_unit_db_tests)->run($this);
         (new view_unit_db_tests)->run($this);
         (new ref_unit_db_tests)->run($this);

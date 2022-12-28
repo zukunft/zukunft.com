@@ -36,6 +36,11 @@ class base_list
     // the protected main var
     protected array $lst;
 
+    // paging vars
+    // display and select fields to increase the response time
+    private int $offset; // start to display with this id
+    public int $limit;   // if not defined, use the default page size
+
     // memory vs speed optimize vars
     private array $id_pos_lst;
     private bool $lst_dirty;
@@ -48,6 +53,9 @@ class base_list
     {
         $this->lst = array();
 
+        $this->offset = 0;
+        $this->limit = sql_db::PAGE_SIZE;
+
         $this->id_pos_lst = array();
         $this->lst_dirty = false;
 
@@ -59,6 +67,16 @@ class base_list
     /*
      * get and set
      */
+
+    public function set_offset(int $offset): void
+    {
+        $this->offset = $offset;
+    }
+
+    public function offset(): int
+    {
+        return $this->offset;
+    }
 
     /**
      * @returns true if the list has been replaced

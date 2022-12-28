@@ -110,8 +110,9 @@ class formula_list extends sandbox_list
         return $dsp_obj;
     }
 
+
     /*
-     * load functions
+     * load
      */
 
     /**
@@ -136,7 +137,7 @@ class formula_list extends sandbox_list
      * @param array $frm_ids an array of formula ids which should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_ids(sql_db $db_con, array $frm_ids): sql_par
+    function load_sql_by_ids(sql_db $db_con, array $frm_ids): sql_par
     {
         $qp = $this->load_sql($db_con);
         if (count($frm_ids) > 0) {
@@ -280,10 +281,10 @@ class formula_list extends sandbox_list
      * @param array $frm_ids an array of formula ids which should be loaded
      * @return bool true if at least one word found
      */
-    function load_by_frm_ids(array $frm_ids): bool
+    function load_by_ids(array $frm_ids): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_frm_ids($db_con, $frm_ids);
+        $qp = $this->load_sql_by_ids($db_con, $frm_ids);
         return $this->load_int($qp);
     }
 

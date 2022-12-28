@@ -85,6 +85,10 @@ class sql_db
     const POSTGRES = "PostgreSQL";
     const MYSQL = "MySQL";
 
+    // data retrieval settings
+    const PAGE_SIZE = 20; // default number of rows per page/query if not defined
+    const PAGE_SIZE_MAX = 2000; // the max number of rows per query to avoid long response times
+
     // SQL table and model object names used
     // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
     // TODO use const for all object names
@@ -2523,11 +2527,11 @@ class sql_db
     /**
      * set the limit and offset SQL statement for pagination
      */
-    function set_page(int $limit = 0, int $page = 0)
+    function set_page(int $limit = 0, int $offset = 0): void
     {
         // set default values
-        if ($page == 0) {
-            $page = 1;
+        if ($offset <= 0) {
+            $offset = 0;
         }
         if ($limit == 0) {
             $limit = SQL_ROW_LIMIT;
@@ -2536,8 +2540,11 @@ class sql_db
                 $limit = SQL_ROW_LIMIT;
             }
         }
-
-        $this->page = ' LIMIT ' . $limit;
+        $this->page = '';
+        if ($offset > 0) {
+            $this->page .= ' OFFSET ' . $offset;
+        }
+        $this->page .= ' LIMIT ' . $limit;
     }
 
     /**

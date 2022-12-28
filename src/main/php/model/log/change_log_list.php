@@ -267,7 +267,7 @@ class change_log_list extends base_list
         $log_named = new change_log_named();
         $log_named->usr = $usr;
         $qp = $log_named->load_sql($db_con, $query_ext);
-        $db_con->set_page();
+        $db_con->set_page($this->limit, $this->offset());
         $db_con->add_par(sql_db::PAR_INT, $field_id);
         $db_con->add_par(sql_db::PAR_INT, $id);
         $qp->sql = $db_con->select_by_field_list(array(

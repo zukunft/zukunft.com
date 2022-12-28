@@ -34,7 +34,7 @@ namespace api;
 
 use html\formula_list_dsp;
 
-class formula_list_api extends list_api
+class formula_list_api extends list_api implements \JsonSerializable
 {
 
     /*
@@ -81,6 +81,24 @@ class formula_list_api extends list_api
 
         return $dsp_obj;
     }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * an array of the value vars including the private vars
+     */
+    public function jsonSerialize(): array
+    {
+        $vars = [];
+        foreach ($this->lst as $frm) {
+            $vars[] = json_decode(json_encode($frm));
+        }
+        return $vars;
+    }
+
 
     /*
      * selection functions

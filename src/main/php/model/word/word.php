@@ -539,7 +539,7 @@ class word extends user_sandbox_named_with_type
         log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
         $val_lst = new value_list($this->user());
         $val_lst->phr = $this->phrase();
-        $val_lst->page_size = SQL_ROW_MAX;
+        $val_lst->limit = SQL_ROW_MAX;
         $val_lst->load();
         log_debug('got ' . dsp_count($val_lst->lst()));
         return $val_lst;

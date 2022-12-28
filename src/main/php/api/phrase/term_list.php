@@ -98,8 +98,9 @@ class term_list_api extends list_api implements \JsonSerializable
         return $vars;
     }
 
+
     /*
-     * information functions
+     * information
      */
 
     /**
