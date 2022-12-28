@@ -584,7 +584,7 @@ class user
             if ($key == self::FLD_EX_PROFILE) {
                 $this->profile_id = $user_profiles->id($value);
             }
-            if ($key == user_type::FLD_CODE_ID) {
+            if ($key == exp_obj::FLD_CODE_ID) {
                 if ($profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)
                     or $profile_id == cl(db_cl::USER_PROFILE, user_profile::SYSTEM)) {
                     $this->code_id = $value;

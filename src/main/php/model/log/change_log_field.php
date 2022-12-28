@@ -49,6 +49,7 @@ class change_log_field extends user_type_list
     const FLD_WORD_VIEW = 'view_id';
     const FLD_WORD_PLURAL = 'plural';
     const FLD_WORD_TYPE = 'word_type_id';
+    const FLD_VERB_NAME = 'verb_name';
     const FLD_TRIPLE_NAME = 'name_given';
     const FLD_TRIPLE_VIEW = 'view_id';
     const FLD_VALUE_NUMBER = 'word_value';
@@ -60,6 +61,8 @@ class change_log_field extends user_type_list
     const FLD_FORMULA_ALL = 'all_values_needed';
     const FLD_SOURCE_NAME = 'source_name';
     const FLD_SOURCE_URL = 'url';
+    const FLD_VIEW_NAME = 'view_name';
+    const FLD_VIEW_CMP_NAME = 'view_component_name';
     const FLD_VIEW_CMP_TYPE = 'view_component_type_id';
     const FLD_TABLE_FIELD = 'table_field_name';
 

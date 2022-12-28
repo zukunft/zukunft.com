@@ -68,7 +68,6 @@ class test_unit extends testing
         $usr_sys->id = user::SYSTEM_ID;
         $usr_sys->name = user::SYSTEM_NAME;
 
-
         // prepare the unit tests
         $this->init_sys_log_status();
         $this->init_sys_users();

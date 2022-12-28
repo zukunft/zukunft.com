@@ -2,8 +2,8 @@
 
 /*
 
-    api/verb/verb.php - the verb object for the frontend API
-    -----------------
+    api/ref/ref.php - the reference object for the frontend API
+    ---------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,29 +32,28 @@
 
 namespace api;
 
-use html\formula_dsp;
-use html\term_dsp;
-use verb;
-
-class verb_api extends user_sandbox_named_api
+class ref_api extends user_sandbox_named_with_type_api
 {
 
     /*
      * const for system testing
      */
 
-    // already coded verb names or persevered verbs names for unit and integration tests
-    const TN_READ = "not set";
-    const TC_READ = "not_set";
+    // persevered reference names for unit and integration tests
+    const TN_READ = 'wikidata';
+    const TN_ADD = 'System Test Reference Name';
+
+    // reference group for testing
+    const RESERVED_SOURCES = array(
+        self::TN_READ,
+        self::TN_READ
+    );
 
 
     /*
-     * cast
+     * object vars
      */
 
-    function term(): term_api|term_dsp
-    {
-        return new term_api($this->id, $this->name, verb::class);
-    }
+    public ?string $url;
 
 }

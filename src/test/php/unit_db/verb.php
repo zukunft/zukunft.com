@@ -117,16 +117,14 @@ class verb_unit_db_tests
         // TODO check why this differs depending on the database used
         if ($result == 'is an acronym for') {
             $target = 'is an acronym for';
+        } elseif ($result == 'is a') {
+            $target = 'is a';
+        } elseif ($result == 'uses') {
+            $target = 'uses';
+        } elseif ($result == 'is measure type for') {
+            $target = 'is measure type for';
         } else {
-            if ($result == 'is a') {
-                $target = 'is a';
-            } else {
-                if ($result == 'is measure type for') {
-                    $target = 'is measure type for';
-                } else {
-                    $target = 'not set';
-                }
-            }
+            $target = 'not set';
         }
         $t->assert('selector list ' . verb::IS_A, $result, $target);
     }

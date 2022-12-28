@@ -78,6 +78,7 @@ class ref
     const FLD_EX_NAME = 'name';
     const FLD_EX_TYPE = 'type';
 
+
     /*
      * construct and map
      */
@@ -131,9 +132,19 @@ class ref
         return $result;
     }
 
+
     /*
      * set and get
      */
+
+    /**
+     * set the most often used reference vars with one set statement
+     * @param int $id mainly for test creation the database id of the reference
+     */
+    public function set(int $id = 0): void
+    {
+        $this->set_id($id);
+    }
 
     /**
      * @param int|null $id the database id of the verb

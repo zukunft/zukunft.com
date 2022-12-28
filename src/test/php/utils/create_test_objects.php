@@ -39,7 +39,13 @@
 
 */
 
+use api\formula_api;
+use api\source_api;
 use api\triple_api;
+use api\value_api;
+use api\verb_api;
+use api\view_api;
+use api\view_cmp_api;
 use api\word_api;
 
 class test_new_obj extends test_base
@@ -59,12 +65,63 @@ class test_new_obj extends test_base
         return $wrd;
     }
 
+    public function dummy_verb(): verb
+    {
+        return new verb(1, verb_api::TN_READ, verb_api::TC_READ);
+    }
+
     public function dummy_triple(): triple
     {
         global $usr;
         $trp = new triple($usr);
         $trp->set(1, triple_api::TN_READ);
         return $trp;
+    }
+
+    public function dummy_value(): value
+    {
+        global $usr;
+        return new value($usr, 1, value_api::TV_READ);
+    }
+
+    public function dummy_formula(): formula
+    {
+        global $usr;
+        $frm = new formula($usr);
+        $frm->set(1, formula_api::TN_READ);
+        return $frm;
+    }
+
+    public function dummy_source(): source
+    {
+        global $usr;
+        $src = new source($usr);
+        $src->set(1, source_api::TN_READ);
+        return $src;
+    }
+
+    public function dummy_reference(): ref
+    {
+        global $usr;
+        $ref = new ref($usr);
+        $ref->set(1);
+        return $ref;
+    }
+
+    public function dummy_view(): view
+    {
+        global $usr;
+        $dsp = new view($usr);
+        $dsp->set(1, view_api::TN_READ);
+        return $dsp;
+    }
+
+    public function dummy_component(): view_cmp
+    {
+        global $usr;
+        $dsp = new view_cmp($usr);
+        $dsp->set(1, view_cmp_api::TN_READ);
+        return $dsp;
     }
 
     /**
@@ -87,6 +144,9 @@ class test_new_obj extends test_base
 
     /**
      * @return change_log_list a list of change log entries with some dummy values
+     *
+     * TODO add at least one sample for rename and delete
+     * TODO add at least one sample for verb, triple, value, formula, source, ref, view and component
      */
     public function dummy_log_list_named(): change_log_list
     {

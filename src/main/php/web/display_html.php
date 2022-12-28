@@ -228,25 +228,6 @@ function dsp_link_hist_box($comp_name, $comp_html,
 // table element functions
 // -----------------------
 
-// simply to display a single word in a table as a header
-function dsp_tbl_head($link_name): string
-{
-    log_debug();
-    $result = '    <th>' . "\n";
-    $result .= '      ' . $link_name . "\n";
-    $result .= '    </th>' . "\n";
-    return $result;
-}
-
-// simply to display a single word in a table as a header
-function dsp_tbl_head_right($link_name): string
-{
-    $result = '    <th class="right_ref">' . "\n";
-    $result .= '      ' . $link_name . "\n";
-    $result .= '    </th>' . "\n";
-    return $result;
-}
-
 function dsp_tbl_start(): string
 {
     if (UI_USE_BOOTSTRAP) {

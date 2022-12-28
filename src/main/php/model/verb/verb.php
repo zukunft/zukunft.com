@@ -89,20 +89,24 @@ class verb extends db_object
      * object vars
      */
 
-    private ?user $usr = null;         // not used at the moment, because there should not be any user specific verbs
-    //                                   otherwise if id is 0 (not NULL) the standard word link type, otherwise the user specific verb
-    public ?string $code_id = '';     // the main id to detect verbs that have a special behavior
+    private ?user $usr = null;         // used only to allow adding the code id on import
+    //                                    but there should not be any user specific verbs
+    //                                    otherwise if id is 0 (not NULL) the standard word link type,
+    //                                    otherwise the user specific verb
+    public ?string $code_id = '';      // the main id to detect verbs that have a special behavior
     private ?string $name = '';        // the verb name to build the "sentence" for the user, which cannot be empty
-    public ?string $plural = '';      // name used if more than one word is shown
-    //                                   e.g. instead of "ABB" "is a" "company"
-    //                                        use "ABB", Nestlé" "are" "companies"
-    public ?string $reverse = '';     // name used if displayed the other way round
-    //                                   e.g. for "Country" "has a" "Human Development Index"
-    //                                        the reverse would be "Human Development Index" "is used for" "Country"
-    public ?string $rev_plural = '';  // the reverse name for many words
-    public ?string $frm_name = '';    // short name of the verb for the use in formulas, because there both sides are combined
-    public ?string $description = ''; // for the mouse over explain
-    public int $usage = 0; // how often this current used has used the verb (until now just the usage of all users)
+    public ?string $plural = '';       // name used if more than one word is shown
+    //                                    e.g. instead of "ABB" "is a" "company"
+    //                                         use "ABB", Nestlé" "are" "companies"
+    public ?string $reverse = '';      // name used if displayed the other way round
+    //                                    e.g. for "Country" "has a" "Human Development Index"
+    //                                         the reverse would be "Human Development Index" "is used for" "Country"
+    public ?string $rev_plural = '';   // the reverse name for many words
+    public ?string $frm_name = '';     // short name of the verb for the use in formulas
+    //                                    because there both sides are combined
+    public ?string $description = '';  // for the mouse over explain
+    public int $usage = 0;             // how often this current used has used the verb
+    //                                    (until now just the usage of all users)
 
 
     /*
@@ -437,7 +441,11 @@ class verb extends db_object
                 $this->name = $value;
             }
             if ($key == exp_obj::FLD_CODE_ID) {
-                $this->code_id = $value;
+                if ($value != '') {
+                    if ($this->user()->is_admin() or $this->user()->is_system()) {
+                        $this->code_id = $value;
+                    }
+                }
             }
             if ($key == exp_obj::FLD_DESCRIPTION) {
                 $this->description = $value;

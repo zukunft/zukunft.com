@@ -45,14 +45,13 @@ class view extends user_sandbox_named_with_type
     const FLD_ID = 'view_id';
     const FLD_NAME = 'view_name';
     const FLD_TYPE = 'view_type_id';
-    const FLD_CODE_ID = 'code_id';
     const FLD_DESCRIPTION = 'description';
     // the JSON object field names
     const FLD_COMPONENT = 'view_components';
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        self::FLD_CODE_ID
+        sql_db::FLD_CODE_ID
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
@@ -157,6 +156,7 @@ class view extends user_sandbox_named_with_type
     }
 
     // TODO check if there is any case where the user fields should not be set
+
     /**
      * map the database fields to the object fields
      *
@@ -177,7 +177,7 @@ class view extends user_sandbox_named_with_type
             $this->set_name($db_row[self::FLD_NAME]);
             $this->description = $db_row[self::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_TYPE];
-            $this->code_id = $db_row[self::FLD_CODE_ID];
+            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
         }
         return $result;
     }
@@ -482,18 +482,18 @@ class view extends user_sandbox_named_with_type
             foreach ($db_lst as $db_entry) {
                 // this is only for the view of the active user, so a direct exclude can be done
                 if ((is_null($db_entry[self::FLD_EXCLUDED]) or $db_entry[self::FLD_EXCLUDED] == 0)
-                    and (is_null($db_entry[self::FLD_EXCLUDED.'2']) or $db_entry[self::FLD_EXCLUDED.'2'] == 0)) {
+                    and (is_null($db_entry[self::FLD_EXCLUDED . '2']) or $db_entry[self::FLD_EXCLUDED . '2'] == 0)) {
                     $new_entry = new view_cmp_dsp_old($this->user());
                     $new_entry->id = $db_entry[view_cmp::FLD_ID];
                     $new_entry->owner_id = $db_entry[user_sandbox::FLD_USER];
                     $new_entry->order_nbr = $db_entry[view_cmp_link::FLD_ORDER_NBR];
                     $new_entry->name = $db_entry[view_cmp::FLD_NAME];
-                    $new_entry->word_id_row = $db_entry[view_cmp::FLD_ROW_PHRASE.'2'];
-                    $new_entry->link_type_id = $db_entry[view_cmp::FLD_LINK_TYPE.'2'];
-                    $new_entry->type_id = $db_entry[view_cmp::FLD_TYPE.'2'];
-                    $new_entry->formula_id = $db_entry[formula::FLD_ID.'2'];
-                    $new_entry->word_id_col = $db_entry[view_cmp::FLD_COL_PHRASE.'2'];
-                    $new_entry->word_id_col2 = $db_entry[view_cmp::FLD_COL2_PHRASE.'2'];
+                    $new_entry->word_id_row = $db_entry[view_cmp::FLD_ROW_PHRASE . '2'];
+                    $new_entry->link_type_id = $db_entry[view_cmp::FLD_LINK_TYPE . '2'];
+                    $new_entry->type_id = $db_entry[view_cmp::FLD_TYPE . '2'];
+                    $new_entry->formula_id = $db_entry[formula::FLD_ID . '2'];
+                    $new_entry->word_id_col = $db_entry[view_cmp::FLD_COL_PHRASE . '2'];
+                    $new_entry->word_id_col2 = $db_entry[view_cmp::FLD_COL2_PHRASE . '2'];
                     if (!$new_entry->load_phrases()) {
                         $result = false;
                     }
@@ -740,9 +740,11 @@ class view extends user_sandbox_named_with_type
             if ($key == exp_obj::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == self::FLD_CODE_ID) {
-                if ($this->user()->is_admin() or $this->user()->is_system()) {
-                    $this->code_id = $value;
+            if ($key == exp_obj::FLD_CODE_ID) {
+                if ($value != '') {
+                    if ($this->user()->is_admin() or $this->user()->is_system()) {
+                        $this->code_id = $value;
+                    }
                 }
             }
         }
@@ -874,7 +876,7 @@ class view extends user_sandbox_named_with_type
                 $log->new_value = $this->code_id;
                 $log->std_value = $std_rec->code_id;
                 $log->row_id = $this->id;
-                $log->set_field(self::FLD_CODE_ID);
+                $log->set_field(sql_db::FLD_CODE_ID);
                 $result = $this->save_field_do($db_con, $log);
             }
         }

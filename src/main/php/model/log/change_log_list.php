@@ -77,7 +77,7 @@ class change_log_list extends base_list
 
 
     /*
-     * load
+     * load interface
      */
 
     /**
@@ -100,7 +100,26 @@ class change_log_list extends base_list
     }
 
     /**
-     * load a list of the view changes of a word
+     * load a list of the view changes of a verb
+     * @param verb $trp the verb to which the view changes should be loaded
+     * @param string $field_name the field that has been change e.g. 'verb_name'
+     *                           if not set, all changes are returned
+     * @return bool true if at least one change found
+     */
+    function load_by_fld_of_vrb(verb $trp, string $field_name = ''): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_obj_fld(
+            $db_con,
+            change_log_table::VERB,
+            $field_name,
+            $field_name . '_of_vrb',
+            $trp->id());
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of the view changes of a triple
      * @param triple $trp the triple to which the view changes should be loaded
      * @param string $field_name the field that has been change e.g. 'view_id'
      *                           if not set, all changes are returned
@@ -119,8 +138,109 @@ class change_log_list extends base_list
     }
 
     /**
+     * load a list of the view changes of a value
+     * @param value $val the value to which the view changes should be loaded
+     * @param string $field_name the field that has been change e.g. 'word_value'
+     *                           if not set, all changes are returned
+     * @return bool true if at least one change found
+     */
+    function load_by_fld_of_val(value $val, string $field_name = ''): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_obj_fld(
+            $db_con,
+            change_log_table::VALUE,
+            $field_name,
+            $field_name . '_of_val',
+            $val->id());
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of the view changes of a formula
+     * @param formula $trp the formula to which the view changes should be loaded
+     * @param string $field_name the field that has been change e.g. 'view_id'
+     *                           if not set, all changes are returned
+     * @return bool true if at least one change found
+     */
+    function load_by_fld_of_frm(formula $trp, string $field_name = ''): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_obj_fld(
+            $db_con,
+            change_log_table::FORMULA,
+            $field_name,
+            $field_name . '_of_frm',
+            $trp->id());
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of the view changes of a source
+     * @param source $src the source to which the view changes should be loaded
+     * @param string $field_name the field that has been change e.g. 'view_id'
+     *                           if not set, all changes are returned
+     * @return bool true if at least one change found
+     */
+    function load_by_fld_of_src(source $src, string $field_name = ''): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_obj_fld(
+            $db_con,
+            change_log_table::SOURCE,
+            $field_name,
+            $field_name . '_of_src',
+            $src->id());
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of the view changes of a view
+     * @param view $dsp the view to which the view changes should be loaded
+     * @param string $field_name the field that has been change e.g. 'view_id'
+     *                           if not set, all changes are returned
+     * @return bool true if at least one change found
+     */
+    function load_by_fld_of_dsp(view $dsp, string $field_name = ''): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_obj_fld(
+            $db_con,
+            change_log_table::VIEW,
+            $field_name,
+            $field_name . '_of_dsp',
+            $dsp->id());
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of the view changes of a view component
+     * @param view_cmp $cmp the view to which the view component changes should be loaded
+     * @param string $field_name the field that has been change e.g. 'view_id'
+     *                           if not set, all changes are returned
+     * @return bool true if at least one change found
+     */
+    function load_by_fld_of_cmp(view_cmp $cmp, string $field_name = ''): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_obj_fld(
+            $db_con,
+            change_log_table::VIEW_COMPONENT,
+            $field_name,
+            $field_name . '_of_cmp',
+            $cmp->id());
+        return $this->load($qp);
+    }
+
+
+    /*
+     * load internals
+     */
+
+    /**
      * prepare sql to get the changes of one field of one user sandbox object
      * e.g. the when and how a user has changed the way a word should be shown in the user interface
+     * only public for SQL unit testing
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $table_name the table name of the user sandbox object e.g. 'word'
@@ -140,7 +260,7 @@ class change_log_list extends base_list
         global $change_log_tables;
         global $change_log_fields;
 
-        // prepare sql to get the view changes of a triple
+        // prepare sql to get the view changes of a user sandbox object e.g. word
         $table_id = $change_log_tables->id($table_name);
         $table_field_name = $table_id . $field_name;
         $field_id = $change_log_fields->id($table_field_name);
@@ -162,7 +282,7 @@ class change_log_list extends base_list
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @return bool true if at least one change found
      */
-    function load(sql_par $qp): bool
+    private function load(sql_par $qp): bool
     {
         global $db_con;
         $result = false;
@@ -185,7 +305,7 @@ class change_log_list extends base_list
     }
 
     /*
-     * modification functions
+     * modification
      */
 
     /**

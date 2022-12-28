@@ -48,6 +48,7 @@ class formula_api extends user_sandbox_named_with_type_api
     // TF_* is the formula expression in the human-readable format
     // TR_* is the formula expression in the database reference format
     const TN_READ = 'scale minute to sec';
+    const TF_READ = '"second" = "minute" * 60';
     const TN_INCREASE = 'increase';
     const TF_INCREASE = '"percent" = ( "this" - "prior" ) / "prior"';
     const TF_INCREASE_ALTERNATIVE = '"percent" = 1 - ( "this" / "prior" )';
