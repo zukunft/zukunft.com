@@ -541,9 +541,13 @@ class test_base
      */
     function assert_api(object $usr_obj): bool
     {
+        $class = $usr_obj::class;
+        if ($class == view_cmp::class) {
+            $class = 'component';
+        }
         $api_obj = $usr_obj->api_obj();
         $actual = json_decode(json_encode($api_obj), true);
-        $expected = json_decode($this->api_json_expected($usr_obj::class), true);
+        $expected = json_decode($this->api_json_expected($class), true);
         $actual = $this->json_remove_volatile($actual);
         // TODO remove, for faster debugging only
         $json_actual = json_encode($actual);
@@ -561,6 +565,10 @@ class test_base
      */
     function assert_api_get(string $class, int $id = 1): bool
     {
+        // naming exception (to be removed?)
+        if ($class == view_cmp::class) {
+            $class = 'component';
+        }
         $url = HOST_TESTING . '/api/' . $class;
         $data = array("id" => $id);
         // TODO check why for formula a double call is needed
