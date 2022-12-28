@@ -436,9 +436,13 @@ CREATE TABLE IF NOT EXISTS protection_types
 CREATE TABLE IF NOT EXISTS refs
 (
     ref_id       BIGSERIAL PRIMARY KEY,
+    user_id      bigint       DEFAULT NULL,
     phrase_id    bigint       NOT NULL,
     external_key varchar(250) NOT NULL,
-    ref_type_id  bigint       NOT NULL
+    ref_type_id  bigint       NOT NULL,
+    url          text         DEFAULT NULL,
+    description  text         DEFAULT NULL,
+    excluded     smallint     DEFAULT NULL
 );
 
 -- --------------------------------------------------------
@@ -891,8 +895,8 @@ CREATE TABLE IF NOT EXISTS user_refs
 (
     ref_id         bigint NOT NULL,
     user_id        bigint NOT NULL,
-    ref_name       varchar(200) DEFAULT NULL,
-    description    text,
+    url            text         DEFAULT NULL,
+    description    text         DEFAULT NULL,
     excluded       smallint     DEFAULT NULL
 );
 

@@ -293,7 +293,7 @@ class testing extends test_new_obj
 
         // request to delete the added test reference
         $ref = $this->load_ref(word_api::TN_ADD, ref_type::WIKIDATA);
-        if ($ref->id > 0) {
+        if ($ref->id() > 0) {
             $msg = $ref->del();
             $result .= $msg->get_last_message();
             $target = '';

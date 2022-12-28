@@ -40,6 +40,7 @@
 */
 
 use api\formula_api;
+use api\ref_api;
 use api\source_api;
 use api\triple_api;
 use api\value_api;
@@ -514,7 +515,7 @@ class test_new_obj extends test_base
         $wrd = $this->test_word($wrd_name);
         $phr = $wrd->phrase();
         $ref = $this->load_ref($wrd->name(), $type_name);
-        if ($ref->id == 0) {
+        if ($ref->id() == 0) {
             $ref->phr = $phr;
             $ref->ref_type = get_ref_type($type_name);
             $ref->external_key = $external_key;

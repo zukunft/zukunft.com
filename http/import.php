@@ -119,6 +119,7 @@ if ($usr->id > 0) {
                         . $import->triples_done . ' triples, '
                         . $import->formulas_done . ' formulas, '
                         . $import->sources_done . ' sources, '
+                        . $import->refs_done . ' references, '
                         . $import->values_done . ' values, '
                         . $import->list_values_done . ' simple values, '
                         . $import->views_done . ' views loaded, '

@@ -53,10 +53,10 @@ function run_ref_test(testing $t): void
     $target = ref::TEST_REF_NAME;
     $t->dsp('ref->load "' . word_api::TN_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
 
-    if ($ref->id > 0) {
+    if ($ref->id() > 0) {
         // load by id and test the loading of the objects
         $ref2 = new ref($usr);
-        $ref2->load_by_id($ref->id);
+        $ref2->load_by_id($ref->id());
         $result = $ref2->phr->name();
         $target = word_api::TN_ADD;
         $t->dsp('ref->load_object word', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);

@@ -5,9 +5,14 @@
     model/ref/ref.php - a link between a phrase and another system such as wikidata
     -----------------
 
-    a reference is potentially a bidirectional interface to another system
+    The reference is a concrete link between one phrase and an object in an external system
+    the external system is defined by the reference type
+
+    a reference type is potentially a bidirectional interface to another system
     that includes specific coding for the external system
-    a user can never add a reference but can rename it or change the description
+    a user can never add a reference type and can rename it or change the description
+
+    reference types are preloaded in the frontend whereas source are loaded on demand
 
     a source is always unidirectional and based on standard data format
 
@@ -43,7 +48,7 @@
 use export\exp_obj;
 use export\ref_exp;
 
-class ref extends user_sandbox_named_with_type
+class ref extends user_sandbox_link_with_type
 {
 
     /*
@@ -52,33 +57,51 @@ class ref extends user_sandbox_named_with_type
 
     // object specific database and JSON object field names
     const FLD_ID = 'ref_id';
-    const FLD_TYPE = 'ref_type_id';
     const FLD_EX_KEY = 'external_key';
+    const FLD_TYPE = 'ref_type_id';
+    const FLD_URL = 'url';
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
-        self::FLD_EX_KEY
+        phrase::FLD_ID,
+        self::FLD_EX_KEY,
+        self::FLD_TYPE
+    );
+    // list of the user specific database field names
+    const FLD_NAMES_USR = array(
+        self::FLD_URL,
+        user_sandbox_named::FLD_DESCRIPTION
+    );
+    // list of the user specific numeric database field names
+    const FLD_NAMES_NUM_USR = array(
+        self::FLD_EXCLUDED
+    );
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const ALL_FLD_NAMES = array(
+        phrase::FLD_ID,
+        self::FLD_EX_KEY,
+        self::FLD_TYPE,
+        self::FLD_URL,
+        user_sandbox_named::FLD_DESCRIPTION,
+        self::FLD_EXCLUDED
     );
 
     // persevered reference names for unit and integration tests
     const TEST_REF_NAME = 'System Test Reference Name';
 
-    // database fields
-    public ?int $id = null;               // the database id of the reference
-    public ?string $external_key = null;  // the unique key in the external system
-
-    // in memory only fields
-    private user $usr;                    // just needed for logging the changes
-    public ?phrase $phr = null;           // the phrase object incl. the database id of the word, verb or formula
-    public ?ref_type $ref_type = null;    // the ref type object incl. the database id of the ref type
 
     /*
-     * im- and export link
+     * object vars
      */
 
-    // the field names used for the im- and export in the json or yaml format
-    const FLD_EX_NAME = 'name';
-    const FLD_EX_TYPE = 'type';
+    // database fields
+    public ?phrase $phr = null;           // the phrase object incl. the database id of the word, verb or formula
+    public ?string $external_key = null;  // the unique key in the external system
+    public ?string $url;
+    public ?string $description = null;
+
+    // in memory only fields
+    public ?ref_type $ref_type = null;    // the ref type object incl. the database id of the ref type
 
 
     /*
@@ -87,19 +110,23 @@ class ref extends user_sandbox_named_with_type
 
     function __construct(user $usr)
     {
-        $this->set_user($usr);
+        parent::__construct($usr);
         $this->create_objects($usr);
+        $this->external_key = null;
+        $this->url = null;
+        $this->description = null;
     }
 
     function reset(): void
     {
-        $this->id = null;
-        $this->external_key = '';
-
+        parent::reset();
         $this->create_objects($this->user());
+        $this->external_key = '';
+        $this->url = null;
+        $this->description = null;
     }
 
-    private function create_objects(user $usr):void
+    private function create_objects(user $usr): void
     {
         $this->phr = new phrase($usr);
         // TODO set a proper default value
@@ -110,26 +137,29 @@ class ref extends user_sandbox_named_with_type
      * set the class vars based on a database record
      *
      * @param array $db_row is an array with the database values
-     * @return bool true if the verb is loaded and valid
+     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the reference is loaded and valid
      */
-    function row_mapper(array $db_row): bool
+    function row_mapper(
+        array  $db_row,
+        bool   $load_std = false,
+        bool   $allow_usr_protect = false,
+        string $id_fld = ''
+    ): bool
     {
-        $result = false;
-        if ($db_row != null) {
-            if ($db_row[self::FLD_ID] > 0) {
-                $this->id = $db_row[self::FLD_ID];
-                $this->phr->set_id($db_row[phrase::FLD_ID]);
-                $this->external_key = $db_row[self::FLD_EX_KEY];
-                $this->ref_type = get_ref_type_by_id($db_row[self::FLD_TYPE]);
-                if ($this->load_objects()) {
-                    $result = true;
-                    log_debug('done ' . $this->dsp_id());
-                }
-            } else {
-                $this->id = 0;
+        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld);
+        if ($result) {
+            $this->phr->set_id($db_row[phrase::FLD_ID]);
+            $this->external_key = $db_row[self::FLD_EX_KEY];
+            $this->ref_type = get_ref_type_by_id($db_row[self::FLD_TYPE]);
+            $this->url = $db_row[self::FLD_URL];
+            $this->description = $db_row[self::FLD_URL];
+            if ($this->load_objects()) {
+                $result = true;
+                log_debug('done ' . $this->dsp_id());
             }
-        } else {
-            $this->id = 0;
         }
         return $result;
     }
@@ -157,30 +187,11 @@ class ref extends user_sandbox_named_with_type
     }
 
     /**
-     * set the user of the reference
-     *
-     * @param user $usr the person who wants to access the reference
-     * @return void
+     * @return int|null the database id which is not 0 if the object has been saved
      */
-    function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    /**
-     * @return int the database id which is not 0 if the object has been saved
-     */
-    public function id(): int
+    public function id(): ?int
     {
         return $this->id;
-    }
-
-    /**
-     * @return user the person who wants to see the reference
-     */
-    function user(): user
-    {
-        return $this->usr;
     }
 
 
@@ -201,8 +212,46 @@ class ref extends user_sandbox_named_with_type
 
 
     /*
-     * loading
+     * load
      */
+
+    /**
+     * create the SQL to load the default ref always by the id
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
+    {
+        $db_con->set_type(sql_db::TBL_SOURCE);
+        $db_con->set_fields(array_merge(
+            self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
+            array(sql_db::FLD_USER_ID)
+        ));
+
+        return parent::load_standard_sql($db_con, $class);
+    }
+
+    /**
+     * load the ref parameters for all users
+     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * @param string $class the name of this class to be delivered to the parent function
+     * @return bool true if the standard ref has been loaded
+     */
+    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    {
+        global $db_con;
+        $qp = $this->load_standard_sql($db_con);
+        $result = parent::load_standard($qp, $class);
+
+        if ($result) {
+            $result = $this->load_owner();
+        }
+        return $result;
+    }
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of a source from the database
@@ -221,38 +270,8 @@ class ref extends user_sandbox_named_with_type
         $db_con->set_usr($this->user()->id);
         $db_con->set_link_fields(phrase::FLD_ID, self::FLD_TYPE);
         $db_con->set_fields(self::FLD_NAMES);
-
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a ref by id from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param int $id the id of the user sandbox object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_id(sql_db $db_con, int $id): sql_par
-    {
-        $qp = $this->load_sql($db_con, 'id');
-        $qp->sql = $db_con->select_by_id($id);
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a ref by name from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param string $name the name of the term and the related word, triple, formula or verb
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_name(sql_db $db_con, string $name): sql_par
-    {
-        $qp = $this->load_sql($db_con, 'ex_key');
-        $qp->sql = $db_con->select_by_name($name, self::FLD_EX_KEY);
-        $qp->par = $db_con->get_par();
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
     }
@@ -283,7 +302,7 @@ class ref extends user_sandbox_named_with_type
         $result = false;
 
         // check if the minimal input parameters are set
-        if ($this->id <= 0 and ($this->phr->id() <= 0 or $this->ref_type->id <= 0)) {
+        if ($this->id <= 0 and ($this->phr->id() == 0 or $this->ref_type->id <= 0)) {
             log_err('Either the database ID (' . $this->id . ') or the phrase id (' . $this->phr->id() . ') AND the reference type id (' . $this->ref_type->id . ') must be set to load a reference.', 'ref->load');
         } else {
 
@@ -298,6 +317,8 @@ class ref extends user_sandbox_named_with_type
             $db_con->set_usr($this->user()->id);
             $db_con->set_link_fields(phrase::FLD_ID, self::FLD_TYPE);
             $db_con->set_fields(self::FLD_NAMES);
+            $db_con->set_usr_fields(self::FLD_NAMES_USR);
+            $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
             $db_con->set_where_link_no_fld($this->id, $this->phr->id(), $this->ref_type->id);
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
@@ -325,17 +346,32 @@ class ref extends user_sandbox_named_with_type
     }
 
     /**
-     * load a verb by database id
-     * @param int $id the id of the word, triple, formula, verb, view or view component
+     * just set the class name for the user sandbox function
+     * load a reference object by database id
+     * @param int $id the id of the reference
+     * @param string $class the reference class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id): int
+    function load_by_id(int $id, string $class = self::class): int
     {
-        global $db_con;
+        return parent::load_by_id($id, $class);
+    }
 
-        log_debug($id);
-        $qp = $this->load_sql_by_id($db_con, $id);
-        return $this->load($qp);
+    /**
+     * just set the class name for the user sandbox function
+     * load a reference object by name
+     * @param string $name the name reference
+     * @param string $class the reference class name
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_name(string $name, string $class = self::class): int
+    {
+        return parent::load_by_name($name, $class);
+    }
+
+    function all_fields(): array
+    {
+        return self::ALL_FLD_NAMES;
     }
 
     /**
@@ -348,12 +384,14 @@ class ref extends user_sandbox_named_with_type
         global $db_con;
 
         log_debug($external_key_name);
-        $qp = $this->load_sql_by_name($db_con, $external_key_name);
+        $qp = $this->load_sql_by_id($db_con, $external_key_name, self::class);
         return $this->load($qp);
     }
 
-    // to load the related objects if the reference object is loaded
-    private function load_objects(): bool
+    /**
+     * to load the related objects if the reference object is loaded
+     */
+    public function load_objects(): bool
     {
         $result = true;
 
@@ -397,6 +435,7 @@ class ref extends user_sandbox_named_with_type
         // reset of object not needed, because the calling function has just created the object
         foreach ($json_obj as $key => $value) {
             if ($key == exp_obj::FLD_NAME) {
+                $this->name = $value;
                 $this->external_key = $value;
             }
             if ($key == exp_obj::FLD_TYPE) {
@@ -412,7 +451,7 @@ class ref extends user_sandbox_named_with_type
         }
         // to be able to log the object names
         if ($this->load_objects()) {
-            if ($result == '' and $do_save) {
+            if ($result->is_ok() and $do_save) {
                 $result->add_message($this->save());
             }
         }
@@ -424,7 +463,7 @@ class ref extends user_sandbox_named_with_type
      * create a reference object for export (so excluding e.g. the database id)
      * @return ref_exp a reduced reference object for the JSON message creation
      */
-    function export_obj(): ref_exp
+    function export_obj(bool $do_load = true): exp_obj
     {
         $result = new ref_exp();
 
@@ -438,9 +477,10 @@ class ref extends user_sandbox_named_with_type
         return $result;
     }
 
+
     /*
-    display functions
-    */
+     * debug
+     */
 
     /**
      * display the unique id fields
@@ -458,7 +498,9 @@ class ref extends user_sandbox_named_with_type
         return $result;
     }
 
-    // create the unique name
+    /**
+     * create the unique name
+     */
     function name(): string
     {
         $result = '';
@@ -484,8 +526,10 @@ class ref extends user_sandbox_named_with_type
         return $result;
     }
 
-    // set the log entry parameter for a new reference
-    function log_add(): change_log_link
+    /**
+     * set the log entry parameter for a new reference
+     */
+    function log_link_add(): change_log_link
     {
         log_debug('ref->log_add ' . $this->dsp_id());
 
@@ -512,8 +556,10 @@ class ref extends user_sandbox_named_with_type
         return $log;
     }
 
-    // set the main log entry parameters for updating one reference field
-    function log_upd($db_rec): change_log_link
+    /**
+     * set the main log entry parameters for updating one reference field
+     */
+    function log_link_upd($db_rec): change_log_link
     {
         log_debug('ref->log_upd ' . $this->dsp_id());
         $log = new change_log_link;
@@ -532,8 +578,10 @@ class ref extends user_sandbox_named_with_type
         return $log;
     }
 
-    // set the log entry parameter to delete a reference
-    function log_del(): change_log_link
+    /**
+     * set the log entry parameter to delete a reference
+     */
+    function log_link_del(): change_log_link
     {
         log_debug('ref->log_del ' . $this->dsp_id());
 
@@ -558,17 +606,19 @@ class ref extends user_sandbox_named_with_type
         return $log;
     }
 
-    // update a ref in the database or update the existing
-    // returns the database id of the created reference or 0 if not successful
-    private function add(): string
+    /**
+     * update a ref in the database or update the existing
+     * @return user_message the database id of the created reference or 0 if not successful
+     */
+    public function add(): user_message
     {
         log_debug('ref->add ' . $this->dsp_id());
 
         global $db_con;
-        $result = '';
+        $result = new user_message();
 
         // log the insert attempt first
-        $log = $this->log_add();
+        $log = $this->log_link_add();
         if ($log->id() > 0) {
             // insert the new reference
             $db_con->set_type(sql_db::TBL_REF);
@@ -580,19 +630,21 @@ class ref extends user_sandbox_named_with_type
             if ($this->id > 0) {
                 // update the id in the log for the correct reference
                 if (!$log->add_ref($this->id)) {
-                    $result .= 'Adding reference ' . $this->dsp_id() . ' in the log failed.';
-                    log_err($result, 'ref->add');
+                    $result->add_message('Adding reference ' . $this->dsp_id() . ' in the log failed.');
+                    log_err($result->get_message(), 'ref->add');
                 }
             } else {
-                $result .= 'Adding reference ' . $this->dsp_id() . ' failed.';
-                log_err($result, 'ref->add');
+                $result->add_message('Adding reference ' . $this->dsp_id() . ' failed.');
+                log_err($result->get_message(), 'ref->add');
             }
         }
 
         return $result;
     }
 
-    // get a similar reference
+    /**
+     * get a similar reference
+     */
     function get_similar(): ?ref
     {
         $result = null;
@@ -611,8 +663,10 @@ class ref extends user_sandbox_named_with_type
         return $result;
     }
 
-    // update a ref in the database or update the existing
-    // returns the id of the updated or created reference
+    /**
+     * update a ref in the database or update the existing
+     * @return string the id of the updated or created reference
+     */
     function save(): string
     {
         log_debug('ref->save ' . $this->dsp_id());
@@ -641,7 +695,7 @@ class ref extends user_sandbox_named_with_type
         // create a new object or update an existing
         if ($this->id <= 0) {
             log_debug('ref->save add');
-            $result .= $this->add();
+            $result .= $this->add()->get_message();
         } else {
             log_debug('ref->save update');
 
@@ -654,7 +708,7 @@ class ref extends user_sandbox_named_with_type
 
             // if needed log the change and update the database
             if ($this->external_key <> $db_rec->external_key) {
-                $log = $this->log_upd($db_rec);
+                $log = $this->log_link_upd($db_rec);
                 if ($log->id() > 0) {
                     $db_con->set_type(sql_db::TBL_REF);
                     if ($db_con->update($this->id, self::FLD_EX_KEY, $this->external_key)) {
@@ -666,19 +720,26 @@ class ref extends user_sandbox_named_with_type
         return $result;
     }
 
-    // delete a reference of return false if it fails
+    /**
+     * delete a reference of return false if it fails
+     */
     function del(): user_message
     {
         global $db_con;
         $result = new user_message();
 
-        if (!$this->load_obj_vars()) {
+        $reloaded = false;
+        $reloaded_id = $this->load_by_id($this->id());
+        if ($reloaded_id != 0) {
+            $reloaded = true;
+        }
+        if (!$reloaded) {
             log_warning('Reload of ref ' . $this->dsp_id() . ' for deletion failed', 'ref->del');
         } else {
             if ($this->id <= 0) {
                 log_warning('Delete failed, because it seems that the ref ' . $this->dsp_id() . ' has been deleted in the meantime.', 'ref->del');
             } else {
-                $log = $this->log_del();
+                $log = $this->log_link_del();
                 if ($log->id() > 0) {
                     $db_con->set_type(sql_db::TBL_REF);
                     $del_result = $db_con->delete(self::FLD_ID, $this->id);

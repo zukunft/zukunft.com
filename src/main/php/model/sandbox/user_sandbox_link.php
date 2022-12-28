@@ -7,6 +7,10 @@
 
     This superclass should be used by the class word links, formula links and view link
 
+    TODO add weight with int and 100'000 as 100% because
+         humans usually cannot handle more than 100'000 words
+         so weight sorted list has a single place for each word
+
 
     This file is part of zukunft.com - calc with words
 

@@ -1,0 +1,21 @@
+{
+  "version": "0.0.3",
+  "time": "2021-09-19 23:17:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "sample references"
+  ],
+  "refs": [
+    {
+      "name": "Zurich (City)",
+      "external_key": "Q72",
+      "ref_type": "wikidata"
+    },
+    {
+      "name": "Zurich (Canton)",
+      "external_key": "Q11943",
+      "ref_type": "wikidata"
+    }
+  ]
+}
+

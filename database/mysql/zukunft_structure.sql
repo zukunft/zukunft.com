@@ -434,9 +434,13 @@ CREATE TABLE IF NOT EXISTS `protection_types`
 CREATE TABLE IF NOT EXISTS `refs`
 (
     `ref_id`       int(11)      NOT NULL,
+    `user_id`      bigint       NOT NULL,
     `phrase_id`    int(11)      NOT NULL,
     `external_key` varchar(250) NOT NULL,
-    `ref_type_id`  int(11)      NOT NULL
+    `ref_type_id`  int(11)      NOT NULL,
+    `url`          text         DEFAULT NULL,
+    `description`  text         DEFAULT NULL,
+    `excluded`     tinyint(4)   DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -882,8 +886,8 @@ CREATE TABLE IF NOT EXISTS `user_refs`
 (
     `ref_id`        int(11) NOT NULL,
     `user_id`       int(11) NOT NULL,
-    `ref_name`      varchar(200) DEFAULT NULL,
-    `description`   text,
+    `url`           text         DEFAULT NULL,
+    `description`   text         DEFAULT NULL,
     `excluded`      tinyint(4)   DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;

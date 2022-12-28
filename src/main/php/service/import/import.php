@@ -54,6 +54,8 @@ class file_import
     public ?int $formulas_failed = 0;
     public ?int $sources_done = 0;
     public ?int $sources_failed = 0;
+    public ?int $refs_done = 0;
+    public ?int $refs_failed = 0;
     public ?int $values_done = 0;
     public ?int $values_failed = 0;
     public ?int $list_values_done = 0;
@@ -196,6 +198,17 @@ class file_import
                             $this->sources_done++;
                         } else {
                             $this->sources_failed++;
+                        }
+                        $result->add($import_result);
+                    }
+                } elseif ($key == export::REFS) {
+                    foreach ($json_obj as $value) {
+                        $ref = new ref($this->usr);
+                        $import_result = $ref->import_obj($value);
+                        if ($import_result->is_ok()) {
+                            $this->refs_done++;
+                        } else {
+                            $this->refs_failed++;
                         }
                         $result->add($import_result);
                     }

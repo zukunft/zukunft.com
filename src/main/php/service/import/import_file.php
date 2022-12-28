@@ -57,6 +57,7 @@ function import_json_file(string $filename, user $usr): string
                     . $import->values_done . ' values, '
                     . $import->list_values_done . ' simple values, '
                     . $import->sources_done . ' sources, '
+                    . $import->refs_done . ' references, '
                     . $import->views_done . ' views loaded, '
                     . $import->calc_validations_done . ' results validated, '
                     . $import->view_validations_done . ' views validated)';

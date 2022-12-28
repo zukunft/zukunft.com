@@ -327,6 +327,7 @@ include_once $path_php . 'model/value/value_time_series.php';
 include_once $path_php . 'model/ref/source.php';
 include_once $path_php . 'model/ref/source_exp.php';
 include_once $path_php . 'model/ref/ref.php';
+include_once $path_php . 'model/ref/ref_list.php';
 include_once $path_php . 'model/ref/ref_exp.php';
 include_once $path_php . 'model/ref/ref_type.php';
 include_once $path_php . 'model/ref/ref_type_list.php';

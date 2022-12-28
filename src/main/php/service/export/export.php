@@ -56,6 +56,7 @@ class export
     const TRIPLES = 'triples';
     const FORMULAS = 'formulas';
     const SOURCES = 'sources';
+    const REFS = 'refs';
     const VALUES = 'values';
     const VALUE_LIST = 'value-list';
     const VIEWS = 'views';

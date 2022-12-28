@@ -1,8 +1,13 @@
-PREPARE ref_by_id (int) AS
-    SELECT
-        ref_id,
-        phrase_id,
-        ref_type_id,
-        external_key
-    FROM refs
-   WHERE ref_id = $1;
+PREPARE ref_by_id (int,int) AS
+    SELECT s.ref_id,
+           u.ref_id AS user_ref_id,
+           s.user_id,
+           s.phrase_id,
+           s.ref_type_id,
+           s.external_key,
+           CASE WHEN (u.url <> '' IS NOT TRUE) THEN s.url ELSE u.url END AS url,
+           CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description ELSE u.description END AS description,
+           CASE WHEN (u.excluded          IS     NULL) THEN s.excluded    ELSE u.excluded    END AS excluded
+      FROM refs s
+ LEFT JOIN user_refs u ON s.ref_id = u.ref_id AND u.user_id = $1
+     WHERE s.ref_id = $2;

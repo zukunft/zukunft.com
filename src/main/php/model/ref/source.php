@@ -9,7 +9,10 @@
     in many cases a source is just a user base data source without any import
     the automatic import can be based on standard data format e.g. json, XML or HTML
 
-    if the import gets more complex or the interface is bidirectional use a reference
+    reference types are preloaded in the frontend whereas source are loaded on demand
+
+    if the import gets more complex or the interface is bidirectional use a reference type
+    references are concrete links between a phrase and an external object
 
 
     This file is part of zukunft.com - calc with words

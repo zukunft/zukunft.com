@@ -59,6 +59,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     const FLD_VALUES = 'values';
     const FLD_COND_ID = 'triple_condition_id';
     const FLD_COND_TYPE = 'triple_condition_type_id';
+    const FLD_REFS = 'refs';
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
@@ -121,6 +122,9 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     private string $name_generated; // the generated name based on the linked objects and saved in the database for faster searching
     public ?int $values;            // the total number of values linked to this triple as an indication how common the triple is and to sort the triples
 
+    // only used for the export object
+    private ?view $view; // name of the default view for this word
+    private ?array $ref_lst = [];
 
     /*
      * construct and map
@@ -160,6 +164,9 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         $this->set_name('');
         $this->name_given = null;
         $this->name_generated = '';
+
+        $this->view = null;
+        $this->ref_lst = [];
 
         $this->create_objects();
     }
@@ -589,7 +596,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             if (is_null($this->user()->id)) {
                 log_err("The user id must be set to load a word.", "triple->load");
             } else {
-                log_err('Either the database ID (' . $this->id . '), unique word link (' . $this->from->id . ',' . $this->verb->id()  . ',' . $this->to->id . ') or the name (' . $this->name . ') and the user (' . $this->user()->id . ') must be set to load a word link.', "triple->load");
+                log_err('Either the database ID (' . $this->id . '), unique word link (' . $this->from->id . ',' . $this->verb->id() . ',' . $this->to->id . ') or the name (' . $this->name . ') and the user (' . $this->user()->id . ') must be set to load a word link.', "triple->load");
             }
         } else {
             $db_lnk = $db_con->get1($qp);
@@ -664,14 +671,14 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      */
     private function check_order()
     {
-        if ($this->verb->id()  < 0) {
+        if ($this->verb->id() < 0) {
             $to = $this->to;
             $to_id = $this->to->id;
             $to_name = $this->to->name();
             $this->to = $this->from;
             $this->to->id = $this->from->id;
             $this->to->set_name($this->from->name());
-            $this->verb->set_id($this->verb->id()  * -1);
+            $this->verb->set_id($this->verb->id() * -1);
             if (isset($this->verb)) {
                 $this->verb->set_name($this->verb->reverse);
             }
@@ -688,7 +695,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      */
     function load_objects(): bool
     {
-        log_debug($this->from->id . ' ' . $this->verb->id()  . ' ' . $this->to->id);
+        log_debug($this->from->id . ' ' . $this->verb->id() . ' ' . $this->to->id);
         $result = true;
 
         // after every load call from outside the class the order should be checked and reversed if needed
@@ -730,12 +737,12 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
 
         // load verb
         if (!isset($this->verb)) {
-            log_err("The verb (" . $this->verb->id()  . ") must be set before it can be loaded.", "triple->load_objects");
+            log_err("The verb (" . $this->verb->id() . ") must be set before it can be loaded.", "triple->load_objects");
         } else {
-            if ($this->verb->id()  <> 0 and !is_null($this->user()->id)) {
+            if ($this->verb->id() <> 0 and !is_null($this->user()->id)) {
                 $vrb = new verb;
                 $vrb->set_user($this->user());
-                $vrb->load_by_id($this->verb->id() );
+                $vrb->load_by_id($this->verb->id());
                 $this->verb = $vrb;
                 $this->verb->set_name($vrb->name());
                 log_debug('verb ' . $this->verb->name());
@@ -820,7 +827,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         } elseif ($this->has_objects()) {
             $db_con->add_par(sql_db::PAR_INT, $this->from->id);
             $db_con->add_par(sql_db::PAR_INT, $this->to->id);
-            $db_con->add_par(sql_db::PAR_INT, $this->verb->id() );
+            $db_con->add_par(sql_db::PAR_INT, $this->verb->id());
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_FROM, self::FLD_TO, verb::FLD_ID));
         } elseif ($this->name_generated() != '') {
             $db_con->add_par(sql_db::PAR_TEXT, $this->name_generated());
@@ -842,7 +849,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         if ($this->from->id == 0) {
             $result = false;
         }
-        if ($this->verb->id()  == 0) {
+        if ($this->verb->id() == 0) {
             $result = false;
         }
         if ($this->to->id == 0) {
@@ -993,7 +1000,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
                 $vrb->set_user($this->user());
                 if ($result->is_ok() and $do_save) {
                     $vrb->load_by_name($value);
-                    if ($vrb->id()  <= 0) {
+                    if ($vrb->id() <= 0) {
                         $result->add_message('verb "' . $value . '" not found');
                         if ($this->name <> '') {
                             $result->add_message('for triple "' . $this->name . '"');
@@ -1011,10 +1018,36 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
                 $this->protection_id = $protection_types->id($value);
             }
         }
-        if ($result->is_ok() and $do_save) {
-            // remove unneeded given names
-            $this->set_names();
-            $result->add_message($this->save());
+
+        // save the word in the database
+        if ($result->is_ok()) {
+            if ($do_save) {
+                // remove unneeded given names
+                $this->set_names();
+                $result->add_message($this->save());
+            }
+        }
+
+        // add related parameters to the word object
+        if ($result->is_ok()) {
+            log_debug('saved ' . $this->dsp_id());
+
+            if ($this->id <= 0 and $do_save) {
+                $result->add_message('Triple ' . $this->dsp_id() . ' cannot be saved');
+            } else {
+                foreach ($json_obj as $key => $value) {
+                    if ($result->is_ok()) {
+                        if ($key == self::FLD_REFS) {
+                            foreach ($value as $ref_data) {
+                                $ref_obj = new ref($this->user());
+                                $ref_obj->phr = $this->phrase();
+                                $result->add($ref_obj->import_obj($ref_data, $do_save));
+                                $this->ref_lst[] = $ref_obj;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         return $result;
@@ -1026,7 +1059,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      */
     function export_obj(bool $do_load = true): exp_obj
     {
-        log_debug('triple->export_obj');
+        log_debug();
         $result = new triple_exp();
 
         if ($this->name <> '') {
@@ -1038,6 +1071,14 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         $result->from = $this->from->name();
         $result->verb = $this->verb->name();
         $result->to = $this->to->name();
+        if (isset($this->view)) {
+            $result->view = $this->view->name();
+        }
+        if (isset($this->ref_lst)) {
+            foreach ($this->ref_lst as $ref) {
+                $result->refs[] = $ref->export_obj();
+            }
+        }
 
         log_debug(json_encode($result));
         return $result;
@@ -1060,7 +1101,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             $result .= $this->verb->name() . ' '; // e.g. is a
             $result .= $this->to->name();       // e.g. Country
         }
-        $result .= ' (' . $this->from->id . ',' . $this->verb->id()  . ',' . $this->to->id;
+        $result .= ' (' . $this->from->id . ',' . $this->verb->id() . ',' . $this->to->id;
         if ($this->id > 0) {
             $result .= ' -> ' . $this->id . ')';
         }
@@ -1100,7 +1141,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      */
     function generate_name(): string
     {
-        if ($this->verb->id()  == cl(db_cl::VERB, verb::IS_A) and $this->from->name() != '' and $this->to->name() != '') {
+        if ($this->verb->id() == cl(db_cl::VERB, verb::IS_A) and $this->from->name() != '' and $this->to->name() != '') {
             // use the user defined description
             return $this->from->name() . ' (' . $this->to->name() . ')';
         } elseif ($this->from->name() != '' and $this->verb->name() != '' and $this->to->name() != '') {
@@ -1619,7 +1660,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     {
         $result = '';
         if ($db_rec->from->id <> $this->from->id
-            or $db_rec->verb->id()  <> $this->verb->id()
+            or $db_rec->verb->id() <> $this->verb->id()
             or $db_rec->to->id <> $this->to->id) {
             log_debug('triple->save_id_fields to "' . $this->to->name() . '" (' . $this->to->id . ') from "' . $db_rec->to->name . '" (' . $db_rec->to->id . ') standard ' . $std_rec->to->name . '" (' . $std_rec->to->id . ')');
             $log = $this->log_upd();
@@ -1638,7 +1679,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
                 $db_con->set_type(sql_db::TBL_TRIPLE);
                 if (!$db_con->update($this->id,
                     array("from_phrase_id", "verb_id", "to_phrase_id"),
-                    array($this->from->id, $this->verb->id() , $this->to->id))) {
+                    array($this->from->id, $this->verb->id(), $this->to->id))) {
                     $result = 'Update of work link name failed';
                 }
             }
@@ -1655,7 +1696,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         $result = '';
 
         if ($db_rec->from->id <> $this->from->id
-            or $db_rec->verb->id()  <> $this->verb->id()
+            or $db_rec->verb->id() <> $this->verb->id()
             or $db_rec->to->id <> $this->to->id) {
             $this->reset();
             // check if target link already exists
@@ -1732,7 +1773,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             // insert the new triple
             $db_con->set_type(sql_db::TBL_TRIPLE);
             $this->id = $db_con->insert(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
-                array($this->from->id, $this->verb->id() , $this->to->id, $this->user()->id));
+                array($this->from->id, $this->verb->id(), $this->to->id, $this->user()->id));
             // TODO make sure on all add functions that the database object is always set
             //array($this->from->id, $this->verb->id() , $this->to->id, $this->user()->id));
             if ($this->id > 0) {

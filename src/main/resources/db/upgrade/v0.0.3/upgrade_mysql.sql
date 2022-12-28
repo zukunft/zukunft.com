@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS `user_refs`
 (
     `ref_id`        int(11) NOT NULL,
     `user_id`       int(11) NOT NULL,
-    `ref_name`      varchar(200) DEFAULT NULL,
-    `description`   text,
+    `url`           text         DEFAULT NULL,
+    `description`   text         DEFAULT NULL,
     `excluded`      tinyint(4)   DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;

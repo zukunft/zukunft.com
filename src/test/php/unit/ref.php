@@ -52,7 +52,6 @@ class ref_unit_tests
 
         $ref = new ref($usr);
         $t->assert_load_sql_id($db_con, $ref);
-        $t->assert_load_sql_name($db_con, $ref);
 
         $t->subheader('Im- and Export tests');
 

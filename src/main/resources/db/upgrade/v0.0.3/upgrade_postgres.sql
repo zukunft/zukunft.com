@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS user_refs
 (
     ref_id         bigint NOT NULL,
     user_id        bigint NOT NULL,
-    ref_name       varchar(200) DEFAULT NULL,
-    description    text,
+    url            text         DEFAULT NULL,
+    description    text         DEFAULT NULL,
     excluded       smallint     DEFAULT NULL
 );
 

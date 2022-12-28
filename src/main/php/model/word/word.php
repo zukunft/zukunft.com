@@ -645,9 +645,11 @@ class word extends user_sandbox_named_with_type
             $this->type_id = $phrase_types->default_id();
         }
         // save the word in the database
-        if ($do_save) {
-            // TODO should save not return the error reason that should be shown to the user if it fails?
-            $result->add_message($this->save());
+        if ($result->is_ok()) {
+            if ($do_save) {
+                // TODO should save not return the error reason that should be shown to the user if it fails?
+                $result->add_message($this->save());
+            }
         }
 
         // add related parameters to the word object
@@ -724,7 +726,6 @@ class word extends user_sandbox_named_with_type
                 $result->refs[] = $ref->export_obj();
             }
         }
-
 
         log_debug(json_encode($result));
         return $result;

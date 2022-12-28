@@ -39,6 +39,8 @@ class triple_exp extends user_sandbox_exp_link
     public ?string $from = '';
     public ?string $verb = '';
     public ?string $to = '';
+    public ?string $view = '';
+    public ?array $refs = [];
 
     function reset()
     {
@@ -48,6 +50,9 @@ class triple_exp extends user_sandbox_exp_link
         $this->from = '';
         $this->verb = '';
         $this->to = '';
+
+        $this->view = '';
+        $this->refs = [];
     }
 
 }
