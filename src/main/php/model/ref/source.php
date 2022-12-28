@@ -5,6 +5,13 @@
     model/ref/source.php - the source object to define the source for the values
     --------------------
 
+    a source is always unidirectional
+    in many cases a source is just a user base data source without any import
+    the automatic import can be based on standard data format e.g. json, XML or HTML
+
+    if the import gets more complex or the interface is bidirectional use a reference
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

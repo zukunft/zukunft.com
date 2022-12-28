@@ -7,6 +7,8 @@
 
     a reference is potentially a bidirectional interface to another system
     that includes specific coding for the external system
+    a user can never add a reference but can rename it or change the description
+
     a source is always unidirectional and based on standard data format
 
     ref types are
@@ -41,7 +43,7 @@
 use export\exp_obj;
 use export\ref_exp;
 
-class ref
+class ref extends user_sandbox_named_with_type
 {
 
     /*

@@ -5,8 +5,40 @@
 -- --------------------------------------------------------
 
 --
+-- Table structure for table`user_refs`
+--
+
+CREATE TABLE IF NOT EXISTS `user_refs`
+(
+    `ref_id`        int(11) NOT NULL,
+    `user_id`       int(11) NOT NULL,
+    `ref_name`      varchar(200) DEFAULT NULL,
+    `description`   text,
+    `excluded`      tinyint(4)   DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+--
+-- Indexes for table`user_refs`
+--
+ALTER TABLE `user_refs`
+    ADD UNIQUE KEY `ref_id` (`ref_id`, `user_id`),
+    ADD KEY `user_id` (`user_id`),
+    ADD KEY `ref_id_2` (`ref_id`);
+
+--
+-- Constraints for table`user_refs`
+--
+ALTER TABLE `user_refs`
+    ADD CONSTRAINT `user_refs_fk_1` FOREIGN KEY (`ref_id`) REFERENCES `refs` (`ref_id`),
+    ADD CONSTRAINT `user_refs_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+-- --------------------------------------------------------
+
+--
 -- Structure for view`phrases`
 --
+
 DROP TABLE IF EXISTS `phrases`;
 
 CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost` SQL SECURITY DEFINER VIEW `phrases` AS

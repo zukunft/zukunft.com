@@ -5,6 +5,36 @@
 -- --------------------------------------------------------
 
 --
+-- Table structure for table user_refs
+--
+
+CREATE TABLE IF NOT EXISTS user_refs
+(
+    ref_id         bigint NOT NULL,
+    user_id        bigint NOT NULL,
+    ref_name       varchar(200) DEFAULT NULL,
+    description    text,
+    excluded       smallint     DEFAULT NULL
+);
+
+--
+-- Indexes for table user_refs
+--
+ALTER TABLE user_refs
+    ADD CONSTRAINT user_ref_pkey PRIMARY KEY (ref_id, user_id);
+CREATE INDEX user_ref_user_idx ON user_refs (user_id);
+CREATE INDEX user_ref_idx ON user_refs (ref_id);
+
+--
+-- Constraints for table user_refs
+--
+ALTER TABLE user_refs
+    ADD CONSTRAINT user_refs_fk_1 FOREIGN KEY (ref_id) REFERENCES refs (ref_id),
+    ADD CONSTRAINT user_refs_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+-- --------------------------------------------------------
+
+--
 -- Structure for the phrases view
 --
 

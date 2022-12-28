@@ -875,6 +875,22 @@ CREATE TABLE IF NOT EXISTS `user_sources`
 -- --------------------------------------------------------
 
 --
+-- Table structure for table`user_refs`
+--
+
+CREATE TABLE IF NOT EXISTS `user_refs`
+(
+    `ref_id`        int(11) NOT NULL,
+    `user_id`       int(11) NOT NULL,
+    `ref_name`      varchar(200) DEFAULT NULL,
+    `description`   text,
+    `excluded`      tinyint(4)   DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table`user_types`
 --
 
@@ -2003,6 +2019,14 @@ ALTER TABLE `user_sources`
     ADD KEY `source_type_id` (`source_type_id`);
 
 --
+-- Indexes for table`user_refs`
+--
+ALTER TABLE `user_refs`
+    ADD UNIQUE KEY `ref_id` (`ref_id`, `user_id`),
+    ADD KEY `user_id` (`user_id`),
+    ADD KEY `ref_id_2` (`ref_id`);
+
+--
 -- Indexes for table`user_types`
 --
 ALTER TABLE `user_types`
@@ -2670,6 +2694,13 @@ ALTER TABLE `user_phrase_group_triple_links`
 ALTER TABLE `user_sources`
     ADD CONSTRAINT `user_sources_fk_1` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
     ADD CONSTRAINT `user_sources_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table`user_refs`
+--
+ALTER TABLE `user_refs`
+    ADD CONSTRAINT `user_refs_fk_1` FOREIGN KEY (`ref_id`) REFERENCES `refs` (`ref_id`),
+    ADD CONSTRAINT `user_refs_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table`user_values`
