@@ -49,52 +49,43 @@ class ref_unit_tests
         $t->header('Unit tests of the reference class (src/main/php/model/ref/ref.php)');
 
         $t->subheader('SQL user sandbox statement tests');
-
         $ref = new ref($usr);
         $t->assert_load_sql_id($db_con, $ref);
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader('API unit tests');
+        $ref = $t->dummy_reference();
+        $t->assert_api($ref);
 
+        $t->subheader('Im- and Export tests');
         $t->assert_json(new ref($usr), $json_file);
 
         $t->subheader('SQL statement tests');
-
         // sql to load the ref types
         $ref_type_list = new ref_type_list();
         $t->assert_load_sql($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);
 
 
         // init for source
+        $t->name = 'source->';
         $t->resource_path = 'db/ref/';
         $json_file = 'unit/ref/bipm.json';
 
         $t->header('Unit tests of the source class (src/main/php/model/ref/source.php)');
 
         $t->subheader('SQL user sandbox statement tests');
-
         $src = new source($usr);
         $t->assert_load_sql_id($db_con, $src);
         $t->assert_load_sql_name($db_con, $src);
         $t->assert_load_sql_code_id($db_con, $src);
 
         $t->subheader('API unit tests');
-
-        $src = new source($usr);
-        $src->set(1, source_api::TN_READ, source_type::PDF);
-        $src->description = source_api::TD_READ_API;
-        $src->url = source_api::TU_READ_API;
-        $api_src = $src->api_obj();
-        $t->assert($t->name . 'api->id', $api_src->id, $src->id());
-        $t->assert($t->name . 'api->name', $api_src->name, $src->name());
-        $t->assert($t->name . 'api->description', $api_src->description, $src->description);
-        $t->assert($t->name . 'api->url', $api_src->url, $src->url);
+        $src = $t->dummy_source();
+        $t->assert_api($src);
 
         $t->subheader('Im- and Export tests');
-
         $t->assert_json(new source($usr), $json_file);
 
         $t->subheader('SQL statement tests');
-
         // sql to load a source by id
         $src = new source($usr);
         $src->set_id(4);

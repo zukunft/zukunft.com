@@ -440,6 +440,7 @@ CREATE TABLE IF NOT EXISTS refs
     phrase_id    bigint       NOT NULL,
     external_key varchar(250) NOT NULL,
     ref_type_id  bigint       NOT NULL,
+    source_id    bigint       NOT NULL,
     url          text         DEFAULT NULL,
     description  text         DEFAULT NULL,
     excluded     smallint     DEFAULT NULL

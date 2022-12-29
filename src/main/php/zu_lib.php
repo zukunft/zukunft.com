@@ -444,6 +444,7 @@ include_once $path_php . 'web/view/view_list.php';
 include_once $path_php . 'web/view/view_cmp.php';
 include_once $path_php . 'web/view/view_cmp_link_dsp.php';
 include_once $path_php . 'web/view/view_cmp_list.php';
+include_once $path_php . 'web/ref/ref.php';
 include_once $path_php . 'web/ref/source.php';
 
 // deprecated HTML frontend classes

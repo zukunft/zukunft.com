@@ -38,6 +38,7 @@ class user_sandbox_link_with_type extends user_sandbox_link
     // repeating user_sandbox_named_with_type, because php 8.1 does not yet allow multi extends
     public ?int $type_id = null;
 
+
     /*
      * set and get
      */

@@ -45,8 +45,10 @@
    
 */
 
+use api\ref_api;
 use export\exp_obj;
 use export\ref_exp;
+use html\ref_dsp;
 
 class ref extends user_sandbox_link_with_type
 {
@@ -65,7 +67,8 @@ class ref extends user_sandbox_link_with_type
     const FLD_NAMES = array(
         phrase::FLD_ID,
         self::FLD_EX_KEY,
-        self::FLD_TYPE
+        self::FLD_TYPE,
+        source::FLD_ID
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
@@ -97,11 +100,12 @@ class ref extends user_sandbox_link_with_type
     // database fields
     public ?phrase $phr = null;           // the phrase object incl. the database id of the word, verb or formula
     public ?string $external_key = null;  // the unique key in the external system
+    public ?ref_type $ref_type = null;    // the ref type object incl. the database id of the ref type
+    public ?source $source = null;        // if the reference does not allow a full automatic bidirectional update
+    //                                       use the source to define an as good as possible import
+    //                                       or at least a check if the reference is still valid
     public ?string $url;
     public ?string $description = null;
-
-    // in memory only fields
-    public ?ref_type $ref_type = null;    // the ref type object incl. the database id of the ref type
 
 
     /*
@@ -113,6 +117,7 @@ class ref extends user_sandbox_link_with_type
         parent::__construct($usr);
         $this->create_objects($usr);
         $this->external_key = null;
+        $this->source = null;
         $this->url = null;
         $this->description = null;
     }
@@ -122,6 +127,7 @@ class ref extends user_sandbox_link_with_type
         parent::reset();
         $this->create_objects($this->user());
         $this->external_key = '';
+        $this->source = null;
         $this->url = null;
         $this->description = null;
     }
@@ -156,6 +162,12 @@ class ref extends user_sandbox_link_with_type
             $this->ref_type = get_ref_type_by_id($db_row[self::FLD_TYPE]);
             $this->url = $db_row[self::FLD_URL];
             $this->description = $db_row[self::FLD_URL];
+            if ($db_row[source::FLD_ID] != null) {
+                if ($db_row[source::FLD_ID] > 0) {
+                    $this->source = new source($this->user());
+                    $this->source->load_by_id($db_row[source::FLD_ID], source::class);
+                }
+            }
             if ($this->load_objects()) {
                 $result = true;
                 log_debug('done ' . $this->dsp_id());
@@ -192,6 +204,43 @@ class ref extends user_sandbox_link_with_type
     public function id(): ?int
     {
         return $this->id;
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @return ref_api the ref frontend api object
+     */
+    function api_obj(): ref_api
+    {
+        $api_obj = new ref_api();
+        if (!$this->excluded) {
+            parent::fill_api_obj($api_obj);
+            $api_obj->phr = $this->phr->api_obj();
+            $api_obj->external_key = $this->external_key;
+            $api_obj->url = $this->url;
+            $api_obj->description = $this->description;
+        }
+        return $api_obj;
+    }
+
+    /**
+     * @return ref_dsp the ref object with the display interface functions
+     */
+    function dsp_obj(): ref_dsp
+    {
+        $dsp_obj = new ref_dsp();
+        if (!$this->excluded) {
+            parent::fill_dsp_obj($dsp_obj);
+            $dsp_obj->phr = $this->phr->dsp_obj();
+            $dsp_obj->external_key = $this->external_key;
+            $dsp_obj->url = $this->url;
+            $dsp_obj->description = $this->description;
+        }
+        return $dsp_obj;
     }
 
 
@@ -254,7 +303,7 @@ class ref extends user_sandbox_link_with_type
     }
 
     /**
-     * create the common part of an SQL statement to retrieve the parameters of a source from the database
+     * create the common part of an SQL statement to retrieve the parameters of a ref from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $class the name of the child class from where the call has been triggered

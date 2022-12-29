@@ -32,7 +32,7 @@
 
 namespace api;
 
-class ref_api extends user_sandbox_named_with_type_api
+class ref_api extends user_sandbox_api
 {
 
     /*
@@ -42,6 +42,7 @@ class ref_api extends user_sandbox_named_with_type_api
     // persevered reference names for unit and integration tests
     const TN_READ = 'wikidata';
     const TN_ADD = 'System Test Reference Name';
+    const TK_READ = 'Mathematical_constant';
 
     // reference group for testing
     const RESERVED_SOURCES = array(
@@ -54,6 +55,20 @@ class ref_api extends user_sandbox_named_with_type_api
      * object vars
      */
 
+    public ?phrase_api $phr;
+    public ?string $external_key;
+    public ?int $type_id;
+    public ?int $source_id;
     public ?string $url;
+    public ?string $description;
 
+
+    /*
+     * set and get
+     */
+
+    function set_type_id(?int $type_id): void
+    {
+        $this->type_id = $type_id;
+    }
 }

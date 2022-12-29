@@ -390,6 +390,7 @@ class test_base
         $this->assert_api_get(view::class);
         $this->assert_api_get(view_cmp::class);
         $this->assert_api_get(source::class);
+        $this->assert_api_get(ref::class);
         $this->assert_api_get_by_name(source::class, source_api::TN_READ_API);
 
         $this->assert_api_get_list(phrase_list::class);
@@ -545,6 +546,9 @@ class test_base
         if ($class == view_cmp::class) {
             $class = 'component';
         }
+        if ($class == ref::class) {
+            $class = 'reference';
+        }
         $api_obj = $usr_obj->api_obj();
         $actual = json_decode(json_encode($api_obj), true);
         $expected = json_decode($this->api_json_expected($class), true);
@@ -568,6 +572,9 @@ class test_base
         // naming exception (to be removed?)
         if ($class == view_cmp::class) {
             $class = 'component';
+        }
+        if ($class == ref::class) {
+            $class = 'reference';
         }
         $url = HOST_TESTING . '/api/' . $class;
         $data = array("id" => $id);

@@ -2,7 +2,7 @@
 
 /*
 
-  api/source/index.php - the source API controller: send a word to the frontend
+  api/ref/index.php - the ref API controller: send a word to the frontend
   -----------------
   
   This file is part of zukunft.com - calc with words
@@ -40,9 +40,7 @@ include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 $db_con = prg_start("api/ref", "", false);
 
 // get the parameters
-$src_id = $_GET['id'] ?? 0;
-$src_name = $_GET['name'] ?? '';
-$src_code_id = $_GET['code_id'] ?? '';
+$ref_id = $_GET['id'] ?? 0;
 
 $msg = '';
 $result = ''; // reset the html code var
@@ -54,20 +52,12 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
 
-    if ($src_id > 0) {
-        $src = new source($usr);
-        $src->load_by_id($src_id);
-        $result = $src->api_obj();
-    } elseif ($src_name != '') {
-        $src = new source($usr);
-        $src->load_by_name($src_name);
-        $result = $src->api_obj();
-    } elseif ($src_code_id != '') {
-        $src = new source($usr);
-        $src->load_by_code_id($src_code_id);
-        $result = $src->api_obj();
+    if ($ref_id > 0) {
+        $ref = new ref($usr);
+        $ref->load_by_id($ref_id);
+        $result = $ref->api_obj();
     } else {
-        $msg = 'Cannot load source because id, name and code id is missing';
+        $msg = 'Cannot load ref because id is missing';
     }
 }
 

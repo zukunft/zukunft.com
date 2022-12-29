@@ -438,6 +438,7 @@ CREATE TABLE IF NOT EXISTS `refs`
     `phrase_id`    int(11)      NOT NULL,
     `external_key` varchar(250) NOT NULL,
     `ref_type_id`  int(11)      NOT NULL,
+    `source_id`    int(11)      NOT NULL,
     `url`          text         DEFAULT NULL,
     `description`  text         DEFAULT NULL,
     `excluded`     tinyint(4)   DEFAULT NULL

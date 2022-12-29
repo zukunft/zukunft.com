@@ -2,14 +2,10 @@
 
 /*
 
-    source_type.php - the base object for external source type such as pubmed
-    ---------------
+    /web/ref/ref.php - the extension of the reference API objects to create ref base html code
+    ----------------
 
-    the source type is used for all external sources that have some coded functionality
-    but does not allow a full bidirectional synchronisation like a reference type
-
-
-    This file is part of zukunft.com - calc with words
+    This file is part of the frontend of zukunft.com - calc with refs
 
     zukunft.com is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as
@@ -30,18 +26,22 @@
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-   
+  
 */
 
-class source_type extends user_type
+namespace html;
+
+use api\ref_api;
+
+class ref_dsp extends ref_api
 {
-    // list of the source types that have a coded functionality
-    const XBRL = "xbrl";
-    const CSV = "csv";
-    const PDF = "pdf";
 
-    public int $id = 0;
+    /**
+     * @returns string simply the ref name, but later with mouse over that shows the description
+     */
+    function dsp(): string
+    {
+        return $this->name;
+    }
 
-    // the url that can be used to receive data if the external key is added
-    // public ?string $url = null;
 }

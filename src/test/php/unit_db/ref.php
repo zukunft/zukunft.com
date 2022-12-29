@@ -38,6 +38,7 @@ class ref_unit_db_tests
     function run(testing $t): void
     {
 
+        global $usr;
         global $db_con;
 
         // init
@@ -55,6 +56,12 @@ class ref_unit_db_tests
         // TODO check
         $result = cl(db_cl::PHRASE_TYPE, phrase_type::NORMAL);
         $t->assert('check ' . phrase_type::NORMAL, $result, 1);
+
+        $t->subheader('API unit db tests');
+
+        $ref = new ref($usr);
+        $ref->load_by_id(1);
+        $t->assert_api($ref);
 
 
         $t->subheader('Source types tests');

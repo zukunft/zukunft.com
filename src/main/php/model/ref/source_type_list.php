@@ -109,14 +109,18 @@ class source_type_list extends user_type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new source_type(source_type::PDF, source_type::PDF);
+        $type = new source_type(source_type::XBRL, source_type::XBRL);
         $type->id = 2;
         $this->lst[2] = $type;
-        $this->hash[source_type::PDF] = 2;
-        $type = new source_type(source_type::XBRL, source_type::XBRL);
+        $this->hash[source_type::XBRL] = 2;
+        $type = new source_type(source_type::CSV, source_type::CSV);
         $type->id = 3;
         $this->lst[3] = $type;
-        $this->hash[source_type::XBRL] = 3;
+        $this->hash[source_type::CSV] = 3;
+        $type = new source_type(source_type::PDF, source_type::PDF);
+        $type->id = 4;
+        $this->lst[4] = $type;
+        $this->hash[source_type::PDF] = 4;
     }
 
     /**

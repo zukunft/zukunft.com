@@ -107,7 +107,9 @@ class test_new_obj extends test_base
     {
         global $usr;
         $src = new source($usr);
-        $src->set(1, source_api::TN_READ);
+        $src->set(1, source_api::TN_READ_API, source_type::PDF);
+        $src->description = source_api::TD_READ_API;
+        $src->url = source_api::TU_READ_API;
         return $src;
     }
 
@@ -116,6 +118,8 @@ class test_new_obj extends test_base
         global $usr;
         $ref = new ref($usr);
         $ref->set(1);
+        $ref->phr = $this->dummy_word()->phrase();
+        $ref->external_key = ref_api::TK_READ;
         return $ref;
     }
 
