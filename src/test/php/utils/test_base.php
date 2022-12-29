@@ -83,6 +83,7 @@ include_once $path_utils . 'test_cleanup.php';
 include_once $path_unit . 'test_unit.php';
 include_once $path_unit . 'test_lib.php';
 include_once $path_unit . 'system.php';
+include_once $path_unit . 'user.php';
 include_once $path_unit . 'user_sandbox.php';
 include_once $path_unit . 'word.php';
 include_once $path_unit . 'word_list.php';
@@ -356,7 +357,7 @@ class test_base
         // instead a user specific value is created
         // for testing $usr is the user who has started the test ans $usr1 and $usr2 are the users used for simulation
         $this->usr1 = new user_dsp_old;
-        $this->usr1->name = user::SYSTEM_NAME_TEST;
+        $this->usr1->name = user::SYSTEM_TEST_NAME;
         $this->usr1->load_test_user();
 
         $this->usr2 = new user_dsp_old;
@@ -381,6 +382,7 @@ class test_base
     function run_api_test(): void
     {
 
+        $this->assert_api_get(user::class,2);
         $this->assert_api_get(word::class);
         $this->assert_api_get_json(word::class, controller::URL_VAR_WORD_ID, 1);
         $this->assert_api_get_by_name(word::class, word_api::TN_READ);
@@ -781,7 +783,8 @@ class test_base
      */
     function assert_json(object $usr_obj, string $json_file_name): bool
     {
-        $json_in = json_decode(file_get_contents(PATH_TEST_FILES . $json_file_name), true);
+        $file_text = file_get_contents(PATH_TEST_FILES . $json_file_name);
+        $json_in = json_decode($file_text, true);
         $usr_obj->import_obj($json_in, false);
         $json_ex = json_decode(json_encode($usr_obj->export_obj(false)), true);
         $result = json_is_similar($json_in, $json_ex);

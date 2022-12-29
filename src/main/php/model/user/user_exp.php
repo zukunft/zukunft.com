@@ -2,8 +2,8 @@
 
 /*
 
-    api/user/user.php - the simple object to export a user json for the frontend API
-    -----------------
+    user_exp.php - the simple export object for a user
+    --------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,51 +29,30 @@
 
 */
 
-namespace api;
 
-class user_api
+namespace export;
+
+class user_exp extends user_sandbox_exp_named
 {
 
     // field names used for JSON creation
-    public string $id;
-    public ?string $name;
-    public ?string $description;
-    public ?string $profile;
-    public ?string $email;
-    public ?string $first_name;
-    public ?string $last_name;
+    public ?string $email = null;         //
+    public ?string $first_name = null;    //
+    public ?string $last_name = null;     //
+    public ?string $description = null;
+    public ?string $profile = null;
+    public ?string $code_id = null;
 
-    function __construct()
+    function reset()
     {
-        $this->id = 0;
-        $this->name = '';
-        $this->description = null;
-        $this->profile = null;
-        $this->email = null;
-        $this->first_name = null;
-        $this->last_name = null;
+        user_sandbox_exp_named::reset();
+
+        $this->email = '';
+        $this->first_name = '';
+        $this->last_name = '';
+        $this->description = '';
+        $this->profile = '';
+        $this->code_id = '';
     }
 
-    /**
-     * just used for unit testing
-     * @return string the frontend API JSON string
-     */
-    function get_json(): string
-    {
-        return json_encode($this);
-    }
-
-    /*
-     * set and get
-     */
-
-    public function set_id(int $id): void
-    {
-        $this->id = $id;
-    }
-
-    public function id(): int
-    {
-        return $this->id;
-    }
 }

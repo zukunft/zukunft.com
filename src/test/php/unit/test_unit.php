@@ -60,8 +60,8 @@ class test_unit extends testing
 
         // create a dummy user for  testing
         $usr = new user;
-        $usr->id = user::SYSTEM_ID_TEST;
-        $usr->name = user::SYSTEM_NAME_TEST;
+        $usr->id = user::SYSTEM_TEST_ID;
+        $usr->name = user::SYSTEM_TEST_NAME;
 
         // create a dummy system user for unit testing
         $usr_sys = new user;
@@ -101,6 +101,7 @@ class test_unit extends testing
         (new string_unit_tests)->run($this); // test functions not yet split into single unit tests
         (new system_unit_tests)->run($this);
         (new test_api)->run($this);
+        (new user_unit_tests)->run($this);
         (new user_sandbox_unit_tests)->run($this);
         (new word_unit_tests)->run($this);
         (new word_list_unit_tests)->run($this);

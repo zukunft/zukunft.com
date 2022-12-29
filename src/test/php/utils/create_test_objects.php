@@ -59,6 +59,13 @@ class test_new_obj extends test_base
      * dummy objects for unit tests
      */
 
+    public function dummy_user(): user
+    {
+        $usr = new user();
+        $usr->set(2, user::SYSTEM_TEST_NAME, user::SYSTEM_TEST_EMAIL);
+        return $usr;
+    }
+
     public function dummy_word(): word
     {
         global $usr;

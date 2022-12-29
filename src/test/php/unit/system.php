@@ -128,17 +128,18 @@ class system_unit_tests
         $test_usr = new user();
         $test_usr->viewer = $usr;
         $test_usr->id = 1;
+        // test move  to user unit tests
+        //$t->assert_load_sql($db_con, $test_usr);
+        $test_usr->reset();
+        $test_usr->name = user::SYSTEM_TEST_NAME;
+        $t->assert_load_sql($db_con, $test_usr);
+        $test_usr->email = user::SYSTEM_TEST_NAME;
         $t->assert_load_sql($db_con, $test_usr);
         $test_usr->reset();
-        $test_usr->name = user::SYSTEM_NAME_TEST;
-        $t->assert_load_sql($db_con, $test_usr);
-        $test_usr->email = user::SYSTEM_NAME_TEST;
+        $test_usr->code_id = user::SYSTEM_TEST_NAME;
         $t->assert_load_sql($db_con, $test_usr);
         $test_usr->reset();
-        $test_usr->code_id = user::SYSTEM_NAME_TEST;
-        $t->assert_load_sql($db_con, $test_usr);
-        $test_usr->reset();
-        $test_usr->ip_addr = user::SYSTEM_NAME_TEST;
+        $test_usr->ip_addr = user::SYSTEM_TEST_NAME;
         $t->assert_load_sql($db_con, $test_usr);
         $test_usr->reset();
         $test_usr->profile_id = 2;

@@ -190,7 +190,7 @@ class user_list
         $this->lst[1] = $type;
         $this->code_id_hash[user::SYSTEM_NAME] = 1;
         $type = new user();
-        $type->name = user::SYSTEM_NAME_TEST;
+        $type->name = user::SYSTEM_TEST_NAME;
         $type->code_id = user::SYSTEM_TEST_PROFILE_CODE_ID;
         $this->lst[2] = $type;
         $this->code_id_hash[user::SYSTEM_TEST_PROFILE_CODE_ID] = 2;

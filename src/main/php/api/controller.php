@@ -42,6 +42,7 @@ class controller
     // the parameter names used in the url
     CONST URL_VAR_DEBUG = 'debug';
     CONST URL_VAR_WORD = 'words';
+    CONST URL_VAR_ID = 'id';
 
     // used for the change log
     CONST URL_VAR_WORD_ID = 'word_id';

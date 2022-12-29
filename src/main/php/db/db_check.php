@@ -261,7 +261,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
         // add missing system test users if needed
         $test_usr = new user();
         if (!$test_usr->has_any_user_this_profile(user_profile::TEST, $db_con)) {
-            $test_usr->name = user::SYSTEM_NAME_TEST;
+            $test_usr->name = user::SYSTEM_TEST_NAME;
             $test_usr->load($db_con);
             $test_usr->set_profile(user_profile::TEST);
             $test_usr->save($db_con);

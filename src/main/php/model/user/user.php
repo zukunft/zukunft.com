@@ -46,6 +46,7 @@
 
 use api\user_api;
 use export\exp_obj;
+use export\user_exp;
 use html\user_dsp;
 use html\word_dsp;
 
@@ -95,8 +96,14 @@ class user
     const SYSTEM_ID = 1; //
     const SYSTEM_NAME = "zukunft.com system";                    // the system user used to log system tasks and as a fallback owner
     const SYSTEM_CODE_ID = "system";                    // unique id of the system user used to log system tasks
-    const SYSTEM_ID_TEST = 2; //
-    const SYSTEM_NAME_TEST = "zukunft.com system test";          // to perform the system tests
+
+    // the user that performs the system tests
+    const SYSTEM_TEST_ID = 2;
+    const SYSTEM_TEST_NAME = "zukunft.com system test";
+    const SYSTEM_TEST_EMAIL = "support@zukunft.com";
+
+    // the user that acts as a partner for the system tests
+    // so that multi-user behaviour can be tested
     const SYSTEM_NAME_TEST_PARTNER = "zukunft.com system test partner"; // to test that the user sandbox is working e.g. that changes of the main test user has no impact of another user simulated by this test user
     const SYSTEM_TEST_PROFILE_CODE_ID = "test";
     const SYSTEM_LOCAL = 'localhost';
@@ -202,6 +209,42 @@ class user
 
 
     /*
+     * set and get
+     */
+
+    /**
+     * set the most often used reference vars with one set statement
+     * @param int $id mainly for test creation the database id of the reference
+     */
+    public function set(int $id = 0, string $name = '', string $email = '', string $code_id = ''): void
+    {
+        $this->set_id($id);
+        $this->set_name($name);
+    }
+
+    /**
+     * @param int|null $id the database id of the user
+     */
+    public function set_id(?int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @param string|null $name the unique username for this pod
+     */
+    public function set_name(?string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function id(): ?int
+    {
+        return $this->id;
+    }
+
+
+    /*
      * cast
      */
 
@@ -275,6 +318,50 @@ class user
     /*
      * loading / database access object (DAO) functions
      */
+
+    /**
+     * create the common part of an SQL statement to retrieve the parameters of a user from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = new sql_par($class);
+        $db_con->set_type(sql_db::TBL_USER);
+        if ($this->viewer == null) {
+            if ($this->id == null) {
+                $db_con->set_usr(0);
+            } else {
+                $db_con->set_usr($this->id);
+            }
+        } else {
+            $db_con->set_usr($this->viewer->id);
+        }
+        $db_con->set_fields(self::FLD_NAMES);
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a user by id from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $id the id of the user sandbox object
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'id', $class);
+        $qp->name .= 'id';
+        $db_con->set_name($qp->name);
+        $db_con->add_par(sql_db::PAR_INT, $id);
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
 
     /**
      * create an SQL statement to retrieve the parameters of a user from the database
@@ -368,7 +455,13 @@ class user
         return $this->row_mapper($db_usr);
     }
 
-    function load_by_id(int $id): bool
+    /**
+     * load a user by id from the database
+     * @param int $id
+     * @param user|null $request_usr the user who has requested the loading of the user data to prevent right gains
+     * @return bool
+     */
+    function load_by_id(int $id, ?user $request_usr = null): bool
     {
         global $db_con;
 
@@ -607,9 +700,44 @@ class user
         return $result;
     }
 
+    /**
+     * create a user object for the export
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return exp_obj the filled object used to create the json
+     */
+    function export_obj(bool $do_load = true): exp_obj
+    {
+        log_debug();
+        $result = new user_exp();
+
+        // add the source parameters
+        $result->name = $this->name;
+        if ($this->email <> '') {
+            $result->email = $this->email;
+        }
+        if ($this->first_name <> '') {
+            $result->first_name = $this->first_name;
+        }
+        if ($this->last_name <> '') {
+            $result->last_name = $this->last_name;
+        }
+        if ($this->description <> '') {
+            $result->description = $this->description;
+        }
+        if ($this->profile <> '') {
+            $result->profile = $this->profile;
+        }
+        if ($this->code_id <> '') {
+            $result->code_id = $this->code_id;
+        }
+
+        log_debug(json_encode($result));
+        return $result;
+    }
+
 
     /*
-     * information functions
+     * information
      */
 
     /**
