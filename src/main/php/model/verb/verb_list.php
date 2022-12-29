@@ -31,6 +31,8 @@
 
 global $verbs;
 
+use api\user_type_list_api;
+
 class verb_list extends user_type_list
 {
 
@@ -75,6 +77,7 @@ class verb_list extends user_type_list
     {
         return $this->usr;
     }
+
 
     /*
      * loading
@@ -189,6 +192,7 @@ class verb_list extends user_type_list
         //TODO check if $db_con->set_usr($this->user()->id); is needed
         $db_con->set_fields(verb::FLD_NAMES);
         $db_con->set_page_par(SQL_ROW_MAX, 0);
+        $db_con->set_order(verb::FLD_ID);
         $qp->sql = $db_con->select_all();
         $qp->par = $db_con->get_par();
 

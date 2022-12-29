@@ -84,6 +84,7 @@ CREATE TABLE IF NOT EXISTS `change_actions`
 (
     `change_action_id`   int(11)      NOT NULL,
     `change_action_name` varchar(200) NOT NULL,
+    `description`        text,
     `code_id`            varchar(50)  NOT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
@@ -508,7 +509,7 @@ CREATE TABLE IF NOT EXISTS `sources`
     `user_id`        int(11)      DEFAULT NULL,
     `source_name`    varchar(200) NOT NULL,
     `url`            text,
-    `description`        text,
+    `description`    text,
     `source_type_id` int(11)      DEFAULT NULL,
     `code_id`        varchar(100) DEFAULT NULL,
     `excluded`       tinyint(4)   DEFAULT NULL

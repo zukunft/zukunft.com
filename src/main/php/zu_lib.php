@@ -239,6 +239,7 @@ include_once $path_php . 'model/helper/library.php';
 include_once $path_php . 'model/helper/object_type.php';
 include_once $path_php . 'model/helper/db_object.php';
 include_once $path_php . 'model/helper/db_object_named.php';
+include_once $path_php . 'model/helper/type_lists.php';
 include_once $path_php . 'model/user/user_type_list.php';
 include_once $path_php . 'model/system/list.php';
 include_once $path_php . 'model/system/type_list.php';
@@ -372,6 +373,7 @@ include_once $path_php . 'api/message_header.php';
 include_once $path_php . 'api/controller.php';
 include_once $path_php . 'api/system/error_log.php';
 include_once $path_php . 'api/system/error_log_list.php';
+include_once $path_php . 'api/system/type_lists.php';
 include_once $path_php . 'api/system/batch_job.php';
 include_once $path_php . 'api/sandbox/user_sandbox.php';
 include_once $path_php . 'api/sandbox/user_sandbox_named.php';
@@ -553,6 +555,7 @@ define("BASE_CODE_LINK_FILES", serialize(array(
     'calc_and_cleanup_task_types',
     'change_actions',
     'change_tables',
+    'change_fields',
     'formula_element_types',
     'formula_link_types',
     'formula_types',
@@ -876,27 +879,6 @@ function prg_start(string $code_name, string $style = "", $echo_header = true): 
  */
 function prg_restart(string $code_name): sql_db
 {
-    global $system_users;
-    global $user_profiles;
-    global $phrase_types;
-    global $formula_types;
-    global $formula_link_types;
-    global $formula_element_types;
-    global $view_types;
-    global $view_component_types;
-    global $view_component_link_types;
-    global $view_component_position_types;
-    global $ref_types;
-    global $source_types;
-    global $share_types;
-    global $protection_types;
-    global $verbs;
-    global $system_views;
-    global $sys_log_stati;
-    global $job_types;
-    global $change_log_actions;
-    global $change_log_tables;
-    global $change_log_fields;
 
     // link to database
     $db_con = new sql_db;
@@ -913,55 +895,9 @@ function prg_restart(string $code_name): sql_db
         $db_con = null;
     }
 
-    // load default records
-    $sys_log_stati = new sys_log_status();
-    $sys_log_stati->load($db_con);
-    $system_users = new user_list();
-    $system_users->load_system($db_con);
-
-    // load the type database enum
-    // these tables are expected to be so small that it is more efficient to load all database records once at start
-    $user_profiles = new user_profile_list();
-    $user_profiles->load($db_con);
-    $phrase_types = new word_type_list();
-    $phrase_types->load($db_con);
-    $formula_types = new formula_type_list();
-    $formula_types->load($db_con);
-    $formula_link_types = new formula_link_type_list();
-    $formula_link_types->load($db_con);
-    $formula_element_types = new formula_element_type_list();
-    $formula_element_types->load($db_con);
-    $view_types = new view_type_list();
-    $view_types->load($db_con);
-    $view_component_types = new view_cmp_type_list();
-    $view_component_types->load($db_con);
-    // not yet needed?
-    //$view_component_link_types = new view_component_link_type_list();
-    //$view_component_link_types->load($db_con);
-    $view_component_position_types = new view_cmp_pos_type_list();
-    $view_component_position_types->load($db_con);
-    $ref_types = new ref_type_list();
-    $ref_types->load($db_con);
-    $source_types = new source_type_list();
-    $source_types->load($db_con);
-    $share_types = new share_type_list();
-    $share_types->load($db_con);
-    $protection_types = new protection_type_list();
-    $protection_types->load($db_con);
-    $job_types = new job_type_list();
-    $job_types->load($db_con);
-    $change_log_actions = new change_log_action();
-    $change_log_actions->load($db_con);
-    $change_log_tables = new change_log_table();
-    $change_log_tables->load($db_con);
-    $change_log_fields = new change_log_field();
-    $change_log_fields->load($db_con);
-
-    // preload the little more complex objects
-    $verbs = new verb_list();
-    $verbs->load($db_con);
-    //$system_views = new view_list();
-    //$system_views->load($db_con);
+    // preload all types from the database
+    $sys_typ_lst = new type_lists();
+    $sys_typ_lst->load($db_con, null);
 
     return $db_con;
 }

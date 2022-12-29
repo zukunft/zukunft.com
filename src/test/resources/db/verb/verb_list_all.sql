@@ -10,4 +10,5 @@ PREPARE verb_list_all (int) AS
            formula_name,
            words
       FROM verbs
+  ORDER BY verb_id
      LIMIT $1;

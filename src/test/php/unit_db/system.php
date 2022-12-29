@@ -36,6 +36,7 @@ class system_unit_db_tests
     function run(testing $t): void
     {
 
+        global $usr;
         global $db_con;
 
         // init
@@ -81,6 +82,11 @@ class system_unit_db_tests
 
         $result = db_check_missing_owner($db_con);
         $t->assert('db_consistency->check ', $result, true);
+
+        $t->subheader('API unit db tests of preloaded types');
+        $sys_typ_lst = new type_lists($usr);
+        $sys_typ_lst->load($db_con, $usr);
+        $t->assert_api($sys_typ_lst);
 
     }
 

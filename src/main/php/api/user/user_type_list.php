@@ -33,8 +33,10 @@
 namespace api;
 
 use html\user_type_list_dsp;
+use verb;
+use view;
 
-class user_type_list_api extends list_api
+class user_type_list_api extends list_api implements \JsonSerializable
 {
 
     // memory vs speed optimize vars
@@ -66,7 +68,11 @@ class user_type_list_api extends list_api
             foreach ($lst as $key => $obj) {
                 $id = $key;
                 if (property_exists($obj, "id")) {
-                    $id = $obj->id;
+                    if ($obj::class == verb::class or $obj::class == view::class) {
+                        $id = $obj->id();
+                    } else {
+                        $id = $obj->id;
+                    }
                 }
                 $api_obj = new user_type_api(
                     $id,
@@ -92,28 +98,10 @@ class user_type_list_api extends list_api
         return true;
     }
 
-    /**
-     * add a value to the list
-     * @returns bool true if the value has been added
+
+    /*
+     * cast
      */
-    function add(user_type_api $type): bool
-    {
-        $result = false;
-        if ($type->id() == 0) {
-            if (!in_array($type->code_id(), $this->code_id_lst())) {
-                $this->lst[] = $type;
-                $this->set_lst_dirty();
-                $result = true;
-            }
-        } else {
-            if (!in_array($type->id(), $this->id_lst())) {
-                $this->lst[$type->id()] = $type;
-                $this->set_lst_dirty();
-                $result = true;
-            }
-        }
-        return $result;
-    }
 
     /**
      * @returns user_type_list_dsp the cast object with the HTML code generating functions
@@ -130,6 +118,23 @@ class user_type_list_api extends list_api
         }
 
         return new user_type_list_dsp($lst_dsp);
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * an array of the value vars including the private vars
+     */
+    public function jsonSerialize(): array
+    {
+        $vars = [];
+        foreach ($this->lst as $lst) {
+            $vars[] = json_decode(json_encode($lst));
+        }
+        return $vars;
     }
 
     /**
@@ -160,6 +165,34 @@ class user_type_list_api extends list_api
         $result = false;
         if (count($this->lst) > 0) {
             if ($this->lst[0]::class == user_type_api::class) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * add a value to the list
+     * @returns bool true if the value has been added
+     */
+    function add(user_type_api $type): bool
+    {
+        $result = false;
+        if ($type->id() == 0) {
+            if (!in_array($type->code_id(), $this->code_id_lst())) {
+                $this->lst[] = $type;
+                $this->set_lst_dirty();
+                $result = true;
+            }
+        } else {
+            if (!in_array($type->id(), $this->id_lst())) {
+                $this->lst[$type->id()] = $type;
+                $this->set_lst_dirty();
                 $result = true;
             }
         }

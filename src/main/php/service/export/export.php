@@ -50,6 +50,7 @@ class export
     const TIME = 'time';
     const SELECTION = 'selection';
     const USER = 'user';
+    const USER_ID = 'user_id';
     const USERS = 'users';
     const VERBS = 'verbs';
     const WORDS = 'words';

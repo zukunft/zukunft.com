@@ -393,6 +393,7 @@ class test_base
         $this->assert_api_get(ref::class);
         $this->assert_api_get_by_name(source::class, source_api::TN_READ_API);
 
+        $this->assert_api_get_list(type_lists::class);
         $this->assert_api_get_list(phrase_list::class);
         $this->assert_api_get_list(term_list::class, [1, -1]);
         $this->assert_api_get_list(formula_list::class, [1]);
@@ -430,7 +431,11 @@ class test_base
      */
     function file(string $test_resource_path): string
     {
-        return file_get_contents(PATH_TEST_FILES . $test_resource_path);
+        $result = file_get_contents(PATH_TEST_FILES . $test_resource_path);
+        if ($result === false) {
+            $result = 'Cannot get file from ' . PATH_TEST_FILES . $test_resource_path;
+        }
+        return $result;
     }
 
     /**
@@ -551,7 +556,8 @@ class test_base
         }
         $api_obj = $usr_obj->api_obj();
         $actual = json_decode(json_encode($api_obj), true);
-        $expected = json_decode($this->api_json_expected($class), true);
+        $expected_file = $this->api_json_expected($class);
+        $expected = json_decode($expected_file, true);
         $actual = $this->json_remove_volatile($actual);
         // TODO remove, for faster debugging only
         $json_actual = json_encode($actual);
@@ -616,6 +622,12 @@ class test_base
         $data = array("ids" => implode(",", $ids));
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         $expected = json_decode($this->api_json_expected($class), true);
+
+        // remove the change time
+        if ($actual != null) {
+            $actual = $this->json_remove_volatile($actual);
+        }
+
         // TODO remove, for faster debugging only
         $json_actual = json_encode($actual);
         $json_expected = json_encode($expected);
@@ -676,6 +688,21 @@ class test_base
                     $now = new DateTime('now');
                     if ($actual_time < $now) {
                         unset($json[$i][change_log::FLD_CHANGE_TIME]);
+                    }
+                }
+                if (array_key_exists(export::USER, $chg)) {
+                    $actual_user = $chg[export::USER];
+                    if ($actual_user == '127.0.0.1') {
+                        $json[$i][export::USER] = 'zukunft.com system test';
+                    }
+                    if ($actual_user == 'localhost') {
+                        $json[$i][export::USER] = 'zukunft.com system test';
+                    }
+                }
+                if (array_key_exists(export::USER_ID, $chg)) {
+                    $actual_user_id = $chg[export::USER_ID];
+                    if ($actual_user_id > 0) {
+                        $json[$i][export::USER_ID] = 4;
                     }
                 }
             }

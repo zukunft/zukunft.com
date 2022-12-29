@@ -238,6 +238,30 @@ class verb extends db_object
     }
 
     /**
+     * @return string a unique name for the verb that is also used in the code
+     */
+    public function code_id(): string
+    {
+        if ($this->code_id == null) {
+            return '';
+        } else {
+            return $this->code_id;
+        }
+    }
+
+    /**
+     * @return string the description of the verb
+     */
+    public function comment(): string
+    {
+        if ($this->description == null) {
+            return '';
+        } else {
+            return $this->description;
+        }
+    }
+
+    /**
      * @return user|null the person who wants to see this verb
      */
     function user(): ?user

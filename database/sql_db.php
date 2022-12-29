@@ -2510,16 +2510,24 @@ class sql_db
         if ($direction <> self::ORDER_DESC) {
             $direction = '';
         }
-        $this->set_order_text(trim(self::STD_TBL . '.' . $order_field . ' ' . $direction));
+        $table_prefix = '';
+        if ($this->usr_query
+            or $this->join <> ''
+            or $this->join_type <> ''
+            or $this->join2_type <> '') {
+            $table_prefix .= self::STD_TBL . '.';
+        }
+
+        $this->set_order_text(trim($table_prefix . $order_field . ' ' . $direction));
         if ($this->all_query) {
-            $this->order .= ', ' . self::STD_TBL . '.' . sql_db::FLD_USER_ID;
+            $this->order .= ', ' . $table_prefix . sql_db::FLD_USER_ID;
         }
     }
 
     /**
      * set the order SQL statement
      */
-    function set_order_text(string $order_text)
+    function set_order_text(string $order_text): void
     {
         $this->order = ' ORDER BY ' . $order_text;
     }

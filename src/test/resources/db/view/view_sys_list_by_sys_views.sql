@@ -11,4 +11,5 @@ PREPARE view_sys_list_by_sys_views (int) AS
            CASE WHEN (u.protect_id        IS     NULL) THEN s.protect_id    ELSE u.protect_id    END AS protect_id
       FROM views s
  LEFT JOIN user_views u ON s.view_id = u.view_id AND u.user_id = $1
-     WHERE code_id IS NOT NULL;
+     WHERE code_id IS NOT NULL
+  ORDER BY s.view_id;

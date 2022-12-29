@@ -11,4 +11,5 @@ PREPARE view_sys_list_by_sys_views FROM
             IF(u.protect_id    IS NULL, s.protect_id,    u.protect_id)    AS protect_id
        FROM views s
   LEFT JOIN user_views u ON s.view_id = u.view_id AND u.user_id = ?
-      WHERE code_id IS NOT NULL';
+      WHERE code_id IS NOT NULL
+   ORDER BY s.view_id';

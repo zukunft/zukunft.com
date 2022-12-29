@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS change_actions
 (
     change_action_id   BIGSERIAL PRIMARY KEY,
     change_action_name varchar(200) NOT NULL,
+    description        text,
     code_id            varchar(50)  NOT NULL
 );
 

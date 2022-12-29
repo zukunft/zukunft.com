@@ -87,8 +87,8 @@ class test_api extends test_base
             }
         }
         $target = '';
-        // TODO cleanup
-        $target = 'api for import missing, api for export missing, api for batch missing, api for user missing, api for error missing, api for typeLists missing, api for phraseType missing, api for wordForm missing';
+        // TODO add the missing APIs
+        $target = 'api for import missing, api for export missing, api for batch missing, api for user missing, api for error missing, api for phraseType missing, api for wordForm missing';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if an api tag for each controller exists';

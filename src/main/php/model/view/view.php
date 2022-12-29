@@ -212,6 +212,30 @@ class view extends user_sandbox_named_with_type
         $this->type_id = cl(db_cl::VIEW_TYPE, $type_code_id);
     }
 
+    /**
+     * @return string a unique name for the view that is also used in the code
+     */
+    public function code_id(): string
+    {
+        if ($this->code_id == null) {
+            return '';
+        } else {
+            return $this->code_id;
+        }
+    }
+
+    /**
+     * @return string the description of the view
+     */
+    public function comment(): string
+    {
+        if ($this->description == null) {
+            return '';
+        } else {
+            return $this->description;
+        }
+    }
+
 
     /*
      * get preloaded information

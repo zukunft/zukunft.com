@@ -81,6 +81,7 @@ class view_sys_list extends user_type_list
         $qp->name .= 'sys_views';
         $db_con->set_name($qp->name);
         $db_con->set_where_text('code_id IS NOT NULL');
+        $db_con->set_order(view::FLD_ID);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
         return $qp;
