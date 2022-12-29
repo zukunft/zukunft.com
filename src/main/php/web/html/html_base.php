@@ -37,7 +37,7 @@ namespace html;
 class html_base
 {
 
-    const IMG_LOGO = "https://www.zukunft.com/images/ZUKUNFT_logo.svg";
+    const IMG_LOGO = "/src/main/resources/images/ZUKUNFT_logo.svg";
 
     const SIZE_FULL = 'full';
     const SIZE_HALF = 'half';
@@ -88,13 +88,13 @@ class html_base
             // include the bootstrap JavaScript plugins
             $result .= '  <script src="https://www.zukunft.com/lib_external/bootstrap/4.1.3/js/bootstrap.js"></script>';
             // adjust the styles where needed
-            $result .= '  <link rel="stylesheet" type="text/css" href="../../../../style/style_bs.css" />';
+            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css" />';
             // load the icon font
             $result .= '  <link rel="stylesheet" href="https://www.zukunft.com/lib_external/fontawesome/css/all.css">';
             $result .= '  <script defer src="https://www.zukunft.com/lib_external/fontawesome/js/all.js"></script>';
         } else {
             // use a simple stylesheet without Javascript
-            $result .= '  <link rel="stylesheet" type="text/css" href="../../../../style/style.css" />';
+            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />';
         }
         $result .= '</head>';
         if (UI_USE_BOOTSTRAP) {
@@ -128,12 +128,12 @@ class html_base
         if (UI_USE_BOOTSTRAP) {
             // include the bootstrap stylesheets
             $result .= '  <link rel="stylesheet" href="https://www.zukunft.com/lib_external/bootstrap/4.3.1/css/bootstrap.css">';
-            $result .= '  <link rel="stylesheet" type="text/css" href="/style/style_bs.css" />';
+            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css" />';
             // load the icon font
             $result .= '  <link rel="stylesheet" href="https://www.zukunft.com/lib_external/fontawesome/css/all.css">';
         } else {
             // use a simple stylesheet without Javascript
-            $result .= '  <link rel="stylesheet" type="text/css" href="/style/style.css" />';
+            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />';
         }
         $result .= '</head>';
         if (UI_USE_BOOTSTRAP) {
@@ -555,7 +555,7 @@ class html_base
         $result .= 'zukunft.com AG also supports the ';
         $result .= $this->ref("https://github.com/zukunft/tream", "Open Source", "github.com link") . ' Portfolio Management System<br><br>';
         $result .= '<a href="https://tream.biz/p4a/applications/tream/" title="TREAM demo">';
-        $result .= '<img src="https://www.zukunft.com/images/TREAM_logo.jpg" alt="TREAM" style="height: 20%;">';
+        $result .= '<img src="/src/main/resources/images/TREAM_logo.jpg" alt="TREAM" style="height: 20%;">';
         $result .= '</a><br><br>';
         $result .= '</div>   ';
         $result .= $this->footer(true);

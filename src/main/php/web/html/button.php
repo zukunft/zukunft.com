@@ -42,10 +42,10 @@ class button {
     const IMG_ADD_FA = "fa-plus-square";
     const IMG_EDIT_FA = "fa-edit";
     const IMG_DEL_FA = "fa-times-circle";
-    const IMG_UNDO = "../images/button_undo.svg";
-    const IMG_FIND = ".../images/button_find.svg";
-    const IMG_UN_FILTER = "../images/button_filter_off.svg";
-    const IMG_BACK = "../images/button_back.svg";
+    const IMG_UNDO = "/src/main/resources/images/button_undo.svg";
+    const IMG_FIND = "/src/main/resources/images/button_find.svg";
+    const IMG_UN_FILTER = "/src/main/resources/images/button_filter_off.svg";
+    const IMG_BACK = "/src/main/resources/images/button_back.svg";
 
     // parameters for the simple buttons
     public string $title = ''; // title to display on mouse over

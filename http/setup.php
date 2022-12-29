@@ -21,7 +21,7 @@ The steps should be
 1. ask for the database connection and test it
 2. ask for the admin user and set the database user
 3. write the database connection to a config file, which should not be readable for the www user
-4. create the database using zukunft_structure.sql
+4. create the database using src/main/php/db/.../zukunft_structure.sql
 5. load the coded linked database rows
 6. import the initial usr data with JSON
 7. on each start it is checked if the local config exists and if no the setup is started

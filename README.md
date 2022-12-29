@@ -17,7 +17,7 @@ To install this version 0.0.3 use a LAMP server (https://wiki.debian.org/LaMp) a
 2) copy all files of bootstrap 4.1.3 or higher to /var/www/html/lib_external/bootstrap/4.1.3/
 3) copy all files of fontawesome to /var/www/html/lib_external/fontawesome/
 4) create a user "zukunft_db_root" in PostgreSQL or MySQL and remember the password
-5) execute the script "zukunft_structure.sql" in MySQL to create the database zukunft_structure
+5) execute the script "src/main/php/db/.../zukunft_structure.sql" in MySQL to create the database zukunft_structure
 6) change the password "xxx" in db_link/zu_lib_sql_link.php with the password used in 2)
 7) test if the installation is running fine by calling http://yourserver.com/test/test.php
 

@@ -68,30 +68,30 @@ function run_display_test(testing $t): void
 
     $t->header('Test the display button class (src/main/php/web/html/button.php )');
 
-    $target = '<a href="/http/view.php" title="Add test"><img src="../../../../images/button_add.svg" alt="Add test"></a>';
+    $target = '<a href="/http/view.php" title="Add test"><img src="/src/main/resources/images/button_add.svg" alt="Add test"></a>';
     $target = '<a href="/http/view.php" title="Add test">';
     $result = (new button('Add test', '/http/view.php'))->add();
     $t->dsp_contains(", btn_add", $target, $result);
 
-    $target = '<a href="/http/view.php" title="Edit test"><img src="../../../../images/button_edit.svg" alt="Edit test"></a>';
+    $target = '<a href="/http/view.php" title="Edit test"><img src="/src/main/resources/images/button_edit.svg" alt="Edit test"></a>';
     $target = '<a href="/http/view.php" title="Edit test">';
     $result = (new button('Edit test', '/http/view.php'))->edit();
     $t->dsp_contains(", btn_edit", $target, $result);
 
-    $target = '<a href="/http/view.php" title="Del test"><img src="../../../../images/button_del.svg" alt="Del test"></a>';
+    $target = '<a href="/http/view.php" title="Del test"><img src="/src/main/resources/images/button_del.svg" alt="Del test"></a>';
     $target = '<a href="/http/view.php" title="Del test">';
     $result = (new button('Del test', '/http/view.php'))->del();
     $t->dsp_contains(", btn_del", $target, $result);
 
-    $target = '<a href="/http/view.php" title="Undo test"><img src="../images/button_undo.svg" alt="Undo test"></a>';
+    $target = '<a href="/http/view.php" title="Undo test"><img src="/src/main/resources/images/button_undo.svg" alt="Undo test"></a>';
     $result = (new button('Undo test', '/http/view.php'))->undo();
     $t->dsp(", btn_undo", $target, $result);
 
-    $target = '<a href="/http/view.php" title="Find test"><img src=".../images/button_find.svg" alt="Find test"></a>';
+    $target = '<a href="/http/view.php" title="Find test"><img src="/src/main/resources/images/button_find.svg" alt="Find test"></a>';
     $result = (new button('Find test', '/http/view.php'))->find();
     $t->dsp(", btn_find", $target, $result);
 
-    $target = '<a href="/http/view.php" title="Show all test"><img src="../images/button_filter_off.svg" alt="Show all test"></a>';
+    $target = '<a href="/http/view.php" title="Show all test"><img src="/src/main/resources/images/button_filter_off.svg" alt="Show all test"></a>';
     $result = (new button('Show all test', '/http/view.php'))->unfilter();
     $t->dsp(", btn_unfilter", $target, $result);
 
@@ -99,14 +99,14 @@ function run_display_test(testing $t): void
     $result = (new button('YesNo test', '/http/view.php'))->yesno();
     $t->dsp(", btn_yesno", $target, $result);
 
-    $target = '<a href="/http/view.php?words=1" title="back"><img src="../images/button_back.svg" alt="back"></a>';
+    $target = '<a href="/http/view.php?words=1" title="back"><img src="/src/main/resources/images/button_back.svg" alt="back"></a>';
     $result = (new button(''))->back();
     $t->dsp(", btn_back", $target, $result);
 
 
     $t->header('Test the display HTML class (classes/display_html.php )');
 
-    $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../../style/style.css" /> </head> <body class="center_form">'));
+    $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../main/resources/style/style.css" /> </head> <body class="center_form">'));
     $target = htmlspecialchars(trim('<title>Header test (zukunft.com)</title>'));
     $result = htmlspecialchars(trim($html->header('Header test', 'center_form')));
     $t->dsp_contains(", dsp_header", $target, $result);

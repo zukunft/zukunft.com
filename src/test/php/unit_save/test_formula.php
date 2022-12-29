@@ -249,7 +249,7 @@ function run_formula_test(testing $t): void
 
     /* TODO reactivate
     $result = $frm->btn_edit();
-    $target = '<a href="/http/formula_edit.php?id=52&back=" title="Change formula increase"><img src="../images/button_edit.svg" alt="Change formula increase"></a>';
+    $target = '<a href="/http/formula_edit.php?id=52&back=" title="Change formula increase"><img src="/src/main/resources/images/button_edit.svg" alt="Change formula increase"></a>';
     $target = 'data-icon="edit"';
     $t->dsp_contains(', formula->btn_edit for '.$frm->name().'', $target, $result);
     */

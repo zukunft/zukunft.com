@@ -106,7 +106,7 @@ class user_dsp_old extends user
                 $result .= '<th>Your name vs. </th><th>common name</th></tr><tr>';
             }
             $result .= '<td>' . $wrd_row['usr_word_name'] . '</td><td>' . $wrd_row['word_name'] . '</td>';
-            //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_word='.$log_row['type_table'].'&back='.$id.'"><img src="../images/button_del_small.jpg" alt="undo change"></a></td>';
+            //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_word='.$log_row['type_table'].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
             $url = '/http/user.php?id=' . $this->id . '&undo_word=' . $wrd_row['word_id'] . '&back=' . $back . '';
             $result .= '<td>' . \html\btn_del("Undo your change and use the standard word " . $wrd_row['word_name'], $url) . '</td>';
             $result .= '</tr>';
@@ -317,7 +317,7 @@ class user_dsp_old extends user
             $result .= '<td>' . $frm_row['formula_name'] . '</td>';
             $result .= '<td>' . $frm_row['usr_formula_text'] . '</td>';
             $result .= '<td>' . $frm_row['formula_text'] . '</td>';
-            //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula::FLD_ID].'&back='.$id.'"><img src="../images/button_del_small.jpg" alt="undo change"></a></td>';
+            //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula::FLD_ID].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
             $url = '/http/user.php?id=' . $this->id . '&undo_formula=' . $frm_row[formula::FLD_ID] . '&back=' . $back . '';
             $result .= '<td>' . \html\btn_del("Undo your change and use the standard formula " . $frm_row['formula_text'], $url) . '</td>';
             $result .= '</tr>';

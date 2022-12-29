@@ -231,7 +231,7 @@ if ($version[0] < 8) {
 //phpinfo();
 
 // database links
-include_once ROOT_PATH . 'database/sql_db.php';
+include_once $path_php . 'db/sql_db.php';
 include_once $path_php . 'db/db_check.php';
 // utils
 include_once $path_php . 'utils/json_utils.php';
@@ -541,12 +541,12 @@ const ZUC_MAX_CALC_LAYERS = '10000';    // max number of calculation layers
 
 
 // file links used
-//const ZUH_IMG_ADD       = "../images/button_add_small.jpg";
-//const ZUH_IMG_EDIT      = "../images/button_edit_small.jpg";
-const ZUH_IMG_ADD = "../images/button_add.svg";
-const ZUH_IMG_EDIT = ".../images/button_edit.svg";
-const ZUH_IMG_DEL = "../images/button_del.svg";
-const ZUH_IMG_UNDO = "../images/button_undo.svg";
+//const ZUH_IMG_ADD       = "/src/main/resources/images/button_add_small.jpg";
+//const ZUH_IMG_EDIT      = "/src/main/resources/images/button_edit_small.jpg";
+const ZUH_IMG_ADD = "/src/main/resources/images/button_add.svg";
+const ZUH_IMG_EDIT = "/src/main/resources/images/button_edit.svg";
+const ZUH_IMG_DEL = "/src/main/resources/images/button_del.svg";
+const ZUH_IMG_UNDO = "/src/main/resources/images/button_undo.svg";
 
 # list of JSON files that define the base configuration of zukunft.com that is supposed never to be changed
 define("PATH_BASE_CONFIG_FILES", ROOT_PATH . 'src/main/resources/');
