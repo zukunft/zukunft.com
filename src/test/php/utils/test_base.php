@@ -382,6 +382,7 @@ class test_base
     {
 
         $this->assert_api_get(word::class);
+        $this->assert_api_get_json(word::class, controller::URL_VAR_WORD_ID, 1);
         $this->assert_api_get_by_name(word::class, word_api::TN_READ);
         $this->assert_api_get(verb::class);
         $this->assert_api_get(triple::class);
@@ -589,6 +590,26 @@ class test_base
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         $expected = json_decode($this->api_json_expected($class), true);
         return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
+    }
+
+    /**
+     * check if the REST GET call returns the expected export JSON message
+     *
+     * @param string $test_name the name of the object to test
+     * @param string $fld the field name to select the export
+     * @param int $id the database id of the db row that should be used for testing
+     * @return bool true if the json has no relevant differences
+     */
+    function assert_api_get_json(string $test_name, string $fld = '', int $id = 1): bool
+    {
+        $url = HOST_TESTING . '/api/json';
+        $data = array($fld => $id);
+        $actual = json_decode($this->api_call("GET", $url, $data), true);
+        // TODO remove, for faster debugging only
+        $json_actual = json_encode($actual);
+        $expected_text = $this->file('api/json/' . $test_name . '.json');
+        $expected = json_decode($expected_text, true);
+        return $this->assert($test_name . ' API GET', json_is_similar($actual, $expected), true);
     }
 
     /**

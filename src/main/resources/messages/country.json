@@ -40,11 +40,12 @@
     {"from": "Germany", "verb": "is a", "to": "Country"},
     {"name": "Zurich (Canton)", "from": "Zurich", "verb": "is a", "to": "Canton",
       "refs": [ { "name": "Canton of Zürich", "type": "wikipedia" },
-                { "name": "Q11943", "type": "wikidata" }]
+                { "name": "Q11943", "type": "wikidata" } ]
     },
     {"name": "Zurich (City)", "from": "Zurich", "verb": "is a", "to": "City",
       "refs": [ { "name": "Zürich", "type": "wikipedia" },
-                { "name": "Q72", "type": "wikidata" } ]
+                { "name": "Q72", "type": "wikidata" },
+                { "name": "zurich", "type": "conceptnet" } ]
     },
     {"from": "Zurich (Canton)", "verb": "is part of", "to": "Switzerland"},
     {"from": "Zurich (City)", "verb": "is part of", "to": "Zurich (Canton)"},

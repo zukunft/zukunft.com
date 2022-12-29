@@ -125,4 +125,15 @@ class controller
             $this->get_response('', $msg);
         }
     }
+
+    function get_export(object $api_obj, string $msg): void
+    {
+        // return the api json or the error message
+        if ($msg == '') {
+            $this->get_response(json_encode($api_obj), $msg);
+        } else {
+            // tell the user e.g. that no products found
+            $this->get_response('', $msg);
+        }
+    }
 }

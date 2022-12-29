@@ -1795,7 +1795,7 @@ components:
         type:
           type: string
           description: reference to the phrase type that is used to assign a predefined behavior to the word
-          example: time
+          example: default
           enum:
             - default
             - time
@@ -2295,7 +2295,6 @@ components:
     RefList:
       type: array
       description: a list of external references to
-      example: wikipedia, conceptnet
       items:
         $ref: '#/components/schemas/Ref'
     Ref:
@@ -2307,11 +2306,11 @@ components:
         name:
           type: string
           description: the unique name used in the external system
-          example: Canton of Zürich
+          example: Q72
         type:
           type: string
           description: the internal key of a connected system
-          example: wikipedia
+          example: wikidata
           enum:
             - wikipedia
             - wikidata
@@ -2319,7 +2318,7 @@ components:
         description:
           type: string
           description: the description of the external system that is shown to the user as a tooltip
-          example: wikipedia
+          example: wikidata
 
     Share:
       type: string

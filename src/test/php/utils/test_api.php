@@ -73,22 +73,24 @@ class test_api extends test_base
             $result = false;
         } else {
             $tags = $api_def['tags'];
-            foreach ($tags AS $tag) {
-                // check if at least some controller code exists for each tag
-                $filename = self::TEST_ROOT_PATH . self::API_PATH . $tag['name'] . '/' . self::PHP_DEFAULT_FILENAME;
-                $ctrl_code = file_get_contents($filename);
-                if ($ctrl_code == null or $ctrl_code == '') {
-                    if ($result != '') {
-                        $result .= ', ';
+            foreach ($tags as $tag) {
+                $paths = $this->get_paths_of_tag($tag['name'], $api_def);
+                foreach ($paths as $path) {
+                    // check if at least some controller code exists for each tag
+                    $filename = self::TEST_ROOT_PATH . self::API_PATH . $path . '/' . self::PHP_DEFAULT_FILENAME;
+                    $ctrl_code = file_get_contents($filename);
+                    if ($ctrl_code == null or $ctrl_code == '') {
+                        if ($result != '') {
+                            $result .= ', ';
+                        }
+                        $result .= 'api for ' . $path . ' missing';
                     }
-                    $result .= 'api for ' . $tag['name'] . ' missing';
                 }
-
             }
         }
         $target = '';
         // TODO add the missing APIs
-        $target = 'api for import missing, api for export missing, api for batch missing, api for user missing, api for error missing, api for phraseType missing, api for wordForm missing';
+        $target = 'api for batch missing, api for user missing, api for error missing, api for phraseType missing, api for wordForm missing';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if an api tag for each controller exists';
@@ -96,4 +98,31 @@ class test_api extends test_base
         // the openapi internal consistency is checked via the online swagger test
     }
 
+    private function get_paths_of_tag(string $tag, array $api_def): array
+    {
+        $lib = new library();
+        $paths = [];
+        $api_paths = $api_def['paths'];
+        foreach ($api_paths as $path_key => $path) {
+            $path_name = $lib->str_right_of($path_key, '/');
+            if (str_contains($path_name, '/')) {
+                $path_name = $lib->str_left_of($path_name, '/');
+            }
+            if (array_key_exists('post', $path)) {
+                $path_posts = $path['post'];
+                if (array_key_exists('tags', $path_posts)) {
+                    $path_tags = $path_posts['tags'];
+                    foreach ($path_tags as $path_tag) {
+                        if ($path_tag == $tag) {
+                            if (!in_array($path_name, $paths)) {
+                                $paths[] = $path_name;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $paths;
+    }
 }

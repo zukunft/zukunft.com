@@ -139,7 +139,7 @@ class word_unit_db_tests
         $t->assert('add_id', $wrd_lst->name(), '"' . word_api::TN_READ . '","' . word_api::TN_MIO . '"');
 
 
-        $t->header('Unit database tests of the word class (src/main/php/model/word/triple.php)');
+        $t->header('Unit database tests of the triple class (src/main/php/model/word/triple.php)');
         $t->name = 'triple read db->';
 
         $t->subheader('Frontend API tests');
