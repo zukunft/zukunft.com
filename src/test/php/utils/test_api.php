@@ -52,7 +52,8 @@ use html\html_base;
 class test_api extends test_base
 {
     // path
-    const TEST_ROOT_PATH = '/home/timon/git/zukunft.com/';
+    //const TEST_ROOT_PATH = '/home/timon/git/zukunft.com/';
+    const TEST_ROOT_PATH = '/home/timon/PhpstormProjects/zukunft.com/';
     const OPEN_API_PATH = 'src/main/resources/openapi/zukunft_com_api.yaml';
 
     const API_PATH = 'api/';

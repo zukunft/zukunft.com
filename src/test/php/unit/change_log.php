@@ -46,7 +46,7 @@ class change_log_unit_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
-        $t->name = 'word->';
+        $t->name = 'change_log->';
         $t->resource_path = 'db/log/';
         $usr->id = 1;
 

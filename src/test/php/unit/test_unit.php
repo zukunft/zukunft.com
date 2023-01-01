@@ -129,6 +129,7 @@ class test_unit extends testing
         (new view_component_link_unit_tests)->run($this);
         (new ref_unit_tests)->run($this);
         (new change_log_unit_tests)->run($this);
+        (new batch_job_unit_tests)->run($this);
 
         // do the UI unit tests
         (new html_unit_tests)->run($this);

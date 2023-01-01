@@ -138,6 +138,8 @@ function import_base_config(user $usr): string
 {
     $result = '';
     log_debug('load base config');
+    $job = new batch_job($usr);
+    $job_id = $job->add(job_type_list::BASE_IMPORT);
 
     $file_list = unserialize(BASE_CONFIG_FILES);
     foreach ($file_list as $filename) {

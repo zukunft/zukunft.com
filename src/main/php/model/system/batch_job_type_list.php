@@ -44,6 +44,7 @@ class job_type_list extends user_type_list
     const FORMULA_UNLINK = "formula_unlink";
     const triple = "triple";
     const WORD_UNLINK = "word_unlink";
+    const BASE_IMPORT = "base_import"; // import the base configuration by a system user on initial setup
 
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled

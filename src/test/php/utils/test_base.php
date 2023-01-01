@@ -113,6 +113,7 @@ include_once $path_unit . 'view_component_link.php';
 include_once $path_unit . 'verb.php';
 include_once $path_unit . 'ref.php';
 include_once $path_unit . 'change_log.php';
+include_once $path_unit . 'batch_job.php';
 
 // load the testing functions for creating HTML code
 include_once $path_unit . 'html.php';
@@ -715,6 +716,9 @@ class test_base
                 }
                 if (array_key_exists(export::USER, $chg)) {
                     $actual_user = $chg[export::USER];
+                    if ($actual_user == '::1') {
+                        $json[$i][export::USER] = 'zukunft.com system test';
+                    }
                     if ($actual_user == '127.0.0.1') {
                         $json[$i][export::USER] = 'zukunft.com system test';
                     }

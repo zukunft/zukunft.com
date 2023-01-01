@@ -196,6 +196,7 @@ class sql_db
         sql_db::TBL_CHANGE,
         sql_db::TBL_CHANGE_LINK,
         sql_db::TBL_SYS_LOG,
+        sql_db::TBL_TASK,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
     // tables that link two named tables
