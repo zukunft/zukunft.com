@@ -2,7 +2,7 @@
 
 /*
 
-    web\phrase.php - the display extension of the api phrase object
+    /web/phrase.php - the display extension of the api phrase object
     --------------
 
     mainly links to the word and triple display functions

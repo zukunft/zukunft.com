@@ -2,7 +2,7 @@
 
 /*
 
-    web\term.php - the display extension of the api term object
+    /web/term.php - the display extension of the api term object
     ------------
 
 

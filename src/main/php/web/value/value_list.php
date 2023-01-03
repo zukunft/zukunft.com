@@ -2,7 +2,7 @@
 
 /*
 
-    web\value_list.php - the display extension of the api value list object
+    /web/value_list.php - the display extension of the api value list object
     ------------------
 
     to creat the HTML code to display a list of values

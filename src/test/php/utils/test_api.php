@@ -52,8 +52,8 @@ use html\html_base;
 class test_api extends test_base
 {
     // path
-    //const TEST_ROOT_PATH = '/home/timon/git/zukunft.com/';
-    const TEST_ROOT_PATH = '/home/timon/PhpstormProjects/zukunft.com/';
+    const TEST_ROOT_PATH = '/home/timon/git/zukunft.com/';
+    //const TEST_ROOT_PATH = '/home/timon/PhpstormProjects/zukunft.com/';
     const OPEN_API_PATH = 'src/main/resources/openapi/zukunft_com_api.yaml';
 
     const API_PATH = 'api/';
@@ -69,9 +69,10 @@ class test_api extends test_base
 
         $test_name = 'check if a controller for each api tag exists';
         $result = '';
-        $api_def = yaml_parse_file(self::TEST_ROOT_PATH . self::OPEN_API_PATH);
+        $open_api_filename = self::TEST_ROOT_PATH . self::OPEN_API_PATH;
+        $api_def = yaml_parse_file($open_api_filename);
         if ($api_def == null) {
-            $result = false;
+            log_err('OpenAPI file ' . $open_api_filename . ' missing');
         } else {
             $tags = $api_def['tags'];
             foreach ($tags as $tag) {
@@ -91,7 +92,7 @@ class test_api extends test_base
         }
         $target = '';
         // TODO add the missing APIs
-        $target = 'api for batch missing, api for error missing, api for phraseType missing, api for wordForm missing';
+        $target = 'api for error missing, api for phraseType missing, api for wordForm missing';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if an api tag for each controller exists';

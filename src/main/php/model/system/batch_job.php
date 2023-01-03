@@ -144,9 +144,31 @@ class batch_job extends db_object
     function __construct(user $usr)
     {
         parent::__construct();
+        $this->request_time = new DateTime();
         $this->usr = $usr;
         $this->status = self::STATUS_NEW;
         $this->priority = self::PRIO_LOWEST;
+    }
+
+    /**
+     * @return bool true if a job is found
+     */
+    function row_mapper(array $db_row): bool
+    {
+        global $job_types;
+        if ($db_row[self::FLD_ID] > 0) {
+            $this->id = $db_row[self::FLD_ID];
+            //$this->request_time = $db_row[self::FLD_TIME_REQUEST];
+            //$this->start_time = $db_row[self::FLD_TIME_START];
+            //$this->end_time = $db_row[self::FLD_TIME_END];
+            $this->type = $db_row[self::FLD_TYPE];
+            //$this->status = $db_row[self::FLD_ID];
+            //$this->priority = $db_row[self::FLD_ID];
+            log_debug('Batch job ' . $this->id() . ' loaded');
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -157,8 +179,20 @@ class batch_job extends db_object
     public function set_type(string $code_id): void
     {
         global $job_types;
-        $job_type = $job_types->id();
-        $this->type = $job_type->id;
+        $this->type = $job_types->id($code_id);
+    }
+
+    public function type_code_id(): string
+    {
+        global $job_types;
+        $result = '';
+        if ($this->type != null) {
+            $type = $job_types->get_by_id($this->type);
+            if ($type != null) {
+                $result = $type->code_id();
+            }
+        }
+        return $result;
     }
 
     /*
@@ -170,12 +204,11 @@ class batch_job extends db_object
      */
     function api_obj(): batch_job_api
     {
-        $api_obj = new batch_job_api();
+        $api_obj = new batch_job_api($this->usr);
         $api_obj->id = $this->id;
         $api_obj->request_time = $this->request_time;
         $api_obj->start_time = $this->start_time;
         $api_obj->end_time = $this->end_time;
-        $api_obj->user = $this->usr;
         $api_obj->type = $this->type;
         $api_obj->status = $this->status;
         $api_obj->priority = $this->priority;
@@ -194,7 +227,7 @@ class batch_job extends db_object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    public function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_TASK);
         $qp = new sql_par($class);
@@ -226,6 +259,35 @@ class batch_job extends db_object
     }
 
     /**
+     * load a batch job from the database
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper($db_row);
+        return $this->id();
+    }
+
+    /**
+     * load a batch job by database id
+     * @param int $id the id of the batch job
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug($id);
+        $qp = $this->load_sql_by_id($db_con, $id, $class);
+        return $this->load($qp);
+    }
+
+    /**
      * function that can be overwritten by the child object
      * @return string the field name of the prime database index of the object
      */
@@ -250,29 +312,34 @@ class batch_job extends db_object
 
         $result = 0;
         log_debug();
+
         // create first the database entry to make sure the update is done
         if ($this->type <= 0) {
             if ($code_id == '') {
                 log_debug('invalid batch job type');
             } else {
-                $db_con->set_type($code_id);
+                $this->set_type($code_id);
             }
-        } else {
+        }
+
+        if ($this->type > 0) {
             log_debug('ok');
             if ($this->row_id <= 0) {
                 if (isset($this->obj)) {
                     $this->row_id = $this->obj->id();
                 }
             }
-            if ($this->row_id <= 0) {
+            if ($this->row_id <= 0 and $code_id != job_type_list::BASE_IMPORT) {
                 log_debug('row id missing?');
             } else {
                 log_debug('row_id ok');
-                if (isset($this->obj)) {
+                if (isset($this->obj) or $code_id == job_type_list::BASE_IMPORT) {
                     if (!isset($this->usr)) {
                         $this->usr = $this->obj->usr;
                     }
-                    $this->row_id = $this->obj->id();
+                    if (isset($this->obj)) {
+                        $this->row_id = $this->obj->id();
+                    }
                     log_debug('connect');
                     //$db_con = New mysql;
                     $db_type = $db_con->get_type();
@@ -283,7 +350,7 @@ class batch_job extends db_object
                     $this->request_time = new DateTime();
 
                     // execute the job if possible
-                    if ($job_id > 0) {
+                    if ($job_id > 0 and $code_id != job_type_list::BASE_IMPORT) {
                         $this->id = $job_id;
                         $this->exe();
                         $result = $job_id;

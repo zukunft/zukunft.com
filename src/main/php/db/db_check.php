@@ -220,6 +220,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->column_allow_null(sql_db::TBL_SYS_LOG_FUNCTION, 'sys_log_function_name');
     $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'start_time');
     $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'end_time');
+    $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'row_id');
     $result .= $db_con->column_force_not_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, 'user_id');
     // TODO set default profile_id in users to 1
     if ($db_con->db_type == sql_db::MYSQL) {
@@ -330,7 +331,7 @@ function db_fill_code_link_sql(string $table_name, string $id_col_name, int $id)
 /**
  * fill the database with all rows that have a code id and code linked
  */
-function db_fill_code_links(sql_db $db_con)
+function db_fill_code_links(sql_db $db_con): void
 {
     global $debug;
 

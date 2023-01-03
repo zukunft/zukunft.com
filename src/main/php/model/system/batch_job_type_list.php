@@ -42,7 +42,7 @@ class job_type_list extends user_type_list
     const FORMULA_DEL = "formula_del";
     const FORMULA_LINK = "formula_link";
     const FORMULA_UNLINK = "formula_unlink";
-    const triple = "triple";
+    const TRIPLE = "triple";
     const WORD_UNLINK = "word_unlink";
     const BASE_IMPORT = "base_import"; // import the base configuration by a system user on initial setup
 
@@ -65,6 +65,9 @@ class job_type_list extends user_type_list
         $type = new user_type(job_type_list::VALUE_UPDATE, job_type_list::VALUE_UPDATE);
         $this->lst[2] = $type;
         $this->hash[job_type_list::VALUE_UPDATE] = 2;
+        $type = new user_type(job_type_list::BASE_IMPORT, job_type_list::BASE_IMPORT);
+        $this->lst[11] = $type;
+        $this->hash[job_type_list::BASE_IMPORT] = 11;
     }
 
     /**

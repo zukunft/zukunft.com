@@ -74,6 +74,9 @@ if ($usr->id > 0) {
         $db_con = prg_restart("test_reset_db");
 
         // reload the base configuration
+        $job = new batch_job($sys_usr);
+        $job_id = $job->add(job_type_list::BASE_IMPORT);
+
         import_base_config($sys_usr);
 
         /*
@@ -93,7 +96,7 @@ if ($usr->id > 0) {
 /**
  * truncate all tables (use only for system testing)
  */
-function run_db_truncate()
+function run_db_truncate(): void
 {
     // the tables in order to avoid the usage of CASCADE
     $table_names = array(

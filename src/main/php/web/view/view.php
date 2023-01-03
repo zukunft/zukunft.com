@@ -2,7 +2,7 @@
 
 /*
 
-    web\view\view.php - the display extension of the api view object
+    /web/view/view.php - the display extension of the api view object
     -----------------
 
     This file is part of zukunft.com - calc with words

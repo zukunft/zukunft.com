@@ -94,10 +94,10 @@ function run_batch_job_list_test(testing $t): void
     $calc_request->phr_lst = $phr_lst;
     $result = $job_lst->add($calc_request);
     // TODO review
-    $target = 0;
-    if ($result > 0) {
-        $target = $result;
+    $target = '';
+    if ($result->is_ok()) {
+        $target = $result->get_last_message();
     }
-    $t->dsp('batch_job->add has number "' . $result . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp('batch_job->add has number "' . $result->get_last_message() . '"', $target, $result->get_last_message(), TIMEOUT_LIMIT_DB_MULTI);
 
 }

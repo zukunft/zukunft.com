@@ -72,6 +72,7 @@ class test_unit extends testing
         $this->init_sys_log_status();
         $this->init_sys_users();
         $this->init_user_profiles();
+        $this->init_job_types();
 
         // set the profile of the test users
         $usr->profile_id = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
@@ -179,7 +180,7 @@ class test_unit extends testing
     {
         global $user_profiles;
 
-        $user_profiles = new user_profile_list();
+        $user_profiles = new job_type_list();
         $user_profiles->load_dummy();
 
     }
@@ -353,7 +354,7 @@ class test_unit extends testing
     }
 
     /**
-     * create job type array for the unit tests without database connection
+     * create the job types array for the unit tests without database connection
      */
     function init_job_types()
     {
@@ -363,7 +364,6 @@ class test_unit extends testing
         $job_types->load_dummy();
 
     }
-
     /**
      * create log table array for the unit tests without database connection
      */

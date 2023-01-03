@@ -304,8 +304,9 @@ class change_log_list extends base_list
         return $result;
     }
 
+
     /*
-     * modification
+     * modify
      */
 
     /**

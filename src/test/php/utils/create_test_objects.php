@@ -165,6 +165,20 @@ class test_new_obj extends test_base
     }
 
     /**
+     * @return batch_job a batch job entry with some dummy values
+     */
+    public function dummy_job(): batch_job
+    {
+        $sys_usr = $this->system_user();
+        $job = new batch_job($sys_usr);
+        $job->set_id(1);
+        $job->start_time = new DateTime();
+        $job->set_type(job_type_list::BASE_IMPORT);
+        $job->row_id = 1;
+        return $job;
+    }
+
+    /**
      * @return change_log_list a list of change log entries with some dummy values
      *
      * TODO add at least one sample for rename and delete
@@ -175,6 +189,33 @@ class test_new_obj extends test_base
         $log_lst = new change_log_list();
         $log_lst->add($this->dummy_log_named());
         return $log_lst;
+    }
+
+    /**
+     * @return batch_job_list a list of batch job entries with some dummy values
+     */
+    public function dummy_job_list(): batch_job_list
+    {
+        $sys_usr = $this->system_user();
+        $job_lst = new batch_job_list($sys_usr);
+        $job_lst->add($this->dummy_job());
+        return $job_lst;
+    }
+
+    /**
+     * @return user the system user for the database updates
+     */
+    public function system_user(): user
+    {
+        $sys_usr = new user;
+        $sys_usr->id = SYSTEM_USER_ID;
+        $sys_usr->name = "zukunft.com system";
+        $sys_usr->code_id = 'system';
+        $sys_usr->dec_point = ".";
+        $sys_usr->thousand_sep = "'";
+        $sys_usr->percent_decimals = 2;
+        $sys_usr->profile_id = 5;
+        return $sys_usr;
     }
 
 

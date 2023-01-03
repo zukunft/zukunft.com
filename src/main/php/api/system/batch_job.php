@@ -32,12 +32,13 @@
 namespace api;
 
 use DateTime;
+use db_object;
+use user;
 
-class batch_job_api
+class batch_job_api extends db_object
 {
 
     // field names used for JSON creation
-    public int $id;
     public ?DateTime $request_time;
     public ?DateTime $start_time;
     public ?DateTime $end_time;
@@ -46,16 +47,28 @@ class batch_job_api
     public string $status;
     public string $priority;
 
-    function __construct()
+    function __construct(user $usr)
     {
+        parent::__construct();
+        $this->set_user($usr);
         $this->id = 0;
         $this->request_time = null;
         $this->start_time = null;
         $this->end_time = null;
-        $this->user = '';
         $this->type = '';
         $this->status = '';
         $this->priority = '';
+    }
+
+    /**
+     * set the user of the phrase
+     *
+     * @param user $usr the person who wants to access the phrase
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
+        $this->user = $usr->name;
     }
 
     /**

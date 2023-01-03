@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS calc_and_cleanup_tasks
     start_time                    timestamp,
     end_time                      timestamp,
     calc_and_cleanup_task_type_id bigint    NOT NULL,
-    row_id                        bigint    NOT NULL,
+    row_id                        bigint    DEFAULT NULL,
     change_field_id               bigint             DEFAULT NULL
 );
 

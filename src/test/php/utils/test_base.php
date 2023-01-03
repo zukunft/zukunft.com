@@ -147,6 +147,7 @@ include_once $path_unit_db . 'view.php';
 include_once $path_unit_db . 'ref.php';
 include_once $path_unit_db . 'share.php';
 include_once $path_unit_db . 'protection.php';
+include_once $path_unit_db . 'batch_job.php';
 
 
 // load the testing functions for creating JSON messages for the frontend code
@@ -383,7 +384,7 @@ class test_base
     function run_api_test(): void
     {
 
-        $this->assert_api_get(user::class,2);
+        $this->assert_api_get(user::class, 2);
         $this->assert_api_get(word::class);
         $this->assert_api_get_json(word::class, controller::URL_VAR_WORD_ID, 1);
         $this->assert_api_get_by_name(word::class, word_api::TN_READ);
@@ -395,6 +396,7 @@ class test_base
         $this->assert_api_get(view_cmp::class);
         $this->assert_api_get(source::class);
         $this->assert_api_get(ref::class);
+        $this->assert_api_get(batch_job::class);
         $this->assert_api_get_by_name(source::class, source_api::TN_READ_API);
 
         $this->assert_api_get_list(type_lists::class);
@@ -558,6 +560,9 @@ class test_base
         if ($class == ref::class) {
             $class = 'reference';
         }
+        if ($class == batch_job::class) {
+            $class = 'batch';
+        }
         $api_obj = $usr_obj->api_obj();
         $actual = json_decode(json_encode($api_obj), true);
         $expected_file = $this->api_json_expected($class);
@@ -586,12 +591,22 @@ class test_base
         if ($class == ref::class) {
             $class = 'reference';
         }
+        if ($class == batch_job::class) {
+            $class = 'batch';
+        }
         $url = HOST_TESTING . '/api/' . $class;
         $data = array("id" => $id);
         // TODO check why for formula a double call is needed
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         $expected = json_decode($this->api_json_expected($class), true);
+
+        $actual = $this->json_remove_volatile($actual);
+
+        // TODO remove, for faster debugging only
+        $json_actual = json_encode($actual);
+        $json_expected = json_encode($expected);
+
         return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
     }
 
@@ -699,41 +714,73 @@ class test_base
      */
     private function json_remove_volatile(array $json): array
     {
+        $json = $this->json_remove_volatile_item($json, $json, null);
         $i = 0;
-        foreach ($json as $chg) {
-            if (is_array($chg)) {
-                if (array_key_exists(change_log::FLD_CHANGE_TIME, $chg)) {
-                    try {
-                        $actual_time = $chg[change_log::FLD_CHANGE_TIME];
-                    } catch (Exception $e) {
-                        log_warning($chg[change_log::FLD_CHANGE_TIME] . ' cannot be converted to a data');
-                        $actual_time = new DateTime('now');
-                    }
-                    $now = new DateTime('now');
-                    if ($actual_time < $now) {
-                        unset($json[$i][change_log::FLD_CHANGE_TIME]);
-                    }
-                }
-                if (array_key_exists(export::USER, $chg)) {
-                    $actual_user = $chg[export::USER];
-                    if ($actual_user == '::1') {
-                        $json[$i][export::USER] = 'zukunft.com system test';
-                    }
-                    if ($actual_user == '127.0.0.1') {
-                        $json[$i][export::USER] = 'zukunft.com system test';
-                    }
-                    if ($actual_user == 'localhost') {
-                        $json[$i][export::USER] = 'zukunft.com system test';
-                    }
-                }
-                if (array_key_exists(export::USER_ID, $chg)) {
-                    $actual_user_id = $chg[export::USER_ID];
-                    if ($actual_user_id > 0) {
-                        $json[$i][export::USER_ID] = 4;
-                    }
-                }
+        foreach ($json as $item) {
+            if (is_array($item)) {
+                $json = $this->json_remove_volatile_item($json, $item, $i);
             }
             $i++;
+        }
+        return $json;
+    }
+
+    private function json_remove_volatile_item(array $json, array $item, ?int $i): array
+    {
+        $json = $this->json_remove_volatile_field($json, $item, $i, change_log::FLD_CHANGE_TIME);
+        $json = $this->json_remove_volatile_field($json, $item, $i, batch_job::FLD_TIME_REQUEST);
+        $json = $this->json_remove_volatile_field($json, $item, $i, batch_job::FLD_TIME_START);
+        $json = $this->json_remove_volatile_field($json, $item, $i, batch_job::FLD_TIME_END);
+        if (array_key_exists(export::USER, $item)) {
+            $actual_user = $item[export::USER];
+            if ($actual_user == '::1') {
+                if ($i === null) {
+                    $json[export::USER] = 'zukunft.com system test';
+                } else {
+                    $json[$i][export::USER] = 'zukunft.com system test';
+                }
+            }
+            if ($actual_user == '127.0.0.1') {
+                if ($i === null) {
+                    $json[export::USER] = 'zukunft.com system';
+                } else {
+                    $json[$i][export::USER] = 'zukunft.com system test';
+                }
+            }
+            if ($actual_user == 'localhost') {
+                if ($i === null) {
+                    $json[export::USER] = 'zukunft.com system test';
+                } else {
+                    $json[$i][export::USER] = 'zukunft.com system test';
+                }
+            }
+        }
+        if (array_key_exists(export::USER_ID, $item)) {
+            $actual_user_id = $item[export::USER_ID];
+            if ($actual_user_id > 0) {
+                $json[$i][export::USER_ID] = 4;
+            }
+        }
+        return $json;
+    }
+
+    private function json_remove_volatile_field(array $json, array $item, ?int $i, string $fld_name): array
+    {
+        if (array_key_exists($fld_name, $item)) {
+            try {
+                $actual_time = $item[$fld_name];
+            } catch (Exception $e) {
+                log_warning($item[$fld_name] . ' cannot be converted to a data');
+                $actual_time = new DateTime('now');
+            }
+            $now = new DateTime('now');
+            if ($actual_time < $now) {
+                if ($i === null) {
+                    unset($json[$fld_name]);
+                } else {
+                    unset($json[$i][$fld_name]);
+                }
+            }
         }
         return $json;
     }
@@ -876,13 +923,13 @@ class test_base
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_ids($db_con, array(1,2));
+        $qp = $usr_obj->load_sql_by_ids($db_con, array(1, 2));
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_ids($db_con, array(1,2));
+            $qp = $usr_obj->load_sql_by_ids($db_con, array(1, 2));
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;
@@ -1029,6 +1076,30 @@ class test_base
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $lst_obj->load_sql($db_con, $select_obj, $select_obj2, $by_source);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statements for loading a list of objects selected by the type in all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $lst_obj the list object e.g. batch job list
+     * @param string $type_code_id the type code id that should be used for the selection
+     * @return bool true if all tests are fine
+     */
+    function assert_load_list_sql_type(sql_db $db_con, object $lst_obj, string $type_code_id): bool
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst_obj->load_sql_by_type($db_con, $type_code_id, $lst_obj::class);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $lst_obj->load_sql_by_type($db_con, $type_code_id, $lst_obj::class);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;

@@ -152,7 +152,6 @@ class change_log_unit_tests
         $log_lst = $t->dummy_log_list_named();
         $t->assert_api($log_lst);
 
-
     }
 
 }

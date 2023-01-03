@@ -559,6 +559,12 @@
           "code_id": "word_unlink",
           "name": "unlink word",
           "comment": ""
+        },
+        {
+          "id": 11,
+          "code_id": "base_import",
+          "name": "initial import",
+          "comment": "import the base configuration by a system user on initial setup"
         }
       ],
       "change_log_actions": [

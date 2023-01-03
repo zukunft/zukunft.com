@@ -2,7 +2,7 @@
 
 /*
 
-    \web\word\word.php - the extension of the word API objects to create word base html code
+    /web/word/word.php - the extension of the word API objects to create word base html code
     ------------------
 
     This file is part of the frontend of zukunft.com - calc with words

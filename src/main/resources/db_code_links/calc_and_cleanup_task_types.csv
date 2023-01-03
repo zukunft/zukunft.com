@@ -9,3 +9,4 @@ calc_and_cleanup_task_type_id, type_name, description, code_id
 8, 'unlink a formula', NULL, 'formula_unlink'
 9, 'link a word', NULL, 'triple'
 10, 'unlink word', NULL, 'word_unlink'
+11, 'initial import', 'import the base configuration by a system user on initial setup', 'base_import'

@@ -2,7 +2,7 @@
 
 /*
 
-    web\value.php - the display extension of the api value object
+    /web/value.php - the display extension of the api value object
     -------------
 
     to creat the HTML code to display a formula

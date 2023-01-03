@@ -192,6 +192,7 @@ use html\html_base;
 
 // the fixed system user
 const SYSTEM_USER_ID = 1; //
+const SYSTEM_USER_TEST_ID = 2; //
 
 // parameters for internal testing and debugging
 const LIST_MIN_NAMES = 4; // number of object names that should al least be shown
@@ -372,16 +373,17 @@ include_once $path_php . 'model/view/view_cmp_link_types.php';
 // general frontend API classes
 include_once $path_php . 'api/message_header.php';
 include_once $path_php . 'api/controller.php';
+include_once $path_php . 'api/sandbox/list.php';
 include_once $path_php . 'api/system/error_log.php';
 include_once $path_php . 'api/system/error_log_list.php';
 include_once $path_php . 'api/system/type_lists.php';
 include_once $path_php . 'api/system/batch_job.php';
+include_once $path_php . 'api/system/batch_job_list.php';
 include_once $path_php . 'api/sandbox/user_sandbox.php';
 include_once $path_php . 'api/sandbox/user_sandbox_named.php';
 include_once $path_php . 'api/sandbox/user_sandbox_named_with_type.php';
 include_once $path_php . 'api/sandbox/user_sandbox_value.php';
 include_once $path_php . 'api/sandbox/user_config.php';
-include_once $path_php . 'api/sandbox/list.php';
 include_once $path_php . 'api/sandbox/list_value.php';
 include_once $path_php . 'api/user/user.php';
 include_once $path_php . 'api/user/user_type.php';
@@ -421,6 +423,8 @@ include_once $path_php . 'web/user/user.php';
 include_once $path_php . 'web/user/user_type_list.php';
 include_once $path_php . 'web/system/messages.php';
 include_once $path_php . 'web/system/error_log_list.php';
+include_once $path_php . 'web/system/batch_job.php';
+include_once $path_php . 'web/system/batch_job_list.php';
 include_once $path_php . 'web/html/api_const.php';
 include_once $path_php . 'web/html/html_base.php';
 include_once $path_php . 'web/html/button.php';

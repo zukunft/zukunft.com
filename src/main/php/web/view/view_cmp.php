@@ -2,7 +2,7 @@
 
 /*
 
-    web\view\view_cmp.php - the display extension of the api view component object
+    /web/view/view_cmp.php - the display extension of the api view component object
     ---------------------
 
     This file is part of zukunft.com - calc with words

@@ -2,7 +2,7 @@
 
 /*
 
-    web\system\error_log_list.php - the display extension of the system error log api object
+    /web/system/error_log_list.php - the display extension of the system error log api object
     -----------------------------
 
 

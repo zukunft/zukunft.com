@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `calc_and_cleanup_tasks`
     `start_time`                    timestamp          DEFAULT NULL,
     `end_time`                      timestamp          DEFAULT NULL,
     `calc_and_cleanup_task_type_id` int(11)   NOT NULL,
-    `row_id`                        int(11)   NOT NULL,
+    `row_id`                        int(11)   DEFAULT NULL,
     `change_field_id`               int(11)            DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1

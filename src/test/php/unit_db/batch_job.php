@@ -2,9 +2,9 @@
 
 /*
 
-    test/unit/batch_log.php - unit testing of the user log functions
-    -----------------------
-  
+  test/unit_db/batch_job.php - database unit testing of the batch job functions
+  --------------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -30,42 +30,38 @@
 
 */
 
-use api\triple_api;
-
-class batch_job_unit_tests
+class batch_job_unit_db_tests
 {
+
     function run(testing $t): void
     {
 
-        global $usr;
-
-        $t->header('Unit tests of the batch job class (src/main/php/log/batch_job.php)');
-
-        $t->subheader('SQL statement tests');
+        global $db_con;
 
         // init
-        $db_con = new sql_db();
-        $t->name = 'batch_job->';
-        $t->resource_path = 'db/job/';
+        $t->name = 'batch job read db->';
 
-        // sql to load one batch job
-        $job = new batch_job($usr);
-        $t->assert_load_sql_id($db_con, $job);
+        $t->header('Unit database tests of the batch job classes (src/main/php/model/log/* and src/main/php/model/user/log_*)');
 
-        // sql to load a list of open batch jobs
-        $sys_usr = $t->system_user();
+        $t->subheader('Load batch job tests');
+
+        // use the system user for the database updates
+        $sys_usr = new user;
+        $sys_usr->id = SYSTEM_USER_ID;
+        $sys_usr->load($db_con);
+
+        // check if loading of the first entry is the adding of the word name
         $job_lst = new batch_job_list($sys_usr);
-        $t->assert_load_list_sql_type($db_con, $job_lst, job_type_list::BASE_IMPORT);
+        $job_lst->load_by_type(job_type_list::BASE_IMPORT);
+        $first_job = $job_lst->lst()[0];
+        $t->assert('first batch job change is adding', $first_job->type, '11');
 
 
-        $t->subheader('API unit tests');
+        $t->subheader('API unit db tests');
 
-        $job = $t->dummy_job();
-        $t->assert_api($job);
-
-        $job_lst = $t->dummy_job_list();
         $t->assert_api($job_lst);
 
     }
 
 }
+
