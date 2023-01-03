@@ -61,7 +61,7 @@ class user_dsp_old extends user
         log_debug($dsp_type . ' errors for user ' . $this->name);
 
         $result = '';
-        $err_lst = new system_error_log_list;
+        $err_lst = new system_log_list;
         $err_lst->set_user($this);
         $err_lst->page = $page;
         $err_lst->size = $size;

@@ -1,0 +1,28 @@
+{
+  "type": "sys_log",
+  "user_id": 1,
+  "user": "zukunft.com system test",
+  "version": "0.0.3",
+  "system_log": [
+    {
+      "id": 1,
+      "time": "2023-01-03 20:59:59",
+      "user": "zukunft.com system test",
+      "text": "the log text that describes the problem for the user or system admin",
+      "trace": "the technical trace back description for debugging",
+      "prg_part": "name of the function that has caused the exception",
+      "owner": "",
+      "status": "2"
+    },
+    {
+      "id": 2,
+      "time": "2023-01-03 20:59:59",
+      "user": "zukunft.com system test",
+      "text": "the log 2 text that describes the problem for the user or system admin",
+      "trace": "the technical trace 2 back description for debugging",
+      "prg_part": "name 2 of the function that has caused the exception",
+      "owner": "",
+      "status": "3"
+    }
+  ]
+}

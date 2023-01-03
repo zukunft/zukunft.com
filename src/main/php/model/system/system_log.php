@@ -2,8 +2,8 @@
 
 /*
 
-    system_log.php - object to handle a system errors
-    --------------
+    model/system/system_log.php - object to handle a system errors
+    ---------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,15 +30,20 @@
 */
 
 
-use api\system_error_log_api;
+use api\system_log_api;
 
-class system_error_log extends db_object
+class system_log extends db_object
 {
+
+    /*
+     * database link
+     */
 
     // database and export JSON object field names
     const FLD_ID = 'sys_log_id';
     const FLD_SOLVER = 'solver_id';
     const FLD_TIME = 'sys_log_time';
+    const FLD_TIME_JSON = 'time';
     const FLD_TYPE = 'sys_log_type_id';
     const FLD_FUNCTION = 'sys_log_function_id';
     const FLD_FUNCTION_NAME = 'sys_log_function_name';
@@ -62,12 +67,17 @@ class system_error_log extends db_object
         self::FLD_STATUS
     );
 
+
+    /*
+     * object vars
+     */
+
     // object vars for the database fields
     private ?user $usr = null;           // the user who wants to see the error
     public ?int $usr_id = null;         // the user id who was logged in when the error happened
     public string $usr_name = '';       // the username who was logged in when the error happened
     public ?int $solver_id = null;      // the admin id who has solved the problem
-    public string $solver_name = '';    // the admin id who has solved the problem
+    public ?string $solver_name = '';    // the admin id who has solved the problem
     public ?DateTime $log_time = null;  // timestamp when the issue appeared
     public ?int $type_id = null;        // type of the error
     public ?int $function_id = null;    // the program function where the issue happened
@@ -77,6 +87,7 @@ class system_error_log extends db_object
 
     public string $function_name = '';  //
     public string $status_name = '';    //
+
 
     /*
      * construct and map
@@ -93,7 +104,7 @@ class system_error_log extends db_object
             $this->usr_name = $db_row[user_sandbox::FLD_USER_NAME];
             $this->solver_id = $db_row[self::FLD_SOLVER];
             $this->solver_name = $db_row[self::FLD_SOLVER_NAME];
-            $this->log_time = $db_row[self::FLD_TIME];
+            $this->log_time = get_datetime($db_row[self::FLD_TIME]);
             $this->type_id = $db_row[self::FLD_TYPE];
             $this->function_id = $db_row[self::FLD_FUNCTION];
             $this->function_name = $db_row[type_list::FLD_NAME];
@@ -107,8 +118,9 @@ class system_error_log extends db_object
         }
     }
 
+
     /*
-     * get and set
+     * set and get
      */
 
     /**
@@ -135,24 +147,25 @@ class system_error_log extends db_object
      */
 
     /**
-     * @return system_error_log_api a filled frontend api object
+     * @return system_log_api a filled frontend api object
      */
-    function get_dsp_obj(): system_error_log_api
+    function get_dsp_obj(): system_log_api
     {
-        $dsp_obj = new system_error_log_api();
+        $dsp_obj = new system_log_api();
         $dsp_obj->id = $this->id();
         $dsp_obj->time = $this->log_time->format('Y-m-d H:i:s');
         $dsp_obj->user = $this->usr_name;
         $dsp_obj->text = $this->log_text;
         $dsp_obj->trace = $this->log_trace;
         $dsp_obj->prg_part = $this->function_name;
-        $dsp_obj->owner = $this->solver_name;
+        //$dsp_obj->owner = $this->solver_name;
         $dsp_obj->status = $this->status_name;
         return $dsp_obj;
     }
 
+
     /*
-     * loading
+     * load
      */
 
     /**
@@ -161,48 +174,55 @@ class system_error_log extends db_object
      * @return sql_par the database depending on sql statement to load a system error from the log table
      *                 and the unique name for the query
      */
-    function load_sql(sql_db $db_con): sql_par
+    function load_sql(sql_db $db_con, string $query_name = 'id', string $class = self::class): sql_par
     {
-        $qp = new sql_par(self::class);
-        if ($this->id() > 0) {
-            $qp->name .= 'id';
+        $db_con->set_type(sql_db::TBL_SYS_LOG);
+        $qp = new sql_par($class);
+        $qp->name .= $query_name;
 
-            $db_con->set_type(sql_db::TBL_SYS_LOG);
-            $db_con->set_name($qp->name);
-            $db_con->set_fields(self::FLD_NAMES);
-            $db_con->set_join_fields(array(self::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
-            $db_con->set_join_fields(array(user_type::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
-            $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), sql_db::TBL_USER);
-            $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), sql_db::TBL_USER, self::FLD_SOLVER);
-            $db_con->set_where_std($this->id());
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
+        $db_con->set_name($qp->name);
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_join_fields(array(self::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
+        $db_con->set_join_fields(array(user_type::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
+        $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), sql_db::TBL_USER);
+        $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), sql_db::TBL_USER, self::FLD_SOLVER);
 
-        } else {
-            log_err("The database ID (" . $this->id() . ") must be set to load a log message.", "system_error_log->load_sql");
-            $qp->sql = '';
-        }
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a system log entry by id from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $id the id of the user sandbox object
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    {
+
+        $qp = $this->load_sql($db_con, 'id', $class);
+        $db_con->add_par_int($id);
+        $qp->sql = $db_con->select_by_field($this->id_field());
+        $qp->par = $db_con->get_par();
+
         return $qp;
     }
 
     /**
      * load a system error from the database e.g. to be able to display more details
-     * @return bool true if a database row is found
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
      */
-    private function load(): bool
+    public function load_by_id(int $id, string $class = self::class): int
     {
-        log_debug('system_error_log->load search');
+        log_debug();
 
         global $db_con;
 
         // at the moment it is only possible to select the error by the id
-        $qp = $this->load_sql($db_con);
-        if ($qp->sql != '') {
-            $db_con->usr_id = $this->id();
-            return $this->row_mapper($db_con->get1($qp));
-        } else {
-            return false;
-        }
+        $qp = $this->load_sql_by_id($db_con, $id, $class);
+        return $this->row_mapper($db_con->get1($qp));
     }
 
     /**
@@ -211,13 +231,22 @@ class system_error_log extends db_object
      */
     private function log_upd(): change_log_named
     {
-        log_debug('system_error_log->log_upd');
+        log_debug();
         $log = new change_log_named;
         $log->usr = $this->user();
         $log->action = change_log_action::UPDATE;
         $log->set_table(sql_db::TBL_SYS_LOG);
 
         return $log;
+    }
+
+    /**
+     * function that can be overwritten by the child object
+     * @return string the field name of the prime database index of the object
+     */
+    private function id_field(): string
+    {
+        return self::FLD_ID;
     }
 
     /**
@@ -228,7 +257,7 @@ class system_error_log extends db_object
      */
     private function save_field_do(sql_db $db_con, change_log_named $log): bool
     {
-        log_debug('system_error_log->save_field_do');
+        log_debug();
         $result = true;
         if ($log->add()) {
             $db_con->set_type(sql_db::TBL_SYS_LOG);
@@ -240,12 +269,12 @@ class system_error_log extends db_object
     /**
      * set the update parameters for the error status
      * @param sql_db $db_con the active database connection
-     * @param system_error_log $db_rec the system log entry as saved in the database before the change
+     * @param system_log $db_rec the system log entry as saved in the database before the change
      * @return bool true if the status field has been updated
      */
-    private function save_field_status(sql_db $db_con, system_error_log $db_rec): bool
+    private function save_field_status(sql_db $db_con, system_log $db_rec): bool
     {
-        log_debug('system_error_log->save_field_status');
+        log_debug();
         $result = false;
         if ($db_rec->status_id <> $this->status_id) {
             $log = $this->log_upd();
@@ -275,10 +304,9 @@ class system_error_log extends db_object
         $db_con->set_type(sql_db::TBL_SYS_LOG);
 
         if ($this->id() > 0) {
-            $db_rec = new system_error_log;
-            $db_rec->set_id($this->id());
+            $db_rec = new system_log;
             $db_rec->set_user($this->user());
-            if ($db_rec->load()) {
+            if ($db_rec->load_by_id($this->id())) {
                 log_debug("database entry loaded");
             }
 

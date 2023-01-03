@@ -39,6 +39,7 @@ class batch_job_api extends db_object
 {
 
     // field names used for JSON creation
+    public ?int $id;
     public ?DateTime $request_time;
     public ?DateTime $start_time;
     public ?DateTime $end_time;

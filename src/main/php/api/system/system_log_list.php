@@ -2,8 +2,8 @@
 
 /*
 
-    model/log/error_log.php - get the log of the system errors from the database
-    -----------------------
+    api/system/system_log_list.php - the simple export object to create a json for the frontend API
+    ------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -26,16 +26,37 @@
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
-class error_log
+namespace api;
+
+use api_message;
+use user;
+
+class system_log_list_api extends api_message
 {
-    public int $id;                // the database id of the system error
-    public datetime $change_time;  // the date and time of the log entry
-    public user $usr;              // the user that has caused the error
-    public string $description;    //
 
+    // field names used for JSON creation
+    public ?array $system_log = null;      // a list of system error objects
 
+    function __construct(?user $usr = null)
+    {
+        parent::__construct();
+        $this->type = api_message::SYS_LOG;
+        $this->system_log = null;
+        if ($usr != null) {
+            $this->user_id = $usr->id;
+            $this->user = $usr->name;
+        }
+    }
+
+    /**
+     * @return string the frontend API JSON string
+     */
+    function get_json(): string
+    {
+        return json_encode($this);
+    }
 
 }

@@ -1,4 +1,4 @@
-PREPARE system_error_log_list_by_all (int) AS
+PREPARE system_log_list_by_all (int) AS
     SELECT s.sys_log_id,
            s.user_id,
            s.solver_id,

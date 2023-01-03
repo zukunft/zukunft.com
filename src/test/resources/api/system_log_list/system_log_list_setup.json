@@ -1,0 +1,18 @@
+{
+  "type": "sys_log",
+  "user_id": 2,
+  "user": "zukunft.com system test",
+  "version": "0.0.3",
+  "system_log": [
+    {
+      "id": 1,
+      "time": "2023-01-03 20:59:59",
+      "user": "zukunft.com system",
+      "text": "'base setup'",
+      "trace": "'import_base_config'",
+      "prg_part": "import_base_config",
+      "owner": "",
+      "status": "new"
+    }
+  ]
+}

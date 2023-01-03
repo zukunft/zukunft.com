@@ -42,6 +42,7 @@
 use api\formula_api;
 use api\ref_api;
 use api\source_api;
+use api\system_log_api;
 use api\triple_api;
 use api\value_api;
 use api\verb_api;
@@ -165,6 +166,40 @@ class test_new_obj extends test_base
     }
 
     /**
+     * @return system_log a system error entry
+     */
+    public function dummy_sys_log(): system_log
+    {
+        $sys = new system_log();
+        $sys->set_id(1);
+        $sys->log_time = new DateTime(system_log_api::TV_TIME);
+        $sys->usr_name = user::SYSTEM_TEST_NAME;
+        $sys->log_text = system_log_api::TV_LOG_TEXT;
+        $sys->log_trace = system_log_api::TV_LOG_TRACE;
+        $sys->function_name = system_log_api::TV_FUNC_NAME;
+        $sys->solver_name = system_log_api::TV_SOLVE_ID;
+        $sys->status_name = cl(db_cl::LOG_STATUS, sys_log_status::NEW);
+        return $sys;
+    }
+
+    /**
+     * @return system_log a system error entry
+     */
+    public function dummy_sys_log2(): system_log
+    {
+        $sys = new system_log();
+        $sys->set_id(2);
+        $sys->log_time = new DateTime(system_log_api::TV_TIME);
+        $sys->usr_name = user::SYSTEM_TEST_NAME;
+        $sys->log_text = system_log_api::T2_LOG_TEXT;
+        $sys->log_trace = system_log_api::T2_LOG_TRACE;
+        $sys->function_name = system_log_api::T2_FUNC_NAME;
+        $sys->solver_name = system_log_api::TV_SOLVE_ID;
+        $sys->status_name = cl(db_cl::LOG_STATUS, sys_log_status::CLOSED);
+        return $sys;
+    }
+
+    /**
      * @return batch_job a batch job entry with some dummy values
      */
     public function dummy_job(): batch_job
@@ -184,11 +219,22 @@ class test_new_obj extends test_base
      * TODO add at least one sample for rename and delete
      * TODO add at least one sample for verb, triple, value, formula, source, ref, view and component
      */
-    public function dummy_log_list_named(): change_log_list
+    public function dummy_change_log_list_named(): change_log_list
     {
         $log_lst = new change_log_list();
         $log_lst->add($this->dummy_log_named());
         return $log_lst;
+    }
+
+    /**
+     * @return system_log_list a list of system error entries with some dummy values
+     */
+    public function dummy_system_log_list(): system_log_list
+    {
+        $sys_lst = new system_log_list();
+        $sys_lst->add($this->dummy_sys_log());
+        $sys_lst->add($this->dummy_sys_log2());
+        return $sys_lst;
     }
 
     /**

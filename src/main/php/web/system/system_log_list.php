@@ -2,8 +2,8 @@
 
 /*
 
-    /web/system/error_log_list.php - the display extension of the system error log api object
-    -----------------------------
+    /web/system/system_log_list.php - the display extension of the system error log api object
+    -------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,10 +32,10 @@
 
 namespace html;
 
-use api\system_error_log_list_api;
+use api\system_log_list_api;
 use user;
 
-class system_error_log_list_dsp extends system_error_log_list_api
+class system_log_list_dsp extends system_log_list_api
 {
 
     /**
@@ -52,12 +52,12 @@ class system_error_log_list_dsp extends system_error_log_list_api
         $result = ''; // reset the html code var
         $rows = '';   // the html code of the rows
 
-        if (count($this->system_errors) > 0) {
+        if (count($this->system_log) > 0) {
             // prepare to show the word link
-            $log_dsp = $this->system_errors[0];
+            $log_dsp = $this->system_log[0];
             if ($log_dsp->time <> '') {
                 $row_nbr = 0;
-                foreach ($this->system_errors as $log_dsp) {
+                foreach ($this->system_log as $log_dsp) {
                     $row_nbr++;
                     if ($row_nbr == 1) {
                         $rows .= $this->headline_html();

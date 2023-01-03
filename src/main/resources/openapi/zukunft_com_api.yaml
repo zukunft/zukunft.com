@@ -10,7 +10,7 @@ info:
     TODO: add the missing types
     TODO: add the missing lists e.g. PhraseList
     TODO: add list saving functions
-  version: "0.0.2"
+  version: "0.0.2.3"
   contact:
     name: Timon Zielonka
     email: timon@zukunft.com
@@ -1342,7 +1342,7 @@ paths:
               schema:
                 type: string
                 description: Error message
-  /error:
+  /systemLogList:
     post:
       tags:
         - error
@@ -1370,7 +1370,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ErrorLog'
-  /error/{id}:
+  /systemLogList/{id}:
     get:
       tags:
         - error

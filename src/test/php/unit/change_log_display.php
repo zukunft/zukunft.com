@@ -48,12 +48,12 @@ class change_log_display_unit_tests
         $back = new back_trace();
 
         $test_page .= 'simple list of changes of a word<br>';
-        $log_lst = $t->dummy_log_list_named();
+        $log_lst = $t->dummy_change_log_list_named();
         $log_dsp = $log_lst->dsp_obj();
         $test_page .= $log_dsp->tbl($back);
 
         $test_page .= 'condensed list of changes of a word<br>';
-        $log_lst = $t->dummy_log_list_named();
+        $log_lst = $t->dummy_change_log_list_named();
         $log_dsp = $log_lst->dsp_obj();
         $back = new back_trace();
         $test_page .= $log_dsp->tbl($back, true, true);

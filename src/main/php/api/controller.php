@@ -34,6 +34,7 @@ namespace controller;
 use api\list_api;
 use api\type_lists_api;
 use api\user_sandbox_api;
+use api_message;
 use type_lists;
 
 class controller
@@ -106,6 +107,17 @@ class controller
     }
 
     function get_list(list_api $api_obj, string $msg): void
+    {
+        // return the api json or the error message
+        if ($msg == '') {
+            $this->get_response(json_encode($api_obj), $msg);
+        } else {
+            // tell the user e.g. that no products found
+            $this->get_response('', $msg);
+        }
+    }
+
+    function get_api_msg(api_message $api_obj, string $msg): void
     {
         // return the api json or the error message
         if ($msg == '') {

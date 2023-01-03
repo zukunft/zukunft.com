@@ -63,6 +63,7 @@ class test_unit_read_db extends test_unit
         (new view_unit_db_tests)->run($this);
         (new ref_unit_db_tests)->run($this);
         (new change_log_unit_db_tests)->run($this);
+        (new system_log_unit_db_tests)->run($this);
         (new batch_job_unit_db_tests)->run($this);
 
         $this->run_api_test();

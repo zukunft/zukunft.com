@@ -256,7 +256,6 @@ include_once $path_php . 'model/log/change_log_action.php';
 include_once $path_php . 'model/log/change_log_table.php';
 include_once $path_php . 'model/log/change_log_field.php';
 include_once $path_php . 'model/log/change_log_list.php';
-include_once $path_php . 'model/log/error_log.php';
 // service
 include_once $path_php . 'service/import/import_file.php';
 include_once $path_php . 'service/import/import.php';
@@ -290,8 +289,8 @@ include_once $path_php . 'model/sandbox/protection_type.php';
 include_once $path_php . 'model/sandbox/protection_type_list.php';
 include_once $path_php . 'web/user_sandbox_display.php';
 // system classes
-include_once $path_php . 'model/system/system_error_log.php';
-include_once $path_php . 'model/system/system_error_log_list.php';
+include_once $path_php . 'model/system/system_log.php';
+include_once $path_php . 'model/system/system_log_list.php';
 include_once $path_php . 'model/system/batch_job.php';
 include_once $path_php . 'model/system/batch_job_list.php';
 include_once $path_php . 'model/system/batch_job_type_list.php';
@@ -374,8 +373,8 @@ include_once $path_php . 'model/view/view_cmp_link_types.php';
 include_once $path_php . 'api/message_header.php';
 include_once $path_php . 'api/controller.php';
 include_once $path_php . 'api/sandbox/list.php';
-include_once $path_php . 'api/system/error_log.php';
-include_once $path_php . 'api/system/error_log_list.php';
+include_once $path_php . 'api/system/system_log.php';
+include_once $path_php . 'api/system/system_log_list.php';
 include_once $path_php . 'api/system/type_lists.php';
 include_once $path_php . 'api/system/batch_job.php';
 include_once $path_php . 'api/system/batch_job_list.php';
@@ -422,9 +421,9 @@ include_once $path_php . 'web/user_log_display.php';
 include_once $path_php . 'web/user/user.php';
 include_once $path_php . 'web/user/user_type_list.php';
 include_once $path_php . 'web/system/messages.php';
-include_once $path_php . 'web/system/error_log_list.php';
 include_once $path_php . 'web/system/batch_job.php';
 include_once $path_php . 'web/system/batch_job_list.php';
+include_once $path_php . 'web/system/system_log_list.php';
 include_once $path_php . 'web/html/api_const.php';
 include_once $path_php . 'web/html/html_base.php';
 include_once $path_php . 'web/html/button.php';
@@ -691,7 +690,8 @@ function log_msg(string $msg_text,
                  string $msg_log_level,
                  string $function_name,
                  string $function_trace,
-                 int    $user_id): string
+                 int    $user_id,
+                 bool   $force_log = false): string
 {
 
     global $sys_log_msg_lst;
@@ -729,7 +729,7 @@ function log_msg(string $msg_text,
             $sys_log_id = 0;
 
             $sys_log_msg_lst[] = $msg_type_text;
-            if ($msg_log_level > LOG_LEVEL) {
+            if ($msg_log_level > LOG_LEVEL or $force_log) {
                 $db_con->set_type(sql_db::TBL_SYS_LOG_FUNCTION);
                 $function_id = $db_con->get_id($function_name);
                 if ($function_id <= 0) {
@@ -800,13 +800,15 @@ function log_info(string $msg_text,
                   string $function_name = '',
                   string $msg_description = '',
                   string $function_trace = '',
-                  ?user  $calling_usr = null): string
+                  ?user  $calling_usr = null,
+                  bool   $force_log = false): string
 {
     return log_msg($msg_text,
         $msg_description,
         sys_log_level::INFO,
         $function_name, $function_trace,
-        get_user_id($calling_usr));
+        get_user_id($calling_usr),
+        $force_log);
 }
 
 function log_warning(string $msg_text,

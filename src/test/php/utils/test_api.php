@@ -92,7 +92,7 @@ class test_api extends test_base
         }
         $target = '';
         // TODO add the missing APIs
-        $target = 'api for error missing, api for phraseType missing, api for wordForm missing';
+        $target = 'api for phraseType missing, api for wordForm missing';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if an api tag for each controller exists';

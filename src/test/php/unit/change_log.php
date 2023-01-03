@@ -149,7 +149,7 @@ class change_log_unit_tests
 
         $t->subheader('API unit tests');
 
-        $log_lst = $t->dummy_log_list_named();
+        $log_lst = $t->dummy_change_log_list_named();
         $t->assert_api($log_lst);
 
     }

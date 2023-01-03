@@ -66,6 +66,7 @@ class change_log extends db_object
     const FLD_CHANGE_TIME = 'change_time';
     const FLD_ACTION = 'change_action_id';
 
+
     /*
      * object vars
      */

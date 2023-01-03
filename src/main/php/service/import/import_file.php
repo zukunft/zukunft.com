@@ -137,7 +137,12 @@ function import_verbs(user $usr): bool
 function import_base_config(user $usr): string
 {
     $result = '';
-    log_debug('load base config');
+    log_info('base setup',
+        'import_base_config',
+        'import of the base setup',
+        'import_base_config',
+        $usr, true
+    );
 
     $file_list = unserialize(BASE_CONFIG_FILES);
     foreach ($file_list as $filename) {
@@ -145,7 +150,6 @@ function import_base_config(user $usr): string
         echo "\n";
         $result .= import_json_file(PATH_BASE_CONFIG_MESSAGE_FILES . $filename, $usr);
     }
-
 
     log_debug('load base config ... done');
 

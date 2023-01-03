@@ -2560,7 +2560,7 @@ class sql_db
      * set the parameter for paged results
      * @return void
      */
-    function set_page_par(int $limit = 0, int $page = 0)
+    function set_page_par(int $limit = 0, int $page = 0): void
     {
         // set default values
         if ($page < 0) {

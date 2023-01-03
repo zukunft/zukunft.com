@@ -59,7 +59,7 @@ if ($usr->id > 0) {
     if ($usr->id > 0 and $usr->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
         // update the error if requested
         if ($log_id > 0 and $status_id > 0) {
-            $err_entry = new system_error_log;
+            $err_entry = new system_log;
             $err_entry->set_user($usr);
             $err_entry->set_id($log_id);
             $err_entry->status_id = $status_id;
@@ -68,9 +68,9 @@ if ($usr->id > 0) {
 
         // display all program issues if the user is an admin
         $errors_all = '';
-        $err_lst = new system_error_log_list;
+        $err_lst = new system_log_list;
         $err_lst->set_user($usr);
-        $err_lst->dsp_type = system_error_log_list::DSP_ALL;
+        $err_lst->dsp_type = system_log_list::DSP_ALL;
         $err_lst->page = 1;
         $err_lst->size = 20;
         $err_lst->back = $back;

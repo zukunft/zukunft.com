@@ -2,8 +2,8 @@
 
 /*
 
-  system_log_list.php - a list of system error objects
-  -------------------
+  model/system/system_log_list.php - a list of system error objects
+  --------------------------------
   
   This file is part of zukunft.com - calc with words
 
@@ -30,10 +30,10 @@
 */
 
 
-use api\system_error_log_list_api;
-use html\system_error_log_list_dsp;
+use api\system_log_list_api;
+use html\system_log_list_dsp;
 
-class system_error_log_list
+class system_log_list extends base_list
 {
 
     // display types
@@ -41,7 +41,6 @@ class system_error_log_list
     const DSP_MY = 'my';
     const DSP_OTHER = 'other';
 
-    public ?array $lst = null;      // a list of system error objects
     private ?user $usr = null;      // the user who wants to see the errors
     public ?string $dsp_type = '';  //
     public int $page = 0;           //
@@ -77,28 +76,31 @@ class system_error_log_list
      */
 
     /**
-     * @return system_error_log_list_api a filled frontend api object
+     * @return system_log_list_api a filled frontend api object
      */
-    function api_obj(): system_error_log_list_api
+    function api_obj(): system_log_list_api
     {
-        $api_obj = new system_error_log_list_api();
+        $api_obj = new system_log_list_api($this->usr);
         foreach ($this->lst as $log) {
-            $api_obj->system_errors[] = $log->get_dsp_obj();
+            //$api_obj->add($log->api_obj());
+            $api_obj->system_log[] = $log->get_dsp_obj();
         }
         return $api_obj;
     }
 
     /**
-     * @return system_error_log_list_dsp a filled frontend display object
+     * @return system_log_list_dsp a filled frontend display object
      */
-    function dsp_obj(): system_error_log_list_dsp
+    function dsp_obj(): system_log_list_dsp
     {
-        $api_obj = new system_error_log_list_dsp();
+        $dsp_obj = new system_log_list_dsp($this->usr);
         foreach ($this->lst as $log) {
-            $api_obj->system_errors[] = $log->get_dsp_obj();
+            //$dsp_obj->add($log->dsp_obj());
+            $dsp_obj->system_log[] = $log->get_dsp_obj();
         }
-        return $api_obj;
+        return $dsp_obj;
     }
+
 
     /*
      * loading / database access object (DAO) functions
@@ -114,8 +116,8 @@ class system_error_log_list
         $qp = new sql_par(self::class);
 
         $sql_where = '';
-        $sql_status = '(' . sql_db::STD_TBL . '.' . system_error_log::FLD_STATUS . ' <> ' . cl(db_cl::LOG_STATUS, sys_log_status::CLOSED);
-        $sql_status .= ' OR ' . sql_db::STD_TBL . '.' . system_error_log::FLD_STATUS . ' IS NULL)';
+        $sql_status = '(' . sql_db::STD_TBL . '.' . system_log::FLD_STATUS . ' <> ' . cl(db_cl::LOG_STATUS, sys_log_status::CLOSED);
+        $sql_status .= ' OR ' . sql_db::STD_TBL . '.' . system_log::FLD_STATUS . ' IS NULL)';
         if ($this->dsp_type == self::DSP_ALL) {
             $sql_where = $sql_status;
             $qp->name .= self::DSP_ALL;
@@ -139,15 +141,15 @@ class system_error_log_list
             $db_con->set_type(sql_db::TBL_SYS_LOG);
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id);
-            $db_con->set_fields(system_error_log::FLD_NAMES);
-            $db_con->set_join_fields(array(system_error_log::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
+            $db_con->set_fields(system_log::FLD_NAMES);
+            $db_con->set_join_fields(array(system_log::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
             $db_con->set_join_fields(array(user_type::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
             $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), sql_db::TBL_USER);
             $db_con->set_join_fields(array(
-                user_sandbox::FLD_USER_NAME . ' AS ' . system_error_log::FLD_SOLVER_NAME),
-                sql_db::TBL_USER, system_error_log::FLD_SOLVER);
+                user_sandbox::FLD_USER_NAME . ' AS ' . system_log::FLD_SOLVER_NAME),
+                sql_db::TBL_USER, system_log::FLD_SOLVER);
             $db_con->set_where_text($sql_where);
-            $db_con->set_order(system_error_log::FLD_TIME, sql_db::ORDER_DESC);
+            $db_con->set_order(system_log::FLD_TIME, sql_db::ORDER_DESC);
             $db_con->set_page_par($this->size, $this->page);
             $sql = $db_con->select_by_set_id();
             $qp->sql = $sql;
@@ -163,7 +165,7 @@ class system_error_log_list
      */
     function load(): bool
     {
-        log_debug('system_error_log_list->load for user "' . $this->user()->name . '"');
+        log_debug('for user "' . $this->user()->name . '"');
 
         global $db_con;
         $result = false;
@@ -173,7 +175,7 @@ class system_error_log_list
 
         if (count($db_lst) > 0) {
             foreach ($db_lst as $db_row) {
-                $log = new system_error_log();
+                $log = new system_log();
                 $log->row_mapper($db_row);
                 $this->lst[] = $log;
             }
@@ -184,11 +186,23 @@ class system_error_log_list
     }
 
     /**
-     * simple add another system log entry to the list
+     * load a list of all system errors from the database
+     * @return bool true if everything was fine
      */
-    function add(system_error_log $log): void
+    function load_all(): bool
     {
-        $this->lst[] = $log;
+        $this->dsp_type = self::DSP_ALL;
+        return $this->load();
+    }
+
+    /**
+     * simple add another system log entry to the list
+     * @param system_log $log_to_add the log entry that should be added to the list
+     * @returns bool true the log entry has been added
+     */
+    function add(system_log $log_to_add): void
+    {
+        $this->lst[] = $log_to_add;
     }
 
 }

@@ -42,6 +42,7 @@
 // TODO build a cascading test classes and split the classes to sections less than 1000 lines of code
 
 use api\source_api;
+use api\system_log_api;
 use api\word_api;
 use controller\controller;
 use html\html_base;
@@ -112,8 +113,9 @@ include_once $path_unit . 'view_component_display.php';
 include_once $path_unit . 'view_component_link.php';
 include_once $path_unit . 'verb.php';
 include_once $path_unit . 'ref.php';
-include_once $path_unit . 'change_log.php';
 include_once $path_unit . 'batch_job.php';
+include_once $path_unit . 'change_log.php';
+include_once $path_unit . 'system_log.php';
 
 // load the testing functions for creating HTML code
 include_once $path_unit . 'html.php';
@@ -132,7 +134,9 @@ include_once $path_unit_db . 'all.php';
 include_once $path_unit_db . 'system.php';
 include_once $path_unit_db . 'sql_db.php';
 include_once $path_unit_db . 'user.php';
+include_once $path_unit_db . 'batch_job.php';
 include_once $path_unit_db . 'change_log.php';
+include_once $path_unit_db . 'system_log.php';
 include_once $path_unit_db . 'word.php';
 include_once $path_unit_db . 'word_list.php';
 include_once $path_unit_db . 'verb.php';
@@ -147,7 +151,6 @@ include_once $path_unit_db . 'view.php';
 include_once $path_unit_db . 'ref.php';
 include_once $path_unit_db . 'share.php';
 include_once $path_unit_db . 'protection.php';
-include_once $path_unit_db . 'batch_job.php';
 
 
 // load the testing functions for creating JSON messages for the frontend code
@@ -407,6 +410,7 @@ class test_base
             change_log_list::class,
             controller::URL_VAR_WORD_ID, 1,
             controller::URL_VAR_WORD_FLD, change_log_field::FLD_WORD_NAME);
+        $this->assert_api_get_list(system_log_list::class, [1, 2], 'system_log_list_api');
         // $this->assert_rest(new word($usr, word_api::TN_READ));
 
     }
@@ -544,14 +548,17 @@ class test_base
      * @param string $class the class name of the object to test
      * @return string with the expected json message
      */
-    private function api_json_expected(string $class): string
+    private function api_json_expected(string $class, string $file = ''): string
     {
-        return $this->file('api/' . $class . '/' . $class . '.json');
+        if ($file == '') {
+            $file = $class;
+        }
+        return $this->file('api/' . $class . '/' . $file . '.json');
     }
 
     /**
      */
-    function assert_api(object $usr_obj): bool
+    function assert_api(object $usr_obj, string $filename = ''): bool
     {
         $class = $usr_obj::class;
         if ($class == view_cmp::class) {
@@ -565,7 +572,11 @@ class test_base
         }
         $api_obj = $usr_obj->api_obj();
         $actual = json_decode(json_encode($api_obj), true);
-        $expected_file = $this->api_json_expected($class);
+        if ($filename != '') {
+            $expected_file = $this->api_json_expected($class, $filename);
+        } else {
+            $expected_file = $this->api_json_expected($class);
+        }
         $expected = json_decode($expected_file, true);
         $actual = $this->json_remove_volatile($actual);
         // TODO remove, for faster debugging only
@@ -655,12 +666,12 @@ class test_base
      * @param array $ids the database ids of the db rows that should be used for testing
      * @return bool true if the json has no relevant differences
      */
-    function assert_api_get_list(string $class, array $ids = [1, 2]): bool
+    function assert_api_get_list(string $class, array $ids = [1, 2], string $filename = ''): bool
     {
         $url = HOST_TESTING . '/api/' . camelize($class);
         $data = array("ids" => implode(",", $ids));
         $actual = json_decode($this->api_call("GET", $url, $data), true);
-        $expected = json_decode($this->api_json_expected($class), true);
+        $expected = json_decode($this->api_json_expected($class, $filename), true);
 
         // remove the change time
         if ($actual != null) {
@@ -716,21 +727,29 @@ class test_base
     {
         $json = $this->json_remove_volatile_item($json, $json, null);
         $i = 0;
-        foreach ($json as $item) {
+        foreach ($json as $key => $item) {
             if (is_array($item)) {
                 $json = $this->json_remove_volatile_item($json, $item, $i);
+                $j = 0;
+                foreach ($item as $sub_item) {
+                    if (is_array($sub_item)) {
+                        $json = $this->json_remove_volatile_item($json, $sub_item, $i, $j, $key);
+                    }
+                    $j++;
+                }
             }
             $i++;
         }
         return $json;
     }
 
-    private function json_remove_volatile_item(array $json, array $item, ?int $i): array
+    private function json_remove_volatile_item(array $json, array $item, ?int $i, ?int $j = null, string $key = ''): array
     {
-        $json = $this->json_remove_volatile_field($json, $item, $i, change_log::FLD_CHANGE_TIME);
-        $json = $this->json_remove_volatile_field($json, $item, $i, batch_job::FLD_TIME_REQUEST);
-        $json = $this->json_remove_volatile_field($json, $item, $i, batch_job::FLD_TIME_START);
-        $json = $this->json_remove_volatile_field($json, $item, $i, batch_job::FLD_TIME_END);
+        $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, change_log::FLD_CHANGE_TIME);
+        $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, system_log::FLD_TIME_JSON);
+        $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, batch_job::FLD_TIME_REQUEST);
+        $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, batch_job::FLD_TIME_START);
+        $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, batch_job::FLD_TIME_END);
         if (array_key_exists(export::USER, $item)) {
             $actual_user = $item[export::USER];
             if ($actual_user == '::1') {
@@ -756,15 +775,17 @@ class test_base
             }
         }
         if (array_key_exists(export::USER_ID, $item)) {
-            $actual_user_id = $item[export::USER_ID];
-            if ($actual_user_id > 0) {
-                $json[$i][export::USER_ID] = 4;
+            if ($i !== null) {
+                $actual_user_id = $item[export::USER_ID];
+                if ($actual_user_id > 0) {
+                    $json[$i][export::USER_ID] = 4;
+                }
             }
         }
         return $json;
     }
 
-    private function json_remove_volatile_field(array $json, array $item, ?int $i, string $fld_name): array
+    private function json_remove_volatile_field(array $json, array $item, ?int $i, ?int $j, string $key, string $fld_name): array
     {
         if (array_key_exists($fld_name, $item)) {
             try {
@@ -775,10 +796,14 @@ class test_base
             }
             $now = new DateTime('now');
             if ($actual_time < $now) {
-                if ($i === null) {
-                    unset($json[$fld_name]);
+                if ($j === null) {
+                    if ($i === null) {
+                        unset($json[$fld_name]);
+                    } else {
+                        unset($json[$i][$fld_name]);
+                    }
                 } else {
-                    unset($json[$i][$fld_name]);
+                    $json[$key][$j][$fld_name] = (new DateTime(system_log_api::TV_TIME))->format('Y-m-d H:i:s');
                 }
             }
         }
