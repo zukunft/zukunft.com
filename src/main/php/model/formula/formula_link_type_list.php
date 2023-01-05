@@ -50,12 +50,10 @@ class formula_link_type_list extends user_type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new user_type(formula_link::DEFAULT, formula_link::DEFAULT);
-        $this->lst[2] = $type;
-        $this->hash[formula_link::DEFAULT] = 2;
-        $type = new user_type(formula_link::TIME_PERIOD, formula_link::TIME_PERIOD);
-        $this->lst[3] = $type;
-        $this->hash[formula_link::TIME_PERIOD] = 3;
+        $type = new user_type(formula_link::DEFAULT, formula_link::DEFAULT, '', 2);
+        $this->add($type);
+        $type = new user_type(formula_link::TIME_PERIOD, formula_link::TIME_PERIOD, '', 3);
+        $this->add($type);
     }
 
     /**

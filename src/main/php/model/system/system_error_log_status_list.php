@@ -55,12 +55,10 @@ class sys_log_status extends user_type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new user_type(sys_log_status::NEW, sys_log_status::NEW);
-        $this->lst[2] = $type;
-        $this->hash[sys_log_status::NEW] = 2;
-        $type = new user_type(sys_log_status::CLOSED, sys_log_status::CLOSED);
-        $this->lst[3] = $type;
-        $this->hash[sys_log_status::CLOSED] = 3;
+        $type = new user_type(sys_log_status::NEW, sys_log_status::NEW, '', 2);
+        $this->add($type);
+        $type = new user_type(sys_log_status::CLOSED, sys_log_status::CLOSED, '', 3);
+        $this->add($type);
     }
 
     /**

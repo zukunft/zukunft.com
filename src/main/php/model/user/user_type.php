@@ -35,7 +35,9 @@
 
 */
 
-// TODO combine with class object_type
+// TODO combine with class type_object
+
+use api\type_object_api;
 
 class user_type
 {
@@ -44,17 +46,19 @@ class user_type
     const FLD_NAME = 'type_name';
 
     // the standard fields of a type
-    // the database id is used as the array pointer
+    public int $id;                // the database id is also used as the array pointer
     public string $code_id;        // this id text is unique for all code links and is used for system im- and export
     public string $name;           // simply the type name as shown to the user
     public ?string $comment = '';  // to explain the type to the user as a tooltip
+
 
     /*
      * construct and map
      */
 
-    function __construct(string $code_id, string $name, string $comment = '')
+    function __construct(string $code_id, string $name, string $comment = '', int $id = 0)
     {
+        $this->id = $id;
         $this->set_code_id($code_id);
         $this->set_name($name);
         if ($comment != '') {
@@ -64,10 +68,12 @@ class user_type
 
     function reset(): void
     {
+        $this->id = 0;
         $this->code_id = '';
         $this->name = '';
         $this->comment = null;
     }
+
 
     /*
      * set and get
@@ -101,6 +107,23 @@ class user_type
     public function comment(): string
     {
         return $this->comment;
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @return type_object_api the code link frontend api object
+     */
+    function api_obj(): type_object_api
+    {
+        $api_obj = new type_object_api();
+        $api_obj->id = $this->id;
+        $api_obj->name = $this->name;
+        $api_obj->code_id = $this->code_id;
+        return $api_obj;
     }
 
 }

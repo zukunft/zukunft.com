@@ -73,9 +73,8 @@ class word_type_list extends user_type_list
         $i = 2;
         foreach (self::TYPES as $type_name)
         {
-            $type = new user_type($type_name, $type_name);
-            $this->lst[$i] = $type;
-            $this->hash[$type_name] = $i;
+            $type = new user_type($type_name, $type_name, '', $i);
+            $this->add($type);
             $i++;
         }
     }

@@ -49,9 +49,8 @@ class view_cmp_pos_type_list extends user_type_list
      */
     function load_dummy(): void {
         parent::load_dummy();
-        $type = new user_type(view_cmp_pos_type::SIDE, view_cmp_pos_type::SIDE);
-        $this->lst[2] = $type;
-        $this->hash[view_cmp_type::TEXT] = 2;
+        $type = new user_type(view_cmp_pos_type::SIDE, view_cmp_pos_type::SIDE, '', 2);
+        $this->add($type);
     }
 
     /**

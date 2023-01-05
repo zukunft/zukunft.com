@@ -31,7 +31,7 @@
 
 namespace cfg;
 
-class phrase_type extends object_type
+class phrase_type extends type_object
 {
 
     // list of the phrase types that have a coded functionality

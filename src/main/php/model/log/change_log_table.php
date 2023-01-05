@@ -73,15 +73,12 @@ class change_log_table extends user_type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new user_type(change_log_table::VALUE, change_log_table::VALUE);
-        $this->lst[2] = $type;
-        $this->hash[change_log_table::VALUE] = 2;
-        $type = new user_type(change_log_table::USR, change_log_table::USR);
-        $this->lst[3] = $type;
-        $this->hash[change_log_table::USR] = 3;
-        $type = new user_type(change_log_table::WORD, change_log_table::WORD);
-        $this->lst[5] = $type;
-        $this->hash[change_log_table::WORD] = 5;
+        $type = new user_type(change_log_table::VALUE, change_log_table::VALUE, '', 2);
+        $this->add($type);
+        $type = new user_type(change_log_table::USR, change_log_table::USR, '', 3);
+        $this->add($type);
+        $type = new user_type(change_log_table::WORD, change_log_table::WORD, '', 5);
+        $this->add($type);
     }
 
     /**

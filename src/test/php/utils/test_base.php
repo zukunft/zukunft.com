@@ -754,7 +754,7 @@ class test_base
             $actual_user = $item[export::USER];
             if ($actual_user == '::1') {
                 if ($i === null) {
-                    $json[export::USER] = 'zukunft.com system test';
+                    $json[export::USER] = 'zukunft.com system';
                 } else {
                     $json[$i][export::USER] = 'zukunft.com system test';
                 }

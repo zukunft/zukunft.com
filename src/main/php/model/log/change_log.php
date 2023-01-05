@@ -127,9 +127,8 @@ class change_log extends db_object
             if ($this->action_id <= 0) {
                 log_err("Cannot add action name " . $action_name);
             } else {
-                $tbl = new user_type($action_name, $action_name);
-                $change_log_actions->add($tbl, $this->action_id);
-                $change_log_actions->get_hash($change_log_actions->lst);
+                $tbl = new user_type($action_name, $action_name, '', $this->action_id);
+                $change_log_actions->add($tbl);
             }
         }
     }
@@ -158,9 +157,8 @@ class change_log extends db_object
             if ($this->table_id <= 0) {
                 log_err("Cannot add table name " . $table_name);
             } else {
-                $tbl = new user_type($table_name, $table_name);
-                $change_log_tables->add($tbl, $this->table_id);
-                $change_log_tables->get_hash($change_log_tables->lst);
+                $tbl = new user_type($table_name, $table_name, '', $this->table_id);
+                $change_log_tables->add($tbl);
             }
         }
     }
@@ -190,9 +188,12 @@ class change_log extends db_object
                 if ($this->field_id <= 0) {
                     log_err("Cannot add field name " . $field_name);
                 } else {
-                    $tbl = new user_type($this->table_id . $field_name, $this->table_id . $field_name);
-                    $change_log_fields->add($tbl, $this->field_id);
-                    $change_log_fields->get_hash($change_log_fields->lst);
+                    $tbl = new user_type(
+                        $this->table_id . $field_name,
+                        $this->table_id . $field_name,
+                        '',
+                        $this->field_id);
+                    $change_log_fields->add($tbl);
                 }
             }
         } else {

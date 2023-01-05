@@ -49,9 +49,8 @@ class view_type_list extends user_type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new user_type(view_type::DEFAULT, view_type::DEFAULT);
-        $this->lst[2] = $type;
-        $this->hash[view_type::DEFAULT] = 2;
+        $type = new user_type(view_type::DEFAULT, view_type::DEFAULT, '', 2);
+        $this->add($type);
     }
 
     /**

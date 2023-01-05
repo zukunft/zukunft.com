@@ -2,8 +2,14 @@
 
 /*
 
-    protection_type.php - to define if and how an object can changed
-    -------------------
+    api/sandbox/type_object.php - the minimal type object used for the api
+    ---------------------------
+
+    a type object is used to assign predefined functionality to database rows
+    e.g. to remove the measure name meter from the result if two meter values are divided
+
+    the api type object is used if the user is allowed to request new types via the GUI
+
 
     This file is part of zukunft.com - calc with words
 
@@ -29,17 +35,12 @@
 
 */
 
-namespace cfg;
+namespace api;
 
-class protection_type extends type_object
+class type_object_api
 {
-    // the field name used for the JSON im- and export
-    const JSON_FLD = 'protection';
-
-    // list of the protection types that have a coded functionality
-    const NO_PROTECT = "no_protection";
-    const USER = "user_protection";
-    const ADMIN = "admin_protection";
-    const NO_CHANGE = "no_change";
+    public int $id;
+    public string $name;
+    public string $code_id;
 
 }

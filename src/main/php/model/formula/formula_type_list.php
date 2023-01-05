@@ -51,12 +51,10 @@ class formula_type_list extends user_type_list
      */
     function load_dummy(): void
     {
-        $type = new user_type(formula_type::CALC, formula_type::CALC);
-        $this->lst[1] = $type;
-        $this->hash[formula_type::CALC] = 1;
-        $type = new user_type(formula_type::REV, formula_type::REV);
-        $this->lst[2] = $type;
-        $this->hash[formula_type::REV] = 2;
+        $type = new user_type(formula_type::CALC, formula_type::CALC, '', 1);
+        $this->add($type);
+        $type = new user_type(formula_type::REV, formula_type::REV, '', 2);
+        $this->add($type);
     }
 
     /**

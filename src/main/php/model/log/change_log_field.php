@@ -89,9 +89,9 @@ class change_log_field extends user_type_list
         $type = new user_type(
             $table_field_name,
             change_log_field::FLD_WORD_NAME,
-            change_log_field::FLD_WORD_NAME_DSP);
-        $this->lst[9] = $type;
-        $this->hash[$table_field_name] = 9;
+            change_log_field::FLD_WORD_NAME_DSP,
+            9);
+        $this->add($type);
     }
 
     /**

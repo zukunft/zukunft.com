@@ -35,10 +35,10 @@
   
 */
 
-use cfg\object_type;
+use cfg\type_object;
 use cfg\phrase_type;
 
-class word_type extends object_type
+class word_type extends type_object
 {
 
     const DEFAULT = phrase_type::NORMAL;

@@ -52,9 +52,12 @@ class formula_element_type_list extends user_type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new user_type(formula_element_type_list::WORD_SELECTOR, formula_element_type_list::WORD_SELECTOR);
-        $this->lst[2] = $type;
-        $this->hash[formula_element_type_list::WORD_SELECTOR] = 2;
+        $type = new user_type(
+            formula_element_type_list::WORD_SELECTOR,
+            formula_element_type_list::WORD_SELECTOR,
+            '',
+            2);
+        $this->add($type);
     }
 
     /**

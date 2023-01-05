@@ -71,9 +71,10 @@ class user_type_list
      * interface get and set functions
      */
 
-    function add(user_type $item, int $id): void
+    function add(user_type $item): void
     {
-        $this->lst[$id] = $item;
+        $this->lst[$item->id] = $item;
+        $this->hash[$item->code_id] = $item->id;
     }
 
     /**
@@ -83,9 +84,8 @@ class user_type_list
      */
     function add_verb(verb $vrb): void
     {
-        $type_obj = new user_type($vrb->code_id, $vrb->name());
-        $type_obj->id = $vrb->id();
-        $this->add($type_obj, $vrb->id());
+        $type_obj = new user_type($vrb->code_id, $vrb->name(), '', $vrb->id());
+        $this->add($type_obj);
     }
 
     /*
@@ -120,6 +120,7 @@ class user_type_list
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
+                $type_id = $db_entry[$db_con->get_id_field_name($db_type)];
                 $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
                 $type_name = '';
                 if ($db_type == db_cl::LOG_ACTION) {
@@ -132,8 +133,8 @@ class user_type_list
                     $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
                 }
                 $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
-                $type_obj = new user_type($type_code_id, $type_name, $type_comment);
-                $this->lst[$db_entry[$db_con->get_id_field_name($db_type)]] = $type_obj;
+                $type_obj = new user_type($type_code_id, $type_name, $type_comment, $type_id);
+                $this->add($type_obj);
             }
         }
         return $this->lst;
@@ -307,9 +308,8 @@ class user_type_list
     {
         $this->lst = array();
         $this->hash = array();
-        $type = new user_type(user_type_list::TEST_TYPE, user_type_list::TEST_NAME);
-        $this->lst[1] = $type;
-        $this->hash[user_type_list::TEST_TYPE] = 1;
+        $type = new user_type(user_type_list::TEST_TYPE, user_type_list::TEST_NAME, '', 1);
+        $this->add($type);
     }
 
 }

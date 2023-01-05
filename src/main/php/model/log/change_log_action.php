@@ -60,15 +60,12 @@ class change_log_action extends user_type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new user_type(self::ADD, self::ADD);
-        $this->lst[1] = $type;
-        $this->hash[self::ADD] = 1;
-        $type = new user_type(self::DELETE, self::DELETE);
-        $this->lst[2] = $type;
-        $this->hash[self::DELETE] = 2;
-        $type = new user_type(self::UPDATE, self::UPDATE);
-        $this->lst[3] = $type;
-        $this->hash[self::UPDATE] = 3;
+        $type = new user_type(self::ADD, self::ADD, '', 1);
+        $this->add($type);
+        $type = new user_type(self::DELETE, self::DELETE, '',2);
+        $this->add($type);
+        $type = new user_type(self::UPDATE, self::UPDATE, '', 3);
+        $this->add($type);
     }
 
     /**

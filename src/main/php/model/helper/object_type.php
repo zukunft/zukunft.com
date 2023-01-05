@@ -2,8 +2,8 @@
 
 /*
 
-    object_type.php - a base type object that can be used to link program code to single objects
-    ---------------
+    /model/phrase/type_object.php - a base type object that can be used to link program code to single objects
+    -----------------------------
 
     e.g. if a value is classified by a phrase of type percent the value by default is formatted in percent
 
@@ -34,12 +34,19 @@
 
 namespace cfg;
 
-class object_type
+use api\type_object_api;
+
+class type_object
 {
+
+    /*
+     * object vars
+     */
 
     public int $id;
     public string $name;
     public string $code_id;
+
 
     /*
      * construct and map
@@ -52,9 +59,25 @@ class object_type
         $this->code_id = $code_id;
     }
 
+
     /*
      * set and get
      */
+
+    function set_id(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    function set_name(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    function set_code_id(string $code_id): void
+    {
+        $this->code_id = $code_id;
+    }
 
     function id(): int
     {
@@ -71,20 +94,23 @@ class object_type
         return $this->code_id;
     }
 
-    function set_id(int $id): void
+
+    /*
+     * cast
+     */
+
+    /**
+     * @return type_object_api the code link frontend api object
+     */
+    function api_obj(): type_object_api
     {
-        $this->id = $id;
+        $api_obj = new type_object_api();
+        $api_obj->id = $this->id;
+        $api_obj->name = $this->name;
+        $api_obj->code_id = $this->code_id;
+        return $api_obj;
     }
 
-    function set_name(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    function set_code_id(string $code_id): void
-    {
-        $this->code_id = $code_id;
-    }
 
     /*
      * information

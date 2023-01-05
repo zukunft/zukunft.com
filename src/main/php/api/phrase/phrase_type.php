@@ -2,8 +2,8 @@
 
 /*
 
-    protection_type.php - to define if and how an object can changed
-    -------------------
+    api/phrase/phrase_type.php - the minimal phrase type object for the frontend API
+    --------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -22,24 +22,16 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
-namespace cfg;
+namespace api;
 
-class protection_type extends type_object
+class phrase_type_api extends type_object_api
 {
-    // the field name used for the JSON im- and export
-    const JSON_FLD = 'protection';
-
-    // list of the protection types that have a coded functionality
-    const NO_PROTECT = "no_protection";
-    const USER = "user_protection";
-    const ADMIN = "admin_protection";
-    const NO_CHANGE = "no_change";
 
 }

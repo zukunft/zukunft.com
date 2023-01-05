@@ -62,12 +62,10 @@ class job_type_list extends user_type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new user_type(job_type_list::VALUE_UPDATE, job_type_list::VALUE_UPDATE);
-        $this->lst[2] = $type;
-        $this->hash[job_type_list::VALUE_UPDATE] = 2;
-        $type = new user_type(job_type_list::BASE_IMPORT, job_type_list::BASE_IMPORT);
-        $this->lst[11] = $type;
-        $this->hash[job_type_list::BASE_IMPORT] = 11;
+        $type = new user_type(job_type_list::VALUE_UPDATE, job_type_list::VALUE_UPDATE, '', 2);
+        $this->add($type);
+        $type = new user_type(job_type_list::BASE_IMPORT, job_type_list::BASE_IMPORT, '', 11);
+        $this->add($type);
     }
 
     /**

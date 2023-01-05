@@ -54,12 +54,10 @@ class share_type_list extends user_type_list
     {
         $this->lst = array();
         $this->hash = array();
-        $type = new user_type(share_type::PUBLIC, share_type::PUBLIC);
-        $this->lst[2] = $type;
-        $this->hash[share_type::PUBLIC] = 2;
-        $type = new user_type(share_type::PERSONAL, share_type::PERSONAL);
-        $this->lst[3] = $type;
-        $this->hash[share_type::PERSONAL] = 3;
+        $type = new user_type(share_type::PUBLIC, share_type::PUBLIC, '', 2);
+        $this->add($type);
+        $type = new user_type(share_type::PERSONAL, share_type::PERSONAL, '', 3);
+        $this->add($type);
 
     }
 

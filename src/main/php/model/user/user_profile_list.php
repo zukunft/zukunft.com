@@ -52,12 +52,10 @@ class user_profile_list extends user_type_list
     {
         $this->lst = array();
         $this->hash = array();
-        $type = new user_type(user_profile::NORMAL, user_profile::NORMAL);
-        $this->lst[2] = $type;
-        $this->hash[user_profile::NORMAL] = 2;
-        $type = new user_type(user_profile::ADMIN, user_profile::ADMIN);
-        $this->lst[3] = $type;
-        $this->hash[user_profile::ADMIN] = 3;
+        $type = new user_type(user_profile::NORMAL, user_profile::NORMAL, '', 2);
+        $this->add($type);
+        $type = new user_type(user_profile::ADMIN, user_profile::ADMIN, '', 3);
+        $this->add($type);
     }
 
     /**

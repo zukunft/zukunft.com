@@ -31,7 +31,7 @@
 
 namespace cfg;
 
-class formula_type extends object_type
+class formula_type extends type_object
 {
 
     /*
