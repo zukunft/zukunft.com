@@ -69,14 +69,14 @@ class word_type_list extends user_type_list
      */
     function load_dummy(): void
     {
-        parent::load_dummy();
-        $i = 2;
+        $i = 1;
         foreach (self::TYPES as $type_name)
         {
             $type = new user_type($type_name, $type_name, '', $i);
             $this->add($type);
             $i++;
         }
+        //parent::load_dummy();
     }
 
     /**

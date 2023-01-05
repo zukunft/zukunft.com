@@ -641,7 +641,7 @@ class word extends user_sandbox_named_with_type
         }
 
         // set the default type if no type is specified
-        if ($this->type_id == 0) {
+        if ($this->type_id <= 0) {
             $this->type_id = $phrase_types->default_id();
         }
         // save the word in the database
@@ -697,7 +697,7 @@ class word extends user_sandbox_named_with_type
         if ($this->description <> '') {
             $result->description = $this->description;
         }
-        if (isset($this->type_id)) {
+        if ($this->type_id > 0) {
             if ($this->type_id <> $phrase_types->default_id()) {
                 $result->type = $this->type_code_id();
             }

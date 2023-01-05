@@ -864,6 +864,9 @@ class test_base
         $usr_obj->import_obj($json_in, false);
         $json_ex = json_decode(json_encode($usr_obj->export_obj(false)), true);
         $result = json_is_similar($json_in, $json_ex);
+        // TODO remove, for faster debugging only
+        $json_in_txt = json_encode($json_in);
+        $json_ex_txt = json_encode($json_ex);
         return $this->assert($this->name . 'import check name', $result, true);
     }
 
