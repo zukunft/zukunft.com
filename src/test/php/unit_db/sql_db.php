@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit_db/sql_db.php - unit testing of the SQL abstraction layer functions with the current database
-  -----------------------
+    test/unit_db/sql_db.php - unit testing of the SQL abstraction layer functions with the current database
+    -----------------------
   
 
     This file is part of zukunft.com - calc with words

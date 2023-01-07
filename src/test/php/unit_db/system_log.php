@@ -70,7 +70,7 @@ class system_log_unit_db_tests
         $t->assert('system errors', $result, true);
 
         $t->subheader('API unit db tests');
-        $t->assert_api($err_lst, 'system_log_list_setup');
+        $t->assert_api($err_lst, 'system_log_list_setup', true);
 
     }
 

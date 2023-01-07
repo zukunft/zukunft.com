@@ -2,8 +2,8 @@
 
 /*
 
-    /test/php/unit_save/expression.php - TESTing of the expression function that only read from the database
-    ----------------------------------
+    test/php/unit_save/expression.php - TESTing of the expression function that only read from the database
+    ---------------------------------
   
 
     This file is part of zukunft.com - calc with words

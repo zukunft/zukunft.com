@@ -62,19 +62,19 @@ class value_unit_tests
         // sql to load a user specific value by phrase group id
         $val->reset($usr);
         $val->grp->set_id(2);
-        $t->assert_load_sql($db_con, $val);
+        $t->assert_load_sql_obj_vars($db_con, $val);
 
         // sql to load a user specific value by phrase group and time id
         $val->reset($usr);
         $val->grp->set_id(2);
         $val->set_time_id(4);
-        $t->assert_load_sql($db_con, $val);
+        $t->assert_load_sql_obj_vars($db_con, $val);
 
         // sql to load a user specific value by phrase list and time id
         $val->reset($usr);
         $val->phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
         $val->set_time_id(4);
-        $t->assert_load_sql($db_con, $val);
+        $t->assert_load_sql_obj_vars($db_con, $val);
 
         // ... and the related default value
         $t->assert_load_standard_sql($db_con, $val);
@@ -111,7 +111,7 @@ class value_unit_tests
         // sql to load a user specific time series by id
         $vts = new value_time_series($usr);
         $vts->set_id(1);
-        $t->assert_load_sql($db_con, $vts);
+        $t->assert_load_sql_obj_vars($db_con, $vts);
 
         // ... and the related default time series
         $t->assert_load_standard_sql($db_con, $vts);
@@ -119,7 +119,7 @@ class value_unit_tests
         // sql to load a user specific time series by phrase group id
         $vts->reset($usr);
         $vts->grp->set_id(2);
-        $t->assert_load_sql($db_con, $vts);
+        $t->assert_load_sql_obj_vars($db_con, $vts);
 
     }
 

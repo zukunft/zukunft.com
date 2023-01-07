@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit_db/verb.php - database unit testing of the verb functions
-  ---------------------
+    test/unit_db/verb.php - database unit testing of the verb functions
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words

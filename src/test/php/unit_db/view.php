@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit_db/view.php - database unit testing of the view functions
-  ---------------------
+    test/unit_db/view.php - database unit testing of the view functions
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words

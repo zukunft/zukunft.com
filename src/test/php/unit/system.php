@@ -114,14 +114,14 @@ class system_unit_tests
         $t->subheader('ip list sql tests');
 
         $ip_lst = new ip_range_list();
-        $t->assert_load_sql($db_con, $ip_lst);
+        $t->assert_load_sql_obj_vars($db_con, $ip_lst);
 
 
         $t->subheader('user list loading sql tests');
 
         // check if the sql to load the complete list of all .. types is created as expected
         $sys_log_stati = new sys_log_status();
-        $t->assert_load_sql($db_con, $sys_log_stati);
+        $t->assert_load_sql_all($db_con, $sys_log_stati);
 
 
         $t->subheader('user loading sql tests');
@@ -134,18 +134,18 @@ class system_unit_tests
         //$t->assert_load_sql($db_con, $test_usr);
         $test_usr->reset();
         $test_usr->name = user::SYSTEM_TEST_NAME;
-        $t->assert_load_sql($db_con, $test_usr);
+        $t->assert_load_sql_obj_vars($db_con, $test_usr);
         $test_usr->email = user::SYSTEM_TEST_NAME;
-        $t->assert_load_sql($db_con, $test_usr);
+        $t->assert_load_sql_obj_vars($db_con, $test_usr);
         $test_usr->reset();
         $test_usr->code_id = user::SYSTEM_TEST_NAME;
-        $t->assert_load_sql($db_con, $test_usr);
+        $t->assert_load_sql_obj_vars($db_con, $test_usr);
         $test_usr->reset();
         $test_usr->ip_addr = user::SYSTEM_TEST_NAME;
-        $t->assert_load_sql($db_con, $test_usr);
+        $t->assert_load_sql_obj_vars($db_con, $test_usr);
         $test_usr->reset();
         $test_usr->profile_id = 2;
-        $t->assert_load_sql($db_con, $test_usr);
+        $t->assert_load_sql_obj_vars($db_con, $test_usr);
 
 
         $t->subheader('system config sql tests');

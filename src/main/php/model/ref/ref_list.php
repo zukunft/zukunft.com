@@ -92,7 +92,7 @@ class ref_list extends user_type_list
     {
         global $usr;
         $this->lst = [];
-        $qp = $this->load_sql_obj_vars($db_con, $db_type);
+        $qp = $this->load_sql_all($db_con, $db_type);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {

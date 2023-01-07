@@ -3,7 +3,7 @@
 /*
 
     test/unit_db/value.php - database unit testing of the value functions
-    ---------------------
+    ----------------------
 
 
     This file is part of zukunft.com - calc with words

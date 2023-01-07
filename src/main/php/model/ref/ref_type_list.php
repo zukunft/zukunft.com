@@ -49,7 +49,7 @@ class ref_type_list extends user_type_list
      * @param string $db_type the database name e.g. the table name without s
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_obj_vars(sql_db $db_con, string $db_type): sql_par
+    function load_sql(sql_db $db_con, string $db_type): sql_par
     {
         $db_con->set_type($db_type);
         $qp = new sql_par($db_type);
@@ -57,9 +57,24 @@ class ref_type_list extends user_type_list
         $db_con->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id); is needed
         $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, self::FLD_URL));
-        $db_con->set_page_par(SQL_ROW_MAX);
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to load all refs types from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $db_type the class name to be compatible with the user sandbox load_sql functions
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    public function load_sql_all(sql_db $db_con, string $db_type): sql_par
+    {
+        $qp = $this->load_sql($db_con, $db_type);
+        $db_con->set_page_par(SQL_ROW_MAX, 0);
         $qp->sql = $db_con->select_all();
         $qp->par = $db_con->get_par();
+
         return $qp;
     }
 
@@ -72,7 +87,7 @@ class ref_type_list extends user_type_list
     private function load_list(sql_db $db_con, string $db_type): void
     {
         $this->lst = array();
-        $qp = $this->load_sql_obj_vars($db_con, $db_type);
+        $qp = $this->load_sql_all($db_con, $db_type);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {

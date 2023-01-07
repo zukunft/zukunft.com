@@ -66,7 +66,7 @@ class view_component_link_unit_tests
         $lnk = new view_cmp_link($usr);
         $lnk->dsp->set_id(1);
         $lnk->cmp->set_id(2);
-        $t->assert_load_sql($db_con, $lnk);
+        $t->assert_load_sql_obj_vars($db_con, $lnk);
 
 
         $t->subheader('Database list query creation tests');

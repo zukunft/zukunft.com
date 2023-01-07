@@ -3,7 +3,7 @@
 /*
 
     test/unit_db/change_log.php - database unit testing of the user log functions
-    -------------------------
+    ---------------------------
 
 
     This file is part of zukunft.com - calc with words

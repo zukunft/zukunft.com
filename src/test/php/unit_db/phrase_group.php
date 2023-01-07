@@ -2,8 +2,8 @@
 
 /*
 
-    /test/php/unit_db/phrase_group.php - test of the phrase group methods that only read from the database
-    ----------------------------------
+    test/php/unit_db/phrase_group.php - test of the phrase group methods that only read from the database
+    ---------------------------------
   
 
     This file is part of zukunft.com - calc with words

@@ -62,7 +62,7 @@ class ref_unit_tests
         $t->subheader('SQL statement tests');
         // sql to load the ref types
         $ref_type_list = new ref_type_list();
-        $t->assert_load_sql($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);
+        $t->assert_load_sql_all($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);
 
 
         // init for source
@@ -101,7 +101,7 @@ class ref_unit_tests
 
         // sql to load the source types
         $source_type_list = new source_type_list();
-        $t->assert_load_sql($db_con, $source_type_list, sql_db::TBL_SOURCE_TYPE);
+        $t->assert_load_sql_all($db_con, $source_type_list, sql_db::TBL_SOURCE_TYPE);
 
     }
 

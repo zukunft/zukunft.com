@@ -54,33 +54,33 @@ class phrase_group_unit_tests
         // sql to load the phrase group by id
         $phr_grp = new phrase_group($usr);
         $phr_grp->set_id(1);
-        $t->assert_load_sql($db_con, $phr_grp);
+        $t->assert_load_sql_obj_vars($db_con, $phr_grp);
 
         // sql to load the phrase group by word ids
         $phr_grp = new phrase_group($usr);
         $phr_lst = new phrase_list($usr);
         $phr_lst->add_by_ids('2,4,3','');
         $phr_grp->phr_lst = $phr_lst;
-        $t->assert_load_sql($db_con, $phr_grp);
+        $t->assert_load_sql_obj_vars($db_con, $phr_grp);
 
         // sql to load the phrase group by triple ids
         $phr_grp = new phrase_group($usr);
         $phr_lst = new phrase_list($usr);
         $phr_lst->add_by_ids(null,'2,4,3');
         $phr_grp->phr_lst = $phr_lst;
-        $t->assert_load_sql($db_con, $phr_grp);
+        $t->assert_load_sql_obj_vars($db_con, $phr_grp);
 
         // sql to load the phrase group by word and triple ids
         $phr_grp = new phrase_group($usr);
         $phr_lst = new phrase_list($usr);
         $phr_lst->add_by_ids('4,1,3','2');
         $phr_grp->phr_lst = $phr_lst;
-        $t->assert_load_sql($db_con, $phr_grp);
+        $t->assert_load_sql_obj_vars($db_con, $phr_grp);
 
         // sql to load the phrase group by name
         $phr_grp = new phrase_group($usr);
         $phr_grp->grp_name = phrase_group_api::TN_READ;
-        $t->assert_load_sql($db_con, $phr_grp);
+        $t->assert_load_sql_obj_vars($db_con, $phr_grp);
 
         // sql to load the word list ids
         $wrd_lst = new word_list($usr);
@@ -107,12 +107,12 @@ class phrase_group_unit_tests
         // sql to load the phrase group word link by id
         $grp_wrd_lnk = new phrase_group_word_link();
         $grp_wrd_lnk->set_id(11);
-        $t->assert_load_sql($db_con, $grp_wrd_lnk);
+        $t->assert_load_sql_obj_vars($db_con, $grp_wrd_lnk);
 
         // sql to load the phrase group triple link by id
         $grp_trp_lnk = new phrase_group_triple_link();
         $grp_trp_lnk->set_id(12);
-        $t->assert_load_sql($db_con, $grp_trp_lnk);
+        $t->assert_load_sql_obj_vars($db_con, $grp_trp_lnk);
 
         // sql to load all phrase groups linked to a word
         $db_con->db_type = sql_db::POSTGRES;

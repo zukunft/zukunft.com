@@ -60,7 +60,7 @@ class verb_unit_tests
 
         // sql to load a list with all verbs
         $vrb_lst = new verb_list($usr);
-        $t->assert_load_sql($db_con, $vrb_lst);
+        $t->assert_load_sql_all($db_con, $vrb_lst);
 
         // sql to load a verb list by phrase id and direction up
         $vrb_lst = new verb_list($usr);

@@ -44,6 +44,7 @@
 use api\source_api;
 use api\system_log_api;
 use api\word_api;
+use cfg\phrase_type;
 use controller\controller;
 use html\html_base;
 
@@ -140,6 +141,7 @@ include_once $path_unit_db . 'system_log.php';
 include_once $path_unit_db . 'word.php';
 include_once $path_unit_db . 'word_list.php';
 include_once $path_unit_db . 'verb.php';
+include_once $path_unit_db . 'phrase.php';
 include_once $path_unit_db . 'phrase_group.php';
 include_once $path_unit_db . 'term.php';
 include_once $path_unit_db . 'term_list.php';
@@ -400,6 +402,7 @@ class test_base
         $this->assert_api_get(source::class);
         $this->assert_api_get(ref::class);
         $this->assert_api_get(batch_job::class);
+        //$this->assert_api_get(phrase_type::class);
         $this->assert_api_get_by_name(source::class, source_api::TN_READ_API);
 
         $this->assert_api_get_list(type_lists::class);
@@ -410,7 +413,11 @@ class test_base
             change_log_list::class,
             controller::URL_VAR_WORD_ID, 1,
             controller::URL_VAR_WORD_FLD, change_log_field::FLD_WORD_NAME);
-        $this->assert_api_get_list(system_log_list::class, [1, 2], 'system_log_list_api');
+        $this->assert_api_get_list(
+            system_log_list::class,
+            [1, 2],
+            'system_log_list_api',
+            true);
         // $this->assert_rest(new word($usr, word_api::TN_READ));
 
     }
@@ -557,8 +564,9 @@ class test_base
     }
 
     /**
+     * @param object $usr_obj the user sandbox object that should be tested
      */
-    function assert_api(object $usr_obj, string $filename = ''): bool
+    function assert_api(object $usr_obj, string $filename = '', bool $contains = false): bool
     {
         $class = $usr_obj::class;
         if ($class == view_cmp::class) {
@@ -582,7 +590,11 @@ class test_base
         // TODO remove, for faster debugging only
         $json_actual = json_encode($actual);
         $json_expected = json_encode($expected);
-        return $this->assert($usr_obj::class . ' API object', json_is_similar($actual, $expected), true);
+        if ($contains) {
+            return $this->assert($usr_obj::class . ' API object', json_contains($expected, $actual), true);
+        } else {
+            return $this->assert($usr_obj::class . ' API object', json_is_similar($expected, $actual), true);
+        }
     }
 
     /**
@@ -593,7 +605,7 @@ class test_base
      * @param int $id the database id of the db row that should be used for testing
      * @return bool true if the json has no relevant differences
      */
-    function assert_api_get(string $class, int $id = 1): bool
+    function assert_api_get(string $class, int $id = 1, bool $contains = false): bool
     {
         // naming exception (to be removed?)
         if ($class == view_cmp::class) {
@@ -618,7 +630,11 @@ class test_base
         $json_actual = json_encode($actual);
         $json_expected = json_encode($expected);
 
-        return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
+        if ($contains) {
+            return $this->assert($class . ' API GET', json_contains($actual, $expected), true);
+        } else {
+            return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
+        }
     }
 
     /**
@@ -666,7 +682,11 @@ class test_base
      * @param array $ids the database ids of the db rows that should be used for testing
      * @return bool true if the json has no relevant differences
      */
-    function assert_api_get_list(string $class, array $ids = [1, 2], string $filename = ''): bool
+    function assert_api_get_list(
+        string $class,
+        array $ids = [1, 2],
+        string $filename = '',
+        bool $contains = false): bool
     {
         $url = HOST_TESTING . '/api/' . camelize($class);
         $data = array("ids" => implode(",", $ids));
@@ -681,7 +701,11 @@ class test_base
         // TODO remove, for faster debugging only
         $json_actual = json_encode($actual);
         $json_expected = json_encode($expected);
-        return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
+        if ($contains) {
+            return $this->assert($class . ' API GET', json_contains($expected, $actual), true);
+        } else {
+            return $this->assert($class . ' API GET', json_is_similar($expected, $actual), true);
+        }
     }
 
     /**
@@ -888,6 +912,9 @@ class test_base
     }
 
     /**
+     * similar to assert_load_sql but for the load_sql_obj_vars that
+     * TODO should be replaced by assert_load_sql_id, assert_load_sql_name, assert_load_sql_all, ...
+     *
      * check the object load SQL statements for all allowed SQL database dialects
      *
      * @param sql_db $db_con does not need to be connected to a real database
@@ -895,7 +922,7 @@ class test_base
      * @param string $db_type to define the database type if it does not match the class
      * @return bool true if all tests are fine
      */
-    function assert_load_sql(sql_db $db_con, object $usr_obj, string $db_type = ''): bool
+    function assert_load_sql_obj_vars(sql_db $db_con, object $usr_obj, string $db_type = ''): bool
     {
         if ($db_type == '') {
             $db_type = get_class($usr_obj);
@@ -1054,6 +1081,34 @@ class test_base
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_link($db_con, 1, 0, 3, $usr_obj::class);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the object load SQL statements for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param string $db_type to define the database type if it does not match the class
+     * @return bool true if all tests are fine
+     */
+    function assert_load_sql_all(sql_db $db_con, object $usr_obj, string $db_type = ''): bool
+    {
+        if ($db_type == '') {
+            $db_type = get_class($usr_obj);
+        }
+
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_all($db_con, $db_type);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_all($db_con, $db_type);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;

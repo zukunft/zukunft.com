@@ -2,8 +2,8 @@
 
 /*
 
-    /test/php/unit_db/formula_list.php - TESTing of the FORMULA LIST functions that only read from the database
-    ----------------------------------
+    test/php/unit_db/formula_list.php - TESTing of the FORMULA LIST functions that only read from the database
+    ---------------------------------
   
 
     This file is part of zukunft.com - calc with words

@@ -56,13 +56,13 @@ class triple_unit_tests_old
         // sql to load a triple by id
         $trp = new triple($usr);
         $trp->set_id(1);
-        $t->assert_load_sql($db_con, $trp);
+        $t->assert_load_sql_obj_vars($db_con, $trp);
         $t->assert_load_standard_sql($db_con, $trp);
 
         // sql to load a triple by name
         $trp = new triple($usr);
         $trp->set_name(phrase_api::TN_ZH_COMPANY);
-        $t->assert_load_sql($db_con, $trp);
+        $t->assert_load_sql_obj_vars($db_con, $trp);
         $t->assert_load_standard_sql($db_con, $trp);
 
         // sql to load a triple by link ids
@@ -76,7 +76,7 @@ class triple_unit_tests_old
         $trp->from = $wrd_from->phrase();
         $trp->verb = $vrb;
         $trp->to = $wrd_to->phrase();
-        $t->assert_load_sql($db_con, $trp);
+        $t->assert_load_sql_obj_vars($db_con, $trp);
         $t->assert_load_standard_sql($db_con, $trp);
         $trp->set_id(5);
         $t->assert_not_changed_sql($db_con, $trp);

@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit_db/word.php - database unit testing of the word, triple and phrase functions
-  ---------------------
+    test/unit_db/word.php - database unit testing of the word, triple and phrase functions
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words

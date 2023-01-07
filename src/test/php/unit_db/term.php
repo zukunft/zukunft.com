@@ -2,8 +2,8 @@
 
 /*
 
-    /test/php/unit_save/term.php - TESTing of the TERM database read functions
-    ----------------------------
+    test/php/unit_save/term.php - TESTing of the TERM database read functions
+    ---------------------------
   
 
     This file is part of zukunft.com - calc with words

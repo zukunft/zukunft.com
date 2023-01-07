@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit_db/share.php - database unit testing of the share handling
-  ---------------------
+    test/unit_db/share.php - database unit testing of the share handling
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words

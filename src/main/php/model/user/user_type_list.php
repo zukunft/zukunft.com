@@ -92,7 +92,21 @@ class user_type_list
      * database (dao) functions
      */
 
-    function load_sql_obj_vars(sql_db $db_con, string $db_type): sql_par
+    /**
+     * set the common part of the sql parameters to load all rows of one 'type of database type'
+     *
+     * a type is the link between one object and some predefined behavior
+     * a.g. a word like 'meter' has the type 'measure' which implies that
+     * the result of meter divided by meter is a relative value which is e.g. in percent
+     *
+     * a 'database type' is a group of type used for the same objects
+     * e.g. a db_type is phrase_type or view type
+     *
+     * @param sql_db $db_con the open database connection as a parameter to allow unit testing
+     * @param string $db_type the class of the related object e.g. phrase_type or formula_type
+     * @return sql_par the sql statement with the parameters and the name
+     */
+    function load_sql(sql_db $db_con, string $db_type): sql_par
     {
         $db_con->set_type($db_type);
         $qp = new sql_par($db_type);
@@ -100,6 +114,27 @@ class user_type_list
         $db_con->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id); is needed
         $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
+
+        return $qp;
+    }
+
+    /**
+     * the sql parameters to load all rows of one 'type of database type'
+     *
+     * a type is the link between one object and some predefined behavior
+     * a.g. a word like 'meter' has the type 'measure' which implies that
+     * the result of meter divided by meter is a relative value which is e.g. in percent
+     *
+     * a 'database type' is a group of type used for the same objects
+     * e.g. a db_type is phrase_type or view type
+     *
+     * @param sql_db $db_con the open database connection as a parameter to allow unit testing
+     * @param string $db_type the class of the related object e.g. phrase_type or formula_type
+     * @return sql_par the sql statement with the parameters and the name
+     */
+    public function load_sql_all(sql_db $db_con, string $db_type): sql_par
+    {
+        $qp = $this->load_sql($db_con, $db_type);
         $db_con->set_page_par(SQL_ROW_MAX, 0);
         $qp->sql = $db_con->select_all();
         $qp->par = $db_con->get_par();
@@ -116,7 +151,7 @@ class user_type_list
     private function load_list(sql_db $db_con, string $db_type): array
     {
         $this->lst = [];
-        $qp = $this->load_sql_obj_vars($db_con, $db_type);
+        $qp = $this->load_sql_all($db_con, $db_type);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {

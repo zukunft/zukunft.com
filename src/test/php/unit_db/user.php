@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit_db/user.php - database unit testing of the user profile handling
-  -----------------------------
+    test/unit_db/user.php - database unit testing of the user profile handling
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words

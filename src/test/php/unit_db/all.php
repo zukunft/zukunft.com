@@ -2,8 +2,8 @@
 
 /*
 
-    /test/php/unit/test_unit_db.php - add tests to the unit test that read only from the database in a useful order
-    -------------------------------
+    test/php/unit/test_unit_db.php - add tests to the unit test that read only from the database in a useful order
+    ------------------------------
     
     the zukunft.com unit tests should test all class methods, that can be tested without writing to the database
 
@@ -53,6 +53,7 @@ class test_unit_read_db extends test_unit
         (new word_unit_db_tests)->run($this);
         (new word_list_unit_db_tests)->run($this);
         (new verb_unit_db_tests)->run($this);
+        (new phrase_unit_db_tests)->run($this);
         (new phrase_group_unit_db_tests)->run($this);
         (new term_unit_db_tests)->run($this);
         (new term_list_unit_db_tests)->run($this);

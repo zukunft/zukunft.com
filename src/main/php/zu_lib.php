@@ -237,7 +237,7 @@ include_once $path_php . 'db/db_check.php';
 // utils
 include_once $path_php . 'utils/json_utils.php';
 include_once $path_php . 'model/helper/library.php';
-include_once $path_php . 'model/helper/object_type.php';
+include_once $path_php . 'model/helper/type_object.php';
 include_once $path_php . 'model/helper/db_object.php';
 include_once $path_php . 'model/helper/db_object_named.php';
 include_once $path_php . 'model/helper/type_lists.php';
@@ -760,6 +760,7 @@ function log_msg(string $msg_text,
                     $values[] = $user_id;
                 }
                 $db_con->set_type(sql_db::TBL_SYS_LOG);
+
                 $sys_log_id = $db_con->insert($fields, $values, false);
                 //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
                 //$sys_log_id = mysqli_insert_id();
