@@ -403,7 +403,7 @@ class test_base
         $this->assert_api_get(source::class);
         $this->assert_api_get(ref::class);
         $this->assert_api_get(batch_job::class);
-        //$this->assert_api_get(phrase_type::class);
+        $this->assert_api_get(phrase_type::class);
         $this->assert_api_get_by_name(source::class, source_api::TN_READ_API);
 
         $this->assert_api_get_list(type_lists::class);
@@ -622,6 +622,10 @@ class test_base
             $class = 'batch';
         }
         $url = HOST_TESTING . '/api/' . $class;
+        if ($class == phrase_type::class) {
+            $class = 'phrase_type';
+            $url = HOST_TESTING . '/api/phraseType';
+        }
         $data = array("id" => $id);
         // TODO check why for formula a double call is needed
         $actual = json_decode($this->api_call("GET", $url, $data), true);
