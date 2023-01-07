@@ -31,7 +31,11 @@
 
 global $change_log_actions
        ;
-class change_log_action extends user_type_list
+
+use cfg\type_list;
+use cfg\type_object;
+
+class change_log_action extends type_list
 {
 
     // the basic change types that are logged
@@ -60,11 +64,11 @@ class change_log_action extends user_type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new user_type(self::ADD, self::ADD, '', 1);
+        $type = new type_object(self::ADD, self::ADD, '', 1);
         $this->add($type);
-        $type = new user_type(self::DELETE, self::DELETE, '',2);
+        $type = new type_object(self::DELETE, self::DELETE, '',2);
         $this->add($type);
-        $type = new user_type(self::UPDATE, self::UPDATE, '', 3);
+        $type = new type_object(self::UPDATE, self::UPDATE, '', 3);
         $this->add($type);
     }
 

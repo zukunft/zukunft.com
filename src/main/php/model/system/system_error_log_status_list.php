@@ -31,7 +31,10 @@
 
 global $sys_log_stati;
 
-class sys_log_status extends user_type_list
+use cfg\type_list;
+use cfg\type_object;
+
+class sys_log_status extends type_list
 {
     // list of all possible log stati
     const NEW = "new";
@@ -55,9 +58,9 @@ class sys_log_status extends user_type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new user_type(sys_log_status::NEW, sys_log_status::NEW, '', 2);
+        $type = new type_object(sys_log_status::NEW, sys_log_status::NEW, '', 2);
         $this->add($type);
-        $type = new user_type(sys_log_status::CLOSED, sys_log_status::CLOSED, '', 3);
+        $type = new type_object(sys_log_status::CLOSED, sys_log_status::CLOSED, '', 3);
         $this->add($type);
     }
 

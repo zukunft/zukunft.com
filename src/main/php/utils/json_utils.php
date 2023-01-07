@@ -70,9 +70,9 @@ function array_recursive_diff(array $needle, array $haystack, string $key_name =
                     }
                     // find the entry in the haystack that matches the key value
                     if ($key_value != '') {
-                        foreach ($haystack[$key] as $inner_key => $inner_haystack) {
-                            if ($inner_haystack[$key_name] == $inner_key) {
-                                $haystack_key = $inner_key;
+                        foreach ($haystack[$key] as $search_key => $inner_haystack) {
+                            if ($inner_haystack[$key_name] == $key_value) {
+                                $haystack_key = $search_key;
                             }
                         }
                     }

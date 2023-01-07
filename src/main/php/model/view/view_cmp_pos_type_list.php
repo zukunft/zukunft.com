@@ -31,7 +31,10 @@
 
 global $view_component_position_types;
 
-class view_cmp_pos_type_list extends user_type_list
+use cfg\type_list;
+use cfg\type_object;
+
+class view_cmp_pos_type_list extends type_list
 {
 
     /**
@@ -49,7 +52,7 @@ class view_cmp_pos_type_list extends user_type_list
      */
     function load_dummy(): void {
         parent::load_dummy();
-        $type = new user_type(view_cmp_pos_type::SIDE, view_cmp_pos_type::SIDE, '', 2);
+        $type = new type_object(view_cmp_pos_type::SIDE, view_cmp_pos_type::SIDE, '', 2);
         $this->add($type);
     }
 

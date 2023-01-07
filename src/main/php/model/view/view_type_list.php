@@ -31,7 +31,10 @@
 
 global $view_types;
 
-class view_type_list extends user_type_list
+use cfg\type_list;
+use cfg\type_object;
+
+class view_type_list extends type_list
 {
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled
@@ -49,7 +52,7 @@ class view_type_list extends user_type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new user_type(view_type::DEFAULT, view_type::DEFAULT, '', 2);
+        $type = new type_object(view_type::DEFAULT, view_type::DEFAULT, '', 2);
         $this->add($type);
     }
 

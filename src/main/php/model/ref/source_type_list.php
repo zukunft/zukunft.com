@@ -31,7 +31,9 @@
 
 global $source_types;
 
-class source_type_list extends user_type_list
+use cfg\type_list;
+
+class source_type_list extends type_list
 {
 
     /*

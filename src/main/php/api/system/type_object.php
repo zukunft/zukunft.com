@@ -40,7 +40,7 @@
 
 namespace api;
 
-class user_type_api
+class type_api
 {
 
     // the standard fields of a type

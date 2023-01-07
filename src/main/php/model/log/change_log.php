@@ -52,6 +52,7 @@ cache table, field and action id to speed up, because this will never change
 */
 
 
+use cfg\type_object;
 use controller\log\change_log_api;
 
 class change_log extends db_object
@@ -127,7 +128,7 @@ class change_log extends db_object
             if ($this->action_id <= 0) {
                 log_err("Cannot add action name " . $action_name);
             } else {
-                $tbl = new user_type($action_name, $action_name, '', $this->action_id);
+                $tbl = new type_object($action_name, $action_name, '', $this->action_id);
                 $change_log_actions->add($tbl);
             }
         }
@@ -157,7 +158,7 @@ class change_log extends db_object
             if ($this->table_id <= 0) {
                 log_err("Cannot add table name " . $table_name);
             } else {
-                $tbl = new user_type($table_name, $table_name, '', $this->table_id);
+                $tbl = new type_object($table_name, $table_name, '', $this->table_id);
                 $change_log_tables->add($tbl);
             }
         }
@@ -188,7 +189,7 @@ class change_log extends db_object
                 if ($this->field_id <= 0) {
                     log_err("Cannot add field name " . $field_name);
                 } else {
-                    $tbl = new user_type(
+                    $tbl = new type_object(
                         $this->table_id . $field_name,
                         $this->table_id . $field_name,
                         '',

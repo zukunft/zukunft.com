@@ -31,7 +31,10 @@
 
 global $change_log_tables;
 
-class change_log_table extends user_type_list
+use cfg\type_list;
+use cfg\type_object;
+
+class change_log_table extends type_list
 {
     // list of the log table with linked functionalities
     const USR = 'users';
@@ -73,11 +76,11 @@ class change_log_table extends user_type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new user_type(change_log_table::VALUE, change_log_table::VALUE, '', 2);
+        $type = new type_object(change_log_table::VALUE, change_log_table::VALUE, '', 2);
         $this->add($type);
-        $type = new user_type(change_log_table::USR, change_log_table::USR, '', 3);
+        $type = new type_object(change_log_table::USR, change_log_table::USR, '', 3);
         $this->add($type);
-        $type = new user_type(change_log_table::WORD, change_log_table::WORD, '', 5);
+        $type = new type_object(change_log_table::WORD, change_log_table::WORD, '', 5);
         $this->add($type);
     }
 

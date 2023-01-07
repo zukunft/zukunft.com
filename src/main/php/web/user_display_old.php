@@ -548,7 +548,7 @@ class user_dsp_old extends user
                 // create the value objects with the minimal parameter needed
                 $val_usr = new value($this);
                 $val_usr->set_id($val_row['id']);
-                $val_usr->number = $val_row['usr_value'];
+                $val_usr->set_number($val_row['usr_value']);
                 $val_usr->set_source_id($val_row['usr_source']);
                 $val_usr->excluded = $val_row['usr_excluded'];
                 $val_usr->grp->set_id($val_row['phrase_group_id']);
@@ -562,12 +562,12 @@ class user_dsp_old extends user
 
                 $val_std = clone $val_usr;
                 $val_std->set_user($usr_std);
-                $val_std->number = $val_row['std_value'];
+                $val_std->set_number($val_row['std_value']);
                 $val_std->set_source_id($val_row['std_source']);
                 $val_std->excluded = $val_row['std_excluded'];
 
                 // check database consistency and correct it if needed
-                if ($val_usr->number == $val_std->number
+                if ($val_usr->number() == $val_std->number()
                     and $val_usr->source === $val_std->source
                     and $val_usr->excluded == $val_std->excluded) {
                     $val_usr->del_usr_cfg();
@@ -617,7 +617,7 @@ class user_dsp_old extends user
                         // to review: load all user values with one query
                         $val_other = clone $val_usr;
                         $val_other->set_user($usr_other);
-                        $val_other->number = $val_other_row['user_value'];
+                        $val_other->set_number($val_other_row['user_value']);
                         $val_other->set_source_id($val_other_row['source_id']);
                         $val_other->excluded = $val_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {

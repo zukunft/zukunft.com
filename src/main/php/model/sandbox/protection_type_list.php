@@ -33,8 +33,10 @@
 global $protection_types;
 
 use cfg\protection_type;
+use cfg\type_list;
+use cfg\type_object;
 
-class protection_type_list extends user_type_list
+class protection_type_list extends type_list
 {
 
     /**
@@ -54,9 +56,9 @@ class protection_type_list extends user_type_list
     {
         $this->lst = array();
         $this->hash = array();
-        $type = new user_type(protection_type::NO_PROTECT, protection_type::NO_PROTECT, '', 2);
+        $type = new type_object(protection_type::NO_PROTECT, protection_type::NO_PROTECT, '', 2);
         $this->add($type);
-        $type = new user_type(protection_type::ADMIN, protection_type::ADMIN, '', 3);
+        $type = new type_object(protection_type::ADMIN, protection_type::ADMIN, '', 3);
         $this->add($type);
 
     }

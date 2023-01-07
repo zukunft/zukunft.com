@@ -30,7 +30,10 @@
 */
 
 
-class change_log_field extends user_type_list
+use cfg\type_list;
+use cfg\type_object;
+
+class change_log_field extends type_list
 {
 
     const TN_WORD_VIEW = "values";
@@ -86,7 +89,7 @@ class change_log_field extends user_type_list
         parent::load_dummy();
         $table_id = $change_log_tables->id(change_log_table::WORD);
         $table_field_name = $table_id . change_log_field::FLD_WORD_NAME;
-        $type = new user_type(
+        $type = new type_object(
             $table_field_name,
             change_log_field::FLD_WORD_NAME,
             change_log_field::FLD_WORD_NAME_DSP,

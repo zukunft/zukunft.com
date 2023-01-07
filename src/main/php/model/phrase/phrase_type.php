@@ -31,6 +31,9 @@
 
 namespace cfg;
 
+use library;
+use ReflectionClass;
+
 class phrase_type extends type_object
 {
 
@@ -51,5 +54,27 @@ class phrase_type extends type_object
     const CALC = "calc"; // TODO add usage sample
     const LAYER = "view"; // TODO add usage sample
     const OTHER = "type_other";
+
+    /**
+     * just set the class name for the user sandbox function
+     * load a source object by database id
+     * @param int $id the id of the source
+     * @param string $class the source class name
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id, string $class = self::class): int
+    {
+        global $db_con;
+
+        $lib = new library();
+        log_debug($id);
+        $dp_type = $lib->base_class_name($class);
+        // TODO rename table word_type to phrase_type
+        if ($dp_type == 'phrase_type') {
+            $dp_type = 'word_type';
+        }
+        $qp = $this->load_sql_by_id($db_con, $id, $dp_type);
+        return $this->load($qp, $dp_type);
+    }
 
 }

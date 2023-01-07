@@ -3089,10 +3089,8 @@ class sql_db
                 case self::PAR_TEXT_LIST:
                     $this->par_types[] = 'text[]';
                     break;
-                case self::PAR_TEXT_OR:
-                    $this->par_types[] = 'text';
-                    break;
                 case self::PAR_LIKE:
+                case self::PAR_TEXT_OR:
                     $this->par_types[] = 'text';
                     break;
                 case self::PAR_CONST:

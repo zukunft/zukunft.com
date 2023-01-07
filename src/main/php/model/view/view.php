@@ -30,6 +30,7 @@
 */
 
 use api\view_api;
+use cfg\type_list;
 use html\view_dsp;
 use export\view_exp;
 use export\exp_obj;
@@ -754,7 +755,7 @@ class view extends user_sandbox_named_with_type
             if ($key == exp_obj::FLD_TYPE) {
                 if ($value != '') {
                     $type_id = $this->type_id_by_code_id($value);
-                    if ($type_id == user_type_list::CODE_ID_NOT_FOUND) {
+                    if ($type_id == type_list::CODE_ID_NOT_FOUND) {
                         $result->add_message('view type "' . $value . '" not found');
                     } else {
                         $this->type_id = $type_id;

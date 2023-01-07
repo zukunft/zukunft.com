@@ -33,8 +33,10 @@
 global $share_types;
 
 use cfg\share_type;
+use cfg\type_list;
+use cfg\type_object;
 
-class share_type_list extends user_type_list
+class share_type_list extends type_list
 {
 
     /**
@@ -54,9 +56,9 @@ class share_type_list extends user_type_list
     {
         $this->lst = array();
         $this->hash = array();
-        $type = new user_type(share_type::PUBLIC, share_type::PUBLIC, '', 2);
+        $type = new type_object(share_type::PUBLIC, share_type::PUBLIC, '', 2);
         $this->add($type);
-        $type = new user_type(share_type::PERSONAL, share_type::PERSONAL, '', 3);
+        $type = new type_object(share_type::PERSONAL, share_type::PERSONAL, '', 3);
         $this->add($type);
 
     }

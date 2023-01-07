@@ -31,7 +31,9 @@
 
 global $system_views;
 
-class view_sys_list extends user_type_list
+use cfg\type_list;
+
+class view_sys_list extends type_list
 {
 
     public user $usr;   // the user object of the person for whom the verb list is loaded, so to say the viewer

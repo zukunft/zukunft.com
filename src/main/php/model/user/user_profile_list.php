@@ -32,7 +32,10 @@
 
 global $user_profiles;
 
-class user_profile_list extends user_type_list
+use cfg\type_list;
+use cfg\type_object;
+
+class user_profile_list extends type_list
 {
 
     /**
@@ -52,9 +55,9 @@ class user_profile_list extends user_type_list
     {
         $this->lst = array();
         $this->hash = array();
-        $type = new user_type(user_profile::NORMAL, user_profile::NORMAL, '', 2);
+        $type = new type_object(user_profile::NORMAL, user_profile::NORMAL, '', 2);
         $this->add($type);
-        $type = new user_type(user_profile::ADMIN, user_profile::ADMIN, '', 3);
+        $type = new type_object(user_profile::ADMIN, user_profile::ADMIN, '', 3);
         $this->add($type);
     }
 

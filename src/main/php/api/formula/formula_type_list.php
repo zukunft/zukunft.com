@@ -32,9 +32,7 @@
 
 namespace api;
 
-use html\formula_value_list_dsp;
-
-class formula_type_list_api extends user_type_list_api
+class formula_type_list_api extends type_list_api
 {
 
 }

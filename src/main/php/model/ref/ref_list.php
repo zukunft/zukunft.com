@@ -32,8 +32,9 @@
 global $refs;
 
 use api\ref_api;
+use cfg\type_list;
 
-class ref_list extends user_type_list
+class ref_list extends type_list
 {
 
     private ?user $usr = null; // the user object of the person for whom the ref list is loaded, so to say the viewer

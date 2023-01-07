@@ -33,7 +33,9 @@
 
 global $view_component_link_types;
 
-class view_cmp_link_type_list extends user_type_list
+use cfg\type_list;
+
+class view_cmp_link_type_list extends type_list
 {
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled

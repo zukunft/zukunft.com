@@ -69,10 +69,12 @@ class phrase_unit_db_tests
 
         // test reading a phrase type via API that is not yet included in the preloaded phrase type
         // e.g. because it has been just added by the user to request e new phrase type
+        $test_name = 'load phrase type ' . phrase_type::NORMAL . ' by id';
+        global $phrase_types;
+        $phr_typ_id = $phrase_types->id(phrase_type::NORMAL);
         $phr_typ = new phrase_type(phrase_type::NORMAL);
-        // TODO finish and activate
-        //$phr_typ->load_by_id($phr->id(), phrase::class);
-        //$t->assert($test_name, $phr_typ->name(), triple_api::TN_READ);
+        $phr_typ->load_by_id($phr_typ_id);
+        $t->assert($test_name, $phr_typ->code_id(), phrase_type::NORMAL);
 
     }
 

@@ -31,7 +31,9 @@
 
 global $ref_types;
 
-class ref_type_list extends user_type_list
+use cfg\type_list;
+
+class ref_type_list extends type_list
 {
 
     /*

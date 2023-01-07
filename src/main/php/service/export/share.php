@@ -36,19 +36,17 @@ $share_types = array();
 class share_type_old {
 
   // database fields
-  public $id          = null; // the database id of the state type
-  public $name        = null; // the person who wants to see something
-  public $comment     = '';   // the source description that is shown as a mouseover explain to the user
-  public $code_id     = '';   // to trigger the code functions linked to this share type
+  public ?int $id             = null; // the database id of the state type
+  public ?string $name        = null; // the person who wants to see something
+  public ?string $comment     = '';   // the source description that is shown as a mouseover explain to the user
+  public ?string $code_id     = '';   // to trigger the code functions linked to this share type
   
   // in memory only fields
-  public $type_name    = '';   // 
+  public ?string $type_name    = '';   //
   
-  // true if the user is allow to see the value or formulas
-  function can_read() {
-    $result = '';
-    
-    return $result;
+  // true if the user is allowed to see the value or formulas
+  function can_read(): string {
+      return '';
   }
   
   // load the missing source parameters from the database

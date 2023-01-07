@@ -45,6 +45,7 @@ use api\source_api;
 use api\system_log_api;
 use api\word_api;
 use cfg\phrase_type;
+use cfg\type_object;
 use controller\controller;
 use html\html_base;
 
@@ -577,6 +578,9 @@ class test_base
         }
         if ($class == batch_job::class) {
             $class = 'batch';
+        }
+        if ($class == type_object::class) {
+            $class = 'type_object';
         }
         $api_obj = $usr_obj->api_obj();
         $actual = json_decode(json_encode($api_obj), true);

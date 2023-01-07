@@ -153,10 +153,10 @@ if ($session_usr->id > 0) {
                 $calc_lst = $calc_fv_lst->frm_upd_lst($frm, $back);
             }
 
-            log_debug("calculate queue is build (number of values to test: " . dsp_count($calc_lst->lst) . ")");
+            log_debug("calculate queue is build (number of values to test: " . dsp_count($calc_lst->lst()) . ")");
 
             // execute the queue
-            foreach ($calc_lst->lst as $r) {
+            foreach ($calc_lst->lst() as $r) {
                 log_debug('calculate "' . $r->frm->name . '" for ' . $r->phr_lst->name());
                 if ($phr_ids_txt == "" or $phr_ids == $r->phr_lst->ids) {
 
@@ -197,7 +197,7 @@ if ($session_usr->id > 0) {
 
                         // show the user the progress every two seconds
                         if ($last_msg_time + UI_MIN_RESPONSE_TIME < time()) {
-                            $calc_pct = ($calc_pos / sizeof($calc_lst->lst)) * 100;
+                            $calc_pct = ($calc_pos / sizeof($calc_lst->lst())) * 100;
                             if ($fv->is_updated) {
                                 echo "" . round($calc_pct, 2) . "% processed (calculate " . $r->frm->name_linked($back) . " for " . $r->phr_lst->name_linked() . " = " . $fv->display_linked($back) . ")<br>";
                             } else {

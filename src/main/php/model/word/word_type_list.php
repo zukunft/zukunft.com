@@ -32,8 +32,10 @@
 global $phrase_types;
 
 use cfg\phrase_type;
+use cfg\type_list;
+use cfg\type_object;
 
-class word_type_list extends user_type_list
+class word_type_list extends type_list
 {
 
     const TYPES = array(
@@ -72,7 +74,7 @@ class word_type_list extends user_type_list
         $i = 1;
         foreach (self::TYPES as $type_name)
         {
-            $type = new user_type($type_name, $type_name, '', $i);
+            $type = new type_object($type_name, $type_name, '', $i);
             $this->add($type);
             $i++;
         }

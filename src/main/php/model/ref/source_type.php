@@ -33,14 +33,14 @@
    
 */
 
-class source_type extends user_type
+use cfg\type_object;
+
+class source_type extends type_object
 {
     // list of the source types that have a coded functionality
     const XBRL = "xbrl";
     const CSV = "csv";
     const PDF = "pdf";
-
-    public int $id = 0;
 
     // the url that can be used to receive data if the external key is added
     // public ?string $url = null;

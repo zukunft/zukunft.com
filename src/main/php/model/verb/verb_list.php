@@ -31,9 +31,9 @@
 
 global $verbs;
 
-use api\user_type_list_api;
+use cfg\type_list;
 
-class verb_list extends user_type_list
+class verb_list extends type_list
 {
 
     private ?user $usr = null; // the user object of the person for whom the verb list is loaded, so to say the viewer

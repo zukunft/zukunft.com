@@ -32,11 +32,11 @@
 
 namespace api;
 
-use html\user_type_list_dsp;
+use html\_type_list_dsp;
 use verb;
 use view;
 
-class user_type_list_api extends list_api implements \JsonSerializable
+class type_list_api extends list_api implements \JsonSerializable
 {
 
     // memory vs speed optimize vars
@@ -74,7 +74,7 @@ class user_type_list_api extends list_api implements \JsonSerializable
                         $id = $obj->id;
                     }
                 }
-                $api_obj = new user_type_api(
+                $api_obj = new type_api(
                     $id,
                     $obj->code_id(),
                     $obj->name(),
@@ -104,9 +104,9 @@ class user_type_list_api extends list_api implements \JsonSerializable
      */
 
     /**
-     * @returns user_type_list_dsp the cast object with the HTML code generating functions
+     * @returns _type_list_dsp the cast object with the HTML code generating functions
      */
-    function dsp_obj(): user_type_list_dsp
+    function dsp_obj(): _type_list_dsp
     {
         // cast the single list objects
         $lst_dsp = array();
@@ -117,7 +117,7 @@ class user_type_list_api extends list_api implements \JsonSerializable
             }
         }
 
-        return new user_type_list_dsp($lst_dsp);
+        return new _type_list_dsp($lst_dsp);
     }
 
 
@@ -164,7 +164,7 @@ class user_type_list_api extends list_api implements \JsonSerializable
     {
         $result = false;
         if (count($this->lst) > 0) {
-            if ($this->lst[0]::class == user_type_api::class) {
+            if ($this->lst[0]::class == type_api::class) {
                 $result = true;
             }
         }
@@ -180,7 +180,7 @@ class user_type_list_api extends list_api implements \JsonSerializable
      * add a value to the list
      * @returns bool true if the value has been added
      */
-    function add(user_type_api $type): bool
+    function add(type_api $type): bool
     {
         $result = false;
         if ($type->id() == 0) {

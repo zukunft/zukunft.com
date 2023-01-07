@@ -105,6 +105,8 @@ class ref extends user_sandbox_link_with_type
     //                                       use the source to define an as good as possible import
     //                                       or at least a check if the reference is still valid
     public ?string $url;
+    public ?string $name = null;
+    public ?string $code_id = null;
     public ?string $description = null;
 
 
@@ -196,6 +198,14 @@ class ref extends user_sandbox_link_with_type
     public function set_id(?int $id): void
     {
         $this->id = $id;
+    }
+
+    /**
+     * @param int|null $id the database id of the verb
+     */
+    public function set_name(?string $name): void
+    {
+        $this->name = $name;
     }
 
     /**

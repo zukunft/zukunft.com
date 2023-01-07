@@ -31,6 +31,7 @@
 
 
 use api\system_log_list_api;
+use cfg\type_object;
 use html\system_log_list_dsp;
 
 class system_log_list extends base_list
@@ -143,7 +144,7 @@ class system_log_list extends base_list
             $db_con->set_usr($this->user()->id);
             $db_con->set_fields(system_log::FLD_NAMES);
             $db_con->set_join_fields(array(system_log::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
-            $db_con->set_join_fields(array(user_type::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
+            $db_con->set_join_fields(array(type_object::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
             $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), sql_db::TBL_USER);
             $db_con->set_join_fields(array(
                 user_sandbox::FLD_USER_NAME . ' AS ' . system_log::FLD_SOLVER_NAME),

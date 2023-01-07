@@ -34,9 +34,9 @@
 
 namespace html;
 
-use api\user_type_list_api;
+use api\type_list_api;
 
-class user_type_list_dsp extends user_type_list_api
+class _type_list_dsp extends type_list_api
 {
 
     function list(string $class, string $title = ''): string

@@ -31,7 +31,10 @@
 
 global $view_component_types;
 
-class view_cmp_type_list extends user_type_list
+use cfg\type_list;
+use cfg\type_object;
+
+class view_cmp_type_list extends type_list
 {
 
     /**
@@ -49,9 +52,9 @@ class view_cmp_type_list extends user_type_list
      */
     function load_dummy(): void {
         parent::load_dummy();
-        $type = new user_type(view_cmp_type::TEXT, view_cmp_type::TEXT, '', 2);
+        $type = new type_object(view_cmp_type::TEXT, view_cmp_type::TEXT, '', 2);
         $this->add($type);
-        $type = new user_type(view_cmp_type::PHRASE_NAME, view_cmp_type::PHRASE_NAME, '', 8);
+        $type = new type_object(view_cmp_type::PHRASE_NAME, view_cmp_type::PHRASE_NAME, '', 8);
         $this->add($type);
     }
 

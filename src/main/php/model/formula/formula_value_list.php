@@ -629,7 +629,7 @@ class formula_value_list
         //}
 
         //print_r($result);
-        log_debug(dsp_count($result->lst));
+        log_debug(dsp_count($result->lst()));
         return $result;
     }
 
@@ -748,7 +748,7 @@ class formula_value_list
         }
 
         //flush();
-        log_debug(dsp_count($result->lst));
+        log_debug(dsp_count($result->lst()));
         return $result;
     }
 

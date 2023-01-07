@@ -31,7 +31,10 @@
 
 global $job_types;
 
-class job_type_list extends user_type_list
+use cfg\type_list;
+use cfg\type_object;
+
+class job_type_list extends type_list
 {
     // list of the predefined system batch jobs
     const VALUE_UPDATE = "value_update";
@@ -62,9 +65,9 @@ class job_type_list extends user_type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new user_type(job_type_list::VALUE_UPDATE, job_type_list::VALUE_UPDATE, '', 2);
+        $type = new type_object(job_type_list::VALUE_UPDATE, job_type_list::VALUE_UPDATE, '', 2);
         $this->add($type);
-        $type = new user_type(job_type_list::BASE_IMPORT, job_type_list::BASE_IMPORT, '', 11);
+        $type = new type_object(job_type_list::BASE_IMPORT, job_type_list::BASE_IMPORT, '', 11);
         $this->add($type);
     }
 

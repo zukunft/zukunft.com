@@ -31,6 +31,8 @@
 
 */
 
+use cfg\type_object;
+
 class db_cl
 {
     // list of all user types that are used
@@ -567,9 +569,9 @@ function cl_name(string $type, int $id): string
  *
  * @param string $type e.g. phrase_type or formulas_type to select the list of unique code ids
  * @param string $code_id the code id that must be unique within the given type
- * @return user_type the loaded type object
+ * @return type_object the loaded type object
  */
-function get_type(string $type, string $code_id): user_type
+function get_type(string $type, string $code_id): type_object
 {
     $result = null;
     $db_code_link = new db_cl();

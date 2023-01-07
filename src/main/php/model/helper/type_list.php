@@ -30,11 +30,24 @@
   
 */
 
-use api\user_type_list_api;
-use html\user_type_list_dsp;
+namespace cfg;
 
-class user_type_list
+use api\type_list_api;
+use db_cl;
+use html\_type_list_dsp;
+use sql_db;
+use sql_par;
+use verb;
+
+class type_list
 {
+
+    /*
+     * database link
+     */
+
+    // database and export JSON object field names
+    const FLD_NAME = 'sys_log_function_name';
 
     // error return codes
     const CODE_ID_NOT_FOUND = -1;
@@ -42,6 +55,11 @@ class user_type_list
     // persevered type name and code id for unit and integration tests
     const TEST_NAME = 'System Test Type Name';
     const TEST_TYPE = 'System Test Type Code ID';
+
+
+    /*
+     * object vars
+     */
 
     public array $lst = [];  // a list of type objects
     public array $hash = []; // hash list with the code id for fast selection
@@ -52,26 +70,26 @@ class user_type_list
      */
 
     /**
-     * @return user_type_list_api the object type list frontend api object
+     * @return type_list_api the object type list frontend api object
      */
     function api_obj(): object
     {
-        return new user_type_list_api($this->lst);
+        return new type_list_api($this->lst);
     }
 
     /**
-     * @return user_type_list_dsp the word frontend api object
+     * @return _type_list_dsp the word frontend api object
      */
     function dsp_obj(): object
     {
-        return new user_type_list_dsp($this->lst);
+        return new _type_list_dsp($this->lst);
     }
 
     /*
      * interface get and set functions
      */
 
-    function add(user_type $item): void
+    function add(type_object $item): void
     {
         $this->lst[$item->id] = $item;
         $this->hash[$item->code_id] = $item->id;
@@ -84,7 +102,7 @@ class user_type_list
      */
     function add_verb(verb $vrb): void
     {
-        $type_obj = new user_type($vrb->code_id, $vrb->name(), '', $vrb->id());
+        $type_obj = new type_object($vrb->code_id, $vrb->name(), '', $vrb->id());
         $this->add($type_obj);
     }
 
@@ -159,16 +177,16 @@ class user_type_list
                 $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
                 $type_name = '';
                 if ($db_type == db_cl::LOG_ACTION) {
-                    $type_name = strval($db_entry['change_action_name']);
+                    $type_name = strval($db_entry[type_object::FLD_ACTION]);
                 } elseif ($db_type == db_cl::LOG_TABLE) {
-                    $type_name = strval($db_entry['change_table_name']);
+                    $type_name = strval($db_entry[type_object::FLD_TABLE]);
                 } elseif ($db_type == sql_db::VT_TABLE_FIELD) {
-                    $type_name = strval($db_entry['change_table_field_name']);
+                    $type_name = strval($db_entry[type_object::FLD_FIELD]);
                 } else {
                     $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
                 }
                 $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
-                $type_obj = new user_type($type_code_id, $type_name, $type_comment, $type_id);
+                $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);
                 $this->add($type_obj);
             }
         }
@@ -254,9 +272,9 @@ class user_type_list
     /**
      * pick a type from the preloaded object list
      * @param int $id the database id of the expected type
-     * @return user_type|null the type object
+     * @return type_object|null the type object
      */
-    function get_by_id(int $id): ?user_type
+    function get_by_id(int $id): ?type_object
     {
         $result = null;
         if ($id > 0) {
@@ -274,7 +292,7 @@ class user_type_list
     /**
      * TODO to rename to get and rename get to get_by_id
      */
-    function get_by_code_id(string $code_id): user_type
+    function get_by_code_id(string $code_id): type_object
     {
         return $this->get_by_id($this->id($code_id));
     }
@@ -343,7 +361,7 @@ class user_type_list
     {
         $this->lst = array();
         $this->hash = array();
-        $type = new user_type(user_type_list::TEST_TYPE, user_type_list::TEST_NAME, '', 1);
+        $type = new type_object(type_list::TEST_TYPE, type_list::TEST_NAME, '', 1);
         $this->add($type);
     }
 

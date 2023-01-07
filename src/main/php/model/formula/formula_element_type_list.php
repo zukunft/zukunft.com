@@ -31,7 +31,10 @@
 
 global $formula_element_types;
 
-class formula_element_type_list extends user_type_list
+use cfg\type_list;
+use cfg\type_object;
+
+class formula_element_type_list extends type_list
 {
     // list of the formula element types that have a coded functionality
     const WORD_SELECTOR = "word_selector";
@@ -52,7 +55,7 @@ class formula_element_type_list extends user_type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new user_type(
+        $type = new type_object(
             formula_element_type_list::WORD_SELECTOR,
             formula_element_type_list::WORD_SELECTOR,
             '',

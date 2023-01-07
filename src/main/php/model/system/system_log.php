@@ -31,6 +31,8 @@
 
 
 use api\system_log_api;
+use cfg\type_list;
+use cfg\type_object;
 
 class system_log extends db_object
 {
@@ -111,7 +113,7 @@ class system_log extends db_object
             $this->log_text = $db_row[self::FLD_TEXT];
             $this->log_trace = $db_row[self::FLD_TRACE];
             $this->status_id = $db_row[self::FLD_STATUS];
-            $this->status_name = $db_row[user_type::FLD_NAME];
+            $this->status_name = $db_row[type_object::FLD_NAME];
             return true;
         } else {
             return false;
@@ -183,7 +185,7 @@ class system_log extends db_object
         $db_con->set_name($qp->name);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_join_fields(array(self::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
-        $db_con->set_join_fields(array(user_type::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
+        $db_con->set_join_fields(array(type_object::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
         $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), sql_db::TBL_USER);
         $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), sql_db::TBL_USER, self::FLD_SOLVER);
 

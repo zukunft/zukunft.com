@@ -164,6 +164,80 @@ class string_unit_tests
   ],
   "keep non empty field": "with value"
 }';
+        $json_needle = '{
+  "text field": "text value",
+  "number field": 2,
+  "array": [
+    {
+      "id": 1,
+      "text field": "text value"
+    }
+  ],
+  "footer field": "footer value"
+}';
+        $json_needle_without_array = '{
+  "text field": "text value",
+  "number field": 2,
+  "footer field": "footer value"
+}';
+        $json_haystack = '{
+  "text field": "text value",
+  "number field": 2,
+  "array": [
+    {
+      "id": 0,
+      "text field": "additional ignored text value"
+    },
+    {
+      "id": 1,
+      "text field": "text value"
+    },
+    {
+      "id": 2,
+      "text field": "additional ignored text value"
+    }
+  ],
+  "footer field": "footer value"
+}';
+        $json_haystack_with_diff = '{
+  "text field": "text value",
+  "number field": 2,
+  "array": [
+    {
+      "id": 0,
+      "text field": "additional ignored text value"
+    },
+    {
+      "id": 1,
+      "text field": "diff text value"
+    },
+    {
+      "id": 2,
+      "text field": "additional ignored text value"
+    }
+  ],
+  "footer field": "footer value"
+}';
+        $json_haystack_without_match = '{
+  "text field": "text value",
+  "number field": 2,
+  "array": [
+    {
+      "id": 0,
+      "text field": "additional ignored text value"
+    },
+    {
+      "id": 2,
+      "text field": "additional ignored text value"
+    }
+  ],
+  "footer field": "footer value"
+}';
+        $json_haystack_without_array = '{
+  "text field": "text value",
+  "number field": 2,
+  "footer field": "footer value"
+}';
         $json_array = json_decode($json_text, true);
         $json_clean = json_clean($json_array);
         $result = $json_clean == json_decode($json_target, true);
@@ -182,6 +256,31 @@ class string_unit_tests
         $t->dsp(", count_recursive - count level 0", 8, $result);
         $result = count_recursive($json_array, 20);
         $t->dsp(", count_recursive - count level 0", 8, $result);
+
+        // recursive diff
+        $result = json_encode(array_recursive_diff(
+            json_decode($json_needle, true),
+            json_decode($json_haystack, true)));
+        $t->dsp(", array_recursive_diff - contains", '[]', $result);
+        $result = json_encode(array_recursive_diff(
+            json_decode($json_needle_without_array, true),
+            json_decode($json_haystack, true)));
+        $t->dsp(", array_recursive_diff - contains without array", '[]', $result);
+        $result = json_encode(array_recursive_diff(
+            json_decode($json_needle, true),
+            json_decode($json_haystack_with_diff, true)));
+        $expected = '{"array":{"text field":"text value"}}';
+        $t->dsp(", array_recursive_diff - diff expected", $expected, $result);
+        $result = json_encode(array_recursive_diff(
+            json_decode($json_needle, true),
+            json_decode($json_haystack_without_match, true)));
+        $expected = '{"array":{"id":1,"text field":"text value","0":{"id":1,"text field":"text value"}}}';
+        $t->dsp(", array_recursive_diff - without match", $expected, $result);
+        $result = json_encode(array_recursive_diff(
+            json_decode($json_needle, true),
+            json_decode($json_haystack_without_array, true)));
+        $expected = '{"array":[{"id":1,"text field":"text value"}]}';
+        $t->dsp(", array_recursive_diff - without array", $expected, $result);
 
 
         $t->subheader('user message tests');
