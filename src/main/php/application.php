@@ -29,6 +29,7 @@
 
 */
 
+const POD_NAME = "zukunft.com"; // the default pod name if not defined
 const PRG_VERSION = "0.0.3"; // to detect the correct update script and to mark the data export
 const NEXT_VERSION = "0.0.4"; // to prevent importing incompatible data
 const FIRST_VERSION = "0.0.2"; // the last program version which has not a basic upgrade process

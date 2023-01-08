@@ -47,6 +47,10 @@ class source_api extends user_sandbox_named_with_type_api
     const TN_ADD = 'System Test Source';
     const TN_RENAMED = 'System Test Source Renamed';
 
+    // must be the same as in /resource/api/source/source_put.json
+    const TN_ADD_API = 'System Test Source API added';
+    const TEST_DESCRIPTION_API = 'System Test Source Description API';
+
     // parameters used for unit and integration tests
     const TEST_URL = 'https://www.zukunft.com/';
     const TEST_URL_CHANGED = 'https://api.zukunft.com/';
@@ -57,6 +61,7 @@ class source_api extends user_sandbox_named_with_type_api
     const RESERVED_SOURCES = array(
         self::TN_READ, // the source for all data imported from wikidata that does not yet have a source defined in wikidata
         self::TN_ADD,
+        self::TN_ADD_API,
         self::TN_RENAMED
     );
 

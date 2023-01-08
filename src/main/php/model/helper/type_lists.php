@@ -40,6 +40,7 @@ class type_lists
      */
     public function api_obj(): type_lists_api
     {
+        global $db_con;
         global $user_profiles;
         global $phrase_types;
         global $formula_types;
@@ -63,7 +64,7 @@ class type_lists
         global $change_log_tables;
         global $change_log_fields;
 
-        $lst = new type_lists_api();
+        $lst = new type_lists_api($db_con);
         $lst->add($user_profiles->api_obj(), 'user_profiles');
         $lst->add($phrase_types->api_obj(), 'phrase_types');
         $lst->add($formula_types->api_obj(), 'formula_types');

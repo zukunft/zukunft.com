@@ -40,14 +40,12 @@ include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 // open database
 $db_con = prg_start("api/log", "", false);
 
-// get the parameters
-
-$msg = '';
-$result = new system_log_list_api(); // reset the html code var
 
 // load the session user parameters
 $usr = new user;
-$msg .= $usr->get();
+$msg = $usr->get();
+
+$result = new system_log_list_api($db_con, $usr);
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {

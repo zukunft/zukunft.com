@@ -467,7 +467,9 @@ class sql_db
                 $result = true;
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $result = true;
+            if (isset($this->mysql)) {
+                $result = true;
+            }
         } else {
             log_err('Database type ' . $this->db_type . ' not yet implemented');
         }

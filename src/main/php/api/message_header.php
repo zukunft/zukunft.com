@@ -2,8 +2,8 @@
 
 /*
 
-    api_message_header.php - the JSON header object for the frontend API
-    -----------------------
+    api/message_header.php - the JSON header object for the frontend API
+    ----------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -38,27 +38,31 @@ class api_message
     const TYPE_LISTS = 'type_lists';
 
     // field names used for JSON creation
+    public string $pod;       // the pod that has created the message
     public string $type;      // defines the message formal (just used for testing and easy debugging)
     public int $user_id;      // to double-check to the session user
     public string $user;      // for fast debugging
     public string $version;   // to prevent communication error due to incompatible program versions
     public string $timestamp; // for automatic delay problem detection
+    public object $body;      // the json payload of the message
 
-    function __construct()
+    function __construct(sql_db $db_con, string $class)
     {
         global $usr;
-        $this->type = '';
-        if ($usr != null) {
-            $this->user_id = $usr->id;
-            $this->user = $usr->name;
+
+        if ($db_con->connected()) {
+            $this->pod = cfg_get(config::SITE_NAME, $db_con);
+        } else {
+            $this->pod = POD_NAME;
         }
+        $this->type = $class;
+        $this->set_user($usr);
         $this->version = PRG_VERSION;
-        // TODO make testing with timestamp useful
-        //$this->timestamp = (new DateTime())->format('Y-m-d H:i:s');
+        $this->timestamp = (new DateTime())->format(DateTimeInterface::ATOM);
     }
 
     /**
-     * @return false|string the frontend API JSON string
+     * @return string the frontend API JSON string
      */
     function get_json(): string
     {
@@ -80,6 +84,21 @@ class api_message
     {
         $html = new html_base();
         return $html->footer();
+    }
+
+    public function add_body(object $api_obj): void
+    {
+        $this->body = $api_obj;
+    }
+
+    public function set_user(?user $usr): void
+    {
+        if ($usr != null) {
+            if ($usr->id > 0) {
+                $this->user_id = $usr->id;
+                $this->user = $usr->name;
+            }
+        }
     }
 
 }

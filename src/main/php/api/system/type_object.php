@@ -43,6 +43,13 @@ namespace api;
 class type_api
 {
 
+    /*
+     * const for the api
+     */
+
+    const API_NAME = 'type_object';
+
+
     // the standard fields of a type
     public int $id;                // the database id that is added in th api object
     public string $code_id;        // this id text is unique for all code links and is used for system im- and export

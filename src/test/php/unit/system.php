@@ -334,6 +334,7 @@ class system_unit_tests
         $log_lst_dsp = $log_lst->dsp_obj();
         $created = $log_lst_dsp->get_json();
         $expected = file_get_contents(PATH_TEST_FILES . 'api/system_log_list/system_log_list.json');
+        $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
         $t->assert('system_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
         $created = $log_lst_dsp->get_html();

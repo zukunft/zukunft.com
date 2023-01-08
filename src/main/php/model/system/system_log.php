@@ -46,6 +46,7 @@ class system_log extends db_object
     const FLD_SOLVER = 'solver_id';
     const FLD_TIME = 'sys_log_time';
     const FLD_TIME_JSON = 'time';
+    const FLD_TIMESTAMP_JSON = 'timestamp';
     const FLD_TYPE = 'sys_log_type_id';
     const FLD_FUNCTION = 'sys_log_function_id';
     const FLD_FUNCTION_NAME = 'sys_log_function_name';

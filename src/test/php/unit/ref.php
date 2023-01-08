@@ -80,7 +80,7 @@ class ref_unit_tests
 
         $t->subheader('API unit tests');
         $src = $t->dummy_source();
-        $t->assert_api($src);
+        $t->assert_api_msg($db_con, $src);
 
         $t->subheader('Im- and Export tests');
         $t->assert_json(new source($usr), $json_file);

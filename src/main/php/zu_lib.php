@@ -128,6 +128,7 @@
     TODO auto create two triple for an OR condition in a value selection; this implies that to select a list of values only AND needs to be used and brackets are also not needed
     TODO add a phrase group to sources and allow to import it with "keys:"
     TODO allow to assign more phrases to a source for better suggestion of sources
+    TODO add a request time to each frontend request to check the automatically the response times
 
 
     TODO create a table startup page with a
@@ -393,6 +394,8 @@ include_once $path_php . 'api/user/user.php';
 include_once $path_php . 'api/log/change_log.php';
 include_once $path_php . 'api/log/change_log_named.php';
 include_once $path_php . 'api/log/change_log_list.php';
+include_once $path_php . 'api/language/language.php';
+include_once $path_php . 'api/language/language_form.php';
 // model frontend API classes
 include_once $path_php . 'api/word/word.php';
 include_once $path_php . 'api/word/word_list.php';

@@ -36,6 +36,13 @@ class view_cmp_api extends user_sandbox_named_with_type_api
 {
 
     /*
+     * const for the api
+     */
+
+    const API_NAME = 'component';
+
+
+    /*
      * const for system testing
      */
 

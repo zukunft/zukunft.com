@@ -35,4 +35,10 @@ namespace api;
 class language_api extends type_object_api
 {
 
+    /*
+     * const for the api
+     */
+
+    const API_NAME = 'language';
+
 }

@@ -41,6 +41,7 @@ class controller
 {
 
     // the parameter names used in the url
+    CONST URL_API_PATH = 'api/';
     CONST URL_VAR_DEBUG = 'debug';
     CONST URL_VAR_WORD = 'words';
     CONST URL_VAR_ID = 'id';
@@ -65,6 +66,7 @@ class controller
         // required headers
         header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/json; charset=UTF-8");
+        header("Access-Control-Allow-Methods: GET");
 
         // return the api json or the error message
         if ($msg == '') {
@@ -85,6 +87,79 @@ class controller
                 array("message" => $msg)
             );
         }
+    }
+
+    /**
+     * response to post, get, put and delete requests
+     *
+     * @param string $api_obj the object as a json string that should be returned
+     * @param string $msg the message as a json string that should be returned
+     * @return void
+     */
+    private function curl_response(string $api_obj, string $msg): void
+    {
+        // required headers
+        header("Access-Control-Allow-Origin: *");
+        header("Content-Type: application/json; charset=UTF-8");
+        header("Access-Control-Allow-Methods: POST,GET,PUT,DELETE");
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        $request = explode("/", substr(@$_SERVER['PATH_INFO'], 1));
+
+        switch ($method) {
+            case 'PUT':
+                // set response code - 200 OK
+                http_response_code(200);
+
+                echo json_encode(
+                    array("result" => $this->put($request))
+                );
+                break;
+            case 'GET':
+                // return the api json or the error message
+                if ($msg == '') {
+
+                    // set response code - 200 OK
+                    http_response_code(200);
+
+                    // return e.g. the word object
+                    echo $api_obj;
+
+                } else {
+
+                    // set response code - 400 Bad Request
+                    http_response_code(400);
+
+                    // tell the user no products found
+                    echo json_encode(
+                        array("message" => $msg)
+                    );
+                }
+                break;
+            case 'POST':
+                // set response code - 200 OK
+                http_response_code(200);
+                echo json_encode(
+                    array("result" => $this->post($request))
+                );
+                break;
+            case 'DELETE':
+                // set response code - 200 OK
+                http_response_code(200);
+                echo json_encode(
+                    array("result" => $this->delete($request))
+                );
+                break;
+            default:
+                // set response code - 400 Bad Request
+                http_response_code(400);
+                break;
+        }
+    }
+
+    public function not_permitted(): void
+    {
+        http_response_code(401);
     }
 
     /**
@@ -149,4 +224,39 @@ class controller
             $this->get_response('', $msg);
         }
     }
+
+    /**
+     * encode a user sandbox object for the frontend api
+     * and response to curl requests
+     *
+     * @param user_sandbox_api $api_msg the object that should be encoded
+     * @param string $msg if filled the message that should be shown to the user instead of the object
+     * @return void
+     */
+    function curl(api_message $api_msg, string $msg): void
+    {
+        // return the api json or the error message
+        if ($msg == '') {
+            $this->curl_response(json_encode($api_msg), $msg);
+        } else {
+            // tell the user e.g. that no products found
+            $this->curl_response('', $msg);
+        }
+    }
+
+    function put(array $request): string
+    {
+        return 'put request ' . dsp_array($request) . ' done';
+    }
+
+    function post(array $request): string
+    {
+        return 'post';
+    }
+
+    function delete(array $request): string
+    {
+        return 'delete';
+    }
+
 }

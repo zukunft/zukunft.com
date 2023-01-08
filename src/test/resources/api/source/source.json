@@ -1,7 +1,14 @@
 {
-  "id": 1,
-  "name": "The International System of Units",
-  "description": "Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards",
-  "url": "https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf",
-  "type_id": 4
+  "pod": "zukunft.com",
+  "type": "source",
+  "user_id": 4,
+  "user": "zukunft.com system test",
+  "version": "0.0.3",
+  "body": {
+    "id": 1,
+    "name": "The International System of Units",
+    "description": "Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards",
+    "type_id": 4,
+    "url": "https:\/\/www.bipm.org\/documents\/20126\/41483022\/SI-Brochure-9.pdf"
+  }
 }

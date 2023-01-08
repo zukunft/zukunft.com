@@ -29,6 +29,7 @@
   
 */
 
+use api\user_sandbox_api;
 use controller\controller;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
@@ -45,7 +46,8 @@ $src_name = $_GET['name'] ?? '';
 $src_code_id = $_GET['code_id'] ?? '';
 
 $msg = '';
-$result = ''; // reset the html code var
+$ctrl = new controller();
+$result = new api_message($db_con, 'source'); // create the message header
 
 // load the session user parameters
 $usr = new user;
@@ -54,25 +56,27 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
 
+    $result->set_user($usr);
     if ($src_id > 0) {
         $src = new source($usr);
         $src->load_by_id($src_id);
-        $result = $src->api_obj();
+        $result->add_body($src->api_obj());
     } elseif ($src_name != '') {
         $src = new source($usr);
         $src->load_by_name($src_name);
-        $result = $src->api_obj();
+        $result->add_body($src->api_obj());
     } elseif ($src_code_id != '') {
         $src = new source($usr);
         $src->load_by_code_id($src_code_id);
-        $result = $src->api_obj();
+        $result->add_body($src->api_obj());
     } else {
         $msg = 'Cannot load source because id, name and code id is missing';
     }
+
+    $ctrl->curl($result, $msg);
+
+} else {
+    $ctrl->not_permitted($result, $msg);
 }
-
-$ctrl = new controller();
-$ctrl->get($result, $msg);
-
 
 prg_end_api($db_con);

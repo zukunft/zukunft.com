@@ -38,6 +38,13 @@ use user;
 class batch_job_api extends db_object
 {
 
+    /*
+     * const for the api
+     */
+
+    const API_NAME = 'batch';
+
+
     // field names used for JSON creation
     public ?int $id;
     public ?DateTime $request_time;

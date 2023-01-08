@@ -36,6 +36,13 @@ class ref_api extends user_sandbox_api
 {
 
     /*
+     * const for the api
+     */
+
+    const API_NAME = 'reference';
+
+
+    /*
      * const for system testing
      */
 

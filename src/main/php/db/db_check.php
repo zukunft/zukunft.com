@@ -40,6 +40,8 @@ function db_check($db_con): string
     $result = ''; // the message that should be shown to the user immediately
     $do_consistency_check = false;
 
+    cfg_set(config::SITE_NAME, POD_NAME, $db_con);
+
     // get the db version and start the upgrade process if needed
     $db_version = cfg_get(config::VERSION_DB, $db_con);
     if ($db_version != PRG_VERSION) {

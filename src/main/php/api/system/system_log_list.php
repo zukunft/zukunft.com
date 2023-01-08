@@ -32,6 +32,7 @@
 namespace api;
 
 use api_message;
+use sql_db;
 use user;
 
 class system_log_list_api extends api_message
@@ -40,9 +41,9 @@ class system_log_list_api extends api_message
     // field names used for JSON creation
     public ?array $system_log = null;      // a list of system error objects
 
-    function __construct(?user $usr = null)
+    function __construct(sql_db $db_con, ?user $usr = null)
     {
-        parent::__construct();
+        parent::__construct($db_con, 'system_log');
         $this->type = api_message::SYS_LOG;
         $this->system_log = null;
         if ($usr != null) {

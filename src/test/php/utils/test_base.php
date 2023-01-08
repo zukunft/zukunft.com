@@ -41,8 +41,15 @@
 // TODO add checks that all id (name or link) changing return the correct error message if the new id already exists
 // TODO build a cascading test classes and split the classes to sections less than 1000 lines of code
 
+use api\batch_job_api;
+use api\language_api;
+use api\language_form_api;
+use api\phrase_type_api;
+use api\ref_api;
 use api\source_api;
 use api\system_log_api;
+use api\type_api;
+use api\view_cmp_api;
 use api\word_api;
 use cfg\language;
 use cfg\language_form;
@@ -405,6 +412,7 @@ class test_base
         $this->assert_api_get(view::class);
         $this->assert_api_get(view_cmp::class);
         $this->assert_api_get(source::class);
+        //$this->assert_api_put(source::class);
         $this->assert_api_get(ref::class);
         $this->assert_api_get(batch_job::class);
         $this->assert_api_get(phrase_type::class);
@@ -576,20 +584,41 @@ class test_base
     function assert_api(object $usr_obj, string $filename = '', bool $contains = false): bool
     {
         $class = $usr_obj::class;
-        if ($class == view_cmp::class) {
-            $class = 'component';
-        }
-        if ($class == ref::class) {
-            $class = 'reference';
-        }
-        if ($class == batch_job::class) {
-            $class = 'batch';
-        }
-        if ($class == type_object::class) {
-            $class = 'type_object';
-        }
+        $class = $this->class_to_api($class);
         $api_obj = $usr_obj->api_obj();
         $actual = json_decode(json_encode($api_obj), true);
+        if ($filename != '') {
+            $expected_file = $this->api_json_expected($class, $filename);
+        } else {
+            $expected_file = $this->api_json_expected($class);
+        }
+        $expected = json_decode($expected_file, true);
+        $actual = $this->json_remove_volatile($actual);
+        // TODO remove, for faster debugging only
+        $json_actual = json_encode($actual);
+        $json_expected = json_encode($expected);
+        if ($contains) {
+            return $this->assert($usr_obj::class . ' API object', json_contains($expected, $actual), true);
+        } else {
+            return $this->assert($usr_obj::class . ' API object', json_is_similar($expected, $actual), true);
+        }
+    }
+
+    /**
+     * check the api message without using the real curl api
+     * @param object $usr_obj the user sandbox object that should be tested
+     * @param string $filename to overwrite the filename of the expected json message based on the usr_obj
+     * @param bool $contains set to true if the actual message is expected to contain more than the expected message
+     * @return bool true if the check is fine
+     */
+    function assert_api_msg(sql_db $db_con, object $usr_obj, string $filename = '', bool $contains = false): bool
+    {
+        $class = $usr_obj::class;
+        $class = $this->class_to_api($class);
+        $api_obj = $usr_obj->api_obj();
+        $api_msg = new api_message($db_con, $class);
+        $api_msg->add_body($api_obj);
+        $actual = json_decode(json_encode($api_msg), true);
         if ($filename != '') {
             $expected_file = $this->api_json_expected($class, $filename);
         } else {
@@ -618,28 +647,8 @@ class test_base
     function assert_api_get(string $class, int $id = 1, bool $contains = false): bool
     {
         // naming exception (to be removed?)
-        if ($class == view_cmp::class) {
-            $class = 'component';
-        }
-        if ($class == ref::class) {
-            $class = 'reference';
-        }
-        if ($class == batch_job::class) {
-            $class = 'batch';
-        }
-        $url = HOST_TESTING . '/api/' . $class;
-        if ($class == phrase_type::class) {
-            $class = 'phrase_type';
-            $url = HOST_TESTING . '/api/phraseType';
-        }
-        if ($class == language::class) {
-            $class = 'language';
-            $url = HOST_TESTING . '/api/language';
-        }
-        if ($class == language_form::class) {
-            $class = 'language_form';
-            $url = HOST_TESTING . '/api/languageForm';
-        }
+        $class = $this->class_to_api($class);
+        $url = $this->class_to_url($class);
         $data = array("id" => $id);
         // TODO check why for formula a double call is needed
         $actual = json_decode($this->api_call("GET", $url, $data), true);
@@ -657,6 +666,78 @@ class test_base
         } else {
             return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
         }
+    }
+
+    /**
+     * check if the REST PUT call returns the expected result
+     * for testing the local deployments needs to be updated using an external script
+     *
+     * @param string $class the class name of the object to test
+     * @param array $data the database id of the db row that should be used for testing
+     * @return bool true if the json has no relevant differences
+     */
+    function assert_api_put(string $class, array $data = []): bool
+    {
+        // naming exception (to be removed?)
+        $class = $this->class_to_api($class);
+        $url = $this->class_to_url($class);
+        // get default data
+        if ($data == array()) {
+            $data = $this->file('api/' . $class . '/' . $class . '_put.json');
+        }
+        $actual = json_decode($this->api_call("PUT", $url, $data), true);
+        $expected = json_decode($this->api_json_expected($class), true);
+
+        return $this->assert($class . ' API PUT', json_is_similar($actual, $expected), true);
+    }
+
+    /**
+     * adjust the class name to the api name if they does not (yet) match
+     * @param string $class the class name that should be converted
+     * @return string the api name
+     */
+    private function class_to_api(string $class): string
+    {
+        $result = $class;
+        if ($class == view_cmp::class) {
+            $result = view_cmp_api::API_NAME;
+        }
+        if ($class == ref::class) {
+            $result = ref_api::API_NAME;
+        }
+        if ($class == batch_job::class) {
+            $result = batch_job_api::API_NAME;
+        }
+        if ($class == type_object::class) {
+            $result = type_api::API_NAME;
+        }
+        if ($class == phrase_type::class) {
+            $result = phrase_type_api::API_NAME;
+        }
+        if ($class == language::class) {
+            $result = language_api::API_NAME;
+        }
+        if ($class == language_form::class) {
+            $result = language_form_api::API_NAME;
+        }
+        return $result;
+    }
+
+    /**
+     * create the url based on the class name
+     * @param string $class the class name that should be used
+     * @return string the api url
+     */
+    private function class_to_url(string $class): string
+    {
+        $url = HOST_TESTING . '/api/' . $class;
+        if ($class == phrase_type_api::API_NAME) {
+            $url = HOST_TESTING . '/api/' . phrase_type_api::URL_NAME;
+        }
+        if ($class == language_form_api::API_NAME) {
+            $url = HOST_TESTING . '/api/' . language_form_api::URL_NAME;
+        }
+        return $url;
     }
 
     /**
@@ -693,6 +774,15 @@ class test_base
         $data = array("name" => $name);
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         $expected = json_decode($this->api_json_expected($class), true);
+
+        // remove the change time
+        if ($actual != null) {
+            $actual = $this->json_remove_volatile($actual);
+        }
+
+        // TODO remove, for faster debugging only
+        $json_actual = json_encode($actual);
+        $json_expected = json_encode($expected);
         return $this->assert($class . ' API GET', json_is_similar($actual, $expected), true);
     }
 
@@ -706,9 +796,9 @@ class test_base
      */
     function assert_api_get_list(
         string $class,
-        array $ids = [1, 2],
+        array  $ids = [1, 2],
         string $filename = '',
-        bool $contains = false): bool
+        bool   $contains = false): bool
     {
         $url = HOST_TESTING . '/api/' . camelize($class);
         $data = array("ids" => implode(",", $ids));
@@ -769,7 +859,7 @@ class test_base
      * @param array $json a json array with volatile fields
      * @return array a json array without volatile fields
      */
-    private function json_remove_volatile(array $json): array
+    public function json_remove_volatile(array $json): array
     {
         $json = $this->json_remove_volatile_item($json, $json, null);
         $i = 0;
@@ -793,6 +883,7 @@ class test_base
     {
         $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, change_log::FLD_CHANGE_TIME);
         $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, system_log::FLD_TIME_JSON);
+        $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, system_log::FLD_TIMESTAMP_JSON);
         $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, batch_job::FLD_TIME_REQUEST);
         $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, batch_job::FLD_TIME_START);
         $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, batch_job::FLD_TIME_END);
@@ -800,14 +891,21 @@ class test_base
             $actual_user = $item[export::USER];
             if ($actual_user == '::1') {
                 if ($i === null) {
-                    $json[export::USER] = 'zukunft.com system';
+                    $json[export::USER] = 'zukunft.com system test';
                 } else {
                     $json[$i][export::USER] = 'zukunft.com system test';
                 }
             }
             if ($actual_user == '127.0.0.1') {
                 if ($i === null) {
-                    $json[export::USER] = 'zukunft.com system';
+                    $json[export::USER] = 'zukunft.com system test';
+                } else {
+                    $json[$i][export::USER] = 'zukunft.com system test';
+                }
+            }
+            if ($actual_user == 'zukunft.com system') {
+                if ($i === null) {
+                    $json[export::USER] = 'zukunft.com system test';
                 } else {
                     $json[$i][export::USER] = 'zukunft.com system test';
                 }
@@ -821,7 +919,12 @@ class test_base
             }
         }
         if (array_key_exists(export::USER_ID, $item)) {
-            if ($i !== null) {
+            if ($i === null) {
+                $actual_user_id = $item[export::USER_ID];
+                if ($actual_user_id > 0) {
+                    $json[export::USER_ID] = 4;
+                }
+            } else {
                 $actual_user_id = $item[export::USER_ID];
                 if ($actual_user_id > 0) {
                     $json[$i][export::USER_ID] = 4;

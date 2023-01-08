@@ -32,6 +32,7 @@
 namespace api;
 
 use api_message;
+use sql_db;
 
 class type_lists_api extends api_message implements \JsonSerializable
 {
@@ -39,9 +40,9 @@ class type_lists_api extends api_message implements \JsonSerializable
     // parent object for all preloaded types
     public ?array $type_lists = null;      // a list of system error objects
 
-    function __construct()
+    function __construct(sql_db $db_con)
     {
-        parent::__construct();
+        parent::__construct($db_con, 'type_lists');
         $this->type = api_message::TYPE_LISTS;
     }
 

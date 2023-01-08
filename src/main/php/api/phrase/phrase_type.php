@@ -33,5 +33,11 @@ namespace api;
 
 class phrase_type_api extends type_object_api
 {
+    /*
+     * const for the api
+     */
+
+    const API_NAME = 'phrase_type';
+    const URL_NAME = 'phraseType';
 
 }

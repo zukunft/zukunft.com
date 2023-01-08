@@ -35,4 +35,11 @@ namespace api;
 class language_form_api extends type_object_api
 {
 
+    /*
+     * const for the api
+     */
+
+    const API_NAME = 'language_form';
+    const URL_NAME = 'languageForm';
+
 }
