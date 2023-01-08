@@ -10,7 +10,7 @@ info:
     TODO: add the missing types
     TODO: add the missing lists e.g. PhraseList
     TODO: add list saving functions
-  version: "0.0.2.4"
+  version: "0.0.2.5"
   contact:
     name: Timon Zielonka
     email: timon@zukunft.com
@@ -57,6 +57,8 @@ tags:
     description: to trigger and monitor batch jobs e.g. calculations, setup or test tasks
   - name: user
     description: maintain the user setup 
+  - name: log
+    description: get the changes done be the users
   - name: error
     description: to trace the fixing of a setup error and for admins to confirm the fixing
   - name: typeLists
@@ -471,6 +473,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PhraseList'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /termList:
+    post:
+      tags:
+        - termList
+      summary: get a list of terms by the ids
+      description: get a list of terms by the ids
+      requestBody:
+        description: id list of terms to fetch
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdList'
+      responses:
+        '200':
+          description: terms requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TermList'
         default:
           description: unexpected error
           content:
@@ -1344,6 +1372,54 @@ paths:
               schema:
                 type: string
                 description: Error message
+  /changeLog/{id}:
+    get:
+      tags:
+        - log
+      description: get a single log entry with all details by id
+      operationId: changeLog
+      parameters:
+        - name: id
+          in: path
+          description: ID of reference to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: the user change with all details either of a name change or a link change
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangeLog'
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message
+  /changeLogList:
+    get:
+      tags:
+        - log
+      description: a list of changes related to a user sandbox item or a user
+      operationId: changeLogList
+      responses:
+        "200":
+          description: the user change with all details either of a name change or a link change
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangeLog'
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message
   /systemLogList:
     post:
       tags:
@@ -1786,7 +1862,7 @@ paths:
         - languageForm
       summary: get word form by id
       description: Returns a user based on a single ID, if the user does not have access to the word form
-      operationId: find word form by id
+      operationId: getLanguageForm
       parameters:
         - name: id
           in: path
@@ -2015,6 +2091,21 @@ components:
           type: string
           description: the unique name of a word or triple
           example: Canton of Zurich
+    TermList:
+      type: array
+      description: a complete list of all objects that can be used within a formula with the unique name
+      example: Zurich, Canton of Zurich, contains, City of Zurich, increase
+      items:
+        $ref: '#/components/schemas/Term'
+    Term:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: the unique name of a word, triple, verb or formula
+          example: scale million to one
     ValueList:
       type: array
       description: a list of value that can be grouped by a context
@@ -2346,6 +2437,31 @@ components:
             - dev
             - test
             - system
+    ChangeLog:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          description: the internal id of the error log entry for
+        time:
+          type: string
+          format: date-time
+          description: the time when the change has been done
+          example: 2022-08-28T15:19:59Z
+        user:
+          $ref: '#/components/schemas/UserId'
+        owner:
+          $ref: '#/components/schemas/UserId'
+        old:
+          type: string
+          description: the old name of the user sandbox object
+          example:
+        new:
+          type: string
+          description: the new name of the user sandbox object
+          example:
     ErrorLog:
       type: object
       required:
@@ -2393,6 +2509,23 @@ components:
           type: string
           description: phrase types with a code id have a predefined functionality
           example: time
+    Language:
+      type: object
+      required:
+        - languageName
+      properties:
+        languageName:
+          type: string
+          description: to display the language
+          example: plural
+        description:
+          type: string
+          description: the tooltip text for the language e.g. to differentiate
+          example: the users can use this (and the other) languages to create its own namespace
+        codeId:
+          type: string
+          description: to link the predefined display rules e.g. link to external systems
+          example: en_uk
     LanguageForm:
       type: object
       required:
@@ -2400,11 +2533,11 @@ components:
       properties:
         formName:
           type: string
-          description: to display the word in correct the human readable form
+          description: to display the language form in correct the human readable form
           example: plural
         description:
           type: string
-          description: the tooltip text for the word form
+          description: the tooltip text for the language form
           example: if the number is greater one this form should be used
         codeId:
           type: string
