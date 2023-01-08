@@ -10,7 +10,7 @@ info:
     TODO: add the missing types
     TODO: add the missing lists e.g. PhraseList
     TODO: add list saving functions
-  version: "0.0.2.3"
+  version: "0.0.2.4"
   contact:
     name: Timon Zielonka
     email: timon@zukunft.com
@@ -67,8 +67,8 @@ tags:
       or upon request or version update trigger
   - name: phraseType
     description: only word types without code link can be added to request new word types e.g. time
-  - name: wordForm
-    description: only word forms without code link can be added to request new word forms e.g. plural
+  - name: languageForm
+    description: only language forms without code link can be added to request new word language e.g. plural
 
 paths:
   /word:
@@ -1632,20 +1632,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /wordForm:
+  /languageForm:
     post:
       tags:
-        - wordForm
-      summary: Add a new word form
-      description: Add a new word form or activate it for the requesting user
-      operationId: addWordForm
+        - languageForm
+      summary: Add a new language form
+      description: Add a new language form or activate it for the requesting user
+      operationId: addLanguageForm
       requestBody:
         description: Word to add to the store
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WordForm'
+              $ref: '#/components/schemas/LanguageForm'
       responses:
         '200':
           description: word form response
@@ -1661,10 +1661,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /wordForm/{id}:
+  /languageForm/{id}:
     get:
       tags:
-        - wordForm
+        - languageForm
       summary: get word form by id
       description: Returns a user based on a single ID, if the user does not have access to the word form
       operationId: find word form by id
@@ -1682,7 +1682,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WordForm'
+                $ref: '#/components/schemas/LanguageForm'
         default:
           description: unexpected error
           content:
@@ -1691,10 +1691,10 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       tags:
-        - wordForm
+        - languageForm
       summary: Update an existing word form
       description: Update an existing word form by Id
-      operationId: updateWordForm
+      operationId: updateLanguageForm
       parameters:
         - name: id
           in: path
@@ -1708,7 +1708,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WordForm'
+              $ref: '#/components/schemas/LanguageForm'
         required: true
       responses:
         '200':
@@ -1716,10 +1716,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WordForm'
+                $ref: '#/components/schemas/LanguageForm'
             application/xml:
               schema:
-                $ref: '#/components/schemas/WordForm'
+                $ref: '#/components/schemas/LanguageForm'
         '400':
           description: Invalid ID supplied
         '404':
@@ -1728,10 +1728,10 @@ paths:
           description: Validation exception
     delete:
       tags:
-        - wordForm
+        - languageForm
       summary: exclude or delete word form for the requesting user
       description: deletes a single word form based on the ID supplied
-      operationId: deleteWordForm
+      operationId: deleteLanguageForm
       parameters:
         - name: id
           in: path
@@ -2274,7 +2274,7 @@ components:
           type: string
           description: phrase types with a code id have a predefined functionality
           example: time
-    WordForm:
+    LanguageForm:
       type: object
       required:
         - formName

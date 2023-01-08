@@ -93,6 +93,8 @@ class test_unit extends testing
         $this->init_source_types();
         $this->init_share_types();
         $this->init_protection_types();
+        $this->init_languages();
+        $this->init_language_forms();
         $this->init_job_types();
         $this->init_log_actions();
         $this->init_log_tables();
@@ -351,6 +353,30 @@ class test_unit extends testing
 
         $protection_types = new protection_type_list();
         $protection_types->load_dummy();
+
+    }
+
+    /**
+     * create languages array for the unit tests without database connection
+     */
+    function init_languages()
+    {
+        global $languages;
+
+        $languages = new language_list();
+        $languages->load_dummy();
+
+    }
+
+    /**
+     * create language forms array for the unit tests without database connection
+     */
+    function init_language_forms()
+    {
+        global $language_forms;
+
+        $language_forms = new language_form_list();
+        $language_forms->load_dummy();
 
     }
 

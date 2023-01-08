@@ -151,7 +151,10 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->add_column(sql_db::TBL_REF, 'url', 'text');
     $result .= $db_con->add_column(sql_db::TBL_REF, 'description', 'text');
     $result .= $db_con->add_column(sql_db::TBL_CHANGE_ACTION, 'description', 'text');
+    $result .= $db_con->add_column(sql_db::TBL_LANGUAGE_FORM, 'description', 'text');
     $result .= $db_con->change_column_name(sql_db::TBL_LANGUAGE_FORM, 'lanuages_id', 'language_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_LANGUAGE_FORM, 'lanuages_form_id', 'language_form_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_LANGUAGE_FORM, 'lanuages_form_name', 'language_form_name');
     $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'user_value', 'word_value');
     $result .= $db_con->change_column_name(sql_db::TBL_VALUE_TIME_SERIES, 'value_time_serie_id', 'value_time_series_id');
     $result .= $db_con->change_column_name(sql_db::TBL_IP, 'isactive', 'is_active');

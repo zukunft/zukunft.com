@@ -142,6 +142,7 @@ class sql_db
     const TBL_TASK = 'calc_and_cleanup_task';
     const TBL_TASK_TYPE = 'calc_and_cleanup_task_type';
 
+    const TBL_LANGUAGE = 'language';
     const TBL_LANGUAGE_FORM = 'language_form';
 
     const TBL_SHARE = 'share_type';

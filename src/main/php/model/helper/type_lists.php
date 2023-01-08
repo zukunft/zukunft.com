@@ -53,6 +53,8 @@ class type_lists
         global $source_types;
         global $share_types;
         global $protection_types;
+        global $languages;
+        global $language_forms;
         global $verbs;
         global $system_views;
         global $sys_log_stati;
@@ -75,6 +77,8 @@ class type_lists
         $lst->add($source_types->api_obj(), 'source_types');
         $lst->add($share_types->api_obj(), 'share_types');
         $lst->add($protection_types->api_obj(), 'protection_types');
+        $lst->add($languages->api_obj(), 'languages');
+        $lst->add($language_forms->api_obj(), 'language_forms');
         $lst->add($sys_log_stati->api_obj(), 'sys_log_stati');
         $lst->add($job_types->api_obj(), 'job_types');
         $lst->add($change_log_actions->api_obj(), 'change_log_actions');
@@ -108,6 +112,8 @@ class type_lists
         global $source_types;
         global $share_types;
         global $protection_types;
+        global $languages;
+        global $language_forms;
         global $sys_log_stati;
         global $job_types;
         global $change_log_actions;
@@ -153,6 +159,10 @@ class type_lists
         $share_types->load($db_con);
         $protection_types = new protection_type_list();
         $protection_types->load($db_con);
+        $languages = new language_list();
+        $languages->load($db_con);
+        $language_forms = new language_form_list();
+        $language_forms->load($db_con);
         $job_types = new job_type_list();
         $job_types->load($db_con);
         $change_log_actions = new change_log_action();

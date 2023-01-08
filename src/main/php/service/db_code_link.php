@@ -50,6 +50,8 @@ class db_cl
     const SOURCE_TYPE = "source_type";
     const SHARE_TYPE = "share_type";
     const PROTECTION_TYPE = "protection_type";
+    const LANGUAGE = "language";
+    const LANGUAGE_FORM = "language_form";
     const USER_PROFILE = "user_profile_type";
     const LOG_STATUS = "system_log_status";
     const LOG_ACTION = "change_action";
@@ -160,6 +162,18 @@ class db_cl
         return $protection_types->id($code_id);
     }
 
+    function language_id(string $code_id): int
+    {
+        global $languages;
+        return $languages->id($code_id);
+    }
+
+    function language_form_id(string $code_id): int
+    {
+        global $language_forms;
+        return $language_forms->id($code_id);
+    }
+
     function job_type_id(string $code_id): int
     {
         global $job_types;
@@ -254,6 +268,18 @@ class db_cl
     {
         global $protection_types;
         return $protection_types->get_by_id($id);
+    }
+
+    function language(int $id)
+    {
+        global $languages;
+        return $languages->get_by_id($id);
+    }
+
+    function language_form(int $id)
+    {
+        global $language_forms;
+        return $language_forms->get_by_id($id);
     }
 
     function job_type(int $id)
@@ -382,6 +408,18 @@ class db_cl
         return $protection_types->name($id);
     }
 
+    function language_name(int $id): string
+    {
+        global $languages;
+        return $languages->name($id);
+    }
+
+    function language_form_name(int $id): string
+    {
+        global $language_forms;
+        return $language_forms->name($id);
+    }
+
     function job_type_name(int $id): string
     {
         global $job_types;
@@ -471,6 +509,12 @@ function cl(string $type, string $code_id): int
         case db_cl::PROTECTION_TYPE:
             $result = $db_code_link->protection_type_id($code_id);
             break;
+        case db_cl::LANGUAGE:
+            $result = $db_code_link->language_id($code_id);
+            break;
+        case db_cl::LANGUAGE_FORM:
+            $result = $db_code_link->language_form_id($code_id);
+            break;
         case db_cl::JOB_TYPE:
             $result = $db_code_link->job_type_id($code_id);
             break;
@@ -548,6 +592,12 @@ function cl_name(string $type, int $id): string
         case db_cl::PROTECTION_TYPE:
             $result = $db_code_link->protection_type_name($id);
             break;
+        case db_cl::LANGUAGE:
+            $result = $db_code_link->language_name($id);
+            break;
+        case db_cl::LANGUAGE_FORM:
+            $result = $db_code_link->language_form_name($id);
+            break;
         case db_cl::JOB_TYPE:
             $result = $db_code_link->job_type_name($id);
             break;
@@ -618,6 +668,12 @@ function get_type(string $type, string $code_id): type_object
             break;
         case db_cl::PROTECTION_TYPE:
             $result = $db_code_link->protection_type($db_code_link->protection_type_id($code_id));
+            break;
+        case db_cl::LANGUAGE:
+            $result = $db_code_link->language($db_code_link->language_id($code_id));
+            break;
+        case db_cl::LANGUAGE_FORM:
+            $result = $db_code_link->language_form($db_code_link->language_form_id($code_id));
             break;
         case db_cl::JOB_TYPE:
             $result = $db_code_link->job_type($db_code_link->job_type_id($code_id));

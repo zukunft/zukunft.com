@@ -1,2 +1,2 @@
-languages_form_id, languages_form_name, code_id, language_id
+language_form_id, language_form_name, code_id, language_id
 1, 'plural', 'plural', 1

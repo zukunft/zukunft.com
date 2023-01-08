@@ -473,6 +473,34 @@
           "comment": "no change of the ownership is allowed"
         }
       ],
+      "languages": [
+        {
+          "id": 1,
+          "code_id": "en",
+          "name": "English",
+          "comment": "the system language, so each word must be unique for all users in this language"
+        },
+        {
+          "id": 3,
+          "code_id": "de",
+          "name": "German",
+          "comment": "a normal translation to German"
+        },
+        {
+          "id": 2,
+          "code_id": "en_uk",
+          "name": "UK English",
+          "comment": "the users can use this (and the other) languages to create its own namespace. So one user may use \"Zurich\" in UK English for \"Kanton Zurich\" and another user may use \"Zurich\" in UK English for \"Zurich AG\"."
+        }
+      ],
+      "language_forms": [
+        {
+          "id": 1,
+          "code_id": "plural",
+          "name": "plural",
+          "comment": ""
+        }
+      ],
       "sys_log_stati": [
         {
           "id": 1,

@@ -183,6 +183,8 @@ function run_preloaded_truncate(): void
     global $source_types;
     global $share_types;
     global $protection_types;
+    global $languages;
+    global $language_forms;
     global $verbs;
     global $system_views;
     global $sys_log_stati;
@@ -206,6 +208,8 @@ function run_preloaded_truncate(): void
     $source_types = new source_type_list();
     $share_types = new share_type_list();
     $protection_types = new protection_type_list();
+    $languages = new language_list();
+    $language_forms = new language_form_list();
     $job_types = new job_type_list();
     $change_log_actions = new change_log_action();
     $change_log_tables = new change_log_table();

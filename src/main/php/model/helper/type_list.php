@@ -175,6 +175,7 @@ class type_list
             foreach ($db_lst as $db_entry) {
                 $type_id = $db_entry[$db_con->get_id_field_name($db_type)];
                 $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
+                // database field name exceptions
                 $type_name = '';
                 if ($db_type == db_cl::LOG_ACTION) {
                     $type_name = strval($db_entry[type_object::FLD_ACTION]);
@@ -182,6 +183,10 @@ class type_list
                     $type_name = strval($db_entry[type_object::FLD_TABLE]);
                 } elseif ($db_type == sql_db::VT_TABLE_FIELD) {
                     $type_name = strval($db_entry[type_object::FLD_FIELD]);
+                } elseif ($db_type == sql_db::TBL_LANGUAGE) {
+                    $type_name = strval($db_entry[language::FLD_NAME]);
+                } elseif ($db_type == sql_db::TBL_LANGUAGE_FORM) {
+                    $type_name = strval($db_entry[language_form::FLD_NAME]);
                 } else {
                     $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
                 }
