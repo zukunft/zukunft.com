@@ -100,6 +100,10 @@ class type_object
                 $type_name = strval($db_row[self::FLD_TABLE]);
             } elseif ($db_type == sql_db::VT_TABLE_FIELD) {
                 $type_name = strval($db_row[self::FLD_FIELD]);
+            } elseif ($db_type == sql_db::TBL_LANGUAGE) {
+                $type_name = strval($db_row[language::FLD_NAME]);
+            } elseif ($db_type == sql_db::TBL_LANGUAGE_FORM) {
+                $type_name = strval($db_row[language_form::FLD_NAME]);
             } else {
                 $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
             }
@@ -192,17 +196,17 @@ class type_object
      */
 
     /**
-     * create an SQL statement to retrieve a user sandbox object by id from the database
+     * create an SQL statement to retrieve a type object by id from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param int $id the id of the user sandbox object
+     * @param int $id the id of the type object
      * @param string $db_type the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_id(sql_db $db_con, int $id, string $db_type = ''): sql_par
     {
         $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($db_con, $db_type);
+        $qp = $typ_lst->load_sql($db_con, $db_type, 'id');
         $db_con->add_par_int($id);
         $qp->sql = $db_con->select_by_field($this->id_field($db_type));
         $qp->par = $db_con->get_par();
@@ -211,7 +215,45 @@ class type_object
     }
 
     /**
-     * load a user sandbox object e.g. word, triple, value, formula, result or view from the database
+     * create an SQL statement to retrieve a type object by name from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $name the name of the source
+     * @param string $db_type the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_name(sql_db $db_con, string $name, string $db_type = ''): sql_par
+    {
+        $typ_lst = new type_list();
+        $qp = $typ_lst->load_sql($db_con, $db_type, 'name');
+        $db_con->add_par(sql_db::PAR_TEXT, $name);
+        $qp->sql = $db_con->select_by_field($this->name_field($db_type));
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a type object by code id from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $code_id the code id of the source
+     * @param string $db_type the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_code_id(sql_db $db_con, string $code_id, string $db_type = ''): sql_par
+    {
+        $typ_lst = new type_list();
+        $qp = $typ_lst->load_sql($db_con, $db_type, 'code_id');
+        $db_con->add_par(sql_db::PAR_TEXT, $code_id);
+        $qp->sql = $db_con->select_by_code_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load a type object e.g. phrase type, language or language form from the database
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
@@ -228,6 +270,12 @@ class type_object
     {
         global $db_con;
         return $db_con->get_id_field_name($db_type);
+    }
+
+    private function name_field(string $db_type): string
+    {
+        global $db_con;
+        return $db_con->get_name_field($db_type);
     }
 
 }

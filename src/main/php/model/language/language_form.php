@@ -31,6 +31,8 @@
 
 namespace cfg;
 
+use library;
+
 class language_form extends type_object
 {
 
@@ -49,5 +51,29 @@ class language_form extends type_object
     // list of the language forms that have a coded functionality
     const DEFAULT = "standard";
     const PLURAL = "plural";
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load a language form object by database id
+     * mainly set the class name for the type object function
+     *
+     * @param int $id the id of the language form
+     * @param string $class the language form class name
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug($id);
+        $lib = new library();
+        $dp_type = $lib->base_class_name($class);
+        $qp = $this->load_sql_by_id($db_con, $id, $dp_type);
+        return $this->load($qp, $dp_type);
+    }
 
 }

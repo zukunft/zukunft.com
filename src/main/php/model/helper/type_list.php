@@ -122,13 +122,14 @@ class type_list
      *
      * @param sql_db $db_con the open database connection as a parameter to allow unit testing
      * @param string $db_type the class of the related object e.g. phrase_type or formula_type
+     * @param string $query_name the name extension to make the query name unique
      * @return sql_par the sql statement with the parameters and the name
      */
-    function load_sql(sql_db $db_con, string $db_type): sql_par
+    function load_sql(sql_db $db_con, string $db_type, string $query_name = 'all'): sql_par
     {
         $db_con->set_type($db_type);
         $qp = new sql_par($db_type);
-        $qp->name = $db_type . '_all';
+        $qp->name = $db_type . '_' . $query_name;
         $db_con->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id); is needed
         $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
@@ -172,25 +173,25 @@ class type_list
         $qp = $this->load_sql_all($db_con, $db_type);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
-            foreach ($db_lst as $db_entry) {
-                $type_id = $db_entry[$db_con->get_id_field_name($db_type)];
-                $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
+            foreach ($db_lst as $db_row) {
+                $type_id = $db_row[$db_con->get_id_field_name($db_type)];
+                $type_code_id = strval($db_row[sql_db::FLD_CODE_ID]);
                 // database field name exceptions
                 $type_name = '';
                 if ($db_type == db_cl::LOG_ACTION) {
-                    $type_name = strval($db_entry[type_object::FLD_ACTION]);
+                    $type_name = strval($db_row[type_object::FLD_ACTION]);
                 } elseif ($db_type == db_cl::LOG_TABLE) {
-                    $type_name = strval($db_entry[type_object::FLD_TABLE]);
+                    $type_name = strval($db_row[type_object::FLD_TABLE]);
                 } elseif ($db_type == sql_db::VT_TABLE_FIELD) {
-                    $type_name = strval($db_entry[type_object::FLD_FIELD]);
+                    $type_name = strval($db_row[type_object::FLD_FIELD]);
                 } elseif ($db_type == sql_db::TBL_LANGUAGE) {
-                    $type_name = strval($db_entry[language::FLD_NAME]);
+                    $type_name = strval($db_row[language::FLD_NAME]);
                 } elseif ($db_type == sql_db::TBL_LANGUAGE_FORM) {
-                    $type_name = strval($db_entry[language_form::FLD_NAME]);
+                    $type_name = strval($db_row[language_form::FLD_NAME]);
                 } else {
-                    $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
+                    $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
                 }
-                $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
+                $type_comment = strval($db_row[sql_db::FLD_DESCRIPTION]);
                 $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);
                 $this->add($type_obj);
             }

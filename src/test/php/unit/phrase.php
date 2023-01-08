@@ -79,7 +79,7 @@ class phrase_unit_tests
 
         global $phrase_types;
         $phr_typ = $phrase_types->get_by_code_id(phrase_type::PERCENT);
-        $t->assert_api($phr_typ);
+        $t->assert_api($phr_typ, 'phrase_type');
 
     }
 

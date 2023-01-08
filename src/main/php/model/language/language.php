@@ -31,6 +31,8 @@
 
 namespace cfg;
 
+use library;
+
 class language extends type_object
 {
 
@@ -48,5 +50,49 @@ class language extends type_object
 
     // list of the languages that have a coded functionality
     const DEFAULT = "english";
+    const TN_READ = "English";
+
+    
+    /*
+     * load
+     */
+
+    /**
+     * load a language object by database id
+     * mainly set the class name for the type object function
+     *
+     * @param int $id the id of the language
+     * @param string $class the language class name
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug($id);
+        $lib = new library();
+        $dp_type = $lib->base_class_name($class);
+        $qp = $this->load_sql_by_id($db_con, $id, $dp_type);
+        return $this->load($qp, $dp_type);
+    }
+
+    /**
+     * load a language object by database id
+     * mainly set the class name for the type object function
+     *
+     * @param string $name the name of the language
+     * @param string $class the language class name
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_name(string $name, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug($name);
+        $lib = new library();
+        $dp_type = $lib->base_class_name($class);
+        $qp = $this->load_sql_by_name($db_con, $name, $dp_type);
+        return $this->load($qp, $dp_type);
+    }
 
 }

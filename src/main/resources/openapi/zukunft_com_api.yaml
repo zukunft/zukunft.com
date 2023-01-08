@@ -67,6 +67,8 @@ tags:
       or upon request or version update trigger
   - name: phraseType
     description: only word types without code link can be added to request new word types e.g. time
+  - name: language
+    description: only languages without code link can be added to request new word language e.g. German
   - name: languageForm
     description: only language forms without code link can be added to request new word language e.g. plural
 
@@ -1626,6 +1628,123 @@ paths:
       responses:
         '204':
           description: phrase type deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /language:
+    post:
+      tags:
+        - language
+      summary: Add a new language form
+      description: Add a new language form or activate it for the requesting user
+      operationId: addLanguage
+      requestBody:
+        description: Word to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Language'
+      responses:
+        '200':
+          description: word form response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Id'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /language/{id}:
+    get:
+      tags:
+        - language
+      summary: get word form by id
+      description: Returns a user based on a single ID, if the user does not have access to the word form
+      operationId: find word form by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of word form to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: word form response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Language'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - language
+      summary: Update an existing word form
+      description: Update an existing word form by Id
+      operationId: updateLanguage
+      parameters:
+        - name: id
+          in: path
+          description: ID of word form to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent word form in the database
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Language'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Language'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Language'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Word not found
+        '405':
+          description: Validation exception
+    delete:
+      tags:
+        - language
+      summary: exclude or delete word form for the requesting user
+      description: deletes a single word form based on the ID supplied
+      operationId: deleteLanguage
+      parameters:
+        - name: id
+          in: path
+          description: ID of word form to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: word form deleted
         default:
           description: unexpected error
           content:

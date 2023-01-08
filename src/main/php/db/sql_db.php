@@ -1367,13 +1367,12 @@ class sql_db
         return $this->id_field;
     }
 
-    private function set_name_field(): void
+    public function get_name_field(string $type): string
     {
         global $debug;
 
         $lib = new library();
 
-        $type = $this->type;
         // exceptions for user overwrite tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
@@ -1432,6 +1431,15 @@ class sql_db
         if ($result == 'triple_name') {
             $result = 'name';
         }
+        log_debug('to "' . $result . '"', $debug - 20);
+        return $result;
+    }
+
+    private function set_name_field(): void
+    {
+        global $debug;
+
+        $result = $this->get_name_field($this->type);
         log_debug('to "' . $result . '"', $debug - 20);
         $this->name_field = $result;
     }

@@ -91,8 +91,6 @@ class test_api extends test_base
             }
         }
         $target = '';
-        // TODO add the missing APIs
-        $target = 'api for languageForm missing';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check if an api tag for each controller exists';

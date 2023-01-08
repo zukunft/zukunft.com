@@ -55,11 +55,17 @@ class phrase_type extends type_object
     const LAYER = "view"; // TODO add usage sample
     const OTHER = "type_other";
 
+
+    /*
+     * load
+     */
+
     /**
-     * just set the class name for the user sandbox function
-     * load a source object by database id
-     * @param int $id the id of the source
-     * @param string $class the source class name
+     * load a phrase type object by database id
+     * just set the class name for the type object function
+     * 
+     * @param int $id the id of the phrase type
+     * @param string $class the phrase type class name
      * @return int the id of the object found and zero if nothing is found
      */
     function load_by_id(int $id, string $class = self::class): int

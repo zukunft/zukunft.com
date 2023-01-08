@@ -179,14 +179,14 @@ class verb_list extends type_list
      * common part to create an SQL statement to load all verbs from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param string $class the class name to be compatible with the user sandbox load_sql functions
+     * @param string $db_type the class name to be compatible with the user sandbox load_sql functions
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql(sql_db $db_con, string $db_type = self::class, string $query_name = 'all'): sql_par
     {
         $db_con->set_type(sql_db::TBL_VERB);
-        $qp = new sql_par($class);
-        $qp->name = $class . '_all';
+        $qp = new sql_par($db_type);
+        $qp->name = $db_type . '_' . $query_name;
 
         $db_con->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id); is needed

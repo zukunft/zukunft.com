@@ -44,6 +44,8 @@
 use api\source_api;
 use api\system_log_api;
 use api\word_api;
+use cfg\language;
+use cfg\language_form;
 use cfg\phrase_type;
 use cfg\type_object;
 use controller\controller;
@@ -115,6 +117,7 @@ include_once $path_unit . 'view_component_display.php';
 include_once $path_unit . 'view_component_link.php';
 include_once $path_unit . 'verb.php';
 include_once $path_unit . 'ref.php';
+include_once $path_unit . 'language.php';
 include_once $path_unit . 'batch_job.php';
 include_once $path_unit . 'change_log.php';
 include_once $path_unit . 'system_log.php';
@@ -154,6 +157,7 @@ include_once $path_unit_db . 'view.php';
 include_once $path_unit_db . 'ref.php';
 include_once $path_unit_db . 'share.php';
 include_once $path_unit_db . 'protection.php';
+include_once $path_unit_db . 'language.php';
 
 
 // load the testing functions for creating JSON messages for the frontend code
@@ -404,6 +408,8 @@ class test_base
         $this->assert_api_get(ref::class);
         $this->assert_api_get(batch_job::class);
         $this->assert_api_get(phrase_type::class);
+        $this->assert_api_get(language::class);
+        $this->assert_api_get(language_form::class);
         $this->assert_api_get_by_name(source::class, source_api::TN_READ_API);
 
         $this->assert_api_get_list(type_lists::class);
@@ -625,6 +631,14 @@ class test_base
         if ($class == phrase_type::class) {
             $class = 'phrase_type';
             $url = HOST_TESTING . '/api/phraseType';
+        }
+        if ($class == language::class) {
+            $class = 'language';
+            $url = HOST_TESTING . '/api/language';
+        }
+        if ($class == language_form::class) {
+            $class = 'language_form';
+            $url = HOST_TESTING . '/api/languageForm';
         }
         $data = array("id" => $id);
         // TODO check why for formula a double call is needed
