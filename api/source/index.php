@@ -76,7 +76,7 @@ if ($usr->id > 0) {
     $ctrl->curl($result, $msg);
 
 } else {
-    $ctrl->not_permitted($result, $msg);
+    $ctrl->not_permitted($msg);
 }
 
 prg_end_api($db_con);

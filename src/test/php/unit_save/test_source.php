@@ -112,8 +112,8 @@ function run_source_test(testing $t): void
     $t->dsp('source->save rename logged for "' . source_api::TN_RENAMED . '"', $target, $result);
 
     // check if the source parameters can be added
-    $src_renamed->url = source_api::TEST_URL;
-    $src_renamed->description = source_api::TEST_DESCRIPTION;
+    $src_renamed->url = source_api::TU_ADD;
+    $src_renamed->description = source_api::TD_ADD;
     $result = $src_renamed->save();
     $target = '';
     $t->dsp('source->save all source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -121,10 +121,10 @@ function run_source_test(testing $t): void
     // check if the source parameters have been added
     $src_reloaded = $t->load_source(source_api::TN_RENAMED);
     $result = $src_reloaded->url;
-    $target = source_api::TEST_URL;
+    $target = source_api::TU_ADD;
     $t->dsp('source->load url for "' . source_api::TN_RENAMED . '"', $target, $result);
     $result = $src_reloaded->description;
-    $target = source_api::TEST_DESCRIPTION;
+    $target = source_api::TD_ADD;
     $t->dsp('source->load description for "' . source_api::TN_RENAMED . '"', $target, $result);
 
     // check if the source parameter adding have been logged
@@ -134,12 +134,12 @@ function run_source_test(testing $t): void
     $log->row_id = $src_reloaded->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system test added ' . source_api::TEST_URL;
+    $target = 'zukunft.com system test added ' . source_api::TU_ADD;
     //$target = 'zukunft.com system test partner changed ' . source_api::TEST_URL_CHANGED . ' to ' . source_api::TEST_URL;
     $t->dsp('source->load url for "' . source_api::TN_RENAMED . '" logged', $target, $result);
     $log->set_field(user_sandbox_named::FLD_DESCRIPTION);
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system test added ' . source_api::TEST_DESCRIPTION;
+    $target = 'zukunft.com system test added ' . source_api::TD_ADD;
     //$target = 'zukunft.com system test partner changed System Test Source Description Changed to System Test Source Description';
     $t->dsp('source->load description for "' . source_api::TN_RENAMED . '" logged', $target, $result);
 
@@ -165,17 +165,17 @@ function run_source_test(testing $t): void
     // check the source for the original user remains unchanged
     $src_reloaded = $t->load_source(source_api::TN_RENAMED);
     $result = $src_reloaded->url;
-    $target = source_api::TEST_URL;
+    $target = source_api::TU_ADD;
     $t->dsp('source->load url for "' . source_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
     $result = $src_reloaded->description;
-    $target = source_api::TEST_DESCRIPTION;
+    $target = source_api::TD_ADD;
     $t->dsp('source->load description for "' . source_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
 
     // check if undo all specific changes removes the user source
     $src_usr2 = new source($t->usr2);
     $src_usr2->load_by_name(source_api::TN_RENAMED, source::class);
-    $src_usr2->url = source_api::TEST_URL;
-    $src_usr2->description = source_api::TEST_DESCRIPTION;
+    $src_usr2->url = source_api::TU_ADD;
+    $src_usr2->description = source_api::TD_ADD;
     $result = $src_usr2->save();
     $target = '';
     $t->dsp('source->save undo the user source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -184,10 +184,10 @@ function run_source_test(testing $t): void
     $src_usr2_reloaded = new source($t->usr2);
     $src_usr2_reloaded->load_by_name(source_api::TN_RENAMED, source::class);
     $result = $src_usr2_reloaded->url;
-    $target = source_api::TEST_URL;
+    $target = source_api::TU_ADD;
     $t->dsp('source->load url for "' . source_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
     $result = $src_usr2_reloaded->description;
-    $target = source_api::TEST_DESCRIPTION;
+    $target = source_api::TD_ADD;
     $t->dsp('source->load description for "' . source_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
 
     // TODO create and check the display functions

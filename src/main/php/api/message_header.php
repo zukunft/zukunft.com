@@ -33,9 +33,19 @@ use html\html_base;
 
 class api_message
 {
+
+    /*
+     * message types
+     */
+
     // the message types for fast format detection
     const SYS_LOG = 'sys_log';
     const TYPE_LISTS = 'type_lists';
+
+
+    /*
+     * object vars
+     */
 
     // field names used for JSON creation
     public string $pod;       // the pod that has created the message
@@ -46,6 +56,16 @@ class api_message
     public string $timestamp; // for automatic delay problem detection
     public object $body;      // the json payload of the message
 
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * create and always set the header information
+     * @param sql_db $db_con the active database link to get the configuration from the database
+     * @param string $class
+     */
     function __construct(sql_db $db_con, string $class)
     {
         global $usr;
@@ -53,12 +73,33 @@ class api_message
         if ($db_con->connected()) {
             $this->pod = cfg_get(config::SITE_NAME, $db_con);
         } else {
+            // for unit tests use the default pod name
             $this->pod = POD_NAME;
         }
         $this->type = $class;
         $this->set_user($usr);
         $this->version = PRG_VERSION;
         $this->timestamp = (new DateTime())->format(DateTimeInterface::ATOM);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    public function set_user(?user $usr): void
+    {
+        if ($usr != null) {
+            if ($usr->id > 0) {
+                $this->user_id = $usr->id;
+                $this->user = $usr->name;
+            }
+        }
+    }
+
+    public function add_body(object $api_obj): void
+    {
+        $this->body = $api_obj;
     }
 
     /**
@@ -68,6 +109,19 @@ class api_message
     {
         return json_encode($this);
     }
+
+    /**
+     * @return array the frontend API JSON as an array
+     */
+    function get_json_array(): array
+    {
+        return json_decode(json_encode($this), true);
+    }
+
+
+    /*
+     * to review
+     */
 
     function get_html_header(string $title): string
     {
@@ -84,21 +138,6 @@ class api_message
     {
         $html = new html_base();
         return $html->footer();
-    }
-
-    public function add_body(object $api_obj): void
-    {
-        $this->body = $api_obj;
-    }
-
-    public function set_user(?user $usr): void
-    {
-        if ($usr != null) {
-            if ($usr->id > 0) {
-                $this->user_id = $usr->id;
-                $this->user = $usr->name;
-            }
-        }
     }
 
 }

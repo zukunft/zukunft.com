@@ -524,6 +524,7 @@ class test_new_obj extends test_base
         }
     }
 
+
     /*
      * formula test creation
      */
@@ -587,6 +588,7 @@ class test_new_obj extends test_base
         $this->dsp('formula', $frm_name, $frm->name());
         return $frm;
     }
+
 
     /*
      * reference test creation
@@ -840,6 +842,11 @@ class test_new_obj extends test_base
         return $vrb;
     }
 
+
+    /*
+     * source test creation
+     */
+
     function load_source(string $src_name): source
     {
         global $usr;
@@ -864,6 +871,28 @@ class test_new_obj extends test_base
         $this->dsp('source', $src_name, $src->name());
         return $src;
     }
+
+    /**
+     * @return array json message to test if adding a new source via the api works fine
+     */
+    function source_put_json(): array
+    {
+        global $db_con;
+        global $usr;
+        global $source_types;
+        $msg = new api_message($db_con, source::class);
+        $src = new source_api();
+        $src->name = source_api::TN_ADD_API;
+        $src->description = source_api::TD_ADD_API;
+        $src->url = source_api::TU_ADD_API;
+        $src->type_id = $source_types->id(source_type::PDF);
+        $msg->add_body($src);
+        return $msg->get_json_array();
+    }
+
+    /*
+     * view test creation
+     */
 
     /**
      * load a view and if the test user is set for a specific user
@@ -905,6 +934,10 @@ class test_new_obj extends test_base
         return $dsp;
     }
 
+
+    /*
+     * component test creation
+     */
 
     function load_view_component(string $cmp_name, ?user $test_usr = null): view_cmp
     {

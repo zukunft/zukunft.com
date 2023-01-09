@@ -35,24 +35,25 @@ use api\list_api;
 use api\type_lists_api;
 use api\user_sandbox_api;
 use api_message;
+use source;
 use type_lists;
 
 class controller
 {
 
     // the parameter names used in the url
-    CONST URL_API_PATH = 'api/';
-    CONST URL_VAR_DEBUG = 'debug';
-    CONST URL_VAR_WORD = 'words';
-    CONST URL_VAR_ID = 'id';
+    const URL_API_PATH = 'api/';
+    const URL_VAR_DEBUG = 'debug';
+    const URL_VAR_WORD = 'words';
+    const URL_VAR_ID = 'id';
 
     // used for the change log
-    CONST URL_VAR_WORD_ID = 'word_id';
-    CONST URL_VAR_WORD_FLD = 'word_field';
+    const URL_VAR_WORD_ID = 'word_id';
+    const URL_VAR_WORD_FLD = 'word_field';
 
     // path parameters
-    CONST PATH_API_REDIRECT = '/../../'; // get from the __DIR__ to the php root path
-    CONST PATH_MAIN_LIB = 'src/main/php/zu_lib.php'; // the main php library the contains all other paths
+    const PATH_API_REDIRECT = '/../../'; // get from the __DIR__ to the php root path
+    const PATH_MAIN_LIB = 'src/main/php/zu_lib.php'; // the main php library the contains all other paths
 
     /**
      * response to a get request
@@ -104,15 +105,18 @@ class controller
         header("Access-Control-Allow-Methods: POST,GET,PUT,DELETE");
 
         $method = $_SERVER['REQUEST_METHOD'];
-        $request = explode("/", substr(@$_SERVER['PATH_INFO'], 1));
+        $request_text = file_get_contents('php://input');
+        $request_json = json_decode($request_text, true);
 
         switch ($method) {
             case 'PUT':
                 // set response code - 200 OK
                 http_response_code(200);
 
+                $request_body = $this->check_api_msg($request_json);
+
                 echo json_encode(
-                    array("result" => $this->put($request))
+                    array("result" => $this->put($request_body))
                 );
                 break;
             case 'GET':
@@ -140,14 +144,14 @@ class controller
                 // set response code - 200 OK
                 http_response_code(200);
                 echo json_encode(
-                    array("result" => $this->post($request))
+                    array("result" => $this->post($request_json))
                 );
                 break;
             case 'DELETE':
                 // set response code - 200 OK
                 http_response_code(200);
                 echo json_encode(
-                    array("result" => $this->delete($request))
+                    array("result" => $this->delete($request_json))
                 );
                 break;
             default:
@@ -157,9 +161,10 @@ class controller
         }
     }
 
-    public function not_permitted(): void
+    public function not_permitted(string $msg): void
     {
         http_response_code(401);
+        $this->curl_response('', $msg);
     }
 
     /**
@@ -225,11 +230,31 @@ class controller
         }
     }
 
+    private function check_api_msg(array $api_msg): array
+    {
+        $msg_ok = true;
+        $body = array();
+        // TODO check transfer time
+        // TODO check if version matches
+        if ($msg_ok) {
+            if (array_key_exists('body', $api_msg)) {
+                $body = $api_msg['body'];
+            } else {
+                $msg_ok = false;
+            }
+        }
+        if ($msg_ok) {
+            return $body;
+        } else {
+            return array();
+        }
+    }
+
     /**
      * encode a user sandbox object for the frontend api
      * and response to curl requests
      *
-     * @param user_sandbox_api $api_msg the object that should be encoded
+     * @param api_message $api_msg the object that should be encoded
      * @param string $msg if filled the message that should be shown to the user instead of the object
      * @return void
      */
@@ -246,7 +271,14 @@ class controller
 
     function put(array $request): string
     {
-        return 'put request ' . dsp_array($request) . ' done';
+        global $usr;
+        // TODO switch between the objects
+        $src = new source($usr);
+        $result = $src->add_from_api_msg($request)->get_last_message();
+        if ($result == '') {
+            $result = $src->id();
+        }
+        return $result;
     }
 
     function post(array $request): string

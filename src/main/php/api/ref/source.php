@@ -45,16 +45,17 @@ class source_api extends user_sandbox_named_with_type_api
     const TD_READ_API = 'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards';
     const TU_READ_API = 'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf';
     const TN_ADD = 'System Test Source';
+    const TD_ADD = 'System Test Source Description';
+    const TU_ADD = 'https://www.zukunft.com/';
     const TN_RENAMED = 'System Test Source Renamed';
 
     // must be the same as in /resource/api/source/source_put.json
     const TN_ADD_API = 'System Test Source API added';
-    const TEST_DESCRIPTION_API = 'System Test Source Description API';
+    const TD_ADD_API = 'System Test Source Description API';
+    const TU_ADD_API = 'https://api.zukunft.com/';
 
     // parameters used for unit and integration tests
-    const TEST_URL = 'https://www.zukunft.com/';
     const TEST_URL_CHANGED = 'https://api.zukunft.com/';
-    const TEST_DESCRIPTION = 'System Test Source Description';
     const TEST_DESCRIPTION_CHANGED = 'System Test Source Description Changed';
 
     // source group for creating the test sources and remove them after the test
