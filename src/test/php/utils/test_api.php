@@ -56,8 +56,8 @@ use controller\controller;
 class test_api extends test_new_obj
 {
     // path
-    //const TEST_ROOT_PATH = '/home/timon/git/zukunft.com/';
-    const TEST_ROOT_PATH = '/home/timon/PhpstormProjects/zukunft.com/';
+    const TEST_ROOT_PATH = '/home/timon/git/zukunft.com/';
+    const TEST_ROOT_PATH2 = '/home/timon/PhpstormProjects/zukunft.com/';
     const OPEN_API_PATH = 'src/main/resources/openapi/zukunft_com_api.yaml';
 
     const API_PATH = 'api/';
@@ -130,6 +130,9 @@ class test_api extends test_new_obj
         $test_name = 'check if a controller for each api tag exists';
         $result = '';
         $open_api_filename = self::TEST_ROOT_PATH . self::OPEN_API_PATH;
+        if (!file_exists($open_api_filename)) {
+            $open_api_filename = self::TEST_ROOT_PATH2 . self::OPEN_API_PATH;
+        }
         $api_def = yaml_parse_file($open_api_filename);
         if ($api_def == null) {
             log_err('OpenAPI file ' . $open_api_filename . ' missing');
