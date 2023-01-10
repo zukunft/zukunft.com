@@ -56,8 +56,8 @@ use controller\controller;
 class test_api extends test_new_obj
 {
     // path
-    const TEST_ROOT_PATH = '/home/timon/git/zukunft.com/';
-    //const TEST_ROOT_PATH = '/home/timon/PhpstormProjects/zukunft.com/';
+    //const TEST_ROOT_PATH = '/home/timon/git/zukunft.com/';
+    const TEST_ROOT_PATH = '/home/timon/PhpstormProjects/zukunft.com/';
     const OPEN_API_PATH = 'src/main/resources/openapi/zukunft_com_api.yaml';
 
     const API_PATH = 'api/';
@@ -86,6 +86,8 @@ class test_api extends test_new_obj
         $this->assert_api_get(view::class);
         $this->assert_api_get(view_cmp::class);
         $this->assert_api_get(source::class);
+        // move to api write tests
+        // and create write api tests without rest call
         $this->assert_api_put(source::class);
         $this->assert_api_get(ref::class);
         $this->assert_api_get(batch_job::class);

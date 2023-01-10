@@ -94,6 +94,7 @@ class formula_api extends user_sandbox_named_with_type_api
         self::TN_SECTOR,
         self::TN_SCALE_K,
         self::TN_SCALE_TO_K,
+        self::TN_SCALE_MIO,
         self::TN_SCALE_BIL
     );
 

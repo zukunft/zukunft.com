@@ -417,7 +417,7 @@ class test_new_obj extends test_base
         $vrb = $verbs->get_verb($verb_code_id);
 
         $lnk_test = new triple($usr);
-        if ($from->id() > 0 or $to->id() > 0) {
+        if ($from->id() > 0 and $to->id() > 0) {
             // check if the forward link exists
             $lnk_test->from = $from;
             $lnk_test->verb = $vrb;

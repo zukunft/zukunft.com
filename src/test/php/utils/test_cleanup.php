@@ -429,7 +429,7 @@ class testing extends test_api
             $phr = new phrase($usr, $pos, $name);
 
             // set types of some special terms
-            If ($name == word_api::TN_2020) {
+            if ($name == word_api::TN_2020) {
                 $phr->obj->set_type(phrase_type::TIME);
             }
 
@@ -462,14 +462,14 @@ class testing extends test_api
             $trm->set_name($name);
 
             // ste types of some special terms
-            If ($name == formula_api::TN_READ_THIS) {
+            if ($name == formula_api::TN_READ_THIS) {
                 $trm->obj->type_cl = formula_type::THIS;
                 $trm->set_id_from_obj(18, $class);
                 $wrd = new word($usr);
                 $wrd->set(174, formula_type::THIS);
                 $trm->obj->name_wrd = $wrd;
             }
-            If ($name == formula_api::TN_READ_PRIOR) {
+            if ($name == formula_api::TN_READ_PRIOR) {
                 $trm->obj->type_cl = formula_type::PREV;
                 $trm->set_id_from_obj(20, $class);
                 $wrd = new word($usr);
