@@ -143,6 +143,9 @@ class test_api extends test_new_obj
                 foreach ($paths as $path) {
                     // check if at least some controller code exists for each tag
                     $filename = self::TEST_ROOT_PATH . self::API_PATH . $path . '/' . self::PHP_DEFAULT_FILENAME;
+                    if (!file_exists($filename)) {
+                        $filename = self::TEST_ROOT_PATH2 . self::API_PATH . $path . '/' . self::PHP_DEFAULT_FILENAME;
+                    }
                     $ctrl_code = file_get_contents($filename);
                     if ($ctrl_code == null or $ctrl_code == '') {
                         if ($result != '') {
