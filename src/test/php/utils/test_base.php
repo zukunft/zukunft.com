@@ -1074,6 +1074,18 @@ class test_base
     }
 
     /**
+     * just report an assert error without additional check
+     * @param string $msg
+     * @return void
+     */
+    function assert_fail(string $msg): void
+    {
+        log_err('ERROR: ' . $msg);
+        $this->error_counter++;
+        $this->assert_dsp($msg, false);
+    }
+
+    /**
      * display the result of one test e.g. if adding a value has been successful
      *
      * @return bool true if the test result is fine
@@ -1091,8 +1103,6 @@ class test_base
         $test_result = false;
         $txt = '';
         $test_diff = '';
-        $new_start_time = microtime(true);
-        $since_start = $new_start_time - $this->exe_start_time;
 
         // do the compare depending on the type
         if (is_array($target) and is_array($result)) {
@@ -1130,81 +1140,94 @@ class test_base
             }
         }
 
-        // display the result
-        if ($test_result) {
-            // check if executed in a reasonable time and if the result is fine
-            if ($since_start > $exe_max_time) {
-                $txt .= '<p style="color:orange">TIMEOUT' . $msg;
-                $this->timeout_counter++;
-            } else {
-                $txt .= '<p style="color:green">OK' . $msg;
-                $test_result = true;
-            }
-        } else {
-            $txt .= '<p style="color:red">Error' . $msg;
-            $this->error_counter++;
-            // TODO: create a ticket
-        }
-
         // explain the check
         if (is_array($target)) {
             if ($test_type == 'contains') {
-                $txt .= " should contain \"" . dsp_array($target) . "\"";
+                $msg .= " should contain \"" . dsp_array($target) . "\"";
             } else {
-                $txt .= " should be \"" . dsp_array($target) . "\"";
+                $msg .= " should be \"" . dsp_array($target) . "\"";
             }
         } else {
             if ($test_type == 'contains') {
-                $txt .= " should contain \"" . $target . "\"";
+                $msg .= " should contain \"" . $target . "\"";
             } else {
-                $txt .= " should be \"" . $target . "\"";
+                $msg .= " should be \"" . $target . "\"";
             }
         }
         if ($result == $target) {
             if ($test_type == 'contains') {
-                $txt .= " and it contains ";
+                $msg .= " and it contains ";
             } else {
                 $txt .= " and it is ";
             }
         } else {
             if ($test_type == 'contains') {
-                $txt .= ", but ";
+                $msg .= ", but ";
             } else {
-                $txt .= ", but it is ";
+                $msg .= ", but it is ";
             }
         }
         if (is_array($result)) {
             if ($result != null) {
                 if (is_array($result[0])) {
-                    $txt .= "\"";
+                    $msg .= "\"";
                     foreach ($result[0] as $result_item) {
                         if ($result_item <> $result[0]) {
-                            $txt .= ",";
+                            $msg .= ",";
                         }
-                        $txt .= implode(":", $result_item);
+                        $msg .= implode(":", $result_item);
                     }
-                    $txt .= "\"";
+                    $msg .= "\"";
                 } else {
-                    $txt .= "\"" . dsp_array($result) . "\"";
+                    $msg .= "\"" . dsp_array($result) . "\"";
                 }
             }
         } else {
-            $txt .= "\"" . $result . "\"";
+            $msg .= "\"" . $result . "\"";
             if ($test_diff != '') {
-                $txt .= ' ' . $test_diff;
+                $msg .= ' ' . $test_diff;
             }
         }
         if ($comment <> '') {
-            $txt .= ' (' . $comment . ')';
+            $msg .= ' (' . $comment . ')';
         }
 
-// show the execution time
-        $txt .= ', took ';
-        $txt .= round($since_start, 4) . ' seconds';
+        return $this->assert_dsp($msg, $test_result, $exe_max_time);
+    }
 
-// --- and finally display the test result
-        $txt .= '</p>';
-        echo $txt;
+    /**
+     * @return void
+     */
+    private function assert_dsp(string $msg, bool $test_result, float $exe_max_time = TIMEOUT_LIMIT): bool
+    {
+        // calculate the execution time
+        $final_msg = '';
+        $new_start_time = microtime(true);
+        $since_start = $new_start_time - $this->exe_start_time;
+
+        // display the result
+        if ($test_result) {
+            // check if executed in a reasonable time and if the result is fine
+            if ($since_start > $exe_max_time) {
+                $final_msg .= '<p style="color:orange">TIMEOUT' . $msg;
+                $this->timeout_counter++;
+            } else {
+                $final_msg .= '<p style="color:green">OK' . $msg;
+                $test_result = true;
+            }
+        } else {
+            $final_msg .= '<p style="color:red">Error' . $msg;
+            $this->error_counter++;
+            // TODO: create a ticket
+        }
+
+        // show the execution time
+        $final_msg .= ', took ';
+        $final_msg .= round($since_start, 4) . ' seconds';
+
+        // --- and finally display the test result
+        $final_msg .= '</p>';
+        echo $final_msg;
         echo "\n";
         flush();
 

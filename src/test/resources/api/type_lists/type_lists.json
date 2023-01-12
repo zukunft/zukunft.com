@@ -152,6 +152,12 @@
           "code_id": "latest",
           "name": "latest",
           "comment": "to select the latest value by a time jump type e.g. latest year"
+        },
+        {
+          "id": 20,
+          "code_id": "key",
+          "name": "key",
+          "comment": "force faster search and if two keys are connected with the verb is all child values are expected to be equal"
         }
       ],
       "formula_types": [

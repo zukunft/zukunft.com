@@ -230,7 +230,7 @@ class controller
         }
     }
 
-    private function check_api_msg(array $api_msg): array
+    public function check_api_msg(array $api_msg): array
     {
         $msg_ok = true;
         $body = array();

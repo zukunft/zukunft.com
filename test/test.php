@@ -201,6 +201,13 @@ if ($start_usr->id > 0) {
             run_system_test($t);
             run_user_test($t);
 
+            // test the api write functionality
+            $t->test_api_write_no_rest();
+            //$t->test_api_write();
+
+            // cleanup any remaining api test date to be on the save side
+            //$t->cleanup();
+
             create_test_words($t);
             create_test_phrases($t);
             create_test_sources($t);

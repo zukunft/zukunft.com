@@ -86,9 +86,6 @@ class test_api extends test_new_obj
         $this->assert_api_get(view::class);
         $this->assert_api_get(view_cmp::class);
         $this->assert_api_get(source::class);
-        // move to api write tests
-        // and create write api tests without rest call
-        $this->assert_api_put(source::class);
         $this->assert_api_get(ref::class);
         $this->assert_api_get(batch_job::class);
         $this->assert_api_get(phrase_type::class);
@@ -112,6 +109,59 @@ class test_api extends test_new_obj
         // $this->assert_rest(new word($usr, word_api::TN_READ));
 
     }
+
+    /**
+     * test the database update function via simulated api calls
+     * @return void
+     */
+    function test_api_write_no_rest(): void
+    {
+        $src_id = $this->assert_api_put_no_rest(source::class);
+        $this->assert_api_del_no_rest(source::class, $src_id);
+    }
+
+    /**
+     * test the database update function via real api calls
+     * @return void
+     */
+    function test_api_write(): void
+    {
+        // move to api write tests
+        // and create write api tests without rest call
+        $this->assert_api_put(source::class);
+        //$this->assert_api_post(source::class);
+        //$this->assert_api_del(source::class);
+    }
+
+    /*
+     * TODO
+     * add the word type "key"
+     * "key" forces the creation of an internal value table
+     *
+     * add key word test
+     * assume
+     * ABB (Company),Employees, 2021: 15'000
+     * ABBN (Ticker),Employees, 2021: 15'100
+     *
+     *
+     * ABBN (Ticker) is ABB (Company)
+     * -> ask the user which value to use for Employees, 2021
+     * -> until the user has closed the open task 15'000 is used
+     *
+     * if Ticker is defined as a key for companies
+     * -> create a normal table with a unique key
+     * -> and fields like Employees (of a Company)
+     *
+     * the advantage compared to a classic table setup is
+     * that a smooth creation and reverse is supported
+     * to move the data from the word based setup to the table based setup
+     * a batch job is created and once it is finished the alternative
+     * access method is used
+     *
+     * define ISIN as a key
+     * -> streetnumber is move to new table, but not company
+     *
+     */
 
     /**
      * check if the main parts of the openapi definition matches the code
@@ -204,6 +254,71 @@ class test_api extends test_new_obj
             return false;
         } else {
             return $this->assert_api_compare($class, $actual);
+        }
+    }
+
+    /**
+     * check if the API PUT call works without the REST call
+     * similar to assert_api_put but without the need for a local webserver
+     *
+     * @param string $class the class name of the object to test
+     * @param array $data the database id of the db row that should be used for testing
+     * @return int the id of the created db row
+     */
+    function assert_api_put_no_rest(string $class, array $data = []): int
+    {
+        global $usr;
+
+        // naming exception (to be removed?)
+        $class = $this->class_to_api($class);
+        // get default data
+        if ($data == array()) {
+            $data = $this->source_put_json();
+        }
+        // use the controller to get the payload from the api message
+        $ctrl = new controller();
+        $request_body = $ctrl->check_api_msg($data);
+        // apply the payload to the backend object (add switch)
+        $src = new source($usr);
+        $result = $src->add_from_api_msg($request_body)->get_last_message();
+        // if no message should be shown to the user the adding is expected to be fine
+        // so get the row id to be able to remove the test row later
+        if ($result == '') {
+            $result = $src->id();
+        }
+        // if no row id is returned report the problem
+        if ($result == null or $result <= 0) {
+            $this->assert_fail('api write test without REST call of ' . $class . ' failed');
+            return 0;
+        } else {
+            return $result;
+        }
+    }
+
+    /**
+     * check if the API DEL call works without the REST call
+     * similar to assert_api_del but without the need for a local webserver
+     *
+     * @param string $class the class name of the object to test
+     * @param array $data the database id of the db row that should be used for testing
+     * @return int the id of the created db row
+     */
+    function assert_api_del_no_rest(string $class, int $id): bool
+    {
+        global $usr;
+
+        // naming exception (to be removed?)
+        $class = $this->class_to_api($class);
+        // apply the payload to the backend object (add switch)
+        $src = new source($usr);
+        $src->set_id($id);
+        $result = $src->del();
+        // if no row id is returned report the problem
+        if ($result->is_ok()) {
+            return true;
+        } else {
+            $this->assert_fail('api write del test without REST call of ' . $class . ' failed');
+            return false;
         }
     }
 
@@ -419,6 +534,7 @@ class test_api extends test_new_obj
         }
         return $put_msg;
     }
+
     /**
      * remove all volatile fields from a given json array
      *
