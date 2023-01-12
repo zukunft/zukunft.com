@@ -37,6 +37,7 @@ use api\user_sandbox_api;
 use api_message;
 use source;
 use type_lists;
+use user_sandbox;
 
 class controller
 {
@@ -97,7 +98,7 @@ class controller
      * @param string $msg the message as a json string that should be returned
      * @return void
      */
-    private function curl_response(string $api_obj, string $msg): void
+    private function curl_response(string $api_obj, string $msg, int $id = 0, ?user_sandbox $obj = null): void
     {
         // required headers
         header("Access-Control-Allow-Origin: *");
@@ -148,11 +149,17 @@ class controller
                 );
                 break;
             case 'DELETE':
-                // set response code - 200 OK
-                http_response_code(200);
-                echo json_encode(
-                    array("result" => $this->delete($request_json))
-                );
+                if ($id > 0) {
+                    $result = $obj->del($id);
+                    if ($result->is_ok()) {
+                        // set response code - 200 OK
+                        http_response_code(200);
+                    } else {
+                        echo json_encode(
+                            array("result" => $result->get_last_message())
+                        );
+                    }
+                }
                 break;
             default:
                 // set response code - 400 Bad Request
@@ -258,14 +265,14 @@ class controller
      * @param string $msg if filled the message that should be shown to the user instead of the object
      * @return void
      */
-    function curl(api_message $api_msg, string $msg): void
+    function curl(api_message $api_msg, string $msg, int $id, user_sandbox $obj): void
     {
         // return the api json or the error message
         if ($msg == '') {
-            $this->curl_response(json_encode($api_msg), $msg);
+            $this->curl_response(json_encode($api_msg), $msg, $id, $obj);
         } else {
             // tell the user e.g. that no products found
-            $this->curl_response('', $msg);
+            $this->curl_response('', $msg, $id, $obj);
         }
     }
 

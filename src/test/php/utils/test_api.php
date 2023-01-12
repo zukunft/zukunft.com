@@ -130,7 +130,7 @@ class test_api extends test_new_obj
         // and create write api tests without rest call
         $this->assert_api_put(source::class);
         //$this->assert_api_post(source::class);
-        //$this->assert_api_del(source::class);
+        $this->assert_api_del(source::class);
     }
 
     /*
@@ -250,6 +250,32 @@ class test_api extends test_new_obj
         }
         $data_string = json_encode($data);
         $actual = json_decode($this->api_call("PUT", $url, $data), true);
+        if ($actual == null) {
+            return false;
+        } else {
+            return $this->assert_api_compare($class, $actual);
+        }
+    }
+
+    /**
+     * check if the REST DEL call returns the expected result
+     * for testing the local deployments needs to be updated using an external script
+     *
+     * @param string $class the class name of the object to test
+     * @param array $data the database id of the db row that should be used for testing
+     * @return bool true if the json has no relevant differences
+     */
+    function assert_api_del(string $class, array $data = []): bool
+    {
+        // naming exception (to be removed?)
+        $class = $this->class_to_api($class);
+        $url = $this->class_to_url($class);
+        // get default data
+        if ($data == array()) {
+            $data = $this->source_put_json();
+        }
+        $data_string = json_encode($data);
+        $actual = json_decode($this->api_call("DELETE", $url, $data), true);
         if ($actual == null) {
             return false;
         } else {

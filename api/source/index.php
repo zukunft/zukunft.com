@@ -56,24 +56,22 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
 
+    $src = new source($usr);
     $result->set_user($usr);
     if ($src_id > 0) {
-        $src = new source($usr);
         $src->load_by_id($src_id);
         $result->add_body($src->api_obj());
     } elseif ($src_name != '') {
-        $src = new source($usr);
         $src->load_by_name($src_name);
         $result->add_body($src->api_obj());
     } elseif ($src_code_id != '') {
-        $src = new source($usr);
         $src->load_by_code_id($src_code_id);
         $result->add_body($src->api_obj());
     } else {
         $msg = 'Cannot load source because id, name and code id is missing';
     }
 
-    $ctrl->curl($result, $msg);
+    $ctrl->curl($result, $msg, $src_id, $src);
 
 } else {
     $ctrl->not_permitted($msg);
