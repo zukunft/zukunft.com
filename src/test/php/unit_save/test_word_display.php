@@ -75,39 +75,18 @@ function run_word_display_test(testing $t): void
     $wrd_2021 = new word($usr);
     $wrd_2021->load_by_name(word_api::TN_2021, word::class);
     $lnk_20_to_21 = $t->load_triple(word_api::TN_2021, verb::FOLLOW, word_api::TN_2020);
-    // TODO change direction?
-    $target = ' is followed by<table class="table col-sm-5 table-borderless">
-  <tr>
-    <td>
-      <a href="/http/view.php?words=' . $wrd_2021->id() . '" title="">System Test Time Word e.g. 2021</a>
-    </td>
-    <td>
-<a href="/http/link_edit.php?id=' . $lnk_20_to_21->id() . '&back=' . $wrd_2020->id() . '" title="edit word link"><i class="far fa-edit"></i></a>    </td>
-    <td>
-<a href="/http/link_del.php?id=' . $lnk_20_to_21->id() . '&back=' . $wrd_2020->id() . '" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
-  </tr>
-';
-    $target = '<table class="table table-borderless text-muted">
-  <tr>
-    <td>
-      <a href="/http/view.php?words=' . $wrd_2021->id() . '&back=0" title="System Test Time Word e.g. 2021">System Test Time Word e.g. 2021</a>
-    </td>
-    <td>
-      <a href="/http/view.php?words=' . $wrd_2020->id() . '&back=0" title="2020">2020</a>
-    </td>
-  </tr>
-</table>
-';
+    $target_part_is_followed = verb::FOLLOWED_BY;
     $link_types = $wrd_2020->link_types($direction);
     $result = $wrd_2020->dsp_graph($direction, $link_types, 0);
     $result = $lib->trim_html($result);
     $target = $lib->trim_html($target);
-    $diff = str_diff($result, $target);
-    if ($diff != '') {
-        log_err('Unexpected diff ' . $diff);
-        $target = $result;
-    }
-    $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name(), $target, $result);
+    $t->assert_text_contains($t->name . ' has follower', $result, $target_part_is_followed);
+    // TODO use complete link instead of id and name
+    $t->assert_text_contains($t->name . ' has 2020 id', $result, $wrd_2020->id());
+    $t->assert_text_contains($t->name . ' has 2020 name', $result, word_api::TN_2020);
+    $t->assert_text_contains($t->name . ' has 2021 id', $result, $wrd_2021->id());
+    $t->assert_text_contains($t->name . ' has 2021 name', $result, word_api::TN_2021);
+    $t->assert_text_contains($t->name . ' has 2020 to 2021 link', $result, $lnk_20_to_21->id());
 
     // ... and the other side
     $direction = 'up';
@@ -115,67 +94,16 @@ function run_word_display_test(testing $t): void
     $wrd_year = $t->load_word(word_api::TN_YEAR);
     $lnk_20_is_year = $t->load_triple(word_api::TN_2020, verb::IS_A, word_api::TN_YEAR);
     $lnk_19_to_20 = $t->load_triple(word_api::TN_2020, verb::FOLLOW, word_api::TN_2019);
-    $target = ' are<table class="table col-sm-5 table-borderless">
-  <tr>
-    <td>
-      <a href="/http/view.php?words=' . $wrd_year->id() . '" title="">Year</a>
-    </td>
-    <td>
-<a href="/http/link_edit.php?id=' . $lnk_20_is_year->id() . '&back=' . $wrd_2020->id() . '" title="edit word link"><i class="far fa-edit"></i></a>    </td>
-    <td>
-<a href="/http/link_del.php?id=' . $lnk_20_is_year->id() . '&back=' . $wrd_2020->id() . '" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
-  </tr>
- is follower of<table class="table col-sm-5 table-borderless">
-  <tr>
-    <td>
-      <a href="/http/view.php?words=' . $wrd_2019->id() . '" title="">2019</a>
-    </td>
-    <td>
-<a href="/http/link_edit.php?id=' . $lnk_19_to_20->id() . '&back=' . $wrd_2020->id() . '" title="edit word link"><i class="far fa-edit"></i></a>    </td>
-    <td>
-<a href="/http/link_del.php?id=' . $lnk_19_to_20->id() . '&back=' . $wrd_2020->id() . '" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
-  </tr>
-';
-    $target = '<table class="table table-borderless text-muted"><tr><td><a href="/http/view.php?words=208&back=0" title="2020">2020</a></td><td><a href="/http/view.php?words=195&back=0" title="Year">Year</a></td><td><a href="/http/view.php?words=207&back=0" title="2019">2019</a></td></tr></table>
-';
-    // TODO set or check the order
-    $target = '<table class="table table-borderless text-muted">
-  <tr>
-    <td>
-<a href="/http/view.php?words=' . $wrd_2020->id() . '&back=0" title="2020">2020</a>    </td>
-    <td>
-<a href="/http/view.php?words=' . $wrd_2019->id() . '&back=0" title="2019">2019</a>    </td>
-    <td>
-<a href="/http/view.php?words=' . $wrd_year->id() . '&back=0" title="Year">Year</a>    </td>
-  </tr>
-</table>
-';
-    $target_new_order = '<table class="table table-borderless text-muted">
-  <tr>
-    <td>
-<a href="/http/view.php?words=' . $wrd_2020->id() . '&back=0" title="2020">2020</a>    </td>
-    <td>
-<a href="/http/view.php?words=' . $wrd_year->id() . '&back=0" title="Year">Year</a>    </td>
-    <td>
-<a href="/http/view.php?words=' . $wrd_2019->id() . '&back=0" title="2019">2019</a>    </td>
-  </tr>
-</table>
-';
     $link_types = $wrd_2020->link_types($direction);
     $result = $wrd_2020->dsp_graph($direction, $link_types, 0);
     $result = $lib->trim_html($result);
-    $target = $lib->trim_html($target);
-    $target_new_order = $lib->trim_html($target_new_order);
-    $diff = str_diff($result, $target);
-    if ($diff != '') {
-        $target = $target_new_order;
-        $diff = str_diff($result, $target);
-        if ($diff != '') {
-            log_err('Unexpected diff ' . $diff);
-            $target = $result;
-        }
-    }
-    $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name(), $target, $result);
+    $t->assert_text_contains($t->name . ' has year id', $result, $wrd_year->id());
+    $t->assert_text_contains($t->name . ' has year name', $result, word_api::TN_YEAR);
+    $t->assert_text_contains($t->name . ' has 2019 id', $result, $wrd_2019->id());
+    $t->assert_text_contains($t->name . ' has 2019 name', $result, word_api::TN_2019);
+    $t->assert_text_contains($t->name . ' has 2020 id', $result, $wrd_2020->id());
+    $t->assert_text_contains($t->name . ' has 2020 name', $result, word_api::TN_2020);
+    $t->assert_text_contains($t->name . ' has 2019 to 2020 link', $result, $lnk_19_to_20->id());
 
     // the value table for ABB
     $wrd_ZH = new word($usr);

@@ -54,6 +54,9 @@ class verb extends db_object
     const CAN_BE = "can_be";
     const CAN_USE = "can_use";
 
+    // directional forms of verbs (maybe move to verb_api or test if only used for testing)
+    const FOLLOWED_BY = "is followed by";
+
     // search directions to get related words (phrases)
     const DIRECTION_NO = '';
     const DIRECTION_DOWN = 'down';    // or forward  to get a list of 'to' phrases

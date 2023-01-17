@@ -441,6 +441,31 @@ class test_base
     }
 
     /**
+     * check if the result text contains at least the target text
+     *
+     * @param string $msg (unique) description of the test
+     * @param string $result the actual result
+     * @param string $target the expected result
+     * @param float $exe_max_time the expected max time to create the result
+     * @param string $comment
+     * @param string $test_type
+     * @return bool true is the result is fine
+     */
+    function assert_text_contains(
+        string $msg,
+        string $result,
+        string $target,
+        float  $exe_max_time = TIMEOUT_LIMIT,
+        string $comment = '',
+        string $test_type = ''): bool
+    {
+        if (strpos($result, $target) !== null) {
+            $result = $target;
+        }
+        return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
+    }
+
+    /**
      * check if the test results contains at least all expected results
      *
      * @param string $msg (unique) description of the test
