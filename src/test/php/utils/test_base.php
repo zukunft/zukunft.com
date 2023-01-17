@@ -1111,8 +1111,12 @@ class test_base
             // in an array each value needs to be the same
             $test_result = true;
             foreach ($target as $key => $value) {
-                if ($value != $result[$key]) {
-                    $test_result = false;
+                if (array_key_exists($key, $result)) {
+                    if ($value != $result[$key]) {
+                        $test_result = false;
+                    }
+                } else {
+                    log_err('Key ' . $key . ' missing in ' . dsp_array($result, true));
                 }
             }
         } elseif (is_numeric($result) && is_numeric($target)) {

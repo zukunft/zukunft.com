@@ -1272,13 +1272,16 @@ function array_trim(?array $in_array): array
  * @param array|null $in_array the array that should be formatted
  * @return string the value comma seperated or "null" if the array is empty
  */
-function dsp_array(?array $in_array): string
+function dsp_array(?array $in_array, bool $with_keys = false): string
 {
     $result = 'null';
     if ($in_array != null) {
         if (count($in_array) > 0) {
             $result = implode(',', $in_array);
         }
+    }
+    if ($with_keys) {
+        $result .= ' (keys ' . dsp_array_keys($in_array) . ')';
     }
     return $result;
 }

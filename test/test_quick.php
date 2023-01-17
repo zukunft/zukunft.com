@@ -100,6 +100,11 @@ if ($start_usr->id > 0) {
             run_system_test($t);
             run_user_test($t);
 
+            // test the api write functionality
+            $t->test_api_write_no_rest();
+            $t->test_api_write();
+
+            /*
             create_test_words($t);
             create_test_phrases($t);
             create_test_sources($t);
@@ -111,7 +116,6 @@ if ($start_usr->id > 0) {
             create_test_view_component_links($t);
             create_test_values($t);
 
-            /*
             run_db_link_test($t);
             (new string_unit_tests)->run($t); // test functions not yet split into single unit tests
             run_math_test($t);

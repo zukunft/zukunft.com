@@ -205,9 +205,6 @@ if ($start_usr->id > 0) {
             $t->test_api_write_no_rest();
             //$t->test_api_write();
 
-            // cleanup any remaining api test date to be on the save side
-            //$t->cleanup();
-
             create_test_words($t);
             create_test_phrases($t);
             create_test_sources($t);
@@ -226,6 +223,7 @@ if ($start_usr->id > 0) {
             run_word_tests($t);
             $t->run_api_test();
             //run_word_ui_test($t);
+            // TODO add a test to merge a separate opened phrase Kanton Zürich with Zurich (Canton)
             run_word_display_test($t);
             run_word_list_test($t);
             run_triple_test($t);

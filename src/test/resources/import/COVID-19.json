@@ -75,7 +75,7 @@
       "protection": "admin_protection"
     },
     {
-      "name": "Zürich",
+      "name": "Zurich",
       "refs": [
         {
           "name": "Zürich",
@@ -465,19 +465,19 @@
       "to": "Aargau"
     },
     {
-      "from": "Zürich",
+      "from": "Zurich",
       "verb": "is a",
       "to": "Canton"
     },
     {
-      "from": "Zürich",
+      "from": "Zurich",
       "verb": "is part of",
       "to": "Switzerland"
     },
     {
       "from": "ZU",
       "verb": "is an acronym for",
-      "to": "Zürich"
+      "to": "Zurich"
     },
     {
       "from": "Vaud",
