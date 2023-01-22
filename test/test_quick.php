@@ -101,8 +101,8 @@ if ($start_usr->id > 0) {
             run_user_test($t);
 
             // test the api write functionality
-            $t->test_api_write_no_rest();
-            $t->test_api_write();
+            $t->test_api_write_no_rest_all();
+            $t->test_api_write_all();
 
             /*
             create_test_words($t);
@@ -160,7 +160,7 @@ if ($start_usr->id > 0) {
             //import_base_config();
 
             // testing cleanup to remove any remaining test records
-            $t->cleanup();
+            //$t->cleanup();
 
             // start the integration tests by loading the base and sample data
             //run_import_test(unserialize(TEST_IMPORT_FILE_LIST), $t);

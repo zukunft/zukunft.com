@@ -129,6 +129,7 @@
     TODO add a phrase group to sources and allow to import it with "keys:"
     TODO allow to assign more phrases to a source for better suggestion of sources
     TODO add a request time to each frontend request to check the automatically the response times
+    TODO check that all external links from external libraries are removed, so that the cookie disclaimer can be avoided
 
 
     TODO create a table startup page with a

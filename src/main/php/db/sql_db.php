@@ -209,6 +209,7 @@ class sql_db
 
     const NULL_VALUE = 'NULL';
 
+    const FLD_ID = 'id';
     const FLD_EXT_ID = '_id';
     const FLD_EXT_NAME = '_name';
     const FLD_EXT_TYPE_ID = '_type_id';

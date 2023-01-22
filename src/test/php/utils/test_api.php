@@ -111,26 +111,44 @@ class test_api extends test_new_obj
     }
 
     /**
-     * test the database update function via simulated api calls
+     * test the database update function via simulated api calls of all standard user sandbox objects
      * @return void
      */
-    function test_api_write_no_rest(): void
+    function test_api_write_no_rest_all(): void
     {
-        $src_id = $this->assert_api_put_no_rest(source::class);
-        $this->assert_api_del_no_rest(source::class, $src_id);
+        $this->test_api_write_no_rest(source::class, $this->source_put_json());
     }
 
     /**
      * test the database update function via real api calls
      * @return void
      */
-    function test_api_write(): void
+    function test_api_write_all(): void
     {
-        // move to api write tests
-        // and create write api tests without rest call
-        $this->assert_api_put(source::class);
+        // create a new source via api call
+        // e.g. curl -i -X PUT -H 'Content-Type: application/json' -d '{"pod":"zukunft.com","type":"source","user_id":2,"user":"zukunft.com system test","version":"0.0.3","timestamp":"2023-01-23T00:07:23+01:00","body":{"id":0,"name":"System Test Source API added","description":"System Test Source Description API","type_id":4,"url":"https:\/\/api.zukunft.com\/"}}' http://localhost/api/source/
+        //$id = $this->assert_api_put(source::class);
+        // check if the source has been created
         //$this->assert_api_post(source::class);
-        $this->assert_api_del(source::class);
+        //$this->assert_api_del(source::class, $id);
+    }
+
+    /**
+     * test the database update function via simulated api calls for one user sandbox object
+     * @param string $class the class name of the object to test
+     * @param ?array $expected if not null, the expected result
+     * @return void
+     */
+    function test_api_write_no_rest(string $class, ?array $expected = null): void
+    {
+        // create a new object via api call
+        $id = $this->assert_api_put_no_rest($class, $expected);
+        // check if the object has been created
+        // the id is ignored in the compare because it depends on the number of rows in the database that cannot be controlled by the test
+        $this->assert_api_get($class, $id, $expected, true);
+        // remove the previous created test object
+        $this->assert_api_del_no_rest($class, $id);
+        // check the previous created test object really has been removed
     }
 
     /*
@@ -228,7 +246,7 @@ class test_api extends test_new_obj
         $class = $this->class_to_api($class);
         $api_obj = $usr_obj->api_obj();
         $actual = json_decode(json_encode($api_obj), true);
-        return $this->assert_api_compare($class, $actual, $filename, $contains);
+        return $this->assert_api_compare($class, $actual, null, $filename, $contains);
     }
 
     /**
@@ -262,19 +280,15 @@ class test_api extends test_new_obj
      * for testing the local deployments needs to be updated using an external script
      *
      * @param string $class the class name of the object to test
-     * @param array $data the database id of the db row that should be used for testing
+     * @param int $id the database id of the db row that should be used for testing
      * @return bool true if the json has no relevant differences
      */
-    function assert_api_del(string $class, array $data = []): bool
+    function assert_api_del(string $class, int $id = 0): bool
     {
         // naming exception (to be removed?)
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
-        // get default data
-        if ($data == array()) {
-            $data = $this->source_put_json();
-        }
-        $data_string = json_encode($data);
+        $data = array("id" => $id);
         $actual = json_decode($this->api_call("DELETE", $url, $data), true);
         if ($actual == null) {
             return false;
@@ -363,7 +377,7 @@ class test_api extends test_new_obj
         $api_msg = new api_message($db_con, $class);
         $api_msg->add_body($api_obj);
         $actual = json_decode(json_encode($api_msg), true);
-        return $this->assert_api_compare($class, $actual, $filename, $contains);
+        return $this->assert_api_compare($class, $actual, null, $filename, $contains);
     }
 
     /**
@@ -372,18 +386,22 @@ class test_api extends test_new_obj
      *
      * @param string $class the class name of the object to test
      * @param int $id the database id of the db row that should be used for testing
+     * @param ?array $expected if not null, the expected result
+     * @param bool $ignore_id true if the ids should be ignored e.g. because test records have been created
      * @return bool true if the json has no relevant differences
      */
-    function assert_api_get(string $class, int $id = 1, bool $contains = false): bool
+    function assert_api_get(string $class, int $id = 1, ?array $expected = null, bool $ignore_id = false): bool
     {
         // naming exception (to be removed?)
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array("id" => $id);
         // TODO check why for formula a double call is needed
+        if ($class == formula::class) {
+            $actual = json_decode($this->api_call("GET", $url, $data), true);
+        }
         $actual = json_decode($this->api_call("GET", $url, $data), true);
-        $actual = json_decode($this->api_call("GET", $url, $data), true);
-        return $this->assert_api_compare($class, $actual, '', $contains);
+        return $this->assert_api_compare($class, $actual, $expected, '', false, $ignore_id);
     }
 
     /**
@@ -408,6 +426,8 @@ class test_api extends test_new_obj
      *
      * @param string $class the class name of the object to test
      * @param array $ids the database ids of the db rows that should be used for testing
+     * @param string $filename to overwrite the class based filename to get the standard expected result
+     * @param bool $contains set to true if the actual message is expected to contain more than the expected message
      * @return bool true if the json has no relevant differences
      */
     function assert_api_get_list(
@@ -419,7 +439,7 @@ class test_api extends test_new_obj
         $url = HOST_TESTING . '/api/' . camelize($class);
         $data = array("ids" => implode(",", $ids));
         $actual = json_decode($this->api_call("GET", $url, $data), true);
-        return $this->assert_api_compare($class, $actual, $filename, $contains);
+        return $this->assert_api_compare($class, $actual, null, $filename, $contains);
     }
 
     /**
@@ -456,17 +476,30 @@ class test_api extends test_new_obj
      *
      * @param string $class the class name of the object to test
      * @param array $actual the actual received json array
-     * @param string $filename to overwrite the class based filename
+     * @param ?array $expected if not null, the expected result
+     * @param string $filename to overwrite the class based filename to get the standard expected result
      * @param bool $contains set to true if the actual message is expected to contain more than the expected message
+     * @param bool $ignore_id true if the ids should be ignored e.g. because test records have been created
      * @return bool true if the json has no relevant differences
      */
-    function assert_api_compare(string $class, array $actual, string $filename = '', bool $contains = false): bool
+    function assert_api_compare(
+        string $class,
+        array  $actual,
+        ?array $expected = null,
+        string $filename = '',
+        bool   $contains = false,
+        bool   $ignore_id = false): bool
     {
-        $expected = json_decode($this->api_json_expected($class, $filename), true);
+        if ($expected == null) {
+            $expected = json_decode($this->api_json_expected($class, $filename), true);
+        }
 
         // remove the change time
         if ($actual != null) {
-            $actual = $this->json_remove_volatile($actual);
+            $actual = $this->json_remove_volatile($actual, $ignore_id);
+        }
+        if ($expected != null) {
+            $expected = $this->json_remove_volatile($expected, $ignore_id);
         }
 
         // TODO remove, for faster debugging only
@@ -565,108 +598,165 @@ class test_api extends test_new_obj
      * remove all volatile fields from a given json array
      *
      * @param array $json a json array with volatile fields
+     * @param bool $ignore_id true if the ids should be ignored e.g. because test records have been created
      * @return array a json array without volatile fields
      */
-    public function json_remove_volatile(array $json): array
+    public function json_remove_volatile(array $json, bool $ignore_id = false): array
     {
-        $json = $this->json_remove_volatile_item($json, $json, null);
-        $i = 0;
+        return $this->json_remove_volatile_level($json, $ignore_id);
+    }
+
+    /**
+     * remove the volatile fields from the current level of a given json array
+     *
+     * @param array $json a json array with volatile fields
+     * @param bool $ignore_id true if the ids should be ignored e.g. because test records have been created
+     * @return array a json array without volatile fields
+     */
+    private function json_remove_volatile_level(array $json, bool $ignore_id): array
+    {
+        // remove the volatile fields from this level
+        $json = $this->json_remove_volatile_item($json, $ignore_id);
         foreach ($json as $key => $item) {
             if (is_array($item)) {
-                $json = $this->json_remove_volatile_item($json, $item, $i);
-                $j = 0;
-                foreach ($item as $sub_item) {
-                    if (is_array($sub_item)) {
-                        $json = $this->json_remove_volatile_item($json, $sub_item, $i, $j, $key);
-                    }
-                    $j++;
-                }
-            }
-            $i++;
-        }
-        return $json;
-    }
-
-    private function json_remove_volatile_item(array $json, array $item, ?int $i, ?int $j = null, string $key = ''): array
-    {
-        $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, change_log::FLD_CHANGE_TIME);
-        $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, system_log::FLD_TIME_JSON);
-        $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, system_log::FLD_TIMESTAMP_JSON);
-        $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, batch_job::FLD_TIME_REQUEST);
-        $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, batch_job::FLD_TIME_START);
-        $json = $this->json_remove_volatile_field($json, $item, $i, $j, $key, batch_job::FLD_TIME_END);
-        if (array_key_exists(export::USER, $item)) {
-            $actual_user = $item[export::USER];
-            if ($actual_user == '::1') {
-                if ($i === null) {
-                    $json[export::USER] = 'zukunft.com system test';
-                } else {
-                    $json[$i][export::USER] = 'zukunft.com system test';
-                }
-            }
-            if ($actual_user == '127.0.0.1') {
-                if ($i === null) {
-                    $json[export::USER] = 'zukunft.com system test';
-                } else {
-                    $json[$i][export::USER] = 'zukunft.com system test';
-                }
-            }
-            if ($actual_user == 'zukunft.com system') {
-                if ($i === null) {
-                    $json[export::USER] = 'zukunft.com system test';
-                } else {
-                    $json[$i][export::USER] = 'zukunft.com system test';
-                }
-            }
-            if ($actual_user == 'localhost') {
-                if ($i === null) {
-                    $json[export::USER] = 'zukunft.com system test';
-                } else {
-                    $json[$i][export::USER] = 'zukunft.com system test';
-                }
-            }
-        }
-        if (array_key_exists(export::USER_ID, $item)) {
-            if ($i === null) {
-                $actual_user_id = $item[export::USER_ID];
-                if ($actual_user_id > 0) {
-                    $json[export::USER_ID] = 4;
-                }
-            } else {
-                $actual_user_id = $item[export::USER_ID];
-                if ($actual_user_id > 0) {
-                    $json[$i][export::USER_ID] = 4;
-                }
+                // remove the volatile fields from the next level
+                $json[$key] = $this->json_remove_volatile_level($item, $ignore_id);
             }
         }
         return $json;
     }
 
-    private function json_remove_volatile_field(array $json, array $item, ?int $i, ?int $j, string $key, string $fld_name): array
+    /**
+     * remove a time value and key from a json that should not be used for a compare
+     *
+     * @param array $json a json array with volatile fields
+     * @param bool $ignore_id true if the ids should be ignored e.g. because test records have been created
+     * @return array the main json without the volatile id fields
+     */
+    private function json_remove_volatile_item(array $json, bool $ignore_id): array
     {
-        if (array_key_exists($fld_name, $item)) {
+        // remove or replace the volatile time fields
+        $json = $this->json_remove_volatile_time_field($json, system_log::FLD_TIME_JSON);
+        $json = $this->json_remove_volatile_time_field($json, system_log::FLD_TIMESTAMP_JSON);
+        $json = $this->json_remove_volatile_time_field($json, change_log::FLD_CHANGE_TIME);
+        $json = $this->json_remove_volatile_time_field($json, batch_job::FLD_TIME_REQUEST);
+        $json = $this->json_remove_volatile_time_field($json, batch_job::FLD_TIME_START);
+        $json = $this->json_remove_volatile_time_field($json, batch_job::FLD_TIME_END);
+
+        // remove the id fields if requested
+        // for tests with base load dataset the id fields should not be ignored
+        // but for tests that add and remove data to table that have real data the id field should be ignored
+        if ($ignore_id) {
+            $json = $this->json_remove_volatile_unset_field($json, sql_db::FLD_ID);
+            $json = $this->json_remove_volatile_unset_field($json, source::FLD_ID);
+        }
+
+        // replace any local test username with the standard test username
+        if (array_key_exists(export::USER, $json)) {
+            $actual_user = $json[export::USER];
+            if ($actual_user == '::1'
+                or $actual_user == '127.0.0.1'
+                or 'zukunft.com system'
+                or 'localhost') {
+                $new_value = user::SYSTEM_TEST_NAME;
+                $json = $this->json_remove_volatile_replace_field($json, export::USER, $new_value);
+            }
+        }
+
+        // replace any local test user id with the standard test user id
+        if (array_key_exists(export::USER_ID, $json)) {
+            $user_id = $json[export::USER_ID];
+            if ($user_id >= 0) {
+                $user_id = user::SYSTEM_TEST_ID;
+            }
+            $json = $this->json_remove_volatile_replace_int_field($json, export::USER_ID, $user_id);
+        }
+        return $json;
+    }
+
+    /**
+     * remove a time value and key from a json that should not be used for a compare
+     *
+     * @param array $json a json array with volatile fields
+     * @param string $fld_name the field name, that should be removed
+     * @return array the main json without the volatile id fields
+     */
+    private function json_remove_volatile_time_field(array $json, string $fld_name): array
+    {
+        if (array_key_exists($fld_name, $json)) {
             try {
-                $actual_time = $item[$fld_name];
+                $actual_time = $json[$fld_name];
             } catch (Exception $e) {
                 log_warning($item[$fld_name] . ' cannot be converted to a data');
                 $actual_time = new DateTime('now');
             }
             $now = new DateTime('now');
+            // at the moment just a fixed number of levels allowed
             if ($actual_time < $now) {
-                if ($j === null) {
-                    if ($i === null) {
-                        unset($json[$fld_name]);
-                    } else {
-                        unset($json[$i][$fld_name]);
-                    }
-                } else {
-                    $json[$key][$j][$fld_name] = (new DateTime(system_log_api::TV_TIME))->format('Y-m-d H:i:s');
-                }
+                $json = $this->json_remove_volatile_unset_field($json, $fld_name);
+                unset($json[$fld_name]);
+            } else {
+                $new_value = (new DateTime(system_log_api::TV_TIME))->format('Y-m-d H:i:s');
+                $json = $this->json_remove_volatile_replace_field($json, $fld_name, $new_value);
             }
         }
         return $json;
     }
 
+    /**
+     * remove a value and key from a json that should not be used for a compare
+     *
+     * @param array $json a json array with volatile fields
+     * @param string $fld_name the field name, that should be removed
+     * @return array the main json without the volatile id fields
+     */
+    private function json_remove_volatile_unset_field(
+        array  $json,
+        string $fld_name): array
+    {
+        if (array_key_exists($fld_name, $json)) {
+            unset($json[$fld_name]);
+        }
+        return $json;
+    }
+
+    /**
+     * remove a value and key from a json that should not be used for a compare
+     *
+     * @param array $json a json array with volatile fields
+     * @param string $fld_name the field name, that should be removed
+     * @param string $new_value the new field value that the field should have
+     * @return array the main json without the volatile id fields
+     */
+    private function json_remove_volatile_replace_field(
+        array  $json,
+        string $fld_name,
+        string $new_value): array
+    {
+        if (array_key_exists($fld_name, $json)) {
+            $json[$fld_name] = $new_value;
+        }
+        return $json;
+    }
+
+    /**
+     * remove a value and key from a json that should not be used for a compare
+     *
+     * @param array $json a json array with volatile fields
+     * @param string $fld_name the field name, that should be removed
+     * @param int $new_value the new field value that the field should have
+     * @return array the main json without the volatile id fields
+     */
+    private function json_remove_volatile_replace_int_field(
+        array  $json,
+        string $fld_name,
+        int    $new_value): array
+    {
+        if (array_key_exists($fld_name, $json)) {
+            $json[$fld_name] = $new_value;
+        }
+        return $json;
+    }
 
     /*
      * helper for openapi test

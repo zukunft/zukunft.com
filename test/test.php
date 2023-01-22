@@ -202,8 +202,8 @@ if ($start_usr->id > 0) {
             run_user_test($t);
 
             // test the api write functionality
-            $t->test_api_write_no_rest();
-            $t->test_api_write();
+            $t->test_api_write_no_rest_all();
+            $t->test_api_write_all();
 
             create_test_words($t);
             create_test_phrases($t);

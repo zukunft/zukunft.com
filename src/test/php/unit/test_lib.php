@@ -283,6 +283,59 @@ class string_unit_tests
         $t->dsp(", array_recursive_diff - without array", $expected, $result);
 
 
+        $t->subheader('json remove volatile fields');
+
+        // remove timestamp from main json
+        $path = 'unit/json/';
+        $json_with_timestamp = $t->file($path . 'json_with_timestamp.json');
+        $json_without_timestamp = $t->file($path . 'json_without_timestamp.json');
+        $result = $t->json_remove_volatile(json_decode($json_with_timestamp, true));
+        $target = json_decode($json_without_timestamp, true);
+        $t->assert("json remove volatile timestamp", $result, $target);
+
+        // remove timestamp from sub json
+        $json_with_timestamp_in_array = $t->file($path . 'json_with_timestamp_in_array.json');
+        $json_without_timestamp_in_array = $t->file($path . 'json_without_timestamp_in_array.json');
+        $result = $t->json_remove_volatile(json_decode($json_with_timestamp_in_array, true));
+        $target = json_decode($json_without_timestamp_in_array, true);
+        $t->assert("json remove volatile timestamp in a sub array", $result, $target);
+
+        // remove timestamp from array in sub json
+        $json_with_timestamp_in_array = $t->file($path . 'json_with_timestamp_in_array_array.json');
+        $json_without_timestamp_in_array = $t->file($path . 'json_without_timestamp_in_array_array.json');
+        $result = $t->json_remove_volatile(json_decode($json_with_timestamp_in_array, true));
+        $target = json_decode($json_without_timestamp_in_array, true);
+        $t->assert("json remove volatile timestamp in a array of a sub array", $result, $target);
+
+        // remove id from json
+        $json_with_id_in_array = $t->file($path . 'json_with_id.json');
+        $json_without_id_in_array = $t->file($path . 'json_without_id.json');
+        $result = $t->json_remove_volatile(json_decode($json_with_id_in_array, true), true);
+        $target = json_decode($json_without_id_in_array, true);
+        $t->assert("json remove volatile id", $result, $target);
+
+        // remove id from array in sub json
+        $json_with_id_in_array = $t->file($path . 'json_with_id_in_array_array.json');
+        $json_without_id_in_array = $t->file($path . 'json_without_id_in_array_array.json');
+        $result = $t->json_remove_volatile(json_decode($json_with_id_in_array, true), true);
+        $target = json_decode($json_without_id_in_array, true);
+        $t->assert("json remove volatile id in a array of a sub array", $result, $target);
+
+        // replace username from array in sub json
+        $json_with_id_in_array = $t->file($path . 'json_with_username_local_in_array_array.json');
+        $json_without_id_in_array = $t->file($path . 'json_with_username_test_in_array_array.json');
+        $result = $t->json_remove_volatile(json_decode($json_with_id_in_array, true), true);
+        $target = json_decode($json_without_id_in_array, true);
+        $t->assert("json remove volatile id in a array of a sub array", $result, $target);
+
+        // replace user id from array in sub json
+        $json_with_id_in_array = $t->file($path . 'json_with_user_id_local_in_array_array.json');
+        $json_without_id_in_array = $t->file($path . 'json_with_user_id_test_in_array_array.json');
+        $result = $t->json_remove_volatile(json_decode($json_with_id_in_array, true), true);
+        $target = json_decode($json_without_id_in_array, true);
+        $t->assert("json remove volatile id in a array of a sub array", $result, $target);
+
+
         $t->subheader('user message tests');
 
         $msg = new user_message();
