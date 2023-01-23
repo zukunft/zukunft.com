@@ -106,6 +106,11 @@ class word_api extends user_sandbox_named_with_type_api
     const TN_CALC = 'System Test Word Calc';
     const TN_LAYER = 'System Test Word Layer';
 
+    const TN_ADD_API = 'System Test Word API';
+    const TD_ADD_API = 'System Test Word API Description';
+    const TN_UPD_API = 'System Test Word API Renamed';
+    const TD_UPD_API = 'System Test Word API Description Renamed';
+
 
     // word groups for creating the test words and remove them after the test
     const RESERVED_WORDS = array(
@@ -142,7 +147,9 @@ class word_api extends user_sandbox_named_with_type_api
         self::TN_SCALING_PCT,
         self::TN_SCALING_MEASURE,
         self::TN_CALC,
-        self::TN_LAYER
+        self::TN_LAYER,
+        self::TN_ADD_API,
+        self::TN_UPD_API
     );
     const TEST_WORDS_STANDARD = array(
         self::TN_PARENT,

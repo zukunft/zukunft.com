@@ -53,6 +53,8 @@ class source_api extends user_sandbox_named_with_type_api
     const TN_ADD_API = 'System Test Source API added';
     const TD_ADD_API = 'System Test Source Description API';
     const TU_ADD_API = 'https://api.zukunft.com/';
+    const TN_UPD_API = 'System Test Source API renamed';
+    const TD_UPD_API = 'System Test Source Description renamed API';
 
     // parameters used for unit and integration tests
     const TEST_URL_CHANGED = 'https://api.zukunft.com/';

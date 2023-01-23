@@ -50,6 +50,7 @@ use api\view_api;
 use api\view_cmp_api;
 use api\word_api;
 use cfg\formula_type;
+use cfg\phrase_type;
 
 class test_new_obj extends test_base
 {
@@ -873,12 +874,41 @@ class test_new_obj extends test_base
     }
 
     /**
+     * @return array json message to test if adding a new word via the api works fine
+     */
+    function word_put_json(): array
+    {
+        global $db_con;
+        global $phrase_types;
+        $msg = new api_message($db_con, word::class);
+        $wrd = new word_api();
+        $wrd->name = word_api::TN_ADD_API;
+        $wrd->description = word_api::TD_ADD_API;
+        $wrd->type_id = $phrase_types->id(phrase_type::NORMAL);
+        $msg->add_body($wrd);
+        return $msg->get_json_array();
+    }
+
+    /**
+     * @return array json message to test if updating of a word via the api works fine
+     */
+    function word_post_json(): array
+    {
+        global $db_con;
+        $msg = new api_message($db_con, word::class);
+        $wrd = new word_api();
+        $wrd->name = word_api::TN_UPD_API;
+        $wrd->description = word_api::TD_UPD_API;
+        $msg->add_body($wrd);
+        return $msg->get_json_array();
+    }
+
+    /**
      * @return array json message to test if adding a new source via the api works fine
      */
     function source_put_json(): array
     {
         global $db_con;
-        global $usr;
         global $source_types;
         $msg = new api_message($db_con, source::class);
         $src = new source_api();
@@ -887,6 +917,38 @@ class test_new_obj extends test_base
         $src->url = source_api::TU_ADD_API;
         $src->type_id = $source_types->id(source_type::PDF);
         $msg->add_body($src);
+        return $msg->get_json_array();
+    }
+
+    /**
+     * @return array json message to test if updating of a source via the api works fine
+     */
+    function source_post_json(): array
+    {
+        global $db_con;
+        $msg = new api_message($db_con, source::class);
+        $src = new source_api();
+        $src->name = source_api::TN_UPD_API;
+        $src->description = source_api::TD_UPD_API;
+        $msg->add_body($src);
+        return $msg->get_json_array();
+    }
+
+    /**
+     * @return array json message to test if adding a new reference via the api works fine
+     */
+    function reference_put_json(): array
+    {
+        global $db_con;
+        global $reference_types;
+        $msg = new api_message($db_con, ref::class);
+        $ref = new ref_api();
+        $ref->phr = $this->dummy_word()->phrase()->api_obj();
+        $ref->external_key = ref_api::TK_ADD_API;
+        $ref->description = ref_api::TD_ADD_API;
+        $ref->url = ref_api::TU_ADD_API;
+        $ref->type_id = $reference_types->id(source_type::PDF);
+        $msg->add_body($ref);
         return $msg->get_json_array();
     }
 

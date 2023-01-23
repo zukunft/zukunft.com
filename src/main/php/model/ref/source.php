@@ -423,7 +423,7 @@ class source extends user_sandbox_named_with_type
      * @param array $api_json the api array
      * @return user_message false if a value could not be set
      */
-    function add_from_api_msg(array $api_json, bool $do_save = true): user_message
+    function save_from_api_msg(array $api_json, bool $do_save = true): user_message
     {
         log_debug();
         $result = new user_message();

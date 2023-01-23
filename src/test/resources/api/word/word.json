@@ -1,6 +1,13 @@
 {
-  "id": 1,
-  "name": "Mathematical constant",
-  "description": "A mathematical constant that never changes e.g. Pi",
-  "type_id": 17
+  "pod": "zukunft.com",
+  "type": "word",
+  "user_id": 2,
+  "user": "zukunft.com system test",
+  "version": "0.0.3",
+  "body": {
+    "id": 1,
+    "name": "Mathematical constant",
+    "description": "A mathematical constant that never changes e.g. Pi",
+    "type_id": 17
+  }
 }

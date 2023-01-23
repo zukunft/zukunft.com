@@ -1204,7 +1204,7 @@ class test_base
                         if ($result_item <> $result[0]) {
                             $msg .= ",";
                         }
-                        $msg .= implode(":", $result_item);
+                        $msg .= implode(":", array_flat($result_item));
                     }
                     $msg .= "\"";
                 } else {

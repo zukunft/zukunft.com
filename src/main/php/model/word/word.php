@@ -731,6 +731,37 @@ class word extends user_sandbox_named_with_type
         return $result;
     }
 
+    /**
+     * set the word object vars based on an api json array
+     * similar to import_obj but using the database id instead of the names
+     * @param array $api_json the api array
+     * @return user_message false if a value could not be set
+     */
+    function save_from_api_msg(array $api_json, bool $do_save = true): user_message
+    {
+        log_debug();
+        $result = new user_message();
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == exp_obj::FLD_NAME) {
+                $this->name = $value;
+            }
+            if ($key == exp_obj::FLD_DESCRIPTION) {
+                $this->description = $value;
+            }
+            if ($key == exp_obj::FLD_TYPE_ID) {
+                $this->type_id = $value;
+            }
+        }
+
+        if ($result->is_ok() and $do_save) {
+            $result->add_message($this->save());
+        }
+
+        return $result;
+    }
+
 
     /*
      * display functions

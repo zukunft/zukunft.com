@@ -29,7 +29,6 @@
   
 */
 
-use api\user_sandbox_api;
 use controller\controller;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
@@ -47,7 +46,7 @@ $src_code_id = $_GET['code_id'] ?? '';
 
 $msg = '';
 $ctrl = new controller();
-$result = new api_message($db_con, 'source'); // create the message header
+$result = new api_message($db_con, source::class); // create the message header
 
 // load the session user parameters
 $usr = new user;

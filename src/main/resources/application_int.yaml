@@ -1,0 +1,4 @@
+log:
+  measure-average-response-time:
+    skip-api-messages:
+      value: 10

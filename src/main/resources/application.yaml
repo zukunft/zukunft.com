@@ -1,0 +1,5 @@
+log:
+  measure-average-response-time:
+    skip-api-messages:
+      value: 100
+      description: "number of api messages where the response time should not be logged"

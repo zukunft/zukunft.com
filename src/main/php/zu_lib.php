@@ -684,12 +684,12 @@ function log_debug(string $msg_text = '', int $debug_overwrite = null): string
 
 /**
  * for system messages no debug calls to avoid loops
- * @param string $msg_text        is a short description that is used to group and limit the number of error messages
+ * @param string $msg_text is a short description that is used to group and limit the number of error messages
  * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
- * @param string $msg_type_id     is the criticality level e.g. debug, info, warning, error or fatal error
- * @param string $function_name   is the function name which has most likely caused the error
- * @param string $function_trace  is the complete system trace to get more details
- * @param int $user_id            is the user id who has probably seen the error message
+ * @param string $msg_type_id is the criticality level e.g. debug, info, warning, error or fatal error
+ * @param string $function_name is the function name which has most likely caused the error
+ * @param string $function_trace is the complete system trace to get more details
+ * @param int $user_id is the user id who has probably seen the error message
  * return           the text that can be shown to the user in the navigation bar
  * TODO return the link to the log message so that the user can trace the bug fixing
  */
@@ -1278,7 +1278,7 @@ function dsp_array(?array $in_array, bool $with_keys = false): string
     $result = 'null';
     if ($in_array != null) {
         if (count($in_array) > 0) {
-            $result = implode(',', $in_array);
+            $result = implode(',', array_flat($in_array));
         }
     }
     if ($with_keys) {
@@ -1296,6 +1296,15 @@ function dsp_array_keys(?array $in_array): string
         }
     }
     return $result;
+}
+
+function array_flat(array $array): array
+{
+    $return = array();
+    array_walk_recursive($array, function ($a) use (&$return) {
+        $return[] = $a;
+    });
+    return $return;
 }
 
 function dsp_count(?array $in_array): int

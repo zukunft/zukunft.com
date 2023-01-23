@@ -37,6 +37,7 @@ use api\user_sandbox_api;
 use api_message;
 use source;
 use user_sandbox;
+use word;
 
 class controller
 {
@@ -97,6 +98,7 @@ class controller
      *
      * @param string $api_obj the object as a json string that should be returned
      * @param string $msg the message as a json string that should be returned
+     * @param int $id the id of object that should be deleted
      * @return void
      */
     private function curl_response(string $api_obj, string $msg, int $id = 0, ?user_sandbox $obj = null): void
@@ -106,22 +108,31 @@ class controller
         header("Content-Type: application/json; charset=UTF-8");
         header("Access-Control-Allow-Methods: POST,GET,PUT,DELETE");
 
+        // method switch
         $method = $_SERVER['REQUEST_METHOD'];
-        $request_text = file_get_contents('php://input');
-        $request_json = json_decode($request_text, true);
-
+        log_debug($method);
         switch ($method) {
             case 'PUT':
-                // set response code - 200 OK
-                http_response_code(200);
-
+                // get json object body to put
+                $request_text = file_get_contents('php://input');
+                $request_json = json_decode($request_text, true);
                 $request_body = $this->check_api_msg($request_json);
-                $result = $this->put($request_body);
+
+                // call to backend
+                $result = $this->put($request_body, $obj::class);
+
+                // return the result
                 if (is_numeric($result)) {
+
+                    // set response code - 200 OK
+                    http_response_code(200);
                     echo json_encode(
                         array(self::URL_VAR_ID => $result)
                     );
                 } else {
+
+                    // set response code - 400 Bad Request
+                    http_response_code(400);
                     echo json_encode(
                         array(self::URL_VAR_MSG => $result)
                     );
@@ -142,18 +153,38 @@ class controller
                     // set response code - 400 Bad Request
                     http_response_code(400);
 
-                    // tell the user no products found
+                    // tell the user no object found
                     echo json_encode(
                         array(self::URL_VAR_MSG => $msg)
                     );
                 }
                 break;
             case 'POST':
-                // set response code - 200 OK
-                http_response_code(200);
-                echo json_encode(
-                    array(self::URL_VAR_RESULT => $this->post($request_json))
-                );
+                // return the api json or the error message
+                if ($msg == '') {
+                    $request_text = file_get_contents('php://input');
+                    $request_json = json_decode($request_text, true);
+                    $request_body = $this->check_api_msg($request_json);
+
+                    // call to backend
+                    $result = $this->post($request_body, $obj::class);
+
+                    // return the result
+                    if (is_numeric($result)) {
+                        // set response code - 200 OK
+                        http_response_code(200);
+                        echo json_encode(
+                            array(self::URL_VAR_ID => $result)
+                        );
+                    } else {
+
+                        // set response code - 400 Bad Request
+                        http_response_code(400);
+                        echo json_encode(
+                            array(self::URL_VAR_MSG => $result)
+                        );
+                    }
+                }
                 break;
             case 'DELETE':
                 // return the api json or the error message
@@ -195,7 +226,8 @@ class controller
         }
     }
 
-    public function not_permitted(string $msg): void
+    public
+    function not_permitted(string $msg): void
     {
         http_response_code(401);
         $this->curl_response('', $msg);
@@ -264,7 +296,8 @@ class controller
         }
     }
 
-    public function check_api_msg(array $api_msg): array
+    public
+    function check_api_msg(array $api_msg): array
     {
         $msg_ok = true;
         $body = array();
@@ -290,6 +323,7 @@ class controller
      *
      * @param api_message $api_msg the object that should be encoded
      * @param string $msg if filled the message that should be shown to the user instead of the object
+     * @param int $id
      * @return void
      */
     function curl(api_message $api_msg, string $msg, int $id, user_sandbox $obj): void
@@ -303,14 +337,25 @@ class controller
         }
     }
 
-    function put(array $request): string
+    function put(array $request, string $class): string
     {
         global $usr;
-        // TODO switch between the objects
-        $src = new source($usr);
-        $result = $src->add_from_api_msg($request)->get_last_message();
-        if ($result == '') {
-            $result = $src->id();
+        $result = '';
+        switch ($class) {
+            case word::class:
+                $wrd = new word($usr);
+                $result = $wrd->save_from_api_msg($request)->get_last_message();
+                if ($result == '') {
+                    $result = $wrd->id();
+                }
+                break;
+            case source::class:
+                $src = new source($usr);
+                $result = $src->save_from_api_msg($request)->get_last_message();
+                if ($result == '') {
+                    $result = $src->id();
+                }
+                break;
         }
         return $result;
     }

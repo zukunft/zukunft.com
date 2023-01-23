@@ -51,9 +51,14 @@ class ref_api extends user_sandbox_api
     const TN_ADD = 'System Test Reference Name';
     const TK_READ = 'Mathematical_constant';
 
+    // must be the same as in /resource/api/source/source_put.json
+    const TK_ADD_API = 'System Test Reference API added';
+    const TD_ADD_API = 'System Test Reference Description API';
+    const TU_ADD_API = 'https://api.zukunft.com/';
+
     // reference group for testing
-    const RESERVED_SOURCES = array(
-        self::TN_READ,
+    // TODO activate
+    const RESERVED_REFERENCES = array(
         self::TN_READ
     );
 

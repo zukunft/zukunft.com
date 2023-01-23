@@ -29,7 +29,6 @@
   
 */
 
-use api\word_api;
 use controller\controller;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
@@ -45,7 +44,8 @@ $wrd_id = $_GET['id'] ?? 0;
 $wrd_name = $_GET['name'] ?? '';
 
 $msg = '';
-$result = new word_api(); // reset the html code var
+$ctrl = new controller();
+$result = new api_message($db_con, word::class); // create the message header
 
 // load the session user parameters
 $usr = new user;
@@ -54,21 +54,23 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
 
+    $wrd = new word($usr);
+    $result->set_user($usr);
     if ($wrd_id > 0) {
-        $wrd = new word($usr);
         $wrd->load_by_id($wrd_id);
-        $result = $wrd->api_obj();
+        $result->add_body($wrd->api_obj());
     } elseif ($wrd_name != '') {
-        $wrd = new word($usr);
         $wrd->load_by_name($wrd_name);
-        $result = $wrd->api_obj();
+        $result->add_body($wrd->api_obj());
     } else {
         $msg = 'word id or name is missing';
     }
+
+    // add, update or delete the word
+    $ctrl->curl($result, $msg, $wrd_id, $wrd);
+
+} else {
+    $ctrl->not_permitted($msg);
 }
-
-$ctrl = new controller();
-$ctrl->get($result, $msg);
-
 
 prg_end_api($db_con);

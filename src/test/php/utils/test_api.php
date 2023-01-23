@@ -116,41 +116,62 @@ class test_api extends test_new_obj
      */
     function test_api_write_no_rest_all(): void
     {
-        $this->test_api_write_no_rest(source::class, $this->source_put_json());
+        $this->test_api_write_no_rest(word::class, $this->word_put_json(), $this->word_post_json());
+        $this->test_api_write_no_rest(source::class, $this->source_put_json(), $this->source_post_json());
     }
 
     /**
-     * test the database update function via real api calls
+     * test the database update function via real api calls for all user sandbox objects
      * @return void
      */
     function test_api_write_all(): void
     {
-        // create a new source via api call
-        // e.g. curl -i -X PUT -H 'Content-Type: application/json' -d '{"pod":"zukunft.com","type":"source","user_id":2,"user":"zukunft.com system test","version":"0.0.3","timestamp":"2023-01-23T00:07:23+01:00","body":{"id":0,"name":"System Test Source API added","description":"System Test Source Description API","type_id":4,"url":"https:\/\/api.zukunft.com\/"}}' http://localhost/api/source/
-        $id = $this->assert_api_put(source::class, array(),true);
-        if ($id != 0) {
-            // check if the source has been created
-            //$this->assert_api_post(source::class);
-            $this->assert_api_del(source::class, $id);
-        }
+        $this->test_api_write(word::class, $this->word_put_json(), $this->word_post_json());
+        $this->test_api_write(source::class, $this->source_put_json(), $this->source_post_json());
     }
 
     /**
      * test the database update function via simulated api calls for one user sandbox object
      * @param string $class the class name of the object to test
-     * @param ?array $expected if not null, the expected result
+     * @param array $add_data the json that should be used to create the user sandbox object
+     * @param array $upd_data the json that should be used to update the user sandbox object
      * @return void
      */
-    function test_api_write_no_rest(string $class, ?array $expected = null): void
+    function test_api_write_no_rest(string $class, array $add_data, array $upd_data): void
     {
         // create a new object via api call
-        $id = $this->assert_api_put_no_rest($class, $expected);
+        $id = $this->assert_api_put_no_rest($class, $add_data);
         // check if the object has been created
         // the id is ignored in the compare because it depends on the number of rows in the database that cannot be controlled by the test
-        $this->assert_api_get($class, $id, $expected, true);
+        $this->assert_api_get($class, $id, $add_data, true);
+        // update the previous created test object
+        $id = $this->assert_api_post_no_rest($class, $id, $upd_data);
         // remove the previous created test object
         $this->assert_api_del_no_rest($class, $id);
         // check the previous created test object really has been removed
+        //$this->assert_api_get($class, $id, $data, true);
+    }
+
+    /**
+     * test the database update function via real api calls for one user sandbox object
+     * @param string $class the class name of the object to test
+     * @param array $add_data the json that should be used to create the user sandbox object
+     * @param array $upd_data the json that should be used to update the user sandbox object
+     * @return void
+     */
+    function test_api_write(string $class, array $add_data, array $upd_data): void
+    {
+        // create a new source via api call
+        // e.g. curl -i -X PUT -H 'Content-Type: application/json' -d '{"pod":"zukunft.com","type":"source","user_id":2,"user":"zukunft.com system test","version":"0.0.3","timestamp":"2023-01-23T00:07:23+01:00","body":{"id":0,"name":"System Test Source API added","description":"System Test Source Description API","type_id":4,"url":"https:\/\/api.zukunft.com\/"}}' http://localhost/api/source/
+        $id = $this->assert_api_put($class, $add_data, true);
+        if ($id != 0) {
+            // check if the source has been created
+            $this->assert_api_get($class, $id, $add_data, true);
+            //$this->assert_api_post(source::class);
+            $this->assert_api_del($class, $id);
+        } else {
+            log_err($class . ' cannot be added via PU API call with ' . dsp_array($add_data));
+        }
     }
 
     /*
@@ -261,13 +282,13 @@ class test_api extends test_new_obj
      */
     function assert_api_put(string $class, array $data = [], bool $ignore_id = false): int
     {
-        // naming exception (to be removed?)
-        $class = $this->class_to_api($class);
-        $url = $this->class_to_url($class);
         // get default data
         if ($data == array()) {
             $data = $this->source_put_json();
         }
+        // naming exception (to be removed?)
+        $class = $this->class_to_api($class);
+        $url = $this->class_to_url($class);
         $data_string = json_encode($data);
         $actual = json_decode($this->api_call("PUT", $url . '/', $data), true);
         $actual_text = json_encode($actual);
@@ -298,6 +319,8 @@ class test_api extends test_new_obj
                 if ($actual == null) {
                     $actual = $expected;
                 }
+            } else {
+                log_err('PUT API call for ' . $class . ' returned an empty result');
             }
 
             if ($this->assert_api_compare($class, $actual, $expected)) {
@@ -331,7 +354,7 @@ class test_api extends test_new_obj
     }
 
     /**
-     * check if the API PUT call works without the REST call
+     * check if the API PUT call without the REST call adds the user sandbox object
      * similar to assert_api_put but without the need for a local webserver
      *
      * @param string $class the class name of the object to test
@@ -346,18 +369,90 @@ class test_api extends test_new_obj
         $class = $this->class_to_api($class);
         // get default data
         if ($data == array()) {
-            $data = $this->source_put_json();
+            log_err('Data for ' . $class . ' missing in assert_api_put_no_rest');
         }
         // use the controller to get the payload from the api message
         $ctrl = new controller();
         $request_body = $ctrl->check_api_msg($data);
         // apply the payload to the backend object (add switch)
-        $src = new source($usr);
-        $result = $src->add_from_api_msg($request_body)->get_last_message();
-        // if no message should be shown to the user the adding is expected to be fine
-        // so get the row id to be able to remove the test row later
-        if ($result == '') {
-            $result = $src->id();
+        $result = 0;
+        switch ($class) {
+            case word::class:
+                $wrd = new word($usr);
+                $result = $wrd->save_from_api_msg($request_body)->get_last_message();
+                // if no message should be shown to the user the adding is expected to be fine
+                // so get the row id to be able to remove the test row later
+                if ($result == '') {
+                    $result = $wrd->id();
+                }
+                break;
+            case source::class:
+                $src = new source($usr);
+                $result = $src->save_from_api_msg($request_body)->get_last_message();
+                // if no message should be shown to the user the adding is expected to be fine
+                // so get the row id to be able to remove the test row later
+                if ($result == '') {
+                    $result = $src->id();
+                }
+                break;
+            default:
+                log_err($class . ' not yet mapped in assert_api_put_no_rest');
+        }
+        // if no row id is returned report the problem
+        if ($result == null or $result <= 0) {
+            $this->assert_fail('api write test without REST call of ' . $class . ' failed');
+            return 0;
+        } else {
+            return $result;
+        }
+    }
+
+    /**
+     * check if the API POST call without the REST call updates the user sandbox object
+     * similar to assert_api_put but without the need for a local webserver
+     *
+     * @param string $class the class name of the object to test
+     * @param array $data the database id of the db row that should be used for testing
+     * @return int the id of the created db row
+     */
+    function assert_api_post_no_rest(string $class, int $id, array $data = []): int
+    {
+        global $usr;
+
+        // naming exception (to be removed?)
+        $class = $this->class_to_api($class);
+        // get default data
+        if ($data == array()) {
+            log_err('Data for ' . $class . ' missing in assert_api_put_no_rest');
+        }
+        // use the controller to get the payload from the api message
+        $ctrl = new controller();
+        $request_body = $ctrl->check_api_msg($data);
+        // apply the payload to the backend object (add switch)
+        $result = 0;
+        switch ($class) {
+            case word::class:
+                $wrd = new word($usr);
+                $wrd->load_by_id($id, word::class);
+                $result = $wrd->save_from_api_msg($request_body)->get_last_message();
+                // if no message should be shown to the user the adding is expected to be fine
+                // so get the row id to be able to remove the test row later
+                if ($result == '') {
+                    $result = $wrd->id();
+                }
+                break;
+            case source::class:
+                $src = new source($usr);
+                $src->load_by_id($id, source::class);
+                $result = $src->save_from_api_msg($request_body)->get_last_message();
+                // if no message should be shown to the user the adding is expected to be fine
+                // so get the row id to be able to remove the test row later
+                if ($result == '') {
+                    $result = $src->id();
+                }
+                break;
+            default:
+                log_err($class . ' not yet mapped in assert_api_put_no_rest');
         }
         // if no row id is returned report the problem
         if ($result == null or $result <= 0) {
@@ -382,10 +477,23 @@ class test_api extends test_new_obj
 
         // naming exception (to be removed?)
         $class = $this->class_to_api($class);
-        // apply the payload to the backend object (add switch)
-        $src = new source($usr);
-        $src->set_id($id);
-        $result = $src->del();
+
+        // apply the payload to the backend object (add more switches)
+        $result = new user_message();
+        switch ($class) {
+            case word::class:
+                $wrd = new word($usr);
+                $wrd->set_id($id);
+                $result = $wrd->del();
+                break;
+            case source::class:
+                $src = new source($usr);
+                $src->set_id($id);
+                $result = $src->del();
+                break;
+            default:
+                log_err($class . ' not yet mapped in assert_api_del_no_rest');
+        }
         // if no row id is returned report the problem
         if ($result->is_ok()) {
             return true;
@@ -434,6 +542,9 @@ class test_api extends test_new_obj
             $actual = json_decode($this->api_call("GET", $url, $data), true);
         }
         $actual = json_decode($this->api_call("GET", $url, $data), true);
+        if ($actual == null) {
+            log_err('GET api call for ' . $class . ' returned an empty result');
+        }
         return $this->assert_api_compare($class, $actual, $expected, '', false, $ignore_id);
     }
 
