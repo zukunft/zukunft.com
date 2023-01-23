@@ -127,10 +127,12 @@ class test_api extends test_new_obj
     {
         // create a new source via api call
         // e.g. curl -i -X PUT -H 'Content-Type: application/json' -d '{"pod":"zukunft.com","type":"source","user_id":2,"user":"zukunft.com system test","version":"0.0.3","timestamp":"2023-01-23T00:07:23+01:00","body":{"id":0,"name":"System Test Source API added","description":"System Test Source Description API","type_id":4,"url":"https:\/\/api.zukunft.com\/"}}' http://localhost/api/source/
-        //$id = $this->assert_api_put(source::class);
-        // check if the source has been created
-        //$this->assert_api_post(source::class);
-        //$this->assert_api_del(source::class, $id);
+        $id = $this->assert_api_put(source::class, array(),true);
+        if ($id != 0) {
+            // check if the source has been created
+            //$this->assert_api_post(source::class);
+            $this->assert_api_del(source::class, $id);
+        }
     }
 
     /**
@@ -255,9 +257,9 @@ class test_api extends test_new_obj
      *
      * @param string $class the class name of the object to test
      * @param array $data the database id of the db row that should be used for testing
-     * @return bool true if the json has no relevant differences
+     * @return int the id of the added user sandbox object
      */
-    function assert_api_put(string $class, array $data = []): bool
+    function assert_api_put(string $class, array $data = [], bool $ignore_id = false): int
     {
         // naming exception (to be removed?)
         $class = $this->class_to_api($class);
@@ -267,11 +269,42 @@ class test_api extends test_new_obj
             $data = $this->source_put_json();
         }
         $data_string = json_encode($data);
-        $actual = json_decode($this->api_call("PUT", $url, $data), true);
+        $actual = json_decode($this->api_call("PUT", $url . '/', $data), true);
+        $actual_text = json_encode($actual);
+        $expected_raw_text = $this->file('api/' . $class . '/' . $class . '_put_response.json');
+        $expected = json_decode($expected_raw_text, true);
+        $expected_text = json_encode($expected);
         if ($actual == null) {
-            return false;
+            return 0;
         } else {
-            return $this->assert_api_compare($class, $actual);
+            $id = 0;
+            if (array_key_exists(controller::URL_VAR_ID, $actual)) {
+                $id = intval($actual[controller::URL_VAR_ID]);
+            } else {
+                log_err('PUT api call is expected to return the id of the added record, but it returns: ' . $actual_text);
+            }
+
+            // remove the volatile id if requested
+            if ($expected != null) {
+                $expected = $this->json_remove_volatile($expected, $ignore_id);
+                // if there is no expected result beside the volatile values switch off the compare
+                if ($expected == null) {
+                    $expected = $actual;
+                }
+            }
+            if ($actual != null) {
+                $actual = $this->json_remove_volatile($actual, $ignore_id);
+                // if there is no actual result beside the volatile values switch off the compare
+                if ($actual == null) {
+                    $actual = $expected;
+                }
+            }
+
+            if ($this->assert_api_compare($class, $actual, $expected)) {
+                return $id;
+            } else {
+                return 0;
+            }
         }
     }
 
@@ -648,7 +681,7 @@ class test_api extends test_new_obj
         // but for tests that add and remove data to table that have real data the id field should be ignored
         if ($ignore_id) {
             $json = $this->json_remove_volatile_unset_field($json, sql_db::FLD_ID);
-            $json = $this->json_remove_volatile_unset_field($json, source::FLD_ID);
+            $json = $this->json_remove_volatile_unset_field($json, controller::URL_VAR_ID);
         }
 
         // replace any local test username with the standard test username

@@ -1368,23 +1368,30 @@ class test_base
         return $this->seq_nbr;
     }
 
-    function api_call($method, $url, $data = false): string
+    function api_call(string $method, string $url, array $data): string
     {
         $curl = curl_init();
+        $data_json = json_encode($data);
+
 
         switch ($method) {
             case "POST":
-                curl_setopt($curl, CURLOPT_POST, 1);
-
-                if ($data)
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
                 break;
             case "PUT":
-                curl_setopt($curl, CURLOPT_PUT, 1);
+                curl_setopt($curl,
+                    CURLOPT_HTTPHEADER,
+                    array('Content-Type: application/json', 'Content-Length: ' . strlen($data_json)));
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $data_json);
+                break;
+            case "DELETE":
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+                $url = sprintf("%s?%s", $url, http_build_query($data));
                 break;
             default:
-                if ($data)
-                    $url = sprintf("%s?%s", $url, http_build_query($data));
+                $url = sprintf("%s?%s", $url, http_build_query($data));
+
         }
 
         // Optional Authentication:

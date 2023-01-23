@@ -56,6 +56,7 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
 
+    // load the source from the database for GET, UPDATE and DELETE
     $src = new source($usr);
     $result->set_user($usr);
     if ($src_id > 0) {
@@ -71,6 +72,7 @@ if ($usr->id > 0) {
         $msg = 'Cannot load source because id, name and code id is missing';
     }
 
+    // add, update or delete the source
     $ctrl->curl($result, $msg, $src_id, $src);
 
 } else {

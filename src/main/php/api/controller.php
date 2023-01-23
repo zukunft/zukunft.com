@@ -36,17 +36,18 @@ use api\type_lists_api;
 use api\user_sandbox_api;
 use api_message;
 use source;
-use type_lists;
 use user_sandbox;
 
 class controller
 {
 
-    // the parameter names used in the url
+    // the parameter names used in the url or in th result json
     const URL_API_PATH = 'api/';
     const URL_VAR_DEBUG = 'debug';
     const URL_VAR_WORD = 'words';
     const URL_VAR_ID = 'id';
+    const URL_VAR_MSG = 'message';
+    const URL_VAR_RESULT = 'result';
 
     // used for the change log
     const URL_VAR_WORD_ID = 'word_id';
@@ -86,7 +87,7 @@ class controller
 
             // tell the user no products found
             echo json_encode(
-                array("message" => $msg)
+                array(self::URL_VAR_MSG => $msg)
             );
         }
     }
@@ -115,10 +116,16 @@ class controller
                 http_response_code(200);
 
                 $request_body = $this->check_api_msg($request_json);
-
-                echo json_encode(
-                    array("result" => $this->put($request_body))
-                );
+                $result = $this->put($request_body);
+                if (is_numeric($result)) {
+                    echo json_encode(
+                        array(self::URL_VAR_ID => $result)
+                    );
+                } else {
+                    echo json_encode(
+                        array(self::URL_VAR_MSG => $result)
+                    );
+                }
                 break;
             case 'GET':
                 // return the api json or the error message
@@ -137,7 +144,7 @@ class controller
 
                     // tell the user no products found
                     echo json_encode(
-                        array("message" => $msg)
+                        array(self::URL_VAR_MSG => $msg)
                     );
                 }
                 break;
@@ -145,20 +152,40 @@ class controller
                 // set response code - 200 OK
                 http_response_code(200);
                 echo json_encode(
-                    array("result" => $this->post($request_json))
+                    array(self::URL_VAR_RESULT => $this->post($request_json))
                 );
                 break;
             case 'DELETE':
-                if ($id > 0) {
-                    $result = $obj->del($id);
-                    if ($result->is_ok()) {
-                        // set response code - 200 OK
-                        http_response_code(200);
-                    } else {
-                        echo json_encode(
-                            array("result" => $result->get_last_message())
-                        );
+                // return the api json or the error message
+                if ($msg == '') {
+
+                    if ($id > 0) {
+                        $result = $obj->del($id);
+                        if ($result->is_ok()) {
+                            // set response code - 200 OK
+                            http_response_code(200);
+                        } else {
+                            // set response code - 409 Conflict
+                            http_response_code(409);
+
+                            echo json_encode(
+                                array(self::URL_VAR_RESULT => $result->get_last_message())
+                            );
+                        }
                     }
+                } else {
+
+                    // set response code - 400 Bad Request
+                    http_response_code(400);
+                    // set response code - 410 Gone
+                    // http_response_code(410);
+                    // set response code - 403 Forbidden
+                    // http_response_code(403);
+
+                    // tell the user no products found
+                    echo json_encode(
+                        array(self::URL_VAR_MSG => $msg)
+                    );
                 }
                 break;
             default:
