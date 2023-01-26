@@ -426,7 +426,11 @@ class sql_db
         log_debug();
 
         if ($this->db_type == sql_db::POSTGRES) {
-            $this->postgres_link = pg_connect('host=localhost dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
+            try {
+                $this->postgres_link = pg_connect('host=localhost dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
+            } catch (Exception $e) {
+                log_fatal('Cannot connect to database due to ' . $e->getMessage(), 'sql_db open');
+            }
         } elseif ($this->db_type == sql_db::MYSQL) {
             $this->mysql = mysqli_connect('localhost', SQL_DB_USER_MYSQL, SQL_DB_PASSWD_MYSQL, 'zukunft') or die('Could not connect: ' . mysqli_error($this->mysql));
         } else {
@@ -455,6 +459,78 @@ class sql_db
 
 
         log_debug("done");
+    }
+
+    /**
+     * create the technical database user and the database structure for the zukunft.com pod
+     *
+     * @return bool true if the pod setup has been successful
+     */
+    function setup(): bool
+    {
+        $result = false;
+        // ask the user for the database server, admin user and pw
+        $db_server = 'localhost';
+        $db_admin_user = 'postgres';
+        $db_admin_password = 'wind4surfen';
+        // connect with db admin user
+        $this->postgres_link = pg_connect('host=' . $db_server . ' user=' . $db_admin_user . ' password=' . $db_admin_password);
+        // create zukunft user
+        $sql_name = 'db_setup_create_role';
+        $sql = resource_file( 'db/setup/postgres/db_create_user.sql');
+        try {
+            $sql_result = $this->exe($sql);
+            if (!$sql_result) {
+                // show the error message direct to the setup user because database does not yet exist
+                echo 'ERROR: creation of the technical pod user failed ';
+                echo 'due to ' . $sql_result;
+            }
+        } catch (Exception $e) {
+            // show the error message direct to the setup user because database does not yet exist
+            echo 'FATAL ERROR: creation of the technical pod user failed ';
+            echo 'due to ' . $e->getMessage();
+        }
+        $this->close();
+        // connect with zukunft user
+        $conn_str = 'host=' . $db_server . ' dbname=postgres user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
+        $this->postgres_link = pg_connect($conn_str);
+        if ($this->postgres_link !== false) {
+            $sql = resource_file('db/setup/postgres/db_create_database.sql');
+            try {
+                $sql_result = $this->exe($sql);
+                if (!$sql_result) {
+                    // show the error message direct to the setup user because database does not yet exist
+                    echo 'ERROR: creation of the database failed ';
+                    echo 'due to ' . $sql_result;
+                }
+            } catch (Exception $e) {
+                // show the error message direct to the setup user because database does not yet exist
+                echo 'FATAL ERROR: creation of the database failed ';
+                echo 'due to ' . $e->getMessage();
+            }
+        }
+        $this->close();
+        // connect with zukunft user
+        $conn_str = 'host=' . $db_server . ' dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
+        $this->postgres_link = pg_connect($conn_str);
+        if ($this->postgres_link !== false) {
+            $sql = resource_file('db/setup/postgres/zukunft_structure.sql');
+            try {
+                $sql_result = $this->exe($sql);
+                if (!$sql_result) {
+                    // show the error message direct to the setup user because database does not yet exist
+                    echo 'ERROR: creation of the database failed ';
+                    echo 'due to ' . $sql_result;
+                }
+            } catch (Exception $e) {
+                // show the error message direct to the setup user because database does not yet exist
+                echo 'FATAL ERROR: creation of the database failed ';
+                echo 'due to ' . $e->getMessage();
+            }
+            $result = true;
+        }
+        // create the tables and view
+        return $result;
     }
 
     /**

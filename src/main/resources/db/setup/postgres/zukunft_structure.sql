@@ -354,13 +354,13 @@ CREATE TABLE IF NOT EXISTS languages
 
 CREATE TABLE IF NOT EXISTS language_forms
 (
-    languages_form_id   BIGSERIAL PRIMARY KEY,
-    languages_form_name varchar(200) DEFAULT NULL,
-    code_id             varchar(50)  DEFAULT NULL,
-    language_id         bigint NOT NULL
+    language_form_id   BIGSERIAL PRIMARY KEY,
+    language_form_name varchar(200) DEFAULT NULL,
+    code_id            varchar(50)  DEFAULT NULL,
+    language_id        bigint NOT NULL
 );
 
-COMMENT ON COLUMN language_forms.languages_form_name is 'type of adjustment of a term in a language e.g. plural';
+COMMENT ON COLUMN language_forms.language_form_name is 'type of adjustment of a term in a language e.g. plural';
 
 -- --------------------------------------------------------
 
@@ -526,7 +526,7 @@ CREATE TABLE IF NOT EXISTS source_types
     source_type_id BIGSERIAL PRIMARY KEY,
     type_name      varchar(200) NOT NULL,
     code_id        varchar(100) NOT NULL,
-    description text            NOT NULL
+    description text        DEFAULT NULL
 );
 
 -- --------------------------------------------------------

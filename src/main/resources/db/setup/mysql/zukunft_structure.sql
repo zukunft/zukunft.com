@@ -344,10 +344,10 @@ CREATE TABLE IF NOT EXISTS `languages`
 
 CREATE TABLE IF NOT EXISTS `language_forms`
 (
-    `languages_form_id`   int(11) NOT NULL,
-    `languages_form_name` varchar(200) DEFAULT NULL COMMENT 'type of adjustment of a term in a language e.g. plural',
-    `code_id`             varchar(50)  DEFAULT NULL,
-    `language_id`         int(11) NOT NULL
+    `language_form_id`   int(11) NOT NULL,
+    `language_form_name` varchar(200) DEFAULT NULL COMMENT 'type of adjustment of a term in a language e.g. plural',
+    `code_id`            varchar(50)  DEFAULT NULL,
+    `language_id`        int(11) NOT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
@@ -528,7 +528,7 @@ CREATE TABLE IF NOT EXISTS `source_types`
     `source_type_id` int(11)      NOT NULL,
     `type_name`      varchar(200) NOT NULL,
     `code_id`        varchar(100) NOT NULL,
-    `description`    text         NOT NULL
+    `description`    text     DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 5
   DEFAULT CHARSET = utf8;
@@ -1813,7 +1813,7 @@ ALTER TABLE `languages`
 -- Indexes for table`language_forms`
 --
 ALTER TABLE `language_forms`
-    ADD PRIMARY KEY (`languages_form_id`);
+    ADD PRIMARY KEY (`language_form_id`);
 
 --
 -- Indexes for table`phrase_groups`

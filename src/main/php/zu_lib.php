@@ -603,6 +603,7 @@ define("BASE_CONFIG_FILES", serialize(array(
 )));
 
 # list of all static import files for testing the system consistency
+const PATH_RESOURCE_FILES = ROOT_PATH . 'src/main/resources/';
 const PATH_TEST_FILES = ROOT_PATH . 'src/test/resources/';
 const PATH_TEST_IMPORT_FILES = ROOT_PATH . 'src/test/resources/import/';
 define("TEST_IMPORT_FILE_LIST", serialize(array(
@@ -900,21 +901,30 @@ function prg_restart(string $code_name): sql_db
     $db_con = new sql_db;
     $db_con->db_type = SQL_DB_TYPE;
     $db_con->open();
-    log_debug($code_name . ': db open');
+    if ($db_con->postgres_link === false) {
+        log_debug($code_name . ': start db setup');
+        $db_con->setup();
+        $db_con->open();
+        if ($db_con->postgres_link === false) {
+            log_fatal('Cannot connect to database', 'prg_restart');
+        }
+    } else {
+        log_debug($code_name . ': db open');
 
-    // check the system setup
-    $result = db_check($db_con);
-    if ($result != '') {
-        echo '\n';
-        echo $result;
-        $db_con->close();
-        $db_con = null;
+        // check the system setup
+        $result = db_check($db_con);
+        if ($result != '') {
+            echo '\n';
+            echo $result;
+            $db_con->close();
+            $db_con = null;
+        }
+
+        // preload all types from the database
+        $sys_typ_lst = new type_lists();
+        $sys_typ_lst->load($db_con, null);
+
     }
-
-    // preload all types from the database
-    $sys_typ_lst = new type_lists();
-    $sys_typ_lst->load($db_con, null);
-
     return $db_con;
 }
 
@@ -1039,6 +1049,20 @@ function prg_end_api($link)
 
     log_debug(' ... database link closed');
 }
+
+/**
+ * @return string the content of a resource file
+ */
+function resource_file(string $resource_path): string
+{
+    $result = file_get_contents(PATH_RESOURCE_FILES . $resource_path);
+    if ($result === false) {
+        $result = 'Cannot get file from ' . PATH_RESOURCE_FILES . $resource_path;
+    }
+    return $result;
+}
+
+
 
 /*
  * display functions
