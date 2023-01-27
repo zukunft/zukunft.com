@@ -33,7 +33,7 @@ use api\formula_api;
 use controller\controller;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-$debug = $_GET['debug'] ?? 0;
+$debug = $_GET[controller::URL_VAR_DEBUG] ?? 0;
 const ROOT_PATH = __DIR__ . '/../../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
@@ -42,6 +42,7 @@ $db_con = prg_start("api/formula", "", false);
 
 // get the parameters
 $frm_id = $_GET['id'] ?? 0;
+$frm_name = $_GET['name'] ?? '';
 
 $msg = '';
 $result = new formula_api(); // reset the html code var
@@ -53,12 +54,15 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
 
+    $frm = new formula($usr);
     if ($frm_id > 0) {
-        $frm = new formula($usr);
         $frm->load_by_id($frm_id);
         $result = $frm->api_obj();
+    } elseif ($frm_name != '') {
+        $frm->load_by_name($frm_name);
+        $result = $frm->api_obj();
     } else {
-        $msg = 'formula id is missing';
+        $msg = 'formula id or name is missing';
     }
 }
 

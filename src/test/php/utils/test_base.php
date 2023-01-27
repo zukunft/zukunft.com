@@ -48,9 +48,10 @@
 // TODO add checks that all id (name or link) changing return the correct error message if the new id already exists
 // TODO build a cascading test classes and split the classes to sections less than 1000 lines of code
 
+use controller\controller;
 use html\html_base;
 
-const HOST_TESTING = 'http://localhost';
+const HOST_TESTING = 'http://localhost/';
 
 global $debug;
 global $root_path;
@@ -541,7 +542,7 @@ class test_base
      */
     function assert_api_get_json(string $test_name, string $fld = '', int $id = 1): bool
     {
-        $url = HOST_TESTING . '/api/json';
+        $url = HOST_TESTING . controller::URL_API_PATH . 'json';
         $data = array($fld => $id);
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         // TODO remove, for faster debugging only

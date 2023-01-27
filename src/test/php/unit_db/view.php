@@ -31,6 +31,7 @@
 */
 
 use api\view_api;
+use api\view_cmp_api;
 
 class view_unit_db_tests
 {
@@ -70,8 +71,8 @@ class view_unit_db_tests
 
         $t->subheader('View API object creation tests');
 
-        $wrd = $t->load_word(view_api::TN_READ);
-        $t->assert_api_exp($wrd);
+        $cmp = $t->load_word(view_api::TN_READ);
+        $t->assert_api_exp($cmp);
 
 
         $t->subheader('System view tests');
@@ -96,6 +97,17 @@ class view_unit_db_tests
         $t->assert_view(view::COMPONENT_EDIT);
         $t->assert_view(view::COMPONENT_DEL);
 
+
+
+        $t->subheader('View component db read tests');
+
+        $test_name = 'load view component ' . view_cmp_api::TN_READ . ' by name and id';
+        $cmp = new view_cmp($usr);
+        $cmp->load_by_name(view_cmp_api::TN_READ, view_cmp::class);
+        $cmp_by_id = new view_cmp($usr);
+        $cmp_by_id->load_by_id($cmp->id(), view_cmp::class);
+        $t->assert($test_name, $cmp_by_id->name(), view_cmp_api::TN_READ);
+        $t->assert($test_name, $cmp_by_id->description, view_cmp_api::TD_READ);
 
 
         $t->subheader('View component types tests');

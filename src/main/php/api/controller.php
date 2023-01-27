@@ -44,9 +44,10 @@ class controller
 
     // the parameter names used in the url or in th result json
     const URL_API_PATH = 'api/';
-    const URL_VAR_DEBUG = 'debug';
+    const URL_VAR_ID = 'id'; // the internal database id that should never be shown to the user
+    const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
+    const URL_VAR_DEBUG = 'debug'; // to force the output of debug messages
     const URL_VAR_WORD = 'words';
-    const URL_VAR_ID = 'id';
     const URL_VAR_MSG = 'message';
     const URL_VAR_RESULT = 'result';
 

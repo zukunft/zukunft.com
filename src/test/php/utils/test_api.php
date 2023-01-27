@@ -38,6 +38,7 @@
 */
 
 use api\batch_job_api;
+use api\formula_api;
 use api\language_api;
 use api\language_form_api;
 use api\phrase_type_api;
@@ -45,6 +46,7 @@ use api\ref_api;
 use api\source_api;
 use api\system_log_api;
 use api\type_api;
+use api\verb_api;
 use api\view_api;
 use api\view_cmp_api;
 use api\word_api;
@@ -81,19 +83,22 @@ class test_api extends test_new_obj
         $this->assert_api_get_json(word::class, controller::URL_VAR_WORD_ID);
         $this->assert_api_get_by_name(word::class, word_api::TN_READ);
         $this->assert_api_get(verb::class);
+        $this->assert_api_get_by_name(verb::class, verb_api::TN_READ);
         $this->assert_api_get(triple::class);
         $this->assert_api_get(value::class);
         $this->assert_api_get(formula::class);
+        $this->assert_api_get_by_name(formula::class, formula_api::TN_READ);
         $this->assert_api_get(view::class);
         $this->assert_api_get_by_name(view::class, view_api::TN_READ);
         $this->assert_api_get(view_cmp::class);
+        $this->assert_api_get_by_name(view_cmp::class, view_cmp_api::TN_READ);
         $this->assert_api_get(source::class);
+        $this->assert_api_get_by_name(source::class, source_api::TN_READ_API);
         $this->assert_api_get(ref::class);
         $this->assert_api_get(batch_job::class);
         $this->assert_api_get(phrase_type::class);
         $this->assert_api_get(language::class);
         $this->assert_api_get(language_form::class);
-        $this->assert_api_get_by_name(source::class, source_api::TN_READ_API);
 
         $this->assert_api_get_list(type_lists::class);
         $this->assert_api_get_list(phrase_list::class);
@@ -560,7 +565,8 @@ class test_api extends test_new_obj
      */
     function assert_api_get_by_name(string $class, string $name = ''): bool
     {
-        $url = HOST_TESTING . '/api/' . $class;
+        $class = $this->class_to_api($class);
+        $url = $this->class_to_url($class);
         $data = array("name" => $name);
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         return $this->assert_api_compare($class, $actual);
@@ -582,7 +588,7 @@ class test_api extends test_new_obj
         string $filename = '',
         bool   $contains = false): bool
     {
-        $url = HOST_TESTING . '/api/' . camelize($class);
+        $url = HOST_TESTING . controller::URL_API_PATH . camelize($class);
         $data = array("ids" => implode(",", $ids));
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         return $this->assert_api_compare($class, $actual, null, $filename, $contains);
@@ -601,7 +607,7 @@ class test_api extends test_new_obj
      */
     function assert_api_chg_list(string $class, string $id_fld = '', int $id = 1, string $fld_name = '', string $fld_value = ''): bool
     {
-        $url = HOST_TESTING . '/api/' . camelize($class);
+        $url = HOST_TESTING . controller::URL_API_PATH . camelize($class);
         if ($fld_name != '') {
             $data = array($id_fld => $id, $fld_name => $fld_value);
         } else {
@@ -712,12 +718,12 @@ class test_api extends test_new_obj
      */
     private function class_to_url(string $class): string
     {
-        $url = HOST_TESTING . '/api/' . $class;
+        $url = HOST_TESTING . controller::URL_API_PATH . $class;
         if ($class == phrase_type_api::API_NAME) {
-            $url = HOST_TESTING . '/api/' . phrase_type_api::URL_NAME;
+            $url = HOST_TESTING . controller::URL_API_PATH . phrase_type_api::URL_NAME;
         }
         if ($class == language_form_api::API_NAME) {
-            $url = HOST_TESTING . '/api/' . language_form_api::URL_NAME;
+            $url = HOST_TESTING . controller::URL_API_PATH . language_form_api::URL_NAME;
         }
         return $url;
     }

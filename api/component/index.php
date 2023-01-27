@@ -33,7 +33,7 @@ use api\view_cmp_api;
 use controller\controller;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-$debug = $_GET['debug'] ?? 0;
+$debug = $_GET[controller::URL_VAR_DEBUG] ?? 0;
 const ROOT_PATH = __DIR__ . '/../../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
@@ -41,7 +41,8 @@ include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 $db_con = prg_start("api/component", "", false);
 
 // get the parameters
-$cmp_id = $_GET['id'] ?? 0;
+$cmp_id = $_GET[controller::URL_VAR_ID] ?? 0;
+$cmp_name = $_GET[controller::URL_VAR_NAME] ?? '';
 
 $msg = '';
 $result = new view_cmp_api(); // reset the html code var
@@ -53,12 +54,15 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
 
+    $cmp = new view_cmp($usr);
     if ($cmp_id > 0) {
-        $cmp = new view_cmp($usr);
         $cmp->load_by_id($cmp_id);
         $result = $cmp->api_obj();
+    } elseif ($cmp_name != '') {
+        $cmp->load_by_name($cmp_name);
+        $result = $cmp->api_obj();
     } else {
-        $msg = 'component id is missing';
+        $msg = 'component id or name is missing';
     }
 }
 
