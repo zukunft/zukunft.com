@@ -472,7 +472,7 @@ class sql_db
         // ask the user for the database server, admin user and pw
         $db_server = 'localhost';
         $db_admin_user = 'postgres';
-        $db_admin_password = 'wind4surfen';
+        $db_admin_password = 'xxx';
         // connect with db admin user
         $this->postgres_link = pg_connect('host=' . $db_server . ' user=' . $db_admin_user . ' password=' . $db_admin_password);
         // create zukunft user

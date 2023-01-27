@@ -30,6 +30,8 @@
 
 */
 
+use api\view_api;
+
 class view_unit_db_tests
 {
 
@@ -40,9 +42,19 @@ class view_unit_db_tests
         global $usr;
 
         // init
+        $t->header('Unit database tests of the view class (src/main/php/model/value/view.php)');
         $t->name = 'view read db->';
 
-        $t->header('Unit database tests of the view class (src/main/php/model/value/view.php)');
+
+        $t->subheader('View db read tests');
+
+        $test_name = 'load view ' . view_api::TN_READ . ' by name and id';
+        $dsp = new view($usr);
+        $dsp->load_by_name(view_api::TN_READ, view::class);
+        $dsp_by_id = new view($usr);
+        $dsp_by_id->load_by_id($dsp->id(), view::class);
+        $t->assert($test_name, $dsp_by_id->name(), view_api::TN_READ);
+
 
         $t->subheader('View types tests');
 
@@ -54,6 +66,12 @@ class view_unit_db_tests
         // ... and check if at least the most critical is loaded
         $result = cl(db_cl::VIEW_TYPE, view_type::DEFAULT);
         $t->assert('check type' . view_type::DEFAULT, $result, 1);
+
+
+        $t->subheader('View API object creation tests');
+
+        $wrd = $t->load_word(view_api::TN_READ);
+        $t->assert_api_exp($wrd);
 
 
         $t->subheader('System view tests');

@@ -48,6 +48,7 @@ class word_unit_db_tests
         $t->name = 'word read db->';
         $t->resource_path = 'db/word/';
 
+
         $t->subheader('Word db read tests');
 
         $test_name = 'load word ' . word_api::TN_READ . ' by name and id';
@@ -56,8 +57,9 @@ class word_unit_db_tests
         $wrd_by_id = new word($usr);
         $wrd_by_id->load_by_id($wrd->id(), word::class);
         $t->assert($test_name, $wrd_by_id->name(), word_api::TN_READ);
+        $t->assert($test_name, $wrd_by_id->description, word_api::TD_READ);
 
-        // TODO load description, plural, type and view
+        // TODO load plural, type and view
 
 
         $t->subheader('Word types tests');
@@ -69,9 +71,10 @@ class word_unit_db_tests
 
         // ... and check if at least the most critical is loaded
         $result = cl(db_cl::PHRASE_TYPE, phrase_type::NORMAL);
-        $t->assert('check ' . phrase_type::NORMAL, $result, 1);
+        $t->assert('check type ' . phrase_type::NORMAL, $result, 1);
 
-        $t->subheader('Frontend API tests');
+
+        $t->subheader('Word API object creation tests');
 
         $wrd = $t->load_word(word_api::TN_READ);
         $t->assert_api_exp($wrd);
@@ -79,6 +82,7 @@ class word_unit_db_tests
 
         $t->header('Unit database tests of the word list class (src/main/php/model/word/word_list.php)');
         $t->name = 'word list read db->';
+
 
         $t->subheader('Word list load and modification tests');
 

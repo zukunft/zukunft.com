@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
+  Copyright (c) 1995-2023 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -42,6 +42,7 @@ $db_con = prg_start("api/view", "", false);
 
 // get the parameters
 $dsp_id = $_GET['id'] ?? 0;
+$dsp_name = $_GET['name'] ?? '';
 
 $msg = '';
 $result = new view_api(); // reset the html code var
@@ -53,12 +54,15 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
 
+    $dsp = new view($usr);
     if ($dsp_id > 0) {
-        $dsp = new view($usr);
         $dsp->load_by_id($dsp_id);
         $result = $dsp->api_obj();
+    } elseif ($dsp_name != '') {
+        $dsp->load_by_name($dsp_name);
+        $result = $dsp->api_obj();
     } else {
-        $msg = 'view id is missing';
+        $msg = 'view id or name is missing';
     }
 }
 

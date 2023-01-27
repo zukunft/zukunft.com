@@ -45,6 +45,7 @@ use api\ref_api;
 use api\source_api;
 use api\system_log_api;
 use api\type_api;
+use api\view_api;
 use api\view_cmp_api;
 use api\word_api;
 use cfg\language;
@@ -84,6 +85,7 @@ class test_api extends test_new_obj
         $this->assert_api_get(value::class);
         $this->assert_api_get(formula::class);
         $this->assert_api_get(view::class);
+        $this->assert_api_get_by_name(view::class, view_api::TN_READ);
         $this->assert_api_get(view_cmp::class);
         $this->assert_api_get(source::class);
         $this->assert_api_get(ref::class);

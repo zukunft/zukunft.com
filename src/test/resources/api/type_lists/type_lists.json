@@ -2,7 +2,7 @@
   {
     "pod": "zukunft.com",
     "type": "type_lists",
-    "user_id": 4,
+    "user_id": 2,
     "user": "zukunft.com system test",
     "version": "0.0.3",
     "type_lists": {
@@ -370,16 +370,16 @@
       ],
       "view_component_position_types": [
         {
-          "id": 2,
-          "code_id": "",
-          "name": "side",
-          "comment": "is right of the previous entry (or left for right to left languages)"
-        },
-        {
           "id": 1,
-          "code_id": "",
+          "code_id": "below",
           "name": "below",
           "comment": "below the previous entry"
+        },
+        {
+          "id": 2,
+          "code_id": "side",
+          "name": "side",
+          "comment": "is right of the previous entry (or left for right to left languages)"
         }
       ],
       "ref_types": [
