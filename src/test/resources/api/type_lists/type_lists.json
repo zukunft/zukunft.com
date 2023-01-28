@@ -194,16 +194,16 @@
       ],
       "formula_link_types": [
         {
-          "id": 2,
-          "code_id": "time_period_based",
-          "name": "time period based",
-          "comment": "increase needs to know for which time period the increase should be calculated"
-        },
-        {
           "id": 1,
           "code_id": "default",
           "name": "default",
           "comment": "default"
+        },
+        {
+          "id": 2,
+          "code_id": "time_period_based",
+          "name": "time period based",
+          "comment": "increase needs to know for which time period the increase should be calculated"
         }
       ],
       "formula_element_types": [
@@ -488,16 +488,16 @@
           "comment": "the system language, so each word must be unique for all users in this language"
         },
         {
-          "id": 3,
-          "code_id": "de",
-          "name": "German",
-          "comment": "a normal translation to German"
-        },
-        {
           "id": 2,
           "code_id": "en_uk",
           "name": "UK English",
           "comment": "the users can use this (and the other) languages to create its own namespace. So one user may use \"Zurich\" in UK English for \"Kanton Zurich\" and another user may use \"Zurich\" in UK English for \"Zurich AG\"."
+        },
+        {
+          "id": 3,
+          "code_id": "de",
+          "name": "German",
+          "comment": "a normal translation to German"
         }
       ],
       "language_forms": [

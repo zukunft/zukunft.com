@@ -755,7 +755,7 @@ CREATE TABLE IF NOT EXISTS user_formulas
     formula_type_id   bigint         DEFAULT NULL,
     all_values_needed smallint       DEFAULT NULL,
     share_type_id     bigint         DEFAULT NULL,
-    protect_id        bigint    NOT NULL,
+    protect_id        bigint    DEFAULT NULL,
     last_update       timestamp NULL DEFAULT NULL,
     usage             bigint    NULL DEFAULT NULL,
     excluded          smallint       DEFAULT NULL
