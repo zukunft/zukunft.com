@@ -5,4 +5,5 @@ PREPARE ref_type (int) AS
            code_id,
            base_url
       FROM ref_types
+  ORDER BY ref_type_id
      LIMIT $1;

@@ -50,15 +50,21 @@ class source_type_list extends type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param string $db_type the database name e.g. the table name without s
      * @param string $query_name the name extension to make the query name unique
+     * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $db_type, string $query_name = 'all'): sql_par
+    function load_sql(
+        sql_db $db_con,
+        string $db_type,
+        string $query_name = 'all',
+        string $order_field = self::FLD_ID): sql_par
     {
         $db_con->set_type($db_type);
         $qp = new sql_par($db_type);
         $qp->name = $db_type;
         $db_con->set_name($qp->name);
         $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
+        $db_con->set_order($order_field);
 
         return $qp;
     }

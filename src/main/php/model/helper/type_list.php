@@ -123,9 +123,14 @@ class type_list
      * @param sql_db $db_con the open database connection as a parameter to allow unit testing
      * @param string $db_type the class of the related object e.g. phrase_type or formula_type
      * @param string $query_name the name extension to make the query name unique
+     * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
      * @return sql_par the sql statement with the parameters and the name
      */
-    function load_sql(sql_db $db_con, string $db_type, string $query_name = 'all'): sql_par
+    function load_sql(
+        sql_db $db_con,
+        string $db_type,
+        string $query_name = 'all',
+        string $order_field = ''): sql_par
     {
         $db_con->set_type($db_type);
         $qp = new sql_par($db_type);
@@ -133,6 +138,10 @@ class type_list
         $db_con->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id); is needed
         $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
+        if ($order_field == '') {
+            $order_field = $db_con->get_id_field_name($db_type);
+        }
+        $db_con->set_order($order_field);
 
         return $qp;
     }

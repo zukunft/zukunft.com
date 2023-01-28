@@ -180,9 +180,15 @@ class verb_list extends type_list
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $db_type the class name to be compatible with the user sandbox load_sql functions
+     * @param string $query_name the name extension to make the query name unique
+     * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $db_type = self::class, string $query_name = 'all'): sql_par
+    function load_sql(
+        sql_db $db_con,
+        string $db_type = self::class,
+        string $query_name = 'all',
+        string $order_field = verb::FLD_ID): sql_par
     {
         $db_con->set_type(sql_db::TBL_VERB);
         $qp = new sql_par($db_type);
@@ -191,7 +197,7 @@ class verb_list extends type_list
         $db_con->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id); is needed
         $db_con->set_fields(verb::FLD_NAMES);
-        $db_con->set_order(verb::FLD_ID);
+        $db_con->set_order($order_field);
 
         return $qp;
     }

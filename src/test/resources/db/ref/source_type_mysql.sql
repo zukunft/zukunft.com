@@ -4,4 +4,5 @@ PREPARE source_type FROM
            description,
            code_id
       FROM source_types
+  ORDER BY source_type_id
      LIMIT ?';
