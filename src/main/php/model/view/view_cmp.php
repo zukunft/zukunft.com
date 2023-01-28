@@ -201,7 +201,7 @@ class view_cmp extends user_sandbox_named_with_type
      * @return bool true if the view component is loaded and valid
      */
     function row_mapper(
-        array  $db_row,
+        ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = self::FLD_ID): bool

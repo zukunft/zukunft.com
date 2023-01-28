@@ -146,11 +146,11 @@ class phrase extends db_object
     /**
      * map the common word and triple database fields to the phrase fields
      *
-     * @param array $db_row with the data directly from the database
+     * @param array|null $db_row with the data directly from the database
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the triple is loaded and valid
      */
-    function row_mapper(array $db_row, string $id_fld = self::FLD_ID, string $fld_ext = ''): bool
+    function row_mapper(?array $db_row, string $id_fld = self::FLD_ID, string $fld_ext = ''): bool
     {
         $result = false;
         $this->id = 0;

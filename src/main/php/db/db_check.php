@@ -44,7 +44,9 @@ function db_check($db_con): string
 
     // get the db version and start the upgrade process if needed
     $db_version = cfg_get(config::VERSION_DB, $db_con);
-    if ($db_version != PRG_VERSION) {
+    if ($db_version == '') {
+        cfg_set(config::VERSION_DB,PRG_VERSION, $db_con);
+    } elseif ($db_version != PRG_VERSION) {
         $do_consistency_check = true;
         if (prg_version_is_newer($db_version)) {
             log_warning('The zukunft.com backend is older than the database used. This may cause damage on the database. Please upgrade the backend program', 'db_check');
@@ -426,5 +428,6 @@ function db_fill_code_links(sql_db $db_con): void
 
     // set the seq number if needed
     $db_con->seq_reset(sql_db::TBL_CHANGE_TABLE);
+    $db_con->seq_reset(sql_db::TBL_CHANGE_FIELD);
     $db_con->seq_reset(sql_db::TBL_CHANGE_ACTION);
 }

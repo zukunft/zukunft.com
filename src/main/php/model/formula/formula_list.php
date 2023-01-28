@@ -358,9 +358,9 @@ class formula_list extends sandbox_list
 
     /**
      * @param sql_db $db_con the active database connection
-     * @return int the total number of formulas (without user specific changes)
+     * @return int|null the total number of formulas (without user specific changes)
      */
-    function count(sql_db $db_con): int
+    function count(sql_db $db_con): ?int
     {
         return $db_con->count(sql_db::TBL_FORMULA);
     }

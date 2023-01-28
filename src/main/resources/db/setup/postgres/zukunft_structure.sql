@@ -441,7 +441,7 @@ CREATE TABLE IF NOT EXISTS refs
     phrase_id    bigint       NOT NULL,
     external_key varchar(250) NOT NULL,
     ref_type_id  bigint       NOT NULL,
-    source_id    bigint       NOT NULL,
+    source_id    bigint       DEFAULT NULL,
     url          text         DEFAULT NULL,
     description  text         DEFAULT NULL,
     excluded     smallint     DEFAULT NULL
@@ -1048,6 +1048,7 @@ CREATE TABLE IF NOT EXISTS user_triples
 (
     triple_id   BIGSERIAL PRIMARY KEY,
     user_id        bigint            DEFAULT NULL,
+    triple_name    varchar(200)      DEFAULT NULL,
     name_given     varchar(200)      DEFAULT NULL,
     name_generated varchar(200)      DEFAULT NULL,
     description    text,
@@ -1463,6 +1464,7 @@ CREATE TABLE IF NOT EXISTS triples
     from_phrase_id           bigint   NOT NULL,
     verb_id                  bigint   NOT NULL,
     to_phrase_id             bigint   NOT NULL,
+    triple_name              varchar(200)      DEFAULT NULL,
     name_given               varchar(200)      DEFAULT NULL,
     name_generated           varchar(200)      DEFAULT NULL,
     description              text,
@@ -1524,7 +1526,7 @@ COMMENT ON COLUMN word_types.word_symbol is 'e.g. for percent the symbol is %';
 CREATE OR REPLACE VIEW phrases AS
 SELECT w.word_id   AS phrase_id,
        w.user_id,
-       w.word_name AS name_used,
+       w.word_name AS phrase_name,
        w.description,
        w.values,
        w.word_type_id,
@@ -1535,7 +1537,7 @@ FROM words AS w
 UNION
 SELECT (l.triple_id * -(1))                                                    AS phrase_id,
        l.user_id,
-       CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS name_used,
+       CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS phrase_name,
        l.description,
        l.values,
        l.word_type_id,
@@ -1551,7 +1553,7 @@ FROM triples AS l;
 CREATE OR REPLACE VIEW user_phrases AS
 SELECT w.word_id   AS phrase_id,
        w.user_id,
-       w.word_name AS name_used,
+       w.word_name AS phrase_name,
        w.description,
        w.values,
        w.excluded,
@@ -1561,7 +1563,7 @@ SELECT w.word_id   AS phrase_id,
 UNION
 SELECT (l.triple_id * -(1))                                                    AS phrase_id,
        l.user_id,
-       CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS name_used,
+       CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS phrase_name,
        l.description,
        l.values,
        l.excluded,

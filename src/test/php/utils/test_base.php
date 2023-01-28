@@ -19,6 +19,8 @@
     test_api     - the test function for the api
     testing      - adding the cleanup function to have a useful and complete test set
 
+    do sudo apt-get install php-curl
+
 
     This file is part of zukunft.com - calc with words
 

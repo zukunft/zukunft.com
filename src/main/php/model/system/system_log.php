@@ -88,7 +88,7 @@ class system_log extends db_object
     public string $log_trace = '';      // the system trace
     public ?int $status_id = null;      // the status of the error
 
-    public string $function_name = '';  //
+    public ?string $function_name = '';  //
     public string $status_name = '';    //
 
 

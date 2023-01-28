@@ -58,7 +58,7 @@ class system_log_api extends db_object
     public string $user;
     public string $text;
     public string $trace;
-    public string $prg_part;
+    public ?string $prg_part;
     public string $owner;
     public string $status;
 

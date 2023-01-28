@@ -792,7 +792,7 @@ function log_msg(string $msg_text,
     return $result;
 }
 
-function get_user_id(?user $calling_usr = null): int
+function get_user_id(?user $calling_usr = null): ?int
 {
     global $usr;
     $user_id = 0;

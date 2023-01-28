@@ -365,7 +365,7 @@ class ip_range
         $log->usr = $this->user();
         $log->action = change_log_action::ADD;
         $log->set_table(sql_db::TBL_IP);
-        $log->set_field($this->name());
+        $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
         $log->row_id = 0;
         $log->add();
 

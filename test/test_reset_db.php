@@ -228,7 +228,7 @@ function run_table_truncate(string $table_name): void
     }
 }
 
-function run_db_seq_reset()
+function run_db_seq_reset(): void
 {
     // the sequence names of the tables to reset
     $seq_names = array(
