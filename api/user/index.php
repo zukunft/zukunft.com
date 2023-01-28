@@ -38,15 +38,16 @@ use api\phrase_list_api;
 use controller\controller;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-$debug = $_GET[controller::URL_VAR_DEBUG] ?? 0;
 const ROOT_PATH = __DIR__ . '/../../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+$debug = $_GET[controller::URL_VAR_DEBUG] ?? 0;
 
 // open database
 $db_con = prg_start("api/user", "", false);
 
 // get the parameters
 $usr_id = $_GET[controller::URL_VAR_ID] ?? 0;
+$usr_name = $_GET[controller::URL_VAR_NAME] ?? '';
 
 $msg = '';
 $result = ''; // reset the html code var
@@ -58,12 +59,15 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
 
+    $db_usr = new user();
     if ($usr_id != 0) {
-        $db_usr = new user();
         $db_usr->load_by_id($usr_id);
         $result = json_decode(json_encode($db_usr->api_obj()));
+    } elseif ($usr_name != '') {
+        $db_usr->load_by_name($usr_name);
+        $result = json_decode(json_encode($db_usr->api_obj()));
     } else {
-        $msg = 'user id missing';
+        $msg = 'user id or name missing';
     }
 }
 

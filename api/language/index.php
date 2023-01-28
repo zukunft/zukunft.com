@@ -36,15 +36,15 @@ use cfg\language;
 use controller\controller;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-$debug = $_GET[controller::URL_VAR_DEBUG] ?? 0;
 const ROOT_PATH = __DIR__ . '/../../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+$debug = $_GET[controller::URL_VAR_DEBUG] ?? 0;
 
 // open database
 $db_con = prg_start("api/language", "", false);
 
 // get the parameters
-$lan_typ_id = $_GET['id'] ?? 0;
+$lan_typ_id = $_GET[controller::URL_VAR_ID] ?? 0;
 
 $msg = '';
 $result = ''; // reset the html code var

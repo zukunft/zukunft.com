@@ -21,6 +21,7 @@
     TODO add the view result at least as simple text to the JSON export
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO check if reading triples should use a view to generate the triple name and the generated name
     TODO use the sandbox list for all user lists
     TODO use in the frontend only the code id of types
     TODO use in the backend always the type object instead of the db type id

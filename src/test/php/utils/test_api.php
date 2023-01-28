@@ -46,6 +46,7 @@ use api\ref_api;
 use api\source_api;
 use api\system_log_api;
 use api\type_api;
+use api\user_api;
 use api\verb_api;
 use api\view_api;
 use api\view_cmp_api;
@@ -79,6 +80,7 @@ class test_api extends test_new_obj
     {
 
         $this->assert_api_get(user::class, 2);
+        $this->assert_api_get_by_name(user::class, user::SYSTEM_TEST_NAME);
         $this->assert_api_get(word::class);
         $this->assert_api_get_json(word::class, controller::URL_VAR_WORD_ID);
         $this->assert_api_get_by_name(word::class, word_api::TN_READ);
@@ -543,7 +545,7 @@ class test_api extends test_new_obj
         // naming exception (to be removed?)
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
-        $data = array("id" => $id);
+        $data = array(controller::URL_VAR_ID => $id);
         // TODO check why for formula a double call is needed
         if ($class == formula::class) {
             $actual = json_decode($this->api_call("GET", $url, $data), true);
@@ -567,7 +569,7 @@ class test_api extends test_new_obj
     {
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
-        $data = array("name" => $name);
+        $data = array(controller::URL_VAR_NAME => $name);
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         return $this->assert_api_compare($class, $actual);
     }

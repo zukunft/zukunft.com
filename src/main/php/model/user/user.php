@@ -471,6 +471,34 @@ class user
     }
 
     /**
+     * load one user by name
+     * @param string $name the username of the user
+     * @return bool true if a user has been found
+     */
+    function load_by_name(string $name): bool
+    {
+        global $db_con;
+
+        $this->reset();
+        $this->name = $name;
+        return $this->load($db_con);
+    }
+
+    /**
+     * load one user by name
+     * @param string $email the email of the user
+     * @return bool true if a user has been found
+     */
+    function load_by_email(string $email): bool
+    {
+        global $db_con;
+
+        $this->reset();
+        $this->email = $email;
+        return $this->load($db_con);
+    }
+
+    /**
      * load one user by name or email
      * @param string $name the username of the user
      * @param string $email the email of the user

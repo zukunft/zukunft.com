@@ -32,9 +32,9 @@
 use controller\controller;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-$debug = $_GET[controller::URL_VAR_DEBUG] ?? 0;
 const ROOT_PATH = __DIR__ . '/../../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+$debug = $_GET[controller::URL_VAR_DEBUG] ?? 0;
 
 // open database
 $db_con = prg_start("api/typeLists", "", false);
