@@ -125,7 +125,7 @@ class formula_list extends sandbox_list
         $db_con->set_type(sql_db::TBL_FORMULA);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_usr_fields(formula::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(formula::FLD_NAMES_NUM_USR);
         return $qp;
@@ -238,7 +238,7 @@ class formula_list extends sandbox_list
     {
         $db_con->set_type(sql_db::TBL_FORMULA);
         $qp = new sql_par(self::class);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_all();
         $qp->name = formula_list::class . '_all';
         $db_con->set_name($qp->name);

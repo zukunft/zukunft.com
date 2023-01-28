@@ -324,7 +324,7 @@ class view_cmp extends user_sandbox_named_with_type
 
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
@@ -351,7 +351,7 @@ class view_cmp extends user_sandbox_named_with_type
 
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id != 0) {
@@ -380,7 +380,7 @@ class view_cmp extends user_sandbox_named_with_type
         if (!$this->user()->is_set()) {
             log_err("The user id must be set to load a view component.", "view_component->load");
         } elseif ($this->id <= 0 and $this->name == '') {
-            log_err("Either the database ID (" . $this->id . ") or the display item name (" . $this->name . ") and the user (" . $this->user()->id . ") must be set to find a display item.", "view_component->load");
+            log_err("Either the database ID (" . $this->id . ") or the display item name (" . $this->name . ") and the user (" . $this->user()->id() . ") must be set to find a display item.", "view_component->load");
         } else {
 
             $qp = $this->load_sql_obj_vars($db_con);
@@ -642,7 +642,7 @@ class view_cmp extends user_sandbox_named_with_type
                     FROM view_component_types
                    WHERE view_component_type_id = ".$this->type_id.";";
           $db_con = new mysql;
-          $db_con->usr_id = $this->user()->id;
+          $db_con->usr_id = $this->user()->id();
           $db_type = $db_con->get1($sql);
           $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }
@@ -672,10 +672,10 @@ class view_cmp extends user_sandbox_named_with_type
                               " . $db_con->get_usr_field("order_nbr", "l", "u", sql_db::FLD_FORMAT_VAL) . " 
                           FROM view_component_links l 
                     LEFT JOIN user_view_component_links u ON u.view_component_link_id = l.view_component_link_id 
-                                                      AND u.user_id = " . $this->user()->id . " 
+                                                      AND u.user_id = " . $this->user()->id() . " 
                         WHERE l.view_id = " . $view_id . " ) AS m;";
             //$db_con = new mysql;
-            $db_con->usr_id = $this->user()->id;
+            $db_con->usr_id = $this->user()->id();
             $db_row = $db_con->get1_old($sql);
             $result = $db_row["max_order_nbr"];
 
@@ -694,7 +694,7 @@ class view_cmp extends user_sandbox_named_with_type
     // set the log entry parameters for a value update
     function log_link($dsp): bool
     {
-        log_debug('view_component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id);
+        log_debug('view_component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id());
         $log = new change_log_link;
         $log->usr = $this->user();
         $log->action = change_log_action::ADD;
@@ -711,7 +711,7 @@ class view_cmp extends user_sandbox_named_with_type
     // set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
     function log_unlink($dsp): bool
     {
-        log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id);
+        log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id());
         $log = new change_log_link;
         $log->usr = $this->user();
         $log->action = change_log_action::DELETE;
@@ -774,7 +774,7 @@ class view_cmp extends user_sandbox_named_with_type
             $qp = new sql_par(self::class);
             $qp->name = 'view_cmp_del_usr_cfg_if';
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
             $db_con->set_fields(array('view_component_id'));
             $db_con->set_where_std($this->id);
             $qp->sql = $db_con->select_by_set_id();
@@ -786,7 +786,7 @@ class view_cmp extends user_sandbox_named_with_type
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT);
-                $log_id = $db_con->insert(array('view_component_id', user_sandbox::FLD_USER), array($this->id, $this->user()->id));
+                $log_id = $db_con->insert(array('view_component_id', user_sandbox::FLD_USER), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view_component failed.');
                     $result = false;

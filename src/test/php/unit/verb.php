@@ -41,7 +41,7 @@ class verb_unit_tests
         $db_con = new sql_db();
         $t->name = 'verb->';
         $t->resource_path = 'db/verb/';
-        $usr->id = 1;
+        $usr->set_id(1);
 
 
         $t->header('Unit tests of the verb class (src/main/php/model/verb/verb.php)');

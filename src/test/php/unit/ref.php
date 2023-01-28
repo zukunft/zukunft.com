@@ -44,7 +44,7 @@ class ref_unit_tests
         $t->name = 'ref->';
         $t->resource_path = 'db/ref/';
         $json_file = 'unit/ref/wikipedia.json';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         $t->header('Unit tests of the reference class (src/main/php/model/ref/ref.php)');
 

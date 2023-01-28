@@ -44,7 +44,7 @@ class word_list_unit_tests
         $db_con = new sql_db();
         $t->name = 'word_list->';
         $t->resource_path = 'db/word/';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         $t->header('Unit tests of the word list class (src/main/php/model/word/word_list.php)');
 

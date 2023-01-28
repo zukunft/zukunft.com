@@ -177,7 +177,7 @@ class sandbox_list extends base_list
             }
             if ($debug > DEBUG_SHOW_USER) {
                 if ($this->user()->is_set()) {
-                    $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+                    $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
                 }
             }
         }

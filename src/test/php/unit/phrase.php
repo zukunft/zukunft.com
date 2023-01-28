@@ -46,7 +46,7 @@ class phrase_unit_tests
         $t->name = 'phrase->';
         $t->resource_path = 'db/phrase/';
         $json_file = 'unit/phrase/second.json';
-        $usr->id = 1;
+        $usr->set_id(1);
 
 
         $t->header('Unit tests of the phrase class (src/main/php/model/phrase/phrase.php)');

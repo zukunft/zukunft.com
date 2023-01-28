@@ -45,7 +45,7 @@ class view_unit_tests
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
         $json_file = 'unit/view/car_costs.json';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         $t->header('Unit tests of the view class (src/main/php/model/view/view.php)');
 

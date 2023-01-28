@@ -104,7 +104,7 @@ function run_graph_test(testing $t): void
     $graph->vrb = $is;
     $graph->direction = 'up';
     $graph->load_old();
-    //$target = zut_html_list_related($ZH->id, $graph->direction, $usr->id);
+    //$target = zut_html_list_related($ZH->id, $graph->direction, $usr->id());
     $result = $graph->display($back);
     /*
     $diff = str_diff($result, $target);

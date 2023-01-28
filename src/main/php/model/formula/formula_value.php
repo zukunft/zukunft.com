@@ -562,7 +562,7 @@ class formula_value extends db_object
                 $qp->name .= 'no_src_id';
                 $sql_src_time = " (source_time_id = 0 OR source_time_id IS NULL) ";
             }
-            if ($this->src_phr_grp_id > 0 and $this->user()->id > 0) {
+            if ($this->src_phr_grp_id > 0 and $this->user()->id() > 0) {
                 $qp->name .= '_usr_src_phr_grp';
                 $db_con->add_par(sql_db::PAR_INT, $this->src_phr_grp_id);
                 $db_con->add_par(sql_db::PAR_INT, $this->user()->id);
@@ -591,7 +591,7 @@ class formula_value extends db_object
             }
             // select the result based on words
             $sql_wrd = "";
-            if ($this->phr_grp_id > 0 and $this->user()->id > 0) {
+            if ($this->phr_grp_id > 0 and $this->user()->id() > 0) {
                 $qp->name .= '_usr_phr_grp';
                 $db_con->add_par(sql_db::PAR_INT, $this->phr_grp_id);
                 $db_con->add_par(sql_db::PAR_INT, $this->user()->id);
@@ -657,7 +657,7 @@ class formula_value extends db_object
 
             // check if a valid identification is given and load the result
             if (!$qp->has_par()) {
-                log_err("Either the database ID (" . $this->id() . ") or the source or result words or word group and the user (" . $this->user()->id . ") must be set to load a result.", "formula_value->load");
+                log_err("Either the database ID (" . $this->id() . ") or the source or result words or word group and the user (" . $this->user()->id() . ") must be set to load a result.", "formula_value->load");
             } else {
                 $result = $this->load_rec($qp);
 
@@ -707,7 +707,7 @@ class formula_value extends db_object
                           WHERE phrase_group_id IN (" . $sql_grp . ") " . $sql_time . ";";
                             log_debug('sql val "' . $sql_val . '"');
                             //$db_con = new mysql;
-                            $db_con->usr_id = $this->user()->id;
+                            $db_con->usr_id = $this->user()->id();
                             $val_ids_rows = $db_con->get_old($sql_val);
                             if ($val_ids_rows != null) {
                                 if (count($val_ids_rows) > 0) {
@@ -1165,7 +1165,7 @@ class formula_value extends db_object
             $result .= $this->id();
         }
         if ($this->user()->is_set()) {
-            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -1381,9 +1381,9 @@ class formula_value extends db_object
                WHERE formula_id IN (" . sql_array($frm_ids) . ")
                  AND phrase_group_id = " . $this->phr_grp_id . "
                  AND time_word_id    = " . $this->time_id . "
-                 AND user_id         = " . $this->user()->id . ";";
+                 AND user_id         = " . $this->user()->id() . ";";
             //$db_con = New mysql;
-            $db_con->usr_id = $this->user()->id;
+            $db_con->usr_id = $this->user()->id();
             $val_rows = $db_con->get_old($sql);
             foreach ($val_rows as $val_row) {
                 $frm_ids[] = $val_row[formula::FLD_ID];
@@ -1506,7 +1506,7 @@ class formula_value extends db_object
 
                 // build the formula result object
                 //$this->frm_id = $this->frm->id();
-                //$this->user()->id = $frm_result->result_user;
+                //$this->user()->id() = $frm_result->result_user;
                 log_debug('save "' . $this->value . '" for ' . $this->phr_lst->dsp_id());
 
                 // get the default time for the words e.g. if the increase for ABB sales is calculated the last reported sales increase is assumed
@@ -1520,7 +1520,7 @@ class formula_value extends db_object
                 }
 
                 if (!isset($this->value)) {
-                    log_info('No result calculated for "' . $this->frm->name() . '" based on ' . $this->src_phr_lst->dsp_id() . ' for user ' . $this->user()->id . '.', "formula_value->save_if_updated");
+                    log_info('No result calculated for "' . $this->frm->name() . '" based on ' . $this->src_phr_lst->dsp_id() . ' for user ' . $this->user()->id() . '.', "formula_value->save_if_updated");
                 } else {
                     // save the default value if the result time is the "newest"
                     if (isset($fv_default_time)) {
@@ -1580,7 +1580,7 @@ class formula_value extends db_object
             if ($debug > 0) {
                 $debug_txt = 'formula_value->save (' . $this->value . ' for formula ' . $this->frm->id() . ' with ' . $this->phr_lst->dsp_name() . ' based on ' . $this->src_phr_lst->dsp_name();
                 if (!$this->is_std) {
-                    $debug_txt .= ' and user ' . $this->user()->id;
+                    $debug_txt .= ' and user ' . $this->user()->id();
                 }
                 $debug_txt .= ')';
                 log_debug($debug_txt);
@@ -1632,7 +1632,7 @@ class formula_value extends db_object
                 $field_values[] = $this->src_time_id;
                 if (!$this->is_std) {
                     $field_names[] = user_sandbox::FLD_USER;
-                    $field_values[] = $this->user()->id;
+                    $field_values[] = $this->user()->id();
                 }
                 $field_names[] = 'last_update';
                 //$field_values[] = 'Now()'; // replaced with time of last change that has been included in the calculation

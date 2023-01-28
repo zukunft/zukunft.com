@@ -184,7 +184,7 @@ class value_time_series extends user_sandbox_display
 
         if ($sql_where != '') {
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
             $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
@@ -279,7 +279,7 @@ class value_time_series extends user_sandbox_display
 
         // build the database object because the is anyway needed
         $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
 
         // check if a new time series is supposed to be added
         if ($this->id <= 0) {

@@ -255,7 +255,7 @@ class test_new_obj extends test_base
     public function system_user(): user
     {
         $sys_usr = new user;
-        $sys_usr->id = SYSTEM_USER_ID;
+        $sys_usr->set_id(SYSTEM_USER_ID);
         $sys_usr->name = "zukunft.com system";
         $sys_usr->code_id = 'system';
         $sys_usr->dec_point = ".";

@@ -78,7 +78,7 @@ class value_dsp_old extends value
     {
         $result = '';
 
-        log_debug('value->display_linked (' . $this->id . ',u' . $this->user()->id . ')');
+        log_debug('value->display_linked (' . $this->id . ',u' . $this->user()->id() . ')');
         if (!is_null($this->number)) {
             $num_text = $this->val_formatted();
             $link_format = '';
@@ -263,7 +263,7 @@ class value_dsp_old extends value
                    value_phrase_links lt,
                    words t,
                    " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v
-         LEFT JOIN user_values u ON v.value_id = u.value_id AND u.user_id = " . $this->user()->id . " 
+         LEFT JOIN user_values u ON v.value_id = u.value_id AND u.user_id = " . $this->user()->id() . " 
              WHERE l.phrase_id = " . $wrd_id . "
                AND l.value_id = v.value_id
                AND v.value_id = lt.value_id
@@ -272,7 +272,7 @@ class value_dsp_old extends value
                AND (u.excluded IS NULL OR u.excluded = 0) 
              LIMIT " . $size . ";";
         //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $db_lst = $db_con->get_old($sql);
 
         // prepare to show where the user uses different value than a normal viewer
@@ -351,17 +351,17 @@ class value_dsp_old extends value
             $script = "value_add";
             $result .= dsp_form_start($script);
             $result .= dsp_text_h3("Add value for");
-            log_debug("value->dsp_edit new for phrase ids " . implode(",", $this->ids) . " and user " . $this->user()->id . ".");
+            log_debug("value->dsp_edit new for phrase ids " . implode(",", $this->ids) . " and user " . $this->user()->id() . ".");
         } else {
             $script = "value_edit";
             $result .= dsp_form_start($script);
             $result .= dsp_text_h3("Change value for");
             if (count($this->ids) <= 0) {
                 $this->load_phrases();
-                log_debug('value->dsp_edit id ' . $this->id . ' with "' . $this->grp->name() . '"@"' . $this->time_phr->name() . '"and user ' . $this->user()->id);
+                log_debug('value->dsp_edit id ' . $this->id . ' with "' . $this->grp->name() . '"@"' . $this->time_phr->name() . '"and user ' . $this->user()->id());
             } else {
                 $this->load_time_phrase();
-                log_debug('value->dsp_edit id ' . $this->id . ' with phrase ids ' . dsp_array($this->ids) . ' and user ' . $this->user()->id);
+                log_debug('value->dsp_edit id ' . $this->id . ' with phrase ids ' . dsp_array($this->ids) . ' and user ' . $this->user()->id());
             }
         }
         $this_url = '/http/' . $script . '.php?id=' . $this->id . '&back=' . $back; // url to call this display again to display the user changes

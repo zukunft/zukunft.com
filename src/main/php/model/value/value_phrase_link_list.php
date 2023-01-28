@@ -65,7 +65,7 @@ class value_phrase_link_list extends sandbox_list
         } else {
             $qp->name .= $sql_by;
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
             $db_con->set_fields(value_phrase_link::FLD_NAMES);
             if ($val != null) {
                 $db_con->set_join_fields(array(value::FLD_ID), sql_db::TBL_VALUE);
@@ -103,7 +103,7 @@ class value_phrase_link_list extends sandbox_list
         $result = false;
 
         // check the all minimal input parameters
-        if ($usr->id <= 0) {
+        if ($usr->id() <= 0) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $this->set_user($usr);

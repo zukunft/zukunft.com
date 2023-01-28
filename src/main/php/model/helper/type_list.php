@@ -136,7 +136,7 @@ class type_list
         $qp = new sql_par($db_type);
         $qp->name = $db_type . '_' . $query_name;
         $db_con->set_name($qp->name);
-        //TODO check if $db_con->set_usr($this->user()->id); is needed
+        //TODO check if $db_con->set_usr($this->user()->id()); is needed
         $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
         if ($order_field == '') {
             $order_field = $db_con->get_id_field_name($db_type);

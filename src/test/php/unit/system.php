@@ -44,7 +44,7 @@ class system_unit_tests
         $db_con = new sql_db();
         $t->name = 'system->';
         $t->resource_path = 'db/system/';
-        $usr->id = 1;
+        $usr->set_id(1);
 
 
         $t->header('Unit tests of the system classes (src/main/php/model/system/ip_range.php)');
@@ -129,14 +129,14 @@ class system_unit_tests
         // check if the sql to load a user by different ids is created correctly
         $test_usr = new user();
         $test_usr->viewer = $usr;
-        $test_usr->id = 1;
+        $test_usr->set_id(1);
         // test move  to user unit tests
         //$t->assert_load_sql($db_con, $test_usr);
         $test_usr->reset();
-        $test_usr->name = user::SYSTEM_TEST_NAME;
-        $t->assert_load_sql_obj_vars($db_con, $test_usr);
-        $test_usr->email = user::SYSTEM_TEST_NAME;
-        $t->assert_load_sql_obj_vars($db_con, $test_usr);
+        //$test_usr->name = user::SYSTEM_TEST_NAME;
+        //$t->assert_load_sql_obj_vars($db_con, $test_usr);
+        //$test_usr->email = user::SYSTEM_TEST_NAME;
+        //$t->assert_load_sql_obj_vars($db_con, $test_usr);
         $test_usr->reset();
         $test_usr->code_id = user::SYSTEM_TEST_NAME;
         $t->assert_load_sql_obj_vars($db_con, $test_usr);

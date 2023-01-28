@@ -55,7 +55,7 @@ class view_list_dsp extends view_list_api
         $field = 'new_id';
 
         //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $dsp_lst = $db_con->get_old($sql);
         foreach ($dsp_lst as $dsp) {
             $view_id = $dsp['id'];

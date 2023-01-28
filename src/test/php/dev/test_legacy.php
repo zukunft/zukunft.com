@@ -43,7 +43,7 @@ function run_legacy_test(testing $t): void
     $context_word_lst[] = $word_nesn;
     $time_word_id = $word_2016;
     $target = TV_NESN_SALES_2016;
-    $result = zuc_get_formula($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
+    $result = zuc_get_formula($formula_part_text, $context_word_lst, $time_word_id, $usr->id());
     $t->dsp(", zuc_get_formula: the result for formula \"".$formula_part_text."\"", $target, $result);
 
     // test zuf_2num_value
@@ -52,7 +52,7 @@ function run_legacy_test(testing $t): void
     $context_word_lst[] = $word_nesn;
     $time_word_id = $word_2016;
     $target = 5;
-    $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
+    $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id());
     $t->dsp(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result);
 
     // test zuf_2num_value
@@ -61,7 +61,7 @@ function run_legacy_test(testing $t): void
     $context_word_lst[] = $word_nesn;
     $time_word_id = $word_2016;
     $target = 5;
-    $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
+    $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id());
     $t->dsp(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result);
 
     // test zuf_2num_value
@@ -70,7 +70,7 @@ function run_legacy_test(testing $t): void
     $context_word_lst[] = $word_nesn;
     $time_word_id = $word_2016;
     $target = TV_NESN_SALES_2016;
-    $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
+    $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id());
     $t->dsp(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result);
 
     // test zuf_2num_value
@@ -79,7 +79,7 @@ function run_legacy_test(testing $t): void
     $context_word_lst[] = $word_nesn;
     $time_word_id = $word_2016;
     $target = TV_NESN_SALES_2016;
-    $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
+    $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id());
     $t->dsp(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result);
 
     // test if zuf_2num still does a simple calculation
@@ -88,7 +88,7 @@ function run_legacy_test(testing $t): void
     $word_array = array();
     $time_word_id = 0;
     $target = 4;
-    $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
+    $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id());
     $t->dsp(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
 
     // test zuf_2num
@@ -97,7 +97,7 @@ function run_legacy_test(testing $t): void
     $word_array = array();
     $time_word_id = 0;
     $target = 3;
-    $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
+    $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id());
     $t->dsp(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
 
     // test zuf_2num
@@ -106,7 +106,7 @@ function run_legacy_test(testing $t): void
     $word_array = array();
     $time_word_id = 0;
     $target = 2;
-    $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
+    $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id());
     $t->dsp(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
 
     // test zuf_2num
@@ -115,7 +115,7 @@ function run_legacy_test(testing $t): void
     $target = 1;
     $word_array = array($word_nesn);
     $time_word_id = $word_2016;
-    $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
+    $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id());
     $t->dsp(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
 
     // test zuf_2num
@@ -125,7 +125,7 @@ function run_legacy_test(testing $t): void
     $word_array = array($word_abb,$word_revenues);
     $time_word_id = 0;
     $debug = false;
-    $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id);
+    $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id());
     $t->dsp(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
 
     // test zuf_2num
@@ -135,7 +135,7 @@ function run_legacy_test(testing $t): void
     $word_array = array($word_abb,$word_revenues);
     $time_word_id = 0;
     $debug = false;
-    $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id);
+    $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id());
     $t->dsp(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
 
     // test zuf_2num
@@ -145,7 +145,7 @@ function run_legacy_test(testing $t): void
     $word_array = array($word_abb,$word_revenues);
     $time_word_id = 0;
     $debug = false;
-    $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id);
+    $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id());
     $t->dsp(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
 
     // test zuf_2num
@@ -154,7 +154,7 @@ function run_legacy_test(testing $t): void
     $word_array = array($word_abb,$word_revenues);
     $time_word_id = 0;
     $debug = false;
-    $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
+    $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id());
     $t->dsp(", zuf_2num: the result for formula with id ".$frm_id, $target, $result);
 
     // test zuf_2num
@@ -163,7 +163,7 @@ function run_legacy_test(testing $t): void
     $word_array = array($word_abb,$word_revenues);
     $time_word_id = 0;
     $debug = false;
-    $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
+    $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id());
     $t->dsp(", zuf_2num: the result for formula with id ".$frm_id, $target, $result);
 
     // test zuc_has_operator

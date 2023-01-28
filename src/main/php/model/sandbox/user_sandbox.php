@@ -465,7 +465,7 @@ class user_sandbox extends db_object
             // TODO: try to avoid using load_test_user
             if ($this->owner_id > 0) {
                 $usr = new user;
-                $usr->id = $this->owner_id;
+                $usr->set_id($this->owner_id);
                 if ($usr->load_test_user()) {
                     $this->usr = $usr;
                     $result = true;
@@ -543,7 +543,7 @@ class user_sandbox extends db_object
     {
         $result = '';
         if ($this->user()->is_set()) {
-            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -725,8 +725,8 @@ class user_sandbox extends db_object
             if ($this->owner_id > 0) {
                 $result = $this->owner_id;
             } else {
-                if ($this->user()->id > 0) {
-                    $result = $this->user()->id;
+                if ($this->user()->id() > 0) {
+                    $result = $this->user()->id();
                 }
             }
         }
@@ -912,11 +912,11 @@ class user_sandbox extends db_object
         log_debug($this->id);
 
         log_debug('owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id);
-        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
+        if ($this->owner_id == $this->user()->id() or $this->owner_id <= 0) {
             $changer_id = $this->changer();
             // removed "OR $changer_id <= 0" because if no one has changed the object jet does not mean that it can be changed
             log_debug('changer is ' . $changer_id . ' and the change is requested by ' . $this->user()->id);
-            if ($changer_id == $this->user()->id or $changer_id <= 0) {
+            if ($changer_id == $this->user()->id() or $changer_id <= 0) {
                 $result = false;
             }
         }
@@ -937,7 +937,7 @@ class user_sandbox extends db_object
         // if the user who wants to change it, is the owner, he can do it
         // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
         log_debug('owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id);
-        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
+        if ($this->owner_id == $this->user()->id() or $this->owner_id <= 0) {
             $result = true;
         }
 
@@ -1005,10 +1005,10 @@ class user_sandbox extends db_object
         global $db_con;
         $result = true;
 
-        if ($this->id > 0 and $this->user()->id > 0) {
+        if ($this->id > 0 and $this->user()->id() > 0) {
             $log = $this->log_del();
             if ($log->id() > 0) {
-                $db_con->usr_id = $this->user()->id;
+                $db_con->usr_id = $this->user()->id();
                 $result = $this->del_usr_cfg_exe($db_con);
             }
 
@@ -1106,7 +1106,7 @@ class user_sandbox extends db_object
 
         // check again if there ist not yet a record
         $qp = $this->usr_cfg_sql($db_con);
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $usr_cfg_row = $db_con->get1($qp);
         if ($usr_cfg_row) {
             log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
@@ -1616,7 +1616,7 @@ class user_sandbox extends db_object
                     if ($result = '') {
                         // ... and create a new display component link
                         $this->id = 0;
-                        $this->owner_id = $this->user()->id;
+                        $this->owner_id = $this->user()->id();
                         $result .= $this->add()->get_last_message();
                     }
                 }
@@ -1963,7 +1963,7 @@ class user_sandbox extends db_object
             $log = $this->log_del();
         }
         if ($log->id() > 0) {
-            $db_con->usr_id = $this->user()->id;
+            $db_con->usr_id = $this->user()->id();
 
             // for words first delete all links
             if ($this->obj_name == sql_db::TBL_WORD) {

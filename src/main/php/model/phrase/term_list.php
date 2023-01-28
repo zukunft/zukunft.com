@@ -373,7 +373,7 @@ class term_list extends user_sandbox_list_named
             $result = $id;
         }
         if ($this->user()->is_set()) {
-            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
 
         return $result;

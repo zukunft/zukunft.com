@@ -214,7 +214,7 @@ class phrase_group extends db_object
         $qp = new sql_par(self::class);
         $qp->name .= $this->load_sql_name_ext();
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
 
         return $this->load_sql_select_qp($db_con, $qp);
@@ -296,7 +296,7 @@ class phrase_group extends db_object
             return 'name';
         } else {
             log_err('Either the database ID (' . $this->id . ') or the ' .
-                self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->user()->id . ') must be set to load a ' .
+                self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->user()->id() . ') must be set to load a ' .
                 self::class, self::class . '->load');
             return '';
         }
@@ -396,7 +396,7 @@ class phrase_group extends db_object
         } elseif (!$wrd_lst->is_empty()) {
             $sql_name .= count($wrd_lst->lst()) . 'word_id';
         } else {
-            log_err("Either the database ID (" . $this->id . ") or a word list and the user (" . $this->user()->id . ") must be set to load a phrase list.", "phrase_list->load");
+            log_err("Either the database ID (" . $this->id . ") or a word list and the user (" . $this->user()->id() . ") must be set to load a phrase list.", "phrase_list->load");
         }
 
         $sql_from = '';
@@ -480,7 +480,7 @@ class phrase_group extends db_object
               GROUP BY l1.phrase_group_id;";
                 log_debug('phrase_group->get_by_wrd_lst sql ' . $sql);
                 //$db_con = New mysql;
-                $db_con->usr_id = $this->user()->id;
+                $db_con->usr_id = $this->user()->id();
                 $db_grp = $db_con->get1_old($sql);
                 if ($db_grp != null) {
                     $this->id = $db_grp['phrase_group_id'];
@@ -567,7 +567,7 @@ class phrase_group extends db_object
             }
         }
         if ($this->user()->is_set()) {
-            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
 
         return $result;
@@ -634,7 +634,7 @@ class phrase_group extends db_object
         }
 
         //$db_con = new mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $sql = "SELECT formula_value_id AS id,
                    formula_value    AS num,
                    user_id          AS usr,
@@ -642,7 +642,7 @@ class phrase_group extends db_object
               FROM formula_values 
              WHERE phrase_group_id = " . $this->id . "
                AND " . $sql_time . "
-               AND user_id = " . $this->user()->id . ";";
+               AND user_id = " . $this->user()->id() . ";";
         $result = $db_con->get1_old($sql);
 
         // if no user specific result is found, get the standard result
@@ -672,7 +672,7 @@ class phrase_group extends db_object
                 log_debug( $result['num']);
             }
         } else {
-            log_debug($result['num'] . " for " . $this->user()->id);
+            log_debug($result['num'] . " for " . $this->user()->id());
         }
 
         return $result;
@@ -699,7 +699,7 @@ class phrase_group extends db_object
         if ($this->auto_name <> $group_name) {
             if ($this->id > 0) {
                 // update the generic name in the database
-                $db_con->usr_id = $this->user()->id;
+                $db_con->usr_id = $this->user()->id();
                 $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
                 if ($db_con->update($this->id, self::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
@@ -758,7 +758,7 @@ class phrase_group extends db_object
             $wrd_id_txt = implode(',', $this->phr_lst->wrd_ids());
             $trp_id_txt = implode(',', $this->phr_lst->trp_ids());
             if ($wrd_id_txt <> '' or $trp_id_txt <> '') {
-                $db_con->usr_id = $this->user()->id;
+                $db_con->usr_id = $this->user()->id();
 
                 if (strlen($wrd_id_txt) > 255) {
                     log_err('Too many words assigned to one value ("' . $wrd_id_txt . '" is longer than the max database size of 255).', "phrase_group->set_wrd_id_txt");
@@ -802,7 +802,7 @@ class phrase_group extends db_object
         $result = '';
 
         // create the db link object for all actions
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
 
         // switch between the word and triple settings
         if ($type == sql_db::TBL_WORD) {
@@ -887,12 +887,12 @@ class phrase_group extends db_object
         $result = new user_message();
 
         $db_con->set_type(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
         $db_con->set_type(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
@@ -921,7 +921,7 @@ class phrase_group extends db_object
         $result = $this->del_phr_links();
 
         $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
@@ -942,7 +942,7 @@ class phrase_group extends db_object
         $result = array();
 
         $db_con->set_type(sql_db::VT_PHRASE_GROUP_LINK);
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $qp = new sql_par(self::class);
         $qp->name .= 'test_link_ids';
         $db_con->set_name($qp->name);

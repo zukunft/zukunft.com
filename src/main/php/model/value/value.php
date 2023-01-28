@@ -323,7 +323,7 @@ class value extends user_sandbox_value
 
         $db_con->set_type(sql_db::TBL_VALUE);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
@@ -389,7 +389,7 @@ class value extends user_sandbox_value
             $qp->name .= phrase::FLD_ID . $sql_name_time;
         }
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
@@ -484,7 +484,7 @@ class value extends user_sandbox_value
 
                     $qp_val = $this->load_sql($db_con);
                     log_debug('value->load sql val "' . $qp_val->name . '"');
-                    $db_con->usr_id = $this->user()->id;
+                    $db_con->usr_id = $this->user()->id();
                     $val_ids_rows = $db_con->get($qp_val);
                     if ($val_ids_rows != null) {
                         if (count($val_ids_rows) > 0) {
@@ -920,12 +920,12 @@ class value extends user_sandbox_value
         if (is_null($this->number)) {
             // this test should be done in the calling function if needed
             log_debug("To scale a value the number should not be empty.");
-        } elseif (is_null($this->user()->id)) {
+        } elseif (is_null($this->user()->id())) {
             log_warning("To scale a value the user must be defined.", "value->scale");
         } elseif (is_null($this->wrd_lst)) {
             log_warning("To scale a value the word list should be loaded by the calling method.", "value->scale");
         } else {
-            log_debug($this->number . ' for ' . $this->wrd_lst->name() . ' (user ' . $this->user()->id . ')');
+            log_debug($this->number . ' for ' . $this->wrd_lst->name() . ' (user ' . $this->user()->id() . ')');
 
             // if it has a scaling word, scale it to one
             if ($this->wrd_lst->has_scaling()) {
@@ -1240,7 +1240,7 @@ class value extends user_sandbox_value
      */
     function convert()
     {
-        log_debug('value->convert (' . $this->usr_value . ',u' . $this->user()->id . ')');
+        log_debug('value->convert (' . $this->usr_value . ',u' . $this->user()->id() . ')');
         $result = $this->usr_value;
         $result = str_replace(" ", "", $result);
         $result = str_replace("'", "", $result);
@@ -1377,7 +1377,7 @@ class value extends user_sandbox_value
     function is_std(): bool
     {
         $result = false;
-        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
+        if ($this->owner_id == $this->user()->id() or $this->owner_id <= 0) {
             $result = true;
         }
 
@@ -1410,15 +1410,15 @@ class value extends user_sandbox_value
 
             // check again if there ist not yet a record
             $qp = $this->usr_cfg_sql($db_con);
-            $db_con->usr_id = $this->user()->id;
+            $db_con->usr_id = $this->user()->id();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
-                $this->usr_cfg_id = $this->user()->id;
+                $this->usr_cfg_id = $this->user()->id();
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE);
-                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id));
+                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_value failed.');
                     $result = false;
@@ -1448,7 +1448,7 @@ class value extends user_sandbox_value
      */
     function log_upd(): change_log_named
     {
-        log_debug('value->log_upd "' . $this->number . '" for user ' . $this->user()->id);
+        log_debug('value->log_upd "' . $this->number . '" for user ' . $this->user()->id());
         $log = new change_log_named;
         $log->usr = $this->user();
         $log->action = change_log_action::UPDATE;
@@ -1525,7 +1525,7 @@ class value extends user_sandbox_value
 
 
             // create the db link object for all actions
-            $db_con->usr_id = $this->user()->id;
+            $db_con->usr_id = $this->user()->id();
 
             $table_name = $db_con->get_table_name(sql_db::TBL_VALUE_PHRASE_LINK);
             $field_name = phrase::FLD_ID;
@@ -1637,7 +1637,7 @@ class value extends user_sandbox_value
       if ($log->id() > 0) {
         // insert the link
         $db_con = new mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
         $val_wrd_id = $db_con->insert(array("value_id","phrase_id"), array($this->id,$phr_id));
         if ($val_wrd_id > 0) {
@@ -1662,7 +1662,7 @@ class value extends user_sandbox_value
       if ($log->id() > 0) {
         // remove the link
         $db_con = new mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
         $result = $db_con->delete(array("value_id","phrase_id"), array($this->id,$wrd->id));
         //$result = str_replace ('1','',$result);
@@ -1897,7 +1897,7 @@ class value extends user_sandbox_value
 
                     // ... and create a new display component link
                     $this->id = 0;
-                    $this->owner_id = $this->user()->id;
+                    $this->owner_id = $this->user()->id();
                     $result .= $this->add($db_con)->get_last_message();
                     log_debug('value->save_id_if_updated recreate the value "' . $db_rec->dsp_id() . '" as ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                 }
@@ -1975,7 +1975,7 @@ class value extends user_sandbox_value
 
         // build the database object because the is anyway needed
         $db_con->set_type(sql_db::TBL_VALUE);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
 
         // rebuild the value ids if needed e.g. if the front end function has just set a list of phrase ids get the responding group
         $result .= $this->set_grp_and_time_by_ids($this->ids);
@@ -2004,7 +2004,7 @@ class value extends user_sandbox_value
 
             $result .= $this->add($db_con)->get_last_message();
         } else {
-            log_debug('value->save update id ' . $this->id . ' to save "' . $this->number . '" for user ' . $this->user()->id);
+            log_debug('value->save update id ' . $this->id . ' to save "' . $this->number . '" for user ' . $this->user()->id());
             // update a value
             // TODO: if no one else has ever changed the value, change to default value, else create a user overwrite
 

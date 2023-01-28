@@ -182,8 +182,8 @@ function run_math_test(testing $t)
     */
     /*
     $frm_id = 31;
-    $frm_text = zuf_text($frm_id, $usr->id);
-    zuf_element_refresh($frm_id, $frm_text, $usr->id, 20);
+    $frm_text = zuf_text($frm_id, $usr->id());
+    zuf_element_refresh($frm_id, $frm_text, $usr->id(), 20);
     */
 
 

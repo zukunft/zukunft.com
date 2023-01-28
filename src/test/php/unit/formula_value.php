@@ -47,7 +47,7 @@ class formula_value_unit_tests
         $db_con = new sql_db();
         $t->name = 'formula_value->';
         $t->resource_path = 'db/result/';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         $t->header('Unit tests of the formula value class (src/main/php/model/formula/formula_value.php)');
 

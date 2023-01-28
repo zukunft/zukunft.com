@@ -158,7 +158,7 @@ class ip_range
         $sql = '';
         if ($qp->name != '') {
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_where_text($sql_where);
             $qp->sql = $db_con->select_by_set_id();
@@ -407,7 +407,7 @@ class ip_range
         if ($log->id() > 0) {
             // insert the new ip range
             $db_con->set_type(sql_db::TBL_IP);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
 
             $this->id = $db_con->insert(
                 array(self::FLD_FROM, self::FLD_TO, self::FLD_REASON, self::FLD_ACTIVE),
@@ -463,7 +463,7 @@ class ip_range
         $result = '';
 
         // build the database object because this is needed anyway
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_type(sql_db::TBL_IP);
 
         // check if the external reference is supposed to be added

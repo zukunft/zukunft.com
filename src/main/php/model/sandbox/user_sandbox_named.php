@@ -291,7 +291,7 @@ class user_sandbox_named extends user_sandbox
             $result .= $this->id;
         }
         if ($this->user()->is_set()) {
-            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;
     }

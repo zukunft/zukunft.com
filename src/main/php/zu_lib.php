@@ -781,8 +781,7 @@ function log_msg(string $msg_text,
             } else {
                 if ($msg_log_level >= DSP_LEVEL) {
                     $usr = new user();
-                    $usr->id = $user_id;
-                    $usr->load($db_con);
+                    $usr->load_by_id($user_id);
                     $dsp = new view_dsp_old($usr);
                     $result .= $dsp->dsp_navbar_simple();
                     $result .= $msg_text . " (by " . $function_name . ").<br><br>";
@@ -798,10 +797,10 @@ function get_user_id(?user $calling_usr = null): ?int
     global $usr;
     $user_id = 0;
     if ($calling_usr != null) {
-        $user_id = $calling_usr->id;
+        $user_id = $calling_usr->id();
     } else {
         if ($usr != null) {
-            $user_id = $usr->id;
+            $user_id = $usr->id();
         }
     }
     return $user_id;

@@ -260,8 +260,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
         // add missing system users if needed
         $sys_usr = new user();
         if (!$sys_usr->has_any_user_this_profile(user_profile::SYSTEM, $db_con)) {
-            $sys_usr->name = user::SYSTEM_NAME;
-            $sys_usr->load($db_con);
+            $sys_usr->load_by_name(user::SYSTEM_NAME);
             $sys_usr->set_profile(user_profile::SYSTEM);
             $sys_usr->save($db_con);
         }
@@ -269,13 +268,11 @@ function db_upgrade_0_0_3(sql_db $db_con): string
         // add missing system test users if needed
         $test_usr = new user();
         if (!$test_usr->has_any_user_this_profile(user_profile::TEST, $db_con)) {
-            $test_usr->name = user::SYSTEM_TEST_NAME;
-            $test_usr->load($db_con);
+            $test_usr->load_by_name(user::SYSTEM_TEST_NAME);
             $test_usr->set_profile(user_profile::TEST);
             $test_usr->save($db_con);
             $test_usr2 = new user();
-            $test_usr2->name = user::SYSTEM_NAME_TEST_PARTNER;
-            $test_usr2->load($db_con);
+            $test_usr2->load_by_name(user::SYSTEM_NAME_TEST_PARTNER);
             $test_usr2->set_profile(user_profile::TEST);
             $test_usr2->save($db_con);
         }
@@ -283,8 +280,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
 
     // prepare the high level upgrade
     $sys_usr = new user();
-    $sys_usr->name = user::SYSTEM_NAME;
-    $sys_usr->load($db_con);
+    $sys_usr->load_by_name(user::SYSTEM_NAME);
 
     // refresh the formula ref_text, because the coding has changed (use "{w" instead of "{t")
     $frm_lst = new formula_list($sys_usr);

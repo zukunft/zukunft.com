@@ -189,7 +189,7 @@ class view_cmp_link extends user_sandbox_link_with_type
             $qp->name .= 'std_link_ids';
         }
         $db_con->set_name($qp->name);
-        //TODO check if $db_con->set_usr($this->user()->id); is needed
+        //TODO check if $db_con->set_usr($this->user()->id()); is needed
         $db_con->set_fields(array(sql_db::FLD_USER_ID));
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
         $db_con->set_fields(array_merge(
@@ -240,7 +240,7 @@ class view_cmp_link extends user_sandbox_link_with_type
 
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
@@ -268,7 +268,7 @@ class view_cmp_link extends user_sandbox_link_with_type
 
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id > 0) {
@@ -406,7 +406,7 @@ class view_cmp_link extends user_sandbox_link_with_type
             $result .= ', but no link id)';
         }
         if ($this->user()->is_set()) {
-            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -581,7 +581,7 @@ class view_cmp_link extends user_sandbox_link_with_type
             $qp = new sql_par(self::class);
             $qp->name = 'view_cmp_link_add_usr_cfg';
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
             $db_con->set_where_std($this->id);
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
@@ -592,7 +592,7 @@ class view_cmp_link extends user_sandbox_link_with_type
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT_LINK);
-                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id));
+                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view_component_link failed.');
                     $result = false;

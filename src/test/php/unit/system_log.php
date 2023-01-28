@@ -48,7 +48,7 @@ class system_log_unit_tests
         $db_con = new sql_db();
         $t->name = 'system_log->';
         $t->resource_path = 'db/system_log/';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         // sql to load one error by id
         $err = new system_log();

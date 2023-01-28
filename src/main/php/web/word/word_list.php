@@ -101,7 +101,7 @@ class word_list_dsp extends word_list_api
     // TODO REVIEW
     function dsp_like($word_pattern, user $usr): string
     {
-        log_debug($word_pattern . ',u' . $usr->id);
+        log_debug($word_pattern . ',u' . $usr->id());
 
         global $db_con;
         $result = '';

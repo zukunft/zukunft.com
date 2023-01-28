@@ -84,10 +84,10 @@ function import_system_users(): bool
 
     // allow adding only if there is not yet any system user in the database
     $usr = new user;
-    $usr->id = SYSTEM_USER_ID;
+    $usr->set_id(SYSTEM_USER_ID);
     $usr->load_test_user();
 
-    if ($usr->id <= 0) {
+    if ($usr->id() <= 0) {
 
         // check if there is really no user in the database with a system profile
         $check_usr = new user();

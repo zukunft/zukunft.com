@@ -78,13 +78,13 @@ class view_cmp_link_list extends sandbox_list
             }
         }
         if ($sql_by == '') {
-            log_err('Either the view id or the component id and the user (' . $this->user()->id .
+            log_err('Either the view id or the component id and the user (' . $this->user()->id() .
                 ') must be set to load a ' . self::class, self::class . '->load_sql');
             $qp->name = '';
         } else {
             $qp->name .= $sql_by;
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
             $db_con->set_fields(view_cmp_link::FLD_NAMES);
             $db_con->set_usr_num_fields(view_cmp_link::FLD_NAMES_NUM_USR);
             if ($dsp != null) {
@@ -122,7 +122,7 @@ class view_cmp_link_list extends sandbox_list
         $result = false;
 
         // check the all minimal input parameters
-        if ($this->user()->id <= 0) {
+        if ($this->user()->id() <= 0) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql($db_con, $dsp, $cmp);

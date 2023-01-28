@@ -151,7 +151,7 @@ $start_usr = new user;
 $result = $start_usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($start_usr->id > 0) {
+if ($start_usr->id() > 0) {
     if ($start_usr->is_admin()) {
 
         // prepare testing
@@ -169,7 +169,7 @@ if ($start_usr->id > 0) {
         // switch to the test user
         $usr = new user;
         $usr->load_user_by_profile(user::SYSTEM_TEST_PROFILE_CODE_ID, $db_con);
-        if ($usr->id <= 0) {
+        if ($usr->id() <= 0) {
             // create the system user before the local user and admin to get the desired database id
 
             // but only from localhost
@@ -183,7 +183,7 @@ if ($start_usr->id > 0) {
 
             $usr->load_user_by_profile(user::SYSTEM_TEST_PROFILE_CODE_ID, $db_con);
         }
-        if ($usr->id > 0) {
+        if ($usr->id() > 0) {
 
             // create the testing users
             $t->set_users();

@@ -575,10 +575,10 @@ class sql_db
         if ($usr == null) {
             $this->set_usr(SYSTEM_USER_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
-            if ($usr->id == null) {
+            if ($usr->id() == null) {
                 $this->set_usr(0); // fallback for special cases
             } else {
-                $this->set_usr($usr->id); // by default use the session user id
+                $this->set_usr($usr->id()); // by default use the session user id
             }
         }
         $this->set_table($usr_table);
@@ -3336,16 +3336,15 @@ class sql_db
 
         // get the system user id
         $sys_usr = new user();
-        $sys_usr->name = user::SYSTEM_NAME;
-        $sys_usr->load($this);
+        $sys_usr->load_by_name(user::SYSTEM_NAME);
 
-        if ($sys_usr->id <= 0) {
+        if ($sys_usr->id() <= 0) {
             log_err('Cannot load system used in set_default_owner');
             $result = false;
         } else {
             $this->set_table();
             $sql = "UPDATE " . $this->name_sql_esc($this->table) . "
-               SET user_id = " . $sys_usr->id . "
+               SET user_id = " . $sys_usr->id() . "
              WHERE user_id IS NULL;";
 
             //return $this->exe($sql, 'user_default', array());
@@ -4292,6 +4291,6 @@ function sql_lst_usr($type, $usr): string
 {
     global $db_con;
     $db_con->set_type($type);
-    $db_con->usr_id = $usr->id;
+    $db_con->usr_id = $usr->id();
     return $db_con->sql_std_lst_usr();
 }

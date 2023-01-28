@@ -107,7 +107,7 @@ class triple_list
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_link_fields(triple::FLD_FROM, triple::FLD_TO, verb::FLD_ID);
         $db_con->set_fields(triple::FLD_NAMES);
         $db_con->set_usr_fields(triple::FLD_NAMES_USR);
@@ -308,7 +308,7 @@ class triple_list
     private function load_wrd_from($pos): string
     {
         return " words t" . $pos . " LEFT JOIN user_words u" . $pos . " ON u" . $pos . ".word_id = t" . $pos . ".word_id 
-                                                                       AND u" . $pos . ".user_id = " . $this->user()->id . " ";
+                                                                       AND u" . $pos . ".user_id = " . $this->user()->id() . " ";
     }
 
     // returns the of predefined sql statement (must be corresponding to load_sql)
@@ -495,7 +495,7 @@ class triple_list
                        " . $sql_wrd2_fields . "
                   FROM triples l
              LEFT JOIN user_triples ul ON ul.triple_id = l.triple_id 
-                                        AND ul.user_id = " . $this->user()->id . ",
+                                        AND ul.user_id = " . $this->user()->id() . ",
                        verbs v, 
                        " . $sql_wrd1_from . "
                        " . $sql_wrd2_from . "
@@ -522,7 +522,7 @@ class triple_list
         if (!$this->user()->is_set()) {
             log_err("The user id must be set to load a graph.", "triple_list->load");
         } else {
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
             $sql = $this->load_sql($db_con);
             $db_lst = $db_con->get_old($sql);
             log_debug('triple_list->load ... sql "' . $sql . '"');

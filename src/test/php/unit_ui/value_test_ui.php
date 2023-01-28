@@ -30,6 +30,7 @@
 
 */
 
+use api\value_api;
 use api\word_api;
 use html\word_dsp;
 
@@ -189,7 +190,7 @@ function run_value_ui_test(testing $t): void
     $target = TV_NESN_SALES_2016_FORMATTED;
     $t->dsp_contains(', value_list_dsp->dsp_table for "' . $wrd->name() . '" (' . $result . ') contains ' . $target . '', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
     //$result = $val_lst->dsp_table($wrd_col, $wrd->id);
-    //$target = zuv_table ($wrd->id, $wrd_col->id, $usr->id);
+    //$target = zuv_table ($wrd->id, $wrd_col->id, $usr->id());
     //$t->dsp('value_list_dsp->dsp_table for "'.$wrd->name.'"', $target, $result, TIMEOUT_LIMIT_DB);
 
 }

@@ -44,7 +44,7 @@ class view_list_unit_tests
         $db_con = new sql_db();
         $t->name = 'view_list->';
         $t->resource_path = 'db/view/';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         $t->header('Unit tests of the view list class (src/main/php/model/view/view_list.php)');
 

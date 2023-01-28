@@ -145,7 +145,7 @@ function zu_sql_get_all($sql)
 
     try {
         $result = $db_con->exe($sql);
-        //$result = zu_sql_exe($sql, $usr->id, sys_log_level::FATAL, "zu_sql_get_all", (new Exception)->getTraceAsString());
+        //$result = zu_sql_exe($sql, $usr->id(), sys_log_level::FATAL, "zu_sql_get_all", (new Exception)->getTraceAsString());
     } catch (Exception $e) {
         log_err('Cannot get all rows with "' . $sql . '" because: ' . $e->getMessage());
     }

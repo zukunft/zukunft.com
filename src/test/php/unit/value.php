@@ -46,7 +46,7 @@ class value_unit_tests
         $t->name = 'value->';
         $t->resource_path = 'db/value/';
         $json_file = 'unit/value/speed_of_light.json';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         $t->header('Unit tests of the value class (src/main/php/model/value/value.php)');
 

@@ -42,7 +42,7 @@ class value_phrase_link_unit_tests
         $db_con = new sql_db();
         $t->name = 'value_phrase_link->';
         $t->resource_path = 'db/value/';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         $t->header('Unit tests of the value phrase link class (src/main/php/model/value/value_phrase_link.php)');
 

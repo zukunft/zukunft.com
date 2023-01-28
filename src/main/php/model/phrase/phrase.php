@@ -820,7 +820,7 @@ class phrase extends db_object
             $result .= $this->id;
         }
         if ($this->user()->is_set()) {
-            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -977,13 +977,13 @@ class phrase extends db_object
                              ' . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM words w   
                    LEFT JOIN user_words u ON u.word_id = w.word_id 
-                                         AND u.user_id = ' . $this->user()->id . ' ';
+                                         AND u.user_id = ' . $this->user()->id() . ' ';
         $sql_triples = 'SELECT DISTINCT l.triple_id * -1 AS id, 
                                ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM triples l
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                AND u.user_id = ' . $this->user()->id . ' ';
+                                                AND u.user_id = ' . $this->user()->id() . ' ';
 
         if (isset($type)) {
             if ($type->id() > 0) {
@@ -997,7 +997,7 @@ class phrase extends db_object
                                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                                           FROM triples l
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                                AND u.user_id = ' . $this->user()->id . '
+                                                                AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id = ' . $type->id() . ' 
                                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
@@ -1009,7 +1009,7 @@ class phrase extends db_object
                                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                                           FROM triples l
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                                AND u.user_id = ' . $this->user()->id . '
+                                                                AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id <> ' . $type->id() . ' 
                                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
@@ -1023,7 +1023,7 @@ class phrase extends db_object
                              ' . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM ( ' . $sql_wrd_all . ' ) a, words w
                    LEFT JOIN user_words u ON u.word_id = w.word_id 
-                                         AND u.user_id = ' . $this->user()->id . '
+                                         AND u.user_id = ' . $this->user()->id() . '
                        WHERE w.word_id NOT IN ( ' . $sql_wrd_other . ' )                                        
                          AND w.word_id = a.id ) AS w 
                        WHERE ' . $sql_where_exclude . ' ';
@@ -1036,7 +1036,7 @@ class phrase extends db_object
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM triples l
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                AND u.user_id = ' . $this->user()->id . '
+                                                AND u.user_id = ' . $this->user()->id() . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
                            AND l.to_phrase_id = ' . $type->id() . ' ) AS t 

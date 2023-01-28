@@ -52,7 +52,7 @@ class value_list_unit_tests
         $t->name = 'value_list->';
         $t->resource_path = 'db/value/';
         $json_file = 'unit/value/travel_scoring_value_list.json';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         $t->header('Unit tests of the value list class (src/main/php/model/value/value_list.php)');
 

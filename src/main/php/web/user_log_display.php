@@ -90,7 +90,7 @@ class user_log_display
                    OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 'c.user_id = u.user_id
-                AND c.user_id = ' . $this->usr->id . ' ';
+                AND c.user_id = ' . $this->usr->id() . ' ';
         } elseif ($this->type == word::class) {
             $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD) . " 
                      OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . ") AND ";
@@ -136,7 +136,7 @@ class user_log_display
             ORDER BY c.change_time DESC
                LIMIT " . $this->size . ";";
             log_debug('user_log_display->dsp_hist ' . $sql);
-            $db_con->usr_id = $this->usr->id;
+            $db_con->usr_id = $this->usr->id();
             $db_lst = $db_con->get_old($sql);
 
             // prepare to show where the user uses different word than a normal viewer
@@ -297,7 +297,7 @@ class user_log_display
                     c.new_text_to AS new';
             $sql_row = '';
             $sql_user = 'c.user_id = u.user_id
-                AND c.user_id = ' . $this->usr->id . ' ';
+                AND c.user_id = ' . $this->usr->id() . ' ';
         } elseif ($this->type == 'word') {
             $sql_where = " ( c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD) . " 
                     OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . " 
@@ -386,7 +386,7 @@ class user_log_display
         $html = new html_base();
 
         $sql = $this->dsp_hist_links_sql($db_con);
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->usr->id();
         $db_lst = $db_con->get_old($sql);
 
         // display the changes

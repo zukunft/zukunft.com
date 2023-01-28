@@ -60,12 +60,12 @@ class test_unit extends testing
 
         // create a dummy user for  testing
         $usr = new user;
-        $usr->id = user::SYSTEM_TEST_ID;
+        $usr->set_id(user::SYSTEM_TEST_ID);
         $usr->name = user::SYSTEM_TEST_NAME;
 
         // create a dummy system user for unit testing
         $usr_sys = new user;
-        $usr_sys->id = user::SYSTEM_ID;
+        $usr_sys->set_id(user::SYSTEM_ID);
         $usr_sys->name = user::SYSTEM_NAME;
 
         // prepare the unit tests

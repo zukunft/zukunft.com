@@ -94,7 +94,7 @@ class word_list extends sandbox_list
         $db_con->set_type(sql_db::TBL_WORD);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(word::FLD_NAMES);
         $db_con->set_usr_fields(word::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
@@ -285,7 +285,7 @@ class word_list extends sandbox_list
     function load_user_changes_sql(sql_db $db_con, user $usr): sql_par
     {
         $qp = $this->load_sql($db_con);
-        if ($usr->id > 0) {
+        if ($usr->id() > 0) {
             $qp->name .= 'user_changes';
             $db_con->set_name($qp->name);
             $qp->sql = $db_con->select_by_field(word::FLD_ID);
@@ -406,7 +406,7 @@ class word_list extends sandbox_list
         if ($qp->name == '') {
             log_warning('The word list is empty, so nothing could be found', self::class . '->load_linked_words');
         } else {
-            $db_con->usr_id = $this->user()->id;
+            $db_con->usr_id = $this->user()->id();
             $db_wrd_lst = $db_con->get($qp);
             if ($db_wrd_lst) {
                 log_debug('got ' . dsp_count($db_wrd_lst));
@@ -752,7 +752,7 @@ class word_list extends sandbox_list
     {
         $result = false;
         log_debug($wrd_name_to_add);
-        if (is_null($this->user()->id)) {
+        if (is_null($this->user()->id())) {
             log_err("The user must be set.", "word_list->add_name");
         } else {
             $wrd_to_add = new word($this->user());
@@ -1148,7 +1148,7 @@ class word_list extends sandbox_list
             $result = $id;
         }
         if ($this->user()->is_set()) {
-            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
 
         return $result;
@@ -1494,7 +1494,7 @@ class word_list extends sandbox_list
         if (sizeof($value_lst) > 0) {
 
           // get all words related to the value list
-          $all_word_lst = zu_sql_value_lst_words($value_lst, $this->user()->id);
+          $all_word_lst = zu_sql_value_lst_words($value_lst, $this->user()->id());
 
           // get the time words
           $time_lst = zut_time_lst($all_word_lst);

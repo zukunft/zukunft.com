@@ -50,7 +50,7 @@ use export\user_exp;
 use html\user_dsp;
 use html\word_dsp;
 
-class user
+class user extends db_object
 {
 
     /*
@@ -81,12 +81,14 @@ class user
         self::FLD_USER_PROFILE
     );
 
+
     /*
      * im- and export link
      */
 
     // the field names used for the im- and export in the json or yaml format
     const FLD_EX_PROFILE = 'profile';
+
 
     /*
      * predefined user linked to the program code
@@ -108,12 +110,12 @@ class user
     const SYSTEM_TEST_PROFILE_CODE_ID = "test";
     const SYSTEM_LOCAL = 'localhost';
 
+
     /*
      * object vars
      */
 
     // database fields
-    public ?int $id = null;               // the database id of the word link type (verb)
     public ?string $name = null;          // simply the username, which cannot be empty
     public ?string $description = null;   // used for system users to describe the target; can be used by users for a short introduction
     public ?string $ip_addr = null;       // simply the ip address used if no username is given
@@ -143,6 +145,7 @@ class user
 
     function __construct()
     {
+        parent::__construct();
         $this->reset();
 
         //global $user_profiles;
@@ -223,24 +226,11 @@ class user
     }
 
     /**
-     * @param int|null $id the database id of the user
-     */
-    public function set_id(?int $id): void
-    {
-        $this->id = $id;
-    }
-
-    /**
      * @param string|null $name the unique username for this pod
      */
     public function set_name(?string $name): void
     {
         $this->name = $name;
-    }
-
-    public function id(): ?int
-    {
-        return $this->id;
     }
 
 
@@ -285,35 +275,6 @@ class user
         return $api_obj;
     }
 
-    /**
-     * @return user_dsp_old the user object with the display interface functions
-     */
-    function dsp_obj_old(): user_dsp_old
-    {
-        $dsp_obj = new user_dsp_old();
-
-        $dsp_obj->id = $this->id;
-        $dsp_obj->name = $this->name;
-        $dsp_obj->ip_addr = $this->ip_addr;
-        $dsp_obj->email = $this->email;
-
-        $dsp_obj->first_name = $this->first_name;
-        $dsp_obj->last_name = $this->last_name;
-        $dsp_obj->code_id = $this->code_id;
-        $dsp_obj->dec_point = $this->dec_point;
-        $dsp_obj->thousand_sep = $this->thousand_sep;
-        $dsp_obj->percent_decimals = $this->percent_decimals;
-
-        $dsp_obj->profile_id = $this->profile_id;
-        $dsp_obj->source_id = $this->source_id;
-
-        $dsp_obj->wrd_id = $this->wrd_id;
-        $dsp_obj->vrb_id = $this->vrb_id;
-
-        $dsp_obj->wrd = $this->wrd;
-
-        return $dsp_obj;
-    }
 
     /*
      * loading / database access object (DAO) functions
@@ -323,13 +284,18 @@ class user
      * create the common part of an SQL statement to retrieve the parameters of a user from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
+        $qp->name .= $query_name;
+
         $db_con->set_type(sql_db::TBL_USER);
+        $db_con->set_name($qp->name);
+
         if ($this->viewer == null) {
             if ($this->id == null) {
                 $db_con->set_usr(0);
@@ -347,17 +313,33 @@ class user
      * create an SQL statement to retrieve a user by id from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param int $id the id of the user sandbox object
+     * @param int $id the id of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($db_con, 'id', $class);
-        $qp->name .= 'id';
-        $db_con->set_name($qp->name);
-        $db_con->add_par(sql_db::PAR_INT, $id);
-        $qp->sql = $db_con->select_by_set_id();
+        $db_con->add_par_int($id);
+        $qp->sql = $db_con->select_by_field(self::FLD_ID);
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a user by name from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $name the name of the user
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_name(sql_db $db_con, string $name, string $class = self::class): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'name', $class);
+        $db_con->add_par_txt($name);
+        $qp->sql = $db_con->select_by_field(self::FLD_NAME);
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -449,39 +431,60 @@ class user
      * load the missing user parameters from the database
      * should be private because the loading should be done via the get method
      */
-    function load(sql_db $db_con): bool
+    function load_by_vars(sql_db $db_con): bool
     {
         $db_usr = $this->load_db($db_con);
         return $this->row_mapper($db_usr);
     }
 
     /**
-     * load a user by id from the database
-     * @param int $id
-     * @param user|null $request_usr the user who has requested the loading of the user data to prevent right gains
-     * @return bool
+     * load a user from the database view
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, ?user $request_usr = null): bool
+    private function load(sql_par $qp): int
     {
         global $db_con;
 
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper($db_row);
+        return $this->id();
+    }
+
+    /**
+     * load a user by id from the database
+     *
+     * TODO make sure that it is always checked if the requesting user has the sufficient permissions
+     *  param user|null $request_usr the user who has requested the loading of the user data to prevent right gains
+     *
+     * @param int $id
+     * @param string $class the name of the user
+     * @return int
+     */
+    function load_by_id(int $id, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug($id);
         $this->reset();
-        $this->id = $id;
-        return $this->load($db_con);
+        $qp = $this->load_sql_by_id($db_con, $id);
+        return $this->load($qp);
     }
 
     /**
      * load one user by name
      * @param string $name the username of the user
-     * @return bool true if a user has been found
+     * @param string $class the name of the user
+     * @return int the id of the found user and zero if nothing is found
      */
-    function load_by_name(string $name): bool
+    function load_by_name(string $name, string $class = self::class): int
     {
         global $db_con;
 
+        log_debug($name);
         $this->reset();
-        $this->name = $name;
-        return $this->load($db_con);
+        $qp = $this->load_sql_by_name($db_con, $name);
+        return $this->load($qp);
     }
 
     /**
@@ -495,7 +498,7 @@ class user
 
         $this->reset();
         $this->email = $email;
-        return $this->load($db_con);
+        return $this->load_by_vars($db_con);
     }
 
     /**
@@ -511,7 +514,7 @@ class user
         $this->reset();
         $this->name = $name;
         $this->email = $email;
-        return $this->load($db_con);
+        return $this->load_by_vars($db_con);
     }
 
     /**
@@ -521,7 +524,7 @@ class user
     function load_test_user(): bool
     {
         global $db_con;
-        return $this->load($db_con);
+        return $this->load_by_vars($db_con);
     }
 
     function load_user_by_profile(string $profile_code_id, sql_db $db_con): bool
@@ -607,7 +610,7 @@ class user
                 if ($_SESSION['logged']) {
                     $this->id = $_SESSION['usr_id'];
                     global $db_con;
-                    $this->load($db_con);
+                    $this->load_by_vars($db_con);
                     log_debug('use (' . $this->id . ')');
                 }
             } else {
@@ -616,7 +619,7 @@ class user
                 global $db_con;
 
                 $this->get_ip();
-                $this->load($db_con);
+                $this->load_by_vars($db_con);
                 if ($this->id <= 0) {
                     // use the ip address as the username and add the user
                     $this->name = $this->ip_addr;
@@ -648,7 +651,7 @@ class user
                         // use the system user for the database initial load
                         $sys_usr = new user;
                         $sys_usr->id = SYSTEM_USER_ID;
-                        $sys_usr->load($db_con);
+                        $sys_usr->load_by_vars($db_con);
 
                         //
                         import_verbs($sys_usr);
@@ -790,7 +793,7 @@ class user
 
         if (!isset($this->profile_id)) {
             global $db_con;
-            $this->load($db_con);
+            $this->load_by_vars($db_con);
         }
         if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
             $result = true;
@@ -808,7 +811,7 @@ class user
 
         if (!isset($this->profile_id)) {
             global $db_con;
-            $this->load($db_con);
+            $this->load_by_vars($db_con);
         }
         if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::TEST)
             or $this->profile_id == cl(db_cl::USER_PROFILE, user_profile::SYSTEM)) {
@@ -825,7 +828,7 @@ class user
 
         if (!isset($this->profile_id)) {
             global $db_con;
-            $this->load($db_con);
+            $this->load_by_vars($db_con);
         }
         if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)
             or $this->profile_id == cl(db_cl::USER_PROFILE, user_profile::TEST)
@@ -869,7 +872,7 @@ class user
         global $db_con;
         $dsp_user = new user_dsp_old;
         $dsp_user->id = $this->id;
-        $dsp_user->load($db_con);
+        $dsp_user->load_by_vars($db_con);
         return $dsp_user;
     }
 

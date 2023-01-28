@@ -90,8 +90,8 @@ class api_message
     public function set_user(?user $usr): void
     {
         if ($usr != null) {
-            if ($usr->id > 0) {
-                $this->user_id = $usr->id;
+            if ($usr->id() > 0) {
+                $this->user_id = $usr->id();
                 $this->user = $usr->name;
             }
         }

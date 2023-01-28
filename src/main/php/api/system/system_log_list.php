@@ -47,7 +47,7 @@ class system_log_list_api extends api_message
         $this->type = api_message::SYS_LOG;
         $this->system_log = null;
         if ($usr != null) {
-            $this->user_id = $usr->id;
+            $this->user_id = $usr->id();
             $this->user = $usr->name;
         }
     }

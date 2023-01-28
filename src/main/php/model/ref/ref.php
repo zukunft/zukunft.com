@@ -326,7 +326,7 @@ class ref extends user_sandbox_link_with_type
 
         $db_con->set_type(sql_db::TBL_REF);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_link_fields(phrase::FLD_ID, self::FLD_TYPE);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
@@ -373,7 +373,7 @@ class ref extends user_sandbox_link_with_type
                 $qp->name = 'ref_by_link_ids';
             }
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
             $db_con->set_link_fields(phrase::FLD_ID, self::FLD_TYPE);
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_usr_fields(self::FLD_NAMES_USR);
@@ -681,7 +681,7 @@ class ref extends user_sandbox_link_with_type
         if ($log->id() > 0) {
             // insert the new reference
             $db_con->set_type(sql_db::TBL_REF);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
 
             $this->id = $db_con->insert(
                 array(phrase::FLD_ID, self::FLD_EX_KEY, self::FLD_TYPE),
@@ -735,7 +735,7 @@ class ref extends user_sandbox_link_with_type
 
         // build the database object because the is anyway needed
         if ($this->user()->is_set()) {
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
         }
         $db_con->set_type(sql_db::TBL_REF);
 

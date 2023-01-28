@@ -89,7 +89,7 @@ $wrd = new word($usr);
 $wrd->load_by_id($back);
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id > 0) {
+if ($usr->id() > 0) {
     if ($err_id > 0) {
         log_debug("error_log (" . $err_id . ")");
 
@@ -100,7 +100,7 @@ if ($usr->id > 0) {
         $dsp->set_id(cl(db_cl::VIEW, view::ERR_LOG));
         $result .= $dsp->dsp_navbar($back);
         //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
-        $result .= err_dsp($err_id, $usr->id);
+        $result .= err_dsp($err_id, $usr->id());
     }
 }
 

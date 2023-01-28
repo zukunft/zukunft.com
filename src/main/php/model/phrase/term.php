@@ -491,8 +491,7 @@ class term extends db_object
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
-    private
-    function load(sql_par $qp): int
+    private function load(sql_par $qp): int
     {
         global $db_con;
 
@@ -888,8 +887,8 @@ class term extends db_object
         } else {
             $result .= $this->id();
         }
-        if ($this->user()->id > 0) {
-            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+        if ($this->user()->id() > 0) {
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;
     }

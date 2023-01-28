@@ -48,7 +48,7 @@ $usr = new user;
 $result .= $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id > 0) {
+if ($usr->id() > 0) {
 
     load_usr_data();
 
@@ -56,7 +56,7 @@ if ($usr->id > 0) {
     $dsp->set_id(cl(db_cl::VIEW, view::ERR_UPD));
     $result .= $dsp->dsp_navbar($back);
 
-    if ($usr->id > 0 and $usr->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
+    if ($usr->id() > 0 and $usr->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
         // update the error if requested
         if ($log_id > 0 and $status_id > 0) {
             $err_entry = new system_log;
@@ -77,7 +77,7 @@ if ($usr->id > 0) {
         if ($err_lst->load()) {
             $errors_all = $err_lst->dsp_obj()->get_html();
         }
-        //$errors_all .= zuu_dsp_errors  ($usr->id, $usr->profile_id, "all", $back);
+        //$errors_all .= zuu_dsp_errors  ($usr->id(), $usr->profile_id, "all", $back);
         if ($errors_all <> "") {
             $result .= dsp_text_h3("Program issues that other user have found, that have not yet been solved.");
             $result .= $errors_all;

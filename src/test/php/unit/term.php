@@ -45,7 +45,7 @@ class term_unit_tests
         $db_con = new sql_db();
         $t->name = 'term->';
         $t->resource_path = 'db/term/';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         $t->header('Unit tests of the term class (src/main/php/model/phrase/term.php)');
 

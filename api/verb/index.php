@@ -52,7 +52,7 @@ $usr = new user;
 $msg .= $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id > 0) {
+if ($usr->id() > 0) {
 
     $vrb = new verb();
     if ($vrb_id > 0) {

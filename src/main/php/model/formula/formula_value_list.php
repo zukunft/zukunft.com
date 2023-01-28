@@ -139,7 +139,7 @@ class formula_value_list
             }
         }
         if ($sql_by == '') {
-            log_err('Either the formula id or the phrase group id and the user (' . $this->user()->id .
+            log_err('Either the formula id or the phrase group id and the user (' . $this->user()->id() .
                 ') must be set to load a ' . self::class, self::class . '->load_sql');
             $qp->name = '';
         } else {
@@ -147,7 +147,7 @@ class formula_value_list
             $qp->name .= $sql_by;
             $db_con->set_name(substr($qp->name, 0, 62));
             $db_con->set_fields(formula_value::FLD_NAMES);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
             if ($obj->id() > 0) {
                 if (get_class($obj) == formula::class or get_class($obj) == formula_dsp_old::class) {
                     $db_con->add_par(sql_db::PAR_INT, $obj->id());
@@ -445,7 +445,7 @@ class formula_value_list
      */
     function add_frm_val(int $phr_id, $frm_phr_ids, $frm_row, $usr_id)
     {
-        log_debug($phr_id . ',' . dsp_array($frm_phr_ids) . ',u' . $this->user()->id . ')');
+        log_debug($phr_id . ',' . dsp_array($frm_phr_ids) . ',u' . $this->user()->id() . ')');
 
         global $debug;
 
@@ -456,7 +456,7 @@ class formula_value_list
         $phr->load_by_id($phr_id);
 
         $val_lst = new value_list($this->usr);
-        $value_lst = $val_lst->load_frm_related_grp_phrs($phr_id, $frm_phr_ids, $this->user()->id);
+        $value_lst = $val_lst->load_frm_related_grp_phrs($phr_id, $frm_phr_ids, $this->user()->id());
 
         foreach (array_keys($value_lst) as $val_id) {
             /* maybe use for debugging */
@@ -480,7 +480,7 @@ class formula_value_list
 
             // build the single calculation request
             $calc_row = array();
-            $calc_row['usr_id'] = $this->user()->id;
+            $calc_row['usr_id'] = $this->user()->id();
             $calc_row['frm_id'] = $frm_row[formula::FLD_ID];
             $calc_row['frm_name'] = $frm_row['formula_name'];
             $calc_row['frm_text'] = $frm_row['formula_text'];
@@ -555,7 +555,7 @@ class formula_value_list
         /*
         $used_word_lst = New word_list;
         $used_word_lst->ids    = $used_word_ids;
-        $used_word_lst->usr_id = $this->user()->id;
+        $used_word_lst->usr_id = $this->user()->id();
         $used_word_lst->load ();
 
         // loop over the words assigned to the formulas
@@ -737,10 +737,10 @@ class formula_value_list
         foreach ($usr_lst->lst as $usr) {
             // check
             $usr_calc_needed = False;
-            if ($usr->id == $this->user()->id) {
+            if ($usr->id() == $this->user()->id()) {
                 $usr_calc_needed = true;
             }
-            if ($this->user()->id == 0 or $usr_calc_needed) {
+            if ($this->user()->id() == 0 or $usr_calc_needed) {
                 log_debug('update values for user: ' . $usr->name . ' and formula ' . $frm->name());
 
                 $result = $this->frm_upd_lst_usr($frm, $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos);
@@ -789,7 +789,7 @@ class formula_value_list
         $formula_links = '';
         $sql = "SELECT l.formula_id, f.formula_text FROM value_formula_links l, formulas f WHERE l.value_id = " . $val->id() . " AND l.formula_id = f.formula_id;";
         //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $db_lst = $db_con->get_old($sql);
         if ($db_lst != null) {
             foreach ($db_lst as $db_fv) {

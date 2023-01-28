@@ -96,7 +96,7 @@ class phrase_list extends user_sandbox_list_named
         $db_con->set_type(sql_db::TBL_PHRASE);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(phrase::FLD_NAMES);
         $db_con->set_usr_fields(phrase::FLD_NAMES_USR_NO_NAME);
         $db_con->set_usr_num_fields(phrase::FLD_NAMES_NUM_USR);
@@ -118,7 +118,7 @@ class phrase_list extends user_sandbox_list_named
         $qp->name .= count($ids) . 'ids_word_part';
 
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(word::FLD_NAMES);
         $db_con->set_usr_fields(word::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
@@ -143,7 +143,7 @@ class phrase_list extends user_sandbox_list_named
         $qp->name .= count($ids) . 'ids_triple_part';
 
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_link_fields(triple::FLD_FROM, triple::FLD_TO, verb::FLD_ID);
         $db_con->set_fields(triple::FLD_NAMES);
         $db_con->set_usr_fields(triple::FLD_NAMES_USR);
@@ -191,7 +191,7 @@ class phrase_list extends user_sandbox_list_named
                 }
             } else {
                 $qp = $this->load_by_wrd_ids_sql($db_con, $wrd_ids);
-                $db_con->usr_id = $this->user()->id;
+                $db_con->usr_id = $this->user()->id();
                 $db_wrd_lst = $db_con->get($qp);
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
@@ -215,7 +215,7 @@ class phrase_list extends user_sandbox_list_named
                 }
             } else {
                 $qp = $this->load_by_trp_ids_sql($db_con, $lnk_ids);
-                $db_con->usr_id = $this->user()->id;
+                $db_con->usr_id = $this->user()->id();
                 $db_trp_lst = $db_con->get($qp);
                 foreach ($db_trp_lst as $db_trp) {
                     if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
@@ -277,7 +277,7 @@ class phrase_list extends user_sandbox_list_named
                 }
             } else {
                 $qp = $this->load_by_wrd_ids_sql($db_con, $wrd_ids);
-                $db_con->usr_id = $this->user()->id;
+                $db_con->usr_id = $this->user()->id();
                 $db_wrd_lst = $db_con->get($qp);
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
@@ -304,7 +304,7 @@ class phrase_list extends user_sandbox_list_named
                 }
             } else {
                 $qp = $this->load_by_trp_ids_sql($db_con, $trp_ids);
-                $db_con->usr_id = $this->user()->id;
+                $db_con->usr_id = $this->user()->id();
                 $db_trp_lst = $db_con->get($qp);
                 foreach ($db_trp_lst as $db_trp) {
                     if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
@@ -418,13 +418,13 @@ class phrase_list extends user_sandbox_list_named
                              ' . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM ' . $db_con->get_table_name(sql_db::TBL_WORD) . ' w   
                    LEFT JOIN user_' . $db_con->get_table_name(sql_db::TBL_WORD) . ' u ON u.' . word::FLD_ID . ' = w.' . word::FLD_ID . ' 
-                                         AND u.user_id = ' . $this->user()->id . ' ';
+                                         AND u.user_id = ' . $this->user()->id() . ' ';
         $sql_triples = 'SELECT DISTINCT l.triple_id * -1 AS id, 
                                ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM triples l
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                AND u.user_id = ' . $this->user()->id . ' ';
+                                                AND u.user_id = ' . $this->user()->id() . ' ';
 
         if (isset($type)) {
             if ($type->id > 0) {
@@ -438,7 +438,7 @@ class phrase_list extends user_sandbox_list_named
                                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                                           FROM triples l
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                                AND u.user_id = ' . $this->user()->id . '
+                                                                AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id = ' . $type->id . ' 
                                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
@@ -450,7 +450,7 @@ class phrase_list extends user_sandbox_list_named
                                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                                           FROM triples l
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                                AND u.user_id = ' . $this->user()->id . '
+                                                                AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id <> ' . $type->id . ' 
                                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
@@ -464,7 +464,7 @@ class phrase_list extends user_sandbox_list_named
                              ' . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM ( ' . $sql_wrd_all . ' ) a, words w
                    LEFT JOIN user_words u ON u.' . word::FLD_ID . ' = w.' . word::FLD_ID . ' 
-                                         AND u.user_id = ' . $this->user()->id . '
+                                         AND u.user_id = ' . $this->user()->id() . '
                        WHERE w.' . word::FLD_ID . ' NOT IN ( ' . $sql_wrd_other . ' )                                        
                          AND w.' . word::FLD_ID . ' = a.id ) AS w 
                        WHERE ' . $sql_where_exclude . ' ';
@@ -477,7 +477,7 @@ class phrase_list extends user_sandbox_list_named
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM triples l
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                AND u.user_id = ' . $this->user()->id . '
+                                                AND u.user_id = ' . $this->user()->id() . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
                            AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
                            AND l.to_phrase_id = ' . $type->id . ' ) AS t 
@@ -524,7 +524,7 @@ class phrase_list extends user_sandbox_list_named
         // select the related words
         $db_con->set_type(sql_db::TBL_WORD);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(triple::FLD_NAMES);
         $db_con->set_usr_fields(triple::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(triple::FLD_NAMES_NUM_USR);
@@ -536,7 +536,7 @@ class phrase_list extends user_sandbox_list_named
         // select the related triple
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_link_fields(triple::FLD_FROM, triple::FLD_TO, verb::FLD_ID);
         $db_con->set_fields(triple::FLD_NAMES);
         $db_con->set_usr_fields(triple::FLD_NAMES_USR);
@@ -656,7 +656,7 @@ class phrase_list extends user_sandbox_list_named
                             " . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . "
                        FROM " . $sql_from . "
                   LEFT JOIN user_words u ON u.word_id = w.word_id
-                                        AND u.user_id = " . $this->user()->id . "
+                                        AND u.user_id = " . $this->user()->id() . "
                       WHERE w.word_type_id = " . cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME) . "
                         " . $sql_where_and . "
                    GROUP BY name) AS s
@@ -957,7 +957,7 @@ class phrase_list extends user_sandbox_list_named
         if ($qp->name == '') {
             log_warning('The phrase list is empty, so nothing could be found', self::class . '->load_linked_phrases');
         } else {
-            $db_con->usr_id = $this->user()->id;
+            $db_con->usr_id = $this->user()->id();
             $db_phr_lst = $db_con->get($qp);
             if ($db_phr_lst) {
                 log_debug('got ' . dsp_count($db_phr_lst));
@@ -1609,7 +1609,7 @@ class phrase_list extends user_sandbox_list_named
     function add_name($phr_name_to_add): void
     {
         log_debug('phrase_list->add_name "' . $phr_name_to_add . '"');
-        if (is_null($this->user()->id)) {
+        if (is_null($this->user()->id())) {
             log_err("The user must be set.", "phrase_list->add_name");
         } else {
             $phr_to_add = new phrase($this->user());

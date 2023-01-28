@@ -297,7 +297,7 @@ class view_cmp_dsp_old extends view_cmp
     // lists of all views where a view component is used
     private function linked_views($add_link, $wrd, $back): string
     {
-        log_debug("id " . $this->id . " and user " . $this->user()->id . " (word " . $wrd->id . ", add " . $add_link . ").");
+        log_debug("id " . $this->id . " and user " . $this->user()->id() . " (word " . $wrd->id . ", add " . $add_link . ").");
 
         global $db_con;
         $result = '';
@@ -313,7 +313,7 @@ class view_cmp_dsp_old extends view_cmp
              WHERE l.view_component_id = " . $this->id . " 
                AND l.view_id = m.view_id;";
         //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $view_lst = $db_con->get_old($sql);
         foreach ($view_lst as $view) {
             $result .= '  <tr>' . "\n";

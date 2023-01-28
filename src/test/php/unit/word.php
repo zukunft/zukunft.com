@@ -46,7 +46,7 @@ class word_unit_tests
         $t->name = 'word->';
         $t->resource_path = 'db/word/';
         $json_file = 'unit/word/second.json';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         $t->header('Unit tests of the word class (src/main/php/model/word/word.php)');
 

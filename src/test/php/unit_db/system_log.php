@@ -57,8 +57,7 @@ class system_log_unit_db_tests
 
         // use the system user for the database updates
         $sys_usr = new user;
-        $sys_usr->id = SYSTEM_USER_TEST_ID;
-        $sys_usr->load($db_con);
+        $sys_usr->load_by_id(SYSTEM_USER_TEST_ID);
 
         // check if loading the system errors technically works
         $err_lst = new system_log_list();

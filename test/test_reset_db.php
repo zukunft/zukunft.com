@@ -41,7 +41,7 @@ $usr = new user;
 $result = $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id > 0) {
+if ($usr->id() > 0) {
     if ($usr->is_admin()) {
 
         // load the testing base functions
@@ -49,8 +49,7 @@ if ($usr->id > 0) {
 
         // use the system user for the database updates
         $usr = new user;
-        $usr->id = SYSTEM_USER_ID;
-        $usr->load($db_con);
+        $usr->load_by_id(SYSTEM_USER_ID);
         $sys_usr = $usr;
 
         // run reset the main database tables

@@ -46,7 +46,7 @@ class formula_unit_tests
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
         $json_file = 'unit/formula/scale_second_to_minute.json';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         $t->header('Unit tests of the formula class (src/main/php/model/formula/formula.php)');
 

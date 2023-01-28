@@ -47,8 +47,7 @@ class batch_job_unit_db_tests
 
         // use the system user for the database updates
         $sys_usr = new user;
-        $sys_usr->id = SYSTEM_USER_ID;
-        $sys_usr->load($db_con);
+        $sys_usr->load_by_id(SYSTEM_USER_ID);
 
         // check if loading of the first entry is the adding of the word name
         $job_lst = new batch_job_list($sys_usr);

@@ -122,7 +122,7 @@ class value_list_dsp extends value_list_api
 
         log_debug('add new button');
         foreach ($this->lst as $val) {
-            //$this->user()->id  = $val->usr->id;
+            //$this->user()->id()  = $val->usr->id;
 
             // get the words
             $val->load_phrases();

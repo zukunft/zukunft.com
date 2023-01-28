@@ -303,7 +303,7 @@ class system_log extends db_object
         $result = '';
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_type(sql_db::TBL_SYS_LOG);
 
         if ($this->id() > 0) {

@@ -48,7 +48,7 @@ class change_log_unit_tests
         $db_con = new sql_db();
         $t->name = 'change_log->';
         $t->resource_path = 'db/log/';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         // sql to load the word by id
         $log_dsp = new user_log_display($usr);
@@ -103,7 +103,7 @@ class change_log_unit_tests
         $trp->set(1, triple_api::TN_READ);
 
         // sql to load a list of log entry by word
-        $db_con->set_usr($usr->id);
+        $db_con->set_usr($usr->id());
         $log_lst = new change_log_list();
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $log_lst->load_sql_obj_fld(
@@ -125,7 +125,7 @@ class change_log_unit_tests
         $t->assert_qp($qp, $db_con->db_type);
 
         // sql to load a list of log entry by phrase
-        $db_con->set_usr($usr->id);
+        $db_con->set_usr($usr->id());
         $log_lst = new change_log_list();
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $log_lst->load_sql_obj_fld(

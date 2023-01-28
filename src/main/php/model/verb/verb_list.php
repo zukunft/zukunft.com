@@ -109,7 +109,7 @@ class verb_list extends type_list
         if ($qp->name != '') {
             $db_con->set_type(sql_db::TBL_TRIPLE);
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
             $db_con->set_usr_num_fields(array(user_sandbox::FLD_EXCLUDED));
             $db_con->set_join_fields(array_merge(verb::FLD_NAMES, array(verb::FLD_NAME)), sql_db::TBL_VERB);
             $db_con->set_fields(array(verb::FLD_ID));
@@ -195,7 +195,7 @@ class verb_list extends type_list
         $qp->name = $db_type . '_' . $query_name;
 
         $db_con->set_name($qp->name);
-        //TODO check if $db_con->set_usr($this->user()->id); is needed
+        //TODO check if $db_con->set_usr($this->user()->id()); is needed
         $db_con->set_fields(verb::FLD_NAMES);
         $db_con->set_order($order_field);
 
@@ -295,7 +295,7 @@ class verb_list extends type_list
                                    FROM triples l
                                   WHERE v.verb_id = l.verb_id)
                  WHERE verb_id > 0;";
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         return $db_con->exe_try('Calculation of the verb usage', $sql);
     }
 

@@ -111,7 +111,7 @@ function run_word_display_test(testing $t): void
     $wrd_year = new word($usr);
     $wrd_year->load_by_name(word_api::TN_YEAR, word::class);
     /*
-    $target = zut_dsp_list_wrd_val($wrd_ZH->id(), $wrd_year->id(), $usr->id);
+    $target = zut_dsp_list_wrd_val($wrd_ZH->id(), $wrd_year->id(), $usr->id());
     $target = substr($target,0,208);
     */
     $target = word_api::TN_2020;
@@ -130,7 +130,7 @@ function run_word_display_test(testing $t): void
     $wrd_ratios->name = "Company main ratio";
     $wrd_ratios->set_user($usr);
     $wrd_ratios->load();
-    $target = zut_dsp_list_wrd_val($wrd_company->id, $wrd_ratios->id, $usr->id);
+    $target = zut_dsp_list_wrd_val($wrd_company->id, $wrd_ratios->id, $usr->id());
     $target = substr($target,0,200);
     $result = $wrd_company->dsp_val_list ($wrd_ratios, $back);
     $result = substr($result,0,200);

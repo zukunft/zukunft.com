@@ -58,7 +58,7 @@ $result = $usr->get();
 $msg = '';
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id > 0) {
+if ($usr->id() > 0) {
 
     $result = ''; // reset the html code var
 
@@ -75,22 +75,22 @@ if ($usr->id > 0) {
             // save activation key
             $key = getRandomKey();
             $db_con->set_type(sql_db::TBL_USER);
-            $db_con->set_usr($usr->id);
-            if (!$db_con->update($db_usr->id, array("activation_key", "activation_key_timeout"), array($db_con->sf($key), 'NOW() + INTERVAL 1 DAY'))) {
-                log_err('Saving of activation key failed for user ' . $db_usr->id, 'login_reset');
+            $db_con->set_usr($usr->id());
+            if (!$db_con->update($db_usr->id(), array("activation_key", "activation_key_timeout"), array($db_con->sf($key), 'NOW() + INTERVAL 1 DAY'))) {
+                log_err('Saving of activation key failed for user ' . $db_usr->id(), 'login_reset');
             }
 
             $mail_to = $db_usr->email;
             $mail_subject = 'zukunft.com - password reset request';
             // to be replaced by
-            $mail_body = sprintf('Hello, ' . "\n\n" . 'Please use the following activation key to reset your password: %4$s' . "\n\n" . 'Or use this link:' . "\n" . '%1$s/%2$s?id=%3$s&key=%4$s' . "\n\n" . 'If you did not request a password reset for %1$s recently, please ignore it.', 'www.zukunft.com', 'login_activate.php', $db_usr->id, $key);
+            $mail_body = sprintf('Hello, ' . "\n\n" . 'Please use the following activation key to reset your password: %4$s' . "\n\n" . 'Or use this link:' . "\n" . '%1$s/%2$s?id=%3$s&key=%4$s' . "\n\n" . 'If you did not request a password reset for %1$s recently, please ignore it.', 'www.zukunft.com', 'login_activate.php', $db_usr->id(), $key);
             $mail_header = 'From: admin@zukunft.com' . "\r\n" .
                 'Reply-To: admin@zukunft.com' . "\r\n" .
                 'X-Mailer: PHP/' . phpversion();
             mail($db_usr->email, $mail_subject, $mail_body, $mail_header);
             // TODO ask if cookies are allowed: if yes, the session id does not need to be forwarded
             // if no, use the session id
-            header("Location: http/login_activate.php?id=" . $db_usr->id); // Modify to go to the page you would like
+            header("Location: http/login_activate.php?id=" . $db_usr->id()); // Modify to go to the page you would like
             //header("Location: view.php?sid=".SID.""); // Modify to go to the page you would like
             exit;
         } else {

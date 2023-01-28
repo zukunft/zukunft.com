@@ -46,7 +46,7 @@ class user_unit_tests
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
         $json_file = '';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         $t->header('Unit tests of the user class (src/main/php/model/user/user.php)');
 
@@ -55,7 +55,7 @@ class user_unit_tests
 
         $test_usr = new user();
         $t->assert_load_sql_id($db_con, $test_usr);
-        // $t->assert_load_sql_name($db_con, $test_usr);
+        $t->assert_load_sql_name($db_con, $test_usr);
 
 
         $t->subheader('API unit tests');

@@ -105,7 +105,7 @@ if (isset($_POST['submit'])) {
             $sql = $db_con->select_by_set_id();
 
             $db_row = $db_con->get1_old($sql);
-            $usr_name = $db_row['user_name'];
+            $usr_name = $db_row[user::FLD_NAME];
 
             if ($usr_id > 0 and $usr_name <> '') {
                 // auto login

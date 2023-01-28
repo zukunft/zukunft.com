@@ -70,7 +70,7 @@ class formula_link_list extends sandbox_list
         $db_con->set_type(sql_db::TBL_FORMULA_LINK);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_usr_num_fields(formula_link::FLD_NAMES_NUM_USR);
         // also load the linked user specific phrase with the same SQL statement
@@ -189,7 +189,7 @@ class formula_link_list extends sandbox_list
             if ($result == '') {
                 if ($frm_lnk->can_change() > 0 and $frm_lnk->not_used()) {
                     //$db_con = new mysql;
-                    $db_con->usr_id = $this->user()->id;
+                    $db_con->usr_id = $this->user()->id();
                     // delete first all user configuration that have also been excluded
                     $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK);
                     $result = $db_con->delete(array(formula_link::FLD_ID, user_sandbox::FLD_EXCLUDED), array($frm_lnk->id(), '1'));

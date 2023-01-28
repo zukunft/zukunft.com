@@ -44,7 +44,7 @@ $usr = new user;
 $result .= $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id > 0) {
+if ($usr->id() > 0) {
 
     load_usr_data();
 
@@ -84,7 +84,7 @@ if ($usr->id > 0) {
         if ($confirm > 0 AND $new_tbl <> '') {
 
           // adjust the user entries for the database
-          $new_tbl = v_convert($new_tbl, $usr->id);
+          $new_tbl = v_convert($new_tbl, $usr->id());
 
           // add the new value to the database
           $val_wrd_lst = New word_list;
@@ -93,13 +93,13 @@ if ($usr->id > 0) {
           $val_wrd_lst->load();
           $val = New value;
           $val->
-          $val_id = v_db_add($new_tbl, $wrd_ids, $usr->id);
+          $val_id = v_db_add($new_tbl, $wrd_ids, $usr->id());
 
           if ($val_id > 0) {
             // save the source
             if ($src_id > 0) {
-              zuv_db_add($val_id, $src_id, $usr->id);
-              zuu_set_source ($usr->id, $src_id);
+              zuv_db_add($val_id, $src_id, $usr->id());
+              zuu_set_source ($usr->id(), $src_id);
             }
           } else {
             zu_err("Adding ".$new_tbl." for words ".implode(",",$wrd_ids)." failed.","value_add");
@@ -110,7 +110,7 @@ if ($usr->id > 0) {
           // display the view header
           $result .= $dsp->dsp_navbar($back);
 
-          $result .= zuv_dsp_edit_or_add (0, $wrd_ids, $type_ids, $db_ids, $src_id, $back, $usr->id);
+          $result .= zuv_dsp_edit_or_add (0, $wrd_ids, $type_ids, $db_ids, $src_id, $back, $usr->id());
 
         } */
 }

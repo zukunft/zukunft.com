@@ -183,7 +183,7 @@ class user_sandbox_link extends user_sandbox
         }
         $result .= $this->obj_name . ' ' . $this->obj_type;
         if ($this->user()->is_set()) {
-            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;
     }

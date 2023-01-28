@@ -47,7 +47,7 @@ $back = $_GET['back'];     // the word id from which this value change has been 
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 log_debug('import.php check user ');
-if ($usr->id > 0) {
+if ($usr->id() > 0) {
 
     load_usr_data();
 

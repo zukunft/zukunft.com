@@ -411,7 +411,7 @@ class view extends user_sandbox_named_with_type
         $db_con_tmp = new sql_db();
         $db_con_tmp->set_type(sql_db::TBL_VIEW);
         $db_con->set_name($qp->name);
-        $db_con_tmp->set_usr($this->user()->id);
+        $db_con_tmp->set_usr($this->user()->id());
         $db_con_tmp->set_where_std($phr->id);
         $sql = "SELECT u.view_id, count(u.user_id) AS users
                        FROM words w 
@@ -422,7 +422,7 @@ class view extends user_sandbox_named_with_type
 
         // load all parameters of the view with one sql statement
         $db_con->set_type(sql_db::TBL_VIEW);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
@@ -467,7 +467,7 @@ class view extends user_sandbox_named_with_type
         }
 
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_name($qp->name);
         $db_con->set_fields(view_cmp_link::FLD_NAMES);
         $db_con->set_usr_num_fields(view_cmp_link::FLD_NAMES_NUM_USR);
@@ -499,7 +499,7 @@ class view extends user_sandbox_named_with_type
         global $db_con;
         $result = true;
 
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $qp = $this->load_components_sql($db_con);
         $db_lst = $db_con->get($qp);
         $this->cmp_lst = array();
@@ -702,7 +702,7 @@ class view extends user_sandbox_named_with_type
         $field = 'new_id';
 
         //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $dsp_lst = $db_con->get_old($sql);
         foreach ($dsp_lst as $dsp) {
             $view_id = $dsp['id'];

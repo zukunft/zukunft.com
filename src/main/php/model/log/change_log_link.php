@@ -133,7 +133,7 @@ class change_log_link extends change_log
             $this->new_to_id = $db_row[self::FLD_NEW_TO_ID];
             // TODO check if not the complete user should be loaded
             $usr = new user();
-            $usr->id = $db_row[user::FLD_ID];
+            $usr->set_id($db_row[user::FLD_ID]);
             $usr->name = $db_row[user::FLD_NAME];
             $this->usr = $usr;
             return true;
@@ -294,7 +294,7 @@ class change_log_link extends change_log
         log_debug('user_log_link->set_usr for ' . $this->usr->dsp_id());
         if (!isset($this->usr)) {
             $usr = new user;
-            $usr->id = $this->usr->id;
+            $usr->set_id($this->usr->id);
             $usr->load_test_user();
             $this->usr = $usr;
             log_debug('user_log_link->set_usr got ' . $this->usr->name);
@@ -415,8 +415,8 @@ class change_log_link extends change_log
             if (!$ex_time) {
                 $result .= $db_row['change_time'] . ' ';
             }
-            if ($db_row['user_name'] <> '') {
-                $result .= $db_row['user_name'] . ' ';
+            if ($db_row[user::FLD_NAME] <> '') {
+                $result .= $db_row[user::FLD_NAME] . ' ';
             }
             if ($db_row['new_text_from'] <> '' and $db_row['new_text_to'] <> '') {
                 $result .= 'linked ' . $db_row['new_text_from'] . ' to ' . $db_row['new_text_to'];

@@ -519,7 +519,7 @@ class verb extends db_object
             $result .= $this->id;
         }
         if ($this->user()->is_set()) {
-            $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;
     }
@@ -667,7 +667,7 @@ class verb extends db_object
         $qp->name .= 'usage';
         $db_con->set_type(sql_db::TBL_WORD);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_where_std($this->id);
         $qp->sql = $db_con->select_by_set_id();
@@ -700,7 +700,7 @@ class verb extends db_object
     // true if no other user has modified the verb
     private function not_changed(): bool
     {
-        log_debug('verb->not_changed (' . $this->id . ') by someone else than the owner (' . $this->user()->id . ')');
+        log_debug('verb->not_changed (' . $this->id . ') by someone else than the owner (' . $this->user()->id() . ')');
 
         global $db_con;
         $result = true;
@@ -713,7 +713,7 @@ class verb extends db_object
                    AND user_id <> ".$this->owner_id."
                    AND (excluded <> 1 OR excluded is NULL)";
         //$db_con = new mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $change_user_id = $db_con->get1($sql);
         if ($change_user_id > 0) {
           $result = false;
@@ -977,7 +977,7 @@ class verb extends db_object
 
                   // ... and create a new display component link
                   $this->id = 0;
-                  $this->owner_id = $this->user()->id;
+                  $this->owner_id = $this->user()->id();
                   $result .= $this->add($db_con);
                   zu_debug('verb->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'")');
                 }
@@ -1034,7 +1034,7 @@ class verb extends db_object
         $result = '';
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_type(sql_db::TBL_VERB);
 
         // check if a new word is supposed to be added
@@ -1124,7 +1124,7 @@ class verb extends db_object
             if ($this->can_change()) {
                 $log = $this->log_del();
                 if ($log->id() > 0) {
-                    $db_con->usr_id = $this->user()->id;
+                    $db_con->usr_id = $this->user()->id();
                     $db_con->set_type(sql_db::TBL_VERB);
                     $result = $db_con->delete(self::FLD_ID, $this->id);
                 }

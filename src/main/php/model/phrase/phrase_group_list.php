@@ -117,7 +117,7 @@ class phrase_group_list
         } else {
 
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
             $db_con->set_fields(phrase_group::FLD_NAMES);
             if ($this->phr->is_word()) {
                 $db_con->set_join_fields(array(word::FLD_ID), sql_db::TBL_PHRASE_GROUP_WORD_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
@@ -361,10 +361,10 @@ class phrase_group_list
             $sql_group = 'SELECT l1.phrase_group_id
                       FROM phrase_group_phrase_links l1
                  LEFT JOIN user_phrase_group_phrase_links u1 ON u1.phrase_group_phrase_link_id = l1.phrase_group_phrase_link_id 
-                                                            AND u1.user_id = ' . $this->user()->id . ',
+                                                            AND u1.user_id = ' . $this->user()->id() . ',
                            phrase_group_phrase_links l2
                  LEFT JOIN user_phrase_group_phrase_links u2 ON u2.phrase_group_phrase_link_id = l2.phrase_group_phrase_link_id 
-                                                            AND u2.user_id = ' . $this->user()->id . '
+                                                            AND u2.user_id = ' . $this->user()->id() . '
                      WHERE l1.phrase_id IN (' . $phr_linked_ex->ids_txt() . ')  
                        AND l2.phrase_id IN (' . $phr_used_ex->ids_txt() . ')
                        AND l1.phrase_group_id = l2.phrase_group_id
@@ -422,7 +422,7 @@ class phrase_group_list
 
         log_debug('sql "' . $sql . '"');
         //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         return $db_con->get_old($sql);
     }
 

@@ -45,7 +45,7 @@ $usr = new user;
 $result = $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id > 0) {
+if ($usr->id() > 0) {
 
     $result = ''; // reset the html code var
     $msg = '';
@@ -64,18 +64,18 @@ if ($usr->id > 0) {
 
         // Let's search the database for the username and password
         // don't use the sf shortcut here!
-        $usr = mysqli_real_escape_string($_POST['username']);
-        $pw_hash = hash('sha256', mysqli_real_escape_string($_POST['password']));
+        $usr = mysqli_real_escape_string($db_con->mysql, $_POST['username']);
+        $pw_hash = hash('sha256', mysqli_real_escape_string($db_con->mysql, $_POST['password']));
         $sql = "SELECT * FROM users  
               WHERE user_name='$usr'
                 AND password='$pw_hash'
                     LIMIT 1";
-        $sql_result = mysqli_query($sql);
+        $sql_result = mysqli_query($db_con->mysql, $sql);
         if (mysqli_num_rows($sql_result) == 1) {
             $row = mysqli_fetch_array($sql_result);
             session_start();
             $_SESSION['usr_id'] = $row[user::FLD_ID];
-            $_SESSION['user_name'] = $row['user_name'];
+            $_SESSION['user_name'] = $row[user::FLD_NAME];
             $_SESSION['logged'] = TRUE;
             // TODO ask if cookies are allowed: if yes, the session id does not need to be forwarded
             // if no, use the session id

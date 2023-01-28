@@ -47,8 +47,8 @@ class user_list
         if ($db_usr_lst != null) {
             foreach ($db_usr_lst as $db_usr) {
                 $usr = new user;
-                $usr->id = $db_usr[user::FLD_ID];
-                $usr->name = $db_usr['user_name'];
+                $usr->set_id($db_usr[user::FLD_ID]);
+                $usr->name = $db_usr[user::FLD_NAME];
                 $usr->code_id = $db_usr[sql_db::FLD_CODE_ID];
                 $this->lst[] = $usr;
             }
@@ -83,7 +83,7 @@ class user_list
             WHERE u.user_id = c.user_id
          ORDER BY u.user_id;";
         // TODO check if the user needs to be set to the original value again
-        $db_con->usr_id = $usr->id;
+        $db_con->usr_id = $usr->id();
         $this->load_sql($sql, $db_con);
 
         log_debug(dsp_count($this->lst));
@@ -112,7 +112,7 @@ class user_list
     function add_by_id($usr_id): void
     {
         $usr = new user;
-        $usr->id = $usr_id;
+        $usr->set_id($usr_id);
         $this->lst[] = $usr;
     }
 

@@ -41,7 +41,7 @@ class formula_element_unit_tests
         $db_con = new sql_db();
         $t->name = 'formula_element->';
         $t->resource_path = 'db/formula/';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         $t->header('Unit tests of the formula element class (src/main/php/model/formula/formula_element.php)');
 

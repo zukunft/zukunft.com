@@ -75,7 +75,7 @@ class view_list extends sandbox_list
         $qp = new sql_par($class);
         $db_con->set_type(sql_db::TBL_VIEW);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(view::FLD_NAMES);
         $db_con->set_usr_fields(view::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(view::FLD_NAMES_NUM_USR);

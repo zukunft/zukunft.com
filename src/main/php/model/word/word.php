@@ -373,7 +373,7 @@ class word extends user_sandbox_named_with_type
 
         $db_con->set_type(sql_db::TBL_WORD);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
@@ -487,7 +487,7 @@ class word extends user_sandbox_named_with_type
     function view_sql(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_WORD);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(array(self::FLD_VIEW));
         $db_con->set_join_usr_count_fields(array(sql_db::FLD_USER_ID), sql_db::TBL_WORD);
         $qp = new sql_par(self::class);
@@ -1262,7 +1262,7 @@ class word extends user_sandbox_named_with_type
      */
     function parents(): phrase_list
     {
-        log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id);
+        log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
         $phr_lst = $this->lst();
         $parent_phr_lst = $phr_lst->foaf_parents(cl(db_cl::VERB, verb::IS_A));
         log_debug('are ' . $parent_phr_lst->dsp_name() . ' for ' . $this->dsp_id());
@@ -1327,7 +1327,7 @@ class word extends user_sandbox_named_with_type
      */
     function children(): phrase_list
     {
-        log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id);
+        log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
         $phr_lst = $this->lst();
         $child_phr_lst = $phr_lst->foaf_all_children(cl(db_cl::VERB, verb::IS_A));
         log_debug('are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
@@ -1411,7 +1411,7 @@ class word extends user_sandbox_named_with_type
 
         $link_id = cl(db_cl::VERB, verb::FOLLOW);
         //$db_con = new mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
@@ -1428,14 +1428,14 @@ class word extends user_sandbox_named_with_type
      */
     function prior(): word
     {
-        log_debug($this->dsp_id() . ',u' . $this->user()->id);
+        log_debug($this->dsp_id() . ',u' . $this->user()->id());
 
         global $db_con;
         $result = new word($this->user());
 
         $link_id = cl(db_cl::VERB, verb::FOLLOW);
         //$db_con = new mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
@@ -1471,7 +1471,7 @@ class word extends user_sandbox_named_with_type
      */
     function is_part(): phrase_list
     {
-        log_debug($this->dsp_id() . ', user ' . $this->user()->id);
+        log_debug($this->dsp_id() . ', user ' . $this->user()->id());
         $phr_lst = $this->lst();
         $is_phr_lst = $phr_lst->foaf_parents(cl(db_cl::VERB, verb::IS_PART_OF));
 
@@ -1489,7 +1489,7 @@ class word extends user_sandbox_named_with_type
      */
     function link_types(string $direction): verb_list
     {
-        log_debug($this->dsp_id() . ' and user ' . $this->user()->id);
+        log_debug($this->dsp_id() . ' and user ' . $this->user()->id());
 
         global $db_con;
 
@@ -1662,7 +1662,7 @@ class word extends user_sandbox_named_with_type
                        AND user_id <> ".$this->owner_id."
                        AND (excluded <> 1 OR excluded is NULL)";
             //$db_con = new mysql;
-            $db_con->usr_id = $this->user()->id;
+            $db_con->usr_id = $this->user()->id();
             $change_user_id = $db_con->get1($sql);
             if ($change_user_id > 0) {
               $result = false;
@@ -1710,11 +1710,11 @@ class word extends user_sandbox_named_with_type
      */
     function can_change(): bool
     {
-        log_debug($this->id . ',u' . $this->user()->id);
+        log_debug($this->id . ',u' . $this->user()->id());
         $can_change = false;
-        if ($this->owner_id == $this->user()->id or $this->owner_id <= 0) {
+        if ($this->owner_id == $this->user()->id() or $this->owner_id <= 0) {
             $wrd_user = $this->changer();
-            if ($wrd_user == $this->user()->id or $wrd_user <= 0) {
+            if ($wrd_user == $this->user()->id() or $wrd_user <= 0) {
                 $can_change = true;
             }
         }
@@ -1791,10 +1791,10 @@ class word extends user_sandbox_named_with_type
         $result = '';
 
         if ($this->id > 0 and $view_id > 0 and $view_id <> $this->view_id) {
-            log_debug($view_id . ' for ' . $this->dsp_id() . ' and user ' . $this->user()->id);
+            log_debug($view_id . ' for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
             if ($this->log_upd_view($view_id) > 0) {
                 //$db_con = new mysql;
-                $db_con->usr_id = $this->user()->id;
+                $db_con->usr_id = $this->user()->id();
                 if ($this->can_change()) {
                     $db_con->set_type(sql_db::TBL_WORD);
                     if (!$db_con->update($this->id, "view_id", $view_id)) {

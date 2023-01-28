@@ -99,7 +99,7 @@ class change_log_named extends change_log
             $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
             // TODO check if not the complete user should be loaded
             $usr = new user();
-            $usr->id = $db_row[user::FLD_ID];
+            $usr->set_id($db_row[user::FLD_ID]);
             $usr->name = $db_row[user::FLD_NAME];
             $this->usr = $usr;
             log_debug('Change ' . $this->id() . ' loaded', $debug - 8);

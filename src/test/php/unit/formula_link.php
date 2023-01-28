@@ -42,7 +42,7 @@ class formula_link_unit_tests
         $db_con = new sql_db();
         $t->name = 'formula_link->';
         $t->resource_path = 'db/formula/';
-        $usr->id = 1;
+        $usr->set_id(1);
 
         // TODO use assert_load_sql idf possible
 

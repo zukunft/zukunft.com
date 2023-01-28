@@ -227,8 +227,8 @@ class formula_dsp_old extends formula
         log_debug($this->ref_text);
         $result = '<br>';
 
-        $result .= dsp_btn_text("Test", '/http/formula_test.php?id=' . $this->id . '&user=' . $this->user()->id . '&back=' . $back);
-        $result .= dsp_btn_text("Refresh results", '/http/formula_test.php?id=' . $this->id . '&user=' . $this->user()->id . '&back=' . $back . '&refresh=1');
+        $result .= dsp_btn_text("Test", '/http/formula_test.php?id=' . $this->id . '&user=' . $this->user()->id() . '&back=' . $back);
+        $result .= dsp_btn_text("Refresh results", '/http/formula_test.php?id=' . $this->id . '&user=' . $this->user()->id() . '&back=' . $back . '&refresh=1');
 
         $result .= '<br><br>';
 

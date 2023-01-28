@@ -401,7 +401,7 @@ class formula extends user_sandbox_named_with_type
             $qp->name .= 'name';
         } else {
             log_err('Either the database ID (' . $this->id . ') or the ' .
-                $class . ' name (' . $this->name() . ') and the user (' . $this->user()->id . ') must be set to load a ' .
+                $class . ' name (' . $this->name() . ') and the user (' . $this->user()->id() . ') must be set to load a ' .
                 $class, $class . '->load');
         }
         // the formula name should be excluded from the user sandbox to avoid confusion
@@ -418,7 +418,7 @@ class formula extends user_sandbox_named_with_type
             $qp->sql = $db_con->select_by_set_name();
         } else {
             log_err('Either the database ID (' . $this->id . ') or the ' .
-                $class . ' name (' . $this->name() . ') and the user (' . $this->user()->id . ') must be set to load a ' .
+                $class . ' name (' . $this->name() . ') and the user (' . $this->user()->id() . ') must be set to load a ' .
                 $class, $class . '->load');
         }
         $qp->par = $db_con->get_par();
@@ -438,7 +438,7 @@ class formula extends user_sandbox_named_with_type
         if (!$this->user()->is_set()) {
             log_err("The user id must be set to load a formula.", "formula->load");
         } elseif ($this->id <= 0 and $this->name() == '') {
-            log_err("Either the database ID (" . $this->id . ") or the formula name (" . $this->name() . ") and the user (" . $this->user()->id . ") must be set to load a formula.", "formula->load");
+            log_err("Either the database ID (" . $this->id . ") or the formula name (" . $this->name() . ") and the user (" . $this->user()->id() . ") must be set to load a formula.", "formula->load");
         } else {
 
             $qp = $this->load_sql_obj_vars($db_con);
@@ -1569,7 +1569,7 @@ class formula extends user_sandbox_named_with_type
             if ($frm_usr_id > 0) {
                 $field_values[] = $frm_usr_id;
             } else {
-                $field_values[] = $this->user()->id;
+                $field_values[] = $this->user()->id();
             }
             $field_names[] = 'formula_element_type_id';
             $field_values[] = $elm_type_id;
@@ -1618,7 +1618,7 @@ class formula extends user_sandbox_named_with_type
      */
     function element_refresh($frm_text): bool
     {
-        log_debug('->element_refresh (f' . $this->id . '' . $frm_text . ',u' . $this->user()->id . ')');
+        log_debug('->element_refresh (f' . $this->id . '' . $frm_text . ',u' . $this->user()->id() . ')');
 
         global $db_con;
         $result = true;
@@ -1753,7 +1753,7 @@ class formula extends user_sandbox_named_with_type
                    AND user_id <> ".$this->owner_id."
                    AND (excluded <> 1 OR excluded is NULL)";
         //$db_con = new mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->user()->id();
         $change_user_id = $db_con->get1($sql);
         if ($change_user_id > 0) {
           $result = false;
@@ -1922,12 +1922,12 @@ class formula extends user_sandbox_named_with_type
         global $db_con;
         $result = '';
 
-        if ($this->id > 0 and $this->user()->id > 0) {
+        if ($this->id > 0 and $this->user()->id() > 0) {
             log_debug('->del_usr_cfg  "' . $this->id . ' und user ' . $this->user()->name);
 
             $log = $this->log_del();
             if ($log->id() > 0) {
-                $db_con->usr_id = $this->user()->id;
+                $db_con->usr_id = $this->user()->id();
                 $result = $this->del_usr_cfg_exe($db_con);
             }
 
@@ -2205,7 +2205,7 @@ class formula extends user_sandbox_named_with_type
 
                         // ... and create a new display component link
                         $this->id = 0;
-                        $this->owner_id = $this->user()->id;
+                        $this->owner_id = $this->user()->id();
                         // TODO check the result values and if the id is needed
                         $result .= $this->add()->get_last_message();
                         log_debug('->save_id_if_updated recreate the display component link del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');

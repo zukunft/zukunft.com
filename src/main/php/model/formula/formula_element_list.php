@@ -48,7 +48,7 @@ class formula_element_list extends sandbox_list
         $db_con->set_type(sql_db::TBL_FORMULA_ELEMENT);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(formula_element::FLD_NAMES);
         return $qp;
     }
@@ -66,7 +66,7 @@ class formula_element_list extends sandbox_list
             $qp->name .= 'frm_id';
             $db_con->set_name($qp->name);
             $db_con->add_par(sql_db::PAR_INT, $frm_id);
-            $db_con->add_par(sql_db::PAR_INT, $this->user()->id);
+            $db_con->add_par(sql_db::PAR_INT, $this->user()->id());
             $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID, user_sandbox::FLD_USER));
         } else {
             $qp->name = '';
@@ -90,7 +90,7 @@ class formula_element_list extends sandbox_list
             $db_con->set_name($qp->name);
             $db_con->add_par(sql_db::PAR_INT, $frm_id);
             $db_con->add_par(sql_db::PAR_INT, $elm_type_id);
-            $db_con->add_par(sql_db::PAR_INT, $this->user()->id);
+            $db_con->add_par(sql_db::PAR_INT, $this->user()->id());
             $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID, formula_element::FLD_TYPE, user_sandbox::FLD_USER));
         } else {
             $qp->name = '';

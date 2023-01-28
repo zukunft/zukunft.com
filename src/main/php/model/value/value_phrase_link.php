@@ -88,7 +88,7 @@ class value_phrase_link
     {
         $result = false;
         if ($db_row != null) {
-            if ($db_row[user_sandbox::FLD_USER] != $this->user()->id AND $db_row[user_sandbox::FLD_USER] > 0) {
+            if ($db_row[user_sandbox::FLD_USER] != $this->user()->id() AND $db_row[user_sandbox::FLD_USER] > 0) {
                 log_err('Value user (' .  $this->user()->dsp_id() . ') and phrase link user (' .  $db_row[user_sandbox::FLD_USER] . ') does not match for link ' . $db_row[self::FLD_ID]);
                 $this->id = 0;
             } else {
@@ -152,11 +152,11 @@ class value_phrase_link
                 array(self::FLD_ID),
                 array($this->id)
             );
-        } elseif ($this->val->id() > 0 and $this->phr->id() > 0 and $this->user()->id > 0) {
+        } elseif ($this->val->id() > 0 and $this->phr->id() > 0 and $this->user()->id() > 0) {
             $qp->name .= 'val_phr_usr_id';
             $sql_where .= $db_con->where_par(
                 array(value::FLD_ID, phrase::FLD_ID, user_sandbox::FLD_USER),
-                array($this->val->id(), $this->phr->id(), $this->user()->id)
+                array($this->val->id(), $this->phr->id(), $this->user()->id())
             );
         } else {
             log_err("The id or the value id, phrase id and user id must be set to load the value phrase links", self::class . '->load_sql');
@@ -164,7 +164,7 @@ class value_phrase_link
 
         if ($sql_where != '') {
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_where_text($sql_where);
             $qp->sql = $db_con->select_by_set_id();
@@ -290,7 +290,7 @@ class value_phrase_link
                     WHERE value_id = " . $this->val->id() . " 
                       AND phrase_id  = " . $this->phr->id() . " 
                       AND value_phrase_link_id <> " . $this->id . ";";
-            $sql_result = $db_con->exe($sql_del, $this->user()->id, sys_log_level::ERROR, "val_lnk->update", (new Exception)->getTraceAsString());
+            $sql_result = $db_con->exe($sql_del, $this->user()->id(), sys_log_level::ERROR, "val_lnk->update", (new Exception)->getTraceAsString());
             $db_row = $db_con->get1($sql);
             $this->id = $db_row['value_phrase_link_id'];
             if ($this->id > 0) {
@@ -306,10 +306,10 @@ class value_phrase_link
     // only allowed if the value has not yet been used
     function save()
     {
-        log_debug("val_lnk->save link word id " . $this->phr->name() . " to " . $this->val->id() . " (link id " . $this->id . " for user " . $this->user()->id . ").");
+        log_debug("val_lnk->save link word id " . $this->phr->name() . " to " . $this->val->id() . " (link id " . $this->id . " for user " . $this->user()->id() . ").");
 
         global $db_con;
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
 
         if (!$this->used()) {
@@ -381,7 +381,7 @@ class value_phrase_link
             $log = $this->log_add();
             if ($log->id() > 0) {
                 //$db_con = new mysql;
-                $db_con->usr_id = $this->user()->id;
+                $db_con->usr_id = $this->user()->id();
                 $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
                 $result .= $db_con->delete(array(value::FLD_ID, phrase::FLD_ID), array($this->val->id(), $this->phr->id()));
             }

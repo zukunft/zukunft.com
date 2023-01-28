@@ -50,7 +50,7 @@ $session_usr = new user;
 $result = $session_usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($session_usr->id > 0) {
+if ($session_usr->id() > 0) {
 
     load_usr_data();
 
@@ -72,7 +72,7 @@ if ($session_usr->id > 0) {
         $usr = $session_usr;
     } else {
         $usr = new user;
-        $usr->id = $usr_id;
+        $usr->set_id($usr_id);
         $usr->get();
     }
 
@@ -128,7 +128,7 @@ if ($session_usr->id > 0) {
                         } else {
                             $debug_text = '' . $frm->name_linked() . ' for ' . $fv->phr_lst->name_linked();
                         }
-                        $debug_text .= ' = ' . $fv->display_linked($back) . ' (<a href="/http/formula_test.php?id=' . $frm_id . '&phrases=' . $phr_ids_txt . '&user=' . $usr->id . '&back=' . $back . '&debug=' . $debug_next_level . '">more details</a>)';
+                        $debug_text .= ' = ' . $fv->display_linked($back) . ' (<a href="/http/formula_test.php?id=' . $frm_id . '&phrases=' . $phr_ids_txt . '&user=' . $usr->id() . '&back=' . $back . '&debug=' . $debug_next_level . '">more details</a>)';
                         log_debug($debug_text);
                     }
                 }
@@ -175,7 +175,7 @@ if ($session_usr->id > 0) {
                                     if (implode(",", $r->phr_lst->ids) <> "") {
                                         $debug_text .= '&phrases=' . implode(",", $r->phr_lst->ids);
                                     }
-                                    $debug_text .= '&user=' . $usr->id . '&back=' . $back . '&debug=' . $debug_next_level . '">more details for this result</a>)';
+                                    $debug_text .= '&user=' . $usr->id() . '&back=' . $back . '&debug=' . $debug_next_level . '">more details for this result</a>)';
                                     log_debug($debug_text);
                                 } else {
                                     log_debug("Skipped " . $debug_text);
@@ -190,7 +190,7 @@ if ($session_usr->id > 0) {
                                 if (implode(",", $r->phr_lst->ids) <> "") {
                                     $debug_text .= '&phrases=' . implode(",", $r->phr_lst->ids);
                                 }
-                                $debug_text .= '&user=' . $usr->id . '&back=' . $back . '&debug=' . $debug_next_level . '">more details only for this result</a>)';
+                                $debug_text .= '&user=' . $usr->id() . '&back=' . $back . '&debug=' . $debug_next_level . '">more details only for this result</a>)';
                                 log_debug($debug_text);
                             }
                         }
@@ -221,7 +221,7 @@ if ($session_usr->id > 0) {
         if ($phr_ids_txt <> "") {
             $call_next_level .= '&phrases=' . $phr_ids_txt;
         }
-        $call_next_level .= '&user=' . $usr->id . '&back=' . $back . '&debug=' . $debug_next_level . '">more details</a>';
+        $call_next_level .= '&user=' . $usr->id() . '&back=' . $back . '&debug=' . $debug_next_level . '">more details</a>';
         echo $call_next_level . ")<br>";
 
     }

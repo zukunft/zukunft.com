@@ -56,7 +56,7 @@ function run_user_test(testing $t): void
             echo 'remote user: ' . $_SERVER['REMOTE_USER'] . '<br>';
         }
     }
-    echo 'user id: ' . $usr->id . '<br>';
+    echo 'user id: ' . $usr->id() . '<br>';
 
     $t->header('Test the user permission scripts (e.g. /user/user.php)');
 
