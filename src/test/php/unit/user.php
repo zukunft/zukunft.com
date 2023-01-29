@@ -56,6 +56,10 @@ class user_unit_tests
         $test_usr = new user();
         $t->assert_load_sql_id($db_con, $test_usr);
         $t->assert_load_sql_name($db_con, $test_usr);
+        $this->assert_load_sql_email($t, $db_con, $test_usr);
+        $this->assert_load_sql_name_or_email($t, $db_con, $test_usr);
+        $this->assert_load_sql_ip($t, $db_con, $test_usr);
+        $this->assert_load_sql_profile($t, $db_con, $test_usr);
 
 
         $t->subheader('API unit tests');
@@ -68,6 +72,110 @@ class user_unit_tests
 
         //$t->assert_json(new user(), $json_file);
 
+    }
+
+    /*
+     * assert testing function only used for the user object
+     */
+
+    /**
+     * similar to assert_load_sql of the testing class but select one user based on the email
+     * check the object load by name SQL statements for all allowed SQL database dialects
+     *
+     * @param testing $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a verb
+     * @return bool true if all tests are fine
+     */
+    function assert_load_sql_email(testing $t, sql_db $db_con, object $usr_obj): bool
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_email($db_con, 'System test', $usr_obj::class);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_email($db_con, 'System test', $usr_obj::class);
+            $result = $t->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * similar to assert_load_sql of the testing class but select one user based on the name or email
+     * check the object load by name SQL statements for all allowed SQL database dialects
+     *
+     * @param testing $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a verb
+     * @return bool true if all tests are fine
+     */
+    function assert_load_sql_name_or_email(testing $t, sql_db $db_con, object $usr_obj): bool
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_name_or_email($db_con, 'System test name', 'System test email', $usr_obj::class);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_name_or_email($db_con, 'System test name', 'System test email', $usr_obj::class);
+            $result = $t->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * similar to assert_load_sql of the testing class but select first user with the given ip address
+     * check the object load by name SQL statements for all allowed SQL database dialects
+     *
+     * @param testing $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a verb
+     * @return bool true if all tests are fine
+     */
+    function assert_load_sql_ip(testing $t, sql_db $db_con, object $usr_obj): bool
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_ip($db_con, 'System test', $usr_obj::class);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_ip($db_con, 'System test', $usr_obj::class);
+            $result = $t->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * similar to assert_load_sql of the testing class but select the first user with the given profile
+     * check the object load by name SQL statements for all allowed SQL database dialects
+     *
+     * @param testing $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a verb
+     * @return bool true if all tests are fine
+     */
+    function assert_load_sql_profile(testing $t, sql_db $db_con, object $usr_obj): bool
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_profile($db_con, 1, $usr_obj::class);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_profile($db_con, 1, $usr_obj::class);
+            $result = $t->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
     }
 
 }

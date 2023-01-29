@@ -182,8 +182,7 @@ class user_dsp_old extends user
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
-                $usr_std->id = $sbx_row['owner_id'];
-                $usr_std->load_test_user();
+                $usr_std->load_by_id($sbx_row['owner_id']);
 
                 $wrd_std = clone $wrd_usr;
                 $wrd_std->set_user($usr_std);
@@ -230,8 +229,7 @@ class user_dsp_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $wrd_lnk_other_row) {
                         $usr_other = new user;
-                        $usr_other->id = $wrd_lnk_other_row[user::FLD_ID];
-                        $usr_other->load_test_user();
+                        $usr_other->load_by_id($wrd_lnk_other_row[user::FLD_ID]);
 
                         // to review: load all user triples with one query
                         $wrd_lnk_other = clone $wrd_usr;
@@ -389,8 +387,7 @@ class user_dsp_old extends user
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
-                $usr_std->id = $sbx_row['owner_id'];
-                $usr_std->load_test_user();
+                $usr_std->load_by_id($sbx_row['owner_id']);
 
                 $frm_std = clone $frm_usr;
                 $frm_std->set_user($usr_std);
@@ -439,8 +436,7 @@ class user_dsp_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $frm_lnk_other_row) {
                         $usr_other = new user;
-                        $usr_other->id = $frm_lnk_other_row[user::FLD_ID];
-                        $usr_other->load_test_user();
+                        $usr_other->load_by_id($frm_lnk_other_row[user::FLD_ID]);
 
                         // to review: load all user formula_links with one query
                         $frm_lnk_other = clone $frm_usr;
@@ -557,8 +553,7 @@ class user_dsp_old extends user
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
-                $usr_std->id = $val_row['owner_id'];
-                $usr_std->load_test_user();
+                $usr_std->load_by_id($val_row['owner_id']);
 
                 $val_std = clone $val_usr;
                 $val_std->set_user($usr_std);
@@ -611,8 +606,7 @@ class user_dsp_old extends user
                     $val_lst_other = $db_con->get_old($sql_other);
                     foreach ($val_lst_other as $val_other_row) {
                         $usr_other = new user;
-                        $usr_other->id = $val_other_row[user::FLD_ID];
-                        $usr_other->load_test_user();
+                        $usr_other->load_by_id($val_other_row[user::FLD_ID]);
 
                         // to review: load all user values with one query
                         $val_other = clone $val_usr;
@@ -727,8 +721,7 @@ class user_dsp_old extends user
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
-                $usr_std->id = $sbx_row['owner_id'];
-                $usr_std->load_test_user();
+                $usr_std->load_by_id($sbx_row['owner_id']);
 
                 $dsp_std = clone $dsp_usr;
                 $dsp_std->set_user($usr_std);
@@ -778,8 +771,7 @@ class user_dsp_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $dsp_other_row) {
                         $usr_other = new user;
-                        $usr_other->id = $dsp_other_row[user::FLD_ID];
-                        $usr_other->load_test_user();
+                        $usr_other->load_by_id($dsp_other_row[user::FLD_ID]);
 
                         // to review: load all user views with one query
                         $dsp_other = clone $dsp_usr;
@@ -893,8 +885,7 @@ class user_dsp_old extends user
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
-                $usr_std->id = $sbx_row['owner_id'];
-                $usr_std->load_test_user();
+                $usr_std->load_by_id($sbx_row['owner_id']);
 
                 $dsp_std = clone $dsp_usr;
                 $dsp_std->set_user($usr_std);
@@ -944,8 +935,7 @@ class user_dsp_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $cmp_other_row) {
                         $usr_other = new user;
-                        $usr_other->id = $cmp_other_row[user::FLD_ID];
-                        $usr_other->load_test_user();
+                        $usr_other->load_by_id($cmp_other_row[user::FLD_ID]);
 
                         // to review: load all user view_components with one query
                         $cmp_other = clone $dsp_usr;
@@ -1064,8 +1054,7 @@ class user_dsp_old extends user
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
-                $usr_std->id = $sbx_row['owner_id'];
-                $usr_std->load_test_user();
+                $usr_std->load_by_id($sbx_row['owner_id']);
 
                 $dsp_std = clone $dsp_usr;
                 $dsp_std->set_user($usr_std);
@@ -1114,8 +1103,7 @@ class user_dsp_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $dsp_lnk_other_row) {
                         $usr_other = new user;
-                        $usr_other->id = $dsp_lnk_other_row[user::FLD_ID];
-                        $usr_other->load_test_user();
+                        $usr_other->load_by_id($dsp_lnk_other_row[user::FLD_ID]);
 
                         // to review: load all user view_component_links with one query
                         $dsp_lnk_other = clone $dsp_usr;
@@ -1235,8 +1223,7 @@ class user_dsp_old extends user
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
-                $usr_std->id = $sbx_row['owner_id'];
-                $usr_std->load_test_user();
+                $usr_std->load_by_id($sbx_row['owner_id']);
 
                 $dsp_std = clone $dsp_usr;
                 $dsp_std->set_user($usr_std);
@@ -1291,8 +1278,7 @@ class user_dsp_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $dsp_other_row) {
                         $usr_other = new user;
-                        $usr_other->id = $dsp_other_row[user::FLD_ID];
-                        $usr_other->load_test_user();
+                        $usr_other->load_by_id($dsp_other_row[user::FLD_ID]);
 
                         // to review: load all user sources with one query
                         $dsp_other = clone $dsp_usr;

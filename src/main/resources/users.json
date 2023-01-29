@@ -7,19 +7,22 @@
       "name": "zukunft.com system",
       "description": "the internal zukunft.com system user mainly used as a log entry for the initial setup and batch jobs",
       "code_id": "system",
-      "profile": "system"
+      "profile": "system",
+      "email": "admin@zukunft.com"
     },
     {
       "name": "zukunft.com system test",
       "description": "the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
       "code_id": "test",
-      "profile": "test"
+      "profile": "test",
+      "email": "support@zukunft.com"
     },
     {
       "name": "zukunft.com system test partner",
       "description": "another internal zukunft.com user used for user sandbox integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
       "code_id": "test_partner",
-      "profile": "test"
+      "profile": "test",
+      "email": "support.partner@zukunft.com"
     }
   ]
 }

@@ -84,14 +84,13 @@ function import_system_users(): bool
 
     // allow adding only if there is not yet any system user in the database
     $usr = new user;
-    $usr->set_id(SYSTEM_USER_ID);
-    $usr->load_test_user();
+    $usr->load_by_id(SYSTEM_USER_ID);
 
     if ($usr->id() <= 0) {
 
         // check if there is really no user in the database with a system profile
         $check_usr = new user();
-        if (!$check_usr->has_any_user_this_profile(user_profile::SYSTEM, $db_con)) {
+        if (!$check_usr->has_any_user_this_profile(user_profile::SYSTEM)) {
             // if the system users are missing always reset all users as a double line of defence to prevent system
             // TODO ask for final confirmation before deleting all users !!!
             run_table_truncate(sql_db::TBL_USER);

@@ -673,6 +673,15 @@ class sql_db
     }
 
     /**
+     * interface function to add a text parameter that is connected to the previous added parameter with an or condition
+     * @param string $name the search text for the WHERE IN SQL statement part
+     */
+    function add_par_txt_or(string $name): void
+    {
+        $this->add_par(sql_db::PAR_TEXT_OR, $name);
+    }
+
+    /**
      * interface function to add a "IN" parameter for a prepared query
      * @param array $names with the strings for the WHERE IN SQL statement part
      */

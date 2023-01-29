@@ -76,9 +76,7 @@ function run_system_test(testing $t): void
     // load by name
     $usr_test->reset();
     $usr_test = new user;
-    $usr_test->name = user::SYSTEM_TEST_NAME;
-
-    $usr_test->load_test_user();
+    $usr_test->load_by_name(user::SYSTEM_TEST_NAME);
     $target = '<a href="/http/user.php?id=' . $usr_test->id() . '">zukunft.com system test</a>';
     $result = $usr->display();
     $t->dsp('user->load for id ' . $wrd_company->id(), $target, $result);

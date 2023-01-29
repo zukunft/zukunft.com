@@ -673,6 +673,7 @@ CREATE TABLE IF NOT EXISTS users
 (
     user_id                  BIGSERIAL PRIMARY KEY,
     user_name                varchar(100) NOT NULL,
+    description              text         NOT NULL,
     code_id                  varchar(50)           DEFAULT NULL,
     right_level              smallint              DEFAULT NULL,
     password                 varchar(200)          DEFAULT NULL,

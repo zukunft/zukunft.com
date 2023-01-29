@@ -465,8 +465,7 @@ class user_sandbox extends db_object
             // TODO: try to avoid using load_test_user
             if ($this->owner_id > 0) {
                 $usr = new user;
-                $usr->set_id($this->owner_id);
-                if ($usr->load_test_user()) {
+                if ($usr->load_by_id($this->owner_id)) {
                     $this->usr = $usr;
                     $result = true;
                 }
@@ -787,8 +786,7 @@ class user_sandbox extends db_object
 
             $this->owner_id = $new_owner_id;
             $new_owner = new user;
-            $new_owner->id = $new_owner_id;
-            if ($new_owner->load_test_user()) {
+            if ($new_owner->load_by_id($new_owner_id)) {
                 $this->usr = $new_owner;
             } else {
                 $result = false;

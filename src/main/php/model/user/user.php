@@ -59,7 +59,7 @@ class user extends db_object
 
     // database fields only used for user
     const FLD_ID = 'user_id';
-    const FLD_NAME= 'user_name';
+    const FLD_NAME = 'user_name';
     const FLD_IP_ADDRESS = 'ip_address';
     const FLD_EMAIL = 'email';
     const FLD_FIRST_NAME = 'first_name';
@@ -98,17 +98,22 @@ class user extends db_object
     const SYSTEM_ID = 1; //
     const SYSTEM_NAME = "zukunft.com system";                    // the system user used to log system tasks and as a fallback owner
     const SYSTEM_CODE_ID = "system";                    // unique id of the system user used to log system tasks
+    const SYSTEM_EMAIL = "admin@zukunft.com";
 
     // the user that performs the system tests
     const SYSTEM_TEST_ID = 2;
     const SYSTEM_TEST_NAME = "zukunft.com system test";
     const SYSTEM_TEST_EMAIL = "support@zukunft.com";
+    const SYSTEM_TEST_IP = "localhost";
+    const SYSTEM_TEST_NAME_FIRST = "first";
+    const SYSTEM_TEST_NAME_LAST = "last";
 
     // the user that acts as a partner for the system tests
     // so that multi-user behaviour can be tested
     const SYSTEM_NAME_TEST_PARTNER = "zukunft.com system test partner"; // to test that the user sandbox is working e.g. that changes of the main test user has no impact of another user simulated by this test user
     const SYSTEM_TEST_PROFILE_CODE_ID = "test";
     const SYSTEM_LOCAL = 'localhost';
+    const SYSTEM_TEST_PARTNER_EMAIL = "support.partner@zukunft.com";
 
 
     /*
@@ -137,7 +142,7 @@ class user extends db_object
     public ?word $wrd = null;             // the last word viewed by the user
     public ?user_profile $profile = null; //
     public ?user $viewer = null;          // the user who wants to access this user
-                                          // e.g. only admin are allowed to see other user parameters
+    // e.g. only admin are allowed to see other user parameters
 
     /*
      * construct and map
@@ -223,6 +228,7 @@ class user extends db_object
     {
         $this->set_id($id);
         $this->set_name($name);
+        $this->set_email($email);
     }
 
     /**
@@ -232,6 +238,15 @@ class user extends db_object
     {
         $this->name = $name;
     }
+
+    /**
+     * @param string|null $email the unique email for the user
+     */
+    public function set_email(?string $email): void
+    {
+        $this->email = $email;
+    }
+
 
 
     /*
@@ -346,95 +361,77 @@ class user extends db_object
     }
 
     /**
-     * create an SQL statement to retrieve the parameters of a user from the database
+     * create an SQL statement to retrieve a user by email from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $email the email of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_by_email(sql_db $db_con, string $email, string $class = self::class): sql_par
     {
-        $qp = new sql_par($class);
-        $db_con->set_type(sql_db::TBL_USER);
-        if ($this->viewer == null) {
-            if ($this->id == null) {
-                $db_con->set_usr(0);
-            } else {
-                $db_con->set_usr($this->id);
-            }
-        } else {
-            $db_con->set_usr($this->viewer->id);
-        }
-        $db_con->set_fields(self::FLD_NAMES);
-        if ($this->id > 0) {
-            $qp->name .= 'id';
-            $db_con->set_name($qp->name);
-            $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select_by_set_id();
-        } elseif ($this->code_id > 0) {
-            $qp->name .= 'code_id';
-            $db_con->set_name($qp->name);
-            $db_con->add_par(sql_db::PAR_TEXT, $this->code_id);
-            $qp->sql = $db_con->select_by_code_id();
-        } elseif ($this->name <> '') {
-            if ($this->email == '') {
-                $qp->name .= 'name';
-                $db_con->set_name($qp->name);
-                $db_con->add_par(sql_db::PAR_TEXT, $this->name);
-                $qp->sql = $db_con->select_by_set_name();
-            } else {
-                $qp->name .= 'name_or_email';
-                $db_con->set_name($qp->name);
-                $db_con->add_par(sql_db::PAR_TEXT, $this->name);
-                $db_con->add_par(sql_db::PAR_TEXT_OR, $this->email);
-                $qp->sql = $db_con->select_by_name_or(self::FLD_EMAIL);
-            }
-        } elseif ($this->ip_addr <> '') {
-            $qp->name .= self::FLD_IP_ADDRESS;
-            $db_con->set_name($qp->name);
-            $db_con->add_par(sql_db::PAR_TEXT, $this->ip_addr);
-            $qp->sql = $db_con->select_by_field(self::FLD_IP_ADDRESS);
-        } elseif ($this->profile_id > 0) {
-            $qp->name .= 'profile_id';
-            $db_con->set_name($qp->name);
-            $db_con->add_par(sql_db::PAR_INT, $this->profile_id);
-            $qp->sql = $db_con->select_by_field(self::FLD_USER_PROFILE);
-        } else {
-            log_err('Either the id, code_id, name or ip address must be set to get a user');
-        }
-
+        $qp = $this->load_sql($db_con, 'email', $class);
+        $db_con->add_par_txt($email);
+        $qp->sql = $db_con->select_by_field(self::FLD_EMAIL);
         $qp->par = $db_con->get_par();
 
         return $qp;
     }
 
-
     /**
+     * create an SQL statement to retrieve a user by name or email from the database
+     *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @return array the database record for the db row to object mapper
+     * @param string $name the name of the user
+     * @param string $email the email of the user
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_db(sql_db $db_con): array
+    function load_sql_by_name_or_email(sql_db $db_con, string $name, string $email, string $class = self::class): sql_par
     {
+        $qp = $this->load_sql($db_con, 'name_or_email', $class);
+        $db_con->add_par_txt($name);
+        $db_con->add_par_txt_or($email);
+        $qp->sql = $db_con->select_by_name_or(self::FLD_EMAIL);
+        $qp->par = $db_con->get_par();
 
-        $db_usr = null;
-        // select the user either by id, code_id, name or ip
-        $qp = $this->load_sql_obj_vars($db_con);
-        if (!$qp->has_par()) {
-            log_err("Either the database ID, the user name, the ip address or the code_id must be set for loading a user.", "user->load", '', (new Exception)->getTraceAsString(), $this);
-        } else {
-            $db_usr = $db_con->get1($qp);
-        }
-        return $db_usr;
+        return $qp;
     }
 
     /**
-     * load the missing user parameters from the database
-     * should be private because the loading should be done via the get method
+     * create an SQL statement to retrieve a user with the ip from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $ip_addr the ip address with which the user has logged in
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_vars(sql_db $db_con): bool
+    function load_sql_by_ip(sql_db $db_con, string $ip_addr, string $class = self::class): sql_par
     {
-        $db_usr = $this->load_db($db_con);
-        return $this->row_mapper($db_usr);
+        $qp = $this->load_sql($db_con, 'ip', $class);
+        $db_con->add_par_txt($ip_addr);
+        $qp->sql = $db_con->select_by_field(self::FLD_IP_ADDRESS);
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a user with the profile from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $profile_id the id of the profile of which the first matching user should be loaded
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_profile(sql_db $db_con, int $profile_id, string $class = self::class): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'profile', $class);
+        $db_con->add_par_int($profile_id);
+        $qp->sql = $db_con->select_by_field(self::FLD_USER_PROFILE);
+        $qp->par = $db_con->get_par();
+
+        return $qp;
     }
 
     /**
@@ -496,9 +493,10 @@ class user extends db_object
     {
         global $db_con;
 
+        log_debug($email);
         $this->reset();
-        $this->email = $email;
-        return $this->load_by_vars($db_con);
+        $qp = $this->load_sql_by_email($db_con, $email);
+        return $this->load($qp);
     }
 
     /**
@@ -511,36 +509,51 @@ class user extends db_object
     {
         global $db_con;
 
+        log_debug($email);
         $this->reset();
-        $this->name = $name;
-        $this->email = $email;
-        return $this->load_by_vars($db_con);
+        $qp = $this->load_sql_by_name_or_email($db_con, $name, $email);
+        return $this->load($qp);
     }
 
     /**
-     * special function to exposed the user loading for simulating test users for the automatic system test
-     * TODO used also in the user sandbox: check if this is correct
+     * load the first user with the given ip address
+     * @param string $ip the ip address with which the user has logged in
+     * @return bool true if a user has been found
      */
-    function load_test_user(): bool
+    function load_by_ip(string $ip): bool
     {
         global $db_con;
-        return $this->load_by_vars($db_con);
-    }
 
-    function load_user_by_profile(string $profile_code_id, sql_db $db_con): bool
-    {
-        $profile_id = cl(db_cl::USER_PROFILE, $profile_code_id);
-
+        log_debug($ip);
         $this->reset();
-        $this->profile_id = $profile_id;
-        $qp = $this->load_sql_obj_vars($db_con);
-        $db_usr = $db_con->get1($qp);
-        return $this->row_mapper($db_usr);
+        $qp = $this->load_sql_by_ip($db_con, $ip);
+        return $this->load($qp);
     }
 
-    function has_any_user_this_profile(string $profile_code_id, sql_db $db_con): bool
+    /**
+     * load the first user with the given ip address
+     * @param int $profile_id the id of the profile of which the first matching user should be loaded
+     * @return bool true if a user has been found
+     */
+    function load_by_profile(int $profile_id): bool
     {
-        return $this->load_user_by_profile($profile_code_id, $db_con);
+        global $db_con;
+
+        log_debug($profile_id);
+        $this->reset();
+        $qp = $this->load_sql_by_profile($db_con, $profile_id);
+        return $this->load($qp);
+    }
+
+    function load_by_profile_code(string $profile_code_id): bool
+    {
+        global $user_profiles;
+        return $this->load_by_profile($user_profiles->id($profile_code_id));
+    }
+
+    function has_any_user_this_profile(string $profile_code_id): bool
+    {
+        return $this->load_by_profile_code($profile_code_id);
     }
 
     private function ip_in_range($ip_addr, $min, $max): bool
@@ -599,7 +612,7 @@ class user extends db_object
         if ($this->ip_addr == '') {
             $this->get_ip();
         } else {
-            log_debug(' (' . $this->ip_addr . ')', $debug -1);
+            log_debug(' (' . $this->ip_addr . ')', $debug - 1);
         }
         // even if the user has an open session, but the ip is blocked, drop the user
         $result .= $this->ip_check($this->ip_addr);
@@ -608,9 +621,7 @@ class user extends db_object
             // if the user has logged in use the logged in account
             if (isset($_SESSION['logged'])) {
                 if ($_SESSION['logged']) {
-                    $this->id = $_SESSION['usr_id'];
-                    global $db_con;
-                    $this->load_by_vars($db_con);
+                    $this->load_by_id($_SESSION['usr_id']);
                     log_debug('use (' . $this->id . ')');
                 }
             } else {
@@ -618,11 +629,10 @@ class user extends db_object
                 global $user_profiles;
                 global $db_con;
 
-                $this->get_ip();
-                $this->load_by_vars($db_con);
+                $this->load_by_ip($this->get_ip());
                 if ($this->id <= 0) {
                     // use the ip address as the username and add the user
-                    $this->name = $this->ip_addr;
+                    $this->name = $this->get_ip();
 
                     // allow to fill the database only if a local user has logged in
                     if ($this->name == self::SYSTEM_LOCAL) {
@@ -641,7 +651,7 @@ class user extends db_object
 
                         // create the admin users
                         $check_usr = new user();
-                        if (!$check_usr->has_any_user_this_profile(user_profile::ADMIN, $db_con)) {
+                        if (!$check_usr->has_any_user_this_profile(user_profile::ADMIN)) {
                             $this->set_profile(user_profile::ADMIN);
                         }
 
@@ -650,8 +660,7 @@ class user extends db_object
 
                         // use the system user for the database initial load
                         $sys_usr = new user;
-                        $sys_usr->id = SYSTEM_USER_ID;
-                        $sys_usr->load_by_vars($db_con);
+                        $sys_usr->load_by_id(SYSTEM_USER_ID);
 
                         //
                         import_verbs($sys_usr);
@@ -705,6 +714,18 @@ class user extends db_object
             if ($key == exp_obj::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
+            if ($key == self::FLD_EMAIL) {
+                $this->email = $value;
+            }
+            if ($key == self::FLD_FIRST_NAME) {
+                $this->first_name = $value;
+            }
+            if ($key == self::FLD_LAST_NAME) {
+                $this->last_name = $value;
+            }
+            if ($key == self::FLD_CODE_ID) {
+                $this->code_id = $value;
+            }
             if ($key == self::FLD_EX_PROFILE) {
                 $this->profile_id = $user_profiles->id($value);
             }
@@ -743,6 +764,9 @@ class user extends db_object
 
         // add the source parameters
         $result->name = $this->name;
+        if ($this->description <> '') {
+            $result->description = $this->description;
+        }
         if ($this->email <> '') {
             $result->email = $this->email;
         }
@@ -752,14 +776,11 @@ class user extends db_object
         if ($this->last_name <> '') {
             $result->last_name = $this->last_name;
         }
-        if ($this->description <> '') {
-            $result->description = $this->description;
+        if ($this->code_id <> '') {
+            $result->code_id = $this->code_id;
         }
         if ($this->profile <> '') {
             $result->profile = $this->profile;
-        }
-        if ($this->code_id <> '') {
-            $result->code_id = $this->code_id;
         }
 
         log_debug(json_encode($result));
@@ -788,14 +809,11 @@ class user extends db_object
      */
     function is_admin(): bool
     {
-        log_debug(' (' . $this->id . ')');
+        global $user_profiles;
+        log_debug();
         $result = false;
 
-        if (!isset($this->profile_id)) {
-            global $db_con;
-            $this->load_by_vars($db_con);
-        }
-        if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
+        if ($this->profile_id == $user_profiles->id(user_profile::ADMIN)) {
             $result = true;
         }
         return $result;
@@ -806,15 +824,12 @@ class user extends db_object
      */
     function is_system(): bool
     {
-        log_debug(' (' . $this->id . ')');
+        global $user_profiles;
+        log_debug();
         $result = false;
 
-        if (!isset($this->profile_id)) {
-            global $db_con;
-            $this->load_by_vars($db_con);
-        }
-        if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::TEST)
-            or $this->profile_id == cl(db_cl::USER_PROFILE, user_profile::SYSTEM)) {
+        if ($this->profile_id == $user_profiles->id(user_profile::TEST)
+            or $this->profile_id == $user_profiles->id(user_profile::SYSTEM)) {
             $result = true;
         }
         return $result;
@@ -823,16 +838,13 @@ class user extends db_object
     // true if the user has the right to import data
     function can_import(): bool
     {
-        log_debug(' (' . $this->id . ')');
+        global $user_profiles;
+        log_debug();
         $result = false;
 
-        if (!isset($this->profile_id)) {
-            global $db_con;
-            $this->load_by_vars($db_con);
-        }
-        if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)
-            or $this->profile_id == cl(db_cl::USER_PROFILE, user_profile::TEST)
-            or $this->profile_id == cl(db_cl::USER_PROFILE, user_profile::SYSTEM)) {
+        if ($this->profile_id == $user_profiles->id(user_profile::ADMIN)
+            or $this->profile_id == $user_profiles->id(user_profile::TEST)
+            or $this->profile_id == $user_profiles->id(user_profile::SYSTEM)) {
             $result = true;
         }
         return $result;
@@ -871,8 +883,7 @@ class user extends db_object
     {
         global $db_con;
         $dsp_user = new user_dsp_old;
-        $dsp_user->id = $this->id;
-        $dsp_user->load_by_vars($db_con);
+        $dsp_user->load_by_id($this->id);
         return $dsp_user;
     }
 
@@ -962,8 +973,7 @@ class user extends db_object
         $db_con->set_type(sql_db::TBL_USER);
 
         $db_usr = new user;
-        $db_usr->id = $this->id;
-        $db_row = $db_usr->load_db($db_con);
+        $db_row = $db_usr->load_by_id($this->id);
         log_debug('database user loaded "' . $db_row['name'] . '"');
 
         $this->upd_par($db_con, $usr_par, $db_row, self::FLD_NAME, 'name');
@@ -1003,15 +1013,32 @@ class user extends db_object
             $this->id = $db_con->insert("user_name", $this->name);
             // log the changes???
             if ($this->id > 0) {
+                // add the description of the user
+                if (!$db_con->update($this->id, sql_db::FLD_DESCRIPTION, $this->description)) {
+                    $result = 'Saving of user description ' . $this->id . ' failed.';
+                }
+                // add the email of the user
+                if (!$db_con->update($this->id, self::FLD_EMAIL, $this->email)) {
+                    $result = 'Saving of user email ' . $this->id . ' failed.';
+                }
+                // add the first name of the user
+                if (!$db_con->update($this->id, self::FLD_FIRST_NAME, $this->first_name)) {
+                    $result = 'Saving of user first name ' . $this->id . ' failed.';
+                }
+                // add the last name of the user
+                if (!$db_con->update($this->id, self::FLD_LAST_NAME, $this->last_name)) {
+                    $result = 'Saving of user last name ' . $this->id . ' failed.';
+                }
+                // add the code of the user
+                if ($this->code_id != '') {
+                    if (!$db_con->update($this->id, self::FLD_CODE_ID, $this->code_id)) {
+                        $result = 'Saving of user code id ' . $this->id . ' failed.';
+                    }
+                }
                 // add the profile of the user
                 if (!$db_con->update($this->id, self::FLD_USER_PROFILE, $this->profile_id)) {
                     $result = 'Saving of user profile ' . $this->id . ' failed.';
                 }
-                // add the code of the user
-                if ($this->code_id != '') {
-                if (!$db_con->update($this->id, self::FLD_CODE_ID, $this->code_id)) {
-                    $result = 'Saving of user code id ' . $this->id . ' failed.';
-                }}
                 // add the ip address to the user, but never for system users
                 if ($this->profile_id != cl(db_cl::USER_PROFILE, user_profile::SYSTEM)
                     and $this->profile_id != cl(db_cl::USER_PROFILE, user_profile::TEST)) {

@@ -154,6 +154,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->add_column(sql_db::TBL_REF, 'source_id', 'bigint');
     $result .= $db_con->add_column(sql_db::TBL_REF, 'url', 'text');
     $result .= $db_con->add_column(sql_db::TBL_REF, 'description', 'text');
+    $result .= $db_con->add_column(sql_db::TBL_USER, 'description', 'text');
     $result .= $db_con->add_column(sql_db::TBL_CHANGE_ACTION, 'description', 'text');
     $result .= $db_con->add_column(sql_db::TBL_LANGUAGE_FORM, 'description', 'text');
     $result .= $db_con->change_column_name(sql_db::TBL_LANGUAGE_FORM, 'lanuages_id', 'language_id');
@@ -259,7 +260,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
 
         // add missing system users if needed
         $sys_usr = new user();
-        if (!$sys_usr->has_any_user_this_profile(user_profile::SYSTEM, $db_con)) {
+        if (!$sys_usr->has_any_user_this_profile(user_profile::SYSTEM)) {
             $sys_usr->load_by_name(user::SYSTEM_NAME);
             $sys_usr->set_profile(user_profile::SYSTEM);
             $sys_usr->save($db_con);
@@ -267,7 +268,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
 
         // add missing system test users if needed
         $test_usr = new user();
-        if (!$test_usr->has_any_user_this_profile(user_profile::TEST, $db_con)) {
+        if (!$test_usr->has_any_user_this_profile(user_profile::TEST)) {
             $test_usr->load_by_name(user::SYSTEM_TEST_NAME);
             $test_usr->set_profile(user_profile::TEST);
             $test_usr->save($db_con);

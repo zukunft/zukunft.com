@@ -294,8 +294,7 @@ class change_log_link extends change_log
         log_debug('user_log_link->set_usr for ' . $this->usr->dsp_id());
         if (!isset($this->usr)) {
             $usr = new user;
-            $usr->set_id($this->usr->id);
-            $usr->load_test_user();
+            $usr->load_by_id($this->usr->id);
             $this->usr = $usr;
             log_debug('user_log_link->set_usr got ' . $this->usr->name);
         }

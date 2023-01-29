@@ -371,12 +371,10 @@ class test_base
         // instead a user specific value is created
         // for testing $usr is the user who has started the test ans $usr1 and $usr2 are the users used for simulation
         $this->usr1 = new user_dsp_old;
-        $this->usr1->name = user::SYSTEM_TEST_NAME;
-        $this->usr1->load_test_user();
+        $this->usr1->load_by_name(user::SYSTEM_TEST_NAME);
 
         $this->usr2 = new user_dsp_old;
-        $this->usr2->name = user::SYSTEM_NAME_TEST_PARTNER;
-        $this->usr2->load_test_user();
+        $this->usr2->load_by_name(user::SYSTEM_NAME_TEST_PARTNER);
 
     }
 
