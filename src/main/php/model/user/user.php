@@ -938,14 +938,16 @@ class user extends db_object
 
     /**
      * check and update a single user parameter
+     *
+     * TODO check if name and email are unique and do the check within one transaction closed by a commit
      */
-    private function upd_par(sql_db $db_con, $usr_par, $db_row, $fld_name, $par_name)
+    private function upd_par(sql_db $db_con, array $usr_par, string $db_value, string $fld_name, string $par_name): void
     {
         $result = '';
-        if ($usr_par[$par_name] <> $db_row[$fld_name]
+        if ($usr_par[$par_name] <> $db_value
             and $usr_par[$par_name] <> "") {
             $log = $this->log_upd();
-            $log->old_value = $db_row[$fld_name];
+            $log->old_value = $db_value;
             $log->new_value = $usr_par[$par_name];
             $log->row_id = $this->id;
             $log->set_field($fld_name);
@@ -954,13 +956,14 @@ class user extends db_object
                 $result = $db_con->update($this->id, $log->field(), $log->new_value);
             }
         }
-        return $result;
     }
 
     /**
      * check and update all user parameters
+     *
+     * @param array $usr_par the array of parameters as received with the URL
      */
-    function upd_pars($usr_par): string
+    function upd_pars(array $usr_par): string
     {
         log_debug();
 
@@ -973,13 +976,13 @@ class user extends db_object
         $db_con->set_type(sql_db::TBL_USER);
 
         $db_usr = new user;
-        $db_row = $db_usr->load_by_id($this->id);
-        log_debug('database user loaded "' . $db_row['name'] . '"');
+        $db_id = $db_usr->load_by_id($this->id);
+        log_debug('database user loaded "' . $db_id . '"');
 
-        $this->upd_par($db_con, $usr_par, $db_row, self::FLD_NAME, 'name');
-        $this->upd_par($db_con, $usr_par, $db_row, self::FLD_EMAIL, 'email');
-        $this->upd_par($db_con, $usr_par, $db_row, self::FLD_FIRST_NAME, 'fname');
-        $this->upd_par($db_con, $usr_par, $db_row, self::FLD_LAST_NAME, 'lname');
+        $this->upd_par($db_con, $usr_par, $db_usr->name, self::FLD_NAME, 'name');
+        $this->upd_par($db_con, $usr_par, $db_usr->email, self::FLD_EMAIL, 'email');
+        $this->upd_par($db_con, $usr_par, $db_usr->first_name, self::FLD_FIRST_NAME, 'fname');
+        $this->upd_par($db_con, $usr_par, $db_usr->last_name, self::FLD_LAST_NAME, 'lname');
 
         log_debug('done');
         return $result;

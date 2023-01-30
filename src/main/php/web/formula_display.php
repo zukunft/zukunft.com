@@ -75,7 +75,7 @@ class formula_dsp_old extends formula
         $fv->frm = $this;
         $fv->phr = $phr;
         log_debug('load fv');
-        $fv->load_by_vars();
+        $fv->load_obj_vars();
         log_debug('display');
         return $fv->display($back);
     }

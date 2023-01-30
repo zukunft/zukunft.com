@@ -800,8 +800,7 @@ class formula_value_list
                     $phr_lst_used->add($val->time_phr);
                 }
                 $frm = new formula($this->usr);
-                $frm->set_id($frm_id);
-                $frm->load_obj_vars();
+                $frm->load_by_id($frm_id);
                 $back = '';
                 $fv_list = $frm->to_num($phr_lst_used);
                 $formula_value = $fv_list->get_first();

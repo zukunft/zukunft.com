@@ -62,19 +62,18 @@ function run_phrase_test(testing $t): void
 {
 
     global $usr;
+    global $verbs;
 
     $t->header('Test the phrase class (src/main/php/model/phrase/phrase.php)');
 
-    // load the main test word
+    // load the main test word and verb
     $wrd_company = $t->test_word(word_api::TN_COMPANY);
+    $is_id = $verbs->id(verb::IS_A);
 
     // prepare the Insurance Zurich
     $wrd_zh = $t->load_word(word_api::TN_ZH);
     $lnk_company = new triple($usr);
-    $lnk_company->from->set_id($wrd_zh->id());
-    $lnk_company->verb->set_id(cl(db_cl::VERB, verb::IS_A));
-    $lnk_company->to->set_id($wrd_company->id());
-    $lnk_company->load_obj_vars();
+    $lnk_company->load_by_link($wrd_zh->id(), $is_id, $wrd_company->id());
 
     // remember the id for later use
     $zh_company_id = $lnk_company->id();

@@ -29,6 +29,7 @@ class triple_unit_tests
         $trp = new triple($usr);
         $t->assert_load_sql_id($db_con, $trp);
         $t->assert_load_sql_name($db_con, $trp);
+        $t->assert_load_sql_link($db_con, $trp);
 
         // sql to load the triple by id
         $trp = new triple($usr);

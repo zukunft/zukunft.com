@@ -50,6 +50,7 @@ class controller
     const URL_VAR_WORD = 'words';
     const URL_VAR_MSG = 'message';
     const URL_VAR_RESULT = 'result';
+    const URL_VAR_EMAIL = 'email';
 
     // used for the change log
     const URL_VAR_WORD_ID = 'word_id';

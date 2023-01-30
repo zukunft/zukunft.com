@@ -45,6 +45,7 @@ use api\phrase_type_api;
 use api\ref_api;
 use api\source_api;
 use api\system_log_api;
+use api\triple_api;
 use api\type_api;
 use api\user_api;
 use api\verb_api;
@@ -80,22 +81,24 @@ class test_api extends test_new_obj
     {
 
         $this->assert_api_get(user::class, 2);
-        $this->assert_api_get_by_name(user::class, user::SYSTEM_TEST_NAME);
+        $this->assert_api_get_by_text(user::class, user::SYSTEM_TEST_NAME);
+        $this->assert_api_get_by_text(user::class, user::SYSTEM_TEST_EMAIL, controller::URL_VAR_EMAIL);
         $this->assert_api_get(word::class);
         $this->assert_api_get_json(word::class, controller::URL_VAR_WORD_ID);
-        $this->assert_api_get_by_name(word::class, word_api::TN_READ);
+        $this->assert_api_get_by_text(word::class, word_api::TN_READ);
         $this->assert_api_get(verb::class);
-        $this->assert_api_get_by_name(verb::class, verb_api::TN_READ);
+        $this->assert_api_get_by_text(verb::class, verb_api::TN_READ);
         $this->assert_api_get(triple::class);
+        //$this->assert_api_get_by_text(triple::class, triple_api::TN_READ);
         $this->assert_api_get(value::class);
         $this->assert_api_get(formula::class);
-        $this->assert_api_get_by_name(formula::class, formula_api::TN_READ);
+        $this->assert_api_get_by_text(formula::class, formula_api::TN_READ);
         $this->assert_api_get(view::class);
-        $this->assert_api_get_by_name(view::class, view_api::TN_READ);
+        $this->assert_api_get_by_text(view::class, view_api::TN_READ);
         $this->assert_api_get(view_cmp::class);
-        $this->assert_api_get_by_name(view_cmp::class, view_cmp_api::TN_READ);
+        $this->assert_api_get_by_text(view_cmp::class, view_cmp_api::TN_READ);
         $this->assert_api_get(source::class);
-        $this->assert_api_get_by_name(source::class, source_api::TN_READ_API);
+        $this->assert_api_get_by_text(source::class, source_api::TN_READ_API);
         $this->assert_api_get(ref::class);
         $this->assert_api_get(batch_job::class);
         $this->assert_api_get(phrase_type::class);
@@ -562,14 +565,15 @@ class test_api extends test_new_obj
      * for testing the local deployments needs to be updated using an external script
      *
      * @param string $class the class name of the object to test
-     * @param string $name the unique name of the db row that should be used for testing
+     * @param string $name the unique name (or any other unique text) of the db row that should be used for testing
+     * @param string $field the URL field name of the unique text
      * @return bool true if the json has no relevant differences
      */
-    function assert_api_get_by_name(string $class, string $name = ''): bool
+    function assert_api_get_by_text(string $class, string $name = '', string $field = controller::URL_VAR_NAME): bool
     {
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
-        $data = array(controller::URL_VAR_NAME => $name);
+        $data = array($field => $name);
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         return $this->assert_api_compare($class, $actual);
     }

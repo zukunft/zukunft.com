@@ -1533,6 +1533,60 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /user/{name}:
+    get:
+      tags:
+        - user
+      summary: get user by name
+      description: Returns a user based on the name, if the requesting user is permitted to seen the user details
+      operationId: find user by name
+      parameters:
+        - name: name
+          in: path
+          description: name of user to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: user response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /user/{email}:
+    get:
+      tags:
+        - user
+      summary: get user by email
+      description: Returns a user based on the email, if the requesting user is permitted to seen the user details
+      operationId: find user by email
+      parameters:
+        - name: email
+          in: path
+          description: email of user to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: user response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       tags:
         - user

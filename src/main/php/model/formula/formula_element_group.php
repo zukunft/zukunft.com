@@ -364,7 +364,7 @@ class formula_element_group
                 if ($val_time_phr != null) {
                     $grp_fv->time_phr = $val_time_phr;
                 }
-                $grp_fv->load_by_vars();
+                $grp_fv->load_obj_vars();
                 */
                 if ($val_time_phr == null) {
                     $time_id = null;
@@ -379,7 +379,7 @@ class formula_element_group
                     $fig->symbol = $this->symbol;
                     $fig_lst->add($fig);
 
-                    log_debug('formula value for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name() . '" (word group ' . $val_phr_grp->id() . ', user ' . $this->usr->id . ') = ' . $grp_fv->value);
+                    log_debug('formula value for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name() . '" (word group ' . $val_phr_grp->id() . ', user ' . $this->usr->id() . ') = ' . $grp_fv->value);
                 } else {
                     // if there is also not a formula result at least one number of the formula is not valid
                     $fig_lst->fig_missing = True;

@@ -1139,8 +1139,12 @@ class formula extends user_sandbox_named_with_type
 
             // reload the formula if needed, but this should be done by the calling function, so create an info message
             if ($this->name() == '' or is_null($this->name_wrd)) {
-                $this->load_obj_vars();
-                log_info('formula ' . $this->dsp_id() . ' reloaded.', 'formula->calc');
+                if ($this->id() > 0) {
+                    $this->load_by_id($this->id());
+                    log_info('formula ' . $this->dsp_id() . ' reloaded.', 'formula->calc');
+                } else {
+                    log_warning('formula ' . $this->dsp_id() . ' cannot be reloaded');
+                }
             }
 
             // build the formula expression for calculating the result
@@ -1224,7 +1228,14 @@ class formula extends user_sandbox_named_with_type
                             }
 
                             // add the formula name also to the result phrase e.g. increase
-                            $fv->phr_lst->add($this->name_wrd->phrase());
+                            if (is_null($this->name_wrd)) {
+                                $this->load_wrd();
+                            }
+                            if (is_null($this->name_wrd)) {
+                                log_warning('Cannot load word for formula ' . $this->dsp_id());
+                            } else {
+                                $fv->phr_lst->add($this->name_wrd->phrase());
+                            }
 
                             $fv = $fv->save_if_updated($has_result_phrases);
 

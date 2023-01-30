@@ -171,39 +171,39 @@ class user_dsp_old extends user
 
                 // create the triple objects with the minimal parameter needed
                 // TODO maybe use row mapper
-                $wrd_usr = new triple($this);
-                $wrd_usr->set_id($sbx_row['id']);
-                $wrd_usr->from->set_id($sbx_row['from_phrase_id']);
-                $wrd_usr->verb->set_id($sbx_row[verb::FLD_ID]);
-                $wrd_usr->to->set_id($sbx_row['to_phrase_id']);
-                $wrd_usr->set_name($sbx_row['usr_name']);
-                $wrd_usr->excluded = $sbx_row['usr_excluded'];
-                $wrd_usr->load_obj_vars();
+                $trp_usr = new triple($this);
+                $trp_usr->set_id($sbx_row['id']);
+                $trp_usr->from->set_id($sbx_row['from_phrase_id']);
+                $trp_usr->verb->set_id($sbx_row[verb::FLD_ID]);
+                $trp_usr->to->set_id($sbx_row['to_phrase_id']);
+                $trp_usr->set_name($sbx_row['usr_name']);
+                $trp_usr->excluded = $sbx_row['usr_excluded'];
+                //$trp_usr->load_obj_vars();
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->load_by_id($sbx_row['owner_id']);
 
-                $wrd_std = clone $wrd_usr;
+                $wrd_std = clone $trp_usr;
                 $wrd_std->set_user($usr_std);
-                $wrd_std->load_obj_vars();
+                $wrd_std->load_by_id($trp_usr->id());
                 $wrd_std->set_name($sbx_row['std_name']);
                 $wrd_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
-                if ($wrd_usr->name() == $wrd_std->name()
-                    and $wrd_usr->excluded == $wrd_std->excluded) {
-                    $wrd_usr->del_usr_cfg();
+                if ($trp_usr->name() == $wrd_std->name()
+                    and $trp_usr->excluded == $wrd_std->excluded) {
+                    $trp_usr->del_usr_cfg();
                 } else {
 
                     // prepare the row triples
-                    //$sandbox_item_name = $wrd_usr->name_linked($back);
+                    //$sandbox_item_name = $trp_usr->name_linked($back);
 
                     // format the user triple
-                    if ($wrd_usr->excluded == 1) {
+                    if ($trp_usr->excluded == 1) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $wrd_usr->name();
+                        $sandbox_usr_txt = $trp_usr->name();
                     }
 
                     // format the standard triple
@@ -232,9 +232,9 @@ class user_dsp_old extends user
                         $usr_other->load_by_id($wrd_lnk_other_row[user::FLD_ID]);
 
                         // to review: load all user triples with one query
-                        $wrd_lnk_other = clone $wrd_usr;
+                        $wrd_lnk_other = clone $trp_usr;
                         $wrd_lnk_other->set_user($usr_other);
-                        $wrd_lnk_other->load_obj_vars();
+                        $wrd_lnk_other->load_by_id($trp_usr->id());
                         $wrd_lnk_other->set_name($wrd_lnk_other_row['name']);
                         $wrd_lnk_other->excluded = $wrd_lnk_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {

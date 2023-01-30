@@ -29,11 +29,16 @@
   
 */
 
+use controller\controller;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 $db_con = prg_start("formula_edit");
+
+// get the parameters
+$frm_id = $_GET[controller::URL_VAR_ID] ?? 0;
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -52,10 +57,9 @@ if ($usr->id() > 0) {
     $dsp->load_by_code_id(view::FORMULA_EDIT);
     $back = $_GET['back'];
 
-    // create the formula object to have an place to update the parameters
+    // create the formula object to have a place to update the parameters
     $frm = new formula($usr);
-    $frm->set_id($_GET['id']); // id of the formula that can be changed
-    $frm->load_obj_vars();
+    $frm->load_by_id($frm_id);
 
     // load the parameters to the formula object to display the user input again in case of an error
     if (isset($_GET['formula_name'])) {
@@ -131,7 +135,7 @@ if ($usr->id() > 0) {
             $result .= dsp_err($msg);
 
             // display the view to change the formula
-            $frm->load_obj_vars(); // reload to formula object to display the real database values
+            $frm->load_by_id($frm_id); // reload to formula object to display the real database values
             if (isset($_GET['add_link'])) {
                 $add_link = $_GET['add_link'];
             } else {

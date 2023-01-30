@@ -62,8 +62,7 @@ if ($usr->id() > 0) {
 
         // create the source object to have an object to update the parameters
         $lnk = new triple($usr);
-        $lnk->set_id($link_id);
-        $lnk->load_obj_vars();
+        $lnk->load_by_id($link_id);
 
         if ($confirm == 1) {
             $lnk->del();

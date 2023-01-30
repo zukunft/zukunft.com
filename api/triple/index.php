@@ -42,6 +42,7 @@ $db_con = prg_start("api/triple", "", false);
 
 // get the parameters
 $trp_id = $_GET[controller::URL_VAR_ID] ?? 0;
+$trp_name = $_GET[controller::URL_VAR_NAME] ?? '';
 
 $msg = '';
 $result = new triple_api();
@@ -53,12 +54,15 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
+    $trp = new triple($usr);
     if ($trp_id > 0) {
-        $trp = new triple($usr);
         $trp->load_by_id($trp_id);
         $result = $trp->api_obj();
+    } elseif ($trp_name > 0) {
+        $trp->load_by_name($trp_name);
+        $result = $trp->api_obj();
     } else {
-        $msg = 'triple id is missing';
+        $msg = 'triple id or name is missing';
     }
 }
 
