@@ -2066,6 +2066,7 @@ class user_sandbox extends db_object
         // TODO it seems that the owner is not updated
         $reloaded = false;
         if ($this->obj_name == sql_db::TBL_WORD
+            or $this->obj_name == sql_db::TBL_TRIPLE
             or $this->obj_name == sql_db::TBL_SOURCE
             or $this->obj_name == sql_db::TBL_VIEW) {
             $reloaded_id = $this->load_by_id($this->id());

@@ -30,25 +30,25 @@
 
 */
 
+use api\phrase_api;
 use api\word_api;
 
 function run_phrase_list_test(testing $t)
 {
 
     global $usr;
+    global $verbs;
 
     $t->header('Test the phrase list class (src/main/php/model/phrase/phrase_list.php)');
 
-    // load the main test word
+    // load the main test word and verb
     $wrd_company = $t->test_word(word_api::TN_READ);
+    $is_id = $verbs->id(verb::IS_A);
 
     // prepare test by loading Insurance Zurich
     $wrd_zh = $t->load_word(word_api::TN_ZH);
     $lnk_company = new triple($usr);
-    $lnk_company->from->set_id($wrd_zh->id());
-    $lnk_company->verb->set_id(cl(db_cl::VERB, verb::IS_A));
-    $lnk_company->to->set_id($wrd_company->id());
-    $lnk_company->load_obj_vars();
+    $lnk_company->load_by_link($wrd_zh->id(), $is_id, $wrd_company->id());
     $triple_sample_id = $lnk_company->id();
 
     // test the phrase loading via id

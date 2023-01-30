@@ -55,8 +55,7 @@ if ($usr->id() > 0) {
 
     // create the link object to have a place to update the parameters
     $lnk = new triple($usr);
-    $lnk->set_id($_GET['id']);
-    $lnk->load_obj_vars();
+    $lnk->load_by_id($_GET['id']);
 
     // edit the link or ask for confirmation
     if ($lnk->id() <= 0) {
@@ -90,7 +89,7 @@ if ($usr->id() > 0) {
             $result .= dsp_err($msg);
 
             // display the word link to allow the user to change it
-            $result .= $lnk->dsp_edit($back);
+            $result .= $lnk->dsp_obj()->form_edit($back);
         }
     }
 }

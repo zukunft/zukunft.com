@@ -48,6 +48,7 @@ $db_con = prg_start("api/user", "", false);
 // get the parameters
 $usr_id = $_GET[controller::URL_VAR_ID] ?? 0;
 $usr_name = $_GET[controller::URL_VAR_NAME] ?? '';
+$usr_email = $_GET[controller::URL_VAR_EMAIL] ?? '';
 
 $msg = '';
 $result = ''; // reset the html code var
@@ -65,6 +66,9 @@ if ($usr->id() > 0) {
         $result = json_decode(json_encode($db_usr->api_obj()));
     } elseif ($usr_name != '') {
         $db_usr->load_by_name($usr_name);
+        $result = json_decode(json_encode($db_usr->api_obj()));
+    } elseif ($usr_email != '') {
+        $db_usr->load_by_email($usr_email);
         $result = json_decode(json_encode($db_usr->api_obj()));
     } else {
         $msg = 'user id or name missing';

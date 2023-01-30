@@ -648,7 +648,7 @@ class user_sandbox_named extends user_sandbox
                     log_err('The name must be set to check if a similar object exists');
                 }
             } else {
-                // for all other objects still use the deprecated load_by_vars method
+                // for all other objects still use the deprecated load_obj_vars method
                 if ($db_chk->load_obj_vars()) {
                     if ($db_chk->id > 0) {
                         log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');

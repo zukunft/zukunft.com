@@ -420,10 +420,7 @@ class test_new_obj extends test_base
         $lnk_test = new triple($usr);
         if ($from->id() > 0 and $to->id() > 0) {
             // check if the forward link exists
-            $lnk_test->from = $from;
-            $lnk_test->verb = $vrb;
-            $lnk_test->to = $to;
-            $lnk_test->load_obj_vars();
+            $lnk_test->load_by_link($from->id(), $vrb->id(), $to->id());
         }
         return $lnk_test;
     }
@@ -467,16 +464,13 @@ class test_new_obj extends test_base
             log_err("Words " . $from_name . " and " . $to_name . " cannot be created");
         } else {
             // check if the forward link exists
-            $lnk_test->from = $from;
-            $lnk_test->verb = $vrb;
-            $lnk_test->to = $to;
-            $lnk_test->load_obj_vars();
+            $lnk_test->load_by_link($from->id(), $vrb->id(), $to->id());
             if ($lnk_test->id() > 0) {
                 // refresh the given name if needed
                 if ($phrase_name <> '' and $lnk_test->name_given() <> $phrase_name) {
                     $lnk_test->set_name_given($phrase_name);
                     $lnk_test->save();
-                    $lnk_test->load_obj_vars();
+                    $lnk_test->load_by_id($lnk_test->id());
                 }
                 $result = $lnk_test;
             } else {
@@ -485,7 +479,7 @@ class test_new_obj extends test_base
                 $lnk_test->verb = $vrb;
                 $lnk_test->to = $from;
                 $lnk_test->set_user($usr);
-                $lnk_test->load_obj_vars();
+                $lnk_test->load_by_link($to->id(), $vrb->id(), $from->id());
                 $result = $lnk_test;
                 // create the link if requested
                 if ($lnk_test->id() <= 0 and $autocreate) {
@@ -496,7 +490,7 @@ class test_new_obj extends test_base
                         $lnk_test->set_name_given($phrase_name);
                     }
                     $lnk_test->save();
-                    $lnk_test->load_obj_vars();
+                    $lnk_test->load_by_id($lnk_test->id());
                 }
             }
         }

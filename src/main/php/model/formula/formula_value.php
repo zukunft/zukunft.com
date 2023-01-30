@@ -448,7 +448,7 @@ class formula_value extends db_object
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_vars_sql(sql_db $db_con): sql_par
+    function load_obj_vars_sql(sql_db $db_con): sql_par
     {
         $sql_where = "";
         if ($this->id > 0) {
@@ -641,7 +641,7 @@ class formula_value extends db_object
     // load the missing formula parameters from the database
     // TODO load user specific values
     // TODO create load_sql and name the query
-    function load_by_vars(): bool
+    function load_obj_vars(): bool
     {
 
         global $db_con;
@@ -653,7 +653,7 @@ class formula_value extends db_object
         } else {
 
             // prepare the selection of the result
-            $qp = $this->load_by_vars_sql($db_con);
+            $qp = $this->load_obj_vars_sql($db_con);
 
             // check if a valid identification is given and load the result
             if (!$qp->has_par()) {
@@ -1597,7 +1597,7 @@ class formula_value extends db_object
 
             // to check if a database update is needed to create a second fv object with the database values
             $fv_db = clone $this;
-            $fv_db->load_by_vars();
+            $fv_db->load_obj_vars();
             $row_id = $fv_db->id;
             $db_val = $fv_db->value;
 

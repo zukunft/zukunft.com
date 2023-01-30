@@ -33,10 +33,22 @@ namespace html;
 
 use api\phrase_api;
 use api\triple_api;
+use phrase;
+use phrase_list;
 use triple;
 
 class triple_dsp extends triple_api
 {
+
+    // the form names to change the word
+    const FORM_ADD = 'triple_add';
+    const FORM_EDIT = 'triple_edit';
+    const FORM_DEL = 'triple_del';
+
+
+    /*
+     * base elements
+     */
 
     /**
      * @returns string simply the word name, but later with mouse over that shows the description
@@ -59,18 +71,81 @@ class triple_dsp extends triple_api
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
+
+    /*
+     * select
+     */
+
+    /**
+     * TODO review
+     *
+     * select a phrase based on a given context
+     *
+     * @param string $form_name
+     * @param phrase $phr the context to select the phrases, which is until now just the phrase
+     * @return string the html code to select a phrase
+     */
+    private function phrase_selector(string $form_name, string $label, phrase_api $phr): string
+    {
+        global $usr;
+        $phr_lst = new phrase_list($usr);
+        $phr_lst->load_by_phr($phr);
+        return $phr_lst->dsp_obj()->selector($label, $form_name, $label);
+    }
+
+
+    /*
+     * change forms
+     */
+
+    /**
+     * display a form to adjust the link between too words or triples
+     */
+    function form_edit(string $back = ''): string
+    {
+        $html = new html_base();
+        $result = ''; // reset the html code var
+
+        // prepare to show the word link
+        if ($this->id > 0) {
+            $header = $html->text_h2('Change "' . $this->from()->name() . ' ' . $this->verb()->name() . ' ' . $this->to()->name() . '"');
+            $hidden_fields = $html->form_hidden("id", $this->id);
+            $hidden_fields .= $html->form_hidden("back", $back);
+            $hidden_fields .= $html->form_hidden("confirm", '1');
+            $detail_fields = $html->form_text("name", $this->name());
+            $detail_fields .= $html->form_text("description", $this->description);
+            $detail_fields .= $this->phrase_selector(self::FORM_EDIT, 'from', $this->from());
+            /* TODO
+            if (isset($this->verb)) {
+                $result .= $this->verb->dsp_selector('forward', $form_name, "col-sm-4", $back);
+            }
+            */
+            $detail_fields .= $this->phrase_selector(self::FORM_EDIT, 'to', $this->to());
+            $detail_row = $html->fr($detail_fields) . '<br>';
+            $result = $header . $html->form(self::FORM_EDIT, $hidden_fields . $detail_row);
+        }
+
+        return $result;
+    }
+
+
+    /*
+     * buttons
+     */
+
     /**
      * @returns string the html code to display a bottom to edit the word link in a table cell
      */
-    function btn_edit(phrase_api $wrd): string
+    function btn_edit(phrase_api $trp): string
     {
 
         $html = new html_base();
-        $url = $html->url(api::PATH_FIXED . 'link' . api::UPDATE . api::EXT, $this->id, $wrd->id);
+        $url = $html->url(api::PATH_FIXED . 'link' . api::UPDATE . api::EXT, $this->id, $trp->id);
         $btn = (new button("edit word link", $url))->edit();
 
         return $html->td($btn);
     }
+
 
     /*
      * casting

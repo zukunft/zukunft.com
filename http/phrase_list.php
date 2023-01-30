@@ -68,15 +68,15 @@ if ($usr->id() > 0) {
     }      // the type that adds special behavior to the word
 
     // all words should be linked to an existing word, so collect the parameters for the word link now
-    $wrd_id = $_GET['add'];  // id of an existing word that should be linked 
+    $phr_id = $_GET['add'];  // id of an existing word that should be linked
     $vrb_id = $_GET['verb']; // id of the link between the words e.g. clicking add at Nestle is a company should lead to a question ... is (also) a company
-    $wrd_to = $_GET['word']; // a selected word where the new word should be linked to; e.g. company in the example above
+    $phr_to = $_GET['word']; // a selected word where the new word should be linked to; e.g. company in the example above
 
     // if the user has pressed "save" it is 1
     if ($_GET['confirm'] > 0) {
 
         // check if either a new word text is entered by the user or the user as selected an existing word to link
-        if ($wrd->name() == "" and $wrd_id <= 0) {
+        if ($wrd->name() == "" and $phr_id <= 0) {
             $msg .= 'Either enter a name for the new word or select an existing word to link.';
         }
         /*
@@ -89,7 +89,7 @@ if ($usr->id() > 0) {
         }
         */
         if ($wrd->type_id <= 0 and $wrd->name() <> "") {
-            $wrd_id = 0; // if new word in supposed to be added, but type is missing, do not add an existing word
+            $phr_id = 0; // if new word in supposed to be added, but type is missing, do not add an existing word
             $msg .= 'Type missing; Please press back and select a word type. ';
         }
 
@@ -112,23 +112,17 @@ if ($usr->id() > 0) {
                 //}
             }
 
-        } elseif ($wrd_id > 0) {
+        } elseif ($phr_id > 0) {
             // check link of the existing word already exists
             $lnk_test = new triple($usr);
-            $lnk_test->from->set_id($wrd_id);
-            $lnk_test->verb->set_id($vrb_id);
-            $lnk_test->to->set_id($wrd_to);
-            $lnk_test->load_obj_vars();
+            $lnk_test->load_by_link($phr_id, $vrb_id, $phr_to);
             if ($lnk_test->id() > 0) {
                 $lnk_test->load_objects();
-                log_debug('forward link ' . $wrd_id . ' ' . $vrb_id . ' ' . $wrd_to . '');
+                log_debug('forward link ' . $phr_id . ' ' . $vrb_id . ' ' . $phr_to . '');
                 $msg .= '"' . $lnk_test->from_name . ' ' . $lnk_test->verb->name() . ' ' . $lnk_test->to_name . '" already exists. ';
             }
             $lnk_rev = new triple($usr);
-            $lnk_rev->from->set_id($wrd_to);
-            $lnk_rev->verb->set_id($vrb_id);
-            $lnk_rev->to->set_id($wrd_id);
-            $lnk_rev->load_obj_vars();
+            $lnk_rev->load_by_link($phr_to, $vrb_id, $phr_id);
             if ($lnk_rev->id() > 0) {
                 $lnk_rev->load_objects();
                 $msg .= 'The reverse of "' . $lnk_rev->from_name . ' ' . $lnk_rev->verb->name() . ' ' . $lnk_rev->to_name . '" already exists. Do you really want to add both sides? ';
@@ -143,16 +137,16 @@ if ($usr->id() > 0) {
             if ($wrd->name() <> "") {
                 $add_result .= $wrd->save();
             } else {
-                $wrd->load_by_id($wrd_id);
+                $wrd->load_by_id($phr_id);
             }
             log_debug('test word');
-            if ($wrd->id() > 0 and $vrb_id <> 0 and $wrd_to > 0) {
+            if ($wrd->id() > 0 and $vrb_id <> 0 and $phr_to > 0) {
                 // ... and link it to an existing word
-                log_debug('word ' . $wrd->id() . ' linked via ' . $vrb_id . ' to ' . $wrd_to . ': ' . $add_result);
+                log_debug('word ' . $wrd->id() . ' linked via ' . $vrb_id . ' to ' . $phr_to . ': ' . $add_result);
                 $lnk = new triple($usr);
                 $lnk->from->set_id($wrd->id());
                 $lnk->verb->set_id($vrb_id);
-                $lnk->to->set_id($wrd_to);
+                $lnk->to->set_id($phr_to);
                 $add_result .= $lnk->save();
             }
 
@@ -176,7 +170,7 @@ if ($usr->id() > 0) {
         $result .= $dsp->dsp_navbar($back);
         $result .= dsp_err($msg);
 
-        $result .= $wrd->dsp_add($wrd_id, $wrd_to, $vrb_id, $back);
+        $result .= $wrd->dsp_add($phr_id, $phr_to, $vrb_id, $back);
     }
 }
 

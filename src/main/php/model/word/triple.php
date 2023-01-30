@@ -126,6 +126,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     private ?view $view; // name of the default view for this word
     private ?array $ref_lst = [];
 
+
     /*
      * construct and map
      */
@@ -404,6 +405,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         return $dsp_obj;
     }
 
+
     /*
      * loading / database access object (DAO) functions
      */
@@ -513,10 +515,10 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     }
 
     /**
-     * create an SQL statement to retrieve a term by name from the database
+     * create an SQL statement to retrieve a triple by name from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param string $name the name of the term and the related word, triple, formula or verb
+     * @param string $name the name of the triple and the related word, triple, formula or verb
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
@@ -531,27 +533,45 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     }
 
     /**
-     * create an SQL statement to retrieve the parameters of a triple from the database
+     * create an SQL statement to retrieve a triple by name from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $from the id of the phrase that is linked
+     * @param int $type the type id of the link
+     * @param int $to the id of the phrase to which is the link directed
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_by_link(sql_db $db_con, int $from, int $type, int $to, string $class): sql_par
     {
-        $db_con->set_type(sql_db::TBL_TRIPLE);
-        $qp = new sql_par(self::class);
-        $qp->name .= $this->load_sql_name_ext();
+        $qp = $this->load_sql($db_con, 'link_ids', $class);
+        $db_con->add_par_int($from);
+        $db_con->add_par_int($to);
+        $db_con->add_par_int($type);
+        $qp->sql = $db_con->select_by_field_list(array(self::FLD_FROM, self::FLD_TO, verb::FLD_ID));
+        $qp->par = $db_con->get_par();
 
-        // similar statement used in triple_list->load, check if changes should be repeated in triple_list.php
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_link_fields(self::FLD_FROM, self::FLD_TO, verb::FLD_ID);
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        return $qp;
+    }
 
-        return $this->load_sql_select_qp($db_con, $qp);
+    /**
+     * set the generated triple name base on the view
+     */
+    private function reload_generated_name(): void
+    {
+        global $db_con;
+
+        if ($this->id > 0) {
+            // automatically update the generic name
+            $this->load_objects();
+            $new_name = $this->name_generated();
+            log_debug('triple->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
+            if ($new_name <> $this->name) {
+                $db_con->set_type(sql_db::TBL_TRIPLE);
+                $db_con->update($this->id, self::FLD_NAME_AUTO, $new_name);
+                $this->set_name_generated($new_name);
+            }
+        }
     }
 
     /**
@@ -565,63 +585,12 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
 
         $db_row = $db_con->get1($qp);
         $this->row_mapper($db_row);
-        if ($this->id > 0) {
-            // automatically update the generic name
-            $this->load_objects();
-            $new_name = $this->name_generated();
-            log_debug('triple->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
-            if ($new_name <> $this->name) {
-                $db_con->set_type(sql_db::TBL_TRIPLE);
-                $db_con->update($this->id, self::FLD_NAME_AUTO, $new_name);
-                $this->set_name_generated($new_name);
-            }
-        }
+        $this->reload_generated_name();
         return $this->id();
     }
 
     /**
-     * load the word link without the linked objects, because in many cases the object are already loaded by the caller
-     */
-    function load_obj_vars(): bool
-    {
-        global $db_con;
-        $result = false;
-
-        // after every load call from outside the class the order should be checked and reversed if needed
-        $this->check_order();
-
-        $qp = $this->load_sql_obj_vars($db_con);
-
-        if ($qp->sql == '') {
-            if (is_null($this->user()->id())) {
-                log_err("The user id must be set to load a word.", "triple->load");
-            } else {
-                log_err('Either the database ID (' . $this->id . '), unique word link (' . $this->from->id . ',' . $this->verb->id() . ',' . $this->to->id . ') or the name (' . $this->name . ') and the user (' . $this->user()->id() . ') must be set to load a word link.', "triple->load");
-            }
-        } else {
-            $db_lnk = $db_con->get1($qp);
-            $this->row_mapper($db_lnk);
-            if ($this->id > 0) {
-                // automatically update the generic name
-                $this->load_objects();
-                $new_name = $this->name_generated();
-                log_debug('triple->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
-                if ($new_name <> $this->name) {
-                    $db_con->set_type(sql_db::TBL_TRIPLE);
-                    $db_con->update($this->id, self::FLD_NAME_AUTO, $new_name);
-                    $this->set_name_generated($new_name);
-                }
-                $result = true;
-            } else {
-                $this->id = 0;
-            }
-            log_debug('triple->load ... done (' . $this->name() . ')');
-        }
-        return $result;
-    }
-
-    /**
-     * load a named user sandbox object by database id
+     * load a triple by database id
      * @param int $id the id of the word, triple, formula, verb, view or view component
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
@@ -636,7 +605,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     }
 
     /**
-     * load a named user sandbox object by name
+     * load a triple by name
      * @param string $name the name of the word, triple, formula, verb, view or view component
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
@@ -647,6 +616,23 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
 
         log_debug($name);
         $qp = $this->load_sql_by_name($db_con, $name, $class);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a triple by the ids of the linked objects
+     * @param int $from the id of the phrase that is linked
+     * @param int $type the type id of the link
+     * @param int $to the id of the phrase to which is the link directed
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_link(int $from, int $type, int $to, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug($from . ' ' . $type . ' ' . $to);
+        $qp = $this->load_sql_by_link($db_con, $from, $type, $to, $class);
         return $this->load($qp);
     }
 
@@ -1249,45 +1235,6 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     /**
      * display a form to adjust the link between too words or triples
      */
-    function dsp_edit(string $back = ''): string
-    {
-        log_debug("triple->dsp_edit id " . $this->id . " for user" . $this->user()->id() . ".");
-        $result = ''; // reset the html code var
-
-        // at least to create the dummy objects to display the selectors
-        $this->load_obj_vars();
-        $this->load_objects();
-        log_debug("triple->dsp_edit id " . $this->id . " load done.");
-
-        // prepare to show the word link
-        if ($this->id > 0) {
-            $form_name = 'link_edit';
-            $result .= dsp_text_h2('Change "' . $this->from->name() . ' ' . $this->verb->name() . ' ' . $this->to->name() . '" to ');
-            $result .= dsp_form_start($form_name);
-            $result .= dsp_form_hidden("back", $back);
-            $result .= dsp_form_hidden("confirm", '1');
-            $result .= dsp_form_hidden("id", $this->id);
-            $result .= '<div class="form-row">';
-            if (isset($this->from)) {
-                $result .= $this->from->dsp_selector(0, $form_name, 1, "col-sm-4", $back);
-            }
-            if (isset($this->verb)) {
-                $result .= $this->verb->dsp_selector('forward', $form_name, "col-sm-4", $back);
-            }
-            if (isset($this->to)) {
-                $result .= $this->to->dsp_selector(0, $form_name, 2, "col-sm-4", $back);
-            }
-            $result .= '</div>';
-            $result .= dsp_form_end('', $back);
-            $result .= '<br>';
-        }
-
-        return $result;
-    }
-
-    /**
-     * display a form to adjust the link between too words or triples
-     */
     function dsp_del(string $back = ''): string
     {
         log_debug("triple->dsp_del " . $this->id . ".");
@@ -1854,12 +1801,11 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             if ($this->id <= 0) {
                 $result .= $this->add()->get_last_message();
             } else {
-                log_debug('update "' . $this->id . '"');
+                log_debug('update ' . $this->dsp_id());
                 // read the database values to be able to check if something has been changed;
                 // done first, because it needs to be done for user and general phrases
                 $db_rec = new triple($this->user());
-                $db_rec->id = $this->id;
-                if (!$db_rec->load_obj_vars()) {
+                if (!$db_rec->load_by_id($this->id())) {
                     $result .= 'Reloading of triple failed';
                 }
                 log_debug('database triple "' . $db_rec->name . '" (' . $db_rec->id . ') loaded');

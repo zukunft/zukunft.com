@@ -45,7 +45,10 @@ class word_dsp extends word_api
     const TIME_MAX_COLS = 10; // maximum number of same time type word to display in a table e.g. if more the 10 years exist, by default show only the lst 10 years
     const TIME_FUT_PCT = 20; // the default number of future outlook e.g. if there are 10 years of hist and 3 years of outlook display 8 years of hist and 2 years outlook
 
+    // the form names to change the word
+    const FORM_ADD = 'word_add';
     const FORM_EDIT = 'word_edit';
+    const FORM_DEL = 'word_del';
 
 
     /*
@@ -175,22 +178,30 @@ class word_dsp extends word_api
         return $result;
     }
 
+
     /*
      * change forms
      */
 
+    /**
+     * HTML code to add a word with all fields
+     * @param string $back the html code to be opened in case of a back action
+     * @return string the html code to display the add page
+     */
     function form_add(string $back = ''): string
     {
         $html = new html_base();
         $ui_msg = new msg();
-        $result = '';
 
         $header = $html->text_h2($ui_msg->txt(msg::FORM_WORD_ADD_TITLE));
         $hidden_fields = $html->form_hidden("back", $back);
         $hidden_fields .= $html->form_hidden("confirm", '1');
         $detail_fields = $html->form_text("word_name", $this->plural(), $ui_msg->txt(msg::FORM_WORD_FLD_NAME));
+        $detail_row = $html->fr($detail_fields) . '<br>';
 
-        return $result;
+        // TODO complete
+
+        return $header . $html->form(self::FORM_ADD, $hidden_fields . $detail_row);
     }
 
     /**
@@ -225,6 +236,26 @@ class word_dsp extends word_api
         $result .= $dsp_log;
 
         return $result;
+    }
+
+    /**
+     * HTML code to delete or exclude a word
+     * @param string $back the html code to be opened in case of a back action
+     * @return string the html code to display the delete page
+     */
+    function form_del(string $back = ''): string
+    {
+        $html = new html_base();
+
+        $header = $html->text_h2('Delete "' . $this->name . '"');
+        $hidden_fields = $html->form_hidden("id", $this->id);
+        $hidden_fields .= $html->form_hidden("back", $back);
+        $hidden_fields .= $html->form_hidden("confirm", '1');
+        $detail_row = $this->btn_del() . '<br>';
+
+        // TODO complete
+
+        return $header . $html->form(self::FORM_DEL, $hidden_fields . $detail_row);
     }
 
 
