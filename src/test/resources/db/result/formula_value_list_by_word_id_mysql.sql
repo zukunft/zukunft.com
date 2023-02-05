@@ -5,7 +5,6 @@ PREPARE formula_value_list_by_word_id FROM
            s.source_phrase_group_id,
            s.source_time_id,
            s.phrase_group_id,
-           s.time_word_id,
            s.formula_value,
            s.last_update,
            s.dirty,

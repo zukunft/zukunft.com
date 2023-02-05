@@ -5,10 +5,8 @@ PREPARE formula_value_by_grp_time FROM
            source_phrase_group_id,
            source_time_id,
            phrase_group_id,
-           time_word_id,
            formula_value,
            last_update,
            dirty
       FROM formula_values
-     WHERE phrase_group_id = ?
-       AND time_word_id = ?';
+     WHERE phrase_group_id = ?';

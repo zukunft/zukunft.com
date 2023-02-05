@@ -1257,13 +1257,9 @@ class word_list extends sandbox_list
     {
         $val = new value($this->user());
         $phr_lst = $this->phrase_lst();
-        $time_phr = $phr_lst->time_useful();
-        $phr_lst->ex_time();
         $phr_grp = new phrase_group($this->user());
         $phr_grp->load_by_lst($phr_lst);
-        $val->grp = $phr_grp;
-        $val->time_phr = $time_phr;
-        $val->load_obj_vars();
+        $val->load_by_grp($phr_grp);
 
         log_debug($val->name() . ' for "' . $this->user()->name . '" is ' . $val->number());
         return $val;

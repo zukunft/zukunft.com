@@ -50,9 +50,9 @@
     {
       "words": [
         "electricity",
-        "kWh"
+        "kWh",
+        "2019"
       ],
-      "time": "2019",
       "number": "7305",
       "share": "personal"
     },
@@ -60,9 +60,9 @@
       "words": [
         "electricity",
         "kWh",
-        "Solar power"
+        "Solar power",
+        "2019"
       ],
-      "time": "2019",
       "number": "5740",
       "share": "personal"
     },
@@ -70,9 +70,9 @@
       "words": [
         "electricity",
         "kWh",
-        "Swiss hydropower"
+        "Swiss hydropower",
+        "2019"
       ],
-      "time": "2019",
       "number": "2305",
       "share": "personal"
     },
@@ -81,9 +81,9 @@
         "gram",
         "CO2",
         "per kWh",
-        "Solar power"
+        "Solar power",
+        "2019"
       ],
-      "time": "2019",
       "number": "54",
       "share": "public",
       "protection": "admin_protection",
@@ -94,9 +94,9 @@
         "gram",
         "CO2",
         "per kWh",
-        "Swiss hydropower"
+        "Swiss hydropower",
+        "2019"
       ],
-      "time": "2019",
       "number": "14.4",
       "share": "public",
       "protection": "admin_protection",

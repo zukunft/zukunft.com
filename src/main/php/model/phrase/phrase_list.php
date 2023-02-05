@@ -1455,8 +1455,11 @@ class phrase_list extends user_sandbox_list_named
     {
         global $debug;
 
-        $name_lst = $this->names();
+        // separate the time phrases
+        $dsp_lst = clone $this;
 
+        // display the non time phrase
+        $name_lst = $dsp_lst->names();
         if ($debug > 10) {
             $result = '"' . implode('","', $name_lst) . '"';
         } else {
@@ -1466,6 +1469,7 @@ class phrase_list extends user_sandbox_list_named
             }
             $result .= '"';
         }
+
         return $result;
     }
 
@@ -1905,8 +1909,6 @@ class phrase_list extends user_sandbox_list_named
      */
     function time_lst(): word_list
     {
-        log_debug('phrase_list->time_lst for phrases ' . $this->dsp_id());
-
         $wrd_lst = $this->wrd_lst_all();
         $result = $wrd_lst->time_lst();
         $result->set_user($this->user());
@@ -2031,12 +2033,10 @@ class phrase_list extends user_sandbox_list_named
      */
     function ex_time(): void
     {
-        log_debug('phrase_list->ex_time ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         $del_wrd_lst = $this->time_lst();
         $del_phr_lst = $del_wrd_lst->phrase_lst();
         $this->diff($del_phr_lst);
-        //$this->diff_by_ids($del_phr_lst->ids);
-        log_debug($this->dsp_name() . ' (exclude times ' . $del_phr_lst->name() . ')');
     }
 
     /**
@@ -2217,8 +2217,7 @@ class phrase_list extends user_sandbox_list_named
     function value(): value
     {
         $val = new value($this->user());
-        $val->grp = $this->get_grp();
-        $val->load_obj_vars();
+        $val->load_by_grp($this->get_grp());
 
         return $val;
     }

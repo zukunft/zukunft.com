@@ -127,9 +127,8 @@
         "2017",
         "USD",
         "million",
-        "Sales of products"
+        "Sales of products",
       ],
-      "time": "2017",
       "number": "28133",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -140,9 +139,8 @@
         "2017",
         "USD",
         "million",
-        "Sales of services and other"
+        "Sales of services and other",
       ],
-      "time": "2017",
       "number": "6179",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -155,7 +153,6 @@
         "million",
         "Total revenues"
       ],
-      "time": "2017",
       "number": "34312",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -168,7 +165,6 @@
         "million",
         "Cost of sales of products"
       ],
-      "time": "2017",
       "number": "-20313",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -181,7 +177,6 @@
         "million",
         "Cost of services and other"
       ],
-      "time": "2017",
       "number": "-3733",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -194,7 +189,6 @@
         "million",
         "Total cost of sales"
       ],
-      "time": "2017",
       "number": "-24046",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -207,7 +201,6 @@
         "million",
         "Gross profit"
       ],
-      "time": "2017",
       "number": "10266",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -220,7 +213,6 @@
         "million",
         "Selling, general and administrative expenses"
       ],
-      "time": "2017",
       "number": "-5607",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -233,7 +225,6 @@
         "million",
         "Non-order related research and development expenses"
       ],
-      "time": "2017",
       "number": "-1365",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -246,7 +237,6 @@
         "million",
         "Other income (expense), net"
       ],
-      "time": "2017",
       "number": "140",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -259,7 +249,6 @@
         "million",
         "Income from operations"
       ],
-      "time": "2017",
       "number": "3434",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -272,7 +261,6 @@
         "million",
         "Interest and dividend income"
       ],
-      "time": "2017",
       "number": "74",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -285,7 +273,6 @@
         "million",
         "Interest and other finance expense"
       ],
-      "time": "2017",
       "number": "-277",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -298,7 +285,6 @@
         "million",
         "Income from continuing operations before taxes"
       ],
-      "time": "2017",
       "number": "3231",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -311,7 +297,6 @@
         "million",
         "Provision for taxes"
       ],
-      "time": "2017",
       "number": "-860",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -324,7 +309,6 @@
         "million",
         "Income from continuing operations, net of tax"
       ],
-      "time": "2017",
       "number": "2371",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -337,7 +321,6 @@
         "million",
         "Income (loss) from discontinued operations, net of tax"
       ],
-      "time": "2017",
       "number": "-6",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -350,7 +333,6 @@
         "million",
         "Net income"
       ],
-      "time": "2017",
       "number": "2365",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -363,7 +345,6 @@
         "million",
         "Net income attributable to noncontrolling interests"
       ],
-      "time": "2017",
       "number": "-152",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"
@@ -376,7 +357,6 @@
         "million",
         "Net income attributable to ABB"
       ],
-      "time": "2017",
       "number": "2213",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2017"

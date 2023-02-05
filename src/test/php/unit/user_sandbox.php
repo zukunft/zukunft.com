@@ -450,7 +450,15 @@ class user_sandbox_unit_tests
 
         // ... similar with joined fields
         $db_con->set_type(sql_db::TBL_FORMULA);
-        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION, 'formula_type_id', 'all_values_needed', 'last_update', user_sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array(
+            sql_db::FLD_USER_ID,
+            formula::FLD_FORMULA_TEXT,
+            formula::FLD_FORMULA_USER_TEXT,
+            sql_db::FLD_DESCRIPTION,
+            formula::FLD_FORMULA_TYPE,
+            formula::FLD_ALL_NEEDED,
+            formula::FLD_LAST_UPDATE,
+            user_sandbox::FLD_EXCLUDED));
         $db_con->set_join_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
         $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_set_id();
@@ -473,7 +481,10 @@ class user_sandbox_unit_tests
         // ... same for user sandbox data (should match with the parameters in formula->load)
         $db_con->set_type(sql_db::TBL_FORMULA);
         $db_con->set_usr_fields(array('formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array('formula_type_id', 'all_values_needed', 'last_update'));
+        $db_con->set_usr_num_fields(array(
+            formula::FLD_FORMULA_TYPE,
+            formula::FLD_ALL_NEEDED,
+            formula::FLD_LAST_UPDATE));
         $db_con->set_usr_bool_fields(array(user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_set_id();
@@ -496,18 +507,18 @@ class user_sandbox_unit_tests
 
         // ... same for the special case of a table without name e.g. the value table
         $db_con->set_type(sql_db::TBL_VALUE);
-        $db_con->set_fields(array('phrase_group_id', value::FLD_TIME_WORD));
-        $db_con->set_usr_num_fields(array('word_value', 'source_id', user_sandbox::FLD_PROTECT, 'last_update'));
+        $db_con->set_fields(array(phrase_group::FLD_ID));
+        $db_con->set_usr_num_fields(
+            array(value::FLD_VALUE, source::FLD_ID, user_sandbox::FLD_PROTECT, value::FLD_LAST_UPDATE));
         $db_con->set_usr_bool_fields(array(user_sandbox::FLD_EXCLUDED));
         $db_con->set_usr_only_fields(array(user_sandbox::FLD_SHARE));
-        $db_con->set_where_text('s.phrase_group_id = 1');
+        $db_con->set_where_text('s.' . phrase_group::FLD_ID . ' = 1');
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT 
                     s.value_id,
                     u.value_id AS user_value_id,
                     s.user_id,
                     s.phrase_group_id,
-                    s.time_word_id,
                     CASE WHEN (u.word_value         IS           NULL) THEN s.word_value           ELSE u.word_value           END AS word_value,
                     CASE WHEN (u.source_id          IS           NULL) THEN s.source_id            ELSE u.source_id            END AS source_id,
                     CASE WHEN (u.protect_id IS           NULL) THEN s.protect_id   ELSE u.protect_id   END AS protect_id,
@@ -873,7 +884,15 @@ class user_sandbox_unit_tests
 
         // ... similar with joined fields
         $db_con->set_type(sql_db::TBL_FORMULA);
-        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION, 'formula_type_id', 'all_values_needed', 'last_update', user_sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array(
+            sql_db::FLD_USER_ID,
+            formula::FLD_FORMULA_TEXT,
+            formula::FLD_FORMULA_USER_TEXT,
+            sql_db::FLD_DESCRIPTION,
+            formula::FLD_FORMULA_TYPE,
+            formula::FLD_ALL_NEEDED,
+            formula::FLD_LAST_UPDATE,
+            user_sandbox::FLD_EXCLUDED));
         $db_con->set_join_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
         $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_set_id();
@@ -895,8 +914,15 @@ class user_sandbox_unit_tests
 
         // ... same for user sandbox data
         $db_con->set_type(sql_db::TBL_FORMULA);
-        $db_con->set_usr_fields(array('formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array('formula_type_id', 'all_values_needed', 'last_update', user_sandbox::FLD_EXCLUDED));
+        $db_con->set_usr_fields(array(
+            formula::FLD_FORMULA_TEXT,
+            formula::FLD_FORMULA_USER_TEXT,
+            sql_db::FLD_DESCRIPTION));
+        $db_con->set_usr_num_fields(array(
+            formula::FLD_FORMULA_TYPE,
+            formula::FLD_ALL_NEEDED,
+            formula::FLD_LAST_UPDATE,
+            user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_set_id();
         $sql_avoid_code_check_prefix = "SELECT";
@@ -920,8 +946,13 @@ class user_sandbox_unit_tests
 
         // ... same for the special case of a table without name e.g. the value table
         $db_con->set_type(sql_db::TBL_VALUE);
-        $db_con->set_fields(array('phrase_group_id', value::FLD_TIME_WORD));
-        $db_con->set_usr_fields(array('word_value', 'source_id', 'last_update', user_sandbox::FLD_PROTECT, user_sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array(phrase_group::FLD_ID));
+        $db_con->set_usr_fields(array(
+            value::FLD_VALUE,
+            source::FLD_ID,
+            value::FLD_LAST_UPDATE,
+            user_sandbox::FLD_PROTECT,
+            user_sandbox::FLD_EXCLUDED));
         $db_con->set_usr_only_fields(array(user_sandbox::FLD_SHARE));
         $db_con->set_where_text('s.phrase_group_id = 1');
         $created_sql = $db_con->select_by_set_id();
@@ -931,7 +962,6 @@ class user_sandbox_unit_tests
                     u.value_id AS user_value_id,
                     s.user_id,
                     s.phrase_group_id,
-                    s.time_word_id,
                     IF(u.word_value         IS NULL, s.word_value,         u.word_value)         AS word_value,
                     IF(u.source_id          IS NULL, s.source_id,          u.source_id)          AS source_id,
                     IF(u.last_update        IS NULL, s.last_update,        u.last_update)        AS last_update,
@@ -1140,13 +1170,13 @@ class user_sandbox_unit_tests
         $created_sql = "SELECT 
                        f.formula_id,
                        f.formula_name,
-                       " . $db_con->get_usr_field('formula_text', 'f', 'u') . ",
-                       " . $db_con->get_usr_field('resolved_text', 'f', 'u') . ",
+                       " . $db_con->get_usr_field(formula::FLD_FORMULA_TEXT, 'f', 'u') . ",
+                       " . $db_con->get_usr_field(formula::FLD_FORMULA_USER_TEXT, 'f', 'u') . ",
                        " . $db_con->get_usr_field(sql_db::FLD_DESCRIPTION, 'f', 'u') . ",
-                       " . $db_con->get_usr_field('formula_type_id', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                       " . $db_con->get_usr_field(formula::FLD_FORMULA_TYPE, 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
                        " . $db_con->get_usr_field(sql_db::FLD_CODE_ID, 't', 'c') . ",
-                       " . $db_con->get_usr_field('all_values_needed', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                       " . $db_con->get_usr_field('last_update', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                       " . $db_con->get_usr_field(formula::FLD_ALL_NEEDED, 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                       " . $db_con->get_usr_field(formula::FLD_LAST_UPDATE, 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
                        " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'f', 'u', sql_db::FLD_FORMAT_VAL) . "
                   FROM " . $sql_from . " 
              LEFT JOIN user_formulas u ON u.formula_id = f.formula_id 
@@ -1180,12 +1210,11 @@ class user_sandbox_unit_tests
         $created_sql = "SELECT v.value_id,
                      u.value_id AS user_value_id,
                      v.user_id,
-                    " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('last_update', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(value::FLD_LAST_UPDATE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(source::FLD_ID, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                      v.phrase_group_id,
-                     v.time_word_id,
                      g.word_ids,
                      g.triple_ids
                 FROM phrase_groups g, " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
@@ -1196,7 +1225,7 @@ class user_sandbox_unit_tests
                                        FROM value_phrase_links 
                                       WHERE phrase_id = 1
                                    GROUP BY value_id )
-            ORDER BY v.phrase_group_id, v.time_word_id
+            ORDER BY v.phrase_group_id
                LIMIT " . $limit . ";";
         $expected_sql = "SELECT v.value_id,
                      u.value_id AS user_value_id,
@@ -1206,7 +1235,6 @@ class user_sandbox_unit_tests
                      CASE WHEN (u.last_update IS NULL) THEN v.last_update ELSE u.last_update END AS last_update,
                      CASE WHEN (u.source_id   IS NULL) THEN v.source_id   ELSE u.source_id   END AS source_id,
                      v.phrase_group_id,
-                     v.time_word_id,
                      g.word_ids,
                      g.triple_ids
                 FROM phrase_groups g, values v 
@@ -1217,7 +1245,7 @@ class user_sandbox_unit_tests
                                        FROM value_phrase_links 
                                       WHERE phrase_id = 1
                                    GROUP BY value_id )
-            ORDER BY v.phrase_group_id, v.time_word_id
+            ORDER BY v.phrase_group_id
                LIMIT 10;";
         $t->dsp('value list load query', $lib->trim($expected_sql), $lib->trim($created_sql));
 

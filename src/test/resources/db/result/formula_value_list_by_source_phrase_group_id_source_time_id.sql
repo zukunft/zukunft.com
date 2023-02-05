@@ -5,7 +5,6 @@ PREPARE formula_value_list_by_source_phrase_group_id_source_time_id (int, int) A
            source_phrase_group_id,
            source_time_id,
            phrase_group_id,
-           time_word_id,
            formula_value,
            last_update,
            dirty

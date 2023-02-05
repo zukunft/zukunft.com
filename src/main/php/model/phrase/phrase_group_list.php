@@ -380,6 +380,7 @@ class phrase_group_list
         }
 
         // create the time selection
+        /*
         $sql_time = '';
         if (count($time_linked->ids) > 0 and count($time_used->ids) > 0) {
             $sql_time = 'v.time_word_id IN (' . sql_array($time_linked->ids) . ')
@@ -388,36 +389,25 @@ class phrase_group_list
             // dito group
             log_warning('Phrases missing while loading the phrase groups');
         }
+        */
 
         // create the value or result selection
         if ($type == 'value') {
             $sql_select = 'SELECT v.value_id,
-                            v.phrase_group_id,
-                            v.time_word_id
+                            v.phrase_group_id
                        FROM values v';
         } else {
             $sql_select = 'SELECT v.formula_value_id AS value_id,
-                            v.phrase_group_id,
-                            v.time_word_id
+                            v.phrase_group_id
                        FROM formula_values v';
         }
 
         // combine the selections
         $sql = '';
-        $sql_group_by = ' GROUP BY value_id, phrase_group_id, time_word_id LIMIT 500'; // limit is only set for testing: remove for release!
+        $sql_group_by = ' GROUP BY value_id, phrase_group_id LIMIT 500'; // limit is only set for testing: remove for release!
         if ($sql_group <> '') {
-            if ($sql_time <> '') {
-                // select only values that match both: group and time
-                $sql = $sql_select . ', ( ' . $sql_group . ') AS g WHERE v.phrase_group_id = g.phrase_group_id OR ' . $sql_time . $sql_group_by . ';';
-            } else {
-                // select values only by the group
-                $sql = $sql_select . ', ( ' . $sql_group . ') AS g WHERE v.phrase_group_id = g.phrase_group_id' . $sql_group_by . ';';
-            }
-        } else {
-            // select values only by the time
-            if ($sql_time <> '') {
-                $sql = $sql_select . ' WHERE ' . $sql_time . $sql_group_by . ';';
-            }
+            // select values only by the group
+            $sql = $sql_select . ', ( ' . $sql_group . ') AS g WHERE v.phrase_group_id = g.phrase_group_id' . $sql_group_by . ';';
         }
 
         log_debug('sql "' . $sql . '"');
@@ -454,11 +444,11 @@ class phrase_group_list
             foreach ($val_rows as $val_row) {
                 // add the phrase group of the value or formula result add the time using a combined index
                 // because a time word should never be part of a phrase group to have a useful number of groups
-                log_debug('add id ' . $val_row['phrase_group_id']);
-                log_debug('add time id ' . $val_row[value::FLD_TIME_WORD]);
+                log_debug('add id ' . $val_row[phrase_group::FLD_ID]);
+                // log_debug('add time id ' . $val_row[value::FLD_TIME_WORD]);
                 // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and
                 $val_grp = new phrase_group($this->usr);
-                $val_grp->set_id($val_row['phrase_group_id']);
+                $val_grp->set_id($val_row[phrase_group::FLD_ID]);
                 $val_grp->load();
                 $used_phr_lst = clone $val_grp->phr_lst;
                 log_debug('used_phr_lst ' . $used_phr_lst->dsp_id());
@@ -478,11 +468,13 @@ class phrase_group_list
                     log_debug('group ' . $grp_to_add->dsp_id() . ' used instead of ' . $val_grp->dsp_id() . ' because ' . $phr_frm->dsp_id() . ' and  ' . $phr_lst_fv_name . ' are part of the formula and have been remove from the phrase group selection');
                     $changed++;
                 }
+                /* TODO deprecate now
                 if ($this->add_grp_time_id($grp_to_add->id(), $val_row[value::FLD_TIME_WORD])) {
                     $added++;
                     $changed++;
                     log_debug('added ' . $added . ' in ' . dsp_count($this->grp_time_ids));
                 }
+                */
             }
         }
 

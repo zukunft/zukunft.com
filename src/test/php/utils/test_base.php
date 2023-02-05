@@ -867,17 +867,17 @@ class test_base
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return bool true if all tests are fine
      */
-    function assert_load_list_sql(sql_db $db_con, object $lst_obj, object $select_obj, object $select_obj2 = null, bool $by_source = false): bool
+    function assert_load_list_sql(sql_db $db_con, object $lst_obj, object $select_obj, bool $by_source = false): bool
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst_obj->load_sql($db_con, $select_obj, $select_obj2, $by_source);
+        $qp = $lst_obj->load_sql($db_con, $select_obj, $by_source);
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $lst_obj->load_sql($db_con, $select_obj, $select_obj2, $by_source);
+            $qp = $lst_obj->load_sql($db_con, $select_obj, $by_source);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;

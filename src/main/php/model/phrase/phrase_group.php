@@ -175,7 +175,7 @@ class phrase_group extends db_object
             $api_obj->add($phr->api_obj());
         }
         $api_obj->set_id($this->id);
-        $api_obj->set_name($this->grp_name);
+        $api_obj->set_name($this->name());
         return $api_obj;
     }
 
@@ -263,7 +263,7 @@ class phrase_group extends db_object
     function load_by_lst(phrase_list $phr_lst): bool
     {
         // TODO review
-        $phr_lst->ex_time();
+        // $phr_lst->ex_time();
         $this->phr_lst = $phr_lst;
         return $this->load();
     }
@@ -483,7 +483,7 @@ class phrase_group extends db_object
                 $db_con->usr_id = $this->user()->id();
                 $db_grp = $db_con->get1_old($sql);
                 if ($db_grp != null) {
-                    $this->id = $db_grp['phrase_group_id'];
+                    $this->id = $db_grp[phrase_group::FLD_ID];
                     if ($this->id > 0) {
                         log_debug('phrase_group->get_by_wrd_lst got id ' . $this->id);
                         $result = $this->load();
@@ -610,8 +610,7 @@ class phrase_group extends db_object
     function value(): value
     {
         $val = new value($this->usr);
-        $val->grp = $this;
-        $val->load_obj_vars();
+        $val->load_by_grp($this);
 
         log_debug($val->wrd_lst->name() . ' for "' . $this->user()->name . '" is ' . $val->number());
         return $val;
@@ -627,12 +626,6 @@ class phrase_group extends db_object
 
         global $db_con;
 
-        if ($time_wrd_id > 0) {
-            $sql_time = " time_word_id = " . $time_wrd_id . " ";
-        } else {
-            $sql_time = " (time_word_id IS NULL OR time_word_id = 0) ";
-        }
-
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $sql = "SELECT formula_value_id AS id,
@@ -641,7 +634,6 @@ class phrase_group extends db_object
                    last_update      AS upd
               FROM formula_values 
              WHERE phrase_group_id = " . $this->id . "
-               AND " . $sql_time . "
                AND user_id = " . $this->user()->id() . ";";
         $result = $db_con->get1_old($sql);
 
@@ -653,7 +645,6 @@ class phrase_group extends db_object
                      last_update      AS upd
                 FROM formula_values 
                WHERE phrase_group_id = " . $this->id . "
-                 AND " . $sql_time . "
                  AND (user_id = 0 OR user_id IS NULL);";
             $result = $db_con->get1_old($sql);
 
@@ -898,8 +889,7 @@ class phrase_group extends db_object
 
         // delete the related value
         $val = new value($this->usr);
-        $val->grp = $this;
-        $val->load_obj_vars();
+        $val->load_by_grp($this);
 
         if ($val->id > 0) {
             $val->del();

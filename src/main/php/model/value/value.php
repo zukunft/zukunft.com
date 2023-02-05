@@ -68,13 +68,11 @@ class value extends user_sandbox_value
     // object specific database and JSON object field names
     const FLD_ID = 'value_id';
     const FLD_VALUE = 'word_value';
-    const FLD_TIME_WORD = 'time_word_id';
     const FLD_LAST_UPDATE = 'last_update';
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
-        phrase_group::FLD_ID,
-        self::FLD_TIME_WORD
+        phrase_group::FLD_ID
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
@@ -110,9 +108,6 @@ class value extends user_sandbox_value
     // simple database fields
     public ?DateTime $last_update = null; // the time of the last update of fields that may influence the calculated results
 
-    // fields to deprecate
-    public ?phrase $time_phr;             // deprecation reason: the time phrase should no longer be seperated; has been the time (period) word object for this value
-
     // deprecated fields
     public ?DateTime $time_stamp = null;  // the time stamp for this value (if this is set, the time wrd is supposed to be empty and the value is saved in the time_series table)
 
@@ -141,8 +136,7 @@ class value extends user_sandbox_value
         $this->fill_api_obj($api_obj);
         $api_obj->set_number($this->number());
         if ($this->grp != null) {
-            // TODO activate
-            //$api_obj->set_grp($this->grp->api_obj());
+            $api_obj->set_grp($this->grp->api_obj());
         }
         return $api_obj;
     }
@@ -202,7 +196,6 @@ class value extends user_sandbox_value
         $this->phr_lst = null;
         $this->wrd_lst = null;
         $this->lnk_lst = null;
-        $this->time_phr = null;
         $this->update_time = null;
         $this->share_id = null;
         $this->protection_id = null;
@@ -229,7 +222,6 @@ class value extends user_sandbox_value
         $dsp_obj->wrd_lst = $this->wrd_lst;
         $dsp_obj->lnk_lst = $this->lnk_lst;
         $dsp_obj->grp = $this->grp;
-        $dsp_obj->time_phr = $this->time_phr;
         $dsp_obj->update_time = $this->update_time;
         $dsp_obj->share_id = $this->share_id;
         $dsp_obj->protection_id = $this->protection_id;
@@ -252,7 +244,7 @@ class value extends user_sandbox_value
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld =  self::FLD_ID
+        string $id_fld = self::FLD_ID
     ): bool
     {
         $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
@@ -261,7 +253,6 @@ class value extends user_sandbox_value
             // TODO check if phrase_group_id and time_word_id are user specific or time series specific
             $this->grp->set_id($db_row[phrase_group::FLD_ID]);
             $this->set_source_id($db_row[source::FLD_ID]);
-            $this->set_time_id($db_row[self::FLD_TIME_WORD]);
             $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE]);
         }
         return $result;
@@ -336,13 +327,76 @@ class value extends user_sandbox_value
      * added to value just to assign the class for the user sandbox object
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param int $id the id of the user sandbox object
+     * @param int $id the id of the value
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
     {
         return parent::load_sql_by_id($db_con, $id, $class);
+    }
+
+    /**
+     * create an SQL statement to retrieve a value by phrase group from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase_group $grp the id of the phrase group
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_grp(sql_db $db_con, phrase_group $grp, string $class = self::class): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'phrase_group_id', $class);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->user()->id());
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
+        $db_con->add_par_int($grp->id());
+        $qp->sql = $db_con->select_by_field(phrase_group::FLD_ID);
+
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a value by phrase group and time phrasefrom the database
+     * TODO deprecate
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase_group $grp the id of the phrase group
+     * @param phrase $time_phr the id of the phrase group
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_grp_and_time(
+        sql_db       $db_con,
+        phrase_group $grp,
+        phrase       $time_phr,
+        string       $class = self::class): sql_par
+    {
+        $query_name = 'phrase_group_id';
+        if ($grp->id <= 0) {
+            log_err('Phase group id missing');
+        } else {
+            if ($time_phr->id() <> 0) {
+                $query_name = 'phrase_group_and_time_id';
+            }
+        }
+
+        $qp = $this->load_sql($db_con, $query_name, $class);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->user()->id());
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
+        $db_con->add_par_int($grp->id());
+        $qp->sql = $db_con->select_by_field(phrase_group::FLD_ID);
+
+        $qp->par = $db_con->get_par();
+
+        return $qp;
     }
 
     /**
@@ -361,20 +415,9 @@ class value extends user_sandbox_value
         if ($this->id > 0) {
             $qp->name .= 'id';
         } elseif ($this->grp->id > 0) {
-            if ($this->get_time_id() <> 0) {
-                $qp->name .= 'phrase_group_and_time_id';
-            } else {
-                $qp->name .= 'phrase_group_id';
-            }
+            $qp->name .= 'phrase_group_id';
         } elseif ($this->phr_lst != null) {
             $phr_lst = clone $this->phr_lst;
-            if ($this->get_time_id() == 0) {
-                $time_phr = $this->phr_lst->time_useful();
-                if ($time_phr != null) {
-                    $this->time_phr = $time_phr;
-                }
-            }
-            $phr_lst->ex_time();
             $pos = 1;
             foreach ($phr_lst->lst() as $phr) {
                 $pos++;
@@ -382,11 +425,7 @@ class value extends user_sandbox_value
             if ($pos > 1) {
                 $qp->name .= $pos;
             }
-            $sql_name_time = '';
-            if ($this->get_time_id() <> 0) {
-                $sql_name_time = '_and_' . self::FLD_TIME_WORD;
-            }
-            $qp->name .= phrase::FLD_ID . $sql_name_time;
+            $qp->name .= phrase::FLD_ID;
         }
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
@@ -397,21 +436,10 @@ class value extends user_sandbox_value
         if ($this->id > 0) {
             $sql_where = $db_con->where_id(self::FLD_ID, $this->id, true);
         } elseif ($this->grp->id > 0) {
-            if ($this->get_time_id() <> 0) {
-                $sql_where = $db_con->where_par(array(phrase_group::FLD_ID, self::FLD_TIME_WORD), array($this->grp->id, $this->get_time_id()), true);
-            } else {
-                $sql_where = $db_con->where_par(array(phrase_group::FLD_ID), array($this->grp->id), true);
-            }
+            $sql_where = $db_con->where_par(array(phrase_group::FLD_ID), array($this->grp->id), true);
         } elseif ($this->phr_lst != null) {
             // create the SQL to select a phrase group which needs to inside load_sql for correct parameter counting
             $phr_lst = clone $this->phr_lst;
-            if ($this->get_time_id() == 0) {
-                $time_phr = $this->phr_lst->time_useful();
-                if ($time_phr != null) {
-                    $this->time_phr = $time_phr;
-                }
-            }
-            $phr_lst->ex_time();
 
             // the phrase groups with the least number of additional words that have at least one formula value
             $sql_grp_from = '';
@@ -436,11 +464,6 @@ class value extends user_sandbox_value
                          WHERE ' . $sql_grp_where . ')';
             $sql_where .= $sql_grp;
 
-            if ($this->get_time_id() <> 0) {
-                $db_con->add_par(sql_db::PAR_INT, $this->get_time_id());
-                $sql_where .= ' AND ' . self::FLD_TIME_WORD . ' = ' . $db_con->par_name() . ' ';
-            }
-
         } else {
             log_err('At least the id, phrase group or phrase list must be set to load a value', 'value->load');
         }
@@ -454,6 +477,37 @@ class value extends user_sandbox_value
         }
 
         return $qp;
+    }
+
+    /**
+     * load a value by the phrase group
+     * @param phrase_group $grp the id of the phrase group
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_grp(phrase_group $grp, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug($grp->dsp_id());
+        $qp = $this->load_sql_by_grp($db_con, $grp, $class);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a value by the phrase group
+     * @param phrase_group $grp the id of the phrase group
+     * @param phrase $time_phr the id of the phrase group
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_grp_and_time(phrase_group $grp, phrase $time_phr, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug($grp->dsp_id());
+        $qp = $this->load_sql_by_grp_and_time($db_con, $grp, $time_phr, $class);
+        return $this->load($qp);
     }
 
     /**
@@ -517,7 +571,7 @@ class value extends user_sandbox_value
     function load_best()
     {
         log_debug('value->load_best for ' . $this->dsp_id());
-        $this->load_obj_vars();
+        $this->load_by_id($this->id());
         // if not found try without scaling
         if ($this->id <= 0) {
             $this->load_phrases();
@@ -529,8 +583,7 @@ class value extends user_sandbox_value
                 $phr_lst_unscaled->ex_scaling();
                 log_debug('try unscaled with ' . $phr_lst_unscaled->dsp_id());
                 $grp_unscale = $phr_lst_unscaled->get_grp();
-                $this->grp->id = $grp_unscale->id;
-                $this->load_obj_vars();
+                $this->load_by_grp($grp_unscale);
                 // if not found try with converted measure
                 if ($this->id <= 0) {
                     // try to get a value with another measure
@@ -539,7 +592,7 @@ class value extends user_sandbox_value
                     log_debug('try converted with ' . $phr_lst_converted->dsp_id());
                     $grp_unscale = $phr_lst_converted->get_grp();
                     $this->grp->id = $grp_unscale->id;
-                    $this->load_obj_vars();
+                    $this->load_by_grp($grp_unscale);
                     // TODO:
                     // check if there are any matching values at all
                     // if yes, get the most often used phrase
@@ -584,12 +637,10 @@ class value extends user_sandbox_value
     {
         log_debug();
         // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
-        if ($this->grp->id > 0) {
+        if ($this->grp->id() > 0) {
             $this->load_grp_by_id();
         }
-        log_debug('load time');
-        $this->load_time_phrase();
-        log_debug('done (' . (new Exception)->getTraceAsString() . ')');
+        log_debug('done');
     }
 
     /**
@@ -664,34 +715,6 @@ class value extends user_sandbox_value
      */
 
     /**
-     * @return int|null the id of the time phrase or zero if no time phrase is defined
-     */
-    function get_time_id(): ?int
-    {
-        $result = 0;
-        if ($this->time_phr != null) {
-            $result = $this->time_phr->id;
-        }
-        return $result;
-    }
-
-    /**
-     * create the time phrase if needed and set the id
-     * @param int|null $id the id of the time phrase
-     */
-    function set_time_id(?int $id)
-    {
-        if ($id != null) {
-            if ($id <> 0) {
-                if ($this->time_phr == null) {
-                    $this->time_phr = new phrase($this->user());
-                }
-                $this->time_phr->id = $id;
-            }
-        }
-    }
-
-    /**
      * @return int the id of the source or zero if no source is defined
      */
     function get_source_id(): int
@@ -740,16 +763,6 @@ class value extends user_sandbox_value
     }
 
     /**
-     * just load the time word object based on the id loaded from the database
-     */
-    function load_time_phrase()
-    {
-        if ($this->get_time_id() <> 0) {
-            $this->time_phr->load_by_obj_par();
-        }
-    }
-
-    /**
      * load the source and return the source name
      */
     function source_name(): string
@@ -771,26 +784,6 @@ class value extends user_sandbox_value
      *  load object functions that extend the frontend functions
      */
 
-    //
-    function set_grp_and_time_by_ids(?array $ids): string
-    {
-        $result = '';
-        if ($ids != null) {
-            // 1. load the phrases parameters based on the ids
-            $result = $this->set_phr_lst_by_ids($ids);
-            // 2. extract the time from the phrase list
-            $result .= $this->set_time_by_phr_lst();
-            // 3. get the group based on the phrase list
-            $result .= $this->set_grp_by_ids();
-            if ($this->ids == null) {
-                log_debug('value->set_grp_and_time_by_ids ids are null');
-            } else {
-                log_debug('value->set_grp_and_time_by_ids "' . implode(",", $ids) . '" to "' . $this->grp->id . '" and ' . $this->get_time_id());
-            }
-        }
-        return $result;
-    }
-
     /**
      * rebuild the phrase list based on the phrase ids
      */
@@ -811,22 +804,6 @@ class value extends user_sandbox_value
                     }
                     $this->phr_lst = $phr_lst;
                 }
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * get the time based on the phrase id list
-     */
-    function set_time_by_phr_lst(): string
-    {
-        $result = '';
-        if (isset($this->phr_lst)) {
-            log_debug('value->set_time_by_phr_lst from ' . $this->phr_lst->dsp_name());
-            if ($this->get_time_id() == 0) {
-                $wrd_lst = $this->phr_lst->wrd_lst_all();
-                $this->time_phr = $wrd_lst->assume_time();
             }
         }
         return $result;
@@ -859,6 +836,24 @@ class value extends user_sandbox_value
         return $result;
     }
 
+    //
+    function set_grp_and_time_by_ids(?array $ids): string
+    {
+        $result = '';
+        if ($ids != null) {
+            // 1. load the phrases parameters based on the ids
+            $result = $this->set_phr_lst_by_ids($ids);
+            // 2. get the group based on the phrase list
+            $result .= $this->set_grp_by_ids();
+            if ($this->ids == null) {
+                log_debug('ids missing');
+            } else {
+                log_debug(implode(",", $ids) . ' to ' . $this->grp->id());
+            }
+        }
+        return $result;
+    }
+
     /**
      * exclude the time period word from the phrase list
      */
@@ -886,7 +881,7 @@ class value extends user_sandbox_value
 
         // reload the value to include all changes
         log_debug('value->check id ' . $this->id . ', for user ' . $this->user()->name);
-        $this->load_obj_vars();
+        $this->load_by_id($this->id());
         log_debug('value->check load phrases');
         $this->load_phrases();
         log_debug('value->check phrases loaded');
@@ -1034,12 +1029,6 @@ class value extends user_sandbox_value
                 }
             }
 
-            if ($key == exp_obj::FLD_TIME) {
-                $phr = new phrase($this->user());
-                $result->add($phr->import_obj($value, $do_save));
-                $this->time_phr = $phr;
-            }
-
             if ($key == exp_obj::FLD_NUMBER) {
                 if (is_numeric($value)) {
                     $this->number = $value;
@@ -1096,7 +1085,7 @@ class value extends user_sandbox_value
 
         // reload the value parameters
         if ($do_load) {
-            $this->load_obj_vars();
+            $this->load_by_id($this->id());
             log_debug('load phrases');
             $this->load_phrases();
         }
@@ -1143,12 +1132,6 @@ class value extends user_sandbox_value
                     $result->triples = $triples_lst;
                 }
             }
-        }
-
-        // add the time
-        if (isset($this->time_phr)) {
-            $result->time = $this->time_phr->name();
-            log_debug('got time ' . $this->time_phr->dsp_id());
         }
 
         // add the value itself
@@ -1201,12 +1184,6 @@ class value extends user_sandbox_value
         $result = '';
         if (isset($this->grp)) {
             $result .= $this->grp->name();
-        }
-        if (isset($this->time_phr)) {
-            if ($result <> '') {
-                $result .= ',';
-            }
-            $result .= $this->time_phr->name();
         }
 
         return $result;
@@ -1262,7 +1239,7 @@ class value extends user_sandbox_value
     {
         log_debug('value->fv_lst_depending group id "' . $this->grp->id . '" for user ' . $this->user()->name . '');
         $fv_lst = new formula_value_list($this->user());
-        $fv_lst->load($this->grp, null, true);
+        $fv_lst->load($this->grp, true);
 
         log_debug('done');
         return $fv_lst;
@@ -1503,14 +1480,6 @@ class value extends user_sandbox_value
             // $phr_lst->load();
             $grp_ids = $phr_lst->id_lst();
 
-            // add the time phrase id if needed
-            // TODO remove or replace with the series phrase id
-            if ($this->get_time_id() <> 0) {
-                if (!in_array($this->get_time_id(), $grp_ids)) {
-                    $grp_ids[] = $this->get_time_id();
-                }
-            }
-
             // read all existing phrase to value links for this value
             $lst = new value_phrase_link_list($this->user());
             $lst->load_by_value($this->user(), $this);
@@ -1683,7 +1652,7 @@ class value extends user_sandbox_value
 
         $this->last_update = new DateTime();
         $db_con->set_type(sql_db::TBL_VALUE);
-        if (!$db_con->update($this->id, 'last_update', 'Now()')) {
+        if (!$db_con->update($this->id, value::FLD_LAST_UPDATE, 'Now()')) {
             $result = 'setting of value update trigger failed';
         }
         log_debug('value->save_field_trigger_update timestamp of ' . $this->id . ' updated to "' . $this->last_update->format('Y-m-d H:i:s') . '"');
@@ -1805,34 +1774,6 @@ class value extends user_sandbox_value
         }
         log_debug('value->save_id_fields group updated for ' . $this->dsp_id());
 
-        if ($result == '') {
-            if ($db_rec->get_time_id() <> $this->get_time_id()) {
-                log_debug('value->save_id_fields to ' . $this->dsp_id() . ' from "' . $db_rec->dsp_id() . '" (standard ' . $std_rec->dsp_id() . ')');
-                $log = $this->log_upd();
-                $log->old_value = $db_rec->time_phr->name();
-                $log->old_id = $db_rec->get_time_id();
-                $log->new_value = $this->time_phr->dsp_name();
-                $log->new_id = $this->get_time_id();
-                $log->std_value = $std_rec->time_phr->name();
-                $log->std_id = $std_rec->get_time_id();
-                $log->row_id = $this->id;
-                $log->set_field(value::FLD_TIME_WORD);
-                if ($log->add()) {
-                    $db_con->set_type(sql_db::TBL_VALUE);
-                    if (!$db_con->update(
-                        $this->id,
-                        array("time_word_id"),
-                        array($this->get_time_id()))) {
-                        $result .= 'updating time word of value failed';
-                    }
-                }
-            }
-            log_debug('value->save_id_fields time updated for ' . $this->dsp_id());
-
-            // update the phrase links for fast searching
-            $result .= $this->upd_phr_links();
-        }
-
         // not yet active
         /*
         if ($db_rec->time_stamp <> $this->time_stamp) {
@@ -1844,12 +1785,11 @@ class value extends user_sandbox_value
           $log->row_id    = $this->id;
           $log->field     = 'time_stamp';
           if ($log->add()) {
-            $result .= $db_con->update($this->id, array("time_word_id"),
+            $result .= $db_con->update($this->id, array("time_stamp"),
                                                   array($this->time_stamp));
           }
         }
         */
-        log_debug('value->save_id_fields time updated for ' . $this->dsp_id());
 
         return $result;
     }
@@ -1863,13 +1803,12 @@ class value extends user_sandbox_value
         $result = '';
 
         // if the phrases or time has changed, check if value with the same phrases/time already exists
-        if ($db_rec->grp->id <> $this->grp->id or $db_rec->get_time_id() <> $this->get_time_id() or $db_rec->time_stamp <> $this->time_stamp) {
+        if ($db_rec->grp->id <> $this->grp->id or $db_rec->time_stamp <> $this->time_stamp) {
             // check if a value with the same phrases/time is already in the database
             $chk_val = new value($this->user());
-            $chk_val->grp->id = $this->grp->id;
-            $chk_val->time_phr = $this->time_phr;
-            $chk_val->time_stamp = $this->time_stamp;
-            $chk_val->load_obj_vars();
+            //$chk_val->time_phr = $this->time_phr;
+            //$chk_val->time_stamp = $this->time_stamp;
+            $chk_val->load_by_grp($this->grp);
             log_debug('value->save_id_if_updated check value loaded');
             if ($chk_val->id > 0) {
                 // TODO if the target value is already in the database combine the user changes with this values
@@ -1903,7 +1842,7 @@ class value extends user_sandbox_value
                 }
             }
         } else {
-            log_debug('value->save_id_if_updated no id field updated (group ' . $db_rec->grp->id . '=' . $this->grp->id . ', time ' . $db_rec->get_time_id() . '=' . $this->get_time_id() . ')');
+            log_debug('value->save_id_if_updated no id field updated (group ' . $db_rec->grp->id . '=' . $this->grp->id . ')');
         }
 
         log_debug('value->save_id_if_updated for ' . $this->dsp_id() . ' has been done');
@@ -1930,8 +1869,8 @@ class value extends user_sandbox_value
             // insert the value
             $db_con->set_type(sql_db::TBL_VALUE);
             $this->id = $db_con->insert(
-                array(phrase_group::FLD_ID, "time_word_id", "user_id", self::FLD_VALUE, self::FLD_LAST_UPDATE),
-                array($this->grp->id, $this->get_time_id(), $this->user()->id, $this->number, "Now()"));
+                array(phrase_group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE),
+                array($this->grp->id, $this->user()->id, $this->number, "Now()"));
             if ($this->id > 0) {
                 // update the reference in the log
                 if (!$log->add_ref($this->id)) {
@@ -1985,15 +1924,14 @@ class value extends user_sandbox_value
             log_debug('value->save check if a value for "' . $this->name() . '" and user ' . $this->user()->name . ' is already in the database');
             // check if a value for this words is already in the database
             $db_chk = new value($this->user());
-            $db_chk->grp = $this->grp;
-            $db_chk->time_phr = $this->time_phr;
-            $db_chk->time_stamp = $this->time_stamp;
-            $db_chk->load_obj_vars();
+            //$db_chk->time_phr = $this->time_phr;
+            //$db_chk->time_stamp = $this->time_stamp;
+            $db_chk->load_by_grp($this->grp);
             if ($db_chk->id > 0) {
-                if ($this->grp != null and $this->time_phr != null and !$this->user()->is_set()) {
-                    log_debug('value->save value for "' . $this->grp->name() . '"@"' . $this->time_phr->name() . '" and user ' . $this->user()->name . ' is already in the database and will be updated');
+                if ($this->grp->id != 0 and !$this->user()->is_set()) {
+                    log_debug('value for "' . $this->grp->name() . '" and user ' . $this->user()->name . ' is already in the database and will be updated');
                 } else {
-                    log_debug('value->save value is empty');
+                    log_debug('value is empty');
                 }
                 $this->id = $db_chk->id;
             }
@@ -2004,15 +1942,14 @@ class value extends user_sandbox_value
 
             $result .= $this->add($db_con)->get_last_message();
         } else {
-            log_debug('value->save update id ' . $this->id . ' to save "' . $this->number . '" for user ' . $this->user()->id());
+            log_debug('update id ' . $this->id . ' to save "' . $this->number . '" for user ' . $this->user()->id());
             // update a value
             // TODO: if no one else has ever changed the value, change to default value, else create a user overwrite
 
             // read the database value to be able to check if something has been changed
             // done first, because it needs to be done for user and general values
             $db_rec = new value($this->user());
-            $db_rec->id = $this->id;
-            $db_rec->load_obj_vars();
+            $db_rec->load_by_id($this->id);
             log_debug("old database value loaded (" . $db_rec->number . ") with group " . $db_rec->grp->id . ".");
             $std_rec = new value($this->user()); // user must also be set to allow to take the ownership
             $std_rec->id = $this->id;

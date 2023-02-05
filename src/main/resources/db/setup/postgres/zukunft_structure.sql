@@ -303,7 +303,6 @@ CREATE TABLE IF NOT EXISTS formula_values
     source_phrase_group_id bigint                DEFAULT NULL,
     source_time_id    bigint                DEFAULT NULL,
     phrase_group_id        bigint                DEFAULT 0,
-    time_word_id           bigint                DEFAULT 0,
     formula_value          double precision NOT NULL,
     last_update            timestamp        NULL DEFAULT NULL,
     dirty                  smallint              DEFAULT NULL
@@ -311,7 +310,6 @@ CREATE TABLE IF NOT EXISTS formula_values
 
 COMMENT ON TABLE formula_values is 'temp table to cache the formula results';
 COMMENT ON COLUMN formula_values.phrase_group_id is 'temp field for fast data collection; no single links to terms because this is just a cache table and can be recreated by the underlying tables';
-COMMENT ON COLUMN formula_values.time_word_id is 'special field just to speed up queries';
 COMMENT ON COLUMN formula_values.last_update is 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty';
 
 -- --------------------------------------------------------
@@ -1075,7 +1073,6 @@ CREATE TABLE IF NOT EXISTS values
     word_value      double precision NOT NULL,
     source_id       bigint                    DEFAULT NULL,
     phrase_group_id bigint                    DEFAULT NULL,
-    time_word_id    bigint                    DEFAULT NULL,
     last_update     timestamp        NULL     DEFAULT NULL,
     description     text,
     excluded        smallint                  DEFAULT NULL,
@@ -1086,7 +1083,6 @@ CREATE TABLE IF NOT EXISTS values
 COMMENT ON TABLE values is 'long list';
 COMMENT ON COLUMN values.user_id is 'the owner / creator of the value';
 COMMENT ON COLUMN values.phrase_group_id is 'temp field to increase speed created by the value term links';
-COMMENT ON COLUMN values.time_word_id is 'special field just to speed up queries';
 COMMENT ON COLUMN values.last_update is 'for fast recalculation';
 COMMENT ON COLUMN values.description is 'temp field used during dev phase for easy value to trm assigns';
 COMMENT ON COLUMN values.excluded is 'the default exclude setting for most users';
@@ -1764,7 +1760,7 @@ CREATE INDEX formula_link_type_idx ON formula_links (link_type_id);
 --
 -- Indexes for table formula_values
 --
-CREATE UNIQUE INDEX formula_value_idx ON formula_values (formula_id, user_id, phrase_group_id, time_word_id,
+CREATE UNIQUE INDEX formula_value_idx ON formula_values (formula_id, user_id, phrase_group_id,
                                                          source_phrase_group_id, source_time_id);
 CREATE INDEX formula_value_user_idx ON formula_values (user_id);
 
@@ -1953,7 +1949,6 @@ CREATE INDEX user_triple_user_idx ON user_triples (user_id);
 CREATE INDEX value_user_idx ON "values" (user_id);
 CREATE INDEX value_source_idx ON "values" (source_id);
 CREATE INDEX value_phrase_group_idx ON "values" (phrase_group_id);
-CREATE INDEX value_time_word_idx ON "values" (time_word_id);
 CREATE INDEX value_protection_idx ON "values" (protect_id);
 
 --

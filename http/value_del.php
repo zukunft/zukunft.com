@@ -68,8 +68,7 @@ if ($usr->id() > 0) {
 
         // create the value object to have an object to update the parameters
         $val = new value($usr);
-        $val->set_id($val_id);
-        $val->load_obj_vars();
+        $val->load_by_id($val_id);
 
         if ($confirm == 1) {
             // actually delete the value (at least for this user)

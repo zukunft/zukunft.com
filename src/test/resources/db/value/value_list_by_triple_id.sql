@@ -7,7 +7,6 @@ PREPARE value_list_by_triple_id (int, int, int) AS
            CASE WHEN (u.last_update IS NULL) THEN v.last_update ELSE u.last_update END AS last_update,
            CASE WHEN (u.source_id IS NULL) THEN v.source_id ELSE u.source_id END       AS source_id,
            v.phrase_group_id,
-           v.time_word_id,
            g.word_ids,
            g.triple_ids
     FROM phrase_groups g,
@@ -19,5 +18,5 @@ PREPARE value_list_by_triple_id (int, int, int) AS
                          FROM value_phrase_links
                          WHERE phrase_id = $2
                          GROUP BY value_id)
-    ORDER BY v.phrase_group_id, v.time_word_id
+    ORDER BY v.phrase_group_id
     LIMIT $3;

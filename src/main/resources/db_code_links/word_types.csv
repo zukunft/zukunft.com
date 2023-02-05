@@ -19,3 +19,4 @@ word_type_id, type_name, description, code_id, scaling_factor, word_symbol
 18, 'measure divisor', 'a measure divisor like per year, per kg, ...', 'measure_divisor', NULL, ''
 19, 'latest', 'to select the latest value by a time jump type e.g. latest year', 'latest', NULL, ''
 20, 'key', 'force faster search and if two keys are connected with the verb is all child values are expected to be equal', 'key', NULL, ''
+21, 'information', 'this phrase is used mainly for information purpose and for the selection the program tries to another search without this phrase', 'information', NULL, ''

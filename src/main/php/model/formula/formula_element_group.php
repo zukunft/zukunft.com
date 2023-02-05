@@ -328,18 +328,10 @@ class formula_element_group
             // try to get a normal value set by the user directly for the phrase list
             // display the word group value and offer the user to change it
             // e.g. if the user has overwritten a formula value use the user overwrite
-            if (isset($val_time_phr)) {
-                log_debug('load word value for ' . $val_phr_grp->dsp_id() . ' and ' . $val_time_phr->dsp_id());
-            } else {
-                log_debug('load word value for ' . $val_phr_lst->dsp_id());
-            }
+            log_debug('load word value for ' . $val_phr_lst->dsp_id());
             $wrd_val = new value($this->usr);
-            $wrd_val->grp = $val_phr_grp;
-            if ($val_time_phr != null) {
-                $wrd_val->time_phr = $val_time_phr;
-            }
             // TODO create $wrd_val->load_best();
-            $wrd_val->load_obj_vars();
+            $wrd_val->load_by_grp($val_phr_grp);
 
             if ($wrd_val->isset()) {
                 // save the value to the result

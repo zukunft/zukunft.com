@@ -267,7 +267,6 @@
       "from": "savings ",
       "verb": "scaled by",
       "to": "production"
-
     },
     {
       "name": "second",
@@ -310,9 +309,9 @@
         "Wind Turbine",
         "Top Seller",
         "Power rating",
-        "kW"
+        "kW",
+        "2022"
       ],
-      "time": "2022",
       "number": "3000",
       "source": "Windertrag Rechner Volker Quaschning"
     },
@@ -321,9 +320,9 @@
         "Wind Turbine",
         "Top Seller",
         "Diameter",
-        "meter"
+        "meter",
+        "2022"
       ],
-      "time": "2022",
       "number": "115",
       "source": "Windertrag Rechner Volker Quaschning"
     },
@@ -333,9 +332,9 @@
         "Top Seller",
         "Turbine",
         "surface",
-        "m²"
+        "m²",
+        "2022"
       ],
-      "time": "2022",
       "number": "10386.9",
       "source": "Windertrag Rechner Volker Quaschning"
     },
@@ -343,9 +342,9 @@
       "words": [
         "Wind Turbine",
         "Top Seller",
-        "cP,Betz"
+        "cP,Betz",
+        "2022"
       ],
-      "time": "2022",
       "number": "0.476",
       "source": "Windertrag Rechner Volker Quaschning"
     },

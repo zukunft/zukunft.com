@@ -1,4 +1,4 @@
-PREPARE value_by_phrase_group_id (int, int) AS
+PREPARE value_by_3phrase_id (int, int, int) AS
     SELECT s.value_id,
            u.value_id                                                            AS user_value_id,
            s.user_id,
@@ -9,7 +9,11 @@ PREPARE value_by_phrase_group_id (int, int) AS
            CASE WHEN (u.excluded           IS NULL) THEN s.excluded           ELSE u.excluded           END  AS excluded,
            CASE WHEN (u.protect_id IS NULL) THEN s.protect_id ELSE u.protect_id END  AS protect_id,
            u.share_type_id
-
-    FROM values s
-             LEFT JOIN user_values u ON s.value_id = u.value_id AND u.user_id = $1
-    WHERE s.phrase_group_id = $2;
+      FROM values s
+ LEFT JOIN user_values u ON s.value_id = u.value_id AND u.user_id = $1
+     WHERE s.phrase_group_id IN (SELECT l1.phrase_group_id
+                                  FROM phrase_group_word_links l1,
+                                       phrase_group_word_links l2
+                                 WHERE l1.word_id = $2
+                                   AND l1.phrase_group_id = l2.phrase_group_id
+                                   AND l2.word_id = $3);

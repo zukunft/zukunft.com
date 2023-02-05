@@ -188,14 +188,6 @@ class value_list extends sandbox_list
                     if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
                         $val = new value($this->user());
                         $val->row_mapper($db_val);
-                        // TODO either integrate this in the query or load this with one sql for all values
-                        if ($db_val[value::FLD_TIME_WORD] <> 0) {
-                            $time_phr = new phrase($this->user());
-                            $time_phr->set_id($db_val[value::FLD_TIME_WORD]);
-                            if ($time_phr->load_by_obj_par()) {
-                                $val->time_phr = $time_phr;
-                            }
-                        }
                         $this->lst[] = $val;
                         $result = true;
                     }
@@ -272,12 +264,11 @@ class value_list extends sandbox_list
         $sql = "SELECT v.value_id,
                       u.value_id AS user_value_id,
                       v.user_id,
-                    " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('last_update', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                      v.phrase_group_id,
-                      v.time_word_id
+                    " . $db_con->get_usr_field(value::FLD_LAST_UPDATE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(source::FLD_ID, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                      v.phrase_group_id
                   FROM " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
             LEFT JOIN user_values u ON u.value_id = v.value_id 
                                     AND u.user_id = " . $this->user()->id() . " 
@@ -285,7 +276,7 @@ class value_list extends sandbox_list
                                         FROM value_phrase_links 
                                         WHERE phrase_id IN (" . implode(",", $this->phr_lst->id_lst()) . ")
                                     GROUP BY value_id )
-              ORDER BY v.phrase_group_id, v.time_word_id;";
+              ORDER BY v.phrase_group_id;";
         return $sql;
     }
 
@@ -356,13 +347,12 @@ class value_list extends sandbox_list
 
         if ($sql_where <> '') {
             $sql = "SELECT DISTINCT v.value_id,
-                    " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('last_update', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(value::FLD_LAST_UPDATE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(source::FLD_ID, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                        v.user_id,
-                       v.phrase_group_id,
-                       v.time_word_id
+                       v.phrase_group_id
                   FROM " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
              LEFT JOIN user_values u ON u.value_id = v.value_id 
                                     AND u.user_id = " . $this->user()->id() . " 
@@ -370,7 +360,7 @@ class value_list extends sandbox_list
                                          FROM " . $sql_from . "
                                               " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v
                                               " . $sql_where . " )
-              ORDER BY v.phrase_group_id, v.time_word_id;";
+              ORDER BY v.phrase_group_id;";
         }
 
         if ($get_name) {
@@ -403,11 +393,10 @@ class value_list extends sandbox_list
                             //$val->row_mapper($db_val);
                             $val->set_id($db_val[value::FLD_ID]);
                             $val->owner_id = $db_val[user_sandbox::FLD_USER];
-                            $val->set_number($db_val['word_value']);
-                            $val->set_source_id($db_val['source_id']);
-                            $val->last_update = get_datetime($db_val['last_update']);
-                            $val->grp->set_id($db_val['phrase_group_id']);
-                            $val->set_time_id($db_val[value::FLD_TIME_WORD]);
+                            $val->set_number($db_val[value::FLD_VALUE]);
+                            $val->set_source_id($db_val[source::FLD_ID]);
+                            $val->last_update = get_datetime($db_val[value::FLD_LAST_UPDATE]);
+                            $val->grp->set_id($db_val[phrase_group::FLD_ID]);
                             $this->lst[] = $val;
                         }
                     }
@@ -466,12 +455,6 @@ class value_list extends sandbox_list
                 } else {
                     $result->add_message('Cannot add timestamp "' . $value . '" when importing ' . $val->dsp_id());
                 }
-            }
-
-            if ($key == exp_obj::FLD_TIME) {
-                $phr = new phrase($this->user());
-                $result->add($phr->import_obj($value, $do_save));
-                $val->time_phr = $phr;
             }
 
             if ($key == share_type::JSON_FLD) {
@@ -553,10 +536,9 @@ class value_list extends sandbox_list
                 $result->context = $phr_lst;
             }
 
-            // add the time
-            if (isset($val0->time_phr)) {
-                $result->time = $val0->time_phr->name();
-            }
+            // order the context to make the string result reproducible
+            ksort($result->context);
+
 
             // add the share type
             log_debug('get share');

@@ -58,10 +58,9 @@ function run_math_test(testing $t)
     /*$formula_id = $formula_value;
     $target = "45548";
     $word_array =           array($word_abb,$word_revenues,$word_CHF);
-    $word_ids = zut_sql_ids(array($word_abb,$word_revenues,$word_CHF));
-    $time_word_id = $word_2013;
+    $word_ids = zut_sql_ids(array($word_abb,$word_revenues,$word_CHF, $word_2013));
     $debug = false;
-    $result = zuc_parse($formula_id, ZUP_RESULT_TYPE_VALUE, $word_ids, $time_word_id);
+    $result = zuc_parse($formula_id, ZUP_RESULT_TYPE_VALUE, $word_ids);
     $t->dsp(", zuc_parse: the result for formula with id ".$formula_id, $target, $result); */
 
     // test zuc_is_text_only

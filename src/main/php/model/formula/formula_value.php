@@ -68,7 +68,6 @@ class formula_value extends db_object
         self::FLD_SOURCE_GRP,
         self::FLD_SOURCE_TIME,
         self::FLD_GRP,
-        self::FLD_TIME,
         self::FLD_VALUE,
         self::FLD_LAST_UPDATE,
         self::FLD_DIRTY
@@ -146,7 +145,6 @@ class formula_value extends db_object
                 $this->src_phr_grp_id = $db_row[self::FLD_SOURCE_GRP];
                 $this->src_time_id = $db_row[self::FLD_SOURCE_TIME];
                 $this->phr_grp_id = $db_row[self::FLD_GRP];
-                $this->time_id = $db_row[self::FLD_TIME];
                 $this->value = $db_row[self::FLD_VALUE];
                 $this->last_update = get_datetime($db_row[self::FLD_LAST_UPDATE]);
                 $this->last_val_update = get_datetime($db_row[self::FLD_LAST_UPDATE]);
@@ -294,10 +292,6 @@ class formula_value extends db_object
         $fld_lst[] = self::FLD_GRP;
         $qp->name .= '_time';
         $db_con->set_name($qp->name);
-        if ($this->time_id > 0) {
-            $db_con->add_par(sql_db::PAR_INT, $this->time_id);
-            $fld_lst[] = self::FLD_TIME;
-        }
         return $this->load_by_grp_sql_select($db_con, $qp, $fld_lst);
     }
 
@@ -581,14 +575,6 @@ class formula_value extends db_object
             }
             // and include the result words in the search, because one source word list can result to two result word
             // e.g. one time specific and one general
-            if ($this->time_id > 0) {
-                $qp->name .= '_time_id';
-                $db_con->add_par(sql_db::PAR_INT, $this->time_id);
-                $sql_time = " time_word_id = " . $db_con->par_name() . " ";
-            } else {
-                $qp->name .= '_no_time_id';
-                $sql_time = " (time_word_id = 0 OR time_word_id IS NULL) ";
-            }
             // select the result based on words
             $sql_wrd = "";
             if ($this->phr_grp_id > 0 and $this->user()->id() > 0) {
@@ -618,15 +604,13 @@ class formula_value extends db_object
             if ($sql_src_wrd <> '' and $sql_wrd <> '') {
                 $sql_where = $sql_src_time
                     . $sql_src_wrd
-                    . $sql_time
                     . $sql_wrd
                     . $sql_frm
                     . $sql_order;
             } elseif ($sql_wrd <> '') {
                 // if only the target value list is set, get the "best" result
                 // TODO define what is the best result
-                $sql_where = $sql_time
-                    . $sql_wrd
+                $sql_where = $sql_wrd
                     . $sql_frm
                     . $sql_order;
             }
@@ -696,15 +680,9 @@ class formula_value extends db_object
                             // count the number of phrases per group
                             // and add the user specific phrase links
                             // select also the time
-                            $sql_time = '';
-                            if ($this->time_id > 0) {
-                                $qp->name .= '_time_wrd_id';
-                                $db_con->add_par(sql_db::PAR_INT, $this->time_id);
-                                $sql_time = ' AND time_word_id = ' . $this->time_id . ' ';
-                            }
                             $sql_val = "SELECT formula_value_id 
                             FROM formula_values
-                          WHERE phrase_group_id IN (" . $sql_grp . ") " . $sql_time . ";";
+                          WHERE phrase_group_id IN (" . $sql_grp . ");";
                             log_debug('sql val "' . $sql_val . '"');
                             //$db_con = new mysql;
                             $db_con->usr_id = $this->user()->id();
@@ -907,12 +885,6 @@ class formula_value extends db_object
                 }
             }
             */
-
-            if ($key == exp_obj::FLD_TIME) {
-                $phr = new phrase($this->user());
-                $result->add($phr->import_obj($fv, $do_save));
-                $this->time_phr = $phr;
-            }
 
             if ($key == exp_obj::FLD_NUMBER) {
                 $this->value = $fv;
@@ -1380,7 +1352,6 @@ class formula_value extends db_object
                 FROM formula_values 
                WHERE formula_id IN (" . sql_array($frm_ids) . ")
                  AND phrase_group_id = " . $this->phr_grp_id . "
-                 AND time_word_id    = " . $this->time_id . "
                  AND user_id         = " . $this->user()->id() . ";";
             //$db_con = New mysql;
             $db_con->usr_id = $this->user()->id();
@@ -1605,7 +1576,9 @@ class formula_value extends db_object
             if ($row_id > 0) {
                 if ($db_con->sf($db_val) <> $db_con->sf($this->value)) {
                     $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
-                    if ($db_con->update($row_id, array('formula_value', 'last_update'), array($this->value, 'Now()'))) {
+                    if ($db_con->update($row_id,
+                        array(formula_value::FLD_VALUE, formula_value::FLD_LAST_UPDATE),
+                        array($this->value, 'Now()'))) {
                         $this->id = $row_id;
                         $result = $row_id;
                     }
@@ -1620,21 +1593,19 @@ class formula_value extends db_object
                 $field_values = array();
                 $field_names[] = formula::FLD_ID;
                 $field_values[] = $this->frm->id();
-                $field_names[] = 'formula_value';
+                $field_names[] = formula_value::FLD_VALUE;
                 $field_values[] = $this->value;
-                $field_names[] = 'phrase_group_id';
+                $field_names[] = formula_value::FLD_GRP;
                 $field_values[] = $this->phr_grp_id;
-                $field_names[] = value::FLD_TIME_WORD;
-                $field_values[] = $this->time_id;
-                $field_names[] = 'source_phrase_group_id';
+                $field_names[] = formula_value::FLD_SOURCE_GRP;
                 $field_values[] = $this->src_phr_grp_id;
-                $field_names[] = 'source_time_id';
+                $field_names[] = formula_value::FLD_SOURCE_TIME;
                 $field_values[] = $this->src_time_id;
                 if (!$this->is_std) {
                     $field_names[] = user_sandbox::FLD_USER;
                     $field_values[] = $this->user()->id();
                 }
-                $field_names[] = 'last_update';
+                $field_names[] = formula_value::FLD_LAST_UPDATE;
                 //$field_values[] = 'Now()'; // replaced with time of last change that has been included in the calculation
                 $field_values[] = $this->last_val_update->format('Y-m-d H:i:s');
                 $db_con->set_type(sql_db::TBL_FORMULA_VALUE);

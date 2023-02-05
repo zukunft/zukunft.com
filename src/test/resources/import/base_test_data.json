@@ -141,27 +141,27 @@
     {
       "words": [
         "Zurich (City)",
-        "Population"
+        "Population",
+        "2018 (Year)"
       ],
-      "time": "2018 (Year)",
       "number": "415215",
       "source": "Federal Statistical Office - Ständige Wohnbevölkerung nach Staatsangehörigkeitskategorie, Geschlecht und Gemeinde, Provisorische Jahresergebnisse, 2018"
     },
     {
       "words": [
         "Zurich (Canton)",
-        "Population"
+        "Population",
+        "2019 (Year)"
       ],
-      "time": "2019 (Year)",
       "number": "1539275",
       "source": "STAT-TAB – interaktive Tabellen - Bestand am 31. Dezember - Zürich Staatsangehörigkeit (Kategorie) - Total Geschlecht - Total"
     },
     {
       "words": [
         "Zurich Insurance",
-        "Employee"
+        "Employee",
+        "2020 (Year)"
       ],
-      "time": "2020 (Year)",
       "number": "52930",
       "source": "Zurich Insurance Group Ltd - Annual Report 2020"
     }

@@ -83,9 +83,7 @@ class phrase_list_unit_tests
         $phr_lst = $this->get_phrase_list();
         $phr_lst_ex_time = clone $phr_lst;
         $phr_lst_ex_time->ex_time();
-        $result = true;
-        $target = true;
-        $t->dsp('phrase_list->ex_time', $target, $result);
+        $t->dsp('phrase_list->ex_time', true, true);
         $result = $phr_lst_ex_time->dsp_id();
         $target = $this->get_phrase_list_ex_time()->dsp_id();
         $t->dsp('phrase_list->ex_time names', $target, $result);

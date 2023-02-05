@@ -97,6 +97,14 @@ function db_check_missing_owner(sql_db $db_con): bool
 // the version 0.0.3 is the first version, which has a build in upgrade process
 function db_upgrade_0_0_3(sql_db $db_con): string
 {
+    // prepare to remove the time word from the values
+    $msg = db_move_time_phrase_to_group();
+    if ($msg->is_ok()) {
+        //
+        $msg->add($db_con->del_field(sql_db::TBL_VALUE, 'time_word_id'));
+        $msg->add($db_con->del_field(sql_db::TBL_FORMULA_VALUE, 'time_word_id'));
+    }
+
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
     $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
     // TODO check if change has been successful
@@ -305,6 +313,18 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     return $result;
 }
 
+// TODO finish
+function db_move_time_phrase_to_group(): user_message
+{
+    $msg = new user_message();
+    // get all values where the time word is used
+    $qp = new sql_par(value::class);
+
+    // loop over values that needs to be adjusted
+    // create the new group including the time
+    // update the value
+    return $msg;
+}
 
 /**
  * upgrade the database from any version prior of 0.0.4

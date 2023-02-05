@@ -115,14 +115,6 @@ class user_sandbox_value extends user_sandbox
         if (isset($this->grp)) {
             $result .= $this->grp->dsp_id();
         }
-        if (isset($this->time_phr)) {
-            if ($result <> '') {
-                $result .= '@';
-            }
-            if (gettype($this->time_phr) == 'object') {
-                $result .= $this->time_phr->dsp_id();
-            }
-        }
         if ($this->user()->is_set()) {
             $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }

@@ -57,15 +57,10 @@ if ($usr->id() > 0) {
     $wrd_lst->load_by_names($word_names);
 
     // get time word
-    $time_word_id = 0;
-    /*  if (zut_has_time($word_names)) {
-        $time_word_lst = zut_time_lst($word_names);
-        // shortcut, replace with a most_useful function
-        $time_word_id = $time_word_lst[0];
-        $word_names = zu_lst_not_in($word_names, $time_word_id);
-      } else {
-        $time_word_id = zut_get_max_time($word_names[0], $word_names);
-      }
+    /*
+      $time_word_lst = zut_time_lst($word_names);
+      // shortcut, replace with a most_useful function
+      $word_names = zu_lst_not_in($word_names);
       zu_debug("-> time word (".$time_word_id.")"); */
     log_debug("other words (" . implode(",", $word_names) . ")");
 

@@ -4010,6 +4010,31 @@ class sql_db
     }
 
     /**
+     * remove a database column but only if needed
+     * @param string $table_name
+     * @param string $field_name
+     * @return user_message ok or the message that should be shown to the user
+     */
+    function del_field(string $table_name, string $field_name): user_message
+    {
+        $result = new user_message();
+
+        // adjust the parameters to the used database used
+        $table_name = $this->get_table_name($table_name);
+
+        // check if the old column name is still valid
+        if ($this->has_column($table_name, $field_name)) {
+
+            // actually add the column
+            $sql = 'ALTER TABLE IF EXISTS ' . $this->name_sql_esc($table_name) .
+                ' DROP COLUMN IF EXISTS ' . $this->name_sql_esc($field_name) . ';';
+            $result->add_message($this->exe_try('Deleting column ' . $field_name . ' of ' . $table_name, $sql));
+        }
+
+        return $result;
+    }
+
+    /**
      * create an SQL statement to change the name of a column
      *
      * @param string $table_name

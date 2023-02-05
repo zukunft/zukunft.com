@@ -56,8 +56,7 @@ class value_unit_db_tests
             array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020)
         );
         $val = new value($usr);
-        $val->grp = $phr_lst->get_grp();
-        $val->load_obj_vars();
+        $val->load_by_grp($phr_lst->get_grp());
         $result = $val->number();
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->assert($test_name, $result, $target);

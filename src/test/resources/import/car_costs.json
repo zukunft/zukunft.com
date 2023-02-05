@@ -313,9 +313,9 @@
         "CO2",
         "emission",
         "t",
-        "luxury hybrid car"
+        "luxury hybrid car",
+        "2013"
       ],
-      "time": "2013",
       "number": "8",
       "share": "public",
       "source": "Life cycle environmental and cost comparison of current and future passenger cars under different energy scenarios"
@@ -327,9 +327,9 @@
         "CO2",
         "emission",
         "t",
-        "electric car"
+        "electric car",
+        "2015"
       ],
-      "time": "2015",
       "number": "5",
       "share": "public",
       "source": "Life cycle environmental and cost comparison of current and future passenger cars under different energy scenarios"
@@ -338,9 +338,9 @@
       "words": [
         "car",
         "product lifetime",
-        "km"
+        "km",
+        "2013"
       ],
-      "time": "2013",
       "number": "150000",
       "share": "public"
     },
@@ -348,9 +348,9 @@
       "words": [
         "car",
         "km",
-        "at purchase"
+        "at purchase",
+        "2014"
       ],
-      "time": "2014",
       "number": "11,000",
       "share": "public"
     },
@@ -358,9 +358,9 @@
       "words": [
         "car",
         "CHF",
-        "at purchase"
+        "at purchase",
+        "2014"
       ],
-      "time": "2014",
       "number": "41,000",
       "share": "public"
     },
@@ -368,9 +368,9 @@
       "words": [
         "car",
         "product lifetime",
-        "year"
+        "year",
+        "2013"
       ],
-      "time": "2013",
       "number": "10",
       "share": "public"
     },
@@ -379,9 +379,9 @@
         "car",
         "km",
         "per year",
-        "min"
+        "min",
+        "2020"
       ],
-      "time": "2020",
       "number": "4,000",
       "share": "public"
     },
@@ -390,9 +390,9 @@
         "car",
         "km",
         "per year",
-        "min to max factor"
+        "min to max factor",
+        "2020"
       ],
-      "time": "2020",
       "number": "3",
       "share": "public"
     },
@@ -402,9 +402,9 @@
         "CO2",
         "emission",
         "g",
-        "per km"
+        "per km",
+        "2020"
       ],
-      "time": "2020",
       "number": "157",
       "share": "public"
     },
@@ -414,9 +414,9 @@
         "CHF",
         "CO2",
         "emission",
-        "per t"
+        "per t",
+        "2020"
       ],
-      "time": "2020",
       "number": "1,100",
       "share": "public"
     },
@@ -426,9 +426,9 @@
         "costs",
         "insurance",
         "per year",
-        "CHF"
+        "CHF",
+        "2020"
       ],
-      "time": "2020",
       "number": "1,800",
       "share": "public"
     },
@@ -437,9 +437,9 @@
         "luxury hybrid car",
         "tax",
         "per year",
-        "CHF"
+        "CHF",
+        "2020"
       ],
-      "time": "2020",
       "number": "800",
       "share": "public"
     },
@@ -449,9 +449,9 @@
         "costs",
         "car maintenance",
         "per year",
-        "CHF"
+        "CHF",
+        "2020"
       ],
-      "time": "2020",
       "number": "1,500",
       "share": "public"
     },
@@ -461,9 +461,9 @@
         "diesel",
         "consumption",
         "l",
-        "per 100 km"
+        "per 100 km",
+        "2020"
       ],
-      "time": "2020",
       "number": "6",
       "share": "public"
     },
@@ -473,9 +473,9 @@
         "costs",
         "insurance",
         "per year",
-        "CHF"
+        "CHF",
+        "2020"
       ],
-      "time": "2020",
       "number": "800",
       "share": "public"
     },
@@ -484,9 +484,9 @@
         "electric car",
         "tax",
         "per year",
-        "CHF"
+        "CHF",
+        "2020"
       ],
-      "time": "2020",
       "number": "400",
       "share": "public"
     },
@@ -496,9 +496,9 @@
         "costs",
         "car maintenance",
         "per year",
-        "CHF"
+        "CHF",
+        "2020"
       ],
-      "time": "2020",
       "number": "500",
       "share": "public"
     },
@@ -506,9 +506,9 @@
       "words": [
         "electric car",
         "kWh",
-        "per 100 km"
+        "per 100 km",
+        "2020"
       ],
-      "time": "2020",
       "number": "16.00",
       "share": "public"
     },
@@ -516,9 +516,9 @@
       "words": [
         "diesel",
         "CHF",
-        "per litre"
+        "per litre",
+        "2020"
       ],
-      "time": "2020",
       "number": "1.50",
       "share": "public"
     },
@@ -527,9 +527,9 @@
         "diesel",
         "CO2",
         "emission",
-        "pre litre"
+        "pre litre",
+        "2020"
       ],
-      "time": "2020",
       "number": "157",
       "share": "public"
     },
@@ -538,9 +538,9 @@
         "costs",
         "per day",
         "CHF",
-        "luxury hybrid car"
+        "luxury hybrid car",
+        "2020"
       ],
-      "time": "2020",
       "number": "10",
       "share": "personal",
       "source": "personal agreement"
@@ -550,9 +550,9 @@
         "costs",
         "per km",
         "CHF",
-        "luxury hybrid car"
+        "luxury hybrid car",
+        "2020"
       ],
-      "time": "2020",
       "number": "0.7",
       "share": "personal",
       "source": "personal agreement"

@@ -78,8 +78,7 @@ class testing extends test_api
                 if ($val_id > 0) {
                     // request to delete the added test value
                     $val = new value($this->usr1);
-                    $val->set_id($val_id);
-                    $val->load_obj_vars();
+                    $val->load_by_id($val_id);
                     // check again, because some id may be added twice
                     if ($val->id() > 0) {
                         $msg = $val->del();

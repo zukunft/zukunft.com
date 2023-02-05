@@ -105,11 +105,10 @@ class formula_value_list
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param object $obj a named object used for selection e.g. a formula
-     * @param object|null $obj2 a second named object used for selection e.g. a time phrase
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, object $obj, ?object $obj2 = null, bool $by_source = false): sql_par
+    function load_sql(sql_db $db_con, object $obj, bool $by_source = false): sql_par
     {
         $qp = new sql_par(self::class);
         $sql_by = '';
@@ -119,18 +118,8 @@ class formula_value_list
             } elseif (get_class($obj) == phrase_group::class) {
                 if ($by_source) {
                     $sql_by .= formula_value::FLD_SOURCE_GRP;
-                    if ($obj2 != null) {
-                        if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp_old::class) {
-                            $sql_by .= '_' . formula_value::FLD_SOURCE_TIME;
-                        }
-                    }
                 } else {
                     $sql_by .= phrase_group::FLD_ID;
-                    if ($obj2 != null) {
-                        if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp_old::class) {
-                            $sql_by .= '_' . formula_value::FLD_TIME;
-                        }
-                    }
                 }
             } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
                 $sql_by .= word::FLD_ID;
@@ -157,20 +146,8 @@ class formula_value_list
                     $link_fields = array();
                     if ($by_source) {
                         $link_fields[] = formula_value::FLD_SOURCE_GRP;
-                        if ($obj2 != null) {
-                            if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp_old::class) {
-                                $db_con->add_par(sql_db::PAR_INT, $obj2->id());
-                                $link_fields[] = formula_value::FLD_SOURCE_TIME;
-                            }
-                        }
                     } else {
                         $link_fields[] = phrase_group::FLD_ID;
-                        if ($obj2 != null) {
-                            if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp_old::class) {
-                                $db_con->add_par(sql_db::PAR_INT, $obj2->id());
-                                $link_fields[] = formula_value::FLD_TIME;
-                            }
-                        }
                     }
                     $qp->sql = $db_con->select_by_field_list($link_fields);
                 } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
@@ -248,16 +225,15 @@ class formula_value_list
      * a word or a triple
      *
      * @param object $obj a named object used for selection e.g. a formula
-     * @param object|null $obj2 a second named object used for selection e.g. a time phrase
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return bool true if value or phrases are found
      */
-    function load(object $obj, ?object $obj2 = null, bool $by_source = false): bool
+    function load(object $obj, bool $by_source = false): bool
     {
         global $db_con;
         $result = false;
 
-        $qp = $this->load_sql($db_con, $obj, $obj2, $by_source);
+        $qp = $this->load_sql($db_con, $obj, $by_source);
         if ($qp->name != '') {
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
@@ -482,8 +458,8 @@ class formula_value_list
             $calc_row = array();
             $calc_row['usr_id'] = $this->user()->id();
             $calc_row['frm_id'] = $frm_row[formula::FLD_ID];
-            $calc_row['frm_name'] = $frm_row['formula_name'];
-            $calc_row['frm_text'] = $frm_row['formula_text'];
+            $calc_row['frm_name'] = $frm_row[formula::FLD_NAME];
+            $calc_row['frm_text'] = $frm_row[formula::FLD_FORMULA_TEXT];
             $calc_row['trm_ids'] = $phr_ids;
             $result[] = $calc_row;
         }
@@ -794,11 +770,8 @@ class formula_value_list
         if ($db_lst != null) {
             foreach ($db_lst as $db_fv) {
                 $frm_id = $db_fv[formula::FLD_ID];
-                $formula_text = $db_fv['formula_text'];
+                $formula_text = $db_fv[formula::FLD_FORMULA_TEXT];
                 $phr_lst_used = clone $phr_lst;
-                if ($val->time_phr != null) {
-                    $phr_lst_used->add($val->time_phr);
-                }
                 $frm = new formula($this->usr);
                 $frm->load_by_id($frm_id);
                 $back = '';

@@ -296,7 +296,6 @@ CREATE TABLE IF NOT EXISTS `formula_values`
     `source_phrase_group_id` int(11)        DEFAULT NULL,
     `source_time_id`    int(11)        DEFAULT NULL,
     `phrase_group_id`        int(11)        DEFAULT '0' COMMENT 'temp field for fast data collection; no single links to terms because this is just a cache table and can be recreated by the underlying tables',
-    `time_word_id`           int(11)        DEFAULT '0' COMMENT 'special field just to speed up queries',
     `formula_value`          double    NOT NULL,
     `last_update`            timestamp NULL DEFAULT NULL COMMENT 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty',
     `dirty`                  tinyint(4)     DEFAULT NULL
@@ -1066,7 +1065,6 @@ CREATE TABLE IF NOT EXISTS `values`
     `word_value`      double    NOT NULL,
     `source_id`       int(11)            DEFAULT NULL,
     `phrase_group_id` int(11)            DEFAULT NULL COMMENT 'temp field to increase speed created by the value term links',
-    `time_word_id`    int(11)            DEFAULT NULL COMMENT 'special field just to speed up queries',
     `last_update`     timestamp NULL     DEFAULT NULL COMMENT 'for fast recalculation',
     `description`     text COMMENT 'temp field used during dev phase for easy value to trm assigns',
     `excluded`        tinyint(4)         DEFAULT NULL COMMENT 'the default exclude setting for most users',
@@ -1796,7 +1794,7 @@ ALTER TABLE `formula_types`
 --
 ALTER TABLE `formula_values`
     ADD PRIMARY KEY (`formula_value_id`),
-    ADD UNIQUE KEY `formula_id_2` (`formula_id`, `user_id`, `phrase_group_id`, `time_word_id`,
+    ADD UNIQUE KEY `formula_id_2` (`formula_id`, `user_id`, `phrase_group_id`,
                                    `source_phrase_group_id`, `source_time_id`),
     ADD KEY `user_id` (`user_id`);
 
@@ -2117,7 +2115,6 @@ ALTER TABLE `values`
     ADD KEY `user_id` (`user_id`),
     ADD KEY `source_id` (`source_id`),
     ADD KEY `phrase_group_id` (`phrase_group_id`),
-    ADD KEY `time_word_id` (`time_word_id`),
     ADD KEY `protect_id` (`protect_id`);
 
 --

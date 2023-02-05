@@ -737,17 +737,13 @@ class test_new_obj extends test_base
 
         // the time separation is done here until there is a phrase series value table that can be used also to time phrases
         $phr_lst = $this->load_phrase_list($array_of_word_str);
-        $time_phr = $phr_lst->time_useful();
-        $phr_lst->ex_time();
         $phr_grp = $phr_lst->get_grp();
 
         $val = new value($usr);
         if ($phr_grp == null) {
             log_err('Cannot get phrase group for ' . $phr_lst->dsp_id());
         } else {
-            $val->grp = $phr_grp;
-            $val->time_phr = $time_phr;
-            $val->load_obj_vars();
+            $val->load_by_grp($phr_grp);
         }
         return $val;
     }
@@ -757,11 +753,12 @@ class test_new_obj extends test_base
         global $usr;
         $val = $this->load_value($array_of_word_str);
         if ($val->id() == 0) {
-            // the time separation is done here until there is a phrase series value table that can be used also to time phrases
             $phr_lst = $this->load_phrase_list($array_of_word_str);
-            $time_phr = $phr_lst->time_useful();
-            $phr_lst->ex_time();
             $phr_grp = $phr_lst->get_grp();
+
+            // getting the latest value if selected without time phrase should be done when reading the value
+            //$time_phr = $phr_lst->time_useful();
+            //$phr_lst->ex_time();
 
             $val = new value($usr);
             if ($phr_grp == null) {
@@ -769,7 +766,6 @@ class test_new_obj extends test_base
             } else {
                 $val->grp = $phr_grp;
             }
-            $val->time_phr = $time_phr;
             $val->set_number($target);
             $val->save();
         }
@@ -790,8 +786,7 @@ class test_new_obj extends test_base
         global $usr;
 
         $val = new value($usr);
-        $val->grp = $phr_grp;
-        $val->load_obj_vars();
+        $val->load_by_grp($phr_grp);
         return $val;
     }
 

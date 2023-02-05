@@ -50,11 +50,9 @@ function run_value_ui_test(testing $t): void
     $phr_lst_ch->add_name(word_api::TN_CH);
     $phr_lst_added->add_name(word_api::TN_RENAMED);
     $val_added = new value($usr);
-    $val_added->ids = $phr_lst_added->id_lst();
-    $val_added->load_obj_vars();
+    $val_added->load_by_grp($phr_lst_added->get_grp());
     $val_ch = new value($usr);
-    $val_ch->ids = $phr_lst_ch->id_lst();
-    $val_ch->load_obj_vars();
+    $val_ch->load_by_grp($phr_lst_ch->get_grp());
 
     // call the add value page and check if at least some basic keywords are returned
     $back = 0;

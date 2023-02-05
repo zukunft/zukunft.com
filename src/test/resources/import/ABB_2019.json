@@ -174,7 +174,6 @@
         "million",
         "Total revenues "
       ],
-      "time": "2019",
       "number": "27978",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -187,7 +186,6 @@
         "million",
         "Total cost of sales"
       ],
-      "time": "2019",
       "number": "-19072",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -200,7 +198,6 @@
         "million",
         "Gross profit "
       ],
-      "time": "2019",
       "number": "8906",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -213,7 +210,6 @@
         "million",
         "Selling, general and administrative expenses"
       ],
-      "time": "2019",
       "number": "-5447",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -226,7 +222,6 @@
         "million",
         "Non-order related research and development expenses"
       ],
-      "time": "2019",
       "number": "-1198",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -239,7 +234,6 @@
         "million",
         "Other income (expense), net "
       ],
-      "time": "2019",
       "number": "-323",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -252,7 +246,6 @@
         "million",
         "Income from operations "
       ],
-      "time": "2019",
       "number": "1938",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -265,7 +258,6 @@
         "million",
         "Interest and dividend income "
       ],
-      "time": "2019",
       "number": "67",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -278,7 +270,6 @@
         "million",
         "Interest and other finance expense "
       ],
-      "time": "2019",
       "number": "-215",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -291,7 +282,6 @@
         "million",
         "Non-operational pension (cost) credit"
       ],
-      "time": "2019",
       "number": "72",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -304,7 +294,6 @@
         "million",
         "Income from continuing operations before taxes "
       ],
-      "time": "2019",
       "number": "1862",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -317,7 +306,6 @@
         "million",
         "Provision for taxes "
       ],
-      "time": "2019",
       "number": "-772",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -330,7 +318,6 @@
         "million",
         "Income from continuing operations, net of tax "
       ],
-      "time": "2019",
       "number": "1090",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -343,7 +330,6 @@
         "million",
         "Income from discontinued operations, net of tax "
       ],
-      "time": "2019",
       "number": "438",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -356,7 +342,6 @@
         "million",
         "Net income "
       ],
-      "time": "2019",
       "number": "1528",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -369,7 +354,6 @@
         "million",
         "Net income attributable to noncontrolling interests "
       ],
-      "time": "2019",
       "number": "-89",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -382,7 +366,6 @@
         "million",
         "Net income attributable to ABB "
       ],
-      "time": "2019",
       "number": "1439",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -390,12 +373,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Total revenues "
       ],
-      "time": "2018",
       "number": "27662",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -403,12 +385,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Total cost of sales"
       ],
-      "time": "2018",
       "number": "-19118",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -416,12 +397,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Gross profit "
       ],
-      "time": "2018",
       "number": "8544",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -429,12 +409,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Selling, general and administrative expenses"
       ],
-      "time": "2018",
       "number": "-5295",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -442,12 +421,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Non-order related research and development expenses"
       ],
-      "time": "2018",
       "number": "-1147",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -455,12 +433,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Other income (expense), net "
       ],
-      "time": "2018",
       "number": "124",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -468,12 +445,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Income from operations "
       ],
-      "time": "2018",
       "number": "2226",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -481,12 +457,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Interest and dividend income "
       ],
-      "time": "2018",
       "number": "72",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -494,12 +469,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Interest and other finance expense "
       ],
-      "time": "2018",
       "number": "-262",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -507,12 +481,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Non-operational pension (cost) credit"
       ],
-      "time": "2018",
       "number": "83",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -520,12 +493,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Income from continuing operations before taxes "
       ],
-      "time": "2018",
       "number": "2119",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -533,12 +505,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Provision for taxes "
       ],
-      "time": "2018",
       "number": "-544",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -546,12 +517,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Income from continuing operations, net of tax "
       ],
-      "time": "2018",
       "number": "1575",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -559,12 +529,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Income from discontinued operations, net of tax "
       ],
-      "time": "2018",
       "number": "723",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -572,12 +541,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Net income "
       ],
-      "time": "2018",
       "number": "2298",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -585,12 +553,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Net income attributable to noncontrolling interests "
       ],
-      "time": "2018",
       "number": "-125",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -598,12 +565,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2018",
         "USD",
         "million",
         "Net income attributable to ABB "
       ],
-      "time": "2018",
       "number": "2173",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -611,12 +577,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Total revenues "
       ],
-      "time": "2017",
       "number": "25196",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -624,12 +589,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Total cost of sales"
       ],
-      "time": "2017",
       "number": "-17350",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -637,12 +601,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Gross profit "
       ],
-      "time": "2017",
       "number": "7846",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -650,12 +613,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Selling, general and administrative expenses"
       ],
-      "time": "2017",
       "number": "-4765",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -663,12 +625,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Non-order related research and development expenses"
       ],
-      "time": "2017",
       "number": "-1013",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -676,12 +637,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Other income (expense), net "
       ],
-      "time": "2017",
       "number": "162",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -689,12 +649,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Income from operations "
       ],
-      "time": "2017",
       "number": "2230",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -702,12 +661,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Interest and dividend income "
       ],
-      "time": "2017",
       "number": "73",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -715,12 +673,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Interest and other finance expense "
       ],
-      "time": "2017",
       "number": "-234",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -728,12 +685,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Non-operational pension (cost) credit"
       ],
-      "time": "2017",
       "number": "33",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -741,12 +697,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Income from continuing operations before taxes "
       ],
-      "time": "2017",
       "number": "2102",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -754,12 +709,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Provision for taxes "
       ],
-      "time": "2017",
       "number": "-583",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -767,12 +721,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Income from continuing operations, net of tax "
       ],
-      "time": "2017",
       "number": "1519",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -780,12 +733,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Income from discontinued operations, net of tax "
       ],
-      "time": "2017",
       "number": "846",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -793,12 +745,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Net income "
       ],
-      "time": "2017",
       "number": "2365",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -806,12 +757,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Net income attributable to noncontrolling interests "
       ],
-      "time": "2017",
       "number": "-152",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -819,12 +769,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2017",
         "USD",
         "million",
         "Net income attributable to ABB "
       ],
-      "time": "2017",
       "number": "2213",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -832,12 +781,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Total revenues "
       ],
-      "time": "2016",
       "number": "24929",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -845,12 +793,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Total cost of sales"
       ],
-      "time": "2016",
       "number": "-17396",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -858,12 +805,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Gross profit "
       ],
-      "time": "2016",
       "number": "7533",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -871,12 +817,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Selling, general and administrative expenses"
       ],
-      "time": "2016",
       "number": "-4532",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -884,12 +829,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Non-order related research and development expenses"
       ],
-      "time": "2016",
       "number": "-967",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -897,12 +841,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Other income (expense), net "
       ],
-      "time": "2016",
       "number": "-105",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -910,12 +853,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Income from operations "
       ],
-      "time": "2016",
       "number": "1929",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -923,12 +865,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Interest and dividend income "
       ],
-      "time": "2016",
       "number": "71",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -936,12 +877,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Interest and other finance expense "
       ],
-      "time": "2016",
       "number": "-201",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -949,12 +889,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Non-operational pension (cost) credit"
       ],
-      "time": "2016",
       "number": "-38",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -962,12 +901,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Income from continuing operations before taxes "
       ],
-      "time": "2016",
       "number": "1761",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -975,12 +913,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Provision for taxes "
       ],
-      "time": "2016",
       "number": "-526",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -988,12 +925,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Income from continuing operations, net of tax "
       ],
-      "time": "2016",
       "number": "1235",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1001,12 +937,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Income from discontinued operations, net of tax "
       ],
-      "time": "2016",
       "number": "799",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1014,12 +949,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Net income "
       ],
-      "time": "2016",
       "number": "2034",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1027,12 +961,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Net income attributable to noncontrolling interests "
       ],
-      "time": "2016",
       "number": "-135",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1040,12 +973,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2016",
         "USD",
         "million",
         "Net income attributable to ABB "
       ],
-      "time": "2016",
       "number": "1899",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1053,12 +985,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Total revenues "
       ],
-      "time": "2015",
       "number": "26459",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1066,12 +997,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Total cost of sales"
       ],
-      "time": "2015",
       "number": "-18429",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1079,12 +1009,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Gross profit "
       ],
-      "time": "2015",
       "number": "8030",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1092,12 +1021,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Selling, general and administrative expenses"
       ],
-      "time": "2015",
       "number": "-4769",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1105,12 +1033,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Non-order related research and development expenses"
       ],
-      "time": "2015",
       "number": "-1041",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1118,12 +1045,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Other income (expense), net "
       ],
-      "time": "2015",
       "number": "-102",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1131,12 +1057,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Income from operations "
       ],
-      "time": "2015",
       "number": "2118",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1144,12 +1069,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Interest and dividend income "
       ],
-      "time": "2015",
       "number": "74",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1157,12 +1081,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Interest and other finance expense "
       ],
-      "time": "2015",
       "number": "-240",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1170,12 +1093,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Non-operational pension (cost) credit"
       ],
-      "time": "2015",
       "number": "-20",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1183,12 +1105,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Income from continuing operations before taxes "
       ],
-      "time": "2015",
       "number": "1932",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1196,12 +1117,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Provision for taxes "
       ],
-      "time": "2015",
       "number": "-566",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1209,12 +1129,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Income from continuing operations, net of tax "
       ],
-      "time": "2015",
       "number": "1366",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1222,12 +1141,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Income from discontinued operations, net of tax "
       ],
-      "time": "2015",
       "number": "689",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1235,12 +1153,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Net income "
       ],
-      "time": "2015",
       "number": "2055",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1248,12 +1165,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Net income attributable to noncontrolling interests "
       ],
-      "time": "2015",
       "number": "-122",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"
@@ -1261,12 +1177,11 @@
     {
       "words": [
         "ABB",
-        "2019",
+        "2015",
         "USD",
         "million",
         "Net income attributable to ABB "
       ],
-      "time": "2015",
       "number": "1933",
       "protection": "admin_protection",
       "source": "ABB Annual Report 2019"

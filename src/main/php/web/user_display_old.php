@@ -312,12 +312,12 @@ class user_dsp_old extends user
                 $result .= '<th>common formula</th>';
                 $result .= '</tr><tr>';
             }
-            $result .= '<td>' . $frm_row['formula_name'] . '</td>';
+            $result .= '<td>' . $frm_row[formula::FLD_NAME] . '</td>';
             $result .= '<td>' . $frm_row['usr_formula_text'] . '</td>';
-            $result .= '<td>' . $frm_row['formula_text'] . '</td>';
+            $result .= '<td>' . $frm_row[formula::FLD_FORMULA_TEXT] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula::FLD_ID].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
             $url = '/http/user.php?id=' . $this->id . '&undo_formula=' . $frm_row[formula::FLD_ID] . '&back=' . $back . '';
-            $result .= '<td>' . \html\btn_del("Undo your change and use the standard formula " . $frm_row['formula_text'], $url) . '</td>';
+            $result .= '<td>' . \html\btn_del("Undo your change and use the standard formula " . $frm_row[formula::FLD_FORMULA_TEXT], $url) . '</td>';
             $result .= '</tr>';
         }
         $result .= dsp_tbl_end();
@@ -509,8 +509,7 @@ class user_dsp_old extends user
                     v.source_id                                                                        AS std_source, 
                     CASE WHEN (u.excluded   <> '' IS NOT TRUE) THEN v.excluded   ELSE u.excluded   END AS usr_excluded,
                     v.excluded                                                                         AS std_excluded, 
-                    v.phrase_group_id,
-                    v.time_word_id
+                    v.phrase_group_id
                FROM user_values u,
                     values v
               WHERE u.user_id = " . $this->id . "
@@ -525,8 +524,7 @@ class user_dsp_old extends user
                     v.source_id                                          AS std_source, 
                     IF(u.excluded   IS NULL, v.excluded,   u.excluded)   AS usr_excluded,
                     v.excluded                                           AS std_excluded, 
-                    v.phrase_group_id,
-                    v.time_word_id
+                    v.phrase_group_id
                FROM user_values u,
                     `values` v
               WHERE u.user_id = " . $this->id . "
@@ -547,8 +545,7 @@ class user_dsp_old extends user
                 $val_usr->set_number($val_row['usr_value']);
                 $val_usr->set_source_id($val_row['usr_source']);
                 $val_usr->excluded = $val_row['usr_excluded'];
-                $val_usr->grp->set_id($val_row['phrase_group_id']);
-                $val_usr->set_time_id($val_row[value::FLD_TIME_WORD]);
+                $val_usr->grp->set_id($val_row[phrase_group::FLD_ID]);
                 $val_usr->load_phrases();
 
                 // to review: try to avoid using load_test_user

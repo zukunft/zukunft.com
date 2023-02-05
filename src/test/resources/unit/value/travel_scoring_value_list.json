@@ -1,6 +1,5 @@
 {
-  "context": ["Democracy Index","Electoral process and pluralism "],
-  "time": "2019",
+  "context": ["Democracy Index","Electoral process and pluralism","2019"],
   "source": "Democracy Index 2019 (Economist Intelligence Unit)",
   "values": [
     {"Norway": 10},

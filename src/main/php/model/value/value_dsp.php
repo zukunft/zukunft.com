@@ -140,8 +140,11 @@ class value_dsp_old extends value
         $this->load_phrases();
 
         if (!is_null($this->number)) {
+            // load the list of phrases if needed
+            $this->reload_if_needed();
             if (is_null($this->wrd_lst)) {
-                $this->load_obj_vars();
+                $phr_grp = $this->wrd_lst->phrase_lst()->get_grp();
+                $this->load_by_grp($phr_grp);
             }
             if ($this->wrd_lst != null) {
                 if ($this->wrd_lst->has_percent()) {
@@ -358,10 +361,7 @@ class value_dsp_old extends value
             $result .= dsp_text_h3("Change value for");
             if (count($this->ids) <= 0) {
                 $this->load_phrases();
-                log_debug('value->dsp_edit id ' . $this->id . ' with "' . $this->grp->name() . '"@"' . $this->time_phr->name() . '"and user ' . $this->user()->id());
-            } else {
-                $this->load_time_phrase();
-                log_debug('value->dsp_edit id ' . $this->id . ' with phrase ids ' . dsp_array($this->ids) . ' and user ' . $this->user()->id());
+                log_debug('value->dsp_edit id ' . $this->id . ' with "' . $this->grp->name() . '"and user ' . $this->user()->id());
             }
         }
         $this_url = '/http/' . $script . '.php?id=' . $this->id . '&back=' . $back; // url to call this display again to display the user changes
@@ -379,13 +379,8 @@ class value_dsp_old extends value
             log_debug("value->dsp_edit main wrd");
 
             // rebuild the value ids if needed
-            // 1. load the phrases parameters based on the ids
+            // load the phrases parameters based on the ids
             $result .= $this->set_phr_lst_by_ids($type_ids);
-            // 2. extract the time from the phrase list
-            $result .= $this->set_time_by_phr_lst();
-            log_debug("value->dsp_edit phrase list incl. time " . $this->phr_lst->dsp_name());
-            $result .= $this->set_phr_lst_ex_time();
-            log_debug("value->dsp_edit phrase list excl. time " . $this->phr_lst->dsp_name());
             $phr_lst = $this->phr_lst;
 
             /*
@@ -533,23 +528,38 @@ class value_dsp_old extends value
                 }
             }
 
-            // show the time word
+            // show the time phrase
             log_debug('show time');
-            if ($this->get_time_id() <> 0) {
-                if (isset($this->time_phr)) {
-                    $result .= '  <tr>';
-                    if ($this->time_phr->id == 0) {
-                        $result .= '    <td colspan="2">';
+            $time_lst = $this->grp->phr_lst->time_lst();
+            $has_time = false;
+            foreach ($time_lst->lst() as $time_phr) {
+                $result .= '  <tr>';
+                if ($time_phr->id() <> 0) {
+                    $has_time = true;
+                    $result .= '    <td colspan="2">';
 
-                        log_debug('show time selector');
-                        $result .= $this->time_phr->dsp_time_selector(0, $script, $url_pos, $back);
-                        $url_pos++;
+                    log_debug('show time selector');
+                    $result .= $time_phr->dsp_time_selector(0, $script, $url_pos, $back);
+                    $url_pos++;
 
-                        $result .= '    </td>';
-                        $result .= '    <td>' . \html\btn_del("Remove " . $this->time_phr->name(), $used_url) . '</td>';
-                    }
-                    $result .= '  </tr>';
+                    $result .= '    </td>';
+                    $result .= '    <td>' . \html\btn_del("Remove " . $time_phr->name(), $used_url) . '</td>';
                 }
+                $result .= '  </tr>';
+            }
+            // show an empty time selector
+            if (!$has_time) {
+                $time_phr = new phrase($this->user());
+                $result .= '  <tr>';
+                $result .= '    <td colspan="2">';
+
+                log_debug('show time selector');
+                $result .= $time_phr->dsp_time_selector(0, $script, $url_pos, $back);
+                $url_pos++;
+
+                $result .= '    </td>';
+                $result .= '    <td>' . \html\btn_del("Remove " . $time_phr->name(), $used_url) . '</td>';
+                $result .= '  </tr>';
             }
 
             // show the new phrases
@@ -633,6 +643,44 @@ class value_dsp_old extends value
         }
 
         log_debug("done");
+        return $result;
+    }
+
+    /**
+     * @return user_message
+     */
+    private function reload(): user_message
+    {
+        $msg = new user_message();
+        if ($this->id() != 0) {
+            $this->load_by_id($this->id());
+        }
+        return $msg;
+    }
+
+    /**
+     * reload the value object from the database, but only if some related objects
+     * e,g, the phrase list is probably missing
+     * @return user_message
+     */
+    private function reload_if_needed(): user_message
+    {
+        $msg = new user_message();
+        if (!$this->is_loaded()) {
+            $msg = $this->reload();
+        }
+        return $msg;
+    }
+
+    /**
+     * @return bool true if all related objects are loaded
+     */
+    private function is_loaded(): bool
+    {
+        $result = true;
+        if ($this->grp->phr_lst->is_empty()) {
+            $result = false;
+        }
         return $result;
     }
 

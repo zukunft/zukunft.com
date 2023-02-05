@@ -158,6 +158,12 @@
           "code_id": "key",
           "name": "key",
           "comment": "force faster search and if two keys are connected with the verb is all child values are expected to be equal"
+        },
+        {
+          "id": 21,
+          "code_id": "information",
+          "name": "information",
+          "comment": "this phrase is used mainly for information purpose and for the selection the program tries to another search without this phrase"
         }
       ],
       "formula_types": [

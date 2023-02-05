@@ -121,8 +121,7 @@ function run_formula_value_test(testing $t): void
     $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020));
     $phr_lst->ex_time();
     $val_best_guess = new value($usr);
-    $val_best_guess->grp = $phr_lst->get_grp();
-    $val_best_guess->load_obj_vars();
+    $val_best_guess->load_by_grp($phr_lst->get_grp());
     $result = $val_best_guess->number();
     // TODO check why this value sometimes switch
     /*
@@ -171,16 +170,16 @@ function run_formula_value_list_test(testing $t): void
     $t->dsp_contains(', formula_value_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // ... and also with time selection
-    $time_phr = $t->load_phrase(word_api::TN_2020);
+    $grp = $t->load_phrase_group(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_IN_K, word_api::TN_2020));
     $fv_lst = new formula_value_list($usr);
-    $fv_lst->load($grp, $time_phr);
+    $fv_lst->load($grp);
     $result = $fv_lst->dsp_id();
     $t->dsp_contains(', formula_value_list->load of the formula results for ' . $grp->dsp_id() . ' and ' . $time_phr->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // load results by source phrase group
     $grp = $t->load_phrase_group(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO));
     $fv_lst = new formula_value_list($usr);
-    $fv_lst->load($grp, null, true);
+    $fv_lst->load($grp, true);
     $result = $fv_lst->dsp_id();
     $target = '0.0078';
     $t->dsp_contains(', formula_value_list->load of the formula results for source ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
@@ -188,7 +187,7 @@ function run_formula_value_list_test(testing $t): void
     // ... and also with time selection
     $time_phr = $t->load_phrase(word_api::TN_2020);
     $fv_lst = new formula_value_list($usr);
-    $fv_lst->load($grp, $time_phr, true);
+    $fv_lst->load($grp, true);
     $result = $fv_lst->dsp_id();
     $t->dsp_contains(', formula_value_list->load of the formula results for ' . $grp->dsp_id() . ' and ' . $time_phr->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 

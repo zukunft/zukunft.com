@@ -40,6 +40,32 @@ function run_value_test(testing $t): void
 
     $t->header('Test the value class (classes/value.php)');
 
+    // check if loading the value without time still returns the value
+    /* TODO fix and activate
+    $val = $t->load_value(array(
+        word_api::TN_CANTON,
+        word_api::TN_ZH,
+        word_api::TN_INHABITANTS,
+        word_api::TN_MIO
+    ));
+    $t->assert('Check if loading the latest value works',
+        $val->number(), value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
+    */
+
+    // check if loading value with a phrase returns a value created with the phrase parts
+    // e.g. the value created with words canton and zurich
+    // should be returned if requested with the phrase canton of zurich
+    // TODO activate
+    $val = $t->load_value(array(
+        word_api::TN_CANTON,
+        word_api::TN_ZH,
+        word_api::TN_INHABITANTS,
+        word_api::TN_MIO,
+        word_api::TN_2020
+    ));
+    //$t->assert('Check if loading the latest value works',
+    //    $val->number(), value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
+
     // test load by phrase list first to get the value id
     $ch_inhabitants = $t->test_value(array(
         word_api::TN_CH,
@@ -61,11 +87,7 @@ function run_value_test(testing $t): void
         // test load by phrase list first to get the value id
         $phr_lst = $t->load_phrase_list(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
         $val_by_phr_lst = new value($t->usr1);
-        $time_phr = $phr_lst->time_useful();
-        $phr_lst->ex_time();
-        $val_by_phr_lst->grp = $phr_lst->get_grp();
-        $val_by_phr_lst->time_phr = $time_phr;
-        $val_by_phr_lst->load_obj_vars();
+        $val_by_phr_lst->load_by_grp($phr_lst->get_grp());
         $result = $val_by_phr_lst->number();
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->dsp(', value->load for another word list ' . $phr_lst->dsp_name(), $target, $result);
@@ -86,15 +108,28 @@ function run_value_test(testing $t): void
     }
 
     // test another rebuild_grp_id by value id
-    $chk_phr_grp = $t->load_word_list(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO))->get_grp();
-    $time_phr = $t->load_phrase(word_api::TN_2020);
+    $chk_phr_grp = $t->load_word_list(array(
+        word_api::TN_CANTON,
+        word_api::TN_ZH,
+        word_api::TN_INHABITANTS,
+        word_api::TN_MIO,
+        word_api::TN_2020))->get_grp();
     $chk_val = new value($t->usr1);
     if ($chk_phr_grp != null) {
-        $chk_val->grp = $chk_phr_grp;
-        $chk_val->time_phr = $time_phr;
-        $chk_val->load_obj_vars();
+        $chk_val->load_by_grp($chk_phr_grp);
     }
     $target = true;
+    if ($chk_val->id() <= 0) {
+        $chk_phr_grp = $t->load_word_list(array(
+            word_api::TN_CANTON,
+            word_api::TN_ZH,
+            word_api::TN_INHABITANTS,
+            word_api::TN_MIO))->get_grp();
+        $chk_val = new value($t->usr1);
+        if ($chk_phr_grp != null) {
+            $chk_val->load_by_grp($chk_phr_grp);
+        }
+    }
     if ($chk_val->id() <= 0) {
         $result = 'No value found for ' . $chk_phr_grp->dsp_id() . '.';
         $t->dsp(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -109,55 +144,35 @@ function run_value_test(testing $t): void
 
         // ... and check the words loaded
         $result = $chk_val->name();
-        //$target = 'million,System Test Word Category e.g. Canton,System Test Word Member e.g. Zurich,System Test Word Unit e.g. inhabitant';
-        $target = 'Canton,Zurich,inhabitants,million,2020';
+        $target = '2020,Canton,Zurich,inhabitants,million';
         $t->dsp(', value->load words', $target, $result);
 
-        // ... and check the time word
-        if ($chk_val->time_phr != null) {
-            //log_err('Time word not seperated');
-        //} else {
-            $result = $chk_val->time_phr->name();
-            $target = word_api::TN_2020;
-            $t->dsp(', value->load time word', $target, $result);
-
-            // ... and check the word reloading by group
-            $chk_val->wrd_lst = null;
-            $chk_val->load_phrases();
-            if (isset($chk_val->wrd_lst)) {
-                $chk_val->wrd_lst->wlsort();
-                $result = dsp_array($chk_val->wrd_lst->names());
-            } else {
-                $result = '';
-            }
-            //$target = 'System Test Word Unit e.g. inhabitant,System Test Word Member e.g. Zurich,million,System Test Word Category e.g. Canton';
-            $target = 'Canton,Zurich,inhabitants,million';
-            $t->dsp(', value->load_phrases reloaded words', $target, $result);
-
-            // ... and check the time word reloading
-            $chk_val->time_phr = null;
-            $chk_val->load_phrases();
-            if (isset($chk_val->time_phr)) {
-                $result = $chk_val->time_phr->name();
-            } else {
-                $result = '';
-            }
-            //$target = word_api::TN_2020;
-            $target = '';
-            $t->dsp(', value->load_phrases reloaded time word', $target, $result);
+        // ... and check the word reloading by group
+        $chk_val->wrd_lst = null;
+        $chk_val->load_phrases();
+        if (isset($chk_val->wrd_lst)) {
+            $chk_val->wrd_lst->wlsort();
+            $result = dsp_array($chk_val->wrd_lst->names());
+        } else {
+            $result = '';
         }
+        $t->dsp(', value->load_phrases reloaded words', $target, $result);
     }
 
     // test load the word list object
-    $phr_lst = $t->load_word_list(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
-    $phr_lst->ex_time();
+    $phr_lst = $t->load_word_list(array(
+        word_api::TN_CANTON,
+        word_api::TN_ZH,
+        word_api::TN_INHABITANTS,
+        word_api::TN_MIO,
+        word_api::TN_2020));
+    //$phr_lst->ex_time();
     $grp = $phr_lst->get_grp();
     if ($grp->id() == 0) {
         $result = 'No word list found.';
     } else {
         $val = new value($t->usr1);
-        $val->grp = $grp;
-        $val->load_obj_vars();
+        $val->load_by_grp($grp);
         $result = '';
         if ($val->id() <= 0) {
             $result = 'No value found for ' . $val->dsp_id() . '.';
@@ -174,33 +189,31 @@ function run_value_test(testing $t): void
     $t->dsp(', value->load for group id "' . $grp->id() . '"', $target, $result);
 
     // test the formatting of a value (percent)
-    $pct_val = $t->load_value(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_PCT, word_api::TN_2020));
+    $pct_val = $t->load_value(array(
+        word_api::TN_CANTON,
+        word_api::TN_ZH,
+        word_api::TN_CH,
+        word_api::TN_INHABITANTS,
+        word_api::TN_PCT,
+        word_api::TN_2020));
     $result = $pct_val->dsp_obj_old()->display(0);
     $target = number_format(round(value_api::TV_PCT * 100, 2), 2) . '%';
     $t->dsp(', value->val_formatted for ' . $pct_val->dsp_id(), $target, $result);
 
     // test the scaling of a value
     $phr_lst = $t->load_phrase_list(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
-    $time_phr = $phr_lst->time_useful();
-    $phr_lst->ex_time();
     $dest_phr_lst = new phrase_list($t->usr1);
     $dest_phr_lst->load_by_names(array(word_api::TN_INHABITANTS, word_api::TN_ONE));
     $mio_val = new value($t->usr1);
-    $mio_val->time_phr = $time_phr;
-    $mio_val->grp = $phr_lst->get_grp();
-    $mio_val->load_obj_vars();
+    $mio_val->load_by_grp($phr_lst->get_grp());
     $result = $mio_val->scale($dest_phr_lst);
     $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO * 1000000;
     $t->dsp(', value->val_scaling for a word list ' . $phr_lst->dsp_id() . '', $target, $result);
 
     // test the figure object creation
     $phr_lst = $t->load_phrase_list(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
-    $time_phr = $phr_lst->time_useful();
-    $phr_lst->ex_time();
     $mio_val = new value_dsp_old($t->usr1);
-    $mio_val->time_phr = $time_phr;
-    $mio_val->grp = $phr_lst->get_grp();
-    $mio_val->load_obj_vars();
+    $mio_val->load_by_grp($phr_lst->get_grp());
     $fig = $mio_val->figure();
     $result = $fig->display_linked('1');
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1" title="1.55">1.55</a>';
@@ -278,8 +291,7 @@ function run_value_test(testing $t): void
 
     // ... check if the value has been added
     $added_val = new value($t->usr1);
-    $added_val->grp = $phr_grp;
-    $added_val->load_obj_vars();
+    $added_val->load_by_grp($phr_grp);
     $result = $added_val->number();
     $target = '123456789';
     $t->dsp(', value->load the value previous saved for "' . $phr_grp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -322,8 +334,7 @@ function run_value_test(testing $t): void
 
     // ... check if the value has been added
     $added_val2 = new value($t->usr1);
-    $added_val2->grp = $phr_grp2;
-    $added_val2->load_obj_vars();
+    $added_val2->load_by_grp($phr_grp2);
     $result = $added_val2->number();
     $target = '234567890';
     $t->dsp(', value->load the value previous saved for "' . $phr_grp2->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -332,8 +343,7 @@ function run_value_test(testing $t): void
 
     // check if the value can be changed
     $added_val = new value($t->usr1);
-    $added_val->set_id($added_val_id);
-    $added_val->load_obj_vars();
+    $added_val->load_by_id($added_val_id);
     $added_val->set_number(987654321);
     $result = $added_val->save();
     $target = '';
@@ -353,8 +363,7 @@ function run_value_test(testing $t): void
 
     // ... check if the value has really been updated
     $added_val = new value($t->usr1);
-    $added_val->set_id($added_val_id);
-    $added_val->load_obj_vars();
+    $added_val->load_by_id($added_val_id);
     $result = $added_val->number();
     $target = '987654321';
     $t->dsp(', value->load the value previous updated for "' . word_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -371,8 +380,7 @@ function run_value_test(testing $t): void
     $phr_lst = $wrd_lst->phrase_lst(); */
     $val_usr2 = new value($t->usr2);
     //$val_usr2->ids = $phr_lst->ids;
-    $val_usr2->set_id($added_val_id);
-    $val_usr2->load_obj_vars();
+    $val_usr2->load_by_id($added_val_id);
     $val_usr2->set_number(23456);
     $result = $val_usr2->save();
     $target = '';
@@ -380,8 +388,7 @@ function run_value_test(testing $t): void
 
     // ... check if the value change for the other user has been logged
     $val_usr2 = new value($t->usr2);
-    $val_usr2->set_id($added_val_id);
-    $val_usr2->load_obj_vars();
+    $val_usr2->load_by_id($added_val_id);
     if ($val_usr2->id() > 0) {
         $log = new change_log_named;
         $log->set_table(change_log_table::VALUE_USR);
@@ -395,24 +402,21 @@ function run_value_test(testing $t): void
 
     // ... check if the value has really been updated
     $added_val_usr2 = new value($t->usr2);
-    $added_val_usr2->grp = $phr_grp;
-    $added_val_usr2->load_obj_vars();
+    $added_val_usr2->load_by_grp($phr_grp);
     $result = $added_val_usr2->number();
     $target = '23456';
     $t->dsp(', value->load the value previous updated for "' . $phr_grp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the value for the original user remains unchanged
     $added_val = new value($t->usr1);
-    $added_val->grp = $phr_grp;
-    $added_val->load_obj_vars();
+    $added_val->load_by_grp($phr_grp);
     $result = $added_val->number();
     $target = '987654321';
     $t->dsp(', value->load for user "' . $t->usr1->name . '" is still', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if undo all specific changes removes the user value
     $added_val_usr2 = new value($t->usr2);
-    $added_val_usr2->grp = $phr_grp;
-    $added_val_usr2->load_obj_vars();
+    $added_val_usr2->load_by_grp($phr_grp);
     $added_val_usr2->set_number(987654321);
     $result = $added_val_usr2->save();
     $target = '';
@@ -420,8 +424,7 @@ function run_value_test(testing $t): void
 
     // ... check if the value change for the other user has been logged
     $val_usr2 = new value($t->usr2);
-    $val_usr2->grp = $phr_grp;
-    $val_usr2->load_obj_vars();
+    $val_usr2->load_by_grp($phr_grp);
     if ($val_usr2->id() > 0) {
         $log = new change_log_named;
         $log->set_table(change_log_table::VALUE_USR);
@@ -435,8 +438,7 @@ function run_value_test(testing $t): void
 
     // ... check if the value has really been changed back
     $added_val_usr2 = new value($t->usr2);
-    $added_val_usr2->grp = $phr_grp;
-    $added_val_usr2->load_obj_vars();
+    $added_val_usr2->load_by_grp($phr_grp);
     $result = $added_val_usr2->number();
     $target = '987654321';
     $t->dsp(', value->load the value previous updated for "' . $phr_grp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);

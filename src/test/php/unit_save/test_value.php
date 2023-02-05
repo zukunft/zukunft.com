@@ -36,18 +36,11 @@ use api\word_api;
 
 function create_test_values(testing $t): void
 {
-    $t->header('Check if all base values are exist and create them if needed');
+    $t->header('Check if all base values exist or create them if needed');
 
-    // add the number of inhabitants in the canton of zurich without time definition
-    $t->test_value(array(
-        word_api::TN_CANTON,
-        word_api::TN_ZH,
-        word_api::TN_INHABITANTS,
-        word_api::TN_MIO
-        ),
-        value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
-
-    // ... same with the concrete year
+    // add a number with a concrete time value
+    // e.g. inhabitants in the canton of zurich in the year 2020
+    // used to test if loading the value without time returns this value a the last available
     $t->test_value(array(
         word_api::TN_CANTON,
         word_api::TN_ZH,
@@ -57,7 +50,10 @@ function create_test_values(testing $t): void
     ),
         value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
-    // add the number of inhabitants in the city of zurich without time definition using the phrase zurich (city) instead of two single words
+    // add a number with a triple without time definition
+    // e.g. the inhabitants in the city of zurich
+    // using the triple zurich (city) instead of two single words
+    // used to test if requesting the value with the separate words returns the value
     $t->test_value(array(
         phrase_api::TN_ZH_CITY,
         word_api::TN_INHABITANTS

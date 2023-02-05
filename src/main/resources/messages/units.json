@@ -41,6 +41,39 @@
       ]
     },
     {
+      "name": "Year",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Year",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "definition",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Definition",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "1967"
+    },
+    {
+      "name": "1979"
+    },
+    {
+      "name": "1983"
+    },
+    {
+      "name": "2019"
+    },
+    {
       "name": "second",
       "plural": "seconds",
       "type": "measure",
@@ -1084,6 +1117,64 @@
       "from": "l",
       "verb": "is alias of",
       "to": "litre"
+    },
+    {
+      "name": "1967 (Year)",
+      "from": "1967",
+      "verb": "is a",
+      "to": "Year"
+    },
+    {
+      "name": "1979 (Year)",
+      "from": "1967",
+      "verb": "is a",
+      "to": "Year"
+    },
+    {
+      "name": "1983 (Year)",
+      "from": "1967",
+      "verb": "is a",
+      "to": "Year"
+    },
+    {
+      "name": "2019 (Year)",
+      "from": "1967",
+      "verb": "is a",
+      "to": "Year"
+    },
+    {
+      "name": "year of definition",
+      "from": "Year",
+      "verb": "of",
+      "to": "definition"
+    },
+    {
+      "name": "1967 (year of definition)",
+      "from": "1967",
+      "verb": "is a",
+      "to": "year of definition",
+      "type": "information"
+    },
+    {
+      "name": "1979 (year of definition)",
+      "from": "1967",
+      "verb": "is a",
+      "to": "year of definition",
+      "type": "information"
+    },
+    {
+      "name": "1983 (year of definition)",
+      "from": "1967",
+      "verb": "is a",
+      "to": "year of definition",
+      "type": "information"
+    },
+    {
+      "name": "2019 (year of definition)",
+      "from": "1967",
+      "verb": "is a",
+      "to": "year of definition",
+      "type": "information"
     }
   ],
   "formulas": [
@@ -1182,9 +1273,9 @@
     {
       "words": [
         "hyperfine transition frequency of Cs",
-        "Hz"
+        "Hz",
+        "1967 (year of definition)"
       ],
-      "time": "1967",
       "number": "9192631770",
       "share": "public",
       "source": "The International System of Units"
@@ -1192,9 +1283,9 @@
     {
       "words": [
         "speed of light",
-        "m/s"
+        "m/s",
+        "1983 (year of definition)"
       ],
-      "time": "1983",
       "number": "299792458",
       "share": "public",
       "source": "The International System of Units"
@@ -1202,9 +1293,9 @@
     {
       "words": [
         "Planck constant",
-        "J⋅s"
+        "J⋅s",
+        "2019 (year of definition)"
       ],
-      "time": "2019",
       "number": "6.62607015E-34",
       "share": "public",
       "source": "The International System of Units"
@@ -1212,9 +1303,9 @@
     {
       "words": [
         "elementary charge",
-        "C"
+        "C",
+        "2019 (year of definition)"
       ],
-      "time": "2019",
       "number": "1.602176634E-19",
       "share": "public",
       "source": "The International System of Units"
@@ -1222,9 +1313,9 @@
     {
       "words": [
         "Boltzmann constant",
-        "J/K"
+        "J/K",
+        "2019 (year of definition)"
       ],
-      "time": "2019",
       "number": "1.380649E-23",
       "share": "public",
       "source": "The International System of Units"
@@ -1232,9 +1323,9 @@
     {
       "words": [
         "Avogadro constant",
-        "mol−1"
+        "mol−1",
+        "2019 (year of definition)"
       ],
-      "time": "2019",
       "number": "6.02214076E+023",
       "share": "public",
       "source": "The International System of Units"
@@ -1242,9 +1333,9 @@
     {
       "words": [
         "luminous efficacy",
-        "lm/W"
+        "lm/W",
+        "1979 (year of definition)"
       ],
-      "time": "1979",
       "number": "683",
       "share": "public",
       "source": "The International System of Units"

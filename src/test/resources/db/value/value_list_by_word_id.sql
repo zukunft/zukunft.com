@@ -3,7 +3,6 @@ PREPARE value_list_by_word_id (int, int) AS
            u.value_id AS user_value_id,
            s.user_id,
            s.phrase_group_id,
-           s.time_word_id,
            l.phrase_group_id,
            l2.word_id,
            CASE WHEN (u.word_value  IS NULL) THEN s.word_value  ELSE u.word_value  END AS word_value,
