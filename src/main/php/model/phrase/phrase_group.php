@@ -174,7 +174,7 @@ class phrase_group extends db_object
         foreach ($this->phr_lst->lst() as $phr) {
             $api_obj->add($phr->api_obj());
         }
-        $api_obj->set_id($this->id);
+        $api_obj->set_id($this->id());
         $api_obj->set_name($this->name());
         return $api_obj;
     }
@@ -341,17 +341,23 @@ class phrase_group extends db_object
 
     /**
      * get the word/triple group name (and create a new group if needed)
+     * @param bool $do_save can be set to false for unit testing
      * based on a string with the word and triple ids
      */
-    function get(): string
+    function get(bool $do_save = true): string
     {
         log_debug($this->dsp_id());
         $result = '';
 
         // get the id based on the given parameters
         $test_load = clone $this;
-        $result .= $test_load->load();
-        log_debug('loaded ' . $this->dsp_id());
+        if ($do_save) {
+            $result .= $test_load->load();
+            log_debug('loaded ' . $this->dsp_id());
+        } else {
+            // TODO use a unit test seq builder
+            $test_load->set_id(1);
+        }
 
         // use the loaded group or create the word group if it is missing
         if ($test_load->id > 0) {
@@ -364,8 +370,10 @@ class phrase_group extends db_object
 
         // update the database for correct selection references
         if ($this->id > 0) {
-            $result .= $this->save_links();  // update the database links for fast selection
-            $result .= $this->generic_name(); // update the generic name if needed
+            if ($do_save) {
+                $result .= $this->save_links();  // update the database links for fast selection
+            }
+            $result .= $this->generic_name($do_save); // update the generic name if needed
         }
 
         log_debug('got ' . $this->dsp_id());
@@ -503,6 +511,7 @@ class phrase_group extends db_object
     }
     */
 
+
     /*
      * modification functions
      */
@@ -612,7 +621,7 @@ class phrase_group extends db_object
         $val = new value($this->usr);
         $val->load_by_grp($this);
 
-        log_debug($val->wrd_lst->name() . ' for "' . $this->user()->name . '" is ' . $val->number());
+        log_debug($val->grp->dsp_id() . ' for "' . $this->user()->name . '" is ' . $val->number());
         return $val;
     }
 
@@ -673,7 +682,7 @@ class phrase_group extends db_object
      * create the generic group name (and update the database record if needed and possible)
      * @returns string the generic name if it has been saved to the database
      */
-    private function generic_name(): string
+    private function generic_name(bool $do_save = true): string
     {
         log_debug();
 
@@ -681,13 +690,15 @@ class phrase_group extends db_object
         $result = '';
 
         // if not yet done, load, the words and triple list
-        $this->load_lst();
+        if ($do_save) {
+            $this->load_lst();
+        }
 
         // TODO take the order into account
         $group_name = $this->phr_lst->dsp_name();
 
         // update the name if possible and needed
-        if ($this->auto_name <> $group_name) {
+        if ($this->auto_name <> $group_name and $do_save) {
             if ($this->id > 0) {
                 // update the generic name in the database
                 $db_con->usr_id = $this->user()->id();

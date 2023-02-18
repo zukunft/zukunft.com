@@ -602,21 +602,27 @@ class triple_list
 
     /**
      * add one triple to the triple list, but only if it is not yet part of the list
+     * @return bool true if the triple has been added to the list
+     *              and false if the triple already exists
      */
-    function add($lnk_to_add)
+    function add($lnk_to_add): bool
     {
-        log_debug('triple_list->add ' . $lnk_to_add->dsp_id());
-        if (!in_array($lnk_to_add->id, $this->ids)) {
-            if ($lnk_to_add->id > 0) {
+        log_debug($lnk_to_add->dsp_id());
+        $result = false;
+
+        if (!in_array($lnk_to_add->id(), $this->ids)) {
+            if ($lnk_to_add->id() > 0) {
                 $this->lst[] = $lnk_to_add;
-                $this->ids[] = $lnk_to_add->id;
+                $this->ids[] = $lnk_to_add->id();
+                $result = true;
             }
         }
+        return $result;
     }
 
     /*
-    display functions
-    */
+     * display functions
+     */
 
     // description of the triple list for debugging
     function dsp_id(): string
@@ -773,6 +779,24 @@ class triple_list
                         $result .= '<br>';
                     }
                 }
+            }
+        }
+        return $result;
+    }
+
+    /*
+     *  information functions
+     */
+
+    /**
+     * @return bool true if the list has no entry
+     */
+    function is_empty(): bool
+    {
+        $result = true;
+        if ($this->lst != null) {
+            if ($this->count() > 0) {
+                $result = false;
             }
         }
         return $result;

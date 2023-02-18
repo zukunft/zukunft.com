@@ -81,7 +81,7 @@ if ($usr->id() > 0) {
 
             $val->load_phrases();
             $url = $html->url(api::VALUE . api::REMOVE, $val_id, $back);
-            $result .= (new button('Delete ' . $val->number() . ' for ' . $val->phr_lst->dsp_name() . '? ', $url))->yesno();
+            $result .= (new button('Delete ' . $val->number() . ' for ' . $val->phr_lst()->dsp_name() . '? ', $url))->yesno();
         }
     } else {
         $result .= dsp_go_back($back, $usr);

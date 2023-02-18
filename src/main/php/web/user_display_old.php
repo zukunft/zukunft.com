@@ -567,8 +567,8 @@ class user_dsp_old extends user
 
                     // prepare the row values
                     $sandbox_item_name = '';
-                    if (isset($val_usr->wrd_lst)) {
-                        $sandbox_item_name = $val_usr->wrd_lst->dsp_obj()->name_linked();
+                    if (!$val_usr->grp->phr_lst->is_empty()) {
+                        $sandbox_item_name = $val_usr->grp->phr_lst->dsp_obj()->name_linked();
                     }
 
                     // format the user value

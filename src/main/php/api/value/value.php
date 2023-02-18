@@ -32,6 +32,7 @@
 
 namespace api;
 
+use controller\controller;
 use html\value_dsp;
 
 class value_api extends user_sandbox_value_api implements \JsonSerializable
@@ -59,6 +60,9 @@ class value_api extends user_sandbox_value_api implements \JsonSerializable
     const TV_SHARE_PRICE = 17.08;
     const TV_EARNINGS_PER_SHARE = 1.22;
 
+    // true if the user has done no personal overwrites which is the default case
+    public bool $is_std;
+
 
     /*
      * construct and map
@@ -67,6 +71,25 @@ class value_api extends user_sandbox_value_api implements \JsonSerializable
     function __construct(int $id = 0)
     {
         parent::__construct($id);
+        $this->is_std = true;
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function set_is_std(bool $is_std = true): void
+    {
+        $this->is_std = $is_std;
+    }
+
+    /**
+     * @return bool false if the loaded value is user specific
+     */
+    function is_std(): bool
+    {
+        return $this->is_std;
     }
 
 
@@ -95,9 +118,23 @@ class value_api extends user_sandbox_value_api implements \JsonSerializable
     public function jsonSerialize(): array
     {
         $vars = get_object_vars($this);
-        // TODO fix
-        //$vars['name'] = $this->grp()->name();
+
+        // add the var of the parent object
         $vars['number'] = $this->number();
+
+        // remove vars from the json that have the default value
+        if ($this->is_std) {
+            if (array_key_exists('is_std', $vars)) {
+                unset($vars['is_std']);
+            }
+        }
+
+        // add the phrase list to the api object because this is always needed to display the value
+        // the phrase group is not used in the api because this is always created dynamically based on the phrase
+        // and only used to speed up the database and reduce the size
+        $vars[controller::API_FLD_PHRASES] = json_decode(json_encode($this->phr_lst()));
+
         return $vars;
     }
+
 }

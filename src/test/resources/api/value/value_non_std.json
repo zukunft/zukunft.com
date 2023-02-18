@@ -1,10 +1,11 @@
 {
   "id": 1,
+  "is_std": false,
   "number": 3.1415926535898,
   "phrases": [
     {
-      "id": 1,
-      "name": "Pi (math)",
+      "id": 2,
+      "name": "Pi",
       "description": null
     }
   ]

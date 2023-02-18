@@ -51,6 +51,7 @@
 
 use api\phrase_api;
 use cfg\phrase_type;
+use controller\controller;
 use html\html_selector;
 use html\phrase_dsp;
 use html\triple_dsp;
@@ -317,6 +318,32 @@ class phrase extends db_object
         }
     }
 
+    /**
+     * map a phrase api json to this model phrase object
+     * @param array $api_json the api array with the phrase values that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = new user_message();
+
+        if ($api_json[controller::API_FLD_ID] > 0) {
+            $wrd = new word($this->user());
+            $msg->add($wrd->set_by_api_json($api_json));
+            if ($msg->is_ok()) {
+                $this->obj = $wrd;
+            }
+            return $msg;
+        } else {
+            $trp = new triple($this->user());
+            $api_json[controller::API_FLD_ID] = $api_json[controller::API_FLD_ID] * -1;
+            $msg->add($trp->set_by_api_json($api_json));
+            if ($msg->is_ok()) {
+                $this->obj = $trp;
+            }
+            return $msg;
+        }
+    }
+
 
     /*
      * loading / database access object (DAO) functions
@@ -568,6 +595,35 @@ class phrase extends db_object
         return $result;
     }
 
+    /**
+     * if there is just one formula linked to the phrase, get it
+     * TODO separate the query parameter creation and add a unit test
+     * TODO allow also to retrieve a list of formulas
+     * TODO get the user specific list of formulas
+     */
+    function formula(): formula
+    {
+        global $db_con;
+
+        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
+        $qp = new sql_par(self::class);
+        $qp->name = 'phrase_formula_by_id';
+        $db_con->set_name($qp->name);
+        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
+        $db_con->set_where_link_no_fld(null, null, $this->id);
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+        $db_row = $db_con->get1($qp);
+        $frm = new formula($this->user());
+        if ($db_row !== false) {
+            if ($db_row[formula::FLD_ID] > 0) {
+                $frm->load_by_id($db_row[formula::FLD_ID], formula::class);
+            }
+        }
+
+        return $frm;
+    }
+
     /*
      * classification
      */
@@ -663,21 +719,22 @@ class phrase extends db_object
 
     protected function get_triple(): triple
     {
-        $lnk = new triple($this->usr);
+        $trp = new triple($this->usr);
         if (get_class($this->obj) == triple::class) {
-            $lnk->set_id($this->obj->id());
-            $lnk->fob = $this->obj->fob;
-            $lnk->tob = $this->obj->tob;
-            $lnk->usr_cfg_id = $this->obj->usr_cfg_id;
-            $lnk->owner_id = $this->obj->owner_id;
-            $lnk->share_id = $this->obj->share_id;
-            $lnk->protection_id = $this->obj->protection_id;
-            $lnk->excluded = $this->obj->excluded;
-            $lnk->description = $this->obj->description;
-            $lnk->type_id = $this->obj->type_id;
-            $lnk->values = $this->obj->values;
+            $trp->set_id($this->obj->id());
+            $trp->set_name($this->obj->name());
+            $trp->fob = $this->obj->fob;
+            $trp->tob = $this->obj->tob;
+            $trp->usr_cfg_id = $this->obj->usr_cfg_id;
+            $trp->owner_id = $this->obj->owner_id;
+            $trp->share_id = $this->obj->share_id;
+            $trp->protection_id = $this->obj->protection_id;
+            $trp->excluded = $this->obj->excluded;
+            $trp->description = $this->obj->description;
+            $trp->type_id = $this->obj->type_id;
+            $trp->values = $this->obj->values;
         }
-        return $lnk;
+        return $trp;
     }
 
     protected function get_triple_dsp(): triple

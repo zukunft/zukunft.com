@@ -77,7 +77,7 @@ class word_unit_db_tests
         $t->subheader('Word API object creation tests');
 
         $wrd = $t->load_word(word_api::TN_READ);
-        $t->assert_api_exp($wrd);
+        $t->assert_api_obj($wrd);
 
 
         $t->header('Unit database tests of the word list class (src/main/php/model/word/word_list.php)');
@@ -149,7 +149,7 @@ class word_unit_db_tests
         $t->subheader('Frontend API tests');
 
         $trp = $t->load_triple(triple_api::TN_READ, verb::IS_A, word_api::TN_READ);
-        $t->assert_api_exp($trp);
+        $t->assert_api_obj($trp);
     }
 
 }

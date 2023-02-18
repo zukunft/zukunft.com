@@ -553,11 +553,16 @@ class test_api extends test_new_obj
         if ($class == formula::class) {
             $actual = json_decode($this->api_call("GET", $url, $data), true);
         }
+        // TODO simulate other users
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         if ($actual == null) {
             log_err('GET api call for ' . $class . ' returned an empty result');
         }
-        return $this->assert_api_compare($class, $actual, $expected, '', false, $ignore_id);
+        $filename = '';
+        if ($class == value::class) {
+            $filename = "value_non_std";
+        }
+        return $this->assert_api_compare($class, $actual, $expected, $filename, false, $ignore_id);
     }
 
     /**

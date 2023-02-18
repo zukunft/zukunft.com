@@ -72,7 +72,7 @@ class view_unit_db_tests
         $t->subheader('View API object creation tests');
 
         $cmp = $t->load_word(view_api::TN_READ);
-        $t->assert_api_exp($cmp);
+        $t->assert_api_obj($cmp);
 
 
         $t->subheader('System view tests');

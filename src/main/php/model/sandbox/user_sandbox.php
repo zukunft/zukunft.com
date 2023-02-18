@@ -657,11 +657,11 @@ class user_sandbox extends db_object
      * dummy function to import a user sandbox object from a json string
      * to be overwritten by the child object
      *
-     * @param array $json_obj an array with the data of the json object
+     * @param array $in_ex_json an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
+    function import_obj(array $in_ex_json, bool $do_save = true): user_message
     {
         return new user_message();
     }

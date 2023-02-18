@@ -153,7 +153,7 @@ class phrase_group_api extends user_sandbox_named_api
     function add(phrase_api $phr): bool
     {
         $result = false;
-        if (!in_array($phr->id, $this->id_lst())) {
+        if (!in_array($phr->id(), $this->id_lst())) {
             $this->lst[] = $phr;
             $this->set_dirty();
             $result = true;

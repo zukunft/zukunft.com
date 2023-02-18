@@ -148,11 +148,12 @@ function run_value_test(testing $t): void
         $t->dsp(', value->load words', $target, $result);
 
         // ... and check the word reloading by group
-        $chk_val->wrd_lst = null;
+        $chk_val->phr_lst()->set_lst(array());
         $chk_val->load_phrases();
-        if (isset($chk_val->wrd_lst)) {
-            $chk_val->wrd_lst->wlsort();
-            $result = dsp_array($chk_val->wrd_lst->names());
+        if (!$chk_val->phr_lst()->is_empty()) {
+            // TODO check if sort is needed
+            //$chk_val->phr_lst()->wlsort();
+            $result = dsp_array($chk_val->phr_names());
         } else {
             $result = '';
         }
@@ -178,8 +179,8 @@ function run_value_test(testing $t): void
             $result = 'No value found for ' . $val->dsp_id() . '.';
         } else {
             if ($val->grp != null) {
-                if ($val->grp->phr_lst->wrd_lst() != null) {
-                    $val_lst = $val->grp->phr_lst->names();
+                if ($val->phr_lst()->wrd_lst() != null) {
+                    $val_lst = $val->phr_lst()->names();
                     $result = array_diff($val_lst, $phr_lst->names());
                 }
             }
@@ -196,7 +197,7 @@ function run_value_test(testing $t): void
         word_api::TN_INHABITANTS,
         word_api::TN_PCT,
         word_api::TN_2020));
-    $result = $pct_val->dsp_obj_old()->display(0);
+    $result = $pct_val->dsp_obj()->display(0);
     $target = number_format(round(value_api::TV_PCT * 100, 2), 2) . '%';
     $t->dsp(', value->val_formatted for ' . $pct_val->dsp_id(), $target, $result);
 

@@ -75,14 +75,14 @@ if ($usr->id() > 0) {
         }
         log_debug("phrases " . implode(",", $phr_ids) . ".");
         log_debug("types " . implode(",", $type_ids) . ".");
-        $val->ids = $phr_ids;
+        $val->load_by_phr_ids($phr_ids);
     } elseif (isset($_GET['phrases'])) {
         $phr_ids = array();
         if ($_GET['phrases'] <> '') {
             $phr_ids = explode(",", $_GET['phrases']);
         }
         log_debug("phrases " . implode(",", $phr_ids) . ".");
-        $val->ids = $phr_ids;
+        $val->load_by_phr_ids($phr_ids);
     }
 
     // get the essential parameters for adding a value
@@ -113,7 +113,7 @@ if ($usr->id() > 0) {
                 }
             }
         } else {
-            $result .= log_err("Adding " . $new_val . " for words " . implode(",", $val->ids) . " failed (" . $upd_result . ").", "value_add");
+            $result .= log_err("Adding " . $new_val . " for phrases " . $val->grp->dsp_id() . " failed (" . $upd_result . ").", "value_add");
         }
 
         log_debug("go back to " . $back . ".");

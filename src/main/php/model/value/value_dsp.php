@@ -112,13 +112,13 @@ class value_dsp_old extends value
         $val_btn_title = '';
         $url_phr = '';
         $this->load_phrases();
-        if (isset($this->phr_lst)) {
-            if (!empty($this->phr_lst->lst())) {
-                $val_btn_title = "add new value similar to " . htmlentities($this->phr_lst->dsp_name());
+        if (isset($this->grp->phr_lst)) {
+            if (!empty($this->grp->phr_lst->lst())) {
+                $val_btn_title = "add new value similar to " . htmlentities($this->grp->phr_lst->dsp_name());
             } else {
                 $val_btn_title = "add new value";
             }
-            $url_phr = $this->phr_lst->id_url_long();
+            $url_phr = $this->grp->phr_lst->id_url_long();
         }
 
         $val_btn_call = '/http/value_add.php?back=' . $back . $url_phr;
@@ -142,12 +142,8 @@ class value_dsp_old extends value
         if (!is_null($this->number)) {
             // load the list of phrases if needed
             $this->reload_if_needed();
-            if (is_null($this->wrd_lst)) {
-                $phr_grp = $this->wrd_lst->phrase_lst()->get_grp();
-                $this->load_by_grp($phr_grp);
-            }
-            if ($this->wrd_lst != null) {
-                if ($this->wrd_lst->has_percent()) {
+            if (!$this->grp->phr_lst->is_empty()) {
+                if ($this->grp->phr_lst->has_percent()) {
                     $result = round($this->number * 100, $this->user()->percent_decimals) . "%";
                 } else {
                     if ($this->number >= 1000 or $this->number <= -1000) {
@@ -354,21 +350,21 @@ class value_dsp_old extends value
             $script = "value_add";
             $result .= dsp_form_start($script);
             $result .= dsp_text_h3("Add value for");
-            log_debug("value->dsp_edit new for phrase ids " . implode(",", $this->ids) . " and user " . $this->user()->id() . ".");
+            log_debug("value->dsp_edit new for " . $this->dsp_id());
         } else {
             $script = "value_edit";
             $result .= dsp_form_start($script);
             $result .= dsp_text_h3("Change value for");
-            if (count($this->ids) <= 0) {
+            if (count($this->ids()) <= 0) {
                 $this->load_phrases();
-                log_debug('value->dsp_edit id ' . $this->id . ' with "' . $this->grp->name() . '"and user ' . $this->user()->id());
+                log_debug('value->dsp_edit ' . $this->dsp_id());
             }
         }
         $this_url = '/http/' . $script . '.php?id=' . $this->id . '&back=' . $back; // url to call this display again to display the user changes
 
         // display the words and triples
         $result .= dsp_tbl_start_select();
-        if (count($this->ids) > 0) {
+        if (count($this->ids()) > 0) {
             $url_pos = 1; // the phrase position (combined number for fixed, type and free phrases)
             // if the form is confirmed, save the value or the other way round: if with the plus sign only a new phrase is added, do not yet save the value
             $result .= '  <input type="hidden" name="id" value="' . $this->id . '">';
@@ -377,11 +373,6 @@ class value_dsp_old extends value
             // reset the phrase sample settings
             $main_wrd = null;
             log_debug("value->dsp_edit main wrd");
-
-            // rebuild the value ids if needed
-            // load the phrases parameters based on the ids
-            $result .= $this->set_phr_lst_by_ids($type_ids);
-            $phr_lst = $this->phr_lst;
 
             /*
       // load the phrase list
@@ -399,10 +390,11 @@ class value_dsp_old extends value
       */
 
             // assign the type to the phrases
+            $phr_lst = clone $this->grp->phr_lst;
             foreach ($phr_lst->lst() as $phr) {
                 $phr->set_user($this->user());
-                foreach (array_keys($this->ids) as $pos) {
-                    if ($phr->id == $this->ids[$pos]) {
+                foreach (array_keys($this->ids()) as $pos) {
+                    if ($phr->id == $this->ids()[$pos]) {
                         $phr->is_wrd_id = $type_ids[$pos];
                         $is_wrd = new word_dsp();
                         $is_wrd->set_id($phr->is_wrd_id);
@@ -431,7 +423,7 @@ class value_dsp_old extends value
                     // allow the user to change also the fixed phrases
                     $type_ids_adj = $type_ids;
                     $type_ids_adj[$phr->dsp_pos] = 0;
-                    $used_url = $this_url . zu_ids_to_url($this->ids, "phrase") .
+                    $used_url = $this_url . zu_ids_to_url($this->ids(), "phrase") .
                         zu_ids_to_url($type_ids_adj, "type");
                     $result .= $phr->dsp_name_del($used_url);
                     $result .= '  <input type="hidden" name="phrase' . $url_pos . '" value="' . $phr->id . '">';
@@ -465,7 +457,7 @@ class value_dsp_old extends value
 
                     // build the url for the case that this phrase should be removed
                     log_debug('build url');
-                    $phr_ids_adj = $this->ids;
+                    $phr_ids_adj = $this->ids();
                     $type_ids_adj = $type_ids;
                     array_splice($phr_ids_adj, $phr->dsp_pos, 1);
                     array_splice($type_ids_adj, $phr->dsp_pos, 1);
@@ -564,7 +556,7 @@ class value_dsp_old extends value
 
             // show the new phrases
             log_debug('show new phrases');
-            foreach ($this->ids as $phr_id) {
+            foreach ($this->ids() as $phr_id) {
                 $result .= '  <tr>';
                 if ($phr_id == 0) {
                     $result .= '    <td colspan="2">';
@@ -583,7 +575,7 @@ class value_dsp_old extends value
         $result .= dsp_tbl_end();
 
         log_debug('table ended');
-        $phr_ids_new = $this->ids;
+        $phr_ids_new = $this->ids();
         //$phr_ids_new[]  = $new_phrase_default;
         $phr_ids_new[] = 0;
         $type_ids_new = $type_ids;
@@ -633,7 +625,7 @@ class value_dsp_old extends value
             // display similar values as a sample for the user to force a consistent type of entry e.g. cost should always be a negative number
             if (isset($main_wrd)) {
                 $main_wrd->load();
-                $samples = $this->dsp_samples($main_wrd->id, $this->ids, 10, $back);
+                $samples = $this->dsp_samples($main_wrd->id, $this->ids(), 10, $back);
                 log_debug("value->dsp_edit samples.");
                 if (trim($samples) <> "") {
                     $result .= dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->dsp_link(api::STYLE_GREY) . '" values as an indication', 'change_hist');

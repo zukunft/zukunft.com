@@ -85,7 +85,14 @@ class user_sandbox_named_api extends user_sandbox_api
 
     function phrase(): phrase_api|phrase_dsp
     {
-        return new phrase_api($this->id, $this->name);
+        if ($this::class == word_api::class) {
+            return new phrase_api($this->id, $this->name);
+        } elseif ($this::class == triple_api::class) {
+            return new phrase_api($this->id * -1, $this->name);
+        } else {
+            log_err('Unexpected ' . $this::class);
+            return new phrase_api($this->id, $this->name);
+        }
     }
 
     function term(): term_api|term_dsp

@@ -83,7 +83,7 @@ class formula_unit_db_tests
         $t->subheader('Frontend API tests');
 
         $frm = $t->load_formula(formula_api::TN_INCREASE);
-        $t->assert_api_exp($frm);
+        $t->assert_api_obj($frm);
     }
 
 }

@@ -53,6 +53,7 @@ use api\value_api;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
+use controller\controller;
 use export\exp_obj;
 use export\source_exp;
 use export\value_exp;
@@ -112,43 +113,10 @@ class value extends user_sandbox_value
     public ?DateTime $time_stamp = null;  // the time stamp for this value (if this is set, the time wrd is supposed to be empty and the value is saved in the time_series table)
 
     // deprecated derived database fields
-    public ?array $ids = null;            // list of the word or triple ids (if > 0 id of a word if < 0 id of a triple)
-    public ?phrase_list $phr_lst = null;  // the phrase object list for this value
-    public ?word_list $wrd_lst = null;    // the word object list for this value
-    public ?triple_list $lnk_lst = null;        // the triple object list  for this value
     public ?DateTime $update_time = null; // time of the last update, which could also be taken from the change log
 
     // field for user interaction
     public ?string $usr_value = null;     // the raw value as the user has entered it including formatting chars such as the thousand separator
-
-
-    /*
-     * casting
-     */
-
-    /**
-     * @return value_api the value frontend api object
-     */
-    function api_obj(): object
-    {
-        $api_obj = new value_api();
-        $number = $this->number();
-        $this->fill_api_obj($api_obj);
-        $api_obj->set_number($this->number());
-        if ($this->grp != null) {
-            $api_obj->set_grp($this->grp->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * just to shorten the code
-     * @return value_dsp the value frontend object
-     */
-    function dsp_obj(): value_dsp
-    {
-        return $this->api_obj()->dsp_obj();
-    }
 
 
     /*
@@ -192,10 +160,6 @@ class value extends user_sandbox_value
         // deprecated fields
         $this->time_stamp = null;
 
-        $this->ids = null;
-        $this->phr_lst = null;
-        $this->wrd_lst = null;
-        $this->lnk_lst = null;
         $this->update_time = null;
         $this->share_id = null;
         $this->protection_id = null;
@@ -205,36 +169,9 @@ class value extends user_sandbox_value
     }
 
     /**
-     * @return value_dsp_old the value object with the display interface functions
-     */
-    function dsp_obj_old(): object
-    {
-        $dsp_obj = new value_dsp_old($this->user());
-
-        parent::fill_dsp_obj($dsp_obj);
-
-        $dsp_obj->source = $this->source;
-        $dsp_obj->time_stamp = $this->time_stamp;
-        $dsp_obj->last_update = $this->last_update;
-
-        $dsp_obj->ids = $this->ids;
-        $dsp_obj->phr_lst = $this->phr_lst;
-        $dsp_obj->wrd_lst = $this->wrd_lst;
-        $dsp_obj->lnk_lst = $this->lnk_lst;
-        $dsp_obj->grp = $this->grp;
-        $dsp_obj->update_time = $this->update_time;
-        $dsp_obj->share_id = $this->share_id;
-        $dsp_obj->protection_id = $this->protection_id;
-
-        $dsp_obj->usr_value = $this->usr_value;
-
-        return $dsp_obj;
-    }
-
-    /**
      * map the database fields to the object fields
      *
-     * @param array $db_row with the data directly from the database
+     * @param array|null $db_row with the data directly from the database
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
@@ -260,14 +197,148 @@ class value extends user_sandbox_value
 
 
     /*
+     * cast
+     */
+
+    /**
+     * @return value_api the value frontend api object
+     */
+    function api_obj(): object
+    {
+        $api_obj = new value_api();
+        $this->fill_api_obj($api_obj);
+        $api_obj->set_number($this->number());
+        $api_obj->set_grp($this->grp->api_obj());
+        $api_obj->set_is_std($this->is_std());
+        return $api_obj;
+    }
+
+    /**
+     * just to shorten the code
+     * @return value_dsp the value frontend object
+     */
+    function dsp_obj(): value_dsp
+    {
+        return $this->api_obj()->dsp_obj();
+    }
+
+    /**
+     * @return value_dsp_old the value object with the display interface functions
+     */
+    function dsp_obj_old(): object
+    {
+        $dsp_obj = new value_dsp_old($this->user());
+
+        parent::fill_dsp_obj($dsp_obj);
+
+        $dsp_obj->grp = $this->grp;
+        $dsp_obj->source = $this->source;
+        $dsp_obj->time_stamp = $this->time_stamp;
+        $dsp_obj->last_update = $this->last_update;
+
+        $dsp_obj->update_time = $this->update_time;
+        $dsp_obj->share_id = $this->share_id;
+        $dsp_obj->protection_id = $this->protection_id;
+
+        $dsp_obj->usr_value = $this->usr_value;
+
+        return $dsp_obj;
+    }
+
+
+    /*
      * set and get
      */
+
+    /**
+     * map a value api json to this model value object
+     * @param array $api_json the api array with the values that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        global $share_types;
+        global $protection_types;
+
+        $msg = new user_message();
+
+        // make sure that there are no unexpected leftovers but keep the user
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == controller::API_FLD_ID) {
+                $this->set_id($value);
+            }
+
+            if ($key == controller::API_FLD_PHRASES) {
+                $phr_lst = new phrase_list($this->user());
+                $msg->add($phr_lst->set_by_api_json($value));
+                if ($msg->is_ok()) {
+                    $this->grp->phr_lst = $phr_lst;
+                }
+            }
+
+            if ($key == exp_obj::FLD_TIMESTAMP) {
+                if (strtotime($value)) {
+                    $this->time_stamp = get_datetime($value, $this->dsp_id(), 'JSON import');
+                } else {
+                    $msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
+                }
+            }
+
+            if ($key == exp_obj::FLD_NUMBER) {
+                if (is_numeric($value)) {
+                    $this->number = $value;
+                } else {
+                    $msg->add_message('Import value: "' . $value . '" is expected to be a number (' . $this->grp->dsp_id() . ')');
+                }
+            }
+
+            if ($key == share_type::JSON_FLD) {
+                $this->share_id = $share_types->id($value);
+            }
+
+            if ($key == protection_type::JSON_FLD) {
+                $this->protection_id = $protection_types->id($value);
+                if ($value <> protection_type::NO_PROTECT) {
+                    $get_ownership = true;
+                }
+            }
+
+            if ($key == source_exp::FLD_REF) {
+                $src = new source($this->user());
+                $src->set_name($value);
+                $this->source = $src;
+            }
+
+        }
+
+        return $msg;
+    }
 
     public function set_grp(phrase_group $grp): void
     {
         $this->grp = $grp;
+    }
 
-        $this->phr_lst = $grp->phr_lst;
+    public function wrd_lst(): word_list
+    {
+        return $this->grp->phr_lst->wrd_lst();
+    }
+
+    public function trp_lst(): triple_list
+    {
+        return $this->grp->phr_lst->trp_lst();
+    }
+
+    /**
+     * @return array with the ids of the phrases
+     */
+    public function ids(): array
+    {
+        return $this->grp->phr_lst->ids();
     }
 
 
@@ -361,45 +432,6 @@ class value extends user_sandbox_value
     }
 
     /**
-     * create an SQL statement to retrieve a value by phrase group and time phrasefrom the database
-     * TODO deprecate
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param phrase_group $grp the id of the phrase group
-     * @param phrase $time_phr the id of the phrase group
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_grp_and_time(
-        sql_db       $db_con,
-        phrase_group $grp,
-        phrase       $time_phr,
-        string       $class = self::class): sql_par
-    {
-        $query_name = 'phrase_group_id';
-        if ($grp->id <= 0) {
-            log_err('Phase group id missing');
-        } else {
-            if ($time_phr->id() <> 0) {
-                $query_name = 'phrase_group_and_time_id';
-            }
-        }
-
-        $qp = $this->load_sql($db_con, $query_name, $class);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
-        $db_con->add_par_int($grp->id());
-        $qp->sql = $db_con->select_by_field(phrase_group::FLD_ID);
-
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
-    /**
      * create the SQL to load a single user specific value
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
@@ -416,8 +448,8 @@ class value extends user_sandbox_value
             $qp->name .= 'id';
         } elseif ($this->grp->id > 0) {
             $qp->name .= 'phrase_group_id';
-        } elseif ($this->phr_lst != null) {
-            $phr_lst = clone $this->phr_lst;
+        } elseif ($this->grp->phr_lst != null) {
+            $phr_lst = clone $this->grp->phr_lst;
             $pos = 1;
             foreach ($phr_lst->lst() as $phr) {
                 $pos++;
@@ -437,9 +469,9 @@ class value extends user_sandbox_value
             $sql_where = $db_con->where_id(self::FLD_ID, $this->id, true);
         } elseif ($this->grp->id > 0) {
             $sql_where = $db_con->where_par(array(phrase_group::FLD_ID), array($this->grp->id), true);
-        } elseif ($this->phr_lst != null) {
+        } elseif ($this->grp->phr_lst != null) {
             // create the SQL to select a phrase group which needs to inside load_sql for correct parameter counting
-            $phr_lst = clone $this->phr_lst;
+            $phr_lst = clone $this->grp->phr_lst;
 
             // the phrase groups with the least number of additional words that have at least one formula value
             $sql_grp_from = '';
@@ -491,23 +523,33 @@ class value extends user_sandbox_value
 
         log_debug($grp->dsp_id());
         $qp = $this->load_sql_by_grp($db_con, $grp, $class);
-        return $this->load($qp);
+        $id = $this->load($qp);
+
+        // use the given phrase list
+        if ($this->phr_lst()->is_empty() and !$grp->phr_lst->is_empty()) {
+            $this->grp = $grp;
+            /*
+        } else {
+            // ... or reload the phrase list
+            if ($this->phr_lst()->is_empty()) {
+                $this->phr_lst()->load_by_phr();
+            }
+            */
+        }
+
+        return $id;
     }
 
     /**
-     * load a value by the phrase group
-     * @param phrase_group $grp the id of the phrase group
-     * @param phrase $time_phr the id of the phrase group
-     * @param string $class the name of the child class from where the call has been triggered
+     * load a value by the phrase ids
+     * @param array $phr_ids with the phrase ids
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_grp_and_time(phrase_group $grp, phrase $time_phr, string $class = self::class): int
+    public function load_by_phr_ids(array $phr_ids): int
     {
-        global $db_con;
-
-        log_debug($grp->dsp_id());
-        $qp = $this->load_sql_by_grp_and_time($db_con, $grp, $time_phr, $class);
-        return $this->load($qp);
+        $phr_lst = new phrase_list($this->user());
+        $phr_lst->load_by_ids((new phr_ids($phr_ids)));
+        return $this->load_by_grp($phr_lst->get_grp());
     }
 
     /**
@@ -575,11 +617,11 @@ class value extends user_sandbox_value
         // if not found try without scaling
         if ($this->id <= 0) {
             $this->load_phrases();
-            if (!isset($this->phr_lst)) {
+            if (!isset($this->grp->phr_lst)) {
                 log_err('No phrases found for ' . $this->dsp_id() . '.', 'value->load_best');
             } else {
                 // try to get a value with another scaling
-                $phr_lst_unscaled = clone $this->phr_lst;
+                $phr_lst_unscaled = clone $this->grp->phr_lst;
                 $phr_lst_unscaled->ex_scaling();
                 log_debug('try unscaled with ' . $phr_lst_unscaled->dsp_id());
                 $grp_unscale = $phr_lst_unscaled->get_grp();
@@ -674,39 +716,41 @@ class value extends user_sandbox_value
     function load_grp_by_id()
     {
         // if the group object is missing
-        if (!isset($this->grp)) {
-            if ($this->grp->id > 0) {
-                // ... load the group related objects means the word and triple list
-                $grp = new phrase_group($this->user()); // in case the word names and word links can be user specific maybe the owner should be used here
-                $grp->id = $this->grp->id;
-                $grp->get();
-                $grp->load(); // to make sure that the word and triple object lists are loaded
-                if ($grp->id > 0) {
-                    $this->grp = $grp;
-                }
+        if ($this->grp->id > 0) {
+            // ... load the group related objects means the word and triple list
+            $grp = new phrase_group($this->user()); // in case the word names and word links can be user specific maybe the owner should be used here
+            $grp->id = $this->grp->id;
+            $grp->get();
+            $grp->load(); // to make sure that the word and triple object lists are loaded
+            if ($grp->id > 0) {
+                $this->grp = $grp;
             }
         }
 
+        /*
         // if a list object is missing
         if (!isset($this->wrd_lst) or !isset($this->lnk_lst)) {
             if (isset($this->grp)) {
                 $this->set_lst_by_grp();
 
                 // these if's are only needed for debugging to avoid accessing an unset object, which would cause a crash
-                if (isset($this->phr_lst)) {
-                    log_debug('got ' . $this->phr_lst->dsp_name() . ' from group ' . $this->grp->id . ' for "' . $this->user()->name . '"');
+                if (isset($this->grp->phr_lst)) {
+                    log_debug('got ' . $this->grp->phr_lst->dsp_name() . ' from group ' . $this->grp->id . ' for "' . $this->user()->name . '"');
                 }
-                if (isset($this->wrd_lst)) {
-                    if (isset($this->lnk_lst)) {
-                        log_debug('with words ' . $this->wrd_lst->name() . ' and triples ' . $this->lnk_lst->dsp_id() . ' by group ' . $this->grp->id . ' for "' . $this->user()->name . '"');
+                $wrd_lst = $this->wrd_lst();
+                $trp_lst = $this->trp_lst();
+                if (!$wrd_lst->is_empty()) {
+                    if (!$trp_lst->is_empty()) {
+                        log_debug('with words ' . $wrd_lst->name() . ' and triples ' . $trp_lst->dsp_id() . ' by group ' . $this->grp->id() . ' for "' . $this->user()->name . '"');
                     } else {
-                        log_debug('with words ' . $this->wrd_lst->name() . ' by group ' . $this->grp->id . ' for "' . $this->user()->name . '"');
+                        log_debug('with words ' . $wrd_lst->name() . ' by group ' . $this->grp->id() . ' for "' . $this->user()->name . '"');
                     }
                 } else {
-                    log_debug($this->grp->id . ' for "' . $this->user()->name . '"');
+                    log_debug($this->grp->id() . ' for "' . $this->user()->name . '"');
                 }
             }
         }
+        */
         log_debug('done');
     }
 
@@ -743,26 +787,6 @@ class value extends user_sandbox_value
     }
 
     /**
-     * set the list objects based on the loaded phrase group
-     * function to set depending objects based on loaded objects
-     */
-    function set_lst_by_grp()
-    {
-        if (isset($this->grp)) {
-            if (!isset($this->phr_lst)) {
-                $this->phr_lst = $this->grp->phr_lst;
-            }
-            if (!isset($this->wrd_lst)) {
-                $this->wrd_lst = $this->grp->phr_lst->wrd_lst();
-            }
-            if (!isset($this->lnk_lst)) {
-                $this->lnk_lst = $this->grp->phr_lst->trp_lst();
-            }
-            $this->ids = $this->grp->phr_lst->id_lst();
-        }
-    }
-
-    /**
      * load the source and return the source name
      */
     function source_name(): string
@@ -781,90 +805,24 @@ class value extends user_sandbox_value
 
 
     /*
-     *  load object functions that extend the frontend functions
+     * reduce code line length
      */
 
     /**
-     * rebuild the phrase list based on the phrase ids
+     * @return phrase_list the phrase list of this value from the phrase group
      */
-    function set_phr_lst_by_ids(array $ids): string
+    public function phr_lst(): phrase_list
     {
-        $result = '';
-
-        // check the parameters
-        if (!$this->user()->is_set()) {
-            $result = 'User must be set to load ' . $this->dsp_id() . ' to load the phrase list';
-        } else {
-            if (empty($this->phr_lst)) {
-                if (!empty($this->ids)) {
-                    log_debug('value->set_phr_lst_by_ids for "' . implode(",", $ids) . '" and "' . $this->user()->name . '"');
-                    $phr_lst = new phrase_list($this->user());
-                    if (!$phr_lst->load_by_ids((new phr_ids($ids)))) {
-                        $result = 'Cannot load phrases by id';
-                    }
-                    $this->phr_lst = $phr_lst;
-                }
-            }
-        }
-        return $result;
+        return $this->grp->phr_lst;
     }
 
     /**
-     * rebuild the word and triple list based on the word and triple ids
-     * add set the time_id if needed
+     * @return array with the phrase names of this value from the phrase group
      */
-    function set_grp_by_ids(): string
+    public function phr_names(): array
     {
-        $result = '';
-        if (!isset($this->grp)) {
-            if (!empty($this->ids)) {
-                log_debug('value->set_grp_by_ids for ids "' . implode(",", $this->ids) . '" for "' . $this->user()->name . '"');
-                $grp = new phrase_group($this->user()); // in case the word names and word links can be user specific maybe the owner should be used here
-                $grp->load_by_ids((new phr_ids($this->ids)));
-                if ($grp->id > 0) {
-                    $this->grp = $grp;
-                    /* actually not needed
-                    $this->set_lst_by_grp();
-                    if (isset($this->wrd_lst)) {
-                        zu_debug('value->set_grp_by_ids -> got '.$this->wrd_lst->name().' for '.dsp_array($this->ids).'');
-                    }
-                    */
-                }
-            }
-        }
-        log_debug('group set to id ' . $this->grp->id);
-        return $result;
+        return $this->grp->phr_lst->names();
     }
-
-    //
-    function set_grp_and_time_by_ids(?array $ids): string
-    {
-        $result = '';
-        if ($ids != null) {
-            // 1. load the phrases parameters based on the ids
-            $result = $this->set_phr_lst_by_ids($ids);
-            // 2. get the group based on the phrase list
-            $result .= $this->set_grp_by_ids();
-            if ($this->ids == null) {
-                log_debug('ids missing');
-            } else {
-                log_debug(implode(",", $ids) . ' to ' . $this->grp->id());
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * exclude the time period word from the phrase list
-     */
-    function set_phr_lst_ex_time()
-    {
-        log_debug('for "' . $this->phr_lst->dsp_name() . '" for "' . $this->user()->name . '"');
-        $result = '';
-        $this->phr_lst->ex_time();
-        return $result;
-    }
-
 
 
     /*
@@ -917,16 +875,16 @@ class value extends user_sandbox_value
             log_debug("To scale a value the number should not be empty.");
         } elseif (is_null($this->user()->id())) {
             log_warning("To scale a value the user must be defined.", "value->scale");
-        } elseif (is_null($this->wrd_lst)) {
+        } elseif ($this->grp->phr_lst->is_empty()) {
             log_warning("To scale a value the word list should be loaded by the calling method.", "value->scale");
         } else {
-            log_debug($this->number . ' for ' . $this->wrd_lst->name() . ' (user ' . $this->user()->id() . ')');
+            log_debug($this->number . ' for ' . $this->grp->dsp_id() . ' (user ' . $this->user()->id() . ')');
 
             // if it has a scaling word, scale it to one
-            if ($this->wrd_lst->has_scaling()) {
+            if ($this->grp->phr_lst->has_scaling()) {
                 log_debug('value words have a scaling words');
                 // get any scaling words related to the value
-                $scale_wrd_lst = $this->wrd_lst->scaling_lst();
+                $scale_wrd_lst = $this->grp->phr_lst->scaling_lst();
                 if (count($scale_wrd_lst->lst()) > 1) {
                     log_warning('Only one scale word can be taken into account in the current version, but not a list like ' . $scale_wrd_lst->name() . '.', "value->scale");
                 } else {
@@ -996,70 +954,28 @@ class value extends user_sandbox_value
     /**
      * import a value from an external object
      *
-     * @param array $json_obj an array with the data of the json object
+     * @param array $in_ex_json an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
+    function import_obj(array $in_ex_json, bool $do_save = true): user_message
     {
-        global $share_types;
-        global $protection_types;
-
         log_debug();
         $result = new user_message();
 
         $get_ownership = false;
-        foreach ($json_obj as $key => $value) {
+        foreach ($in_ex_json as $key => $value) {
 
             if ($key == export::WORDS) {
                 $phr_lst = new phrase_list($this->user());
                 $result->add($phr_lst->import_lst($value, $do_save));
-                if ($result->is_ok() and $do_save) {
-                    $phr_grp = $phr_lst->get_grp();
+                if ($result->is_ok()) {
+                    $phr_grp = $phr_lst->get_grp($do_save);
                     $this->grp = $phr_grp;
                 }
-                $this->phr_lst = $phr_lst;
             }
 
-            if ($key == exp_obj::FLD_TIMESTAMP) {
-                if (strtotime($value)) {
-                    $this->time_stamp = get_datetime($value, $this->dsp_id(), 'JSON import');
-                } else {
-                    $result->add_message('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
-                }
-            }
-
-            if ($key == exp_obj::FLD_NUMBER) {
-                if (is_numeric($value)) {
-                    $this->number = $value;
-                } else {
-                    $result->add_message('Import value: "' . $value . '" is expected to be a number (' . $this->phr_lst->dsp_id() . ')');
-                }
-            }
-
-            if ($key == share_type::JSON_FLD) {
-                $this->share_id = $share_types->id($value);
-            }
-
-            if ($key == protection_type::JSON_FLD) {
-                $this->protection_id = $protection_types->id($value);
-                if ($value <> protection_type::NO_PROTECT) {
-                    $get_ownership = true;
-                }
-            }
-
-            if ($key == source_exp::FLD_REF) {
-                $src = new source($this->user());
-                $src->set_name($value);
-                if ($result->is_ok() and $do_save) {
-                    $src->load_by_name($value);
-                    if ($src->id == 0) {
-                        $src->save();
-                    }
-                }
-                $this->source = $src;
-            }
-
+            $result->add($this->set_fields_from_json($key, $value, $result, $do_save));
 
         }
 
@@ -1090,28 +1006,13 @@ class value extends user_sandbox_value
             $this->load_phrases();
         }
 
-        // add the phrases
-        log_debug('get phrases');
-        $phr_lst = array();
-        // TODO use either word and triple export_obj function or phrase
-        if ($this->phr_lst != null) {
-            if (!$this->phr_lst->is_empty()) {
-                foreach ($this->phr_lst->lst() as $phr) {
-                    $phr_lst[] = $phr->name();
-                }
-                if (count($phr_lst) > 0) {
-                    $result->words = $phr_lst;
-                }
-            }
-        }
-
         // add the words
         log_debug('get words');
         $wrd_lst = array();
         // TODO use the triple export_obj function
-        if ($this->wrd_lst != null) {
-            if (!$this->wrd_lst->is_empty()) {
-                foreach ($this->wrd_lst->lst() as $wrd) {
+        if (!$this->grp->phr_lst->is_empty()) {
+            if (!$this->wrd_lst()->is_empty()) {
+                foreach ($this->wrd_lst()->lst() as $wrd) {
                     $wrd_lst[] = $wrd->name();
                 }
                 if (count($wrd_lst) > 0) {
@@ -1123,9 +1024,9 @@ class value extends user_sandbox_value
         // add the triples
         $triples_lst = array();
         // TODO use the triple export_obj function
-        if ($this->lnk_lst != null) {
-            if (count($this->lnk_lst->lst) > 0) {
-                foreach ($this->lnk_lst->lst as $lnk) {
+        if (!$this->grp->phr_lst->is_empty()) {
+            if (!$this->trp_lst()->is_empty()) {
+                foreach ($this->trp_lst()->lst as $lnk) {
                     $triples_lst[] = $lnk->name();
                 }
                 if (count($triples_lst) > 0) {
@@ -1156,6 +1057,102 @@ class value extends user_sandbox_value
         return $result;
     }
 
+    /**
+     * set the value object vars based on an api json array
+     * similar to import_obj but using the database id instead of the names
+     * the other side of the api_obj function
+     *
+     * @param array $api_json the api array
+     * @return user_message false if a value could not be set
+     */
+    function save_from_api_msg(array $api_json, bool $do_save = true): user_message
+    {
+        log_debug();
+        $result = new user_message();
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == export::WORDS) {
+                $grp = new phrase_group($this->user());
+                $result->add($grp->save_from_api_msg($value, $do_save));
+                if ($result->is_ok()) {
+                    $this->grp = $value;
+                }
+            }
+
+            $result->add($this->set_fields_from_json($key, $value, $result, $do_save));
+
+        }
+
+        if ($result->is_ok() and $do_save) {
+            $result->add_message($this->save());
+        }
+
+        return $result;
+    }
+
+    /**
+     * set the all model vars based on a json key value pair that are not a database id
+     * used for the import_obj and save_from_api_msg function
+     *
+     * @param string $key the json key
+     * @param string|array $value the value from the json message or an array of sub json
+     * @param user_message $msg the user message object to remember the message that should be shown to the user
+     * @param bool $do_save false only for unit tests
+     * @return user_message the enriched user message
+     */
+    private function set_fields_from_json(
+        string       $key,
+        string|array $value,
+        user_message $msg,
+        bool         $do_save = true): user_message
+    {
+        global $share_types;
+        global $protection_types;
+
+        if ($key == exp_obj::FLD_TIMESTAMP) {
+            if (strtotime($value)) {
+                $this->time_stamp = get_datetime($value, $this->dsp_id(), 'JSON import');
+            } else {
+                $msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
+            }
+        }
+
+        if ($key == exp_obj::FLD_NUMBER) {
+            if (is_numeric($value)) {
+                $this->number = $value;
+            } else {
+                $msg->add_message('Import value: "' . $value . '" is expected to be a number (' . $this->grp->dsp_id() . ')');
+            }
+        }
+
+        if ($key == share_type::JSON_FLD) {
+            $this->share_id = $share_types->id($value);
+        }
+
+        if ($key == protection_type::JSON_FLD) {
+            $this->protection_id = $protection_types->id($value);
+            if ($value <> protection_type::NO_PROTECT) {
+                $get_ownership = true;
+            }
+        }
+
+        if ($key == source_exp::FLD_REF) {
+            $src = new source($this->user());
+            $src->set_name($value);
+            if ($msg->is_ok() and $do_save) {
+                $src->load_by_name($value);
+                if ($src->id == 0) {
+                    $src->save();
+                }
+            }
+            $this->source = $src;
+        }
+
+        return $msg;
+    }
+
+
     /*
      *  display functions
      */
@@ -1167,8 +1164,8 @@ class value extends user_sandbox_value
     {
         $result = '';
 
-        if ($this->phr_lst != null) {
-            $result .= $this->phr_lst->dsp_id();
+        if ($this->grp->phr_lst != null) {
+            $result .= $this->grp->phr_lst->dsp_id();
         }
         $result .= $this->usr_value;
 
@@ -1915,9 +1912,6 @@ class value extends user_sandbox_value
         // build the database object because the is anyway needed
         $db_con->set_type(sql_db::TBL_VALUE);
         $db_con->set_usr($this->user()->id());
-
-        // rebuild the value ids if needed e.g. if the front end function has just set a list of phrase ids get the responding group
-        $result .= $this->set_grp_and_time_by_ids($this->ids);
 
         // check if a new value is supposed to be added
         if ($this->id <= 0) {

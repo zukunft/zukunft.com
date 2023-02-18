@@ -25,6 +25,7 @@
     TODO add the view result at least as simple text to the JSON export
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO use the json api message header for all api messages
     TODO check if reading triples should use a view to generate the triple name and the generated name
     TODO use the sandbox list for all user lists
     TODO use in the frontend only the code id of types
@@ -135,6 +136,22 @@
     TODO allow to assign more phrases to a source for better suggestion of sources
     TODO add a request time to each frontend request to check the automatically the response times
     TODO check that all external links from external libraries are removed, so that the cookie disclaimer can be avoided
+    TODO reduce the size of the api messages to improve speed
+
+    TODO add data optimizers for read time, write time and space usage
+         e.g. select the queries most often used with the longest exe time by data transferred
+              if at least 1000 values share the same owner, share and protection parameters and context
+              create a value group and a value group table for these values
+              estimate the speed and size saving potential
+              create a separate pure key-value data table
+              copy the data to the optimized structure
+              switch over the read and write queries
+              check if the real query time match the estimates
+              and adjust the parameters if needed
+              if the time or space saving is real remove the old and unused data (fixed reorg)
+              set the max number of value group tables per pod to e.g. 900
+              check the context overlapping between two pods
+              and suggest data transfer if this will reduce trafic
 
 
     TODO create a table startup page with a
@@ -169,6 +186,15 @@
         9. remove class and function from debug
        10. capsule object vars
         done:
+
+
+    rules for this projects (target, but not yet done)
+
+    - be open
+    - always sort by priority
+    - one place (e.g. git / issue tracker / wiki)
+    - not more than 6 information block per page
+    - automatic log (who has changed what and when)
 
 
     This file is part of zukunft.com - calc with words

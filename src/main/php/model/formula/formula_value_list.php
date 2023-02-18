@@ -752,13 +752,13 @@ class formula_value_list
      *              split the backend and frontend part
      *              target is: if a value is changed, what needs to be updated?
      */
-    function load_by_val(value $val)
+    function load_by_val(value $val): string
     {
         global $db_con;
 
-        $phr_lst = $val->phr_lst;
+        $phr_lst = $val->phr_lst();
 
-        log_debug("fv_lst->val_phr_lst ... for value " . $val->id());
+        log_debug("for value " . $val->id());
         $result = '';
 
         // list all related formula results

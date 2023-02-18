@@ -483,16 +483,16 @@ class ref extends user_sandbox_link_with_type
     /**
      * import a link to external database from an imported json object
      *
-     * @param array $json_obj an array with the data of the json object
+     * @param array $in_ex_json an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
+    function import_obj(array $in_ex_json, bool $do_save = true): user_message
     {
         $result = new user_message();
 
         // reset of object not needed, because the calling function has just created the object
-        foreach ($json_obj as $key => $value) {
+        foreach ($in_ex_json as $key => $value) {
             if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
                 $this->external_key = $value;

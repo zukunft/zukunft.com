@@ -44,6 +44,7 @@ use api\word_api;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
+use controller\controller;
 use export\exp_obj;
 use export\user_sandbox_exp_named;
 use export\word_exp;
@@ -300,6 +301,80 @@ class word extends user_sandbox_named_with_type
         }
 
         return $dsp_obj;
+    }
+
+    /**
+     * map a word api json to this model word object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the word values that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        global $phrase_types;
+
+        $msg = new user_message();
+
+        // make sure that there are no unexpected leftovers
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == controller::API_FLD_ID) {
+                $this->set_id($value);
+            }
+            if ($key == controller::API_FLD_NAME) {
+                $this->set_name($value);
+            }
+            if ($key == controller::API_FLD_DESCRIPTION) {
+                if ($value <> '') {
+                    $this->description = $value;
+                }
+            }
+            if ($key == controller::API_FLD_TYPE) {
+                $this->type_id = $phrase_types->id($value);
+            }
+
+            /* TODO
+            if ($key == self::FLD_PLURAL) {
+                if ($value <> '') {
+                    $this->plural = $value;
+                }
+            }
+            if ($key == share_type::JSON_FLD) {
+                $this->share_id = $share_types->id($value);
+            }
+            if ($key == protection_type::JSON_FLD) {
+                $this->protection_id = $protection_types->id($value);
+            }
+            if ($key == exp_obj::FLD_VIEW) {
+                $wrd_view = new view($this->user());
+                if ($do_save) {
+                    $wrd_view->load_by_name($value, view::class);
+                    if ($wrd_view->id == 0) {
+                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                    } else {
+                        $this->view_id = $wrd_view->id;
+                    }
+                } else {
+                    $wrd_view->set_name($value);
+                }
+                $this->view = $wrd_view;
+            }
+
+            if ($key == controller::API_FLD_PHRASES) {
+                $phr_lst = new phrase_list($this->user());
+                $msg->add($phr_lst->db_obj($value));
+                if ($msg->is_ok()) {
+                    $this->grp->phr_lst = $phr_lst;
+                }
+            }
+            */
+
+        }
+
+        return $msg;
     }
 
 
@@ -584,11 +659,11 @@ class word extends user_sandbox_named_with_type
     /**
      * import a word from a json data word object
      *
-     * @param array $json_obj an array with the data of the json object
+     * @param array $in_ex_json an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
+    function import_obj(array $in_ex_json, bool $do_save = true): user_message
     {
         global $phrase_types;
         global $share_types;
@@ -601,7 +676,7 @@ class word extends user_sandbox_named_with_type
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
-        foreach ($json_obj as $key => $value) {
+        foreach ($in_ex_json as $key => $value) {
             if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
             }
@@ -659,7 +734,7 @@ class word extends user_sandbox_named_with_type
             if ($this->id <= 0 and $do_save) {
                 $result->add_message('Word ' . $this->dsp_id() . ' cannot be saved');
             } else {
-                foreach ($json_obj as $key => $value) {
+                foreach ($in_ex_json as $key => $value) {
                     if ($result->is_ok()) {
                         if ($key == self::FLD_REFS) {
                             foreach ($value as $ref_data) {
@@ -734,6 +809,8 @@ class word extends user_sandbox_named_with_type
     /**
      * set the word object vars based on an api json array
      * similar to import_obj but using the database id instead of the names
+     * the other side of the api_obj function
+     *
      * @param array $api_json the api array
      * @return user_message false if a value could not be set
      */

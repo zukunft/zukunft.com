@@ -446,7 +446,7 @@ class value_list extends sandbox_list
             if ($key == self::FLD_EX_CONTEXT) {
                 $phr_lst = new phrase_list($this->user());
                 $result->add($phr_lst->import_lst($value, $do_save));
-                $val->phr_lst = clone $phr_lst;
+                $val->grp = $phr_lst->get_grp($do_save);
             }
 
             if ($key == exp_obj::FLD_TIMESTAMP) {
@@ -481,17 +481,17 @@ class value_list extends sandbox_list
                 foreach ($value as $val_entry) {
                     foreach ($val_entry as $val_key => $val_number) {
                         $val_to_add = clone $val;
-                        $val_to_add->phr_lst = clone $phr_lst;
+                        $phr_lst_to_add = clone $phr_lst;
                         $val_phr = new phrase($this->user());
                         if ($do_save) {
                             $val_phr->load_by_name($val_key);
                         } else {
                             $val_phr->set_name($val_key, word::class);
                         }
-                        $val_to_add->phr_lst->add($val_phr);
+                        $phr_lst_to_add->add($val_phr);
                         $val_to_add->set_number($val_number);
+                        $val_to_add->grp = $phr_lst_to_add->get_grp($do_save);
                         if ($do_save) {
-                            $val_to_add->grp = $phr_lst->get_grp();
                             $result->add_message($val_to_add->save());
                         }
                         $this->lst[] = $val_to_add;
@@ -526,9 +526,9 @@ class value_list extends sandbox_list
             $val1 = $this->lst[1];
 
             // get phrase names of the first value
-            $phr_lst1 = $val0->phr_lst->names();
+            $phr_lst1 = $val0->phr_names();
             // get phrase names of the second value
-            $phr_lst2 = $val1->phr_lst->names();
+            $phr_lst2 = $val1->phr_names();
             // add common phrase of the first and second value
             $phr_lst = array();
             if (count($phr_lst1) > 0 and count($phr_lst2) > 0) {
@@ -558,7 +558,7 @@ class value_list extends sandbox_list
             }
 
             foreach ($this->lst as $val) {
-                $phr_name = array_diff($val->phr_lst->names(), $phr_lst);
+                $phr_name = array_diff($val->phr_names(), $phr_lst);
                 if (count($phr_name) > 0) {
                     $val_entry = array();
                     $key_name = array_values($phr_name)[0];

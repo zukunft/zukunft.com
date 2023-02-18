@@ -72,6 +72,7 @@ class phrase_list extends user_sandbox_list_named
     }
 
     /**
+     * TODO base the display object on the api object as already done in value
      * @return phrase_list_dsp_old the word object with the display interface functions
      */
     function dsp_obj(): object
@@ -79,6 +80,30 @@ class phrase_list extends user_sandbox_list_named
         $dsp_obj = new phrase_list_dsp_old($this->user());
         $dsp_obj->lst = $this->lst;
         return $dsp_obj;
+    }
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * map a phrase list api json to this model phrase list object
+     * @param array $api_json the api array with the phrases that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = new user_message();
+
+        foreach ($api_json as $json_phr) {
+            $phr = new phrase($this->user());
+            $msg->add($phr->set_by_api_json($json_phr));
+            if ($msg->is_ok()) {
+                $this->add($phr);
+            }
+        }
+
+        return $msg;
     }
 
 
@@ -596,7 +621,7 @@ class phrase_list extends user_sandbox_list_named
         $this->lst = array();
 
         $wrd_lst = new word_list($this->user());
-        $wrd_lst->load_linked_words($vrb->id() , $direction);
+        $wrd_lst->load_linked_words($vrb->id(), $direction);
         $wrd_added = $this->add_wrd_lst($wrd_lst);
 
         $trp_lst = new triple_list($this->user());
@@ -836,8 +861,8 @@ class phrase_list extends user_sandbox_list_named
     {
         $wrd_lst = new word_list($this->user());
         foreach ($this->lst as $phr) {
-            if ($phr->id() > 0) {
-                if (isset($phr->obj)) {
+            if ($phr->id() > 0 or $phr->name() != '') {
+                if (isset($phr->obj) and $phr->obj::class == word::class) {
                     $wrd_lst->add($phr->obj);
                 }
             }
@@ -853,8 +878,8 @@ class phrase_list extends user_sandbox_list_named
     {
         $trp_lst = new triple_list($this->user());
         foreach ($this->lst as $phr) {
-            if ($phr->id() < 0) {
-                if (isset($phr->obj)) {
+            if ($phr->id() < 0 or $phr->name() != '') {
+                if (isset($phr->obj) and $phr->obj::class == triple::class) {
                     $trp_lst->add($phr->obj);
                 }
             }
@@ -1004,7 +1029,7 @@ class phrase_list extends user_sandbox_list_named
     {
         log_debug($vrb->dsp_id());
         $wrd_lst = $this->wrd_lst_all();
-        $added_wrd_lst = $wrd_lst->parents($vrb->id() , $level);
+        $added_wrd_lst = $wrd_lst->parents($vrb->id(), $level);
         $added_phr_lst = $added_wrd_lst->phrase_lst();
 
         log_debug($added_phr_lst->name());
@@ -1061,9 +1086,9 @@ class phrase_list extends user_sandbox_list_named
      */
     function children(?verb $vrb = null, int $level = 0): phrase_list
     {
-        log_debug('phrase_list->children type ' . $vrb->id() );
+        log_debug('phrase_list->children type ' . $vrb->id());
         $wrd_lst = $this->wrd_lst_all();
-        $added_wrd_lst = $wrd_lst->children($vrb->id() , $level);
+        $added_wrd_lst = $wrd_lst->children($vrb->id(), $level);
         $added_phr_lst = $added_wrd_lst->phrase_lst();
 
         log_debug($added_phr_lst->name());
@@ -1136,7 +1161,7 @@ class phrase_list extends user_sandbox_list_named
     }
 
     // makes sure that all combinations of "are" and "contains" are included
-    function are_and_contains()
+    function are_and_contains(): phrase_list
     {
         log_debug('phrase_list->are_and_contains for ' . $this->dsp_id());
 
@@ -1216,9 +1241,10 @@ class phrase_list extends user_sandbox_list_named
         return $result;
     }
 
+
     /*
-      im- and export functions
-    */
+     * im- and export
+     */
 
     /**
      * import a phrase list from an inner part of a JSON array object
@@ -1235,25 +1261,28 @@ class phrase_list extends user_sandbox_list_named
         foreach ($json_obj as $value) {
             if ($value != '') {
                 $phr = new phrase($this->user());
-                if ($result->is_ok() and $do_save) {
-                    $phr->load_by_name($value);
-                    if ($phr->id() == 0) {
-                        $wrd = new word($this->user());
-                        $wrd->load_by_name($value, word::class);
-                        if ($wrd->id() == 0) {
-                            $wrd->set_name($value);
-                            $wrd->type_id = $phrase_types->default_id();
-                            $result->add_message($wrd->save());
+                if ($result->is_ok()) {
+                    if ($do_save) {
+                        $phr->load_by_name($value);
+                        if ($phr->id() == 0) {
+                            // for new phrase use the word object
+                            $wrd = new word($this->user());
+                            $wrd->load_by_name($value, word::class);
+                            if ($wrd->id() == 0) {
+                                $wrd->set_name($value);
+                                $wrd->type_id = $phrase_types->default_id();
+                                $result->add_message($wrd->save());
+                            }
+                            if ($wrd->id() == 0) {
+                                log_err('Cannot add word "' . $value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
+                            } else {
+                                $phr = $wrd->phrase();
+                            }
                         }
-                        if ($wrd->id() == 0) {
-                            log_err('Cannot add word "' . $value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
-                        } else {
-                            $phr = $wrd->phrase();
-                        }
+                    } else {
+                        // fallback for unit tests
+                        $phr->set_name($value, word::class);
                     }
-                } else {
-                    // fallback for unit tests
-                    $phr->set_name($value, word::class);
                 }
                 $this->add($phr);
             }
@@ -1267,11 +1296,6 @@ class phrase_list extends user_sandbox_list_named
 
         return $result;
     }
-
-
-    /*
-     * im- and export
-     */
 
     /**
      * import a phrase list object from a JSON array object
@@ -1405,6 +1429,7 @@ class phrase_list extends user_sandbox_list_named
         return zu_ids_to_url($this->id_lst(), "phrase");
     }
 
+
     /*
      * display functions
      */
@@ -1511,6 +1536,26 @@ class phrase_list extends user_sandbox_list_named
 
         return $result;
     }
+
+
+    /*
+     *  information functions
+     */
+
+    /**
+     * @return bool true if the list has no entry
+     */
+    function is_empty(): bool
+    {
+        $result = true;
+        if ($this->lst != null) {
+            if (count($this->lst) > 0) {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * modification functions
@@ -2114,20 +2159,21 @@ class phrase_list extends user_sandbox_list_named
 
     /**
      * get the best matching phrase group (but don't create a new group)
+     * @param bool $do_save can be set to false for unit testing
      * @return phrase_group|null the best matching phrase group or null if no group matches
      */
-    function get_grp(): ?phrase_group
+    function get_grp(bool $do_save = true): ?phrase_group
     {
         log_debug($this->dsp_id());
         $grp = null;
 
         // get or create the group
-        if (count($this->id_lst()) <= 0) {
+        if ($this->is_empty()) {
             log_err('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
         } else {
             $grp = new phrase_group($this->user());
             $grp->phr_lst = $this;
-            $grp->get();
+            $grp->get($do_save);
         }
 
         log_debug($this->dsp_id());

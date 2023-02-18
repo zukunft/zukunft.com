@@ -91,7 +91,7 @@ if ($usr->id() > 0) {
             log_debug("phrases " . implode(",", $phr_ids) . ".");
             log_debug("types " . implode(",", $type_ids) . ".");
 
-            $val->ids = $phr_ids;
+            $val->load_by_phr_ids($phr_ids);
         }
 
         // 'confirm' is 1 if the user has pressed "save"

@@ -519,17 +519,55 @@ class test_base
      * @param object $usr_obj the object which frontend API functions should be tested
      * @return bool true if the reloaded backend object has no relevant differences
      */
-    function assert_api_exp(object $usr_obj): bool
+    function assert_api_obj(object $usr_obj): bool
     {
         $original_json = json_decode(json_encode($usr_obj->export_obj(false)), true);
         $recreated_json = '';
         $api_obj = $usr_obj->api_obj();
         if ($api_obj->id() == $usr_obj->id()) {
             $db_obj = $api_obj->db_obj($usr_obj->user(), get_class($api_obj));
+            $db_obj->load_by_id($usr_obj->id(), get_class($usr_obj));
             $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
         }
         $result = json_is_similar($original_json, $recreated_json);
+        // TODO remove, for faster debugging only
+        $json_in_txt = json_encode($original_json);
+        $json_ex_txt = json_encode($recreated_json);
         return $this->assert($this->name . 'API check', $result, true);
+    }
+
+    /**
+     * check if the frontend API json can be created
+     * and if the export based recreation of the backend object result to the similar object
+     *
+     * @param object $usr_obj the object which frontend API functions should be tested
+     * @return bool true if the reloaded backend object has no relevant differences
+     */
+    function assert_api_json(object $usr_obj): bool
+    {
+        $original_json = json_decode(json_encode($usr_obj->export_obj(false)), true);
+        $api_obj = $usr_obj->api_obj();
+        $api_json = json_decode(json_encode($api_obj), true);
+        $db_obj = $api_obj->db_obj($usr_obj->user(), get_class($api_obj));
+        $db_obj->set_by_api_json($api_json);
+        $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
+        $result = json_is_similar($original_json, $recreated_json);
+        // TODO remove, for faster debugging only
+        $json_in_txt = json_encode($original_json);
+        $json_ex_txt = json_encode($recreated_json);
+        return $this->assert($this->name . 'API check', $result, true);
+    }
+
+    /**
+     * check if the
+     *
+     * @param object $usr_obj the api object used a a base for the message
+     * @return bool true if the generated message matches in relevant parts the expected message
+     */
+    function assert_api_json_msg(object $api_obj): bool
+    {
+        $json_api_msg = json_encode($api_obj);
+        return true;
     }
 
     /**
@@ -605,6 +643,7 @@ class test_base
         $file_text = file_get_contents(PATH_TEST_FILES . $json_file_name);
         $json_in = json_decode($file_text, true);
         $usr_obj->import_obj($json_in, false);
+        $this->set_id_for_unit_tests($usr_obj);
         $json_ex = json_decode(json_encode($usr_obj->export_obj(false)), true);
         $result = json_is_similar($json_in, $json_ex);
         // TODO remove, for faster debugging only
@@ -1369,6 +1408,55 @@ class test_base
         return $this->seq_nbr;
     }
 
+    /**
+     * fill the object with dummy ids to enable correct and fast unit tests without db connect
+     * @param object $usr_obj
+     * @return void
+     */
+    private function set_id_for_unit_tests(object $usr_obj): void
+    {
+        if ($usr_obj::class == word::class
+            or $usr_obj::class == triple::class) {
+            if ($usr_obj->id() == 0) {
+                $usr_obj->set_id($this->next_seq_nbr());
+            }
+        } elseif ($usr_obj::class == value::class) {
+            $this->set_val_id_for_unit_tests($usr_obj);
+        } elseif ($usr_obj::class == phrase_list::class) {
+            foreach ($usr_obj->lst() as $phr) {
+                if ($phr->id() == 0) {
+                    $phr->set_id($this->next_seq_nbr());
+                }
+            }
+        } elseif ($usr_obj::class == value_list::class) {
+            foreach ($usr_obj->lst() as $val) {
+                $this->set_val_id_for_unit_tests($val);
+            }
+        } else {
+            log_err('set id for unit tests not yet coded for ' . $usr_obj::class . ' object');
+        }
+    }
+
+    private function set_val_id_for_unit_tests(value $val): void
+    {
+        if ($val->id() == 0) {
+            $val->set_id($this->next_seq_nbr());
+        }
+        if ($val->grp->id() == 0) {
+            $val->grp->set_id($this->next_seq_nbr());
+        }
+        foreach ($val->phr_lst()->lst() as $phr) {
+            if ($phr->id() == 0) {
+                $phr->obj->set_id($this->next_seq_nbr());
+                if ($phr->obj::class == word::class) {
+                    $phr->set_id($phr->obj->id());
+                } else {
+                    $phr->set_id($phr->obj->id() * -1);
+                }
+            }
+        }
+    }
+
     function api_call(string $method, string $url, array $data): string
     {
         $curl = curl_init();
@@ -1415,6 +1503,7 @@ class test_base
         $html = new html_base();
         return $html->header_test('test') . $body . $html->footer();
     }
+
 }
 
 

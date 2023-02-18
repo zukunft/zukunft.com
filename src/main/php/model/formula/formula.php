@@ -1293,11 +1293,11 @@ class formula extends user_sandbox_named_with_type
     /**
      * import a formula from a JSON object
      *
-     * @param array $json_obj an array with the data of the json object
+     * @param array $in_ex_json an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
+    function import_obj(array $in_ex_json, bool $do_save = true): user_message
     {
         global $formula_types;
         global $share_types;
@@ -1310,7 +1310,7 @@ class formula extends user_sandbox_named_with_type
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
-        foreach ($json_obj as $key => $value) {
+        foreach ($in_ex_json as $key => $value) {
             if ($key == exp_obj::FLD_NAME) {
                 $this->set_name($value);
             }
@@ -1348,7 +1348,7 @@ class formula extends user_sandbox_named_with_type
         // assign the formula to the words and triple
         if ($result->is_ok()) {
             log_debug('saved ' . $this->dsp_id());
-            foreach ($json_obj as $key => $value) {
+            foreach ($in_ex_json as $key => $value) {
                 if ($result->is_ok()) {
                     if ($key == self::FLD_ASSIGN) {
                         if (is_array($value)) {

@@ -124,7 +124,11 @@ class value_dsp extends value_api
 
     function display(string $back): string
     {
-        return $this->val_formatted();
+        if (!$this->is_std()) {
+            return '<span class="user_specific">' . $this->val_formatted() . '</span>';
+        } else {
+            return $this->val_formatted();
+        }
     }
 
 }

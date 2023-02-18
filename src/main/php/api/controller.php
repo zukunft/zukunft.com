@@ -56,6 +56,13 @@ class controller
     const URL_VAR_WORD_ID = 'word_id';
     const URL_VAR_WORD_FLD = 'word_field';
 
+    // field names of the api json messages
+    const API_FLD_ID = 'id';
+    const API_FLD_NAME = 'name';
+    const API_FLD_DESCRIPTION = 'description';
+    const API_FLD_TYPE = 'type';
+    const API_FLD_PHRASES = 'phrases';
+
     // path parameters
     const PATH_API_REDIRECT = '/../../'; // get from the __DIR__ to the php root path
     const PATH_MAIN_LIB = 'src/main/php/zu_lib.php'; // the main php library the contains all other paths

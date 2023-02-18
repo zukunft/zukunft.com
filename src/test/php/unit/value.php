@@ -56,8 +56,9 @@ class value_unit_tests
         $val = new value($usr);
         $t->assert_load_sql_id($db_con, $val);
         $this->assert_load_sql_grp($t, $db_con, $val);
-        $this->assert_load_sql_grp_and_time($t, $db_con, $val);
 
+        // ... and the related default value
+        $t->assert_load_standard_sql($db_con, $val);
 
         $t->subheader('Database query creation tests');
 
@@ -66,13 +67,6 @@ class value_unit_tests
         $val->grp->set_id(2);
         //$t->assert_load_sql_obj_vars($db_con, $val);
 
-        // sql to load a user specific value by phrase list
-        $val->reset($usr);
-        $val->phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
-        $t->assert_load_sql_obj_vars($db_con, $val);
-
-        // ... and the related default value
-        $t->assert_load_standard_sql($db_con, $val);
 
         // ... and to check if any user has uses another than the default value
         $val->set_id(1);
@@ -142,37 +136,6 @@ class value_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_grp($db_con, $phr_grp, $usr_obj::class);
-            $result = $t->assert_qp($qp, $db_con->db_type);
-        }
-        return $result;
-    }
-
-    /**
-     * similar to assert_load_sql_grp but select a value by the phrase group and time phrase
-     *
-     * @param testing $t the testing object with the error counter
-     * @param sql_db $db_con does not need to be connected to a real database
-     * @param object $usr_obj the user sandbox object e.g. a verb
-     * @return bool true if all tests are fine
-     */
-    function assert_load_sql_grp_and_time(testing $t, sql_db $db_con, object $usr_obj): bool
-    {
-        global $usr;
-
-        $phr_grp = new phrase_group($usr);
-        $phr_grp->set_id(1);
-        $time_phr = new phrase($usr);
-        $time_phr->set_id(2);
-
-        // check the PostgreSQL query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_grp_and_time($db_con, $phr_grp, $time_phr, $usr_obj::class);
-        $result = $t->assert_qp($qp, $db_con->db_type);
-
-        // ... and check the MySQL query syntax
-        if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_grp_and_time($db_con, $phr_grp, $time_phr, $usr_obj::class);
             $result = $t->assert_qp($qp, $db_con->db_type);
         }
         return $result;

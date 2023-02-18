@@ -21,6 +21,13 @@ To install this version 0.0.3 use a LAMP server (https://wiki.debian.org/LaMp) a
 6) change the password "xxx" in db_link/zu_lib_sql_link.php with the password used in 2)
 7) test if the installation is running fine by calling http://yourserver.com/test/test.php
 
+Additional for development
+--------------------------
+
+on debian systems
+
+
+
 Planned changes
 ---------------
 
