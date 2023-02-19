@@ -654,7 +654,7 @@ CREATE TABLE IF NOT EXISTS `users`
 (
     `user_id`                  int(11)      NOT NULL,
     `user_name`                varchar(100) NOT NULL,
-    `description`              text         NOT NULL,
+    `description`              text         DEFAULT NULL,
     `code_id`                  varchar(50)           DEFAULT NULL COMMENT 'to select e.g. the system batch user',
     `right_level`              int(11)               DEFAULT NULL,
     `password`                 varchar(200)          DEFAULT NULL,
