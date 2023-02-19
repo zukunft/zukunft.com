@@ -613,7 +613,7 @@ class value extends user_sandbox_value
     function load_best()
     {
         log_debug('value->load_best for ' . $this->dsp_id());
-        $this->load_by_id($this->id());
+        $this->load_by_grp($this->grp);
         // if not found try without scaling
         if ($this->id <= 0) {
             $this->load_phrases();

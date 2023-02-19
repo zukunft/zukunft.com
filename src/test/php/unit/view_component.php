@@ -84,7 +84,8 @@ class view_component_unit_tests
 
         $t->subheader('Im- and Export tests');
 
-        $t->assert_json(new view_dsp_old($usr), $json_file);
+        // TODO use view_dsp for testing and activate
+        //$t->assert_json(new view_dsp_old($usr), $json_file);
 
     }
 

@@ -1415,13 +1415,18 @@ class test_base
      */
     private function set_id_for_unit_tests(object $usr_obj): void
     {
+        // set the id for simple db objects without related objects
         if ($usr_obj::class == word::class
-            or $usr_obj::class == triple::class) {
+            or $usr_obj::class == triple::class
+            or $usr_obj::class == source::class
+            or $usr_obj::class == ref::class) {
             if ($usr_obj->id() == 0) {
                 $usr_obj->set_id($this->next_seq_nbr());
             }
         } elseif ($usr_obj::class == value::class) {
             $this->set_val_id_for_unit_tests($usr_obj);
+        } elseif ($usr_obj::class == formula::class) {
+            $this->set_frm_id_for_unit_tests($usr_obj);
         } elseif ($usr_obj::class == phrase_list::class) {
             foreach ($usr_obj->lst() as $phr) {
                 if ($phr->id() == 0) {
@@ -1437,6 +1442,11 @@ class test_base
         }
     }
 
+    /**
+     * only for unit testing: set the id of a value model object
+     * @param value $val the value object that
+     * @return void nothing because the value object a modified
+     */
     private function set_val_id_for_unit_tests(value $val): void
     {
         if ($val->id() == 0) {
@@ -1454,6 +1464,18 @@ class test_base
                     $phr->set_id($phr->obj->id() * -1);
                 }
             }
+        }
+    }
+
+    /**
+     * only for unit testing: set the id of a formula model object
+     * @param formula $frm the formula object that
+     * @return void nothing because the formula object a modified
+     */
+    private function set_frm_id_for_unit_tests(formula $frm): void
+    {
+        if ($frm->id() == 0) {
+            $frm->set_id($this->next_seq_nbr());
         }
     }
 
