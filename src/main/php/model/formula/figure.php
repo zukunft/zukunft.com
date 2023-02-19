@@ -43,13 +43,12 @@ class figure extends db_object
      * object vars
      */
 
-    public user $usr;                     // the person who wants to see the figure (value or formula result)
-    public string $type;                  // either "value" or "result"
-    public ?float $number = null;         // the numeric value
-    public ?string $symbol = null;        // the reference text that has lead to the value
+    public user $usr;                 // the person who wants to see the figure (value or formula result)
+    public string $type;              // either "value" or "result"
+    public ?float $number = null;     // the numeric value
+    public ?string $symbol = null;    // the reference text that has lead to the value
     public ?DateTime $last_update;    // the time of the last update of fields that may influence the calculated results
-    public ?word $time_wrd = null;        // the time word object, if the figure value time is adjusted by a special formula
-    public ?object $obj = null;           // the value or formula result object
+    public ?object $obj = null;       // the value or formula result object
 
     /*
      * construct and map
@@ -129,9 +128,6 @@ class figure extends db_object
         if (isset($this->obj)) {
             $result .= $this->obj->dsp_id();
         }
-        if (isset($this->time_wrd)) {
-            $result .= $this->time_wrd->dsp_id();
-        }
 
         return $result;
     }
@@ -146,9 +142,6 @@ class figure extends db_object
         $result .= ' ' . $this->symbol;
         if (isset($this->obj)) {
             $result .= $this->obj->name();
-        }
-        if (isset($this->time_wrd)) {
-            $result .= $this->time_wrd->name_dsp();
         }
 
         return $result;

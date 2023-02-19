@@ -80,32 +80,6 @@ class user_sandbox_named_api extends user_sandbox_api
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return phrase_api|phrase_dsp the related phrase api or display object with the basic values filled
-     */
-    function phrase(): phrase_api|phrase_dsp
-    {
-        if ($this::class == word_api::class) {
-            return new phrase_api($this->id, $this->name);
-        } elseif ($this::class == word_dsp::class) {
-            return new phrase_dsp($this->id, $this->name);
-        } elseif ($this::class == triple_api::class) {
-            return new phrase_api($this->id * -1, $this->name);
-        } else {
-            log_err('Unexpected ' . $this::class);
-            return new phrase_api($this->id, $this->name);
-        }
-    }
-
-    function term(): term_api|term_dsp
-    {
-        return new term_api($this->id, $this->name);
-    }
-
-    /*
      * logging
      */
 

@@ -45,7 +45,6 @@ class formula_element_group
 
     public ?array $lst = null;           // array of formula elements such as a word, verb or formula
     public ?phrase_list $phr_lst = null; // phrase list object with the context to retrieve the element number
-    public ?phrase $time_phr = null;     // the time word for the element number selection
     public ?user $usr = null;            // the formula values can differ for each user; this is the user who wants to see the result
 
     public ?string $symbol = null; // the formula reference text for this element group; used to fill in the numbers into the formula
@@ -66,10 +65,6 @@ class formula_element_group
         if (isset($this->phr_lst)) {
             $phr_name = $this->phr_lst->dsp_name();
         }
-        $time_name = '';
-        if (isset($this->time_phr)) {
-            $time_name = $this->time_phr->name();
-        }
         if ($name <> '') {
             $result = '"' . $name . '" (' . $id . ')';
         } else {
@@ -77,9 +72,6 @@ class formula_element_group
         }
         if ($phr_name <> '') {
             $result .= ' and ' . $phr_name;
-        }
-        if ($time_name <> '') {
-            $result .= '@' . $time_name;
         }
 
         return $result;
@@ -184,31 +176,18 @@ class formula_element_group
         $val_time_phr = new phrase($this->usr);
 
         // guess the time word if needed
-        if (isset($this->time_phr)) {
-            if ($this->time_phr->id() == 0) {
-                log_debug('assume time for ' . $val_phr_lst->dsp_id());
-                $val_time_phr = $val_phr_lst->assume_time();
-                if (isset($val_time_phr)) {
-                    $this->time_phr = $val_time_phr;
-                }
-            }
-        } else {
-            log_debug('assume time for ' . $val_phr_lst->dsp_id());
-            $val_time_phr = $val_phr_lst->assume_time();
-            if (isset($val_time_phr)) {
-                $this->time_phr = $val_time_phr;
-            }
-        }
+        log_debug('assume time for ' . $val_phr_lst->dsp_id());
+        $val_time_phr = $val_phr_lst->assume_time();
 
         // adjust the element time word if forced by the special formula
-        if (isset($this->time_phr)) {
-            if ($this->time_phr->id() == 0) {
+        if (isset($val_time_phr)) {
+            if ($val_time_phr->id() == 0) {
                 // switched off because it is not working for "this"
                 log_err('No time found for "' . $frm_elm->obj->name . '".', 'formula_element_group->figures');
             } else {
                 log_debug('get predefined time result');
                 if (isset($frm_elm->obj)) {
-                    $val_time = $frm_elm->obj->special_time_phr($this->time_phr);
+                    $val_time = $frm_elm->obj->special_time_phr($val_time_phr);
                     if ($val_time->id() > 0) {
                         $val_time_phr = $val_time;
                         if ($val_time_phr->id() == 0) {
@@ -226,7 +205,7 @@ class formula_element_group
             // before adding a special time word, remove all other time words from the word list
             $val_phr_lst->ex_time();
             $val_phr_lst->add($val_time_phr);
-            $this->time_phr = $val_time_phr;
+            $this->phr_lst = $val_phr_lst;
             log_debug('got the special formula word "' . $val_time_phr->name() . '" (' . $val_time_phr->id() . ')');
         }
 
@@ -270,7 +249,7 @@ class formula_element_group
             // e.g. 1: $val_phr_lst is Swiss inhabitants
             // e.g. if "percent" is requested and a measure word is part of the request, the measure words are ignored
             $val_phr_lst = clone $this->phr_lst;
-            $val_time_phr = $this->time_phr;
+            $val_time_phr = $val_phr_lst->assume_time();
             if (isset($val_time_phr)) {
                 log_debug('for time ' . $val_time_phr->dsp_id());
             }
@@ -307,14 +286,6 @@ class formula_element_group
                     log_debug('include formula word "' . $frm_elm->wrd_obj->name . '" (' . $frm_elm->wrd_id . ')');
                 }
             }
-
-            // remember the time if adjusted by the formula
-            if (isset($val_time_phr)) {
-                $fig_lst->time_phr = $val_time_phr;
-            }
-
-            // exclude the time word from the word group finding, because the main time word should not be included in the word group to reduce the number of word groups
-            $val_phr_lst->ex_time();
 
             // get the word group
             $val_phr_lst_sort = $val_phr_lst->lst();
@@ -404,11 +375,6 @@ class formula_element_group
         }
 
         // TODO: show the time phrase only if it differs from the main time phrase
-        if (isset($fig_lst->time_phr) and isset($time_default)) {
-            if ($fig_lst->time_phr->id() <> $time_default->id()) {
-                $result .= ' (' . $fig_lst->time_phr->name() . ')';
-            }
-        }
 
         // display alternative values
 

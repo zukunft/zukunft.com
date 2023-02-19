@@ -860,20 +860,6 @@ class formula extends user_sandbox_named_with_type
             $this->ref_text_r = expression::CHAR_CALC . $exp->r_part();
         }
 
-        // guess the time if needed and exclude the time for consistent word groups
-        $wrd_lst = $phr_lst->wrd_lst_all();
-        $time_wrd = $wrd_lst->assume_time();
-        if (isset($time_wrd)) {
-            if (get_class($time_wrd) == phrase::class) {
-                $time_phr = $time_wrd;
-            } else {
-                $time_phr = $time_wrd->phrase();
-            }
-        }
-        $phr_lst_ex = clone $phr_lst;
-        $phr_lst_ex->ex_time();
-        log_debug('the phrases excluded time are ' . $phr_lst_ex->dsp_id());
-
         // create the formula value list
         $fv_lst = new formula_value_list($this->user());
 
@@ -882,14 +868,8 @@ class formula extends user_sandbox_named_with_type
         $fv_init->frm = $this;
         $fv_init->ref_text = $this->ref_text_r;
         $fv_init->num_text = $this->ref_text_r;
-        $fv_init->src_phr_lst = clone $phr_lst_ex;
-        $fv_init->phr_lst = clone $phr_lst_ex;
-        if (isset($time_phr)) {
-            $fv_init->src_time_phr = clone $time_phr;
-        }
-        if (isset($time_phr)) {
-            $fv_init->time_phr = clone $time_phr;
-        }
+        $fv_init->src_phr_lst = clone $phr_lst;
+        $fv_init->phr_lst = clone $phr_lst;
         if ($fv_init->last_val_update < $this->last_update) {
             $fv_init->last_val_update = $this->last_update;
         }
@@ -910,10 +890,7 @@ class formula extends user_sandbox_named_with_type
 
             // get the figures based on the context e.g. the formula element "Share Price" for the context "ABB" can be 23.11
             // a figure is either the user edited value or a calculated formula result
-            $elm_grp->phr_lst = clone $phr_lst_ex;
-            if (isset($time_phr)) {
-                $elm_grp->time_phr = clone $time_phr;
-            }
+            $elm_grp->phr_lst = clone $phr_lst;
             $elm_grp->build_symbol();
             $fig_lst = $elm_grp->figures();
             log_debug('figures ');
@@ -1026,7 +1003,7 @@ class formula extends user_sandbox_named_with_type
                     }
                 } else {
                     // if not figure found remember to switch off the result if needed
-                    log_debug('no figures found for ' . $elm_grp->dsp_id() . ' and ' . $phr_lst_ex->dsp_id());
+                    log_debug('no figures found for ' . $elm_grp->dsp_id() . ' and ' . $phr_lst->dsp_id());
                     $all_elm_grp_filled = false;
                 }
             }
@@ -1034,11 +1011,11 @@ class formula extends user_sandbox_named_with_type
 
         // if some values are not filled and all are needed, switch off the incomplete formula results
         if ($this->need_all_val) {
-            log_debug('for ' . $phr_lst_ex->dsp_id() . ' all value are needed');
+            log_debug('for ' . $phr_lst->dsp_id() . ' all value are needed');
             if ($all_elm_grp_filled) {
-                log_debug('for ' . $phr_lst_ex->dsp_id() . ' all value are filled');
+                log_debug('for ' . $phr_lst->dsp_id() . ' all value are filled');
             } else {
-                log_debug('some needed values missing for ' . $phr_lst_ex->dsp_id());
+                log_debug('some needed values missing for ' . $phr_lst->dsp_id());
                 foreach ($fv_lst->lst as $fv) {
                     log_debug('some needed values missing for ' . $fv->dsp_id() . ' so switch off');
                     $fv->val_missing = True;
@@ -1076,8 +1053,8 @@ class formula extends user_sandbox_named_with_type
                             log_debug('always calculate ' . $this->dsp_id());
                             $can_calc = true;
                         }
-                        if ($can_calc == true and $time_wrd != null) {
-                            log_debug('calculate ' . $fv->num_text . ' for ' . $phr_lst_ex->dsp_id());
+                        if ($can_calc == true) {
+                            log_debug('calculate ' . $fv->num_text . ' for ' . $phr_lst->dsp_id());
                             $calc = new math;
                             $fv->value = $calc->parse($fv->num_text);
                             $fv->is_updated = true;

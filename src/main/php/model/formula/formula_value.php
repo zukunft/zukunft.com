@@ -921,24 +921,6 @@ class formula_value extends db_object
         if (isset($this->src_phr_lst)) {
             // TODO check if the phrases are already loaded
             // $this->src_phr_lst->load();
-            // remember the time if needed (but don't assume the time, because a value can be saved without timestamp)
-            // separate the time word if not done already to reduce the number of word groups created and increase the request speed
-            $time_phr_lst = $this->src_phr_lst->time_lst();
-            if (count($time_phr_lst->lst()) > 1) {
-                log_warning('More than one time word is not yet supported ' . $time_phr_lst->name() . ' (' . $this->id() . ') is empty.', 'formula_value->save_prepare_phr_lst_src');
-            }
-            if (count($time_phr_lst->lst()) == 1) {
-                $time_wrd = $time_phr_lst->lst()[0];
-                if (isset($this->src_time_phr)) {
-                    if ($this->src_time_phr->id() <> $time_wrd->id()) {
-                        log_warning('The word list suggested "' . $time_wrd->name . '", but the time is already set to  "' . $this->src_time_phr->name() . '" (' . $this->id() . ').', 'formula_value->save_prepare_phr_lst_src');
-                    }
-                } else {
-                    $this->src_time_phr = $time_wrd;
-                }
-            }
-            // exclude all time words before the word group creation
-            $this->src_phr_lst->ex_time();
             // get the word group id (and create the group if needed)
             // TODO include triples
             if (count($this->src_phr_lst->id_lst()) > 0) {
@@ -955,24 +937,6 @@ class formula_value extends db_object
     private function save_prepare_phr_lst(): void
     {
         if (isset($this->phr_lst)) {
-            // remember the time if needed (but don't assume the time, because a value can be saved without timestamp)
-            // separate the time word if not done already to reduce the number of word groups created and increase the request speed
-            $time_phr_lst = $this->phr_lst->time_lst();
-            if (count($time_phr_lst->lst()) > 1) {
-                log_warning('More than one time word is not yet supported ' . $time_phr_lst->name() . ' (' . $this->id() . ') is empty.', 'formula_value->save_prepare_phr_lst');
-            }
-            if (count($time_phr_lst->lst()) == 1) {
-                $time_wrd = $time_phr_lst->lst()[0];
-                if (isset($this->time_phr)) {
-                    if ($this->time_phr->id() <> $time_wrd->id()) {
-                        log_warning('The word list suggested "' . $time_wrd->name . '", but the time is already set to  "' . $this->time_phr->name() . '" (' . $this->id() . ').', 'formula_value->save_prepare_phr_lst');
-                    }
-                } else {
-                    $this->time_phr = $time_wrd;
-                }
-            }
-            // exclude all time words before the word group creation
-            $this->phr_lst->ex_time();
             // get the word group id (and create the group if needed)
             // TODO include triples
             $grp = new phrase_group($this->user());
@@ -982,32 +946,13 @@ class formula_value extends db_object
         }
     }
 
-    // update the source time word id based on the source time word object ($this->src_time_phr)
-    private function save_prepare_time_wrd_src()
-    {
-        if (isset($this->src_time_phr)) {
-            $this->src_time_id = $this->src_time_phr->id();
-        }
-    }
-
-    // update the time word id based on the time word object ($this->time_phr)
-    private function save_prepare_time_wrd()
-    {
-        if (isset($this->time_phr)) {
-            $this->time_id = $this->time_phr->id();
-        }
-    }
-
     // update the word ids based on the word objects (usually done before saving the formula result to the database)
     private function save_prepare_wrds()
     {
-        log_debug("formula_value->save_prepare_wrds.");
+        log_debug();
         $this->save_prepare_phr_lst_src();
         $this->save_prepare_phr_lst();
-        log_debug("formula_value->save_prepare_wrds source done.");
-        $this->save_prepare_time_wrd_src();
-        $this->save_prepare_time_wrd();
-        log_debug("formula_value->save_prepare_wrds done.");
+        log_debug("done.");
     }
 
     /**

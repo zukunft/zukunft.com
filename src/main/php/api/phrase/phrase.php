@@ -63,7 +63,7 @@ class phrase_api extends user_sandbox_named_api
     private ?triple_api $triple;
 
     // the type of this phrase
-    private phrase_type $type;
+    private ?int $type_id;
 
     /*
      * construct and map
@@ -76,12 +76,13 @@ class phrase_api extends user_sandbox_named_api
         string $verb = '',
         string $to = '')
     {
+        global $phrase_types;
+
         parent::__construct($id, $name);
         if ($from != '' and $to != '') {
             $this->triple = new triple_api($id, $name, $from, $verb, $to);
         }
-        // TODO set type
-        // $this->type = phrase_type::NORMAL;
+        $this->set_type($phrase_types->default_id());
     }
 
     /**
@@ -91,7 +92,9 @@ class phrase_api extends user_sandbox_named_api
     {
         $this->description = null;
         $this->triple = null;
+        $this->set_type(null);
     }
+
 
     /*
      * set and get
@@ -105,6 +108,16 @@ class phrase_api extends user_sandbox_named_api
     public function description(): ?string
     {
         return $this->description;
+    }
+
+    public function set_type(?int $type_id)
+    {
+        $this->type_id = $type_id;
+    }
+
+    public function type(): ?int
+    {
+        return $this->type_id;
     }
 
 
@@ -124,12 +137,16 @@ class phrase_api extends user_sandbox_named_api
 
     protected function wrd_dsp(): word_dsp
     {
-        return new word_dsp($this->id, $this->name);
+        $wrd = new word_dsp($this->id, $this->name);
+        $wrd->set_type_id($this->type());
+        return $wrd;
     }
 
     protected function trp_dsp(): triple_dsp
     {
-        return new triple_dsp($this->id, $this->name);
+        $trp = new triple_dsp($this->id, $this->name);
+        $trp->set_type_id($this->type());
+        return $trp;
     }
 
     /*

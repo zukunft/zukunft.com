@@ -167,7 +167,7 @@ function run_formula_test(testing $t): void
         $fv->save_if_updated();
         $result = $fv->value;
         $target = formula_value_unit_tests::TN_INCREASE_CH_CAPITA_2020;
-        $t->dsp('formula_value->save_if_updated "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id() . '', $target, $result);
+        $t->dsp('formula_value->save_if_updated "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
     }
 
     $fv_lst = $frm->calc($phr_lst);

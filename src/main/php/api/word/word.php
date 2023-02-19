@@ -321,9 +321,10 @@ class word_api extends user_sandbox_named_with_type_api
      */
     function is_type(string $type): bool
     {
+        global $phrase_types;
         $result = false;
-        if ($this->type() != Null) {
-            if ($this->type()->code_id == $type) {
+        if ($this->type_id() != Null) {
+            if ($this->type_id() == $phrase_types->id($type)) {
                 $result = true;
             }
         }
