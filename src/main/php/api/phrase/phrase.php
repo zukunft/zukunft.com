@@ -148,4 +148,21 @@ class phrase_api extends user_sandbox_named_api
         }
     }
 
+
+    /*
+     * info
+     */
+
+    /**
+     * @return bool true if one of the phrases that classify this value is of type percent
+     */
+    function is_percent(): bool
+    {
+        if ($this->is_word()) {
+            return $this->wrd_dsp()->is_percent();
+        } else {
+            return $this->trp_dsp()->is_percent();
+        }
+    }
+
 }

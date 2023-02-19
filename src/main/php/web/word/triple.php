@@ -33,6 +33,7 @@ namespace html;
 
 use api\phrase_api;
 use api\triple_api;
+use cfg\phrase_type;
 use phrase;
 use phrase_list;
 use triple;
@@ -69,6 +70,38 @@ class triple_dsp extends triple_api
         $html = new html_base();
         $url = $html->url(api::TRIPLE, $this->id, $back, api::PAR_VIEW_TRIPLES);
         return $html->ref($url, $this->name(), $this->name(), $style);
+    }
+
+
+    /*
+     * get and set
+     */
+
+    /**
+     * @param string|null $code_id the code id of the phrase type
+     */
+    function set_type(?string $code_id): void
+    {
+        global $phrase_types;
+        if ($code_id == null) {
+            $this->set_type_id(null);
+        } else {
+            $this->set_type_id($phrase_types->id($code_id));
+        }
+    }
+
+    /**
+     * TODO use ENUM instead of string in php version 8.1
+     * @return phrase_type|null the phrase type of this word
+     */
+    function type(): ?object
+    {
+        global $phrase_types;
+        if ($this->type_id == null) {
+            return null;
+        } else {
+            return $phrase_types->get_by_id($this->type_id);
+        }
     }
 
 
@@ -162,6 +195,39 @@ class triple_dsp extends triple_api
     function term(): term_dsp
     {
         return new term_dsp($this->id, $this->name, triple::class);
+    }
+
+
+    /*
+     * type functions
+     */
+
+    /**
+     * repeating of the backend functions in the frontend to enable filtering in the frontend and reduce the traffic
+     * repeated in triple, because a triple can have it's own type
+     * kind of repeated in phrase to use hierarchies
+     *
+     * @param string $type the ENUM string of the fixed type
+     * @returns bool true if the word has the given type
+     * TODO Switch to php 8.1 and real ENUM
+     */
+    function is_type(string $type): bool
+    {
+        $result = false;
+        if ($this->type() != Null) {
+            if ($this->type()->code_id == $type) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
+     */
+    function is_percent(): bool
+    {
+        return $this->is_type(phrase_type::PERCENT);
     }
 
 }
