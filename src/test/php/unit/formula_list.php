@@ -53,7 +53,7 @@ class formula_list_unit_tests
         $frm_lst = new formula_list($usr);
         $t->assert_load_sql_ids($db_con, $frm_lst);
 
-        // check the PostgreSQL query syntax to load a list of formulas by the names
+        // check the Postgres query syntax to load a list of formulas by the names
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $frm_lst->load_sql_by_names($db_con, array(formula_api::TN_INCREASE, formula_api::TN_ADD));
         $t->assert_qp($qp, sql_db::POSTGRES);
@@ -63,7 +63,7 @@ class formula_list_unit_tests
         $qp = $frm_lst->load_sql_by_names($db_con, array(formula_api::TN_INCREASE, formula_api::TN_ADD));
         $t->assert_qp($qp, sql_db::MYSQL);
 
-        // check the PostgreSQL query syntax to load a list of formulas by phrase
+        // check the Postgres query syntax to load a list of formulas by phrase
         $wrd = new word($usr);
         $wrd->set(1,word_api::TN_ADD);
         $phr = $wrd->phrase();
@@ -76,7 +76,7 @@ class formula_list_unit_tests
         $qp = $frm_lst->load_sql_by_phr($db_con, $phr);
         $t->assert_qp($qp, sql_db::MYSQL);
 
-        // check the PostgreSQL query syntax to load a list of formulas by phrase list
+        // check the Postgres query syntax to load a list of formulas by phrase list
         $phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $frm_lst->load_sql_by_phr_lst($db_con, $phr_lst);
@@ -87,7 +87,7 @@ class formula_list_unit_tests
         $qp = $frm_lst->load_sql_by_phr_lst($db_con, $phr_lst);
         $t->assert_qp($qp, sql_db::MYSQL);
 
-        // check the PostgreSQL query syntax to load a page of all formulas
+        // check the Postgres query syntax to load a page of all formulas
         $frm_lst = new formula_list($usr);
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $frm_lst->load_sql_all($db_con, 10, 2);

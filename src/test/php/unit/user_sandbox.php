@@ -167,7 +167,7 @@ class user_sandbox_unit_tests
          * General tests (one by one for each database)
          */
 
-        // test a simple SQL user select query for PostgreSQL by name
+        // test a simple SQL user select query for Postgres by name
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(sql_db::TBL_USER);
         $db_con->set_name('formula_link_std_by_id');
@@ -176,7 +176,7 @@ class user_sandbox_unit_tests
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = $t->file('db/formula/formula_link_by_id.sql');
         $expected_sql = "PREPARE formula_link_std_by_id (text) AS SELECT user_id, user_name FROM users WHERE user_name = $1;";
-        $t->dsp('PostgreSQL select max', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres select max', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
@@ -188,13 +188,13 @@ class user_sandbox_unit_tests
         $expected_sql = "PREPARE formula_link_std_by_id_mysql FROM 'SELECT user_id,  user_name FROM users WHERE user_name = ?';";
         $t->dsp('MySQL select max', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // test a simple SQL max select creation for PostgreSQL without where
+        // test a simple SQL max select creation for Postgres without where
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(sql_db::TBL_VALUE);
         $db_con->set_fields(array('MAX(value_id) AS max_id'));
         $created_sql = $db_con->select_by_set_id(false);
         $expected_sql = "SELECT MAX(value_id) AS max_id FROM values;";
-        $t->dsp('PostgreSQL select max', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres select max', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
@@ -205,14 +205,14 @@ class user_sandbox_unit_tests
         $expected_sql = $sql_avoid_code_check_prefix . " MAX(value_id) AS max_id FROM `values`;";
         $t->dsp('MySQL select max', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // test a simple SQL select creation for PostgreSQL without the standard id and name identification
+        // test a simple SQL select creation for Postgres without the standard id and name identification
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(sql_db::TBL_CONFIG);
         $db_con->set_fields(array('value'));
         $db_con->where(array(sql_db::FLD_CODE_ID), array(config::VERSION_DB));
         $created_sql = $db_con->select_by_set_id(false);
         $expected_sql = "SELECT value FROM config WHERE code_id = 'version_database';";
-        $t->dsp('non id PostgreSQL select', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('non id Postgres select', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
@@ -223,7 +223,7 @@ class user_sandbox_unit_tests
         $expected_sql = "SELECT `value` FROM config WHERE code_id = 'version_database';";
         $t->dsp('non id MySQL select', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // test a simple SQL select creation for PostgreSQL with the standard id and name identification
+        // test a simple SQL select creation for Postgres with the standard id and name identification
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(sql_db::TBL_SOURCE_TYPE);
         $db_con->set_name('source_type_by_id');
@@ -233,7 +233,7 @@ class user_sandbox_unit_tests
               SELECT source_type_id,  type_name 
                 FROM source_types
                WHERE source_type_id = $1;";
-        $t->dsp('PostgreSQL select based on id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres select based on id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
@@ -247,7 +247,7 @@ class user_sandbox_unit_tests
                WHERE source_type_id = ?';";
         $t->dsp('MySQL select based on id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // test a simple SQL select of the user defined word for PostgreSQL by the id
+        // test a simple SQL select of the user defined word for Postgres by the id
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(sql_db::TBL_WORD, true);
         $db_con->set_usr(1);
@@ -263,7 +263,7 @@ class user_sandbox_unit_tests
                 FROM user_words
                WHERE word_id = $1 
                  AND user_id = $2;';
-        $t->dsp('PostgreSQL user word select based on id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres user word select based on id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
@@ -283,7 +283,7 @@ class user_sandbox_unit_tests
                  AND user_id = ?;';
         $t->dsp('MySQL user word select based on id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // test a very simple SQL select of the user defined word for PostgreSQL by the id
+        // test a very simple SQL select of the user defined word for Postgres by the id
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(sql_db::TBL_WORD, true);
         $db_con->set_usr(1);
@@ -294,7 +294,7 @@ class user_sandbox_unit_tests
                 FROM user_words
                WHERE word_id = $1 
                  AND user_id = $2;';
-        $t->dsp('PostgreSQL user word id select based on id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres user word id select based on id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
@@ -321,7 +321,7 @@ class user_sandbox_unit_tests
                         phrase_id
                    FROM formula_links
                   WHERE phrase_id = $1;';
-        $t->dsp('PostgreSQL formulas linked to a phrase select based on phrase id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres formulas linked to a phrase select based on phrase id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
@@ -337,7 +337,7 @@ class user_sandbox_unit_tests
               WHERE phrase_id = ?;';
         $t->dsp('MySQL formulas linked to a phrase select based on phrase id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // test a list of links SQL select creation for PostgreSQL selected by a linked object
+        // test a list of links SQL select creation for Postgres selected by a linked object
         /*
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(sql_db::TBL_TRIPLE);
@@ -357,14 +357,14 @@ class user_sandbox_unit_tests
                          ".$sql_where."
                 GROUP BY v.verb_id
                 ORDER BY v.verb_id;";
-        $t->dsp('PostgreSQL select based on id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres select based on id', $lib->trim($expected_sql), $lib->trim($created_sql));
         */
 
         /*
-         * Start of the concrete database object test fpr PostgreSQL
+         * Start of the concrete database object test fpr Postgres
          */
 
-        // test a SQL select creation of user sandbox data for PostgreSQL
+        // test a SQL select creation of user sandbox data for Postgres
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(sql_db::TBL_SOURCE);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
@@ -385,7 +385,7 @@ class user_sandbox_unit_tests
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
                   WHERE s.source_id = $1;";
-        $t->dsp('PostgreSQL user sandbox select', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres user sandbox select', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for search by name
         $db_con->set_type(sql_db::TBL_SOURCE);
@@ -408,7 +408,7 @@ class user_sandbox_unit_tests
                                       AND u.user_id = 1 
                   WHERE (u.source_name = $1 
                      OR (s.source_name = $1 AND u.source_name IS NULL));";
-        $t->dsp('PostgreSQL user sandbox select by name', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres user sandbox select by name', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for search by code_id
         $db_con->set_type(sql_db::TBL_SOURCE);
@@ -430,7 +430,7 @@ class user_sandbox_unit_tests
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
                   WHERE s.code_id = $1 AND s.code_id IS NOT NULL;";
-        $t->dsp('PostgreSQL user sandbox select by code_id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres user sandbox select by code_id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for all users by id
         $db_con->set_type(sql_db::TBL_SOURCE);
@@ -446,7 +446,7 @@ class user_sandbox_unit_tests
                         source_type_id
                    FROM sources 
                   WHERE source_id = $1;";
-        $t->dsp('PostgreSQL all user select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres all user select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... similar with joined fields
         $db_con->set_type(sql_db::TBL_FORMULA);
@@ -476,7 +476,7 @@ class user_sandbox_unit_tests
                 FROM formulas s
            LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
                WHERE s.formula_id = $1;";
-        $t->dsp('PostgreSQL all user join select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres all user join select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for user sandbox data (should match with the parameters in formula->load)
         $db_con->set_type(sql_db::TBL_FORMULA);
@@ -503,7 +503,7 @@ class user_sandbox_unit_tests
              LEFT JOIN user_formulas u ON s.formula_id = u.formula_id 
                                       AND u.user_id = 1 
                WHERE s.formula_id = $1;";
-        $t->dsp('PostgreSQL user sandbox join select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres user sandbox join select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for the special case of a table without name e.g. the value table
         $db_con->set_type(sql_db::TBL_VALUE);
@@ -529,7 +529,7 @@ class user_sandbox_unit_tests
           LEFT JOIN user_values u ON s.value_id = u.value_id 
                                  AND u.user_id = 1 
               WHERE s.phrase_group_id = 1;";
-        $t->dsp('PostgreSQL user sandbox value select by where text', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres user sandbox value select by where text', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for a link table
         $db_con->set_type(sql_db::TBL_TRIPLE);
@@ -551,7 +551,7 @@ class user_sandbox_unit_tests
            LEFT JOIN user_triples u ON s.triple_id = u.triple_id 
                                       AND u.user_id = 1 
                WHERE s.triple_id = 1;";
-        $t->dsp('PostgreSQL user sandbox link select by where text', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres user sandbox link select by where text', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the view load_standard SQL creation
         $db_con->set_type(sql_db::TBL_VIEW);
@@ -565,7 +565,7 @@ class user_sandbox_unit_tests
                      excluded
                 FROM views
                WHERE view_id = $1;";
-        $t->dsp('PostgreSQL view load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres view load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the view load SQL creation
         $db_con->set_type(sql_db::TBL_VIEW);
@@ -585,7 +585,7 @@ class user_sandbox_unit_tests
               LEFT JOIN user_views u ON s.view_id = u.view_id 
                                     AND u.user_id = 1 
                   WHERE s.view_id = $1;";
-        $t->dsp('PostgreSQL view load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres view load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the view_component_link load_standard SQL creation
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
@@ -601,7 +601,7 @@ class user_sandbox_unit_tests
                      excluded
                 FROM view_component_links 
                WHERE view_component_link_id = $1;";
-        $t->dsp('PostgreSQL view_component_link load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres view_component_link load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same but select by the link ids
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
@@ -617,7 +617,7 @@ class user_sandbox_unit_tests
                      excluded
                 FROM view_component_links 
                WHERE view_id = $1 AND view_component_id = $2;";
-        $t->dsp('PostgreSQL view_component_link load_standard select by link ids', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres view_component_link load_standard select by link ids', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the view_component_link load SQL creation
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
@@ -638,7 +638,7 @@ class user_sandbox_unit_tests
               LEFT JOIN user_view_component_links u ON s.view_component_link_id = u.view_component_link_id 
                                                    AND u.user_id = 1 
                   WHERE s.view_component_link_id = $1;";
-        $t->dsp('PostgreSQL view_component_link load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres view_component_link load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the formula_link load_standard SQL creation
         $db_con->set_type(sql_db::TBL_FORMULA_LINK);
@@ -653,7 +653,7 @@ class user_sandbox_unit_tests
                      excluded
                 FROM formula_links 
                WHERE formula_link_id = $1;";
-        $t->dsp('PostgreSQL formula_link load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres formula_link load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the formula_link load SQL creation
         $db_con->set_type(sql_db::TBL_FORMULA_LINK);
@@ -673,7 +673,7 @@ class user_sandbox_unit_tests
               LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id 
                                             AND u.user_id = 1 
                   WHERE s.formula_link_id = $1;";
-        $t->dsp('PostgreSQL formula_link load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres formula_link load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the view_component load_standard SQL creation
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
@@ -692,7 +692,7 @@ class user_sandbox_unit_tests
                      excluded
                 FROM view_components
                WHERE view_component_id = $1;";
-        $t->dsp('PostgreSQL view_component load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres view_component load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the view_component load SQL creation
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
@@ -717,7 +717,7 @@ class user_sandbox_unit_tests
               LEFT JOIN user_view_components u ON s.view_component_id = u.view_component_id 
                                               AND u.user_id = 1 
                   WHERE s.view_component_id = $1;";
-        $t->dsp('PostgreSQL view_component load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres view_component load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the triple load_standard SQL creation
         $db_con->set_type(sql_db::TBL_TRIPLE);
@@ -734,7 +734,7 @@ class user_sandbox_unit_tests
                      excluded
                 FROM triples 
                WHERE triple_id = 1;";
-        $t->dsp('PostgreSQL triple load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres triple load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the triple load SQL creation
         $db_con->set_type(sql_db::TBL_TRIPLE);
@@ -759,7 +759,7 @@ class user_sandbox_unit_tests
               LEFT JOIN user_triples u ON s.triple_id = u.triple_id 
                                          AND u.user_id = 1 
                   WHERE s.triple_id = 1;";
-        $t->dsp('PostgreSQL triple load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres triple load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the verb_list load SQL creation
         $db_con->set_type(sql_db::TBL_TRIPLE);
@@ -789,7 +789,7 @@ class user_sandbox_unit_tests
                                              AND u.user_id = 1 
                   LEFT JOIN verbs l ON s.verb_id = l.verb_id 
                       WHERE s.to_phrase_id = 2;";
-        $t->dsp('PostgreSQL verb_list load', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->dsp('Postgres verb_list load', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         /*
          * Start of the corresponding MySQL tests
@@ -1160,7 +1160,7 @@ class user_sandbox_unit_tests
         $t->dsp('MySQL triple load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         /*
-         * Build sample queries in the PostgreSQL format to use the database syntax check of the IDE
+         * Build sample queries in the Postgres format to use the database syntax check of the IDE
          */
 
         // the formula list load query

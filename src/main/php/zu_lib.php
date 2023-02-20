@@ -130,7 +130,7 @@
     TODO create an "always on" thread for the backend
     TODO create a LaTeX extension for charts and values, so that studies can be recreated based on the LaTeX document
     TODO for fail over in the underlying technologies, create a another backend in python and java  and allow the user to select or auto select the backend technology
-    TODO for fail over in the underlying database technologies, auto sync the casandra, hadoop, postgreSQL and mariaDB databases
+    TODO for fail over in the underlying database technologies, auto sync the casandra, hadoop, Postgres and mariaDB databases
     TODO auto create two triple for an OR condition in a value selection; this implies that to select a list of values only AND needs to be used and brackets are also not needed
     TODO add a phrase group to sources and allow to import it with "keys:"
     TODO allow to assign more phrases to a source for better suggestion of sources

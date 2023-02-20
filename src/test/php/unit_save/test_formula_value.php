@@ -45,7 +45,8 @@ function run_formula_value_test(testing $t): void
     // test load result without time
     $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(word_api::TN_CH);
-    $phr_lst->add_name(formula_api::TN_ADD);
+    //$phr_lst->add_name(formula_api::TN_ADD);
+    $phr_lst->add_name(formula_api::TN_RENAMED);
     $phr_lst->add_name(word_api::TN_PCT);
     $phr_lst->add_name(word_api::TN_INHABITANTS);
     $ch_up_grp = $phr_lst->get_grp();
@@ -154,7 +155,7 @@ function run_formula_value_list_test(testing $t): void
     $t->header('Test the formula value list class (classes/formula_value_list.php)');
 
     // load results by formula
-    $frm = $t->load_formula(formula_api::TN_ADD);
+    $frm = $t->load_formula(formula_api::TN_RENAMED);
     $fv_lst = new formula_value_list($usr);
     $fv_lst->load($frm);
     $result = $fv_lst->dsp_id();

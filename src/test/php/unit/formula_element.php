@@ -82,7 +82,7 @@ class formula_element_unit_tests
      */
     private function assert_sql_by_frm_id(testing $t, sql_db $db_con, formula_element_list $lst, int $frm_id)
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst->load_sql_by_frm_id($db_con, $frm_id);
         $t->assert_qp($qp, sql_db::POSTGRES);
@@ -109,7 +109,7 @@ class formula_element_unit_tests
                                                    int                  $frm_id,
                                                    int                  $elm_type_id)
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst->load_sql_by_frm_and_type_id($db_con, $frm_id, $elm_type_id);
         $t->assert_qp($qp, sql_db::POSTGRES);

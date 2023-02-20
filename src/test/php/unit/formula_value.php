@@ -59,7 +59,7 @@ class formula_value_unit_tests
         $qp = $fv->load_sql_by_id($db_con, 1);
         $t->assert_qp($qp, sql_db::POSTGRES);
 
-        // ... and the same for MySQL databases instead of PostgreSQL
+        // ... and the same for MySQL databases instead of Postgres
         $db_con->db_type = sql_db::MYSQL;
         $qp = $fv->load_sql_by_id($db_con, 1);
         $t->assert_qp($qp, sql_db::MYSQL);
@@ -71,7 +71,7 @@ class formula_value_unit_tests
         $qp = $fv->load_by_grp_sql($db_con);
         $t->assert_qp($qp, sql_db::POSTGRES);
 
-        // ... and the same for MySQL databases instead of PostgreSQL
+        // ... and the same for MySQL databases instead of Postgres
         $db_con->db_type = sql_db::MYSQL;
         $qp = $fv->load_by_grp_sql($db_con);
         $t->assert_qp($qp, sql_db::MYSQL);
@@ -82,7 +82,7 @@ class formula_value_unit_tests
         $qp = $fv->load_by_grp_time_sql($db_con);
         $t->assert_qp($qp, sql_db::POSTGRES);
 
-        // ... and the same for MySQL databases instead of PostgreSQL
+        // ... and the same for MySQL databases instead of Postgres
         $db_con->db_type = sql_db::MYSQL;
         $qp = $fv->load_by_grp_time_sql($db_con);
         $t->assert_qp($qp, sql_db::MYSQL);

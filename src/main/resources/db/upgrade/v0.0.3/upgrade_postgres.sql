@@ -1,5 +1,5 @@
 --
--- upgrade the zukunft.com PostgreSQL database to Version 0.0.3
+-- upgrade the zukunft.com Postgres database to Version 0.0.3
 --
 
 -- --------------------------------------------------------

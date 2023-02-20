@@ -551,7 +551,7 @@ class triple_list_unit_tests
      */
     private function assert_sql_by_ids(testing $t, sql_db $db_con, triple_list $lst, array $ids): void
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst->load_sql_by_ids($db_con, $ids);
         $t->assert_qp($qp, sql_db::POSTGRES);
@@ -582,7 +582,7 @@ class triple_list_unit_tests
         ?verb       $vrb = null,
         string      $direction = triple_list::DIRECTION_BOTH)
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst->load_sql_by_phr($db_con, $phr, $vrb, $direction);
         $t->assert_qp($qp, sql_db::POSTGRES);

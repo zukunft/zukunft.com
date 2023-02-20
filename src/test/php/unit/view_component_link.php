@@ -98,7 +98,7 @@ class view_component_link_unit_tests
      */
     private function assert_lst_sql_all(testing $t, sql_db $db_con, view_cmp_link_list $lst, ?view $dsp = null, ?view_cmp $cmp = null): void
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst->load_sql($db_con, $dsp, $cmp);
         $t->assert_qp($qp, sql_db::POSTGRES);

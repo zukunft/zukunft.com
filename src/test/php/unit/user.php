@@ -89,7 +89,7 @@ class user_unit_tests
      */
     function assert_load_sql_email(testing $t, sql_db $db_con, object $usr_obj): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_email($db_con, 'System test', $usr_obj::class);
         $result = $t->assert_qp($qp, $db_con->db_type);
@@ -114,7 +114,7 @@ class user_unit_tests
      */
     function assert_load_sql_name_or_email(testing $t, sql_db $db_con, object $usr_obj): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_name_or_email($db_con, 'System test name', 'System test email', $usr_obj::class);
         $result = $t->assert_qp($qp, $db_con->db_type);
@@ -139,7 +139,7 @@ class user_unit_tests
      */
     function assert_load_sql_ip(testing $t, sql_db $db_con, object $usr_obj): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_ip($db_con, 'System test', $usr_obj::class);
         $result = $t->assert_qp($qp, $db_con->db_type);
@@ -164,7 +164,7 @@ class user_unit_tests
      */
     function assert_load_sql_profile(testing $t, sql_db $db_con, object $usr_obj): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_profile($db_con, 1, $usr_obj::class);
         $result = $t->assert_qp($qp, $db_con->db_type);

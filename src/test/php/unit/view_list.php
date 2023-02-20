@@ -67,7 +67,7 @@ class view_list_unit_tests
      */
     private function assert_sql_sys_views(testing $t, sql_db $db_con, view_sys_list $lst): void
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst->load_sql_list($db_con);
         $t->assert_qp($qp, sql_db::POSTGRES);

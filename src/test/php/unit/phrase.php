@@ -61,7 +61,7 @@ class phrase_unit_tests
         $phr = new phrase($usr);
         $phr->set_id(2);
 
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $wrd_company = new word($usr);
         $wrd_company->set(2, word_api::TN_COMPANY);
         $sql_name = 'phrase_list_related';

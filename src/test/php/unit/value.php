@@ -127,7 +127,7 @@ class value_unit_tests
         $phr_grp = new phrase_group($usr);
         $phr_grp->set_id(1);
 
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_grp($db_con, $phr_grp, $usr_obj::class);
         $result = $t->assert_qp($qp, $db_con->db_type);

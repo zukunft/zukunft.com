@@ -161,7 +161,7 @@ class phrase_group_unit_tests
      */
     private function assert_load_by_group_id_sql(testing $t, sql_db $db_con, phrase_group_link $phr_grp_lnk, phrase_group $grp)
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $phr_grp_lnk->load_by_group_id_sql($db_con, $grp);
         $result = $t->assert_qp($qp, $db_con->db_type);

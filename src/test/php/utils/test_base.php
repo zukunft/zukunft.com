@@ -242,15 +242,6 @@ const TP_TAXES = "Income taxes is part of cash flow statement";
 const TF_SECTOR = "sectorweight";
 
 // some numbers used to test the program
-const TV_TEST_SALES_2016 = 1234;
-const TV_TEST_SALES_2017 = 2345;
-const TV_ABB_SALES_2013 = 45548;
-const TV_ABB_SALES_2014 = 46000;
-const TV_ABB_PRICE_20200515 = 17.08;
-const TV_NESN_SALES_2016 = 89469;
-const TV_ABB_SALES_AUTO_2013 = 9915;
-const TV_DAN_SALES_USA_2016 = '11%';
-
 const TV_TEST_SALES_INCREASE_2017_FORMATTED = '90.03 %';
 const TV_NESN_SALES_2016_FORMATTED = '89\'469';
 
@@ -686,7 +677,7 @@ class test_base
             $db_type = get_class($usr_obj);
         }
 
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_obj_vars($db_con, $db_type);
         $result = $this->assert_qp($qp, $db_con->db_type);
@@ -710,7 +701,7 @@ class test_base
      */
     function assert_load_sql_id(sql_db $db_con, object $usr_obj): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_id($db_con, 1, $usr_obj::class);
         $result = $this->assert_qp($qp, $db_con->db_type);
@@ -734,7 +725,7 @@ class test_base
      */
     function assert_load_sql_ids(sql_db $db_con, object $usr_obj): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_ids($db_con, array(1, 2));
         $result = $this->assert_qp($qp, $db_con->db_type);
@@ -758,7 +749,7 @@ class test_base
      */
     function assert_load_sql_trm_ids(sql_db $db_con, object $usr_obj): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_ids($db_con, new trm_ids(array()));
         $result = $this->assert_qp($qp, $db_con->db_type);
@@ -782,7 +773,7 @@ class test_base
      */
     function assert_load_sql_name(sql_db $db_con, object $usr_obj): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_name($db_con, 'System test', $usr_obj::class);
         $result = $this->assert_qp($qp, $db_con->db_type);
@@ -806,7 +797,7 @@ class test_base
      */
     function assert_load_sql_code_id(sql_db $db_con, object $usr_obj): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_code_id($db_con, 'System test', $usr_obj::class);
         $result = $this->assert_qp($qp, $db_con->db_type);
@@ -830,7 +821,7 @@ class test_base
      */
     function assert_load_sql_link(sql_db $db_con, object $usr_obj): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_link($db_con, 1, 0, 3, $usr_obj::class);
         $result = $this->assert_qp($qp, $db_con->db_type);
@@ -858,7 +849,7 @@ class test_base
             $db_type = get_class($usr_obj);
         }
 
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_all($db_con, $db_type);
         $result = $this->assert_qp($qp, $db_con->db_type);
@@ -882,7 +873,7 @@ class test_base
      */
     function assert_load_sql_like(sql_db $db_con, object $usr_obj,): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_like($db_con, '');
         $result = $this->assert_qp($qp, $db_con->db_type);
@@ -908,7 +899,7 @@ class test_base
      */
     function assert_load_list_sql(sql_db $db_con, object $lst_obj, object $select_obj, bool $by_source = false): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst_obj->load_sql($db_con, $select_obj, $by_source);
         $result = $this->assert_qp($qp, $db_con->db_type);
@@ -932,7 +923,7 @@ class test_base
      */
     function assert_load_list_sql_type(sql_db $db_con, object $lst_obj, string $type_code_id): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst_obj->load_sql_by_type($db_con, $type_code_id, $lst_obj::class);
         $result = $this->assert_qp($qp, $db_con->db_type);
@@ -955,7 +946,7 @@ class test_base
      */
     function assert_load_standard_sql(sql_db $db_con, user_sandbox $usr_obj): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_standard_sql($db_con, get_class($usr_obj));
         $result = $this->assert_qp($qp, $db_con->db_type);
@@ -1000,7 +991,7 @@ class test_base
      */
     function assert_not_changed_sql(sql_db $db_con, user_sandbox $usr_obj): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $usr_obj->owner_id = 0;
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->not_changed_sql($db_con);
@@ -1041,7 +1032,7 @@ class test_base
      */
     function assert_user_config_sql(sql_db $db_con, user_sandbox $usr_obj): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->usr_cfg_sql($db_con);
         $result = $this->assert_qp($qp, $db_con->db_type);
@@ -1060,7 +1051,7 @@ class test_base
      * test the SQL statement creation for a value
      *
      * @param sql_par $qp the query parameters that should be tested
-     * @param string $dialect if not PostgreSQL the name of the SQL dialect
+     * @param string $dialect if not Postgres the name of the SQL dialect
      * @return bool true if the test is fine
      */
     function assert_qp(sql_par $qp, string $dialect = ''): bool
@@ -1083,7 +1074,7 @@ class test_base
             $expected_sql
         );
 
-        // check if the prepared sql name is unique always based on the  PostgreSQL query parameter creation
+        // check if the prepared sql name is unique always based on the  Postgres query parameter creation
         if ($dialect == sql_db::POSTGRES) {
             $result = $this->assert_sql_name_unique($qp->name);
         }

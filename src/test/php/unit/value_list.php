@@ -108,7 +108,7 @@ class value_list_unit_tests
      * test the SQL statement creation for a value list
      *
      * @param phrase $phr filled with an id to be able to load
-     * @param string $dialect if not PostgreSQL the name of the SQL dialect
+     * @param string $dialect if not Postgres the name of the SQL dialect
      * @return void
      */
     private function assert_by_phr_sql(phrase $phr, string $dialect = ''): sql_par

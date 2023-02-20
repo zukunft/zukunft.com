@@ -94,7 +94,7 @@ class formula_link_unit_tests
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($lnk->not_changed_sql($db_con)->name);
 
-        // MySQL check not needed, because it is the same as for PostgreSQL
+        // MySQL check not needed, because it is the same as for Postgres
 
         /*
         $t->subheader('Im- and Export tests');

@@ -75,7 +75,7 @@ class formula_unit_tests
         $t->assert_load_standard_sql($db_con, $frm);
 
 
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $frm->load_user_sql($db_con);
         $t->assert_qp($qp, sql_db::POSTGRES);
@@ -101,13 +101,15 @@ class formula_unit_tests
         $t->subheader('Expression tests');
 
         // get the id of the phrases that should be added to the result based on the formula reference text
-        $exp = new expression($usr);
-        $exp->set_ref_text('{w205}={w203}*1000000');
-        $result = $exp->fv_phr_lst();
         $target = new phrase_list($usr);
+        $trm_lst = new term_list($usr);
         $wrd = new word($usr);
         $wrd->set_id(205);
         $target->add($wrd->phrase());
+        $trm_lst->add($wrd->term());
+        $exp = new expression($usr);
+        $exp->set_ref_text('{w205}={w203}*1000000');
+        $result = $exp->fv_phr_lst($trm_lst);
         $t->assert('Expression->fv_phr_lst for ' . formula_api::TF_READ_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
 
         // get the special formulas used in a formula to calculate the result

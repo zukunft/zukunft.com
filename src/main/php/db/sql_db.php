@@ -7,7 +7,7 @@
   
   the database link is reduced to a very few basic functions that exists on all databases
   this way an apache droid or hadoop adapter should also be possible
-  at the moment adapter to MySQL and PostgreSQL are working
+  at the moment adapter to MySQL and Postgres are working
   
   This file is part of zukunft.com - calc with words
 
@@ -82,7 +82,7 @@ class sql_db
 {
 
     // these databases can be used at the moment
-    const POSTGRES = "PostgreSQL";
+    const POSTGRES = "Postgres";
     const MYSQL = "MySQL";
 
     // data retrieval settings
@@ -169,7 +169,7 @@ class sql_db
 
     // reserved words that are automatically escaped
 
-    // based on https://www.postgresql.org/docs/current/sql-keywords-appendix.html from 2021-06-13
+    // based on https://www.Postgres.org/docs/current/sql-keywords-appendix.html from 2021-06-13
     const POSTGRES_RESERVED_NAMES = ['AND ', 'ANY ', 'ARRAY ', 'AS ', 'ASC ', 'ASYMMETRIC ', 'BOTH ', 'CASE ', 'CAST ', 'CHECK ', 'COLLATE ', 'COLUMN ', 'CONSTRAINT ', 'CREATE ', 'CURRENT_CATALOG ', 'CURRENT_DATE ', 'CURRENT_ROLE ', 'CURRENT_TIME ', 'CURRENT_TIMESTAMP ', 'CURRENT_USER ', 'DEFAULT ', 'DEFERRABLE ', 'DESC ', 'DISTINCT ', 'DO ', 'ELSE ', 'END ', 'EXCEPT ', 'FALSE ', 'FETCH ', 'FOR ', 'FOREIGN ', 'FROM ', 'GRANT ', 'GROUP ', 'HAVING ', 'IN ', 'INITIALLY ', 'INTERSECT ', 'INTO ', 'LATERAL ', 'LEADING ', 'LIMIT ', 'LOCALTIME ', 'LOCALTIMESTAMP ', 'NOT ', 'NULL ', 'OFFSET ', 'ON ', 'ONLY ', 'OR ', 'ORDER ', 'PLACING ', 'PRIMARY ', 'REFERENCES ', 'RETURNING ', 'SELECT ', 'SESSION_USER ', 'SOME ', 'SYMMETRIC ', 'TABLE ', 'THEN ', 'TO ', 'TRAILING ', 'TRUE ', 'UNION ', 'UNIQUE ', 'USER ', 'USING ', 'VARIADIC ', 'WHEN ', 'WHERE ', 'WINDOW ', 'WITH ',];
     // extra names for backward compatibility
     const POSTGRES_RESERVED_NAMES_EXTRA = ['USER'];
@@ -245,7 +245,7 @@ class sql_db
      * object variables
      */
 
-    public ?string $db_type = null;                 // the database type which should be used for this connection e.g. postgreSQL or MYSQL
+    public ?string $db_type = null;                 // the database type which should be used for this connection e.g. Postgres or MYSQL
     // TODO change type to PgSql\Connection with php 8.1
     public $postgres_link;                          // the link object to the database
     public mysqli $mysql;                           // the MySQL object to the database
@@ -612,7 +612,7 @@ class sql_db
 
     /**
      * add a parameter for a prepared query
-     * @param string $par_type the SQL parameter type used e.g. for PostgreSQL as int or text
+     * @param string $par_type the SQL parameter type used e.g. for Postgres as int or text
      * @param string $value the int, float value or text value that is used for the concrete execution of the query
      * @param bool $named true if the parameter name is already used
      */
@@ -1539,7 +1539,7 @@ class sql_db
      */
 
     /**
-     * execute an SQL statement on the active database (either PostgreSQL or MySQL)
+     * execute an SQL statement on the active database (either Postgres or MySQL)
      *
      * @param string $msg the description of the task that is executed
      * @param string $sql the sql statement that should be executed
@@ -1564,7 +1564,7 @@ class sql_db
     }
 
     /**
-     * execute an change SQL statement on the active database (either PostgreSQL or MySQL)
+     * execute an change SQL statement on the active database (either Postgres or MySQL)
      * similar to exe_try, but without exception handling
      *
      * @param string $sql the sql statement that should be executed
@@ -1583,7 +1583,7 @@ class sql_db
         global $debug;
         log_debug('"' . $sql . '" with ' . dsp_array($sql_array) . ' named "' . $sql_name . '" for  user ' . $this->usr_id, $debug - 15);
 
-        // PostgreSQL part
+        // Postgres part
         if ($this->db_type == sql_db::POSTGRES) {
             $result = $this->exe_postgres($sql, $sql_name, $sql_array, $log_level);            // check database connection
         } elseif ($this->db_type == sql_db::MYSQL) {
@@ -1596,7 +1596,7 @@ class sql_db
     }
 
     /**
-     * execute an change SQL statement on a PostgreSQL database
+     * execute an change SQL statement on a Postgres database
      * similar to exe, but database specific because the return object differs depending on the database
      *
      * @param string $sql the sql statement that should be executed
@@ -1779,7 +1779,7 @@ class sql_db
     }
 
     /**
-     * fetch the first value from an SQL database (either PostgreSQL or MySQL at the moment)
+     * fetch the first value from an SQL database (either Postgres or MySQL at the moment)
      *
      * @param string $sql the sql statement that should be executed
      * @param string $sql_name the unique name of the sql statement
@@ -1848,7 +1848,7 @@ class sql_db
     }
 
     /**
-     * fetch the first row from an SQL database (either PostgreSQL or MySQL at the moment)
+     * fetch the first row from an SQL database (either Postgres or MySQL at the moment)
      */
     private function fetch_first(string $sql, string $sql_name = '', array $sql_array = array()): ?array
     {
@@ -1856,7 +1856,7 @@ class sql_db
     }
 
     /**
-     * fetch the all value from an SQL database (either PostgreSQL or MySQL at the moment)
+     * fetch the all value from an SQL database (either Postgres or MySQL at the moment)
      */
     private function fetch_all($sql, string $sql_name = '', array $sql_array = array()): array
     {
@@ -3723,7 +3723,7 @@ class sql_db
     }
 
     /**
-     * formats one value for the PostgreSQL statement
+     * formats one value for the Postgres statement
      */
     function postgres_format($field_value, $forced_format)
     {
@@ -3741,7 +3741,7 @@ class sql_db
                 }
             } elseif ($forced_format == sql_db::FLD_FORMAT_TEXT or !is_numeric($result)) {
 
-                // escape the text value for PostgreSQL
+                // escape the text value for Postgres
                 $result = pg_escape_string($result);
                 //$result = pg_real_escape_string($result);
 

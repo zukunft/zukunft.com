@@ -116,16 +116,35 @@ class phrase_list extends user_sandbox_list_named
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con): sql_par
+    function load_sql(sql_db $db_con, string $query_name): sql_par
     {
         $db_con->set_type(sql_db::TBL_PHRASE);
         $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
+
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(phrase::FLD_NAMES);
         $db_con->set_usr_fields(phrase::FLD_NAMES_USR_NO_NAME);
         $db_con->set_usr_num_fields(phrase::FLD_NAMES_NUM_USR);
         $db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(phrase::FLD_VALUES) . ' DESC, ' . phrase::FLD_NAME);
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of phrase by the id from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phr_ids $ids phrase ids that should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_ids(sql_db $db_con, phr_ids $ids): sql_par
+    {
+        $qp = $this->load_sql($db_con, $ids->count() . 'ids');
+        $db_con->set_where_id_in(phrase::FLD_ID, $ids->lst);
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+
         return $qp;
     }
 
@@ -257,13 +276,53 @@ class phrase_list extends user_sandbox_list_named
     }
 
     /**
+     * load this list of phrases
+     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @return bool true if at least one phrase has been loaded
+     */
+    function load(sql_par $qp): bool
+    {
+        global $db_con;
+        $result = false;
+
+        if ($qp->name == '') {
+            log_err('The query name cannot be created to load a ' . self::class);
+        } else {
+            $db_rows = $db_con->get($qp);
+            if ($db_rows != null) {
+                foreach ($db_rows as $db_row) {
+                    $phr = new phrase($this->user());
+                    $phr->row_mapper($db_row);
+                    $this->lst[] = $phr;
+                    $result = true;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * load the phrases by the given id list from the database
+     *
+     * @param phr_ids $ids phrase ids that should be loaded
+     * @return bool true if at least one phrase has been loaded
+     */
+    function load_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con, $ids);
+        return $this->load($qp);
+    }
+
+    /**
      * load the phrases selected by the id
      *
      * @param phr_ids $ids of phrase ids that should be loaded
      * @param phrase_list|null $phr_lst a list of preloaded phrase that should not be loaded again
      * @return bool true if at least one phrase has been loaded
      */
-    function load_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
+    function load_by_ids_old(phr_ids $ids, ?phrase_list $phr_lst = null): bool
     {
         global $db_con;
         $result = false;
@@ -709,7 +768,7 @@ class phrase_list extends user_sandbox_list_named
      */
     function load_sql_linked_phrases(sql_db $db_con, int $verb_id, string $direction): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql($db_con, '');
         $sql_where = '';
         $join_field = '';
         if (count($this->lst) <= 0) {

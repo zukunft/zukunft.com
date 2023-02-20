@@ -86,7 +86,7 @@ class verb_unit_tests
         testing $t, sql_db $db_con, verb_list $vrb_lst, phrase $phr, string $direction
     ): void
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $vrb_lst->load_by_linked_phrases_sql($db_con, $phr, $direction);
         $result = $t->assert_qp($qp, $db_con->db_type);

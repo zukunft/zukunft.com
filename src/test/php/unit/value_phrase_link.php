@@ -91,7 +91,7 @@ class value_phrase_link_unit_tests
      */
     private function assert_lst_sql_all(testing $t, sql_db $db_con, value_phrase_link_list $lst, ?phrase $phr = null, ?value $val = null)
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst->load_sql($db_con, $phr, $val);
         $t->assert_qp($qp, sql_db::POSTGRES);

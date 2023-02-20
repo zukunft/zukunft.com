@@ -60,10 +60,15 @@ class phrase_list_unit_tests
 
         $t->subheader('SQL statement creation tests');
 
+        // load by phrase ids
+        $phr_lst = new phrase_list($usr);
+        $phr_ids = new phr_ids(array(3, -2, 4, -7));
+        $this->assert_sql_by_ids($t, $db_con, $phr_lst, $phr_ids);
+
         $this->test = $t;
 
         // sql to load a list of value by the phrase id
-        $ids = array(1,2,3);
+        $ids = array(1, 2, 3);
         $qp = $this->assert_by_ids_sql($ids, sql_db::POSTGRES);
         $this->assert_by_ids_sql($ids, sql_db::MYSQL);
         $this->test->assert_sql_name_unique($qp->name);
@@ -171,7 +176,7 @@ class phrase_list_unit_tests
      * test the SQL statement creation for a phrase list
      *
      * @param array $ids all word or triple id that should be loaded
-     * @param string $dialect if not PostgreSQL the name of the SQL dialect
+     * @param string $dialect if not Postgres the name of the SQL dialect
      * @return void
      */
     private function assert_by_ids_sql(array $ids, string $dialect = ''): sql_par
@@ -205,6 +210,32 @@ class phrase_list_unit_tests
     }
 
     /**
+     * test the SQL statement creation for a phrase list in all SQL dialect
+     * and check if the statement name is unique
+     *
+     * @param testing $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param phrase_list $lst the empty phrase list object
+     * @param phr_ids $ids filled with a list of word ids to be used for the query creation
+     * @return bool true if all tests are fine
+     */
+    private function assert_sql_by_ids(testing $t, sql_db $db_con, phrase_list $lst, phr_ids $ids): bool
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_ids($db_con, $ids);
+        $result = $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $lst->load_sql_by_ids($db_con, $ids);
+            $result = $t->assert_qp($qp, sql_db::MYSQL);
+        }
+        return $result;
+    }
+
+    /**
      * similar to assert_load_sql_name from test_base but to test the SQL statement creation
      * to get the linked phrases
      *
@@ -216,13 +247,13 @@ class phrase_list_unit_tests
      * @return bool true if all tests are fine
      */
     function assert_load_sql_linked_phrases(
-        sql_db $db_con,
+        sql_db  $db_con,
         testing $t,
-        object $usr_obj,
-        int $verb_id,
-        string $direction): bool
+        object  $usr_obj,
+        int     $verb_id,
+        string  $direction): bool
     {
-        // check the PostgreSQL query syntax
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_linked_phrases($db_con, $verb_id, $direction);
         $result = $t->assert_qp($qp, $db_con->db_type);
