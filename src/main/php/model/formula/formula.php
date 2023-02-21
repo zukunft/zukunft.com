@@ -789,7 +789,7 @@ class formula extends user_sandbox_named_with_type
                     $phr_ids = array_merge($direct_phr_lst->id_lst(), $indirect_phr_lst->id_lst());
                     $phr_ids = array_unique($phr_ids);
 
-                    $phr_lst->load_by_ids((new phr_ids($phr_ids)));
+                    $phr_lst->load_by_ids_old((new phr_ids($phr_ids)));
                     log_debug('number of words and triples ' . dsp_count($phr_lst->lst()));
                 } else {
                     log_debug( 'no words are assigned to ' . $this->dsp_id());

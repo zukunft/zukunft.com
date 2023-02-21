@@ -275,7 +275,7 @@ class phrase_group extends db_object
     {
         if (!$this->phr_lst->loaded()) {
             $ids = $this->phr_lst->phrase_ids();
-            $this->phr_lst->load_by_ids($ids);
+            $this->phr_lst->load_by_ids_old($ids);
         }
     }
 

@@ -689,19 +689,21 @@ class phrase extends db_object
     function get_word(): word
     {
         $wrd = new word($this->usr);
-        if (get_class($this->obj) == word::class) {
-            $wrd->set_id($this->obj->id());
-            $wrd->usr_cfg_id = $this->obj->usr_cfg_id;
-            $wrd->owner_id = $this->obj->owner_id;
-            $wrd->share_id = $this->obj->share_id;
-            $wrd->protection_id = $this->obj->protection_id;
-            $wrd->excluded = $this->obj->excluded;
-            $wrd->set_name($this->obj->name());
-            $wrd->description = $this->obj->description;
-            $wrd->plural = $this->obj->plural;
-            $wrd->type_id = $this->obj->type_id;
-            $wrd->view_id = $this->obj->view_id;
-            $wrd->values = $this->obj->values;
+        if ($this->obj != null) {
+            if (get_class($this->obj) == word::class) {
+                $wrd->set_id($this->obj->id());
+                $wrd->usr_cfg_id = $this->obj->usr_cfg_id;
+                $wrd->owner_id = $this->obj->owner_id;
+                $wrd->share_id = $this->obj->share_id;
+                $wrd->protection_id = $this->obj->protection_id;
+                $wrd->excluded = $this->obj->excluded;
+                $wrd->set_name($this->obj->name());
+                $wrd->description = $this->obj->description;
+                $wrd->plural = $this->obj->plural;
+                $wrd->type_id = $this->obj->type_id;
+                $wrd->view_id = $this->obj->view_id;
+                $wrd->values = $this->obj->values;
+            }
         }
         return $wrd;
     }
