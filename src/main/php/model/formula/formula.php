@@ -864,6 +864,23 @@ class formula extends user_sandbox_named_with_type
         return $db_con->delete($this->fld_id(), $this->id);
     }
 
+    /**
+     * @return formula_value with the value from this formula
+     */
+    private function create_result(phrase_list $phr_lst): formula_value
+    {
+        $rst = new formula_value($this->user());
+        $rst->frm = $this;
+        $rst->ref_text = $this->ref_text_r;
+        $rst->num_text = $this->ref_text_r;
+        $rst->src_phr_lst = clone $phr_lst;
+        $rst->phr_lst = clone $phr_lst;
+        if ($rst->last_val_update < $this->last_update) {
+            $rst->last_val_update = $this->last_update;
+        }
+        return $rst;
+    }
+
 
     /**
      * fill the formula in the reference format with numbers
@@ -885,15 +902,7 @@ class formula extends user_sandbox_named_with_type
         $fv_lst = new formula_value_list($this->user());
 
         // create a master formula value object to only need to fill it with the numbers in the code below
-        $fv_init = new formula_value($this->user()); // maybe move the constructor of formula_value_list?
-        $fv_init->frm = $this;
-        $fv_init->ref_text = $this->ref_text_r;
-        $fv_init->num_text = $this->ref_text_r;
-        $fv_init->src_phr_lst = clone $phr_lst;
-        $fv_init->phr_lst = clone $phr_lst;
-        if ($fv_init->last_val_update < $this->last_update) {
-            $fv_init->last_val_update = $this->last_update;
-        }
+        $fv_init = $this->create_result($phr_lst); // maybe move the constructor of formula_value_list?
 
         // load the formula element groups; similar parts is used in the explain method in formula_value
         // e.g. for "Sales differentiator Sector / Total Sales" the element groups are

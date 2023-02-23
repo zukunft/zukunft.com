@@ -82,6 +82,18 @@ class phrase_list extends user_sandbox_list_named
         return $dsp_obj;
     }
 
+    /**
+     * @return term_list filled with all phrases from this phrase list
+     */
+    function term_list(): term_list
+    {
+        $trm_lst = new term_list($this->user());
+        foreach ($this->lst() as $phr) {
+            $trm_lst->add($phr->term());
+        }
+        return $trm_lst;
+    }
+
 
     /*
      * set and get
