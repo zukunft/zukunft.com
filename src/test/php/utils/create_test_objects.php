@@ -571,7 +571,7 @@ class test_new_obj extends test_base
         if ($frm->id() == 0) {
             $frm->set_name($frm_name);
             $frm->usr_text = $frm_text;
-            $frm->set_ref_text();
+            $frm->generate_ref_text();
             $frm->save();
         }
         return $frm;

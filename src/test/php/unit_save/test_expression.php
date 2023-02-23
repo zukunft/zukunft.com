@@ -74,7 +74,7 @@ function run_expression_test(testing $t): void
     $target = '"' . word_api::TN_PCT . '"';
     $result = $exp->fv_part_usr();
     $t->assert('fv_part_usr for "' . $frm->usr_text . '"', $result, $target, TIMEOUT_LIMIT_LONG); // ??? why???
-    $target = '( "this" - "prior" ) / "prior"';
+    $target = '( "' . formula_api::TN_READ_THIS .  '" - "' . formula_api::TN_READ_PRIOR .  '" ) / "' . formula_api::TN_READ_PRIOR .  '"';
     $result = $exp->r_part_usr();
     $t->assert('r_part_usr for "' . $frm->usr_text . '"', $result, $target);
     $target = 'true';
@@ -87,7 +87,7 @@ function run_expression_test(testing $t): void
     // test the expression processing of the database reference
     $exp_db = new expression($usr);
     $exp_db->set_ref_text('{w' . $wrd_percent->id() . '} = ( is.numeric( {f' . $frm_this->id() . '} ) & is.numeric( {f' . $frm_prior->id() . '} ) ) ( {f' . $frm_this->id() . '} - {f' . $frm_prior->id() . '} ) / {f' . $frm_prior->id() . '}');
-    $target = '"percent"=( is.numeric( "this" ) & is.numeric( "prior" ) ) ( "this" - "prior" ) / "prior"';
+    $target = '"percent"=( is.numeric( "' . formula_api::TN_READ_THIS .  '" ) & is.numeric( "' . formula_api::TN_READ_PRIOR .  '" ) ) ( "' . formula_api::TN_READ_THIS .  '" - "' . formula_api::TN_READ_PRIOR .  '" ) / "' . formula_api::TN_READ_PRIOR .  '"';
     $result = $exp_db->user_text();
     $t->assert('get_usr_text for "' . $exp_db->ref_text() . '"', $result, $target);
 
@@ -129,13 +129,13 @@ function run_expression_test(testing $t): void
     // test getting special phrases
     $phr_lst = $exp->element_special_following();
     $result = $phr_lst->dsp_name();
-    $target = '"this","prior"';
+    $target = '"' . formula_api::TN_READ_THIS .  '","' . formula_api::TN_READ_PRIOR .  '"';
     // TODO $t->assert('element_special_following for "'.$exp->dsp_id().'"', $result, $target, TIMEOUT_LIMIT_LONG);
 
     // test getting for special phrases the related formula
     $frm_lst = $exp->element_special_following_frm();
     $result = $frm_lst->name();
-    $target = 'this,prior';
+    $target = '' . formula_api::TN_READ_THIS .  ',' . formula_api::TN_READ_PRIOR .  '';
     // TODO $t->assert('element_special_following_frm for "'.$exp->dsp_id().'"', $result, $target, TIMEOUT_LIMIT_LONG);
 
 }

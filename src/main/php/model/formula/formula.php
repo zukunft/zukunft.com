@@ -109,7 +109,9 @@ class formula extends user_sandbox_named_with_type
 
     // database fields additional to the user sandbox fields
     public ?string $ref_text = '';         // the formula expression with the names replaced by database references
+    private bool $ref_text_dirty;          // true if the human-readable text has been updated and not yet converted
     public ?string $usr_text = '';         // the formula expression in the user format
+    private bool $usr_text_dirty;          // true if the reference text has been updated and not yet converted
     public ?string $description = '';      // describes to the user what this formula is doing
     public ?bool $need_all_val = false;    // calculate and save the result only if all used values are not null
     public ?DateTime $last_update = null;  // the time of the last update of fields that may influence the calculated results
@@ -120,6 +122,7 @@ class formula extends user_sandbox_named_with_type
     //                                        because values can only be assigned to phrases, also for the formula name a triple must exist
     public bool $needs_fv_upd = false;     // true if the formula results needs to be updated
     public ?string $ref_text_r = '';       // the part of the formula expression that is right of the equation sign (used as a work-in-progress field for calculation)
+
 
     /*
      * construct and map
@@ -132,6 +135,7 @@ class formula extends user_sandbox_named_with_type
     function __construct(user $usr)
     {
         parent::__construct($usr);
+        $this->reset();
 
         $this->obj_name = sql_db::TBL_FORMULA;
         $this->rename_can_switch = UI_CAN_CHANGE_FORMULA_NAME;
@@ -148,7 +152,9 @@ class formula extends user_sandbox_named_with_type
         $this->name = '';
 
         $this->ref_text = '';
+        $this->ref_text_dirty = false;
         $this->usr_text = '';
+        $this->usr_text_dirty = false;
         $this->type_id = null;
         $this->need_all_val = false;
         $this->last_update = null;
@@ -247,6 +253,21 @@ class formula extends user_sandbox_named_with_type
     {
         return $this->name;
     }
+
+    /**
+     * update the expression by setting the human-readable format and try to update the database reference format
+     * @param string $usr_txt the formula expression in the human-readable format
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return void
+     */
+    public function set_user_text(string $usr_txt, ?term_list $trm_lst = null): void
+    {
+        $this->usr_text = $usr_txt;
+        $this->usr_text_dirty = false;
+        $this->ref_text_dirty = true;
+        $this->generate_ref_text($trm_lst);
+    }
+
 
 
     /*
@@ -1701,15 +1722,18 @@ class formula extends user_sandbox_named_with_type
 
     /**
      * update the database reference text based on the user text
+     * TODO check in not the left AND the right part needs to be transformed as expression
      *
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string which is empty if the update of the reference text was successful and otherwise the error message that should be shown to the user
      */
-    function set_ref_text(): string
+    function generate_ref_text(?term_list $trm_lst = null): string
     {
         $result = '';
         $exp = new expression($this->user());
         $exp->set_user_text($this->usr_text);
-        $this->ref_text = $exp->ref_text();
+        $this->ref_text = $exp->ref_text($trm_lst);
+        $this->ref_text_dirty = false;
         $result .= $exp->err_text;
         return $result;
     }
@@ -2307,7 +2331,7 @@ class formula extends user_sandbox_named_with_type
             // create a new formula or update an existing
             if ($this->id <= 0) {
                 // convert the formula text to db format (any error messages should have been returned from the calling user script)
-                $result .= $this->set_ref_text();
+                $result .= $this->generate_ref_text();
                 if ($result == '') {
                     $result .= $this->add()->get_last_message();
                 }
@@ -2329,7 +2353,7 @@ class formula extends user_sandbox_named_with_type
                 }
 
                 // ... and convert the formula text to db format (any error messages should have been returned from the calling user script)
-                $result .= $this->set_ref_text();
+                $result .= $this->generate_ref_text();
                 if ($result == '') {
 
                     // check if the id parameters are supposed to be changed

@@ -163,6 +163,12 @@
          Typing = in any cell starts the formula selection
          Typing an operator sign after a space starts the formula creation and a formula name is suggested
 
+    TODO add a multi unique key auto merge test case
+        add Euro and Swissfranc and an Euro to Swissfrance rate of 1.1
+        add EUR and CHF and a EUR/CHF rate of 1.0
+        add a Name and ISO code unique Index to currencies
+         -> use the later rate
+
 
     TODO split the frontend from the backend
          the namespaced should be

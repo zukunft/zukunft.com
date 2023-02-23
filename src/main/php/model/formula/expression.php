@@ -2,8 +2,12 @@
 
 /*
 
-    model/log/expression.php - a text (usually in the database reference format) that implies a data selection and can calculate a number
-    ------------------------
+    model/formula/expression.php - a text that implies a data selection and can calculate a number
+    ----------------------------
+
+    either the right part of the equation sign of a formula or the left part
+    usually in the database reference format
+
 
     This file is part of zukunft.com - calc with words
 
