@@ -414,7 +414,7 @@ class testing extends test_api
      * @param array $names the names that should be used to create the phrase list
      * @return phrase_list
      */
-    public function phrase_list_for_tests(array $names): phrase_list
+    function phrase_list_for_tests(array $names): phrase_list
     {
         global $usr;
 
@@ -443,7 +443,7 @@ class testing extends test_api
      * @param array $names the names that should be used to create the term list
      * @return term_list
      */
-    public function term_list_for_tests(array $names): term_list
+    function term_list_for_tests(array $names): term_list
     {
         global $usr;
 
@@ -519,7 +519,7 @@ class testing extends test_api
         return $result;
     }
 
-    public function html_test(string $body, string $filename, testing $t)
+    function html_test(string $body, string $filename, testing $t)
     {
         $lib = new library();
 

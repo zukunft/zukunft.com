@@ -224,7 +224,7 @@ class user extends db_object
      * set the most often used reference vars with one set statement
      * @param int $id mainly for test creation the database id of the reference
      */
-    public function set(int $id = 0, string $name = '', string $email = '', string $code_id = ''): void
+    function set(int $id = 0, string $name = '', string $email = '', string $code_id = ''): void
     {
         $this->set_id($id);
         $this->set_name($name);
@@ -234,7 +234,7 @@ class user extends db_object
     /**
      * @param string|null $name the unique username for this pod
      */
-    public function set_name(?string $name): void
+    function set_name(?string $name): void
     {
         $this->name = $name;
     }
@@ -242,7 +242,7 @@ class user extends db_object
     /**
      * @param string|null $email the unique email for the user
      */
-    public function set_email(?string $email): void
+    function set_email(?string $email): void
     {
         $this->email = $email;
     }
@@ -571,7 +571,7 @@ class user extends db_object
      * exposed as public mainly for testing
      * @return string the message, why the if is not permitted
      */
-    public function ip_check(string $ip_addr): string
+    function ip_check(string $ip_addr): string
     {
         global $debug;
         log_debug(' (' . $ip_addr . ')', $debug - 12);

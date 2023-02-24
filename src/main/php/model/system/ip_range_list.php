@@ -59,7 +59,7 @@ class ip_range_list extends base_list
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    public function load_sql_obj_vars(sql_db $db_con): sql_par
+    function load_sql_obj_vars(sql_db $db_con): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'active';

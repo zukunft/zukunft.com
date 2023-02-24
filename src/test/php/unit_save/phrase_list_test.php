@@ -57,7 +57,7 @@ function run_phrase_list_test(testing $t)
     $id_lst = $wrd_lst->ids();
     $id_lst[] = $triple_sample_id * -1;
     $phr_lst = new phrase_list($usr);
-    $phr_lst->load_by_ids(new phr_ids($id_lst));
+    $phr_lst->load_names_by_ids(new phr_ids($id_lst));
     $target = '"' . TW_ABB . '","' . TW_VESTAS . '","' . phrase_api::TN_ZH_COMPANY . '"';
     $result = $phr_lst->dsp_name();
     $t->dsp('phrase->load via id', $target, $result);

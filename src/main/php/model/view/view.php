@@ -193,7 +193,7 @@ class view extends user_sandbox_named_with_type
      * @param string $name mainly for test creation the name of the view
      * @param string $type_code_id the code id of the predefined view type
      */
-    public function set(int $id = 0, string $name = '', string $type_code_id = ''): void
+    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
     {
         parent::set($id, $name);
 
@@ -216,7 +216,7 @@ class view extends user_sandbox_named_with_type
     /**
      * @return string a unique name for the view that is also used in the code
      */
-    public function code_id(): string
+    function code_id(): string
     {
         if ($this->code_id == null) {
             return '';
@@ -228,7 +228,7 @@ class view extends user_sandbox_named_with_type
     /**
      * @return string the description of the view
      */
-    public function comment(): string
+    function comment(): string
     {
         if ($this->description == null) {
             return '';
@@ -245,7 +245,7 @@ class view extends user_sandbox_named_with_type
     /**
      * @return string the name of the view type
      */
-    public function type_name(): string
+    function type_name(): string
     {
         global $view_types;
         return $view_types->name($this->type_id);

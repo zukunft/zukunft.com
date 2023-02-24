@@ -318,17 +318,17 @@ class value extends user_sandbox_value
         return $msg;
     }
 
-    public function set_grp(phrase_group $grp): void
+    function set_grp(phrase_group $grp): void
     {
         $this->grp = $grp;
     }
 
-    public function wrd_lst(): word_list
+    function wrd_lst(): word_list
     {
         return $this->grp->phr_lst->wrd_lst();
     }
 
-    public function trp_lst(): triple_list
+    function trp_lst(): triple_list
     {
         return $this->grp->phr_lst->trp_lst();
     }
@@ -336,7 +336,7 @@ class value extends user_sandbox_value
     /**
      * @return array with the ids of the phrases
      */
-    public function ids(): array
+    function ids(): array
     {
         return $this->grp->phr_lst->ids();
     }
@@ -545,10 +545,10 @@ class value extends user_sandbox_value
      * @param array $phr_ids with the phrase ids
      * @return int the id of the object found and zero if nothing is found
      */
-    public function load_by_phr_ids(array $phr_ids): int
+    function load_by_phr_ids(array $phr_ids): int
     {
         $phr_lst = new phrase_list($this->user());
-        $phr_lst->load_by_ids((new phr_ids($phr_ids)));
+        $phr_lst->load_names_by_ids((new phr_ids($phr_ids)));
         return $this->load_by_grp($phr_lst->get_grp());
     }
 
@@ -811,7 +811,7 @@ class value extends user_sandbox_value
     /**
      * @return phrase_list the phrase list of this value from the phrase group
      */
-    public function phr_lst(): phrase_list
+    function phr_lst(): phrase_list
     {
         return $this->grp->phr_lst;
     }
@@ -819,7 +819,7 @@ class value extends user_sandbox_value
     /**
      * @return array with the phrase names of this value from the phrase group
      */
-    public function phr_names(): array
+    function phr_names(): array
     {
         return $this->grp->phr_lst->names();
     }

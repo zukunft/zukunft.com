@@ -68,7 +68,7 @@ class sql_par
     /**
      * @return bool true if the query has at least one parameter set
      */
-    public function has_par(): bool
+    function has_par(): bool
     {
         if (count($this->par) > 0) {
             return true;
@@ -1417,7 +1417,7 @@ class sql_db
         log_debug('to "' . $this->table . '"', $debug - 20);
     }
 
-    public function get_id_field_name($type): string
+    function get_id_field_name($type): string
     {
         $lib = new library();
 
@@ -1455,7 +1455,7 @@ class sql_db
         return $this->id_field;
     }
 
-    public function get_name_field(string $type): string
+    function get_name_field(string $type): string
     {
         global $debug;
 

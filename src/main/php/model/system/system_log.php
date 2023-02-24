@@ -217,7 +217,7 @@ class system_log extends db_object
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    public function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int $id, string $class = self::class): int
     {
         log_debug();
 

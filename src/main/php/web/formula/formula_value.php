@@ -43,7 +43,7 @@ class formula_value_dsp extends formula_value_api
      * @param phrase_list_api|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
      * @returns string the html code to display the phrase group with reference links
      */
-    public function name_linked(phrase_list_api $phr_lst_header = null): string
+    function name_linked(phrase_list_api $phr_lst_header = null): string
     {
         return $this->grp_dsp()->name_linked($phr_lst_header);
     }

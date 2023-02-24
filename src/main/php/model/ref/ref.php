@@ -187,7 +187,7 @@ class ref extends user_sandbox_link_with_type
      * set the most often used reference vars with one set statement
      * @param int $id mainly for test creation the database id of the reference
      */
-    public function set(int $id = 0): void
+    function set(int $id = 0): void
     {
         $this->set_id($id);
     }
@@ -195,7 +195,7 @@ class ref extends user_sandbox_link_with_type
     /**
      * @param int|null $id the database id of the verb
      */
-    public function set_id(?int $id): void
+    function set_id(?int $id): void
     {
         $this->id = $id;
     }
@@ -203,7 +203,7 @@ class ref extends user_sandbox_link_with_type
     /**
      * @param int|null $id the database id of the verb
      */
-    public function set_name(?string $name): void
+    function set_name(?string $name): void
     {
         $this->name = $name;
     }
@@ -211,7 +211,7 @@ class ref extends user_sandbox_link_with_type
     /**
      * @return int|null the database id which is not 0 if the object has been saved
      */
-    public function id(): ?int
+    function id(): ?int
     {
         return $this->id;
     }
@@ -262,7 +262,7 @@ class ref extends user_sandbox_link_with_type
      * get the name of the reference type
      * @return string the name of the reference type
      */
-    public function type_name(): string
+    function type_name(): string
     {
         //global $reference_types;
         //return $reference_types->name($this->ref_type->name());
@@ -450,7 +450,7 @@ class ref extends user_sandbox_link_with_type
     /**
      * to load the related objects if the reference object is loaded
      */
-    public function load_objects(): bool
+    function load_objects(): bool
     {
         $result = true;
 
@@ -669,7 +669,7 @@ class ref extends user_sandbox_link_with_type
      * update a ref in the database or update the existing
      * @return user_message the database id of the created reference or 0 if not successful
      */
-    public function add(): user_message
+    function add(): user_message
     {
         log_debug('ref->add ' . $this->dsp_id());
 

@@ -38,7 +38,7 @@ class type_lists
     /*
      * cast
      */
-    public function api_obj(): type_lists_api
+    function api_obj(): type_lists_api
     {
         global $db_con;
         global $user_profiles;
@@ -96,7 +96,7 @@ class type_lists
      * load
      */
 
-    public function load(sql_db $db_con, ?user $usr): bool
+    function load(sql_db $db_con, ?user $usr): bool
     {
         global $sys_log_stati;
         global $system_users;

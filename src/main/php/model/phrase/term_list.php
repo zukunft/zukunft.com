@@ -73,7 +73,7 @@ class term_list extends user_sandbox_list_named
      * get the phrases out of a term list
      * @return phrase_list the list of phrases picked from the term list
      */
-    public function phrase_list(): phrase_list
+    function phrase_list(): phrase_list
     {
         $phr_lst = new phrase_list($this->user());
         foreach ($this->lst() as $trm) {
@@ -203,7 +203,7 @@ class term_list extends user_sandbox_list_named
      * @param string $name the term name that should be returned
      * @return term|null the found term or null if no name is found
      */
-    public function get_by_name(string $name): ?term
+    function get_by_name(string $name): ?term
     {
         return parent::get_obj_by_name($name);
     }

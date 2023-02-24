@@ -65,7 +65,7 @@ class list_api
     /**
      * @returns true if the list has been replaced
      */
-    public function set_lst(array $lst): bool
+    function set_lst(array $lst): bool
     {
         $this->lst = $lst;
         $this->set_lst_dirty();
@@ -75,7 +75,7 @@ class list_api
     /**
      * @returns array the protected list of values or formula results
      */
-    public function lst(): array
+    function lst(): array
     {
         return $this->lst;
     }
@@ -83,7 +83,7 @@ class list_api
     /**
      * @returns array with the names on the db keys
      */
-    public function lst_key(): array
+    function lst_key(): array
     {
         $result = array();
         foreach ($this->lst as $val) {

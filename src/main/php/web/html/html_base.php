@@ -592,7 +592,7 @@ class html_base
      * converts object class name to an edit php script name
      *
      */
-    public function edit_url(string $class): string
+    function edit_url(string $class): string
     {
         return $class . api::UPDATE . api::EXT;
     }

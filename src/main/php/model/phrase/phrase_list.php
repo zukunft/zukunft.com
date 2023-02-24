@@ -128,7 +128,7 @@ class phrase_list extends user_sandbox_list_named
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $query_name): sql_par
+    function load_names_sql(sql_db $db_con, string $query_name): sql_par
     {
         $db_con->set_type(sql_db::TBL_PHRASE);
         $qp = new sql_par(self::class);
@@ -150,9 +150,9 @@ class phrase_list extends user_sandbox_list_named
      * @param phr_ids $ids phrase ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_db $db_con, phr_ids $ids): sql_par
+    function load_names_sql_by_ids(sql_db $db_con, phr_ids $ids): sql_par
     {
-        $qp = $this->load_sql($db_con, $ids->count() . 'ids');
+        $qp = $this->load_names_sql($db_con, $ids->count() . 'ids');
         $db_con->set_where_id_in(phrase::FLD_ID, $ids->lst);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -315,7 +315,20 @@ class phrase_list extends user_sandbox_list_named
     }
 
     /**
-     * load the phrases by the given id list from the database
+     * load the phrase names by the given id list from the database
+     *
+     * @param phr_ids $ids phrase ids that should be loaded
+     * @return bool true if at least one phrase has been loaded
+     */
+    function load_names_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
+    {
+        global $db_con;
+        $qp = $this->load_names_sql_by_ids($db_con, $ids);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the phrases including the related word or triple object by the given id list from the database
      *
      * @param phr_ids $ids phrase ids that should be loaded
      * @return bool true if at least one phrase has been loaded
@@ -323,7 +336,7 @@ class phrase_list extends user_sandbox_list_named
     function load_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_ids($db_con, $ids);
+        $qp = $this->load_names_sql_by_ids($db_con, $ids);
         return $this->load($qp);
     }
 
@@ -780,7 +793,7 @@ class phrase_list extends user_sandbox_list_named
      */
     function load_sql_linked_phrases(sql_db $db_con, int $verb_id, string $direction): sql_par
     {
-        $qp = $this->load_sql($db_con, '');
+        $qp = $this->load_names_sql($db_con, '');
         $sql_where = '';
         $join_field = '';
         if (count($this->lst) <= 0) {

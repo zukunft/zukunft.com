@@ -113,7 +113,7 @@ class math
     /**
      * @returns int the position of the corresponding separator and takes text fields and brackets into account by not splitting them
      */
-    public function pos_separator(string $formula, string $separator, int $start_pos): int
+    function pos_separator(string $formula, string $separator, int $start_pos): int
     {
         log_debug("pos_separator (" . $formula . "," . $separator . "," . $start_pos . ")");
 
@@ -367,7 +367,7 @@ class math
     /**
      * @returns bool true if the formula starts with a bracket, so that first the inner part needs to be calculated
      */
-    public function has_bracket(string $formula): bool
+    function has_bracket(string $formula): bool
     {
         log_debug($formula);
 
@@ -393,7 +393,7 @@ class math
     /**
      * @returns bool true if the formula starts with a bracket, so that first the inner part needs to be calculated
      */
-    public function has_formula(string $formula): bool
+    function has_formula(string $formula): bool
     {
         if (str_starts_with($formula, expression::FORMULA_START)) {
             return true;
@@ -405,7 +405,7 @@ class math
     /**
      * @returns bool true if the remaining formula part is only text, do not parse it any more
      */
-    public function is_text_only(string $formula): bool
+    function is_text_only(string $formula): bool
     {
         if ($formula[0] == expression::TXT_FIELD && substr($formula, -1) == expression::TXT_FIELD) {
             return true;
@@ -417,7 +417,7 @@ class math
     /**
      * @returns bool true if the remaining formula part is only a date
      */
-    public function is_date(string $formula): bool
+    function is_date(string $formula): bool
     {
         $date = date_parse($formula);
         if (checkdate($date["month"], $date["day"], $date["year"])) {
@@ -430,7 +430,7 @@ class math
     /**
      * @returns int the position of the word id in the database reference format
      */
-    public function pos_word(string $formula): int
+    function pos_word(string $formula): int
     {
         $result = -1;
 
@@ -554,7 +554,7 @@ class math
     /**
      * checks if formula contains a bracket and calculates the inner part first
      */
-    public function math_bracket(string $formula): string
+    function math_bracket(string $formula): string
     {
         $result = $formula;
 
@@ -721,7 +721,7 @@ class math
     }
 
 
-    public function is_math_symbol_or_num(string $formula): bool
+    function is_math_symbol_or_num(string $formula): bool
     {
         log_debug($formula);
         if ($this->is_math_symbol($formula)) {
@@ -737,7 +737,7 @@ class math
     /**
      * returns the next math symbol or number
      */
-    public function get_math_symbol(string $formula): string
+    function get_math_symbol(string $formula): string
     {
         log_debug($formula);
 

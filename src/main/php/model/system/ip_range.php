@@ -109,7 +109,7 @@ class ip_range
     /**
      * @returns int the protected id of the ip range
      */
-    public function id(): int
+    function id(): int
     {
         return $this->id;
     }
@@ -278,7 +278,7 @@ class ip_range
      * @param string $ip_addr the ip address to check
      * @return bool true if the given ip address is within the ip range
      */
-    public function includes(string $ip_addr): bool
+    function includes(string $ip_addr): bool
     {
         $result = false;
         if (ip2long(trim($this->from)) <= ip2long(trim($ip_addr))

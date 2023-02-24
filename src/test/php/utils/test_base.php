@@ -651,7 +651,7 @@ class test_base
      * @param string $filename the filename of the expected html page
      * @return bool true if the html has no relevant differences
      */
-    public function assert_html(string $test_name, string $body, string $filename): bool
+    function assert_html(string $test_name, string $body, string $filename): bool
     {
         $lib = new library();
 

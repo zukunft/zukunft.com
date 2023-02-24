@@ -90,7 +90,7 @@ class formula_list_api extends list_api implements \JsonSerializable
     /**
      * an array of the value vars including the private vars
      */
-    public function jsonSerialize(): array
+    function jsonSerialize(): array
     {
         $vars = [];
         foreach ($this->lst as $frm) {

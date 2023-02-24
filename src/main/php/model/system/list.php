@@ -68,12 +68,12 @@ class base_list
      * get and set
      */
 
-    public function set_offset(int $offset): void
+    function set_offset(int $offset): void
     {
         $this->offset = $offset;
     }
 
-    public function offset(): int
+    function offset(): int
     {
         return $this->offset;
     }
@@ -81,7 +81,7 @@ class base_list
     /**
      * @returns true if the list has been replaced
      */
-    public function set_lst(array $lst): bool
+    function set_lst(array $lst): bool
     {
         $this->lst = $lst;
         $this->set_lst_dirty();
@@ -91,7 +91,7 @@ class base_list
     /**
      * @returns array the protected list of values or formula results
      */
-    public function lst(): array
+    function lst(): array
     {
         return $this->lst;
     }
@@ -99,7 +99,7 @@ class base_list
     /**
      * @returns array with the names on the db keys
      */
-    public function lst_key(): array
+    function lst_key(): array
     {
         $result = array();
         foreach ($this->lst as $val) {
@@ -136,7 +136,7 @@ class base_list
      * @param int $id the unique database id of the object that should be returned
      * @return user_sandbox|null the found user sandbox object or null if no id is found
      */
-    public function get_by_id(int $id): ?object
+    function get_by_id(int $id): ?object
     {
         $key_lst = $this->id_pos_lst();
         if (array_key_exists($id, $key_lst)) {

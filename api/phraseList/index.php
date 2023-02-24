@@ -55,7 +55,7 @@ if ($usr->id() > 0) {
 
     if ($phr_ids != '') {
         $lst = new phrase_list($usr);
-        $lst->load_by_ids((new phr_ids(explode(",", $phr_ids))));
+        $lst->load_names_by_ids((new phr_ids(explode(",", $phr_ids))));
         $result = $lst->api_obj();
     } else {
         $msg = 'phrase id is missing';

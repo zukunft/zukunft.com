@@ -230,7 +230,7 @@ class view_cmp extends user_sandbox_named_with_type
      * @param string $name mainly for test creation the name of the view component
      * @param string $type_code_id the code id of the predefined view component type
      */
-    public function set(int $id = 0, string $name = '', string $type_code_id = ''): void
+    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
     {
         parent::set($id, $name);
 
@@ -258,7 +258,7 @@ class view_cmp extends user_sandbox_named_with_type
     /**
      * @return string the name of the view type
      */
-    public function type_name(): string
+    function type_name(): string
     {
         global $view_component_types;
         return $view_component_types->name($this->type_id);

@@ -218,7 +218,7 @@ class word_api extends user_sandbox_named_with_type_api
      * get and set
      */
 
-    public function set_description(string $description): void
+    function set_description(string $description): void
     {
         $this->description = $description;
     }
@@ -235,7 +235,7 @@ class word_api extends user_sandbox_named_with_type_api
         }
     }
 
-    public function set_plural(?string $plural): void
+    function set_plural(?string $plural): void
     {
         $this->plural = $plural;
     }
@@ -245,7 +245,7 @@ class word_api extends user_sandbox_named_with_type_api
         return $this->plural;
     }
 
-    public function set_parent(?phrase_api $parent): void
+    function set_parent(?phrase_api $parent): void
     {
         $this->parent = $parent;
     }

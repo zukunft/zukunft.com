@@ -220,7 +220,7 @@ class expression
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return void
      */
-    public function set_user_text(string $usr_txt, ?term_list $trm_lst = null): void
+    function set_user_text(string $usr_txt, ?term_list $trm_lst = null): void
     {
         $this->usr_text = $usr_txt;
         $this->usr_text_dirty = false;
@@ -234,7 +234,7 @@ class expression
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return void
      */
-    public function set_ref_text(string $ref_txt, ?term_list $trm_lst = null): void
+    function set_ref_text(string $ref_txt, ?term_list $trm_lst = null): void
     {
         $this->ref_text = $ref_txt;
         $this->ref_text_dirty = false;
@@ -246,7 +246,7 @@ class expression
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string|null the recreated expression in the human-readable format or null if an error has occurred
      */
-    public function user_text(?term_list $trm_lst = null): ?string
+    function user_text(?term_list $trm_lst = null): ?string
     {
         if ($this->usr_text_dirty) {
             $this->usr_text = $this->get_usr_text($trm_lst);
@@ -262,7 +262,7 @@ class expression
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string|null the recreated expression in the database reference format or null if an error has occurred
      */
-    public function ref_text(?term_list $trm_lst = null): ?string
+    function ref_text(?term_list $trm_lst = null): ?string
     {
         if ($this->ref_text_dirty) {
             $this->ref_text = $this->get_ref_text($trm_lst);
@@ -286,7 +286,7 @@ class expression
     {
         $phr_lst = new phrase_list($this->usr);
         $phr_ids = $this->phr_id_lst($this->r_part());
-        $phr_lst->load_by_ids($phr_ids);
+        $phr_lst->load_names_by_ids($phr_ids);
 
         return $phr_lst;
     }
@@ -303,7 +303,7 @@ class expression
         $phr_lst = new phrase_list($this->usr);
         $phr_ids = $this->phr_id_lst($this->fv_part());
         if ($trm_lst == null) {
-            $phr_lst->load_by_ids($phr_ids);
+            $phr_lst->load_names_by_ids($phr_ids);
         } else {
             $phr_lst->load_by_ids_old($phr_ids, $trm_lst->phrase_list());
         }
@@ -328,7 +328,7 @@ class expression
      * @return formula_element_list a list of all formula elements
      * (don't use for number retrieval, use element_grp_lst instead, because )
      */
-    public function element_list(?term_list $trm_lst = null): formula_element_list
+    function element_list(?term_list $trm_lst = null): formula_element_list
     {
         $lib = new library();
 
@@ -409,7 +409,7 @@ class expression
     /**
      * format the expression name to use it for debugging
      */
-    public function dsp_id(): string
+    function dsp_id(): string
     {
         // $result = '"' . $this->usr_text . '" (' . $this->ref_text . ')';
         // the user is no most cases no extra info
@@ -417,7 +417,7 @@ class expression
         return '"' . $this->user_text() . '" (' . $this->ref_text() . ')';
     }
 
-    public function name(): string
+    function name(): string
     {
         return $this->usr_text;
     }
@@ -491,7 +491,7 @@ class expression
      * @returns phr_ids with the word and triple ids from a given formula text
      * and without loading the objects from the database
      */
-    public function phr_id_lst(string $ref_text): phr_ids
+    function phr_id_lst(string $ref_text): phr_ids
     {
         $id_lst = [];
 
@@ -525,7 +525,7 @@ class expression
      * @returns phrase_list with the word and triple ids from a given formula text
      * and without loading the objects from the database
      */
-    public function phr_id_lst_as_phr_lst(string $ref_text): phrase_list
+    function phr_id_lst_as_phr_lst(string $ref_text): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
         $id_lst = $this->phr_id_lst($ref_text)->lst;
@@ -541,28 +541,28 @@ class expression
      * find the position of the formula indicator "="
      * use the part left of it to add the words to the result
      */
-    public function fv_part(): string
+    function fv_part(): string
     {
         $lib = new library();
         $result = $lib->str_left_of($this->ref_text, self::CHAR_CALC);
         return trim($result);
     }
 
-    public function fv_part_usr(): string
+    function fv_part_usr(): string
     {
         $lib = new library();
         $result = $lib->str_left_of($this->usr_text, self::CHAR_CALC);
         return trim($result);
     }
 
-    public function r_part(): string
+    function r_part(): string
     {
         $lib = new library();
         $result = $lib->str_right_of($this->ref_text, self::CHAR_CALC);
         return trim($result);
     }
 
-    public function r_part_usr(): string
+    function r_part_usr(): string
     {
         $lib = new library();
         $result = $lib->str_right_of($this->usr_text, self::CHAR_CALC);
@@ -572,7 +572,7 @@ class expression
     /**
      * @returns bool true if the formula contains a word, verb or formula link
      */
-    public function has_ref(): bool
+    function has_ref(): bool
     {
         log_debug($this->dsp_id());
         $result = false;
@@ -592,7 +592,7 @@ class expression
      * @return array of the term names used in the expression based on the user text
      * e.g. converts "'Sales' 'differentiator' / 'Total Sales'" to "Sales, differentiator, Total Sales"
      */
-    public function get_usr_names(): array
+    function get_usr_names(): array
     {
         $result = [];
         $remaining = $this->user_text();

@@ -42,7 +42,7 @@ class phrase_list_dsp extends phrase_list_api
     /**
      * @returns string the html code to display the phrases with the most useful link
      */
-    public function dsp_link(): string
+    function dsp_link(): string
     {
         $result = '';
         foreach ($this->lst as $phr) {
@@ -75,7 +75,7 @@ class phrase_list_dsp extends phrase_list_api
     /**
      * @returns string the html code to display the phrases as a headline
      */
-    public function headline(): string
+    function headline(): string
     {
         $html = new html_base();
         return $html->text_h2($this->InitCap());
@@ -84,7 +84,7 @@ class phrase_list_dsp extends phrase_list_api
     /**
      * @returns string the html code to select a phrase out of this list
      */
-    public function selector(string $name = '', string $form = '', string $label = '', int $selected = 0): string
+    function selector(string $name = '', string $form = '', string $label = '', int $selected = 0): string
     {
         $sel = new html_selector;
         $sel->name = $name;

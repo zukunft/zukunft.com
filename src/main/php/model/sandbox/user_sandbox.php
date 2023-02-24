@@ -301,7 +301,7 @@ class user_sandbox extends db_object
      * @param array $db_row with the data loaded from the database
      * @return void
      */
-    public function row_mapper_usr(array $db_row): void
+    function row_mapper_usr(array $db_row): void
     {
         $this->share_id = $db_row[self::FLD_SHARE];
         $this->protection_id = $db_row[self::FLD_PROTECT];
@@ -312,7 +312,7 @@ class user_sandbox extends db_object
      *
      * @return void
      */
-    public function row_mapper_std(): void
+    function row_mapper_std(): void
     {
         $this->share_id = cl(db_cl::SHARE_TYPE, share_type::PUBLIC);
         $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT);
@@ -2254,7 +2254,7 @@ class user_sandbox extends db_object
      * dummy function that should be overwritten by the child object
      * @return string the name of the object type
      */
-    public function type_name(): string
+    function type_name(): string
     {
         $msg = 'ERROR: the type name function should have been overwritten by the child object';
         return log_err($msg);

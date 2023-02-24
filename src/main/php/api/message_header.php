@@ -87,7 +87,7 @@ class api_message
      * set and get
      */
 
-    public function set_user(?user $usr): void
+    function set_user(?user $usr): void
     {
         if ($usr != null) {
             if ($usr->id() > 0) {
@@ -97,7 +97,7 @@ class api_message
         }
     }
 
-    public function add_body(object $api_obj): void
+    function add_body(object $api_obj): void
     {
         $this->body = $api_obj;
     }

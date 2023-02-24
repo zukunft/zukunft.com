@@ -265,7 +265,7 @@ class view_dsp_old extends view
     /**
      * same as dsp_navbar, but without the view change used for the view editors
      */
-    public function dsp_navbar_html_no_view(string $back = ''): string
+    function dsp_navbar_html_no_view(string $back = ''): string
     {
 
         $result = $this->html_navbar_start();
@@ -351,7 +351,7 @@ class view_dsp_old extends view
      * without javascript this is the top right corner
      * with    javascript this is a bar on the top
      */
-    public function dsp_navbar(string $back = ''): string
+    function dsp_navbar(string $back = ''): string
     {
         log_debug();
         $result = '';
@@ -379,7 +379,7 @@ class view_dsp_old extends view
     /**
      * same as dsp_navbar, but without the view change used for the view editors
      */
-    public function dsp_navbar_no_view(string $back = ''): string
+    function dsp_navbar_no_view(string $back = ''): string
     {
         $result = '';
 
@@ -399,7 +399,7 @@ class view_dsp_old extends view
     /**
      * the basic zukunft top elements that should be show always
      */
-    public function dsp_navbar_simple(): string
+    function dsp_navbar_simple(): string
     {
         if (UI_USE_BOOTSTRAP) {
             $result = $this->dsp_navbar_bs(FALSE, 0);
@@ -458,7 +458,7 @@ class view_dsp_old extends view
 
     /*
     // create the HTML code to edit a view
-    public function edit($wrd) {
+    function edit($wrd) {
       $result = '';
 
       // check the all minimal input parameters are set

@@ -105,7 +105,7 @@ class phrase_list_unit_tests
     /**
      * create the standard phrase list test object without using a database connection
      */
-    public function get_phrase_list(): phrase_list
+    function get_phrase_list(): phrase_list
     {
         global $usr;
         $phr_lst = new phrase_list($usr);
@@ -118,7 +118,7 @@ class phrase_list_unit_tests
      * create a phrase list test object without using a database connection
      * that matches the all members of word with id 1 (math const)
      */
-    public function get_phrase_list_related(): phrase_list
+    function get_phrase_list_related(): phrase_list
     {
         global $usr;
         $phr_lst = new phrase_list($usr);
@@ -223,13 +223,13 @@ class phrase_list_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_ids($db_con, $ids);
+        $qp = $lst->load_names_sql_by_ids($db_con, $ids);
         $result = $t->assert_qp($qp, sql_db::POSTGRES);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $lst->load_sql_by_ids($db_con, $ids);
+            $qp = $lst->load_names_sql_by_ids($db_con, $ids);
             $result = $t->assert_qp($qp, sql_db::MYSQL);
         }
         return $result;

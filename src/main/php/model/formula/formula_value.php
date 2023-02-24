@@ -465,7 +465,7 @@ class formula_value extends db_object
                     }
                 } elseif (!empty($this->phr_ids())) {
                     $phr_lst = new phrase_list($this->user());
-                    $phr_lst->load_by_ids(new phr_ids($this->phr_ids()));
+                    $phr_lst->load_names_by_ids(new phr_ids($this->phr_ids()));
                     // ... or to get the most interesting result for this word
                 } elseif ($this->phr != null and isset($this->frm)) {
                     if ($this->phr->id() > 0 and $this->frm->id() > 0 and isset($this->frm->name_wrd)) {

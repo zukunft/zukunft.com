@@ -66,7 +66,7 @@ class user_sandbox_link_with_type extends user_sandbox_link
      * dummy function that should be overwritten by the child object
      * @return string the name of the object type
      */
-    public function type_name(): string
+    function type_name(): string
     {
         $msg = 'ERROR: the type name function should have been overwritten by the child object';
         return log_err($msg);

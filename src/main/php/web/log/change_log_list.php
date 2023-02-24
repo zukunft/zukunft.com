@@ -42,7 +42,7 @@ class change_log_list_dsp extends change_log_list_api
      * @param back_trace|null $back the back trace url for the undo functionality
      * @return string the html code with all words of the list
      */
-    public function tbl(back_trace $back = null, bool $condensed = false, bool $with_users = false): string
+    function tbl(back_trace $back = null, bool $condensed = false, bool $with_users = false): string
     {
         $html = new html_base();
         $html_text = $this->th($condensed, $with_users);

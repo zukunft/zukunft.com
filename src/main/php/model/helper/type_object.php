@@ -134,7 +134,7 @@ class type_object
         $this->code_id = $code_id;
     }
 
-    public function set_comment(string $comment): void
+    function set_comment(string $comment): void
     {
         $this->comment = $comment;
     }
@@ -154,7 +154,7 @@ class type_object
         return $this->code_id;
     }
 
-    public function comment(): string
+    function comment(): string
     {
         return $this->comment;
     }

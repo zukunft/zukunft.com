@@ -119,7 +119,7 @@ class formula_element extends db_object
     /**
      * @return string the element name to the user in the most simple form (without any ids)
      */
-    public function name(): string
+    function name(): string
     {
         if ($this->obj != null) {
             return $this->obj->name();
@@ -131,7 +131,7 @@ class formula_element extends db_object
     /**
      * @return int|null the database id of the related object
      */
-    public function id(): ?int
+    function id(): ?int
     {
         return $this->obj?->id;
     }

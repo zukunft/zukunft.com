@@ -199,7 +199,7 @@ class formula_link extends user_sandbox_link_with_type
      * get the name of the formula link type
      * @return string the name of the formula link type
      */
-    public function type_name(): string
+    function type_name(): string
     {
         global $formula_link_types;
         return $formula_link_types->name($this->type_id);

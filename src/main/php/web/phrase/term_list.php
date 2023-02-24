@@ -42,7 +42,7 @@ class term_list_dsp extends term_list_api
     /**
      * @returns string the html code to display the phrases with the most useful link
      */
-    public function dsp(): string
+    function dsp(): string
     {
         $result = '';
         foreach ($this->lst as $trm) {
@@ -57,7 +57,7 @@ class term_list_dsp extends term_list_api
     /**
      * @returns string the html code to select a phrase out of this list
      */
-    public function selector(string $name = '', string $form = '', int $selected = 0): string
+    function selector(string $name = '', string $form = '', int $selected = 0): string
     {
         $sel = new html_selector;
         $sel->name = $name;

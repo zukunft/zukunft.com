@@ -46,7 +46,7 @@ class type_lists_api extends api_message implements \JsonSerializable
         $this->type = api_message::TYPE_LISTS;
     }
 
-    public function add(type_list_api $lst_to_add, string $api_name): void
+    function add(type_list_api $lst_to_add, string $api_name): void
     {
         $this->type_lists[$api_name] = $lst_to_add;
     }
@@ -58,7 +58,7 @@ class type_lists_api extends api_message implements \JsonSerializable
     /**
      * an array of the value vars including the private vars
      */
-    public function jsonSerialize(): array
+    function jsonSerialize(): array
     {
         $json = [];
         $json[] = json_decode(json_encode((array)$this));

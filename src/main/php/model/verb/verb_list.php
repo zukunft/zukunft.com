@@ -210,7 +210,7 @@ class verb_list extends type_list
      * @param string $db_type the class name to be compatible with the user sandbox load_sql functions
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    public function load_sql_all(sql_db $db_con, string $db_type): sql_par
+    function load_sql_all(sql_db $db_con, string $db_type): sql_par
     {
         $qp = $this->load_sql($db_con, $db_type);
         $db_con->set_page_par(SQL_ROW_MAX, 0);

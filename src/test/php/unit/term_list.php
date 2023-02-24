@@ -98,7 +98,7 @@ class term_list_unit_tests
      * create a term list test object without using a database connection
      * that matches the all members of word with id 1 (math const)
      */
-    public function get_term_list_related(): term_list
+    function get_term_list_related(): term_list
     {
         global $usr;
         $trm_lst = new term_list($usr);

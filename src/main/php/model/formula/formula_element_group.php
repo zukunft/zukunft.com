@@ -99,7 +99,7 @@ class formula_element_group
         return $result;
     }
 
-    public function id(): int
+    function id(): int
     {
         if (count($this->lst) == 1) {
             return $this->lst[0]->obj->id();

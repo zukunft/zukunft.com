@@ -57,7 +57,7 @@ class user_sandbox_link_named extends user_sandbox_link
      * @param string $name the name of this named user sandbox object e.g. word set in the related object
      * @return void
      */
-    public function set_name(string $name): void
+    function set_name(string $name): void
     {
         $this->name = $name;
     }
@@ -67,7 +67,7 @@ class user_sandbox_link_named extends user_sandbox_link
      *
      * @return string the name from the object e.g. word using the same function as the phrase and term
      */
-    public function name(): string
+    function name(): string
     {
         return $this->name;
     }

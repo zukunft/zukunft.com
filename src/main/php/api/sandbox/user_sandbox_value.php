@@ -58,22 +58,22 @@ class user_sandbox_value_api extends user_sandbox_api
      * set and get
      */
 
-    public function set_grp(phrase_group_api $grp)
+    function set_grp(phrase_group_api $grp)
     {
         $this->grp = $grp;
     }
 
-    public function set_number(?float $number)
+    function set_number(?float $number)
     {
         $this->number = $number;
     }
 
-    public function grp(): phrase_group_api
+    function grp(): phrase_group_api
     {
         return $this->grp;
     }
 
-    public function number(): ?float
+    function number(): ?float
     {
         return $this->number;
     }
@@ -83,7 +83,7 @@ class user_sandbox_value_api extends user_sandbox_api
      * cast
      */
 
-    public function grp_dsp(): phrase_group_dsp
+    function grp_dsp(): phrase_group_dsp
     {
         return $this->grp()->dsp_obj();
     }
@@ -100,7 +100,7 @@ class user_sandbox_value_api extends user_sandbox_api
      * @returns string the html code to display the value with reference links
      * TODO create a popup with the details e.g. the values of other users
      */
-    public function value_linked(): string
+    function value_linked(): string
     {
         return $this->number;
     }

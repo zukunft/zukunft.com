@@ -176,13 +176,13 @@ class batch_job extends db_object
      * set and get
      */
 
-    public function set_type(string $code_id): void
+    function set_type(string $code_id): void
     {
         global $job_types;
         $this->type = $job_types->id($code_id);
     }
 
-    public function type_code_id(): string
+    function type_code_id(): string
     {
         global $job_types;
         $result = '';
@@ -227,7 +227,7 @@ class batch_job extends db_object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    public function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_TASK);
         $qp = new sql_par($class);

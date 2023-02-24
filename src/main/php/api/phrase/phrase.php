@@ -100,22 +100,22 @@ class phrase_api extends user_sandbox_named_api
      * set and get
      */
 
-    public function set_description(?string $description)
+    function set_description(?string $description)
     {
         $this->description = $description;
     }
 
-    public function description(): ?string
+    function description(): ?string
     {
         return $this->description;
     }
 
-    public function set_type(?int $type_id)
+    function set_type(?int $type_id)
     {
         $this->type_id = $type_id;
     }
 
-    public function type(): ?int
+    function type(): ?int
     {
         return $this->type_id;
     }

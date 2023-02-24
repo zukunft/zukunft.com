@@ -67,12 +67,12 @@ class user_api
      * set and get
      */
 
-    public function set_id(int $id): void
+    function set_id(int $id): void
     {
         $this->id = $id;
     }
 
-    public function id(): int
+    function id(): int
     {
         return $this->id;
     }

@@ -82,42 +82,42 @@ class type_api
      * set and get
      */
 
-    public function set_id(int $id): void
+    function set_id(int $id): void
     {
         $this->id = $id;
     }
 
-    public function id(): int
+    function id(): int
     {
         return $this->id;
     }
 
-    public function set_code_id(string $code_id): void
+    function set_code_id(string $code_id): void
     {
         $this->code_id = $code_id;
     }
 
-    public function code_id(): string
+    function code_id(): string
     {
         return $this->code_id;
     }
 
-    public function set_name(string $name): void
+    function set_name(string $name): void
     {
         $this->name = $name;
     }
 
-    public function name(): string
+    function name(): string
     {
         return $this->name;
     }
 
-    public function set_comment(string $comment): void
+    function set_comment(string $comment): void
     {
         $this->comment = $comment;
     }
 
-    public function comment(): string
+    function comment(): string
     {
         return $this->comment;
     }

@@ -38,7 +38,7 @@ use view;
 class view_dsp extends view_api
 {
 
-    public function list_sort(): string
+    function list_sort(): string
     {
         return $this->components()->dsp();
     }
@@ -53,7 +53,7 @@ class view_dsp extends view_api
         return $lst;
     }
 
-    public function dsp_system_view(): string
+    function dsp_system_view(): string
     {
         $result = '';
         switch ($this->code_id) {

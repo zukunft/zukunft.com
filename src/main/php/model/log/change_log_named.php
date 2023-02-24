@@ -114,7 +114,7 @@ class change_log_named extends change_log
      * cast
      */
 
-    public function api_obj(): change_log_named_api
+    function api_obj(): change_log_named_api
     {
         $api_obj = new change_log_named_api();
         $this->fill_obj($api_obj);
@@ -122,7 +122,7 @@ class change_log_named extends change_log
 
     }
 
-    public function dsp_obj(): change_log_named_dsp
+    function dsp_obj(): change_log_named_dsp
     {
         $dsp_obj = new change_log_named_dsp();
         $this->fill_obj($dsp_obj);
@@ -175,7 +175,7 @@ class change_log_named extends change_log
      * @param int $row_id the database id of the database row of the changes that the user wants to see
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    public function load_sql_by_field_row(sql_db $db_con, int $field_id, int $row_id): sql_par
+    function load_sql_by_field_row(sql_db $db_con, int $field_id, int $row_id): sql_par
     {
         $qp = $this->load_sql($db_con, 'field_row');
         $db_con->set_page();
@@ -198,7 +198,7 @@ class change_log_named extends change_log
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    public function load_by_user_sql(sql_db $db_con): sql_par
+    function load_by_user_sql(sql_db $db_con): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'user';

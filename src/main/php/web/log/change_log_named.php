@@ -49,7 +49,7 @@ class change_log_named_dsp extends change_log_named_api
     /**
      * @return string with the html code to show one row of the changes of sandbox objects e.g. a words
      */
-    public function tr(back_trace $back, bool $condensed = false, bool $user_changes = false): string
+    function tr(back_trace $back, bool $condensed = false, bool $user_changes = false): string
     {
         $html = new html_base();
 

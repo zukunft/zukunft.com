@@ -109,7 +109,7 @@ class batch_job_list extends base_list
      * @param string $type_code_id the code id of the job type that should be loaded
      * @return sql_par
      */
-    public function load_sql_by_type(sql_db $db_con, string $type_code_id = ''): sql_par
+    function load_sql_by_type(sql_db $db_con, string $type_code_id = ''): sql_par
     {
         global $job_types;
         $type_id = $job_types->id($type_code_id);

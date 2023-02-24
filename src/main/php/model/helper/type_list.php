@@ -160,7 +160,7 @@ class type_list
      * @param string $db_type the class of the related object e.g. phrase_type or formula_type
      * @return sql_par the sql statement with the parameters and the name
      */
-    public function load_sql_all(sql_db $db_con, string $db_type): sql_par
+    function load_sql_all(sql_db $db_con, string $db_type): sql_par
     {
         $qp = $this->load_sql($db_con, $db_type);
         $db_con->set_page_par(SQL_ROW_MAX, 0);

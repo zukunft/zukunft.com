@@ -87,7 +87,7 @@ class user_sandbox_named extends user_sandbox
      * @param string $name mainly for test creation the name of the named user sandbox object
      * @param string $type_code_id the code id of the predefined object type only used by some child objects
      */
-    public function set(int $id = 0, string $name = '', string $type_code_id = ''): void
+    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
     {
         parent::set_id($id);
 
@@ -103,7 +103,7 @@ class user_sandbox_named extends user_sandbox
      * @param string $name the name of this named user sandbox object e.g. word set in the related object
      * @return void
      */
-    public function set_name(string $name): void
+    function set_name(string $name): void
     {
         $this->name = $name;
     }
@@ -113,7 +113,7 @@ class user_sandbox_named extends user_sandbox
      *
      * @return string the name from the object e.g. word using the same function as the phrase and term
      */
-    public function name(): string
+    function name(): string
     {
         return $this->name;
     }

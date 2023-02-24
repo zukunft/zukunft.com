@@ -115,7 +115,7 @@ class value_api extends user_sandbox_value_api implements \JsonSerializable
     /**
      * an array of the value vars including the private vars
      */
-    public function jsonSerialize(): array
+    function jsonSerialize(): array
     {
         $vars = get_object_vars($this);
 

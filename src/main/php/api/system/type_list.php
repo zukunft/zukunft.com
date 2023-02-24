@@ -59,7 +59,7 @@ class type_list_api extends list_api implements \JsonSerializable
     /**
      * @returns true if the list has been replaced
      */
-    public function set_lst(array $lst): bool
+    function set_lst(array $lst): bool
     {
         if ($this->lst_has_api_items()) {
             parent::set_lst($lst);
@@ -128,7 +128,7 @@ class type_list_api extends list_api implements \JsonSerializable
     /**
      * an array of the value vars including the private vars
      */
-    public function jsonSerialize(): array
+    function jsonSerialize(): array
     {
         $vars = [];
         foreach ($this->lst as $lst) {

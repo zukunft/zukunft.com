@@ -588,7 +588,7 @@ class value_list extends sandbox_list
         }
         $phr_lst = new phrase_list($this->user());
         if (count($all_ids) > 0) {
-            $phr_lst->load_by_ids(new phr_ids($all_ids));
+            $phr_lst->load_names_by_ids(new phr_ids($all_ids));
         }
         log_debug(dsp_count($phr_lst->lst));
         return $phr_lst;

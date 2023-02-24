@@ -86,7 +86,7 @@ class change_log extends db_object
      * cast
      */
 
-    public function fill_api_obj(change_log_api $api_obj): change_log_api
+    function fill_api_obj(change_log_api $api_obj): change_log_api
     {
         if ($this->usr != null) {
             $api_obj->usr = $this->usr->api_obj();
@@ -104,12 +104,12 @@ class change_log extends db_object
      * set and get
      */
 
-    public function set_user(user $usr): void
+    function set_user(user $usr): void
     {
         $this->usr = $usr;
     }
 
-    public function user(): user
+    function user(): user
     {
         return $this->usr;
     }
@@ -119,7 +119,7 @@ class change_log extends db_object
      * @param string $action_name the name of the new action
      * @return void
      */
-    public function set_action(string $action_name): void
+    function set_action(string $action_name): void
     {
         global $change_log_actions;
         $this->action_id = $change_log_actions->id($action_name);
@@ -138,7 +138,7 @@ class change_log extends db_object
      * get the action name base on the action_id
      * @return string
      */
-    public function action(): string
+    function action(): string
     {
         global $change_log_actions;
         return $change_log_actions->name($this->action_id);
@@ -149,7 +149,7 @@ class change_log extends db_object
      * @param string $table_name the name of the new table
      * @return void
      */
-    public function set_table(string $table_name): void
+    function set_table(string $table_name): void
     {
         global $change_log_tables;
         $this->table_id = $change_log_tables->id($table_name);
@@ -168,7 +168,7 @@ class change_log extends db_object
      * get the table name base on the table_id
      * @return string
      */
-    public function table(): string
+    function table(): string
     {
         global $change_log_tables;
         return $change_log_tables->name($this->table_id);
@@ -179,7 +179,7 @@ class change_log extends db_object
      * @param string $field_name the name of the new field
      * @return void
      */
-    public function set_field(string $field_name): void
+    function set_field(string $field_name): void
     {
         global $change_log_fields;
         if ($this->table_id > 0) {
@@ -206,7 +206,7 @@ class change_log extends db_object
      * get the field name base on the field_id
      * @return string
      */
-    public function field(): string
+    function field(): string
     {
         global $change_log_fields;
 
@@ -216,12 +216,12 @@ class change_log extends db_object
         return $lib->str_right_of($field_key, $this->table_id);
     }
 
-    public function set_time(DateTime $time): void
+    function set_time(DateTime $time): void
     {
         $this->change_time = $time;
     }
 
-    public function set_time_str(string $time_str): void
+    function set_time_str(string $time_str): void
     {
         global $debug;
         try {
@@ -233,7 +233,7 @@ class change_log extends db_object
         }
     }
 
-    public function time(): DateTime
+    function time(): DateTime
     {
         return $this->change_time;
     }

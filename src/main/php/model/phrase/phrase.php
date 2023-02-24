@@ -464,7 +464,7 @@ class phrase extends db_object
         return $result;
     }
 
-    public function load_obj(): bool
+    function load_obj(): bool
     {
         $result = 0;
         if ($this->is_triple()) {

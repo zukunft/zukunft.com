@@ -75,7 +75,7 @@ class view_sys_list extends type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    public function load_sql_list(sql_db $db_con): sql_par
+    function load_sql_list(sql_db $db_con): sql_par
     {
         $this->lst = [];
         $dsp_lst = new view_list($this->user());

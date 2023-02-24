@@ -61,7 +61,7 @@ class db_object
      * set the unique database id of a database object
      * @param int|null $id used in the row mapper and to set a dummy database id for unit tests
      */
-    public function set_id(?int $id): void
+    function set_id(?int $id): void
     {
         $this->id = $id;
     }
@@ -70,7 +70,7 @@ class db_object
      * @return int|null the database id which is not 0 if the object has been saved
      * the internal null value is used to detect if database saving has been tried
      */
-    public function id(): ?int
+    function id(): ?int
     {
         return $this->id;
     }
@@ -82,7 +82,7 @@ class db_object
     /**
      * @return bool true if the object has a valid database id
      */
-    public function isset(): bool
+    function isset(): bool
     {
         if ($this->id == null) {
             return false;
@@ -104,7 +104,7 @@ class db_object
      *
      * @return string the name from the object e.g. word using the same function as the phrase and term
      */
-    public function name(): string
+    function name(): string
     {
         return 'ERROR: name function not overwritten by child';
     }

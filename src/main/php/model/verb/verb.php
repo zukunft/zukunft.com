@@ -188,7 +188,7 @@ class verb extends db_object
      * @param int $id mainly for test creation the database id of the verb
      * @param string $name mainly for test creation the name of the verb
      */
-    public function set(int $id = 0, string $name = ''): void
+    function set(int $id = 0, string $name = ''): void
     {
         $this->set_id($id);
         $this->set_name($name);
@@ -197,7 +197,7 @@ class verb extends db_object
     /**
      * @param int|null $id the database id of the verb
      */
-    public function set_id(?int $id): void
+    function set_id(?int $id): void
     {
         $this->id = $id;
     }
@@ -205,7 +205,7 @@ class verb extends db_object
     /**
      * @param string|null $name the unique name of the verb
      */
-    public function set_name(?string $name): void
+    function set_name(?string $name): void
     {
         $this->name = $name;
     }
@@ -235,7 +235,7 @@ class verb extends db_object
     /**
      * @return int|null the database id which is not 0 if the object has been saved
      */
-    public function id(): ?int
+    function id(): ?int
     {
         return $this->id;
     }
@@ -243,7 +243,7 @@ class verb extends db_object
     /**
      * @return string a unique name for the verb that is also used in the code
      */
-    public function code_id(): string
+    function code_id(): string
     {
         if ($this->code_id == null) {
             return '';
@@ -255,7 +255,7 @@ class verb extends db_object
     /**
      * @return string the description of the verb
      */
-    public function comment(): string
+    function comment(): string
     {
         if ($this->description == null) {
             return '';

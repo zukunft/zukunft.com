@@ -205,7 +205,7 @@ class word extends user_sandbox_named_with_type
      * @param string $name mainly for test creation the name of the word
      * @param string $type_code_id the code id of the predefined phrase type
      */
-    public function set(int $id = 0, string $name = '', string $type_code_id = ''): void
+    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
     {
         parent::set($id, $name);
 
@@ -253,7 +253,7 @@ class word extends user_sandbox_named_with_type
      * get the name of the word type
      * @return string the name of the word type
      */
-    public function type_name(): string
+    function type_name(): string
     {
         global $phrase_types;
         return $phrase_types->name($this->type_id);
@@ -1614,7 +1614,7 @@ class word extends user_sandbox_named_with_type
      * maybe move this to a new object user_log_display
      * because this is very similar to a value linked function
      */
-    public function dsp_hist(int $page = 1, int $size = 20, string $call = '', string $back = ''): string
+    function dsp_hist(int $page = 1, int $size = 20, string $call = '', string $back = ''): string
     {
         log_debug("word_dsp->dsp_hist for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var

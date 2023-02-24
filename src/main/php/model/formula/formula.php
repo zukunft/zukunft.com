@@ -210,7 +210,7 @@ class formula extends user_sandbox_named_with_type
      * @param string $name mainly for test creation the name of the formula
      * @param string $type_code_id the code id of the predefined formula type
      */
-    public function set(int $id = 0, string $name = '', string $type_code_id = ''): void
+    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
     {
         parent::set($id, $name);
 
@@ -249,7 +249,7 @@ class formula extends user_sandbox_named_with_type
         return 0;
     }
 
-    public function name(): string
+    function name(): string
     {
         return $this->name;
     }
@@ -260,7 +260,7 @@ class formula extends user_sandbox_named_with_type
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return void
      */
-    public function set_user_text(string $usr_txt, ?term_list $trm_lst = null): void
+    function set_user_text(string $usr_txt, ?term_list $trm_lst = null): void
     {
         $this->usr_text = $usr_txt;
         $this->usr_text_dirty = false;
@@ -278,7 +278,7 @@ class formula extends user_sandbox_named_with_type
      * get the name of the formula type
      * @return string the name of the formula type
      */
-    public function type_name(): string
+    function type_name(): string
     {
         global $formula_types;
         return $formula_types->name($this->type_id);
@@ -762,7 +762,7 @@ class formula extends user_sandbox_named_with_type
 
             if (count($phr_ids->lst) > 0) {
                 $phr_lst = new phrase_list($this->user());
-                $phr_lst->load_by_ids($phr_ids);
+                $phr_lst->load_names_by_ids($phr_ids);
                 log_debug("number of words " . dsp_count($phr_lst->lst()));
             }
         } else {
@@ -1265,7 +1265,7 @@ class formula extends user_sandbox_named_with_type
      * @param figure_list $fig_lst the value and results that should be used for the calculation
      * @return figure_list the received figure list with the additions forlua results
      */
-    public function calc_with(figure_list $fig_lst): figure_list
+    function calc_with(figure_list $fig_lst): figure_list
     {
         return $fig_lst;
     }

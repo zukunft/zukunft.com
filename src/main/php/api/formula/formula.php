@@ -121,12 +121,12 @@ class formula_api extends user_sandbox_named_with_type_api
      * set and get
      */
 
-    public function set_usr_text(string $usr_text)
+    function set_usr_text(string $usr_text)
     {
         $this->usr_text = $usr_text;
     }
 
-    public function usr_text(): string
+    function usr_text(): string
     {
         return $this->usr_text;
     }

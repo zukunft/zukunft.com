@@ -224,7 +224,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      * @param int $id mainly for test creation the database id of the word
      * @param string $name mainly for test creation the name of the word
      */
-    public function set(
+    function set(
         int    $id = 0,
         string $name = '',
         string $from = '',
@@ -244,7 +244,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      * @param string $name
      * @return void
      */
-    public function set_name(string $name): void
+    function set_name(string $name): void
     {
         $this->name = $name;
     }
@@ -254,7 +254,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      * @param string|null $name_given
      * @return void
      */
-    public function set_name_given(?string $name_given): void
+    function set_name_given(?string $name_given): void
     {
         $this->name_given = $name_given;
     }
@@ -280,7 +280,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      * set the used name, update the generated name if needed
      * @return void
      */
-    public function set_names(): void
+    function set_names(): void
     {
         // update the generated name if needed
         if ($this->generate_name() != '' and $this->generate_name() != ' ()') {
@@ -327,7 +327,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     /**
      * @return string|null the name manually set by the user or null if the generated name should be used
      */
-    public function name_given(): ?string
+    function name_given(): ?string
     {
         return $this->name_given;
     }
@@ -335,7 +335,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     /**
      * TODO check where the function or the db value should be used
      */
-    public function name_generated(): ?string
+    function name_generated(): ?string
     {
         return $this->name_generated;
     }
@@ -357,7 +357,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      * get the name of the triple type
      * @return string the name of the triple type
      */
-    public function type_name(): string
+    function type_name(): string
     {
         global $phrase_types;
         return $phrase_types->name($this->type_id);
@@ -971,7 +971,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     /**
      * an array of the value vars including the private vars
      */
-    public function jsonSerialize(): array
+    function jsonSerialize(): array
     {
         $vars = get_object_vars($this);
         if ($this->from->obj != null) {

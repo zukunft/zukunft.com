@@ -90,7 +90,7 @@ class user_sandbox_list_named extends sandbox_list
      * @param string $name the unique name of the object that should be returned
      * @return object|null the found user sandbox object or null if no name is found
      */
-    public function get_obj_by_name(string $name): ?object
+    function get_obj_by_name(string $name): ?object
     {
         $key_lst = $this->name_pos_lst();
         $pos = $key_lst[$name];
@@ -111,7 +111,7 @@ class user_sandbox_list_named extends sandbox_list
      * @param object $obj_to_add the named user sandbox object that should be added
      * @returns bool true if the object has been added
      */
-    public function add_obj(object $obj_to_add): bool
+    function add_obj(object $obj_to_add): bool
     {
         $result = false;
         if (!in_array($obj_to_add->name(), $this->name_pos_lst())) {

@@ -150,7 +150,7 @@ class source extends user_sandbox_named_with_type
      * @param string $name mainly for test creation the name of the source
      * @param string $type_code_id the code id of the predefined source type
      */
-    public function set(int $id = 0, string $name = '', string $type_code_id = ''): void
+    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
     {
         parent::set($id, $name);
 
@@ -335,7 +335,7 @@ class source extends user_sandbox_named_with_type
     /**
      * @return string the source type name from the array preloaded from the database
      */
-    public function type_name(): string
+    function type_name(): string
     {
         global $source_types;
 
@@ -459,7 +459,7 @@ class source extends user_sandbox_named_with_type
     /**
      * @return bool true if no one has used this source
      */
-    public function not_used(): bool
+    function not_used(): bool
     {
         log_debug($this->id);
 

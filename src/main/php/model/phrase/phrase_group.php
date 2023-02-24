@@ -184,7 +184,7 @@ class phrase_group extends db_object
      * set and get function
      */
 
-    public function set_name(string $name = ''): void
+    function set_name(string $name = ''): void
     {
         if ($name != '') {
             $this->grp_name = $name;
@@ -251,7 +251,7 @@ class phrase_group extends db_object
     function load_by_ids(phr_ids $ids): bool
     {
         $phr_lst = new phrase_list($this->usr);
-        $phr_lst->load_by_ids($ids);
+        $phr_lst->load_names_by_ids($ids);
         return $this->load_by_lst($phr_lst);
     }
 

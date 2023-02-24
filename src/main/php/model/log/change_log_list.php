@@ -249,7 +249,7 @@ class change_log_list extends base_list
      * @param int $id the database id of the user sandbox object that has been changed
      * @return sql_par
      */
-    public function load_sql_obj_fld(
+    function load_sql_obj_fld(
         sql_db $db_con,
         string $table_name,
         string $field_name,

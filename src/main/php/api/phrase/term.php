@@ -79,12 +79,12 @@ class term_api extends user_sandbox_named_api
      * set and get
      */
 
-    public function set_description(?string $description)
+    function set_description(?string $description)
     {
         $this->description = $description;
     }
 
-    public function description(): ?string
+    function description(): ?string
     {
         return $this->description;
     }

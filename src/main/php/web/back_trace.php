@@ -39,7 +39,7 @@ class back_trace
     public ?array $url_lst = null;
 
     /** encode the back trace for an url */
-    public function url_encode(): string
+    function url_encode(): string
     {
         $result = '';
         if ($this->url_lst != null) {

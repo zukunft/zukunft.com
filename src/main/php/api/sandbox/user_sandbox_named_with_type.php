@@ -61,12 +61,12 @@ class user_sandbox_named_with_type_api extends user_sandbox_named_api
      * set and get
      */
 
-    public function set_type_id(?int $type_id): void
+    function set_type_id(?int $type_id): void
     {
         $this->type_id = $type_id;
     }
 
-    public function type_id(): ?int
+    function type_id(): ?int
     {
         return $this->type_id;
     }

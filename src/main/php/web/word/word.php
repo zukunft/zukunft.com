@@ -317,7 +317,7 @@ class word_dsp extends word_api
      * @param back_trace $back the last changes to allow undo actions by the user
      * @return string with the HTML code to show the last changes of the view of this word
      */
-    public function log_view(back_trace $back): string
+    function log_view(back_trace $back): string
     {
         $log_dsp = new change_log_dsp();
         return '';

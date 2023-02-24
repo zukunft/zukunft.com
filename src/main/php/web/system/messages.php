@@ -45,7 +45,7 @@ class msg
     const FORM_WORD_ADD_TITLE = 'form_word_add_title';
     const FORM_WORD_FLD_NAME = 'form_word_fld_name';
 
-    public function txt(string $message_id): string
+    function txt(string $message_id): string
     {
         $msg_text = '';
         // to be replaced with a get_cfg function
