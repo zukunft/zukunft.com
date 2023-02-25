@@ -1535,13 +1535,6 @@ class phrase_list extends user_sandbox_list_named
         } else {
             $result = dsp_array($this->id_lst());
         }
-
-        /* the user is in most cases no extra info
-        if ($this->user()->is_set()) {
-          $result .= ' for user '.$this->user()->name;
-        }
-        */
-
         return $result;
     }
 
@@ -1570,11 +1563,7 @@ class phrase_list extends user_sandbox_list_named
     {
         global $debug;
 
-        // separate the time phrases
-        $dsp_lst = clone $this;
-
-        // display the non time phrase
-        $name_lst = $dsp_lst->names();
+        $name_lst = $this->names();
         if ($debug > 10) {
             $result = '"' . implode('","', $name_lst) . '"';
         } else {
@@ -1598,7 +1587,9 @@ class phrase_list extends user_sandbox_list_named
     }
 
     /**
-     * @return array with all phrase names
+     * @return array with all phrase names in alphabetic order
+     * this function is called from dsp_id, so no call of another function is allowed
+     * TODO move to a parent object for phrase list and term list
      */
     function names(): array
     {

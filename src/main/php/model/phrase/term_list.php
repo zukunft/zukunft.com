@@ -372,27 +372,23 @@ class term_list extends user_sandbox_list_named
         } else {
             $result = $id;
         }
-        if ($this->user()->is_set()) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-
         return $result;
     }
 
     /**
-     * this function is called from dsp_id, so no call of another function is allowed
      * @return string with all names of the list
+     * this function is called from dsp_id, so no call of another function is allowed
      */
-    function name(): string
+    function dsp_name(): string
     {
         global $debug;
-        $result = '';
 
+        $name_lst = $this->names();
         if ($debug > 10) {
-            $result .= '"' . implode('","', $this->names()) . '"';
+            $result = '"' . implode('","', $name_lst) . '"';
         } else {
-            $result .= '"' . implode('","', array_slice($this->names(), 0, 7));
-            if (count($this->names()) > 8) {
+            $result = '"' . implode('","', array_slice($name_lst, 0, 7));
+            if (count($name_lst) > 8) {
                 $result .= ' ... total ' . dsp_count($this->lst);
             }
             $result .= '"';
@@ -401,18 +397,30 @@ class term_list extends user_sandbox_list_named
     }
 
     /**
+     * @return string with all names of the list
+     */
+    function name(): string
+    {
+        $name_lst = $this->names();
+        return '"' . implode('","', $name_lst) . '"';
+    }
+
+    /**
+     * @return array a sorted list of the term names
      * this function is called from dsp_id, so no call of another function is allowed
-     * @return array a list of the word names
+     * TODO move to a parent object for phrase list and term list
      */
     function names(): array
     {
-        $result = array();
+        $name_lst = array();
         foreach ($this->lst as $trm) {
             if (isset($trm)) {
-                $result[] = $trm->name();
+                $name_lst[] = $trm->name();
             }
         }
-        return $result;
+        // TODO allow to fix the order
+        asort($name_lst);
+        return $name_lst;
     }
 
 }

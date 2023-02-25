@@ -62,8 +62,9 @@ class phrase_list_unit_tests
         $t->subheader('Cast tests');
 
         $phr_lst = $this->get_phrase_list();
-        //$trm_lst = $phr_lst->term_list();
-        //$t->assert('cast phrase list to term list', $phr_lst->dsp_id(), $trm_lst->dsp_id());
+        $trm_lst = $phr_lst->term_list();
+        // using dsp_id() does not work here because the second word has the term id 3 instead of the phrase id 2
+        $t->assert('cast phrase list to term list', $phr_lst->dsp_name(), $trm_lst->dsp_name());
 
 
         $t->subheader('SQL statement creation tests');

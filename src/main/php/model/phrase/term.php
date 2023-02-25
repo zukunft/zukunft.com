@@ -305,19 +305,21 @@ class term extends db_object
 
     /**
      * @return int the id of the containing object witch is (corresponding to id())
-     * e.g 1 for word with id 1
-     *     -1 for a phrase with id 1
-     *     2 for a formula with id 1
-     * and -2 for a verb with id 1
+     * e.g if the term id is  1 and the object is a word    with id 1 simply 1 is returned
+     * but if the term id is -1 and the object is a triple  with id 1   also 1 is returned
+     * and if the term id is  2 and the object is a formula with id 1   also 1 is returned
+     * and if the term id is -2 and the object is a verb    with id 1   also 1 is returned
      */
     function id_obj(): int
     {
         $result = 0;
+        // use directly the object id
         if (isset($this->obj)) {
             if ($this->obj->id() != 0) {
                 $result = $this->obj->id();
             }
         }
+        // as fallback recreate the id based on the term id
         if ($result == 0) {
             if ($this->id % 2 == 0) {
                 $result = abs($this->id) / 2;

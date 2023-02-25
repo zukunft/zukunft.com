@@ -270,6 +270,20 @@ class phrase extends db_object
     }
 
     /**
+     * @return int the id of the containing object
+     * e.g if the phrase id is  1 and the object is a word   with id 1 simply 1 is returned
+     * but if the phrase id is -1 and the object is a triple with id 1   also 1 is returned
+     */
+    function id_obj(): int
+    {
+        if ($this->obj == null) {
+            return 0;
+        } else {
+            return $this->obj->id();
+        }
+    }
+
+    /**
      * @return string the name of the phrase
      */
     function name(): string
@@ -316,6 +330,16 @@ class phrase extends db_object
         } else {
             return $this->get_triple()->dsp_obj()->phrase_dsp();
         }
+    }
+
+    function term(): term
+    {
+        $trm = new term($this->user());
+        if ($this->obj != null) {
+            $trm->obj = $this->obj;
+            $trm->set_id_from_obj($this->id_obj(), $this->obj::class);
+        }
+        return $trm;
     }
 
     /**
