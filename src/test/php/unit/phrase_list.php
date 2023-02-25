@@ -58,6 +58,14 @@ class phrase_list_unit_tests
 
         $t->header('Unit tests of the phrase list class (src/main/php/model/phrase/phrase_list.php)');
 
+
+        $t->subheader('Cast tests');
+
+        $phr_lst = $this->get_phrase_list();
+        //$trm_lst = $phr_lst->term_list();
+        //$t->assert('cast phrase list to term list', $phr_lst->dsp_id(), $trm_lst->dsp_id());
+
+
         $t->subheader('SQL statement creation tests');
 
         // load by phrase ids

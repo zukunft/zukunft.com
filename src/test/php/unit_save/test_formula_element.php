@@ -35,6 +35,7 @@ use api\word_api;
 
 function run_formula_element_test(testing $t): void
 {
+    global $verbs;
 
     $back = 0;
 
@@ -49,7 +50,7 @@ function run_formula_element_test(testing $t): void
     $wrd_country = $t->load_word(word_api::TN_COUNTRY);
     $wrd_canton = $t->load_word(word_api::TN_CANTON);
     $wrd_total = $t->load_word(word_api::TN_TOTAL);
-    $vrb_id = cl(db_cl::VERB, verb::CAN_CONTAIN);
+    $vrb_id = $verbs->id(verb::CAN_CONTAIN);
 
     if (isset($elm_lst)) {
         $pos = 0;

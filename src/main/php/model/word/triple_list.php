@@ -663,6 +663,8 @@ class triple_list
     // returns the html code to select a word that can be edited
     function display(string $back = ''): string
     {
+        global $verbs;
+
         $result = '';
 
         // check the all minimal input parameters
@@ -742,13 +744,13 @@ class triple_list
 
                     // use the last word as a sample for the new word type
                     $last_linked_word_id = 0;
-                    if ($lnk->verb->id()  == cl(db_cl::VERB, verb::FOLLOW)) {
+                    if ($lnk->verb->id() == $verbs->id(verb::FOLLOW)) {
                         $last_linked_word_id = $lnk->to->id;
                     }
 
                     // in case of the verb "following" continue the series after the last element
                     $start_id = 0;
-                    if ($lnk->verb->id()  == cl(db_cl::VERB, verb::FOLLOW)) {
+                    if ($lnk->verb->id() == $verbs->id(verb::FOLLOW)) {
                         $start_id = $last_linked_word_id;
                         // and link with the same direction (looks like not needed!)
                         /* if ($directional_link_type_id > 0) {

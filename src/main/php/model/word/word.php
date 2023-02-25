@@ -1201,8 +1201,9 @@ class word extends user_sandbox_named_with_type
      */
     function btn_add(string $back = ''): string
     {
+        global $verbs;
         global $phrase_types;
-        $vrb_is = cl(db_cl::VERB, verb::IS_A);
+        $vrb_is = $verbs->id(verb::IS_A);
         $wrd_type = $phrase_types->default_id(); // maybe base it on the other linked words
         $wrd_add_title = "add a new " . $this->name();
         $wrd_add_call = "/http/word_add.php?verb=" . $vrb_is . "&word=" . $this->id . "&type=" . $wrd_type . "&back=" . $back . "";
@@ -1339,9 +1340,10 @@ class word extends user_sandbox_named_with_type
      */
     function parents(): phrase_list
     {
+        global $verbs;
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $parent_phr_lst = $phr_lst->foaf_parents(cl(db_cl::VERB, verb::IS_A));
+        $parent_phr_lst = $phr_lst->foaf_parents($verbs->id(verb::IS_A));
         log_debug('are ' . $parent_phr_lst->dsp_name() . ' for ' . $this->dsp_id());
         return $parent_phr_lst;
     }
@@ -1404,9 +1406,10 @@ class word extends user_sandbox_named_with_type
      */
     function children(): phrase_list
     {
+        global $verbs;
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $child_phr_lst = $phr_lst->foaf_all_children(cl(db_cl::VERB, verb::IS_A));
+        $child_phr_lst = $phr_lst->foaf_all_children($verbs->id(verb::IS_A));
         log_debug('are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
         return $child_phr_lst;
     }
@@ -1429,8 +1432,9 @@ class word extends user_sandbox_named_with_type
      */
     function parts(): phrase_list
     {
+        global $verbs;
         $phr_lst = $this->lst();
-        return $phr_lst->foaf_children(cl(db_cl::VERB, verb::IS_PART_OF));
+        return $phr_lst->foaf_children($verbs->id(verb::IS_PART_OF));
     }
 
     /**
@@ -1439,8 +1443,9 @@ class word extends user_sandbox_named_with_type
      */
     function direct_parts(): phrase_list
     {
+        global $verbs;
         $phr_lst = $this->lst();
-        return $phr_lst->foaf_children(cl(db_cl::VERB, verb::IS_PART_OF), 1);
+        return $phr_lst->foaf_children($verbs->id(verb::IS_PART_OF), 1);
     }
 
     /**
@@ -1477,17 +1482,19 @@ class word extends user_sandbox_named_with_type
     }
 
     /**
-     * return the follow word id based on the predefined verb following
+     * @return word the follow word id based on the predefined verb following
+     * TODO create unit tests
      */
     function next(): word
     {
-        log_debug($this->dsp_id() . ' and user ' . $this->user()->name);
+        log_debug($this->dsp_id());
 
         global $db_con;
+        global $verbs;
+
         $result = new word($this->user());
 
-        $link_id = cl(db_cl::VERB, verb::FOLLOW);
-        //$db_con = new mysql;
+        $link_id = $verbs->id(verb::FOLLOW);
         $db_con->usr_id = $this->user()->id();
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, verb::FLD_ID, $link_id);
@@ -1502,16 +1509,18 @@ class word extends user_sandbox_named_with_type
 
     /**
      * return the follow word id based on the predefined verb following
+     * TODO create unit tests
      */
     function prior(): word
     {
-        log_debug($this->dsp_id() . ',u' . $this->user()->id());
+        log_debug($this->dsp_id());
 
         global $db_con;
+        global $verbs;
+
         $result = new word($this->user());
 
-        $link_id = cl(db_cl::VERB, verb::FOLLOW);
-        //$db_con = new mysql;
+        $link_id = $verbs->id(verb::FOLLOW);
         $db_con->usr_id = $this->user()->id();
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, verb::FLD_ID, $link_id);
@@ -1548,9 +1557,10 @@ class word extends user_sandbox_named_with_type
      */
     function is_part(): phrase_list
     {
+        global $verbs;
         log_debug($this->dsp_id() . ', user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $is_phr_lst = $phr_lst->foaf_parents(cl(db_cl::VERB, verb::IS_PART_OF));
+        $is_phr_lst = $phr_lst->foaf_parents($verbs->id(verb::IS_PART_OF));
 
         log_debug($this->dsp_id() . ' is a ' . $is_phr_lst->dsp_name());
         return $is_phr_lst;

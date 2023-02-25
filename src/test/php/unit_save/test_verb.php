@@ -36,13 +36,14 @@ function run_verb_test(testing $t): void
 {
 
     global $usr;
+    global $verbs;
 
     $t->header('Test the verb class (classes/verb.php)');
 
     // check the loading of the "is a" verb
     $vrb = new verb;
     $vrb->set_user($usr);
-    $vrb->load_by_id(cl(db_cl::VERB, verb::IS_A));
+    $vrb->load_by_id($verbs->id(verb::IS_A));
     $target = 'is a';
     $result = $vrb->name();
     $t->dsp('verb->load ', $target, $result);

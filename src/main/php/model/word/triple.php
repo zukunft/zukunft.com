@@ -1207,7 +1207,8 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      */
     function generate_name(): string
     {
-        if ($this->verb->id() == cl(db_cl::VERB, verb::IS_A) and $this->from->name() != '' and $this->to->name() != '') {
+        global $verbs;
+        if ($this->verb->id() == $verbs->id(verb::IS_A) and $this->from->name() != '' and $this->to->name() != '') {
             // use the user defined description
             return $this->from->name() . ' (' . $this->to->name() . ')';
         } elseif ($this->from->name() != '' and $this->verb->name() != '' and $this->to->name() != '') {

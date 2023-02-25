@@ -513,6 +513,7 @@ class phrase_list extends user_sandbox_list_named
      */
     function load_related_sql(sql_db $db_con, phrase $phr, ?phrase $grp_phr = null): sql_par
     {
+        global $verbs;
         $qp = new sql_par(self::class);
         $qp->name .= 'related';
         if ($grp_phr != null) {
@@ -549,7 +550,7 @@ class phrase_list extends user_sandbox_list_named
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id = ' . $type->id . ' 
-                                           AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . ' ) AS a 
+                                           AND l.verb_id = ' . $verbs->id(verb::IS_A) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
 
                 // ... out of all those get the phrase ids that have also other types e.g. Zurich (Canton)
@@ -561,7 +562,7 @@ class phrase_list extends user_sandbox_list_named
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id <> ' . $type->id . ' 
-                                           AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
+                                           AND l.verb_id = ' . $verbs->id(verb::IS_A) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
                                          WHERE ' . $sql_where_exclude . ' ';
 
@@ -588,7 +589,7 @@ class phrase_list extends user_sandbox_list_named
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                 AND u.user_id = ' . $this->user()->id() . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
-                           AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
+                           AND l.verb_id = ' . $verbs->id(verb::IS_A) . '
                            AND l.to_phrase_id = ' . $type->id . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*
@@ -752,7 +753,7 @@ class phrase_list extends user_sandbox_list_named
         if ($type->id > 0) {
             $sql_from = "triples l, words w";
             $sql_where_and = "AND w.word_id = l.from_phrase_id
-                        AND l.verb_id = " . cl(db_cl::VERB, verb::IS_A) . "
+                        AND l.verb_id = " . $verbs->id(verb::IS_A) . "
                         AND l.to_phrase_id = " . $type->id;
         } else {
             $sql_from = "words w";
@@ -1182,7 +1183,8 @@ class phrase_list extends user_sandbox_list_named
     // returns a list of phrases that are related to this phrase list e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
     function is(): phrase_list
     {
-        $phr_lst = $this->foaf_parents(cl(db_cl::VERB, verb::IS_A));
+        global $verbs;
+        $phr_lst = $this->foaf_parents($verbs->id(verb::IS_A));
         log_debug($this->dsp_id() . ' is ' . $phr_lst->dsp_name());
         return $phr_lst;
     }
@@ -1191,8 +1193,9 @@ class phrase_list extends user_sandbox_list_named
     // e.g. to get all related values
     function are(): phrase_list
     {
+        global $verbs;
         log_debug($this->dsp_id());
-        $phr_lst = $this->foaf_all_children(cl(db_cl::VERB, verb::IS_A));
+        $phr_lst = $this->foaf_all_children($verbs->id(verb::IS_A));
         log_debug($this->dsp_id() . ' are ' . $phr_lst->dsp_id());
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' merged into ' . $phr_lst->dsp_id());
@@ -1204,7 +1207,8 @@ class phrase_list extends user_sandbox_list_named
      */
     function contains(): phrase_list
     {
-        $phr_lst = $this->foaf_all_children(cl(db_cl::VERB, verb::IS_PART_OF));
+        global $verbs;
+        $phr_lst = $this->foaf_all_children($verbs->id(verb::IS_PART_OF));
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $phr_lst->name());
         return $phr_lst;
@@ -1278,8 +1282,9 @@ class phrase_list extends user_sandbox_list_named
     // add all potential differentiator phrases of the phrase lst e.g. get "energy" for "sector"
     function differentiators()
     {
+        global $verbs;
         log_debug('for ' . $this->dsp_id());
-        $phr_lst = $this->foaf_all_children(cl(db_cl::VERB, verb::CAN_CONTAIN));
+        $phr_lst = $this->foaf_all_children($verbs->id(verb::CAN_CONTAIN));
         log_debug('merge ' . $this->dsp_id());
         $this->merge($phr_lst);
         log_debug($phr_lst->dsp_id() . ' for ' . $this->dsp_id());
@@ -1289,9 +1294,10 @@ class phrase_list extends user_sandbox_list_named
     // same as differentiators, but including the subtypes e.g. get "energy" and "wind energy" for "sector" if "wind energy" is part of "energy"
     function differentiators_all()
     {
+        global $verbs;
         log_debug('for ' . $this->dsp_id());
         // this first time get all related items
-        $phr_lst = $this->foaf_all_children(cl(db_cl::VERB, verb::CAN_CONTAIN));
+        $phr_lst = $this->foaf_all_children($verbs->id(verb::CAN_CONTAIN));
         $phr_lst = $phr_lst->are();
         $added_lst = $phr_lst->contains();
         $added_lst->diff($this);
@@ -1300,7 +1306,7 @@ class phrase_list extends user_sandbox_list_named
             $loops = 0;
             log_debug('added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
             do {
-                $next_lst = $added_lst->foaf_all_children(cl(db_cl::VERB, verb::CAN_CONTAIN));
+                $next_lst = $added_lst->foaf_all_children($verbs->id(verb::CAN_CONTAIN));
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
                 $added_lst->diff($phr_lst);

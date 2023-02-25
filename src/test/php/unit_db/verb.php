@@ -40,6 +40,7 @@ class verb_unit_db_tests
 
         global $db_con;
         global $usr;
+        global $verbs;
 
         // init
         $t->name = 'verb read db->';
@@ -103,7 +104,7 @@ class verb_unit_db_tests
         $t->assert('load', $result, true);
 
         // ... and check if at least the most critical verb is loaded
-        $result = cl(db_cl::VERB, verb::IS_A);
+        $result = $verbs->id(verb::IS_A);
         // just check if the verb is around, because the position may vary depending on the historic creation of the database
         $target = 0;
         if ($result > 0) {

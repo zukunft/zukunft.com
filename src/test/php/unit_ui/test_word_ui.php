@@ -42,13 +42,14 @@ function run_word_ui_test(testing $t): void
 
     global $usr;
     global $phrase_types;
+    global $verbs;
 
     $t->header('Test the word frontend scripts (e.g. /word_add.php)');
 
     // call the add word page and check if at least some keywords are returned
     $wrd = new word($usr);
     $wrd->load_by_name(word_api::TN_READ);
-    $vrb_is = cl(db_cl::VERB, verb::IS_A);
+    $vrb_is = $verbs->id(verb::IS_A);
     $wrd_type = $phrase_types->default_id();
     $result = file_get_contents('https://zukunft.com/http/word_add.php?verb=' . $vrb_is . '&word=' . $wrd->id() . '&type=1&back=' . $wrd->id());
     $target = word_api::TN_READ;

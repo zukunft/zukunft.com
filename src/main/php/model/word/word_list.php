@@ -577,7 +577,8 @@ class word_list extends sandbox_list
      */
     function is(): word_list
     {
-        $wrd_lst = $this->foaf_parents(cl(db_cl::VERB, verb::IS_A));
+        global $verbs;
+        $wrd_lst = $this->foaf_parents($verbs->id(verb::IS_A));
         log_debug($this->dsp_id() . ' is ' . $wrd_lst->name());
         return $wrd_lst;
     }
@@ -590,8 +591,9 @@ class word_list extends sandbox_list
      */
     function are(): word_list
     {
+        global $verbs;
         log_debug('for ' . $this->dsp_id());
-        $wrd_lst = $this->foaf_children(cl(db_cl::VERB, verb::IS_A));
+        $wrd_lst = $this->foaf_children($verbs->id(verb::IS_A));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' are ' . $wrd_lst->name());
         return $wrd_lst;
@@ -603,7 +605,8 @@ class word_list extends sandbox_list
      */
     function contains(): word_list
     {
-        $wrd_lst = $this->foaf_children(cl(db_cl::VERB, verb::IS_PART_OF));
+        global $verbs;
+        $wrd_lst = $this->foaf_children($verbs->id(verb::IS_PART_OF));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $wrd_lst->name());
         return $wrd_lst;
@@ -655,7 +658,8 @@ class word_list extends sandbox_list
      */
     function differentiators(): word_list
     {
-        $wrd_lst = $this->foaf_parents(cl(db_cl::VERB, verb::CAN_CONTAIN));
+        global $verbs;
+        $wrd_lst = $this->foaf_parents($verbs->id(verb::CAN_CONTAIN));
         $wrd_lst->merge($this);
         return $wrd_lst;
     }
@@ -667,9 +671,10 @@ class word_list extends sandbox_list
      */
     function differentiators_all(): word_list
     {
+        global $verbs;
         // this first time get all related items
         // parents and not children because the verb is "can contain", but here the question is for "can be split by"
-        $wrd_lst = $this->foaf_parents(cl(db_cl::VERB, verb::CAN_CONTAIN));
+        $wrd_lst = $this->foaf_parents($verbs->id(verb::CAN_CONTAIN));
         return $wrd_lst->are_and_contains();
     }
 

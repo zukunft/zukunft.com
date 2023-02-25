@@ -261,7 +261,7 @@ class phrase extends db_object
     }
 
     /**
-     * @return int the id of the phrase witch is (corresponding to id_obj())
+     * @return int|null the id of the phrase witch is (corresponding to id_obj())
      * e.g 1 for a word, -1 for a triple
      */
     function id(): ?int
@@ -1024,6 +1024,7 @@ class phrase extends db_object
     {
         log_debug();
         global $db_con;
+        global $verbs;
 
         $sql_type_from = '';
         $sql_type_where = '';
@@ -1058,7 +1059,7 @@ class phrase extends db_object
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id = ' . $type->id() . ' 
-                                           AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . ' ) AS a 
+                                           AND l.verb_id = ' . $verbs->id(verb::IS_A) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
 
                 // ... out of all those get the phrase ids that have also other types e.g. Zurich (Canton)
@@ -1070,7 +1071,7 @@ class phrase extends db_object
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id <> ' . $type->id() . ' 
-                                           AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
+                                           AND l.verb_id = ' . $verbs->id(verb::IS_A) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
                                          WHERE ' . $sql_where_exclude . ' ';
 
@@ -1097,7 +1098,7 @@ class phrase extends db_object
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                 AND u.user_id = ' . $this->user()->id() . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
-                           AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
+                           AND l.verb_id = ' . $verbs->id(verb::IS_A) . '
                            AND l.to_phrase_id = ' . $type->id() . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*
@@ -1202,8 +1203,8 @@ class phrase extends db_object
     }
 
     /*
-    word replication functions
-    */
+     * word replication functions
+     */
 
     function is_time()
     {
@@ -1256,6 +1257,70 @@ class phrase extends db_object
         $wrd = $this->main_word();
         return $wrd->dsp_time_selector($type, $form_name, $pos, $back);
     }
+
+    /**
+     * @return phrase the following phrase based on the predefined verb following
+     * e.g. the year 2020 if the given year phrase is 2019
+     * TODO add to triple and review
+     * TODO create unit tests
+     */
+    function next(): phrase
+    {
+        log_debug($this->dsp_id());
+
+        global $db_con;
+        global $verbs;
+
+        $result = new phrase($this->user());
+
+        $link_id = $verbs->id(verb::FOLLOW);
+        //$link_id = cl(db_cl::VERB, verb::FOLLOW);
+        //$db_con = new mysql;
+        $db_con->usr_id = $this->user()->id();
+        $db_con->set_type(sql_db::TBL_TRIPLE);
+        $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, verb::FLD_ID, $link_id);
+        if (is_numeric($key_result)) {
+            $id = intval($key_result);
+            if ($id > 0) {
+                $result->load_by_id($id);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * return the follow word id based on the predefined verb following
+     * TODO add to triple and review
+     * TODO create unit tests
+     */
+    function prior(): word
+    {
+        log_debug($this->dsp_id());
+
+        global $db_con;
+        global $verbs;
+
+        $result = new word($this->user());
+
+        $link_id = $verbs->id(verb::FOLLOW);
+        //$link_id = cl(db_cl::VERB, verb::FOLLOW);
+        //$db_con = new mysql;
+        $db_con->usr_id = $this->user()->id();
+        $db_con->set_type(sql_db::TBL_TRIPLE);
+        $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, verb::FLD_ID, $link_id);
+        if (is_numeric($key_result)) {
+            $id = intval($key_result);
+            if ($id > 0) {
+                $result->load_by_id($id);
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * save
+     */
 
     /**
      * @return string

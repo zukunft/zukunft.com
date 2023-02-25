@@ -254,7 +254,9 @@ class view_cmp_dsp_old extends view_cmp
      */
     function all(phrase $phr, string $back = ''): string
     {
+        global $verbs;
         log_debug('for word ' . $phr->name());
+
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::VALUES_ALL)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $phr->name() . ' and user ' . $this->user()->name);
@@ -265,7 +267,7 @@ class view_cmp_dsp_old extends view_cmp
                 $result .= $phrases_down . $phrases_up;
             } else {
                 $result .= "The type of " . $phr->name() . " is not jet defined. Please define what it is: ";
-                $type_is = cl(db_cl::VERB, verb::IS_A);
+                $type_is = $verbs->id(verb::IS_A);
                 $result .= \html\btn_add("Please link " . $phr->name() . " to an existing word to include it in the lists", '/http/link_add.php?from=' . $phr->id . '&verb=' . $type_is . '&back=' . $phr->id);
             }
             $result .= '<br><br>values<br>';
