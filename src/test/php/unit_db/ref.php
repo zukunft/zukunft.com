@@ -40,6 +40,7 @@ class ref_unit_db_tests
 
         global $usr;
         global $db_con;
+        global $phrase_types;
 
         // init
         $t->header('Unit database tests of the ref class (src/main/php/model/ref/ref.php)');
@@ -54,7 +55,7 @@ class ref_unit_db_tests
 
         // ... and check if at least the most critical is loaded
         // TODO check
-        $result = cl(db_cl::PHRASE_TYPE, phrase_type::NORMAL);
+        $result = $phrase_types->id(phrase_type::NORMAL);
         $t->assert('check ' . phrase_type::NORMAL, $result, 1);
 
         $t->subheader('API unit db tests');

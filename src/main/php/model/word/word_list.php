@@ -959,8 +959,9 @@ class word_list extends sandbox_list
     {
         log_debug('for words "' . $this->dsp_id() . '"');
 
+        global $phrase_types;
         $result = new word_list($this->user());
-        $time_type = cl(db_cl::PHRASE_TYPE, phrase_type::TIME);
+        $time_type = $phrase_types->id(phrase_type::TIME);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
             if ($wrd->type_id() == $time_type) {
@@ -1014,10 +1015,12 @@ class word_list extends sandbox_list
      */
     function measure_lst(): word_list
     {
+        global $phrase_types;
+
         log_debug($this->dsp_id());
 
         $result = new word_list($this->user());
-        $measure_type = cl(db_cl::PHRASE_TYPE, phrase_type::MEASURE);
+        $measure_type = $phrase_types->id(phrase_type::MEASURE);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
             if ($wrd->type_id == $measure_type) {
@@ -1037,11 +1040,13 @@ class word_list extends sandbox_list
      */
     function scaling_lst(): word_list
     {
+        global $phrase_types;
+
         log_debug($this->dsp_id());
 
         $result = new word_list($this->user());
-        $scale_type = cl(db_cl::PHRASE_TYPE, phrase_type::SCALING);
-        $scale_hidden_type = cl(db_cl::PHRASE_TYPE, phrase_type::SCALING_HIDDEN);
+        $scale_type = $phrase_types->id(phrase_type::SCALING);
+        $scale_hidden_type = $phrase_types->id(phrase_type::SCALING_HIDDEN);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
             if ($wrd->type_id == $scale_type or $wrd->type_id == $scale_hidden_type) {
@@ -1062,10 +1067,12 @@ class word_list extends sandbox_list
      */
     function percent_lst(): word_list
     {
+        global $phrase_types;
+
         log_debug($this->dsp_id());
 
         $result = new word_list($this->user());
-        $percent_type = cl(db_cl::PHRASE_TYPE, phrase_type::PERCENT);
+        $percent_type = $phrase_types->id(phrase_type::PERCENT);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
             if ($wrd->type_id == $percent_type) {

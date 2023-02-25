@@ -576,11 +576,13 @@ class term extends db_object
     private
     function load_word_by_id(int $id): bool
     {
+        global $phrase_types;
+
         $result = false;
         $wrd = new word($this->user());
         if ($wrd->load_by_id($id, word::class)) {
-            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK));
-            if ($wrd->type_id == cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK)) {
+            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phrase_types->id(phrase_type::FORMULA_LINK));
+            if ($wrd->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
                 $result = $this->load_formula_by_id($id);
             } else {
                 $this->set_id_from_obj($wrd->id, word::class);
@@ -676,11 +678,13 @@ class term extends db_object
     private
     function load_word_by_name(string $name): bool
     {
+        global $phrase_types;
+
         $result = false;
         $wrd = new word($this->user());
         if ($wrd->load_by_name($name, word::class)) {
-            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK));
-            if ($wrd->type_id == cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK)) {
+            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phrase_types->id(phrase_type::FORMULA_LINK));
+            if ($wrd->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
                 $result = $this->load_formula_by_name($name);
             } else {
                 $this->set_id_from_obj($wrd->id, word::class);

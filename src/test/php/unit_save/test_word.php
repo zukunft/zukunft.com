@@ -67,6 +67,7 @@ function create_test_words(testing $t): void
 
 function run_word_tests(testing $t): void
 {
+    global $phrase_types;
 
     $t->header('Test the word class (classes/word.php)');
 
@@ -347,7 +348,7 @@ function run_word_tests(testing $t): void
     // check if the word parameters can be added
     $wrd_renamed->plural = word_api::TN_RENAMED . 's';
     $wrd_renamed->description = word_api::TN_RENAMED . ' description';
-    $wrd_renamed->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::OTHER);
+    $wrd_renamed->type_id = $phrase_types->id(phrase_type::OTHER);
     $result = $wrd_renamed->save();
     $target = '';
     $t->dsp('word->save all word fields beside the name for "' . word_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -361,7 +362,7 @@ function run_word_tests(testing $t): void
     $target = word_api::TN_RENAMED . ' description';
     $t->dsp('word->load description for "' . word_api::TN_RENAMED . '"', $target, $result);
     $result = $wrd_reloaded->type_id;
-    $target = cl(db_cl::PHRASE_TYPE, phrase_type::OTHER);
+    $target = $phrase_types->id(phrase_type::OTHER);
     $t->dsp('word->load type_id for "' . word_api::TN_RENAMED . '"', $target, $result);
 
     // check if the word parameter adding have been logged
@@ -388,7 +389,7 @@ function run_word_tests(testing $t): void
     $wrd_usr2->load_by_name(word_api::TN_RENAMED, word::class);
     $wrd_usr2->plural = word_api::TN_RENAMED . 's2';
     $wrd_usr2->description = word_api::TN_RENAMED . ' description2';
-    $wrd_usr2->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::TIME);
+    $wrd_usr2->type_id = $phrase_types->id(phrase_type::TIME);
     $result = $wrd_usr2->save();
     $target = '';
     $t->dsp('word->save all word fields for user 2 beside the name for "' . word_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -403,7 +404,7 @@ function run_word_tests(testing $t): void
     $target = word_api::TN_RENAMED . ' description2';
     $t->dsp('word->load description for "' . word_api::TN_RENAMED . '"', $target, $result);
     $result = $wrd_usr2_reloaded->type_id;
-    $target = cl(db_cl::PHRASE_TYPE, phrase_type::TIME);
+    $target = $phrase_types->id(phrase_type::TIME);
     $t->dsp('word->load type_id for "' . word_api::TN_RENAMED . '"', $target, $result);
 
     // check the word for the original user remains unchanged
@@ -415,7 +416,7 @@ function run_word_tests(testing $t): void
     $target = word_api::TN_RENAMED . ' description';
     $t->dsp('word->load description for "' . word_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
     $result = $wrd_reloaded->type_id;
-    $target = cl(db_cl::PHRASE_TYPE, phrase_type::OTHER);
+    $target = $phrase_types->id(phrase_type::OTHER);
     $t->dsp('word->load type_id for "' . word_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
 
     // check if undo all specific changes removes the user word
@@ -423,7 +424,7 @@ function run_word_tests(testing $t): void
     $wrd_usr2->load_by_name(word_api::TN_RENAMED, word::class);
     $wrd_usr2->plural = word_api::TN_RENAMED . 's';
     $wrd_usr2->description = word_api::TN_RENAMED . ' description';
-    $wrd_usr2->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::OTHER);
+    $wrd_usr2->type_id = $phrase_types->id(phrase_type::OTHER);
     $result = $wrd_usr2->save();
     $target = '';
     $t->dsp('word->save undo the user word fields beside the name for "' . word_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -438,7 +439,7 @@ function run_word_tests(testing $t): void
     $target = word_api::TN_RENAMED . ' description';
     $t->dsp('word->load description for "' . word_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
     $result = $wrd_usr2_reloaded->type_id;
-    $target = cl(db_cl::PHRASE_TYPE, phrase_type::OTHER);
+    $target = $phrase_types->id(phrase_type::OTHER);
     $t->dsp('word->load type_id for "' . word_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
 
     // display

@@ -822,6 +822,8 @@ class phrase extends db_object
      */
     function import_obj(string $json_value, bool $do_save = true): user_message
     {
+        global $phrase_types;
+
         $result = new user_message();
         if ($do_save) {
             $this->load_by_name($json_value);
@@ -830,7 +832,7 @@ class phrase extends db_object
                 $wrd->load_by_name($json_value, word::class);
                 if ($wrd->id() == 0) {
                     $wrd->set_name($json_value);
-                    $wrd->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::TIME);
+                    $wrd->type_id = $phrase_types->id(phrase_type::TIME);
                     $result->add_message($wrd->save());
                 }
                 if ($wrd->id() == 0) {

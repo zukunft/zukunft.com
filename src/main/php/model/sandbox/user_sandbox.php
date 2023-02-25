@@ -1664,6 +1664,8 @@ class user_sandbox extends db_object
      */
     function is_same($obj_to_check): bool
     {
+        global $phrase_types;
+
         $result = false;
 
         /*
@@ -1683,15 +1685,15 @@ class user_sandbox extends db_object
                         $result = true;
                     } else {
                         if ($this->type_id == sql_db::TBL_FORMULA
-                            and $obj_to_check->type_id == cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK)) {
+                            and $obj_to_check->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
                             // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
                             $result = true;
                         } elseif ($obj_to_check->type_id == sql_db::TBL_FORMULA
-                            and $this->type_id == cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK)) {
+                            and $this->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
                             // like above, but the other way round
                             $result = true;
-                        } elseif ($this->type_id == cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK)
-                            or $obj_to_check->type_id == cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK)) {
+                        } elseif ($this->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)
+                            or $obj_to_check->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
                             // if one of the two words is a formula link and not both, the user should ge no suggestion to combine them
                             $result = false;
                         } else {
@@ -1951,6 +1953,8 @@ class user_sandbox extends db_object
         log_debug($this->dsp_id());
 
         global $db_con;
+        global $phrase_types;
+
         $msg = '';
         $result = new user_message();
 
@@ -2000,7 +2004,7 @@ class user_sandbox extends db_object
                 if ($result->is_ok()) {
                     $wrd = new word($this->usr);
                     $wrd->load_by_name($this->name());
-                    $wrd->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK);
+                    $wrd->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
                     $msg = $wrd->del();
                     $result->add($msg);
                 }

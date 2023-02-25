@@ -42,6 +42,7 @@ class word_unit_db_tests
 
         global $db_con;
         global $usr;
+        global $phrase_types;
 
         // init
         $t->header('Unit database tests of the word class (src/main/php/model/word/word.php)');
@@ -70,7 +71,7 @@ class word_unit_db_tests
         $t->assert('load types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = cl(db_cl::PHRASE_TYPE, phrase_type::NORMAL);
+        $result = $phrase_types->id(phrase_type::NORMAL);
         $t->assert('check type ' . phrase_type::NORMAL, $result, 1);
 
 
@@ -122,7 +123,7 @@ class word_unit_db_tests
 
         // load a word list by type
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_type(cl(db_cl::PHRASE_TYPE, phrase_type::PERCENT));
+        $wrd_lst->load_by_type($phrase_types->id(phrase_type::PERCENT));
         $t->assert('load_by_type', $wrd_lst->name(), '"' . word_api::TN_PCT . '"');
 
         // load a word list by name pattern

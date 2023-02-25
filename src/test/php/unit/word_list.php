@@ -39,6 +39,7 @@ class word_list_unit_tests
     {
 
         global $usr;
+        global $phrase_types;
 
         // init
         $db_con = new sql_db();
@@ -124,23 +125,23 @@ class word_list_unit_tests
         $wrd_time = new word($usr);
         $wrd_time->set_id(4);
         $wrd_time->set_name('time_word');
-        $wrd_time->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::TIME);
+        $wrd_time->type_id = $phrase_types->id(phrase_type::TIME);
         $wrd_time2 = new word($usr);
         $wrd_time2->set_id(5);
         $wrd_time2->set_name('time_word2');
-        $wrd_time2->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::TIME);
+        $wrd_time2->type_id = $phrase_types->id(phrase_type::TIME);
         $wrd_scale = new word($usr);
         $wrd_scale->set_id(6);
         $wrd_scale->set_name('scale_word');
-        $wrd_scale->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::SCALING);
+        $wrd_scale->type_id = $phrase_types->id(phrase_type::SCALING);
         $wrd_percent = new word($usr);
         $wrd_percent->set_id(7);
         $wrd_percent->set_name('percent_word');
-        $wrd_percent->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::PERCENT);
+        $wrd_percent->type_id = $phrase_types->id(phrase_type::PERCENT);
         $wrd_measure = new word($usr);
         $wrd_measure->set_id(8);
         $wrd_measure->set_name('measure_word');
-        $wrd_measure->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::MEASURE);
+        $wrd_measure->type_id = $phrase_types->id(phrase_type::MEASURE);
 
         // merge two lists
         $wrd_lst = new word_list($usr);

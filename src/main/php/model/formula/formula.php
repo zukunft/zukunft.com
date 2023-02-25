@@ -592,13 +592,15 @@ class formula extends user_sandbox_named_with_type
      */
     function add_wrd(): bool
     {
+        global $phrase_types;
+
         log_err('The formula word for ' . $this->dsp_id() . ' needs to be recreated to fix an internal error');
         $result = false;
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word($this->user());
         $name_wrd->name = $this->name();
-        $name_wrd->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK);
+        $name_wrd->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
         $name_wrd->add();
         if ($name_wrd->id > 0) {
             //zu_info('Word with the formula name "'.$this->name().'" has been missing for id '.$this->id.'.','formula->calc');
@@ -615,13 +617,15 @@ class formula extends user_sandbox_named_with_type
      */
     function create_wrd(): bool
     {
+        global $phrase_types;
+
         log_debug('->create_wrd create formula linked word ' . $this->dsp_id());
         $result = false;
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word($this->user());
         $name_wrd->set_name($this->name());
-        $name_wrd->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK);
+        $name_wrd->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
         $name_wrd->save();
         if ($name_wrd->id > 0) {
             //zu_info('Word with the formula name "'.$this->name().'" has been missing for id '.$this->id.'.','formula->calc');
@@ -2151,6 +2155,8 @@ class formula extends user_sandbox_named_with_type
     private
     function is_term_the_same(term $trm): bool
     {
+        global $phrase_types;
+
         $result = false;
         if ($trm->type() == formula::class) {
             //$result = $trm;
@@ -2159,7 +2165,7 @@ class formula extends user_sandbox_named_with_type
             if ($trm->obj == null) {
                 log_warning('The object of the term has been expected to be loaded');
             } else {
-                if ($trm->obj->type_id == cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK)) {
+                if ($trm->obj->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
                     //$result = $trm;
                     $result = true;
                 }
@@ -2304,6 +2310,7 @@ class formula extends user_sandbox_named_with_type
         log_debug('->save >' . $this->usr_text . '< (id ' . $this->id . ') as ' . $this->dsp_id() . ' for user ' . $this->user()->name);
 
         global $db_con;
+        global $phrase_types;
 
         // check the preserved names
         $result = $this->check_preserved();
@@ -2322,7 +2329,7 @@ class formula extends user_sandbox_named_with_type
                 if ($trm->id_obj() > 0) {
                     if ($trm->type() <> formula::class) {
                         if ($trm->type() == word::class) {
-                            if ($trm->obj->type_id == cl(db_cl::PHRASE_TYPE, phrase_type::FORMULA_LINK)) {
+                            if ($trm->obj->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
                                 log_debug('adding formula name ' . $this->dsp_id() . ' has just a matching formula word');
                             } else {
                                 $result .= $trm->id_used_msg();

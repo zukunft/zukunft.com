@@ -164,9 +164,11 @@ class phrase_list_unit_tests
     private function get_time_phrase(): phrase
     {
         global $usr;
+        global $phrase_types;
+
         $wrd = new word($usr);
         $wrd->set(2, word_api::TN_RENAMED);
-        $wrd->type_id = cl(db_cl::PHRASE_TYPE, phrase_type::TIME);
+        $wrd->type_id = $phrase_types->id(phrase_type::TIME);
         return $wrd->phrase();
     }
 

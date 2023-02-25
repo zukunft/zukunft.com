@@ -2014,10 +2014,12 @@ class phrase_list extends user_sandbox_list_named
      */
     function time_lst_old(): array
     {
+        global $phrase_types;
+
         log_debug($this->dsp_id());
 
         $result = array();
-        $time_type = cl(db_cl::PHRASE_TYPE, phrase_type::TIME);
+        $time_type = $phrase_types->id(phrase_type::TIME);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
             if ($phr->type_id() == $time_type) {
@@ -2108,10 +2110,11 @@ class phrase_list extends user_sandbox_list_named
      */
     function measure_lst(): phrase_list
     {
+        global $phrase_types;
         log_debug('phrase_list->measure_lst(' . $this->dsp_id());
 
         $result = new phrase_list($this->user());
-        $measure_type = cl(db_cl::PHRASE_TYPE, phrase_type::MEASURE);
+        $measure_type = $phrase_types->id(phrase_type::MEASURE);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
             if (get_class($phr) <> phrase::class and get_class($phr) <> word::class and get_class($phr) <> word_dsp::class) {
@@ -2136,11 +2139,13 @@ class phrase_list extends user_sandbox_list_named
      */
     function scaling_lst(): phrase_list
     {
+        global $phrase_types;
+
         log_debug('phrase_list->scaling_lst(' . $this->dsp_id());
 
         $result = new phrase_list($this->user());
-        $scale_type = cl(db_cl::PHRASE_TYPE, phrase_type::SCALING);
-        $scale_hidden_type = cl(db_cl::PHRASE_TYPE, phrase_type::SCALING_HIDDEN);
+        $scale_type = $phrase_types->id(phrase_type::SCALING);
+        $scale_hidden_type = $phrase_types->id(phrase_type::SCALING_HIDDEN);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
             if ($phr->type_id() == $scale_type or $phr->type_id() == $scale_hidden_type) {
