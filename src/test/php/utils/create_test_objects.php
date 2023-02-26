@@ -171,6 +171,7 @@ class test_new_obj extends test_base
      */
     function dummy_sys_log(): system_log
     {
+        global $sys_log_stati;
         $sys = new system_log();
         $sys->set_id(1);
         $sys->log_time = new DateTime(system_log_api::TV_TIME);
@@ -179,7 +180,7 @@ class test_new_obj extends test_base
         $sys->log_trace = system_log_api::TV_LOG_TRACE;
         $sys->function_name = system_log_api::TV_FUNC_NAME;
         $sys->solver_name = system_log_api::TV_SOLVE_ID;
-        $sys->status_name = cl(db_cl::LOG_STATUS, sys_log_status::NEW);
+        $sys->status_name = $sys_log_stati->id(sys_log_status::NEW);
         return $sys;
     }
 
@@ -188,6 +189,7 @@ class test_new_obj extends test_base
      */
     function dummy_sys_log2(): system_log
     {
+        global $sys_log_stati;
         $sys = new system_log();
         $sys->set_id(2);
         $sys->log_time = new DateTime(system_log_api::TV_TIME);
@@ -196,7 +198,7 @@ class test_new_obj extends test_base
         $sys->log_trace = system_log_api::T2_LOG_TRACE;
         $sys->function_name = system_log_api::T2_FUNC_NAME;
         $sys->solver_name = system_log_api::TV_SOLVE_ID;
-        $sys->status_name = cl(db_cl::LOG_STATUS, sys_log_status::CLOSED);
+        $sys->status_name = $sys_log_stati->id(sys_log_status::CLOSED);
         return $sys;
     }
 

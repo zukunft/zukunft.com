@@ -116,10 +116,11 @@ class system_log_list extends base_list
      */
     function load_sql(sql_db $db_con): sql_par
     {
+        global $sys_log_stati;
         $qp = new sql_par(self::class);
 
         $sql_where = '';
-        $sql_status = '(' . sql_db::STD_TBL . '.' . system_log::FLD_STATUS . ' <> ' . cl(db_cl::LOG_STATUS, sys_log_status::CLOSED);
+        $sql_status = '(' . sql_db::STD_TBL . '.' . system_log::FLD_STATUS . ' <> ' . $sys_log_stati->id(sys_log_status::CLOSED);
         $sql_status .= ' OR ' . sql_db::STD_TBL . '.' . system_log::FLD_STATUS . ' IS NULL)';
         if ($this->dsp_type == self::DSP_ALL) {
             $sql_where = $sql_status;

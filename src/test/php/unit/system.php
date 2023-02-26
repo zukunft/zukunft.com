@@ -38,6 +38,7 @@ class system_unit_tests
 
         global $usr;
         global $sql_names;
+        global $sys_log_stati;
 
         // init
         $lib = new library();
@@ -120,8 +121,8 @@ class system_unit_tests
         $t->subheader('user list loading sql tests');
 
         // check if the sql to load the complete list of all .. types is created as expected
-        $sys_log_stati = new sys_log_status();
-        $t->assert_load_sql_all($db_con, $sys_log_stati);
+        $sys_log_status = new sys_log_status();
+        $t->assert_load_sql_all($db_con, $sys_log_status);
 
 
         $t->subheader('system config sql tests');
@@ -281,7 +282,7 @@ class system_unit_tests
         $log->log_trace = system_log_api::TV_LOG_TRACE;
         $log->function_name = system_log_api::TV_FUNC_NAME;
         $log->solver_name = system_log_api::TV_SOLVE_ID;
-        $log->status_name = cl(db_cl::LOG_STATUS, sys_log_status::NEW);
+        $log->status_name = $sys_log_stati->id(sys_log_status::NEW);
         $log_dsp = $log->get_dsp_obj();
         $created = $log_dsp->get_json();
         $expected = file_get_contents(PATH_TEST_FILES . 'api/system/system_log.json');
@@ -301,7 +302,7 @@ class system_unit_tests
         $log2->log_trace = system_log_api::T2_LOG_TRACE;
         $log2->function_name = system_log_api::T2_FUNC_NAME;
         $log2->solver_name = system_log_api::TV_SOLVE_ID;
-        $log2->status_name = cl(db_cl::LOG_STATUS, sys_log_status::CLOSED);
+        $log2->status_name = $sys_log_stati->id(sys_log_status::CLOSED);
 
         $log_lst = new system_log_list();
         $log_lst->add($log);

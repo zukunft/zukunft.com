@@ -38,6 +38,7 @@ class system_unit_db_tests
 
         global $usr;
         global $db_con;
+        global $sys_log_stati;
 
         // init
         $t->name = 'system read db->';
@@ -52,7 +53,7 @@ class system_unit_db_tests
         $t->assert('load status', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = cl(db_cl::LOG_STATUS, sys_log_status::NEW);
+        $result = $sys_log_stati->id(sys_log_status::NEW);
         $t->assert('check status ' . sys_log_status::NEW, $result, 1);
 
         $t->subheader('System batch job type tests');

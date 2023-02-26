@@ -92,6 +92,7 @@ class sql_db
     // SQL table and model object names used
     // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
     // TODO use const for all object names
+    // TODO try to use the class name if possible
     const TBL_USER = 'user';
     const TBL_USER_TYPE = 'user_type';
     const TBL_USER_PROFILE = 'user_profile';
