@@ -41,6 +41,7 @@ class formula_unit_tests
     {
 
         global $usr;
+        global $formula_types;
 
         // init
         $db_con = new sql_db();
@@ -118,7 +119,7 @@ class formula_unit_tests
         /*
         $frm_next = new formula($usr);
         $frm_next->name = "next";
-        $frm_next->type_id = cl(db_cl::FORMULA_TYPE, formula_type::NEXT);
+        $frm_next->type_id = $formula_types->id(formula_type::NEXT);
         $frm_next->id = 1;
         $frm_has_next = new formula($usr);
         $frm_has_next->usr_text = '=next';

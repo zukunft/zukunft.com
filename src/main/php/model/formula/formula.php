@@ -227,7 +227,8 @@ class formula extends user_sandbox_named_with_type
      */
     function set_type(string $type_code_id): void
     {
-        $this->type_id = cl(db_cl::FORMULA_TYPE, $type_code_id);
+        global $formula_types;
+        $this->type_id = $formula_types->id($type_code_id);
     }
 
     /**
@@ -2208,8 +2209,8 @@ class formula extends user_sandbox_named_with_type
                         $this->id = $db_chk->id;
                         $this->owner_id = $db_chk->owner_id;
                         // force including again
-                        $this->excluded = null;
-                        $db_rec->excluded = '1';
+                        $this->include();
+                        $db_rec->exclude();
                         $this->save_field_excluded($db_con, $db_rec, $std_rec);
                         log_debug('->save_id_if_updated found a display component link with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id());
                     } else {

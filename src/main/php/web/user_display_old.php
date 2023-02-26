@@ -177,7 +177,7 @@ class user_dsp_old extends user
                 $trp_usr->verb->set_id($sbx_row[verb::FLD_ID]);
                 $trp_usr->to->set_id($sbx_row['to_phrase_id']);
                 $trp_usr->set_name($sbx_row['usr_name']);
-                $trp_usr->excluded = $sbx_row['usr_excluded'];
+                $trp_usr->set_excluded($sbx_row['usr_excluded']);
                 //$trp_usr->load_obj_vars();
 
                 // to review: try to avoid using load_test_user
@@ -188,11 +188,11 @@ class user_dsp_old extends user
                 $wrd_std->set_user($usr_std);
                 $wrd_std->load_by_id($trp_usr->id());
                 $wrd_std->set_name($sbx_row['std_name']);
-                $wrd_std->excluded = $sbx_row['std_excluded'];
+                $wrd_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
                 if ($trp_usr->name() == $wrd_std->name()
-                    and $trp_usr->excluded == $wrd_std->excluded) {
+                    and $trp_usr->is_excluded() == $wrd_std->is_excluded()) {
                     $trp_usr->del_usr_cfg();
                 } else {
 
@@ -200,14 +200,14 @@ class user_dsp_old extends user
                     //$sandbox_item_name = $trp_usr->name_linked($back);
 
                     // format the user triple
-                    if ($trp_usr->excluded == 1) {
+                    if ($trp_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
                         $sandbox_usr_txt = $trp_usr->name();
                     }
 
                     // format the standard triple
-                    if ($wrd_std->excluded == 1) {
+                    if ($wrd_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
                         $sandbox_std_txt = $wrd_std->name();
@@ -236,7 +236,7 @@ class user_dsp_old extends user
                         $wrd_lnk_other->set_user($usr_other);
                         $wrd_lnk_other->load_by_id($trp_usr->id());
                         $wrd_lnk_other->set_name($wrd_lnk_other_row['name']);
-                        $wrd_lnk_other->excluded = $wrd_lnk_other_row[user_sandbox::FLD_EXCLUDED];
+                        $wrd_lnk_other->set_excluded($wrd_lnk_other_row[user_sandbox::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -382,7 +382,7 @@ class user_dsp_old extends user
                 $frm_usr->fob->id = $sbx_row[formula::FLD_ID];
                 $frm_usr->tob->id = $sbx_row[phrase::FLD_ID];
                 $frm_usr->link_type_id = $sbx_row['usr_type'];
-                $frm_usr->excluded = $sbx_row['usr_excluded'];
+                $frm_usr->set_excluded($sbx_row['usr_excluded']);
                 $frm_usr->load_objects();
 
                 // to review: try to avoid using load_test_user
@@ -392,11 +392,11 @@ class user_dsp_old extends user
                 $frm_std = clone $frm_usr;
                 $frm_std->set_user($usr_std);
                 $frm_std->link_type_id = $sbx_row['std_type'];
-                $frm_std->excluded = $sbx_row['std_excluded'];
+                $frm_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
                 if ($frm_usr->link_type_id == $frm_std->link_type_id
-                    and $frm_usr->excluded == $frm_std->excluded) {
+                    and $frm_usr->is_excluded() == $frm_std->is_excluded()) {
                     $frm_usr->del_usr_cfg();
                 } else {
 
@@ -405,7 +405,7 @@ class user_dsp_old extends user
                     //$sandbox_item_name = $frm_usr->name_linked($back);
 
                     // format the user formula_link
-                    if ($frm_usr->excluded == 1) {
+                    if ($frm_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
                         $sandbox_usr_txt = $frm_usr->tob->dsp_link();
@@ -413,7 +413,7 @@ class user_dsp_old extends user
                     }
 
                     // format the standard formula_link
-                    if ($frm_std->excluded == 1) {
+                    if ($frm_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
                         $sandbox_std_txt = $frm_std->tob->dsp_link();
@@ -442,7 +442,7 @@ class user_dsp_old extends user
                         $frm_lnk_other = clone $frm_usr;
                         $frm_lnk_other->set_user($usr_other);
                         $frm_lnk_other->link_type_id = $frm_lnk_other_row['link_type_id'];
-                        $frm_lnk_other->excluded = $frm_lnk_other_row[user_sandbox::FLD_EXCLUDED];
+                        $frm_lnk_other->set_excluded($frm_lnk_other_row[user_sandbox::FLD_EXCLUDED]);
                         $frm_lnk_other->load_objects();
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
@@ -544,7 +544,7 @@ class user_dsp_old extends user
                 $val_usr->set_id($val_row['id']);
                 $val_usr->set_number($val_row['usr_value']);
                 $val_usr->set_source_id($val_row['usr_source']);
-                $val_usr->excluded = $val_row['usr_excluded'];
+                $val_usr->set_excluded($val_row['usr_excluded']);
                 $val_usr->grp->set_id($val_row[phrase_group::FLD_ID]);
                 $val_usr->load_phrases();
 
@@ -556,12 +556,12 @@ class user_dsp_old extends user
                 $val_std->set_user($usr_std);
                 $val_std->set_number($val_row['std_value']);
                 $val_std->set_source_id($val_row['std_source']);
-                $val_std->excluded = $val_row['std_excluded'];
+                $val_std->set_excluded($val_row['std_excluded']);
 
                 // check database consistency and correct it if needed
                 if ($val_usr->number() == $val_std->number()
                     and $val_usr->source === $val_std->source
-                    and $val_usr->excluded == $val_std->excluded) {
+                    and $val_usr->is_excluded() == $val_std->is_excluded()) {
                     $val_usr->del_usr_cfg();
                 } else {
 
@@ -572,7 +572,7 @@ class user_dsp_old extends user
                     }
 
                     // format the user value
-                    if ($val_usr->excluded == 1) {
+                    if ($val_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
                         $sandbox_usr_txt = $val_usr->val_formatted();
@@ -580,7 +580,7 @@ class user_dsp_old extends user
                     $sandbox_usr_txt = '<a href="/http/value_edit.php?id=' . $val_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
 
                     // format the standard value
-                    if ($val_std->excluded == 1) {
+                    if ($val_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
                         $sandbox_std_txt = $val_std->val_formatted();
@@ -610,7 +610,7 @@ class user_dsp_old extends user
                         $val_other->set_user($usr_other);
                         $val_other->set_number($val_other_row['user_value']);
                         $val_other->set_source_id($val_other_row['source_id']);
-                        $val_other->excluded = $val_other_row[user_sandbox::FLD_EXCLUDED];
+                        $val_other->set_excluded($val_other_row[user_sandbox::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -713,7 +713,7 @@ class user_dsp_old extends user
                 $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->description = $sbx_row['usr_description'];
                 $dsp_usr->type_id = $sbx_row['usr_type'];
-                $dsp_usr->excluded = $sbx_row['usr_excluded'];
+                $dsp_usr->set_excluded($sbx_row['usr_excluded']);
                 $dsp_usr->set_user($this);
 
                 // to review: try to avoid using load_test_user
@@ -725,18 +725,18 @@ class user_dsp_old extends user
                 $dsp_std->set_name($sbx_row['std_name']);
                 $dsp_std->description = $sbx_row['std_description'];
                 $dsp_std->type_id = $sbx_row['std_type'];
-                $dsp_std->excluded = $sbx_row['std_excluded'];
+                $dsp_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
                 if ($dsp_usr->set_name($dsp_std->name())
                     and $dsp_usr->description == $dsp_std->description
                     and $dsp_usr->type_id == $dsp_std->type_id
-                    and $dsp_usr->excluded == $dsp_std->excluded) {
+                    and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
                     $dsp_usr->del_usr_cfg();
                 } else {
 
                     // format the user view
-                    if ($dsp_usr->excluded == 1) {
+                    if ($dsp_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
                         $sandbox_usr_txt = $dsp_usr->name();
@@ -744,7 +744,7 @@ class user_dsp_old extends user
                     $sandbox_usr_txt = '<a href="/http/view_edit.php?id=' . $dsp_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
 
                     // format the standard view
-                    if ($dsp_std->excluded == 1) {
+                    if ($dsp_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
                         $sandbox_std_txt = $dsp_std->name();
@@ -776,7 +776,7 @@ class user_dsp_old extends user
                         $dsp_other->set_name($dsp_other_row[view::FLD_NAME]);
                         $dsp_other->description = $dsp_other_row[user_sandbox_named::FLD_DESCRIPTION];
                         $dsp_other->type_id = $dsp_other_row[view::FLD_TYPE];
-                        $dsp_other->excluded = $dsp_other_row[user_sandbox::FLD_EXCLUDED];
+                        $dsp_other->set_excluded($dsp_other_row[user_sandbox::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -878,7 +878,7 @@ class user_dsp_old extends user
                 $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->description = $sbx_row['usr_comment'];
                 $dsp_usr->type_id = $sbx_row['usr_type'];
-                $dsp_usr->excluded = $sbx_row['usr_excluded'];
+                $dsp_usr->set_excluded($sbx_row['usr_excluded']);
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
@@ -889,18 +889,18 @@ class user_dsp_old extends user
                 $dsp_std->set_name($sbx_row['std_name']);
                 $dsp_std->description = $sbx_row['std_comment'];
                 $dsp_std->type_id = $sbx_row['std_type'];
-                $dsp_std->excluded = $sbx_row['std_excluded'];
+                $dsp_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
                 if ($dsp_usr->name() == $dsp_std->name()
                     and $dsp_usr->description == $dsp_std->description
                     and $dsp_usr->type_id == $dsp_std->type_id
-                    and $dsp_usr->excluded == $dsp_std->excluded) {
+                    and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
                     //$dsp_usr->del_usr_cfg();
                 } else {
 
                     // format the user view_component
-                    if ($dsp_usr->excluded == 1) {
+                    if ($dsp_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
                         $sandbox_usr_txt = $dsp_usr->name();
@@ -908,7 +908,7 @@ class user_dsp_old extends user
                     $sandbox_usr_txt = '<a href="/http/view_component_edit.php?id=' . $dsp_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
 
                     // format the standard view_component
-                    if ($dsp_std->excluded == 1) {
+                    if ($dsp_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
                         $sandbox_std_txt = $dsp_std->name();
@@ -940,7 +940,7 @@ class user_dsp_old extends user
                         $cmp_other->set_name($cmp_other_row[view_cmp::FLD_NAME]);
                         $cmp_other->description = $cmp_other_row[user_sandbox_named::FLD_DESCRIPTION];
                         $cmp_other->type_id = $cmp_other_row['view_component_type_id'];
-                        $cmp_other->excluded = $cmp_other_row[user_sandbox::FLD_EXCLUDED];
+                        $cmp_other->set_excluded($cmp_other_row[user_sandbox::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -1046,7 +1046,7 @@ class user_dsp_old extends user
                 $dsp_usr->cmp->set_id($sbx_row['view_component_id']);
                 $dsp_usr->order_nbr = $sbx_row['usr_order'];
                 $dsp_usr->position_type = $sbx_row['usr_type'];
-                $dsp_usr->excluded = $sbx_row['usr_excluded'];
+                $dsp_usr->set_excluded($sbx_row['usr_excluded']);
                 $dsp_usr->load_objects();
 
                 // to review: try to avoid using load_test_user
@@ -1057,12 +1057,12 @@ class user_dsp_old extends user
                 $dsp_std->set_user($usr_std);
                 $dsp_std->order_nbr = $sbx_row['std_order'];
                 $dsp_std->position_type = $sbx_row['std_type'];
-                $dsp_std->excluded = $sbx_row['std_excluded'];
+                $dsp_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
                 if ($dsp_usr->order_nbr == $dsp_std->order_nbr
                     and $dsp_usr->position_type == $dsp_std->position_type
-                    and $dsp_usr->excluded == $dsp_std->excluded) {
+                    and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
                     $dsp_usr->del_usr_cfg();
                 } else {
 
@@ -1070,14 +1070,14 @@ class user_dsp_old extends user
                     $sandbox_item_name = $dsp_usr->name_linked($back);
 
                     // format the user view_component_link
-                    if ($dsp_usr->excluded == 1) {
+                    if ($dsp_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
                         $sandbox_usr_txt = $dsp_usr->order_nbr;
                     }
 
                     // format the standard view_component_link
-                    if ($dsp_std->excluded == 1) {
+                    if ($dsp_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
                         $sandbox_std_txt = $dsp_std->order_nbr;
@@ -1107,7 +1107,7 @@ class user_dsp_old extends user
                         $dsp_lnk_other->set_user($usr_other);
                         $dsp_lnk_other->order_nbr = $dsp_lnk_other_row['order_nbr'];
                         $dsp_lnk_other->position_type = $dsp_lnk_other_row['position_type'];
-                        $dsp_lnk_other->excluded = $dsp_lnk_other_row[user_sandbox::FLD_EXCLUDED];
+                        $dsp_lnk_other->set_excluded($dsp_lnk_other_row[user_sandbox::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -1216,7 +1216,7 @@ class user_dsp_old extends user
                 $dsp_usr->url = $sbx_row['usr_url'];
                 $dsp_usr->description = $sbx_row['usr_comment'];
                 $dsp_usr->type_id = $sbx_row['usr_type'];
-                $dsp_usr->excluded = $sbx_row['usr_excluded'];
+                $dsp_usr->set_excluded($sbx_row['usr_excluded']);
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
@@ -1228,21 +1228,21 @@ class user_dsp_old extends user
                 $dsp_std->url = $sbx_row['std_url'];
                 $dsp_std->description = $sbx_row['std_comment'];
                 $dsp_std->type_id = $sbx_row['std_type'];
-                $dsp_std->excluded = $sbx_row['std_excluded'];
+                $dsp_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
                 if ($dsp_usr->name() == $dsp_std->name()
                     and $dsp_usr->url == $dsp_std->url
                     and $dsp_usr->description == $dsp_std->description
                     and $dsp_usr->type_id == $dsp_std->type_id
-                    and $dsp_usr->excluded == $dsp_std->excluded) {
+                    and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
                     // TODO: add user config also to source?
                     //$dsp_usr->del_usr_cfg();
                     $dsp_usr->del();
                 } else {
 
                     // format the user source
-                    if ($dsp_usr->excluded == 1) {
+                    if ($dsp_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
                         $sandbox_usr_txt = $dsp_usr->name();
@@ -1250,7 +1250,7 @@ class user_dsp_old extends user
                     $sandbox_usr_txt = '<a href="/http/source_edit.php?id=' . $dsp_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
 
                     // format the standard source
-                    if ($dsp_std->excluded == 1) {
+                    if ($dsp_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
                         $sandbox_std_txt = $dsp_std->name();
@@ -1284,7 +1284,7 @@ class user_dsp_old extends user
                         $dsp_other->url = $dsp_other_row['url'];
                         $dsp_other->description = $dsp_other_row[user_sandbox_named::FLD_DESCRIPTION];
                         $dsp_other->type_id = $dsp_other_row['source_type_id'];
-                        $dsp_other->excluded = $dsp_other_row[user_sandbox::FLD_EXCLUDED];
+                        $dsp_other->set_excluded($dsp_other_row[user_sandbox::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }

@@ -243,7 +243,7 @@ class triple_list
                     $trp->row_mapper($db_row);
                     // the simple object row mapper allows mapping excluded objects to remove the exclusion
                     // but an object list should not have excluded objects
-                    if (!$trp->excluded) {
+                    if (!$trp->is_excluded()) {
                         $this->lst[] = $trp;
                         $result = true;
                         // fill verb

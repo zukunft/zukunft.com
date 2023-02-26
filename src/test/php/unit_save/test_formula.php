@@ -51,6 +51,8 @@ function create_test_formulas(testing $t): void
 function run_formula_test(testing $t): void
 {
 
+    global $formula_types;
+
     // init
     $t->name = 'formula->';
 
@@ -349,7 +351,7 @@ function run_formula_test(testing $t): void
     // check if the formula parameters can be added
     $frm_renamed->usr_text = '= "this"';
     $frm_renamed->description = formula_api::TN_RENAMED . ' description';
-    $frm_renamed->type_id = cl(db_cl::FORMULA_TYPE, formula_type::THIS);
+    $frm_renamed->type_id = $formula_types->id(formula_type::THIS);
     $frm_renamed->need_all_val = True;
     $result = $frm_renamed->save();
     $target = '';
@@ -367,7 +369,7 @@ function run_formula_test(testing $t): void
     $target = formula_api::TN_RENAMED . ' description';
     $t->dsp('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->type_id;
-    $target = cl(db_cl::FORMULA_TYPE, formula_type::THIS);
+    $target = $formula_types->id(formula_type::THIS);
     $t->dsp('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->need_all_val;
     $target = True;
@@ -410,7 +412,7 @@ function run_formula_test(testing $t): void
     $frm_usr2->load_by_name(formula_api::TN_RENAMED, formula::class);
     $frm_usr2->usr_text = '"percent" = ( "this" - "prior" ) / "prior"';
     $frm_usr2->description = formula_api::TN_RENAMED . ' description2';
-    $frm_usr2->type_id = cl(db_cl::FORMULA_TYPE, formula_type::NEXT);
+    $frm_usr2->type_id = $formula_types->id(formula_type::NEXT);
     $frm_usr2->need_all_val = False;
     $result = $frm_usr2->save();
     $target = '';
@@ -429,7 +431,7 @@ function run_formula_test(testing $t): void
     $target = formula_api::TN_RENAMED . ' description2';
     $t->dsp('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->type_id;
-    $target = cl(db_cl::FORMULA_TYPE, formula_type::NEXT);
+    $target = $formula_types->id(formula_type::NEXT);
     $t->dsp('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->need_all_val;
     $target = False;
@@ -447,7 +449,7 @@ function run_formula_test(testing $t): void
     $target = formula_api::TN_RENAMED . ' description';
     $t->dsp('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->type_id;
-    $target = cl(db_cl::FORMULA_TYPE, formula_type::THIS);
+    $target = $formula_types->id(formula_type::THIS);
     $t->dsp('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->need_all_val;
     $target = True;
@@ -458,7 +460,7 @@ function run_formula_test(testing $t): void
     $frm_usr2->load_by_name(formula_api::TN_RENAMED, formula::class);
     $frm_usr2->usr_text = '= "this"';
     $frm_usr2->description = formula_api::TN_RENAMED . ' description';
-    $frm_usr2->type_id = cl(db_cl::FORMULA_TYPE, formula_type::THIS);
+    $frm_usr2->type_id = $formula_types->id(formula_type::THIS);
     $frm_usr2->need_all_val = True;
     $result = $frm_usr2->save();
     $target = '';
@@ -477,7 +479,7 @@ function run_formula_test(testing $t): void
     $target = formula_api::TN_RENAMED . ' description';
     $t->dsp('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->type_id;
-    $target = cl(db_cl::FORMULA_TYPE, formula_type::THIS);
+    $target = $formula_types->id(formula_type::THIS);
     $t->dsp('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->need_all_val;
     $target = True;

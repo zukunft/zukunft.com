@@ -48,6 +48,7 @@ class test_unit extends testing
         global $sql_names;
         global $usr;
         global $usr_sys;
+        global $user_profiles;
         $global_db_con = $db_con;
         $global_sql_names = $sql_names;
         $global_usr = $usr;
@@ -58,7 +59,7 @@ class test_unit extends testing
         // create a list with all prepared sql queries to check if the name is unique
         $sql_names = array();
 
-        // create a dummy user for  testing
+        // create a dummy user for testing
         $usr = new user;
         $usr->set_id(user::SYSTEM_TEST_ID);
         $usr->name = user::SYSTEM_TEST_NAME;
@@ -75,8 +76,8 @@ class test_unit extends testing
         $this->init_job_types();
 
         // set the profile of the test users
-        $usr->profile_id = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
-        $usr_sys->profile_id = cl(db_cl::USER_PROFILE, user_profile::SYSTEM);
+        $usr->profile_id = $user_profiles->id(user_profile::NORMAL);
+        $usr_sys->profile_id = $user_profiles->id(user_profile::SYSTEM);
 
         // continue with preparing unit tests
         $this->init_word_types();

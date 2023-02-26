@@ -159,10 +159,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      */
     function reset(): void
     {
-        $this->usr_cfg_id = null;
-        $this->owner_id = null;
-        $this->values = null;
-        $this->excluded = null;
+        parent::reset();
         $this->set_name('');
         $this->name_given = null;
         $this->name_generated = '';
@@ -374,7 +371,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     function api_obj(): object
     {
         $api_obj = new triple_api();
-        if (!$this->excluded) {
+        if (!$this->is_excluded()) {
             $this->fill_api_obj($api_obj);
             $api_obj->name = $this->name();
             $api_obj->description = $this->description;
@@ -1186,7 +1183,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     {
         $result = '';
 
-        if ($this->excluded <> 1) {
+        if (!$this->is_excluded()) {
             if ($this->name <> '') {
                 // use the object
                 $result = $this->name;
@@ -1719,7 +1716,10 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     /**
      * check if the id parameters are supposed to be changed
      */
-    function save_id_if_updated(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_id_if_updated(
+        sql_db $db_con,
+        triple|user_sandbox $db_rec,
+        triple|user_sandbox $std_rec): string
     {
         $result = '';
 
@@ -1745,8 +1745,8 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
                     $this->id = $db_chk->id;
                     $this->owner_id = $db_chk->owner_id;
                     // force including again
-                    $this->excluded = null;
-                    $db_rec->excluded = '1';
+                    $this->include();
+                    $db_rec->exclude();
                     if ($this->save_field_excluded($db_con, $db_rec, $std_rec)) {
                         log_debug('triple->save_id_if_updated found a triple with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id());
                     }

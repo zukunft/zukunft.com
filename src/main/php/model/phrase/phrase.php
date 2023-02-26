@@ -164,7 +164,7 @@ class phrase extends db_object
                 $wrd->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
                 $wrd->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 $wrd->type_id = $db_row[word::FLD_TYPE . $fld_ext];
-                $wrd->excluded = $db_row[user_sandbox::FLD_EXCLUDED . $fld_ext];
+                $wrd->set_excluded($db_row[user_sandbox::FLD_EXCLUDED . $fld_ext]);
                 $wrd->share_id = $db_row[user_sandbox::FLD_SHARE . $fld_ext];
                 $wrd->protection_id = $db_row[user_sandbox::FLD_PROTECT . $fld_ext];
                 //$wrd->owner_id = $db_row[user_sandbox::FLD_USER . $fld_ext];
@@ -178,7 +178,7 @@ class phrase extends db_object
                 $trp->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
                 $trp->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 $trp->type_id = $db_row[triple::FLD_TYPE . $fld_ext];
-                $trp->excluded = $db_row[user_sandbox::FLD_EXCLUDED . $fld_ext];
+                $trp->set_excluded($db_row[user_sandbox::FLD_EXCLUDED . $fld_ext]);
                 $trp->share_id = $db_row[user_sandbox::FLD_SHARE . $fld_ext];
                 $trp->protection_id = $db_row[user_sandbox::FLD_PROTECT . $fld_ext];
                 // not yet loaded with initial load
@@ -720,7 +720,7 @@ class phrase extends db_object
                 $wrd->owner_id = $this->obj->owner_id;
                 $wrd->share_id = $this->obj->share_id;
                 $wrd->protection_id = $this->obj->protection_id;
-                $wrd->excluded = $this->obj->excluded;
+                $wrd->set_excluded($this->obj->is_excluded());
                 $wrd->set_name($this->obj->name());
                 $wrd->description = $this->obj->description;
                 $wrd->plural = $this->obj->plural;
@@ -755,7 +755,7 @@ class phrase extends db_object
             $trp->owner_id = $this->obj->owner_id;
             $trp->share_id = $this->obj->share_id;
             $trp->protection_id = $this->obj->protection_id;
-            $trp->excluded = $this->obj->excluded;
+            $trp->set_excluded($this->obj->is_excluded());
             $trp->description = $this->obj->description;
             $trp->type_id = $this->obj->type_id;
             $trp->values = $this->obj->values;

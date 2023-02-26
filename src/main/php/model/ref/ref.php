@@ -227,7 +227,7 @@ class ref extends user_sandbox_link_with_type
     function api_obj(): ref_api
     {
         $api_obj = new ref_api();
-        if (!$this->excluded) {
+        if (!$this->is_excluded()) {
             parent::fill_api_obj($api_obj);
             $api_obj->phr = $this->phr->api_obj();
             $api_obj->external_key = $this->external_key;
@@ -243,7 +243,7 @@ class ref extends user_sandbox_link_with_type
     function dsp_obj(): ref_dsp
     {
         $dsp_obj = new ref_dsp();
-        if (!$this->excluded) {
+        if (!$this->is_excluded()) {
             parent::fill_dsp_obj($dsp_obj);
             $dsp_obj->phr = $this->phr->dsp_obj();
             $dsp_obj->external_key = $this->external_key;

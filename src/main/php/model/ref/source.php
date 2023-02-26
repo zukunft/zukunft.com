@@ -181,7 +181,7 @@ class source extends user_sandbox_named_with_type
     function api_obj(): source_api
     {
         $api_obj = new source_api();
-        if (!$this->excluded) {
+        if (!$this->is_excluded()) {
             parent::fill_api_obj($api_obj);
             $api_obj->url = $this->url;
         }
@@ -194,7 +194,7 @@ class source extends user_sandbox_named_with_type
     function dsp_obj(): source_dsp
     {
         $dsp_obj = new source_dsp();
-        if (!$this->excluded) {
+        if (!$this->is_excluded()) {
             parent::fill_dsp_obj($dsp_obj);
             $dsp_obj->url = $this->url;
         }

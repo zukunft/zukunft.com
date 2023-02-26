@@ -538,6 +538,7 @@ class test_new_obj extends test_base
     function new_formula(string $frm_name, ?int $id = null, ?string $frm_type_code_id = null, ?user $test_usr = null): formula
     {
         global $usr;
+        global $formula_types;
 
         if ($id == null) {
             $id = $this->next_seq_nbr();
@@ -551,7 +552,7 @@ class test_new_obj extends test_base
         $frm->set_name($frm_name);
 
         if ($frm_type_code_id != null) {
-            $frm->type_id = cl(db_cl::FORMULA_TYPE, $frm_type_code_id);
+            $frm->type_id = $formula_types->id($frm_type_code_id);
         }
         return $frm;
     }

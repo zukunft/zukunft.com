@@ -169,9 +169,10 @@ class word extends user_sandbox_named_with_type
     /**
      * map the database fields to the object fields
      *
-     * TODO check if "if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {" should be added
+     * this is the pure mapping function which also maps the field 'exclude'
+     * the 'exclude check' needs to be done in the calling function
      *
-     * @param array $db_row with the data directly from the database
+     * @param array|null $db_row with the data directly from the database
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
@@ -280,7 +281,7 @@ class word extends user_sandbox_named_with_type
     function api_obj(): word_api
     {
         $api_obj = new word_api();
-        if (!$this->excluded) {
+        if (!$this->is_excluded()) {
             parent::fill_api_obj($api_obj);
         }
         return $api_obj;
@@ -293,7 +294,7 @@ class word extends user_sandbox_named_with_type
     {
         $dsp_obj = new word_dsp();
 
-        if (!$this->excluded) {
+        if (!$this->is_excluded()) {
             parent::fill_dsp_obj($dsp_obj);
 
             $dsp_obj->set_plural($this->plural);
@@ -849,7 +850,7 @@ class word extends user_sandbox_named_with_type
      */
     function name_dsp(): string
     {
-        if ($this->excluded) {
+        if ($this->is_excluded()) {
             return '';
         } else {
             return $this->name;

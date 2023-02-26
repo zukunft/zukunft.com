@@ -250,9 +250,9 @@ class phrase_list extends user_sandbox_list_named
                 $db_con->usr_id = $this->user()->id();
                 $db_wrd_lst = $db_con->get($qp);
                 foreach ($db_wrd_lst as $db_wrd) {
-                    if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
-                        $wrd = new word($this->user());
-                        $wrd->row_mapper($db_wrd);
+                    $wrd = new word($this->user());
+                    $wrd->row_mapper($db_wrd);
+                    if (!$wrd->is_excluded()) {
                         $this->lst[] = $wrd->phrase();
                         $result = true;
                     }
