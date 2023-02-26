@@ -37,7 +37,7 @@ use cfg\type_object;
 class sys_log_status extends type_list
 {
     // list of all possible log stati
-    const NEW = "new";
+    const OPEN = "new";
     const ASSIGNED = "assigned";
     const RESOLVED = "resolved";
     const CLOSED = "closed";
@@ -58,7 +58,7 @@ class sys_log_status extends type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new type_object(sys_log_status::NEW, sys_log_status::NEW, '', 2);
+        $type = new type_object(sys_log_status::OPEN, sys_log_status::OPEN, '', 2);
         $this->add($type);
         $type = new type_object(sys_log_status::CLOSED, sys_log_status::CLOSED, '', 3);
         $this->add($type);
@@ -69,7 +69,7 @@ class sys_log_status extends type_list
      */
     function default_id(): int
     {
-        return parent::id(sys_log_status::NEW);
+        return parent::id(sys_log_status::OPEN);
     }
 
 }

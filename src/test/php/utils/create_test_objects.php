@@ -180,7 +180,7 @@ class test_new_obj extends test_base
         $sys->log_trace = system_log_api::TV_LOG_TRACE;
         $sys->function_name = system_log_api::TV_FUNC_NAME;
         $sys->solver_name = system_log_api::TV_SOLVE_ID;
-        $sys->status_name = $sys_log_stati->id(sys_log_status::NEW);
+        $sys->status_name = $sys_log_stati->id(sys_log_status::OPEN);
         return $sys;
     }
 

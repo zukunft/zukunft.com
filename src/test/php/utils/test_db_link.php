@@ -32,13 +32,14 @@
 
 function run_db_link_test(testing $t): void
 {
+    global $change_log_tables;
 
     $t->header('Test database link functions (zu_lib_sql_code_link.php)');
 
     // test code link
     $id = change_log_table::WORD;
     $target = 5;
-    $result = cl(db_cl::LOG_TABLE, $id);
+    $result = $change_log_tables->id($id);
     $t->dsp(", sql_code_link " . $id, $target, $result);
 
 }

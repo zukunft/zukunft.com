@@ -282,7 +282,7 @@ class system_unit_tests
         $log->log_trace = system_log_api::TV_LOG_TRACE;
         $log->function_name = system_log_api::TV_FUNC_NAME;
         $log->solver_name = system_log_api::TV_SOLVE_ID;
-        $log->status_name = $sys_log_stati->id(sys_log_status::NEW);
+        $log->status_name = $sys_log_stati->id(sys_log_status::OPEN);
         $log_dsp = $log->get_dsp_obj();
         $created = $log_dsp->get_json();
         $expected = file_get_contents(PATH_TEST_FILES . 'api/system/system_log.json');

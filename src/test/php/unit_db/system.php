@@ -53,8 +53,8 @@ class system_unit_db_tests
         $t->assert('load status', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $sys_log_stati->id(sys_log_status::NEW);
-        $t->assert('check status ' . sys_log_status::NEW, $result, 1);
+        $result = $sys_log_stati->id(sys_log_status::OPEN);
+        $t->assert('check status ' . sys_log_status::OPEN, $result, 1);
 
         $t->subheader('System batch job type tests');
 

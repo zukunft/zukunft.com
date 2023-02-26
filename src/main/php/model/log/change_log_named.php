@@ -215,6 +215,8 @@ class change_log_named extends change_log
     function load_sql_old(string $type): sql_par
     {
         global $db_con;
+        global $change_log_tables;
+
         $result = ''; // reset the html code var
 
         $qp = new sql_par(self::class);
@@ -236,27 +238,27 @@ class change_log_named extends change_log
         $sql_row = ' s.row_id  = $2 ';
         // the class specific settings
         if ($type == user::class) {
-            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD) . " 
-                   OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::WORD) . " 
+                   OR f.table_id = " . $change_log_tables->id(change_log_table::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 's.user_id = u.user_id
                 AND s.user_id = ' . $this->usr->id . ' ';
         } elseif ($type == word::class) {
-            //$db_con->add_par(sql_db::PAR_INT, cl(db_cl::LOG_TABLE, change_log_table::WORD));
-            //$db_con->add_par(sql_db::PAR_INT, cl(db_cl::LOG_TABLE, change_log_table::WORD_USR));
+            //$db_con->add_par(sql_db::PAR_INT, $change_log_tables->id(change_log_table::WORD));
+            //$db_con->add_par(sql_db::PAR_INT, $change_log_tables->id(change_log_table::WORD_USR));
             $sql_where = " s.change_field_id = $1 ";
         } elseif ($type == value::class) {
-            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VALUE) . " 
-                     OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VALUE_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VALUE) . " 
+                     OR f.table_id = " . $change_log_tables->id(change_log_table::VALUE_USR) . ") AND ";
         } elseif ($type == formula::class) {
-            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::FORMULA) . " 
-                     OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::FORMULA_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::FORMULA) . " 
+                     OR f.table_id = " . $change_log_tables->id(change_log_table::FORMULA_USR) . ") AND ";
         } elseif ($type == view::class) {
-            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW) . " 
-                     OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VIEW) . " 
+                     OR f.table_id = " . $change_log_tables->id(change_log_table::VIEW_USR) . ") AND ";
         } elseif ($type == view_cmp::class) {
-            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_COMPONENT) . " 
-                     OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_COMPONENT_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VIEW_COMPONENT) . " 
+                     OR f.table_id = " . $change_log_tables->id(change_log_table::VIEW_COMPONENT_USR) . ") AND ";
         }
 
         if ($sql_where == '') {

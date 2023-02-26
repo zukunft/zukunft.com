@@ -64,6 +64,8 @@ class user_log_display
         log_debug('user_log_display->dsp_hist ' . $this->type . ' id ' . $this->id . ' size ' . $this->size . ' page ' . $this->page . ' call from ' . $this->call . ' original call from ' . $this->back);
 
         global $db_con;
+        global $change_log_tables;
+
         $result = ''; // reset the html code var
 
         $html = new html_base();
@@ -86,26 +88,26 @@ class user_log_display
         $sql_user = 'c.user_id = u.user_id';
         // the class specific settings
         if ($this->type == user::class) {
-            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD) . " 
-                   OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::WORD) . " 
+                   OR f.table_id = " . $change_log_tables->id(change_log_table::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 'c.user_id = u.user_id
                 AND c.user_id = ' . $this->usr->id() . ' ';
         } elseif ($this->type == word::class) {
-            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD) . " 
-                     OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::WORD) . " 
+                     OR f.table_id = " . $change_log_tables->id(change_log_table::WORD_USR) . ") AND ";
         } elseif ($this->type == value::class) {
-            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VALUE) . " 
-                     OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VALUE_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VALUE) . " 
+                     OR f.table_id = " . $change_log_tables->id(change_log_table::VALUE_USR) . ") AND ";
         } elseif ($this->type == formula::class) {
-            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::FORMULA) . " 
-                     OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::FORMULA_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::FORMULA) . " 
+                     OR f.table_id = " . $change_log_tables->id(change_log_table::FORMULA_USR) . ") AND ";
         } elseif ($this->type == view::class) {
-            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW) . " 
-                     OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VIEW) . " 
+                     OR f.table_id = " . $change_log_tables->id(change_log_table::VIEW_USR) . ") AND ";
         } elseif ($this->type == view_cmp::class) {
-            $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_COMPONENT) . " 
-                     OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_COMPONENT_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VIEW_COMPONENT) . " 
+                     OR f.table_id = " . $change_log_tables->id(change_log_table::VIEW_COMPONENT_USR) . ") AND ";
         }
 
         if ($sql_where == '') {
@@ -284,6 +286,8 @@ class user_log_display
 
     function dsp_hist_links_sql(sql_db $db_con, bool $get_name = false): string
     {
+        global $change_log_tables;
+
         $sql_name = 'user_log_links_by_' . $this->type;
 
         // select the change table to use
@@ -292,53 +296,53 @@ class user_log_display
         $sql_row = '';
         $sql_user = '';
         if ($this->type == 'user') {
-            $sql_where = " ( c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::USR) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $change_log_tables->id(change_log_table::USR) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = '';
             $sql_user = 'c.user_id = u.user_id
                 AND c.user_id = ' . $this->usr->id() . ' ';
         } elseif ($this->type == 'word') {
-            $sql_where = " ( c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::TRIPLE) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::TRIPLE_USR) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $change_log_tables->id(change_log_table::WORD) . " 
+                    OR c.change_table_id = " . $change_log_tables->id(change_log_table::WORD_USR) . " 
+                    OR c.change_table_id = " . $change_log_tables->id(change_log_table::TRIPLE) . " 
+                    OR c.change_table_id = " . $change_log_tables->id(change_log_table::TRIPLE_USR) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.old_to_id = ' . $this->id . ' OR
                        c.new_from_id = ' . $this->id . ' OR c.new_to_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
         } elseif ($this->type == 'value') {
-            $sql_where = " ( c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VALUE) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VALUE_USR) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VALUE_LINK) . ") AND ";
+            $sql_where = " ( c.change_table_id = " . $change_log_tables->id(change_log_table::VALUE) . " 
+                    OR c.change_table_id = " . $change_log_tables->id(change_log_table::VALUE_USR) . " 
+                    OR c.change_table_id = " . $change_log_tables->id(change_log_table::VALUE_LINK) . ") AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.new_from_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
         } elseif ($this->type == 'formula') {
-            $sql_where = " ( c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::FORMULA) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::FORMULA_USR) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::FORMULA_LINK) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::FORMULA_LINK_USR) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $change_log_tables->id(change_log_table::FORMULA) . " 
+                    OR c.change_table_id = " . $change_log_tables->id(change_log_table::FORMULA_USR) . " 
+                    OR c.change_table_id = " . $change_log_tables->id(change_log_table::FORMULA_LINK) . " 
+                    OR c.change_table_id = " . $change_log_tables->id(change_log_table::FORMULA_LINK_USR) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.new_from_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
         } elseif ($this->type == 'view') {
-            $sql_where = " ( c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_USR) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_LINK) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_LINK_USR) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $change_log_tables->id(change_log_table::VIEW) . " 
+                    OR c.change_table_id = " . $change_log_tables->id(change_log_table::VIEW_USR) . " 
+                    OR c.change_table_id = " . $change_log_tables->id(change_log_table::VIEW_LINK) . " 
+                    OR c.change_table_id = " . $change_log_tables->id(change_log_table::VIEW_LINK_USR) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.new_from_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
         } elseif ($this->type == 'view_cmp') {
-            $sql_where = " ( c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_COMPONENT) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_COMPONENT_USR) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_LINK) . " 
-                    OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_LINK_USR) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $change_log_tables->id(change_log_table::VIEW_COMPONENT) . " 
+                    OR c.change_table_id = " . $change_log_tables->id(change_log_table::VIEW_COMPONENT_USR) . " 
+                    OR c.change_table_id = " . $change_log_tables->id(change_log_table::VIEW_LINK) . " 
+                    OR c.change_table_id = " . $change_log_tables->id(change_log_table::VIEW_LINK_USR) . " ) AND ";
             $sql_field = 'c.old_text_from AS old, 
                     c.new_text_from AS new';
             $sql_row = ' (c.old_to_id = ' . $this->id . ' OR c.new_to_id = ' . $this->id . ') AND ';
