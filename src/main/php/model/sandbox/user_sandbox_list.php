@@ -32,6 +32,7 @@
 
 class sandbox_list extends base_list
 {
+
     /*
      *  object vars
      */
@@ -79,40 +80,6 @@ class sandbox_list extends base_list
 
 
     /*
-     *  information functions
-     */
-
-    /**
-     * @return bool true if the list is already empty
-     */
-    function is_empty(): bool
-    {
-        $result = true;
-        if ($this->lst != null) {
-            if (count($this->lst) > 0) {
-                $result = false;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @return array with the database ids of all objects of this list
-     */
-    function ids(): array
-    {
-        $result = array();
-        foreach ($this->lst as $sbx_obj) {
-            // use only valid ids
-            if ($sbx_obj->id() <> 0) {
-                $result[] = $sbx_obj->id();
-            }
-        }
-        return $result;
-    }
-
-
-    /*
      * modification
      */
 
@@ -124,15 +91,13 @@ class sandbox_list extends base_list
     function add_obj(object $obj_to_add): bool
     {
         $result = false;
+
         // check parameters
         if ($obj_to_add->user() == null) {
             $obj_to_add->set_user($this->user());
         }
-        if ($obj_to_add != null) {
-            log_debug($obj_to_add->dsp_id());
-            if ($obj_to_add->id() <> 0 or $obj_to_add->name() != '') {
-                $result = parent::add_obj($obj_to_add);
-            }
+        if ($obj_to_add->id() <> 0 or $obj_to_add->name() != '') {
+            $result = parent::add_obj($obj_to_add);
         }
         return $result;
     }

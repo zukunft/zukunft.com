@@ -129,6 +129,40 @@ class base_list
 
 
     /*
+     *  information functions
+     */
+
+    /**
+     * @return bool true if the list is already empty
+     */
+    function is_empty(): bool
+    {
+        $result = true;
+        if ($this->lst != null) {
+            if (count($this->lst) > 0) {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array with the database ids of all objects of this list
+     */
+    function ids(): array
+    {
+        $result = array();
+        foreach ($this->lst as $sbx_obj) {
+            // use only valid ids
+            if ($sbx_obj->id() <> 0) {
+                $result[] = $sbx_obj->id();
+            }
+        }
+        return $result;
+    }
+
+
+    /*
      * search
      */
 
