@@ -174,16 +174,6 @@ class library
         return $result;
     }
 
-
-    /*
-     * short forms for the reflection class
-     */
-
-    function base_class_name(string $class_name): string
-    {
-        return $this->str_right_of($class_name,'\\');
-    }
-
     /*
      * string functions (to be dismissed)
      * some small string related functions to shorten code and make the code clearer
@@ -197,6 +187,16 @@ class library
     function str_right(string $text, string $pos): string
     {
         return substr($text, $pos * -1);
+    }
+
+
+    /*
+     * short forms for the reflection class
+     */
+
+    function base_class_name(string $class_name): string
+    {
+        return $this->str_right_of($class_name,'\\');
     }
 
 }

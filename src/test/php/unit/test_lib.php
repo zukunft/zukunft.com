@@ -56,71 +56,94 @@ class string_unit_tests
         $result = $lib->trim_all_spaces($text);
         $t->assert("trim_all_spaces", $result, $target);
 
-        // test trim line feed and spaces
+        // test trim of an SQL statement to the relevant part
+        // to make two SQL statements more comparable
         $text = "field1, field2 FROM table_name;";
         $target = "field1,field2 FROM table_name;";
         $result = $lib->trim_sql($text);
-        $t->assert("trim_all_spaces", $result, $target);
+        $t->assert("trim_sql", $result, $target);
 
-        // test str_left
-        $text = "This are the left 4";
-        $pos = 4;
-        $target = "This";
-        $result = $lib->str_left($text, $pos);
-        $t->assert(", str_left: What are the left \"" . $pos . "\" chars of \"" . $text . "\"", $result, $target);
+        // test trim of an JSON string to the relevant part
+        // to make two JSON strings more comparable
+        $text = ' { "field" :  "value", "array": [ "item" ] } ';
+        $target = '{"field" : "value","array":[ "item" ]}';
+        $result = $lib->trim_json($text);
+        $t->assert("trim_json", $result, $target);
 
-        // test str_right
-        $text = "This are the right 7";
-        $pos = 7;
-        $target = "right 7";
-        $result = $lib->str_right($text, $pos);
-        $t->assert(", str_right: What are the right \"" . $pos . "\" chars of \"" . $text . "\"", $result, $target);
+        // test trim of an HTML string to the relevant part
+        // to make two HTML strings more comparable
+        $text = ' <html>  <table >  <tr>  <th>header</th>   </tr>  <tr>  <td>data</td>   </tr>  </table>   </html> ';
+        $target = '<html><table><tr><th>header</th></tr><tr><td>data</td></tr></table></html>';
+        $result = $lib->trim_html($text);
+        $t->assert("trim_html", $result, $target);
+
+        // test str_between
+        $text = "The formula id of {f23}.";
+        $maker_start = "{f";
+        $maker_end = "}";
+        $target = "23";
+        $result = $lib->str_between($text, $maker_start, $maker_end);
+        $t->assert("str_between: " . $text, $result, $target);
+
+        // test str_between
+        $text = "The formula id of {f4} / {f5}.";
+        $target = "4";
+        $result = $lib->str_between($text, $maker_start, $maker_end);
+        $t->assert("str_between: " . $text, $result, $target);
 
         // test str_left_of
         $text = "This is left of that ";
         $maker = " of that";
         $target = "This is left";
         $result = $lib->str_left_of($text, $maker);
-        $t->assert(", str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $result, $target);
+        $t->assert("str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $result, $target);
 
         // test str_left_of
         $text = "This is left of that, but not of that";
         $result = $lib->str_left_of($text, $maker);
-        $t->assert(", str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $result, $target);
+        $t->assert("str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $result, $target);
 
         // test str_right_of
         $text = "That is right of this";
         $maker = "That is right ";
         $target = "of this";
         $result = $lib->str_right_of($text, $maker);
-        $t->assert(", str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $result, $target);
+        $t->assert("str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $result, $target);
 
         // test str_right_of
         $text = "00000";
         $maker = "0";
         $target = "0000";
         $result = $lib->str_right_of($text, $maker);
-        $t->assert(", str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $result, $target);
+        $t->assert("str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $result, $target);
 
         // test str_right_of
         $text = "The formula id of {f23}.";
         $maker = "{f";
         $target = "23}.";
         $result = $lib->str_right_of($text, $maker);
-        $t->assert(", str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $result, $target);
+        $t->assert("str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $result, $target);
 
-        // test str_between
-        $maker_start = "{f";
-        $maker_end = "}";
-        $target = "23";
-        $result = $lib->str_between($text, $maker_start, $maker_end);
-        $t->assert(", str_between: " . $text, $result, $target);
+        // test str_left
+        $text = "This are the left 4";
+        $pos = 4;
+        $target = "This";
+        $result = $lib->str_left($text, $pos);
+        $t->assert("str_left: What are the left \"" . $pos . "\" chars of \"" . $text . "\"", $result, $target);
 
-        // test str_between
-        $text = "The formula id of {f4} / {f5}.";
-        $target = "4";
-        $result = $lib->str_between($text, $maker_start, $maker_end);
-        $t->assert(", str_between: " . $text, $result, $target);
+        // test str_right
+        $text = "This are the right 7";
+        $pos = 7;
+        $target = "right 7";
+        $result = $lib->str_right($text, $pos);
+        $t->assert("str_right: What are the right \"" . $pos . "\" chars of \"" . $text . "\"", $result, $target);
+
+        // test base_class_name
+        $class = 'cfg\language';
+        $target = 'language';
+        $result = $lib->base_class_name($class);
+        $t->assert("base_class_name", $result, $target);
+
 
         $t->subheader('arrays and lists');
 
@@ -128,21 +151,21 @@ class string_unit_tests
         $test_array = [1, 2, 3];
         $target = '1,2,3';
         $result = dsp_array($test_array);
-        $t->assert(", dsp_array: ", $result, $target);
+        $t->assert("dsp_array: ", $result, $target);
 
         $test_array = ["A", "B", "C"];
         $target = 'A,B,C';
         $result = dsp_array($test_array);
-        $t->assert(", dsp_array: ", $result, $target);
+        $t->assert("dsp_array: ", $result, $target);
 
         $test_array = [];
         $target = 'null';
         $result = dsp_array($test_array);
-        $t->assert(", dsp_array: ", $result, $target);
+        $t->assert("dsp_array: ", $result, $target);
 
         $test_array = null;
         $result = dsp_array($test_array);
-        $t->assert(", dsp_array: ", $result, $target);
+        $t->assert("dsp_array: ", $result, $target);
 
 
         $t->subheader('json');
@@ -254,46 +277,46 @@ class string_unit_tests
         $json_array = json_decode($json_text, true);
         $json_clean = json_clean($json_array);
         $result = $json_clean == json_decode($json_target, true);
-        $t->assert(", json_clean", $result, true);
+        $t->assert("json_clean", $result, true);
 
         // ... plausibility check
         $result = $json_clean == json_decode($json_check, true);
-        $t->assert(", json_clean - false test", $result, false);
+        $t->assert("json_clean - false test", $result, false);
 
         // recursive count
         $result = count_recursive($json_array, 0);
-        $t->assert(", count_recursive - count level 0", $result, 0);
+        $t->assert("count_recursive - count level 0", $result, 0);
         $result = count_recursive($json_array, 1);
-        $t->assert(", count_recursive - count level 0", $result, 4);
+        $t->assert("count_recursive - count level 0", $result, 4);
         $result = count_recursive($json_array, 2);
-        $t->assert(", count_recursive - count level 0", $result, 8);
+        $t->assert("count_recursive - count level 0", $result, 8);
         $result = count_recursive($json_array, 20);
-        $t->assert(", count_recursive - count level 0", $result, 8);
+        $t->assert("count_recursive - count level 0", $result, 8);
 
         // recursive diff
         $result = json_encode(array_recursive_diff(
             json_decode($json_needle, true),
             json_decode($json_haystack, true)));
-        $t->assert(", array_recursive_diff - contains", $result, '[]');
+        $t->assert("array_recursive_diff - contains", $result, '[]');
         $result = json_encode(array_recursive_diff(
             json_decode($json_needle_without_array, true),
             json_decode($json_haystack, true)));
-        $t->assert(", array_recursive_diff - contains without array", $result, '[]');
+        $t->assert("array_recursive_diff - contains without array", $result, '[]');
         $result = json_encode(array_recursive_diff(
             json_decode($json_needle, true),
             json_decode($json_haystack_with_diff, true)));
         $expected = '{"array":{"text field":"text value"}}';
-        $t->assert(", array_recursive_diff - diff expected", $result, $expected);
+        $t->assert("array_recursive_diff - diff expected", $result, $expected);
         $result = json_encode(array_recursive_diff(
             json_decode($json_needle, true),
             json_decode($json_haystack_without_match, true)));
         $expected = '{"array":{"id":1,"text field":"text value","0":{"id":1,"text field":"text value"}}}';
-        $t->assert(", array_recursive_diff - without match", $result, $expected);
+        $t->assert("array_recursive_diff - without match", $result, $expected);
         $result = json_encode(array_recursive_diff(
             json_decode($json_needle, true),
             json_decode($json_haystack_without_array, true)));
         $expected = '{"array":[{"id":1,"text field":"text value"}]}';
-        $t->assert(", array_recursive_diff - without array", $result, $expected);
+        $t->assert("array_recursive_diff - without array", $result, $expected);
 
 
         $t->subheader('json remove volatile fields');
