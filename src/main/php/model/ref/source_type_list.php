@@ -163,12 +163,14 @@ class source_type_list extends type_list
     function get_by_id(int $id): ?source_type
     {
         global $source_types;
+
+        $lib = new library();
         $result = null;
         if ($id > 0) {
             if (array_key_exists($id, $source_types->lst)) {
                 $result = $source_types->lst[$id];
             } else {
-                log_err('Source type with is ' . $id . ' not found in ' . dsp_array($source_types->lst));
+                log_err('Source type with is ' . $id . ' not found in ' . $lib->dsp_array($source_types->lst));
             }
         } else {
             log_debug('Source type id not not set');

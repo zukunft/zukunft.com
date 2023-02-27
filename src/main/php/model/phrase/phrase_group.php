@@ -858,11 +858,13 @@ class phrase_group extends db_object
             }
             if ($sql <> '') {
                 //$sql_result = $db_con->exe($sql, 'phrase_group->save_phr_links', array());
-                $result = $db_con->exe_try('Adding of group links "' . dsp_array($add_ids) . '" for ' . $this->id,
+                $lib = new library();
+                $result = $db_con->exe_try('Adding of group links "' . $lib->dsp_array($add_ids) . '" for ' . $this->id,
                     $sql);
             }
         }
-        log_debug('added links "' . dsp_array($add_ids) . '" lead to ' . implode(",", $db_ids));
+        $lib = new library();
+        log_debug('added links "' . $lib->dsp_array($add_ids) . '" lead to ' . implode(",", $db_ids));
 
         // remove the links not needed any more
         if (count($del_ids) > 0) {
@@ -871,10 +873,10 @@ class phrase_group extends db_object
                WHERE phrase_group_id = ' . $this->id . '
                  AND ' . $field_name . ' IN (' . sql_array($del_ids) . ');';
             //$sql_result = $db_con->exe($sql, "phrase_group->delete_phr_links", array());
-            $result = $db_con->exe_try('Removing of group links "' . dsp_array($del_ids) . '" from ' . $this->id,
+            $result = $db_con->exe_try('Removing of group links "' . $lib->dsp_array($del_ids) . '" from ' . $this->id,
                 $sql);
         }
-        log_debug('deleted links "' . dsp_array($del_ids) . '" lead to ' . implode(",", $db_ids));
+        log_debug('deleted links "' . $lib->dsp_array($del_ids) . '" lead to ' . implode(",", $db_ids));
 
         return $result;
     }

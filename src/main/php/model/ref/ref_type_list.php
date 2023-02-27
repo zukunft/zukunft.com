@@ -159,12 +159,14 @@ class ref_type_list extends type_list
     function get_by_id(int $id): ?ref_type
     {
         global $ref_types;
+
+        $lib = new library();
         $result = null;
         if ($id > 0) {
             if (array_key_exists($id, $ref_types->lst)) {
                 $result = $ref_types->lst[$id];
             } else {
-                log_err('Ref type with is ' . $id . ' not found in ' . dsp_array($ref_types->lst));
+                log_err('Ref type with is ' . $id . ' not found in ' . $lib->dsp_array($ref_types->lst));
             }
         } else {
             log_debug('Ref type id not not set');

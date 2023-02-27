@@ -131,7 +131,8 @@ class user_list
 
     function name_lst(): string
     {
-        return dsp_array($this->names());
+        $lib = new library();
+        return $lib->dsp_array($this->names());
     }
 
     function names(): array
@@ -169,7 +170,8 @@ class user_list
             if (array_key_exists($code_id, $this->code_id_hash)) {
                 $result = $this->code_id_hash[$code_id];
             } else {
-                log_err('User id not found for ' . $code_id . ' in ' . dsp_array($this->code_id_hash));
+                $lib = new library();
+                log_err('User id not found for ' . $code_id . ' in ' . $lib->dsp_array($this->code_id_hash));
             }
         } else {
             log_debug('Type code id not not set');

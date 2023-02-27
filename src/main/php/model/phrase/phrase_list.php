@@ -1529,11 +1529,12 @@ class phrase_list extends user_sandbox_list_named
      */
     function dsp_id(): string
     {
+        $lib = new library();
         $name = $this->dsp_name();
         if ($name <> '""') {
-            $result = $name . ' (' . dsp_array($this->id_lst()) . ')';
+            $result = $name . ' (' . $lib->dsp_array($this->id_lst()) . ')';
         } else {
-            $result = dsp_array($this->id_lst());
+            $result = $lib->dsp_array($this->id_lst());
         }
         return $result;
     }
@@ -2197,6 +2198,8 @@ class phrase_list extends user_sandbox_list_named
     function name_sort(): array
     {
         log_debug($this->dsp_id() . ' and user ' . $this->user()->name);
+        $lib = new library();
+
         $name_lst = array();
         $result = array();
         $pos = 0;
@@ -2205,7 +2208,7 @@ class phrase_list extends user_sandbox_list_named
             $pos++;
         }
         asort($name_lst);
-        log_debug('sorted "' . implode('","', $name_lst) . '" (' . dsp_array(array_keys($name_lst)) . ')');
+        log_debug('sorted "' . implode('","', $name_lst) . '" (' . $lib->dsp_array(array_keys($name_lst)) . ')');
         foreach (array_keys($name_lst) as $sorted_id) {
             log_debug('get ' . $sorted_id);
             $phr_to_add = $this->lst[$sorted_id];

@@ -1327,26 +1327,6 @@ function array_trim(?array $in_array): array
     return $result;
 }
 
-
-/**
- * create a human-readable string from an array
- * @param array|null $in_array the array that should be formatted
- * @return string the value comma seperated or "null" if the array is empty
- */
-function dsp_array(?array $in_array, bool $with_keys = false): string
-{
-    $result = 'null';
-    if ($in_array != null) {
-        if (count($in_array) > 0) {
-            $result = implode(',', array_flat($in_array));
-        }
-    }
-    if ($with_keys) {
-        $result .= ' (keys ' . dsp_array_keys($in_array) . ')';
-    }
-    return $result;
-}
-
 function dsp_array_keys(?array $in_array): string
 {
     $result = 'null';
@@ -1405,7 +1385,8 @@ function camelize_ex_1(string $input, string $separator = '_'): string
 // get all entries of the list that are not in the second list
 function zu_lst_not_in($in_lst, $exclude_lst): array
 {
-    log_debug('zu_lst_not_in(' . dsp_array(array_keys($in_lst)) . ',ex' . dsp_array($exclude_lst) . ')');
+    $lib = new library();
+    log_debug('zu_lst_not_in(' . $lib->dsp_array(array_keys($in_lst)) . ',ex' . $lib->dsp_array($exclude_lst) . ')');
     $result = array();
     foreach (array_keys($in_lst) as $lst_entry) {
         if (!in_array($lst_entry, $exclude_lst)) {
@@ -1420,14 +1401,15 @@ function zu_lst_not_in($in_lst, $exclude_lst): array
  */
 function zu_lst_not_in_no_key(array $in_lst, array $exclude_lst): array
 {
-    log_debug('zu_lst_not_in_no_key(' . dsp_array($in_lst) . 'ex' . dsp_array($exclude_lst) . ')');
+    $lib = new library();
+    log_debug('zu_lst_not_in_no_key(' . $lib->dsp_array($in_lst) . 'ex' . $lib->dsp_array($exclude_lst) . ')');
     $result = array();
     foreach ($in_lst as $lst_entry) {
         if (!in_array($lst_entry, $exclude_lst)) {
             $result[] = $lst_entry;
         }
     }
-    log_debug(dsp_array($result));
+    log_debug($lib->dsp_array($result));
     return $result;
 }
 
@@ -1541,6 +1523,7 @@ function zu_lst_common($id_lst1, $id_lst2): array
 // if this is used for a val_lst_wrd and the sub_array_pos is 1 the common list of word ids is returned
 function zu_lst_get_common_ids($val_lst, $sub_array_pos)
 {
+    $lib = new library();
     log_debug("zu_lst_get_common_ids (" . zu_lst_dsp($val_lst) . ")");
     $result = 0;
     //print_r ($val_lst);
@@ -1555,7 +1538,7 @@ function zu_lst_get_common_ids($val_lst, $sub_array_pos)
         }
     }
 
-    log_debug(dsp_array($result));
+    log_debug($lib->dsp_array($result));
     return $result;
 }
 
@@ -1563,6 +1546,7 @@ function zu_lst_get_common_ids($val_lst, $sub_array_pos)
 // if this is used for a val_lst_wrd and the sub_array_pos is 1 the common list of word ids is returned
 function zu_lst_all_ids($val_lst, $sub_array_pos)
 {
+    $lib = new library();
     log_debug(zu_lst_dsp($val_lst) . ",pos" . $sub_array_pos);
     $result = array();
     foreach ($val_lst as $val_entry) {
@@ -1580,7 +1564,7 @@ function zu_lst_all_ids($val_lst, $sub_array_pos)
         }
     }
 
-    log_debug(dsp_array($result));
+    log_debug($lib->dsp_array($result));
     return $result;
 }
 
@@ -1636,11 +1620,12 @@ function zu_lst_to_flat_lst($complex_lst): array
 // display a list; if the list is an array the first field is shown
 function zu_lst_dsp($lst_to_dsp)
 {
+    $lib = new library();
     //zu_debug("zu_lst_dsp");
     if (is_array($lst_to_dsp)) {
         $result_array = zu_lst_to_array($lst_to_dsp);
         //zu_debug("zu_lst_dsp -> converted");
-        $result = dsp_array($result_array);
+        $result = $lib->dsp_array($result_array);
     } else {
         $result = $lst_to_dsp;
     }
@@ -1663,9 +1648,10 @@ function zu_lst_merge_with_key($lst_1, $lst_2): array
 function dsp_var($var_to_format): string
 {
     $result = '';
+    $lib = new library();
     if ($var_to_format != null) {
         if (is_array($var_to_format)) {
-            $result = dsp_array($var_to_format);
+            $result = $lib->dsp_array($var_to_format);
         } else {
             $result = $var_to_format;
         }

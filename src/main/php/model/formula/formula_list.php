@@ -408,7 +408,8 @@ class formula_list extends sandbox_list
 
     function name(): string
     {
-        return dsp_array($this->names());
+        $lib = new library();
+        return $lib->dsp_array($this->names());
     }
 
     /**

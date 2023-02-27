@@ -1582,7 +1582,8 @@ class sql_db
     function exe(string $sql, string $sql_name = '', array $sql_array = array(), int $log_level = sys_log_level::ERROR)
     {
         global $debug;
-        log_debug('"' . $sql . '" with ' . dsp_array($sql_array) . ' named "' . $sql_name . '" for  user ' . $this->usr_id, $debug - 15);
+        $lib = new library();
+        log_debug('"' . $sql . '" with ' . $lib->dsp_array($sql_array) . ' named "' . $sql_name . '" for  user ' . $this->usr_id, $debug - 15);
 
         // Postgres part
         if ($this->db_type == sql_db::POSTGRES) {
@@ -3396,7 +3397,8 @@ class sql_db
         if (is_array($fields)) {
             if (count($fields) <> count($values)) {
                 if ($log_err) {
-                    log_fatal('MySQL insert call with different number of fields (' . dsp_count($fields) . ': ' . dsp_array($fields) . ') and values (' . dsp_count($values) . ': ' . dsp_array($values) . ').', "user_log->add");
+                    $lib = new library();
+                    log_fatal('MySQL insert call with different number of fields (' . dsp_count($fields) . ': ' . $lib->dsp_array($fields) . ') and values (' . dsp_count($values) . ': ' . $lib->dsp_array($values) . ').', "user_log->add");
                 }
             } else {
                 foreach (array_keys($fields) as $i) {
@@ -3635,8 +3637,9 @@ class sql_db
      */
     function delete($id_fields, $id_values): string
     {
+        $lib = new library();
         if (is_array($id_fields)) {
-            log_debug('in "' . $this->type . '" WHERE "' . dsp_array($id_fields) . '" IS "' . dsp_array($id_values) . '" for user ' . $this->usr_id);
+            log_debug('in "' . $this->type . '" WHERE "' . $lib->dsp_array($id_fields) . '" IS "' . $lib->dsp_array($id_values) . '" for user ' . $this->usr_id);
         } else {
             log_debug('in "' . $this->type . '" WHERE "' . $id_fields . '" IS "' . $id_values . '" for user ' . $this->usr_id);
 
@@ -4297,7 +4300,8 @@ class sql_db
         $missing_columns = array_diff($expected_columns, $real_columns);
         if (count($missing_columns) > 0) {
             // TODO add $this
-            log_err('Database column ' . dsp_array($missing_columns) . ' missing in ' . $table_name);
+            $lib = new library();
+            log_err('Database column ' . $lib->dsp_array($missing_columns) . ' missing in ' . $table_name);
             $result = false;
         }
         return $result;

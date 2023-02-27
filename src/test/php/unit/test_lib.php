@@ -37,6 +37,7 @@ class string_unit_tests
 {
     function run(testing $t): void
     {
+        global $debug;
 
         $t->header('Test the zukunft.com base functions (model/helper/library.php)');
 
@@ -150,22 +151,48 @@ class string_unit_tests
         // test dsp_array
         $test_array = [1, 2, 3];
         $target = '1,2,3';
-        $result = dsp_array($test_array);
-        $t->assert("dsp_array: ", $result, $target);
+        $result = $lib->dsp_array($test_array);
+        $t->assert("dsp_array numbers", $result, $target);
 
         $test_array = ["A", "B", "C"];
         $target = 'A,B,C';
-        $result = dsp_array($test_array);
-        $t->assert("dsp_array: ", $result, $target);
+        $result = $lib->dsp_array($test_array);
+        $t->assert("dsp_array string", $result, $target);
 
         $test_array = [];
         $target = 'null';
-        $result = dsp_array($test_array);
-        $t->assert("dsp_array: ", $result, $target);
+        $result = $lib->dsp_array($test_array);
+        $t->assert("dsp_array empty", $result, $target);
 
         $test_array = null;
-        $result = dsp_array($test_array);
-        $t->assert("dsp_array: ", $result, $target);
+        $result = $lib->dsp_array($test_array);
+        $t->assert("dsp_array null", $result, $target);
+
+        $mem_debug = $debug;
+        $debug = 1;
+        $test_array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        $target = '1,2,3,...,10';
+        $result = $lib->dsp_array($test_array);
+        $t->assert("dsp_array many numbers", $result, $target);
+
+        $debug = 11;
+        $test_array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        $target = '1,2,3,4,5,6,7,8,9,10';
+        $result = $lib->dsp_array($test_array);
+        $t->assert("dsp_array many number details", $result, $target);
+
+        $debug = 1;
+        $test_array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        $target = '0,1,2,...,9';
+        $result = $lib->dsp_array_keys($test_array);
+        $t->assert("dsp_array_keys many numbers", $result, $target);
+
+        $debug = 11;
+        $test_array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        $target = '0,1,2,3,4,5,6,7,8,9';
+        $result = $lib->dsp_array_keys($test_array);
+        $t->assert("dsp_array_keys many number details", $result, $target);
+        $debug = $mem_debug;
 
 
         $t->subheader('json');

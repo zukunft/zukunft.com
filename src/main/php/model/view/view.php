@@ -806,7 +806,8 @@ class view extends user_sandbox_named_with_type
         }
 
         if (!$result->is_ok()) {
-            $result->add_message(' when importing ' . dsp_array($in_ex_json));
+            $lib = new library();
+            $result->add_message(' when importing ' . $lib->dsp_array($in_ex_json));
         }
 
         return $result;

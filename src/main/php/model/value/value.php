@@ -1514,6 +1514,7 @@ class value extends user_sandbox_value
                         }
                     }
                 }
+                $lib = new library();
                 log_debug('add sql');
                 if ($sql <> '') {
                     //$sql_result = $db_con->exe($sql, "value->upd_phr_links", array());
@@ -1522,7 +1523,7 @@ class value extends user_sandbox_value
                         if ($sql_result) {
                             $sql_error = pg_result_error($sql_result);
                             if ($sql_error != '') {
-                                log_err('Error adding new group links "' . dsp_array($add_ids) . '" for ' . $this->id . ' using ' . $sql . ' failed due to ' . $sql_error);
+                                log_err('Error adding new group links "' . $lib->dsp_array($add_ids) . '" for ' . $this->id . ' using ' . $sql . ' failed due to ' . $sql_error);
                             }
                         }
                     } catch (Exception $e) {
@@ -1531,7 +1532,8 @@ class value extends user_sandbox_value
                     }
                 }
             }
-            log_debug('added links "' . dsp_array($add_ids) . '" lead to ' . implode(",", $db_ids));
+            $lib = new library();
+            log_debug('added links "' . $lib->dsp_array($add_ids) . '" lead to ' . implode(",", $db_ids));
 
             // remove the links not needed any more
             if (count($del_ids) > 0) {
@@ -1544,7 +1546,7 @@ class value extends user_sandbox_value
                 try {
                     $sql_result = $db_con->exe($sql);
                     if ($sql_result != '') {
-                        $msg = 'Removing the phrase group links "' . dsp_array($del_ids) . '" from ' . $this->id . ' failed because: ' . $sql_result;
+                        $msg = 'Removing the phrase group links "' . $lib->dsp_array($del_ids) . '" from ' . $this->id . ' failed because: ' . $sql_result;
                         log_warning($msg);
                         $result = $msg;
                     }

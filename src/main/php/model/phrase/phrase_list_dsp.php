@@ -77,7 +77,8 @@ class phrase_list_dsp_old extends phrase_list
     // return a list of the phrase ids as a sql compatible text
     function ids_txt()
     {
-        $result = dsp_array($this->id_lst());
+        $lib = new library();
+        $result = $lib->dsp_array($this->id_lst());
         return $result;
     }
 
@@ -94,7 +95,8 @@ class phrase_list_dsp_old extends phrase_list
     // return one string with all names of the list with the link
     function name_linked(): string
     {
-        $result = dsp_array($this->names_linked());
+        $lib = new library();
+        $result = $lib->dsp_array($this->names_linked());
         return $result;
     }
 

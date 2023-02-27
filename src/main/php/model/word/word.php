@@ -868,6 +868,7 @@ class word extends user_sandbox_named_with_type
     {
         log_debug('for ' . $this->dsp_id() . ' with "' . $col_wrd->name . '"');
 
+        $lib = new library();
         $is_part_of_dsp = $is_part_of->get_dsp_obj();
         $result = $this->dsp_obj()->header($is_part_of_dsp);
 
@@ -920,7 +921,7 @@ class word extends user_sandbox_named_with_type
                 asort($val_wrd_ids);
                 $val_wrd_lst = new word_list($this->user());
                 $val_wrd_lst->load_by_ids($val_wrd_ids);
-                log_debug('get group ' . dsp_array($val_wrd_ids));
+                log_debug('get group ' . $lib->dsp_array($val_wrd_ids));
                 $wrd_grp = $val_wrd_lst->get_grp();
                 if ($wrd_grp->id > 0) {
                     log_debug('got group ' . $wrd_grp->id);

@@ -825,6 +825,7 @@ class word_list extends sandbox_list
      */
     function diff_by_ids(array $del_wrd_ids)
     {
+        $lib = new library();
         foreach ($del_wrd_ids as $del_wrd_id) {
             if ($del_wrd_id > 0) {
                 if (in_array($del_wrd_id, $this->ids())) {
@@ -834,7 +835,7 @@ class word_list extends sandbox_list
                 }
             }
         }
-        log_debug($this->dsp_id() . ' (' . dsp_array($this->ids()));
+        log_debug($this->dsp_id() . ' (' . $lib->dsp_array($this->ids()));
     }
 
     /**
@@ -884,6 +885,7 @@ class word_list extends sandbox_list
     function wlsort(): array
     {
         log_debug($this->dsp_id() . ' and user ' . $this->user()->name);
+        $lib = new library();
         $name_lst = array();
         $result = array();
         $pos = 0;
@@ -892,7 +894,7 @@ class word_list extends sandbox_list
             $pos++;
         }
         asort($name_lst);
-        log_debug('sorted "' . implode('","', $name_lst) . '" (' . dsp_array(array_keys($name_lst)) . ')');
+        log_debug('sorted "' . implode('","', $name_lst) . '" (' . $lib->dsp_array(array_keys($name_lst)) . ')');
         foreach (array_keys($name_lst) as $sorted_id) {
             log_debug('get ' . $sorted_id);
             $wrd_to_add = $this->lst[$sorted_id];

@@ -241,7 +241,8 @@ class term_list extends user_sandbox_list_named
      */
     function ids_txt(): string
     {
-        return dsp_array($this->id_lst());
+        $lib = new library();
+        return $lib->dsp_array($this->id_lst());
     }
 
     /**

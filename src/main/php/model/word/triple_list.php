@@ -629,7 +629,8 @@ class triple_list
     {
         $result = '';
 
-        $id = dsp_array($this->ids);
+        $lib = new library();
+        $id = $lib->dsp_array($this->ids);
         $name = $this->name();
         if ($name <> '') {
             $result .= '"' . $name . '" (' . $id . ')';
@@ -643,7 +644,8 @@ class triple_list
     // description of the triple list for the user
     function name(): string
     {
-        return dsp_array($this->names());
+        $lib = new library();
+        return $lib->dsp_array($this->names());
     }
 
     // return a list of the triple names

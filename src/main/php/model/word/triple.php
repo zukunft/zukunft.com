@@ -1046,14 +1046,16 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             }
             if ($key == self::FLD_EX_FROM) {
                 if ($value == "") {
-                    $result->add_message('from name should not be empty at ' . dsp_array($in_ex_json));
+                    $lib = new library();
+                    $result->add_message('from name should not be empty at ' . $lib->dsp_array($in_ex_json));
                 } else {
                     $this->from = $this->import_phrase($value, $do_save);
                 }
             }
             if ($key == self::FLD_EX_TO) {
                 if ($value == "") {
-                    $result->add_message('to name should not be empty at ' . dsp_array($in_ex_json));
+                    $lib = new library();
+                    $result->add_message('to name should not be empty at ' . $lib->dsp_array($in_ex_json));
                 } else {
                     $this->to = $this->import_phrase($value, $do_save);
                 }

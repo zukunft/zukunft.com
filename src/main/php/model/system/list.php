@@ -172,12 +172,13 @@ class base_list
      */
     function get_by_id(int $id): ?object
     {
+        $lib = new library();
         $key_lst = $this->id_pos_lst();
         if (array_key_exists($id, $key_lst)) {
             $pos = $key_lst[$id];
             return $this->lst[$pos];
         } else {
-            log_err($id . ' not found in ' . dsp_array($key_lst));
+            log_err($id . ' not found in ' . $lib->dsp_array($key_lst));
             return null;
         }
     }

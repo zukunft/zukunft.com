@@ -112,7 +112,8 @@ class figure_list extends sandbox_list
      */
     function ids_txt(): string
     {
-        return dsp_array($this->ids());
+        $lib = new library();
+        return $lib->dsp_array($this->ids());
     }
 
     /**

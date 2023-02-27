@@ -202,7 +202,8 @@ class value_list_dsp_old extends value_list
                         // to be done for the list at once
                         $grp = new phrase_group($this->user());
                         $grp->load_by_ids(new phr_ids($val_wrd_ids));
-                        log_debug("val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id() . ".");
+                        $lib = new library();
+                        log_debug("val ids " . $lib->dsp_array($val_wrd_ids) . " = " . $grp->id() . ".");
 
                         $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                         if ($tbl_value->number() == "") {
@@ -303,7 +304,8 @@ class value_list_dsp_old extends value_list
                                 // to be done for the list at once
                                 $grp = new phrase_group($this->user());
                                 $grp->load_by_ids(new phr_ids($val_wrd_ids));
-                                log_debug("val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id() . ".");
+                                $lib = new library();
+                                log_debug("val ids " . $lib->dsp_array($val_wrd_ids) . " = " . $grp->id() . ".");
 
                                 $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                                 if ($tbl_value->number() == "") {

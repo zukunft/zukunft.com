@@ -59,8 +59,9 @@ class formula_element_group
      */
     function dsp_id(): string
     {
-        $id = dsp_array($this->ids());
-        $name = dsp_array($this->names());
+        $lib = new library();
+        $id = $lib->dsp_array($this->ids());
+        $name = $lib->dsp_array($this->names());
         $phr_name = '';
         if (isset($this->phr_lst)) {
             $phr_name = $this->phr_lst->dsp_name();
@@ -82,7 +83,8 @@ class formula_element_group
      */
     function name(): string
     {
-        return dsp_array($this->names());
+        $lib = new library();
+        return $lib->dsp_array($this->names());
     }
 
     // list of the formula element names independent of the element type

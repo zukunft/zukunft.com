@@ -1059,6 +1059,7 @@ class formula extends user_sandbox_named_with_type
         }
 
         // calculate the final numeric results
+        $lib = new library();
         if ($fv_lst->lst != null) {
             foreach ($fv_lst->lst as $fv) {
                 // at least the formula update should be used
@@ -1075,7 +1076,7 @@ class formula extends user_sandbox_named_with_type
                         if ($this->need_all_val) {
                             log_debug('calculate ' . $this->dsp_id() . ' only if all numbers are given');
                             if ($fv->val_missing) {
-                                log_debug('got some numbers for ' . $this->dsp_id() . ' and ' . dsp_array($fv->phr_ids()));
+                                log_debug('got some numbers for ' . $this->dsp_id() . ' and ' . $lib->dsp_array($fv->phr_ids()));
                             } else {
                                 if ($fv->is_std) {
                                     log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $fv->name_linked() . ': ' . $fv->num_text);
@@ -1514,7 +1515,7 @@ class formula extends user_sandbox_named_with_type
             $new_wrd_id = $this->get_word_id($frm_text);
         }
 
-        log_debug(dsp_array($result));
+        log_debug($lib->dsp_array($result));
         return $result;
     }
 
@@ -1538,7 +1539,7 @@ class formula extends user_sandbox_named_with_type
             $new_frm_id = $this->get_formula_id($frm_text);
         }
 
-        log_debug(dsp_array($result));
+        log_debug($lib->dsp_array($result));
         return $result;
     }
 
@@ -1564,7 +1565,8 @@ class formula extends user_sandbox_named_with_type
                 $elm_ids = $this->wrd_ids($frm_text, $frm_usr_id);
                 break;
         }
-        log_debug('got (' . dsp_array($elm_ids) . ') of type ' . $element_type . ' from text');
+        $lib = new library();
+        log_debug('got (' . $lib->dsp_array($elm_ids) . ') of type ' . $element_type . ' from text');
 
         // read the existing elements from the database
         $frm_elm_lst = new formula_element_list($this->user());
@@ -1577,12 +1579,14 @@ class formula extends user_sandbox_named_with_type
                 $elm_db_ids[] = $db_row['ref_id'];
             }
         }
-        log_debug('got (' . dsp_array($elm_db_ids) . ') of type ' . $element_type . ' from database');
+        $lib = new library();
+        log_debug('got (' . $lib->dsp_array($elm_db_ids) . ') of type ' . $element_type . ' from database');
 
         // add missing links
         $elm_add_ids = array_diff($elm_ids, $elm_db_ids);
         $elm_order_nbr = 1;
-        log_debug('add ' . $element_type . ' (' . dsp_array($elm_add_ids) . ')');
+        $lib = new library();
+        log_debug('add ' . $element_type . ' (' . $lib->dsp_array($elm_add_ids) . ')');
         foreach ($elm_add_ids as $elm_add_id) {
             $field_names = array();
             $field_values = array();
@@ -1611,7 +1615,8 @@ class formula extends user_sandbox_named_with_type
 
         // delete links not needed any more
         $elm_del_ids = array_diff($elm_db_ids, $elm_ids);
-        log_debug('del ' . $element_type . ' (' . dsp_array($elm_del_ids) . ')');
+        $lib = new library();
+        log_debug('del ' . $element_type . ' (' . $lib->dsp_array($elm_del_ids) . ')');
         foreach ($elm_del_ids as $elm_del_id) {
             $field_names = array();
             $field_values = array();

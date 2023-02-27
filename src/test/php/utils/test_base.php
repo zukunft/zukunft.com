@@ -1172,7 +1172,8 @@ class test_base
                         $test_result = false;
                     }
                 } else {
-                    log_err('Key ' . $key . ' missing in ' . dsp_array($result, true));
+                    $lib = new library();
+                    log_err('Key ' . $key . ' missing in ' . $lib->dsp_array($result, true));
                 }
             }
         } elseif (is_numeric($result) && is_numeric($target)) {
@@ -1201,11 +1202,12 @@ class test_base
         }
 
         // explain the check
+        $lib = new library();
         if (is_array($target)) {
             if ($test_type == 'contains') {
-                $msg .= " should contain \"" . dsp_array($target) . "\"";
+                $msg .= " should contain \"" . $lib->dsp_array($target) . "\"";
             } else {
-                $msg .= " should be \"" . dsp_array($target) . "\"";
+                $msg .= " should be \"" . $lib->dsp_array($target) . "\"";
             }
         } else {
             if ($test_type == 'contains') {
@@ -1239,7 +1241,7 @@ class test_base
                     }
                     $msg .= "\"";
                 } else {
-                    $msg .= "\"" . dsp_array($result) . "\"";
+                    $msg .= "\"" . $lib->dsp_array($result) . "\"";
                 }
             }
         } else {

@@ -96,7 +96,8 @@ class user_sandbox_link extends user_sandbox
     {
         global $db_con;
 
-        log_debug(dsp_array(array($from, $type, $to)));
+        $lib = new library();
+        log_debug($lib->dsp_array(array($from, $type, $to)));
         $qp = $this->load_sql_by_link($db_con, $from, $type, $to, $class);
         return parent::load($qp);
     }

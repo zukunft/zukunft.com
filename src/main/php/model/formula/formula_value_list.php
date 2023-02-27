@@ -339,6 +339,7 @@ class formula_value_list
     function names(): array
     {
         $result = array();
+        $lib = new library();
         if (isset($this->lst)) {
             foreach ($this->lst as $fv) {
                 $result[] = $fv->name();
@@ -351,7 +352,7 @@ class formula_value_list
                 }
             }
         }
-        log_debug('fv_lst->names (' . dsp_array($result) . ')');
+        log_debug('fv_lst->names (' . $lib->dsp_array($result) . ')');
         return $result;
     }
 
@@ -421,7 +422,8 @@ class formula_value_list
      */
     function add_frm_val(int $phr_id, $frm_phr_ids, $frm_row, $usr_id)
     {
-        log_debug($phr_id . ',' . dsp_array($frm_phr_ids) . ',u' . $this->user()->id() . ')');
+        $lib = new library();
+        log_debug($phr_id . ',' . $lib->dsp_array($frm_phr_ids) . ',u' . $this->user()->id() . ')');
 
         global $debug;
 
@@ -709,7 +711,8 @@ class formula_value_list
         $usr_lst = new user_list;
         $usr_lst->load_active();
 
-        log_debug('active users (' . dsp_array($usr_lst->names()) . ')');
+        $lib = new library();
+        log_debug('active users (' . $lib->dsp_array($usr_lst->names()) . ')');
         foreach ($usr_lst->lst as $usr) {
             // check
             $usr_calc_needed = False;

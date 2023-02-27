@@ -52,13 +52,14 @@ function run_word_list_test(testing $t): void
     $target = '"' . word_api::TN_MIO . '","' . word_api::TN_2021 . '","' . word_api::TN_ZH . '"'; // order adjusted based on the number of usage
     $t->assert('word_list->load by names for ' . $wrd_lst->dsp_id(), $result, $target);
 
+    $lib = new library();
     // test load by word list by group id
     /*$wrd_grp_id = $wrd_lst->grp_id;
     $wrd_lst = New word_list;
     $wrd_lst->usr = $usr;
     $wrd_lst->grp_id = $wrd_grp_id;
     $wrd_lst->load();
-    $result = dsp_array($wrd_lst->names());
+    $result = $lib->dsp_array($wrd_lst->names());
     $target = "million,Sales,wrd"; // order adjusted based on the number of usage
     $t->assert('word_list->load by word group id for "'.$wrd_grp_id.'"', $result, $target, TIMEOUT_LIMIT_DB_MULTI); */
 
@@ -66,7 +67,7 @@ function run_word_list_test(testing $t): void
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_names(array(word_api::TN_ZH));
     $wrd_lst_linked = $wrd_lst->load_linked_words($verbs->id(verb::IS_A), word_select_direction::UP);
-    $result = dsp_array($wrd_lst_linked->names());
+    $result = $lib->dsp_array($wrd_lst_linked->names());
     $target = word_api::TN_CANTON . "," . word_api::TN_CITY . "," . word_api::TN_COMPANY; // order adjusted based on the number of usage
     $t->assert('word_list->load_linked_words for "' . word_api::TN_ZH . '" "' . verb::IS_A . '" up', $result, $target);
 
@@ -74,7 +75,7 @@ function run_word_list_test(testing $t): void
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_names(array(word_api::TN_CASH));
     $parents = $wrd_lst->foaf_parents($verbs->id(verb::IS_PART_OF));
-    $result = dsp_array($parents->names());
+    $result = $lib->dsp_array($parents->names());
     $target = word_api::TN_ASSETS_CURRENT . "," . word_api::TN_ASSETS;
     $t->assert('word_list->foaf_parent for "' . word_api::TN_ZH . '" "' . verb::IS_A . '" up', $result, $target);
 
@@ -82,7 +83,7 @@ function run_word_list_test(testing $t): void
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_names(array(word_api::TN_CASH));
     $parents = $wrd_lst->parents($verbs->id(verb::IS_PART_OF), 1);
-    $result = dsp_array($parents->names());
+    $result = $lib->dsp_array($parents->names());
     $target = word_api::TN_ASSETS_CURRENT;
     $t->assert('word_list->parents for "' . word_api::TN_CASH . '" "' . verb::IS_PART_OF . '" up', $result, $target);
 
@@ -90,7 +91,7 @@ function run_word_list_test(testing $t): void
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_names(array(word_api::TN_CASH));
     $parents = $wrd_lst->parents($verbs->id(verb::IS_PART_OF), 2);
-    $result = dsp_array($parents->names());
+    $result = $lib->dsp_array($parents->names());
     $target = word_api::TN_ASSETS_CURRENT . "," . word_api::TN_ASSETS;
     $t->assert('word_list->parents for "' . word_api::TN_CASH . '" "' . verb::IS_PART_OF . '" up', $result, $target);
 
@@ -114,8 +115,8 @@ function run_word_list_test(testing $t): void
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_names(array(word_api::TN_ZH));
     $lst_is = $wrd_lst->is();
-    $result = dsp_array($lst_is->names());
-    $target = dsp_array(array(word_api::TN_CANTON, word_api::TN_CITY, word_api::TN_COMPANY)); // order adjusted based on the number of usage
+    $result = $lib->dsp_array($lst_is->names());
+    $target = $lib->dsp_array(array(word_api::TN_CANTON, word_api::TN_CITY, word_api::TN_COMPANY)); // order adjusted based on the number of usage
     $t->assert('word_list->is for ' . $wrd_lst->name() . ' up', $result, $target);
 
     // test "are" e.g. "Cantons are Zurich and ..."

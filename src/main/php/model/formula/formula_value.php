@@ -1130,6 +1130,7 @@ class formula_value extends db_object
     // create an HTML page that shows different levels of detail information for one formula result to explain to the user how the value is calculated
     function explain($lead_phr_id, $back): string
     {
+        $lib = new library();
         log_debug('formula_value->explain ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $result = '';
 
@@ -1146,8 +1147,8 @@ class formula_value extends db_object
         $val_phr_lst = clone $this->phr_lst;
         $val_phr_lst->add($this->time_phr);
         $val_wrd_lst = $val_phr_lst->wrd_lst_all();
-        $title .= dsp_array($val_wrd_lst->api_obj()->ex_measure_and_time_lst()->dsp_obj()->names_linked());
-        $time_phr = dsp_array($val_wrd_lst->dsp_obj()->time_lst()->dsp_obj()->names_linked());
+        $title .= $lib->dsp_array($val_wrd_lst->api_obj()->ex_measure_and_time_lst()->dsp_obj()->names_linked());
+        $time_phr = $lib->dsp_array($val_wrd_lst->dsp_obj()->time_lst()->dsp_obj()->names_linked());
         if ($time_phr <> '') {
             $title .= ' (' . $time_phr . ')';
         }
@@ -1243,7 +1244,8 @@ class formula_value extends db_object
     //      based on the frm id and the word group
     function update_depending(): array
     {
-        log_debug("(f" . $this->frm->id() . ",t" . dsp_array($this->phr_ids()) . ",tt" . $this->time_id . ",v" . $this->value . " and user " . $this->user()->name . ")");
+        $lib = new library();
+        log_debug("(f" . $this->frm->id() . ",t" . $lib->dsp_array($this->phr_ids()) . ",tt" . $this->time_id . ",v" . $this->value . " and user " . $this->user()->name . ")");
 
         global $db_con;
         $result = array();

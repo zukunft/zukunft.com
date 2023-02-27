@@ -148,12 +148,13 @@ function run_value_test(testing $t): void
         $t->dsp(', value->load words', $target, $result);
 
         // ... and check the word reloading by group
+        $lib = new library();
         $chk_val->phr_lst()->set_lst(array());
         $chk_val->load_phrases();
         if (!$chk_val->phr_lst()->is_empty()) {
             // TODO check if sort is needed
             //$chk_val->phr_lst()->wlsort();
-            $result = dsp_array($chk_val->phr_names());
+            $result = $lib->dsp_array($chk_val->phr_names());
         } else {
             $result = '';
         }

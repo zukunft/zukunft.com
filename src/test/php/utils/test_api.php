@@ -182,7 +182,8 @@ class test_api extends test_new_obj
             //$this->assert_api_post(source::class);
             $this->assert_api_del($class, $id);
         } else {
-            log_err($class . ' cannot be added via PU API call with ' . dsp_array($add_data));
+            $lib = new library();
+            log_err($class . ' cannot be added via PU API call with ' . $lib->dsp_array($add_data));
         }
     }
 
