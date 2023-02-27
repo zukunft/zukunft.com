@@ -515,6 +515,7 @@ class triple_list
     function load_old()
     {
         log_debug('triple_list->load');
+        $lib = new library();
 
         global $db_con;
 
@@ -596,7 +597,7 @@ class triple_list
                     }
                 }
             }
-            log_debug('triple_list->load ... done (' . dsp_count($this->lst) . ')');
+            log_debug('triple_list->load ... done (' . $lib->dsp_count($this->lst) . ')');
         }
     }
 

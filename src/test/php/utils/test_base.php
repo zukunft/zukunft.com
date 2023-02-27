@@ -1159,6 +1159,7 @@ class test_base
         $test_result = false;
         $txt = '';
         $test_diff = '';
+        $lib = new library();
 
         // do the compare depending on the type
         if (is_array($target) and is_array($result)) {
@@ -1202,7 +1203,6 @@ class test_base
         }
 
         // explain the check
-        $lib = new library();
         if (is_array($target)) {
             if ($test_type == 'contains') {
                 $msg .= " should contain \"" . $lib->dsp_array($target) . "\"";
@@ -1237,7 +1237,7 @@ class test_base
                         if ($result_item <> $result[0]) {
                             $msg .= ",";
                         }
-                        $msg .= implode(":", array_flat($result_item));
+                        $msg .= implode(":", $lib->array_flat($result_item));
                     }
                     $msg .= "\"";
                 } else {

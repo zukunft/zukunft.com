@@ -1182,7 +1182,7 @@ class formula_value extends db_object
         $exp = $frm->expression();
         //$elm_lst = $exp->element_lst ($back);
         $elm_grp_lst = $exp->element_grp_lst($back);
-        log_debug("elements loaded (" . dsp_count($elm_grp_lst->lst()) . " for " . $frm->ref_text . ")");
+        log_debug("elements loaded (" . $lib->dsp_count($elm_grp_lst->lst()) . " for " . $frm->ref_text . ")");
 
         $result .= ' where</br>';
 

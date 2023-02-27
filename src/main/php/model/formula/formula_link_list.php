@@ -157,6 +157,7 @@ class formula_link_list extends sandbox_list
     {
         log_debug('formula_link_list->ids');
         $result = array();
+        $lib = new library();
 
         foreach ($this->lst as $frm_lnk) {
             if ($frm_lnk->phrase_id() <> 0) {
@@ -170,7 +171,7 @@ class formula_link_list extends sandbox_list
             }
         }
 
-        log_debug('got ' . dsp_count($result));
+        log_debug('got ' . $lib->dsp_count($result));
         return (new phr_ids($result));
     }
 

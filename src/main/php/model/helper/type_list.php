@@ -35,6 +35,7 @@ namespace cfg;
 use api\type_list_api;
 use db_cl;
 use html\_type_list_dsp;
+use library;
 use sql_db;
 use sql_par;
 use verb;
@@ -249,13 +250,14 @@ class type_list
      */
     function id(string $code_id): int
     {
+        $lib = new library();
         $result = 0;
         if ($code_id != '' and $code_id != null) {
             if (array_key_exists($code_id, $this->hash)) {
                 $result = $this->hash[$code_id];
             } else {
                 $result = self::CODE_ID_NOT_FOUND;
-                log_debug('Type id not found for "' . $code_id . '" in ' . dsp_array_keys($this->hash));
+                log_debug('Type id not found for "' . $code_id . '" in ' . $lib->dsp_array_keys($this->hash));
             }
         } else {
             log_debug('Type code id not not set');

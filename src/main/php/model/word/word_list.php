@@ -400,6 +400,7 @@ class word_list extends sandbox_list
     {
 
         global $db_con;
+        $lib = new library();
         $additional_added = new word_list($this->user()); // list of the added words with this call
 
         $qp = $this->load_sql_linked_words($db_con, $verb_id, $direction);
@@ -409,7 +410,7 @@ class word_list extends sandbox_list
             $db_con->usr_id = $this->user()->id();
             $db_wrd_lst = $db_con->get($qp);
             if ($db_wrd_lst) {
-                log_debug('got ' . dsp_count($db_wrd_lst));
+                log_debug('got ' . $lib->dsp_count($db_wrd_lst));
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
                         if ($db_wrd[word::FLD_ID] > 0 and !in_array($db_wrd[word::FLD_ID], $this->ids())) {
@@ -903,7 +904,7 @@ class word_list extends sandbox_list
         }
         // check
         if (count($this->lst) <> count($result)) {
-            log_err("Sorting changed the number of words from " . dsp_count($this->lst) . " to " . dsp_count($result) . ".", "word_list->wlsort");
+            log_err("Sorting changed the number of words from " . $lib->dsp_count($this->lst) . " to " . $lib->dsp_count($result) . ".", "word_list->wlsort");
         } else {
             $this->lst = $result;
         }
@@ -960,6 +961,7 @@ class word_list extends sandbox_list
     function time_lst(): word_list
     {
         log_debug('for words "' . $this->dsp_id() . '"');
+        $lib = new library();
 
         global $phrase_types;
         $result = new word_list($this->user());
@@ -976,7 +978,7 @@ class word_list extends sandbox_list
         if (count($result->lst) < 10) {
             log_debug('total found ' . $result->dsp_id());
         } else {
-            log_debug('total found: ' . dsp_count($result->lst) . ' ');
+            log_debug('total found: ' . $lib->dsp_count($result->lst) . ' ');
         }
         return $result;
     }
@@ -1018,6 +1020,7 @@ class word_list extends sandbox_list
     function measure_lst(): word_list
     {
         global $phrase_types;
+        $lib = new library();
 
         log_debug($this->dsp_id());
 
@@ -1032,7 +1035,7 @@ class word_list extends sandbox_list
                 log_debug($wrd->name() . ' is not measure');
             }
         }
-        log_debug(dsp_count($result->lst));
+        log_debug($lib->dsp_count($result->lst));
         return $result;
     }
 
@@ -1043,6 +1046,7 @@ class word_list extends sandbox_list
     function scaling_lst(): word_list
     {
         global $phrase_types;
+        $lib = new library();
 
         log_debug($this->dsp_id());
 
@@ -1059,7 +1063,7 @@ class word_list extends sandbox_list
                 log_debug('not found (' . $wrd->name() . ')');
             }
         }
-        log_debug(dsp_count($result->ids()));
+        log_debug($lib->dsp_count($result->ids()));
         return $result;
     }
 
@@ -1070,6 +1074,7 @@ class word_list extends sandbox_list
     function percent_lst(): word_list
     {
         global $phrase_types;
+        $lib = new library();
 
         log_debug($this->dsp_id());
 
@@ -1084,7 +1089,7 @@ class word_list extends sandbox_list
                 log_debug($wrd->name() . ' is not percent');
             }
         }
-        log_debug(dsp_count($result->ids()));
+        log_debug($lib->dsp_count($result->ids()));
         return $result;
     }
 
@@ -1175,6 +1180,7 @@ class word_list extends sandbox_list
     function name(): string
     {
         global $debug;
+        $lib = new library();
         $result = '';
 
         if ($debug > 10) {
@@ -1182,7 +1188,7 @@ class word_list extends sandbox_list
         } else {
             $result .= '"' . implode('","', array_slice($this->names(), 0, 7));
             if (count($this->names()) > 8) {
-                $result .= ' ... total ' . dsp_count($this->lst);
+                $result .= ' ... total ' . $lib->dsp_count($this->lst);
             }
             $result .= '"';
         }
@@ -1248,6 +1254,7 @@ class word_list extends sandbox_list
     function phrase_lst(): phrase_list
     {
         log_debug($this->dsp_id());
+        $lib = new library();
         $phr_lst = new phrase_list($this->user());
         foreach ($this->lst as $phr) {
             if (get_class($phr) == word::class or get_class($phr) == word_dsp::class) {
@@ -1259,7 +1266,7 @@ class word_list extends sandbox_list
             }
         }
         $phr_lst->id_lst();
-        log_debug('done ' . dsp_count($phr_lst->lst()));
+        log_debug('done ' . $lib->dsp_count($phr_lst->lst()));
         return $phr_lst;
     }
 
@@ -1409,6 +1416,7 @@ class word_list extends sandbox_list
     function view_lst(): array
     {
         $result = array();
+        $lib = new library();
         log_debug();
 
         foreach ($this->lst as $wrd) {
@@ -1429,7 +1437,7 @@ class word_list extends sandbox_list
             }
         }
 
-        log_debug('done got ' . dsp_count($result));
+        log_debug('done got ' . $lib->dsp_count($result));
         return $result;
     }
 
@@ -1463,13 +1471,14 @@ class word_list extends sandbox_list
     function max_val_time(): ?word
     {
         log_debug($this->dsp_id() . ' and user ' . $this->user()->name);
+        $lib = new library();
         $wrd = null;
 
         // load the list of all value related to the word list
         $val_lst = new value_list($this->user());
         $val_lst->phr_lst = $this->phrase_lst();
         $val_lst->load_by_phr_lst_old();
-        log_debug(dsp_count($val_lst->lst()) . ' values for ' . $this->dsp_id());
+        log_debug($lib->dsp_count($val_lst->lst()) . ' values for ' . $this->dsp_id());
 
         $time_ids = array();
         foreach ($val_lst->lst() as $val) {

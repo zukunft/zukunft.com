@@ -1327,34 +1327,6 @@ function array_trim(?array $in_array): array
     return $result;
 }
 
-function dsp_array_keys(?array $in_array): string
-{
-    $result = 'null';
-    if ($in_array != null) {
-        if (count($in_array) > 0) {
-            $result = implode(',', array_keys($in_array));
-        }
-    }
-    return $result;
-}
-
-function array_flat(array $array): array
-{
-    $return = array();
-    array_walk_recursive($array, function ($a) use (&$return) {
-        $return[] = $a;
-    });
-    return $return;
-}
-
-function dsp_count(?array $in_array): int
-{
-    $result = 0;
-    if ($in_array != null) {
-        $result = count($in_array);
-    }
-    return $result;
-}
 
 /**
  * prepare an array for an SQL statement

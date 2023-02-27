@@ -65,7 +65,8 @@ class phrase_list_dsp_old extends phrase_list
     // return a list of the phrase names with html links
     function names_linked(): array
     {
-        log_debug('phrase_list->names_linked (' . dsp_count($this->lst) . ')');
+        $lib = new library();
+        log_debug('phrase_list->names_linked (' . $lib->dsp_count($this->lst) . ')');
         $result = array();
         foreach ($this->lst as $phr) {
             $result[] = $phr->display();

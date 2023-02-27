@@ -47,6 +47,7 @@ $usr_id = $_GET['user']; // to force another user view for testing the formula c
 if ($usr->id() > 0) {
 
     load_usr_data();
+    $lib = new library();
 
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
@@ -66,14 +67,14 @@ if ($usr->id() > 0) {
         // load the formulas to calculate
         $frm_lst = new formula_list($usr);
         $frm_lst->load_all($block_size, $page);
-        echo "Calculate " . dsp_count($frm_lst->lst()) . " formulas<br>";
+        echo "Calculate " . $lib->dsp_count($frm_lst->lst()) . " formulas<br>";
 
         foreach ($frm_lst as $frm_request) {
 
             // build the calculation queue
             $calc_fv_lst = new formula_value_list($usr);
             $calc_lst = $calc_fv_lst->frm_upd_lst($frm_request, $back);
-            log_debug("calculate queue is build (number of values to check: " . dsp_count($calc_lst->lst()) . ")");
+            log_debug("calculate queue is build (number of values to check: " . $lib->dsp_count($calc_lst->lst()) . ")");
 
             // execute the queue
             foreach ($calc_lst->lst() as $r) {

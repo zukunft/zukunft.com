@@ -172,6 +172,7 @@ class value_list extends sandbox_list
 
         global $db_con;
         $result = false;
+        $lib = new library();
 
         // check the all minimal input parameters
         if (!$this->user()->is_set()) {
@@ -192,7 +193,7 @@ class value_list extends sandbox_list
                         $result = true;
                     }
                 }
-                log_debug(dsp_count($this->lst));
+                log_debug($lib->dsp_count($this->lst));
             }
         }
 
@@ -237,6 +238,7 @@ class value_list extends sandbox_list
     {
         global $db_con;
         $result = false;
+        $lib = new library();
 
         if ($limit <= 0) {
             $limit = SQL_ROW_LIMIT;
@@ -251,7 +253,7 @@ class value_list extends sandbox_list
                 $val = new value($this->user());
                 $val->row_mapper($db_val);
                 $this->lst[] = $val;
-                log_debug(dsp_count($this->lst));
+                log_debug($lib->dsp_count($this->lst));
                 $result = true;
             }
         }
@@ -287,6 +289,7 @@ class value_list extends sandbox_list
     {
 
         global $db_con;
+        $lib = new library();
 
         // the id and the user must be set
         if (isset($this->phr_lst)) {
@@ -304,7 +307,7 @@ class value_list extends sandbox_list
                         }
                     }
                 }
-                log_debug(dsp_count($this->lst));
+                log_debug($lib->dsp_count($this->lst));
             }
         }
         log_debug('done');
@@ -378,6 +381,7 @@ class value_list extends sandbox_list
     {
 
         global $db_con;
+        $lib = new library();
 
         // the word list and the user must be set
         if (count($this->phr_lst->id_lst()) > 0 and !is_null($this->user()->id())) {
@@ -402,7 +406,7 @@ class value_list extends sandbox_list
                     }
                 }
             }
-            log_debug(dsp_count($this->lst));
+            log_debug($lib->dsp_count($this->lst));
         }
     }
 
@@ -582,6 +586,7 @@ class value_list extends sandbox_list
      */
     function time_lst(): phrase_list
     {
+        $lib = new library();
         $all_ids = array();
         foreach ($this->lst as $val) {
             $all_ids = array_unique(array_merge($all_ids, array($val->time_id)));
@@ -590,7 +595,7 @@ class value_list extends sandbox_list
         if (count($all_ids) > 0) {
             $phr_lst->load_names_by_ids(new phr_ids($all_ids));
         }
-        log_debug(dsp_count($phr_lst->lst));
+        log_debug($lib->dsp_count($phr_lst->lst));
         return $phr_lst;
     }
 
@@ -601,6 +606,7 @@ class value_list extends sandbox_list
     {
         log_debug('by ids (needs review)');
         $phr_lst = new phrase_list($this->user());
+        $lib = new library();
 
         foreach ($this->lst as $val) {
             if (!isset($val->phr_lst)) {
@@ -610,7 +616,7 @@ class value_list extends sandbox_list
             $phr_lst->merge($val->phr_lst);
         }
 
-        log_debug(dsp_count($phr_lst->lst));
+        log_debug($lib->dsp_count($phr_lst->lst));
         return $phr_lst;
     }
 
@@ -688,6 +694,7 @@ class value_list extends sandbox_list
     function filter_by_time($time_lst): value_list
     {
         log_debug();
+        $lib = new library();
         $val_lst = array();
         foreach ($this->lst as $val) {
             // only include time specific value
@@ -706,7 +713,7 @@ class value_list extends sandbox_list
         $result = clone $this;
         $result->lst = $val_lst;
 
-        log_debug(dsp_count($result->lst));
+        log_debug($lib->dsp_count($result->lst));
         return $result;
     }
 
@@ -715,7 +722,8 @@ class value_list extends sandbox_list
      */
     function filter_by_phrase_lst($phr_lst): value_list
     {
-        log_debug(dsp_count($this->lst) . ' values by ' . $phr_lst->name());
+        $lib = new library();
+        log_debug($lib->dsp_count($this->lst) . ' values by ' . $phr_lst->name());
         $result = array();
         foreach ($this->lst as $val) {
             //$val->load_phrases();
@@ -743,7 +751,7 @@ class value_list extends sandbox_list
         }
         $this->lst = $result;
 
-        log_debug(dsp_count($this->lst));
+        log_debug($lib->dsp_count($this->lst));
         return $this;
     }
 
@@ -853,6 +861,7 @@ class value_list extends sandbox_list
     function phrase_groups(): phrase_group_list
     {
         log_debug();
+        $lib = new library();
         $grp_lst = new phrase_group_list($this->user());
         foreach ($this->lst as $val) {
             if (!isset($val->grp)) {
@@ -865,7 +874,7 @@ class value_list extends sandbox_list
             }
         }
 
-        log_debug(dsp_count($grp_lst->lst));
+        log_debug($lib->dsp_count($grp_lst->lst));
         return $grp_lst;
     }
 
@@ -875,9 +884,10 @@ class value_list extends sandbox_list
      */
     function common_phrases(): phrase_list
     {
+        $lib = new library();
         $grp_lst = $this->phrase_groups();
         $phr_lst = $grp_lst->common_phrases();
-        log_debug(dsp_count($phr_lst->lst));
+        log_debug($lib->dsp_count($phr_lst->lst));
         return $phr_lst;
     }
 
@@ -895,6 +905,7 @@ class value_list extends sandbox_list
     {
 
         global $db_con;
+        $lib = new library();
         $result = true;
 
         // the id and the user must be set
@@ -908,9 +919,9 @@ class value_list extends sandbox_list
             if (!$val->check()) {
                 $result = false;
             }
-            log_debug(dsp_count($this->lst));
+            log_debug($lib->dsp_count($this->lst));
         }
-        log_debug(dsp_count($this->lst));
+        log_debug($lib->dsp_count($this->lst));
         return $result;
     }
 
@@ -1041,7 +1052,8 @@ class value_list extends sandbox_list
      */
     function html($back): string
     {
-        log_debug(dsp_count($this->lst));
+        $lib = new library();
+        log_debug($lib->dsp_count($this->lst));
         $result = '';
 
         $html = new html_base();

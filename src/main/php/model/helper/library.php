@@ -213,18 +213,20 @@ class library
     function dsp_array(?array $in_array, bool $with_keys = false): string
     {
         global $debug;
+
+        $lib = new library();
         $result = 'null';
         if ($in_array != null) {
             if ($debug > 10 or count($in_array) < 7) {
                 if (count($in_array) > 0) {
-                    $result = implode(',', array_flat($in_array));
+                    $result = implode(',', $lib->array_flat($in_array));
                 }
                 if ($with_keys) {
-                    $result .= ' (keys ' . dsp_array_keys($in_array) . ')';
+                    $result .= ' (keys ' . $this->dsp_array_keys($in_array) . ')';
                 }
             } else {
                 $left = array_slice($in_array, 0, 3);
-                $result = implode(',', array_flat($left));
+                $result = implode(',', $lib->array_flat($left));
                 $result .= ',...,' . end($in_array);
             }
         }
@@ -234,6 +236,8 @@ class library
     function dsp_array_keys(?array $in_array): string
     {
         global $debug;
+
+        $lib = new library();
         $result = 'null';
         if ($in_array != null) {
             $keys = array_keys($in_array);
@@ -243,13 +247,17 @@ class library
                 }
             } else {
                 $left = array_slice($keys, 0, 3);
-                $result = implode(',', array_flat($left));
+                $result = implode(',', $lib->array_flat($left));
                 $result .= ',...,' . end($keys);
             }
         }
         return $result;
     }
 
+    /*
+     * list functions (to be dismissed / replaced by objects)
+
+    */
     function array_flat(array $array): array
     {
         $return = array();

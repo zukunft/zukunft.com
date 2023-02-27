@@ -497,6 +497,7 @@ class view extends user_sandbox_named_with_type
         log_debug($this->dsp_id());
 
         global $db_con;
+        $lib = new library();
         $result = true;
 
         $db_con->usr_id = $this->user()->id();
@@ -526,7 +527,7 @@ class view extends user_sandbox_named_with_type
                 }
             }
         }
-        log_debug(dsp_count($this->cmp_lst) . ' loaded for ' . $this->dsp_id());
+        log_debug($lib->dsp_count($this->cmp_lst) . ' loaded for ' . $this->dsp_id());
 
         return $result;
     }
@@ -613,10 +614,11 @@ class view extends user_sandbox_named_with_type
     function add_cmp(view_cmp $cmp, ?int $pos = null, bool $do_save = true): string
     {
         $result = '';
+        $lib = new library();
         if ($pos != null) {
             $this->cmp_lst[] = $cmp;
             if (count($this->cmp_lst) != $cmp->order_nbr) {
-                $result .= 'view component "' . $cmp->name . '" has been expected to be at position ' . $cmp->order_nbr . ' in ' . $this->name . ', but it is at position ' . dsp_count($this->cmp_lst);
+                $result .= 'view component "' . $cmp->name . '" has been expected to be at position ' . $cmp->order_nbr . ' in ' . $this->name . ', but it is at position ' . $lib->dsp_count($this->cmp_lst);
             } else {
                 if ($do_save) {
                     $cmp->save();

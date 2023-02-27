@@ -3398,7 +3398,7 @@ class sql_db
             if (count($fields) <> count($values)) {
                 if ($log_err) {
                     $lib = new library();
-                    log_fatal('MySQL insert call with different number of fields (' . dsp_count($fields) . ': ' . $lib->dsp_array($fields) . ') and values (' . dsp_count($values) . ': ' . $lib->dsp_array($values) . ').', "user_log->add");
+                    log_fatal('MySQL insert call with different number of fields (' . $lib->dsp_count($fields) . ': ' . $lib->dsp_array($fields) . ') and values (' . $lib->dsp_count($values) . ': ' . $lib->dsp_array($values) . ').', "user_log->add");
                 }
             } else {
                 foreach (array_keys($fields) as $i) {

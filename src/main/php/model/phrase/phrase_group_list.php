@@ -419,6 +419,8 @@ class phrase_group_list
     // combined code to add values assigned by a word or a predefined formula like "this", "prior" or "next"
     private function add_grp_by_phr($type, $frm_linked, $frm_used, $phr_frm, $phr_lst_fv): int
     {
+        $lib = new library();
+
         // check the parameters
         if ($type == '') {
             log_err('Type is missing.', 'phr_grp_lst->add_grp_by_phr');
@@ -472,7 +474,7 @@ class phrase_group_list
                 if ($this->add_grp_time_id($grp_to_add->id(), $val_row[value::FLD_TIME_WORD])) {
                     $added++;
                     $changed++;
-                    log_debug('added ' . $added . ' in ' . dsp_count($this->grp_time_ids));
+                    log_debug('added ' . $added . ' in ' . $lib->dsp_count($this->grp_time_ids));
                 }
                 */
             }
@@ -528,6 +530,7 @@ class phrase_group_list
     function common_phrases(): ?phrase_list
     {
         log_debug();
+        $lib = new library();
         $result = new phrase_list($this->usr);
         $pos = 0;
         foreach ($this->lst as $grp) {
@@ -545,7 +548,7 @@ class phrase_group_list
             log_debug($result->dsp_name());
             $pos++;
         }
-        log_debug(dsp_count($result->lst()));
+        log_debug($lib->dsp_count($result->lst()));
         return $result;
     }
 
@@ -558,10 +561,11 @@ class phrase_group_list
     function dsp_id(): string
     {
         global $debug;
+        $lib = new library();
         $result = '';
         // check the object setup
         if (count($this->lst) <> count($this->time_lst)) {
-            $result .= 'The number of groups (' . dsp_count($this->lst) . ') are not equal the number of times (' . dsp_count($this->time_lst) . ') of this phrase group list';
+            $result .= 'The number of groups (' . $lib->dsp_count($this->lst) . ') are not equal the number of times (' . $lib->dsp_count($this->time_lst) . ') of this phrase group list';
         } else {
 
             $pos = 0;
@@ -579,7 +583,7 @@ class phrase_group_list
                 }
             }
             if (count($this->lst) > $pos) {
-                $result .= ' ... total ' . dsp_count($this->lst);
+                $result .= ' ... total ' . $lib->dsp_count($this->lst);
             }
 
         }
@@ -592,12 +596,13 @@ class phrase_group_list
     function name(): string
     {
         global $debug;
+        $lib = new library();
         $result = '';
         $names = $this->names();
         if ($debug > 10 or count($names) > 3) {
             $main_names = array_slice($names, 0, 3);
             $result .= implode(" and ", $main_names);
-            $result .= " ... total " . dsp_count($names);
+            $result .= " ... total " . $lib->dsp_count($names);
         } else {
             $result .= implode(" and ", $names);
         }

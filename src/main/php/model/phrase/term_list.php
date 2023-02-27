@@ -383,6 +383,7 @@ class term_list extends user_sandbox_list_named
     function dsp_name(): string
     {
         global $debug;
+        $lib = new library();
 
         $name_lst = $this->names();
         if ($debug > 10) {
@@ -390,7 +391,7 @@ class term_list extends user_sandbox_list_named
         } else {
             $result = '"' . implode('","', array_slice($name_lst, 0, 7));
             if (count($name_lst) > 8) {
-                $result .= ' ... total ' . dsp_count($this->lst);
+                $result .= ' ... total ' . $lib->dsp_count($this->lst);
             }
             $result .= '"';
         }

@@ -113,6 +113,7 @@ class sandbox_list extends base_list
     function dsp_id(): string
     {
         global $debug;
+        $lib = new library();
         $result = '';
 
         // show at least 4 elements by name
@@ -138,7 +139,7 @@ class sandbox_list extends base_list
                 }
             }
             if (count($this->lst) > $pos) {
-                $result .= ' ... total ' . dsp_count($this->lst);
+                $result .= ' ... total ' . $lib->dsp_count($this->lst);
             }
             if ($debug > DEBUG_SHOW_USER) {
                 if ($this->user()->is_set()) {

@@ -1061,6 +1061,7 @@ class phrase_list extends user_sandbox_list_named
     {
 
         global $db_con;
+        $lib = new library();
         $additional_added = new phrase_list($this->user()); // list of the added phrases with this call
 
         $qp = $this->load_sql_linked_phrases($db_con, $verb_id, $direction);
@@ -1070,7 +1071,7 @@ class phrase_list extends user_sandbox_list_named
             $db_con->usr_id = $this->user()->id();
             $db_phr_lst = $db_con->get($qp);
             if ($db_phr_lst) {
-                log_debug('got ' . dsp_count($db_phr_lst));
+                log_debug('got ' . $lib->dsp_count($db_phr_lst));
                 foreach ($db_phr_lst as $db_phr) {
                     if (is_null($db_phr[user_sandbox::FLD_EXCLUDED]) or $db_phr[user_sandbox::FLD_EXCLUDED] == 0) {
                         if ($db_phr[phrase::FLD_ID] != 0 and !in_array($db_phr[phrase::FLD_ID], $this->ids())) {
@@ -1563,6 +1564,7 @@ class phrase_list extends user_sandbox_list_named
     function dsp_name(): string
     {
         global $debug;
+        $lib = new library();
 
         $name_lst = $this->names();
         if ($debug > 10) {
@@ -1570,7 +1572,7 @@ class phrase_list extends user_sandbox_list_named
         } else {
             $result = '"' . implode('","', array_slice($name_lst, 0, 7));
             if (count($name_lst) > 8) {
-                $result .= ' ... total ' . dsp_count($this->lst);
+                $result .= ' ... total ' . $lib->dsp_count($this->lst);
             }
             $result .= '"';
         }
@@ -2113,6 +2115,7 @@ class phrase_list extends user_sandbox_list_named
     {
         global $phrase_types;
         log_debug('phrase_list->measure_lst(' . $this->dsp_id());
+        $lib = new library();
 
         $result = new phrase_list($this->user());
         $measure_type = $phrase_types->id(phrase_type::MEASURE);
@@ -2130,7 +2133,7 @@ class phrase_list extends user_sandbox_list_named
                 }
             }
         }
-        log_debug(dsp_count($result->lst));
+        log_debug($lib->dsp_count($result->lst));
         return $result;
     }
 
@@ -2143,6 +2146,7 @@ class phrase_list extends user_sandbox_list_named
         global $phrase_types;
 
         log_debug('phrase_list->scaling_lst(' . $this->dsp_id());
+        $lib = new library();
 
         $result = new phrase_list($this->user());
         $scale_type = $phrase_types->id(phrase_type::SCALING);
@@ -2156,7 +2160,7 @@ class phrase_list extends user_sandbox_list_named
                 log_debug('not found (' . $phr->name() . ')');
             }
         }
-        log_debug(dsp_count($result->lst));
+        log_debug($lib->dsp_count($result->lst));
         return $result;
     }
 
@@ -2217,7 +2221,7 @@ class phrase_list extends user_sandbox_list_named
         }
         // check
         if (count($this->lst) <> count($result)) {
-            log_err("Sorting changed the number of phrases from " . dsp_count($this->lst) . " to " . dsp_count($result) . ".", "phrase_list->wlsort");
+            log_err("Sorting changed the number of phrases from " . $lib->dsp_count($this->lst) . " to " . $lib->dsp_count($result) . ".", "phrase_list->wlsort");
         } else {
             $this->lst = $result;
             $this->id_lst();
@@ -2275,6 +2279,7 @@ class phrase_list extends user_sandbox_list_named
     function common(phrase_list $filter_lst): array
     {
         $result = array();
+        $lib = new library();
         log_debug('of ' . $this->dsp_name() . ' and ' . $filter_lst->name());
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {
@@ -2288,7 +2293,7 @@ class phrase_list extends user_sandbox_list_named
             $this->lst = $result;
             $this->id_lst();
         }
-        log_debug(dsp_count($this->lst));
+        log_debug($lib->dsp_count($this->lst));
         return $result;
     }
 
@@ -2298,13 +2303,14 @@ class phrase_list extends user_sandbox_list_named
     function concat_unique($join_phr_lst): phrase_list
     {
         log_debug();
+        $lib = new library();
         $result = clone $this;
         foreach ($join_phr_lst->lst as $phr) {
             if (!in_array($phr, $result->lst)) {
                 $result->lst[] = $phr;
             }
         }
-        log_debug(dsp_count($result->lst));
+        log_debug($lib->dsp_count($result->lst));
         return $result;
     }
 

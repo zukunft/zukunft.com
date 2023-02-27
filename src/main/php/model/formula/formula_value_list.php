@@ -259,6 +259,7 @@ class formula_value_list
     {
         global $debug;
         $result = '';
+        $lib = new library();
 
         if ($debug > 10) {
             if (isset($this->lst)) {
@@ -279,7 +280,7 @@ class formula_value_list
                 }
             }
             if ($nbr > 5) {
-                $result .= ' ... total ' . dsp_count($this->lst);
+                $result .= ' ... total ' . $lib->dsp_count($this->lst);
             }
         }
         /*
@@ -296,6 +297,7 @@ class formula_value_list
     function name(): string
     {
         global $debug;
+        $lib = new library();
 
         $name_lst = array();
         if (isset($this->lst)) {
@@ -309,7 +311,7 @@ class formula_value_list
         } else {
             $result = '"' . implode('","', array_slice($name_lst, 0, 7));
             if (count($name_lst) > 8) {
-                $result .= ' ... total ' . dsp_count($this->lst);
+                $result .= ' ... total ' . $lib->dsp_count($this->lst);
             }
             $result .= '"';
         }
@@ -362,7 +364,8 @@ class formula_value_list
      */
     function display(string $back = ''): string
     {
-        log_debug("fv_lst->display (" . dsp_count($this->lst) . ")");
+        $lib = new library();
+        log_debug("fv_lst->display (" . $lib->dsp_count($this->lst) . ")");
         $result = ''; // reset the html code var
 
         // prepare to show where the user uses different word than a normal viewer
@@ -466,7 +469,7 @@ class formula_value_list
             $result[] = $calc_row;
         }
 
-        log_debug('number of values added (' . dsp_count($result) . ')');
+        log_debug('number of values added (' . $lib->dsp_count($result) . ')');
         return $result;
     }
 
@@ -478,6 +481,7 @@ class formula_value_list
         formula $frm,
                 $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
     {
+        $lib = new library();
         log_debug('fv_lst->frm_upd_lst_usr(' . $frm->name() . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
         $result = new batch_job_list($usr);
         $added = 0;
@@ -607,7 +611,7 @@ class formula_value_list
         //}
 
         //print_r($result);
-        log_debug(dsp_count($result->lst()));
+        log_debug($lib->dsp_count($result->lst()));
         return $result;
     }
 
@@ -620,6 +624,7 @@ class formula_value_list
     function frm_upd_lst(formula $frm, $back)
     {
         log_debug('add ' . $frm->dsp_id() . ' to queue ...');
+        $lib = new library();
 
         // to inform the user about the progress
         $last_msg_time = time(); // the start time
@@ -727,7 +732,7 @@ class formula_value_list
         }
 
         //flush();
-        log_debug(dsp_count($result->lst()));
+        log_debug($lib->dsp_count($result->lst()));
         return $result;
     }
 

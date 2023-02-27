@@ -858,12 +858,13 @@ class phrase extends db_object
      */
     function val_lst(): value_list
     {
+        $lib = new library();
         log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
         $val_lst = new value_list($this->usr);
         $val_lst->phr = $this;
         $val_lst->limit = SQL_ROW_MAX;
         $val_lst->load();
-        log_debug('got ' . dsp_count($val_lst->lst()));
+        log_debug('got ' . $lib->dsp_count($val_lst->lst()));
         return $val_lst;
     }
 
@@ -877,11 +878,12 @@ class phrase extends db_object
     function vrb_lst(string $direction): verb_list
     {
         global $db_con;
+        $lib = new library();
 
         log_debug('for ' . $this->dsp_id());
         $vrb_lst = new verb_list($this->usr);
         $vrb_lst->load_by_linked_phrases($db_con, $this, $direction);
-        log_debug('got ' . dsp_count($vrb_lst->lst));
+        log_debug('got ' . $lib->dsp_count($vrb_lst->lst));
         return $vrb_lst;
     }
 

@@ -235,6 +235,7 @@ class formula_element_group
     function figures(): figure_list
     {
         log_debug('figures ' . $this->dsp_id());
+        $lib = new library();
 
         // init the resulting figure list
         $fig_lst = new figure_list($this->usr);
@@ -353,7 +354,7 @@ class formula_element_group
             }
         }
 
-        log_debug(dsp_count($fig_lst->lst()) . ' found');
+        log_debug($lib->dsp_count($fig_lst->lst()) . ' found');
         return $fig_lst;
     }
 

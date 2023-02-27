@@ -59,6 +59,7 @@ class user_list
     function load_active(): array
     {
         log_debug('user_list->load_active');
+        $lib = new library();
 
         global $db_con;
 
@@ -86,7 +87,7 @@ class user_list
         $db_con->usr_id = $usr->id();
         $this->load_sql($sql, $db_con);
 
-        log_debug(dsp_count($this->lst));
+        log_debug($lib->dsp_count($this->lst));
         return $this->lst;
     }
 

@@ -352,6 +352,8 @@ class expression
      */
     function element_special_following(?term_list $trm_lst = null): phrase_list
     {
+        $lib = new library();
+
         $phr_lst = new phrase_list($this->usr);
         $elm_lst = $this->element_list($trm_lst);
         if (!$elm_lst->is_empty()) {
@@ -370,7 +372,7 @@ class expression
             }
         }
 
-        log_debug(dsp_count($phr_lst->lst()));
+        log_debug($lib->dsp_count($phr_lst->lst()));
         return $phr_lst;
     }
 
@@ -381,6 +383,8 @@ class expression
      */
     function element_special_following_frm(?term_list $trm_lst = null): formula_list
     {
+        $lib = new library();
+
         $frm_lst = new formula_list($this->usr);
         $elm_lst = $this->element_list($trm_lst);
         if (!$elm_lst->is_empty()) {
@@ -397,7 +401,7 @@ class expression
             }
         }
 
-        log_debug(dsp_count($frm_lst->lst()));
+        log_debug($lib->dsp_count($frm_lst->lst()));
         return $frm_lst;
     }
 
@@ -847,7 +851,7 @@ class expression
         }
         $result->set_lst($lst);
 
-        log_debug(dsp_count($result->lst()) . ' elements');
+        log_debug($lib->dsp_count($result->lst()) . ' elements');
         return $result;
     }
 
@@ -1120,9 +1124,11 @@ class expression
      */
     function phr_verb_lst(): phrase_list
     {
+        $lib = new library();
+
         log_debug();
         $elm_lst = $this->element_lst_all(expression::SELECT_PHRASE, FALSE);
-        log_debug('got ' . dsp_count($elm_lst->lst()) . ' formula elements');
+        log_debug('got ' . $lib->dsp_count($elm_lst->lst()) . ' formula elements');
         $phr_lst = new phrase_list($this->usr);
         foreach ($elm_lst->lst() as $elm) {
             log_debug('check elements ' . $elm->name());
@@ -1148,7 +1154,7 @@ class expression
         }
         // TODO check if the phrases are already loaded
         //$phr_lst->load();
-        log_debug(dsp_count($phr_lst->lst()));
+        log_debug($lib->dsp_count($phr_lst->lst()));
         return $phr_lst;
     }
 

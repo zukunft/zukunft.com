@@ -758,6 +758,7 @@ class formula extends user_sandbox_named_with_type
     function assign_phr_glst_direct($sbx): ?phrase_list
     {
         $phr_lst = null;
+        $lib = new library();
 
         if ($this->id > 0 and $this->user()->is_set()) {
             log_debug('for formula ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
@@ -768,7 +769,7 @@ class formula extends user_sandbox_named_with_type
             if (count($phr_ids->lst) > 0) {
                 $phr_lst = new phrase_list($this->user());
                 $phr_lst->load_names_by_ids($phr_ids);
-                log_debug("number of words " . dsp_count($phr_lst->lst()));
+                log_debug("number of words " . $lib->dsp_count($phr_lst->lst()));
             }
         } else {
             log_err("The user id must be set to list the formula links.", "formula->assign_phr_glst_direct");
@@ -800,6 +801,7 @@ class formula extends user_sandbox_named_with_type
     function assign_phr_glst($sbx): phrase_list
     {
         $phr_lst = new phrase_list($this->user());
+        $lib = new library();
 
         if ($this->id > 0 and $this->user()->is_set()) {
             $direct_phr_lst = $this->assign_phr_glst_direct($sbx);
@@ -816,7 +818,7 @@ class formula extends user_sandbox_named_with_type
                     $phr_ids = array_unique($phr_ids);
 
                     $phr_lst->load_by_ids_old((new phr_ids($phr_ids)));
-                    log_debug('number of words and triples ' . dsp_count($phr_lst->lst()));
+                    log_debug('number of words and triples ' . $lib->dsp_count($phr_lst->lst()));
                 } else {
                     log_debug( 'no words are assigned to ' . $this->dsp_id());
                 }
@@ -895,6 +897,7 @@ class formula extends user_sandbox_named_with_type
     function to_num(phrase_list $phr_lst): formula_value_list
     {
         log_debug('get numbers for ' . $this->dsp_id() . ' and ' . $phr_lst->dsp_id());
+        $lib = new library();
 
         // check
         if ($this->ref_text_r == '' and $this->ref_text <> '') {
@@ -915,7 +918,7 @@ class formula extends user_sandbox_named_with_type
         //      the element group "Sales differentiator Sector" has the elements: "Sales" (of type word), "differentiator" (verb), "Sector" (word)
         $exp = $this->expression();
         $elm_grp_lst = $exp->element_grp_lst();
-        log_debug('in ' . $exp->ref_text() . ' ' . dsp_count($elm_grp_lst->lst()) . ' element groups found');
+        log_debug('in ' . $exp->ref_text() . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');
 
         // to check if all needed value are given
         $all_elm_grp_filled = true;
@@ -929,7 +932,7 @@ class formula extends user_sandbox_named_with_type
             $elm_grp->build_symbol();
             $fig_lst = $elm_grp->figures();
             log_debug('figures ');
-            log_debug('figures ' . $fig_lst->dsp_id() . ' (' . dsp_count($fig_lst->lst()) . ') for ' . $elm_grp->dsp_id());
+            log_debug('figures ' . $fig_lst->dsp_id() . ' (' . $lib->dsp_count($fig_lst->lst()) . ') for ' . $elm_grp->dsp_id());
 
             // fill the figure into the formula text and create as much formula values / results as needed
             if ($fig_lst->lst() != null) {
@@ -1134,6 +1137,7 @@ class formula extends user_sandbox_named_with_type
     function calc(phrase_list $phr_lst): ?array
     {
         $result = null;
+        $lib = new library();
 
         // check the parameters
         if (!isset($phr_lst)) {
@@ -1180,7 +1184,7 @@ class formula extends user_sandbox_named_with_type
             // $fv_lst is a list of all results saved in the database
             $fv_lst = $this->to_num($phr_lst);
             if (isset($fv_add_phr_lst)) {
-                log_debug(dsp_count($fv_lst->lst) . ' formula results to save');
+                log_debug($lib->dsp_count($fv_lst->lst) . ' formula results to save');
             }
 
             // save the numeric results

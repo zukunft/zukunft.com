@@ -75,6 +75,7 @@ class export
     {
 
         global $db_con;
+        $lib = new library();
 
         log_debug('export->get');
         $export_obj = (object)[];
@@ -145,7 +146,7 @@ class export
                 // 7. add all sources to the export object
                 log_debug('export->get sources');
                 $source_lst = $val_lst->source_lst();
-                log_debug('export->got ' . dsp_count($source_lst) . ' sources');
+                log_debug('export->got ' . $lib->dsp_count($source_lst) . ' sources');
                 $exp_sources = array();
                 if ($source_lst != null) {
                     foreach ($source_lst as $src) {
