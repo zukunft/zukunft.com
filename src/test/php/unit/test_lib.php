@@ -210,6 +210,21 @@ class string_unit_tests
         $result = $lib->dsp_count($test_array);
         $t->assert("dsp_count of null", $result, $target);
 
+        $test_array = ["a", "", "c"];
+        $target = 'a,c';
+        $result = $lib->dsp_array($lib->array_trim($test_array));
+        $t->assert("dsp array_trim", $result, $target);
+
+        $test_array = [1, 2, 3];
+        $target = " AND field IN ('1,2,3')";
+        $result = $lib->sql_array($test_array, ' AND field IN (', ')');
+        $t->assert("sql_array", $result, $target);
+
+        $test_array = [];
+        $target = '';
+        $result = $lib->sql_array($test_array, ' AND field IN (', ')');
+        $t->assert("sql_array empty", $result, $target);
+
 
         $t->subheader('json');
 

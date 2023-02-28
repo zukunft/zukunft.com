@@ -358,6 +358,7 @@ function db_fill_code_link_sql(string $table_name, string $id_col_name, int $id)
 function db_fill_code_links(sql_db $db_con): void
 {
     global $debug;
+    $lib = new library();
 
     // first of all set the database version if not jet done
     $cfg = new config();
@@ -386,10 +387,10 @@ function db_fill_code_links(sql_db $db_con): void
                 if ($continue) {
                     if ($row == 1) {
                         // check if the csv column names match the table names
-                        if (!$db_con->check_column_names($table_name, array_trim($data))) {
+                        if (!$db_con->check_column_names($table_name, $lib->array_trim($data))) {
                             $continue = false;
                         } else {
-                            $col_names = array_trim($data);
+                            $col_names = $lib->array_trim($data);
                         }
                         // check if the first column name is the id col
                         $id_col_name = $data[0];

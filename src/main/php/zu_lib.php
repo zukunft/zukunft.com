@@ -1309,24 +1309,6 @@ list functions (to be dismissed / replaced by objects)
 
 */
 
-/**
- * remove all empty string entries from an array
- * @param array|null $in_array the array with empty strings or string with leading spaces
- * @return array the value comma seperated or "null" if the array is empty
- */
-function array_trim(?array $in_array): array
-{
-    $result = array();
-    if ($in_array != null) {
-        foreach ($in_array as $item) {
-            if (trim($item) <> '') {
-                $result[] = trim($item);
-            }
-        }
-    }
-    return $result;
-}
-
 
 /**
  * prepare an array for an SQL statement

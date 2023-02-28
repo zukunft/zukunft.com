@@ -802,6 +802,7 @@ class phrase_group extends db_object
 
         global $db_con;
         $result = '';
+        $lib = new library();
 
         // create the db link object for all actions
         $db_con->usr_id = $this->user()->id();
@@ -871,7 +872,7 @@ class phrase_group extends db_object
             log_debug('del ' . implode(",", $del_ids));
             $sql = 'DELETE FROM ' . $table_name . ' 
                WHERE phrase_group_id = ' . $this->id . '
-                 AND ' . $field_name . ' IN (' . sql_array($del_ids) . ');';
+                ' . $lib->sql_array($del_ids,' AND ' . $field_name . ' IN (', ')') . ';';
             //$sql_result = $db_con->exe($sql, "phrase_group->delete_phr_links", array());
             $result = $db_con->exe_try('Removing of group links "' . $lib->dsp_array($del_ids) . '" from ' . $this->id,
                 $sql);

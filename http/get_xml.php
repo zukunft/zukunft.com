@@ -50,11 +50,12 @@ if ($usr->id() > 0) {
     $xml = '';
 
     load_usr_data();
+    $lib = new library();
 
     // get the words that are supposed to be exported, sample "Nestlé 2 country weight"
     $phrases = $_GET[controller::URL_VAR_WORD];
     log_debug("get_xml(" . $phrases . ")");
-    $phr_names = array_trim(explode(",", $phrases));
+    $phr_names = $lib->array_trim(explode(",", $phrases));
 
     if (count($phr_names) > 0) {
         $phr_lst = new phrase_list($usr);

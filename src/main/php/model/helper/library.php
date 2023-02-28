@@ -255,7 +255,7 @@ class library
     }
 
     /*
-     * list functions (to be dismissed / replaced by objects)
+     * list functions (to be replced by standard functions if possible)
 
     */
     function array_flat(array $array): array
@@ -272,6 +272,45 @@ class library
         $result = 0;
         if ($in_array != null) {
             $result = count($in_array);
+        }
+        return $result;
+    }
+
+    /**
+     * remove all empty string entries from an array
+     * @param array|null $in_array the array with empty strings or string with leading spaces
+     * @return array the value comma seperated or "null" if the array is empty
+     */
+    function array_trim(?array $in_array): array
+    {
+        $result = array();
+        if ($in_array != null) {
+            foreach ($in_array as $item) {
+                if (trim($item) <> '') {
+                    $result[] = trim($item);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * prepare an array for an SQL statement
+     * maybe needs esc of values and check of SQL injection
+     *
+     * @param array $in_array the array that should be formatted
+     * @param string $start the start text of the SQL statement
+     * @param string $end the end text of the SQL statement
+     * @return string the values comma seperated or "" if the array is empty
+     */
+    function sql_array(array $in_array, string $start = '', string $end = ''): string
+    {
+        global $db_con;
+        $result = '';
+        if ($in_array != null) {
+            if (count($in_array) > 0) {
+                $result = $start . $db_con->sf(implode(',', $in_array)) . $end;
+            }
         }
         return $result;
     }
