@@ -3389,6 +3389,7 @@ class sql_db
     {
         $result = 0;
         $is_valid = false;
+        $lib = new library();
 
         // escape the fields and values and build the SQL statement
         $this->set_table();
@@ -3405,8 +3406,9 @@ class sql_db
                     $fields[$i] = $this->name_sql_esc($fields[$i]);
                     $values[$i] = $this->sf($values[$i]);
                 }
-                $sql .= ' (' . sql_array($fields) . ')
-                 VALUES (' . sql_array($values) . ')';
+                $sql_fld = $lib->sql_array($fields, ' (', ') ');
+                $sql .= $lib->sql_array($values,
+                    $sql_fld . ' VALUES (', ') ');
                 $is_valid = true;
             }
         } else {
@@ -3653,7 +3655,7 @@ class sql_db
             foreach (array_keys($id_fields) as $i) {
                 $del_val = $id_values[$i];
                 if (is_array($del_val)) {
-                    $del_val_txt = ' IN (' . $this->sf(sql_array($del_val)) . ') ';
+                    $del_val_txt = $lib->sql_array($del_val,' IN (', ') ', true);
                 } else {
                     $del_val_txt = ' = ' . $this->sf($del_val) . ' ';
                 }

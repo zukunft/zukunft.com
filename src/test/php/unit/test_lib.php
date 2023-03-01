@@ -145,6 +145,14 @@ class string_unit_tests
         $result = $lib->base_class_name($class);
         $t->assert("base_class_name", $result, $target);
 
+        // test camelize
+        $result = $lib->camelize("function_name");
+        $t->assert("camelize", $result, "FunctionName");
+
+        // test camelize_ex_1
+        $result = $lib->camelize_ex_1("function_name");
+        $t->assert("camelize_ex_1", $result, "functionName");
+
 
         $t->subheader('arrays and lists');
 
@@ -216,8 +224,13 @@ class string_unit_tests
         $t->assert("dsp array_trim", $result, $target);
 
         $test_array = [1, 2, 3];
-        $target = " AND field IN ('1,2,3')";
+        $target = " AND field IN (1,2,3)";
         $result = $lib->sql_array($test_array, ' AND field IN (', ')');
+        $t->assert("sql_array", $result, $target);
+
+        $test_array = [1, 2, 3];
+        $target = " AND field IN ('1,2,3')";
+        $result = $lib->sql_array($test_array, ' AND field IN (', ')', true);
         $t->assert("sql_array", $result, $target);
 
         $test_array = [];

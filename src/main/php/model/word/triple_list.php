@@ -372,6 +372,7 @@ class triple_list
     // TODO add query name
     function load_sql(sql_db $db_con): string
     {
+        $lib = new library();
         $sql = '';
 
         // set the where clause depending on the defined select values
@@ -386,7 +387,7 @@ class triple_list
         // if the list of word link ids is set, use them for a direct selection
         if (isset($this->ids)) {
             if (count($this->ids) > 0) {
-                $id_txt = sql_array($this->ids);
+                $id_txt = $lib->sql_array($this->ids);
                 if ($id_txt <> '') {
                     $sql_where = 'l.triple_id IN (' . $id_txt . ')';
                     $sql_wrd1_fields = $this->load_wrd_fields($db_con, '1');

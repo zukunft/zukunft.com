@@ -600,7 +600,8 @@ class test_api extends test_new_obj
         string $filename = '',
         bool   $contains = false): bool
     {
-        $url = HOST_TESTING . controller::URL_API_PATH . camelize($class);
+        $lib = new library();
+        $url = HOST_TESTING . controller::URL_API_PATH . $lib->camelize_ex_1($class);
         $data = array("ids" => implode(",", $ids));
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         return $this->assert_api_compare($class, $actual, null, $filename, $contains);
@@ -619,7 +620,8 @@ class test_api extends test_new_obj
      */
     function assert_api_chg_list(string $class, string $id_fld = '', int $id = 1, string $fld_name = '', string $fld_value = ''): bool
     {
-        $url = HOST_TESTING . controller::URL_API_PATH . camelize($class);
+        $lib = new library();
+        $url = HOST_TESTING . controller::URL_API_PATH . $lib->camelize_ex_1($class);
         if ($fld_name != '') {
             $data = array($id_fld => $id, $fld_name => $fld_value);
         } else {

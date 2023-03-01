@@ -122,10 +122,12 @@ class user_list
     {
 
         global $db_con;
+        $lib = new library();
 
+        $sql_in = $lib->sql_array($this->lst, 'user_id IN(', ')');
         $sql = "SELECT user_id, user_name, code_id 
               FROM users
-            WHERE user_id IN(" . sql_array($this->lst) . ")
+            WHERE " . $sql_in . "
          ORDER BY user_id;";
         $this->load_sql($sql, $db_con);
     }

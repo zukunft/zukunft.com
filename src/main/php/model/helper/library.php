@@ -189,6 +189,17 @@ class library
         return substr($text, $pos * -1);
     }
 
+    function camelize(string $input, string $separator = '_'): string
+    {
+        return str_replace($separator, '', ucwords($input, $separator));
+    }
+
+    function camelize_ex_1(string $input, string $separator = '_'): string
+    {
+        return str_replace($separator, '', lcfirst(ucwords($input, $separator)));
+    }
+
+
 
     /*
      * short forms for the reflection class
@@ -303,13 +314,21 @@ class library
      * @param string $end the end text of the SQL statement
      * @return string the values comma seperated or "" if the array is empty
      */
-    function sql_array(array $in_array, string $start = '', string $end = ''): string
+    function sql_array(
+        array $in_array,
+        string $start = '',
+        string $end = '',
+        bool $sql_format = false): string
     {
         global $db_con;
         $result = '';
         if ($in_array != null) {
             if (count($in_array) > 0) {
-                $result = $start . $db_con->sf(implode(',', $in_array)) . $end;
+                if ($sql_format) {
+                    $result = $start . $db_con->sf(implode(',', $in_array)) . $end;
+                } else {
+                    $result = $start . implode(',', $in_array) . $end;
+                }
             }
         }
         return $result;

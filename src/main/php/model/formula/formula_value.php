@@ -1261,9 +1261,10 @@ class formula_value extends db_object
         }
         // get formula results that may need an update (maybe include also word groups that have any word of the updated word group)
         if (!empty($frm_ids)) {
+            $sql_in = $lib->sql_array($frm_ids, ' formula_id IN (', ') ');
             $sql = "SELECT formula_value_id, formula_id
                 FROM formula_values 
-               WHERE formula_id IN (" . sql_array($frm_ids) . ")
+               WHERE " . $sql_in . "
                  AND phrase_group_id = " . $this->phr_grp_id . "
                  AND user_id         = " . $this->user()->id() . ";";
             //$db_con = New mysql;

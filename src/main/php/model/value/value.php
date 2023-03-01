@@ -1465,6 +1465,7 @@ class value extends user_sandbox_value
 
         global $db_con;
         $result = '';
+        $lib = new library();
 
         // get the list of phrases assigned to this value based on the phrase group
         // this list is the master
@@ -1539,9 +1540,10 @@ class value extends user_sandbox_value
             if (count($del_ids) > 0) {
                 log_debug('del ' . implode(",", $del_ids) . '');
                 $del_nbr = 0;
+                $sql_ids = $lib->sql_array($del_ids,
+                ' AND ' . $field_name . ' IN (', ')');
                 $sql = 'DELETE FROM ' . $table_name . ' 
-               WHERE value_id = ' . $this->id . '
-                 AND ' . $field_name . ' IN (' . sql_array($del_ids) . ');';
+               WHERE value_id = ' . $this->id . $sql_ids;
                 //$sql_result = $db_con->exe($sql, "value->upd_phr_links_delete", array());
                 try {
                     $sql_result = $db_con->exe($sql);

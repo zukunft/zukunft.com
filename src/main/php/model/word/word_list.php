@@ -1140,7 +1140,8 @@ class word_list extends sandbox_list
      */
     function ids_txt(): string
     {
-        return sql_array($this->ids());
+        $lib = new library();
+        return $lib->sql_array($this->ids());
     }
 
     /**

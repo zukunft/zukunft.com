@@ -1310,32 +1310,6 @@ list functions (to be dismissed / replaced by objects)
 */
 
 
-/**
- * prepare an array for an SQL statement
- * @param array $in_array the array that should be formatted
- * @return string the values comma seperated or "" if the array is empty
- */
-function sql_array(array $in_array): string
-{
-    $result = '';
-    if ($in_array != null) {
-        if (count($in_array) > 0) {
-            $result = implode(',', $in_array);
-        }
-    }
-    return $result;
-}
-
-function camelize(string $input, string $separator = '_'): string
-{
-    return str_replace($separator, '', lcfirst(ucwords($input, $separator)));
-}
-
-function camelize_ex_1(string $input, string $separator = '_'): string
-{
-    return str_replace($separator, '', ucwords($input, $separator));
-}
-
 // get all entries of the list that are not in the second list
 function zu_lst_not_in($in_lst, $exclude_lst): array
 {

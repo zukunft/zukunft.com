@@ -475,7 +475,8 @@ class verb_list extends type_list
      */
     function ids_txt(): string
     {
-        return sql_array($this->ids());
+        $lib = new library();
+        return $lib->sql_array($this->ids());
     }
 
     /**
