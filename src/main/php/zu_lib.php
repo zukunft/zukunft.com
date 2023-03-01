@@ -1310,49 +1310,6 @@ list functions (to be dismissed / replaced by objects)
 */
 
 
-// get all entries of the list that are not in the second list
-function zu_lst_not_in($in_lst, $exclude_lst): array
-{
-    $lib = new library();
-    log_debug('zu_lst_not_in(' . $lib->dsp_array(array_keys($in_lst)) . ',ex' . $lib->dsp_array($exclude_lst) . ')');
-    $result = array();
-    foreach (array_keys($in_lst) as $lst_entry) {
-        if (!in_array($lst_entry, $exclude_lst)) {
-            $result[$lst_entry] = $in_lst[$lst_entry];
-        }
-    }
-    return $result;
-}
-
-/**
- * similar to zu_lst_not_in, but looking at the array value not the key
- */
-function zu_lst_not_in_no_key(array $in_lst, array $exclude_lst): array
-{
-    $lib = new library();
-    log_debug('zu_lst_not_in_no_key(' . $lib->dsp_array($in_lst) . 'ex' . $lib->dsp_array($exclude_lst) . ')');
-    $result = array();
-    foreach ($in_lst as $lst_entry) {
-        if (!in_array($lst_entry, $exclude_lst)) {
-            $result[] = $lst_entry;
-        }
-    }
-    log_debug($lib->dsp_array($result));
-    return $result;
-}
-
-// get all entries of the list that are not in the second list
-function zu_lst_in_ids($in_lst, $only_if_ids): array
-{
-    $result = array();
-    foreach (array_keys($in_lst) as $lst_entry) {
-        if (in_array($lst_entry, $only_if_ids)) {
-            $result[$lst_entry] = $in_lst[$lst_entry];
-        }
-    }
-    return $result;
-}
-
 // create an url parameter text out of an id array
 function zu_ids_to_url($ids, $par_name): string
 {

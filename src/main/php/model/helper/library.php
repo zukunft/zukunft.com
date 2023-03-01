@@ -202,73 +202,8 @@ class library
 
 
     /*
-     * short forms for the reflection class
+     * list functions (to be replaced by standard functions if possible)
      */
-
-    function base_class_name(string $class_name): string
-    {
-        return $this->str_right_of($class_name, '\\');
-    }
-
-
-    /*
-     * display functions
-     * to format objects as a string
-     */
-
-    /**
-     * create a human-readable string from an array
-     * @param array|null $in_array the array that should be formatted
-     * @return string the value comma seperated or "null" if the array is empty
-     */
-    function dsp_array(?array $in_array, bool $with_keys = false): string
-    {
-        global $debug;
-
-        $lib = new library();
-        $result = 'null';
-        if ($in_array != null) {
-            if ($debug > 10 or count($in_array) < 7) {
-                if (count($in_array) > 0) {
-                    $result = implode(',', $lib->array_flat($in_array));
-                }
-                if ($with_keys) {
-                    $result .= ' (keys ' . $this->dsp_array_keys($in_array) . ')';
-                }
-            } else {
-                $left = array_slice($in_array, 0, 3);
-                $result = implode(',', $lib->array_flat($left));
-                $result .= ',...,' . end($in_array);
-            }
-        }
-        return $result;
-    }
-
-    function dsp_array_keys(?array $in_array): string
-    {
-        global $debug;
-
-        $lib = new library();
-        $result = 'null';
-        if ($in_array != null) {
-            $keys = array_keys($in_array);
-            if ($debug > 10 or count($keys) < 7) {
-                if (count($keys) > 0) {
-                    $result = implode(',', $keys);
-                }
-            } else {
-                $left = array_slice($keys, 0, 3);
-                $result = implode(',', $lib->array_flat($left));
-                $result .= ',...,' . end($keys);
-            }
-        }
-        return $result;
-    }
-
-    /*
-     * list functions (to be replced by standard functions if possible)
-
-    */
     function array_flat(array $array): array
     {
         $return = array();
@@ -332,6 +267,86 @@ class library
             }
         }
         return $result;
+    }
+
+    /**
+     * @return array with all entries of the list that are not in the second list
+     */
+    function lst_not_in(array $in_lst, array $exclude_lst): array
+    {
+        $lib = new library();
+        $result = array();
+        foreach ($in_lst as $lst_entry) {
+            if (!in_array($lst_entry, $exclude_lst)) {
+                $result[] = $lst_entry;
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * display functions
+     * to format objects as a string
+     */
+
+    /**
+     * create a human-readable string from an array
+     * @param array|null $in_array the array that should be formatted
+     * @return string the value comma seperated or "null" if the array is empty
+     */
+    function dsp_array(?array $in_array, bool $with_keys = false): string
+    {
+        global $debug;
+
+        $lib = new library();
+        $result = 'null';
+        if ($in_array != null) {
+            if ($debug > 10 or count($in_array) < 7) {
+                if (count($in_array) > 0) {
+                    $result = implode(',', $lib->array_flat($in_array));
+                }
+                if ($with_keys) {
+                    $result .= ' (keys ' . $this->dsp_array_keys($in_array) . ')';
+                }
+            } else {
+                $left = array_slice($in_array, 0, 3);
+                $result = implode(',', $lib->array_flat($left));
+                $result .= ',...,' . end($in_array);
+            }
+        }
+        return $result;
+    }
+
+    function dsp_array_keys(?array $in_array): string
+    {
+        global $debug;
+
+        $lib = new library();
+        $result = 'null';
+        if ($in_array != null) {
+            $keys = array_keys($in_array);
+            if ($debug > 10 or count($keys) < 7) {
+                if (count($keys) > 0) {
+                    $result = implode(',', $keys);
+                }
+            } else {
+                $left = array_slice($keys, 0, 3);
+                $result = implode(',', $lib->array_flat($left));
+                $result .= ',...,' . end($keys);
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * short forms for the reflection class
+     */
+
+    function base_class_name(string $class_name): string
+    {
+        return $this->str_right_of($class_name, '\\');
     }
 
 }

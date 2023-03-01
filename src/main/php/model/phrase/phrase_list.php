@@ -1911,6 +1911,7 @@ class phrase_list extends user_sandbox_list_named
     function keep_only_specific()
     {
         log_debug('phrase_list->keep_only_specific (' . $this->dsp_id());
+        $lib = new library();
 
         $result = $this->id_lst();
         foreach ($this->lst as $phr) {
@@ -1921,7 +1922,7 @@ class phrase_list extends user_sandbox_list_named
             $phr_lst_is = $phr->is();
             if (isset($phr_lst_is)) {
                 if (!empty($phr_lst_is->ids)) {
-                    $result = zu_lst_not_in_no_key($result, $phr_lst_is->ids);
+                    $result = $lib->lst_not_in($result, $phr_lst_is->ids);
                     log_debug($phr->name() . ' is of type ' . $phr_lst_is->dsp_id());
                 }
             }

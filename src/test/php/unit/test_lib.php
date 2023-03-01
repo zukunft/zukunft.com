@@ -156,6 +156,48 @@ class string_unit_tests
 
         $t->subheader('arrays and lists');
 
+        $inner_array = ["a", "b", "c"];
+        $test_array = [1, 2, $inner_array, 3];
+        $target = '1,2,a,b,c,3';
+        $result = $lib->dsp_array($lib->array_flat($test_array));
+        $t->assert("dsp array_flat", $result, $target);
+
+        $test_array = [1, 2, 3];
+        $target = 3;
+        $result = $lib->dsp_count($test_array);
+        $t->assert("dsp_count", $result, $target);
+
+        $test_array = null;
+        $target = 0;
+        $result = $lib->dsp_count($test_array);
+        $t->assert("dsp_count of null", $result, $target);
+
+        $test_array = ["a", "", "c"];
+        $target = 'a,c';
+        $result = $lib->dsp_array($lib->array_trim($test_array));
+        $t->assert("dsp array_trim", $result, $target);
+
+        $test_array = [1, 2, 3];
+        $target = " AND field IN (1,2,3)";
+        $result = $lib->sql_array($test_array, ' AND field IN (', ')');
+        $t->assert("sql_array", $result, $target);
+
+        $test_array = [1, 2, 3];
+        $target = " AND field IN ('1,2,3')";
+        $result = $lib->sql_array($test_array, ' AND field IN (', ')', true);
+        $t->assert("sql_array", $result, $target);
+
+        $test_array = [1, 2, 3, 4];
+        $del_array = [2, 3];
+        $target = [1, 4];
+        $result = $lib->lst_not_in($test_array, $del_array);
+        $t->assert("sql_array", $result, $target);
+
+        $test_array = [];
+        $target = '';
+        $result = $lib->sql_array($test_array, ' AND field IN (', ')');
+        $t->assert("sql_array empty", $result, $target);
+
         // test dsp_array
         $test_array = [1, 2, 3];
         $target = '1,2,3';
@@ -201,42 +243,6 @@ class string_unit_tests
         $result = $lib->dsp_array_keys($test_array);
         $t->assert("dsp_array_keys many number details", $result, $target);
         $debug = $mem_debug;
-
-        $inner_array = ["a", "b", "c"];
-        $test_array = [1, 2, $inner_array, 3];
-        $target = '1,2,a,b,c,3';
-        $result = $lib->dsp_array($lib->array_flat($test_array));
-        $t->assert("dsp array_flat", $result, $target);
-
-        $test_array = [1, 2, 3];
-        $target = 3;
-        $result = $lib->dsp_count($test_array);
-        $t->assert("dsp_count", $result, $target);
-
-        $test_array = null;
-        $target = 0;
-        $result = $lib->dsp_count($test_array);
-        $t->assert("dsp_count of null", $result, $target);
-
-        $test_array = ["a", "", "c"];
-        $target = 'a,c';
-        $result = $lib->dsp_array($lib->array_trim($test_array));
-        $t->assert("dsp array_trim", $result, $target);
-
-        $test_array = [1, 2, 3];
-        $target = " AND field IN (1,2,3)";
-        $result = $lib->sql_array($test_array, ' AND field IN (', ')');
-        $t->assert("sql_array", $result, $target);
-
-        $test_array = [1, 2, 3];
-        $target = " AND field IN ('1,2,3')";
-        $result = $lib->sql_array($test_array, ' AND field IN (', ')', true);
-        $t->assert("sql_array", $result, $target);
-
-        $test_array = [];
-        $target = '';
-        $result = $lib->sql_array($test_array, ' AND field IN (', ')');
-        $t->assert("sql_array empty", $result, $target);
 
 
         $t->subheader('json');

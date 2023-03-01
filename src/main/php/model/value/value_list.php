@@ -764,17 +764,18 @@ class value_list extends sandbox_list
     {
         asort($word_ids);
         log_debug("ids " . implode(",", $word_ids) . ".");
+        $lib = new library();
 
         $found = false;
         $result = null;
         foreach ($this->lst as $val) {
             if (!$found) {
                 log_debug("check " . implode(",", $word_ids) . " with (" . implode(",", $val->ids) . ")");
-                $wrd_missing = zu_lst_not_in_no_key($word_ids, $val->ids);
+                $wrd_missing = $lib->lst_not_in($word_ids, $val->ids);
                 if (empty($wrd_missing)) {
                     // potential result candidate, because the value has all needed words
                     log_debug("can (" . $val->number() . ")");
-                    $wrd_extra = zu_lst_not_in_no_key($val->ids, $word_ids);
+                    $wrd_extra = $lib->lst_not_in($val->ids, $word_ids);
                     if (empty($wrd_extra)) {
                         // if there is no extra word, it is the correct value
                         log_debug("is (" . $val->number() . ")");
