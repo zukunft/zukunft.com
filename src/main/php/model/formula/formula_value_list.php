@@ -402,7 +402,8 @@ class formula_value_list
      * create functions - build new formula values
      */
 
-    /**
+    /*
+     * TODO check
      * add all formula results to the list for ONE formula based on
      * - the word assigned to the formula ($phr_id)
      * - the word that are used in the formula ($frm_phr_ids)
@@ -422,7 +423,6 @@ class formula_value_list
      *       exclude the time word and if needed loop over the time words
      *       if the value has been update, create a calculation request
      * ex zuc_upd_lst_val
-     */
     function add_frm_val(int $phr_id, $frm_phr_ids, $frm_row, $usr_id)
     {
         $lib = new library();
@@ -440,7 +440,7 @@ class formula_value_list
         $value_lst = $val_lst->load_frm_related_grp_phrs($phr_id, $frm_phr_ids, $this->user()->id());
 
         foreach (array_keys($value_lst) as $val_id) {
-            /* maybe use for debugging */
+            // maybe use for debugging
             if ($debug > 0) {
                 $debug_txt = "";
                 $debug_phr_ids = $value_lst[$val_id][1];
@@ -472,6 +472,7 @@ class formula_value_list
         log_debug('number of values added (' . $lib->dsp_count($result) . ')');
         return $result;
     }
+*/
 
     /**
      * add all formula results to the list that may needs to be updated if a formula is updated for one user

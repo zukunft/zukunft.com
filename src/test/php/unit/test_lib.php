@@ -187,16 +187,27 @@ class string_unit_tests
         $result = $lib->sql_array($test_array, ' AND field IN (', ')', true);
         $t->assert("sql_array", $result, $target);
 
-        $test_array = [1, 2, 3, 4];
-        $del_array = [2, 3];
-        $target = [1, 4];
-        $result = $lib->lst_not_in($test_array, $del_array);
-        $t->assert("sql_array", $result, $target);
-
         $test_array = [];
         $target = '';
         $result = $lib->sql_array($test_array, ' AND field IN (', ')');
         $t->assert("sql_array empty", $result, $target);
+
+        $test_array = [1, 2, 3, 4];
+        $del_array = [2, 3];
+        $target = [1, 4];
+        $result = $lib->lst_not_in($test_array, $del_array);
+        $t->assert("lst_not_in", $result, $target);
+
+        $test_array = [5, 6, 7, 8];
+        $par_name = 'phr';
+        $target = '&phr1=5&phr2=6&phr3=7&phr4=8';
+        $result = $lib->ids_to_url($test_array, $par_name);
+        $t->assert("ids_to_url", $result, $target);
+
+        $test_array = [1, 0, null, 4];
+        $target = [1, 4];
+        $result = $lib->ids_not_empty($test_array, $par_name);
+        $t->assert("ids_not_empty", $result, $target);
 
         // test dsp_array
         $test_array = [1, 2, 3];

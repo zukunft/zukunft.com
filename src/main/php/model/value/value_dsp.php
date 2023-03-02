@@ -344,6 +344,7 @@ class value_dsp_old extends value
     function dsp_edit($type_ids, $back): string
     {
         $result = ''; // reset the html code var
+        $lib = new library();
 
         // set main display parameters for the add or edit view
         if ($this->id <= 0) {
@@ -423,8 +424,8 @@ class value_dsp_old extends value
                     // allow the user to change also the fixed phrases
                     $type_ids_adj = $type_ids;
                     $type_ids_adj[$phr->dsp_pos] = 0;
-                    $used_url = $this_url . zu_ids_to_url($this->ids(), "phrase") .
-                        zu_ids_to_url($type_ids_adj, "type");
+                    $used_url = $this_url . $lib->ids_to_url($this->ids(), "phrase") .
+                        $lib->ids_to_url($type_ids_adj, "type");
                     $result .= $phr->dsp_name_del($used_url);
                     $result .= '  <input type="hidden" name="phrase' . $url_pos . '" value="' . $phr->id . '">';
                     $url_pos++;
@@ -461,8 +462,8 @@ class value_dsp_old extends value
                     $type_ids_adj = $type_ids;
                     array_splice($phr_ids_adj, $phr->dsp_pos, 1);
                     array_splice($type_ids_adj, $phr->dsp_pos, 1);
-                    $used_url = $this_url . zu_ids_to_url($phr_ids_adj, "phrase") .
-                        zu_ids_to_url($type_ids_adj, "type") .
+                    $used_url = $this_url . $lib->ids_to_url($phr_ids_adj, "phrase") .
+                        $lib->ids_to_url($type_ids_adj, "type") .
                         '&confirm=1';
                     // url for the case that this phrase should be renamed
                     if ($phr->id > 0) {
@@ -580,8 +581,8 @@ class value_dsp_old extends value
         $phr_ids_new[] = 0;
         $type_ids_new = $type_ids;
         $type_ids_new[] = 0;
-        $used_url = $this_url . zu_ids_to_url($phr_ids_new, "phrase") .
-            zu_ids_to_url($type_ids_new, "type");
+        $used_url = $this_url . $lib->ids_to_url($phr_ids_new, "phrase") .
+            $lib->ids_to_url($type_ids_new, "type");
         $result .= '  ' . \html\btn_add("Add another phrase", $used_url);
         $result .= '  <br><br>';
         $result .= '  <input type="hidden" name="back" value="' . $back . '">';

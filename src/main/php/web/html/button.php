@@ -34,6 +34,7 @@
 
 namespace html;
 
+use library;
 use phrase_list;
 use phrase_list_dsp_old;
 
@@ -143,6 +144,7 @@ class button {
     */
     function add_value ($phr_lst, $type_ids, $back): string {
         log_debug("button->add_value");
+        $lib = new library();
 
         $url_phr = '';
         if (isset($phr_lst)) {
@@ -161,7 +163,7 @@ class button {
         log_debug("type URL");
         $url_type = '';
         if (isset($type_ids)) {
-            $url_type = zu_ids_to_url($type_ids,"type");
+            $url_type = $lib->ids_to_url($type_ids,"type");
         }
 
         $this->call  = '/http/value_add.php?back='.$back.$url_phr.$url_type;

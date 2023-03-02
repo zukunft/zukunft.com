@@ -1517,7 +1517,8 @@ class phrase_list extends user_sandbox_list_named
     // the old long form to encode
     function id_url_long(): string
     {
-        return zu_ids_to_url($this->id_lst(), "phrase");
+        $lib = new library();
+        return $lib->ids_to_url($this->id_lst(), "phrase");
     }
 
 

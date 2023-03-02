@@ -958,10 +958,9 @@ class value_list extends sandbox_list
         return $result;
     }
 
-    /**
+    /*
      * group words
      * kind of similar to zu_sql_val_lst_wrd
-     */
     function load_frm_related_grp_phrs_part($val_ids, $phr_id, $phr_ids, $user_id): array
     {
         log_debug("(v" . implode(",", $val_ids) . ",t" . $phr_id . ",ft" . implode(",", $phr_ids) . ",u" . $user_id . ")");
@@ -1016,27 +1015,8 @@ class value_list extends sandbox_list
         log_debug(zu_lst_dsp($result));
         return $result;
     }
-
-    /**
-     * to be integrated into load
      */
-    function load_frm_related_grp_phrs($phr_id, $phr_ids, $user_id)
-    {
-        log_debug($phr_id . ",ft" . implode(",", $phr_ids) . ",u" . $user_id);
-        $result = array();
 
-        if ($phr_id > 0 and !empty($phr_ids)) {
-            // get the relevant values
-            $val_ids = $this->load_frm_related($phr_id, $phr_ids, $user_id);
-
-            // get the word groups for which a formula result is expected
-            // maybe exclude word groups already here where not all needed values for the formula are in the database
-            $result = $this->load_frm_related_grp_phrs_part($val_ids, $phr_id, $phr_ids, $user_id);
-        }
-
-        log_debug(zu_lst_dsp($result));
-        return $result;
-    }
 
     /*
     private function common_phrases(): phrase_list

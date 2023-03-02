@@ -284,6 +284,41 @@ class library
         return $result;
     }
 
+    /**
+     * create an url parameter text out of an id array
+     * @param array $ids
+     * @param string $par_name
+     * @return string
+     */
+    function ids_to_url(array $ids, string $par_name): string
+    {
+        $result = "";
+        foreach (array_keys($ids) as $pos) {
+            $nbr = $pos + 1;
+            if ($ids[$pos] <> "" or $ids[$pos] === 0) {
+                $result .= "&" . $par_name . $nbr . "=" . $ids[$pos];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $ids that can contain o and null values
+     * @return array with positive or negative numbers
+     */
+    function ids_not_empty(array $ids): array
+    {
+        $result = array();
+        foreach ($ids as $id) {
+            if ($id != null) {
+                if ($id > 0) {
+                    $result[] = $id;
+                }
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * display functions

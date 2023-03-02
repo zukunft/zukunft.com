@@ -103,7 +103,7 @@ if ($session_usr->id() > 0) {
         $dsp_lst = "";
         if ($phr_ids_txt <> "") {
             $phr_ids = explode(",", $phr_ids_txt);
-            $phr_ids = zu_ids_not_empty($phr_ids);
+            $phr_ids = $lib->ids_not_empty($phr_ids);
             if (!empty($phr_ids)) {
                 $phr_lst = new phrase_list($usr);
                 $phr_lst->load_names_by_ids(new phr_ids($phr_ids));
