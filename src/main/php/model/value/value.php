@@ -184,13 +184,14 @@ class value extends user_sandbox_value
         string $id_fld = self::FLD_ID
     ): bool
     {
+        $lib = new library();
         $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->number = $db_row[self::FLD_VALUE];
             // TODO check if phrase_group_id and time_word_id are user specific or time series specific
             $this->grp->set_id($db_row[phrase_group::FLD_ID]);
             $this->set_source_id($db_row[source::FLD_ID]);
-            $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE]);
+            $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
         }
         return $result;
     }
@@ -260,6 +261,7 @@ class value extends user_sandbox_value
         global $protection_types;
 
         $msg = new user_message();
+        $lib = new library();
 
         // make sure that there are no unexpected leftovers but keep the user
         $usr = $this->user();
@@ -282,7 +284,7 @@ class value extends user_sandbox_value
 
             if ($key == exp_obj::FLD_TIMESTAMP) {
                 if (strtotime($value)) {
-                    $this->time_stamp = get_datetime($value, $this->dsp_id(), 'JSON import');
+                    $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
                 } else {
                     $msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
                 }
@@ -1109,10 +1111,11 @@ class value extends user_sandbox_value
     {
         global $share_types;
         global $protection_types;
+        $lib = new library();
 
         if ($key == exp_obj::FLD_TIMESTAMP) {
             if (strtotime($value)) {
-                $this->time_stamp = get_datetime($value, $this->dsp_id(), 'JSON import');
+                $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
             } else {
                 $msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
             }

@@ -34,7 +34,53 @@ class library
 {
 
     /*
-     * format functions
+     * convert
+     */
+
+    /**
+     * convert a database datetime string to a php DateTime object
+     *
+     * @param string $datetime_text the datetime as received from the database
+     * @return DateTime the converted DateTime value or now()
+     */
+    function get_datetime(string $datetime_text, string $obj_name = '', string $process = ''): DateTime
+    {
+        $result = new DateTime();
+        try {
+            $result = new DateTime($datetime_text);
+        } catch (Exception $e) {
+            $msg = 'Failed to convert the database DateTime value ' . $datetime_text;
+            if ($obj_name != '') {
+                $msg .= ' for ' . $obj_name;
+            }
+            if ($process != '') {
+                $msg .= ' during ' . $process;
+            }
+            $msg .= ', because ' . $e;
+            $msg .= ' reset to now';
+            log_err($msg);
+        }
+        return $result;
+    }
+
+    /**
+     * convert a database boolean tiny int value to a php boolean object
+     *
+     * @param int|null $bool_value the value as received from the database
+     * @return bool true if the database value is 1
+     */
+    function get_bool(?int $bool_value): bool
+    {
+        if ($bool_value == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /*
+     * format
      */
 
     /**
@@ -204,6 +250,7 @@ class library
     /*
      * list functions (to be replaced by standard functions if possible)
      */
+
     function array_flat(array $array): array
     {
         $return = array();
@@ -211,6 +258,29 @@ class library
             $return[] = $a;
         });
         return $return;
+    }
+
+    /**
+     * recursive count of the number of elements in an array but limited to a given level
+     * @param array $json_array the array that should be analysed
+     * @param int $levels the number of levels that should be taken into account (-1 or empty for unlimited levels)
+     * @param int $level used for the recursive
+     * @return int the number of elements
+     */
+    function count_recursive(array $json_array, int $levels = -1, int $level = 1): int
+    {
+        $result = 0;
+        if ($json_array != null) {
+            if ($level <= $levels or $levels == -1) {
+                foreach ($json_array as $sub_array) {
+                    $result++;
+                    if (is_array($sub_array)) {
+                        $result = $result + $this->count_recursive($sub_array, $levels, ++$level);
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
     function dsp_count(?array $in_array): int
@@ -321,10 +391,27 @@ class library
 
 
     /*
-     * display functions
+     * display
      * to format objects as a string
      */
 
+    /**
+     * @param array|string|int|null $var_to_format
+     * @return string best guess formatting of an array, string or int value for debug lines
+     */
+    function dsp_var(array|string|int|null $var_to_format): string
+    {
+        $result = '';
+        $lib = new library();
+        if ($var_to_format != null) {
+            if (is_array($var_to_format)) {
+                $result = $lib->dsp_array($var_to_format);
+            } else {
+                $result = $var_to_format;
+            }
+        }
+        return $result;
+    }
     /**
      * create a human-readable string from an array
      * @param array|null $in_array the array that should be formatted

@@ -89,6 +89,7 @@ class file_import
     function put(): user_message
     {
         global $usr;
+        $lib = new library();
 
         log_debug();
         $result = new user_message();
@@ -96,7 +97,7 @@ class file_import
 
         $json_array = json_decode($this->json_str, true);
         if ($json_array != null) {
-            $total = count_recursive($json_array, 1);
+            $total = $lib->count_recursive($json_array, 1);
 
             // get the user first to allow user specific validation
             $usr_import = null;

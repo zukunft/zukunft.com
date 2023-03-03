@@ -2220,36 +2220,6 @@ class user_sandbox extends db_object
 
 
     /*
-     * helper functions
-     */
-
-    /**
-     * convert a database datetime string to a php DateTime object
-     *
-     * @param string $datetime_text the datetime as received from the database
-     * @return DateTime the converted DateTime value or now()
-     */
-    function get_datetime(string $datetime_text, string $obj_name = ''): DateTime
-    {
-        return get_datetime($datetime_text, $obj_name);
-    }
-
-    /**
-     * convert a database boolean tiny int value to a php boolean object
-     *
-     * @param int|null $bool_value the value as received from the database
-     * @return bool true if the database value is 1
-     */
-    function get_bool(?int $bool_value): bool
-    {
-        if ($bool_value == 1) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /*
      * type field
      *
      * functions that are not used in this object, but in many child objects

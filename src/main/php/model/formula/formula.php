@@ -182,6 +182,7 @@ class formula extends user_sandbox_named_with_type
         string $id_fld = self::FLD_ID): bool
     {
         global $formula_types;
+        $lib = new library();
         $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->set_name($db_row[self::FLD_NAME]);
@@ -189,8 +190,8 @@ class formula extends user_sandbox_named_with_type
             $this->usr_text = $db_row[self::FLD_FORMULA_USER_TEXT];
             $this->description = $db_row[self::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_FORMULA_TYPE];
-            $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
-            $this->need_all_val = $this->get_bool($db_row[self::FLD_ALL_NEEDED]);
+            $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
+            $this->need_all_val = $lib->get_bool($db_row[self::FLD_ALL_NEEDED]);
 
             if ($this->type_id > 0) {
                 $this->type_cl = $formula_types->code_id($this->type_id);

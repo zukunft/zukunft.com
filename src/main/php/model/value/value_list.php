@@ -399,7 +399,7 @@ class value_list extends sandbox_list
                             $val->owner_id = $db_val[user_sandbox::FLD_USER];
                             $val->set_number($db_val[value::FLD_VALUE]);
                             $val->set_source_id($db_val[source::FLD_ID]);
-                            $val->last_update = get_datetime($db_val[value::FLD_LAST_UPDATE]);
+                            $val->last_update = $lib->get_datetime($db_val[value::FLD_LAST_UPDATE]);
                             $val->grp->set_id($db_val[phrase_group::FLD_ID]);
                             $this->lst[] = $val;
                         }
@@ -441,6 +441,7 @@ class value_list extends sandbox_list
 
         log_debug();
         $result = new user_message();
+        $lib = new library();
 
         $val = new value($this->user());
         $phr_lst = new phrase_list($this->user());
@@ -455,7 +456,7 @@ class value_list extends sandbox_list
 
             if ($key == exp_obj::FLD_TIMESTAMP) {
                 if (strtotime($value)) {
-                    $val->time_stamp = get_datetime($value, $val->dsp_id(), 'JSON import');
+                    $val->time_stamp = $lib->get_datetime($value, $val->dsp_id(), 'JSON import');
                 } else {
                     $result->add_message('Cannot add timestamp "' . $value . '" when importing ' . $val->dsp_id());
                 }

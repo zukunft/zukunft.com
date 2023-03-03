@@ -38,12 +38,26 @@ class string_unit_tests
     function run(testing $t): void
     {
         global $debug;
+        $lib = new library();
 
         $t->header('Test the zukunft.com base functions (model/helper/library.php)');
 
-        $t->subheader('strings');
 
-        $lib = new library();
+        $t->subheader('convert');
+
+        // db date text to php datetime object
+        $date_text = "2023-03-03 09:32:50.980518";
+        $target = '2023-03-03T09:32:50+01:00';
+        $result = $lib->get_datetime($date_text)->format(DateTimeInterface::ATOM);
+        $t->assert("trim", $result, $target);
+
+        // potential db bool value
+        $bool = null;
+        $result = $lib->get_bool($bool);
+        $t->assert("trim", $result, false);
+
+
+        $t->subheader('strings');
 
         // test trim (remove also double spaces)
         $text = "  This  text  has  many  spaces  ";
@@ -77,6 +91,9 @@ class string_unit_tests
         $target = '<html><table><tr><th>header</th></tr><tr><td>data</td></tr></table></html>';
         $result = $lib->trim_html($text);
         $t->assert("trim_html", $result, $target);
+
+
+        $t->subheader('string parts');
 
         // test str_between
         $text = "The formula id of {f23}.";
@@ -162,6 +179,17 @@ class string_unit_tests
         $result = $lib->dsp_array($lib->array_flat($test_array));
         $t->assert("dsp array_flat", $result, $target);
 
+        $level2_array = [4, 5, 6];
+        $level1_array = ["a", "b", "c", $level2_array];
+        $test_array = [1, 2, $level1_array, 3];
+        $target = 11;
+        $result = $lib->count_recursive($test_array);
+        $t->assert("dsp array_flat", $result, $target);
+
+        $target = 8;
+        $result = $lib->count_recursive($test_array, 2);
+        $t->assert("dsp array_flat", $result, $target);
+
         $test_array = [1, 2, 3];
         $target = 3;
         $result = $lib->dsp_count($test_array);
@@ -208,6 +236,21 @@ class string_unit_tests
         $target = [1, 4];
         $result = $lib->ids_not_empty($test_array, $par_name);
         $t->assert("ids_not_empty", $result, $target);
+
+
+        $t->subheader('display');
+
+        // test dsp_var
+        $test_var = [1, 2, 3];
+        $target = '1,2,3';
+        $result = $lib->dsp_var($test_var);
+        $t->assert("dsp_var array", $result, $target);
+
+        // test dsp_var
+        $test_var = 1;
+        $target = '1';
+        $result = $lib->dsp_var($test_var);
+        $t->assert("dsp_var array", $result, $target);
 
         // test dsp_array
         $test_array = [1, 2, 3];
@@ -372,13 +415,13 @@ class string_unit_tests
         $t->assert("json_clean - false test", $result, false);
 
         // recursive count
-        $result = count_recursive($json_array, 0);
+        $result = $lib->count_recursive($json_array, 0);
         $t->assert("count_recursive - count level 0", $result, 0);
-        $result = count_recursive($json_array, 1);
+        $result = $lib->count_recursive($json_array, 1);
         $t->assert("count_recursive - count level 0", $result, 4);
-        $result = count_recursive($json_array, 2);
-        $t->assert("count_recursive - count level 0", $result, 8);
-        $result = count_recursive($json_array, 20);
+        $result = $lib->count_recursive($json_array, 3);
+        $t->assert("count_recursive - count level 0", $result, 5);
+        $result = $lib->count_recursive($json_array, 20);
         $t->assert("count_recursive - count level 0", $result, 8);
 
         // recursive diff

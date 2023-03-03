@@ -101,13 +101,14 @@ class system_log extends db_object
      */
     function row_mapper(array $db_row): bool
     {
+        $lib = new library();
         if ($db_row[self::FLD_ID] > 0) {
             $this->set_id($db_row[self::FLD_ID]);
             $this->usr_id = $db_row[user_sandbox::FLD_USER];
             $this->usr_name = $db_row[user_sandbox::FLD_USER_NAME];
             $this->solver_id = $db_row[self::FLD_SOLVER];
             $this->solver_name = $db_row[self::FLD_SOLVER_NAME];
-            $this->log_time = get_datetime($db_row[self::FLD_TIME]);
+            $this->log_time = $lib->get_datetime($db_row[self::FLD_TIME]);
             $this->type_id = $db_row[self::FLD_TYPE];
             $this->function_id = $db_row[self::FLD_FUNCTION];
             $this->function_name = $db_row[type_list::FLD_NAME];

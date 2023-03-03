@@ -3559,8 +3559,9 @@ class sql_db
     function update($id, $fields, $values, string $id_field = ''): bool
     {
         global $debug;
+        $lib = new library();
 
-        log_debug('of ' . $this->type . ' row ' . dsp_var($id) . ' ' . dsp_var($fields) . ' with "' . dsp_var($values) . '" for user ' . $this->usr_id, $debug - 7);
+        log_debug('of ' . $this->type . ' row ' . $lib->dsp_var($id) . ' ' . $lib->dsp_var($fields) . ' with "' . $lib->dsp_var($values) . '" for user ' . $this->usr_id, $debug - 7);
 
         $result = true;
 
@@ -3570,7 +3571,7 @@ class sql_db
         $this->set_id_field($id_field);
         if ($debug > 0) {
             if ($this->table == "") {
-                log_err("Table not valid for " . $fields . " at " . dsp_var($id) . ".", "zu_sql_update", (new Exception)->getTraceAsString());
+                log_err("Table not valid for " . $fields . " at " . $lib->dsp_var($id) . ".", "zu_sql_update", (new Exception)->getTraceAsString());
                 $par_ok = false;
             }
             if ($values === "") {

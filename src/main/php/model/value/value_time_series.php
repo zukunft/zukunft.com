@@ -122,6 +122,7 @@ class value_time_series extends user_sandbox_display
         bool   $allow_usr_protect = true,
         string $id_fld = self::FLD_ID): bool
     {
+        $lib = new library();
         $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->grp->id = $db_row[phrase_group::FLD_ID];
@@ -129,7 +130,7 @@ class value_time_series extends user_sandbox_display
                 $this->source = new source($this->user());
                 $this->source->id = $db_row[source::FLD_ID];
             }
-            $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
+            $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
         }
         return $result;
     }

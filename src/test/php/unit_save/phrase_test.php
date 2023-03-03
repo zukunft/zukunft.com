@@ -63,6 +63,7 @@ function run_phrase_test(testing $t): void
 
     global $usr;
     global $verbs;
+    $lib = new library();
 
     $t->header('Test the phrase class (src/main/php/model/phrase/phrase.php)');
 
@@ -92,8 +93,8 @@ function run_phrase_test(testing $t): void
     $target = ' <td><a href="/http/view.php?words=' . $wrd_company->id() . '" title="System Test Word Group e.g. Company">' . word_api::TN_COMPANY . '</a></td> ';
     $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
     $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
-    $result = trim_all($result);
-    $target = trim_all($target);
+    $result = $lib->trim_all_spaces($result);
+    $target = $lib->trim_all_spaces($target);
     // to overwrite any special char
     $diff = str_diff($result, $target);
     if ($diff != '') {
@@ -114,8 +115,8 @@ function run_phrase_test(testing $t): void
     $target = ' <td> <a href="/http/view.php?link=' . $lnk_company->id() . '" title="' . phrase_api::TN_ZH_COMPANY . '">' . phrase_api::TN_ZH_COMPANY . '</a></td> ';
     $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
     $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
-    $result = trim_all($result);
-    $target = trim_all($target);
+    $result = $lib->trim_all_spaces($result);
+    $target = $lib->trim_all_spaces($target);
     // to overwrite any special char
     $diff = str_diff($result, $target);
     if ($diff != '') {

@@ -135,6 +135,7 @@ class formula_value extends db_object
      */
     function row_mapper(array $db_row): bool
     {
+        $lib = new library();
         $this->id = 0;
         $result = false;
         if ($db_row != null) {
@@ -146,8 +147,8 @@ class formula_value extends db_object
                 $this->src_time_id = $db_row[self::FLD_SOURCE_TIME];
                 $this->phr_grp_id = $db_row[self::FLD_GRP];
                 $this->value = $db_row[self::FLD_VALUE];
-                $this->last_update = get_datetime($db_row[self::FLD_LAST_UPDATE]);
-                $this->last_val_update = get_datetime($db_row[self::FLD_LAST_UPDATE]);
+                $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
+                $this->last_val_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
                 $this->dirty = $db_row[self::FLD_DIRTY];
                 $this->load_phrases(true);
                 $result = true;
