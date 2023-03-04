@@ -34,4 +34,44 @@ class formula_element_group_list extends sandbox_list
 
     // array $lst is the list of formula element groups
 
+    /*
+     * debug functions
+     */
+
+    /**
+     * @return string to display the unique id fields
+     */
+    function dsp_id(): string
+    {
+        global $debug;
+        $lib = new library();
+        $result = '';
+
+        // show at least 4 elements by name
+        $min_names = $debug;
+        if ($min_names < LIST_MIN_NAMES) {
+            $min_names = LIST_MIN_NAMES;
+        }
+
+        if ($this->lst != null) {
+            $pos = 0;
+            foreach ($this->lst as $sbx_obj) {
+                if ($min_names > $pos) {
+                    if ($result <> '') $result .= ' / ';
+                    $result .= $sbx_obj->dsp_id();
+                    $pos++;
+                }
+            }
+            if (count($this->lst) > $pos) {
+                $result .= ' ... total ' . $lib->dsp_count($this->lst);
+            }
+            if ($debug > DEBUG_SHOW_USER) {
+                if ($this->user()->is_set()) {
+                    $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+                }
+            }
+        }
+        return $result;
+    }
+
 }

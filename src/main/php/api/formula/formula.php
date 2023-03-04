@@ -51,6 +51,7 @@ class formula_api extends user_sandbox_named_with_type_api
     const TF_READ = '"second" = "minute" * 60';
     const TN_READ_ANOTHER = 'scale hour to sec';
     const TN_INCREASE = 'increase';
+    const TN_PERCENT = 'percent';
     const TF_INCREASE = '"percent" = ( "this" - "prior" ) / "prior"';
     const TF_INCREASE_ALTERNATIVE = '"percent" = 1 - ( "this" / "prior" )';
     const TR_INCREASE = '{w1}=({f18}-{f20})/{f20}';
@@ -65,8 +66,8 @@ class formula_api extends user_sandbox_named_with_type_api
     const TF_READ_SCALE_MIO = '"one" = "millions" * 1000000';
     const TR_SCALE_MIO = '{w1} = {w2} * 1000000';
     const TN_PARTS_IN_PERCENT = 'parts in percent';
-    const TF_PARTS_IN_PERCENT = '"percent" = "parts" "of" / "total"';
-    const TR_PARTS_IN_PERCENT = '{w1}={w2}{w3}/{w4}';
+    const TF_PARTS_IN_PERCENT = '"percent" = "parts" "of" / "total"'; // TODO check if separate verb "of each" is needed
+    const TR_PARTS_IN_PERCENT = '{w1}={w2}{v3}/{w4}';
 
     // persevered formula names for unit and integration tests
     const TN_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula

@@ -60,7 +60,7 @@ function run_formula_element_group_test(testing $t): void
     $elm_grp_lst = $exp->element_grp_lst();
 
     $result = $elm_grp_lst->dsp_id();
-    $target = 'this ('.$frm_this->id().') / prior ('.$frm_prior->id().') / prior ('.$frm_prior->id().')';
+    $target = '"'.formula_api::TN_READ_THIS.'" ('.$frm_this->id().') / "'.formula_api::TN_READ_PRIOR.'" ('.$frm_prior->id().') / "'.formula_api::TN_READ_PRIOR.'" ('.$frm_prior->id().')';
     $t->dsp_contains(', formula_element_group_list->dsp_id', $target, $result);
 
 

@@ -101,6 +101,7 @@ class formula_element_group
         return $result;
     }
 
+    // TODO handle multi entry cases if needed
     function id(): int
     {
         if (count($this->lst) == 1) {

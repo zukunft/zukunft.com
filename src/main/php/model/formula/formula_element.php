@@ -5,7 +5,7 @@
     formula_element.php - either a word, triple, verb or formula with a link to a formula
     -------------------
 
-    formula elements are terms, expression operators such as add or brakets
+    formula elements are terms or expression operators such as add or brackets
     The term formula elements are saved in the database for fast detection of dependencies
     formula elements are terms with a link to a formula
 

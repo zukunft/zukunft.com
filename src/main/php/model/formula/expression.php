@@ -326,9 +326,12 @@ class expression
     }
 
     /**
-     * a formula element group is a group of words, verbs, phrases or formula that retrieve a value or a list of values
+     * a formula element group is a group of words, verbs, phrases or formula
+     * that retrieve a value or a list of values
      * e.g. with "Sector" "differentiator" all
      *
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return formula_element_list|formula_element_group_list with the formula element groups used in the expression
      */
     function element_grp_lst(?term_list $trm_lst = null): formula_element_list|formula_element_group_list
     {

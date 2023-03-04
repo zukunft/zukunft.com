@@ -67,8 +67,8 @@ class expression_unit_tests
 
         $t->subheader('interface');
 
-        // just to complete the unit tests test the phrase list creation
-        $test_name = 'get the phrases';
+        // test the phrase list of the right side
+        $test_name = 'get the calc phrases';
         $exp = new expression($usr);
         $exp->set_user_text(formula_api::TF_DIAMETER);
         $trm_names = $exp->get_usr_names();
@@ -77,6 +77,43 @@ class expression_unit_tests
         $phr_lst = $exp->phr_lst($trm_lst);
         $result = $phr_lst->dsp_id();
         $target = '"' . formula_api::TN_PI . '","' . formula_api::TN_CIRCUMFERENCE . '" (-2,1)';
+        $t->assert($test_name, $result, $target);
+
+        // test the phrase list of the left side
+        $test_name = 'get the result phrases';
+        $exp = new expression($usr);
+        $exp->set_user_text(formula_api::TF_INCREASE);
+        $trm_names = $exp->get_usr_names();
+        $trm_lst = $t->term_list_for_tests($trm_names);
+        $exp->ref_text($trm_lst);
+        $phr_lst = $exp->fv_phr_lst($trm_lst);
+        $result = $phr_lst->dsp_id();
+        $target = '"' . formula_api::TN_PERCENT . '" (1)';
+        $t->assert($test_name, $result, $target);
+
+        // the phrase list for the calc part should be empty, because it contains only formulas
+        $phr_lst = $exp->phr_lst($trm_lst);
+        $result = $phr_lst->dsp_id();
+        $target = 'null';
+        $t->assert($test_name, $result, $target);
+
+        // test the element group list of the right side
+        // TODO check with cantons of switzerland
+        // TODO check if adjustment overwrite from some parts works
+        //      e.g. if the total needs to be adjusted, because
+        //      the sum of tax payers of all cantons can be higher than
+        //      the total number of tax payers in Switzerland
+        //      because one person can be tax payer in more than one Canton
+        $test_name = 'get the formula element group list';
+        $exp = new expression($usr);
+        $exp->set_user_text(formula_api::TF_PARTS_IN_PERCENT);
+        $trm_names = $exp->get_usr_names();
+        $trm_lst = $t->term_list_for_tests($trm_names);
+        $exp->ref_text($trm_lst);
+        $elm_grp_lst = $exp->element_grp_lst($trm_lst);
+        $result = $elm_grp_lst->dsp_id();
+        $target = '"parts,of" (2,3) / "total" (4)';
+        //$target = '"' . formula_api::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
 
         // tests based on the increase formula
@@ -119,7 +156,7 @@ class expression_unit_tests
         $frm_prior = $trm_lst->get_by_name(formula_api::TN_READ_PRIOR);
 
         $result = $elm_grp_lst->dsp_id();
-        $target = 'this ('.$frm_this->id_obj().') / prior ('.$frm_prior->id_obj().') / prior ('.$frm_prior->id_obj().')';
+        $target = '"this" ('.$frm_this->id_obj().') / "prior" ('.$frm_prior->id_obj().') / "prior" ('.$frm_prior->id_obj().')';
         $t->dsp_contains($test_name, $target, $result);
 
         $test_name = 'getting phrases that should be added to the result of a formula for "' . $exp->dsp_id() . '"';
@@ -143,7 +180,7 @@ class expression_unit_tests
         $exp_sector->set_ref_text(formula_api::TR_PARTS_IN_PERCENT);
         $phr_lst = $exp_sector->phr_id_lst_as_phr_lst($exp_sector->r_part());
         $result = $phr_lst->dsp_id();
-        $target = '"","","" (2,3,4)';
+        $target = '"","" (2,4)';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'result phrase list with id from the reference text';

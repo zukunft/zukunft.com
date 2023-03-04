@@ -1910,7 +1910,11 @@ class phrase_list extends user_sandbox_list_named
     {
         $result = clone $this;
 
-        if (!empty($id_lst->lst)) {
+        if (empty($id_lst->lst)) {
+            // return an empty list
+            $result = new phrase_list($this->user());
+        } else {
+            $result = clone $this;
             $phr_lst = array();
             $lst_ids = $id_lst->lst;
             foreach ($result->lst as $phr) {
