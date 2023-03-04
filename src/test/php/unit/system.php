@@ -120,7 +120,7 @@ class system_unit_tests
 
         $t->subheader('user list loading sql tests');
 
-        // check if the sql to load the complete list of all .. types is created as expected
+        // check if the sql to load the complete list of all ... types is created as expected
         $sys_log_status = new sys_log_status();
         $t->assert_load_sql_all($db_con, $sys_log_status);
 
@@ -184,6 +184,32 @@ class system_unit_tests
         $json_ex = json_decode(json_encode($ip_range->export_obj()), true);
         $result = json_is_similar($json_in, $json_ex);
         $t->assert('ip_range->import check', $result, true);
+
+
+        /*
+         * ip range tests
+         */
+
+        $t->subheader('ip range tests');
+
+        $json_in = json_decode(file_get_contents(PATH_TEST_FILES . 'unit/system/ip_blacklist.json'), true);
+        $ip_range = new ip_range();
+        $ip_range->set_user($usr);
+        $ip_range->import_obj($json_in, false);
+        $test_ip = '66.249.64.95';
+        $result = $ip_range->includes($test_ip);
+        $t->assert('ip_range->includes check', $result, true);
+
+        // negative case before
+        $test_ip = '66.249.64.94';
+        $result = $ip_range->includes($test_ip);
+        $t->assert('ip_range->includes check', $result, false);
+
+        // negative case after
+        $test_ip = '66.249.65.95';
+        $result = $ip_range->includes($test_ip);
+        $t->assert('ip_range->includes check', $result, false);
+
 
         /*
          * system consistency SQL creation tests
@@ -288,7 +314,7 @@ class system_unit_tests
         $expected = file_get_contents(PATH_TEST_FILES . 'api/system/system_log.json');
         $t->assert('system_log_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
-        $created = $log_dsp->get_html($usr, '');
+        $created = $log_dsp->get_html($usr);
         $expected = file_get_contents(PATH_TEST_FILES . 'web/system/system_log.html');
         $t->assert('system_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 

@@ -144,6 +144,7 @@ class user extends db_object
     public ?user $viewer = null;          // the user who wants to access this user
     // e.g. only admin are allowed to see other user parameters
 
+
     /*
      * construct and map
      */

@@ -137,13 +137,13 @@ function run_formula_test(testing $t): void
     $phr_lst->load_by_names(array(word_api::TN_SHARE, word_api::TN_CHF));
 
     $phr_lst_all = $frm_pe->assign_phr_lst();
-    $phr_lst = $phr_lst_all->filter($phr_lst);
+    $phr_lst = $phr_lst_all->del_list($phr_lst);
     $result = $phr_lst->dsp_name();
     $target = '"' . word_api::TN_SHARE . '"';
     $t->dsp('formula->assign_phr_lst for "' . $frm->name() . '"', $target, $result);
 
     $phr_lst_all = $frm_pe->assign_phr_ulst();
-    $phr_lst = $phr_lst_all->filter($phr_lst);
+    $phr_lst = $phr_lst_all->del_list($phr_lst);
     $result = $phr_lst->dsp_name();
     $target = '"' . word_api::TN_SHARE . '"';
     $t->dsp('formula->assign_phr_ulst for "' . $frm->name() . '"', $target, $result);

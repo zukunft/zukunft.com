@@ -901,7 +901,7 @@ class view_cmp extends user_sandbox_named_with_type
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param view_cmp $db_rec the view component as saved in the database before the update
      * @param view_cmp $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @returns string any message that should be shown to the user or an empty string if everything is fine
      */
     function save_field_formula(sql_db $db_con, view_cmp $db_rec, view_cmp $std_rec): string
     {

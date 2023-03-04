@@ -45,9 +45,7 @@ use api\phrase_type_api;
 use api\ref_api;
 use api\source_api;
 use api\system_log_api;
-use api\triple_api;
 use api\type_api;
-use api\user_api;
 use api\verb_api;
 use api\view_api;
 use api\view_cmp_api;
@@ -213,7 +211,7 @@ class test_api extends test_new_obj
      * access method is used
      *
      * define ISIN as a key
-     * -> streetnumber is move to new table, but not company
+     * -> street number is move to new table, but not company
      *
      */
 

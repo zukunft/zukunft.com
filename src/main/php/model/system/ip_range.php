@@ -35,6 +35,10 @@ class ip_range
 
     const OBJ_NAME = 'ip range';
 
+    /*
+     * database link
+     */
+
     // database and JSON object field names
     const FLD_ID = 'user_blocked_id';
     const FLD_FROM = 'ip_from';
@@ -49,6 +53,11 @@ class ip_range
         self::FLD_ACTIVE
     );
 
+
+    /*
+     * object vars
+     */
+
     // database fields
     public ?int $id = null;               // the database id of the reference
     public string $from = '';
@@ -58,6 +67,11 @@ class ip_range
 
     // in memory only fields
     private ?user $usr = null;             // just needed for logging the changes
+
+
+    /*
+     * construct and map
+     */
 
     function reset(): void
     {
@@ -91,6 +105,7 @@ class ip_range
         return $result;
     }
 
+
     /*
      * get and set
      */
@@ -121,6 +136,7 @@ class ip_range
     {
         return $this->usr;
     }
+
 
     /*
      * loading
@@ -155,7 +171,6 @@ class ip_range
                 ") must be set to load an ip range.", self::class . '->load_sql');
         }
 
-        $sql = '';
         if ($qp->name != '') {
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
@@ -194,6 +209,7 @@ class ip_range
         $this->id = $id;
         return $this->load();
     }
+
 
     /*
      * im- and export
@@ -248,8 +264,13 @@ class ip_range
         return $result;
     }
 
+
+    /*
+     * display
+     */
+
     /**
-     * the unique name of the ip range
+     * @return string with the unique name of the ip range
      */
     function name(): string
     {
@@ -257,7 +278,7 @@ class ip_range
     }
 
     /**
-     * display the unique id fields
+     * @return string to display the identifying ip range fields e.g. for a debug message
      */
     function dsp_id(): string
     {
@@ -271,6 +292,11 @@ class ip_range
         }
         return $result;
     }
+
+
+    /*
+     * check
+     */
 
     /**
      * check if an ip address is within this range
@@ -291,13 +317,18 @@ class ip_range
         return $result;
     }
 
+
+    /*
+     * save
+     */
+
     /**
      * actually update a formula field in the main database record
-     * @param sql_db $db_con
-     * @param $log
-     * @return string
+     * @param sql_db $db_con the active database connection
+     * @param change_log_named $log with the action and table already set
+     * @return string string any message that should be shown to the user or an empty string if everything is fine
      */
-    private function save_field_do(sql_db $db_con, $log): string
+    private function save_field_do(sql_db $db_con, change_log_named $log): string
     {
         $result = '';
         if ($log->add()) {
@@ -312,11 +343,11 @@ class ip_range
 
     /**
      * set the update parameters for the block reason
-     * @param sql_db $db_con
-     * @param $db_rec
-     * @return string
+     * @param sql_db $db_con the active database connection
+     * @param ip_range $db_rec the ip range reason as saved in the database before the change
+     * @return string string any message that should be shown to the user or an empty string if everything is fine
      */
-    private function save_field_reason(sql_db $db_con, $db_rec): string
+    private function save_field_reason(sql_db $db_con, ip_range $db_rec): string
     {
         $result = '';
         if ($db_rec->reason <> $this->reason) {
@@ -333,11 +364,11 @@ class ip_range
 
     /**
      * set the update parameters for the block reason
-     * @param sql_db $db_con
-     * @param $db_rec
-     * @return string
+     * @param sql_db $db_con the active database connection
+     * @param ip_range $db_rec the ip range active flag as saved in the database before the change
+     * @return string string any message that should be shown to the user or an empty string if everything is fine
      */
-    private function save_field_active(sql_db $db_con, $db_rec): string
+    private function save_field_active(sql_db $db_con, ip_range $db_rec): string
     {
         $result = '';
         if ($db_rec->active <> $this->active) {
@@ -354,8 +385,7 @@ class ip_range
 
     /**
      * set the log entry parameter for a new ip range
-     *
-     * @return change_log_named
+     * @return change_log_named with the action set to add
      */
     function log_add(): change_log_named
     {
@@ -372,7 +402,10 @@ class ip_range
         return $log;
     }
 
-    // set the main log entry parameters for updating one verb field
+    /**
+     * set the main log entry parameters for updating one verb field
+     * @return change_log_named with the action set to update
+     */
     private function log_upd(): change_log_named
     {
         log_debug('->log_upd ' . $this->dsp_id());
@@ -384,8 +417,13 @@ class ip_range
         return $log;
     }
 
-    // save all updated verb fields excluding the name, because already done when adding a verb
-    private function save_fields(sql_db $db_con, $db_rec): string
+    /**
+     * save all updated verb fields excluding the name, because already done when adding a verb
+     * @param sql_db $db_con the active database connection
+     * @param ip_range $db_rec the ip range entry as saved in the database before the change
+     * @return string string any message that should be shown to the user or an empty string if everything is fine
+     */
+    private function save_fields(sql_db $db_con, ip_range $db_rec): string
     {
         $result = $this->save_field_reason($db_con, $db_rec);
         $result .= $this->save_field_active($db_con, $db_rec);
@@ -499,6 +537,9 @@ class ip_range
 
 }
 
+/**
+ * the helper class to im- and export an ip range filter
+ */
 class ip_range_exp
 {
 
@@ -508,7 +549,7 @@ class ip_range_exp
     public ?string $reason = null;
     public bool $is_active = false;
 
-    function reset()
+    function reset(): void
     {
         $this->ip_from = '';
         $this->ip_to = '';

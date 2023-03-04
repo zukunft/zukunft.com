@@ -39,12 +39,14 @@ class expression_unit_tests
     {
 
         global $usr;
+        $lib = new library();
 
         // init
-        $lib = new library();
         $t->name = 'expression->';
 
         $t->header('Unit tests of the formula expression class (src/main/php/model/formula/expression.php)');
+
+        $t->subheader('convert user text to database ref text and the other way round');
 
         $this->frm_exp_convert($t,
             'including a triple',
@@ -61,6 +63,21 @@ class expression_unit_tests
             formula_api::TF_PARTS_IN_PERCENT,
             formula_api::TR_PARTS_IN_PERCENT
         );
+
+
+        $t->subheader('interface');
+
+        // just to complete the unit tests test the phrase list creation
+        $test_name = 'get the phrases';
+        $exp = new expression($usr);
+        $exp->set_user_text(formula_api::TF_DIAMETER);
+        $trm_names = $exp->get_usr_names();
+        $trm_lst = $t->term_list_for_tests($trm_names);
+        $exp->ref_text($trm_lst);
+        $phr_lst = $exp->phr_lst($trm_lst);
+        $result = $phr_lst->dsp_id();
+        $target = '"' . formula_api::TN_PI . '","' . formula_api::TN_CIRCUMFERENCE . '" (-2,1)';
+        $t->assert($test_name, $result, $target);
 
         // tests based on the increase formula
         $test_name = 'test the conversion of the user text to the database reference text with fixed formulas';
@@ -103,7 +120,7 @@ class expression_unit_tests
 
         $result = $elm_grp_lst->dsp_id();
         $target = 'this ('.$frm_this->id_obj().') / prior ('.$frm_prior->id_obj().') / prior ('.$frm_prior->id_obj().')';
-        $t->dsp_contains(', formula_element_group_list->dsp_id', $target, $result);
+        $t->dsp_contains($test_name, $target, $result);
 
         $test_name = 'getting phrases that should be added to the result of a formula for "' . $exp->dsp_id() . '"';
         $phr_lst_fv = $exp->fv_phr_lst($trm_lst);
@@ -140,7 +157,7 @@ class expression_unit_tests
     }
 
     /**
-     * @param testing $t just the testing object to count the
+     * @param testing $t just the testing object to count the number of errors and warnings
      * @param string $test_name which part should be tested e.g. with fixed formulas
      * @param string $usr_frm_exp the formula expression in the human-readable format
      * @param string $db_ref_frm_exp the formula expression in the database reference format

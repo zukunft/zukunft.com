@@ -726,7 +726,7 @@ class phrase extends db_object
                 $wrd->plural = $this->obj->plural;
                 $wrd->type_id = $this->obj->type_id;
                 $wrd->view_id = $this->obj->view_id;
-                $wrd->values = $this->obj->values;
+                $wrd->set_usage($this->obj->usage());
             }
         }
         return $wrd;
@@ -758,7 +758,7 @@ class phrase extends db_object
             $trp->set_excluded($this->obj->is_excluded());
             $trp->description = $this->obj->description;
             $trp->type_id = $this->obj->type_id;
-            $trp->values = $this->obj->values;
+            $trp->set_usage($this->obj->usage());
         }
         return $trp;
     }

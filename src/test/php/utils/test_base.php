@@ -1258,7 +1258,7 @@ class test_base
     }
 
     /**
-     * @return void
+     * @return bool
      */
     private function assert_dsp(string $msg, bool $test_result, float $exe_max_time = TIMEOUT_LIMIT): bool
     {

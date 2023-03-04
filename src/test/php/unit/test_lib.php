@@ -87,8 +87,8 @@ class string_unit_tests
 
         // test trim of an HTML string to the relevant part
         // to make two HTML strings more comparable
-        $text = ' <html>  <table >  <tr>  <th>header</th>   </tr>  <tr>  <td>data</td>   </tr>  </table>   </html> ';
-        $target = '<html><table><tr><th>header</th></tr><tr><td>data</td></tr></table></html>';
+        $text = ' <html lang="en">  <table >  <tr>  <th>header</th>   </tr>  <tr>  <td>data</td>   </tr>  </table>   </html> ';
+        $target = '<html lang="en"><table><tr><th>header</th></tr><tr><td>data</td></tr></table></html>';
         $result = $lib->trim_html($text);
         $t->assert("trim_html", $result, $target);
 
@@ -210,7 +210,6 @@ class string_unit_tests
         $result = $lib->sql_array($test_array, ' AND field IN (', ')');
         $t->assert("sql_array", $result, $target);
 
-        $test_array = [1, 2, 3];
         $target = " AND field IN ('1,2,3')";
         $result = $lib->sql_array($test_array, ' AND field IN (', ')', true);
         $t->assert("sql_array", $result, $target);
@@ -234,7 +233,7 @@ class string_unit_tests
 
         $test_array = [1, 0, null, 4];
         $target = [1, 4];
-        $result = $lib->ids_not_empty($test_array, $par_name);
+        $result = $lib->ids_not_empty($test_array);
         $t->assert("ids_not_empty", $result, $target);
 
 
@@ -280,19 +279,16 @@ class string_unit_tests
         $t->assert("dsp_array many numbers", $result, $target);
 
         $debug = 11;
-        $test_array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         $target = '1,2,3,4,5,6,7,8,9,10';
         $result = $lib->dsp_array($test_array);
         $t->assert("dsp_array many number details", $result, $target);
 
         $debug = 1;
-        $test_array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         $target = '0,1,2,...,9';
         $result = $lib->dsp_array_keys($test_array);
         $t->assert("dsp_array_keys many numbers", $result, $target);
 
         $debug = 11;
-        $test_array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         $target = '0,1,2,3,4,5,6,7,8,9';
         $result = $lib->dsp_array_keys($test_array);
         $t->assert("dsp_array_keys many number details", $result, $target);

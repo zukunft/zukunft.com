@@ -229,18 +229,18 @@ class word extends user_sandbox_named_with_type
     /**
      * set the value to rank the words by usage
      *
-     * @param int $usage a higher value moves the word to the top of the selection list
+     * @param int|null $usage a higher value moves the word to the top of the selection list
      * @return void
      */
-    function set_usage(int $usage): void
+    function set_usage(?int $usage): void
     {
         $this->values = $usage;
     }
 
     /**
-     * @return int a higher number indicates a higher usage
+     * @return int|null a higher number indicates a higher usage
      */
-    function usage(): int
+    function usage(): ?int
     {
         return $this->values;
     }

@@ -56,6 +56,8 @@ class formula_api extends user_sandbox_named_with_type_api
     const TR_INCREASE = '{w1}=({f18}-{f20})/{f20}';
     const TN_READ_THIS = 'this';
     const TN_READ_PRIOR = 'prior';
+    const TN_CIRCUMFERENCE = 'circumference';
+    const TN_PI = 'Pi';
     const TN_DIAMETER = 'diameter';
     const TF_DIAMETER = '= "circumference" / "Pi"';
     const TR_DIAMETER = '={w1}/{t2}';

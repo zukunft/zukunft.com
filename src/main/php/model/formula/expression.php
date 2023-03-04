@@ -5,8 +5,15 @@
     model/formula/expression.php - a text that implies a data selection and can calculate a number
     ----------------------------
 
-    either the right part of the equation sign of a formula or the left part
+    the formula expression with
+    the right part of the equation sign which for calculation the result
+    and the left part which contains phrases to be added to the result
     usually in the database reference format
+
+    sample
+    formula with name "increase"
+    and expression "percent" = ("this" - "prior") / "prior
+"
 
 
     This file is part of zukunft.com - calc with words
@@ -279,14 +286,21 @@ class expression
      */
 
     /**
-     * @returns phrase_list with the phrases from a given formula text and load the phrases
+     * get the phrases that are user to calculate the expression result
      * used to detect if the phrases should trigger predefined function e.g. to scale the values
+     *
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @returns phrase_list with the phrases from a given formula text and load the phrases
      */
-    function phr_lst(): phrase_list
+    function phr_lst(?term_list $trm_lst = null): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
         $phr_ids = $this->phr_id_lst($this->r_part());
-        $phr_lst->load_names_by_ids($phr_ids);
+        if ($trm_lst == null) {
+            $phr_lst->load_names_by_ids($phr_ids);
+        } else {
+            $phr_lst->load_names_by_ids($phr_ids, $trm_lst->phrase_list());
+        }
 
         return $phr_lst;
     }
@@ -635,7 +649,7 @@ class expression
      */
 
     /**
-     * returns a word id if the formula string in the database format contains a word link
+     * returns the next word id if the formula string in the database format contains a word link
      * @param string $ref_text with the formula reference text e.g. ={w203}
      * @return int the word id found in the reference text or zero if no word id is found
      */
@@ -645,7 +659,7 @@ class expression
     }
 
     /**
-     * returns a triple id if the formula string in the database format contains a triple link
+     * returns the next triple id if the formula string in the database format contains a triple link
      * @param string $ref_text with the formula reference text e.g. ={t42}
      * @return int the word id found in the reference text or zero if no triple id is found
      */
@@ -655,7 +669,7 @@ class expression
     }
 
     /**
-     * returns a formula id if the formula string in the database format contains a triple link
+     * returns the next formula id if the formula string in the database format contains a triple link
      * @param string $ref_text with the formula reference text e.g. ={f42}
      * @return int the word id found in the reference text or zero if no formula id is found
      */
@@ -665,7 +679,7 @@ class expression
     }
 
     /**
-     * returns a verb id if the formula string in the database format contains a triple link
+     * returns the next verb id if the formula string in the database format contains a triple link
      * @param string $ref_text with the formula reference text e.g. ={v42}
      * @return int the word id found in the reference text or zero if no verb id is found
      */
@@ -675,7 +689,7 @@ class expression
     }
 
     /**
-     * returns a positive reference (word, verb or formula) id if the formula string in the database format contains a database reference link
+     * returns the next positive reference (word, verb or formula) id if the formula string in the database format contains a database reference link
      * uses the $ref_text as a parameter because to ref_text is in many cases only a part of the complete reference text
      *
      * @param string $ref_text with the formula reference text e.g. ={f203}
@@ -789,7 +803,7 @@ class expression
 
                     // filter the elements if requested
                     if ($type == self::SELECT_PHRASE) {
-                        if ($elm->type != formula_element::TYPE_WORD AND $elm->type != formula_element::TYPE_TRIPLE) {
+                        if ($elm->type != formula_element::TYPE_WORD and $elm->type != formula_element::TYPE_TRIPLE) {
                             $elm->obj = null;
                         }
                     }
@@ -804,7 +818,7 @@ class expression
                         }
                     }
                     if ($type == self::SELECT_VERB_WORD) {
-                        if ($elm->type != formula_element::TYPE_WORD AND $elm->type != formula_element::TYPE_VERB) {
+                        if ($elm->type != formula_element::TYPE_WORD and $elm->type != formula_element::TYPE_VERB) {
                             $elm->obj = null;
                         }
                     }
@@ -961,8 +975,8 @@ class expression
                     $vrb = new verb;
                     $vrb->set_user($this->usr);
                     $vrb->load_by_name($name);
-                    if ($vrb->id()  > 0) {
-                        $db_sym = self::VERB_START . $vrb->id()  . self::VERB_END;
+                    if ($vrb->id() > 0) {
+                        $db_sym = self::VERB_START . $vrb->id() . self::VERB_END;
                         log_debug('found verb "' . $db_sym . '" for "' . $name . '"');
                     }
                 }

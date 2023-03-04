@@ -124,7 +124,7 @@ class phrase_list extends user_sandbox_list_named
      */
 
     /**
-     * set the SQL query parameters to load a list of phrases
+     * set the SQL query parameters to load a list of phrase names
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
@@ -144,7 +144,27 @@ class phrase_list extends user_sandbox_list_named
     }
 
     /**
-     * create an SQL statement to retrieve a list of phrase by the id from the database
+     * set the SQL query parameters to load a list of phrase objects
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_object_sql(sql_db $db_con, string $query_name): sql_par
+    {
+        $db_con->set_type(sql_db::TBL_PHRASE);
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
+
+        $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $db_con->set_usr($this->user()->id());
+        $db_con->set_fields(phrase::FLD_NAMES);
+        $db_con->set_usr_fields(phrase::FLD_NAMES_USR_NO_NAME);
+        $db_con->set_usr_num_fields(phrase::FLD_NAMES_NUM_USR);
+        $db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(phrase::FLD_VALUES) . ' DESC, ' . phrase::FLD_NAME);
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of phrase names by the id from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param phr_ids $ids phrase ids that should be loaded
@@ -153,6 +173,23 @@ class phrase_list extends user_sandbox_list_named
     function load_names_sql_by_ids(sql_db $db_con, phr_ids $ids): sql_par
     {
         $qp = $this->load_names_sql($db_con, $ids->count() . 'ids');
+        $db_con->set_where_id_in(phrase::FLD_ID, $ids->lst);
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of phrase objects by the id from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phr_ids $ids phrase ids that should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_object_sql_by_ids(sql_db $db_con, phr_ids $ids): sql_par
+    {
+        $qp = $this->load_object_sql($db_con, $ids->count() . 'ids');
         $db_con->set_where_id_in(phrase::FLD_ID, $ids->lst);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -323,8 +360,22 @@ class phrase_list extends user_sandbox_list_named
     function load_names_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
     {
         global $db_con;
-        $qp = $this->load_names_sql_by_ids($db_con, $ids);
-        return $this->load($qp);
+        if ($phr_lst != null) {
+            $ids_lst_to_load = array_diff($ids->lst, $phr_lst->ids());
+            $ids_to_load = new phr_ids($ids_lst_to_load);
+        } else {
+            $ids_to_load = $ids;
+        }
+        $qp = $this->load_names_sql_by_ids($db_con, $ids_to_load);
+        $result = $this->load($qp);
+        if ($phr_lst != null) {
+            $phr_lst_to_add = $phr_lst->filter_by_ids($ids);
+            if (!$phr_lst_to_add->is_empty()) {
+                $this->merge($phr_lst_to_add);
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -336,8 +387,22 @@ class phrase_list extends user_sandbox_list_named
     function load_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
     {
         global $db_con;
-        $qp = $this->load_names_sql_by_ids($db_con, $ids);
-        return $this->load($qp);
+        if ($phr_lst != null) {
+            $ids_lst_to_load = array_diff($ids->lst, $phr_lst->ids());
+            $ids_to_load = new phr_ids($ids_lst_to_load);
+        } else {
+            $ids_to_load = $ids;
+        }
+        $qp = $this->load_object_sql_by_ids($db_con, $ids_to_load);
+        $result = $this->load($qp);
+        if ($phr_lst != null) {
+            $phr_lst_to_add = $phr_lst->filter_by_ids($ids);
+            if (!$phr_lst_to_add->is_empty()) {
+                $this->merge($phr_lst_to_add);
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -1327,7 +1392,7 @@ class phrase_list extends user_sandbox_list_named
     {
         log_debug('for ' . $this->dsp_id());
         $result = $this->differentiators_all();
-        $result = $result->filter($filter_lst);
+        $result = $result->del_list($filter_lst);
         log_debug($result->dsp_id());
         return $result;
     }
@@ -1795,14 +1860,14 @@ class phrase_list extends user_sandbox_list_named
     }
 
     /**
-     * filters a phrase list
+     * remove a list of phrases from this phrase list
      * e.g. out of "2014", "2015", "2016", "2017"
      *      with the filter "2016", "2017","2018"
      *      the result is "2016", "2017"
      * @param phrase_list $filter_lst a phrase list with the phrases that should be removed from this list
      * @returns phrase_list list a phrase excluding the given phrases
      */
-    function filter(phrase_list $filter_lst): phrase_list
+    function del_list(phrase_list $filter_lst): phrase_list
     {
         $result = clone $this;
 
@@ -1822,6 +1887,32 @@ class phrase_list extends user_sandbox_list_named
         if (!empty($result->lst)) {
             $phr_lst = array();
             $lst_ids = $filter_phr_lst->id_lst();
+            foreach ($result->lst as $phr) {
+                if (in_array($phr->id(), $lst_ids)) {
+                    $phr_lst[] = $phr;
+                }
+            }
+            $result->lst = $phr_lst;
+            log_debug($result->dsp_id());
+        }
+        return $result;
+    }
+
+    /**
+     * filters a phrase list by an id list
+     * e.g. out of "2014 (1)", "2015 (2)", "2016 (3)", "2017 (4)"
+     *      with the filter 2, 3
+     *      the result is "2015 (2)", "2016 (3)"
+     * @param phr_ids $id_lst a list with the phrase ids that should be used from this list
+     * @returns phrase_list list a phrase excluding the given phrases
+     */
+    function filter_by_ids(phr_ids $id_lst): phrase_list
+    {
+        $result = clone $this;
+
+        if (!empty($id_lst->lst)) {
+            $phr_lst = array();
+            $lst_ids = $id_lst->lst;
             foreach ($result->lst as $phr) {
                 if (in_array($phr->id(), $lst_ids)) {
                     $phr_lst[] = $phr;
