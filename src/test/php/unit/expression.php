@@ -116,6 +116,13 @@ class expression_unit_tests
         //$target = '"' . formula_api::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
 
+        // test the element list of the right side
+        $elm_grp_lst = $exp->element_list($trm_lst);
+        $result = $elm_grp_lst->dsp_id();
+        $target = 'parts (2) / of (3) / total (4)';
+        //$target = '"' . formula_api::TN_PERCENT . '" (1)';
+        $t->assert($test_name, $result, $target);
+
         // tests based on the increase formula
         $test_name = 'test the conversion of the user text to the database reference text with fixed formulas';
         $exp = new expression($usr);

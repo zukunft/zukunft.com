@@ -112,7 +112,7 @@ class figure extends db_object
 
 
     /*
-     * display functions
+     * display
      */
 
     /**

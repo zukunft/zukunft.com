@@ -199,8 +199,6 @@ class expression
     private bool $ref_text_dirty;      // true if the human-readable text has been updated and not yet converted
     public ?string $err_text = null;   // description of the problems that appeared during the conversion from the human-readable to the database reference format
     public user $usr;                  // to get the user settings for the conversion
-    public ?phrase_list $fv_phr_lst = null;  // list object of the words that should be added to the formula result
-    public ?phrase_list $phr_lst = null;     // list of the phrase ids that are used for the formula result
 
 
     /*
@@ -363,7 +361,8 @@ class expression
     }
 
     /**
-     * list of elements (in this case only formulas) that are of the predefined type "following", e.g. "this", "next" and "prior"
+     * list of elements (in this case only formulas) that are of the predefined type "following"
+     * e.g. "this", "next" and "prior"
      * @param term_list|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
      * @return phrase_list a list of all formulas words that are using hardcoded functions
      */
@@ -553,8 +552,6 @@ class expression
         foreach ($id_lst as $id) {
             $phr_lst->add_id($id);
         }
-
-        $this->phr_lst = $phr_lst;
         return $phr_lst;
     }
 
@@ -799,7 +796,6 @@ class expression
 
                 // $pos is the position von the next element
                 // to list the elements from left to right, set it to the right most position at the beginning of each replacement
-                $pos = strlen($work);
                 $obj_sym = $lib->str_between($work, self::TERM_START, self::TERM_END);
                 if ($obj_sym != '') {
                     $elm = $this->element_by_symbol($obj_sym, $trm_lst);
@@ -881,8 +877,6 @@ class expression
      */
     private function get_usr_part(string $frm_part_text, ?term_list $trm_lst = null): string
     {
-        $lib = new library();
-
         log_debug($frm_part_text . '< and user ' . $this->usr->name);
         $result = $frm_part_text;
 
@@ -1144,7 +1138,7 @@ class expression
         $lib = new library();
 
         log_debug();
-        $elm_lst = $this->element_lst_all(expression::SELECT_PHRASE, FALSE);
+        $elm_lst = $this->element_lst_all(expression::SELECT_PHRASE);
         log_debug('got ' . $lib->dsp_count($elm_lst->lst()) . ' formula elements');
         $phr_lst = new phrase_list($this->usr);
         foreach ($elm_lst->lst() as $elm) {

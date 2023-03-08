@@ -64,7 +64,7 @@ if ($usr->id() > 0) {
         $frm->set_name($_GET['formula_name']);
     } // the new formula name
     if (isset($_GET['formula_text'])) {
-        $frm->usr_text = $_GET['formula_text'];
+        $frm->set_user_text($_GET['formula_text']);
     } // the new formula text in the user format
     if (isset($_GET['description'])) {
         $frm->description = $_GET['description'];

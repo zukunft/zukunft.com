@@ -270,6 +270,21 @@ class formula extends user_sandbox_named_with_type
         $this->generate_ref_text($trm_lst);
     }
 
+    function usr_text(): string
+    {
+        if ($this->usr_text_dirty) {
+            $this->generate_usr_text();
+        }
+        return $this->usr_text;
+    }
+    function ref_text(): string
+    {
+        if ($this->ref_text_dirty) {
+            $this->generate_ref_text();
+        }
+        return $this->ref_text;
+    }
+
 
 
     /*
@@ -1752,6 +1767,23 @@ class formula extends user_sandbox_named_with_type
      * @return string which is empty if the update of the reference text was successful and otherwise the error message that should be shown to the user
      */
     function generate_ref_text(?term_list $trm_lst = null): string
+    {
+        $result = '';
+        $exp = new expression($this->user());
+        $exp->set_user_text($this->usr_text);
+        $this->ref_text = $exp->ref_text($trm_lst);
+        $this->ref_text_dirty = false;
+        $result .= $exp->err_text;
+        return $result;
+    }
+
+    /**
+     * update the user text based on the database reference text
+     *
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return string which is empty if the update of the reference text was successful and otherwise the error message that should be shown to the user
+     */
+    function generate_usr_text(?term_list $trm_lst = null): string
     {
         $result = '';
         $exp = new expression($this->user());

@@ -1,3 +1,4 @@
 messages:
-  rename_word: "Rename"
+  rename_word:
+    text: "Rename"
     tooltip: "change the word name only for as an exception"

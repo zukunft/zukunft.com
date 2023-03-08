@@ -43,7 +43,7 @@ $session_usr = new user;
 $result .= $session_usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($session_usr->id > 0) {
+if ($session_usr->id() > 0) {
 
     load_usr_data();
 
