@@ -49,4 +49,22 @@ class figure_dsp extends figure_api
     }
 
 
+    /**
+     * return the html code to display a value
+     * this is the opposite of the convert function
+     */
+    function display(string $back = ''): string
+    {
+        return round($this->number(), 2);
+    }
+
+    /**
+     * html code to show the value with the possibility to click for the result explanation
+     */
+    function display_linked(string $back = ''): string
+    {
+        $html = new html_base();
+        return $html->ref($html->url(api::VALUE_EDIT, $this->id, $back), $this->val_formatted());
+    }
+
 }

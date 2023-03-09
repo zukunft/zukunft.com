@@ -38,12 +38,52 @@ class figure_api extends user_sandbox_value_api
 {
 
     /*
+     * object vars
+     */
+
+    private bool $is_result;          // true if the value has been calculated and not set by a user
+
+
+    /*
      * construct and map
      */
 
     function __construct(int $id = 0)
     {
         parent::__construct($id);
+        $this->set_type_result();
+    }
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * define that this figure has been calculated based on other numbers
+     * @return void
+     */
+    function set_type_result(): void
+    {
+        $this->is_result = true;
+    }
+
+    /**
+     * define that this figure has been defined by a user
+     * @return void
+     */
+    function set_type_value(): void
+    {
+        $this->is_result = false;
+    }
+
+    function is_result(): bool
+    {
+        if ($this->is_result) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

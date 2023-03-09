@@ -29,22 +29,18 @@
 
 */
 
+use api\figure_api;
+use html\figure_dsp;
+
 class figure extends db_object
 {
-    /*
-     * types
-     */
-
-    // the main types of a figure objects
-    const TYPE_VALUE = 'value';   // a number set by a user or imported
-    const TYPE_RESULT = 'result'; // a calculated number based on other values
 
     /*
      * object vars
      */
 
     public user $usr;                 // the person who wants to see the figure (value or formula result)
-    public string $type;              // either "value" or "result"
+    private bool $is_result;          // true if the value has been calculated and not set by a user
     public ?float $number = null;     // the numeric value
     public ?string $symbol = null;    // the reference text that has lead to the value
     public ?DateTime $last_update;    // the time of the last update of fields that may influence the calculated results
@@ -62,9 +58,10 @@ class figure extends db_object
     {
         parent::__construct();
         $this->usr = $usr;
-        $this->type = self::TYPE_RESULT;
+        $this->set_type_result();
         $this->last_update = new DateTime();
     }
+
 
     /*
      * set and get
@@ -82,6 +79,24 @@ class figure extends db_object
     }
 
     /**
+     * define that this figure has been calculated based on other numbers
+     * @return void
+     */
+    function set_type_result(): void
+    {
+        $this->is_result = true;
+    }
+
+    /**
+     * define that this figure has been defined by a user
+     * @return void
+     */
+    function set_type_value(): void
+    {
+        $this->is_result = false;
+    }
+
+    /**
      * @return user the person who wants to see a word, verb, triple, formula or view
      */
     function user(): user
@@ -90,12 +105,20 @@ class figure extends db_object
     }
 
     /**
+     * @return float the value either from the formula result or the db value from a user or source
+     */
+    function number(): float
+    {
+        return $this->number;
+    }
+
+    /**
      * @return bool true if the user has done no overwrites either of the value direct
      * or the formula or the formula assignment
      */
     function is_std(): bool
     {
-        if ($this->type == self::TYPE_RESULT) {
+        if ($this->is_result()) {
             if ($this->obj == null) {
                 return false;
             } else {
@@ -112,6 +135,42 @@ class figure extends db_object
 
 
     /*
+     * cast
+     */
+
+    /**
+     * @returns figure_api the cast object for the api
+     */
+    function api_obj(): figure_api
+    {
+        $dsp_obj = new figure_api($this->id);
+        $dsp_obj->set_grp($this->grp());
+        $dsp_obj->set_number($this->number());
+        return $dsp_obj;
+    }
+
+    /**
+     * @returns figure_dsp the cast object with the HTML code generating functions
+     */
+    function dsp_obj(): figure_dsp
+    {
+        return $this->api_obj()->dsp_obj();
+    }
+
+    /*
+     * classification
+     */
+
+    function is_result(): bool
+    {
+        if ($this->is_result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /*
      * display
      */
 
@@ -121,7 +180,12 @@ class figure extends db_object
     function dsp_id(): string
     {
 
-        $result = $this->type;
+        $result = '';
+        if ($this->is_result()) {
+            $result .= 'result';
+        } else {
+            $result .= 'value';
+        }
         $result .= ' ' . $this->number;
         $result .= ' ' . $this->symbol;
         $result .= ' ' . $this->last_update->format('Y-m-d H:i:s');
@@ -156,12 +220,12 @@ class figure extends db_object
         log_debug();
         $result = '';
 
-        if ($this->type == 'value') {
+        if ($this->is_result()) {
+            $result .= $this->obj->display($back);
+        } else {
             if ($this->obj != null) {
                 $result .= $this->obj->dsp_obj()->display($back);
             }
-        } elseif ($this->type == 'result') {
-            $result .= $this->obj->display($back);
         }
 
         return $result;
@@ -175,14 +239,11 @@ class figure extends db_object
         log_debug('figure->display_linked');
         $result = '';
 
-        log_debug('type ' . $this->type);
-        if ($this->type == 'value') {
-            log_debug('value ' . $this->number);
+        if ($this->is_result()) {
+            $result .= $this->obj->display_linked($back);
+        } else {
             $val_dsp = $this->obj->dsp_obj();
             $result .= $val_dsp->display_linked($back);
-        } elseif ($this->type == 'result') {
-            log_debug('result ' . $this->number);
-            $result .= $this->obj->display_linked($back);
         }
 
         return $result;

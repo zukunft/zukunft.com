@@ -998,7 +998,7 @@ class formula_value extends db_object
     {
         $fig = new figure($this->user());
         $fig->id = $this->id();
-        $fig->type = figure::TYPE_RESULT;
+        $fig->set_type_result();
         $fig->number = $this->value;
         $fig->last_update = $this->last_update;
         $fig->obj = $this;

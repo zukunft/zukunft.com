@@ -1200,7 +1200,7 @@ class value extends user_sandbox_value
     {
         $fig = new figure($this->user());
         $fig->id = $this->id;
-        $fig->type = figure::TYPE_VALUE;
+        $fig->set_type_value();
         $fig->number = $this->number();
         $fig->last_update = $this->last_update;
         $fig->obj = $this;
