@@ -29,6 +29,8 @@
   
 */
 
+use model\figure;
+
 class figure_list extends sandbox_list
 {
 

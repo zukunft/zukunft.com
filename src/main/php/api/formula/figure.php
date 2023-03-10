@@ -32,26 +32,20 @@
 
 namespace api;
 
+include_once API_SANDBOX_PATH . 'combine_object.php';
+
 use html\figure_dsp;
 
-class figure_api extends user_sandbox_value_api
+class figure_api extends combine_object_api
 {
-
-    /*
-     * object vars
-     */
-
-    private bool $is_result;          // true if the value has been calculated and not set by a user
-
 
     /*
      * construct and map
      */
 
-    function __construct(int $id = 0)
+    function __construct(value_api|formula_value_api $val_obj)
     {
-        parent::__construct($id);
-        $this->set_type_result();
+        $this->set_obj($val_obj);
     }
 
 
@@ -59,32 +53,28 @@ class figure_api extends user_sandbox_value_api
      * set and get
      */
 
-    /**
-     * define that this figure has been calculated based on other numbers
-     * @return void
-     */
-    function set_type_result(): void
+    function id(): int
     {
-        $this->is_result = true;
-    }
-
-    /**
-     * define that this figure has been defined by a user
-     * @return void
-     */
-    function set_type_value(): void
-    {
-        $this->is_result = false;
-    }
-
-    function is_result(): bool
-    {
-        if ($this->is_result) {
+        if ($this->is_result()) {
             return true;
         } else {
             return false;
         }
     }
+
+    /**
+     * @return bool true if this figure has been calculated based on other numbers
+     *              false if this figure has been defined by a user
+     */
+    function is_result(): bool
+    {
+        if ($this->obj()::class == formula_value_api::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
 
     /*

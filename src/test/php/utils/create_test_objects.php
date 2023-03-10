@@ -40,6 +40,7 @@
 */
 
 use api\formula_api;
+use api\phrase_group_api;
 use api\ref_api;
 use api\source_api;
 use api\system_log_api;
@@ -92,7 +93,17 @@ class test_new_obj extends test_base
     function dummy_value(): value
     {
         global $usr;
-        return new value($usr, 1, value_api::TV_READ);
+        $grp = new phrase_group($usr, 1,  array(phrase_group_api::TN_READ));
+        return new value($usr, 1, round(value_api::TV_READ, 13), $grp);
+    }
+
+    /**
+     * @return figure with all vars set for unit testing - user value case
+     */
+    function dummy_figure_value(): figure
+    {
+        $val = $this->dummy_value();
+        return $val->figure();
     }
 
     function dummy_formula(): formula

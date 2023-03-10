@@ -58,6 +58,7 @@ use export\exp_obj;
 use export\source_exp;
 use export\value_exp;
 use html\value_dsp;
+use model\figure;
 
 class value extends user_sandbox_value
 {

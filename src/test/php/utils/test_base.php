@@ -1258,7 +1258,10 @@ class test_base
     }
 
     /**
-     * @return bool
+     * @param string $msg the message that describes the test for the developer
+     * @param bool $test_result
+     * @param float $exe_max_time
+     * @return bool true if the test result is fine
      */
     private function assert_dsp(string $msg, bool $test_result, float $exe_max_time = TIMEOUT_LIMIT): bool
     {
@@ -1280,7 +1283,7 @@ class test_base
         } else {
             $final_msg .= '<p style="color:red">Error' . $msg;
             $this->error_counter++;
-            // TODO: create a ticket
+            // TODO: create a ticket after version 0.1 where hopefully more than one developer is working on the project
         }
 
         // show the execution time

@@ -2,9 +2,17 @@
 
 /*
 
-    test/unit/figure.php - unit testing of the figure functions
-    --------------------
-  
+    model/sandbox/combine_object.php - parent object to combine two or four sandbox objects
+    --------------------------------
+
+    e.g. to combine value and result to figure
+    or word and triple to phrase
+    or word, triple, verb and formula to term
+
+    TODO use it for figure
+    TODO use it for phrase
+    TODO use it for term
+
 
     This file is part of zukunft.com - calc with words
 
@@ -30,34 +38,30 @@
 
 */
 
-use model\figure;
+namespace model;
 
-class figure_unit_tests
+class combine_object
 {
-    function run(testing $t): void
+
+    /*
+     * object vars
+     */
+
+    private object $obj;
+
+
+    /*
+     * set and get
+     */
+
+    function set_obj(object $obj): void
     {
+        $this->obj = $obj;
+    }
 
-        global $usr;
-
-        $t->header('Unit tests of the formula class (src/main/php/model/formula/figure.php)');
-
-
-        $t->subheader('SQL statement tests');
-
-        // if the user has changed the formula, that related figure is not standard anymore
-        $frm = new formula($usr);
-        $frm->usr_cfg_id = 1;
-        $fig = new figure($usr);
-        $fig->obj = $frm;
-        $result = $fig->is_std();
-        $t->assert('figure->is_std if formula is changed by the user', $result, false);
-
-
-        $t->subheader('API unit tests');
-
-        //$fig = $t->dummy_figure_value();
-        //$t->assert_api($fig);
-
+    function obj(): object
+    {
+        return $this->obj;
     }
 
 }

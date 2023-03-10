@@ -34,6 +34,8 @@
 
 namespace html;
 
+include_once API_FORMULA_PATH . 'figure.php';
+
 use api\figure_api;
 use api\phrase_list_api;
 

@@ -29,8 +29,15 @@
 
 */
 
+namespace model;
+
+include_once API_FORMULA_PATH . 'figure.php';
+
 use api\figure_api;
+use DateTime;
+use db_object;
 use html\figure_dsp;
+use user;
 
 class figure extends db_object
 {
@@ -112,6 +119,11 @@ class figure extends db_object
         return $this->number;
     }
 
+    function obj(): object
+    {
+        return $this->obj;
+    }
+
     /**
      * @return bool true if the user has done no overwrites either of the value direct
      * or the formula or the formula assignment
@@ -143,10 +155,7 @@ class figure extends db_object
      */
     function api_obj(): figure_api
     {
-        $dsp_obj = new figure_api($this->id);
-        $dsp_obj->set_grp($this->grp());
-        $dsp_obj->set_number($this->number());
-        return $dsp_obj;
+        return new figure_api($this->obj->api_obj());
     }
 
     /**
