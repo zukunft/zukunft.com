@@ -52,6 +52,7 @@ use api\view_cmp_api;
 use api\word_api;
 use cfg\formula_type;
 use cfg\phrase_type;
+use model\figure;
 
 class test_new_obj extends test_base
 {

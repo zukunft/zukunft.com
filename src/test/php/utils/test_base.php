@@ -409,7 +409,7 @@ class test_base
      * TODO replace all dsp calls with this but the
      *
      * @param string $msg (unique) description of the test
-     * @param string|array $result the actual result
+     * @param string|array|null $result the actual result
      * @param string|array $target the expected result
      * @param float $exe_max_time the expected max time to create the result
      * @param string $comment
@@ -1520,6 +1520,12 @@ class test_base
     {
         $html = new html_base();
         return $html->header_test('test') . $body . $html->footer();
+    }
+
+    function class_without_namespace(string $class_name_with_namespace): string
+    {
+        $lib = new library();
+        return $lib->str_right_of_or_all($class_name_with_namespace, "\\");
     }
 
 }

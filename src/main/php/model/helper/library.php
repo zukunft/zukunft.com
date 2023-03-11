@@ -220,6 +220,33 @@ class library
         return $result;
     }
 
+    /**
+     * @param string|null $text the text from which the right part should be taken e.g. "select" of "ignore start<select"
+     *                          or the complete text if maker not found
+     * @param string|null $maker e.g. "start<"
+     * @return string the selected text e.g. "select"
+     */
+    function str_right_of_or_all(?string $text, ?string $maker): string
+    {
+        $result = "";
+        if ($text == null) {
+            $text = "";
+        }
+        if ($maker == null) {
+            $maker = "";
+        }
+        if ($text !== $maker) {
+            if (strpos($text, $maker) > 0) {
+                if (substr($text, strpos($text, $maker), strlen($maker)) === $maker) {
+                    $result = substr($text, strpos($text, $maker) + strlen($maker));
+                }
+            } else {
+                $result = $text;
+            }
+        }
+        return $result;
+    }
+
     /*
      * string functions (to be dismissed)
      * some small string related functions to shorten code and make the code clearer
@@ -244,7 +271,6 @@ class library
     {
         return str_replace($separator, '', lcfirst(ucwords($input, $separator)));
     }
-
 
 
     /*
@@ -320,10 +346,10 @@ class library
      * @return string the values comma seperated or "" if the array is empty
      */
     function sql_array(
-        array $in_array,
+        array  $in_array,
         string $start = '',
         string $end = '',
-        bool $sql_format = false): string
+        bool   $sql_format = false): string
     {
         global $db_con;
         $result = '';
@@ -412,6 +438,7 @@ class library
         }
         return $result;
     }
+
     /**
      * create a human-readable string from an array
      * @param array|null $in_array the array that should be formatted

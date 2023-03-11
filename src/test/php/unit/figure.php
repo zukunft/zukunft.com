@@ -55,7 +55,8 @@ class figure_unit_tests
 
         $t->subheader('API unit tests');
 
-        //$fig = $t->dummy_figure_value();
+        $fig = $t->dummy_figure_value();
+        // TODO: fix it
         //$t->assert_api($fig);
 
     }

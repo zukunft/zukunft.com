@@ -654,8 +654,9 @@ class test_api extends test_new_obj
         bool   $contains = false,
         bool   $ignore_id = false): bool
     {
+        $class_for_file = $this->class_without_namespace($class);
         if ($expected == null) {
-            $expected = json_decode($this->api_json_expected($class, $filename), true);
+            $expected = json_decode($this->api_json_expected($class_for_file, $filename), true);
         }
 
         // remove the change time
