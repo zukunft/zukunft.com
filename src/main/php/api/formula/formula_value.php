@@ -32,10 +32,15 @@
 
 namespace api;
 
+use controller\controller;
 use html\formula_value_dsp;
 
-class formula_value_api extends user_sandbox_value_api
+class formula_value_api extends user_sandbox_value_api implements \JsonSerializable
 {
+
+    // true if the user has done no personal overwrites which is the default case
+    public bool $is_std;
+
 
     /*
      * construct and map
@@ -44,6 +49,7 @@ class formula_value_api extends user_sandbox_value_api
     function __construct(int $id = 0)
     {
         parent::__construct($id);
+        $this->is_std = true;
     }
 
 
@@ -60,6 +66,35 @@ class formula_value_api extends user_sandbox_value_api
         $dsp_obj->set_grp($this->grp());
         $dsp_obj->set_number($this->number());
         return $dsp_obj;
+    }
+
+    /*
+     * interface
+     */
+
+    /**
+     * an array of the value vars including the private vars
+     */
+    function jsonSerialize(): array
+    {
+        $vars = get_object_vars($this);
+
+        // add the var of the parent object
+        $vars['number'] = $this->number();
+
+        // remove vars from the json that have the default value
+        if ($this->is_std) {
+            if (array_key_exists('is_std', $vars)) {
+                unset($vars['is_std']);
+            }
+        }
+
+        // add the phrase list to the api object because this is always needed to display the value
+        // the phrase group is not used in the api because this is always created dynamically based on the phrase
+        // and only used to speed up the database and reduce the size
+        $vars[controller::API_FLD_PHRASES] = json_decode(json_encode($this->phr_lst()));
+
+        return $vars;
     }
 
 }

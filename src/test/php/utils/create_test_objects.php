@@ -107,6 +107,15 @@ class test_new_obj extends test_base
         return $val->figure();
     }
 
+    /**
+     * @return figure with all vars set for unit testing - user value case
+     */
+    function dummy_figure_result(): figure
+    {
+        $fv = $this->dummy_formula_value();
+        return $fv->figure();
+    }
+
     function dummy_formula(): formula
     {
         global $usr;
@@ -122,6 +131,30 @@ class test_new_obj extends test_base
         $lst = new formula_list($usr);
         $lst->add($this->dummy_formula());
         return $lst;
+    }
+
+    function dummy_formula_value(): formula_value
+    {
+        global $usr;
+        $fv = new formula_value($usr);
+        $wrd = $this->dummy_word();
+        $phr_lst = new phrase_list($usr);
+        $phr_lst->add($wrd->phrase());
+        $fv->phr_lst = $phr_lst;
+        $fv->value = 123456;
+        return $fv;
+    }
+
+    function dummy_formula_value_pct(): formula_value
+    {
+        global $usr;
+        $fv = new formula_value($usr);
+        $wrd_pct = $this->new_word(word_api::TN_PCT, 2, phrase_type::PERCENT);
+        $phr_lst = new phrase_list($usr);
+        $phr_lst->add($wrd_pct->phrase());
+        $fv->phr_lst = $phr_lst;
+        $fv->value = 0.01234;
+        return $fv;
     }
 
     function dummy_source(): source

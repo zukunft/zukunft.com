@@ -82,12 +82,13 @@ class phrase_list_api extends list_api implements \JsonSerializable
         return $dsp_obj;
     }
 
+
     /*
      * interface
      */
 
     /**
-     * an array of the value vars including the private vars
+     * @return array with the value vars including the private vars
      */
     function jsonSerialize(): array
     {

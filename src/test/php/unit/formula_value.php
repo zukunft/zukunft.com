@@ -103,12 +103,7 @@ class formula_value_unit_tests
         $t->assert('formula_value->val_formatted test small numbers', $fv->val_formatted(), "12.35");
 
         // ... for percent values
-        $fv = new formula_value($usr);
-        $wrd_pct = $t->new_word(word_api::TN_PCT, 0, phrase_type::PERCENT);
-        $phr_lst = new phrase_list($usr);
-        $phr_lst->add($wrd_pct->phrase());
-        $fv->phr_lst = $phr_lst;
-        $fv->value = 0.01234;
+        $fv = $t->dummy_formula_value_pct();
         $t->assert('formula_value->val_formatted test percent formatting', $fv->val_formatted(), '1.23 %');
 
 

@@ -1,0 +1,12 @@
+{
+  "id": 0,
+  "number": 123456,
+  "phrases": [
+    {
+      "id": 1,
+      "name": "Mathematical constant",
+      "description": null
+    }
+  ],
+  "type": "result"
+}

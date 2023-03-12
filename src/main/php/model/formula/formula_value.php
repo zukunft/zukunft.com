@@ -43,6 +43,7 @@
 use api\formula_value_api;
 use export\exp_obj;
 use export\formula_value_exp;
+use model\figure;
 
 class formula_value extends db_object
 {
@@ -199,6 +200,8 @@ class formula_value extends db_object
     {
         $api_obj = new formula_value_api($this->id);
         $api_obj->set_number($this->value);
+        $grp = $this->phr_lst->get_grp();
+        $api_obj->set_grp($grp->api_obj());
         return $api_obj;
     }
 
