@@ -39,6 +39,9 @@ use html\phrase_group_dsp;
 class user_sandbox_value_api extends user_sandbox_api
 {
 
+    // the json field name in the api json message which is supposed to be the same as the var $number
+    const FLD_NUMBER = 'number';
+
     private phrase_group_api $grp; // the phrase group with the list of words and triples (not the source words and triples)
     private ?float $number; // the number calculated by the system
 

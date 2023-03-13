@@ -34,6 +34,8 @@ namespace model;
 include_once API_FORMULA_PATH . 'figure.php';
 
 use api\figure_api;
+use api\formula_value_api;
+use api\value_api;
 use DateTime;
 use db_object;
 use html\figure_dsp;
@@ -163,7 +165,14 @@ class figure extends db_object
      */
     function dsp_obj(): figure_dsp
     {
-        return $this->api_obj()->dsp_obj();
+        if ($this->is_result()) {
+            $fig_dsp = new figure_dsp(new formula_value_api());
+        } else {
+            $fig_dsp = new figure_dsp(new value_api());
+        }
+        $json_msg = json_encode($this->api_obj());
+        $fig_dsp->set_from_json($json_msg);
+        return $fig_dsp;
     }
 
     /*

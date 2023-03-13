@@ -45,6 +45,9 @@ use function log_err;
 class user_sandbox_api
 {
 
+    // the json field name in the api json message which is supposed to be the same as the var $id
+    const FLD_ID = 'id';
+
     // fields for the backend link
     public int $id; // the database id of the object, which is the same as the related database object in the backend
 

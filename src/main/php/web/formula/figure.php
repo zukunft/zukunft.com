@@ -34,13 +34,55 @@
 
 namespace html;
 
-include_once API_FORMULA_PATH . 'figure.php';
+include_once API_FORMULA_PATH . DIRECTORY_SEPARATOR . 'figure.php';
 
 use api\figure_api;
 use api\phrase_list_api;
 
-class figure_dsp extends figure_api
+class figure_dsp
 {
+
+    /*
+     * object vars
+     */
+
+    private value_dsp|formula_value_dsp $obj;
+
+
+    /*
+     * set and get
+     */
+
+    function set_from_json(string $json_api_msg): void
+    {
+        $json_array = json_decode($json_api_msg);
+        if ($json_array[figure_api::TYPE_FLD] == figure_api::TYPE_RESULT)
+        {
+            $fv_dsp = new formula_value_dsp();
+            $fv_dsp->set_from_json_array();
+            $this->set_obj($fv_dsp);
+        } else {
+            $val = new value_dsp();
+            $val->set_from_json_array();
+            $this->set_obj($val);
+        }
+    }
+
+    function set_obj(value_dsp|formula_value_dsp $obj): void
+    {
+        $this->obj = $obj;
+    }
+
+    function obj(): value_dsp|formula_value_dsp
+    {
+        return $this->obj;
+    }
+
+
+    /*
+     * display
+     */
+
     /**
      * @param phrase_list_api|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
      * @returns string the html code to display the phrase group with reference links

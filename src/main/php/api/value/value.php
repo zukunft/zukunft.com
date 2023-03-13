@@ -120,7 +120,7 @@ class value_api extends user_sandbox_value_api implements \JsonSerializable
         $vars = get_object_vars($this);
 
         // add the var of the parent object
-        $vars['number'] = $this->number();
+        $vars[user_sandbox_value_api::FLD_NUMBER] = $this->number();
 
         // remove vars from the json that have the default value
         if ($this->is_std) {

@@ -36,6 +36,8 @@ namespace html;
 
 use api\formula_value_api;
 use api\phrase_list_api;
+use api\user_sandbox_api;
+use api\user_sandbox_value_api;
 
 class formula_value_dsp extends formula_value_api
 {
@@ -48,5 +50,27 @@ class formula_value_dsp extends formula_value_api
         return $this->grp_dsp()->name_linked($phr_lst_header);
     }
 
+
+    /*
+     * set and get
+     */
+
+    function set_from_json(string $json_api_msg): void
+    {
+        $this->set_from_json_array(json_decode($json_api_msg));
+    }
+
+    function set_from_json_array(array $json_array): void
+    {
+        if (array_key_exists(user_sandbox_api::FLD_ID, $json_array)) {
+            $this->set_number($json_array[user_sandbox_api::FLD_ID]);
+        } else {
+            log_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
+        }
+        if (array_key_exists(user_sandbox_value_api::FLD_NUMBER, $json_array)) {
+            $this->set_number($json_array[user_sandbox_value_api::FLD_NUMBER]);
+        }
+
+    }
 
 }

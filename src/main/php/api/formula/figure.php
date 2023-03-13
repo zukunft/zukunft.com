@@ -36,13 +36,15 @@ include_once API_SANDBOX_PATH . 'combine_object.php';
 
 use html\figure_dsp;
 
-// the json field name in the api json message to identify if the figure is a value or result
-const TYPE_FLD = 'type';
-const TYPE_VALUE = 'value';
-const TYPE_RESULT = 'result';
 
 class figure_api extends combine_object_api implements \JsonSerializable
 {
+
+    // the json field name in the api json message to identify if the figure is a value or result
+    const TYPE_FLD = 'type';
+    const TYPE_VALUE = 'value';
+    const TYPE_RESULT = 'result';
+
 
     /*
      * construct and map
@@ -92,9 +94,9 @@ class figure_api extends combine_object_api implements \JsonSerializable
     {
         $vars = $this->obj()->jsonSerialize();
         if ($this->is_result()) {
-            $vars[TYPE_FLD] = TYPE_RESULT;
+            $vars[self::TYPE_FLD] = self::TYPE_RESULT;
         } else {
-            $vars[TYPE_FLD] = TYPE_VALUE;
+            $vars[self::TYPE_FLD] = self::TYPE_VALUE;
         }
         return $vars;
     }
