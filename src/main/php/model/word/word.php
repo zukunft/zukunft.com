@@ -46,14 +46,14 @@ use cfg\protection_type;
 use cfg\share_type;
 use controller\controller;
 use export\exp_obj;
-use export\user_sandbox_exp_named;
+use export\sandbox_exp_named;
 use export\word_exp;
 use html\api;
 use html\button;
 use html\html_selector;
 use html\word_dsp;
 
-class word extends user_sandbox_named_with_type
+class word extends sandbox_typed
 {
     /*
      * database link
@@ -84,8 +84,8 @@ class word extends user_sandbox_named_with_type
         self::FLD_TYPE,
         self::FLD_VIEW,
         self::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_FLD_NAMES = array(
@@ -96,8 +96,8 @@ class word extends user_sandbox_named_with_type
         self::FLD_TYPE,
         self::FLD_VIEW,
         self::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
 
 
@@ -756,9 +756,9 @@ class word extends user_sandbox_named_with_type
     /**
      * create a word object for the export
      * @param bool $do_load can be set to false for unit testing
-     * @return user_sandbox_exp_named a reduced word object that can be used to create a JSON message
+     * @return sandbox_exp_named a reduced word object that can be used to create a JSON message
      */
-    function export_obj(bool $do_load = true): user_sandbox_exp_named
+    function export_obj(bool $do_load = true): sandbox_exp_named
     {
         global $phrase_types;
 
@@ -1947,11 +1947,11 @@ class word extends user_sandbox_named_with_type
     /**
      * save all updated word fields
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param word|user_sandbox $db_rec the database record before the saving
-     * @param word|user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param word|sandbox $db_rec the database record before the saving
+     * @param word|sandbox $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    function save_fields(sql_db $db_con, word|user_sandbox $db_rec, word|user_sandbox $std_rec): string
+    function save_fields(sql_db $db_con, word|sandbox $db_rec, word|sandbox $std_rec): string
     {
         $result = $this->save_field_plural($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_description($db_con, $db_rec, $std_rec);
@@ -1962,7 +1962,7 @@ class word extends user_sandbox_named_with_type
         return $result;
     }
 
-    function get_obj_with_same_id_fields(): user_sandbox
+    function get_obj_with_same_id_fields(): sandbox
     {
         $db_chk = parent::get_obj_with_same_id_fields();
         if ($db_chk->id > 0) {

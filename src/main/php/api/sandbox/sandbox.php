@@ -2,7 +2,7 @@
 
 /*
 
-    api/sandbox/user_sandbox.php - the minimal superclass for the frontend API
+    api/sandbox/sandbox.php - the minimal superclass for the frontend API
     ----------------------------
 
     This superclass should be used by the classes word_min, formula_min, ... to enable user specific values and links
@@ -36,13 +36,13 @@ namespace api;
 
 use formula;
 use user;
-use user_sandbox;
+use sandbox;
 use value;
 use word;
 use triple;
 use function log_err;
 
-class user_sandbox_api
+class sandbox_api
 {
 
     // the json field name in the api json message which is supposed to be the same as the var $id
@@ -90,7 +90,7 @@ class user_sandbox_api
      * should be part of the save_from_api_msg functions
      * TODO review
      */
-    function db_obj(user $usr, string $class): user_sandbox
+    function db_obj(user $usr, string $class): sandbox
     {
         $db_obj = null;
         if ($class == word_api::class) {

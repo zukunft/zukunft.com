@@ -2,10 +2,8 @@
 
 /*
 
-    /web/figure_dsp.php - the display extension of the api figure object
-    -------------------
-
-    to creat the HTML code to display a formula
+    web/formula/figure.php - to create the html code to display a value or result
+    ----------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -34,8 +32,11 @@
 
 namespace html;
 
-include_once API_FORMULA_PATH . DIRECTORY_SEPARATOR . 'figure.php';
+include_once API_SANDBOX_PATH . 'combine_object.php';
+include_once API_FORMULA_PATH . 'figure.php';
+include_once API_PHRASE_PATH . 'phrase_list.php';
 
+use api\combine_object_api;
 use api\figure_api;
 use api\phrase_list_api;
 
@@ -50,21 +51,32 @@ class figure_dsp
 
 
     /*
+     * construct and map
+     */
+
+    function __construct(value_dsp|formula_value_dsp $fig_obj)
+    {
+        $this->set_obj($fig_obj);
+    }
+
+
+    /*
      * set and get
      */
 
     function set_from_json(string $json_api_msg): void
     {
         $json_array = json_decode($json_api_msg);
-        if ($json_array[figure_api::TYPE_FLD] == figure_api::TYPE_RESULT)
-        {
+        if ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_RESULT) {
             $fv_dsp = new formula_value_dsp();
-            $fv_dsp->set_from_json_array();
+            $fv_dsp->set_from_json_array($json_array);
             $this->set_obj($fv_dsp);
-        } else {
+        } elseif ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_VALUE) {
             $val = new value_dsp();
-            $val->set_from_json_array();
+            $val->set_from_json_array($json_array);
             $this->set_obj($val);
+        } else {
+            log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a figure');
         }
     }
 
@@ -78,10 +90,60 @@ class figure_dsp
         return $this->obj;
     }
 
+    /**
+     * return the figure id based on the value or result id
+     * must have the same logic as the database view and the frontend
+     */
+    function id(): int
+    {
+        if ($this->is_result()) {
+            return $this->obj_id() * -1;
+        } else {
+            return $this->obj_id();
+        }
+    }
+
+    function obj_id(): int
+    {
+        return $this->obj()->id();
+    }
+
+    function grp(): phrase_group_dsp
+    {
+        return $this->obj()->grp();
+    }
+
+    function number(): float
+    {
+        return $this->obj()->number();
+    }
+
+
+    /*
+     * classifications
+     */
+
+    /**
+     * @return bool true if this figure has been calculated based on other numbers
+     *              false if this figure has been defined by a user
+     */
+    function is_result(): bool
+    {
+        if ($this->obj()::class == formula_value_dsp::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /*
      * display
      */
+
+    function val_formatted(): float
+    {
+        return $this->obj()->val_formatted();
+    }
 
     /**
      * @param phrase_list_api|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
@@ -89,7 +151,7 @@ class figure_dsp
      */
     function name_linked(phrase_list_api $phr_lst_header = null): string
     {
-        return $this->grp_dsp()->name_linked($phr_lst_header);
+        return $this->grp()->name_linked($phr_lst_header);
     }
 
 
@@ -97,7 +159,7 @@ class figure_dsp
      * return the html code to display a value
      * this is the opposite of the convert function
      */
-    function display(string $back = ''): string
+    function display(): string
     {
         return round($this->number(), 2);
     }
@@ -108,7 +170,11 @@ class figure_dsp
     function display_linked(string $back = ''): string
     {
         $html = new html_base();
-        return $html->ref($html->url(api::VALUE_EDIT, $this->id, $back), $this->val_formatted());
+        if ($this->is_result()) {
+            return $html->ref($html->url(api::VALUE_EDIT, $this->obj_id(), $back), $this->val_formatted());
+        } else {
+            return $html->ref($html->url(api::RESULT_EDIT, $this->obj_id(), $back), $this->val_formatted());
+        }
     }
 
 }

@@ -70,8 +70,9 @@ class triple_list
         $this->set_user($usr);
     }
 
+
     /*
-     * get and set
+     * set and get
      */
 
     /**
@@ -301,7 +302,7 @@ class triple_list
                 " . $db_con->get_usr_field(sql_db::FLD_DESCRIPTION, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, sql_db::FLD_DESCRIPTION . $pos) . ",
                 " . $db_con->get_usr_field('word_type_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'word_type_id' . $pos) . ",
                 " . $db_con->get_usr_field(view::FLD_ID, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, view::FLD_ID . $pos) . ",
-                " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'excluded' . $pos) . ",
+                " . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'excluded' . $pos) . ",
                   t" . $pos . "." . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " AS values" . $pos;
     }
 
@@ -491,7 +492,7 @@ class triple_list
                        v.formula_name,
                        v.description,
                        v.words,
-                       " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'l', 'ul', sql_db::FLD_FORMAT_VAL) . ",
+                       " . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, 'l', 'ul', sql_db::FLD_FORMAT_VAL) . ",
                        " . $sql_wrd1_fields . "
                        " . $sql_wrd2_fields . "
                   FROM triples l
@@ -532,7 +533,7 @@ class triple_list
             $this->ids = array();
             if ($db_lst != null) {
                 foreach ($db_lst as $db_lnk) {
-                    if (is_null($db_lnk[user_sandbox::FLD_EXCLUDED]) or $db_lnk[user_sandbox::FLD_EXCLUDED] == 0) {
+                    if (is_null($db_lnk[sandbox::FLD_EXCLUDED]) or $db_lnk[sandbox::FLD_EXCLUDED] == 0) {
                         $new_link = new triple($this->user());
                         $new_link->row_mapper($db_lnk);
                         if ($new_link->id() > 0) {
@@ -738,7 +739,7 @@ class triple_list
                             $dsp_obj = $lnk->to->get_dsp_obj();
                             $result .= $dsp_obj->dsp_tbl_cell(0);
                         }
-                        $result .= $lnk->dsp_obj()->btn_edit($lnk->from->api_obj());
+                        $result .= $lnk->dsp_obj()->btn_edit($lnk->from->dsp_obj());
                         if ($lnk->from != null) {
                             $dsp_obj = $lnk->from->get_dsp_obj();
                             $result .= $dsp_obj->dsp_unlink($lnk->id());

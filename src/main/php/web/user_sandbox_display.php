@@ -32,7 +32,7 @@
 
 use html\html_selector;
 
-class user_sandbox_display extends user_sandbox_value
+class user_sandbox_display extends _sandbox_value
 {
 
     // create the HTML code to display the protection setting (but only if allowed)

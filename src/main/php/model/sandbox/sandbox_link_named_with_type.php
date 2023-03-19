@@ -2,8 +2,8 @@
 
 /*
 
-    model/sandbox/user_sandbox_link_with_type.php - adding the type field to the user sandbox link named superclass
-    ---------------------------------------------
+    model/sandbox/sandbox_link_named_with_type.php - adding the type field to the user sandbox link named superclass
+    ---------------------------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,12 +30,12 @@
 */
 
 
-class user_sandbox_link_with_type extends user_sandbox_link
+class _sandbox_link_named_with_type extends sandbox_link_named
 {
 
     // database id of the type used for named link user sandbox objects with predefined functionality
-    // which is formula link and view component link
-    // repeating user_sandbox_named_with_type, because php 8.1 does not yet allow multi extends
+    // which is actually only triple
+    // repeating _sandbox_typed, because php 8.1 does not yet allow multi extends
     public ?int $type_id = null;
 
 
@@ -61,6 +61,11 @@ class user_sandbox_link_with_type extends user_sandbox_link
     {
         return $this->type_id;
     }
+
+
+    /*
+     * get preloaded information
+     */
 
     /**
      * dummy function that should be overwritten by the child object

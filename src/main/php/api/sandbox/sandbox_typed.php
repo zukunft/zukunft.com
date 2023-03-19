@@ -32,12 +32,13 @@
 
 namespace api;
 
-use html\phrase_dsp;
-use html\term_dsp;
-use html\word_dsp;
+include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
-class user_sandbox_named_with_type_api extends user_sandbox_named_api
+class sandbox_typed_api extends sandbox_named_api
 {
+
+    // the json field names in the api json message which is supposed to be the same as the var $id
+    const FLD_TYPE = 'type';
 
     // all named objects can have a type that links predefined functionality to it
     // e.g. all value assigned with the percent word are per default shown as percent with two decimals
@@ -76,16 +77,12 @@ class user_sandbox_named_with_type_api extends user_sandbox_named_api
      */
 
     /**
-     * @return phrase_api|phrase_dsp the related phrase api or display object with the basic values filled
+     * @return phrase_api the related phrase api or display object with the basic values filled
      */
-    function phrase(): phrase_api|phrase_dsp
+    function phrase(): phrase_api
     {
         if ($this::class == word_api::class) {
             $phr = new phrase_api($this->id, $this->name);
-            $phr->set_type($this->type_id());
-            return $phr;
-        } elseif ($this::class == word_dsp::class) {
-            $phr =  new phrase_dsp($this->id, $this->name);
             $phr->set_type($this->type_id());
             return $phr;
         } elseif ($this::class == triple_api::class) {
@@ -98,7 +95,7 @@ class user_sandbox_named_with_type_api extends user_sandbox_named_api
         }
     }
 
-    function term(): term_api|term_dsp
+    function term(): term_api
     {
         return new term_api($this->id, $this->name);
     }

@@ -392,7 +392,7 @@ function run_formula_test(testing $t): void
     $target = 'zukunft.com system test changed {w'.$wrd_percent->id().'}=( {f'.$frm_this->id().'} - {f5} ) / {f5} to ={f3}';
     $target = 'zukunft.com system test changed {w'.$wrd_percent->id().'}=1-({f'.$frm_this->id().'}/{f'.$frm_prior->id().'}) to ={f'.$frm_this->id().'}';
     $t->dsp('formula->load formula_text for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
-    $log->set_field(user_sandbox_named::FLD_DESCRIPTION);
+    $log->set_field(sandbox_named::FLD_DESCRIPTION);
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added System Test Formula Renamed description';
     $t->dsp('formula->load description for "' . formula_api::TN_RENAMED . '" logged', $target, $result);

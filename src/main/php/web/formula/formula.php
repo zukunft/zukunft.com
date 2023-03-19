@@ -34,20 +34,52 @@
 
 namespace html;
 
-use api\formula_api;
-use formula;
-use formula_value;
+include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
-class formula_dsp extends formula_api
+class formula_dsp extends sandbox_typed_dsp
 {
 
     /*
-     * casting
+     * object vars
+     */
+
+    // the formula expression as shown to the user
+    private string $usr_text;
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(int $id = 0, string $name = '')
+    {
+        parent::__construct($id, $name);
+        $this->usr_text = '';
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function set_usr_text(string $usr_text)
+    {
+        $this->usr_text = $usr_text;
+    }
+
+    function usr_text(): string
+    {
+        return $this->usr_text;
+    }
+
+
+    /*
+     * cast
      */
 
     function term(): term_dsp
     {
-        return new term_dsp($this->id, $this->name, formula::class);
+        return new term_dsp($this);
     }
 
     /**

@@ -86,8 +86,9 @@ class type_list
         return new _type_list_dsp($this->lst);
     }
 
+
     /*
-     * interface get and set functions
+     * interface set and get
      */
 
     function add(type_object $item): void

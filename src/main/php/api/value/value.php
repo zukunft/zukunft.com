@@ -35,7 +35,7 @@ namespace api;
 use controller\controller;
 use html\value_dsp;
 
-class value_api extends user_sandbox_value_api implements \JsonSerializable
+class value_api extends sandbox_value_api implements \JsonSerializable
 {
 
     /*
@@ -103,7 +103,7 @@ class value_api extends user_sandbox_value_api implements \JsonSerializable
     function dsp_obj(): value_dsp
     {
         $dsp_obj = new value_dsp($this->id);
-        $dsp_obj->set_grp($this->grp());
+        $dsp_obj->set_grp($this->grp()->dsp_obj());
         $dsp_obj->set_number($this->number());
         return $dsp_obj;
     }
@@ -120,7 +120,7 @@ class value_api extends user_sandbox_value_api implements \JsonSerializable
         $vars = get_object_vars($this);
 
         // add the var of the parent object
-        $vars[user_sandbox_value_api::FLD_NUMBER] = $this->number();
+        $vars[sandbox_value_api::FLD_NUMBER] = $this->number();
 
         // remove vars from the json that have the default value
         if ($this->is_std) {

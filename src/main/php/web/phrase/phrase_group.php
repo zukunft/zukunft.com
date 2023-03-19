@@ -37,15 +37,142 @@ namespace html;
 use api\phrase_group_api;
 use api\phrase_list_api;
 
-class phrase_group_dsp extends phrase_group_api
+class phrase_group_dsp extends sandbox_named_dsp
 {
-    /**
-     * @returns string the html code to display the phrase group with reference links
+
+    /*
+     * object vars
      */
-    function name_linked(phrase_list_api $phr_lst_header = null): string
+
+    // list of word_min and triple_min objects
+    private array $lst;
+
+    // memory vs speed optimize vars
+    private array $id_lst;
+    private bool $lst_dirty;
+    private string $name_linked;
+    private bool $name_dirty;
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(int $id = 0, string $name = '')
+    {
+        parent::__construct($id, $name);
+        $this->lst = [];
+
+        $this->id_lst = array();
+        $this->lst_dirty = false;
+        $this->name_linked = '';
+        $this->name_dirty = true;
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function set_lst($lst): void
+    {
+        $this->lst = $lst;
+        $this->set_dirty();
+    }
+
+    function reset_lst(): void
+    {
+        $this->lst = array();
+        $this->set_dirty();
+    }
+
+    function set_dirty(): void
+    {
+        $this->lst_dirty = true;
+        $this->name_dirty = true;
+    }
+
+    function unset_name_dirty(): void
+    {
+        $this->name_dirty = false;
+    }
+
+    /**
+     * @returns array the protected list of phrases
+     */
+    function lst(): array
+    {
+        return $this->lst;
+    }
+
+    function name_dirty(): bool
+    {
+        return $this->name_dirty;
+    }
+
+    /**
+     * @returns array with all unique phrase ids og this list
+     */
+    private function id_lst(): array
+    {
+        $result = array();
+        if ($this->lst_dirty) {
+            foreach ($this->lst as $phr) {
+                if (!in_array($phr->id, $result)) {
+                    $result[] = $phr->id;
+                }
+            }
+            $this->lst_dirty = false;
+        } else {
+            $result = $this->id_lst;
+        }
+        return $result;
+    }
+
+    /**
+     * add a phrase to the list
+     * @returns bool true if the phrase has been added
+     */
+    function add(phrase_dsp $phr): bool
+    {
+        $result = false;
+        if (!in_array($phr->id(), $this->id_lst())) {
+            $this->lst[] = $phr;
+            $this->set_dirty();
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * @returns phrase_list_dsp the list of phrases as an object
+     */
+    function phr_lst(): phrase_list_dsp
+    {
+        $result = new phrase_list_dsp();
+        $result->set_lst($this->lst());
+        return $result;
+    }
+
+
+    /*
+     * info
+     */
+
+    function has_percent(): bool
+    {
+        return $this->phr_lst()->has_percent();
+    }
+
+
+    /**
+     * @param phrase_list_dsp|null $phr_lst_header list of phrases already shown in the header and don't need to be include in the result
+     * @return string
+     */
+    function name_linked(phrase_list_dsp $phr_lst_header = null): string
     {
         $result = '';
-        if ($this->name_dirty()) {
+        if ($this->name_dirty() or $phr_lst_header != null) {
             if ($this->name <> '') {
                 $result .= $this->name();
             } else {

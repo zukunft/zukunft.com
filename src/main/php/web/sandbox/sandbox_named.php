@@ -30,13 +30,14 @@
 
 */
 
-namespace api;
+namespace html;
 
-use html\phrase_dsp;
-use html\term_dsp;
-use html\word_dsp;
+include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
-class user_sandbox_named_api extends user_sandbox_api
+use api\sandbox_named_api;
+
+class sandbox_named_dsp extends db_object_dsp
 {
 
     // the unique name of the object that is shown to the user
@@ -51,22 +52,35 @@ class user_sandbox_named_api extends user_sandbox_api
      * construct and map
      */
 
-    function __construct(int $id = 0, string $name = '')
+    function __construct(int $id = 0, string $name = '', ?string $description = null)
     {
         parent::__construct($id);
-        $this->name = '';
-
-        // set also the name if included in new call
-        if ($name <> '') {
-            $this->name = $name;
-        }
-
+        $this->set_name($name);
+        $this->set_description($description);
     }
 
 
     /*
      * set and get
      */
+
+    /**
+     * set the vars of this object bases on the api json array
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        parent::set_from_json_array($json_array);
+        if (array_key_exists(sandbox_named_api::FLD_NAME, $json_array)) {
+            $this->set_name($json_array[sandbox_named_api::FLD_NAME]);
+        } else {
+            log_err('Mandatory field name missing in API JSON ' . json_encode($json_array));
+        }
+        if (array_key_exists(sandbox_named_api::FLD_DESCRIPTION, $json_array)) {
+            $this->set_description($json_array[sandbox_named_api::FLD_DESCRIPTION]);
+        }
+    }
 
     function set_name(string $name): void
     {
@@ -76,6 +90,23 @@ class user_sandbox_named_api extends user_sandbox_api
     function name(): string
     {
         return $this->name;
+    }
+
+    function set_description(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string the display value of the tooltip where null is an empty string
+     */
+    function description(): string
+    {
+        if ($this->description == null) {
+            return '';
+        } else {
+            return $this->description;
+        }
     }
 
 

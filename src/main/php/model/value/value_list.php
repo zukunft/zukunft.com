@@ -186,7 +186,7 @@ class value_list extends sandbox_list
                 $db_con->usr_id = $this->user()->id();
                 $db_val_lst = $db_con->get($qp);
                 foreach ($db_val_lst as $db_val) {
-                    if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
+                    if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
                         $val = new value($this->user());
                         $val->row_mapper($db_val);
                         $this->lst[] = $val;
@@ -249,7 +249,7 @@ class value_list extends sandbox_list
         $db_con->usr_id = $this->user()->id();
         $db_val_lst = $db_con->get($qp);
         foreach ($db_val_lst as $db_val) {
-            if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
+            if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
                 $val = new value($this->user());
                 $val->row_mapper($db_val);
                 $this->lst[] = $val;
@@ -267,7 +267,7 @@ class value_list extends sandbox_list
                       u.value_id AS user_value_id,
                       v.user_id,
                     " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(value::FLD_LAST_UPDATE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(source::FLD_ID, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                       v.phrase_group_id
@@ -300,7 +300,7 @@ class value_list extends sandbox_list
                 $db_val_lst = $db_con->get_old($sql);
                 if ($db_val_lst != false) {
                     foreach ($db_val_lst as $db_val) {
-                        if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
+                        if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
                             $val = new value($this->user());
                             $val->row_mapper($db_val);
                             $this->lst[] = $val;
@@ -351,7 +351,7 @@ class value_list extends sandbox_list
         if ($sql_where <> '') {
             $sql = "SELECT DISTINCT v.value_id,
                     " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(value::FLD_LAST_UPDATE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(source::FLD_ID, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                        v.user_id,
@@ -392,11 +392,11 @@ class value_list extends sandbox_list
                 $db_val_lst = $db_con->get_old($sql);
                 if ($db_val_lst != false) {
                     foreach ($db_val_lst as $db_val) {
-                        if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
+                        if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
                             $val = new value($this->user());
                             //$val->row_mapper($db_val);
                             $val->set_id($db_val[value::FLD_ID]);
-                            $val->owner_id = $db_val[user_sandbox::FLD_USER];
+                            $val->owner_id = $db_val[sandbox::FLD_USER];
                             $val->set_number($db_val[value::FLD_VALUE]);
                             $val->set_source_id($db_val[source::FLD_ID]);
                             $val->last_update = $lib->get_datetime($db_val[value::FLD_LAST_UPDATE]);

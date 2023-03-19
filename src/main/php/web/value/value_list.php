@@ -40,8 +40,45 @@ use formula_value_list;
 use phrase;
 use word_list;
 
-class value_list_dsp extends value_list_api
+class value_list_dsp extends list_dsp
 {
+
+    function __construct(array $lst = array())
+    {
+        parent::__construct($lst);
+    }
+
+    /**
+     * add a value to the list
+     * @returns bool true if the value has been added
+     */
+    function add(value_dsp $val): bool
+    {
+        $result = false;
+        if (!in_array($val->id(), $this->id_lst())) {
+            $this->lst[] = $val;
+            $this->set_lst_dirty();
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * @returns value_list_dsp the cast object with the HTML code generating functions
+     */
+    function dsp_obj(): value_list_dsp
+    {
+        // cast the single list objects
+        $lst_dsp = array();
+        foreach ($this->lst as $val) {
+            if ($val != null) {
+                $val_dsp = $val->dsp_obj();
+                $lst_dsp[] = $val_dsp;
+            }
+        }
+
+        return new value_list_dsp($lst_dsp);
+    }
 
     /**
      * @param phrase_list_api|null $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again

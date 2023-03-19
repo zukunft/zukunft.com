@@ -43,6 +43,9 @@ namespace api;
 class combine_object_api
 {
 
+    // the json field name in the api json message to identify if the term is a word, triple, verb or formula
+    const FLD_CLASS = 'class';
+
     /*
      * object vars
      */

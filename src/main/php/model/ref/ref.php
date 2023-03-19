@@ -50,7 +50,7 @@ use export\exp_obj;
 use export\ref_exp;
 use html\ref_dsp;
 
-class ref extends user_sandbox_link_with_type
+class ref extends sandbox_link_with_type
 {
 
     /*
@@ -73,7 +73,7 @@ class ref extends user_sandbox_link_with_type
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
         self::FLD_URL,
-        user_sandbox_named::FLD_DESCRIPTION
+        sandbox_named::FLD_DESCRIPTION
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
@@ -85,7 +85,7 @@ class ref extends user_sandbox_link_with_type
         self::FLD_EX_KEY,
         self::FLD_TYPE,
         self::FLD_URL,
-        user_sandbox_named::FLD_DESCRIPTION,
+        sandbox_named::FLD_DESCRIPTION,
         self::FLD_EXCLUDED
     );
 

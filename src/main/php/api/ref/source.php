@@ -32,7 +32,7 @@
 
 namespace api;
 
-class source_api extends user_sandbox_named_with_type_api
+class source_api extends sandbox_typed_api
 {
 
     /*

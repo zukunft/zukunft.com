@@ -166,7 +166,7 @@ function run_view_test(testing $t): void
     // check if the view parameter adding have been logged
     $log = new change_log_named;
     $log->set_table(change_log_table::VIEW);
-    $log->set_field(user_sandbox_named::FLD_DESCRIPTION);
+    $log->set_field(sandbox_named::FLD_DESCRIPTION);
     $log->row_id = $dsp_reloaded->id();
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);

@@ -35,7 +35,7 @@ use html\view_dsp;
 use export\view_exp;
 use export\exp_obj;
 
-class view extends user_sandbox_named_with_type
+class view extends sandbox_typed
 {
 
     /*
@@ -62,16 +62,16 @@ class view extends user_sandbox_named_with_type
     const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
         self::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_FLD_NAMES = array(
         self::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
 
 
@@ -511,7 +511,7 @@ class view extends user_sandbox_named_with_type
                     and (is_null($db_entry[self::FLD_EXCLUDED . '2']) or $db_entry[self::FLD_EXCLUDED . '2'] == 0)) {
                     $new_entry = new view_cmp_dsp_old($this->user());
                     $new_entry->id = $db_entry[view_cmp::FLD_ID];
-                    $new_entry->owner_id = $db_entry[user_sandbox::FLD_USER];
+                    $new_entry->owner_id = $db_entry[sandbox::FLD_USER];
                     $new_entry->order_nbr = $db_entry[view_cmp_link::FLD_ORDER_NBR];
                     $new_entry->name = $db_entry[view_cmp::FLD_NAME];
                     $new_entry->word_id_row = $db_entry[view_cmp::FLD_ROW_PHRASE . '2'];
@@ -914,11 +914,11 @@ class view extends user_sandbox_named_with_type
     /**
      * save all updated view fields excluding the name, because already done when adding a view
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param view|user_sandbox $db_rec the database record before the saving
-     * @param view|user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param view|sandbox $db_rec the database record before the saving
+     * @param view|sandbox $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    function save_fields(sql_db $db_con, view|user_sandbox $db_rec, view|user_sandbox $std_rec): string
+    function save_fields(sql_db $db_con, view|sandbox $db_rec, view|sandbox $std_rec): string
     {
         $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_code_id($db_con, $db_rec, $std_rec);

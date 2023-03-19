@@ -35,7 +35,7 @@ namespace api;
 use html\phrase_group_dsp;
 use html\phrase_list_dsp;
 
-class phrase_group_api extends user_sandbox_named_api
+class phrase_group_api extends sandbox_named_api
 {
 
     /*

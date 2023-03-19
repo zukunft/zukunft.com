@@ -2,7 +2,7 @@
 
 /*
 
-    user_exp.php - the simple export object for a user
+    _user_exp.php - the simple export object for a user
     --------------
 
     This file is part of zukunft.com - calc with words
@@ -32,7 +32,7 @@
 
 namespace export;
 
-class user_exp extends user_sandbox_exp_named
+class _user_exp extends sandbox_exp_named
 {
 
     // field names used for JSON creation
@@ -45,7 +45,7 @@ class user_exp extends user_sandbox_exp_named
 
     function reset()
     {
-        user_sandbox_exp_named::reset();
+        sandbox_exp_named::reset();
 
         $this->email = '';
         $this->first_name = '';

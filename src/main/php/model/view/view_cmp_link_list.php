@@ -44,7 +44,7 @@ class view_cmp_link_list extends sandbox_list
     {
         $result = false;
         foreach ($db_rows as $db_row) {
-            if (is_null($db_row[user_sandbox::FLD_EXCLUDED]) or $db_row[user_sandbox::FLD_EXCLUDED] == 0) {
+            if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0) {
                 $dsp_cmp_lnk = new view_cmp_link($this->user());
                 $dsp_cmp_lnk->row_mapper($db_row);
                 $this->lst[] = $dsp_cmp_lnk;

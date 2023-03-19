@@ -42,7 +42,7 @@ use export\exp_obj;
 use export\triple_exp;
 use html\triple_dsp;
 
-class triple extends user_sandbox_link_named_with_type implements JsonSerializable
+class triple extends _sandbox_link_named_with_type implements JsonSerializable
 {
 
     /*
@@ -84,9 +84,9 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_VALUES,
-        user_sandbox::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_FLD_NAMES = array(
@@ -95,9 +95,9 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
         self::FLD_NAME_AUTO,
         sql_db::FLD_DESCRIPTION,
         self::FLD_VALUES,
-        user_sandbox::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
 
 
@@ -144,7 +144,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
 
         $this->obj_name = sql_db::TBL_TRIPLE;
         $this->rename_can_switch = UI_CAN_CHANGE_triple_NAME;
-        $this->obj_type = user_sandbox::TYPE_LINK;
+        $this->obj_type = sandbox::TYPE_LINK;
 
         $this->reset();
         $this->name_given = null;
@@ -1480,7 +1480,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE);
-                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id()));
+                $log_id = $db_con->insert(array(self::FLD_ID, sandbox::FLD_USER), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_triple failed.');
                     $result = false;
@@ -1586,7 +1586,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
     /**
      * set the update parameters for the triple name
      */
-    function save_field_name(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_field_name(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         $result = '';
 
@@ -1683,7 +1683,7 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      * save updated the triple id fields (from, verb and to)
      * should only be called if the user is the owner and nobody has used the triple
      */
-    function save_id_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->from->id <> $this->from->id
@@ -1719,9 +1719,9 @@ class triple extends user_sandbox_link_named_with_type implements JsonSerializab
      * check if the id parameters are supposed to be changed
      */
     function save_id_if_updated(
-        sql_db $db_con,
-        triple|user_sandbox $db_rec,
-        triple|user_sandbox $std_rec): string
+        sql_db         $db_con,
+        triple|sandbox $db_rec,
+        triple|sandbox $std_rec): string
     {
         $result = '';
 

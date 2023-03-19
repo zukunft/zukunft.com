@@ -72,8 +72,8 @@ class word_list_display_unit_tests
         $test_page .= 'table cells<br>';
         $test_page .= $lst->tbl();
         $test_page .= 'all word types: ' . '<br>' . $lst_long->dsp() . '<br>';
-        $test_page .= 'ex measure and time: ' . '<br>' . $lst_long->ex_measure_and_time_lst()->dsp_obj()->dsp() . '<br>';
-        $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->dsp_obj()->dsp() . '<br>';
+        $test_page .= 'ex measure and time: ' . '<br>' . $lst_long->ex_measure_and_time_lst()->dsp() . '<br>';
+        $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->dsp() . '<br>';
 
         $test_page .= 'selector: ' . '<br>';
         $test_page .= $lst_long->selector() . '<br>';

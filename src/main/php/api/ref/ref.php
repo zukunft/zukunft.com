@@ -32,7 +32,7 @@
 
 namespace api;
 
-class ref_api extends user_sandbox_api
+class ref_api extends sandbox_api
 {
 
     /*

@@ -35,7 +35,7 @@
   
 */
 
-class view_cmp_link extends user_sandbox_link_with_type
+class view_cmp_link extends sandbox_link_with_type
 {
 
     /*
@@ -57,16 +57,16 @@ class view_cmp_link extends user_sandbox_link_with_type
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
         self::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_FLD_NAMES = array(
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
         self::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
 
     /*
@@ -96,7 +96,7 @@ class view_cmp_link extends user_sandbox_link_with_type
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->obj_type = user_sandbox::TYPE_LINK;
+        $this->obj_type = sandbox::TYPE_LINK;
         $this->obj_name = sql_db::TBL_VIEW_COMPONENT_LINK;
         $this->from_name = sql_db::TBL_VIEW;
         $this->to_name = sql_db::TBL_VIEW_COMPONENT;
@@ -592,7 +592,7 @@ class view_cmp_link extends user_sandbox_link_with_type
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT_LINK);
-                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id()));
+                $log_id = $db_con->insert(array(self::FLD_ID, sandbox::FLD_USER), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view_component_link failed.');
                     $result = false;
@@ -647,11 +647,11 @@ class view_cmp_link extends user_sandbox_link_with_type
      * save all updated view_component_link fields excluding the name, because already done when adding a view_component_link
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param view_cmp_link|user_sandbox $db_rec the view component link as saved in the database before the update
-     * @param view_cmp_link|user_sandbox $std_rec the default parameter used for this view component link
+     * @param view_cmp_link|sandbox $db_rec the view component link as saved in the database before the update
+     * @param view_cmp_link|sandbox $std_rec the default parameter used for this view component link
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
-    function save_fields(sql_db $db_con, view_cmp_link|user_sandbox $db_rec, view_cmp_link|user_sandbox $std_rec): string
+    function save_fields(sql_db $db_con, view_cmp_link|sandbox $db_rec, view_cmp_link|sandbox $std_rec): string
     {
         $result = $this->save_field_order_nbr($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);

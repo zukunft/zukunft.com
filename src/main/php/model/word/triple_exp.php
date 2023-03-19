@@ -31,7 +31,7 @@
 
 namespace export;
 
-class triple_exp extends user_sandbox_exp_link
+class triple_exp extends sandbox_exp_link
 {
 
     // field names used for JSON creation

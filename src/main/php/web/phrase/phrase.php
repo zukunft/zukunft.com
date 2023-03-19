@@ -2,10 +2,8 @@
 
 /*
 
-    /web/phrase.php - the display extension of the api phrase object
+    web/phrase.php - to create the html code to display a word or triple
     --------------
-
-    mainly links to the word and triple display functions
 
 
     This file is part of zukunft.com - calc with words
@@ -25,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -34,21 +32,154 @@
 
 namespace html;
 
+include_once API_SANDBOX_PATH . 'combine_object.php';
+include_once API_PHRASE_PATH . 'phrase.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once WEB_WORD_PATH . 'triple.php';
+
+use api\combine_object_api;
 use api\phrase_api;
 
-class phrase_dsp extends phrase_api
+class phrase_dsp
 {
+
+    /*
+     * object vars
+     */
+
+    // the word or triple object
+    private word_dsp|triple_dsp $obj;
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(word_dsp|triple_dsp $phr_obj)
+    {
+        $this->set_obj($phr_obj);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function set_from_json(string $json_api_msg): void
+    {
+        $json_array = json_decode($json_api_msg);
+        if ($json_array[combine_object_api::FLD_CLASS] == phrase_api::CLASS_WORD) {
+            $fv_dsp = new word_dsp();
+            $fv_dsp->set_from_json_array($json_array);
+            $this->set_obj($fv_dsp);
+        } elseif ($json_array[combine_object_api::FLD_CLASS] == phrase_api::CLASS_TRIPLE) {
+            $fv_dsp = new triple_dsp();
+            $fv_dsp->set_from_json_array($json_array);
+            $this->set_obj($fv_dsp);
+        } else {
+            log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a phrase');
+        }
+    }
+
+    function set_obj(word_dsp|triple_dsp $obj): void
+    {
+        $this->obj = $obj;
+    }
+
+    function obj(): word_dsp|triple_dsp
+    {
+        return $this->obj;
+    }
+
+    /**
+     * return the phrase id based on the word or triple id
+     * must have the same logic as the database view and the backend
+     */
+    function id(): int
+    {
+        if ($this->is_word()) {
+            return $this->obj_id();
+        } else {
+            return $this->obj_id() * -1;
+        }
+    }
+
+    function obj_id(): int
+    {
+        return $this->obj()->id();
+    }
+
+    function set_name(?string $name): void
+    {
+        $this->obj()->set_name($name);
+    }
+
+    function name(): ?string
+    {
+        return $this->obj()->name();
+    }
+
+    function set_description(?string $description): void
+    {
+        $this->obj()->description = $description;
+    }
+
+    function description(): ?string
+    {
+        return $this->obj()->description;
+    }
+
+    function set_type(?int $type_id): void
+    {
+        $this->obj()->set_type_id($type_id);
+    }
+
+    function type(): ?int
+    {
+        return $this->obj()->type_id();
+    }
+
+
+    /*
+     * classifications
+     */
+
+    /**
+     * @return bool true if this phrase is a word or supposed to be a word
+     */
+    function is_word(): bool
+    {
+        if ($this->obj::class == word_dsp::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * @return bool true if this phrase is of type percent
+     */
+    function is_percent(): bool
+    {
+        return $this->obj()->is_percent();
+    }
+
+
+    /*
+     * display
+     */
 
     /**
      * @returns string the html code to display with mouse over that shows the description
      */
     function dsp(): string
     {
-        if ($this->is_word()) {
-            return $this->wrd_dsp()->dsp();
-        } else {
-            return $this->trp_dsp()->dsp();
-        }
+        return $this->obj()->dsp();
     }
 
     /**
@@ -56,7 +187,7 @@ class phrase_dsp extends phrase_api
      */
     function dsp_link(): string
     {
-        return $this->name;
+        return $this->obj()->name();
     }
 
     /**
@@ -66,7 +197,7 @@ class phrase_dsp extends phrase_api
     {
         $result = '';
         if ($this->is_word()) {
-            $wrd = $this->wrd_dsp();
+            $wrd = $this->obj();
             $result .= $wrd->td('', '', $intent);
         }
         return $result;
@@ -78,7 +209,7 @@ class phrase_dsp extends phrase_api
     function dsp_unlink(int $link_id): string
     {
         $result = '    <td>' . "\n";
-        $result .= \html\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id);
+        $result .= btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id());
         $result .= '    </td>' . "\n";
 
         return $result;
@@ -123,7 +254,7 @@ class phrase_dsp extends phrase_api
         }
         $sel->bs_class = $class;
         $sel->sql = $this->sql_list($type);
-        $sel->selected = $this->id;
+        $sel->selected = $this->id();
         $sel->dummy_text = '... please select';
         $result .= $sel->display();
 

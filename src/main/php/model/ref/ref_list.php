@@ -55,8 +55,9 @@ class ref_list extends type_list
         $this->set_user($usr);
     }
 
+
     /*
-     * get and set
+     * set and get
      */
 
     /**

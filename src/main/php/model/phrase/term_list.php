@@ -33,7 +33,7 @@
 use api\term_list_api;
 use html\term_list_dsp;
 
-class term_list extends user_sandbox_list_named
+class term_list extends sandbox_list_named
 {
 
     // array $lst is the array of the loaded term objects

@@ -935,7 +935,7 @@ class verb extends db_object
     }
 
     // check if the id parameters are supposed to be changed
-    private function save_id_if_updated(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    private function save_id_if_updated(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         $result = '';
         /*

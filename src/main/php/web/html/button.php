@@ -38,7 +38,8 @@ use library;
 use phrase_list;
 use phrase_list_dsp_old;
 
-class button {
+class button
+{
 
     const IMG_ADD_FA = "fa-plus-square";
     const IMG_EDIT_FA = "fa-edit";
@@ -50,8 +51,8 @@ class button {
 
     // parameters for the simple buttons
     public string $title = ''; // title to display on mouse over
-    public string $call  = ''; // url to call if the user clicks
-    public string $back  = ''; // word id, word name or url that should be called after the action is completed
+    public string $call = ''; // url to call if the user clicks
+    public string $back = ''; // word id, word name or url that should be called after the action is completed
 
     /*
      * construct and capsule
@@ -72,35 +73,65 @@ class button {
      * @param string $icon the path of the icon that should be shown
      * @returns string the HTML code to display a button
      */
-    private function html (string $icon): string {
-        return '<a href="'.$this->call.'" title="'.$this->title.'"><img src="'.$icon.'" alt="'.$this->title.'"></a>';
+    private function html(string $icon): string
+    {
+        return '<a href="' . $this->call . '" title="' . $this->title . '"><img src="' . $icon . '" alt="' . $this->title . '"></a>';
     }
 
     // same as html but the bootstrap version
-    private function html_fa (string $icon): string {
-        return '<a href="'.$this->call.'" title="'.$this->title.'"><i class="far '.$icon.'"></i></a>';
+    private function html_fa(string $icon): string
+    {
+        return '<a href="' . $this->call . '" title="' . $this->title . '"><i class="far ' . $icon . '"></i></a>';
     }
 
     // button function to keep the image call on one place
-    function add      (): string { return $this->html_fa(self::IMG_ADD_FA    ); } // an add button to create a new entry
-    function edit     (): string { return $this->html_fa(self::IMG_EDIT_FA   ); } // an edit button to adjust an entry
-    function del      (): string { return $this->html_fa(self::IMG_DEL_FA    ); } // an delete button to remove an entry
-    function undo     (): string { return $this->html   (self::IMG_UNDO      ); } // an undo button to undo a change (not only the last)
-    function find     (): string { return $this->html   (self::IMG_FIND      ); } // a find button to search for a word
-    function unfilter (): string { return $this->html   (self::IMG_UN_FILTER ); } // button to remove a filter
-    function back_img (): string { return $this->html   (self::IMG_BACK      ); } // button to go back to the original calling page
+    function add(): string
+    {
+        return $this->html_fa(self::IMG_ADD_FA);
+    } // an add button to create a new entry
+
+    function edit(): string
+    {
+        return $this->html_fa(self::IMG_EDIT_FA);
+    } // an edit button to adjust an entry
+
+    function del(): string
+    {
+        return $this->html_fa(self::IMG_DEL_FA);
+    } // an delete button to remove an entry
+
+    function undo(): string
+    {
+        return $this->html(self::IMG_UNDO);
+    } // an undo button to undo a change (not only the last)
+
+    function find(): string
+    {
+        return $this->html(self::IMG_FIND);
+    } // a find button to search for a word
+
+    function unfilter(): string
+    {
+        return $this->html(self::IMG_UN_FILTER);
+    } // button to remove a filter
+
+    function back_img(): string
+    {
+        return $this->html(self::IMG_BACK);
+    } // button to go back to the original calling page
 
     /**
-    * display a button to go back to the main calling page (several pages have been show to adjust the view of a word, go back to the word not to the view edit pages)
-    * $back can be either the id of the last used word or the url path
-    */
-    function back (string $back = ''): string {
+     * display a button to go back to the main calling page (several pages have been show to adjust the view of a word, go back to the word not to the view edit pages)
+     * $back can be either the id of the last used word or the url path
+     */
+    function back(string $back = ''): string
+    {
         if ($back == '') {
             $back = 1; // temp solution
         }
         $this->title = 'back';
         if (is_numeric($back)) {
-            $this->call = '/http/view.php?words='.$back;
+            $this->call = '/http/view.php?words=' . $back;
         } else {
             $this->call = $back;
         }
@@ -108,16 +139,17 @@ class button {
     }
 
     /**
-    * ask a yes/no question with the default calls
-    * @param string $title the text show beside the button
-    * @param string $description the text shown inside the button
-    * @param string $call the url that should be call if the button is pressed
-    * @returns string the HTML code to display a confirm button
-    */
-    function confirm (string $title, string $description, string $call): string {
+     * ask a yes/no question with the default calls
+     * @param string $title the text show beside the button
+     * @param string $description the text shown inside the button
+     * @param string $call the url that should be call if the button is pressed
+     * @returns string the HTML code to display a confirm button
+     */
+    function confirm(string $title, string $description, string $call): string
+    {
         $result = dsp_text_h3($title);
-        $result .= $description.'<br><br>';
-        $result .= '<a href="'.$call.'&confirm=1" title="Yes">Yes</a> / <a href="'.$call.'&confirm=-1" title="No">No</a>';
+        $result .= $description . '<br><br>';
+        $result .= '<a href="' . $call . '&confirm=1" title="Yes">Yes</a> / <a href="' . $call . '&confirm=-1" title="No">No</a>';
         //$result = $title.'<a href="'.$call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$call.'&confirm=-1" title="No">No</a>';
         //$result = '<a href="'.$call.'" onclick="return confirm(\''.$title.'\')">'.$title.'</a>';
         //$result = "<a onClick=\"javascript: return confirm('".$title."');\" href='".$call."'>x</a>";
@@ -125,13 +157,14 @@ class button {
     }
 
     /**
-    * the old zuh_btn_confirm without description, replace with zuh_btn_confirm
-    */
-    function yesno (): string {
+     * the old zuh_btn_confirm without description, replace with zuh_btn_confirm
+     */
+    function yesno(): string
+    {
         //zu_debug("button->yesno ".$this->title.".", 10);
 
         $result = dsp_text_h3($this->title);
-        $result .= '<a href="'.$this->call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$this->call.'&confirm=-1" title="No">No</a>';
+        $result .= '<a href="' . $this->call . '&confirm=1" title="Yes">Yes</a>/<a href="' . $this->call . '&confirm=-1" title="No">No</a>';
         //$result = $this->title.'<a href="'.$this->call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$this->call.'&confirm=-1" title="No">No</a>';
         //$result = '<a href="'.$this->call.'" onclick="return confirm(\''.$this->title.'\')">'.$this->title.'</a>';
         //$result = "<a onClick=\"javascript: return confirm('".$this->title."');\" href='".$this->call."'>x</a>";
@@ -140,19 +173,20 @@ class button {
     }
 
     /**
-    * display a button to add a value
-    */
-    function add_value ($phr_lst, $type_ids, $back): string {
+     * display a button to add a value
+     */
+    function add_value($phr_lst, $type_ids, $back): string
+    {
         log_debug("button->add_value");
         $lib = new library();
 
         $url_phr = '';
         if (isset($phr_lst)) {
             if (get_class($phr_lst) <> phrase_list::class and get_class($phr_lst) <> phrase_list_dsp_old::class) {
-                log_err("Object to add must be of type phrase_list, but it is ".get_class($phr_lst).".", "button->add_value");
+                log_err("Object to add must be of type phrase_list, but it is " . get_class($phr_lst) . ".", "button->add_value");
             } else {
                 if (!empty($phr_lst->id_lst())) {
-                    $this->title = "add new value similar to ".$phr_lst->dsp_name();
+                    $this->title = "add new value similar to " . $phr_lst->dsp_name();
                 } else {
                     $this->title = "add new value";
                 }
@@ -163,10 +197,10 @@ class button {
         log_debug("type URL");
         $url_type = '';
         if (isset($type_ids)) {
-            $url_type = $lib->ids_to_url($type_ids,"type");
+            $url_type = $lib->ids_to_url($type_ids, "type");
         }
 
-        $this->call  = '/http/value_add.php?back='.$back.$url_phr.$url_type;
+        $this->call = '/http/value_add.php?back=' . $back . $url_phr . $url_type;
         $result = $this->add();
 
         log_debug($result);
@@ -174,9 +208,10 @@ class button {
     }
 
     /**
-    * similar to btn_add_value, but uses a simple modal box
-    */
-    function add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back): string {
+     * similar to btn_add_value, but uses a simple modal box
+     */
+    function add_value_fast($modal_nbr, $phr_lst, $phr_main, $common_lst, $back): string
+    {
         log_debug();
         $result = '';
 
@@ -193,28 +228,28 @@ class button {
 
 
         // the button to call the modal box
-        $result .= '  <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#val_add'.$modal_nbr.'">';
+        $result .= '  <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#val_add' . $modal_nbr . '">';
         $result .= '    ';
         $result .= '  </button>';
         // the modal box itself
         $form_name = '/http/value_add';
-        $result .= '  <div class="modal" id="val_add'.$modal_nbr.'">';
+        $result .= '  <div class="modal" id="val_add' . $modal_nbr . '">';
         $result .= '    <div class="modal-dialog">';
         $result .= '      <div class="modal-content">';
         $result .= '        <div class="modal-header">';
         $result .= '          <h4 class="modal-title">';
-        $result .= '            '.$phr_lst_header->name_dsp();
+        $result .= '            ' . $phr_lst_header->name_dsp();
         $result .= '          </h4>';
         $result .= '          <button type="button" class="save" data-dismiss="modal">&times;</button>';
         $result .= '        </div>';
         $result .= '        <div class="modal-body">';
-        $result .= dsp_form_start ($form_name);
-        $result .= '            '.$phr_time->name_dsp();
-        $result .= '            <input type="hidden" name="phrases" value="'.implode(",",$phr_lst->ids()).'">';
-        $result .= '            <input type="hidden" name="back" value="'.$back.'">';
+        $result .= dsp_form_start($form_name);
+        $result .= '            ' . $phr_time->name_dsp();
+        $result .= '            <input type="hidden" name="phrases" value="' . implode(",", $phr_lst->ids()) . '">';
+        $result .= '            <input type="hidden" name="back" value="' . $back . '">';
         $result .= '            <input type="hidden" name="confirm" value="1">';
         $result .= '            <input type="text" name="value" value="0">';
-        $result .= '            '.$common_lst_ex_main->name_dsp();
+        $result .= '            ' . $common_lst_ex_main->name_dsp();
         $result .= '          </form>';
         $result .= '        </div>';
         $result .= '        <div class="modal-footer">';
@@ -234,34 +269,36 @@ class button {
     }
 
     /**
-    * display a button to adjust a value
-    */
-    function edit_value ($phr_lst, $value_id, $back): string {
-        log_debug($phr_lst->name().",v".$value_id.",b".$back);
+     * display a button to adjust a value
+     */
+    function edit_value($phr_lst, $value_id, $back): string
+    {
+        log_debug($phr_lst->name() . ",v" . $value_id . ",b" . $back);
 
         if (!empty($phr_lst->ids)) {
-            $this->title = "change the value for ".$phr_lst->name();
+            $this->title = "change the value for " . $phr_lst->name();
         } else {
             $this->title = "change this value";
         }
-        $this->call  = '/http/value_edit.php?id='.$value_id.'&back='.$back;
+        $this->call = '/http/value_edit.php?id=' . $value_id . '&back=' . $back;
         $result = $this->edit();
         log_debug($result);
         return $result;
     }
 
     /**
-    * display a button to exclude a value
-    */
-    function del_value ($phr_lst, $value_id, $back): string {
-        log_debug($phr_lst->name().",v".$value_id.",b".$back);
+     * display a button to exclude a value
+     */
+    function del_value($phr_lst, $value_id, $back): string
+    {
+        log_debug($phr_lst->name() . ",v" . $value_id . ",b" . $back);
 
         if (!empty($phr_lst->ids)) {
-            $this->title = "delete the value for ".$phr_lst->name();
+            $this->title = "delete the value for " . $phr_lst->name();
         } else {
             $this->title = "delete this value";
         }
-        $this->call  = '/http/value_del.php?id='.$value_id.'&back='.$back;
+        $this->call = '/http/value_del.php?id=' . $value_id . '&back=' . $back;
         $result = $this->del();
         log_debug($result);
         return $result;
@@ -271,24 +308,58 @@ class button {
 
 // only to shorten the code the basic buttons as a function without object
 // this way only one code line is needed 
-function btn_add      ($t, $c): string { $b = New button($t,$c); return $b->add(); }      // an add button to create a new entry
-function btn_edit     ($t, $c): string { $b = New button($t,$c); return $b->edit(); }     // an edit button to adjust an entry
-function btn_del      ($t, $c): string { $b = New button($t,$c); return $b->del(); }      // an delete button to remove an entry
-function btn_undo     ($t, $c): string { $b = New button($t,$c); return $b->undo(); }     // an undo button to undo a change (not only the last)
-function btn_find     ($t, $c): string { $b = New button($t,$c); return $b->find(); }     // a find button to search for a word
-function btn_unfilter ($t, $c): string { $b = New button($t,$c); return $b->unfilter(); } // button to remove a filter
-function btn_yesno    ($t, $c): string { $b = New button($t,$c); return $b->yesno(); }    // button to get the user confirmation
-function btn_back     ($bl): string    { $b = New button();                                return $b->back($bl); } // button to remove a filter
+function btn_add($t, $c): string
+{
+    $b = new button($t, $c);
+    return $b->add();
+}      // an add button to create a new entry
+function btn_edit($t, $c): string
+{
+    $b = new button($t, $c);
+    return $b->edit();
+}     // an edit button to adjust an entry
+function btn_del($t, $c): string
+{
+    $b = new button($t, $c);
+    return $b->del();
+}      // an delete button to remove an entry
+function btn_undo($t, $c): string
+{
+    $b = new button($t, $c);
+    return $b->undo();
+}     // an undo button to undo a change (not only the last)
+function btn_find($t, $c): string
+{
+    $b = new button($t, $c);
+    return $b->find();
+}     // a find button to search for a word
+function btn_unfilter($t, $c): string
+{
+    $b = new button($t, $c);
+    return $b->unfilter();
+} // button to remove a filter
+function btn_yesno($t, $c): string
+{
+    $b = new button($t, $c);
+    return $b->yesno();
+}    // button to get the user confirmation
+function btn_back($bl): string
+{
+    $b = new button();
+    return $b->back($bl);
+} // button to remove a filter
 
 
 // button to add a new value related to some phrases
-function btn_add_value ($phr_lst, $type_ids, $back): string {
-    $b = New button;
-    return $b->add_value ($phr_lst, $type_ids, $back);
+function btn_add_value($phr_lst, $type_ids, $back): string
+{
+    $b = new button;
+    return $b->add_value($phr_lst, $type_ids, $back);
 }
 
 // similar to btn_add_value, but uses a simple modal box
-function btn_add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back): string {
-    $b = New button;
-    return $b->add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back);
+function btn_add_value_fast($modal_nbr, $phr_lst, $phr_main, $common_lst, $back): string
+{
+    $b = new button;
+    return $b->add_value_fast($modal_nbr, $phr_lst, $phr_main, $common_lst, $back);
 }

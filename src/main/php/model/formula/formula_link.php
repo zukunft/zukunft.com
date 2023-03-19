@@ -29,7 +29,7 @@
   
 */
 
-class formula_link extends user_sandbox_link_with_type
+class formula_link extends sandbox_link_with_type
 {
 
     // list of the formula link types that have a coded functionality
@@ -43,16 +43,16 @@ class formula_link extends user_sandbox_link_with_type
     // all database field names excluding the id
     const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
-        user_sandbox::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_FLD_NAMES = array(
         self::FLD_TYPE,
-        user_sandbox::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
 
     // database fields additional to the user sandbox fields
@@ -60,12 +60,12 @@ class formula_link extends user_sandbox_link_with_type
     public ?int $link_type_id = null; // define a special behavior for this link (maybe not needed at the moment)
 
     /**
-     * formula_link constructor that set the parameters for the user_sandbox object
+     * formula_link constructor that set the parameters for the _sandbox object
      */
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->obj_type = user_sandbox::TYPE_LINK;
+        $this->obj_type = sandbox::TYPE_LINK;
         $this->obj_name = sql_db::TBL_FORMULA_LINK;
         $this->from_name = sql_db::TBL_FORMULA;
         $this->to_name = sql_db::TBL_PHRASE;
@@ -544,7 +544,7 @@ class formula_link extends user_sandbox_link_with_type
             }
             // create an entry in the user sandbox
             $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK);
-            $log_id = $db_con->insert(array(formula_link::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id()));
+            $log_id = $db_con->insert(array(formula_link::FLD_ID, sandbox::FLD_USER), array($this->id, $this->user()->id()));
             if ($log_id <= 0) {
                 log_err('Insert of user_formula_link failed.');
                 $result = false;
@@ -576,11 +576,11 @@ class formula_link extends user_sandbox_link_with_type
     /**
      * save all updated formula_link fields excluding the name, because already done when adding a formula_link
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param formula_link|user_sandbox $db_rec the database record before the saving
-     * @param formula_link|user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param formula_link|sandbox $db_rec the database record before the saving
+     * @param formula_link|sandbox $std_rec the database record defined as standard because it is used by most users
      * @return string the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save_fields(sql_db $db_con, formula_link|user_sandbox $db_rec, formula_link|user_sandbox $std_rec): string
+    function save_fields(sql_db $db_con, formula_link|sandbox $db_rec, formula_link|sandbox $std_rec): string
     {
         // link type not used at the moment
         $result = $this->save_field_type($db_con, $db_rec, $std_rec);

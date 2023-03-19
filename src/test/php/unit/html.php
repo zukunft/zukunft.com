@@ -35,6 +35,7 @@ use api\value_api;
 use api\view_cmp_api;
 use api\word_api;
 use html\button;
+use html\formula_value_list_dsp;
 use html\html_base;
 use html\html_selector;
 use html\view_dsp;
@@ -87,6 +88,10 @@ class html_unit_tests
 
 
         $t->subheader('HTML list tests');
+
+        // TODO create and set the model objects and
+        //      create the api object using the api_obj() function
+        //      create and set the dsp object based on the api json
 
         $lst = new verb_list($usr);
         $lst->add_verb(new verb(1, verb::IS_A));
@@ -178,13 +183,13 @@ class html_unit_tests
         $fv_canton->set_number(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO / value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 
         // create the formula result list and the table to display the results
-        $fv_lst = new \api\formula_value_list_api();
-        $fv_lst->add($fv_city);
-        $fv_lst->add($fv_canton);
-        $t->html_test($fv_lst->dsp_obj()->table(), 'table_formula_value', $t);
+        $fv_lst = new formula_value_list_dsp();
+        $fv_lst->add($fv_city->dsp_obj());
+        $fv_lst->add($fv_canton->dsp_obj());
+        $t->html_test($fv_lst->table(), 'table_formula_value', $t);
 
         // create the same table as above, but within a context
-        $t->html_test($fv_lst->dsp_obj()->table($phr_lst_context), 'table_formula_value_context', $t);
+        $t->html_test($fv_lst->table($phr_lst_context->dsp_obj()), 'table_formula_value_context', $t);
 
 
         $t->subheader('View component tests');

@@ -137,7 +137,7 @@ class phrase_group extends db_object
 
 
     /*
-     * get and set
+     * set and get
      */
 
     /**

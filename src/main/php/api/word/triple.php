@@ -36,7 +36,7 @@ use cfg\phrase_type;
 use html\term_dsp;
 use triple;
 
-class triple_api extends user_sandbox_named_with_type_api
+class triple_api extends sandbox_typed_api
 {
 
     /*
@@ -57,8 +57,6 @@ class triple_api extends user_sandbox_named_with_type_api
     private phrase_api $from;
     private verb_api $verb;
     private phrase_api $to;
-
-    public ?string $description = null; // the triple description that is shown as a mouseover explain to the user
 
 
     /*
@@ -124,7 +122,7 @@ class triple_api extends user_sandbox_named_with_type_api
      * cast
      */
 
-    function term(): term_api|term_dsp
+    function term(): term_api
     {
         return new term_api($this->id, $this->name, triple::class);
     }

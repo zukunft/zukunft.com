@@ -38,7 +38,7 @@ class word_change_list
 
 
     /*
-     * get and set
+     * set and get
      */
 
     /**

@@ -31,7 +31,7 @@
 
 namespace export;
 
-class view_cmp_exp extends user_sandbox_exp_named
+class view_cmp_exp extends sandbox_exp_named
 {
 
     // field names used for JSON creation

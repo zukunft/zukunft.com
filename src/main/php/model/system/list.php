@@ -64,8 +64,9 @@ class base_list
         }
     }
 
+
     /*
-     * get and set
+     * set and get
      */
 
     function set_offset(int $offset): void
@@ -111,7 +112,7 @@ class base_list
     /**
      * to be called after the lists have been updated
      * but the index list have not yet been updated
-     * is overwritten by the child user_sandbox_list_named
+     * is overwritten by the child _sandbox_list_named
      */
     protected function set_lst_dirty(): void
     {
@@ -120,7 +121,7 @@ class base_list
 
     /**
      * to be called after the index lists have been updated
-     * is overwritten by the child user_sandbox_list_named
+     * is overwritten by the child _sandbox_list_named
      */
     protected function set_lst_clean(): void
     {
@@ -168,7 +169,7 @@ class base_list
 
     /**
      * @param int $id the unique database id of the object that should be returned
-     * @return user_sandbox|null the found user sandbox object or null if no id is found
+     * @return sandbox|null the found user sandbox object or null if no id is found
      */
     function get_by_id(int $id): ?object
     {

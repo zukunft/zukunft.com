@@ -36,7 +36,7 @@ use formula;
 use html\formula_dsp;
 use html\term_dsp;
 
-class formula_api extends user_sandbox_named_with_type_api
+class formula_api extends sandbox_typed_api
 {
 
     /*
@@ -149,7 +149,7 @@ class formula_api extends user_sandbox_named_with_type_api
         return $dsp_obj;
     }
 
-    function term(): term_api|term_dsp
+    function term(): term_api
     {
         return new term_api($this->id, $this->name, formula::class);
     }

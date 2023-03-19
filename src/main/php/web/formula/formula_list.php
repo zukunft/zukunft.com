@@ -31,9 +31,9 @@
 
 namespace html;
 
-use api\formula_list_api;
+include_once WEB_SANDBOX_PATH . 'list.php';
 
-class formula_list_dsp extends formula_list_api
+class formula_list_dsp extends list_dsp
 {
 
     /**

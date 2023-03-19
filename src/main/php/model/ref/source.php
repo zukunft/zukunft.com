@@ -44,7 +44,7 @@ use html\source_dsp;
 use export\source_exp;
 use export\exp_obj;
 
-class source extends user_sandbox_named_with_type
+class source extends sandbox_typed
 {
 
     /*
@@ -65,7 +65,7 @@ class source extends user_sandbox_named_with_type
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
         self::FLD_URL,
-        user_sandbox_named::FLD_DESCRIPTION
+        sandbox_named::FLD_DESCRIPTION
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
@@ -75,7 +75,7 @@ class source extends user_sandbox_named_with_type
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_FLD_NAMES = array(
         self::FLD_NAME,
-        user_sandbox_named::FLD_DESCRIPTION,
+        sandbox_named::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_EXCLUDED,
         self::FLD_URL
@@ -132,7 +132,7 @@ class source extends user_sandbox_named_with_type
         if ($result) {
             $this->set_name($db_row[self::FLD_NAME]);
             $this->url = $db_row[self::FLD_URL];
-            $this->description = $db_row[user_sandbox_named::FLD_DESCRIPTION];
+            $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_TYPE];
             $this->code_id = $db_row[sql_db::FLD_CODE_ID];
         }
@@ -539,11 +539,11 @@ class source extends user_sandbox_named_with_type
     /**
      * save all updated source fields excluding the name, because already done when adding a source
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param source|user_sandbox $db_rec the database record before the saving
-     * @param source|user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param source|sandbox $db_rec the database record before the saving
+     * @param source|sandbox $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    function save_fields(sql_db $db_con, source|user_sandbox $db_rec, source|user_sandbox $std_rec): string
+    function save_fields(sql_db $db_con, source|sandbox $db_rec, source|sandbox $std_rec): string
     {
         $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_url($db_con, $db_rec, $std_rec);

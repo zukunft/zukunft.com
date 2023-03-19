@@ -91,7 +91,7 @@ include_once $path_unit . 'test_unit.php';
 include_once $path_unit . 'test_lib.php';
 include_once $path_unit . 'system.php';
 include_once $path_unit . 'user.php';
-include_once $path_unit . 'user_sandbox.php';
+include_once $path_unit . 'sandbox.php';
 include_once $path_unit . 'word.php';
 include_once $path_unit . 'word_list.php';
 include_once $path_unit . 'triple.php';
@@ -941,10 +941,10 @@ class test_base
      * check the object load SQL statements to get the default object value for all allowed SQL database dialects
      *
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param user_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_load_standard_sql(sql_db $db_con, user_sandbox $usr_obj): bool
+    function assert_load_standard_sql(sql_db $db_con, sandbox $usr_obj): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -963,7 +963,7 @@ class test_base
     /**
      * check the object loading by id and name
      *
-     * @param user_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox $usr_obj the user sandbox object e.g. a word
      * @param string $name the name
      * @return bool true if all tests are fine
      */
@@ -986,10 +986,10 @@ class test_base
      * check the not changed SQL statements of a user sandbox object e.g. word, triple, value or formulas
      *
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param user_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_not_changed_sql(sql_db $db_con, user_sandbox $usr_obj): bool
+    function assert_not_changed_sql(sql_db $db_con, sandbox $usr_obj): bool
     {
         // check the Postgres query syntax
         $usr_obj->owner_id = 0;
@@ -1027,10 +1027,10 @@ class test_base
      * e.g. the value a user has changed of word, triple, value or formulas
      *
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param user_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_user_config_sql(sql_db $db_con, user_sandbox $usr_obj): bool
+    function assert_user_config_sql(sql_db $db_con, sandbox $usr_obj): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

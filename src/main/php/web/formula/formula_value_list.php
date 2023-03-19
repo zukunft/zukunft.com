@@ -34,15 +34,35 @@
 
 namespace html;
 
+include_once WEB_SANDBOX_PATH . 'list_value.php';
+
 use api\formula_value_list_api;
 use api\phrase_list_api;
 
-class formula_value_list_dsp extends formula_value_list_api
+class formula_value_list_dsp extends list_value_dsp
 {
+
+
+    /**
+     * add a formula result to the list
+     * @returns bool true if the formula result has been added
+     */
+    function add(formula_value_dsp $fv): bool
+    {
+        $result = false;
+        if (!in_array($fv->id(), $this->id_lst())) {
+            $this->lst[] = $fv;
+            $this->set_lst_dirty();
+            $result = true;
+        }
+        return $result;
+    }
+
+
     /**
      * @return string the html code to show the formula results as a table to the user
      */
-    function table(phrase_list_api $context_phr_lst = null, string $back = ''): string
+    function table(phrase_list_dsp $context_phr_lst = null, string $back = ''): string
     {
         $html = new html_base();
 
@@ -60,7 +80,7 @@ class formula_value_list_dsp extends formula_value_list_api
         if ($header_phrases->count() <= 0) {
             $head_text = 'description';
         } else {
-            $head_text = $header_phrases->dsp_obj()->dsp_link();
+            $head_text = $header_phrases->dsp_link();
         }
         $header_rows = '';
         $rows = '';

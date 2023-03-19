@@ -82,7 +82,7 @@ function db_check_missing_owner(sql_db $db_con): bool
 {
     $result = true;
 
-    foreach (user_sandbox::DB_TYPES as $db_type) {
+    foreach (sandbox::DB_TYPES as $db_type) {
         $db_con->set_type($db_type);
         $db_lst = $db_con->missing_owner();
         if ($db_lst != null) {
@@ -174,20 +174,20 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->change_column_name(sql_db::TBL_USER, 'isactive', 'is_active');
     $result .= $db_con->change_column_name(sql_db::TBL_USER, 'email_alternativ', 'email_alternative');
     $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_ELEMENT_TYPE, 'formula_element_type_name', 'type_name');
-    $result .= $db_con->change_column_name(sql_db::TBL_VIEW, 'comment', user_sandbox_named::FLD_DESCRIPTION);
-    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW, 'comment', user_sandbox_named::FLD_DESCRIPTION);
-    $result .= $db_con->change_column_name(sql_db::TBL_VIEW_COMPONENT, 'comment', user_sandbox_named::FLD_DESCRIPTION);
-    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT, 'comment', user_sandbox_named::FLD_DESCRIPTION);
+    $result .= $db_con->change_column_name(sql_db::TBL_VIEW, 'comment', sandbox_named::FLD_DESCRIPTION);
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW, 'comment', sandbox_named::FLD_DESCRIPTION);
+    $result .= $db_con->change_column_name(sql_db::TBL_VIEW_COMPONENT, 'comment', sandbox_named::FLD_DESCRIPTION);
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT, 'comment', sandbox_named::FLD_DESCRIPTION);
     $result .= $db_con->change_column_name(sql_db::TBL_VIEW_COMPONENT_TYPE, 'view_component_type_name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_TYPE, 'name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_REF_TYPE, 'ref_type_name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_REF_TYPE, 'source_type_name', 'type_name');
-    $result .= $db_con->change_column_name(sql_db::TBL_SOURCE, 'comment', user_sandbox_named::FLD_DESCRIPTION);
-    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, 'comment', user_sandbox_named::FLD_DESCRIPTION);
+    $result .= $db_con->change_column_name(sql_db::TBL_SOURCE, 'comment', sandbox_named::FLD_DESCRIPTION);
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, 'comment', sandbox_named::FLD_DESCRIPTION);
     $result .= $db_con->change_column_name(sql_db::TBL_SHARE, 'share_type_name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_PROTECTION, 'protection_type_name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_USER_PROFILE, 'user_profile_name', 'type_name');
-    $result .= $db_con->change_column_name(sql_db::TBL_USER_PROFILE, 'commen', user_sandbox_named::FLD_DESCRIPTION);
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PROFILE, 'commen', sandbox_named::FLD_DESCRIPTION);
     $result .= $db_con->change_column_name(sql_db::TBL_SYS_LOG_STATUS, 'comment', 'description');
     $result .= $db_con->change_column_name(sql_db::TBL_SYS_LOG_STATUS, 'sys_log_status_name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_TASK_TYPE, 'calc_and_cleanup_task_type_name', 'type_name');
@@ -226,7 +226,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->column_allow_null(sql_db::TBL_CHANGE_FIELD, 'code_id');
     $result .= $db_con->column_allow_null(sql_db::TBL_VIEW, 'comment');
     $result .= $db_con->column_allow_null(sql_db::TBL_VIEW_COMPONENT_TYPE, 'description');
-    $result .= $db_con->column_allow_null(sql_db::TBL_VALUE, user_sandbox::FLD_EXCLUDED);
+    $result .= $db_con->column_allow_null(sql_db::TBL_VALUE, sandbox::FLD_EXCLUDED);
     $result .= $db_con->column_allow_null(sql_db::TBL_VALUE, 'protect_id');
     $result .= $db_con->column_allow_null(sql_db::TBL_FORMULA_LINK, 'link_type_id');
     $result .= $db_con->column_allow_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'protect_id');

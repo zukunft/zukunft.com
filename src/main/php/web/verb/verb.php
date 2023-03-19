@@ -31,10 +31,12 @@
 
 namespace html;
 
+include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
+
 use api\verb_api;
 use verb;
 
-class verb_dsp extends verb_api
+class verb_dsp extends sandbox_named_dsp
 {
 
     /*
@@ -43,7 +45,7 @@ class verb_dsp extends verb_api
 
     function term(): term_dsp
     {
-        return new term_dsp($this->id, $this->name, verb::class);
+        return new term_dsp($this);
     }
 
     /**

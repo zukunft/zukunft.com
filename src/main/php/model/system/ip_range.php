@@ -107,7 +107,7 @@ class ip_range
 
 
     /*
-     * get and set
+     * set and get
      */
 
     /**

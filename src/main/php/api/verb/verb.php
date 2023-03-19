@@ -36,7 +36,7 @@ use html\formula_dsp;
 use html\term_dsp;
 use verb;
 
-class verb_api extends user_sandbox_named_api
+class verb_api extends sandbox_named_api
 {
 
     /*

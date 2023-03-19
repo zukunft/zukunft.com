@@ -55,8 +55,9 @@ class verb_list extends type_list
         $this->set_user($usr);
     }
 
+
     /*
-     * get and set
+     * set and get
      */
 
     /**
@@ -110,7 +111,7 @@ class verb_list extends type_list
             $db_con->set_type(sql_db::TBL_TRIPLE);
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
-            $db_con->set_usr_num_fields(array(user_sandbox::FLD_EXCLUDED));
+            $db_con->set_usr_num_fields(array(sandbox::FLD_EXCLUDED));
             $db_con->set_join_fields(array_merge(verb::FLD_NAMES, array(verb::FLD_NAME)), sql_db::TBL_VERB);
             $db_con->set_fields(array(verb::FLD_ID));
             // set the where clause depending on the values given

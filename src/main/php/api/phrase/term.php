@@ -42,13 +42,19 @@ use verb;
 use word;
 use triple;
 
-class term_api extends user_sandbox_named_api
+class term_api extends sandbox_named_api
 {
 
-    // the word, triple, verb or formula object
-    private ?user_sandbox_api $obj = null;
+    // the json field name in the api json message to identify if the term is a word, triple, verb or formula
+    const CLASS_WORD = 'word';
+    const CLASS_TRIPLE = 'triple';
+    const CLASS_VERB = 'verb';
+    const CLASS_FORMULA = 'formula';
 
-    // the type of this phrase
+    // the word, triple, verb or formula object
+    private word_api|triple_api|verb_api|formula_api|null $obj = null;
+
+    // the type of this term
     private phrase_type $type;
 
     /*
@@ -79,6 +85,16 @@ class term_api extends user_sandbox_named_api
      * set and get
      */
 
+    function set_obj(word_api|triple_api|verb_api|formula_api $obj): void
+    {
+        $this->obj = $obj;
+    }
+
+    function obj(): word_api|triple_api|verb_api|formula_api
+    {
+        return $this->obj;
+    }
+
     function set_description(?string $description)
     {
         $this->description = $description;
@@ -90,6 +106,9 @@ class term_api extends user_sandbox_named_api
     }
 
     /**
+     * the generated term id
+     * TODO remove this logic from the API and keep it only in the model, the database view and the frontend
+     * must have the same logic as the database view and the frontend
      * @param int $id the object id that is converted to the term id
      * @return void
      */
@@ -129,7 +148,7 @@ class term_api extends user_sandbox_named_api
      */
     function dsp_obj(): phrase_dsp
     {
-        $dsp_obj = new phrase_dsp($this->id, $this->name);
+        $dsp_obj = new phrase_dsp($this->obj()->dsp_obj(), $this->name);
         $dsp_obj->set_description($this->description());
         return $dsp_obj;
     }
@@ -153,6 +172,7 @@ class term_api extends user_sandbox_named_api
     {
         return new verb_dsp($this->id_obj(), $this->name);
     }
+
 
     /*
      * classifications

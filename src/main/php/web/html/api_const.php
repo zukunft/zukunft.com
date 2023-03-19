@@ -83,5 +83,6 @@ class api
 
     // to be reviewed
     const VALUE_EDIT = 'value_edit';
+    const RESULT_EDIT = 'result_edit';
 
 }

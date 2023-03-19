@@ -37,8 +37,12 @@ use html\triple_dsp;
 use html\verb_dsp;
 use html\word_dsp;
 
-class phrase_api extends user_sandbox_named_api
+class phrase_api extends sandbox_named_api
 {
+
+    // the json field name in the api json message to identify if the figure is a value or result
+    const CLASS_WORD = 'word';
+    const CLASS_TRIPLE = 'triple';
 
     // phrase names for stand-alone unit tests that are added with the system initial data load
     // TN_* is the name of the phrase used for testing
@@ -130,8 +134,11 @@ class phrase_api extends user_sandbox_named_api
      */
     function dsp_obj(): phrase_dsp
     {
-        $dsp_obj = new phrase_dsp($this->id, $this->name);
-        $dsp_obj->set_description($this->description());
+        if ($this->is_word()) {
+            $dsp_obj = $this->wrd_dsp()->phrase();
+        } else {
+            $dsp_obj = $this->trp_dsp()->phrase();
+        }
         return $dsp_obj;
     }
 
@@ -144,7 +151,7 @@ class phrase_api extends user_sandbox_named_api
 
     protected function trp_dsp(): triple_dsp
     {
-        $trp = new triple_dsp($this->id, $this->name);
+        $trp = new triple_dsp($this->id * -1, $this->name);
         $trp->set_type_id($this->type());
         return $trp;
     }

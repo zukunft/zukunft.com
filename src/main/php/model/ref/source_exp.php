@@ -31,7 +31,7 @@
 
 namespace export;
 
-class source_exp extends user_sandbox_exp_named
+class source_exp extends sandbox_exp_named
 {
 
     // object specific database and JSON object field names

@@ -2,10 +2,10 @@
 
 /*
 
-    /web/formula_value_dsp.php - the display extension of the api formula value object
-    -------------------------
+    web/sandbox/sandbox.php - the superclass for the html frontend of database objects
+    -----------------------
 
-    to creat the HTML code to display a formula
+    This superclass should be used by the classes word_dsp, formula_dsp, ... to enable user specific values and links
 
 
     This file is part of zukunft.com - calc with words
@@ -25,7 +25,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -34,23 +34,29 @@
 
 namespace html;
 
-include_once API_PHRASE_PATH . 'phrase_list.php';
+include_once API_SANDBOX_PATH . 'sandbox.php';
 
-use api\phrase_list_api;
 use api\sandbox_api;
-use api\sandbox_value_api;
 
-class formula_value_dsp extends sandbox_value_dsp
+class db_object_dsp
 {
-    /**
-     * @param phrase_list_dsp|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
-     * @returns string the html code to display the phrase group with reference links
-     */
-    function name_linked(phrase_list_dsp $phr_lst_header = null): string
-    {
-        return $this->grp()->name_linked($phr_lst_header);
-    }
 
+    // fields for the backend link
+    public int $id; // the database id of the object, which is the same as the related database object in the backend
+
+    /*
+     * construct and map
+     */
+
+    function __construct(int $id = 0)
+    {
+        $this->id = 0;
+
+        // set the id if included in new call
+        if ($id <> 0) {
+            $this->id = $id;
+        }
+    }
 
     /*
      * set and get
@@ -74,14 +80,22 @@ class formula_value_dsp extends sandbox_value_dsp
     function set_from_json_array(array $json_array): void
     {
         if (array_key_exists(sandbox_api::FLD_ID, $json_array)) {
-            $this->set_number($json_array[sandbox_api::FLD_ID]);
+            $this->set_id($json_array[sandbox_api::FLD_ID]);
         } else {
             log_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
-        if (array_key_exists(sandbox_value_api::FLD_NUMBER, $json_array)) {
-            $this->set_number($json_array[sandbox_value_api::FLD_NUMBER]);
-        }
+    }
 
+    function set_id(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    function id(): int
+    {
+        return $this->id;
     }
 
 }
+
+

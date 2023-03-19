@@ -2,7 +2,7 @@
 
 /*
 
-    user_sandbox_link.php - the superclass for handling user specific link objects including the database saving
+    sandbox_link.php - the superclass for handling user specific link objects including the database saving
     ---------------------
 
     This superclass should be used by the class word links, formula links and view link
@@ -36,7 +36,7 @@
 
 */
 
-class user_sandbox_link extends user_sandbox
+class sandbox_link extends sandbox
 {
 
     public ?object $fob = null;        // the object from which this linked object is creating the connection
@@ -303,10 +303,10 @@ class user_sandbox_link extends user_sandbox
     /**
      * check if the id parameters are supposed to be changed
      * TODO add the link type for word links
-     * @param user_sandbox_link $db_rec the object data as it is now in the database
+     * @param sandbox_link $db_rec the object data as it is now in the database
      * @return bool true if one of the object id fields have been changed
      */
-    function is_id_updated_link(user_sandbox $db_rec): bool
+    function is_id_updated_link(sandbox $db_rec): bool
     {
         $result = False;
         log_debug($this->dsp_id());
@@ -333,12 +333,12 @@ class user_sandbox_link extends user_sandbox
      * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
      * should only be called if the user is the owner and nobody has used the display component link
      * @param sql_db $db_con the active database connection
-     * @param user_sandbox $db_rec the database record before the saving
-     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param sandbox $db_rec the database record before the saving
+     * @param sandbox $std_rec the database record defined as standard because it is used by most users
      * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
      * @throws Exception
      */
-    function save_id_fields_link(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_id_fields_link(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         $result = '';
         log_debug($this->dsp_id());
@@ -401,14 +401,14 @@ class user_sandbox_link extends user_sandbox
      * @returns string|null a filled object that links the same objects
      *                            or null if nothing similar has been found
      */
-    function get_similar(): ?user_sandbox
+    function get_similar(): ?sandbox
     {
-        $result = new user_sandbox($this->user());
+        $result = new sandbox($this->user());
 
         // check potential duplicate by name
         // check for linked objects
         if (!isset($this->fob) or !isset($this->tob)) {
-            log_err('The linked objects for ' . $this->dsp_id() . ' are missing.', 'user_sandbox->get_similar');
+            log_err('The linked objects for ' . $this->dsp_id() . ' are missing.', '_sandbox->get_similar');
         } else {
             $db_chk = clone $this;
             $db_chk->reset();

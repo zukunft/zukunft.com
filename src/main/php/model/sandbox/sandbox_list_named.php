@@ -2,7 +2,7 @@
 
 /*
 
-    model/sandbox/user_sandbox_list.php - a base object for a list of user sandbox objects
+    model/sandbox/sandbox_list.php - a base object for a list of user sandbox objects
     -----------------------------------
 
 
@@ -30,7 +30,7 @@
 
 */
 
-class user_sandbox_list_named extends sandbox_list
+class sandbox_list_named extends sandbox_list
 {
 
     // memory vs speed optimize vars
@@ -55,7 +55,7 @@ class user_sandbox_list_named extends sandbox_list
 
 
     /*
-     * get and set
+     * set and get
      */
 
     /**

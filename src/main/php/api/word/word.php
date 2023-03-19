@@ -37,7 +37,7 @@ use html\term_dsp;
 use html\word_dsp;
 use word;
 
-class word_api extends user_sandbox_named_with_type_api
+class word_api extends sandbox_typed_api
 {
 
     /*
@@ -202,6 +202,7 @@ class word_api extends user_sandbox_named_with_type_api
     // the main parent phrase
     private ?phrase_api $parent;
 
+
     /*
      * construct and map
      */
@@ -214,8 +215,9 @@ class word_api extends user_sandbox_named_with_type_api
         $this->type_id = null;
     }
 
+
     /*
-     * get and set
+     * set and get
      */
 
     function set_description(string $description): void
@@ -287,7 +289,7 @@ class word_api extends user_sandbox_named_with_type_api
      * cast
      */
 
-    function term(): term_api|term_dsp
+    function term(): term_api
     {
         return new term_api($this->id, $this->name, word::class);
     }
@@ -298,96 +300,12 @@ class word_api extends user_sandbox_named_with_type_api
     function dsp_obj(): word_dsp
     {
         $wrd_dsp = new word_dsp($this->id, $this->name, $this->description);
-        $wrd_dsp->plural = $this->plural;
+        $wrd_dsp->set_plural($this->plural);
         $wrd_dsp->type_id = $this->type_id;
         if ($this->parent != null) {
-            $wrd_dsp->parent = $this->parent->dsp_obj();
+            $wrd_dsp->set_parent($this->parent->dsp_obj());
         }
         return $wrd_dsp;
-    }
-
-    /*
-     * type functions
-     */
-
-    /**
-     * repeating of the backend functions in the frontend to enable filtering in the frontend and reduce the traffic
-     * repeated in triple, because a triple can have it's own type
-     * kind of repeated in phrase to use hierarchies
-     *
-     * @param string $type the ENUM string of the fixed type
-     * @returns bool true if the word has the given type
-     * TODO Switch to php 8.1 and real ENUM
-     */
-    function is_type(string $type): bool
-    {
-        global $phrase_types;
-        $result = false;
-        if ($this->type_id() != Null) {
-            if ($this->type_id() == $phrase_types->id($type)) {
-                $result = true;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @return bool true if the word has the type "time" e.g. "2022 (year)"
-     */
-    function is_time(): bool
-    {
-        return $this->is_type(phrase_type::TIME);
-    }
-
-    /**
-     * @return bool true if the word has the type "time" e.g. "monthly"
-     */
-    function is_time_jump(): bool
-    {
-        return $this->is_type(phrase_type::TIME_JUMP);
-    }
-
-    /**
-     * @return bool true if the word has the type "measure" (e.g. "meter" or "CHF")
-     * in case of a division, these words are excluded from the result
-     * in case of add, it is checked that the added value does not have a different measure
-     */
-    function is_measure(): bool
-    {
-        return $this->is_type(phrase_type::MEASURE);
-    }
-
-    /**
-     * @return bool true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
-     */
-    function is_scaling(): bool
-    {
-        $result = false;
-        if ($this->is_type(phrase_type::SCALING)
-            or $this->is_type(phrase_type::SCALING_HIDDEN)) {
-            $result = true;
-        }
-        return $result;
-    }
-
-    /**
-     * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
-     */
-    function is_percent(): bool
-    {
-        return $this->is_type(phrase_type::PERCENT);
-    }
-
-    /**
-     * @return bool true if the word is normally not shown to the user e.g. scaling of one is assumed
-     */
-    function is_hidden(): bool
-    {
-        $result = false;
-        if ($this->is_type(phrase_type::SCALING_HIDDEN)) {
-            $result = true;
-        }
-        return $result;
     }
 
 }

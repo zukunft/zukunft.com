@@ -56,7 +56,7 @@ class term_list_unit_tests
 
         $this->t = $t;
 
-        // test the word list display functions
+        // test the term list display functions
         $lst = $this->new_list();
         $test_page = $html->text_h2('Term list display test');
         $test_page .= 'names with links: ' . $lst->dsp_obj()->dsp() . '<br>';

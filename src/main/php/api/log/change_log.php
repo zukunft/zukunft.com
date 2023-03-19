@@ -33,10 +33,10 @@
 namespace controller\log;
 
 use api\user_api;
-use api\user_sandbox_api;
+use api\sandbox_api;
 use DateTime;
 
-class change_log_api extends user_sandbox_api
+class change_log_api extends sandbox_api
 {
 
 

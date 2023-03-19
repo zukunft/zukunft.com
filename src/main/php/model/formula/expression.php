@@ -216,7 +216,7 @@ class expression
 
 
     /*
-     * get and set
+     * set and get
      */
 
     /**

@@ -106,7 +106,7 @@ class test_unit extends testing
         (new system_unit_tests)->run($this);
         (new test_api)->run_openapi_test($this);
         (new user_unit_tests)->run($this);
-        (new user_sandbox_unit_tests)->run($this);
+        (new sandbox_unit_tests)->run($this);
         (new word_unit_tests)->run($this);
         (new word_list_unit_tests)->run($this);
         (new verb_unit_tests)->run($this);

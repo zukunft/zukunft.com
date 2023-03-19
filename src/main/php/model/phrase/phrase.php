@@ -89,9 +89,9 @@ class phrase extends db_object
     // list of the common user specific numeric database field names of phrases
     const FLD_NAMES_NUM_USR = array(
         self::FLD_VALUES,
-        user_sandbox::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
 
 
@@ -164,10 +164,10 @@ class phrase extends db_object
                 $wrd->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
                 $wrd->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 $wrd->type_id = $db_row[word::FLD_TYPE . $fld_ext];
-                $wrd->set_excluded($db_row[user_sandbox::FLD_EXCLUDED . $fld_ext]);
-                $wrd->share_id = $db_row[user_sandbox::FLD_SHARE . $fld_ext];
-                $wrd->protection_id = $db_row[user_sandbox::FLD_PROTECT . $fld_ext];
-                //$wrd->owner_id = $db_row[user_sandbox::FLD_USER . $fld_ext];
+                $wrd->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
+                $wrd->share_id = $db_row[sandbox::FLD_SHARE . $fld_ext];
+                $wrd->protection_id = $db_row[sandbox::FLD_PROTECT . $fld_ext];
+                //$wrd->owner_id = $db_row[_sandbox::FLD_USER . $fld_ext];
                 $this->obj = $wrd;
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
@@ -178,12 +178,12 @@ class phrase extends db_object
                 $trp->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
                 $trp->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 $trp->type_id = $db_row[triple::FLD_TYPE . $fld_ext];
-                $trp->set_excluded($db_row[user_sandbox::FLD_EXCLUDED . $fld_ext]);
-                $trp->share_id = $db_row[user_sandbox::FLD_SHARE . $fld_ext];
-                $trp->protection_id = $db_row[user_sandbox::FLD_PROTECT . $fld_ext];
+                $trp->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
+                $trp->share_id = $db_row[sandbox::FLD_SHARE . $fld_ext];
+                $trp->protection_id = $db_row[sandbox::FLD_PROTECT . $fld_ext];
                 // not yet loaded with initial load
                 // $trp->name = $db_row[triple::FLD_NAME_GIVEN . $fld_ext];
-                // $trp->owner_id = $db_row[user_sandbox::FLD_USER . $fld_ext];
+                // $trp->owner_id = $db_row[_sandbox::FLD_USER . $fld_ext];
                 // $trp->from->id = $db_row[triple::FLD_FROM];
                 // $trp->to->id = $db_row[triple::FLD_TO];
                 // $trp->verb->id = $db_row[verb::FLD_ID];
@@ -196,11 +196,12 @@ class phrase extends db_object
 
 
     /*
-     * get and set
+     * set and get
      */
 
     /**
      * set the phrase id based id the word or triple id
+     * must have the same logic as the database view and the frontend
      *
      * @param int $id the object id that is converted to the phrase id
      * @param string $class the class of the phrase object
@@ -326,9 +327,9 @@ class phrase extends db_object
     function dsp_obj(): phrase_dsp
     {
         if ($this->is_word()) {
-            return $this->get_word()->dsp_obj()->phrase_dsp();
+            return $this->get_word()->dsp_obj()->phrase();
         } else {
-            return $this->get_triple()->dsp_obj()->phrase_dsp();
+            return $this->get_triple()->dsp_obj()->phrase();
         }
     }
 
@@ -763,7 +764,7 @@ class phrase extends db_object
         return $trp;
     }
 
-    protected function get_triple_dsp(): triple
+    protected function get_triple_dsp(): triple_dsp
     {
         $lnk_dsp = new triple_dsp();
         if (get_class($this->obj) == triple_dsp::class) {
@@ -797,15 +798,15 @@ class phrase extends db_object
      */
     function get_dsp_obj(): ?phrase_dsp
     {
-        $obj = new phrase_dsp();
         if ($this->is_word()) {
             $wrd = $this->get_word_dsp();
-            $obj = $wrd->phrase()->dsp_obj();
+            return $wrd->phrase();
         } elseif ($this->is_triple()) {
             $trp = $this->get_triple_dsp();
-            $obj = $trp->phrase()->get_dsp_obj();
+            return $trp->phrase();
+        } else {
+            return null;
         }
-        return $obj;
     }
 
 

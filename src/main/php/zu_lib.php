@@ -1,6 +1,8 @@
 <?php
 
-/*
+/*use html\phrase_group_dsp;
+use html\phrase_group_dsp;
+
 
     zu_lib.php - the main ZUkunft.com LIBrary
     ----------
@@ -12,6 +14,10 @@
     4. commit
 
     but first this needs to be fixed:
+    TODO remove the set and get functions from the api objects and make them as simple as possible
+    TODO move the include_once calls from zu_lib to the classes
+    TODO check that the child classes do not repeat the parent functions
+    TODO do not base the html frontend objects on the api object because the api object should be as small as possible
     TODO cast api object in model object and dsp object in api object and add the dsp_obj() function to model object
     TODO define all database field names as const
     TODO for reference field names use the destination object
@@ -276,6 +282,7 @@ const WEB_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR; // path of the pure htm
 const WEB_LOG_PATH = WEB_PATH . 'log' . DIRECTORY_SEPARATOR;
 const WEB_USER_PATH = WEB_PATH . 'user' . DIRECTORY_SEPARATOR;
 const WEB_SYSTEM_PATH = WEB_PATH . 'system' . DIRECTORY_SEPARATOR;
+const WEB_SANDBOX_PATH = WEB_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
 const WEB_HTML_PATH = WEB_PATH . 'html' . DIRECTORY_SEPARATOR;
 const WEB_HIST_PATH = WEB_PATH . 'hist' . DIRECTORY_SEPARATOR;
 const WEB_WORD_PATH = WEB_PATH . 'word' . DIRECTORY_SEPARATOR;
@@ -357,19 +364,19 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
 include_once MODEL_USER_PATH . 'user_list.php';
-include_once MODEL_SANDBOX_PATH . 'user_sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'user_sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'user_sandbox_value.php';
-include_once MODEL_SANDBOX_PATH . 'user_sandbox_link.php';
-include_once MODEL_SANDBOX_PATH . 'user_sandbox_link_with_type.php';
-include_once MODEL_SANDBOX_PATH . 'user_sandbox_link_named.php';
-include_once MODEL_SANDBOX_PATH . 'user_sandbox_link_named_with_type.php';
-include_once MODEL_SANDBOX_PATH . 'user_sandbox_named_with_type.php';
-include_once MODEL_SANDBOX_PATH . 'user_sandbox_exp.php';
-include_once MODEL_SANDBOX_PATH . 'user_sandbox_exp_named.php';
-include_once MODEL_SANDBOX_PATH . 'user_sandbox_exp_link.php';
-include_once MODEL_SANDBOX_PATH . 'user_sandbox_list.php';
-include_once MODEL_SANDBOX_PATH . 'user_sandbox_list_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_named_with_type.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_exp.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_exp_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_exp_link.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
@@ -469,10 +476,10 @@ include_once API_SYSTEM_PATH . 'type_list.php';
 include_once API_SYSTEM_PATH . 'type_lists.php';
 include_once API_SYSTEM_PATH . 'batch_job.php';
 include_once API_SYSTEM_PATH . 'batch_job_list.php';
-include_once API_SANDBOX_PATH . 'user_sandbox.php';
-include_once API_SANDBOX_PATH . 'user_sandbox_named.php';
-include_once API_SANDBOX_PATH . 'user_sandbox_named_with_type.php';
-include_once API_SANDBOX_PATH . 'user_sandbox_value.php';
+include_once API_SANDBOX_PATH . 'sandbox.php';
+include_once API_SANDBOX_PATH . 'sandbox_named.php';
+include_once API_SANDBOX_PATH . 'sandbox_typed.php';
+include_once API_SANDBOX_PATH . 'sandbox_value.php';
 include_once API_SANDBOX_PATH . 'user_config.php';
 include_once API_SANDBOX_PATH . 'list_value.php';
 include_once API_SANDBOX_PATH . 'type_object.php';

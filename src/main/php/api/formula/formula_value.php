@@ -35,7 +35,7 @@ namespace api;
 use controller\controller;
 use html\formula_value_dsp;
 
-class formula_value_api extends user_sandbox_value_api implements \JsonSerializable
+class formula_value_api extends sandbox_value_api implements \JsonSerializable
 {
 
     // true if the user has done no personal overwrites which is the default case
@@ -63,7 +63,7 @@ class formula_value_api extends user_sandbox_value_api implements \JsonSerializa
     function dsp_obj(): formula_value_dsp
     {
         $dsp_obj = new formula_value_dsp($this->id);
-        $dsp_obj->set_grp($this->grp());
+        $dsp_obj->set_grp($this->grp()->dsp_obj());
         $dsp_obj->set_number($this->number());
         return $dsp_obj;
     }
@@ -80,7 +80,7 @@ class formula_value_api extends user_sandbox_value_api implements \JsonSerializa
         $vars = get_object_vars($this);
 
         // add the var of the parent object
-        $vars[user_sandbox_value_api::FLD_NUMBER] = $this->number();
+        $vars[sandbox_value_api::FLD_NUMBER] = $this->number();
 
         // remove vars from the json that have the default value
         if ($this->is_std) {

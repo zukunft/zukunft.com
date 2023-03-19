@@ -48,8 +48,9 @@ class system_log_list extends base_list
     public int $size = 0;           //
     public ?string $back = '';      //
 
+
     /*
-     * get and set
+     * set and get
      */
 
     /**
@@ -128,13 +129,13 @@ class system_log_list extends base_list
         } elseif ($this->dsp_type == self::DSP_OTHER) {
             $db_con->add_par(sql_db::PAR_INT, $this->user()->id());
             $sql_where = $sql_status .
-                ' AND (' . sql_db::STD_TBL . '.' . user_sandbox::FLD_USER . ' <> ' . $db_con->par_name() .
+                ' AND (' . sql_db::STD_TBL . '.' . sandbox::FLD_USER . ' <> ' . $db_con->par_name() .
                 ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
             $qp->name .= self::DSP_OTHER;
         } elseif ($this->dsp_type == self::DSP_MY) {
             $db_con->add_par(sql_db::PAR_INT, $this->user()->id());
             $sql_where = $sql_status .
-                ' AND (' . sql_db::STD_TBL . '.' . user_sandbox::FLD_USER . ' = ' . $db_con->par_name() .
+                ' AND (' . sql_db::STD_TBL . '.' . sandbox::FLD_USER . ' = ' . $db_con->par_name() .
                 ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
             $qp->name .= self::DSP_MY;
         } else {
@@ -148,9 +149,9 @@ class system_log_list extends base_list
             $db_con->set_fields(system_log::FLD_NAMES);
             $db_con->set_join_fields(array(system_log::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
             $db_con->set_join_fields(array(type_object::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
-            $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), sql_db::TBL_USER);
+            $db_con->set_join_fields(array(sandbox::FLD_USER_NAME), sql_db::TBL_USER);
             $db_con->set_join_fields(array(
-                user_sandbox::FLD_USER_NAME . ' AS ' . system_log::FLD_SOLVER_NAME),
+                sandbox::FLD_USER_NAME . ' AS ' . system_log::FLD_SOLVER_NAME),
                 sql_db::TBL_USER, system_log::FLD_SOLVER);
             $db_con->set_where_text($sql_where);
             $db_con->set_order(system_log::FLD_TIME, sql_db::ORDER_DESC);

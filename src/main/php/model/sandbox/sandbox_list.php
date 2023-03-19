@@ -2,7 +2,7 @@
 
 /*
 
-    model/sandbox/user_sandbox_list.php - a base object for a list of user sandbox objects
+    model/sandbox/sandbox_list.php - a base object for a list of user sandbox objects
     -----------------------------------
 
 
@@ -56,7 +56,7 @@ class sandbox_list extends base_list
 
 
     /*
-     * get and set
+     * set and get
      */
 
     /**

@@ -38,7 +38,7 @@ class view_list extends sandbox_list
 
 
     /*
-     * get and set
+     * set and get
      */
 
     /**

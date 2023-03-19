@@ -48,14 +48,14 @@ class phrase_list_display_unit_tests
 
         // create the phrase list test set
         $lst = new phrase_list_dsp();
-        $phr_city = new phrase_dsp(-1,  phrase_api::TN_ZH_CITY_NAME,
+        $phr_city = new phrase_api(-1,  phrase_api::TN_ZH_CITY_NAME,
             word_api::TN_ZH, verb::IS_A, word_api::TN_CITY);
-        $phr_canton = new phrase_dsp(-2,  phrase_api::TN_ZH_CANTON_NAME,
+        $phr_canton = new phrase_api(-2,  phrase_api::TN_ZH_CANTON_NAME,
             word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON);
-        $phr_ch = new phrase_dsp(1, word_api::TN_CH);
-        $lst->add($phr_city);
-        $lst->add($phr_canton);
-        $lst->add($phr_ch);
+        $phr_ch = new phrase_api(1, word_api::TN_CH);
+        $lst->add_phrase($phr_city->dsp_obj());
+        $lst->add_phrase($phr_canton->dsp_obj());
+        $lst->add_phrase($phr_ch->dsp_obj());
 
         // test the phrase list display functions
         $test_page = $html->text_h2('phrase list display test');

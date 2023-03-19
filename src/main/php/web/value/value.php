@@ -34,20 +34,24 @@
 
 namespace html;
 
-use api\phrase_list_api;
-use api\value_api;
+include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
+include_once API_SANDBOX_PATH . 'sandbox.php';
+include_once API_SANDBOX_PATH . 'sandbox_value.php';
 
-class value_dsp extends value_api
+use api\sandbox_api;
+use api\sandbox_value_api;
+
+class value_dsp extends sandbox_value_dsp
 {
 
 
     /**
-     * @param phrase_list_api $phr_lst_exclude usually the context phrases that does not need to be repeated
+     * @param phrase_list_dsp $phr_lst_exclude usually the context phrases that does not need to be repeated
      * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
      */
-    function name_linked(phrase_list_api $phr_lst_exclude): string
+    function name_linked(phrase_list_dsp $phr_lst_exclude): string
     {
-        return $this->grp_dsp()->name_linked($phr_lst_exclude);
+        return $this->grp()->name_linked($phr_lst_exclude);
     }
 
     /**
@@ -87,6 +91,39 @@ class value_dsp extends value_api
     }
 
     /*
+     * set and get
+     */
+
+    /**
+     * set the vars of this object bases on the api json string
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
+    function set_from_json(string $json_api_msg): void
+    {
+        $this->set_from_json_array(json_decode($json_api_msg));
+    }
+
+    /**
+     * set the vars of this object bases on the api json array
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        if (array_key_exists(sandbox_api::FLD_ID, $json_array)) {
+            $this->set_number($json_array[sandbox_api::FLD_ID]);
+        } else {
+            log_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
+        }
+        if (array_key_exists(sandbox_value_api::FLD_NUMBER, $json_array)) {
+            $this->set_number($json_array[sandbox_value_api::FLD_NUMBER]);
+        }
+
+    }
+
+
+    /*
      * info
      */
 
@@ -113,6 +150,7 @@ class value_dsp extends value_api
             return false;
         }
     }
+
 
     /*
      * deprecated function names

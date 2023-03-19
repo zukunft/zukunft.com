@@ -2,8 +2,8 @@
 
 /*
 
-    user_sandbox_exp_link.php - the superclass for the link export objects
-    -------------------------
+    _sandbox_exp_named.php - extends the the export superclass for named objects such as formulas
+    --------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,15 +32,20 @@
 
 namespace export;
 
-class user_sandbox_exp_link extends exp_obj
+class sandbox_exp_named extends exp_obj
 {
+
     // field names used for JSON creation
-    public ?string $name = '';   // the target (to) object name, which cannot be empty; the source (from) object is defined by the placement in the JSON
+    public ?string $name = '';       // the name of the object
+    public ?string $share = '';      // the share permissions of the object
+    public ?string $protection= '';  // the protection of the given object
 
     // reset the search values of this object
     function reset()
     {
         $this->name = '';
+        $this->share = '';
+        $this->protection = '';
     }
 
 }

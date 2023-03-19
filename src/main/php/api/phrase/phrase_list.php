@@ -100,7 +100,7 @@ class phrase_list_api extends list_api implements \JsonSerializable
     }
 
     /*
-     * information functions
+     * info
      */
 
     /**
@@ -121,31 +121,6 @@ class phrase_list_api extends list_api implements \JsonSerializable
     /*
      * modification functions
      */
-
-    /**
-     * removes all terms from this list that are not in the given list
-     * @param term_list_api $new_lst the terms that should remain in this list
-     * @returns phrase_list_api with the phrases of this list and the new list
-     */
-    function intersect(phrase_list_api $new_lst): phrase_list_api
-    {
-        if (!$new_lst->is_empty()) {
-            if ($this->is_empty()) {
-                $this->set_lst($new_lst->lst);
-            } else {
-                // next line would work if array_intersect could handle objects
-                // $this->lst = array_intersect($this->lst, $new_lst->lst());
-                $found_lst = new phrase_list_api();
-                foreach ($new_lst->lst() as $phr) {
-                    if (in_array($phr->id(), $this->id_lst())) {
-                        $found_lst->add($phr);
-                    }
-                }
-                $this->set_lst($found_lst->lst);
-            }
-        }
-        return $this;
-    }
 
     function remove(phrase_list_api $del_lst): phrase_list_api
     {

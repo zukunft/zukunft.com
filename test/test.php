@@ -219,7 +219,7 @@ if ($start_usr->id() > 0) {
             create_test_values($t);
 
             run_db_link_test($t);
-            run_user_sandbox_test($t);
+            run_sandbox_test($t);
             (new string_unit_tests)->run($t); // test functions not yet split into single unit tests
             run_math_test($t);
             run_word_tests($t);

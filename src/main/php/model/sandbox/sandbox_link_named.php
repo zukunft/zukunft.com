@@ -2,7 +2,7 @@
 
 /*
 
-  user_sandbox_description.php - adding the description and type field to the user_sandbox superclass
+  user_sandbox_description.php - adding the description and type field to the _sandbox superclass
   ----------------------------
 
   This file is part of zukunft.com - calc with words
@@ -30,7 +30,7 @@
 */
 
 
-class user_sandbox_link_named extends user_sandbox_link
+class sandbox_link_named extends sandbox_link
 {
     // the word, triple, verb oder formula description that is shown as a mouseover explain to the user
     // if description is NULL the database value should not be updated
@@ -79,7 +79,7 @@ class user_sandbox_link_named extends user_sandbox_link
     /**
      * set the update parameters for the word description
      */
-    function save_field_description(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_field_description(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         $result = '';
         // if the description is not set, don't overwrite any db entry

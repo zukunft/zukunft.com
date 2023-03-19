@@ -54,13 +54,13 @@ class value_time_series extends user_sandbox_display
     const FLD_NAMES_NUM_USR = array(
         source::FLD_ID,
         self::FLD_EXCLUDED,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_PROTECT
     );
 
     // list of field names that are only on the user sandbox row
     // e.g. the standard value does not need the share type, because it is by definition public (even if share types within a group of users needs to be defined, the value for the user group are also user sandbox table)
     const FLD_NAMES_USR_ONLY = array(
-        user_sandbox::FLD_SHARE
+        sandbox::FLD_SHARE
     );
 
     /*
@@ -85,7 +85,7 @@ class value_time_series extends user_sandbox_display
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->obj_type = user_sandbox::TYPE_VALUE;
+        $this->obj_type = sandbox::TYPE_VALUE;
         $this->obj_name = sql_db::TBL_VALUE_TIME_SERIES;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VALUE;

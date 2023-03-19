@@ -62,7 +62,7 @@ class formula_list extends sandbox_list
         $result = false;
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
-                if (is_null($db_row[user_sandbox::FLD_EXCLUDED]) or $db_row[user_sandbox::FLD_EXCLUDED] == 0) {
+                if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0) {
                     if ($db_row[formula::FLD_ID] > 0) {
                         $frm = new formula($this->user());
                         $frm->row_mapper($db_row);

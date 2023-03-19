@@ -43,23 +43,4 @@ class list_value_api extends list_api
         parent::__construct($lst);
     }
 
-    /**
-     * @returns phrase_list_api with the phrases that are used in all values of the list
-     */
-    protected function common_phrases(): phrase_list_api
-    {
-        // get common words
-        $common_phr_lst = new phrase_list_api();
-        foreach ($this->lst as $val) {
-            if ($val != null) {
-                if ($val->phr_lst() != null) {
-                    if ($val->phr_lst()->lst != null) {
-                        $common_phr_lst->intersect($val->phr_lst());
-                    }
-                }
-            }
-        }
-        return $common_phr_lst;
-    }
-
 }

@@ -67,7 +67,7 @@ class formula_element_list extends sandbox_list
             $db_con->set_name($qp->name);
             $db_con->add_par(sql_db::PAR_INT, $frm_id);
             $db_con->add_par(sql_db::PAR_INT, $this->user()->id());
-            $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID, user_sandbox::FLD_USER));
+            $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID, sandbox::FLD_USER));
         } else {
             $qp->name = '';
         }
@@ -91,7 +91,7 @@ class formula_element_list extends sandbox_list
             $db_con->add_par(sql_db::PAR_INT, $frm_id);
             $db_con->add_par(sql_db::PAR_INT, $elm_type_id);
             $db_con->add_par(sql_db::PAR_INT, $this->user()->id());
-            $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID, formula_element::FLD_TYPE, user_sandbox::FLD_USER));
+            $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID, formula_element::FLD_TYPE, sandbox::FLD_USER));
         } else {
             $qp->name = '';
         }

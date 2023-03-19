@@ -222,7 +222,7 @@ admin
 - allow the admin user to set the default value
 - create a daily? task that finds the median value, sets it as the default and recreate the user values
 - add median_user and set_owner to all user sandbox objects
-- check which functions can be private in the user_sandbox
+- check which functions can be private in the user sandbox
 - use private zukunft data to manage the zukunft payments for keeping data private and
 - don't check ip address if someone is trying to login
 

@@ -53,7 +53,7 @@ class type_list_api extends list_api implements \JsonSerializable
     }
 
     /*
-     * get and set overwrite
+     * set and get overwrite
      */
 
     /**

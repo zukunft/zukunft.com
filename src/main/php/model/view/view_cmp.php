@@ -34,7 +34,7 @@ use export\exp_obj;
 use export\view_cmp_exp;
 use html\view_cmp_dsp;
 
-class view_cmp extends user_sandbox_named_with_type
+class view_cmp extends sandbox_typed
 {
 
     /*
@@ -69,8 +69,8 @@ class view_cmp extends user_sandbox_named_with_type
         self::FLD_COL_PHRASE,
         self::FLD_COL2_PHRASE,
         self::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_FLD_NAMES = array(
@@ -83,8 +83,8 @@ class view_cmp extends user_sandbox_named_with_type
         self::FLD_COL_PHRASE,
         self::FLD_COL2_PHRASE,
         self::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
 
 
@@ -220,8 +220,9 @@ class view_cmp extends user_sandbox_named_with_type
         return $result;
     }
 
+
     /*
-     * get and set functions
+     * set and get
      */
 
     /**
@@ -786,7 +787,7 @@ class view_cmp extends user_sandbox_named_with_type
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT);
-                $log_id = $db_con->insert(array('view_component_id', user_sandbox::FLD_USER), array($this->id, $this->user()->id()));
+                $log_id = $db_con->insert(array('view_component_id', sandbox::FLD_USER), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view_component failed.');
                     $result = false;
@@ -925,11 +926,11 @@ class view_cmp extends user_sandbox_named_with_type
      * save all updated view_component fields excluding the name, because already done when adding a view_component
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param view_cmp|user_sandbox $db_rec the view component as saved in the database before the update
-     * @param view_cmp|user_sandbox $std_rec the default parameter used for this view component
+     * @param view_cmp|sandbox $db_rec the view component as saved in the database before the update
+     * @param view_cmp|sandbox $std_rec the default parameter used for this view component
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
-    function save_fields(sql_db $db_con, view_cmp|user_sandbox $db_rec, view_cmp|user_sandbox $std_rec): string
+    function save_fields(sql_db $db_con, view_cmp|sandbox $db_rec, view_cmp|sandbox $std_rec): string
     {
         $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_wrd_row($db_con, $db_rec, $std_rec);

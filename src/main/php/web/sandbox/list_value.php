@@ -2,10 +2,11 @@
 
 /*
 
-    /web/phrase_list_dsp.php - the display extension of the api phrase list object
-    -----------------------
+    api/list_value.php - the minimal list object for values
+    ------------------
 
-    mainly links to the word and triple display functions
+    unlike value_list_min this is the parent object for all lists that have values
+    e.g. used for the value and formula result api object
 
 
     This file is part of zukunft.com - calc with words
@@ -36,40 +37,38 @@ namespace html;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
 
-class term_list_dsp extends list_dsp
+use api\phrase_list_api;
+
+class list_value_dsp extends list_dsp
 {
 
-    /**
-     * @returns string the html code to display the phrases with the most useful link
-     */
-    function dsp(): string
+    function __construct(array $lst = array())
     {
-        $result = '';
-        foreach ($this->lst as $trm) {
-            if ($result != '' and $trm->dsp_link() != '') {
-                $result .= ', ';
+        parent::__construct($lst);
+    }
+
+
+    /*
+     * modification functions
+     */
+
+    /**
+     * @returns phrase_list_api with the phrases that are used in all values of the list
+     */
+    protected function common_phrases(): phrase_list_dsp
+    {
+        // get common words
+        $common_phr_lst = new phrase_list_dsp();
+        foreach ($this->lst as $val) {
+            if ($val != null) {
+                if ($val->phr_lst() != null) {
+                    if ($val->phr_lst()->lst != null) {
+                        $common_phr_lst->intersect($val->phr_lst());
+                    }
+                }
             }
-            $result .= $trm->dsp_link();
         }
-        return $result;
+        return $common_phr_lst;
     }
 
-    /**
-     * @returns string the html code to select a phrase out of this list
-     */
-    function selector(string $name = '', string $form = '', int $selected = 0): string
-    {
-        $sel = new html_selector;
-        $sel->name = $name;
-        $sel->form = $form;
-        $sel->lst = $this->lst_key();
-        $sel->selected = $selected;
-
-        return $sel->dsp();
-    }
-
-    function add(object $obj): bool
-    {
-        return $this->add_obj($obj);
-    }
 }

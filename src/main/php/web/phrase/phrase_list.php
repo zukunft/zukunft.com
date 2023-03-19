@@ -2,10 +2,8 @@
 
 /*
 
-    /web/phrase_list_dsp.php - the display extension of the api phrase list object
-    -----------------------
-
-    mainly links to the word and triple display functions
+    /web/phrase/phrase_list.php - create the html code to display a phrase list
+    ---------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -34,9 +32,9 @@
 
 namespace html;
 
-use api\phrase_list_api;
+include_once WEB_SANDBOX_PATH . 'list.php';
 
-class phrase_list_dsp extends phrase_list_api
+class phrase_list_dsp extends list_dsp
 {
 
     /**
@@ -94,6 +92,98 @@ class phrase_list_dsp extends phrase_list_api
         $sel->selected = $selected;
 
         return $sel->dsp();
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * @return bool true if one of the phrases is of type percent
+     */
+    function has_percent(): bool
+    {
+        $result = false;
+        foreach ($this->lst as $phr) {
+            if ($phr->is_percent()) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * modification
+     */
+
+    /**
+     * removes all terms from this list that are not in the given list
+     * @param phrase_list_dsp $new_lst the terms that should remain in this list
+     * @returns phrase_list_dsp with the phrases of this list and the new list
+     */
+    function intersect(phrase_list_dsp $new_lst): phrase_list_dsp
+    {
+        if (!$new_lst->is_empty()) {
+            if ($this->is_empty()) {
+                $this->set_lst($new_lst->lst);
+            } else {
+                // next line would work if array_intersect could handle objects
+                // $this->lst = array_intersect($this->lst, $new_lst->lst());
+                $found_lst = new phrase_list_dsp();
+                foreach ($new_lst->lst() as $phr) {
+                    if (in_array($phr->id(), $this->id_lst())) {
+                        $found_lst->add_phrase($phr);
+                    }
+                }
+                $this->set_lst($found_lst->lst);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @returns phrase_list_dsp with the phrases that are used in all values of the list
+     */
+    protected function common_phrases(): phrase_list_dsp
+    {
+        // get common words
+        $common_phr_lst = new phrase_list_dsp();
+        foreach ($this->lst as $val) {
+            if ($val != null) {
+                if ($val->phr_lst() != null) {
+                    if ($val->phr_lst()->lst != null) {
+                        $common_phr_lst->intersect($val->phr_lst());
+                    }
+                }
+            }
+        }
+        return $common_phr_lst;
+    }
+
+    /**
+     * add a phrase to the list
+     * @returns bool true if the phrase has been added
+     */
+    function add_phrase(phrase_dsp $phr): bool
+    {
+        return parent::add_obj($phr);
+    }
+    function remove(phrase_list_dsp $del_lst): phrase_list_dsp
+    {
+        if (!$del_lst->is_empty()) {
+            // next line would work if array_intersect could handle objects
+            // $this->lst = array_intersect($this->lst, $new_lst->lst());
+            $remain_lst = new phrase_list_dsp();
+            foreach ($this->lst() as $phr) {
+                if (!in_array($phr->id(), $del_lst->id_lst())) {
+                    $remain_lst->add_phrase($phr);
+                }
+            }
+            $this->set_lst($remain_lst->lst);
+        }
+        return $this;
     }
 
 }

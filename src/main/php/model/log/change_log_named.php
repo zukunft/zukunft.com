@@ -185,7 +185,7 @@ class change_log_named extends change_log
             array(
                 change_log_named::FLD_FIELD_ID,
                 change_log_named::FLD_ROW_ID,
-                user_sandbox::FLD_USER
+                sandbox::FLD_USER
             ));
         $qp->par = $db_con->get_par();
 

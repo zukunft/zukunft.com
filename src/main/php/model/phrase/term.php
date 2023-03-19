@@ -68,9 +68,9 @@ class term extends db_object
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_USAGE,
-        user_sandbox::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
 
 
@@ -159,6 +159,7 @@ class term extends db_object
 
     /**
      * set the term id based id the word, triple, verb or formula id
+     * must have the same logic as the database view and the frontend
      *
      * @param int|null $id the object id that is converted to the term id
      * @param string $class the class of the term object
@@ -204,6 +205,7 @@ class term extends db_object
 
     /**
      * create the expected object based on the id
+     * must have the same logic as the database view and the frontend
      * @return void
      */
     private
@@ -304,6 +306,9 @@ class term extends db_object
     }
 
     /**
+     * get the object id based on the term id
+     * must have the same logic as the database view and the frontend
+     *
      * @return int the id of the containing object witch is (corresponding to id())
      * e.g if the term id is  1 and the object is a word    with id 1 simply 1 is returned
      * but if the term id is -1 and the object is a triple  with id 1   also 1 is returned
@@ -405,7 +410,7 @@ class term extends db_object
             return $this->get_verb()->dsp_obj()->term();
         } else {
             log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
-            return (new term_dsp());
+            return (new term_dsp((new word_dsp())));
         }
     }
 

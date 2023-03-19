@@ -2,8 +2,8 @@
 
 /*
 
-    triple_dsp.php - a list function to create the HTML code to display a triple (two linked words or triples)
-    --------------
+    web/word/triple.php - a list function to create the HTML code to display a triple (two linked words or triples)
+    -------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -31,20 +31,114 @@
 
 namespace html;
 
+include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+
 use api\phrase_api;
-use api\triple_api;
 use cfg\phrase_type;
 use phrase;
 use phrase_list;
 use triple;
 
-class triple_dsp extends triple_api
+class triple_dsp extends sandbox_typed_dsp
 {
 
     // the form names to change the word
     const FORM_ADD = 'triple_add';
     const FORM_EDIT = 'triple_edit';
     const FORM_DEL = 'triple_del';
+
+    // the json field names in the api json message which is supposed to be the same as the var $id
+    const FLD_FROM = 'from';
+    const FLD_VERB = 'parent';
+    const FLD_TO = 'to';
+
+
+    /*
+     * object vars
+     */
+
+    // the triple components
+    private phrase_dsp $from;
+    private verb_dsp $verb;
+    private phrase_dsp $to;
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(
+        int $id = 0,
+        string $name = '',
+        string $from = '',
+        string $verb = '',
+        string $to = ''
+    )
+    {
+        parent::__construct($id, $name);
+        $this->set($from, $verb, $to);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the vars of this object bases on the api json array
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        parent::set_from_json_array($json_array);
+        if (array_key_exists(self::FLD_FROM, $json_array)) {
+            $this->set_from($json_array[self::FLD_FROM]);
+        }
+        if (array_key_exists(self::FLD_VERB, $json_array)) {
+            $this->set_verb($json_array[self::FLD_VERB]);
+        }
+        if (array_key_exists(self::FLD_TO, $json_array)) {
+            $this->set_to($json_array[self::FLD_TO]);
+        }
+    }
+
+    function set(string $from, string $verb, string $to): void
+    {
+        $this->set_from((new word_dsp(0, $from))->phrase());
+        $this->set_verb(new verb_dsp(0, $verb));
+        $this->set_to((new word_dsp(0, $to))->phrase());
+    }
+
+    function set_from(phrase_dsp $from): void
+    {
+        $this->from = $from;
+    }
+
+    function set_verb(verb_dsp $vrb): void
+    {
+        $this->verb = $vrb;
+    }
+
+    function set_to(phrase_dsp $to): void
+    {
+        $this->to = $to;
+    }
+
+    function from(): phrase_dsp
+    {
+        return $this->from;
+    }
+
+    function verb(): verb_dsp
+    {
+        return $this->verb;
+    }
+
+    function to(): phrase_dsp
+    {
+        return $this->to;
+    }
 
 
     /*
@@ -74,7 +168,7 @@ class triple_dsp extends triple_api
 
 
     /*
-     * get and set
+     * set and get
      */
 
     /**
@@ -118,7 +212,7 @@ class triple_dsp extends triple_api
      * @param phrase $phr the context to select the phrases, which is until now just the phrase
      * @return string the html code to select a phrase
      */
-    private function phrase_selector(string $form_name, string $label, phrase_api $phr): string
+    private function phrase_selector(string $form_name, string $label, phrase_dsp $phr): string
     {
         global $usr;
         $phr_lst = new phrase_list($usr);
@@ -169,11 +263,11 @@ class triple_dsp extends triple_api
     /**
      * @returns string the html code to display a bottom to edit the word link in a table cell
      */
-    function btn_edit(phrase_api $trp): string
+    function btn_edit(phrase_dsp $trp): string
     {
 
         $html = new html_base();
-        $url = $html->url(api::PATH_FIXED . 'link' . api::UPDATE . api::EXT, $this->id, $trp->id);
+        $url = $html->url(api::PATH_FIXED . 'link' . api::UPDATE . api::EXT, $this->id, $trp->id());
         $btn = (new button("edit word link", $url))->edit();
 
         return $html->td($btn);
@@ -189,12 +283,12 @@ class triple_dsp extends triple_api
      */
     function phrase_dsp(): phrase_dsp
     {
-        return new phrase_dsp($this->id(), $this->name());
+        return new phrase_dsp($this);
     }
 
     function term(): term_dsp
     {
-        return new term_dsp($this->id, $this->name, triple::class);
+        return new term_dsp($this);
     }
 
 
@@ -228,6 +322,19 @@ class triple_dsp extends triple_api
     function is_percent(): bool
     {
         return $this->is_type(phrase_type::PERCENT);
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @return phrase_dsp the related phrase api or display object with the basic values filled
+     */
+    function phrase(): phrase_dsp
+    {
+        return new phrase_dsp($this);
     }
 
 }

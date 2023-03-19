@@ -2,8 +2,8 @@
 
 /*
 
-    /web/word/word.php - the extension of the word API objects to create word base html code
-    ------------------
+    web/word/word.php - the extension of the word API objects to create word base html code
+    -----------------
 
     This file is part of the frontend of zukunft.com - calc with words
 
@@ -31,13 +31,17 @@
 
 namespace html;
 
-use api\word_api;
+include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once API_PHRASE_PATH . 'phrase.php';
+
+use api\change_log_named_dsp;
+use api\sandbox_api;
 use api\phrase_api;
 use back_trace;
 use cfg\phrase_type;
 use word;
 
-class word_dsp extends word_api
+class word_dsp extends sandbox_typed_dsp
 {
 
     // default view settings
@@ -49,6 +53,86 @@ class word_dsp extends word_api
     const FORM_ADD = 'word_add';
     const FORM_EDIT = 'word_edit';
     const FORM_DEL = 'word_del';
+
+    // the json field names in the api json message which is supposed to be the same as the var $id
+    const FLD_PLURAL = 'plural';
+    const FLD_PARENT = 'parent';
+
+
+    /*
+     * object vars
+     */
+
+    // the language specific forms
+    private ?string $plural = null;
+
+    // the main parent phrase
+    private ?phrase_dsp $parent;
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(int $id = 0, string $name = '', ?string $description = null)
+    {
+        parent::__construct($id, $name, $description);
+        $this->set_parent(null);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the vars of this object bases on the api json array
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        parent::set_from_json_array($json_array);
+        if (array_key_exists(self::FLD_PLURAL, $json_array)) {
+            $this->set_plural($json_array[self::FLD_PLURAL]);
+        }
+        if (array_key_exists(self::FLD_PARENT, $json_array)) {
+            $this->set_parent($json_array[self::FLD_PARENT]);
+        }
+    }
+
+    function set_plural(?string $plural): void
+    {
+        $this->plural = $plural;
+    }
+
+    function plural(): ?string
+    {
+        return $this->plural;
+    }
+
+    function set_parent(?phrase_dsp $parent): void
+    {
+        $this->parent = $parent;
+    }
+
+    function parent(): ?phrase_dsp
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param string|null $code_id the code id of the phrase type
+     */
+    function set_type(?string $code_id): void
+    {
+        global $phrase_types;
+        if ($code_id == null) {
+            $this->set_type_id(null);
+        } else {
+            $this->set_type_id($phrase_types->id($code_id));
+        }
+    }
 
 
     /*
@@ -107,12 +191,12 @@ class word_dsp extends word_api
 
     /**
      * display a word as the view header
-     * @param phrase_api|null $is_part_of the word group as a hint to the user
+     * @param phrase_dsp|null $is_part_of the word group as a hint to the user
      *        e.g. City Zurich because in many cases if just the word Zurich is given the assumption is,
      *             that the Zurich (City) is the phrase to select
      * @returns string the HTML code to display a word
      */
-    function header(?phrase_api $is_part_of = null): string
+    function header(?phrase_dsp $is_part_of = null): string
     {
         $html = new html_base();
 
@@ -129,9 +213,9 @@ class word_dsp extends word_api
             //$default_view_id = cl(DBL_VIEW_WORD);
             $title = '';
             if ($is_part_of != null) {
-                if ($is_part_of->name <> '' and $is_part_of->name <> 'not set') {
-                    $url = $html->url(api::VIEW, $is_part_of->id, '', api::PAR_VIEW_WORDS);
-                    $title .= ' (' . $html->ref($url, $is_part_of->name) . ')';
+                if ($is_part_of->name() <> '' and $is_part_of->name() <> 'not set') {
+                    $url = $html->url(api::VIEW, $is_part_of->id(), '', api::PAR_VIEW_WORDS);
+                    $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }
             $url = $html->url(api::WORD . api::UPDATE, $this->id, $this->id);
@@ -161,7 +245,7 @@ class word_dsp extends word_api
         $sel->label = "Word type:";
         $sel->bs_class = $bs_class;
         $sel->sql = sql_lst("word_type");
-        $sel->selected = $this->type()->id();
+        $sel->selected = $this->type_id();
         $sel->dummy_text = '';
         $result .= $sel->display();
         return $result;
@@ -169,9 +253,10 @@ class word_dsp extends word_api
 
     function dsp_type_selector(string $script, string $back = ''): string
     {
+        global $phrase_types;
         $result = '';
-        if ($this->type()->code_id() == phrase_type::FORMULA_LINK) {
-            $result .= ' type: ' . $this->type()->name();
+        if ($phrase_types->code_id($this->type_id()) == phrase_type::FORMULA_LINK) {
+            $result .= ' type: ' . $phrase_types->name($this->type_id());
         } else {
             $result .= $this->type_selector($script, "col-sm-4");
         }
@@ -319,26 +404,111 @@ class word_dsp extends word_api
      */
     function log_view(back_trace $back): string
     {
-        $log_dsp = new change_log_dsp();
+        $log_dsp = new change_log_named_dsp();
         return '';
     }
 
 
     /*
-     * casting
+     * cast
      */
 
     /**
      * @returns phrase_dsp the phrase display object base on this word object
      */
-    function phrase_dsp(): phrase_dsp
+    function phrase(): phrase_dsp
     {
-        return new phrase_dsp($this->id(), $this->name());
+        return new phrase_dsp($this);
     }
 
     function term(): term_dsp
     {
-        return new term_dsp($this->id, $this->name, word::class);
+        return new term_dsp($this);
+    }
+
+
+    /*
+     * type functions
+     */
+
+    /**
+     * repeating of the backend functions in the frontend to enable filtering in the frontend and reduce the traffic
+     * repeated in triple, because a triple can have it's own type
+     * kind of repeated in phrase to use hierarchies
+     *
+     * @param string $type the ENUM string of the fixed type
+     * @returns bool true if the word has the given type
+     * TODO Switch to php 8.1 and real ENUM
+     */
+    function is_type(string $type): bool
+    {
+        global $phrase_types;
+        $result = false;
+        if ($this->type_id() != Null) {
+            if ($this->type_id() == $phrase_types->id($type)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if the word has the type "time" e.g. "2022 (year)"
+     */
+    function is_time(): bool
+    {
+        return $this->is_type(phrase_type::TIME);
+    }
+
+    /**
+     * @return bool true if the word has the type "time" e.g. "monthly"
+     */
+    function is_time_jump(): bool
+    {
+        return $this->is_type(phrase_type::TIME_JUMP);
+    }
+
+    /**
+     * @return bool true if the word has the type "measure" (e.g. "meter" or "CHF")
+     * in case of a division, these words are excluded from the result
+     * in case of add, it is checked that the added value does not have a different measure
+     */
+    function is_measure(): bool
+    {
+        return $this->is_type(phrase_type::MEASURE);
+    }
+
+    /**
+     * @return bool true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
+     */
+    function is_scaling(): bool
+    {
+        $result = false;
+        if ($this->is_type(phrase_type::SCALING)
+            or $this->is_type(phrase_type::SCALING_HIDDEN)) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
+     */
+    function is_percent(): bool
+    {
+        return $this->is_type(phrase_type::PERCENT);
+    }
+
+    /**
+     * @return bool true if the word is normally not shown to the user e.g. scaling of one is assumed
+     */
+    function is_hidden(): bool
+    {
+        $result = false;
+        if ($this->is_type(phrase_type::SCALING_HIDDEN)) {
+            $result = true;
+        }
+        return $result;
     }
 
 }

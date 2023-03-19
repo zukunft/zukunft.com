@@ -2,7 +2,7 @@
 
 /*
 
-    user_sandbox_named.php - the superclass for handling user specific named objects including the database saving
+    sandbox_named.php - the superclass for handling user specific named objects including the database saving
     ---------------------
 
     This superclass should be used by the classes words, formula, ... to enable user specific values and links
@@ -39,7 +39,7 @@ use api\view_api;
 use api\view_cmp_api;
 use api\word_api;
 
-class user_sandbox_named extends user_sandbox
+class sandbox_named extends sandbox
 {
 
     /*
@@ -356,7 +356,7 @@ class user_sandbox_named extends user_sandbox
 
         $result = '';
         if (!$usr->is_system()) {
-            if ($this->obj_type == user_sandbox::TYPE_NAMED) {
+            if ($this->obj_type == sandbox::TYPE_NAMED) {
                 if ($this->obj_name == sql_db::TBL_WORD) {
                     if (in_array($this->name, word_api::RESERVED_WORDS)) {
                         // the admin user needs to add the read test word during initial load
@@ -449,10 +449,10 @@ class user_sandbox_named extends user_sandbox
     /**
      * check if the id parameters are supposed to be changed
      * TODO add the link type for word links
-     * @param user_sandbox $db_rec the object data as it is now in the database
+     * @param sandbox $db_rec the object data as it is now in the database
      * @return bool true if one of the object id fields have been changed
      */
-    function is_id_updated(user_sandbox $db_rec): bool
+    function is_id_updated(sandbox $db_rec): bool
     {
         $result = False;
         log_debug($this->dsp_id());
@@ -477,11 +477,11 @@ class user_sandbox_named extends user_sandbox
     /**
      * set the update parameters for the word description
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param user_sandbox_named $db_rec the database record before the saving
-     * @param user_sandbox_named $std_rec the database record defined as standard because it is used by most users
+     * @param sandbox_named $db_rec the database record before the saving
+     * @param sandbox_named $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    function save_field_description(sql_db $db_con, user_sandbox_named $db_rec, user_sandbox_named $std_rec): string
+    function save_field_description(sql_db $db_con, sandbox_named $db_rec, sandbox_named $std_rec): string
     {
         $result = '';
         // if the description is not set, don't overwrite any db entry
@@ -502,11 +502,11 @@ class user_sandbox_named extends user_sandbox
     /**
      * save all updated source fields excluding the name, because already done when adding a source
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param user_sandbox_named $db_rec the database record before the saving
-     * @param user_sandbox_named $std_rec the database record defined as standard because it is used by most users
+     * @param sandbox_named $db_rec the database record before the saving
+     * @param sandbox_named $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    function save_fields_named(sql_db $db_con, user_sandbox_named $db_rec, user_sandbox_named $std_rec): string
+    function save_fields_named(sql_db $db_con, sandbox_named $db_rec, sandbox_named $std_rec): string
     {
         $result = $this->save_field_description($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
@@ -517,12 +517,12 @@ class user_sandbox_named extends user_sandbox
      * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
      * should only be called if the user is the owner and nobody has used the display component link
      * @param sql_db $db_con the active database connection
-     * @param user_sandbox $db_rec the database record before the saving
-     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param sandbox $db_rec the database record before the saving
+     * @param sandbox $std_rec the database record defined as standard because it is used by most users
      * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
      * @throws Exception
      */
-    function save_id_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         $result = '';
         log_debug($this->dsp_id());
@@ -599,12 +599,12 @@ class user_sandbox_named extends user_sandbox
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @return user_sandbox|null a filled object that has the same name
+     * @return sandbox|null a filled object that has the same name
      *                            or null if nothing similar has been found
      */
-    function get_similar(): ?user_sandbox
+    function get_similar(): ?sandbox
     {
-        $result = new user_sandbox_named($this->user());
+        $result = new sandbox_named($this->user());
 
         // check potential duplicate by name
         // for words and formulas it needs to be checked if a term (word, verb or formula) with the same name already exist

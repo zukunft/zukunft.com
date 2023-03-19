@@ -2,10 +2,10 @@
 
 /*
 
-    api/sandbox/list.php - the minimal list object used for the api
+    web/sandbox/list.php - the superclass for html list objects
     --------------------
 
-    e.g. used for the value and formula result api object
+    e.g. used to display phrase, term and figure lists
 
     This file is part of zukunft.com - calc with words
 
@@ -31,9 +31,9 @@
 
 */
 
-namespace api;
+namespace html;
 
-class list_api
+class list_dsp
 {
     // the protected main var
     protected array $lst;
@@ -96,7 +96,7 @@ class list_api
     /**
      * @returns true if the list has been replaced
      */
-    protected function set_lst_dirty(): bool
+    public function set_lst_dirty(): bool
     {
         $this->lst_dirty = true;
         return true;

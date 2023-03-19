@@ -2,7 +2,7 @@
 
 /*
 
-    user_sandbox.php - the superclass for handling user specific objects including the database saving
+    sandbox.php - the superclass for handling user specific objects including the database saving
     ----------------
 
     This superclass should be used by the classes words, formula, ... to enable user specific values and links
@@ -42,7 +42,7 @@ use cfg\protection_type;
 use cfg\share_type;
 use export\exp_obj;
 
-class user_sandbox extends db_object
+class sandbox extends db_object
 {
 
     /*
@@ -118,7 +118,7 @@ class user_sandbox extends db_object
      * dummy var because many child objects use a type_id and to enable to add the common code here
      *
      * could and should be moved to a user_sandbox_type_extension object
-     * as soon as php allows something like 'extends user_sandbox_named and user_sandbox_type_extension'
+     * as soon as php allows something like 'extends _sandbox_named and user_sandbox_type_extension'
      *
      * database id of the type used for named user sandbox objects with predefined functionality
      * such as words, formulas, values, terms and view component links
@@ -592,7 +592,7 @@ class user_sandbox extends db_object
     /**
      * @return string a message to use a different name
      */
-    function id_used_msg(user_sandbox $obj_to_add): string
+    function id_used_msg(sandbox $obj_to_add): string
     {
         return 'a ' . $this->obj_name . ' with the name ' . $obj_to_add->dsp_id() . ' already exists, so no ' . $obj_to_add->obj_name . ' with the same name can be added';
     }
@@ -1188,7 +1188,7 @@ class user_sandbox extends db_object
      * remove all user setting that are not needed any more based on the new standard object
      * TODO review
      */
-    function usr_cfg_cleanup(user_sandbox $std): string
+    function usr_cfg_cleanup(sandbox $std): string
     {
         $result = '';
         log_debug($this->dsp_id());
@@ -1331,7 +1331,7 @@ class user_sandbox extends db_object
     /**
      * dummy function to save all updated word fields, which is always overwritten by the child class
      */
-    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         return '';
     }
@@ -1397,10 +1397,10 @@ class user_sandbox extends db_object
     }
 
     /**
-     * @param user_sandbox $db_rec the object as saved in the database before the change
+     * @param sandbox $db_rec the object as saved in the database before the change
      * @return change_log the log object predefined for excluding
      */
-    function save_field_excluded_log(user_sandbox $db_rec): change_log
+    function save_field_excluded_log(sandbox $db_rec): change_log
     {
         $log = new change_log();
         if ($db_rec->is_excluded() <> $this->is_excluded()) {
@@ -1426,7 +1426,7 @@ class user_sandbox extends db_object
      * set the update parameters for the value excluded
      * returns false if something has gone wrong
      */
-    function save_field_excluded(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_field_excluded(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         log_debug($this->dsp_id());
         $result = '';
@@ -1472,7 +1472,7 @@ class user_sandbox extends db_object
     /**
      * save the share level in the database if allowed
      */
-    function save_field_share(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_field_share(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         log_debug($this->dsp_id());
         $result = '';
@@ -1521,7 +1521,7 @@ class user_sandbox extends db_object
      * save the protection level in the database if allowed
      * TODO is the setting of the standard needed?
      */
-    function save_field_protection(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_field_protection(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         $result = '';
         log_debug($this->dsp_id());
@@ -1551,10 +1551,10 @@ class user_sandbox extends db_object
     /**
      * dummy function definition that will be overwritten by the child objects
      * check if the id parameters are supposed to be changed
-     * @param user_sandbox $db_rec the object data as it is now in the database
+     * @param sandbox $db_rec the object data as it is now in the database
      * @return bool true if one of the object id fields have been changed
      */
-    function is_id_updated(user_sandbox $db_rec): bool
+    function is_id_updated(sandbox $db_rec): bool
     {
         return false;
     }
@@ -1563,9 +1563,9 @@ class user_sandbox extends db_object
      * check if target key value already exists
      * overwritten in the word class for formula link words
      *
-     * @return user_sandbox object with id zero if no object with the same id is found
+     * @return sandbox object with id zero if no object with the same id is found
      */
-    function get_obj_with_same_id_fields(): user_sandbox
+    function get_obj_with_same_id_fields(): sandbox
     {
         log_debug('check if target already exists ' . $this->dsp_id());
         $db_chk = clone $this;
@@ -1588,11 +1588,11 @@ class user_sandbox extends db_object
      * and change the id (which can start a longer lasting confirmation process)
      *
      * @param sql_db $db_con the active database connection
-     * @param user_sandbox $db_rec the database record before the saving
-     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param sandbox $db_rec the database record before the saving
+     * @param sandbox $std_rec the database record defined as standard because it is used by most users
      * @returns string an empty string if everything is fine or a messages for the user what should be changed
      */
-    function save_id_if_updated(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_id_if_updated(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         log_debug($this->dsp_id());
         $result = '';
@@ -1672,11 +1672,11 @@ class user_sandbox extends db_object
      * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
      * should only be called if the user is the owner and nobody has used the display component link
      * @param sql_db $db_con the active database connection
-     * @param user_sandbox $db_rec the database record before the saving
-     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param sandbox $db_rec the database record before the saving
+     * @param sandbox $std_rec the database record defined as standard because it is used by most users
      * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
      */
-    function save_id_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         log_warning($this->dsp_id());
         return '';
@@ -1790,13 +1790,13 @@ class user_sandbox extends db_object
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @returns user_sandbox|null a filled object that has the same name or links the same objects
+     * @returns sandbox|null a filled object that has the same name or links the same objects
      *                            or null if nothing similar has been found
      */
-    function get_similar(): ?user_sandbox
+    function get_similar(): ?sandbox
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new user_sandbox($this->usr);
+        return new sandbox($this->usr);
     }
 
 
@@ -2226,7 +2226,7 @@ class user_sandbox extends db_object
      * and that is predefined in the main parent object to avoid code redundancy
      *
      * could and should be moved to a user_sandbox_type_extension object
-     * as soon as php allows something like 'extends user_sandbox_named and user_sandbox_type_extension'
+     * as soon as php allows something like 'extends _sandbox_named and user_sandbox_type_extension'
      */
 
     /**
@@ -2234,14 +2234,14 @@ class user_sandbox extends db_object
      * TODO: log the ref
      * TODO: save the reference also in the log
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param user_sandbox $db_rec the database record before the saving
-     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param sandbox $db_rec the database record before the saving
+     * @param sandbox $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
     function save_field_type(
-        sql_db $db_con,
-        user_sandbox $db_rec,
-        user_sandbox $std_rec
+        sql_db  $db_con,
+        sandbox $db_rec,
+        sandbox $std_rec
     ): string
     {
         $result = '';

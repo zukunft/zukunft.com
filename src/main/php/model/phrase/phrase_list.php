@@ -46,7 +46,7 @@ use api\phrase_list_api;
 use cfg\phrase_type;
 use html\word_dsp;
 
-class phrase_list extends user_sandbox_list_named
+class phrase_list extends sandbox_list_named
 {
 
     // $lst of base_list is used as array of the loaded phrase objects
@@ -311,7 +311,7 @@ class phrase_list extends user_sandbox_list_named
                 $db_con->usr_id = $this->user()->id();
                 $db_trp_lst = $db_con->get($qp);
                 foreach ($db_trp_lst as $db_trp) {
-                    if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
+                    if (is_null($db_trp[sandbox::FLD_EXCLUDED]) or $db_trp[sandbox::FLD_EXCLUDED] == 0) {
                         $trp = new triple($this->user());
                         $trp->row_mapper($db_trp);
                         $this->lst[] = $trp->phrase();
@@ -454,7 +454,7 @@ class phrase_list extends user_sandbox_list_named
                 $db_con->usr_id = $this->user()->id();
                 $db_wrd_lst = $db_con->get($qp);
                 foreach ($db_wrd_lst as $db_wrd) {
-                    if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
+                    if (is_null($db_wrd[sandbox::FLD_EXCLUDED]) or $db_wrd[sandbox::FLD_EXCLUDED] == 0) {
                         $wrd = new word($this->user());
                         $wrd->row_mapper($db_wrd);
                         $phr_lst_loaded->add($wrd->phrase());
@@ -481,7 +481,7 @@ class phrase_list extends user_sandbox_list_named
                 $db_con->usr_id = $this->user()->id();
                 $db_trp_lst = $db_con->get($qp);
                 foreach ($db_trp_lst as $db_trp) {
-                    if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
+                    if (is_null($db_trp[sandbox::FLD_EXCLUDED]) or $db_trp[sandbox::FLD_EXCLUDED] == 0) {
                         $trp = new triple($this->user());
                         $trp->row_mapper($db_trp);
                         $phr_lst_loaded->add($trp->phrase());
@@ -590,7 +590,7 @@ class phrase_list extends user_sandbox_list_named
         $usr_par = $db_con->get_par();
         $sql_words = 'SELECT DISTINCT w.' . word::FLD_ID . ' AS id, 
                              ' . $db_con->get_usr_field(word::FLD_NAME, "w", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
-                             ' . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, "w", "u", sql_db::FLD_FORMAT_BOOL) . '
+                             ' . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM ' . $db_con->get_table_name(sql_db::TBL_WORD) . ' w   
                    LEFT JOIN user_' . $db_con->get_table_name(sql_db::TBL_WORD) . ' u ON u.' . word::FLD_ID . ' = w.' . word::FLD_ID . ' 
                                          AND u.user_id = ' . $this->user()->id() . ' ';
@@ -1138,7 +1138,7 @@ class phrase_list extends user_sandbox_list_named
             if ($db_phr_lst) {
                 log_debug('got ' . $lib->dsp_count($db_phr_lst));
                 foreach ($db_phr_lst as $db_phr) {
-                    if (is_null($db_phr[user_sandbox::FLD_EXCLUDED]) or $db_phr[user_sandbox::FLD_EXCLUDED] == 0) {
+                    if (is_null($db_phr[sandbox::FLD_EXCLUDED]) or $db_phr[sandbox::FLD_EXCLUDED] == 0) {
                         if ($db_phr[phrase::FLD_ID] != 0 and !in_array($db_phr[phrase::FLD_ID], $this->ids())) {
                             $new_phrase = new phrase($this->user());
                             $new_phrase->row_mapper($db_phr);

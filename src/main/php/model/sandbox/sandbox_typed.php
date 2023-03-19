@@ -2,7 +2,7 @@
 
 /*
 
-  user_sandbox_description.php - adding the description field to the user_sandbox superclass
+  user_sandbox_description.php - adding the description field to the _sandbox superclass
   ----------------------------
 
   This file is part of zukunft.com - calc with words
@@ -30,7 +30,7 @@
 */
 
 
-class user_sandbox_named_with_type extends user_sandbox_named
+class sandbox_typed extends sandbox_named
 {
 
     /*
@@ -128,7 +128,7 @@ class user_sandbox_named_with_type extends user_sandbox_named
      * @param source $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    function save_fields_typed(sql_db $db_con, user_sandbox_named_with_type $db_rec, user_sandbox_named_with_type $std_rec): string
+    function save_fields_typed(sql_db $db_con, sandbox_typed $db_rec, sandbox_typed $std_rec): string
     {
         $result = parent::save_fields_named($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);

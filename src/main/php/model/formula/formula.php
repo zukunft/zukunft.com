@@ -39,7 +39,7 @@ use export\exp_obj;
 use html\formula_dsp;
 use html\word_dsp;
 
-class formula extends user_sandbox_named_with_type
+class formula extends sandbox_typed
 {
 
     /*
@@ -85,8 +85,8 @@ class formula extends user_sandbox_named_with_type
         self::FLD_ALL_NEEDED,
         self::FLD_LAST_UPDATE,
         self::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_FLD_NAMES = array(
@@ -98,8 +98,8 @@ class formula extends user_sandbox_named_with_type
         self::FLD_ALL_NEEDED,
         self::FLD_LAST_UPDATE,
         self::FLD_EXCLUDED,
-        user_sandbox::FLD_SHARE,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
 
 
@@ -517,7 +517,7 @@ class formula extends user_sandbox_named_with_type
         $qp->name = self::class . '_user_sandbox';
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
-        $db_con->set_fields(array_merge(array(user_sandbox::FLD_USER), self::FLD_NAMES_USR, self::FLD_NAMES_NUM_USR));
+        $db_con->set_fields(array_merge(array(sandbox::FLD_USER), self::FLD_NAMES_USR, self::FLD_NAMES_NUM_USR));
         $db_con->add_par(sql_db::PAR_INT, strval($this->id));
         $qp->sql = $db_con->select_by_field(self::FLD_ID);
         $qp->par = $db_con->get_par();
@@ -2104,11 +2104,11 @@ class formula extends user_sandbox_named_with_type
     /**
      * save all updated formula fields
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param formula|user_sandbox $db_rec the database record before the saving
-     * @param formula|user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param formula|sandbox $db_rec the database record before the saving
+     * @param formula|sandbox $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    function save_fields(sql_db $db_con, formula|user_sandbox $db_rec, formula|user_sandbox $std_rec): string
+    function save_fields(sql_db $db_con, formula|sandbox $db_rec, formula|sandbox $std_rec): string
     {
         $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_usr_text($db_con, $db_rec, $std_rec);
@@ -2125,7 +2125,7 @@ class formula extends user_sandbox_named_with_type
     /**
      * set the update parameters for the formula text as written by the user if needed
      */
-    function save_field_name(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_field_name(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->name() <> $this->name()) {
@@ -2159,7 +2159,7 @@ class formula extends user_sandbox_named_with_type
      * updated the view component name (which is the id field)
      * should only be called if the user is the owner and nobody has used the display component link
      */
-    function save_id_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->name() <> $this->name()) {
@@ -2221,7 +2221,7 @@ class formula extends user_sandbox_named_with_type
      * check if the id parameters are supposed to be changed
      * and check if the name is already used
      */
-    function save_id_if_updated(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_id_if_updated(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         log_debug('->save_id_if_updated has name changed from "' . $db_rec->name() . '" to ' . $this->dsp_id());
         $result = '';
@@ -2344,7 +2344,7 @@ class formula extends user_sandbox_named_with_type
 
     /**
      * add or update a formula in the database or create a user formula
-     * overwrite the user_sandbox function to create the formula ref text; maybe combine later
+     * overwrite the _sandbox function to create the formula ref text; maybe combine later
      *
      * @return string the message shown to the user why the action has failed or an empty string if everything is fine
      */

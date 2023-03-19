@@ -46,7 +46,7 @@
 
 use api\user_api;
 use export\exp_obj;
-use export\user_exp;
+use export\_user_exp;
 use html\user_dsp;
 use html\word_dsp;
 
@@ -761,7 +761,7 @@ class user extends db_object
     function export_obj(bool $do_load = true): exp_obj
     {
         log_debug();
-        $result = new user_exp();
+        $result = new _user_exp();
 
         // add the source parameters
         $result->name = $this->name;

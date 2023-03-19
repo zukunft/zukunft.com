@@ -33,10 +33,10 @@ namespace controller;
 
 use api\list_api;
 use api\type_lists_api;
-use api\user_sandbox_api;
+use api\sandbox_api;
 use api_message;
 use source;
-use user_sandbox;
+use sandbox;
 use word;
 
 class controller
@@ -110,7 +110,7 @@ class controller
      * @param int $id the id of object that should be deleted
      * @return void
      */
-    private function curl_response(string $api_obj, string $msg, int $id = 0, ?user_sandbox $obj = null): void
+    private function curl_response(string $api_obj, string $msg, int $id = 0, ?sandbox $obj = null): void
     {
         // required headers
         header("Access-Control-Allow-Origin: *");
@@ -246,11 +246,11 @@ class controller
      * encode an user sandbox object for the frontend api
      * and response to a get request
      *
-     * @param user_sandbox_api $api_obj the object that should be encoded
+     * @param sandbox_api $api_obj the object that should be encoded
      * @param string $msg if filled the message that should be shown to the user instead of the object
      * @return void
      */
-    function get(user_sandbox_api $api_obj, string $msg): void
+    function get(sandbox_api $api_obj, string $msg): void
     {
         // return the api json or the error message
         if ($msg == '') {
@@ -335,7 +335,7 @@ class controller
      * @param int $id
      * @return void
      */
-    function curl(api_message $api_msg, string $msg, int $id, user_sandbox $obj): void
+    function curl(api_message $api_msg, string $msg, int $id, sandbox $obj): void
     {
         // return the api json or the error message
         if ($msg == '') {

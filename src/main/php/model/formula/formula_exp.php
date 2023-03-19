@@ -31,7 +31,7 @@
 
 namespace export;
 
-class formula_exp extends user_sandbox_exp_named
+class formula_exp extends sandbox_exp_named
 {
 
     // field names used for JSON creation

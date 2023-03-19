@@ -2,10 +2,10 @@
 
 /*
 
-    api/user/user_sandbox_value.php - the minimal superclass for the frontend API
-    --------------------------
+    web/user/sandbox_value.php - the superclass for the html frontend of value sandbox objects
+    ---------------------------
 
-    This superclass should be used by the classes word_min, formula_min, ... to enable user specific values and links
+    This superclass should be used by the classes value_dsp, result_dsp, ...
 
 
     This file is part of zukunft.com - calc with words
@@ -32,18 +32,19 @@
 
 */
 
-namespace api;
+namespace html;
 
-use html\phrase_group_dsp;
+include_once WEB_SANDBOX_PATH . 'db_object.php';
 
-class user_sandbox_value_api extends user_sandbox_api
+class sandbox_value_dsp extends db_object_dsp
 {
 
-    // the json field name in the api json message which is supposed to be the same as the var $number
-    const FLD_NUMBER = 'number';
-
-    private phrase_group_api $grp; // the phrase group with the list of words and triples (not the source words and triples)
+    private phrase_group_dsp $grp; // the phrase group with the list of words and triples (not the source words and triples)
     private ?float $number; // the number calculated by the system
+
+    // true if the user has done no personal overwrites which is the default case
+    public bool $is_std;
+
 
     /*
      * construct and map
@@ -53,15 +54,17 @@ class user_sandbox_value_api extends user_sandbox_api
     {
         parent::__construct($id);
 
-        $this->grp = new phrase_group_api();
+        $this->grp = new phrase_group_dsp();
         $this->number = null;
+        $this->is_std = true;
     }
+
 
     /*
      * set and get
      */
 
-    function set_grp(phrase_group_api $grp)
+    function set_grp(phrase_group_dsp $grp)
     {
         $this->grp = $grp;
     }
@@ -71,7 +74,12 @@ class user_sandbox_value_api extends user_sandbox_api
         $this->number = $number;
     }
 
-    function grp(): phrase_group_api
+    function set_is_std(bool $is_std = true): void
+    {
+        $this->is_std = $is_std;
+    }
+
+    function grp(): phrase_group_dsp
     {
         return $this->grp;
     }
@@ -81,23 +89,26 @@ class user_sandbox_value_api extends user_sandbox_api
         return $this->number;
     }
 
-
-    /*
-     * cast
+    /**
+     * @return bool false if the loaded value is user specific
      */
-
-    function grp_dsp(): phrase_group_dsp
+    function is_std(): bool
     {
-        return $this->grp()->dsp_obj();
+        return $this->is_std;
     }
 
     /**
-     * @returns phrase_list_api the list of phrases as an object
+     * @returns phrase_list_dsp the list of phrases as an object
      */
-    function phr_lst(): phrase_list_api
+    function phr_lst(): phrase_list_dsp
     {
-        return $this->grp->phr_lst();
+        return $this->grp()->phr_lst();
     }
+
+
+    /*
+     * display
+     */
 
     /**
      * @returns string the html code to display the value with reference links
@@ -107,13 +118,6 @@ class user_sandbox_value_api extends user_sandbox_api
     {
         return $this->number;
     }
-
-    /*
-    function load_phrases(): bool
-    {
-        return $this->grp->load_phrases();
-    }
-    */
 
 }
 

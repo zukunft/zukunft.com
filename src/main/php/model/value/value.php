@@ -60,7 +60,7 @@ use export\value_exp;
 use html\value_dsp;
 use model\figure;
 
-class value extends user_sandbox_value
+class value extends _sandbox_value
 {
 
     /*
@@ -82,7 +82,7 @@ class value extends user_sandbox_value
         source::FLD_ID,
         self::FLD_LAST_UPDATE,
         self::FLD_EXCLUDED,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_FLD_NAMES = array(
@@ -90,12 +90,12 @@ class value extends user_sandbox_value
         source::FLD_ID,
         self::FLD_LAST_UPDATE,
         self::FLD_EXCLUDED,
-        user_sandbox::FLD_PROTECT
+        sandbox::FLD_PROTECT
     );
     // list of field names that are only on the user sandbox row
     // e.g. the standard value does not need the share type, because it is by definition public (even if share types within a group of users needs to be defined, the value for the user group are also user sandbox table)
     const FLD_NAMES_USR_ONLY = array(
-        user_sandbox::FLD_SHARE
+        sandbox::FLD_SHARE
     );
 
 
@@ -131,7 +131,7 @@ class value extends user_sandbox_value
     function __construct(user $usr, ?int $id = null, ?float $num_val = null, ?phrase_group $phr_grp = null)
     {
         parent::__construct($usr);
-        $this->obj_type = user_sandbox::TYPE_VALUE;
+        $this->obj_type = sandbox::TYPE_VALUE;
         $this->obj_name = sql_db::TBL_VALUE;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
@@ -1396,7 +1396,7 @@ class value extends user_sandbox_value
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE);
-                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->user()->id()));
+                $log_id = $db_con->insert(array(self::FLD_ID, sandbox::FLD_USER), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_value failed.');
                     $result = false;
@@ -1723,11 +1723,11 @@ class value extends user_sandbox_value
     /**
      * save the value number and the source
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param value|user_sandbox $db_rec the database record before the saving
-     * @param value|user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param value|sandbox $db_rec the database record before the saving
+     * @param value|sandbox $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    function save_fields(sql_db $db_con, value|user_sandbox $db_rec, value|user_sandbox $std_rec): string
+    function save_fields(sql_db $db_con, value|sandbox $db_rec, value|sandbox $std_rec): string
     {
         $result = $this->save_field_number($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_source($db_con, $db_rec, $std_rec);
@@ -1742,7 +1742,7 @@ class value extends user_sandbox_value
      * updated the view component name (which is the id field)
      * should only be called if the user is the owner and nobody has used the display component link
      */
-    function save_id_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         log_debug('value->save_id_fields');
         $result = '';
@@ -1802,7 +1802,7 @@ class value extends user_sandbox_value
     /**
      * check if the id parameters are supposed to be changed
      */
-    function save_id_if_updated($db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
+    function save_id_if_updated($db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         log_debug('value->save_id_if_updated has name changed from "' . $db_rec->dsp_id() . '" to "' . $this->dsp_id() . '"');
         $result = '';

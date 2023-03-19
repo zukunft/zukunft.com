@@ -42,8 +42,8 @@ class figure_api extends combine_object_api implements \JsonSerializable
 
     // the json field name in the api json message to identify if the figure is a value or result
     const TYPE_FLD = 'type';
-    const TYPE_VALUE = 'value';
-    const TYPE_RESULT = 'result';
+    const CLASS_VALUE = 'value';
+    const CLASS_RESULT = 'result';
 
 
     /*
@@ -63,9 +63,9 @@ class figure_api extends combine_object_api implements \JsonSerializable
     function id(): int
     {
         if ($this->is_result()) {
-            return true;
+            return $this->id() * -1;
         } else {
-            return false;
+            return  $this->id();
         }
     }
 
@@ -94,9 +94,9 @@ class figure_api extends combine_object_api implements \JsonSerializable
     {
         $vars = $this->obj()->jsonSerialize();
         if ($this->is_result()) {
-            $vars[self::TYPE_FLD] = self::TYPE_RESULT;
+            $vars[combine_object_api::FLD_CLASS] = self::CLASS_RESULT;
         } else {
-            $vars[self::TYPE_FLD] = self::TYPE_VALUE;
+            $vars[combine_object_api::FLD_CLASS] = self::CLASS_VALUE;
         }
         return $vars;
     }
@@ -111,9 +111,9 @@ class figure_api extends combine_object_api implements \JsonSerializable
      */
     function dsp_obj(): figure_dsp
     {
-        $dsp_obj = new figure_dsp($this->id);
-        $dsp_obj->set_grp($this->grp());
-        $dsp_obj->set_number($this->number());
+        $dsp_obj = new figure_dsp($this->obj()->dsp_obj());
+        //$dsp_obj->set_grp($this->grp());
+        //$dsp_obj->set_number($this->number());
         return $dsp_obj;
     }
 

@@ -31,7 +31,7 @@
 
 namespace export;
 
-class word_exp extends user_sandbox_exp_named
+class word_exp extends sandbox_exp_named
 {
 
     // field names used for JSON creation

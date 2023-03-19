@@ -2,8 +2,8 @@
 
 /*
 
-    /web/term.php - the display extension of the api term object
-    ------------
+    web/phrase/term.php - to create the html code to display a word, triple, verb or formula
+    --------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -32,21 +32,163 @@
 
 namespace html;
 
+include_once API_SANDBOX_PATH . 'combine_object.php';
+include_once API_PHRASE_PATH . 'term.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once WEB_WORD_PATH . 'triple.php';
+include_once WEB_VERB_PATH . 'verb.php';
+include_once WEB_FORMULA_PATH . 'formula.php';
+
+use api\combine_object_api;
 use api\term_api;
 
-class term_dsp extends term_api
+class term_dsp
 {
+
+    /*
+     * object vars
+     */
+
+    // the word, triple, verb or formula object
+    private word_dsp|triple_dsp|verb_dsp|formula_dsp $obj;
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(word_dsp|triple_dsp|verb_dsp|formula_dsp $trm_obj)
+    {
+        $this->set_obj($trm_obj);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function set_from_json(string $json_api_msg): void
+    {
+        $json_array = json_decode($json_api_msg);
+        if ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_WORD) {
+            $fv_dsp = new word_dsp();
+            $fv_dsp->set_from_json_array($json_array);
+            $this->set_obj($fv_dsp);
+        } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_TRIPLE) {
+            $fv_dsp = new triple_dsp();
+            $fv_dsp->set_from_json_array($json_array);
+            $this->set_obj($fv_dsp);
+        } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_VERB) {
+            $fv_dsp = new verb_dsp();
+            $fv_dsp->set_from_json_array($json_array);
+            $this->set_obj($fv_dsp);
+        } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_FORMULA) {
+            $val = new formula_dsp();
+            $val->set_from_json_array($json_array);
+            $this->set_obj($val);
+        } else {
+            log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a term');
+        }
+    }
+
+    function set_obj(word_dsp|triple_dsp|verb_dsp|formula_dsp $obj): void
+    {
+        $this->obj = $obj;
+    }
+
+    function obj(): word_dsp|triple_dsp|verb_dsp|formula_dsp
+    {
+        return $this->obj;
+    }
+
+    /**
+     * return the term id based on the object id
+     * must have the same logic as the database view and the frontend
+     */
+    function id(): int
+    {
+        if ($this->is_word()) {
+            return ($this->obj_id() * 2) - 1;
+        } elseif ($this->is_triple()) {
+            return ($this->obj_id() * -2) - 1;
+        } elseif ($this->is_formula()) {
+            return $this->obj_id() * 2;
+        } elseif ($this->is_verb()) {
+            return $this->obj_id() * -1;
+        } else {
+            return 0;
+        }
+    }
+
+    function obj_id(): int
+    {
+        return $this->obj()->id();
+    }
+
+
+    /*
+     * classifications
+     */
+
+    /**
+     * @return bool true if this term is a word or supposed to be a word
+     */
+    function is_word(): bool
+    {
+        if ($this->obj()::class == word_dsp::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if this term is a triple
+     */
+    function is_triple(): bool
+    {
+        if ($this->obj()::class == triple_dsp::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if this term is a verb
+     */
+    function is_verb(): bool
+    {
+        if ($this->obj()::class == verb_dsp::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if this term is a formula
+     */
+    function is_formula(): bool
+    {
+        if ($this->obj()::class == formula_dsp::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /*
+     * display
+     */
 
     /**
      * @returns string the html code to display with mouse over that shows the description
      */
     function dsp(): string
     {
-        if ($this->is_word()) {
-            return $this->wrd_dsp()->dsp();
-        } else {
-            return $this->trp_dsp()->dsp();
-        }
+        return $this->obj()->dsp();
     }
 
     /**
@@ -55,13 +197,13 @@ class term_dsp extends term_api
     function dsp_link(): string
     {
         if ($this->is_word()) {
-            return $this->wrd_dsp()->dsp_link();
+            return $this->obj()->dsp_link();
         } elseif ($this->is_triple()) {
-            return $this->trp_dsp()->dsp_link();
+            return $this->obj()->dsp_link();
         } elseif ($this->is_formula()) {
-            return $this->frm_dsp()->dsp_link();
+            return $this->obj()->dsp_link();
         } elseif ($this->is_verb()) {
-            return $this->vrb_dsp()->dsp_link();
+            return $this->obj()->dsp_link();
         } else {
             $msg = 'Unexpected term type ' . $this->dsp_id();
             log_err($msg);

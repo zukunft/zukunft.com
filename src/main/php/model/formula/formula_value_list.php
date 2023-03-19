@@ -51,8 +51,9 @@ class formula_value_list
         $this->set_user($usr);
     }
 
+
     /*
-     * get and set
+     * set and get
      */
 
     /**
