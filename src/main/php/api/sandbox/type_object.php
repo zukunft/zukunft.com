@@ -43,4 +43,17 @@ class type_object_api
     public string $name;
     public string $code_id;
 
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return string the json api message as a text string
+     */
+    function get_json(): string
+    {
+        return json_encode($this);
+    }
+
 }

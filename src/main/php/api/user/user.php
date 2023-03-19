@@ -54,14 +54,7 @@ class user_api
         $this->last_name = null;
     }
 
-    /**
-     * just used for unit testing
-     * @return string the frontend API JSON string
-     */
-    function get_json(): string
-    {
-        return json_encode($this);
-    }
+
 
     /*
      * set and get
@@ -76,4 +69,19 @@ class user_api
     {
         return $this->id;
     }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * just used for unit testing
+     * @return string the frontend API JSON string
+     */
+    function get_json(): string
+    {
+        return json_encode($this);
+    }
+
 }

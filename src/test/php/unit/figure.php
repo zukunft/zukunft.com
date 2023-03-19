@@ -61,6 +61,12 @@ class figure_unit_tests
         $fig = $t->dummy_figure_result();
         $t->assert_api($fig, 'figure_result');
 
+
+        $t->subheader('HTML frontend unit tests');
+
+        $fig = $t->dummy_figure_value();
+        $t->assert_api_to_dsp($fig);
+
     }
 
 }

@@ -34,14 +34,10 @@ namespace api;
 
 include_once API_SANDBOX_PATH . 'combine_object.php';
 
-use html\figure_dsp;
-
-
 class figure_api extends combine_object_api implements \JsonSerializable
 {
 
     // the json field name in the api json message to identify if the figure is a value or result
-    const TYPE_FLD = 'type';
     const CLASS_VALUE = 'value';
     const CLASS_RESULT = 'result';
 
@@ -99,22 +95,6 @@ class figure_api extends combine_object_api implements \JsonSerializable
             $vars[combine_object_api::FLD_CLASS] = self::CLASS_VALUE;
         }
         return $vars;
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @returns figure_dsp the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): figure_dsp
-    {
-        $dsp_obj = new figure_dsp($this->obj()->dsp_obj());
-        //$dsp_obj->set_grp($this->grp());
-        //$dsp_obj->set_number($this->number());
-        return $dsp_obj;
     }
 
 }

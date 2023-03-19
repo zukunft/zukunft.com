@@ -1173,6 +1173,7 @@ class formula_value extends db_object
         // display the formula with links
         $frm = new formula($this->user());
         $frm->load_by_id($this->frm->id(), formula::class);
+        $api_json = $frm->api_obj();
         $result .= ' based on</br>' . $frm->name_linked($back);
         $result .= ' ' . $frm->dsp_text($back) . "\n";
         $result .= ' ' . $frm->btn_edit($back) . "\n";

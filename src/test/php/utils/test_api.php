@@ -267,11 +267,28 @@ class test_api extends test_new_obj
     }
 
 
+    /**
+     * check if the HTML frontend object can be set based on the api json message
+     * @param object $usr_obj the user sandbox object that should be tested
+     */
+    function assert_api_to_dsp(object $usr_obj): bool
+    {
+        $class = $usr_obj::class;
+        $class = $this->class_to_api($class);
+        $api_obj = $usr_obj->api_obj();
+        $api_json_msg = json_decode($api_obj->get_json(), true);
+        // $dsp_obj = $usr_obj->dsp_obj();
+        return $this->assert_api_compare($class, $api_json_msg);
+    }
+
+
     /*
      * assert api
      */
 
     /**
+     * check if the created api json message matches the api json message from the test resources
+     * the unit test should be done for all api objects
      * @param object $usr_obj the user sandbox object that should be tested
      */
     function assert_api(object $usr_obj, string $filename = '', bool $contains = false): bool
@@ -279,7 +296,7 @@ class test_api extends test_new_obj
         $class = $usr_obj::class;
         $class = $this->class_to_api($class);
         $api_obj = $usr_obj->api_obj();
-        $actual = json_decode(json_encode($api_obj), true);
+        $actual = json_decode($api_obj->get_json(), true);
         return $this->assert_api_compare($class, $actual, null, $filename, $contains);
     }
 

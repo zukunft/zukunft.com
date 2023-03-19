@@ -30,7 +30,7 @@
 */
 
 
-class _sandbox_link_named_with_type extends sandbox_link_named
+class sandbox_link_named_with_type extends sandbox_link_named
 {
 
     // database id of the type used for named link user sandbox objects with predefined functionality

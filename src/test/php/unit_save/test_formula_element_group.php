@@ -90,7 +90,7 @@ function run_formula_element_group_test(testing $t): void
 
         // test the display name that can be used for user debugging
         $result = trim($elm_grp->dsp_names());
-        $target = trim('<a href="/http/formula_edit.php?id='.$frm_this->id().'&back=">this</a>');
+        $target = trim('<a href="/http/formula_edit.php?id='.$frm_this->id().'" title="this">this</a>');
         $t->dsp('formula_element_group->dsp_names', $target, $result);
 
         // test if the values for an element group are displayed correctly

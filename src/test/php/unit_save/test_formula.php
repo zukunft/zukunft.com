@@ -230,7 +230,7 @@ function run_formula_test(testing $t): void
 
     // ... in HTML format
     $result = $frm_dsp->dsp_text($back);
-    $target = '"percent" = ( <a href="/http/formula_edit.php?id='.$frm_this->id().'&back=0">this</a> - <a href="/http/formula_edit.php?id='.$frm_prior->id().'&back=0">prior</a> ) / <a href="/http/formula_edit.php?id='.$frm_prior->id().'&back=0">prior</a>';
+    $target = '"percent" = ( <a href="/http/formula_edit.php?id='.$frm_this->id().'&back=0" title="this">this</a> - <a href="/http/formula_edit.php?id='.$frm_prior->id().'&back=0" title=<a href="/http/formula_edit.php?id=20&back=0" title="prior">prior</a>>prior</a> ) / <a href="/http/formula_edit.php?id=20&back=0" title=<a href="/http/formula_edit.php?id='.$frm_prior->id().'&back=0" title="prior">prior</a>>prior</a>';
     $t->dsp('formula->dsp_text for ' . $frm->dsp_id(), $target, $result);
 
     // ... in HTML format with link

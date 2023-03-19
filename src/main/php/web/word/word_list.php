@@ -153,7 +153,7 @@ class word_list_dsp extends list_dsp
                 $frm = new formula_dsp();
                 $frm->id = $db_row['id'];
                 $frm->set_name($db_row['name']);
-                $result .= $frm->name_linked($back);
+                $result .= $frm->edit_link($back);
             }
         }
 

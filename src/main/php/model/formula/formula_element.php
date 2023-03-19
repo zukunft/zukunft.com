@@ -235,7 +235,7 @@ class formula_element extends db_object
                     $result = $this->name();
                 }
                 if ($this->type == formula::class) {
-                    $result = $this->obj->dsp_obj()->name_linked($back);
+                    $result = $this->obj->dsp_obj()->edit_link($back);
                 }
             }
         }

@@ -34,11 +34,10 @@ namespace model;
 include_once API_FORMULA_PATH . 'figure.php';
 
 use api\figure_api;
-use api\formula_value_api;
-use api\value_api;
+use html\figure_dsp;
 use DateTime;
 use db_object;
-use html\figure_dsp;
+use formula;
 use user;
 
 class figure extends db_object
@@ -94,6 +93,17 @@ class figure extends db_object
     function set_type_result(): void
     {
         $this->is_result = true;
+    }
+
+    /**
+     * set the number of the value or result
+     *
+     * @param float|null $number the person who wants to access the object e.g. the word
+     * @return void
+     */
+    function set_number(?float $number): void
+    {
+        $this->number = $number;
     }
 
     /**
@@ -165,15 +175,12 @@ class figure extends db_object
      */
     function dsp_obj(): figure_dsp
     {
-        if ($this->is_result()) {
-            $fig_dsp = new figure_dsp(new formula_value_api());
-        } else {
-            $fig_dsp = new figure_dsp(new value_api());
-        }
+        $fig_dsp = new figure_dsp();
         $json_msg = json_encode($this->api_obj());
         $fig_dsp->set_from_json($json_msg);
         return $fig_dsp;
     }
+
 
     /*
      * classification

@@ -165,4 +165,17 @@ class list_api
         return $result;
     }
 
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return string the json api message as a text string
+     */
+    function get_json(): string
+    {
+        return json_encode($this);
+    }
+
 }

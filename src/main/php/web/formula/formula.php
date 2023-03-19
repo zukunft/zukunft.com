@@ -82,8 +82,13 @@ class formula_dsp extends sandbox_typed_dsp
         return new term_dsp($this);
     }
 
+
+    /*
+     * display
+     */
+
     /**
-     * display the formula with a link to the main page for the formula
+     * display the formula name with a link to the main page for the formula
      * @param string|null $back the back trace url for the undo functionality
      * @param string $style the CSS style that should be used
      * @returns string the html code
@@ -95,14 +100,16 @@ class formula_dsp extends sandbox_typed_dsp
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
-    // create the HTML code to display the formula name with the HTML link
-    function name_linked(?string $back = ''): string
+    /**
+     * display the formula name with a link to change the formula
+     * @param string|null $back the back trace url for the undo functionality
+     * @returns string the html code
+     */
+    function edit_link(?string $back = ''): string
     {
-        if ($back) {
-            return '<a href="/http/formula_edit.php?id=' . $this->id . '">' . $this->name . '</a>';
-        } else {
-            return '<a href="/http/formula_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
-        }
+        $html = new html_base();
+        $url = $html->url(api::FORMULA . api::UPDATE, $this->id, $back);
+        return $html->ref($url, $this->name(), $this->name());
     }
 
 }

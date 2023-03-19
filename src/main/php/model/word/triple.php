@@ -42,7 +42,7 @@ use export\exp_obj;
 use export\triple_exp;
 use html\triple_dsp;
 
-class triple extends _sandbox_link_named_with_type implements JsonSerializable
+class triple extends sandbox_link_named_with_type implements JsonSerializable
 {
 
     /*

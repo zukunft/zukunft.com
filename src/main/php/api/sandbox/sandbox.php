@@ -51,6 +51,7 @@ class sandbox_api
     // fields for the backend link
     public int $id; // the database id of the object, which is the same as the related database object in the backend
 
+
     /*
      * construct and map
      */
@@ -64,6 +65,7 @@ class sandbox_api
             $this->id = $id;
         }
     }
+
 
     /*
      * set and get
@@ -105,6 +107,19 @@ class sandbox_api
             log_err('API class "' . $class . '" not yet implemented');
         }
         return $db_obj;
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return string the json api message as a text string
+     */
+    function get_json(): string
+    {
+        return json_encode($this);
     }
 
 }

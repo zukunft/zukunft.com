@@ -9,7 +9,6 @@
     or word and triple to phrase
     or word, triple, verb and formula to term
 
-    TODO use it for figure
     TODO use it for phrase
     TODO use it for term
 
@@ -65,6 +64,19 @@ class combine_object_api
     function obj(): object
     {
         return $this->obj;
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return string the json api message as a text string
+     */
+    function get_json(): string
+    {
+        return json_encode($this);
     }
 
 }

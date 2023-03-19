@@ -47,16 +47,16 @@ class figure_dsp
      * object vars
      */
 
-    private value_dsp|formula_value_dsp $obj;
+    private value_dsp|formula_value_dsp|null $obj;
 
 
     /*
      * construct and map
      */
 
-    function __construct(value_dsp|formula_value_dsp $fig_obj)
+    function __construct()
     {
-        $this->set_obj($fig_obj);
+        $this->set_obj(null);
     }
 
 
@@ -80,12 +80,12 @@ class figure_dsp
         }
     }
 
-    function set_obj(value_dsp|formula_value_dsp $obj): void
+    function set_obj(value_dsp|formula_value_dsp|null $obj): void
     {
         $this->obj = $obj;
     }
 
-    function obj(): value_dsp|formula_value_dsp
+    function obj(): value_dsp|formula_value_dsp|null
     {
         return $this->obj;
     }
@@ -136,6 +136,7 @@ class figure_dsp
         }
     }
 
+
     /*
      * display
      */
@@ -175,6 +176,20 @@ class figure_dsp
         } else {
             return $html->ref($html->url(api::RESULT_EDIT, $this->obj_id(), $back), $this->val_formatted());
         }
+    }
+
+    /*
+     * interface
+     */
+
+    /**
+     *
+     * @return string the json message string to send the updated data to the backend
+     */
+    function api_message(): string
+    {
+
+        return '';
     }
 
 }
