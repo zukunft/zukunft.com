@@ -970,11 +970,11 @@ class formula extends sandbox_typed
                                 $fv->val_missing = True;
                             } else {
                                 $fig = $fig_lst->lst()[0];
-                                $fv->num_text = str_replace($fig->symbol, $fig->number, $fv->num_text);
-                                if ($fv->last_val_update < $fig->last_update) {
-                                    $fv->last_val_update = $fig->last_update;
+                                $fv->num_text = str_replace($fig->symbol(), $fig->number(), $fv->num_text);
+                                if ($fv->last_val_update < $fig->last_update()) {
+                                    $fv->last_val_update = $fig->last_update();
                                 }
-                                log_debug('one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                log_debug('one figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $fv->num_text . '"');
                             }
                         }
                     }
@@ -1004,22 +1004,22 @@ class formula extends sandbox_typed
                                                 // get the standard value
                                                 // $fig_std = ...;
                                                 $fv_std = clone $fv;
-                                                $fv_std->num_text = str_replace($fig->symbol, $fig->number, $fv_std->num_text);
-                                                if ($fv_std->last_val_update < $fig->last_update) {
-                                                    $fv_std->last_val_update = $fig->last_update;
+                                                $fv_std->num_text = str_replace($fig->symbol(), $fig->number(), $fv_std->num_text);
+                                                if ($fv_std->last_val_update < $fig->last_update()) {
+                                                    $fv_std->last_val_update = $fig->last_update();
                                                 }
-                                                log_debug('one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                                log_debug('one figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $fv->num_text . '"');
                                                 $fv_lst->lst[] = $fv_std;
                                                 // ... and split into a user specific part
                                                 $fv->is_std = false;
                                             }
                                         }
 
-                                        $fv->num_text = str_replace($fig->symbol, $fig->number, $fv->num_text);
-                                        if ($fv->last_val_update < $fig->last_update) {
-                                            $fv->last_val_update = $fig->last_update;
+                                        $fv->num_text = str_replace($fig->symbol(), $fig->number(), $fv->num_text);
+                                        if ($fv->last_val_update < $fig->last_update()) {
+                                            $fv->last_val_update = $fig->last_update();
                                         }
-                                        log_debug('one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                        log_debug('one figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $fv->num_text . '"');
                                     } else {
                                         // if the result has been the standard result utils now
                                         if ($fv_master->is_std()) {
@@ -1029,11 +1029,11 @@ class formula extends sandbox_typed
                                                 // get the standard value
                                                 // $fig_std = ...;
                                                 $fv_std = clone $fv_master;
-                                                $fv_std->num_text = str_replace($fig->symbol, $fig->number, $fv_std->num_text);
-                                                if ($fv_std->last_val_update < $fig->last_update) {
-                                                    $fv_std->last_val_update = $fig->last_update;
+                                                $fv_std->num_text = str_replace($fig->symbol(), $fig->number(), $fv_std->num_text);
+                                                if ($fv_std->last_val_update < $fig->last_update()) {
+                                                    $fv_std->last_val_update = $fig->last_update();
                                                 }
-                                                log_debug('one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                                log_debug('one figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $fv->num_text . '"');
                                                 $fv_lst->lst[] = $fv_std;
                                                 // ... and split into a user specific part
                                                 $fv_master->is_std = false;
@@ -1042,14 +1042,14 @@ class formula extends sandbox_typed
 
                                         // for all following result reuse the first result and fill with the next number
                                         $fv_new = clone $fv_master;
-                                        $fv_new->num_text = str_replace($fig->symbol, $fig->number, $fv_new->num_text);
-                                        if ($fv->last_val_update < $fig->last_update) {
-                                            $fv->last_val_update = $fig->last_update;
+                                        $fv_new->num_text = str_replace($fig->symbol(), $fig->number(), $fv_new->num_text);
+                                        if ($fv->last_val_update < $fig->last_update()) {
+                                            $fv->last_val_update = $fig->last_update();
                                         }
-                                        log_debug('one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                        log_debug('one figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $fv->num_text . '"');
                                         $fv_lst->lst[] = $fv_new;
                                     }
-                                    log_debug('figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                    log_debug('figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $fv->num_text . '"');
                                     $fig_nbr++;
                                 }
                             }

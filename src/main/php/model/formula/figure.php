@@ -31,43 +31,33 @@
 
 namespace model;
 
+include_once MODEL_SANDBOX_PATH . 'combine_object.php';
 include_once API_FORMULA_PATH . 'figure.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_FORMULA_PATH . 'formula_value.php';
 
 use api\figure_api;
 use html\figure_dsp;
-use DateTime;
-use db_object;
-use formula;
+use value;
+use formula_value;
 use user;
+use DateTime;
+use formula;
 
-class figure extends db_object
+class figure extends combine_object
 {
-
-    /*
-     * object vars
-     */
-
-    public user $usr;                 // the person who wants to see the figure (value or formula result)
-    private bool $is_result;          // true if the value has been calculated and not set by a user
-    public ?float $number = null;     // the numeric value
-    public ?string $symbol = null;    // the reference text that has lead to the value
-    public ?DateTime $last_update;    // the time of the last update of fields that may influence the calculated results
-    public ?object $obj = null;       // the value or formula result object
 
     /*
      * construct and map
      */
 
     /**
-     * set the figure default value and the user
-     * @param user $usr the user who requested to see this value or formula result
+     * a figure is either created based on a user value or formula result
+     * @param value|formula_value $obj
      */
-    function __construct(user $usr)
+    function __construct(value|formula_value $obj)
     {
-        parent::__construct();
-        $this->usr = $usr;
-        $this->set_type_result();
-        $this->last_update = new DateTime();
+        $this->set_obj($obj);
     }
 
 
@@ -76,43 +66,25 @@ class figure extends db_object
      */
 
     /**
-     * set the user of the user sandbox object
-     *
-     * @param user $usr the person who wants to access the object e.g. the word
-     * @return void
+     * @return int the figure id based on the value or result id
+     * must have the same logic as the database view and the frontend
      */
-    function set_user(user $usr): void
+    function id(): int
     {
-        $this->usr = $usr;
+        if ($this->is_result()) {
+            return $this->obj_id() * -1;
+        } else {
+            return $this->obj_id();
+        }
     }
 
     /**
-     * define that this figure has been calculated based on other numbers
-     * @return void
+     * @return int the id of the value or result id (not unique!)
+     * must have the same logic as the database view and the frontend
      */
-    function set_type_result(): void
+    function obj_id(): int
     {
-        $this->is_result = true;
-    }
-
-    /**
-     * set the number of the value or result
-     *
-     * @param float|null $number the person who wants to access the object e.g. the word
-     * @return void
-     */
-    function set_number(?float $number): void
-    {
-        $this->number = $number;
-    }
-
-    /**
-     * define that this figure has been defined by a user
-     * @return void
-     */
-    function set_type_value(): void
-    {
-        $this->is_result = false;
+        return $this->obj()->id();
     }
 
     /**
@@ -120,20 +92,39 @@ class figure extends db_object
      */
     function user(): user
     {
-        return $this->usr;
+        return $this->obj()->user();
     }
 
     /**
-     * @return float the value either from the formula result or the db value from a user or source
+     * @return float with the value either from the formula result or the db value from a user or source
      */
     function number(): float
     {
-        return $this->number;
+        return $this->obj()->number();
     }
 
-    function obj(): object
+    /**
+     * @param string $symbol the reference text either from the formula result or the db value from a user or source
+     */
+    function set_symbol(string $symbol): void
     {
-        return $this->obj;
+        $this->obj()->set_symbol($symbol);
+    }
+
+    /**
+     * @return string the reference text either from the formula result or the db value from a user or source
+     */
+    function symbol(): string
+    {
+        return $this->obj()->symbol();
+    }
+
+    /**
+     * @return DateTime the timestamp of the last update either from the formula result or the db value from a user or source
+     */
+    function last_update(): DateTime
+    {
+        return $this->obj()->last_update();
     }
 
     /**
@@ -186,9 +177,12 @@ class figure extends db_object
      * classification
      */
 
+    /**
+     * @return bool true if the value has been calculated and not set by a user
+     */
     function is_result(): bool
     {
-        if ($this->is_result) {
+        if ($this->obj()::class == formula_value::class) {
             return true;
         } else {
             return false;
@@ -211,9 +205,9 @@ class figure extends db_object
         } else {
             $result .= 'value';
         }
-        $result .= ' ' . $this->number;
-        $result .= ' ' . $this->symbol;
-        $result .= ' ' . $this->last_update->format('Y-m-d H:i:s');
+        $result .= ' ' . $this->number();
+        $result .= ' ' . $this->symbol();
+        $result .= ' ' . $this->last_update()->format('Y-m-d H:i:s');
         if (isset($this->obj)) {
             $result .= $this->obj->dsp_id();
         }
@@ -227,8 +221,8 @@ class figure extends db_object
     function name(): string
     {
 
-        $result = ' ' . $this->number;
-        $result .= ' ' . $this->symbol;
+        $result = ' ' . $this->number();
+        $result .= ' ' . $this->symbol();
         if (isset($this->obj)) {
             $result .= $this->obj->name();
         }

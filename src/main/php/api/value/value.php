@@ -45,6 +45,7 @@ class value_api extends sandbox_value_api implements \JsonSerializable
     // a list of dummy values that are used for system tests
     const TV_READ = 3.14159265358979323846264338327950288419716939937510; // pi
     const TV_READ_SHORT = 3.1415926535898; // pi
+    const TV_READ_SHORTEST = 3.1415927; // pi
     const TV_INT = 123456;
     const TV_FLOAT = 123.456;
     const TV_BIG = 123456789;

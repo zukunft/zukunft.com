@@ -47,7 +47,7 @@ class combine_object
      * object vars
      */
 
-    private object $obj;
+    protected object $obj;
 
 
     /*

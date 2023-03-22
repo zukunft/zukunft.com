@@ -140,6 +140,7 @@ class test_new_obj extends test_base
         $wrd = $this->dummy_word();
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd->phrase());
+        $fv->set_id(1);
         $fv->phr_lst = $phr_lst;
         $fv->value = 123456;
         return $fv;

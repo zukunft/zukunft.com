@@ -91,7 +91,7 @@ class figure_dsp
     }
 
     /**
-     * return the figure id based on the value or result id
+     * @return int the figure id based on the value or result id
      * must have the same logic as the database view and the frontend
      */
     function id(): int
@@ -103,6 +103,10 @@ class figure_dsp
         }
     }
 
+    /**
+     * @return int the id of the value or result id (not unique!)
+     * must have the same logic as the database view and the frontend
+     */
     function obj_id(): int
     {
         return $this->obj()->id();

@@ -311,9 +311,9 @@ class formula_element_group
             if ($wrd_val->isset()) {
                 // save the value to the result
                 $fig = $wrd_val->figure();
-                $fig->symbol = $frm_elm->symbol;
+                $fig->set_symbol($frm_elm->symbol);
                 $fig_lst->add($fig);
-                log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->symbol . ')');
+                log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->symbol() . ')');
             } else {
                 // if there is no number that the user has entered for the word list, try to get the most useful formula result
 
@@ -343,7 +343,7 @@ class formula_element_group
                 // save the value to the result
                 if ($grp_fv->id() > 0) {
                     $fig = $grp_fv->figure();
-                    $fig->symbol = $this->symbol;
+                    $fig->set_symbol($this->symbol);
                     $fig_lst->add($fig);
 
                     log_debug('formula value for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name() . '" (word group ' . $val_phr_grp->id() . ', user ' . $this->usr->id() . ') = ' . $grp_fv->value);

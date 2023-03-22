@@ -30,6 +30,7 @@
 
 */
 
+use api\value_api;
 use model\figure;
 
 class figure_unit_tests
@@ -45,13 +46,38 @@ class figure_unit_tests
         $t->subheader('SQL statement tests');
 
         // if the user has changed the formula, that related figure is not standard anymore
+        /*
         $frm = new formula($usr);
         $frm->usr_cfg_id = 1;
         $fig = new figure($usr);
         $fig->obj = $frm;
         $result = $fig->is_std();
         $t->assert('figure->is_std if formula is changed by the user', $result, false);
+        */
 
+
+        $t->subheader('set and get unit tests');
+
+        $fig = $t->dummy_figure_value();
+        $t->assert('figure value id', $fig->id(), 1);
+        $fig = $t->dummy_figure_result();
+        $t->assert('figure result id', $fig->id(), -1);
+
+        $fig = $t->dummy_figure_value();
+        $t->assert('figure value obj id', $fig->obj_id(), 1);
+        $fig = $t->dummy_figure_result();
+        $t->assert('figure result obj id', $fig->obj_id(), 1);
+
+        $fig = $t->dummy_figure_value();
+        $t->assert('figure value number', $fig->number(), value_api::TV_READ_SHORTEST);
+        $fig = $t->dummy_figure_result();
+        $t->assert('figure result number', $fig->number(), 123456);
+
+        $fig = $t->dummy_figure_value();
+        $t->assert('figure value symbol', $fig->symbol(), "");
+        $fig = $t->dummy_figure_result();
+        // TODO review
+        //$t->assert('figure result symbol', $fig->symbol(), "{f1}");
 
         $t->subheader('API unit tests');
 

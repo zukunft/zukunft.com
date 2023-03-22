@@ -79,6 +79,14 @@ class _sandbox_value extends sandbox
         return $this->number;
     }
 
+    /**
+     * @return DateTime|null the timestamp when the user has last updated the value
+     */
+    function last_update(): DateTime
+    {
+        return $this->last_update;
+    }
+
 
     /*
      * cast

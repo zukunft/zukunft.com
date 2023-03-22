@@ -90,7 +90,7 @@ class value_unit_tests
         $val = new value($usr);
         $val->set_number(value_api::TV_PCT);
         $fig = $val->figure();
-        $t->assert($t->name . ' get figure',$fig->number, $val->number());
+        $t->assert($t->name . ' get figure',$fig->number(), $val->number());
 
 
         $t->header('Unit tests of the value time series class (src/main/php/model/value/value_time_series.php)');

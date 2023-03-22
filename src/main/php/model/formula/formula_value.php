@@ -106,6 +106,7 @@ class formula_value extends db_object
     public ?string $num_text = null;           // the formula text filled with numbers used for the result calculation
     public ?DateTime $last_val_update = null;  // the time of the last update of an underlying value, formula result or formula
     //                                            if this is later than the last update the result needs to be updated
+    private string $symbol = '';               // the symbol of the related formula element
 
     // to be dismissed
     public ?phrase $phr = null;  // to get the most interesting result for this word
@@ -164,6 +165,16 @@ class formula_value extends db_object
      * set and get
      */
 
+    function set_symbol(string $symbol): void
+    {
+        $this->symbol = $symbol;
+    }
+
+    function symbol(): string
+    {
+        return $this->symbol;
+    }
+
     /**
      * set the user of the formula result list
      *
@@ -186,6 +197,16 @@ class formula_value extends db_object
     function is_std(): bool
     {
         return $this->is_std;
+    }
+
+    function number(): float
+    {
+        return $this->value;
+    }
+
+    function last_update(): DateTime
+    {
+        return $this->last_update;
     }
 
 
@@ -999,14 +1020,7 @@ class formula_value extends db_object
      */
     function figure(): figure
     {
-        $fig = new figure($this->user());
-        $fig->id = $this->id();
-        $fig->set_type_result();
-        $fig->number = $this->value;
-        $fig->last_update = $this->last_update;
-        $fig->obj = $this;
-
-        return $fig;
+        return new figure($this);
     }
 
     /**

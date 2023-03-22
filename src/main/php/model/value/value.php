@@ -106,6 +106,7 @@ class value extends _sandbox_value
     // related database objects
     public phrase_group $grp;  // phrases (word or triple) group object for this value
     public ?source $source;    // the source object
+    private string $symbol = '';               // the symbol of the related formula element
 
     // simple database fields
     public ?DateTime $last_update = null; // the time of the last update of fields that may influence the calculated results
@@ -251,6 +252,16 @@ class value extends _sandbox_value
     /*
      * set and get
      */
+
+    function set_symbol(string $symbol): void
+    {
+        $this->symbol = $symbol;
+    }
+
+    function symbol(): string
+    {
+        return $this->symbol;
+    }
 
     /**
      * map a value api json to this model value object
@@ -1199,14 +1210,7 @@ class value extends _sandbox_value
      */
     function figure(): figure
     {
-        $fig = new figure($this->user());
-        $fig->id = $this->id;
-        $fig->set_type_value();
-        $fig->number = $this->number();
-        $fig->last_update = $this->last_update;
-        $fig->obj = $this;
-
-        return $fig;
+        return new figure($this);
     }
 
     /**
