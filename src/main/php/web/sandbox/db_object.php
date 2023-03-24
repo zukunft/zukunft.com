@@ -37,6 +37,7 @@ namespace html;
 include_once API_SANDBOX_PATH . 'sandbox.php';
 
 use api\sandbox_api;
+use controller\controller;
 
 class db_object_dsp
 {
@@ -79,8 +80,8 @@ class db_object_dsp
      */
     function set_from_json_array(array $json_array): void
     {
-        if (array_key_exists(sandbox_api::FLD_ID, $json_array)) {
-            $this->set_id($json_array[sandbox_api::FLD_ID]);
+        if (array_key_exists(controller::API_FLD_ID, $json_array)) {
+            $this->set_id($json_array[controller::API_FLD_ID]);
         } else {
             log_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }

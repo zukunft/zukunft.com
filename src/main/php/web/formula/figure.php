@@ -35,10 +35,13 @@ namespace html;
 include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_FORMULA_PATH . 'figure.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
+include_once API_PATH . 'controller.php';
 
 use api\combine_object_api;
 use api\figure_api;
 use api\phrase_list_api;
+use api\sandbox_value_api;
+use controller\controller;
 
 class figure_dsp
 {
@@ -66,17 +69,21 @@ class figure_dsp
 
     function set_from_json(string $json_api_msg): void
     {
-        $json_array = json_decode($json_api_msg);
-        if ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_RESULT) {
-            $fv_dsp = new formula_value_dsp();
-            $fv_dsp->set_from_json_array($json_array);
-            $this->set_obj($fv_dsp);
-        } elseif ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_VALUE) {
-            $val = new value_dsp();
-            $val->set_from_json_array($json_array);
-            $this->set_obj($val);
+        $json_array = json_decode($json_api_msg, true);
+        if (array_key_exists(combine_object_api::FLD_CLASS, $json_array)) {
+            if ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_RESULT) {
+                $fv_dsp = new formula_value_dsp();
+                $fv_dsp->set_from_json_array($json_array);
+                $this->set_obj($fv_dsp);
+            } elseif ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_VALUE) {
+                $val = new value_dsp();
+                $val->set_from_json_array($json_array);
+                $this->set_obj($val);
+            } else {
+                log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a figure');
+            }
         } else {
-            log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a figure');
+            log_err('Json class missing, but expected for a figure');
         }
     }
 
@@ -120,6 +127,29 @@ class figure_dsp
     function number(): float
     {
         return $this->obj()->number();
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string ) to enable combinations of api_message() calls
+     */
+    function api_array(): array
+    {
+        $vars = array();
+        if ($this->is_result()) {
+            $vars[combine_object_api::FLD_CLASS] = figure_api::CLASS_RESULT;
+        } else {
+            $vars[combine_object_api::FLD_CLASS] = figure_api::CLASS_VALUE;
+        }
+        $vars[controller::API_FLD_ID] = $this->id();
+        $vars[sandbox_value_api::FLD_NUMBER] = $this->number();
+        $vars[controller::API_FLD_PHRASES] = $this->obj->grp()->api_array();
+        return $vars;
     }
 
 
@@ -180,20 +210,6 @@ class figure_dsp
         } else {
             return $html->ref($html->url(api::RESULT_EDIT, $this->obj_id(), $back), $this->val_formatted());
         }
-    }
-
-    /*
-     * interface
-     */
-
-    /**
-     *
-     * @return string the json message string to send the updated data to the backend
-     */
-    function api_message(): string
-    {
-
-        return '';
     }
 
 }

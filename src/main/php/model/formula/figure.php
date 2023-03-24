@@ -35,14 +35,16 @@ include_once MODEL_SANDBOX_PATH . 'combine_object.php';
 include_once API_FORMULA_PATH . 'figure.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_FORMULA_PATH . 'formula_value.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_USER_PATH . 'user.php';
 
 use api\figure_api;
 use html\figure_dsp;
 use value;
 use formula_value;
+use formula;
 use user;
 use DateTime;
-use formula;
 
 class figure extends combine_object
 {
@@ -104,6 +106,7 @@ class figure extends combine_object
     }
 
     /**
+     * set by the formula element that has be used to get this figure
      * @param string $symbol the reference text either from the formula result or the db value from a user or source
      */
     function set_symbol(string $symbol): void
@@ -137,7 +140,7 @@ class figure extends combine_object
             if ($this->obj == null) {
                 return false;
             } else {
-                if (get_class($this->obj) == formula::class or get_class($this->obj) == formula_dsp_old::class) {
+                if (get_class($this->obj) == formula::class) {
                     return $this->obj->is_std();
                 } else {
                     return false;

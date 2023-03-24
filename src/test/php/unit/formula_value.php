@@ -30,6 +30,7 @@
 
 */
 
+use api\formula_value_api;
 use api\word_api;
 use cfg\phrase_type;
 
@@ -95,11 +96,11 @@ class formula_value_unit_tests
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_const->phrase());
         $fv->phr_lst = $phr_lst;
-        $fv->value = 123456;
+        $fv->value = formula_value_api::TV_INT;
         $t->assert('formula_value->val_formatted test big numbers', $fv->val_formatted(), "123'456");
 
         // ... for small values 12.35 instead of 12.34 due to rounding
-        $fv->value = 12.3456;
+        $fv->value = formula_value_api::TV_FLOAT;
         $t->assert('formula_value->val_formatted test small numbers', $fv->val_formatted(), "12.35");
 
         // ... for percent values

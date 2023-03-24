@@ -40,6 +40,7 @@ include_once API_SANDBOX_PATH . 'sandbox_value.php';
 
 use api\sandbox_api;
 use api\sandbox_value_api;
+use controller\controller;
 
 class value_dsp extends sandbox_value_dsp
 {
@@ -102,24 +103,6 @@ class value_dsp extends sandbox_value_dsp
     function set_from_json(string $json_api_msg): void
     {
         $this->set_from_json_array(json_decode($json_api_msg));
-    }
-
-    /**
-     * set the vars of this object bases on the api json array
-     * @param array $json_array an api json message
-     * @return void
-     */
-    function set_from_json_array(array $json_array): void
-    {
-        if (array_key_exists(sandbox_api::FLD_ID, $json_array)) {
-            $this->set_number($json_array[sandbox_api::FLD_ID]);
-        } else {
-            log_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
-        }
-        if (array_key_exists(sandbox_value_api::FLD_NUMBER, $json_array)) {
-            $this->set_number($json_array[sandbox_value_api::FLD_NUMBER]);
-        }
-
     }
 
 

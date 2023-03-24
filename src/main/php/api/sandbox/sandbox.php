@@ -34,6 +34,9 @@
 
 namespace api;
 
+include_once API_PATH . 'controller.php';
+
+use controller\controller;
 use formula;
 use user;
 use sandbox;
@@ -44,9 +47,6 @@ use function log_err;
 
 class sandbox_api
 {
-
-    // the json field name in the api json message which is supposed to be the same as the var $id
-    const FLD_ID = 'id';
 
     // fields for the backend link
     public int $id; // the database id of the object, which is the same as the related database object in the backend
@@ -79,6 +79,21 @@ class sandbox_api
     function id(): int
     {
         return $this->id;
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json api message as a text string
+     */
+    function api_array(): array
+    {
+        $vars = array();
+        $vars[controller::API_FLD_ID] = $this->id();
+        return $vars;
     }
 
 

@@ -36,6 +36,9 @@ namespace html;
 
 use api\phrase_group_api;
 use api\phrase_list_api;
+use api\sandbox_api;
+use api\sandbox_value_api;
+use controller\controller;
 
 class phrase_group_dsp extends sandbox_named_dsp
 {
@@ -73,6 +76,21 @@ class phrase_group_dsp extends sandbox_named_dsp
     /*
      * set and get
      */
+
+    /**
+     * set the vars of this phrase list bases on the api json array
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        foreach ($json_array as $phr_json) {
+            $wrd = new word_dsp();
+            $wrd->set_from_json_array($phr_json);
+            $phr = new phrase_dsp($wrd);
+            $this->lst[] = $phr;
+        }
+    }
 
     function set_lst($lst): void
     {
@@ -196,6 +214,7 @@ class phrase_group_dsp extends sandbox_named_dsp
         return $result;
     }
 
+
     /*
      * set and get
      */
@@ -207,6 +226,26 @@ class phrase_group_dsp extends sandbox_named_dsp
             $phr_lst_dsp[] = $phr->dsp_obj();
         }
         $this->set_lst($phr_lst_dsp);
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     */
+    function api_array(): array
+    {
+        //$vars = array();
+        $phr_lst_vars = array();
+        //$vars[controller::API_FLD_ID] = $this->id();
+        foreach ($this->lst as $phr) {
+            $phr_lst_vars[] = $phr->api_array();
+        }
+        //$vars[controller::API_FLD_PHRASES] = $phr_lst_vars;
+        return $phr_lst_vars;
     }
 
 }

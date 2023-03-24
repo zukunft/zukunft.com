@@ -46,7 +46,7 @@ class figure_api extends combine_object_api implements \JsonSerializable
      * construct and map
      */
 
-    function __construct(value_api|formula_value_api $val_obj)
+    function __construct(value_api|formula_value_api|null $val_obj = null)
     {
         $this->set_obj($val_obj);
     }

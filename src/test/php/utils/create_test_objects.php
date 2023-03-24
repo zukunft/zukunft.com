@@ -40,6 +40,7 @@
 */
 
 use api\formula_api;
+use api\formula_value_api;
 use api\phrase_group_api;
 use api\ref_api;
 use api\source_api;
@@ -142,7 +143,7 @@ class test_new_obj extends test_base
         $phr_lst->add($wrd->phrase());
         $fv->set_id(1);
         $fv->phr_lst = $phr_lst;
-        $fv->value = 123456;
+        $fv->value = formula_value_api::TV_INT;
         return $fv;
     }
 

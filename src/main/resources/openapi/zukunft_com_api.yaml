@@ -41,6 +41,10 @@ tags:
     description: the selection of values in formulas is done with an and selection of phrases
   - name: formulaList
     description: get a list of formulas by ids, phrase or phrase list
+  - name: figure
+    description: get a values or result by id, group or phrase list
+  - name: figureList
+    description: get a list of values or results
   - name: view
     description: to define the display format of a phrase and the linked values and formula results
   - name: component
@@ -759,6 +763,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FormulaList'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /figureList:
+    post:
+      tags:
+        - figureList
+      summary: get a list of figure by the ids
+      description: get a list of figure by the ids
+      requestBody:
+        description: id list of figure to fetch
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdList'
+      responses:
+        '200':
+          description: figures requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FigureList'
         default:
           description: unexpected error
           content:
@@ -1594,7 +1624,7 @@ paths:
       description: Update an existing user by Id
       operationId: updateUser
       parameters:
-        - name: id
+        - name: email
           in: path
           description: ID of user to update
           required: true
@@ -1631,7 +1661,7 @@ paths:
       description: deletes a single user based on the ID supplied
       operationId: deleteUser
       parameters:
-        - name: id
+        - name: email
           in: path
           description: ID of user to delete
           required: true
@@ -2224,6 +2254,40 @@ components:
           $ref: '#/components/schemas/Protection'
         assigned_word:
           $ref: '#/components/schemas/PhraseList'
+    FigureList:
+      type: array
+      description: a list of user values or calculated formula results
+      example: 3.14
+      items:
+        $ref: '#/components/schemas/Figure'
+    Figure:
+      type: object
+      required:
+        - name
+      properties:
+        class:
+          type: string
+          description: define if the figure is a value set by a user of a formula result
+          example: value
+          enum:
+            - value
+            - result
+        phrases:
+          $ref: '#/components/schemas/PhraseList'
+        number:
+          type: number
+          description: the numeric value
+          example: 1.375
+        timestamp:
+          type: string
+          description: a point in time
+          example: "2018-11-23 15:35:00"
+        share:
+          $ref: '#/components/schemas/Share'
+        protection:
+          $ref: '#/components/schemas/Protection'
+        source:
+          $ref: '#/components/schemas/Source'
     SourceList:
       type: array
       description: a link to an external data source

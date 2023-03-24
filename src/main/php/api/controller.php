@@ -31,6 +31,7 @@
 
 namespace controller;
 
+use api\combine_object_api;
 use api\list_api;
 use api\type_lists_api;
 use api\sandbox_api;
@@ -57,7 +58,7 @@ class controller
     const URL_VAR_WORD_FLD = 'word_field';
 
     // field names of the api json messages
-    const API_FLD_ID = 'id';
+    const API_FLD_ID = 'id';  // the json field name in the api json message which is supposed to be the same as the var $id
     const API_FLD_NAME = 'name';
     const API_FLD_DESCRIPTION = 'description';
     const API_FLD_TYPE = 'type';
@@ -246,11 +247,11 @@ class controller
      * encode an user sandbox object for the frontend api
      * and response to a get request
      *
-     * @param sandbox_api $api_obj the object that should be encoded
+     * @param sandbox_api|combine_object_api $api_obj the object that should be encoded
      * @param string $msg if filled the message that should be shown to the user instead of the object
      * @return void
      */
-    function get(sandbox_api $api_obj, string $msg): void
+    function get(sandbox_api|combine_object_api $api_obj, string $msg): void
     {
         // return the api json or the error message
         if ($msg == '') {

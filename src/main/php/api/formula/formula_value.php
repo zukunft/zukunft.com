@@ -38,6 +38,18 @@ use html\formula_value_dsp;
 class formula_value_api extends sandbox_value_api implements \JsonSerializable
 {
 
+    /*
+     * const for system testing
+     */
+
+    const TV_INT = 123456;
+    const TV_FLOAT = 12.3456;
+
+
+    /*
+     * object vars
+     */
+
     // true if the user has done no personal overwrites which is the default case
     public bool $is_std;
 

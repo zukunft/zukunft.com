@@ -39,6 +39,7 @@ include_once WEB_WORD_PATH . 'triple.php';
 
 use api\combine_object_api;
 use api\phrase_api;
+use controller\controller;
 
 class phrase_dsp
 {
@@ -137,6 +138,23 @@ class phrase_dsp
     function type(): ?int
     {
         return $this->obj()->type_id();
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     */
+    function api_array(): array
+    {
+        $vars = array();
+        $vars[controller::API_FLD_ID] = $this->id();
+        $vars[controller::API_FLD_NAME] = $this->name();
+        $vars[controller::API_FLD_DESCRIPTION] = $this->description();
+        return $vars;
     }
 
 
