@@ -277,7 +277,7 @@ class test_api extends test_new_obj
         $class = $this->class_to_api($class);
         $api_obj = $usr_obj->api_obj();
         $api_json_msg = json_decode($api_obj->get_json(), true);
-        $dsp_obj->set_from_json(json_encode($api_json_msg));
+        $dsp_obj = $this->dsp_obj($usr_obj, $dsp_obj);
         return $this->assert_api_compare($class, $api_json_msg, $dsp_obj->api_array());
     }
 

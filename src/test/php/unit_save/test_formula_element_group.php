@@ -39,6 +39,7 @@
 
 use api\formula_api;
 use api\word_api;
+use html\figure_dsp;
 
 function run_formula_element_group_test(testing $t): void
 {
@@ -97,7 +98,7 @@ function run_formula_element_group_test(testing $t): void
         $time_phr = $phr_lst->assume_time();
         $result = $elm_grp->dsp_values($time_phr);
         $fig_lst = $elm_grp->figures();
-        $target = '<a href="/http/value_edit.php?id='.$fig_lst->get_first_id().'" title="8.51">8.51</a>';
+        $target = '<a href="/http/result_edit.php?id='.$fig_lst->get_first_id().'" title="8.51">8.51</a>';
         $t->dsp('formula_element_group->dsp_values', $target, $result);
 
         // remember the figure list for the figure and figure list class test
@@ -116,13 +117,15 @@ function run_formula_element_group_test(testing $t): void
             $fig = $fig_lst->lst()[0];
 
             if (isset($fig)) {
-                $result = $fig->display();
+                $t = new test_api();
+                $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
+                $result = $fig_dsp->display();
                 $target = "8.51";
                 $t->dsp('figure->display', $target, $result);
 
-                $result = $fig->display_linked();
+                $result = $fig_dsp->display_linked();
                 //$target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
-                $target = '<a href="/http/value_edit.php?id='.$fig->id().'" title="8.51">8.51</a>';
+                $target = '<a href="/http/result_edit.php?id='.$fig->id().'" title="8.51">8.51</a>';
                 $t->dsp('figure->display_linked', $target, $result);
             }
         } else {

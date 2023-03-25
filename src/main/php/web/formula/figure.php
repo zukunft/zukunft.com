@@ -204,12 +204,14 @@ class figure_dsp
      */
     function display_linked(string $back = ''): string
     {
+        // TODO check if $result .= $this->obj->display_linked($back) can be used
         $html = new html_base();
         if ($this->is_result()) {
-            return $html->ref($html->url(api::VALUE_EDIT, $this->obj_id(), $back), $this->val_formatted());
+            $url = $html->url(api::VALUE_EDIT, $this->obj_id(), $back);
         } else {
-            return $html->ref($html->url(api::RESULT_EDIT, $this->obj_id(), $back), $this->val_formatted());
+            $url = $html->url(api::RESULT_EDIT, $this->obj_id(), $back);
         }
+        return $html->ref($url, $this->val_formatted());
     }
 
 }

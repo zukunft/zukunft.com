@@ -192,6 +192,7 @@ class figure extends combine_object
         }
     }
 
+
     /*
      * display
      */
@@ -228,44 +229,6 @@ class figure extends combine_object
         $result .= ' ' . $this->symbol();
         if (isset($this->obj)) {
             $result .= $this->obj->name();
-        }
-
-        return $result;
-    }
-
-    /**
-     * return the html code to display a value
-     * this is the opposite of the convert function
-     */
-    function display(string $back = ''): string
-    {
-        log_debug();
-        $result = '';
-
-        if ($this->is_result()) {
-            $result .= $this->obj->display($back);
-        } else {
-            if ($this->obj != null) {
-                $result .= $this->obj->dsp_obj()->display($back);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * html code to show the value with the possibility to click for the result explanation
-     */
-    function display_linked(string $back = ''): string
-    {
-        log_debug('figure->display_linked');
-        $result = '';
-
-        if ($this->is_result()) {
-            $result .= $this->obj->display_linked($back);
-        } else {
-            $val_dsp = $this->obj->dsp_obj();
-            $result .= $val_dsp->display_linked($back);
         }
 
         return $result;

@@ -40,6 +40,8 @@
   
 */
 
+use html\figure_dsp;
+
 class formula_element_group
 {
 
@@ -375,7 +377,9 @@ class formula_element_group
         // build the html code to display the value with the link
         foreach ($fig_lst->lst() as $fig) {
             log_debug('display figure');
-            $result .= $fig->display_linked($back);
+            $t = new test_api();
+            $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
+            $result .= $fig_dsp->display_linked($back);
         }
 
         // TODO: show the time phrase only if it differs from the main time phrase

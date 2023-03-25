@@ -32,6 +32,7 @@
 
 use api\value_api;
 use api\word_api;
+use html\figure_dsp;
 
 function run_value_test(testing $t): void
 {
@@ -217,7 +218,8 @@ function run_value_test(testing $t): void
     $mio_val = new value_dsp_old($t->usr1);
     $mio_val->load_by_grp($phr_lst->get_grp());
     $fig = $mio_val->figure();
-    $result = $fig->display_linked('1');
+    $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
+    $result = $fig_dsp->display_linked('1');
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1" title="1.55">1.55</a>';
     $diff = str_diff($result, $target);
     if ($diff != '') {

@@ -34,7 +34,9 @@ namespace api;
 
 include_once API_SANDBOX_PATH . 'combine_object.php';
 
-class figure_api extends combine_object_api implements \JsonSerializable
+use JsonSerializable;
+
+class figure_api extends combine_object_api implements JsonSerializable
 {
 
     // the json field name in the api json message to identify if the figure is a value or result

@@ -36,6 +36,7 @@ include_once WEB_FORMULA_PATH . 'figure.php';
 
 use api\formula_value_api;
 use api\value_api;
+use html\api;
 use html\figure_dsp;
 
 class figure_unit_tests
@@ -92,6 +93,10 @@ class figure_unit_tests
 
         $fig = $t->dummy_figure_value();
         $t->assert_api_to_dsp($fig, new figure_dsp());
+
+        $dsp = $t->dsp_obj($fig, new figure_dsp());
+        $html_link = $dsp->display_linked();
+        $t->assert_text_contains('figure html link', $html_link, api::RESULT_EDIT);
 
     }
 

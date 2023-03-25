@@ -29,6 +29,7 @@
   
 */
 
+use html\figure_dsp;
 use model\figure;
 
 class figure_list extends sandbox_list
@@ -134,6 +135,7 @@ class figure_list extends sandbox_list
     }
 
     /**
+     * TODO to be moved to the frontend object
      * return the html code to display a value
      * this is the opposite of the convert function
      * this function is called from dsp_id, so no other call is allowed
@@ -143,7 +145,9 @@ class figure_list extends sandbox_list
         $result = '';
 
         foreach ($this->lst as $fig) {
-            $result .= $fig->display($back) . ' ';
+            $t = new test_api();
+            $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
+            $result .= $fig_dsp->display($back) . ' ';
         }
 
         return $result;

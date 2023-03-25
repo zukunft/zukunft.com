@@ -315,6 +315,19 @@ class test_new_obj extends test_base
     }
 
 
+    /**
+     * set the all values of the frontend object based on a backend object using the api object
+     * @param object $model_obj the frontend object with the values of the backend object
+     */
+    function dsp_obj(object $model_obj, object $dsp_obj): object
+    {
+        $api_obj = $model_obj->api_obj();
+        $api_json_msg = json_decode($api_obj->get_json(), true);
+        $dsp_obj->set_from_json(json_encode($api_json_msg));
+        return $dsp_obj;
+    }
+
+
     /*
      * word
      */
