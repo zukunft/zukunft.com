@@ -2,8 +2,8 @@
 
 /*
 
-    value_phrase_link_list.php - a list of value phrase links
-    --------------------------
+    model/value/value_phrase_link_list.php - a list of value phrase links
+    --------------------------------------
 
     These links are mainly used for using the database for index based selections
     the links itself are a replication of the phrase group links per value
@@ -25,12 +25,14 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
   
 */
+
+namespace model;
 
 class value_phrase_link_list extends sandbox_list
 {

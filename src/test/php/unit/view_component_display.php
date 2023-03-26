@@ -30,6 +30,8 @@
 
 */
 
+namespace test;
+
 use api\view_cmp_api;
 use html\html_base;
 use html\view_cmp_dsp;

@@ -2,8 +2,8 @@
 
 /*
 
-    phrase.php - either a word or a triple
-    ----------
+    model/phrase/phrase.php - either a word or a triple
+    -----------------------
 
     this is not saved in a separate table
     e.g. to build a selector the entries are caught either from the words or triples table
@@ -49,9 +49,15 @@
 
 */
 
+namespace model;
+
+include_once MODEL_PHRASE_PATH . 'term.php';
+
 use api\phrase_api;
 use cfg\phrase_type;
+use cfg\verb_list;
 use controller\controller;
+use formula_dsp_old;
 use html\html_selector;
 use html\phrase_dsp;
 use html\triple_dsp;

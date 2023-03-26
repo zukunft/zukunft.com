@@ -2,43 +2,49 @@
 
 /*
 
-  user_type_list.php - the superclass for word, formula and view type lists
-  ------------------
+    model/helper/user_type_list.php - the superclass for word, formula and view type lists
+    -------------------------------
 
 
-  This file is part of zukunft.com - calc with words
+    This file is part of zukunft.com - calc with words
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once MODEL_HELPER_PATH . 'library.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once API_SYSTEM_PATH . 'type_list.php';
+include_once WEB_USER_PATH . 'user_type_list.php';
+
+use model\sql_db;
+use model\sql_par;
+use model\library;
+use model\verb;
 use api\type_list_api;
-use db_cl;
-use html\_type_list_dsp;
-use library;
-use sql_db;
-use sql_par;
-use verb;
+use html\type_list_dsp;
 
 class type_list
 {
@@ -79,11 +85,11 @@ class type_list
     }
 
     /**
-     * @return _type_list_dsp the word frontend api object
+     * @return type_list_dsp the word frontend api object
      */
     function dsp_obj(): object
     {
-        return new _type_list_dsp($this->lst);
+        return new type_list_dsp($this->lst);
     }
 
 
@@ -100,7 +106,6 @@ class type_list
     /**
      * like add, but cast a verb
      * @param verb $vrb
-     * @return bool
      */
     function add_verb(verb $vrb): void
     {

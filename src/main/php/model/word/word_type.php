@@ -2,8 +2,8 @@
 
 /*
 
-    word_type.php - the word type setting
-    -------------
+    model/word/word_type.php - the word type setting
+    ------------------------
 
     types are used to assign coded functionality to a word, formula or view
     a user can create a new type to group words, formulas or views and request new functionality for the group
@@ -28,12 +28,14 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
   
 */
+
+namespace cfg;
 
 use cfg\type_object;
 use cfg\phrase_type;

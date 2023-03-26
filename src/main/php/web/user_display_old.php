@@ -29,6 +29,24 @@
   
 */
 
+use cfg\system_log_list;
+use model\formula;
+use model\formula_link;
+use model\phrase;
+use model\phrase_group;
+use model\sandbox;
+use model\sandbox_named;
+use model\source;
+use model\sql_db;
+use model\triple;
+use model\user;
+use model\value;
+use model\verb;
+use model\view;
+use model\view_cmp;
+use model\view_cmp_dsp_old;
+use model\view_cmp_link;
+
 class user_dsp_old extends user
 {
 

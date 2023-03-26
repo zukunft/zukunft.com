@@ -1,11 +1,18 @@
 <?php
 
+namespace test;
+
 // TODO sync with triple
 //use PHPUnit\Framework\TestCase;
+
+include_once API_WORD_PATH . 'triple.php';
 
 //class triple_unit_tests extends TestCase
 use api\triple_api;
 use api\word_api;
+use model\sql_db;
+use model\triple;
+use model\verb;
 
 class triple_unit_tests
 {

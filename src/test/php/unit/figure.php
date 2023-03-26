@@ -30,6 +30,8 @@
 
 */
 
+namespace test;
+
 include_once API_FORMULA_PATH . 'formula_value.php';
 include_once API_VALUE_PATH . 'value.php';
 include_once WEB_FORMULA_PATH . 'figure.php';

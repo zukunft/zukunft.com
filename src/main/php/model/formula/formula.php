@@ -2,8 +2,8 @@
 
 /*
 
-    formula.php - the main formula object
-    -----------------
+    model/formula/formula.php - the main formula object
+    -------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,13 +29,31 @@
   
 */
 
+namespace model;
+
+include_once SERVICE_EXPORT_PATH . 'formula_exp.php';
+include_once MODEL_FORMULA_PATH . 'formula_value_list.php';
+
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once MODEL_SANDBOX_PATH . 'protection_type.php';
+include_once MODEL_SANDBOX_PATH . 'share_type.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+include_once MODEL_FORMULA_PATH . 'formula_type.php';
+include_once MODEL_PHRASE_PATH . 'phrase_type.php';
+include_once API_FORMULA_PATH . 'formula.php';
+include_once WEB_FORMULA_PATH . 'formula.php';
+include_once WEB_WORD_PATH . 'word.php';
+
 use api\formula_api;
+use cfg\export\exp_obj;
+use cfg\export\formula_exp;
 use cfg\formula_type;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
-use export\formula_exp;
-use export\exp_obj;
+use DateTime;
+use formula_dsp_old;
 use html\formula_dsp;
 use html\word_dsp;
 
@@ -512,9 +530,11 @@ class formula extends sandbox_typed
      */
     function load_user_sql(sql_db $db_con): sql_par
     {
+        $lib = new library();
+        $class = $lib->str_right_of_or_all(self::class, '\\');
         $db_con->set_type(sql_db::TBL_FORMULA, true);
-        $qp = new sql_par(self::class);
-        $qp->name = self::class . '_user_sandbox';
+        $qp = new sql_par($class);
+        $qp->name = $class . '_user_sandbox';
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
         $db_con->set_fields(array_merge(array(sandbox::FLD_USER), self::FLD_NAMES_USR, self::FLD_NAMES_NUM_USR));

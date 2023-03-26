@@ -2,8 +2,8 @@
 
 /*
 
-    ip_range.php - a base object for a list of database IDs
-    ------------
+    model/system/ip_range.php - a base object for a list of database IDs
+    -------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,12 +23,14 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
+
+namespace model;
 
 class ip_range
 {
@@ -151,8 +153,10 @@ class ip_range
     function load_sql(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_IP);
-        $qp = new sql_par(self::class);
-        $qp->name = self::class . '_by_';
+        $lib = new library();
+        $class = $lib->str_right_of_or_all(self::class, '\\');
+        $qp = new sql_par($class);
+        $qp->name = $class . '_by_';
         $sql_where = '';
         if ($this->id != 0) {
             $qp->name .= 'id';
@@ -168,7 +172,7 @@ class ip_range
             $qp->name = '';
             log_err("Either the database ID (" . $this->id .
                 ") or the ip range (" . $this->dsp_id() .
-                ") must be set to load an ip range.", self::class . '->load_sql');
+                ") must be set to load an ip range.", $class . '->load_sql');
         }
 
         if ($qp->name != '') {

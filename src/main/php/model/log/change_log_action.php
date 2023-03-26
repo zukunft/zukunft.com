@@ -29,11 +29,12 @@
 
 */
 
-global $change_log_actions
-       ;
+namespace model;
 
 use cfg\type_list;
 use cfg\type_object;
+
+global $change_log_actions;
 
 class change_log_action extends type_list
 {

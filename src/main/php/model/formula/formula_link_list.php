@@ -2,8 +2,8 @@
 
 /*
 
-    formula_link_list.php - a list of formula word links
-    ---------------------
+    model/formula/formula_link_list.php - a list of formula word links
+    -----------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -28,6 +28,8 @@
     http://zukunft.com
   
 */
+
+namespace model;
 
 class formula_link_list extends sandbox_list
 {

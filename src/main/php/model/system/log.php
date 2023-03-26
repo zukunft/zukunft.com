@@ -2,8 +2,8 @@
 
 /*
 
-    log.php - the simple log interface object
-    -------
+    model/system/log.php - the simple log interface object
+    --------------------
 
     for the internal handling of the system error the system_error_log class is used
 
@@ -31,6 +31,7 @@
 
 */
 
+namespace model;
 
 class log
 {

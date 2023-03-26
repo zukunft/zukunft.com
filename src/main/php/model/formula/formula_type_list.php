@@ -29,11 +29,16 @@
 
 */
 
-global $formula_types;
+namespace cfg;
+
+include_once DB_PATH . 'sql_db.php';
 
 use cfg\formula_type;
 use cfg\type_list;
 use cfg\type_object;
+use model\sql_db;
+
+global $formula_types;
 
 class formula_type_list extends type_list
 {

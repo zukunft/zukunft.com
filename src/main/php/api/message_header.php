@@ -29,7 +29,10 @@
 
 */
 
+use cfg\config;
 use html\html_base;
+use model\sql_db;
+use model\user;
 
 class api_message
 {

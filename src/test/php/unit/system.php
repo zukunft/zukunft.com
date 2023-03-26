@@ -29,7 +29,23 @@
 
 */
 
+namespace test;
+
+include_once MODEL_SYSTEM_PATH . 'ip_range.php';
+include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
+include_once MODEL_SYSTEM_PATH . 'system_log_list.php';
+include_once API_SYSTEM_PATH . 'system_log.php';
+
 use api\system_log_api;
+use cfg\config;
+use cfg\system_log_list;
+use DateTime;
+use model\ip_range;
+use model\ip_range_list;
+use model\library;
+use model\sys_log_status;
+use model\sql_db;
+use model\system_log;
 
 class system_unit_tests
 {
@@ -51,8 +67,8 @@ class system_unit_tests
         $t->header('Unit tests of the system classes (src/main/php/model/system/ip_range.php)');
 
         $t->subheader('System function tests');
-        $t->assert('default log message', log_debug(), 'system_unit_tests->run');
-        $t->assert('debug log message', log_debug('additional info'), 'system_unit_tests->run: additional info');
+        $t->assert('default log message', log_debug(), 'test\system_unit_tests->run');
+        $t->assert('debug log message', log_debug('additional info'), 'test\system_unit_tests->run: additional info');
 
 
         $t->subheader('IP filter tests');
@@ -182,7 +198,7 @@ class system_unit_tests
         $ip_range->set_user($usr);
         $ip_range->import_obj($json_in, false);
         $json_ex = json_decode(json_encode($ip_range->export_obj()), true);
-        $result = json_is_similar($json_in, $json_ex);
+        $result = $lib->json_is_similar($json_in, $json_ex);
         $t->assert('ip_range->import check', $result, true);
 
 

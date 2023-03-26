@@ -2,8 +2,8 @@
 
 /*
 
-  phrase_group_list.php - a list of word and triple groups
-  ---------------------
+  model/phrase/phrase_group_list.php - a list of word and triple groups
+  ----------------------------------
 
   This file is part of zukunft.com - calc with words
 
@@ -28,6 +28,8 @@
   http://zukunft.com
   
 */
+
+namespace model;
 
 class phrase_group_list
 {
@@ -94,9 +96,11 @@ class phrase_group_list
      */
     function load_sql(sql_db $db_con, bool $get_name = false): sql_par
     {
+        $lib = new library();
         $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
-        $qp = new sql_par(self::class);
-        $qp->name = self::class . '_by_';
+        $class = $lib->str_right_of_or_all(self::class, '\\');
+        $qp = new sql_par($class);
+        $qp->name = $class . '_by_';
         $sql_where = '';
 
 

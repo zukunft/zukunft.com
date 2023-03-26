@@ -32,11 +32,17 @@
 
 namespace api;
 
-use html\_type_list_dsp;
-use verb;
-use view;
+include_once API_VERB_PATH . 'verb.php';
+include_once API_VIEW_PATH . 'view.php';
+include_once API_SANDBOX_PATH . 'list.php';
+include_once WEB_SANDBOX_PATH . 'list.php';
 
-class type_list_api extends list_api implements \JsonSerializable
+use JsonSerializable;
+use html\type_list_dsp;
+use model\verb;
+use model\view;
+
+class type_list_api extends list_api implements JsonSerializable
 {
 
     // memory vs speed optimize vars
@@ -104,9 +110,9 @@ class type_list_api extends list_api implements \JsonSerializable
      */
 
     /**
-     * @returns _type_list_dsp the cast object with the HTML code generating functions
+     * @returns type_list_dsp the cast object with the HTML code generating functions
      */
-    function dsp_obj(): _type_list_dsp
+    function dsp_obj(): type_list_dsp
     {
         // cast the single list objects
         $lst_dsp = array();
@@ -117,7 +123,7 @@ class type_list_api extends list_api implements \JsonSerializable
             }
         }
 
-        return new _type_list_dsp($lst_dsp);
+        return new type_list_dsp($lst_dsp);
     }
 
 

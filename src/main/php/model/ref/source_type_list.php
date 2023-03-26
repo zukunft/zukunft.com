@@ -2,8 +2,8 @@
 
 /*
 
-    source_types.php - to link coded functionality to a source
-    -----------------
+    model/ref/source_type_list.php - to link coded functionality to a source
+    ------------------------------
 
     This file is part of zukunft.com - calc with sources
 
@@ -29,9 +29,17 @@
   
 */
 
-global $source_types;
+namespace cfg;
 
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once MODEL_REF_PATH . 'source_type.php';
+
+use model\sql_db;
+use model\sql_par;
 use cfg\type_list;
+
+global $source_types;
 
 class source_type_list extends type_list
 {

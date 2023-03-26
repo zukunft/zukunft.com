@@ -22,17 +22,27 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
+  Copyright (c) 1995-2023 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
   
 */
 
+namespace cfg;
+
+include_once WEB_SYSTEM_PATH . 'system_log_list.php';
 
 use api\system_log_list_api;
 use cfg\type_object;
 use html\system_log_list_dsp;
+use model\base_list;
+use model\sandbox;
+use model\sql_db;
+use model\sql_par;
+use model\sys_log_status;
+use model\system_log;
+use model\user;
 
 class system_log_list extends base_list
 {

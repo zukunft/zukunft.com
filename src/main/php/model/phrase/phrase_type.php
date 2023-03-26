@@ -2,8 +2,8 @@
 
 /*
 
-    phrase_type.php - the phrase type object for the frontend API
-    ---------------
+    model/phrase/phrase_type.php - the phrase type object for the frontend API
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -31,8 +31,10 @@
 
 namespace cfg;
 
-use library;
-use ReflectionClass;
+include_once MODEL_HELPER_PATH . 'library.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+
+use model\library;
 
 class phrase_type extends type_object
 {

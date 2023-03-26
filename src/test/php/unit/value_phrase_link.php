@@ -30,6 +30,17 @@
 
 */
 
+namespace test;
+
+include_once MODEL_VALUE_PATH . 'value_phrase_link.php';
+include_once MODEL_VALUE_PATH . 'value_phrase_link_list.php';
+
+use model\phrase;
+use model\sql_db;
+use model\value;
+use model\value_phrase_link;
+use model\value_phrase_link_list;
+
 class value_phrase_link_unit_tests
 {
 

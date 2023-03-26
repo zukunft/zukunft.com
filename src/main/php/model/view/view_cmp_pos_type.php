@@ -2,8 +2,8 @@
 
 /*
 
-  view_component_pos_type.php - ENUM of the view component position types
-  ---------------------------
+  model/view/view_component_pos_type.php - ENUM of the view component position types
+  --------------------------------------
   
   This file is part of zukunft.com - calc with words
 
@@ -22,12 +22,14 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
+  Copyright (c) 1995-2023 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
   
 */
+
+namespace cfg;
 
 class view_cmp_pos_type
 {

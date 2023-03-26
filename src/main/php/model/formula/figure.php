@@ -2,8 +2,11 @@
 
 /*
 
-    figure.php - either a value of a formula result object or a value if a user has overwritten a formula result
-    ----------
+    model/formula/figure.php - combine object for value and result
+    ------------------------
+
+    either a value of a formula result object or a value if a user has overwritten a formula result
+
 
     This file is part of zukunft.com - calc with words
 
@@ -31,7 +34,7 @@
 
 namespace model;
 
-include_once MODEL_SANDBOX_PATH . 'combine_object.php';
+include_once MODEL_HELPER_PATH . 'combine_object.php';
 include_once API_FORMULA_PATH . 'figure.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_FORMULA_PATH . 'formula_value.php';
@@ -39,12 +42,8 @@ include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_USER_PATH . 'user.php';
 
 use api\figure_api;
-use html\figure_dsp;
-use value;
-use formula_value;
-use formula;
-use user;
 use DateTime;
+use html\figure_dsp;
 
 class figure extends combine_object
 {

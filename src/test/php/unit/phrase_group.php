@@ -30,8 +30,26 @@
 
 */
 
+namespace test;
+
+include_once API_PHRASE_PATH . 'phrase_group.php';
+include_once MODEL_PHRASE_PATH . 'phrase_group_word_link.php';
+include_once MODEL_PHRASE_PATH . 'phrase_group_triple_link.php';
+include_once MODEL_PHRASE_PATH . 'phrase_group_list.php';
+
 use api\phrase_group_api;
 use api\word_api;
+use model\library;
+use model\phrase_group;
+use model\phrase_group_link;
+use model\phrase_group_list;
+use model\phrase_group_triple_link;
+use model\phrase_group_word_link;
+use model\phrase_list;
+use model\sql_db;
+use model\verb;
+use model\word;
+use model\word_list;
 
 class phrase_group_unit_tests
 {
@@ -122,7 +140,7 @@ class phrase_group_unit_tests
         $phr_grp_lst->phr = $wrd->phrase();
         $created_sql = $phr_grp_lst->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/phrase/phrase_group_list_by_word.sql');
-        $t->assert('phrase_group_list->load_all_tripleed', $lib->trim($created_sql), $lib->trim($expected_sql));
+        $t->assert('phrase_group_list->load_all_triples', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // sql to load all phrase groups linked to a triple
         $lnk = $t->load_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CITY);

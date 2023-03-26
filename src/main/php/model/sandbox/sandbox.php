@@ -2,8 +2,8 @@
 
 /*
 
-    sandbox.php - the superclass for handling user specific objects including the database saving
-    ----------------
+    model/sandbox/sandbox.php - the superclass for handling user specific objects including the database saving
+    -------------------------
 
     This superclass should be used by the classes words, formula, ... to enable user specific values and links
 
@@ -25,7 +25,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -37,10 +37,19 @@
 // TODO check if handling of negative ids is correct
 // TODO split into a link and a named user sandbox object to always use the smallest possible object
 
+namespace model;
+
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once MODEL_PHRASE_PATH . 'phrase_type.php';
+include_once MODEL_SANDBOX_PATH . 'protection_type.php';
+include_once MODEL_SANDBOX_PATH . 'share_type.php';
+
+use cfg\export\exp_obj;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
-use export\exp_obj;
 
 class sandbox extends db_object
 {

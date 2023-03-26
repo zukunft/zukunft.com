@@ -30,6 +30,19 @@
 
 */
 
+namespace test;
+
+include_once MODEL_WORD_PATH . 'triple_list.php';
+
+use cfg\verb_list;
+use model\library;
+use model\phrase;
+use model\sql_db;
+use model\triple_list;
+use model\verb;
+use model\word;
+use model\word_list;
+
 class triple_list_unit_tests
 {
     function run(testing $t): void

@@ -30,9 +30,19 @@
 
 */
 
+namespace test;
+
 use api\formula_value_api;
 use api\word_api;
 use cfg\phrase_type;
+use model\formula;
+use model\formula_value;
+use model\formula_value_list;
+use model\phrase_group;
+use model\phrase_list;
+use model\sql_db;
+use model\triple;
+use model\word;
 
 class formula_value_unit_tests
 {

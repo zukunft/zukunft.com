@@ -30,8 +30,17 @@
 
 */
 
+namespace test;
+
+include_once MODEL_WORD_PATH . 'word_list.php';
+
 use api\word_api;
 use cfg\phrase_type;
+use model\library;
+use model\sql_db;
+use model\word;
+use model\word_list;
+use model\word_select_direction;
 
 class word_list_unit_tests
 {
@@ -251,13 +260,14 @@ class word_list_unit_tests
         $t->assert($t->name . '->percent list', $wrd_lst_percent->name(), '""');
 
         // JSON export list
+        $lib = new library();
         $wrd_lst = new word_list($usr);
         $wrd_lst->add($wrd_time);
         $wrd_lst->add($wrd_measure);
         $wrd_lst->add($wrd_scale);
         $json = json_decode(json_encode($wrd_lst->export_obj()));
         $json_expected = json_decode(file_get_contents(PATH_TEST_FILES . 'export/word/word_list.json'));
-        $result = json_is_similar($json, $json_expected);
+        $result = $lib->json_is_similar($json, $json_expected);
         $t->assert('JSON export word list', $result, true);
 
     }

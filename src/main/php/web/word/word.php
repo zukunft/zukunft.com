@@ -33,13 +33,13 @@ namespace html;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once API_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
 
 use api\change_log_named_dsp;
 use api\sandbox_api;
 use api\phrase_api;
 use back_trace;
 use cfg\phrase_type;
-use word;
 
 class word_dsp extends sandbox_typed_dsp
 {

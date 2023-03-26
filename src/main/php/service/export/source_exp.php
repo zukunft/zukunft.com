@@ -2,8 +2,8 @@
 
 /*
 
-  formula_value_exp.php - the simple export object for a formula value
-  ---------------------
+  source_exp.php - the simple export object for a source
+  --------------
   
   This file is part of zukunft.com - calc with words
 
@@ -29,23 +29,28 @@
   
 */
 
-namespace export;
+namespace cfg\export;
 
-class formula_value_exp extends exp_obj
+class source_exp extends sandbox_exp_named
 {
 
+    // object specific database and JSON object field names
+    const FLD_REF = 'source';
+
     // field names used for JSON creation
-    public ?array $words = null;
-    public ?array $triples = null;
-    public ?string $time = '';
-    public ?string $number = '';
+    public ?string $url = null;
+    public ?string $description = null;
+    public ?string $type = null;
+    public ?string $code_id = null;
 
     function reset()
     {
-        $this->words = [];
-        $this->triples = [];
-        $this->time = '';
-        $this->number = '';
+        parent::reset();
+
+        $this->url = '';
+        $this->description = '';
+        $this->type = '';
+        $this->code_id = '';
     }
 
 }

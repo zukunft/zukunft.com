@@ -2,8 +2,8 @@
 
 /*
 
-    user_log_named.php - user_log object for logging changes in named objects such as words and formulas
-    ------------------
+    model/log/user_log_named.php - user_log object for logging changes in named objects such as words and formulas
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -28,6 +28,8 @@
     http://zukunft.com
 
 */
+
+namespace model;
 
 use api\change_log_named_dsp;
 use api\user_config;

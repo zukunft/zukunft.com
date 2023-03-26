@@ -30,6 +30,14 @@
 
 */
 
+namespace test;
+
+use cfg\verb_list;
+use model\phrase;
+use model\sql_db;
+use model\verb;
+use model\word_select_direction;
+
 class verb_unit_tests
 {
     function run(testing $t): void

@@ -2,8 +2,8 @@
 
 /*
 
-    triple.php - the object that links two words (an RDF triple)
-    -------------
+    model/word/triple.php - the object that links two words (an RDF triple)
+    ---------------------
 
     A link can also be used in replacement for a word
     e.g. "Zurich (Company)" where the link "Zurich is a company" is used
@@ -25,22 +25,28 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
-global $phrase_types;
+namespace model;
 
-use api\triple_api;
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_named_with_type.php';
+include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
+
+use cfg\export\exp_obj;
+use cfg\export\triple_exp;
 use cfg\protection_type;
 use cfg\share_type;
 use controller\controller;
-use export\exp_obj;
-use export\triple_exp;
+use api\triple_api;
 use html\triple_dsp;
+use JsonSerializable;
+
+global $phrase_types;
 
 class triple extends sandbox_link_named_with_type implements JsonSerializable
 {

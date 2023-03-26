@@ -2,8 +2,8 @@
 
 /*
 
-    phrase_group_triple_link.php - only for fast selection of the phrase group assigned to one triple
-    ----------------------------
+    model/phrase/phrase_group_triple_link.php - only for fast selection of the phrase group assigned to one triple
+    -----------------------------------------
 
     replication of the words linked to a phrase group saved in the triple_ids field
 
@@ -30,6 +30,8 @@
     http://zukunft.com
 
 */
+
+namespace model;
 
 class phrase_group_triple_link extends phrase_group_link
 {

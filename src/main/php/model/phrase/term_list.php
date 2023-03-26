@@ -2,8 +2,8 @@
 
 /*
 
-    term_list.php - a list of word, triple, verb or formula objects
-    -------------
+    model/phrase/term_list.php - a list of word, triple, verb or formula objects
+    --------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -29,6 +29,11 @@
     http://zukunft.com
   
 */
+
+namespace model;
+
+include_once WEB_PHRASE_PATH . 'term_list.php';
+include_once API_PHRASE_PATH . 'term_list.php';
 
 use api\term_list_api;
 use html\term_list_dsp;

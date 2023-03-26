@@ -30,7 +30,13 @@
 
 */
 
+namespace test;
+
 use api\triple_api;
+use cfg\job_type_list;
+use model\batch_job;
+use model\batch_job_list;
+use model\sql_db;
 
 class batch_job_unit_tests
 {

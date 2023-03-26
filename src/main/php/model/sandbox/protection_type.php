@@ -2,8 +2,8 @@
 
 /*
 
-    protection_type.php - to define if and how an object can changed
-    -------------------
+    model/sandbox/protection_type.php - to define if and how an object can changed
+    ---------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -30,6 +30,8 @@
 */
 
 namespace cfg;
+
+include_once MODEL_HELPER_PATH . 'type_object.php';
 
 class protection_type extends type_object
 {

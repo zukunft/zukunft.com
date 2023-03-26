@@ -2,8 +2,8 @@
 
 /*
 
-    model/log/change_log.php - read the changes from the database and forward them to the API
-    ------------------------
+    model/log/change_log_list.php - read the changes from the database and forward them to the API
+    -----------------------------
 
     for writing the user change to the database the classes model/user/user_log* are used
 
@@ -31,8 +31,13 @@
   
 */
 
+namespace model;
+
+include_once MODEL_SYSTEM_PATH . 'list.php';
+
 use api\change_log_list_api;
 use api\change_log_list_dsp;
+use model\base_list;
 
 class change_log_list extends base_list
 {

@@ -32,9 +32,13 @@
 
 namespace api;
 
-use html\phrase_list_dsp;
+include_once API_SANDBOX_PATH . 'list.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
 
-class phrase_list_api extends list_api implements \JsonSerializable
+use html\phrase_list_dsp;
+use JsonSerializable;
+
+class phrase_list_api extends list_api implements JsonSerializable
 {
 
     /*

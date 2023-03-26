@@ -2,8 +2,8 @@
 
 /*
 
-    value_phrase_link.php - only for fast selection of the values assigned to one word, a triple or a list of words or triples
-    ---------------------
+    model/value/value_phrase_link.php - only for fast selection of the values assigned to one word, a triple or a list of words or triples
+    ---------------------------------
 
     replication of the phrases linked by the phrase group saved in the value
     the phrase group of the value is the master and these value phrase links are the slave, means they are actually replicated information
@@ -30,12 +30,14 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
+
+namespace model;
 
 class value_phrase_link
 {

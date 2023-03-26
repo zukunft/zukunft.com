@@ -37,6 +37,15 @@
 
 */
 
+namespace test;
+
+include_once MODEL_LOG_PATH . 'change_log.php';
+include_once MODEL_LOG_PATH . 'change_log_field.php';
+include_once MODEL_LOG_PATH . 'change_log_list.php';
+include_once MODEL_SYSTEM_PATH . 'batch_job.php';
+include_once SERVICE_EXPORT_PATH . 'export.php';
+include_once API_SYSTEM_PATH . 'type_object.php';
+
 use api\batch_job_api;
 use api\formula_api;
 use api\language_api;
@@ -50,11 +59,38 @@ use api\verb_api;
 use api\view_api;
 use api\view_cmp_api;
 use api\word_api;
+use api_message;
 use cfg\language;
 use cfg\language_form;
 use cfg\phrase_type;
+use cfg\system_log_list;
+use cfg\type_lists;
 use cfg\type_object;
 use controller\controller;
+use DateTime;
+use Exception;
+use export\export;
+use model\batch_job;
+use model\change_log;
+use model\change_log_field;
+use model\change_log_list;
+use model\formula;
+use model\formula_list;
+use model\library;
+use model\phrase_list;
+use model\ref;
+use model\source;
+use model\sql_db;
+use model\system_log;
+use model\term_list;
+use model\triple;
+use model\user;
+use model\user_message;
+use model\value;
+use model\verb;
+use model\view;
+use model\view_cmp;
+use model\word;
 
 class test_api extends test_new_obj
 {
@@ -671,6 +707,7 @@ class test_api extends test_new_obj
         bool   $contains = false,
         bool   $ignore_id = false): bool
     {
+        $lib = new library();
         $class_for_file = $this->class_without_namespace($class);
         if ($expected == null) {
             $expected = json_decode($this->api_json_expected($class_for_file, $filename), true);
@@ -688,9 +725,9 @@ class test_api extends test_new_obj
         $json_actual = json_encode($actual);
         $json_expected = json_encode($expected);
         if ($contains) {
-            return $this->assert($class . ' API GET', json_contains($expected, $actual), true);
+            return $this->assert($class . ' API GET', $lib->json_contains($expected, $actual), true);
         } else {
-            return $this->assert($class . ' API GET', json_is_similar($expected, $actual), true);
+            return $this->assert($class . ' API GET', $lib->json_is_similar($expected, $actual), true);
         }
     }
 

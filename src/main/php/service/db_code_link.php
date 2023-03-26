@@ -31,6 +31,8 @@
 
 */
 
+namespace model;
+
 use cfg\type_object;
 
 class db_cl

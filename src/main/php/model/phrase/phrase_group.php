@@ -2,8 +2,8 @@
 
 /*
 
-    phrase_group.php - a combination of a word list and a triple_list
-    ----------------
+    model/phrase/phrase_group.php - a combination of a word list and a triple_list
+    -----------------------------
 
     a kind of phrase list, but separated into two different lists
 
@@ -39,6 +39,8 @@
     http://zukunft.com
 
 */
+
+namespace model;
 
 use api\phrase_group_api;
 

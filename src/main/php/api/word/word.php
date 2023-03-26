@@ -35,7 +35,7 @@ namespace api;
 use cfg\phrase_type;
 use html\term_dsp;
 use html\word_dsp;
-use word;
+use model\word;
 
 class word_api extends sandbox_typed_api
 {

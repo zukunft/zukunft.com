@@ -2,8 +2,8 @@
 
 /*
 
-    word.php - the main word object
-    --------
+    model/word/word.php - the main word object
+    -------------------
 
     TODO move plural to a linked word?
 
@@ -33,21 +33,29 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
+namespace model;
+
+include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
+include_once SERVICE_PATH . 'db_code_link.php';
+include_once API_WORD_PATH . 'word.php';
+include_once MODEL_REF_PATH . 'ref.php';
+include_once SERVICE_EXPORT_PATH . 'word_exp.php';
+
 use api\word_api;
+use cfg\export\exp_obj;
+use cfg\export\sandbox_exp_named;
+use cfg\export\word_exp;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
 use controller\controller;
-use export\exp_obj;
-use export\sandbox_exp_named;
-use export\word_exp;
 use html\api;
 use html\button;
 use html\html_selector;

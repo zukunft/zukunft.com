@@ -2,8 +2,8 @@
 
 /*
 
-    phrase_list_dsp.php - based s a phrase list create HTML code to display it
-    -------------------
+    model/phrase/phrase_list_dsp.php - based s a phrase list create HTML code to display it
+    --------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -28,6 +28,12 @@
     http://zukunft.com
 
 */
+
+namespace model;
+
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+
+use model\phrase_list;
 
 class phrase_list_dsp_old extends phrase_list
 {

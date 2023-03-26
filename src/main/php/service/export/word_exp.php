@@ -2,12 +2,8 @@
 
 /*
 
-    exp_obj.php - the superclass for the export objects
-    -----------
-
-    is used in service/export/json.php
-
-    similar to the api objects, but the export objects does not contain any
+    word_exp.php - the simple export object for a word
+    ------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,21 +26,31 @@
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-
+  
 */
 
-namespace export;
+namespace cfg\export;
 
-class exp_obj
+class word_exp extends sandbox_exp_named
 {
-    // the field names used for the im- and export in the json or yaml format
-    const FLD_NAME = 'name';
-    const FLD_TYPE = 'type';
-    const FLD_TYPE_ID = 'type_id';
-    const FLD_DESCRIPTION = 'description';
-    const FLD_CODE_ID = 'code_id';
-    const FLD_VIEW = 'view';
-    const FLD_TIMESTAMP = 'timestamp';
-    const FLD_NUMBER = 'number';
+
+    // field names used for JSON creation
+    public ?string $plural = '';
+    public ?string $description = '';
+    public ?string $type = '';
+    public ?string $view = '';
+    public ?array $refs = [];
+
+    function reset()
+    {
+        parent::reset();
+
+        $this->plural = '';
+        $this->description = '';
+        $this->type = '';
+
+        $this->view = '';
+        $this->refs = [];
+    }
 
 }

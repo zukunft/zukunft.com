@@ -30,11 +30,17 @@
   
 */
 
-global $language_forms;
+namespace cfg;
+
+include_once DB_PATH . 'sql_db.php';
+include_once MODEL_LANGUAGE_PATH . 'language_form.php';
 
 use cfg\language_form;
 use cfg\type_list;
 use cfg\type_object;
+use model\sql_db;
+
+global $language_forms;
 
 class language_form_list extends type_list
 {

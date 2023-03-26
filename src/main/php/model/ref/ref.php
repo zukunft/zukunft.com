@@ -45,9 +45,16 @@
    
 */
 
+namespace model;
+
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
+include_once SERVICE_EXPORT_PATH . 'ref_exp.php';
+
 use api\ref_api;
-use export\exp_obj;
-use export\ref_exp;
+use cfg\export\exp_obj;
+use cfg\export\ref_exp;
+use cfg\ref_type;
+use cfg\ref_type_list;
 use html\ref_dsp;
 
 class ref extends sandbox_link_with_type
@@ -491,6 +498,7 @@ class ref extends sandbox_link_with_type
     {
         $result = new user_message();
 
+        $ref_lst = new ref_type_list();
         // reset of object not needed, because the calling function has just created the object
         foreach ($in_ex_json as $key => $value) {
             if ($key == exp_obj::FLD_NAME) {
@@ -498,12 +506,12 @@ class ref extends sandbox_link_with_type
                 $this->external_key = $value;
             }
             if ($key == exp_obj::FLD_TYPE) {
-                $this->ref_type = get_ref_type($value);
+                $this->ref_type = $ref_lst->get_ref_type($value);
 
                 if ($this->ref_type == null) {
                     $result->add_message('Reference type for ' . $value . ' not found');
                 } else {
-                    $this->ref_type = get_ref_type($value);
+                    $this->ref_type = $ref_lst->get_ref_type($value);
                     log_debug('ref_type set based on ' . $value . ' (' . $this->ref_type->name . ')');
                 }
             }

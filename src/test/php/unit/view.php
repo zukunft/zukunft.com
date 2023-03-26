@@ -30,7 +30,12 @@
 
 */
 
+namespace test;
+
 use api\view_api;
+use model\library;
+use model\sql_db;
+use model\view;
 
 class view_unit_tests
 {

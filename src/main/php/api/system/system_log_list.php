@@ -31,9 +31,11 @@
 
 namespace api;
 
+include_once API_PATH . 'message_header.php';
+
 use api_message;
-use sql_db;
-use user;
+use model\sql_db;
+use model\user;
 
 class system_log_list_api extends api_message
 {

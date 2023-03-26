@@ -3,7 +3,7 @@
 /*
 
     model/sandbox/sandbox_list.php - a base object for a list of user sandbox objects
-    -----------------------------------
+    ------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -29,6 +29,10 @@
     http://zukunft.com
 
 */
+
+namespace model;
+
+include_once MODEL_SYSTEM_PATH . 'list.php';
 
 class sandbox_list extends base_list
 {

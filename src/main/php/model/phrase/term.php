@@ -2,46 +2,50 @@
 
 /*
 
-  term.php - either a word, verb, triple or formula
-  --------
-  
-  mainly to check the term consistency of all objects
-  a term must be unique for word, verb and triple e.g. "Company" is a word "is a" is a verb and "Kanton Zurich" is a triple
-  all terms are the same for each user
-  if a user changes a term and the term has been used already
-  a new term is created and the deletion of the existing term is requested
-  if all user have confirmed the deletion, the term is finally deleted
-  each user can have its own language translation which must be unique only for one user
-  so one user may use "Zurich" in US English for "Kanton Zurich"
-  and another user may use "Zurich" in US English for "Zurich AG"
-  
-  
-  This file is part of zukunft.com - calc with words
+    model/phrase/term.php - either a word, verb, triple or formula
+    ---------------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
-  TODO: load formula word
+    TODO: load formula word
         check triple
 
+    mainly to check the term consistency of all objects
+    a term must be unique for word, verb and triple e.g. "Company" is a word "is a" is a verb and "Kanton Zurich" is a triple
+    all terms are the same for each user
+    if a user changes a term and the term has been used already
+    a new term is created and the deletion of the existing term is requested
+    if all user have confirmed the deletion, the term is finally deleted
+    each user can have its own language translation which must be unique only for one user
+    so one user may use "Zurich" in US English for "Kanton Zurich"
+    and another user may use "Zurich" in US English for "Zurich AG"
+
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
+
+namespace model;
+
+include_once API_PHRASE_PATH . 'term.php';
 
 use api\term_api;
 use cfg\phrase_type;

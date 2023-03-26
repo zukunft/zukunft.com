@@ -30,6 +30,9 @@
 
 */
 
+namespace test;
+
+use back_trace;
 use html\html_base;
 
 class change_log_display_unit_tests

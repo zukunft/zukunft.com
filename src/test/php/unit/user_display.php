@@ -30,6 +30,8 @@
 
 */
 
+namespace test;
+
 use html\html_base;
 use html\user_dsp;
 

@@ -30,6 +30,8 @@
 
 */
 
+namespace test;
+
 use api\formula_api;
 use api\phrase_api;
 use api\source_api;
@@ -40,7 +42,20 @@ use api\view_cmp_api;
 use api\word_api;
 use cfg\formula_type;
 use cfg\phrase_type;
+use cfg\ref_type;
 use html\html_base;
+use model\formula;
+use model\library;
+use model\phrase;
+use model\phrase_list;
+use model\sql_db;
+use model\sql_par;
+use model\term;
+use model\term_list;
+use model\triple;
+use model\value;
+use model\verb;
+use model\word;
 
 class testing extends test_api
 {

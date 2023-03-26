@@ -2,8 +2,8 @@
 
 /*
 
-  formula_element_group.php - a group of formula elements that, in combination, return a value or a list of values
-  -------------------------
+  model/formula/formula_element_group.php - a group of formula elements that, in combination, return a value or a list of values
+  ---------------------------------------
   
   e.g. for for "ABB", "differentiator" and "Sector" (or "Sectors" "of" "ABB")
        a list of all sector values is returned
@@ -39,6 +39,8 @@
   http://zukunft.com
   
 */
+
+namespace model;
 
 use html\figure_dsp;
 

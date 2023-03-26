@@ -2,8 +2,8 @@
 
 /*
 
-    phrase_group_link.php - the parent object for phrase_group_word_link and phrase_group_triple_link
-    ---------------------
+    model/phrase/phrase_group_link.php - the parent object for phrase_group_word_link and phrase_group_triple_link
+    ----------------------------------
 
     contains the common parts for the two phrase group link objects
 
@@ -30,6 +30,8 @@
     http://zukunft.com
 
 */
+
+namespace model;
 
 class phrase_group_link extends db_object
 {

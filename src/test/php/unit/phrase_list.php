@@ -26,9 +26,21 @@
 
 */
 
+namespace test;
+
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+
 use api\triple_api;
 use api\word_api;
 use cfg\phrase_type;
+use model\library;
+use model\phr_ids;
+use model\phrase;
+use model\phrase_list;
+use model\sql_db;
+use model\sql_par;
+use model\word;
+use model\word_select_direction;
 
 class phrase_list_unit_tests
 {

@@ -32,17 +32,19 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
+namespace model;
+
 use api\source_api;
+use cfg\export\exp_obj;
+use cfg\export\source_exp;
 use html\source_dsp;
-use export\source_exp;
-use export\exp_obj;
 
 class source extends sandbox_typed
 {

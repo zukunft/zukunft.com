@@ -30,6 +30,11 @@
 
 */
 
+namespace test;
+
+use model\sql_db;
+use model\view_cmp;
+use model\view_cmp_type;
 use api\view_api;
 use api\view_cmp_api;
 

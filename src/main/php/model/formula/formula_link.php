@@ -2,8 +2,8 @@
 
 /*
 
-    formula_link.php - link a formula to a word
-    ----------------
+    model/formula/formula_link.php - link a formula to a word
+    ------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -28,6 +28,10 @@
     http://zukunft.com
   
 */
+
+namespace model;
+
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
 
 class formula_link extends sandbox_link_with_type
 {
@@ -110,8 +114,8 @@ class formula_link extends sandbox_link_with_type
     {
         $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            $this->fob->id = $db_row[formula::FLD_ID];
-            $this->tob->id = $db_row[phrase::FLD_ID];
+            $this->fob->set_id($db_row[formula::FLD_ID]);
+            $this->tob->set_id($db_row[phrase::FLD_ID]);
             $this->link_type_id = $db_row[self::FLD_TYPE];
         }
         return $result;

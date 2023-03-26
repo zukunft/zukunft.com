@@ -34,12 +34,7 @@
 
 namespace html;
 
-include_once API_PHRASE_PATH . 'phrase_list.php';
-
-use api\phrase_list_api;
-use api\sandbox_api;
-use api\sandbox_value_api;
-use controller\controller;
+include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 
 class formula_value_dsp extends sandbox_value_dsp
 {

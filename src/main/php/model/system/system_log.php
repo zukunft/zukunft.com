@@ -22,17 +22,21 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
   
 */
 
+namespace model;
+
+include_once API_SANDBOX_PATH . 'sandbox_value.php';
 
 use api\system_log_api;
 use cfg\type_list;
 use cfg\type_object;
+use DateTime;
 
 class system_log extends db_object
 {

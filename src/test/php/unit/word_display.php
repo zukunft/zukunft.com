@@ -30,6 +30,8 @@
 
 */
 
+namespace test;
+
 use api\word_api;
 use html\html_base;
 use html\word_dsp;

@@ -32,6 +32,8 @@
 
 namespace api;
 
+include_once API_SANDBOX_PATH . 'sandbox_typed.php';
+
 class view_api extends sandbox_typed_api
 {
 

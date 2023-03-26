@@ -2,8 +2,8 @@
 
 /*
 
-    ref_list.php - al list of ref objects
-    -------------
+    model/ref/ref_list.php - al list of ref objects
+    ----------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -22,12 +22,14 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
   
 */
+
+namespace model;
 
 global $refs;
 

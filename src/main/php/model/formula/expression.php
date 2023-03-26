@@ -40,6 +40,11 @@
 
 */
 
+namespace model;
+
+include_once MODEL_FORMULA_PATH . 'formula_element_group.php';
+include_once MODEL_FORMULA_PATH . 'formula_element_group_list.php';
+
 use cfg\formula_type;
 
 class expression

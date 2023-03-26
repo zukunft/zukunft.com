@@ -2,14 +2,12 @@
 
 /*
 
-    view_component_link.php - link a single display component/element to a view
-    -----------------------
+    model/view/view_component_link.php - link a single display component/element to a view
+    ----------------------------------
 
-    TODO
-    if a link is owned by someone, who has deleted it, it can be changed by anyone else
-    or another way to formulate this: if the owner deletes a link, the ownership should be move to the remaining users
-
-    force to remove all user settings to be able to delete a link as an admin
+    TODO  if a link is owned by someone, who has deleted it, it can be changed by anyone else
+          or another way to formulate this: if the owner deletes a link, the ownership should be move to the remaining users
+          force to remove all user settings to be able to delete a link as an admin
 
     This file is part of zukunft.com - calc with words
 
@@ -28,12 +26,14 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
   
 */
+
+namespace model;
 
 class view_cmp_link extends sandbox_link_with_type
 {

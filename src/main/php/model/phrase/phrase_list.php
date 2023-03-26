@@ -2,8 +2,8 @@
 
 /*
 
-    phrase_list.php - a list of phrase (word or triple) objects
-    ---------------
+    model/phrase/phrase_list.php - a list of phrase (word or triple) objects
+    ----------------------------
 
     Compared to phrase_groups a phrase list is a memory only object that cannot be saved to the database
 
@@ -41,6 +41,11 @@
     http://zukunft.com
   
 */
+
+namespace model;
+
+include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
+include_once MODEL_PHRASE_PATH . 'term_list.php';
 
 use api\phrase_list_api;
 use cfg\phrase_type;

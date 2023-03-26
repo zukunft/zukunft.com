@@ -2,9 +2,8 @@
 
 /*
 
-    sandbox_exp_link.php - the superclass for the link export objects
-    -------------------------
-
+    _user_exp.php - the simple export object for a user
+    --------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,17 +29,30 @@
 
 */
 
-namespace export;
 
-class sandbox_exp_link extends exp_obj
+namespace cfg\export;
+
+class _user_exp extends sandbox_exp_named
 {
-    // field names used for JSON creation
-    public ?string $name = '';   // the target (to) object name, which cannot be empty; the source (from) object is defined by the placement in the JSON
 
-    // reset the search values of this object
+    // field names used for JSON creation
+    public ?string $email = null;         //
+    public ?string $first_name = null;    //
+    public ?string $last_name = null;     //
+    public ?string $description = null;
+    public ?string $profile = null;
+    public ?string $code_id = null;
+
     function reset()
     {
-        $this->name = '';
+        sandbox_exp_named::reset();
+
+        $this->email = '';
+        $this->first_name = '';
+        $this->last_name = '';
+        $this->description = '';
+        $this->profile = '';
+        $this->code_id = '';
     }
 
 }

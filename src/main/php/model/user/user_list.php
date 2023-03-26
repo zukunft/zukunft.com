@@ -2,8 +2,8 @@
 
 /*
 
-    user_list.php - a list of users
-    -------------
+    model/user/user_list.php - a list of users
+    ------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -28,6 +28,11 @@
     http://zukunft.com
 
 */
+
+namespace model;
+
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
 
 global $system_users;
 

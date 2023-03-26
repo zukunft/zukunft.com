@@ -30,8 +30,12 @@
 
 */
 
+namespace test;
+
 use api\word_api;
 use cfg\phrase_type;
+use model\sql_db;
+use model\word;
 
 class word_unit_tests
 {

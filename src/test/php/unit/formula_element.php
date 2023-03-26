@@ -30,6 +30,11 @@
 
 */
 
+namespace test;
+
+use model\formula_element_list;
+use model\sql_db;
+
 class formula_element_unit_tests
 {
     function run(testing $t)

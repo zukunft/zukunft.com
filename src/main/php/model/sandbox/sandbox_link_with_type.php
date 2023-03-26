@@ -3,7 +3,7 @@
 /*
 
     model/sandbox/sandbox_link_with_type.php - adding the type field to the user sandbox link named superclass
-    ---------------------------------------------
+    ----------------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -22,13 +22,16 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
+namespace model;
+
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
 class sandbox_link_with_type extends sandbox_link
 {

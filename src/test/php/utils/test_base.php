@@ -50,8 +50,31 @@
 // TODO add checks that all id (name or link) changing return the correct error message if the new id already exists
 // TODO build a cascading test classes and split the classes to sections less than 1000 lines of code
 
+namespace test;
+
+include_once MODEL_USER_PATH . 'user.php';
+
+use cfg\config;
 use controller\controller;
 use html\html_base;
+use model\db_object;
+use model\formula;
+use model\library;
+use model\phrase_list;
+use model\ref;
+use model\sandbox;
+use model\source;
+use model\sql_db;
+use model\sql_par;
+use model\triple;
+use model\trm_ids;
+use model\user;
+use model\value;
+use model\value_list;
+use model\verb;
+use model\view;
+use model\word;
+use user_dsp_old;
 
 const HOST_TESTING = 'http://localhost/';
 
@@ -512,6 +535,7 @@ class test_base
      */
     function assert_api_obj(object $usr_obj): bool
     {
+        $lib = new library();
         $original_json = json_decode(json_encode($usr_obj->export_obj(false)), true);
         $recreated_json = '';
         $api_obj = $usr_obj->api_obj();
@@ -520,7 +544,7 @@ class test_base
             $db_obj->load_by_id($usr_obj->id(), get_class($usr_obj));
             $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
         }
-        $result = json_is_similar($original_json, $recreated_json);
+        $result = $lib->json_is_similar($original_json, $recreated_json);
         // TODO remove, for faster debugging only
         $json_in_txt = json_encode($original_json);
         $json_ex_txt = json_encode($recreated_json);
@@ -536,13 +560,14 @@ class test_base
      */
     function assert_api_json(object $usr_obj): bool
     {
+        $lib = new library();
         $original_json = json_decode(json_encode($usr_obj->export_obj(false)), true);
         $api_obj = $usr_obj->api_obj();
         $api_json = json_decode(json_encode($api_obj), true);
         $db_obj = $api_obj->db_obj($usr_obj->user(), get_class($api_obj));
         $db_obj->set_by_api_json($api_json);
         $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
-        $result = json_is_similar($original_json, $recreated_json);
+        $result = $lib->json_is_similar($original_json, $recreated_json);
         // TODO remove, for faster debugging only
         $json_in_txt = json_encode($original_json);
         $json_ex_txt = json_encode($recreated_json);
@@ -571,6 +596,7 @@ class test_base
      */
     function assert_api_get_json(string $test_name, string $fld = '', int $id = 1): bool
     {
+        $lib = new library();
         $url = HOST_TESTING . controller::URL_API_PATH . 'json';
         $data = array($fld => $id);
         $actual = json_decode($this->api_call("GET", $url, $data), true);
@@ -578,7 +604,7 @@ class test_base
         $json_actual = json_encode($actual);
         $expected_text = $this->file('api/json/' . $test_name . '.json');
         $expected = json_decode($expected_text, true);
-        return $this->assert($test_name . ' API GET', json_is_similar($actual, $expected), true);
+        return $this->assert($test_name . ' API GET', $lib->json_is_similar($actual, $expected), true);
     }
 
 
@@ -590,6 +616,7 @@ class test_base
      */
     function assert_rest(object $usr_obj): bool
     {
+        $lib = new library();
         $obj_name = get_class($usr_obj);
         $url_read = 'api/' . $obj_name . '/index.php';
         $original_json = json_decode(json_encode($usr_obj->$usr_obj()), true);
@@ -599,7 +626,7 @@ class test_base
             $db_obj = $api_obj->db_obj($usr_obj->usr, get_class($api_obj));
             $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
         }
-        $result = json_is_similar($original_json, $recreated_json);
+        $result = $lib->json_is_similar($original_json, $recreated_json);
         return $this->assert($this->name . 'REST check', $result, true);
     }
 
@@ -631,12 +658,13 @@ class test_base
      */
     function assert_json(object $usr_obj, string $json_file_name): bool
     {
+        $lib = new library();
         $file_text = file_get_contents(PATH_TEST_FILES . $json_file_name);
         $json_in = json_decode($file_text, true);
         $usr_obj->import_obj($json_in, false);
         $this->set_id_for_unit_tests($usr_obj);
         $json_ex = json_decode(json_encode($usr_obj->export_obj(false)), true);
-        $result = json_is_similar($json_in, $json_ex);
+        $result = $lib->json_is_similar($json_in, $json_ex);
         // TODO remove, for faster debugging only
         $json_in_txt = json_encode($json_in);
         $json_ex_txt = json_encode($json_ex);
@@ -845,8 +873,10 @@ class test_base
      */
     function assert_load_sql_all(sql_db $db_con, object $usr_obj, string $db_type = ''): bool
     {
+        $lib = new library();
         if ($db_type == '') {
             $db_type = get_class($usr_obj);
+            $db_type = $lib->str_right_of_or_all($db_type, '\\');
         }
 
         // check the Postgres query syntax

@@ -30,15 +30,23 @@
 
 */
 
+namespace test;
+
 use api\phrase_list_api;
 use api\value_api;
 use api\view_cmp_api;
 use api\word_api;
+use cfg\verb_list;
 use html\button;
 use html\formula_value_list_dsp;
 use html\html_base;
 use html\html_selector;
 use html\view_dsp;
+use model\library;
+use model\verb;
+use model\view;
+use model\view_cmp;
+use model\view_cmp_type;
 
 class html_unit_tests
 {

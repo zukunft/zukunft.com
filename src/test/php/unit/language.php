@@ -30,6 +30,8 @@
 
 */
 
+namespace test;
+
 use cfg\language;
 use cfg\language_form;
 

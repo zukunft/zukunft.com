@@ -2,8 +2,8 @@
 
 /*
 
-    formula_element.php - either a word, triple, verb or formula with a link to a formula
-    -------------------
+    model/formula/formula_element.php - either a word, triple, verb or formula with a link to a formula
+    ---------------------------------
 
     formula elements are terms or expression operators such as add or brackets
     The term formula elements are saved in the database for fast detection of dependencies
@@ -32,6 +32,8 @@
     http://zukunft.com
 
 */
+
+namespace model;
 
 class formula_element extends db_object
 {

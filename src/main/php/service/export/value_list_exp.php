@@ -29,7 +29,7 @@
   
 */
 
-namespace export;
+namespace cfg\export;
 
 class value_list_exp extends exp_obj
 {

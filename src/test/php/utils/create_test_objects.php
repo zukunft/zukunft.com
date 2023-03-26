@@ -39,6 +39,8 @@
 
 */
 
+namespace test;
+
 use api\formula_api;
 use api\formula_value_api;
 use api\phrase_group_api;
@@ -51,9 +53,43 @@ use api\verb_api;
 use api\view_api;
 use api\view_cmp_api;
 use api\word_api;
+use api_message;
 use cfg\formula_type;
+use cfg\job_type_list;
 use cfg\phrase_type;
+use cfg\source_type;
+use cfg\system_log_list;
+use DateTime;
+use db_cl;
+use model\batch_job;
+use model\batch_job_list;
+use model\change_log_action;
+use model\change_log_field;
+use model\change_log_list;
+use model\change_log_named;
+use model\change_log_table;
 use model\figure;
+use model\formula;
+use model\formula_link;
+use model\formula_list;
+use model\formula_value;
+use model\phrase;
+use model\phrase_group;
+use model\phrase_list;
+use model\ref;
+use model\source;
+use model\sys_log_status;
+use model\system_log;
+use model\triple;
+use model\user;
+use model\value;
+use model\verb;
+use model\view;
+use model\view_cmp;
+use model\view_cmp_link;
+use model\word;
+use model\word_list;
+use view_dsp_old;
 
 class test_new_obj extends test_base
 {

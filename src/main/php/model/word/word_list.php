@@ -2,8 +2,8 @@
 
 /*
 
-    word_list.php - a list of word objects
-    -------------
+    model/word/word_list.php - a list of word objects
+    ------------------------
 
     actually only used for phrase splitting; in most other cases phrase_list is used
 
@@ -31,12 +31,14 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
+
+namespace model;
 
 use cfg\phrase_type;
 use api\word_list_api;

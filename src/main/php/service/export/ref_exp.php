@@ -2,8 +2,8 @@
 
 /*
 
-  formula_exp.php - the simple export object for a formula
-  ---------------
+  ref_exp.php - the simple export object for an external reference
+  ------------
   
   This file is part of zukunft.com - calc with words
 
@@ -29,26 +29,21 @@
   
 */
 
-namespace export;
+namespace cfg\export;
 
-class formula_exp extends sandbox_exp_named
+include_once SERVICE_EXPORT_PATH . 'sandbox_exp_link.php';
+
+class ref_exp extends sandbox_exp_link
 {
 
     // field names used for JSON creation
-    public ?string $expression = '';
-    public ?string $description = '';
     public ?string $type = '';
-    public ?string $assigned_word = '';
 
     function reset()
     {
         parent::reset();
 
-        $this->expression = '';
-        $this->description = '';
         $this->type = '';
-
-        $this->assigned_word = '';
     }
 
 }

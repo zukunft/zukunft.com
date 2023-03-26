@@ -30,6 +30,17 @@
 
 */
 
+namespace test;
+
+include_once MODEL_VALUE_PATH . 'value_list.php';
+
+use model\library;
+use model\phrase;
+use model\sql_db;
+use model\sql_par;
+use model\value_list;
+use model\word;
+
 class value_list_unit_tests
 {
     const TEST_NAME = 'value_list->';

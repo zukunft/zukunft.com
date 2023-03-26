@@ -2,8 +2,8 @@
 
 /*
 
-    user_message.php - a complex object that functions can return
-    ----------------
+    model/user/user_message.php - a complex object that functions can return
+    ---------------------------
 
     class function are should return on of
     1. boolean if a failure does not need any user action
@@ -38,6 +38,8 @@
     http://zukunft.com
 
 */
+
+namespace model;
 
 class user_message
 {

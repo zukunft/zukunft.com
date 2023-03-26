@@ -41,10 +41,12 @@
 
 namespace cfg;
 
+include_once API_SANDBOX_PATH . 'type_object.php';
+
 use api\type_object_api;
-use db_cl;
-use sql_db;
-use sql_par;
+use model\db_cl;
+use model\sql_db;
+use model\sql_par;
 
 class type_object
 {

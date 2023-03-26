@@ -2,8 +2,8 @@
 
 /*
 
-    view_list.php - list of predefined system views
-    -----------------
+    model/view/view_sys_list.php - list of predefined system views
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -22,16 +22,28 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
-global $system_views;
+namespace cfg;
 
-use cfg\type_list;
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_VIEW_PATH . 'view_list.php';
+
+use model\sql_db;
+use model\sql_par;
+use model\user;
+use model\view;
+use model\view_list;
+
+global $system_views;
 
 class view_sys_list extends type_list
 {

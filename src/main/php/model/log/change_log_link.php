@@ -2,8 +2,8 @@
 
 /*
 
-  user_log_link.php - object to save updates of references (links) by the user in the database in a format, so that it can fast be displayed to the user
-  -----------------
+  model/log/change_log_link.php - object to save updates of references (links) by the user in the database in a format, so that it can fast be displayed to the user
+  -----------------------------
 
   A requirement for the expected behaviour of this setup is the strict adherence of these rules in all classes:
 
@@ -44,6 +44,10 @@
   
 */
 
+namespace model;
+
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
 
 class change_log_link extends change_log
 {

@@ -30,9 +30,15 @@
 
 */
 
+namespace test;
+
 // TODO combine with triple_unit_test
 
 use api\phrase_api;
+use model\sql_db;
+use model\triple;
+use model\verb;
+use model\word;
 
 class triple_unit_tests_old
 {

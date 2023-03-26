@@ -2,8 +2,8 @@
 
 /*
 
-  model/log/log_table.php - to link coded functionality to a log log table
-  --------------------------
+  model/log/change_log_table.php - to link coded functionality to a log log table
+  ------------------------------
   
   This file is part of zukunft.com - calc with words
 
@@ -29,10 +29,17 @@
   
 */
 
-global $change_log_tables;
+namespace model;
+
+include_once DB_PATH . 'sql_db.php';
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_LOG_PATH . 'change_log_table.php';
 
 use cfg\type_list;
 use cfg\type_object;
+
+global $change_log_tables;
 
 class change_log_table extends type_list
 {

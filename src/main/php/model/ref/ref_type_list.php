@@ -2,36 +2,45 @@
 
 /*
 
-  ref_types.php - to link coded functionality to a reference
-  -----------------
-  
-  This file is part of zukunft.com - calc with refs
+    model/ref/ref_types.php - to link coded functionality to a reference
+    -----------------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    This file is part of zukunft.com - calc with refs
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
-global $ref_types;
+namespace cfg;
 
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once MODEL_REF_PATH . 'ref_type.php';
+
+use model\library;
+use model\sql_db;
+use model\sql_par;
 use cfg\type_list;
+
+global $ref_types;
 
 class ref_type_list extends type_list
 {
@@ -173,28 +182,29 @@ class ref_type_list extends type_list
         }
         return $result;
     }
+
+    /**
+     * exception to get_type that returns an extended user_type object
+     * @param string $code_id the code id that must be unique within the given type
+     * @return ref_type|null the loaded ref type object
+     */
+    function get_ref_type(string $code_id): ?ref_type
+    {
+        global $ref_types;
+        $id = $ref_types->id($code_id);
+        return $ref_types->get_by_id($id);
+    }
+
+    function get_ref_type_id(string $code_id): int
+    {
+        global $ref_types;
+        return $ref_types->id($code_id);
+    }
+
+    function get_ref_type_by_id(string $id): ref_type
+    {
+        global $ref_types;
+        return $ref_types->get_by_id($id);
+    }
 }
 
-/**
- * exception to get_type that returns an extended user_type object
- * @param string $code_id the code id that must be unique within the given type
- * @return ref_type|null the loaded ref type object
- */
-function get_ref_type(string $code_id): ?ref_type
-{
-    global $ref_types;
-    $id = $ref_types->id($code_id);
-    return $ref_types->get_by_id($id);
-}
-
-function get_ref_type_id(string $code_id): int
-{
-    global $ref_types;
-    return $ref_types->id($code_id);
-}
-
-function get_ref_type_by_id(string $id): ref_type
-{
-    global $ref_types;
-    return $ref_types->get_by_id($id);
-}

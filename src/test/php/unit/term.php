@@ -30,9 +30,16 @@
 
 */
 
+namespace test;
+
 use api\formula_api;
 use api\triple_api;
 use api\word_api;
+use model\formula;
+use model\sql_db;
+use model\term;
+use model\triple;
+use model\verb;
 
 class term_unit_tests
 {

@@ -2,8 +2,8 @@
 
 /*
 
-  ref_type.php - the base object for links between a phrase and another system such as wikidata
-  ------------
+  model/ref/ref_type.php - the base object for links between a phrase and another system such as wikidata
+  ----------------------
   
   
   This file is part of zukunft.com - calc with words
@@ -23,12 +23,14 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
+  Copyright (c) 1995-2023 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
    
 */
+
+namespace cfg;
 
 use cfg\type_object;
 

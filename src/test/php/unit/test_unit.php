@@ -33,6 +33,62 @@
 
 */
 
+namespace test;
+
+include_once DB_PATH . 'sql_db.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_list.php';
+include_once MODEL_USER_PATH . 'user_profile.php';
+include_once MODEL_SYSTEM_PATH . 'batch_job_type_list.php';
+include_once MODEL_SYSTEM_PATH . 'system_error_log_status_list.php';
+include_once MODEL_WORD_PATH . 'word_type_list.php';
+include_once MODEL_VERB_PATH . 'verb_list.php';
+include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
+include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
+include_once MODEL_FORMULA_PATH . 'formula_element_type_list.php';
+include_once MODEL_VIEW_PATH . 'view_sys_list.php';
+include_once MODEL_VIEW_PATH . 'view_sys_list.php';
+include_once MODEL_VIEW_PATH . 'view_type_list.php';
+include_once MODEL_VIEW_PATH . 'view_cmp_type_list.php';
+include_once MODEL_VIEW_PATH . 'view_cmp_link_types.php';
+include_once MODEL_VIEW_PATH . 'view_cmp_pos_type_list.php';
+include_once MODEL_REF_PATH . 'ref_type_list.php';
+include_once MODEL_REF_PATH . 'source_type_list.php';
+include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
+include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
+include_once MODEL_LANGUAGE_PATH . 'language_list.php';
+include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
+include_once MODEL_LOG_PATH . 'change_log_action.php';
+include_once MODEL_LOG_PATH . 'change_log_table.php';
+include_once MODEL_LOG_PATH . 'change_log_field.php';
+include_once API_SANDBOX_PATH . 'sandbox_value.php';
+
+use model\sql_db;
+use model\user_list;
+use model\user_profile;
+use model\user;
+use model\sys_log_status;
+use model\change_log_action;
+use model\change_log_field;
+use model\change_log_table;
+use model\formula_element_type_list;
+use model\formula_link_type_list;
+use cfg\formula_type_list;
+use cfg\job_type_list;
+use cfg\language_form_list;
+use cfg\language_list;
+use cfg\protection_type_list;
+use cfg\ref_type_list;
+use cfg\share_type_list;
+use cfg\source_type_list;
+use cfg\verb_list;
+use cfg\view_cmp_link_type_list;
+use cfg\view_cmp_pos_type_list;
+use cfg\view_cmp_type_list;
+use cfg\view_sys_list;
+use cfg\view_type_list;
+use cfg\word_type_list;
+
 class test_unit extends testing
 {
 

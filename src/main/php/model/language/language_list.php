@@ -30,11 +30,17 @@
   
 */
 
-global $languages;
+namespace cfg;
+
+include_once DB_PATH . 'sql_db.php';
+include_once MODEL_LANGUAGE_PATH . 'language.php';
 
 use cfg\language;
 use cfg\type_list;
 use cfg\type_object;
+use model\sql_db;
+
+global $languages;
 
 class language_list extends type_list
 {

@@ -31,12 +31,15 @@
 
 namespace api;
 
-use db_cl;
-use db_object;
+include_once API_USER_PATH . 'user.php';
+include_once WEB_HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'api_const.php';
+
 use html\api;
 use html\html_base;
-use sys_log_status;
-use user;
+use model\db_object;
+use model\sys_log_status;
+use model\user;
 
 class system_log_api extends db_object
 {

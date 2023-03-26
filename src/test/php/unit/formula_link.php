@@ -30,6 +30,15 @@
 
 */
 
+namespace test;
+
+include_once MODEL_FORMULA_PATH . 'formula_link_list.php';
+
+use model\formula_link;
+use model\formula_link_list;
+use model\library;
+use model\sql_db;
+
 class formula_link_unit_tests
 {
     function run(testing $t)

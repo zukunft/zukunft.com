@@ -2,8 +2,8 @@
 
 /*
 
-  figure_lst.php - a list of figures, so either a value of a formula result object
-  --------------
+  model/formula/figure_list.php - a list of figures, so either a value of a formula result object
+  -----------------------------
   
   This file is part of zukunft.com - calc with words
 
@@ -29,8 +29,11 @@
   
 */
 
+namespace model;
+
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+
 use html\figure_dsp;
-use model\figure;
 
 class figure_list extends sandbox_list
 {
@@ -73,6 +76,7 @@ class figure_list extends sandbox_list
         }
         return $result;
     }
+
 
     /*
      * display functions

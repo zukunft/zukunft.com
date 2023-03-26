@@ -2,8 +2,8 @@
 
 /*
 
-    user_log.php - object to save the user changes in the database in a format, so that it can fast be displayed to the user
-    ------------
+    model/log/user_log.php - object to save the user changes in the database in a format, so that it can fast be displayed to the user
+    ----------------------
 
     for reading the user changes from the database and forwarding them to
     the API and frontend model/log/changeLog* should be used
@@ -51,9 +51,15 @@ cache table, field and action id to speed up, because this will never change
 
 */
 
+namespace model;
 
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once API_LOG_PATH . 'change_log.php';
+
+use api\change_log_api;
 use cfg\type_object;
-use controller\log\change_log_api;
+use DateTime;
+use Exception;
 
 class change_log extends db_object
 {

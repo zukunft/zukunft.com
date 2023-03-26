@@ -23,14 +23,25 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
+namespace cfg;
+
 use api\type_lists_api;
+use model\change_log_action;
+use model\change_log_field;
+use model\change_log_table;
+use model\formula_element_type_list;
+use model\formula_link_type_list;
+use model\sql_db;
+use model\sys_log_status;
+use model\user;
+use model\user_list;
 
 class type_lists
 {

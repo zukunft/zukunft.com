@@ -30,12 +30,15 @@
 
 */
 
+namespace test;
+
 use api\phrase_api;
 use api\word_api;
 use html\html_base;
 use html\phrase_dsp;
 use html\phrase_list_dsp;
 use html\word_dsp;
+use model\verb;
 
 class phrase_list_display_unit_tests
 {

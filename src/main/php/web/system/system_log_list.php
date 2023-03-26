@@ -32,8 +32,10 @@
 
 namespace html;
 
+include_once API_SYSTEM_PATH . 'system_log_list.php';
+
 use api\system_log_list_api;
-use user;
+use model\user;
 
 class system_log_list_dsp extends system_log_list_api
 {

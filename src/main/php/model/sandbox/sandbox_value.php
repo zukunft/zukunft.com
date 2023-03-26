@@ -2,8 +2,8 @@
 
 /*
 
-    sandbox_link.php - the superclass for handling user specific link objects including the database saving
-    ---------------------
+    model/sandbox/sandbox_value.php - the superclass for handling user specific link objects including the database saving
+    -------------------------------
 
     This superclass should be used by the class word links, formula links and view link
 
@@ -32,7 +32,9 @@
 
 */
 
-class _sandbox_value extends sandbox
+namespace model;
+
+class sandbox_value extends sandbox
 {
 
     /*

@@ -30,6 +30,28 @@
 
 */
 
+namespace test;
+
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_PHRASE_PATH . 'phrase_group.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+
+use cfg\config;
+use model\formula;
+use model\formula_link;
+use model\library;
+use model\phrase;
+use model\phrase_group;
+use model\sandbox;
+use model\sandbox_named;
+use model\source;
+use model\sql_db;
+use model\triple;
+use model\value;
+use model\verb;
+use model\view;
+use model\word;
+
 global $db_con;
 
 class sandbox_unit_tests

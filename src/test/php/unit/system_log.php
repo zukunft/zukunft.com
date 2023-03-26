@@ -30,7 +30,12 @@
 
 */
 
+namespace test;
+
 use api\triple_api;
+use model\library;
+use model\sql_db;
+use model\system_log;
 
 class system_log_unit_tests
 {

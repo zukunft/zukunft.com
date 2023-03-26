@@ -234,7 +234,16 @@ use html\phrase_group_dsp;
 
 */
 
+use cfg\type_lists;
+use cfg\verb_list;
+use cfg\view_sys_list;
 use html\html_base;
+use model\library;
+use model\sql_db;
+use model\sql_par;
+use model\sys_log_level;
+use model\user;
+use test\testing;
 
 // the fixed system user
 const SYSTEM_USER_ID = 1; //
@@ -323,6 +332,7 @@ if ($version[0] < 8) {
 //check if "sudo apt-get install php-curl" is done for testing
 //phpinfo();
 
+/*
 // database links
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'db_check.php';
@@ -568,6 +578,10 @@ include_once DB_LINK_PATH . 'zu_lib_sql_link.php';
 include_once SERVICE_PATH . 'db_code_link.php';
 include_once SERVICE_PATH . 'zu_lib_sql_code_link.php';
 include_once SERVICE_PATH . 'config.php';
+*/
+
+// imports actually needed
+include_once MODEL_SYSTEM_PATH . 'system_utils.php';
 
 // used at the moment, but to be replaced with R-Project call
 include_once SERVICE_MATH_PATH . 'calc_internal.php';
@@ -627,6 +641,13 @@ const UI_CAN_CHANGE_VERB_NAME = TRUE; // dito for verbs
 const UI_CAN_CHANGE_SOURCE_NAME = TRUE; // dito for sources
 
 // data retrieval settings
+
+// the possible SQL DB names (must be the same as in sql_db)
+const POSTGRES = "Postgres";
+const MYSQL = "MySQL";
+const SQL_DB_TYPE = POSTGRES;
+// const SQL_DB_TYPE = sql_db::MYSQL;
+
 const SQL_ROW_LIMIT = 20; // default number of rows per page/query if not defined
 const SQL_ROW_MAX = 2000; // the max number of rows per query to avoid long response times
 
@@ -1341,4 +1362,28 @@ function zu_str_diff($original_text, $compare_text): string
     }
 
     return $result;
+}
+
+/*
+  name shortcuts - rename some often used functions to make to code look nicer and not draw the focus away from the important part
+  --------------
+*/
+
+
+// SQL list: create a query string for the standard list
+// e.g. the type "source" creates the SQL statement "SELECT source_id, source_name FROM sources ORDER BY source_name;"
+function sql_lst($type): string
+{
+    global $db_con;
+    $db_con->set_type($type);
+    return $db_con->sql_std_lst();
+}
+
+// similar to "sql_lst", but taking the user sandbox into account
+function sql_lst_usr($type, $usr): string
+{
+    global $db_con;
+    $db_con->set_type($type);
+    $db_con->usr_id = $usr->id();
+    return $db_con->sql_std_lst_usr();
 }

@@ -30,6 +30,13 @@
 
 */
 
+namespace test;
+
+include_once MODEL_SYSTEM_PATH . 'system_log.php';
+
+use cfg\job_type_list;
+use model\sys_log_status;
+
 class system_unit_db_tests
 {
 

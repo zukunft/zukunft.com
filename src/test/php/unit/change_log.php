@@ -30,7 +30,20 @@
 
 */
 
+namespace test;
+
 use api\triple_api;
+use model\change_log_field;
+use model\change_log_link;
+use model\change_log_list;
+use model\change_log_named;
+use model\change_log_table;
+use model\library;
+use model\sql_db;
+use model\triple;
+use model\user;
+use model\word;
+use user_log_display;
 
 class change_log_unit_tests
 {

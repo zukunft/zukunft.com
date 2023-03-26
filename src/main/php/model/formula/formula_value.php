@@ -2,48 +2,50 @@
 
 /*
 
-  formula_value.php - the calculated numeric result of a formula
-  -----------------
-  
-  TODO: add these function
-  
-  set_dirty_on_value_update  - set all formula result value to dirty that are depending on an updated values via Apache Kafka messages not via database
-  set_dirty_on_result_update - set all formula result value to dirty that are depending on an updated formula result
-  set_cleanup_prios          - define which formula results needs to be updated first
-  cleanup                    - update/calculated all dirty formula results
-                               do the cleanup calculations always "in memory" 
+    model/formula/formula_value.php - the calculated numeric result of a formula
+    -------------------------------
+
+    TODO: add these function
+    TODO rename to result
+
+    set_dirty_on_value_update  - set all formula result value to dirty that are depending on an updated values via Apache Kafka messages not via database
+    set_dirty_on_result_update - set all formula result value to dirty that are depending on an updated formula result
+    set_cleanup_prios          - define which formula results needs to be updated first
+    cleanup                    - update/calculated all dirty formula results
+                               do the cleanup calculations always "in memory"
                                drop the results in blocks to the database
-  
 
-  
-  This file is part of zukunft.com - calc with words
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
+namespace model;
+
 use api\formula_value_api;
-use export\exp_obj;
-use export\formula_value_exp;
-use model\figure;
+use cfg\export\exp_obj;
+use cfg\export\formula_value_exp;
 
 class formula_value extends db_object
 {

@@ -2,8 +2,8 @@
 
 /*
 
-    sandbox_named.php - the superclass for handling user specific named objects including the database saving
-    ---------------------
+    model/sandbox/sandbox_named.php - the superclass for handling user specific named objects including the database saving
+    -------------------------------
 
     This superclass should be used by the classes words, formula, ... to enable user specific values and links
 
@@ -31,6 +31,16 @@
     http://zukunft.com
 
 */
+
+namespace model;
+
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once API_FORMULA_PATH . 'formula.php';
+include_once API_PHRASE_PATH . 'phrase.php';
+include_once API_REF_PATH . 'source.php';
+include_once API_VIEW_PATH . 'view.php';
+include_once API_VIEW_PATH . 'view_cmp.php';
+include_once API_WORD_PATH . 'word.php';
 
 use api\formula_api;
 use api\phrase_api;

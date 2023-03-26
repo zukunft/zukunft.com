@@ -2,8 +2,8 @@
 
 /*
 
-  ref_exp.php - the simple export object for an external reference
-  ------------
+  triple_exp.php - the simple export object for a triple
+  -----------------
   
   This file is part of zukunft.com - calc with words
 
@@ -29,19 +29,30 @@
   
 */
 
-namespace export;
+namespace cfg\export;
 
-class ref_exp extends sandbox_exp_link
+class triple_exp extends sandbox_exp_link
 {
 
     // field names used for JSON creation
-    public ?string $type = '';
+    public ?string $description = '';
+    public ?string $from = '';
+    public ?string $verb = '';
+    public ?string $to = '';
+    public ?string $view = '';
+    public ?array $refs = [];
 
     function reset()
     {
         parent::reset();
 
-        $this->type = '';
+        $this->description = '';
+        $this->from = '';
+        $this->verb = '';
+        $this->to = '';
+
+        $this->view = '';
+        $this->refs = [];
     }
 
 }

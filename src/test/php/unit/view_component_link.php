@@ -30,6 +30,14 @@
 
 */
 
+namespace test;
+
+use model\sql_db;
+use model\view;
+use model\view_cmp;
+use model\view_cmp_link;
+use model\view_cmp_link_list;
+
 class view_component_link_unit_tests
 {
     function run(testing $t): void

@@ -2,14 +2,8 @@
 
 /*
 
-    value.php - the main number object
-    ---------
-
-    Common object for the tables values, user_values,
-    in the database the object is save in two tables
-    because it is expected that there will be much less user values than standard values
-
-    A value is usually assigned to exact one phrase group, exceptions are time-series, geo-series or other phrase series values
+    model/value/value.php - the main number object
+    ---------------------
 
     TODO: always use the phrase group as master and update the value phrase links as slave
 
@@ -18,6 +12,12 @@
     TODO: what happens if a user (not the value owner) is adding a word to the value
     TODO: split the object to a time term value and a time stamp value for memory saving
     TODO: create an extreme reduced base object for effective handling of mass data with just phrase group (incl. time if needed) and value with can be used for key value noSQL databases
+
+    Common object for the tables values, user_values,
+    in the database the object is save in two tables
+    because it is expected that there will be much less user values than standard values
+
+    A value is usually assigned to exact one phrase group, exceptions are time-series, geo-series or other phrase series values
 
 
     if the value is not used at all the adding of the new word is logged and the group change is updated without logging
@@ -42,25 +42,35 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
+namespace model;
+
+include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
+include_once MODEL_FORMULA_PATH . 'figure.php';
+include_once SERVICE_EXPORT_PATH . 'source_exp.php';
+include_once SERVICE_EXPORT_PATH . 'value_exp.php';
+
 use api\value_api;
+use cfg\export\exp_obj;
+use cfg\export\source_exp;
+use cfg\export\value_exp;
+use cfg\job_type_list;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
 use controller\controller;
-use export\exp_obj;
-use export\source_exp;
-use export\value_exp;
+use DateTime;
+use Exception;
+use export\export;
 use html\value_dsp;
-use model\figure;
 
-class value extends _sandbox_value
+class value extends sandbox_value
 {
 
     /*

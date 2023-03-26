@@ -2,8 +2,8 @@
 
 /*
 
-  view_exp.php - the simple export object for a view
-  ------------
+  value_exp.php - the simple export object for a value
+  -------------
   
   This file is part of zukunft.com - calc with words
 
@@ -29,23 +29,29 @@
   
 */
 
-namespace export;
+namespace cfg\export;
 
-class view_exp extends sandbox_exp_named
+class value_exp extends exp_obj
 {
 
     // field names used for JSON creation
-    public ?string $description = '';
-    public ?string $type = '';
-    public ?array $view_components = null;
+    public ?array $words = null;
+    public ?array $triples = null;
+    public ?string $time = '';
+    public ?string $number = '';
+    public ?string $share = '';
+    public ?string $protection = '';
+    public ?string $source = '';
 
     function reset()
     {
-        parent::reset();
-
-        $this->type = '';
-
-        $this->view_components = null;
+        $this->words = [];
+        $this->triples = [];
+        $this->time = '';
+        $this->number = '';
+        $this->share = '';
+        $this->protection = '';
+        $this->source = '';
     }
 
 }

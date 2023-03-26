@@ -2,8 +2,8 @@
 
 /*
 
-  formula_link_types.php - to link coded functionality to a formula link
-  ----------------------
+  model/formula/formula_link_types.php - to link coded functionality to a formula link
+  ------------------------------------
   
   This file is part of zukunft.com - calc with words
 
@@ -29,10 +29,16 @@
   
 */
 
-global $formula_link_types;
+namespace model;
+
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_FORMULA_PATH . 'formula_link.php';
 
 use cfg\type_list;
 use cfg\type_object;
+
+global $formula_link_types;
 
 class formula_link_type_list extends type_list
 {

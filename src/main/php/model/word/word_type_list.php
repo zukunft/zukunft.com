@@ -2,8 +2,8 @@
 
 /*
 
-    word_type_list.php - to link coded functionality to a word or a triple, which means to every phrase
-    ------------------
+    model/word/word_type_list.php - to link coded functionality to a word or a triple, which means to every phrase
+    -----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -22,18 +22,20 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
   
 */
 
-global $phrase_types;
+namespace cfg;
 
-use cfg\phrase_type;
-use cfg\type_list;
-use cfg\type_object;
+include_once DB_PATH . 'sql_db.php';
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase_type.php';
+
+use model\sql_db;
 
 class word_type_list extends type_list
 {

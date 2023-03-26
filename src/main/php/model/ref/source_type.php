@@ -2,8 +2,8 @@
 
 /*
 
-    source_type.php - the base object for external source type such as pubmed
-    ---------------
+    model/ref/source_type.php - the base object for external source type such as pubmed
+    -------------------------
 
     the source type is used for all external sources that have some coded functionality
     but does not allow a full bidirectional synchronisation like a reference type
@@ -32,6 +32,8 @@
     http://zukunft.com
    
 */
+
+namespace cfg;
 
 use cfg\type_object;
 

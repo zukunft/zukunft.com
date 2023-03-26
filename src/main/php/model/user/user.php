@@ -2,8 +2,11 @@
 
 /*
 
-    user.php - a person who uses zukunft.com
-    --------
+    model/user/user.php - a person who uses zukunft.com
+    -------------------
+
+    TODO make sure that no right gain is possible
+    TODO move the non functional user parameters to hidden words to be able to reuse the standard view functionality
 
     if a user has done 3 value edits he can add new values (adding a word to a value also creates a new value)
     if a user has added 3 values and at least one is accepted by another user, he can add words and formula and he must have a valid email
@@ -15,9 +18,6 @@
     if a user got 2 pending verb discussion, he can no longer add verbs utils the open discussions are less than 2
 
     the same ip can max 10 add 10 values and max 5 user a day, upon request the number of max user creation can be increased for an ip range
-
-    TODO make sure that no right gain is possible
-    TODO move the non functional user parameters to hidden words to be able to reuse the standard view functionality
 
 
     This file is part of zukunft.com - calc with words
@@ -37,16 +37,22 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
   
 */
 
+namespace model;
+
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once MODEL_HELPER_PATH . 'db_object.php';
+
 use api\user_api;
-use export\exp_obj;
-use export\_user_exp;
+use cfg\export\_user_exp;
+use cfg\export\exp_obj;
 use html\user_dsp;
 use html\word_dsp;
 

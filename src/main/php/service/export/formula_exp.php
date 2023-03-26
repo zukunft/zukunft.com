@@ -2,8 +2,8 @@
 
 /*
 
-  triple_exp.php - the simple export object for a triple
-  -----------------
+  formula_exp.php - the simple export object for a formula
+  ---------------
   
   This file is part of zukunft.com - calc with words
 
@@ -29,30 +29,28 @@
   
 */
 
-namespace export;
+namespace cfg\export;
 
-class triple_exp extends sandbox_exp_link
+include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
+
+class formula_exp extends sandbox_exp_named
 {
 
     // field names used for JSON creation
+    public ?string $expression = '';
     public ?string $description = '';
-    public ?string $from = '';
-    public ?string $verb = '';
-    public ?string $to = '';
-    public ?string $view = '';
-    public ?array $refs = [];
+    public ?string $type = '';
+    public ?string $assigned_word = '';
 
     function reset()
     {
         parent::reset();
 
+        $this->expression = '';
         $this->description = '';
-        $this->from = '';
-        $this->verb = '';
-        $this->to = '';
+        $this->type = '';
 
-        $this->view = '';
-        $this->refs = [];
+        $this->assigned_word = '';
     }
 
 }

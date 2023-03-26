@@ -2,8 +2,17 @@
 
 /*
 
-    word_exp.php - the simple export object for a word
-    ------------
+    model/helper/combine_object.php - parent object to combine two or four sandbox objects
+    -------------------------------
+
+    e.g. to combine value and result to figure
+    or word and triple to phrase
+    or word, triple, verb and formula to term
+
+    TODO use it for figure
+    TODO use it for phrase
+    TODO use it for term
+
 
     This file is part of zukunft.com - calc with words
 
@@ -26,31 +35,33 @@
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
-namespace export;
+namespace model;
 
-class word_exp extends sandbox_exp_named
+class combine_object
 {
 
-    // field names used for JSON creation
-    public ?string $plural = '';
-    public ?string $description = '';
-    public ?string $type = '';
-    public ?string $view = '';
-    public ?array $refs = [];
+    /*
+     * object vars
+     */
 
-    function reset()
+    protected object $obj;
+
+
+    /*
+     * set and get
+     */
+
+    function set_obj(object $obj): void
     {
-        parent::reset();
+        $this->obj = $obj;
+    }
 
-        $this->plural = '';
-        $this->description = '';
-        $this->type = '';
-
-        $this->view = '';
-        $this->refs = [];
+    function obj(): object
+    {
+        return $this->obj;
     }
 
 }

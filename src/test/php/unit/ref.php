@@ -30,7 +30,14 @@
 
 */
 
+namespace test;
+
 use api\source_api;
+use cfg\ref_type_list;
+use cfg\source_type_list;
+use model\ref;
+use model\source;
+use model\sql_db;
 
 class ref_unit_tests
 {

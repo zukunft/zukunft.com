@@ -30,6 +30,8 @@
 
 */
 
+namespace test;
+
 use api\word_api;
 use cfg\phrase_type;
 use html\html_base;

@@ -3,7 +3,7 @@
 /*
 
     model/log/change_log_field.php - the const for the change log field table
-    -------------------------------
+    ------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,7 +29,13 @@
 
 */
 
+namespace model;
 
+include_once DB_PATH . 'sql_db.php';
+include_once MODEL_LOG_PATH . 'change_log_table.php';
+include_once MODEL_LOG_PATH . 'change_log_field.php';
+
+use model\sql_db;
 use cfg\type_list;
 use cfg\type_object;
 

@@ -2,8 +2,8 @@
 
 /*
 
-    triple_list.php - a list of word links, mainly used to build a RDF graph
-    ------------------
+    model/word/triple_list.php - a list of word links, mainly used to build a RDF graph
+    --------------------------
 
     example:
     for company the list of linked words should contain "... has a balance sheet" and "... has a cash flow statement"
@@ -32,12 +32,16 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
+
+namespace model;
+
+use cfg\verb_list;
 
 class triple_list
 {

@@ -41,6 +41,15 @@
   
 */
 
+namespace export;
+
+include_once MODEL_HELPER_PATH . 'library.php';
+
+use cfg\config;
+use model\library;
+use model\phrase_list;
+use model\user;
+
 class export
 {
 

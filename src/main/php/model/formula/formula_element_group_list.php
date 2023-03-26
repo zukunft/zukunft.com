@@ -2,8 +2,8 @@
 
 /*
 
-  formula_element_group_list.php - simply a list of formula element groups to place the name function
-  -----------------------------
+  model/formula/formula_element_group_list.php - simply a list of formula element groups to place the name function
+  --------------------------------------------
   
   This file is part of zukunft.com - calc with words
 
@@ -28,6 +28,8 @@
   http://zukunft.com
   
 */
+
+namespace model;
 
 class formula_element_group_list extends sandbox_list
 {

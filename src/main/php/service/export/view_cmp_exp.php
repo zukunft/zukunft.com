@@ -2,8 +2,8 @@
 
 /*
 
-  source_exp.php - the simple export object for a source
-  --------------
+  view_component_exp.php - the simple export object for a view component including the position that is save in the component link
+  ----------------------
   
   This file is part of zukunft.com - calc with words
 
@@ -29,28 +29,29 @@
   
 */
 
-namespace export;
+namespace cfg\export;
 
-class source_exp extends sandbox_exp_named
+class view_cmp_exp extends sandbox_exp_named
 {
 
-    // object specific database and JSON object field names
-    const FLD_REF = 'source';
-
     // field names used for JSON creation
-    public ?string $url = null;
-    public ?string $description = null;
-    public ?string $type = null;
-    public ?string $code_id = null;
+    public ?int $position = 0;
+    public ?string $type = '';
+    public ?string $row = '';
+    public ?string $column = '';
+    public ?string $column2 = '';
+    public ?string $description = '';
 
     function reset()
     {
         parent::reset();
 
-        $this->url = '';
-        $this->description = '';
+        $this->position = 0;
         $this->type = '';
-        $this->code_id = '';
+        $this->row = '';
+        $this->column = '';
+        $this->column2 = '';
+        $this->description = '';
     }
 
 }

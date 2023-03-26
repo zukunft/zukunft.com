@@ -30,8 +30,12 @@
 
 */
 
+namespace test;
+
 use api\word_api;
 use cfg\phrase_type;
+use cfg\view_sys_list;
+use model\sql_db;
 
 class view_list_unit_tests
 {

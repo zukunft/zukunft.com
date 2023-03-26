@@ -30,11 +30,10 @@
 
 */
 
-use api\formula_type_list_api;
-use api\phrase_api;
-use api\word_api;
+namespace test;
+
+use cfg\formula_type_list;
 use html\html_base;
-use html\phrase_dsp;
 
 class type_list_display_unit_tests
 {

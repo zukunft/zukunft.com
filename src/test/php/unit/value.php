@@ -30,8 +30,16 @@
 
 */
 
+namespace test;
+
+include_once MODEL_VALUE_PATH . 'value_time_series.php';
+
 use api\phrase_group_api;
 use api\value_api;
+use model\phrase_group;
+use model\sql_db;
+use model\value;
+use model\value_time_series;
 
 class value_unit_tests
 {

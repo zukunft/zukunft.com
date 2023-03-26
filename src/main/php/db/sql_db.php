@@ -33,55 +33,12 @@
   
 */
 
-// TODO Check that calling the update function always expects a boolean as return value
-// TODO check that $db_con->get and $db_con->get1 always can handle a null row result
-// TODO check that for all update and insert statement the user id is set correctly (use word user config as an example)
-// TODO mainly for data from the internet use prepared statements to prevent SQL injections
-
-const SQL_DB_TYPE = sql_db::POSTGRES;
-// const SQL_DB_TYPE = sql_db::MYSQL;
-
-/**
- * a query object to build and fill prepared queries
- */
-class sql_par
-{
-    public string $sql;   // the SQL statement to create a prepared query
-    public string $name;  // the unique name of the SQL statement
-    public array $par;    // the list of the parameters used for the execution
-
-    /**
-     * @param string $class the name of the calling class used for the unique query name
-     * @param bool $is_std true if the standard data for all users should be loaded
-     */
-    function __construct(string $class, bool $is_std = false)
-    {
-        $this->sql = '';
-        if ($is_std) {
-            $this->name = $class . '_std_by_';
-        } else {
-            $this->name = $class . '_by_';
-        }
-        $this->par = array();
-    }
-
-    /**
-     * @return bool true if the query has at least one parameter set
-     */
-    function has_par(): bool
-    {
-        if (count($this->par) > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-}
+namespace model;
 
 class sql_db
 {
 
-    // these databases can be used at the moment
+    // these databases can be used at the moment (must be the same as in zu_lib)
     const POSTGRES = "Postgres";
     const MYSQL = "MySQL";
 
@@ -4310,29 +4267,4 @@ class sql_db
         return $result;
     }
 
-}
-
-
-/*
-  name shortcuts - rename some often used functions to make to code look nicer and not draw the focus away from the important part
-  --------------
-*/
-
-
-// SQL list: create a query string for the standard list
-// e.g. the type "source" creates the SQL statement "SELECT source_id, source_name FROM sources ORDER BY source_name;"
-function sql_lst($type): string
-{
-    global $db_con;
-    $db_con->set_type($type);
-    return $db_con->sql_std_lst();
-}
-
-// similar to "sql_lst", but taking the user sandbox into account
-function sql_lst_usr($type, $usr): string
-{
-    global $db_con;
-    $db_con->set_type($type);
-    $db_con->usr_id = $usr->id();
-    return $db_con->sql_std_lst_usr();
 }

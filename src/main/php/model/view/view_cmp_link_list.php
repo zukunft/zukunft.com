@@ -2,8 +2,8 @@
 
 /*
 
-    view_cmp_link_list.php - a list of view component links
-    ----------------------
+    model/view/view_cmp_link_list.php - a list of view component links
+    ---------------------------------
 
     This links list object is used to update or delete a list of links with one SQL statement
 
@@ -24,12 +24,14 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
   
 */
+
+namespace model;
 
 class view_cmp_link_list extends sandbox_list
 {

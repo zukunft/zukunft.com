@@ -34,11 +34,7 @@
 
 namespace html;
 
-use api\phrase_group_api;
-use api\phrase_list_api;
-use api\sandbox_api;
-use api\sandbox_value_api;
-use controller\controller;
+include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 
 class phrase_group_dsp extends sandbox_named_dsp
 {

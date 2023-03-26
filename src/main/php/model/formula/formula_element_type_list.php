@@ -2,8 +2,8 @@
 
 /*
 
-  formula_element_type_list.php - to link coded functionality to a formula element type
-  -----------------------------
+  model/formula/formula_element_type_list.php - to link coded functionality to a formula element type
+  -------------------------------------------
   
   This file is part of zukunft.com - calc with words
 
@@ -29,10 +29,12 @@
   
 */
 
-global $formula_element_types;
+namespace model;
 
 use cfg\type_list;
 use cfg\type_object;
+
+global $formula_element_types;
 
 class formula_element_type_list extends type_list
 {

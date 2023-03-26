@@ -2,8 +2,8 @@
 
 /*
 
-    formula_element_list.php - a list of formula elements to place the name function
-    ------------------------
+    model/formula/formula_element_list.php - a list of formula elements to place the name function
+    --------------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -28,6 +28,8 @@
     http://zukunft.com
 
 */
+
+namespace model;
 
 class formula_element_list extends sandbox_list
 {

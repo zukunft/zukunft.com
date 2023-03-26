@@ -2,8 +2,9 @@
 
 /*
 
-    _user_exp.php - the simple export object for a user
-    --------------
+    _sandbox_exp_named.php - extends the the export superclass for named objects such as formulas
+    --------------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -29,30 +30,25 @@
 
 */
 
+namespace cfg\export;
 
-namespace export;
+include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
+include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 
-class _user_exp extends sandbox_exp_named
+class sandbox_exp_named extends exp_obj
 {
 
     // field names used for JSON creation
-    public ?string $email = null;         //
-    public ?string $first_name = null;    //
-    public ?string $last_name = null;     //
-    public ?string $description = null;
-    public ?string $profile = null;
-    public ?string $code_id = null;
+    public ?string $name = '';       // the name of the object
+    public ?string $share = '';      // the share permissions of the object
+    public ?string $protection= '';  // the protection of the given object
 
+    // reset the search values of this object
     function reset()
     {
-        sandbox_exp_named::reset();
-
-        $this->email = '';
-        $this->first_name = '';
-        $this->last_name = '';
-        $this->description = '';
-        $this->profile = '';
-        $this->code_id = '';
+        $this->name = '';
+        $this->share = '';
+        $this->protection = '';
     }
 
 }

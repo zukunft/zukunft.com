@@ -2,8 +2,8 @@
 
 /*
 
-    value_list.php - to show or modify a list of values
-    --------------
+    model/value/value_list.php - to show or modify a list of values
+    --------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -22,19 +22,23 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
+namespace model;
+
+include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
+
 use api\value_list_api;
+use cfg\export\exp_obj;
+use cfg\export\source_exp;
+use cfg\export\value_list_exp;
 use cfg\protection_type;
 use cfg\share_type;
-use export\source_exp;
-use export\exp_obj;
-use export\value_list_exp;
 use html\button;
 use html\html_base;
 
@@ -105,9 +109,11 @@ class value_list extends sandbox_list
     // TODO review the VAR and LIMIT definitions
     function load_sql(sql_db $db_con): sql_par
     {
+        $lib = new library();
+        $class = $lib->str_right_of_or_all(self::class, '\\');
         $db_con->set_type(sql_db::TBL_VALUE);
-        $qp = new sql_par(self::class);
-        $sql_name = self::class . '_by_';
+        $qp = new sql_par($class);
+        $sql_name = $class . '_by_';
         $sql_name_ext = '';
         $sql_where = '';
 

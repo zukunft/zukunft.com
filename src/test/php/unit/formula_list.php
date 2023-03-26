@@ -26,8 +26,15 @@
 
 */
 
+namespace test;
+
+include_once MODEL_FORMULA_PATH . 'formula_list.php';
+
 use api\formula_api;
 use api\word_api;
+use model\formula_list;
+use model\sql_db;
+use model\word;
 
 class formula_list_unit_tests
 {
