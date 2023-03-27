@@ -36,6 +36,7 @@ include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_FORMULA_PATH . 'figure.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
 include_once API_PATH . 'controller.php';
+include_once WEB_VALUE_PATH . 'value.php';
 
 use api\combine_object_api;
 use api\figure_api;

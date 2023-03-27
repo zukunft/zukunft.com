@@ -393,7 +393,7 @@ class test_new_obj extends test_base
         $wrd->set_name($wrd_name);
 
         if ($wrd_type_code_id != null) {
-            $wrd->type_id = cl(db_cl::PHRASE_TYPE, $wrd_type_code_id);
+            $wrd->set_type($wrd_type_code_id);
         }
         return $wrd;
     }

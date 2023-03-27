@@ -49,6 +49,18 @@ class figure extends combine_object
 {
 
     /*
+     * database link
+     */
+
+    // the database and JSON object duplicate field names for combined value and result mainly to link figures
+    const FLD_ID = 'figure_id';
+
+    // the common figure database field names excluding the id and excluding the user specific fields
+    const FLD_NAMES = array(
+        value::FLD_NAMES
+    );
+
+    /*
      * construct and map
      */
 
@@ -59,6 +71,39 @@ class figure extends combine_object
     function __construct(value|formula_value $obj)
     {
         $this->set_obj($obj);
+    }
+
+    /**
+     * map the common value and result database fields to the figure fields
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the triple is loaded and valid
+     */
+    function row_mapper(?array $db_row, string $id_fld = self::FLD_ID, string $fld_ext = ''): bool
+    {
+        $result = false;
+        $this->id = 0;
+        if ($db_row != null) {
+            if ($db_row[$id_fld] > 0) {
+                $this->id = $db_row[$id_fld];
+                // map a user value
+                $val = new value($this->user());
+                $val->row_mapper($db_row);
+                $this->set_obj($val);
+                $result = true;
+            } elseif ($db_row[$id_fld] < 0) {
+                $this->id = $db_row[$id_fld];
+                // map a formula result
+                $fv = new formula_value($this->user());
+                $fv->row_mapper($db_row);
+                $this->set_obj($fv);
+                $result = true;
+            } else {
+                log_warning('figure with id 0 is not expected');
+            }
+        }
+        return $result;
     }
 
 
