@@ -29,18 +29,18 @@
 
 */
 
-namespace api;
+namespace html;
 
-use back_trace;
-use change_log;
-use change_log_action;
-use change_log_field;
-use change_log_table;
-use controller\log\change_log_named_api;
-use formula;
+include_once API_SANDBOX_PATH . 'user_config.php';
+
+use api\change_log_named_api;
+use api\user_config;
 use html\api;
 use html\button;
 use html\html_base;
+use model\change_log_action;
+use model\change_log_table;
+use model\formula;
 
 class change_log_named_dsp extends change_log_named_api
 {

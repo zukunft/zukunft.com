@@ -33,6 +33,8 @@
 
 namespace html;
 
+include_once WEB_SYSTEM_PATH . 'messages.php';
+
 class html_selector
 {
 

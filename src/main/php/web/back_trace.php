@@ -34,6 +34,8 @@
   
 */
 
+namespace html;
+
 class back_trace
 {
     public ?array $url_lst = null;

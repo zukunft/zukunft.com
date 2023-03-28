@@ -35,9 +35,10 @@ namespace model;
 
 include_once MODEL_SYSTEM_PATH . 'list.php';
 include_once API_LOG_PATH . 'change_log_list.php';
+include_once WEB_LOG_PATH . 'change_log_list.php';
 
 use api\change_log_list_api;
-use api\change_log_list_dsp;
+use html\change_log_list_dsp;
 use model\base_list;
 
 class change_log_list extends base_list

@@ -35,12 +35,15 @@
 namespace html;
 
 use api\type_list_api;
+use model\library;
 
 class type_list_dsp extends type_list_api
 {
 
     function list(string $class, string $title = ''): string
     {
+        $lib = new library();
+        $class = $lib->str_right_of_or_all($class, '\\');
         $html = new html_base();
         if ($title != '') {
             $title = $html->text_h2($title);

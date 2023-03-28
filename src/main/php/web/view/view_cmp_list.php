@@ -31,6 +31,8 @@
 
 namespace html;
 
+include_once API_VIEW_PATH . 'view_cmp_list.php';
+
 use api\view_cmp_list_api;
 
 class view_cmp_list_dsp extends view_cmp_list_api

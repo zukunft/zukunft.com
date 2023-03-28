@@ -754,7 +754,6 @@ class test_api extends test_new_obj
     private function class_to_api(string $class): string
     {
         $lib = new library();
-        $class = $lib->str_right_of_or_all($class, '\\');
         $result = $class;
         if ($class == view_cmp::class) {
             $result = view_cmp_api::API_NAME;
@@ -777,7 +776,7 @@ class test_api extends test_new_obj
         if ($class == language_form::class) {
             $result = language_form_api::API_NAME;
         }
-        return $result;
+        return $lib->str_right_of_or_all($result, '\\');
     }
 
     /**

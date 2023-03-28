@@ -32,7 +32,9 @@
 
 namespace test;
 
-use back_trace;
+include_once WEB_PATH . 'back_trace.php';
+
+use html\back_trace;
 use html\html_base;
 
 class change_log_display_unit_tests

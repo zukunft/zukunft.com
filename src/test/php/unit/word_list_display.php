@@ -32,6 +32,8 @@
 
 namespace test;
 
+include_once WEB_WORD_PATH . 'word_list.php';
+
 use api\word_api;
 use cfg\phrase_type;
 use html\html_base;

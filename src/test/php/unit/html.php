@@ -32,6 +32,10 @@
 
 namespace test;
 
+include_once WEB_HTML_PATH . 'html_selector.php';
+include_once WEB_HTML_PATH . 'button.php';
+include_once WEB_FORMULA_PATH . 'formula_value_list.php';
+
 use api\phrase_list_api;
 use api\value_api;
 use api\view_cmp_api;

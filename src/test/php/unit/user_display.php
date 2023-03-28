@@ -32,6 +32,8 @@
 
 namespace test;
 
+include_once WEB_USER_PATH . 'user.php';
+
 use html\html_base;
 use html\user_dsp;
 

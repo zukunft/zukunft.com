@@ -29,9 +29,9 @@
 
 */
 
-namespace api;
+namespace html;
 
-use back_trace;
+use api\change_log_list_api;
 use html\html_base;
 
 class change_log_list_dsp extends change_log_list_api

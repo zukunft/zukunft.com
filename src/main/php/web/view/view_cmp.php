@@ -32,7 +32,7 @@
 namespace html;
 
 use api\view_cmp_api;
-use view_cmp_type;
+use model\view_cmp_type;
 
 class view_cmp_dsp extends view_cmp_api
 {

@@ -69,7 +69,7 @@ class change_log_unit_tests
 
         // sql to load the word by id
         $log_dsp = new user_log_display($usr);
-        $log_dsp->type = user::class;
+        $log_dsp->type = $lib->str_right_of_or_all(user::class, '\\');
         $log_dsp->size = SQL_ROW_LIMIT;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $log_dsp->dsp_hist_links_sql($db_con);

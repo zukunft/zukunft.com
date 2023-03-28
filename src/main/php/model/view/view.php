@@ -31,6 +31,7 @@
 
 namespace model;
 
+include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_cmp.php';
 include_once MODEL_VIEW_PATH . 'view_cmp_link.php';
 

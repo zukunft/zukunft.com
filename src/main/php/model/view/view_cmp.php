@@ -33,6 +33,8 @@
 
 namespace model;
 
+include_once WEB_VIEW_PATH . 'view_cmp.php';
+
 use api\view_cmp_api;
 use cfg\export\exp_obj;
 use cfg\export\view_cmp_exp;
