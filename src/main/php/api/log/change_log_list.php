@@ -32,9 +32,9 @@
 
 namespace api;
 
-use controller\log\change_log_named_api;
+use JsonSerializable;
 
-class change_log_list_api extends list_api implements \JsonSerializable
+class change_log_list_api extends list_api implements JsonSerializable
 {
 
     /*

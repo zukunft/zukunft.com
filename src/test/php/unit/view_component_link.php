@@ -32,6 +32,8 @@
 
 namespace test;
 
+include_once MODEL_VIEW_PATH . 'view_cmp_link_list.php';
+
 use model\sql_db;
 use model\view;
 use model\view_cmp;

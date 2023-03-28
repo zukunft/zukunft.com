@@ -36,6 +36,8 @@
 
 namespace model;
 
+include_once API_SYSTEM_PATH . 'batch_job_list.php';
+
 use api\batch_job_list_api;
 use cfg\job_type_list;
 use DateTime;

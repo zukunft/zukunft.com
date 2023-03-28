@@ -30,7 +30,9 @@
 */
 
 use html\api;
+use html\html_base;
 use html\word_dsp;
+use model\library;
 
 class value_list_dsp_old extends value_list
 {
@@ -40,6 +42,7 @@ class value_list_dsp_old extends value_list
     function dsp_table($phr_row, $back): string
     {
         $result = '';
+        $html = new html_base();
         $lib = new library();
 
         // check the parameters
@@ -142,7 +145,7 @@ class value_list_dsp_old extends value_list
                     }
                 }
                 $common_text .= ')';
-                $result .= dsp_line_small($common_text);
+                $result .= $html->dsp_line_small($common_text);
             }
             $result .= '<br>';
 

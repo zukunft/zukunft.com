@@ -32,6 +32,8 @@
 
 namespace test;
 
+include_once MODEL_FORMULA_PATH . 'formula_element_list.php';
+
 use model\formula_element_list;
 use model\sql_db;
 

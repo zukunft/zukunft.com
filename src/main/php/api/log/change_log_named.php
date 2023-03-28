@@ -30,7 +30,7 @@
 
 */
 
-namespace controller\log;
+namespace api;
 
 class change_log_named_api extends change_log_api
 {

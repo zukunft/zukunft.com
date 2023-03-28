@@ -47,6 +47,7 @@ use api\formula_value_api;
 use cfg\export\exp_obj;
 use cfg\export\formula_value_exp;
 use DateTime;
+use html\html_base;
 
 class formula_value extends db_object
 {
@@ -1152,6 +1153,7 @@ class formula_value extends db_object
     function explain($lead_phr_id, $back): string
     {
         $lib = new library();
+        $html = new html_base();
         log_debug('formula_value->explain ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $result = '';
 
@@ -1176,7 +1178,7 @@ class formula_value extends db_object
         $title .= ': ';
         // add the value  to the title
         $title .= $this->display($back);
-        $result .= dsp_text_h1($title);
+        $result .= $html->dsp_text_h1($title);
         log_debug('explain the value for ' . $val_phr_lst->dsp_name() . ' based on ' . $this->src_phr_lst->dsp_name());
 
         // display the measure and scaling of the value

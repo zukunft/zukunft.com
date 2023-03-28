@@ -32,6 +32,10 @@
 
 namespace test;
 
+include_once WEB_PATH . 'user_log_display.php';
+include_once MODEL_LOG_PATH . 'change_log_named.php';
+include_once MODEL_LOG_PATH . 'change_log_link.php';
+
 use api\triple_api;
 use model\change_log_field;
 use model\change_log_link;

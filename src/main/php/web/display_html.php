@@ -37,6 +37,8 @@
 // ------------------------------------------------------------------
 
 // get the normal table width (should be based on the display size)
+use html\html_base;
+
 function dsp_tbl_width(): string
 {
     return '800px';
@@ -230,20 +232,22 @@ function dsp_link_hist_box($comp_name, $comp_html,
 
 function dsp_tbl_start(): string
 {
+    $html = new html_base();
     if (UI_USE_BOOTSTRAP) {
         $result = '<table class="table table-striped table-bordered">' . "\n";
     } else {
-        $result = '<table style="width:' . dsp_tbl_width() . '">' . "\n";
+        $result = '<table style="width:' . $html->dsp_tbl_width() . '">' . "\n";
     }
     return $result;
 }
 
 function dsp_tbl_start_half(): string
 {
+    $html = new html_base();
     if (UI_USE_BOOTSTRAP) {
         $result = '<table class="table col-sm-5 table-borderless">' . "\n";
     } else {
-        $result = '<table style="width:' . dsp_tbl_width_half() . '">' . "\n";
+        $result = '<table style="width:' . $html->dsp_tbl_width_half() . '">' . "\n";
     }
     return $result;
 }
@@ -261,10 +265,11 @@ function dsp_tbl_start_hist(): string
 // a table for a list of selectors
 function dsp_tbl_start_select(): string
 {
+    $html = new html_base();
     if (UI_USE_BOOTSTRAP) {
         $result = '<table class="table col-sm-10 table-borderless">' . "\n";
     } else {
-        $result = '<table style="width:' . dsp_tbl_width_half() . '">' . "\n";
+        $result = '<table style="width:' . $html->dsp_tbl_width_half() . '">' . "\n";
     }
     return $result;
 }

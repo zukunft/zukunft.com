@@ -33,6 +33,14 @@
 use html\api;
 use html\button;
 use html\html_base;
+use model\change_log_table;
+use model\formula;
+use model\sql_db;
+use model\user;
+use model\value;
+use model\view;
+use model\view_cmp;
+use model\word;
 
 class user_log_display
 {

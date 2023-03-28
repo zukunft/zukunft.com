@@ -33,8 +33,9 @@
 namespace api;
 
 use html\term_list_dsp;
+use JsonSerializable;
 
-class term_list_api extends list_api implements \JsonSerializable
+class term_list_api extends list_api implements JsonSerializable
 {
 
     /*

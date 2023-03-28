@@ -33,6 +33,10 @@ use html\api;
 use html\button;
 use html\html_base;
 use html\html_selector;
+use model\formula;
+use model\formula_value;
+use model\formula_value_list;
+use model\phrase;
 
 class formula_dsp_old extends formula
 {
@@ -226,9 +230,10 @@ class formula_dsp_old extends formula
     {
         log_debug($this->ref_text);
         $result = '<br>';
+        $html = new html_base();
 
-        $result .= dsp_btn_text("Test", '/http/formula_test.php?id=' . $this->id . '&user=' . $this->user()->id() . '&back=' . $back);
-        $result .= dsp_btn_text("Refresh results", '/http/formula_test.php?id=' . $this->id . '&user=' . $this->user()->id() . '&back=' . $back . '&refresh=1');
+        $result .= $html->dsp_btn_text("Test", '/http/formula_test.php?id=' . $this->id . '&user=' . $this->user()->id() . '&back=' . $back);
+        $result .= $html->dsp_btn_text("Refresh results", '/http/formula_test.php?id=' . $this->id . '&user=' . $this->user()->id() . '&back=' . $back . '&refresh=1');
 
         $result .= '<br><br>';
 

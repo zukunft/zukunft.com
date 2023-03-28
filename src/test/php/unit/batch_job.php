@@ -32,6 +32,8 @@
 
 namespace test;
 
+include_once MODEL_SYSTEM_PATH . 'batch_job_list.php';
+
 use api\triple_api;
 use cfg\job_type_list;
 use model\batch_job;

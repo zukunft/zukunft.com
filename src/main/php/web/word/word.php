@@ -220,7 +220,7 @@ class word_dsp extends sandbox_typed_dsp
             }
             $url = $html->url(api::WORD . api::UPDATE, $this->id, $this->id);
             $title .= $html->ref($url, $html->span($this->name(), api::STYLE_GLYPH), 'Rename word');
-            $result .= dsp_text_h1($title);
+            $result .= $html->dsp_text_h1($title);
         }
 
         return $result;

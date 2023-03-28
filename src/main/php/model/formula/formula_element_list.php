@@ -31,6 +31,8 @@
 
 namespace model;
 
+include_once MODEL_FORMULA_PATH . 'formula_element.php';
+
 class formula_element_list extends sandbox_list
 {
 

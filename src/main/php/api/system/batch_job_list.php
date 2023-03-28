@@ -34,8 +34,9 @@ namespace api;
 
 use cfg\phrase_type;
 use html\batch_job_list_dsp;
+use JsonSerializable;
 
-class batch_job_list_api extends list_api implements \JsonSerializable
+class batch_job_list_api extends list_api implements JsonSerializable
 {
 
     /*

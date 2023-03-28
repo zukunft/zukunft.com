@@ -41,6 +41,8 @@
 
 namespace test;
 
+include_once API_REF_PATH . 'ref.php';
+
 use api\formula_api;
 use api\formula_value_api;
 use api\phrase_group_api;

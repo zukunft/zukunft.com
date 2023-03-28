@@ -31,9 +31,12 @@
 
 namespace model;
 
+include_once API_LOG_PATH . 'change_log_named.php';
+
+use api\change_log_named_api;
 use api\change_log_named_dsp;
 use api\user_config;
-use controller\log\change_log_named_api;
+use Exception;
 
 class change_log_named extends change_log
 {

@@ -71,7 +71,11 @@ A user updates a formula
 
 namespace model;
 
+include_once API_SYSTEM_PATH . 'batch_job.php';
+
 use api\batch_job_api;
+use cfg\job_type_list;
+use DateTime;
 
 class batch_job extends db_object
 {

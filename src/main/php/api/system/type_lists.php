@@ -33,8 +33,9 @@ namespace api;
 
 use api_message;
 use sql_db;
+use JsonSerializable;
 
-class type_lists_api extends api_message implements \JsonSerializable
+class type_lists_api extends api_message implements JsonSerializable
 {
 
     // parent object for all preloaded types

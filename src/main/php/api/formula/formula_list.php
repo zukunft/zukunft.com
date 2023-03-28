@@ -33,8 +33,9 @@
 namespace api;
 
 use html\formula_list_dsp;
+use JsonSerializable;
 
-class formula_list_api extends list_api implements \JsonSerializable
+class formula_list_api extends list_api implements JsonSerializable
 {
 
     /*
