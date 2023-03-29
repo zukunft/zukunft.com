@@ -30,10 +30,14 @@
 
 */
 
+namespace test;
+
 use api\phrase_group_api;
 use api\triple_api;
 use api\value_api;
 use api\word_api;
+use model\phrase_list;
+use model\value;
 
 class value_unit_db_tests
 {

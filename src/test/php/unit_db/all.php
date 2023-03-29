@@ -38,8 +38,7 @@ use api\phrase_group_api;
 use api\triple_api;
 use api\value_api;
 use api\word_api;
-use sql_db_unit_db_tests;
-use user_unit_db_tests;
+use model\verb;
 
 class test_unit_read_db extends test_unit
 {

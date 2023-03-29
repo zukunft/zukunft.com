@@ -30,8 +30,12 @@
 
 */
 
+namespace test;
+
 use api\formula_api;
 use api\word_api;
+use model\phrase_group;
+use model\phrase_list;
 
 class phrase_group_unit_db_tests
 {

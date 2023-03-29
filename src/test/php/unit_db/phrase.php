@@ -30,10 +30,13 @@
 
 */
 
+namespace test;
+
 use api\word_api;
 use api\triple_api;
 use api\phrase_api;
 use cfg\phrase_type;
+use model\phrase;
 
 class phrase_unit_db_tests
 {

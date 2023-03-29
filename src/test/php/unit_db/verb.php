@@ -30,7 +30,12 @@
 
 */
 
+namespace test;
+
 use api\word_api;
+use cfg\verb_list;
+use model\verb;
+use model\word;
 
 class verb_unit_db_tests
 {

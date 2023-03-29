@@ -30,6 +30,8 @@
 
 */
 
+namespace test;
+
 class sql_db_unit_db_tests
 {
 

@@ -35,6 +35,8 @@
 
 namespace model;
 
+use Exception;
+
 class sql_db
 {
 

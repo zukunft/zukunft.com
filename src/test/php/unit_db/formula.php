@@ -30,8 +30,12 @@
 
 */
 
+namespace test;
+
 use api\formula_api;
 use cfg\formula_type;
+use cfg\formula_type_list;
+use model\formula_list;
 
 class formula_unit_db_tests
 {

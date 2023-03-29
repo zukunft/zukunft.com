@@ -30,9 +30,16 @@
 
 */
 
+namespace test;
+
 use api\triple_api;
 use api\word_api;
 use cfg\phrase_type;
+use cfg\word_type_list;
+use model\phrase;
+use model\verb;
+use model\word;
+use model\word_list;
 
 class word_unit_db_tests
 {

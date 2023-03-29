@@ -32,6 +32,8 @@
 
 namespace cfg;
 
+include_once MODEL_SYSTEM_PATH . 'system_error_log_status_list.php';
+
 use api\type_lists_api;
 use model\change_log_action;
 use model\change_log_field;

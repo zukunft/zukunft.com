@@ -30,6 +30,12 @@
 
 */
 
+namespace test;
+
+use cfg\job_type_list;
+use model\batch_job_list;
+use model\user;
+
 class batch_job_unit_db_tests
 {
 

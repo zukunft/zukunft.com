@@ -30,8 +30,18 @@
 
 */
 
+namespace test;
+
 use api\view_api;
 use api\view_cmp_api;
+use cfg\view_cmp_type_list;
+use cfg\view_sys_list;
+use cfg\view_type;
+use cfg\view_type_list;
+use model\db_cl;
+use model\view;
+use model\view_cmp;
+use model\view_cmp_type;
 
 class view_unit_db_tests
 {

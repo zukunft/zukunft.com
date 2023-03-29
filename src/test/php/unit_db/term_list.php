@@ -30,8 +30,12 @@
 
 */
 
+namespace test;
+
 use api\triple_api;
 use api\word_api;
+use model\term_list;
+use model\trm_ids;
 
 class term_list_unit_db_tests
 {

@@ -30,7 +30,13 @@
 
 */
 
+namespace test;
+
 use api\user_api;
+use cfg\user_profile_list;
+use model\db_cl;
+use model\user;
+use model\user_profile;
 
 class user_unit_db_tests
 {

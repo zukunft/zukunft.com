@@ -332,6 +332,44 @@ if ($version[0] < 8) {
 //check if "sudo apt-get install php-curl" is done for testing
 //phpinfo();
 
+// database links
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'db_check.php';
+
+include_once WEB_HTML_PATH . 'html_base.php';
+
+// include all other libraries that are usually needed
+include_once DB_LINK_PATH . 'zu_lib_sql_link.php';
+include_once SERVICE_PATH . 'db_code_link.php';
+include_once SERVICE_PATH . 'zu_lib_sql_code_link.php';
+include_once SERVICE_PATH . 'config.php';
+
+// preloaded lists
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_HELPER_PATH . 'type_lists.php';
+include_once MODEL_SYSTEM_PATH . 'system_error_log_status_list.php';
+include_once MODEL_USER_PATH . 'user_list.php';
+include_once MODEL_USER_PATH . 'user_profile_list.php';
+include_once MODEL_WORD_PATH . 'word_type_list.php';
+include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
+include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
+include_once MODEL_FORMULA_PATH . 'formula_element_type_list.php';
+include_once MODEL_VIEW_PATH . 'view_type_list.php';
+include_once MODEL_VIEW_PATH . 'view_cmp_type_list.php';
+include_once MODEL_VIEW_PATH . 'view_cmp_pos_type_list.php';
+include_once MODEL_REF_PATH . 'ref_type_list.php';
+include_once MODEL_REF_PATH . 'source_type_list.php';
+include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
+include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
+include_once MODEL_LANGUAGE_PATH . 'language_list.php';
+include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
+include_once MODEL_SYSTEM_PATH . 'batch_job_type_list.php';
+include_once MODEL_LOG_PATH . 'change_log_action.php';
+include_once MODEL_LOG_PATH . 'change_log_table.php';
+include_once MODEL_LOG_PATH . 'change_log_field.php';
+include_once MODEL_VERB_PATH . 'verb_list.php';
+include_once MODEL_VIEW_PATH . 'view_sys_list.php';
+
 /*
 // database links
 include_once DB_PATH . 'sql_db.php';

@@ -30,7 +30,10 @@
 
 */
 
+namespace test;
+
 use api\word_api;
+use model\word_list;
 
 class word_list_unit_db_tests
 {

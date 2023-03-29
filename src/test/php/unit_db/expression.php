@@ -30,6 +30,8 @@
 
 */
 
+namespace test;
+
 use api\formula_api;
 
 class expression_unit_db_tests

@@ -30,6 +30,19 @@
 
 */
 
+use cfg\config;
+use cfg\user_profile_list;
+use model\formula_list;
+use model\library;
+use model\sandbox;
+use model\sandbox_named;
+use model\sql_db;
+use model\sql_par;
+use model\user;
+use model\user_message;
+use model\user_profile;
+use model\value;
+
 /**
  * read the version number from the database and compare it with the backend version
  * if the database has a lower version than the backend program start the upgrade process
@@ -39,13 +52,14 @@ function db_check($db_con): string
 
     $result = ''; // the message that should be shown to the user immediately
     $do_consistency_check = false;
+    $cfg = new config();
 
-    cfg_set(config::SITE_NAME, POD_NAME, $db_con);
+    $cfg->set(config::SITE_NAME, POD_NAME, $db_con);
 
     // get the db version and start the upgrade process if needed
-    $db_version = cfg_get(config::VERSION_DB, $db_con);
+    $db_version = $cfg->get(config::VERSION_DB, $db_con);
     if ($db_version == '') {
-        cfg_set(config::VERSION_DB,PRG_VERSION, $db_con);
+        $cfg->set(config::VERSION_DB,PRG_VERSION, $db_con);
     } elseif ($db_version != PRG_VERSION) {
         $do_consistency_check = true;
         if (prg_version_is_newer($db_version)) {
@@ -57,7 +71,7 @@ function db_check($db_con): string
             };
         }
     } else {
-        $last_consistency_check = cfg_get(config::LAST_CONSISTENCY_CHECK, $db_con);
+        $last_consistency_check = $cfg->get(config::LAST_CONSISTENCY_CHECK, $db_con);
         // run a database consistency check once every 24h if the database is the least busy
         if (strtotime($last_consistency_check) < strtotime("now") - 1) {
             $do_consistency_check = true;
@@ -68,7 +82,7 @@ function db_check($db_con): string
     if ($do_consistency_check) {
         db_fill_code_links($db_con);
         db_check_missing_owner($db_con);
-        cfg_set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con);
+        $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con);
     }
 
     return $result;
@@ -97,6 +111,8 @@ function db_check_missing_owner(sql_db $db_con): bool
 // the version 0.0.3 is the first version, which has a build in upgrade process
 function db_upgrade_0_0_3(sql_db $db_con): string
 {
+    $cfg = new config();
+
     // prepare to remove the time word from the values
     $msg = db_move_time_phrase_to_group();
     if ($msg->is_ok()) {
@@ -298,14 +314,14 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     // Change code_id in verbs from contains to is_part_of
 
     // update the database version number in the config
-    cfg_set(config::VERSION_DB, PRG_VERSION, $db_con);
+    $cfg->set(config::VERSION_DB, PRG_VERSION, $db_con);
 
 
 
 
     // TODO create table user_value_time_series
     // check if the config save has been successful
-    $db_version = cfg_get(config::VERSION_DB, $db_con);
+    $db_version = $cfg->get(config::VERSION_DB, $db_con);
     if ($db_version != PRG_VERSION) {
         $result = 'Database upgrade to 0.0.3 has failed';
     }
@@ -331,8 +347,9 @@ function db_move_time_phrase_to_group(): user_message
  */
 function db_upgrade_0_0_4($db_con): string
 {
+    $cfg = new config();
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
-    $db_version = cfg_get(config::VERSION_DB, $db_con);
+    $db_version = $cfg->get(config::VERSION_DB, $db_con);
     if ($db_version != PRG_VERSION) {
         $result = 'Database upgrade to 0.0.4 has failed';
     }
