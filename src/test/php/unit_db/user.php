@@ -79,7 +79,8 @@ class user_unit_db_tests
         $t->assert('user profile load types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
+        global $user_profiles;
+        $result = $user_profiles->id(user_profile::NORMAL);
         $t->assert('user profile check ' . user_profile::NORMAL, $result, 1);
     }
 

@@ -73,8 +73,9 @@ class api_message
     {
         global $usr;
 
+        $cfg = new config();
         if ($db_con->connected()) {
-            $this->pod = cfg_get(config::SITE_NAME, $db_con);
+            $this->pod = $cfg->get(config::SITE_NAME, $db_con);
         } else {
             // for unit tests use the default pod name
             $this->pod = POD_NAME;

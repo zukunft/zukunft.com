@@ -35,6 +35,9 @@ namespace test;
 include_once MODEL_SYSTEM_PATH . 'system_log.php';
 
 use cfg\job_type_list;
+use cfg\type_lists;
+use model\db_cl;
+use model\sql_db;
 use model\sys_log_status;
 
 class system_unit_db_tests
@@ -71,7 +74,8 @@ class system_unit_db_tests
         $t->assert('load batch job', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = cl(db_cl::JOB_TYPE, job_type_list::VALUE_UPDATE);
+        global $job_types;
+        $result = $job_types->id(job_type_list::VALUE_UPDATE);
         $t->assert('check batch job ' . job_type_list::VALUE_UPDATE, $result, 1);
 
         /*
