@@ -164,11 +164,12 @@ class ref extends sandbox_link_with_type
         string $id_fld = ''
     ): bool
     {
+        $lst = new ref_type_list();
         $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->phr->set_id($db_row[phrase::FLD_ID]);
             $this->external_key = $db_row[self::FLD_EX_KEY];
-            $this->ref_type = get_ref_type_by_id($db_row[self::FLD_TYPE]);
+            $this->ref_type = $lst->get_ref_type_by_id($db_row[self::FLD_TYPE]);
             $this->url = $db_row[self::FLD_URL];
             $this->description = $db_row[self::FLD_URL];
             if ($db_row[source::FLD_ID] != null) {

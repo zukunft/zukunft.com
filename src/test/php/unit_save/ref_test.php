@@ -31,20 +31,26 @@
 */
 
 use api\word_api;
+use cfg\ref_type;
+use cfg\ref_type_list;
+use model\ref;
+use test\testing;
+use const test\TIMEOUT_LIMIT_PAGE_LONG;
 
 function run_ref_test(testing $t): void
 {
 
     global $usr;
 
-    dsp_test_header('Test the ref class (src/main/php/model/ref/ref.php)');
+    $t->header('Test the ref class (src/main/php/model/ref/ref.php)');
 
     // create the test ref
     $wrd = $t->test_word(word_api::TN_ADD);
     $t->test_ref(word_api::TN_ADD, ref::TEST_REF_NAME, ref_type::WIKIDATA);
 
     // load by phrase and type
-    $ref_type = get_ref_type(ref_type::WIKIDATA);
+    $lst = new ref_type_list();
+    $ref_type = $lst->get_ref_type(ref_type::WIKIDATA);
     $ref = new ref($usr);
     $ref->phr = $wrd->phrase();
     $ref->ref_type = $ref_type;

@@ -32,6 +32,8 @@
 
 use api\word_api;
 use export\json_io;
+use model\phrase_list;
+use test\testing;
 
 function run_export_test(testing $t): void
 {

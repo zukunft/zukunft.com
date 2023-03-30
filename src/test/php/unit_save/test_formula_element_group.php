@@ -40,6 +40,9 @@
 use api\formula_api;
 use api\word_api;
 use html\figure_dsp;
+use model\phrase_list;
+use test\test_api;
+use test\testing;
 
 function run_formula_element_group_test(testing $t): void
 {

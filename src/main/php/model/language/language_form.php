@@ -31,7 +31,7 @@
 
 namespace cfg;
 
-use library;
+use model\library;
 
 class language_form extends type_object
 {

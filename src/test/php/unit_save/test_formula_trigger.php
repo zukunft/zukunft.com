@@ -33,6 +33,10 @@
 use api\formula_api;
 use api\value_api;
 use api\word_api;
+use model\phrase_list;
+use model\value;
+use test\testing;
+use const test\TV_TEST_SALES_INCREASE_2017_FORMATTED;
 
 function run_formula_trigger_test(testing $t): void
 {

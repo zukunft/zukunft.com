@@ -43,6 +43,7 @@ class protection_unit_db_tests
     {
 
         global $db_con;
+        global $protection_types;
 
         // init
         $t->name = 'protection read db->';
@@ -57,7 +58,7 @@ class protection_unit_db_tests
         $t->assert('load types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT);
+        $result = $protection_types->id(protection_type::NO_PROTECT);
         $t->assert('check ' . protection_type::NO_PROTECT, $result, 1);
     }
 

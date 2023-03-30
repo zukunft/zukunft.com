@@ -151,7 +151,7 @@ class user_log_display
 
             // prepare to show where the user uses different word than a normal viewer
             $row_nbr = 0;
-            $result .= dsp_tbl_start_hist();
+            $result .= $html->dsp_tbl_start_hist();
             foreach ($db_lst as $db_row) {
                 // display the row only if the field is not an "admin only" field
                 //if ($db_row["code_id"] <> formula::FLD_REF_TEXT) {
@@ -285,7 +285,7 @@ class user_log_display
                     $result .= '</tr>';
                 //}
             }
-            $result .= dsp_tbl_end();
+            $result .= $html->dsp_tbl_end();
         }
 
         log_debug("done");
@@ -403,7 +403,7 @@ class user_log_display
 
         // display the changes
         $row_nbr = 0;
-        $result .= dsp_tbl_start_hist();
+        $result .= $html->dsp_tbl_start_hist();
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $row_nbr++;
@@ -443,7 +443,7 @@ class user_log_display
                 $result .= '</tr>';
             }
         }
-        $result .= dsp_tbl_end();
+        $result .= $html->dsp_tbl_end();
 
         log_debug("done");
         return $result;

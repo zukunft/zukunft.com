@@ -31,7 +31,8 @@
 
 namespace cfg;
 
-use library;
+
+use model\library;
 
 class language extends type_object
 {

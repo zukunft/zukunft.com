@@ -37,6 +37,7 @@
 namespace model;
 
 include_once API_SYSTEM_PATH . 'batch_job_list.php';
+include_once MODEL_SYSTEM_PATH . 'list.php';
 
 use api\batch_job_list_api;
 use cfg\job_type_list;

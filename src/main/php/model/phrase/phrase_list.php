@@ -49,6 +49,9 @@ include_once MODEL_PHRASE_PATH . 'term_list.php';
 
 use api\phrase_list_api;
 use cfg\phrase_type;
+use cfg\verb_list;
+use cfg\word_type_list;
+use export\export;
 use html\word_dsp;
 
 class phrase_list extends sandbox_list_named

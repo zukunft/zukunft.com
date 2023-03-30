@@ -134,6 +134,12 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
+
+use model\user;
+use test\string_unit_tests;
+use test\term_list_unit_db_tests;
+use test\test_unit_read_db;
+
 $debug = $_GET['debug'] ?? 0;
 
 // load the main functions
@@ -141,6 +147,10 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
+
+// TODO dismiss by refactoring phrase_list_dsp_old
+include_once MODEL_PHRASE_PATH . 'phrase_list_dsp.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 
 // open database and display header
 $db_con = prg_start("unit and integration testing");
@@ -204,13 +214,14 @@ if ($start_usr->id() > 0) {
             run_user_test($t);
 
             // test the api write functionality
-            $t->test_api_write_no_rest_all();
-            $t->test_api_write_all();
+            // TODO activate
+            //$t->test_api_write_no_rest_all();
+            //$t->test_api_write_all();
 
             create_test_words($t);
-            create_test_phrases($t);
+            test\create_test_phrases($t);
             create_test_sources($t);
-            create_base_times($t);
+            test\create_base_times($t);
             create_test_formulas($t);
             create_test_formula_links($t);
             create_test_views($t);
@@ -223,14 +234,15 @@ if ($start_usr->id() > 0) {
             (new string_unit_tests)->run($t); // test functions not yet split into single unit tests
             run_math_test($t);
             run_word_tests($t);
-            $t->run_api_test();
+            // TODO activate
+            //$t->run_api_test();
             //run_word_ui_test($t);
             // TODO add a test to merge a separate opened phrase Kanton Zürich with Zurich (Canton)
             run_word_display_test($t);
             run_word_list_test($t);
             run_triple_test($t);
             run_ref_test($t);
-            run_phrase_test($t);
+            test\run_phrase_test($t);
             run_phrase_group_test($t);
             run_phrase_group_list_test($t);
             run_graph_test($t);

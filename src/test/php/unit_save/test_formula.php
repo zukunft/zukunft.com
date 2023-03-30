@@ -33,6 +33,18 @@
 use api\formula_api;
 use api\word_api;
 use cfg\formula_type;
+use model\change_log_field;
+use model\change_log_named;
+use model\change_log_table;
+use model\formula;
+use model\formula_list;
+use model\phrase_list;
+use model\sandbox_named;
+use model\word;
+use test\formula_value_unit_tests;
+use test\testing;
+use const test\TIMEOUT_LIMIT_DB_MULTI;
+use const test\TIMEOUT_LIMIT_PAGE;
 
 function create_test_formulas(testing $t): void
 {

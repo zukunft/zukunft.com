@@ -32,6 +32,13 @@
 
 use api\view_api;
 use api\view_cmp_api;
+use model\change_log_link;
+use model\change_log_table;
+use model\view;
+use model\view_cmp;
+use model\view_cmp_link;
+use test\testing;
+use const test\TIMEOUT_LIMIT_DB_MULTI;
 
 function create_test_view_component_links(testing $t): void
 {

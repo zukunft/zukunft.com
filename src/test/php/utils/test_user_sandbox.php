@@ -31,6 +31,12 @@
 */
 
 use cfg\phrase_type;
+use model\source;
+use model\word;
+use test\testing;
+use const test\TS_IPCC_AR6_SYNTHESIS;
+use const test\TS_IPCC_AR6_SYNTHESIS_URL;
+use const test\TW_MIO;
 
 function run_sandbox_test(testing $t): void
 {

@@ -55,11 +55,15 @@ use cfg\export\word_exp;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
+use cfg\verb_list;
 use controller\controller;
 use html\api;
 use html\button;
+use html\html_base;
 use html\html_selector;
 use html\word_dsp;
+use user_log_display;
+use view_dsp_old;
 
 class word extends sandbox_typed
 {
@@ -878,6 +882,7 @@ class word extends sandbox_typed
         log_debug('for ' . $this->dsp_id() . ' with "' . $col_wrd->name . '"');
 
         $lib = new library();
+        $html = new html_base();
         $is_part_of_dsp = $is_part_of->get_dsp_obj();
         $result = $this->dsp_obj()->header($is_part_of_dsp);
 
@@ -900,7 +905,7 @@ class word extends sandbox_typed
 
         // display the words
         $row_nbr = 0;
-        $result .= dsp_tbl_start();
+        $result .= $html->dsp_tbl_start();
         foreach ($row_lst->lst() as $row_phr) {
             // display the column headers
             // not needed any more if wrd lst is created based on word_display elements
@@ -967,7 +972,7 @@ class word extends sandbox_typed
         // display an add button to offer the user to add one row
         $result .= '<tr><td>' . $this->btn_add($back) . '</td></tr>';
 
-        $result .= dsp_tbl_end();
+        $result .= $html->dsp_tbl_end();
 
         return $result;
     }

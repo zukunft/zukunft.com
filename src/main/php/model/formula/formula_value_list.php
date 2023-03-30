@@ -31,6 +31,7 @@
 
 namespace model;
 
+use html\html_base;
 use html\word_dsp;
 
 class formula_value_list
@@ -368,12 +369,14 @@ class formula_value_list
     function display(string $back = ''): string
     {
         $lib = new library();
+        $html = new html_base();
+
         log_debug("fv_lst->display (" . $lib->dsp_count($this->lst) . ")");
         $result = ''; // reset the html code var
 
         // prepare to show where the user uses different word than a normal viewer
         //$row_nbr = 0;
-        $result .= dsp_tbl_start_half();
+        $result .= $html->dsp_tbl_start_half();
         if ($this->lst != null) {
             foreach ($this->lst as $fv) {
                 //$row_nbr++;
@@ -395,7 +398,7 @@ class formula_value_list
                 $result .= '</tr>';
             }
         }
-        $result .= dsp_tbl_end();
+        $result .= $html->dsp_tbl_end();
 
         log_debug("done");
         return $result;

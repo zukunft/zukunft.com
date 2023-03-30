@@ -449,13 +449,3 @@ function dsp_form_file_select(): string
     //}
     return $result;
 }
-
-/*
-display functions for the unit and integration tests
-*/
-
-// display the header for each unit test
-function dsp_test_header($headline): void
-{
-    echo '<br><br><h2>' . $headline . '</h2><br>';
-}

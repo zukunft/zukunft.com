@@ -1086,14 +1086,40 @@ class html_base
         return $result;
     }
 
-    /*
-    display functions for the unit and integration tests
-    */
 
-// display the header for each unit test
-    function dsp_test_header($headline): void
+    /*
+     * display interface
+     *
+     * all interface functions that should be used
+     * depending on the settings either pure HTML, BOOTSTRAP HTML or JavaScript functions are called
+     */
+
+    /**
+     * display a html text immediately to the user
+     * @param string $txt the text that should be should to the user
+     */
+    function echo_html(string $txt): void
     {
-        echo '<br><br><h2>' . $headline . '</h2><br>';
+        echo $txt . '<br>';
     }
 
+    /**
+     * display a message immediately to the user
+     * @param string $txt the text that should be should to the user
+     */
+    function echo(string $txt): void
+    {
+        echo $txt;
+    }
+
+    /**
+     *display a progress bar
+     * TODO create a auto refresh page for async processes and the HTML front end without JavaScript
+     * TODO create a db table, where the async process can drop the status
+     * TODO add the refresh frequency setting to the general and user settings
+     */
+    function ui_progress($id, $value, $max, $text)
+    {
+        echo $text;
+    }
 }

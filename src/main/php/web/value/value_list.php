@@ -36,9 +36,9 @@ namespace html;
 
 use api\phrase_list_api;
 use api\value_list_api;
-use formula_value_list;
-use phrase;
-use word_list;
+use model\formula_value_list;
+use model\phrase;
+use model\word_list;
 
 class value_list_dsp extends list_dsp
 {
@@ -137,6 +137,7 @@ class value_list_dsp extends list_dsp
     function table_old(string $back): string
     {
         $result = '';
+        $html = new html_base();
 
         log_debug();
         $common_phr_ids = array();
@@ -149,7 +150,7 @@ class value_list_dsp extends list_dsp
         }
 
         // instead of the saved result maybe display the calculated result based on formulas that matches the word pattern
-        $result .= dsp_tbl_start();
+        $result .= $html->dsp_tbl_start();
 
         // the reused button object
         $btn = new button;
@@ -225,7 +226,7 @@ class value_list_dsp extends list_dsp
         }
         log_debug('add new button done');
 
-        $result .= dsp_tbl_end();
+        $result .= $html->dsp_tbl_end();
 
         // allow the user to add a completely new value
         log_debug('new');

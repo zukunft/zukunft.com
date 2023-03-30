@@ -33,9 +33,9 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_VIEW_PATH . 'view_cmp_type.php';
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
 
-use cfg\type_list;
-use cfg\type_object;
 use model\sql_db;
 use model\view_cmp_type;
 

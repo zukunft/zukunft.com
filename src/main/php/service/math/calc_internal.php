@@ -64,6 +64,9 @@
 
 */
 
+use model\expression;
+use model\library;
+
 class math
 {
 

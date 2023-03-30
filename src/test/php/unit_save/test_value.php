@@ -33,6 +33,7 @@
 use api\phrase_api;
 use api\value_api;
 use api\word_api;
+use test\testing;
 
 function create_test_values(testing $t): void
 {

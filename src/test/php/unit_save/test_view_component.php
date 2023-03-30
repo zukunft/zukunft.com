@@ -31,6 +31,14 @@
 */
 
 use api\view_cmp_api;
+use model\change_log_field;
+use model\change_log_named;
+use model\change_log_table;
+use model\db_cl;
+use model\sandbox_named;
+use model\view_cmp;
+use model\view_cmp_type;
+use test\testing;
 
 function create_test_view_components(testing $t): void
 {

@@ -31,6 +31,10 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use html\html_base;
+use model\user;
+use model\view;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
@@ -70,15 +74,16 @@ if ($usr->id() > 0) {
         // start base configuration load and check
         // ---------------------------------------
 
-        ui_echo($dsp->dsp_navbar($back));
+        $html = new html_base();
+        $html->echo($dsp->dsp_navbar($back));
 
-        ui_echo("loading of base configuration started<br>");
+        $html->echo("loading of base configuration started<br>");
 
         import_base_config($usr);
 
-        ui_echo("loading of base configuration finished<br>");
+        $html->echo("loading of base configuration finished<br>");
 
-        ui_echo(dsp_go_back($back, $usr));
+        $html->echo(dsp_go_back($back, $usr));
     }
 }
 

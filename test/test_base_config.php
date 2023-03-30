@@ -31,6 +31,11 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use html\html_base;
+use model\db_cl;
+use model\user;
+use model\view;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
@@ -68,15 +73,16 @@ if ($usr->id() > 0) {
         // start base configuration load and check
         // ---------------------------------------
 
-        ui_echo($dsp->dsp_navbar($back));
+        $html = new html_base();
+        $html->echo($dsp->dsp_navbar($back));
 
-        ui_echo("loading of base configuration started<br>");
+        $html->echo("loading of base configuration started<br>");
 
         import_base_config($usr);
 
-        ui_echo("loading of base configuration finished<br>");
+        $html->echo("loading of base configuration finished<br>");
 
-        ui_echo(dsp_go_back($back, $usr));
+        $html->echo(dsp_go_back($back, $usr));
     }
 }
 

@@ -30,8 +30,28 @@
 
 */
 
+namespace test;
+
 use api\phrase_api;
 use api\word_api;
+use model\library;
+use model\phrase;
+use model\triple;
+use model\verb;
+use model\word;
+use test\testing;
+use const test\TEST_WORD;
+use const test\TIMEOUT_LIMIT_PAGE;
+use const test\TIMEOUT_LIMIT_PAGE_SEMI;
+use const test\TP_ABB;
+use const test\TP_FOLLOW;
+use const test\TP_TAXES;
+use const test\TW_2013;
+use const test\TW_2014;
+use const test\TW_ABB;
+use const test\TW_CF;
+use const test\TW_TAX;
+use const test\TW_VESTAS;
 
 function create_test_phrases(testing $t): void
 {

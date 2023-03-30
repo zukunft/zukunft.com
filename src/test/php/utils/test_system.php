@@ -30,6 +30,14 @@
 
 */
 
+use model\user;
+use model\user_list;
+use test\testing;
+use const test\TEST_EMAIL;
+use const test\TEST_USER_DESCRIPTION;
+use const test\TEST_USER_IP;
+use const test\TEST_WORD;
+
 function run_system_test(testing $t): void
 {
 
@@ -40,7 +48,7 @@ function run_system_test(testing $t): void
     // load the main test word
     $wrd_company = $t->test_word(TEST_WORD);
 
-    if (TEST_EMAIL == TRUE) {
+    if (TEST_EMAIL) {
         $t->header('est mail sending');
         $mail_to = 'timon@zukunft.com';
         $mail_subject = 'Test mailto';

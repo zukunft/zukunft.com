@@ -33,7 +33,32 @@
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+
 include_once PHP_PATH . 'zu_lib.php';
+include_once SERVICE_IMPORT_PATH . 'import_file.php';
+
+use cfg\formula_type_list;
+use cfg\job_type_list;
+use cfg\language_form_list;
+use cfg\language_list;
+use cfg\protection_type_list;
+use cfg\ref_type_list;
+use cfg\share_type_list;
+use cfg\source_type_list;
+use cfg\view_cmp_pos_type_list;
+use cfg\view_cmp_type_list;
+use cfg\view_type_list;
+use cfg\word_type_list;
+use html\html_base;
+use model\batch_job;
+use model\change_log_action;
+use model\change_log_field;
+use model\change_log_table;
+use model\formula_element_type_list;
+use model\formula_link_type_list;
+use model\sql_db;
+use model\user;
+
 
 // open database and display header
 $db_con = prg_start("test_reset_db");
@@ -156,9 +181,10 @@ function run_db_truncate(): void
         sql_db::TBL_USER,
         sql_db::TBL_USER_PROFILE
     );
-    echo "\n";
-    ui_echo('truncate ');
-    echo "\n";
+    $html = new html_base();
+    $html->echo("\n");
+    $html->echo('truncate ');
+    $html->echo("\n");
 
     foreach ($table_names as $table_name) {
         run_table_truncate($table_name);
@@ -275,15 +301,16 @@ function run_db_seq_reset(): void
         'users_user_id_seq',
         'user_profiles_profile_id_seq'
     );
-    ui_echo('seq reset ');
-    echo "\n";
+    $html = new html_base();
+    $html->echo('seq reset ');
+    $html->echo("\n");
     foreach ($seq_names as $seq_name) {
         run_seq_reset($seq_name);
     }
 
 }
 
-function run_seq_reset(string $seq_name, int $start_id = 1)
+function run_seq_reset(string $seq_name, int $start_id = 1): void
 {
     global $db_con;
 

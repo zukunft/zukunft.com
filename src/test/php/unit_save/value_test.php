@@ -33,6 +33,15 @@
 use api\value_api;
 use api\word_api;
 use html\figure_dsp;
+use model\change_log_field;
+use model\change_log_named;
+use model\change_log_table;
+use model\library;
+use model\phrase_list;
+use model\value;
+use model\value_dsp_old;
+use test\testing;
+use const test\TIMEOUT_LIMIT_DB_MULTI;
 
 function run_value_test(testing $t): void
 {

@@ -42,6 +42,8 @@
 namespace test;
 
 include_once API_REF_PATH . 'ref.php';
+include_once WEB_PATH . 'formula_display.php';
+include_once WEB_PATH . 'view_display.php';
 
 use api\formula_api;
 use api\formula_value_api;
@@ -59,10 +61,11 @@ use api_message;
 use cfg\formula_type;
 use cfg\job_type_list;
 use cfg\phrase_type;
+use cfg\ref_type_list;
 use cfg\source_type;
 use cfg\system_log_list;
 use DateTime;
-use db_cl;
+use html\formula_dsp_old;
 use model\batch_job;
 use model\batch_job_list;
 use model\change_log_action;
@@ -428,13 +431,14 @@ class test_new_obj extends test_base
      */
     function add_word(string $wrd_name, ?string $wrd_type_code_id = null, ?user $test_usr = null): word
     {
+        global $phrase_types;
         $wrd = $this->load_word($wrd_name, $test_usr);
         if ($wrd->id() == 0) {
             $wrd->set_name($wrd_name);
             $wrd->save();
         }
         if ($wrd_type_code_id != null) {
-            $wrd->type_id = cl(db_cl::PHRASE_TYPE, $wrd_type_code_id);
+            $wrd->type_id = $phrase_types->id($wrd_type_code_id);
             $wrd->save();
         }
         return $wrd;
@@ -482,6 +486,7 @@ class test_new_obj extends test_base
     {
         global $usr;
         global $verbs;
+        global $phrase_types;
 
         if ($id == null) {
             $id = $this->next_seq_nbr();
@@ -498,7 +503,7 @@ class test_new_obj extends test_base
         $trp->set_name($wrd_name);
 
         if ($wrd_type_code_id != null) {
-            $trp->type_id = cl(db_cl::PHRASE_TYPE, $wrd_type_code_id);
+            $trp->type_id = $phrase_types->id($wrd_type_code_id);
         }
         return $trp;
     }
@@ -697,9 +702,10 @@ class test_new_obj extends test_base
         $wrd = $this->load_word($wrd_name);
         $phr = $wrd->phrase();
 
+        $lst = new ref_type_list();
         $ref = new ref($usr);
         $ref->phr = $phr;
-        $ref->ref_type = get_ref_type($type_name);
+        $ref->ref_type = $lst->get_ref_type($type_name);
         if ($phr->id() != 0) {
             $ref->load_obj_vars();
         }
@@ -708,12 +714,13 @@ class test_new_obj extends test_base
 
     function test_ref(string $wrd_name, string $external_key, string $type_name): ref
     {
+        $lst = new ref_type_list();
         $wrd = $this->test_word($wrd_name);
         $phr = $wrd->phrase();
         $ref = $this->load_ref($wrd->name(), $type_name);
         if ($ref->id() == 0) {
             $ref->phr = $phr;
-            $ref->ref_type = get_ref_type($type_name);
+            $ref->ref_type = $lst->get_ref_type($type_name);
             $ref->external_key = $external_key;
             $ref->save();
         }
@@ -1107,6 +1114,7 @@ class test_new_obj extends test_base
     function add_view_component(string $cmp_name, string $type_code_id = '', ?user $test_usr = null): view_cmp
     {
         global $usr;
+        global $view_component_types;
 
         if ($test_usr == null) {
             $test_usr = $usr;
@@ -1117,7 +1125,7 @@ class test_new_obj extends test_base
             $cmp->set_user($test_usr);
             $cmp->set_name($cmp_name);
             if ($type_code_id != '') {
-                $cmp->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, $type_code_id);
+                $cmp->type_id = $view_component_types->id($type_code_id);
             }
             $cmp->save();
         }

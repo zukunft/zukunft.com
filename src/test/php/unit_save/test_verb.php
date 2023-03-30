@@ -31,6 +31,9 @@
 */
 
 use api\word_api;
+use model\verb;
+use model\word_select_direction;
+use test\testing;
 
 function run_verb_test(testing $t): void
 {

@@ -34,6 +34,9 @@
 // start testing the user permission functionality
 // -----------------------------------------------
 
+use model\user;
+use test\testing;
+
 function run_user_test(testing $t): void
 {
 

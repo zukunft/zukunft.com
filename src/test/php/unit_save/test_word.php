@@ -32,6 +32,16 @@
 
 use api\word_api;
 use cfg\phrase_type;
+use model\change_log_field;
+use model\change_log_named;
+use model\change_log_table;
+use model\sandbox_named;
+use model\verb;
+use model\word;
+use test\testing;
+use const test\TIMEOUT_LIMIT;
+use const test\TIMEOUT_LIMIT_DB;
+use const test\TIMEOUT_LIMIT_DB_MULTI;
 
 function create_test_words(testing $t): void
 {

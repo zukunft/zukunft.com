@@ -385,16 +385,17 @@ class testing extends test_api
         }
 
         // TODO better use a info system log message
-        echo $db_con->seq_reset(sql_db::TBL_VALUE) . '<br>';
-        echo $db_con->seq_reset(sql_db::TBL_WORD) . '<br>';
-        echo $db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_WORD_LINK) . '<br>';
-        echo $db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK) . '<br>';
-        echo $db_con->seq_reset(sql_db::TBL_FORMULA) . '<br>';
-        echo $db_con->seq_reset(sql_db::TBL_FORMULA_LINK) . '<br>';
-        echo $db_con->seq_reset(sql_db::TBL_VIEW) . '<br>';
-        echo $db_con->seq_reset(sql_db::TBL_VIEW_COMPONENT) . '<br>';
-        echo $db_con->seq_reset(sql_db::TBL_VIEW_COMPONENT_LINK) . '<br>';
-        echo $db_con->seq_reset(sql_db::TBL_SOURCE) . '<br>';
+        $html = new html_base();
+        $html->echo_html($db_con->seq_reset(sql_db::TBL_VALUE));
+        $html->echo_html($db_con->seq_reset(sql_db::TBL_WORD));
+        $html->echo_html($db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_WORD_LINK));
+        $html->echo_html($db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK));
+        $html->echo_html($db_con->seq_reset(sql_db::TBL_FORMULA));
+        $html->echo_html($db_con->seq_reset(sql_db::TBL_FORMULA_LINK));
+        $html->echo_html($db_con->seq_reset(sql_db::TBL_VIEW));
+        $html->echo_html($db_con->seq_reset(sql_db::TBL_VIEW_COMPONENT));
+        $html->echo_html($db_con->seq_reset(sql_db::TBL_VIEW_COMPONENT_LINK));
+        $html->echo_html($db_con->seq_reset(sql_db::TBL_SOURCE));
 
         if ($result == '') {
             return true;

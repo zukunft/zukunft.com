@@ -30,6 +30,8 @@
 
 */
 
+use test\testing;
+
 function run_import_test($file_list, testing $t): void
 {
     global $usr;

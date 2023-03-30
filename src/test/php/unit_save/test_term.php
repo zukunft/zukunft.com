@@ -33,6 +33,9 @@
 use api\formula_api;
 use api\phrase_api;
 use api\word_api;
+use model\term;
+use model\verb;
+use test\testing;
 
 function run_term_test(testing $t): void
 {

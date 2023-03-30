@@ -42,6 +42,7 @@
 namespace model;
 
 use cfg\verb_list;
+use html\html_base;
 
 class triple_list
 {
@@ -674,6 +675,7 @@ class triple_list
     {
         global $verbs;
 
+        $html = new html_base();
         $result = '';
 
         // check the all minimal input parameters
@@ -730,7 +732,7 @@ class triple_list
                             }
                         }
                     }
-                    $result .= dsp_tbl_start_half();
+                    $result .= $html->dsp_tbl_start_half();
                     $prev_verb_id = $lnk->verb->id() ;
 
                     // display the word
@@ -786,7 +788,7 @@ class triple_list
                         $result .= '    </td>';
                         $result .= '  </tr>';
 
-                        $result .= dsp_tbl_end();
+                        $result .= $html->dsp_tbl_end();
                         $result .= '<br>';
                     }
                 }

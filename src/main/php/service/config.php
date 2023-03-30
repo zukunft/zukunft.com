@@ -272,30 +272,5 @@ class config
 
         return $result;
     }
+
 }
-
-
-/**
- * general replication of the config class function get to shorten the code
- * including $db_con because this is call also from the start, where the global $db_con is not yet set
- * @param string $code_id the identification of the config item that is used in the code that should never be changed
- * @param user $usr the user which has requested the config item for the first time
- * @param sql_db $db_con the open database connection that should be used
- * @return string the configuration value that is valid at the moment
- */
-function cfg_get(string $code_id, sql_db $db_con): ?string
-{
-    return (new config())->get($code_id, $db_con);
-}
-
-/**
- * general replication of the config class function set to shorten the code
- * @param string $code_id the identification of the config item that is used in the code that should never be changed
- * @param string $value the value that should be saved in the configuration table
- * @param sql_db $db_con the open database connection that should be used
- */
-function cfg_set(string $code_id, string $value, sql_db $db_con, string $description = ''): bool
-{
-    return (new config())->set($code_id, $value, $db_con, $description);
-}
-

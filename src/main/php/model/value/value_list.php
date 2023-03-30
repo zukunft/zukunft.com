@@ -1041,6 +1041,7 @@ class value_list extends sandbox_list
     function html($back): string
     {
         $lib = new library();
+        $html = new html_base();
         log_debug($lib->dsp_count($this->lst));
         $result = '';
 
@@ -1082,7 +1083,7 @@ class value_list extends sandbox_list
 
         // instead of the saved result maybe display the calculated result based on formulas that matches the word pattern
         log_debug('tbl_start');
-        $result .= dsp_tbl_start();
+        $result .= $html->dsp_tbl_start();
 
         // the reused button object
         $btn = new button;
@@ -1160,7 +1161,7 @@ class value_list extends sandbox_list
         }
         log_debug('add new button done');
 
-        $result .= dsp_tbl_end();
+        $result .= $html->dsp_tbl_end();
 
         // allow the user to add a completely new value
         log_debug('new');

@@ -34,10 +34,12 @@
 namespace model;
 
 include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once MODEL_LOG_PATH . 'change_log_named.php';
 include_once API_VERB_PATH . 'verb.php';
 
 use api\verb_api;
 use cfg\export\exp_obj;
+use html\html_base;
 use html\html_selector;
 use html\verb_dsp;
 
@@ -579,18 +581,19 @@ class verb extends db_object
     // show the html form to add or edit a new verb
     function dsp_edit(string $back = ''): string
     {
+        $html = new html_base();
         log_debug('verb->dsp_edit ' . $this->dsp_id());
         $result = '';
 
         if ($this->id <= 0) {
             $script = "verb_add";
-            $result .= dsp_text_h2('Add verb (word link type)');
+            $result .= $html->dsp_text_h2('Add verb (word link type)');
         } else {
             $script = "verb_edit";
-            $result .= dsp_text_h2('Change verb (word link type)');
+            $result .= $html->dsp_text_h2('Change verb (word link type)');
         }
-        $result .= dsp_form_start($script);
-        $result .= dsp_tbl_start_half();
+        $result .= $html->dsp_form_start($script);
+        $result .= $html->dsp_tbl_start_half();
         $result .= '  <tr>';
         $result .= '    <td>';
         $result .= '      verb name:';
@@ -625,8 +628,8 @@ class verb extends db_object
         $result .= '  </tr>';
         $result .= '  <input type="hidden" name="back" value="' . $back . '">';
         $result .= '  <input type="hidden" name="confirm" value="1">';
-        $result .= dsp_tbl_end();
-        $result .= dsp_form_end('', $back);
+        $result .= $html->dsp_tbl_end();
+        $result .= $html->dsp_form_end('', $back);
 
         log_debug('verb->dsp_edit ... done');
         return $result;

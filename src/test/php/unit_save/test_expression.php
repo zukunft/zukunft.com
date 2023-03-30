@@ -32,6 +32,10 @@
 
 use api\formula_api;
 use api\word_api;
+use model\expression;
+use test\testing;
+use const test\TIMEOUT_LIMIT_LONG;
+use const test\TIMEOUT_LIMIT_PAGE_LONG;
 
 function run_expression_test(testing $t): void
 {

@@ -608,7 +608,6 @@ include_once WEB_PATH . 'display_list.php';
 include_once WEB_PATH . 'value_list_display.php';
 include_once WEB_PATH . 'formula_display.php';
 include_once WEB_PATH . 'view_display.php';
-include_once WEB_PATH . 'display_interface.php';
 include_once WEB_PATH . 'display_html.php';
 
 // include all other libraries that are usually needed

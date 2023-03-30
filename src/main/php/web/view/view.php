@@ -35,7 +35,7 @@ include_once WEB_VIEW_PATH . 'view_cmp_list.php';
 
 use api\view_api;
 use api\view_cmp_api;
-use view;
+use model\view;
 
 class view_dsp extends view_api
 {

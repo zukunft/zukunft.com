@@ -33,6 +33,7 @@
 namespace model;
 
 use html\api;
+use html\html_base;
 use html\word_dsp;
 
 class value_dsp_old extends value
@@ -255,6 +256,8 @@ class value_dsp_old extends value
         global $db_con;
         $result = ''; // reset the html code var
 
+        $html = new html_base();
+
         // get value changes by the user that are not standard
         $sql = "SELECT v.value_id,
                     " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
@@ -280,7 +283,7 @@ class value_dsp_old extends value
         $row_nbr = 0;
         $value_id = 0;
         $word_names = "";
-        $result .= dsp_tbl_start_hist();
+        $result .= $html->dsp_tbl_start_hist();
         foreach ($db_lst as $db_row) {
             // display the headline first if there is at least on entry
             if ($row_nbr == 0) {
@@ -319,7 +322,7 @@ class value_dsp_old extends value
             $result .= '<td>' . $word_names . '</td>';
             $result .= '</tr>';
         }
-        $result .= dsp_tbl_end();
+        $result .= $html->dsp_tbl_end();
 
         log_debug("done.");
         return $result;
@@ -347,6 +350,7 @@ class value_dsp_old extends value
     {
         $result = ''; // reset the html code var
         $lib = new library();
+        $html = new html_base();
 
         // set main display parameters for the add or edit view
         if ($this->id <= 0) {
@@ -366,7 +370,7 @@ class value_dsp_old extends value
         $this_url = '/http/' . $script . '.php?id=' . $this->id . '&back=' . $back; // url to call this display again to display the user changes
 
         // display the words and triples
-        $result .= dsp_tbl_start_select();
+        $result .= $html->dsp_tbl_start_select();
         if (count($this->ids()) > 0) {
             $url_pos = 1; // the phrase position (combined number for fixed, type and free phrases)
             // if the form is confirmed, save the value or the other way round: if with the plus sign only a new phrase is added, do not yet save the value
@@ -575,7 +579,7 @@ class value_dsp_old extends value
             }
         }
 
-        $result .= dsp_tbl_end();
+        $result .= $html->dsp_tbl_end();
 
         log_debug('table ended');
         $phr_ids_new = $this->ids();

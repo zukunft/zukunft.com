@@ -32,6 +32,8 @@
 
 use api\formula_api;
 use api\word_api;
+use model\verb;
+use test\testing;
 
 function run_formula_element_test(testing $t): void
 {

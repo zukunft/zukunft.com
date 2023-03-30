@@ -1078,6 +1078,7 @@ class sandbox extends db_object
         global $db_con;
         $result = true;
 
+
         if (!$this->has_usr_cfg()) {
             if ($this->obj_type == self::TYPE_NAMED) {
                 log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
@@ -1090,6 +1091,8 @@ class sandbox extends db_object
             } else {
                 log_err('Unknown user sandbox type ' . $this->obj_type . ' in ' . $this->obj_name, $this->obj_name . '->log_add');
             }
+            $lib = new library();
+            $class = $lib->str_right_of_or_all($class, '\\');
 
             // check again if there ist not yet a record
             $db_con->set_type($this->obj_name, true);

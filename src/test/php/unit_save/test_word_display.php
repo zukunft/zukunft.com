@@ -37,6 +37,12 @@
 use api\phrase_api;
 use api\word_api;
 use html\html_selector;
+use model\library;
+use model\verb;
+use model\word;
+use test\testing;
+use const test\TEST_WORD;
+use const test\TIMEOUT_LIMIT_PAGE;
 
 function run_word_display_test(testing $t): void
 {

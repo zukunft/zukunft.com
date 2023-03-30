@@ -37,12 +37,12 @@ namespace api;
 include_once API_PATH . 'controller.php';
 
 use controller\controller;
-use formula;
-use user;
-use sandbox;
-use value;
-use word;
-use triple;
+use model\formula;
+use model\sandbox;
+use model\triple;
+use model\user;
+use model\value;
+use model\word;
 use function log_err;
 
 class sandbox_api

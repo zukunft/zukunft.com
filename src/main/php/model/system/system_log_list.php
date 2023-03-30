@@ -32,6 +32,7 @@
 namespace cfg;
 
 include_once WEB_SYSTEM_PATH . 'system_log_list.php';
+include_once MODEL_SYSTEM_PATH . 'list.php';
 
 use api\system_log_list_api;
 use cfg\type_object;

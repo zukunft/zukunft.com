@@ -33,6 +33,14 @@
 use api\formula_api;
 use api\value_api;
 use api\word_api;
+use cfg\job_type_list;
+use model\batch_job;
+use model\batch_job_list;
+use model\db_cl;
+use model\phrase_list;
+use model\value;
+use test\testing;
+use const test\TIMEOUT_LIMIT_DB_MULTI;
 
 function run_batch_job_test(testing $t): void
 {

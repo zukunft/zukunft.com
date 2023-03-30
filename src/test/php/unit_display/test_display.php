@@ -34,6 +34,12 @@ use api\view_api;
 use api\word_api;
 use html\button;
 use html\html_base;
+use model\db_cl;
+use model\view;
+use model\view_cmp_dsp_old;
+use model\view_cmp_type;
+use test\testing;
+use const test\TW_ABB;
 
 function run_display_test(testing $t): void
 {

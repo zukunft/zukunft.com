@@ -31,8 +31,11 @@
 
 namespace model;
 
+use html\html_base;
 use html\html_selector;
 use html\word_dsp;
+use user_log_display;
+use view_dsp_old;
 
 class view_cmp_dsp_old extends view_cmp
 {
@@ -304,12 +307,13 @@ class view_cmp_dsp_old extends view_cmp
         log_debug("id " . $this->id . " and user " . $this->user()->id() . " (word " . $wrd->id . ", add " . $add_link . ").");
 
         global $db_con;
+        $html = new html_base();
         $result = '';
 
         if (UI_USE_BOOTSTRAP) {
-            $result .= dsp_tbl_start_hist();
+            $result .= $html->dsp_tbl_start_hist();
         } else {
-            $result .= dsp_tbl_start_half();
+            $result .= $html->dsp_tbl_start_half();
         }
 
         $sql = "SELECT m.view_id, m.view_name 
@@ -343,14 +347,14 @@ class view_cmp_dsp_old extends view_cmp
             $sel->dummy_text = 'select a view where the view component should also be used';
             $result .= $sel->display();
 
-            $result .= dsp_form_end('', $back);
+            $result .= $html->dsp_form_end('', $back);
         } else {
             $result .= '      ' . \html\btn_add('add new', '/http/view_component_edit.php?id=' . $this->id . '&add_link=1&word=' . $wrd->id . '&back=' . $back);
         }
         $result .= '    </td>';
         $result .= '  </tr>';
 
-        $result .= dsp_tbl_end();
+        $result .= $html->dsp_tbl_end();
         $result .= '  <br>';
 
         return $result;

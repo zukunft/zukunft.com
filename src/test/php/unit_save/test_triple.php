@@ -38,6 +38,15 @@
 
 use api\phrase_api;
 use api\word_api;
+use model\change_log_link;
+use model\change_log_table;
+use model\triple;
+use model\verb;
+use test\testing;
+use const test\TEST_WORD;
+use const test\TIMEOUT_LIMIT_DB;
+use const test\TIMEOUT_LIMIT_DB_MULTI;
+use const test\TIMEOUT_LIMIT_PAGE_SEMI;
 
 function run_triple_test(testing $t): void
 {

@@ -31,6 +31,11 @@
 */
 
 use api\word_api;
+use model\phrase_group_list;
+use model\phrase_list;
+use model\word_list;
+use test\testing;
+use const test\TIMEOUT_LIMIT_PAGE;
 
 function run_phrase_group_list_test(testing $t): void
 {

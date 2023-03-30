@@ -32,6 +32,16 @@
 
 use api\formula_api;
 use api\word_api;
+use model\change_log_link;
+use model\change_log_table;
+use model\formula;
+use model\formula_link;
+use model\formula_link_list;
+use model\phrase;
+use model\phrase_list;
+use test\testing;
+use const test\TIMEOUT_LIMIT_DB_MULTI;
+use const test\TIMEOUT_LIMIT_PAGE_LONG;
 
 function create_test_formula_links(testing $t): void
 {

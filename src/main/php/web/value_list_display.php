@@ -150,7 +150,7 @@ class value_list_dsp_old extends value_list
             $result .= '<br>';
 
             // display the table
-            $result .= dsp_tbl_start();
+            $result .= $html->dsp_tbl_start();
             $result .= '   <colgroup>' . "\n";
             //$result .= '<col span="'.sizeof($time_lst)+1.'">';
             $result .= '    <col span="7">' . "\n";
@@ -408,7 +408,7 @@ class value_list_dsp_old extends value_list
             $result .= '  </tr>' . "\n";
 
             $result .= '    </tbody>' . "\n";
-            $result .= dsp_tbl_end();
+            $result .= $html->dsp_tbl_end();
 
             $result .= '<br><br>';
 

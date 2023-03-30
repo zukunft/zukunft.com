@@ -51,6 +51,9 @@ class view_unit_db_tests
 
         global $db_con;
         global $usr;
+        global $view_types;
+        global $system_views;
+        global $view_component_types;
 
         // init
         $t->header('Unit database tests of the view class (src/main/php/model/value/view.php)');
@@ -75,7 +78,7 @@ class view_unit_db_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = cl(db_cl::VIEW_TYPE, view_type::DEFAULT);
+        $result = $view_types->id(view_type::DEFAULT);
         $t->assert('check type' . view_type::DEFAULT, $result, 1);
 
 
@@ -95,7 +98,7 @@ class view_unit_db_tests
         $t->assert('load', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = cl(db_cl::VIEW, view::WORD);
+        $result = $system_views->id(view::WORD);
         $target = 0;
         if ($result > 0) {
             $target = $result; // just check if the id is found
@@ -129,7 +132,7 @@ class view_unit_db_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::TEXT);
+        $result = $view_component_types->id(view_cmp_type::TEXT);
         $t->assert('check type' . view_cmp_type::TEXT, $result, 3);
     }
 

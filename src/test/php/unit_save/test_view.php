@@ -32,6 +32,14 @@
 
 use api\view_api;
 use api\word_api;
+use cfg\view_type;
+use model\change_log_named;
+use model\change_log_table;
+use model\db_cl;
+use model\sandbox_named;
+use model\view;
+use model\word;
+use test\testing;
 
 function create_test_views(testing $t): void
 {

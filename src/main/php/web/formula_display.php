@@ -29,6 +29,8 @@
   
 */
 
+namespace html;
+
 use html\api;
 use html\button;
 use html\html_base;
@@ -185,7 +187,7 @@ class formula_dsp_old extends formula
         log_debug("words linked loaded");
 
         // list all linked words
-        $result .= dsp_tbl_start_half();
+        $result .= $html->dsp_tbl_start_half();
         foreach ($phr_lst->lst() as $phr_linked) {
             $result .= '  <tr>' . "\n";
             $result .= $phr_linked->dsp_tbl(0);
@@ -218,7 +220,7 @@ class formula_dsp_old extends formula
         $result .= '    </td>';
         $result .= '  </tr>';
 
-        $result .= dsp_tbl_end();
+        $result .= $html->dsp_tbl_end();
 
         log_debug("done");
         return $result;

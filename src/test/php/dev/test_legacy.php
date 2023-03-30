@@ -30,6 +30,8 @@
 
 */
 
+use test\testing;
+
 function run_legacy_test(testing $t): void
 {
 

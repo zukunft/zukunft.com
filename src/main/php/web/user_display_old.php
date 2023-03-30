@@ -30,6 +30,7 @@
 */
 
 use cfg\system_log_list;
+use html\html_base;
 use model\formula;
 use model\formula_link;
 use model\phrase;
@@ -101,6 +102,7 @@ class user_dsp_old extends user
         log_debug($this->id);
 
         global $db_con;
+        $html = new html_base();
         $result = ''; // reset the html code var
 
         // get word changes by the user that are not standard
@@ -116,7 +118,7 @@ class user_dsp_old extends user
 
         // prepare to show the word link
         $row_nbr = 0;
-        $result .= dsp_tbl_start();
+        $result .= $html->dsp_tbl_start();
         foreach ($wrd_lst as $wrd_row) {
             $row_nbr++;
             $result .= '<tr>';
@@ -129,7 +131,7 @@ class user_dsp_old extends user
             $result .= '<td>' . \html\btn_del("Undo your change and use the standard word " . $wrd_row['word_name'], $url) . '</td>';
             $result .= '</tr>';
         }
-        $result .= dsp_tbl_end();
+        $result .= $html->dsp_tbl_end();
 
         log_debug('done');
         return $result;
@@ -183,7 +185,7 @@ class user_dsp_old extends user
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different word_entry_link than a normal viewer
             $row_nbr = 0;
-            $result .= dsp_tbl_start();
+            $result .= $html->dsp_tbl_start();
             foreach ($sbx_lst as $sbx_row) {
                 $row_nbr++;
 
@@ -289,7 +291,7 @@ class user_dsp_old extends user
                 }
 
             }
-            $result .= dsp_tbl_end();
+            $result .= $html->dsp_tbl_end();
         }
 
         log_debug('done');
@@ -320,7 +322,7 @@ class user_dsp_old extends user
 
         // prepare to show the word link
         $row_nbr = 0;
-        $result .= dsp_tbl_start();
+        $result .= $html->dsp_tbl_start();
         foreach ($frm_lst as $frm_row) {
             $row_nbr++;
             $result .= '<tr>';
@@ -338,7 +340,7 @@ class user_dsp_old extends user
             $result .= '<td>' . \html\btn_del("Undo your change and use the standard formula " . $frm_row[formula::FLD_FORMULA_TEXT], $url) . '</td>';
             $result .= '</tr>';
         }
-        $result .= dsp_tbl_end();
+        $result .= $html->dsp_tbl_end();
 
         log_debug('done');
         return $result;
@@ -390,7 +392,7 @@ class user_dsp_old extends user
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different formula_entry_link than a normal viewer
             $row_nbr = 0;
-            $result .= dsp_tbl_start();
+            $result .= $html->dsp_tbl_start();
             foreach ($sbx_lst as $sbx_row) {
                 $row_nbr++;
 
@@ -496,7 +498,7 @@ class user_dsp_old extends user
                 }
 
             }
-            $result .= dsp_tbl_end();
+            $result .= $html->dsp_tbl_end();
         }
 
         log_debug('done');
@@ -553,7 +555,7 @@ class user_dsp_old extends user
         if (count($val_lst) > 0) {
             // prepare to show where the user uses different value than a normal viewer
             $row_nbr = 0;
-            $result .= dsp_tbl_start();
+            $result .= $html->dsp_tbl_start();
             foreach ($val_lst as $val_row) {
                 $row_nbr++;
 
@@ -662,7 +664,7 @@ class user_dsp_old extends user
                     $result .= '</tr>';
                 }
             }
-            $result .= dsp_tbl_end();
+            $result .= $html->dsp_tbl_end();
         }
 
         log_debug('done');
@@ -721,7 +723,7 @@ class user_dsp_old extends user
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different view than a normal viewer
             $row_nbr = 0;
-            $result .= dsp_tbl_start();
+            $result .= $html->dsp_tbl_start();
             foreach ($sbx_lst as $sbx_row) {
                 $row_nbr++;
 
@@ -827,7 +829,7 @@ class user_dsp_old extends user
                     $result .= '</tr>';
                 }
             }
-            $result .= dsp_tbl_end();
+            $result .= $html->dsp_tbl_end();
         }
 
         log_debug('done');
@@ -886,7 +888,7 @@ class user_dsp_old extends user
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different view_component than a normal viewer
             $row_nbr = 0;
-            $result .= dsp_tbl_start();
+            $result .= $html->dsp_tbl_start();
             foreach ($sbx_lst as $sbx_row) {
                 $row_nbr++;
 
@@ -991,7 +993,7 @@ class user_dsp_old extends user
                     $result .= '</tr>';
                 }
             }
-            $result .= dsp_tbl_end();
+            $result .= $html->dsp_tbl_end();
         }
 
         log_debug('done');
@@ -1053,7 +1055,7 @@ class user_dsp_old extends user
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different view_entry_link than a normal viewer
             $row_nbr = 0;
-            $result .= dsp_tbl_start();
+            $result .= $html->dsp_tbl_start();
             foreach ($sbx_lst as $sbx_row) {
                 $row_nbr++;
 
@@ -1160,7 +1162,7 @@ class user_dsp_old extends user
                 }
 
             }
-            $result .= dsp_tbl_end();
+            $result .= $html->dsp_tbl_end();
         }
 
         log_debug('done');
@@ -1223,7 +1225,7 @@ class user_dsp_old extends user
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different source than a normal viewer
             $row_nbr = 0;
-            $result .= dsp_tbl_start();
+            $result .= $html->dsp_tbl_start();
             foreach ($sbx_lst as $sbx_row) {
                 $row_nbr++;
 
@@ -1335,7 +1337,7 @@ class user_dsp_old extends user
                     $result .= '</tr>';
                 }
             }
-            $result .= dsp_tbl_end();
+            $result .= $html->dsp_tbl_end();
         }
 
         log_debug('done');

@@ -30,6 +30,9 @@
 
 */
 
+use model\change_log_table;
+use test\testing;
+
 function run_db_link_test(testing $t): void
 {
     global $change_log_tables;

@@ -31,6 +31,14 @@
 */
 
 use api\source_api;
+use model\change_log_field;
+use model\change_log_named;
+use model\change_log_table;
+use model\sandbox_named;
+use model\source;
+use test\testing;
+use const test\TIMEOUT_LIMIT_DB;
+use const test\TIMEOUT_LIMIT_DB_MULTI;
 
 function create_test_sources(testing $t): void
 {

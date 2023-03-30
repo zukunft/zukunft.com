@@ -125,6 +125,7 @@ class source_dsp extends source_api
     function dsp_edit(string $back = ''): string
     {
         log_debug('source->dsp_edit ' . $this->dsp_id() . ' by user ' . $this->user()->name);
+        $html = new html_base();
         $result = '';
 
         if ($this->id <= 0) {

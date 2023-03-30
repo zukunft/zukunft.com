@@ -85,6 +85,7 @@ class export
 
         global $db_con;
         $lib = new library();
+        $cfg = new config();
 
         log_debug('export->get');
         $export_obj = (object)[];
@@ -96,7 +97,7 @@ class export
 
                 // 1. create the header
                 $export_obj->version = PRG_VERSION;
-                $export_obj->pod = cfg_get(config::SITE_NAME, $db_con);
+                $export_obj->pod = $cfg->get(config::SITE_NAME, $db_con);
                 $export_obj->time = date("Y-m-d H:i:s");
                 $export_obj->user = $usr->name;
                 $phr_lst_dsp = $phr_lst->dsp_obj();

@@ -36,6 +36,8 @@
 namespace model;
 
 use Exception;
+use mysqli;
+use mysqli_result;
 
 class sql_db
 {

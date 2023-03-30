@@ -33,6 +33,7 @@ use html\api;
 use html\button;
 use html\html_base;
 use html\html_selector;
+use model\view;
 
 class view_dsp_old extends view
 {
@@ -212,7 +213,7 @@ class view_dsp_old extends view
     private function html_navbar_start(): string
     {
         $html = new html_base();
-        $result = dsp_tbl_start();
+        $result = $html->dsp_tbl_start();
         $result .= '<tr><td>';
         $result .= '  <tr>';
         $result .= '    <td>';
@@ -226,8 +227,9 @@ class view_dsp_old extends view
      */
     private function html_navbar_end(): string
     {
+        $html = new html_base();
         $result = '  </tr>';
-        $result .= dsp_tbl_end();
+        $result .= $html->dsp_tbl_end();
         return $result;
     }
 
@@ -483,7 +485,7 @@ class view_dsp_old extends view
         $result = '';
 
         if (UI_USE_BOOTSTRAP) {
-            $result .= dsp_tbl_start_hist();
+            $result .= $html->dsp_tbl_start_hist();
         }
 
         // show the view elements and allow the user to change them

@@ -26,6 +26,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
+include_once SERVICE_IMPORT_PATH . 'import.php';
+
+use cfg\verb_list;
+use html\html_base;
+use model\sql_db;
+use model\user;
+use model\user_profile;
+
 /**
  * import a single json file
  *
@@ -143,9 +151,10 @@ function import_base_config(user $usr): string
         $usr, true
     );
 
+    $html = new html_base();
     $file_list = unserialize(BASE_CONFIG_FILES);
     foreach ($file_list as $filename) {
-        ui_echo('load ' . $filename);
+        $html->echo('load ' . $filename);
         echo "\n";
         $result .= import_json_file(PATH_BASE_CONFIG_MESSAGE_FILES . $filename, $usr);
     }

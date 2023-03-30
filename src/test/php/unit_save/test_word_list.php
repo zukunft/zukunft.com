@@ -36,6 +36,14 @@
 
 use api\value_api;
 use api\word_api;
+use model\library;
+use model\phr_ids;
+use model\phrase_group;
+use model\verb;
+use model\word_list;
+use model\word_select_direction;
+use test\testing;
+use const test\TIMEOUT_LIMIT_DB;
 
 function run_word_list_test(testing $t): void
 {

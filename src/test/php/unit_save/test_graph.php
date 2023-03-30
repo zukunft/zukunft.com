@@ -30,6 +30,13 @@
 */
 
 use api\word_api;
+use model\phrase_list;
+use model\triple_list;
+use model\value_list;
+use model\verb;
+use model\word;
+use test\testing;
+use const test\TIMEOUT_LIMIT_PAGE;
 
 function run_graph_test(testing $t): void
 {

@@ -43,6 +43,7 @@ class share_unit_db_tests
     {
 
         global $db_con;
+        global $share_types;
 
         // init
         $t->name = 'share read db->';
@@ -57,7 +58,7 @@ class share_unit_db_tests
         $t->assert('load types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = cl(db_cl::SHARE_TYPE, share_type::PUBLIC);
+        $result = $share_types->id(share_type::PUBLIC);
         $t->assert('check ' . share_type::PUBLIC, $result, 1);
     }
 

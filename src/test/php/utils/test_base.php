@@ -226,6 +226,9 @@ include_once $path_it . 'test_export.php';
 // load the test functions still in development
 include_once $path_dev . 'test_legacy.php';
 
+// TODO to be dismissed
+include_once WEB_PATH . 'user_display_old.php';
+
 // the fixed system user used for testing
 const TEST_USER_ID = "2";
 const TEST_USER_DESCRIPTION = "standard user view for all users";
@@ -597,10 +600,11 @@ class test_base
     function assert_api_get_json(string $test_name, string $fld = '', int $id = 1): bool
     {
         $lib = new library();
+        $test_name = $lib->str_right_of_or_all($test_name, '\\');
         $url = HOST_TESTING . controller::URL_API_PATH . 'json';
         $data = array($fld => $id);
         $actual = json_decode($this->api_call("GET", $url, $data), true);
-        // TODO remove, for faster debugging only
+        // TODO remove next line (added for faster debugging only)
         $json_actual = json_encode($actual);
         $expected_text = $this->file('api/json/' . $test_name . '.json');
         $expected = json_decode($expected_text, true);
@@ -1569,10 +1573,11 @@ function zu_test_time_setup(testing $t): string
 {
     global $db_con;
 
+    $cfg = new config();
     $result = '';
     $this_year = intval(date('Y'));
     $prev_year = '';
-    $test_years = intval(cfg_get(config::TEST_YEARS, $db_con));
+    $test_years = intval($cfg->get(config::TEST_YEARS, $db_con));
     if ($test_years == '') {
         log_warning('Configuration of test years is missing', 'test_base->zu_test_time_setup');
     } else {

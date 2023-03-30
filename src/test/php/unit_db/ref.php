@@ -48,6 +48,7 @@ class ref_unit_db_tests
         global $usr;
         global $db_con;
         global $phrase_types;
+        global $source_types;
 
         // init
         $t->header('Unit database tests of the ref class (src/main/php/model/ref/ref.php)');
@@ -81,7 +82,7 @@ class ref_unit_db_tests
         $t->assert('load_source_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = cl(db_cl::SOURCE_TYPE, source_type::XBRL);
+        $result = $source_types->id(source_type::XBRL);
         $t->assert('check ' . source_type::XBRL, $result, 2);
     }
 

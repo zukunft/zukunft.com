@@ -49,6 +49,8 @@ namespace model;
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
+include_once MODEL_USER_PATH . 'user_profile.php';
 
 use api\user_api;
 use cfg\export\_user_exp;
