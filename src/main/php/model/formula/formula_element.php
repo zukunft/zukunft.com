@@ -198,7 +198,7 @@ class formula_element extends db_object
         $lib = new library();
         $result = '';
         if ($this->type <> '') {
-            $class_name = $lib->str_right_of_or_all($this->type, '\\');
+            $class_name = $lib->class_to_name($this->type);
             $result .= $class_name . ' ';
         }
         $name = $this->name();

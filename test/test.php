@@ -132,20 +132,16 @@
 
 */
 
-// standard zukunft header for callable php files to allow debugging and lib loading
-global $debug;
-
 use model\user;
 use test\string_unit_tests;
 use test\term_list_unit_db_tests;
 use test\test_unit_read_db;
 
+// standard zukunft header for callable php files to allow debugging and lib loading
+global $debug;
 $debug = $_GET['debug'] ?? 0;
-
-// load the main functions
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
 // TODO dismiss by refactoring phrase_list_dsp_old
@@ -153,11 +149,12 @@ include_once MODEL_PHRASE_PATH . 'phrase_list_dsp.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once SERVICE_IMPORT_PATH . 'import_file.php';
 
+// load the testing base functions
+const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_TEST_PATH . 'utils/test_base.php';
+
 // open database and display header
 $db_con = prg_start("unit and integration testing");
-
-// load the testing base functions
-include_once '../src/test/php/utils/test_base.php';
 
 // load the session user parameters
 $start_usr = new user;

@@ -31,6 +31,7 @@
 
 use cfg\config;
 use html\html_base;
+use model\library;
 use model\sql_db;
 use model\user;
 
@@ -73,6 +74,7 @@ class api_message
     {
         global $usr;
 
+        $lib = new library();
         $cfg = new config();
         if ($db_con->connected()) {
             $this->pod = $cfg->get(config::SITE_NAME, $db_con);
@@ -80,7 +82,8 @@ class api_message
             // for unit tests use the default pod name
             $this->pod = POD_NAME;
         }
-        $this->type = $class;
+        $class_name = $lib->class_to_name($class);
+        $this->type = $class_name;
         $this->set_user($usr);
         $this->version = PRG_VERSION;
         $this->timestamp = (new DateTime())->format(DateTimeInterface::ATOM);

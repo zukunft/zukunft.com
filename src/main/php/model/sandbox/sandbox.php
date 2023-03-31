@@ -1098,7 +1098,7 @@ class sandbox extends db_object
                 log_err('Unknown user sandbox type ' . $this->obj_type . ' in ' . $this->obj_name, $this->obj_name . '->log_add');
             }
             $lib = new library();
-            $class = $lib->str_right_of_or_all($class, '\\');
+            $class = $lib->class_to_name($class);
 
             // check again if there ist not yet a record
             $db_con->set_type($this->obj_name, true);

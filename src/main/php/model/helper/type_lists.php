@@ -32,8 +32,36 @@
 
 namespace cfg;
 
-include_once MODEL_SYSTEM_PATH . 'system_error_log_status_list.php';
+include_once API_SYSTEM_PATH . 'type_object.php';
 include_once API_SYSTEM_PATH . 'type_lists.php';
+include_once MODEL_SYSTEM_PATH . 'system_error_log_status_list.php';
+include_once MODEL_USER_PATH . 'user_list.php';
+include_once MODEL_USER_PATH . 'user_profile.php';
+include_once MODEL_PHRASE_PATH . 'phrase_type.php';
+include_once MODEL_WORD_PATH . 'word_type_list.php';
+include_once MODEL_SYSTEM_PATH . 'batch_job_type_list.php';
+include_once MODEL_SYSTEM_PATH . 'system_error_log_status_list.php';
+include_once MODEL_WORD_PATH . 'word_type_list.php';
+include_once MODEL_VERB_PATH . 'verb_list.php';
+include_once MODEL_FORMULA_PATH . 'formula_type.php';
+include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
+include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
+include_once MODEL_FORMULA_PATH . 'formula_element_type_list.php';
+include_once MODEL_VIEW_PATH . 'view_sys_list.php';
+include_once MODEL_VIEW_PATH . 'view_sys_list.php';
+include_once MODEL_VIEW_PATH . 'view_type_list.php';
+include_once MODEL_VIEW_PATH . 'view_cmp_type_list.php';
+include_once MODEL_VIEW_PATH . 'view_cmp_link_types.php';
+include_once MODEL_VIEW_PATH . 'view_cmp_pos_type_list.php';
+include_once MODEL_REF_PATH . 'ref_type_list.php';
+include_once MODEL_REF_PATH . 'source_type_list.php';
+include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
+include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
+include_once MODEL_LANGUAGE_PATH . 'language_list.php';
+include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
+include_once MODEL_LOG_PATH . 'change_log_action.php';
+include_once MODEL_LOG_PATH . 'change_log_table.php';
+include_once MODEL_LOG_PATH . 'change_log_field.php';
 
 use api\type_lists_api;
 use model\change_log_action;
@@ -78,6 +106,7 @@ class type_lists
         global $change_log_tables;
         global $change_log_fields;
 
+        log_debug();
         $lst = new type_lists_api($db_con);
         $lst->add($user_profiles->api_obj(), 'user_profiles');
         $lst->add($phrase_types->api_obj(), 'phrase_types');
@@ -103,6 +132,7 @@ class type_lists
         if ($system_views != null) {
             $lst->add($system_views->api_obj(), 'system_views');
         }
+        log_debug('done');
         return $lst;
     }
 

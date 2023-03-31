@@ -298,7 +298,7 @@ class user_log_display
         global $change_log_tables;
 
         $lib = new library();
-        $class = $lib->str_right_of_or_all($this->type, '\\');
+        $class = $lib->class_to_name($this->type);
         $sql_name = 'user_log_links_by_' . $class;
 
         // select the change table to use

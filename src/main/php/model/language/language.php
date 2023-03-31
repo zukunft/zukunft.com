@@ -72,7 +72,7 @@ class language extends type_object
 
         log_debug($id);
         $lib = new library();
-        $dp_type = $lib->base_class_name($class);
+        $dp_type = $lib->class_to_name($class);
         $qp = $this->load_sql_by_id($db_con, $id, $dp_type);
         return $this->load($qp, $dp_type);
     }
@@ -91,7 +91,7 @@ class language extends type_object
 
         log_debug($name);
         $lib = new library();
-        $dp_type = $lib->base_class_name($class);
+        $dp_type = $lib->class_to_name($class);
         $qp = $this->load_sql_by_name($db_con, $name, $dp_type);
         return $this->load($qp, $dp_type);
     }

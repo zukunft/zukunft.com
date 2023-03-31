@@ -29,19 +29,30 @@
   
 */
 
-use api\term_list_api;
 use controller\controller;
+use model\user;
+use model\trm_ids;
+use model\term_list;
+use api\term_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-const ROOT_PATH = __DIR__ . '/../../';
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
-$debug = $_GET[controller::URL_VAR_DEBUG] ?? 0;
+global $debug;
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once API_PATH . 'controller.php';
+include_once API_PATH . 'message_header.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_PHRASE_PATH . 'term_list.php';
+include_once API_PHRASE_PATH . 'term_list.php';
 
 // open database
 $db_con = prg_start("api/termList", "", false);
 
 // get the parameters
-$trm_ids = $_GET['ids'] ?? 0;
+$trm_ids = $_GET[controller::URL_VAR_ID_LST] ?? 0;
 //$pattern = $_GET['pattern'] ?? '';
 $pattern = '';
 

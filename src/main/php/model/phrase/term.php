@@ -880,7 +880,7 @@ class term extends db_object
         $result = "";
 
         if ($this->id() > 0) {
-            $class = $lib->str_right_of_or_all($this->type(), '\\');
+            $class = $lib->class_to_name($this->type());
             $result = $html->dsp_err('A ' . $class . ' with the name "' . $this->name() . '" already exists. Please use another name.');
         }
 

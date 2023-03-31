@@ -35,6 +35,8 @@
 namespace api;
 
 include_once API_SANDBOX_PATH . 'sandbox.php';
+include_once API_PHRASE_PATH . 'phrase_list.php';
+include_once API_PHRASE_PATH . 'phrase_group.php';
 include_once WEB_PHRASE_PATH . 'phrase_group.php';
 
 use html\phrase_group_dsp;

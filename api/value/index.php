@@ -29,13 +29,23 @@
   
 */
 
-use api\value_api;
 use controller\controller;
+use model\user;
+use model\value;
+use api\value_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-const ROOT_PATH = __DIR__ . '/../../';
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
-$debug = $_GET[controller::URL_VAR_DEBUG] ?? 0;
+global $debug;
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once API_PATH . 'controller.php';
+include_once API_PATH . 'message_header.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once API_VALUE_PATH . 'value.php';
 
 // open database
 $db_con = prg_start("api/value", "", false);

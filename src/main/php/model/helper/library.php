@@ -678,9 +678,14 @@ class library
      * short forms for the reflection class
      */
 
-    function base_class_name(string $class_name): string
+    /**
+     * remove the namespace from the class name
+     * @param string $class including the namespace
+     * @return string class name without the namespace
+     */
+    function class_to_name(string $class): string
     {
-        return $this->str_right_of($class_name, '\\');
+        return $this->str_right_of_or_all($class, '\\');
     }
 
 }

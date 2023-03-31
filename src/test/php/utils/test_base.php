@@ -600,7 +600,7 @@ class test_base
     function assert_api_get_json(string $test_name, string $fld = '', int $id = 1): bool
     {
         $lib = new library();
-        $test_name = $lib->str_right_of_or_all($test_name, '\\');
+        $test_name = $lib->class_to_name($test_name);
         $url = HOST_TESTING . controller::URL_API_PATH . 'json';
         $data = array($fld => $id);
         $actual = json_decode($this->api_call("GET", $url, $data), true);
@@ -880,7 +880,7 @@ class test_base
         $lib = new library();
         if ($db_type == '') {
             $db_type = get_class($usr_obj);
-            $db_type = $lib->str_right_of_or_all($db_type, '\\');
+            $db_type = $lib->class_to_name($db_type);
         }
 
         // check the Postgres query syntax

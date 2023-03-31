@@ -54,7 +54,7 @@ class sql_par
     {
         $lib = new library();
         $this->sql = '';
-        $class = $lib->str_right_of_or_all($class, '\\');
+        $class = $lib->class_to_name($class);
         if ($is_std) {
             $this->name = $class . '_std_by_';
         } else {

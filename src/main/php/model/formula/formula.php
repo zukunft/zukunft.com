@@ -533,7 +533,7 @@ class formula extends sandbox_typed
     function load_user_sql(sql_db $db_con): sql_par
     {
         $lib = new library();
-        $class = $lib->str_right_of_or_all(self::class, '\\');
+        $class = $lib->class_to_name(self::class);
         $db_con->set_type(sql_db::TBL_FORMULA, true);
         $qp = new sql_par($class);
         $qp->name = $class . '_user_sandbox';

@@ -166,7 +166,7 @@ class string_unit_tests
         // test base_class_name
         $class = 'cfg\language';
         $target = 'language';
-        $result = $lib->base_class_name($class);
+        $result = $lib->class_to_name($class);
         $t->assert("base_class_name", $result, $target);
 
         // test camelize

@@ -32,7 +32,6 @@
 
 namespace cfg\export;
 
-include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 
 class sandbox_exp_named extends exp_obj

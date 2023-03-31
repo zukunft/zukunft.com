@@ -34,8 +34,6 @@
 
 namespace api;
 
-include_once API_PATH . 'controller.php';
-
 use controller\controller;
 use model\formula;
 use model\sandbox;

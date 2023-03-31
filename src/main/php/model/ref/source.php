@@ -41,6 +41,12 @@
 
 namespace model;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+include_once API_REF_PATH . 'source.php';
+include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
+include_once SERVICE_EXPORT_PATH . 'source_exp.php';
+include_once WEB_REF_PATH . 'source.php';
+
 use api\source_api;
 use cfg\export\exp_obj;
 use cfg\export\source_exp;

@@ -76,7 +76,7 @@ class phrase_type extends type_object
 
         $lib = new library();
         log_debug($id);
-        $dp_type = $lib->base_class_name($class);
+        $dp_type = $lib->class_to_name($class);
         // TODO rename table word_type to phrase_type
         if ($dp_type == 'phrase_type') {
             $dp_type = 'word_type';

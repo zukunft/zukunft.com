@@ -46,7 +46,7 @@ class list_api
      * construct and map
      */
 
-    function __construct(array $lst = array())
+    function __construct(array $lst)
     {
         $this->lst = array();
 

@@ -32,6 +32,8 @@
 
 namespace model;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+
 use model\user;
 
 class sandbox_list_named extends sandbox_list
@@ -94,7 +96,7 @@ class sandbox_list_named extends sandbox_list
      * @param string $name the unique name of the object that should be returned
      * @return object|null the found user sandbox object or null if no name is found
      */
-    function get_obj_by_name(string $name): ?object
+    function get_obj_by_name(string $name): ?term
     {
         $key_lst = $this->name_pos_lst();
         $pos = $key_lst[$name];

@@ -31,14 +31,23 @@
 
 namespace controller;
 
+include_once API_PATH . 'message_header.php';
+include_once API_SYSTEM_PATH . 'type_lists.php';
+include_once API_SANDBOX_PATH . 'combine_object.php';
+include_once API_SANDBOX_PATH . 'list.php';
+include_once API_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_WORD_PATH . 'word.php';
+
+use api_message;
 use api\combine_object_api;
 use api\list_api;
 use api\type_lists_api;
 use api\sandbox_api;
-use api_message;
-use source;
-use sandbox;
-use word;
+use model\sandbox;
+use model\source;
+use model\word;
 
 class controller
 {
@@ -46,8 +55,10 @@ class controller
     // the parameter names used in the url or in th result json
     const URL_API_PATH = 'api/';
     const URL_VAR_ID = 'id'; // the internal database id that should never be shown to the user
+    const URL_VAR_ID_LST = 'ids'; // a comma seperated list of internal database ids
     const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
     const URL_VAR_DEBUG = 'debug'; // to force the output of debug messages
+    const URL_VAR_CODE_ID = 'code_id';
     const URL_VAR_WORD = 'words';
     const URL_VAR_MSG = 'message';
     const URL_VAR_RESULT = 'result';

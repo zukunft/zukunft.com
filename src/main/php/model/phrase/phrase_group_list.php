@@ -98,7 +98,7 @@ class phrase_group_list
     {
         $lib = new library();
         $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
-        $class = $lib->str_right_of_or_all(self::class, '\\');
+        $class = $lib->class_to_name(self::class);
         $qp = new sql_par($class);
         $qp->name = $class . '_by_';
         $sql_where = '';

@@ -30,11 +30,20 @@
 */
 
 use controller\controller;
+use model\user;
+use model\source;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-const ROOT_PATH = __DIR__ . '/../../';
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
-$debug = $_GET[controller::URL_VAR_DEBUG] ?? 0;
+global $debug;
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once API_PATH . 'controller.php';
+include_once API_PATH . 'message_header.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_REF_PATH . 'source.php';
 
 // open database
 $db_con = prg_start("api/ref", "", false);
@@ -42,7 +51,7 @@ $db_con = prg_start("api/ref", "", false);
 // get the parameters
 $src_id = $_GET[controller::URL_VAR_ID] ?? 0;
 $src_name = $_GET[controller::URL_VAR_NAME] ?? '';
-$src_code_id = $_GET['code_id'] ?? '';
+$src_code_id = $_GET[controller::URL_VAR_CODE_ID] ?? '';
 
 $msg = '';
 $ctrl = new controller();

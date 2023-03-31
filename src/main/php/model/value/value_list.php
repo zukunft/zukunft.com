@@ -110,7 +110,7 @@ class value_list extends sandbox_list
     function load_sql(sql_db $db_con): sql_par
     {
         $lib = new library();
-        $class = $lib->str_right_of_or_all(self::class, '\\');
+        $class = $lib->class_to_name(self::class);
         $db_con->set_type(sql_db::TBL_VALUE);
         $qp = new sql_par($class);
         $sql_name = $class . '_by_';

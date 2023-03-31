@@ -32,24 +32,32 @@
   
 */
 
-use api\formula_list_api;
 use controller\controller;
-use model\figure_list;
 use model\user;
+use model\figure_list;
+use api\figure_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-const ROOT_PATH = __DIR__ . '/../../';
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
-$debug = $_GET[controller::URL_VAR_DEBUG] ?? 0;
+global $debug;
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once API_PATH . 'controller.php';
+include_once API_PATH . 'message_header.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_FORMULA_PATH . 'figure_list.php';
+include_once API_FORMULA_PATH . 'figure_list.php';
 
 // open database
 $db_con = prg_start("api/figureList", "", false);
 
 // get the parameters
-$frm_ids = $_GET['ids'] ?? 0;
+$frm_ids = $_GET[controller::URL_VAR_ID_LST] ?? 0;
 
 $msg = '';
-$result = new formula_list_api(); // reset the html code var
+$result = new figure_list_api(); // reset the html code var
 
 // load the session user parameters
 $usr = new user;

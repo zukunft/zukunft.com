@@ -48,13 +48,21 @@
 namespace model;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
+include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once SERVICE_EXPORT_PATH . 'ref_exp.php';
+include_once MODEL_REF_PATH . 'ref_type.php';
+include_once MODEL_REF_PATH . 'ref_type_list.php';
+include_once API_REF_PATH . 'ref.php';
+include_once WEB_REF_PATH . 'ref.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 
-use api\ref_api;
 use cfg\export\exp_obj;
 use cfg\export\ref_exp;
 use cfg\ref_type;
 use cfg\ref_type_list;
+use api\ref_api;
 use html\ref_dsp;
 
 class ref extends sandbox_link_with_type

@@ -46,6 +46,7 @@ include_once MODEL_SYSTEM_PATH . 'batch_job.php';
 include_once SERVICE_EXPORT_PATH . 'export.php';
 include_once API_SYSTEM_PATH . 'type_object.php';
 include_once API_PHRASE_PATH . 'phrase_type.php';
+include_once API_LANGUAGE_PATH . 'language.php';
 include_once API_LANGUAGE_PATH . 'language_form.php';
 
 use api\batch_job_api;
@@ -654,6 +655,7 @@ class test_api extends test_new_obj
         bool   $contains = false): bool
     {
         $lib = new library();
+        $class = $lib->class_to_name($class);
         $url = HOST_TESTING . controller::URL_API_PATH . $lib->camelize_ex_1($class);
         $data = array("ids" => implode(",", $ids));
         $actual = json_decode($this->api_call("GET", $url, $data), true);
@@ -778,7 +780,7 @@ class test_api extends test_new_obj
         if ($class == language_form::class) {
             $result = language_form_api::API_NAME;
         }
-        return $lib->str_right_of_or_all($result, '\\');
+        return $lib->class_to_name($result);
     }
 
     /**

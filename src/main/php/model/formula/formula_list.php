@@ -242,7 +242,7 @@ class formula_list extends sandbox_list
     function load_sql_all(sql_db $db_con, int $limit, int $page): sql_par
     {
         $lib = new library();
-        $class = $lib->str_right_of_or_all(self::class, '\\');
+        $class = $lib->class_to_name(self::class);
         $db_con->set_type(sql_db::TBL_FORMULA);
         $qp = new sql_par($class);
         $db_con->set_usr($this->user()->id());

@@ -32,6 +32,9 @@
 
 namespace model;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_PHRASE_PATH . 'term.php';
 include_once WEB_PHRASE_PATH . 'term_list.php';
 include_once API_PHRASE_PATH . 'term_list.php';
 

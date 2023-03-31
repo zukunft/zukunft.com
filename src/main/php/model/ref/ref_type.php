@@ -32,6 +32,9 @@
 
 namespace cfg;
 
+include_once MODEL_HELPER_PATH . 'type_object.php';
+
+
 use cfg\type_object;
 
 class ref_type extends type_object
