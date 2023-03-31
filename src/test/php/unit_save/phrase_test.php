@@ -116,7 +116,7 @@ function run_phrase_test(testing $t): void
     $result = $lib->trim_all_spaces($result);
     $target = $lib->trim_all_spaces($target);
     // to overwrite any special char
-    $diff = str_diff($result, $target);
+    $diff = $lib->str_diff($result, $target);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);
         $target = $result;
@@ -138,7 +138,7 @@ function run_phrase_test(testing $t): void
     $result = $lib->trim_all_spaces($result);
     $target = $lib->trim_all_spaces($target);
     // to overwrite any special char
-    $diff = str_diff($result, $target);
+    $diff = $lib->str_diff($result, $target);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);
         $target = $result;

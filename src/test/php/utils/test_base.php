@@ -1227,7 +1227,7 @@ class test_base
                 if ($target == '') {
                     log_err('Target is not expected to be empty ' . $result);
                 } else {
-                    $diff = str_diff($result, $target);
+                    $diff = $lib->str_diff($result, $target);
                     if ($diff == '') {
                         log_err('Unexpected diff ' . $diff);
                         $target = $result;

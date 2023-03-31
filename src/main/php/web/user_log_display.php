@@ -35,6 +35,7 @@ use html\button;
 use html\html_base;
 use model\change_log_table;
 use model\formula;
+use model\library;
 use model\sql_db;
 use model\user;
 use model\value;
@@ -296,21 +297,23 @@ class user_log_display
     {
         global $change_log_tables;
 
-        $sql_name = 'user_log_links_by_' . $this->type;
+        $lib = new library();
+        $class = $lib->str_right_of_or_all($this->type, '\\');
+        $sql_name = 'user_log_links_by_' . $class;
 
         // select the change table to use
         $sql_where = '';
         $sql_field = '';
         $sql_row = '';
         $sql_user = '';
-        if ($this->type == 'user') {
+        if ($class == 'user') {
             $sql_where = " ( c.change_table_id = " . $change_log_tables->id(change_log_table::USR) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = '';
             $sql_user = 'c.user_id = u.user_id
                 AND c.user_id = ' . $this->usr->id() . ' ';
-        } elseif ($this->type == 'word') {
+        } elseif ($class == 'word') {
             $sql_where = " ( c.change_table_id = " . $change_log_tables->id(change_log_table::WORD) . " 
                     OR c.change_table_id = " . $change_log_tables->id(change_log_table::WORD_USR) . " 
                     OR c.change_table_id = " . $change_log_tables->id(change_log_table::TRIPLE) . " 
@@ -320,7 +323,7 @@ class user_log_display
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.old_to_id = ' . $this->id . ' OR
                        c.new_from_id = ' . $this->id . ' OR c.new_to_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
-        } elseif ($this->type == 'value') {
+        } elseif ($class == 'value') {
             $sql_where = " ( c.change_table_id = " . $change_log_tables->id(change_log_table::VALUE) . " 
                     OR c.change_table_id = " . $change_log_tables->id(change_log_table::VALUE_USR) . " 
                     OR c.change_table_id = " . $change_log_tables->id(change_log_table::VALUE_LINK) . ") AND ";
@@ -328,7 +331,7 @@ class user_log_display
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.new_from_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
-        } elseif ($this->type == 'formula') {
+        } elseif ($class == 'formula') {
             $sql_where = " ( c.change_table_id = " . $change_log_tables->id(change_log_table::FORMULA) . " 
                     OR c.change_table_id = " . $change_log_tables->id(change_log_table::FORMULA_USR) . " 
                     OR c.change_table_id = " . $change_log_tables->id(change_log_table::FORMULA_LINK) . " 
@@ -337,7 +340,7 @@ class user_log_display
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.new_from_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
-        } elseif ($this->type == 'view') {
+        } elseif ($class == 'view') {
             $sql_where = " ( c.change_table_id = " . $change_log_tables->id(change_log_table::VIEW) . " 
                     OR c.change_table_id = " . $change_log_tables->id(change_log_table::VIEW_USR) . " 
                     OR c.change_table_id = " . $change_log_tables->id(change_log_table::VIEW_LINK) . " 
@@ -346,7 +349,7 @@ class user_log_display
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.new_from_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
-        } elseif ($this->type == 'view_cmp') {
+        } elseif ($class == 'view_cmp') {
             $sql_where = " ( c.change_table_id = " . $change_log_tables->id(change_log_table::VIEW_COMPONENT) . " 
                     OR c.change_table_id = " . $change_log_tables->id(change_log_table::VIEW_COMPONENT_USR) . " 
                     OR c.change_table_id = " . $change_log_tables->id(change_log_table::VIEW_LINK) . " 

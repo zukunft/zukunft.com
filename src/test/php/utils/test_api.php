@@ -71,7 +71,7 @@ use cfg\type_object;
 use controller\controller;
 use DateTime;
 use Exception;
-use export\export;
+use im_export\export;
 use model\batch_job;
 use model\change_log;
 use model\change_log_field;

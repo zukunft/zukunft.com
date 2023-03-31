@@ -29,12 +29,18 @@
   
 */
 
+use html\html_base;
+use model\triple;
+use model\user;
+use model\view;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("link_edit");
+$html = new html_base();
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -86,7 +92,7 @@ if ($usr->id() > 0) {
         if ($result == '') {
             // display the view header
             $result .= $dsp->dsp_navbar($back);
-            $result .= dsp_err($msg);
+            $result .= $html->dsp_err($msg);
 
             // display the word link to allow the user to change it
             $result .= $lnk->dsp_obj()->form_edit($back);

@@ -40,6 +40,7 @@
 use api\formula_api;
 use api\word_api;
 use html\figure_dsp;
+use model\library;
 use model\phrase_list;
 use test\test_api;
 use test\testing;
@@ -48,6 +49,7 @@ function run_formula_element_group_test(testing $t): void
 {
 
     global $usr;
+    $lib = new library();
 
     $t->header('Test the formula element group list class (classes/formula_element_group_list.php)');
 
@@ -148,7 +150,7 @@ function run_formula_element_group_test(testing $t): void
         $fig_lst = $elm_grp->figures();
         $target = '8.51  ('.$fig_lst->get_first_id().')';
         // to overwrite any special char
-        $diff = str_diff($result, $target);
+        $diff = $lib->str_diff($result, $target);
         if ($diff != '') {
             log_err('Unexpected diff ' . $diff);
             $target = $result;

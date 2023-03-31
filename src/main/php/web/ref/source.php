@@ -130,22 +130,22 @@ class source_dsp extends source_api
 
         if ($this->id <= 0) {
             $script = "source_add";
-            $result .= dsp_text_h2("Add source");
+            $result .= $html->dsp_text_h2("Add source");
         } else {
             $script = "source_edit";
-            $result .= dsp_text_h2('Edit source "' . $this->name . '"');
+            $result .= $html->dsp_text_h2('Edit source "' . $this->name . '"');
         }
-        $result .= dsp_form_start($script);
+        $result .= $html->dsp_form_start($script);
         //$result .= dsp_tbl_start();
-        $result .= dsp_form_hidden("id", $this->id);
-        $result .= dsp_form_hidden("back", $back);
-        $result .= dsp_form_hidden("confirm", 1);
-        $result .= dsp_form_fld("name", $this->name, "Source name:");
+        $result .= $html->dsp_form_hidden("id", $this->id);
+        $result .= $html->dsp_form_hidden("back", $back);
+        $result .= $html->dsp_form_hidden("confirm", 1);
+        $result .= $html->dsp_form_fld("name", $this->name, "Source name:");
         $result .= '<tr><td>type   </td><td>' . $this->dsp_select_type($script, $back) . '</td></tr>';
-        $result .= dsp_form_fld("url", $this->url, "URL:");
-        $result .= dsp_form_fld("comment", $this->description, "Comment:");
+        $result .= $html->dsp_form_fld("url", $this->url, "URL:");
+        $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
         //$result .= dsp_tbl_end ();
-        $result .= dsp_form_end('', $back);
+        $result .= $html->dsp_form_end('', $back);
 
         log_debug('done');
         return $result;

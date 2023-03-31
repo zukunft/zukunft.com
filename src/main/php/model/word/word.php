@@ -235,7 +235,8 @@ class word extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        $this->type_id = cl(db_cl::PHRASE_TYPE, $type_code_id);
+        global $phrase_types;
+        $this->type_id = $phrase_types->id($type_code_id);
     }
 
     /**
@@ -773,6 +774,8 @@ class word extends sandbox_typed
     function export_obj(bool $do_load = true): sandbox_exp_named
     {
         global $phrase_types;
+        global $share_types;
+        global $protection_types;
 
         log_debug();
         $result = new word_exp();
@@ -793,12 +796,12 @@ class word extends sandbox_typed
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> cl(db_cl::SHARE_TYPE, share_type::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protection_type::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 
@@ -1097,14 +1100,15 @@ class word extends sandbox_typed
     {
         log_debug('word_dsp->dsp_add ' . $this->dsp_id() . ' or link the existing word with id ' . $wrd_id . ' to ' . $wrd_to . ' by verb ' . $vrb_id . ' for user ' . $this->user()->name . ' (called by ' . $back . ')');
         $result = '';
+        $html = new html_base();
 
         $form = "word_add";
-        $result .= dsp_text_h2('Add a new word');
-        $result .= dsp_form_start($form);
-        $result .= dsp_form_hidden("back", $back);
-        $result .= dsp_form_hidden("confirm", '1');
+        $result .= $html->dsp_text_h2('Add a new word');
+        $result .= $html->dsp_form_start($form);
+        $result .= $html->dsp_form_hidden("back", $back);
+        $result .= $html->dsp_form_hidden("confirm", '1');
         $result .= '<div class="form-row">';
-        $result .= dsp_form_text("word_name", $this->name, "Name:", "col-sm-4");
+        $result .= $html->dsp_form_text("word_name", $this->name, "Name:", "col-sm-4");
         $result .= $this->dsp_type_selector($form, "col-sm-4");
         $result .= $this->selector_add($wrd_id, $form, "form-row") . ' ';
         $result .= '</div>';
@@ -1113,7 +1117,7 @@ class word extends sandbox_typed
         $result .= $this->selector_link($vrb_id, $form, $back);
         $result .= $this->selector_word($wrd_to, 0, $form);
         $result .= '</div>';
-        $result .= dsp_form_end('', $back);
+        $result .= $html->dsp_form_end('', $back);
 
         log_debug('word_dsp->dsp_add ... done');
         return $result;
@@ -1122,16 +1126,17 @@ class word extends sandbox_typed
     function dsp_formula(string $back = ''): string
     {
         global $phrase_types;
+        $html = new html_base();
 
         $result = '';
         if ($this->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
-            $result .= dsp_form_hidden("name", $this->name);
+            $result .= $html->dsp_form_hidden("name", $this->name);
             $result .= '  to change the name of "' . $this->name . '" rename the ';
             $frm = $this->formula();
             $result .= $frm->dsp_obj_old()->name_linked($back);
             $result .= '.<br> ';
         } else {
-            $result .= dsp_form_text("name", $this->name, "Name:", "col-sm-4");
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", "col-sm-4");
         }
         return $result;
     }
@@ -1159,6 +1164,7 @@ class word extends sandbox_typed
      */
     function dsp_edit(string $back = ''): string
     {
+        $html = new html_base();
         $phr_lst_up = $this->parents();
         $phr_lst_down = $this->children();
         $phr_lst_up_dsp = $phr_lst_up->dsp_obj();
@@ -1170,12 +1176,12 @@ class word extends sandbox_typed
         $dsp_log = '';
         $changes = $this->dsp_hist(1, SQL_ROW_LIMIT, '', $back);
         if (trim($changes) <> "") {
-            $dsp_log .= dsp_text_h3("Latest changes related to this word", "change_hist");
+            $dsp_log .= $html->dsp_text_h3("Latest changes related to this word", "change_hist");
             $dsp_log .= $changes;
         }
         $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
         if (trim($changes) <> "") {
-            $dsp_log .= dsp_text_h3("Latest link changes related to this word", "change_hist");
+            $dsp_log .= $html->dsp_text_h3("Latest link changes related to this word", "change_hist");
             $dsp_log .= $changes;
         }
         return $wrd_dsp->form_edit(
@@ -1693,7 +1699,7 @@ class word extends sandbox_typed
     {
         $phr = new phrase($this->user());
         $phr->id = $this->id;
-        $phr->set_name($this->name, word::class);
+        $phr->set_name($this->name, self::class);
         $phr->obj = $this;
         log_debug($this->dsp_id());
         return $phr;

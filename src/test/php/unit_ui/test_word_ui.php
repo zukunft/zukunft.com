@@ -36,6 +36,8 @@
 
 use api\word_api;
 use html\word_dsp;
+use const test\TIMEOUT_LIMIT_PAGE;
+use const test\TIMEOUT_LIMIT_PAGE_SEMI;
 
 function run_word_ui_test(testing $t): void
 {

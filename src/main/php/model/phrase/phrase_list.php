@@ -51,7 +51,7 @@ use api\phrase_list_api;
 use cfg\phrase_type;
 use cfg\verb_list;
 use cfg\word_type_list;
-use export\export;
+use im_export\export;
 use html\word_dsp;
 
 class phrase_list extends sandbox_list_named
@@ -990,7 +990,7 @@ class phrase_list extends sandbox_list_named
                     // TODO check if old can ge removed: if ($phr->id > 0) {
                     if (get_class($phr->obj) == word::class or get_class($phr->obj) == word_dsp::class) {
                         $wrd_lst->add($phr->obj);
-                    } elseif (get_class($phr->obj) == sql_db::TBL_TRIPLE) {
+                    } elseif (get_class($phr->obj) == triple::class) {
                         // use the recursive triple function to include the foaf words
                         $sub_wrd_lst = $phr->obj->wrd_lst();
                         foreach ($sub_wrd_lst->lst as $wrd) {

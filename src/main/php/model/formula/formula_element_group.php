@@ -42,7 +42,10 @@
 
 namespace model;
 
+include_once MODEL_FORMULA_PATH . 'figure_list.php';
+
 use html\figure_dsp;
+use test\test_api;
 
 class formula_element_group
 {
@@ -297,7 +300,7 @@ class formula_element_group
 
             // get the word group
             $val_phr_lst_sort = $val_phr_lst->lst();
-            usort($val_phr_lst_sort, array("phrase", "cmp"));
+            usort($val_phr_lst_sort, array(phrase::class, "cmp"));
             $val_phr_lst->set_lst($val_phr_lst_sort);
 
             //asort($val_phr_lst);

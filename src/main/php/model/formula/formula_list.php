@@ -443,7 +443,7 @@ class formula_list extends sandbox_list
 
         // list all related formula results
         if ($this->lst != null) {
-            usort($this->lst, array("formula", "cmp"));
+            usort($this->lst, array(formula::class, "cmp"));
             if ($this->lst != null) {
                 foreach ($this->lst as $frm) {
                     // formatting should be moved

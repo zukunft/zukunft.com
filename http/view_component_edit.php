@@ -30,12 +30,18 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use html\html_base;
+use model\user;
+use model\view_cmp_dsp_old;
+use model\word;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("view_component_edit");
+$html = new html_base();
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -130,7 +136,7 @@ if ($usr->id() > 0) {
         if ($result == '') {
             // in view edit views the view cannot be changed
             $result .= $dsp->dsp_navbar_no_view($wrd->id());
-            $result .= dsp_err($msg);
+            $result .= $html->dsp_err($msg);
 
             // if the user has requested to use this display component also in another view, $add_link is greater than 0
             $add_link = 0;

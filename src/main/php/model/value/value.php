@@ -55,6 +55,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once MODEL_FORMULA_PATH . 'figure.php';
 include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once SERVICE_EXPORT_PATH . 'value_exp.php';
+include_once SERVICE_EXPORT_PATH . 'json.php';
 
 use api\value_api;
 use cfg\export\exp_obj;
@@ -67,8 +68,9 @@ use cfg\share_type;
 use controller\controller;
 use DateTime;
 use Exception;
-use export\export;
+use im_export\export;
 use html\value_dsp;
+use math;
 
 class value extends sandbox_value
 {
@@ -1020,6 +1022,8 @@ class value extends sandbox_value
      */
     function export_obj(bool $do_load = true): exp_obj
     {
+        global $share_types;
+        global $protection_types;
         log_debug();
         $result = new value_exp();
 
@@ -1063,12 +1067,12 @@ class value extends sandbox_value
         $result->number = $this->number;
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> cl(db_cl::SHARE_TYPE, share_type::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protection_type::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 
@@ -1667,6 +1671,8 @@ class value extends sandbox_value
      */
     function save_field_trigger_update($db_con): string
     {
+        global $job_types;
+
         $result = '';
 
         $this->last_update = new DateTime();
@@ -1681,7 +1687,7 @@ class value extends sandbox_value
         log_debug('value->save_field_trigger_update group id "' . $this->grp->id . '" for user ' . $this->user()->name . '');
         if ($this->id > 0) {
             $job = new batch_job($this->user());
-            $job->type = cl(db_cl::JOB_TYPE, job_type_list::VALUE_UPDATE);
+            $job->type = $job_types->id(job_type_list::VALUE_UPDATE);
             $job->obj = $this;
             $job->add();
         } else {

@@ -409,6 +409,7 @@ class batch_job extends db_object
     function exe()
     {
         global $db_con;
+        global $job_types;
         //$db_con = New mysql;
         $db_type = $db_con->get_type();
         $db_con->usr_id = $this->usr->id;
@@ -416,7 +417,7 @@ class batch_job extends db_object
         $result = $db_con->update($this->id, 'start_time', 'Now()');
 
         log_debug($this->type . ' with ' . $result);
-        if ($this->type == cl(db_cl::JOB_TYPE, job_type_list::VALUE_UPDATE)) {
+        if ($this->type == $job_types->id(job_type_list::VALUE_UPDATE)) {
             $this->exe_val_upd();
         } else {
             log_err('Job type "' . $this->type . '" not defined.', 'batch_job->exe');

@@ -254,7 +254,8 @@ class view_cmp extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        $this->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, $type_code_id);
+        global $view_component_types;
+        $this->type_id = $view_component_types->id($type_code_id);
     }
 
 

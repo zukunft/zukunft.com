@@ -31,6 +31,8 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 use html\html_base;
+use model\sql_db;
+use model\user;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
@@ -38,7 +40,7 @@ include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database 
 $db_con = prg_start("login_activate", "center_form");
-
+$html = new html_base();
 
 $result = ''; // reset the html code var
 $msg = '';
@@ -121,14 +123,14 @@ if (isset($_POST['submit'])) {
             header("Location: view.php");
             exit;
         } else {
-            $msg .= dsp_err($error) . '<br>';
+            $msg .= $html->dsp_err($error) . '<br>';
         }
     } else {
         if ($db_key <> "") {
             //$msg .= dsp_err ('Error: activation key ('.$db_key.'/'.$_POST['key'].' for '.$usr_id.') does not match. Please request the password reset again.').'<br>';
-            $msg .= dsp_err('Error: activation key does not match. Please request the password reset again.') . '<br>';
+            $msg .= $html->dsp_err('Error: activation key does not match. Please request the password reset again.') . '<br>';
         } else {
-            $msg .= dsp_err('Activation key is not valid any more. Please request the password reset again.') . '<br>';
+            $msg .= $html->dsp_err('Activation key is not valid any more. Please request the password reset again.') . '<br>';
         }
     }
 }
@@ -141,7 +143,6 @@ if (!$_SESSION['logged']) {
         }
     }
     if ($usr_id > 0) {
-        $html = new html_base();
         $result .= dsp_form_center();
         $result .= $html->logo_big();
         $result .= '<br><br>';
@@ -150,7 +151,7 @@ if (!$_SESSION['logged']) {
         if ($debug > 0) {
             $result .= '<input type="hidden" name="debug" value="' . $debug . '">';
         }
-        $result .= dsp_text_h2('Change password<br>');
+        $result .= $html->dsp_text_h2('Change password<br>');
 
         $key = $_GET['key'];
         if ($key <> '') {

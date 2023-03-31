@@ -31,6 +31,9 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 use html\html_base;
+use model\sandbox;
+use model\sql_db;
+use model\user;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
@@ -38,6 +41,7 @@ include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database 
 $db_con = prg_start("signup", "center_form");
+$html = new html_base();
 
 $result = ''; // reset the html code var
 
@@ -134,7 +138,7 @@ $result .= dsp_form_center();
 $result .= $html->logo_big();
 $result .= '<br><br>';
 $result .= '<p>Please signup for <b>alpha testing</b> of zukunft.com.</p>';
-$result .= '<p>' . dsp_err('Be aware that during this phase your <b>data may get lost</b> or is changed due to program errors or updates.') . '</p>';
+$result .= '<p>' . $html->dsp_err('Be aware that during this phase your <b>data may get lost</b> or is changed due to program errors or updates.') . '</p>';
 $result .= '<form action="' . $_SERVER['PHP_SELF'] . '" method="post"> ';
 $result .= '<p>User Name:<br><input type="text" name="user_name" value="' . $_POST['user_name'] . '"></p> ';
 $result .= '<p>Email:<br><input type="text" name="email" value="' . $_POST['email'] . '"></p>  ';
@@ -149,5 +153,3 @@ echo $result;
 
 // close the database  
 prg_end($db_con);
-
-?>

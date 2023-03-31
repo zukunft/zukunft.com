@@ -38,12 +38,23 @@
 
 */
 
+use html\html_base;
+use model\db_cl;
+use model\formula_list;
+use model\formula_value_list;
+use model\library;
+use model\phr_ids;
+use model\phrase_list;
+use model\user;
+use model\view;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("start formula_test.php");
+$html = new html_base();
 
 // load the session user parameters
 $session_usr = new user;
@@ -78,7 +89,7 @@ if ($session_usr->id() > 0) {
     }
 
     if ($frm_id == '') {
-        echo dsp_text_h2("Please select a formula");
+        echo $html->dsp_text_h2("Please select a formula");
         echo "<br>";
     } else {
 
@@ -110,7 +121,7 @@ if ($session_usr->id() > 0) {
                 $dsp_lst = "for " . $phr_lst->name_linked() . " ";
             }
         }
-        dsp_text_h2('Calculate the ' . $frm1->name_linked($back) . ' ' . $dsp_lst);
+        $html->dsp_text_h2('Calculate the ' . $frm1->name_linked($back) . ' ' . $dsp_lst);
         echo '<br>';
 
         // if a single calculation is selected by the user, show only this

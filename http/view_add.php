@@ -30,12 +30,19 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use html\html_base;
+use model\db_cl;
+use model\user;
+use model\view;
+use model\word;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("view_add");
+$html = new html_base();
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -100,7 +107,7 @@ if ($usr->id() > 0) {
 
         // show the header (in view edit views the view cannot be changed)
         $result .= $dsp->dsp_navbar_no_view($wrd->id());
-        $result .= dsp_err($msg);
+        $result .= $html->dsp_err($msg);
 
         // show the form to create a new view
         $result .= $dsp_add->dsp_edit(0, $wrd, $back);

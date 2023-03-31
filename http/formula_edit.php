@@ -30,12 +30,18 @@
 */
 
 use controller\controller;
+use html\html_base;
+use model\formula;
+use model\phrase;
+use model\user;
+use model\view;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 $db_con = prg_start("formula_edit");
+$html = new html_base();
 
 // get the parameters
 $frm_id = $_GET[controller::URL_VAR_ID] ?? 0;
@@ -132,7 +138,7 @@ if ($usr->id() > 0) {
         if ($result == '') {
             // display the view header
             $result .= $dsp->dsp_navbar($back);
-            $result .= dsp_err($msg);
+            $result .= $html->dsp_err($msg);
 
             // display the view to change the formula
             $frm->load_by_id($frm_id); // reload to formula object to display the real database values

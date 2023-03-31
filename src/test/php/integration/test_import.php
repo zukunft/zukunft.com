@@ -31,6 +31,7 @@
 */
 
 use test\testing;
+use const test\TIMEOUT_LIMIT_IMPORT;
 
 function run_import_test($file_list, testing $t): void
 {

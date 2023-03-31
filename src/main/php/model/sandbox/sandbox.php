@@ -50,6 +50,7 @@ use cfg\export\exp_obj;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
+use Exception;
 
 class sandbox extends db_object
 {
@@ -365,8 +366,10 @@ class sandbox extends db_object
      */
     function row_mapper_std(): void
     {
-        $this->share_id = cl(db_cl::SHARE_TYPE, share_type::PUBLIC);
-        $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT);
+        global $share_types;
+        global $protection_types;
+        $this->share_id = $share_types->id(share_type::PUBLIC);
+        $this->protection_id = $protection_types->id(protection_type::NO_PROTECT);
     }
 
 
@@ -667,9 +670,11 @@ class sandbox extends db_object
      */
     function share_type_name(): string
     {
+        global $share_types;
+
         // use the default share type if not set
         if ($this->share_id <= 0) {
-            $this->share_id = cl(db_cl::SHARE_TYPE, share_type::PUBLIC);
+            $this->share_id = $share_types->id(share_type::PUBLIC);
         }
 
         global $share_types;
@@ -690,12 +695,13 @@ class sandbox extends db_object
      */
     function protection_type_name(): string
     {
+        global $protection_types;
+
         // use the default share type if not set
         if ($this->protection_id <= 0) {
-            $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT);
+            $this->protection_id = $protection_types->id(protection_type::NO_PROTECT);
         }
 
-        global $protection_types;
         return $protection_types->name($this->protection_id);
     }
 

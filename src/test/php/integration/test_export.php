@@ -30,10 +30,13 @@
 
 */
 
+include_once SERVICE_EXPORT_PATH . 'xml.php';
+
 use api\word_api;
-use export\json_io;
+use im_export\json_io;
 use model\phrase_list;
 use test\testing;
+use const test\TIMEOUT_LIMIT_PAGE;
 
 function run_export_test(testing $t): void
 {

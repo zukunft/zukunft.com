@@ -35,6 +35,8 @@ include_once API_FORMULA_PATH . 'figure_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
 use api\figure_list_api;
+use html\figure_dsp;
+use test\test_api;
 
 class figure_list extends sandbox_list
 {
@@ -178,7 +180,7 @@ class figure_list extends sandbox_list
     function dsp_id(): string
     {
         $id = $this->ids_txt();
-        $name = $this->display();
+        $name = $this->name();
         if ($name <> '""') {
             $result = $name . ' (' . $id . ')';
         } else {
@@ -222,5 +224,43 @@ class figure_list extends sandbox_list
         }
         return $result;
     }
+
+    /*
+     * TODO review
+     */
+    function get_first_id(): int
+    {
+        $result = 0;
+        if ($this != null) {
+            if (count($this->lst) > 0) {
+                $fig = $this->lst[0];
+                if ($fig != null) {
+                    $result = $fig->id();
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * TODO to be moved to the frontend object
+     * return the html code to display a value
+     * this is the opposite of the convert function
+     * this function is called from dsp_id, so no other call is allowed
+     */
+    function display($back = ''): string
+    {
+        $result = '';
+
+        foreach ($this->lst as $fig) {
+            $t = new test_api();
+            $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
+            $result .= $fig_dsp->display($back) . ' ';
+        }
+
+        return $result;
+    }
+
+
 
 }

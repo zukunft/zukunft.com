@@ -34,9 +34,9 @@
 
 namespace html;
 
-use library;
-use phrase_list;
-use phrase_list_dsp_old;
+use model\library;
+use model\phrase_list;
+use model\phrase_list_dsp_old;
 
 class button
 {
@@ -147,7 +147,8 @@ class button
      */
     function confirm(string $title, string $description, string $call): string
     {
-        $result = dsp_text_h3($title);
+        $html = new html_base();
+        $result = $html->dsp_text_h3($title);
         $result .= $description . '<br><br>';
         $result .= '<a href="' . $call . '&confirm=1" title="Yes">Yes</a> / <a href="' . $call . '&confirm=-1" title="No">No</a>';
         //$result = $title.'<a href="'.$call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$call.'&confirm=-1" title="No">No</a>';
@@ -161,9 +162,10 @@ class button
      */
     function yesno(): string
     {
+        $html = new html_base();
         //zu_debug("button->yesno ".$this->title.".", 10);
 
-        $result = dsp_text_h3($this->title);
+        $result = $html->dsp_text_h3($this->title);
         $result .= '<a href="' . $this->call . '&confirm=1" title="Yes">Yes</a>/<a href="' . $this->call . '&confirm=-1" title="No">No</a>';
         //$result = $this->title.'<a href="'.$this->call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$this->call.'&confirm=-1" title="No">No</a>';
         //$result = '<a href="'.$this->call.'" onclick="return confirm(\''.$this->title.'\')">'.$this->title.'</a>';

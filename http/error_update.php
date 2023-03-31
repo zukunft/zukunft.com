@@ -30,11 +30,20 @@
 
 */
 
+use cfg\system_log_list;
+use html\html_base;
+use model\db_cl;
+use model\system_log;
+use model\user;
+use model\user_profile;
+use model\view;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 $db_con = prg_start("error_update");
+$html = new html_base();
 
 $result = ''; // reset the html code var
 
@@ -77,19 +86,19 @@ if ($usr->id() > 0) {
         if ($err_lst->load()) {
             $errors_all = $err_lst->dsp_obj()->get_html();
         }
-        //$errors_all .= zuu_dsp_errors  ($usr->id(), $usr->profile_id, "all", $back);
+        //$errors_all .= dsp_errors  ($usr->id(), $usr->profile_id, "all", $back);
         if ($errors_all <> "") {
-            $result .= dsp_text_h3("Program issues that other user have found, that have not yet been solved.");
+            $result .= $html->dsp_text_h3("Program issues that other user have found, that have not yet been solved.");
             $result .= $errors_all;
         } else {
-            $result .= dsp_text_h3("There are no open errors left.");
+            $result .= $html->dsp_text_h3("There are no open errors left.");
         }
 
         if ($_SESSION['logged']) {
             $result .= '<br><br><a href="/http/logout.php">logout</a>';
         }
     } else {
-        $result .= dsp_text_h3("You are not permitted to update the error status. If you want to get the permission, please request it at admin@zukunft.com..");
+        $result .= $html->dsp_text_h3("You are not permitted to update the error status. If you want to get the permission, please request it at admin@zukunft.com..");
     }
 }
 

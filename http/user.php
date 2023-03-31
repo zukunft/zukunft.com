@@ -30,11 +30,25 @@
 
 */
 
+use html\html_base;
+use model\db_cl;
+use model\formula;
+use model\formula_link;
+use model\triple;
+use model\user;
+use model\user_profile;
+use model\value;
+use model\view;
+use model\view_cmp;
+use model\view_cmp_link;
+use model\word;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 $db_con = prg_start("user");
+$html = new html_base();
 
 $result = ''; // reset the html code var
 
@@ -131,51 +145,51 @@ if ($usr->id() > 0) {
 
     // allow to import data
     if ($usr->can_import()) {
-        $result .= dsp_text_h2('<br>Data import<br>');
-        $result .= dsp_text_h3('<br>Import <a href="/http/import.php">JSON</a><br>');
-        $result .= dsp_text_h3('<br>');
+        $result .= $html->dsp_text_h2('<br>Data import<br>');
+        $result .= $html->dsp_text_h3('<br>Import <a href="/http/import.php">JSON</a><br>');
+        $result .= $html->dsp_text_h3('<br>');
     }
 
     // allow admins to test the system consistence
     if ($usr->is_admin()) {
-        $result .= dsp_text_h2('<br>System testing<br>');
-        $result .= dsp_text_h3('<br>Perform all unit <a href="/test/test.php">tests</a><br>');
-        $result .= dsp_text_h3('<br>Perform critical unit and integration <a href="/test/test_quick.php">tests</a><br>');
-        $result .= dsp_text_h3('<br>Force <a href="/test/test_base_config.php">reloading</a> the base configuration e.g. to check that the units definition are still OK.<br>');
-        $result .= dsp_text_h3('<br>');
+        $result .= $html->dsp_text_h2('<br>System testing<br>');
+        $result .= $html->dsp_text_h3('<br>Perform all unit <a href="/test/test.php">tests</a><br>');
+        $result .= $html->dsp_text_h3('<br>Perform critical unit and integration <a href="/test/test_quick.php">tests</a><br>');
+        $result .= $html->dsp_text_h3('<br>Force <a href="/test/test_base_config.php">reloading</a> the base configuration e.g. to check that the units definition are still OK.<br>');
+        $result .= $html->dsp_text_h3('<br>');
     }
 
     // display the user sandbox if there is something in
     $sandbox = $dsp_usr_old->dsp_sandbox($back);
     if (trim($sandbox) <> "") {
-        $result .= dsp_text_h2("Your changes, which are not standard");
+        $result .= $html->dsp_text_h2("Your changes, which are not standard");
         $result .= $sandbox;
-        $result .= dsp_text_h3('<br>');
+        $result .= $html->dsp_text_h3('<br>');
     }
 
     // display the user changes 
     $changes = $dsp_usr_old->dsp_changes(0, SQL_ROW_LIMIT, 1, $back);
     if (trim($changes) <> "") {
-        $result .= dsp_text_h2("Your latest changes");
+        $result .= $html->dsp_text_h2("Your latest changes");
         $result .= $changes;
-        $result .= dsp_text_h3('<br>');
+        $result .= $html->dsp_text_h3('<br>');
     }
 
     // display the program issues that the user has found if there are some
     $errors = $dsp_usr_old->dsp_errors("", SQL_ROW_LIMIT, 1, $back);
     if (trim($errors) <> "") {
-        $result .= dsp_text_h2("Program issues that you found, that have not yet been solved.");
+        $result .= $html->dsp_text_h2("Program issues that you found, that have not yet been solved.");
         $result .= $errors;
-        $result .= dsp_text_h3('<br>');
+        $result .= $html->dsp_text_h3('<br>');
     }
 
     // display all program issues if the user is an admin
     if ($usr->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
         $errors_all = $dsp_usr_old->dsp_errors("other", SQL_ROW_LIMIT, 1, $back);
         if (trim($errors_all) <> "") {
-            $result .= dsp_text_h2("Program issues that other user have found, that have not yet been solved.");
+            $result .= $html->dsp_text_h2("Program issues that other user have found, that have not yet been solved.");
             $result .= $errors_all;
-            $result .= dsp_text_h3('<br>');
+            $result .= $html->dsp_text_h3('<br>');
         }
     }
 

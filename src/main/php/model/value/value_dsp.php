@@ -355,13 +355,13 @@ class value_dsp_old extends value
         // set main display parameters for the add or edit view
         if ($this->id <= 0) {
             $script = "value_add";
-            $result .= dsp_form_start($script);
-            $result .= dsp_text_h3("Add value for");
+            $result .= $html->dsp_form_start($script);
+            $result .= $html->dsp_text_h3("Add value for");
             log_debug("value->dsp_edit new for " . $this->dsp_id());
         } else {
             $script = "value_edit";
-            $result .= dsp_form_start($script);
-            $result .= dsp_text_h3("Change value for");
+            $result .= $html->dsp_form_start($script);
+            $result .= $html->dsp_text_h3("Change value for");
             if (count($this->ids()) <= 0) {
                 $this->load_phrases();
                 log_debug('value->dsp_edit ' . $this->dsp_id());
@@ -620,12 +620,12 @@ class value_dsp_old extends value
         if ($this->id > 0) {
             $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
-                $result .= dsp_text_h3("Latest changes related to this value", "change_hist");
+                $result .= $html->dsp_text_h3("Latest changes related to this value", "change_hist");
                 $result .= $changes;
             }
             $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
-                $result .= dsp_text_h3("Latest link changes related to this value", "change_hist");
+                $result .= $html->dsp_text_h3("Latest link changes related to this value", "change_hist");
                 $result .= $changes;
             }
         } else {
@@ -635,7 +635,7 @@ class value_dsp_old extends value
                 $samples = $this->dsp_samples($main_wrd->id, $this->ids(), 10, $back);
                 log_debug("value->dsp_edit samples.");
                 if (trim($samples) <> "") {
-                    $result .= dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->dsp_link(api::STYLE_GREY) . '" values as an indication', 'change_hist');
+                    $result .= $html->dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->dsp_link(api::STYLE_GREY) . '" values as an indication', 'change_hist');
                     $result .= $samples;
                 }
             }

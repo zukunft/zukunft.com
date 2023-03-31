@@ -32,12 +32,19 @@
 */
 
 // header for all zukunft.com code 
+use html\html_base;
+use model\formula;
+use model\user;
+use model\view;
+use model\word;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("formula_add");
+$html = new html_base();
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -90,15 +97,15 @@ if ($usr->id() > 0) {
 
         // check parameters
         if (!isset($wrd)) {
-            $msg .= dsp_err('Word missing; Internal error, because a formula should always be linked to a word or a list of words.');
+            $msg .= $html->dsp_err('Word missing; Internal error, because a formula should always be linked to a word or a list of words.');
         }
 
         if ($frm->name() == "") {
-            $msg .= dsp_err('Formula name missing; Please give the unique name to be able to identify it.');
+            $msg .= $html->dsp_err('Formula name missing; Please give the unique name to be able to identify it.');
         }
 
         if ($frm->usr_text == "") {
-            $msg .= dsp_err('Formula text missing; Please define how the calculation should be done.');
+            $msg .= $html->dsp_err('Formula text missing; Please define how the calculation should be done.');
         }
 
         // check if a word, verb or formula with the same name already exists
@@ -143,14 +150,14 @@ if ($usr->id() > 0) {
     if ($result == '') {
         // show the header
         $result .= $dsp->dsp_navbar($back);
-        $result .= dsp_err($msg);
+        $result .= $html->dsp_err($msg);
 
         $result .= $frm->dsp_edit(0, $wrd, $back);
     }
 }
 
 // display any error message
-$result .= dsp_err($msg);
+$result .= $html->dsp_err($msg);
 
 echo $result;
 

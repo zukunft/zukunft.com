@@ -35,8 +35,8 @@ include_once WEB_SANDBOX_PATH . 'list.php';
 //include_once CFG_PATH . 'phrase_type.php';
 
 use cfg\phrase_type;
-use term_list;
-use user;
+use model\term_list;
+use model\user;
 
 class word_list_dsp extends list_dsp
 {

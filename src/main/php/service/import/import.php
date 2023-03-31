@@ -53,7 +53,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 
-use export\export;
+use im_export\export;
 use model\formula;
 use model\formula_list;
 use model\formula_value;

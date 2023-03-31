@@ -31,10 +31,14 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 use html\html_base;
+use model\sql_db;
+use model\user;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+
+$html = new html_base();
 
 // TODO include("auth.php");
 // all taken from
@@ -105,7 +109,7 @@ if (!$_SESSION['logged']) {
     $result .= $html->logo_big();
     $result .= '<br><br>';
     $result .= '<form action="login_reset.php" method="post">';
-    $result .= dsp_text_h2('Reset password<br>');
+    $result .= $html->dsp_text_h2('Reset password<br>');
     $result .= 'Fill in one of the fields to receive a temporary password via email:<br><br> ';
     $result .= 'Username:<br> ';
     $result .= '<input name="username"><br><br> ';

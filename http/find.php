@@ -30,6 +30,12 @@
 
 */
 
+use html\html_base;
+use model\db_cl;
+use model\user;
+use model\view;
+use model\word_list;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
@@ -38,6 +44,7 @@ $result = ''; // reset the html code var
 
 // open database
 $db_con = prg_start("find");
+$html = new html_base();
 
 // TODO review the http API code based on this example
 // TODO but first reduce the API files
@@ -63,7 +70,7 @@ if ($db_con == null) {
 
         $find_str = $_GET['pattern'];
 
-        $result .= dsp_text_h2('Find word');
+        $result .= $html->dsp_text_h2('Find word');
 
         // show a search field
         /* replaced by the navbar form

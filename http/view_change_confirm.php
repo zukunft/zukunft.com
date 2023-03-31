@@ -30,12 +30,18 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use html\html_base;
+use model\user;
+use model\view;
+use model\word;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("view_confirm");
+$html = new html_base();
 
 $result = ''; // reset the html code var
 $back = $_GET['back']; // the word id from which this value change has been called (maybe later any page)
@@ -61,7 +67,7 @@ if ($usr->id() > 0) {
 
     // in view edit views the view cannot be changed
     if ($word_id <= 0) {
-        $result .= dsp_err('word not found');
+        $result .= $html->dsp_err('word not found');
     } else {
         $dsp = new view_dsp_old($usr);
         //$dsp->set_id(cl(SQL_VIEW_FORMULA_EXPLAIN));
@@ -71,12 +77,12 @@ if ($usr->id() > 0) {
         // show the word name
         $wrd = new word($usr);
         $wrd->load_by_id($word_id);
-        $result .= dsp_text_h2('Select the display format for "' . $wrd->name() . '"');
+        $result .= $html->dsp_text_h2('Select the display format for "' . $wrd->name() . '"');
     }
 
     // allow to change to type
     if ($view_id <= 0) {
-        $result .= dsp_err('view not found');
+        $result .= $html->dsp_err('view not found');
     } else {
         $dsp = new view($usr);
         $dsp->set_id($view_id);

@@ -34,6 +34,7 @@ namespace model;
 include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_cmp.php';
 include_once MODEL_VIEW_PATH . 'view_cmp_link.php';
+include_once MODEL_VIEW_PATH . 'view_cmp_dsp.php'; // TODO move to web namespace
 
 use api\view_api;
 use cfg\export\exp_obj;
@@ -216,7 +217,8 @@ class view extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        $this->type_id = cl(db_cl::VIEW_TYPE, $type_code_id);
+        global $view_types;
+        $this->type_id = $view_types->id($type_code_id);
     }
 
     /**

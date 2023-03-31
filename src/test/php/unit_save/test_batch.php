@@ -46,6 +46,7 @@ function run_batch_job_test(testing $t): void
 {
 
     global $usr;
+    global $job_types;
 
     $t->header('Test the batch job class (classes/batch_job.php)');
 
@@ -72,7 +73,7 @@ function run_batch_job_test(testing $t): void
     // test adding a batch job
     $job = new batch_job($usr);
     $job->obj = $val;
-    $job->type = cl(db_cl::JOB_TYPE, job_type_list::VALUE_UPDATE);
+    $job->type = $job_types->id(job_type_list::VALUE_UPDATE);
     $result = $job->add();
     if ($result > 0) {
         $target = $result;

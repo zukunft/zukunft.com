@@ -37,11 +37,12 @@
 
 */
 
-namespace export;
+namespace im_export;
 
-use export;
-use phrase_list;
-use user;
+include_once SERVICE_EXPORT_PATH . 'json.php';
+
+use model\phrase_list;
+use model\user;
 
 class json_io
 {

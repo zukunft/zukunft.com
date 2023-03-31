@@ -53,9 +53,11 @@ use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
 use DateTime;
-use formula_dsp_old;
+use Exception;
 use html\formula_dsp;
+use html\formula_dsp_old;
 use html\word_dsp;
+use math;
 
 class formula extends sandbox_typed
 {
@@ -718,7 +720,7 @@ class formula extends sandbox_typed
                 $val_phr_lst = clone $phr_lst;
                 $prior_wrd = $time_phr->prior();
                 if ($prior_wrd->id > 0) {
-                    $val_phr_lst->add($prior_wrd); // the time word should be added at the end, because ...
+                    $val_phr_lst->add($prior_wrd->phrase()); // the time word should be added at the end, because ...
                     log_debug("prior (" . $prior_wrd->name() . ")");
                     $val = $val_phr_lst->value_scaled();
                 }
@@ -1441,6 +1443,8 @@ class formula extends sandbox_typed
     function export_obj(bool $do_load = true): exp_obj
     {
         global $formula_types;
+        global $share_types;
+        global $protection_types;
 
         log_debug('->export_obj');
         $result = new formula_exp();
@@ -1461,12 +1465,12 @@ class formula extends sandbox_typed
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> cl(db_cl::SHARE_TYPE, share_type::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protection_type::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 

@@ -39,6 +39,7 @@ class hist_log_dsp
     // show the changes of the view
     function dsp_log_view(word $wrd, string $back = ''): string
     {
+        $html = new html_base();
         log_debug($wrd->id());
         $result = '';
 
@@ -53,7 +54,7 @@ class hist_log_dsp
 
             $changes = $wrd->dsp_hist(1, 20, '', $back);
             if (trim($changes) <> "") {
-                $result .= dsp_text_h3("Latest view changes related to this word", "change_hist");
+                $result .= $html->dsp_text_h3("Latest view changes related to this word", "change_hist");
                 $result .= $changes;
             }
         }

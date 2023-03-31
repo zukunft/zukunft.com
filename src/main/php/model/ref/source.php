@@ -169,7 +169,8 @@ class source extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        $this->type_id = cl(db_cl::SOURCE_TYPE, $type_code_id);
+        global $source_types;
+        $this->type_id = $source_types->id($type_code_id);
     }
 
 

@@ -30,12 +30,17 @@
 
 */
 
+use html\html_base;
+use model\user;
+use model\view;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("import");
+$html = new html_base();
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -153,7 +158,7 @@ if ($usr->id() > 0) {
         log_debug('import.php display mask ');
         // show the value and the linked words to edit the value (again after removing or adding a word)
         $result .= $dsp->dsp_navbar($back);
-        $result .= dsp_err($msg);
+        $result .= $html->dsp_err($msg);
 
         $result .= dsp_form_file_select();
         // $result .= dsp_btn_text ('Start import', '/http/import.php?confirm=1&filepath='.);

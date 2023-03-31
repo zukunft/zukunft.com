@@ -31,6 +31,11 @@
 */
 
 use api\formula_api;
+use test\testing;
+use const test\TEST_WORD;
+use const test\TIMEOUT_LIMIT_PAGE;
+use const test\TIMEOUT_LIMIT_PAGE_LONG;
+use const test\TIMEOUT_LIMIT_PAGE_SEMI;
 
 function run_formula_ui_test(testing $t)
 {

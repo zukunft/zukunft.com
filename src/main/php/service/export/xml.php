@@ -35,6 +35,8 @@
   
 */
 
+use im_export\export;
+
 class XMLSerializer
 {
 
@@ -90,7 +92,7 @@ class xml_io
     //public $phr_lst_used = null; // all phrases used by the exported values
 
     // export zukunft.com data as xml
-    function export()
+    function export(): string
     {
         log_debug('xml_io->export');
         $result = '';

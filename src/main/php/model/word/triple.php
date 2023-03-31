@@ -43,6 +43,7 @@ use cfg\protection_type;
 use cfg\share_type;
 use controller\controller;
 use api\triple_api;
+use html\html_base;
 use html\triple_dsp;
 use JsonSerializable;
 
@@ -1847,6 +1848,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
 
         global $db_con;
         $result = '';
+        $html = new html_base();
 
         // load the objects if needed
         $this->load_objects();
@@ -1869,7 +1871,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
             $db_chk_rev->load_standard();
             if ($db_chk_rev->id > 0) {
                 $this->id = $db_chk_rev->id;
-                $result .= dsp_err('The reverse of "' . $this->from->name() . ' ' . $this->verb->name() . ' ' . $this->to->name() . '" already exists. Do you really want to create both sides?');
+                $result .= $html->dsp_err('The reverse of "' . $this->from->name() . ' ' . $this->verb->name() . ' ' . $this->to->name() . '" already exists. Do you really want to create both sides?');
             }
         }
 

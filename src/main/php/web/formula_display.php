@@ -39,6 +39,7 @@ use model\formula;
 use model\formula_value;
 use model\formula_value_list;
 use model\phrase;
+use user_log_display;
 
 class formula_dsp_old extends formula
 {
@@ -246,7 +247,7 @@ class formula_dsp_old extends formula
         $sample_val = $fv_lst->display($back);
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {
-                $result .= dsp_text_h3("Results for " . $this->name_wrd->dsp_obj()->dsp_link($back), "change_hist");
+                $result .= $html->dsp_text_h3("Results for " . $this->name_wrd->dsp_obj()->dsp_link($back), "change_hist");
             }
             $result .= $sample_val;
         }
@@ -262,16 +263,17 @@ class formula_dsp_old extends formula
     {
         log_debug("" . $this->ref_text . " for " . $wrd->name() . ", back:" . $back . " and user " . $this->user()->name . ".");
         $result = '';
+        $html = new html_base();
 
         $resolved_text = str_replace('"', '&quot;', $this->usr_text);
 
         // add new or change an existing formula
         if ($this->id <= 0) {
             $script = "formula_add";
-            $result .= dsp_text_h2('Add new formula for ' . $wrd->dsp_tbl_row() . ' ');
+            $result .= $html->dsp_text_h2('Add new formula for ' . $wrd->dsp_tbl_row() . ' ');
         } else {
             $script = "formula_edit";
-            $result .= dsp_text_h2('Formula "' . $this->name . '"');
+            $result .= $html->dsp_text_h2('Formula "' . $this->name . '"');
         }
         $result .= '<div class="row">';
 
@@ -281,26 +283,26 @@ class formula_dsp_old extends formula
         }
 
         // formula fields
-        $result .= dsp_form_start($script);
-        $result .= dsp_form_hidden("id", $this->id);
-        $result .= dsp_form_hidden("word", $wrd->id);
-        $result .= dsp_form_hidden("confirm", 1);
+        $result .= $html->dsp_form_start($script);
+        $result .= $html->dsp_form_hidden("id", $this->id);
+        $result .= $html->dsp_form_hidden("word", $wrd->id);
+        $result .= $html->dsp_form_hidden("confirm", 1);
         if (trim($back) <> '') {
-            $result .= dsp_form_hidden("back", $back);
+            $result .= $html->dsp_form_hidden("back", $back);
         }
         $result .= '<div class="form-row">';
-        $result .= dsp_form_fld("formula_name", $this->name, "Formula name:", "col-sm-8");
+        $result .= $html->dsp_form_fld("formula_name", $this->name, "Formula name:", "col-sm-8");
         $result .= $this->dsp_type_selector($script, "col-sm-4");
         $result .= '</div>';
-        $result .= dsp_form_fld("description", $this->description, "Description:", "col-sm-9");
+        $result .= $html->dsp_form_fld("description", $this->description, "Description:", "col-sm-9");
         // predefined formulas like "this" or "next" should only be changed by an admin
         // TODO check if formula user or login user should be used
         if (!$this->is_special() or $this->user()->is_admin()) {
-            $result .= dsp_form_fld("formula_text", $resolved_text, "Expression:", "col-sm-10");
+            $result .= $html->dsp_form_fld("formula_text", $resolved_text, "Expression:", "col-sm-10");
         }
-        $result .= dsp_form_fld_checkbox("need_all_val", $this->need_all_val, "calculate only if all values used in the formula exist");
+        $result .= $html->dsp_form_fld_checkbox("need_all_val", $this->need_all_val, "calculate only if all values used in the formula exist");
         $result .= '<br><br>';
-        $result .= dsp_form_end('', $back);
+        $result .= $html->dsp_form_end('', $back);
 
         // list the assigned words
         if ($this->id > 0) {
@@ -323,7 +325,7 @@ class formula_dsp_old extends formula
             } else {
                 $link_html = 'No word have been added or removed yet.';
             }
-            $result .= dsp_link_hist_box('Usage', $comp_html,
+            $result .= $html->dsp_link_hist_box('Usage', $comp_html,
                 'Test', $numbers_html,
                 'Changes', $hist_html,
                 'Link changes', $link_html);

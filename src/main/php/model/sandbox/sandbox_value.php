@@ -34,6 +34,9 @@
 
 namespace model;
 
+use DateTime;
+use Exception;
+
 class sandbox_value extends sandbox
 {
 

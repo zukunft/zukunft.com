@@ -29,6 +29,7 @@
   
 */
 
+use cfg\view_type;
 use html\api;
 use html\button;
 use html\html_base;
@@ -570,6 +571,7 @@ class view_dsp_old extends view
     function dsp_edit($add_cmp, $wrd, $back): string
     {
         $result = '';
+        $html = new html_base();
 
         // use the default settings if needed
         if ($this->type_id <= 0) {
@@ -580,11 +582,11 @@ class view_dsp_old extends view
         if ($this->id <= 0) {
             log_debug('create a view');
             $script = "view_add";
-            $result .= dsp_text_h2('Create a new view (for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
+            $result .= $html->dsp_text_h2('Create a new view (for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
         } else {
             log_debug($this->dsp_id() . ' for user ' . $this->user()->name . ' (called from ' . $back . ')');
             $script = "view_edit";
-            $result .= dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
+            $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
         }
         $result .= '<div class="row">';
 
@@ -594,25 +596,25 @@ class view_dsp_old extends view
         }
 
         // show the edit fields
-        $result .= dsp_form_start($script);
-        $result .= dsp_form_id($this->id);
-        $result .= dsp_form_hidden("word", $wrd->id);
-        $result .= dsp_form_hidden("back", $back);
-        $result .= dsp_form_hidden("confirm", '1');
+        $result .= $html->dsp_form_start($script);
+        $result .= $html->dsp_form_id($this->id);
+        $result .= $html->dsp_form_hidden("word", $wrd->id);
+        $result .= $html->dsp_form_hidden("back", $back);
+        $result .= $html->dsp_form_hidden("confirm", '1');
         $result .= '<div class="form-row">';
         if ($add_cmp < 0 or $add_cmp > 0) {
             // show the fields inactive, because the assign fields are active
-            $result .= dsp_form_text("name", $this->name, "Name:", "col-sm-8", "disabled");
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", "col-sm-8", "disabled");
             $result .= $this->dsp_type_selector($script, "col-sm-4", "disabled");
             $result .= '</div>';
-            $result .= dsp_form_text_big("description", $this->description, "Comment:", "", "disabled");
+            $result .= $html->dsp_form_text_big("description", $this->description, "Comment:", "", "disabled");
         } else {
             // show the fields inactive, because the assign fields are active
-            $result .= dsp_form_text("name", $this->name, "Name:", "col-sm-8");
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", "col-sm-8");
             $result .= $this->dsp_type_selector($script, "col-sm-4", "");
             $result .= '</div>';
-            $result .= dsp_form_text_big("description", $this->description, "Comment:");
-            $result .= dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id . "&back=" . $back);
+            $result .= $html->dsp_form_text_big("description", $this->description, "Comment:");
+            $result .= $html->dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id . "&back=" . $back);
         }
 
         // in edit mode show the assigned words and the hist on the right
@@ -636,7 +638,7 @@ class view_dsp_old extends view
             }
 
             // display the tab box with the links and changes
-            $result .= dsp_link_hist_box('Components', $comp_html,
+            $result .= $html->dsp_link_hist_box('Components', $comp_html,
                 '', '',
                 'Changes', $hist_html,
                 'Component changes', $link_html);

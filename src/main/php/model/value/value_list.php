@@ -522,6 +522,8 @@ class value_list extends sandbox_list
     {
         log_debug();
         $result = new value_list_exp();
+        global $share_types;
+        global $protection_types;
 
         // reload the value parameters
         if ($do_load) {
@@ -553,13 +555,13 @@ class value_list extends sandbox_list
 
             // add the share type
             log_debug('get share');
-            if ($val0->share_id > 0 and $val0->share_id <> cl(db_cl::SHARE_TYPE, share_type::PUBLIC)) {
+            if ($val0->share_id > 0 and $val0->share_id <> $share_types->id(share_type::PUBLIC)) {
                 $result->share = $val0->share_type_code_id();
             }
 
             // add the protection type
             log_debug('get protection');
-            if ($val0->protection_id > 0 and $val0->protection_id <> cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT)) {
+            if ($val0->protection_id > 0 and $val0->protection_id <> $protection_types->id(protection_type::NO_PROTECT)) {
                 $result->protection = $val0->protection_type_code_id();
             }
 

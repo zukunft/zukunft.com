@@ -41,7 +41,7 @@
   
 */
 
-namespace export;
+namespace im_export;
 
 include_once MODEL_HELPER_PATH . 'library.php';
 

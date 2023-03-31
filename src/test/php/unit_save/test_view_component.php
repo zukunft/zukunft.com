@@ -39,6 +39,8 @@ use model\sandbox_named;
 use model\view_cmp;
 use model\view_cmp_type;
 use test\testing;
+use const test\TIMEOUT_LIMIT_DB_MULTI;
+use const test\TIMEOUT_LIMIT_LONG;
 
 function create_test_view_components(testing $t): void
 {
@@ -53,6 +55,7 @@ function create_test_view_components(testing $t): void
 
 function run_view_component_test(testing $t): void
 {
+    global $view_component_types;
 
     $t->header('Test the view component class (classes/view_component.php)');
     /*
@@ -154,7 +157,7 @@ function run_view_component_test(testing $t): void
     $cmp_renamed = new view_cmp($t->usr1);
     $cmp_renamed->load_by_name(view_cmp_api::TN_RENAMED, view_cmp::class);
     $cmp_renamed->description = 'Just added for testing the user sandbox';
-    $cmp_renamed->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::PHRASE_NAME);
+    $cmp_renamed->type_id = $view_component_types->id(view_cmp_type::PHRASE_NAME);
     $result = $cmp_renamed->save();
     $target = '';
     $t->dsp('view_component->save all view_component fields beside the name for "' . view_cmp_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_LONG);
@@ -166,7 +169,7 @@ function run_view_component_test(testing $t): void
     $target = 'Just added for testing the user sandbox';
     $t->dsp('view_component->load comment for "' . view_cmp_api::TN_RENAMED . '"', $target, $result);
     $result = $cmp_reloaded->type_id;
-    $target = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::PHRASE_NAME);
+    $target = $view_component_types->id(view_cmp_type::PHRASE_NAME);
     $t->dsp('view_component->load type_id for "' . view_cmp_api::TN_RENAMED . '"', $target, $result);
 
     // check if the view_component parameter adding have been logged
@@ -188,7 +191,7 @@ function run_view_component_test(testing $t): void
     $cmp_usr2 = new view_cmp($t->usr2);
     $cmp_usr2->load_by_name(view_cmp_api::TN_RENAMED, view_cmp::class);
     $cmp_usr2->description = 'Just changed for testing the user sandbox';
-    $cmp_usr2->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::FORMULAS);
+    $cmp_usr2->type_id = $view_component_types->id(view_cmp_type::FORMULAS);
     $result = $cmp_usr2->save();
     $target = '';
     $t->dsp('view_component->save all view_component fields for user 2 beside the name for "' . view_cmp_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -200,7 +203,7 @@ function run_view_component_test(testing $t): void
     $target = 'Just changed for testing the user sandbox';
     $t->dsp('view_component->load comment for "' . view_cmp_api::TN_RENAMED . '"', $target, $result);
     $result = $cmp_usr2_reloaded->type_id;
-    $target = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::FORMULAS);
+    $target = $view_component_types->id(view_cmp_type::FORMULAS);
     $t->dsp('view_component->load type_id for "' . view_cmp_api::TN_RENAMED . '"', $target, $result);
 
     // check the view_component for the original user remains unchanged
@@ -210,14 +213,14 @@ function run_view_component_test(testing $t): void
     $target = 'Just added for testing the user sandbox';
     $t->dsp('view_component->load comment for "' . view_cmp_api::TN_RENAMED . '"', $target, $result);
     $result = $cmp_reloaded->type_id;
-    $target = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::PHRASE_NAME);
+    $target = $view_component_types->id(view_cmp_type::PHRASE_NAME);
     $t->dsp('view_component->load type_id for "' . view_cmp_api::TN_RENAMED . '"', $target, $result);
 
     // check if undo all specific changes removes the user view_component
     $cmp_usr2 = new view_cmp($t->usr2);
     $cmp_usr2->load_by_name(view_cmp_api::TN_RENAMED, view_cmp::class);
     $cmp_usr2->description = 'Just added for testing the user sandbox';
-    $cmp_usr2->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::PHRASE_NAME);
+    $cmp_usr2->type_id = $view_component_types->id(view_cmp_type::PHRASE_NAME);
     $result = $cmp_usr2->save();
     $target = '';
     $t->dsp('view_component->save undo the user view_component fields beside the name for "' . view_cmp_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);

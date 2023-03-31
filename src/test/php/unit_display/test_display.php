@@ -45,6 +45,7 @@ function run_display_test(testing $t): void
 {
 
     global $usr;
+    global $view_component_types;
     $html = new html_base();
 
     $is_connected = true; // assumes that the test is done with an internet connection, but if not connected, just show the warning once
@@ -64,7 +65,7 @@ function run_display_test(testing $t): void
 
     // test if a simple text component can be created
     $cmp = new view_cmp_dsp_old($usr);
-    $cmp->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::TEXT);
+    $cmp->type_id = $view_component_types->id(view_cmp_type::TEXT);
     $cmp->set_id(1);
     $cmp->set_name(view_api::TN_READ_NESN_2016);
     $result = $cmp->dsp_obj()->html();

@@ -739,8 +739,8 @@ class user extends db_object
                 $this->profile_id = $user_profiles->id($value);
             }
             if ($key == exp_obj::FLD_CODE_ID) {
-                if ($profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)
-                    or $profile_id == cl(db_cl::USER_PROFILE, user_profile::SYSTEM)) {
+                if ($profile_id == $user_profiles->id(user_profile::ADMIN)
+                    or $profile_id == $user_profiles->id(user_profile::SYSTEM)) {
                     $this->code_id = $value;
                 }
             }
@@ -1012,6 +1012,8 @@ class user extends db_object
      */
     function save(sql_db $db_con): string
     {
+        global $user_profiles;
+
         $result = '';
 
         // build the database object because the is anyway needed
@@ -1052,8 +1054,8 @@ class user extends db_object
                     $result = 'Saving of user profile ' . $this->id . ' failed.';
                 }
                 // add the ip address to the user, but never for system users
-                if ($this->profile_id != cl(db_cl::USER_PROFILE, user_profile::SYSTEM)
-                    and $this->profile_id != cl(db_cl::USER_PROFILE, user_profile::TEST)) {
+                if ($this->profile_id != $user_profiles->id(user_profile::SYSTEM)
+                    and $this->profile_id != $user_profiles->id(user_profile::TEST)) {
                     if (!$db_con->update($this->id, self::FLD_IP_ADDRESS, $this->get_ip())) {
                         $result = 'Saving of user ' . $this->id . ' failed.';
                     }

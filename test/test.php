@@ -151,6 +151,7 @@ include_once PHP_PATH . 'zu_lib.php';
 // TODO dismiss by refactoring phrase_list_dsp_old
 include_once MODEL_PHRASE_PATH . 'phrase_list_dsp.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once SERVICE_IMPORT_PATH . 'import_file.php';
 
 // open database and display header
 $db_con = prg_start("unit and integration testing");

@@ -32,6 +32,20 @@
 
 use api\phrase_api;
 use api\word_api;
+use model\library;
+use model\phr_ids;
+use model\phrase_list;
+use model\triple;
+use model\verb;
+use model\word_list;
+use test\testing;
+use const test\TEST_WORD;
+use const test\TW_2017;
+use const test\TW_ABB;
+use const test\TW_CHF;
+use const test\TW_MIO;
+use const test\TW_SALES;
+use const test\TW_VESTAS;
 
 function run_phrase_list_test(testing $t)
 {

@@ -146,6 +146,7 @@ class user_dsp_old extends user
 
         global $db_con;
         $result = ''; // reset the html code var
+        $html = new html_base();
 
         // create the databased link
         $db_con->usr_id = $this->id;
@@ -307,6 +308,7 @@ class user_dsp_old extends user
 
         global $db_con;
         $result = ''; // reset the html code var
+        $html = new html_base();
 
         // get word changes by the user that are not standard
         $sql = "SELECT u.formula_name, 
@@ -355,6 +357,7 @@ class user_dsp_old extends user
 
         global $db_con;
         $result = ''; // reset the html code var
+        $html = new html_base();
 
         // create the databased link
         $db_con->usr_id = $this->id;
@@ -514,6 +517,7 @@ class user_dsp_old extends user
 
         global $db_con;
         $result = ''; // reset the html code var
+        $html = new html_base();
 
         // create the databased link
         $db_con->usr_id = $this->id;
@@ -680,6 +684,7 @@ class user_dsp_old extends user
 
         global $db_con;
         $result = ''; // reset the html code var
+        $html = new html_base();
 
         // create the databased link
         $db_con->usr_id = $this->id;
@@ -845,6 +850,7 @@ class user_dsp_old extends user
 
         global $db_con;
         $result = ''; // reset the html code var
+        $html = new html_base();
 
         // create the databased link
         $db_con->usr_id = $this->id;
@@ -1009,11 +1015,13 @@ class user_dsp_old extends user
 
         global $db_con;
         $result = ''; // reset the html code var
+        $html = new html_base();
 
         // create the databased link
         $db_con->usr_id = $this->id;
 
         // get all values changed by the user to a non standard view_component_link
+        $sql = '';
         if (SQL_DB_TYPE == sql_db::POSTGRES) {
         } else {
             if (SQL_DB_TYPE == sql_db::POSTGRES) {
@@ -1178,6 +1186,7 @@ class user_dsp_old extends user
 
         global $db_con;
         $result = ''; // reset the html code var
+        $html = new html_base();
 
         // create the databased link
         $db_con->usr_id = $this->id;

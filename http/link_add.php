@@ -33,12 +33,18 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use html\html_base;
+use model\triple;
+use model\user;
+use model\view;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("link_add");
+$html = new html_base();
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -96,7 +102,7 @@ if ($usr->id() > 0) {
     if ($result == '') {
         // display the add view again
         $result .= $dsp->dsp_navbar($back);
-        $result .= dsp_err($msg);
+        $result .= $html->dsp_err($msg);
 
         // display the form to create a new triple
         $result .= $lnk->dsp_add($back);
