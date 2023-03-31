@@ -29,11 +29,18 @@
   
 */
 
+use model\db_cl;
+use model\formula;
+use model\user;
+use model\view;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 $db_con = prg_start("formula_del");
+
+global $system_views;
 
 $result = ''; // reset the html code var
 
@@ -48,7 +55,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_id(cl(db_cl::VIEW, view::FORMULA_DEL));
+    $dsp->load_by_id($system_views->id(view::FORMULA_DEL));
     $back = $_GET['back'];
 
     // get the parameters

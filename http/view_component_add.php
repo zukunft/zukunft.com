@@ -45,6 +45,8 @@ include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 $db_con = prg_start("view_component_add");
 $html = new html_base();
 
+global $system_views;
+
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
 
@@ -60,7 +62,7 @@ if ($usr->id() > 0) {
 
     // init the display object to show the standard elements such as the header
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_id(cl(db_cl::VIEW, view::COMPONENT_ADD));
+    $dsp->load_by_id($system_views->id(view::COMPONENT_ADD));
     // the calling stack to move back to page where the user has come from after adding the view component is done
     $back = $_GET['back'];
 

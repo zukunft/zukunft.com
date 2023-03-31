@@ -44,7 +44,7 @@ use model\user;
 use model\view;
 use model\word;
 
-function err_dsp($err_id, $user_id)
+function err_dsp($err_id, $user_id): string
 {
 
     global $db_con;
@@ -80,6 +80,8 @@ include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 $db_con = prg_start("error_log");
 
+global $system_views;
+
 $result = ''; // reset the html code var
 
 $err_id = $_GET['id'];
@@ -104,7 +106,7 @@ if ($usr->id() > 0) {
 
         // prepare the display to edit the view
         $dsp = new view_dsp_old($usr);
-        $dsp->set_id(cl(db_cl::VIEW, view::ERR_LOG));
+        $dsp->set_id($system_views->id(view::ERR_LOG));
         $result .= $dsp->dsp_navbar($back);
         //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
         $result .= err_dsp($err_id, $usr->id());

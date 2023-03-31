@@ -46,6 +46,8 @@ include_once PHP_PATH . 'zu_lib.php';
 // open database
 $db_con = prg_start("test_base_config");
 
+global $system_views;
+
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
 
@@ -59,7 +61,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_id(cl(db_cl::VIEW, view::IMPORT));
+    $dsp->load_by_id($system_views->id(view::IMPORT));
 
     if ($usr->is_admin()) {
 

@@ -40,6 +40,8 @@ $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
+global $system_views;
+
 $result = ''; // reset the html code var
 
 // open database
@@ -65,7 +67,7 @@ if ($db_con == null) {
 
         // show view header
         $dsp = new view_dsp_old($usr);
-        $dsp->set_id(cl(db_cl::VIEW, view::WORD_FIND));
+        $dsp->set_id($system_views->id(view::WORD_FIND));
         $result .= $dsp->dsp_navbar($back);
 
         $find_str = $_GET['pattern'];

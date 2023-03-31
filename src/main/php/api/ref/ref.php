@@ -83,4 +83,13 @@ class ref_api extends sandbox_api
     {
         $this->type_id = $type_id;
     }
+
+    /**
+     * @return string the name of the reference type e.g. wikidata
+     */
+    function type_name(): string
+    {
+        global $ref_types;
+        return $ref_types->name($this->type_id);
+    }
 }

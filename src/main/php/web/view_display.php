@@ -34,7 +34,9 @@ use html\api;
 use html\button;
 use html\html_base;
 use html\html_selector;
+use model\db_cl;
 use model\view;
+use model\word;
 
 class view_dsp_old extends view
 {
@@ -570,12 +572,14 @@ class view_dsp_old extends view
      */
     function dsp_edit($add_cmp, $wrd, $back): string
     {
+        global $view_types;
+
         $result = '';
         $html = new html_base();
 
         // use the default settings if needed
         if ($this->type_id <= 0) {
-            $this->type_id = cl(db_cl::VIEW_TYPE, view_type::DEFAULT);
+            $this->type_id = $view_types->id(view_type::DEFAULT);
         }
 
         // the header to add or change a view

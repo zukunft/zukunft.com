@@ -68,7 +68,7 @@ class formula_element extends db_object
     // TODO should be actually just the linked formula id that extends the term
 
     public user $usr;                // the person who has requested the formula element
-    public string $type = '';        // either "word", "verb" or "formula" to direct the links
+    public string $type = '';        // the word, verb or formula class name to direct the links
     public ?string $symbol = null;   // the database reference symbol for formula expressions
     public ?object $obj = null;      // the word, verb or formula object
     public ?word $wrd_obj = null;    // in case of a formula the corresponding word object
@@ -191,13 +191,15 @@ class formula_element extends db_object
      */
 
     /**
-     * return best possible id for this element mainly used for debugging
+     * @return string best possible id for this element mainly used for debugging
      */
     function dsp_id(): string
     {
+        $lib = new library();
         $result = '';
         if ($this->type <> '') {
-            $result .= $this->type . ' ';
+            $class_name = $lib->str_right_of_or_all($this->type, '\\');
+            $result .= $class_name . ' ';
         }
         $name = $this->name();
         if ($name <> '') {

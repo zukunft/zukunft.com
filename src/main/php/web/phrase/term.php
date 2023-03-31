@@ -184,6 +184,14 @@ class term_dsp
      */
 
     /**
+     * @return string best possible id for this term mainly used for debugging
+     */
+    function dsp_id(): string
+    {
+        return $this->obj()->dsp_id();
+    }
+
+    /**
      * @returns string the html code to display with mouse over that shows the description
      */
     function dsp(): string
@@ -218,7 +226,7 @@ class term_dsp
     {
         $result = '';
         if ($this->is_word()) {
-            $wrd = $this->wrd_dsp();
+            $wrd = $this->obj();
             $result .= $wrd->td('', '', $intent);
         }
         return $result;
@@ -230,7 +238,7 @@ class term_dsp
     function dsp_unlink(int $link_id): string
     {
         $result = '    <td>' . "\n";
-        $result .= \html\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id);
+        $result .= \html\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id());
         $result .= '    </td>' . "\n";
 
         return $result;
@@ -275,7 +283,7 @@ class term_dsp
         }
         $sel->bs_class = $class;
         //$sel->sql = $this->sql_list($type);
-        $sel->selected = $this->id;
+        $sel->selected = $this->id();
         $sel->dummy_text = '... please select';
         $result .= $sel->display();
 

@@ -56,6 +56,8 @@ include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 $db_con = prg_start("start formula_test.php");
 $html = new html_base();
 
+global $system_views;
+
 // load the session user parameters
 $session_usr = new user;
 $result = $session_usr->get();
@@ -68,7 +70,7 @@ if ($session_usr->id() > 0) {
 
     // show the header even if all parameters are wrong
     $dsp = new view_dsp_old($session_usr);
-    $dsp->set_id(cl(db_cl::VIEW, view::FORMULA_TEST));
+    $dsp->set_id($system_views->id(view::FORMULA_TEST));
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
     echo $dsp->dsp_navbar($back);
 

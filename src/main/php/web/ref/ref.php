@@ -41,7 +41,7 @@ class ref_dsp extends ref_api
      */
     function dsp(): string
     {
-        return $this->name;
+        return $this->type_name() . ' ' . $this->external_key;
     }
 
 }

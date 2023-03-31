@@ -30,11 +30,18 @@
 */
 
 // for callable php files the standard zukunft.com header to load all classes and allow debugging
+use model\db_cl;
+use model\formula_value;
+use model\user;
+use model\view;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 $db_con = prg_start("formula_result");
+
+global $system_views;
 
 $result = ''; // reset the html code var
 
@@ -49,7 +56,7 @@ if ($session_usr->id() > 0) {
 
     // show the header
     $dsp = new view_dsp_old($session_usr);
-    $dsp->set_id(cl(db_cl::VIEW, view::FORMULA_EXPLAIN));
+    $dsp->set_id($system_views->id(view::FORMULA_EXPLAIN));
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
     $result .= $dsp->dsp_navbar($back);
 

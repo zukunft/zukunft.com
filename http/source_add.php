@@ -46,6 +46,8 @@ include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 $db_con = prg_start("source_add");
 $html = new html_base();
 
+global $system_views;
+
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
 
@@ -60,7 +62,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_id(cl(db_cl::VIEW, view::SOURCE_ADD));
+    $dsp->load_by_id($system_views->id(view::SOURCE_ADD));
     $back = $_GET['back'];      // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled

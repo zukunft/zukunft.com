@@ -31,8 +31,9 @@
 */
 
 use html\html_selector;
+use model\sandbox_value;
 
-class user_sandbox_display extends _sandbox_value
+class user_sandbox_display extends sandbox_value
 {
 
     // create the HTML code to display the protection setting (but only if allowed)

@@ -30,12 +30,18 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use model\source;
+use model\user;
+use model\view;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("source_edit");
+
+global $system_views;
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -51,7 +57,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_id(cl(db_cl::VIEW, view::SOURCE_EDIT));
+    $dsp->load_by_id($system_views->id(view::SOURCE_EDIT));
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // create the source object to have an place to update the parameters

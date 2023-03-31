@@ -45,6 +45,9 @@ include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 $db_con = prg_start("error_update");
 $html = new html_base();
 
+global $system_views;
+global $user_profiles;
+
 $result = ''; // reset the html code var
 
 // get the parameters
@@ -62,10 +65,10 @@ if ($usr->id() > 0) {
     load_usr_data();
 
     $dsp = new view_dsp_old($usr);
-    $dsp->set_id(cl(db_cl::VIEW, view::ERR_UPD));
+    $dsp->set_id($system_views->id(view::ERR_UPD));
     $result .= $dsp->dsp_navbar($back);
 
-    if ($usr->id() > 0 and $usr->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
+    if ($usr->id() > 0 and $usr->profile_id == $user_profiles->id(user_profile::ADMIN)) {
         // update the error if requested
         if ($log_id > 0 and $status_id > 0) {
             $err_entry = new system_log;
