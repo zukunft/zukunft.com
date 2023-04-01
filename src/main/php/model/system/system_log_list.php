@@ -31,11 +31,19 @@
 
 namespace cfg;
 
-include_once WEB_SYSTEM_PATH . 'system_log_list.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_SYSTEM_PATH . 'list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SYSTEM_PATH . 'system_error_log_status_list.php';
+include_once MODEL_SYSTEM_PATH . 'system_log.php';
+include_once API_SYSTEM_PATH . 'system_log.php';
+include_once API_SYSTEM_PATH . 'system_log_list.php';
+include_once WEB_SYSTEM_PATH . 'system_log_list.php';
 
 use api\system_log_list_api;
-use cfg\type_object;
 use html\system_log_list_dsp;
 use model\base_list;
 use model\sandbox;
@@ -97,7 +105,7 @@ class system_log_list extends base_list
         $api_obj = new system_log_list_api($db_con, $this->usr);
         foreach ($this->lst as $log) {
             //$api_obj->add($log->api_obj());
-            $api_obj->system_log[] = $log->get_dsp_obj();
+            $api_obj->system_log[] = $log->get_api_obj();
         }
         return $api_obj;
     }
@@ -111,7 +119,7 @@ class system_log_list extends base_list
         $dsp_obj = new system_log_list_dsp($db_con, $this->usr);
         foreach ($this->lst as $log) {
             //$dsp_obj->add($log->dsp_obj());
-            $dsp_obj->system_log[] = $log->get_dsp_obj();
+            $dsp_obj->system_log[] = $log->get_api_obj();
         }
         return $dsp_obj;
     }

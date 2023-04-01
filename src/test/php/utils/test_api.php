@@ -601,6 +601,7 @@ class test_api extends test_new_obj
     function assert_api_get(string $class, int $id = 1, ?array $expected = null, bool $ignore_id = false): bool
     {
         // naming exception (to be removed?)
+        $lib = new library();
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array(controller::URL_VAR_ID => $id);
@@ -614,7 +615,7 @@ class test_api extends test_new_obj
             log_err('GET api call for ' . $class . ' returned an empty result');
         }
         $filename = '';
-        if ($class == value::class) {
+        if ($class == value::class or $class == $lib->class_to_name(value::class)) {
             $filename = "value_non_std";
         }
         return $this->assert_api_compare($class, $actual, $expected, $filename, false, $ignore_id);
@@ -676,6 +677,7 @@ class test_api extends test_new_obj
     function assert_api_chg_list(string $class, string $id_fld = '', int $id = 1, string $fld_name = '', string $fld_value = ''): bool
     {
         $lib = new library();
+        $class = $lib->class_to_name($class);
         $url = HOST_TESTING . controller::URL_API_PATH . $lib->camelize_ex_1($class);
         if ($fld_name != '') {
             $data = array($id_fld => $id, $fld_name => $fld_value);

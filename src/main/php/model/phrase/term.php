@@ -46,6 +46,17 @@
 namespace model;
 
 include_once API_PHRASE_PATH . 'term.php';
+include_once API_WORD_PATH . 'word.php';
+include_once API_WORD_PATH . 'triple.php';
+include_once API_VERB_PATH . 'verb.php';
+include_once API_FORMULA_PATH . 'formula.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'term.php';
 
 use api\term_api;
 use cfg\phrase_type;

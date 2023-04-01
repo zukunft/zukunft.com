@@ -31,11 +31,18 @@
 
 namespace model;
 
+include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_LOG_PATH . 'change_log_named.php';
+include_once MODEL_LOG_PATH . 'change_log_action.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
+include_once API_SYSTEM_PATH . 'system_log.php';
 
-use api\system_log_api;
 use cfg\type_list;
 use cfg\type_object;
+use api\system_log_api;
 use DateTime;
 
 class system_log extends db_object
@@ -157,7 +164,7 @@ class system_log extends db_object
     /**
      * @return system_log_api a filled frontend api object
      */
-    function get_dsp_obj(): system_log_api
+    function get_api_obj(): system_log_api
     {
         $dsp_obj = new system_log_api();
         $dsp_obj->id = $this->id();
