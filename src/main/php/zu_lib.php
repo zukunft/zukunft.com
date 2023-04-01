@@ -14,6 +14,10 @@ use html\phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO base the html frontend objects (_dsp) on the api JSON using the set_from_json function
+    TODO refactor the web classes (dismiss all _old classes)
+    TODO always use a function of the test_new_obj class to create a object for testing
+    TODO create unit tests for all display object functions
     TODO remove the set and get functions from the api objects and make them as simple as possible
     TODO move the include_once calls from zu_lib to the classes
     TODO check that the child classes do not repeat the parent functions

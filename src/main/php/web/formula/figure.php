@@ -68,6 +68,11 @@ class figure_dsp
      * set and get
      */
 
+    /**
+     * set the vars of this figure html display object bases on the api message
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
     function set_from_json(string $json_api_msg): void
     {
         $json_array = json_decode($json_api_msg, true);

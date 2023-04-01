@@ -32,10 +32,16 @@
 
 namespace test;
 
-use api\word_api;
-use cfg\phrase_type;
+include_once DB_PATH . 'sql_db.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once API_WORD_PATH . 'word.php';
+include_once WEB_WORD_PATH . 'word.php';
+
 use model\sql_db;
+use cfg\phrase_type;
 use model\word;
+use api\word_api;
+use html\word_dsp;
 
 class word_unit_tests
 {
@@ -95,6 +101,11 @@ class word_unit_tests
 
         $t->assert_json(new word($usr), $json_file);
 
+
+        $t->subheader('HTML frontend unit tests');
+
+        $wrd = $t->dummy_word();
+        $t->assert_api_to_dsp($wrd, new word_dsp());
     }
 
 }

@@ -36,6 +36,7 @@ include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
 use api\sandbox_named_api;
+use controller\controller;
 
 class sandbox_named_dsp extends db_object_dsp
 {
@@ -107,6 +108,24 @@ class sandbox_named_dsp extends db_object_dsp
         } else {
             return $this->description;
         }
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+
+        $vars[controller::API_FLD_NAME] = $this->name();
+        $vars[controller::API_FLD_DESCRIPTION] = $this->description();
+        return $vars;
     }
 
 

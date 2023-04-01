@@ -32,14 +32,14 @@
 namespace html;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once API_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_HTML_PATH . 'html_base.php';
+include_once API_PHRASE_PATH . 'phrase.php';
 
-use api\change_log_named_dsp;
 use api\sandbox_api;
 use api\phrase_api;
-use back_trace;
 use cfg\phrase_type;
+use controller\controller;
 
 class word_dsp extends sandbox_typed_dsp
 {
@@ -86,7 +86,18 @@ class word_dsp extends sandbox_typed_dsp
      */
 
     /**
+     * set the vars of this word html display object bases on the api message
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
+    function set_from_json(string $json_api_msg): void
+    {
+        $this->set_from_json_array(json_decode($json_api_msg, true));
+    }
+
+    /**
      * set the vars of this object bases on the api json array
+     * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
      * @return void
      */
@@ -134,6 +145,39 @@ class word_dsp extends sandbox_typed_dsp
         }
     }
 
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string ) to enable combinations of api_message() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+
+        $vars[self::FLD_PLURAL] = $this->plural();
+        if ($this->has_parent()) {
+            $vars[self::FLD_PARENT] = $this->parent()->api_array();
+        }
+        return $vars;
+    }
+
+
+    /*
+     * information
+     */
+
+    function has_parent(): bool
+    {
+        if ($this->parent() == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     /*
      * base elements

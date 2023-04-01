@@ -33,6 +33,7 @@
 namespace html;
 
 use api\sandbox_typed_api;
+use controller\controller;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 
@@ -72,8 +73,9 @@ class sandbox_typed_dsp extends sandbox_named_dsp
     function set_from_json_array(array $json_array): void
     {
         parent::set_from_json_array($json_array);
-        if (array_key_exists(sandbox_typed_api::FLD_TYPE, $json_array)) {
-            $this->set_type_id($json_array[sandbox_typed_api::FLD_TYPE]);
+        // TODO combine the controller::API_FLD_TYPE
+        if (array_key_exists(controller::API_FLD_TYPE, $json_array)) {
+            $this->set_type_id($json_array[controller::API_FLD_TYPE]);
         }
     }
 
@@ -85,6 +87,23 @@ class sandbox_typed_dsp extends sandbox_named_dsp
     function type_id(): ?int
     {
         return $this->type_id;
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+
+        $vars[controller::API_FLD_TYPE] = $this->type_id();
+        return $vars;
     }
 
 }

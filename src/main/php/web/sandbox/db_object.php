@@ -36,7 +36,6 @@ namespace html;
 
 include_once API_SANDBOX_PATH . 'sandbox.php';
 
-use api\sandbox_api;
 use controller\controller;
 
 class db_object_dsp
@@ -95,6 +94,22 @@ class db_object_dsp
     function id(): int
     {
         return $this->id;
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = array();
+        $vars[controller::API_FLD_ID] = $this->id();
+        return $vars;
     }
 
 }

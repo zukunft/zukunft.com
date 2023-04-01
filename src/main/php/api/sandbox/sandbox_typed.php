@@ -37,9 +37,6 @@ include_once API_SANDBOX_PATH . 'sandbox_named.php';
 class sandbox_typed_api extends sandbox_named_api
 {
 
-    // the json field names in the api json message which is supposed to be the same as the var $id
-    const FLD_TYPE = 'type';
-
     // all named objects can have a type that links predefined functionality to it
     // e.g. all value assigned with the percent word are per default shown as percent with two decimals
     // the frontend object just contains the id of the type

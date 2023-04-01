@@ -72,6 +72,8 @@ class controller
     const API_FLD_ID = 'id';  // the json field name in the api json message which is supposed to be the same as the var $id
     const API_FLD_NAME = 'name';
     const API_FLD_DESCRIPTION = 'description';
+    // the json field name in the api json message which is supposed to contain the id of an object type
+    // e.g. for the word api message it contains the id of the phrase type
     const API_FLD_TYPE = 'type';
     const API_FLD_PHRASES = 'phrases';
 
