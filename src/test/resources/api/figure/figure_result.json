@@ -5,7 +5,8 @@
     {
       "id": 1,
       "name": "Mathematical constant",
-      "description": null
+      "type_id": 17,
+      "class": "word"
     }
   ],
   "class": "result"

@@ -87,6 +87,7 @@ use model\sql_db;
 use model\system_log;
 use model\term_list;
 use model\triple;
+use model\trm_ids;
 use model\user;
 use model\user_message;
 use model\value;
@@ -143,7 +144,8 @@ class test_api extends test_new_obj
         $this->assert_api_get(language_form::class);
 
         $this->assert_api_get_list(type_lists::class);
-        $this->assert_api_get_list(phrase_list::class);
+        $this->assert_api_get_list(phrase_list::class, [1, -1]);
+        // TODO add formula and ver to the term list test
         $this->assert_api_get_list(term_list::class, [1, -1]);
         $this->assert_api_get_list(formula_list::class, [1]);
         $this->assert_api_chg_list(
@@ -312,12 +314,19 @@ class test_api extends test_new_obj
      */
     function assert_api_to_dsp(object $usr_obj, object $dsp_obj): bool
     {
-        $class = $usr_obj::class;
-        $class = $this->class_to_api($class);
+        $class = $this->class_to_api($usr_obj::class);
         $api_obj = $usr_obj->api_obj();
         $api_json_msg = json_decode($api_obj->get_json(), true);
         $dsp_obj = $this->dsp_obj($usr_obj, $dsp_obj);
-        return $this->assert_api_compare($class, $api_json_msg, $dsp_obj->api_array());
+        $msg_to_backend = $dsp_obj->api_array();
+        // remove the empty fields to compare the "api save" message with the "api show" message
+        // the "api show" message ($api_json_msg) should not contain empty fields
+        // because they are irrelevant for the user and this reduces traffic
+        // the "api save" message ($msg_to_backend) should contain empty fields
+        // to allow the user to remove e.g. a description and less save traffic is expected
+        // TODO add a test that e.g. the description can be removed via api
+        $msg_to_backend = array_filter($msg_to_backend, fn($value) => !is_null($value) && $value !== '');
+        return $this->assert_api_compare($class, $api_json_msg, $msg_to_backend);
     }
 
 

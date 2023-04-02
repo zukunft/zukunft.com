@@ -49,7 +49,7 @@ class combine_object_api
      * object vars
      */
 
-    private object $obj;
+    protected object $obj;
 
 
     /*
@@ -76,7 +76,19 @@ class combine_object_api
      */
     function get_json(): string
     {
-        return json_encode($this);
+        return json_encode($this->jsonSerialize());
+    }
+
+    /**
+     * @return array with the value vars including the private vars
+     * but without empty vars to save traffic
+     * the function json_array of the frontend object includes empty vars
+     * to allow the user to remove vars from the database
+     */
+    function jsonSerialize(): array
+    {
+        $vars = $this->obj()->jsonSerialize();
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 }

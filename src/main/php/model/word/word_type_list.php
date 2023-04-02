@@ -40,14 +40,14 @@ use model\sql_db;
 class word_type_list extends type_list
 {
 
+    // TODO sync this list with the csv list and write a update process for the prod database
     const TYPES = array(
         phrase_type::NORMAL,
-        phrase_type::MATH_CONST,
         phrase_type::TIME,
         phrase_type::TIME_JUMP,
         phrase_type::LATEST,
-        phrase_type::PERCENT,
         phrase_type::MEASURE,
+        phrase_type::PERCENT,
         phrase_type::SCALING,
         phrase_type::SCALING_HIDDEN,
         phrase_type::SCALING_PCT,
@@ -55,7 +55,10 @@ class word_type_list extends type_list
         phrase_type::FORMULA_LINK,
         phrase_type::CALC,
         phrase_type::LAYER,
-        phrase_type::OTHER
+        phrase_type::OTHER,
+        phrase_type::KEY,
+        phrase_type::INFO,
+        phrase_type::MATH_CONST
     );
 
     /**

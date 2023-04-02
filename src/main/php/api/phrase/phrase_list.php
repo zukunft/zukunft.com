@@ -92,13 +92,21 @@ class phrase_list_api extends list_api implements JsonSerializable
      */
 
     /**
-     * @return array with the value vars including the private vars
+     * @return string the json api message as a text string
+     */
+    function get_json(): string
+    {
+        return json_encode($this->jsonSerialize());
+    }
+
+    /**
+     * @return array with the value vars including the protected vars
      */
     function jsonSerialize(): array
     {
         $vars = [];
         foreach ($this->lst as $phr) {
-            $vars[] = json_decode(json_encode($phr));
+            $vars[] = $phr->jsonSerialize();
         }
         return $vars;
     }

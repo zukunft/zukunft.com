@@ -33,6 +33,7 @@
 namespace test;
 
 use cfg\verb_list;
+use html\verb_dsp;
 use model\phrase;
 use model\sql_db;
 use model\verb;
@@ -60,6 +61,11 @@ class verb_unit_tests
         $t->assert_load_sql_id($db_con, $vrb);
         $t->assert_load_sql_name($db_con, $vrb);
         $t->assert_load_sql_code_id($db_con, $vrb);
+
+        $t->subheader('HTML frontend unit tests');
+
+        $vrb = $t->dummy_verb();
+        $t->assert_api_to_dsp($vrb, new verb_dsp());
 
 
         $t->header('Unit tests of the verb list class (src/main/php/model/verb/verb_list.php)');

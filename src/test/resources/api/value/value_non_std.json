@@ -6,7 +6,8 @@
     {
       "id": 2,
       "name": "Pi",
-      "description": null
+      "type_id": 17,
+      "class": "word"
     }
   ]
 }

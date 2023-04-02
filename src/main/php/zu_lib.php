@@ -15,6 +15,8 @@ use html\phrase_group_dsp;
 
     but first this needs to be fixed:
     TODO base the html frontend objects (_dsp) on the api JSON using the set_from_json function
+    TODO check that in the API            messages the database id is used for all preloaded types e.g. phrase type
+    TODO check that in the im- and export messages the     code id is used for all preloaded types e.g. phrase type
     TODO refactor the web classes (dismiss all _old classes)
     TODO always use a function of the test_new_obj class to create a object for testing
     TODO create unit tests for all display object functions

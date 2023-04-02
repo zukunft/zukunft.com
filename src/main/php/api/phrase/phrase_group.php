@@ -135,8 +135,8 @@ class phrase_group_api extends sandbox_named_api
         $result = array();
         if ($this->lst_dirty) {
             foreach ($this->lst as $phr) {
-                if (!in_array($phr->id, $result)) {
-                    $result[] = $phr->id;
+                if (!in_array($phr->id(), $result)) {
+                    $result[] = $phr->id();
                 }
             }
             $this->lst_dirty = false;

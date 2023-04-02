@@ -34,10 +34,35 @@ namespace html;
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 
 use api\verb_api;
-use verb;
 
 class verb_dsp extends sandbox_named_dsp
 {
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the vars of this verb html display object bases on the api message
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
+    function set_from_json(string $json_api_msg): void
+    {
+        $this->set_from_json_array(json_decode($json_api_msg, true));
+    }
+
+    /**
+     * set the vars of this object bases on the api json array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        parent::set_from_json_array($json_array);
+    }
+
 
     /*
      * casting
@@ -59,6 +84,20 @@ class verb_dsp extends sandbox_named_dsp
         $html = new html_base();
         $url = $html->url(api::VERB, $this->id, $back, api::PAR_VIEW_VERBS);
         return $html->ref($url, $this->name(), $this->name(), $style);
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        return parent::api_array();
     }
 
 }

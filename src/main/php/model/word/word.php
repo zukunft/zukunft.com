@@ -165,7 +165,6 @@ class word extends sandbox_typed
     {
         parent::reset();
         $this->plural = null;
-        $this->type_id = null;
         $this->view_id = null;
         $this->values = null;
 

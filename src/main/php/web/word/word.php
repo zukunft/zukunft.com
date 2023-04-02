@@ -152,7 +152,7 @@ class word_dsp extends sandbox_typed_dsp
 
     /**
      * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string ) to enable combinations of api_message() calls
+     * an array is used (instead of a string) to enable combinations of api_array() calls
      */
     function api_array(): array
     {
@@ -162,12 +162,12 @@ class word_dsp extends sandbox_typed_dsp
         if ($this->has_parent()) {
             $vars[self::FLD_PARENT] = $this->parent()->api_array();
         }
-        return $vars;
+        return array_filter($vars, fn($value) => !is_null($value));
     }
 
 
     /*
-     * information
+     * info
      */
 
     function has_parent(): bool
@@ -178,6 +178,7 @@ class word_dsp extends sandbox_typed_dsp
             return true;
         }
     }
+
 
     /*
      * base elements

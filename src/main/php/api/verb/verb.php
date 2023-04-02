@@ -49,6 +49,8 @@ class verb_api extends sandbox_named_api
     // already coded verb names or persevered verbs names for unit and integration tests
     const TN_READ = "not set";
     const TC_READ = "not_set";
+    const TN_IS_A = "is a";
+    const TC_IS_A = "is";
 
 
     /*

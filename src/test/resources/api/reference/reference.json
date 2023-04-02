@@ -3,7 +3,8 @@
   "phr": {
     "id": 1,
     "name": "Mathematical constant",
-    "description": null
+    "type_id": 17,
+    "class": "word"
   },
   "external_key": "Mathematical_constant",
   "type_id": null,

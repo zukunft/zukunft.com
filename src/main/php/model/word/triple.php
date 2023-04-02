@@ -170,6 +170,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         $this->set_name('');
         $this->name_given = null;
         $this->name_generated = '';
+        $this->values = null;
 
         $this->view = null;
         $this->ref_lst = [];
@@ -241,6 +242,55 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
             $this->set_name($name);
         }
         $this->create_objects($from, $verb, $to);
+    }
+
+    /**
+     * set the "from" phrase of this triple
+     * e.g. "Zurich" for "Zurich (city)" based on "Zurich" (from) "is a" (verb) "city" (to)
+     *
+     * @param phrase $from_phr the "from" phrase
+     * @return void
+     */
+    function set_from(phrase $from_phr): void
+    {
+        $this->fob = $from_phr;
+    }
+
+    /**
+     * set the "from" phrase of this triple
+     * e.g. "Zurich" for "Zurich (city)" based on "Zurich" (from) "is a" (verb) "city" (to)
+     *
+     * @param verb $vrb the verb
+     * @return void
+     */
+    function set_verb(verb $vrb): void
+    {
+        $this->verb = $vrb;
+    }
+
+    /**
+     * set the "from" phrase of this triple
+     * e.g. "city" for "Zurich (city)" based on "Zurich" (from) "is a" (verb) "city" (to)
+     *
+     * @param phrase $to_phr the code id that should be added to this triple
+     * @return void
+     */
+    function set_to(phrase $to_phr): void
+    {
+        $this->tob = $to_phr;
+    }
+
+    /**
+     * set the phrase type of this triple
+     * if the type id is null or 0 the phrase type from the "to" phrase is returned
+     *
+     * @param string $type_code_id the code id that should be added to this triple
+     * @return void
+     */
+    function set_type(string $type_code_id): void
+    {
+        global $phrase_types;
+        $this->type_id = $phrase_types->id($type_code_id);
     }
 
     /**
@@ -1681,7 +1731,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         $result .= $this->save_field_name_generated($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_triple_description($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        //$result .= $this->save_field_type     ($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
         log_debug('triple->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }

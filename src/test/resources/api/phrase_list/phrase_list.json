@@ -1,10 +1,14 @@
 [
   {
     "id": 1,
-    "name": "Mathematical constant"
+    "name": "Mathematical constant",
+    "type_id": 17,
+    "class": "word"
   },
   {
-    "id": 2,
-    "name": "Pi"
+    "id": -1,
+    "name": "Pi (math)",
+    "type_id": 17,
+    "class": "triple"
   }
 ]

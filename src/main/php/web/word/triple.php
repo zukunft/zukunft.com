@@ -35,9 +35,8 @@ include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
 use api\phrase_api;
 use cfg\phrase_type;
-use phrase;
-use phrase_list;
-use triple;
+use model\phrase;
+use model\phrase_list;
 
 class triple_dsp extends sandbox_typed_dsp
 {
@@ -83,6 +82,16 @@ class triple_dsp extends sandbox_typed_dsp
     /*
      * set and get
      */
+
+    /**
+     * set the vars of this word html display object bases on the api message
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
+    function set_from_json(string $json_api_msg): void
+    {
+        $this->set_from_json_array(json_decode($json_api_msg, true));
+    }
 
     /**
      * set the vars of this object bases on the api json array
@@ -140,37 +149,6 @@ class triple_dsp extends sandbox_typed_dsp
         return $this->to;
     }
 
-
-    /*
-     * base elements
-     */
-
-    /**
-     * @returns string simply the word name, but later with mouse over that shows the description
-     */
-    function dsp(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * display a triple with a link to the main page for the triple
-     * @param string|null $back the back trace url for the undo functionality
-     * @param string $style the CSS style that should be used
-     * @returns string the html code
-     */
-    function dsp_link(?string $back = '', string $style = ''): string
-    {
-        $html = new html_base();
-        $url = $html->url(api::TRIPLE, $this->id, $back, api::PAR_VIEW_TRIPLES);
-        return $html->ref($url, $this->name(), $this->name(), $style);
-    }
-
-
-    /*
-     * set and get
-     */
-
     /**
      * @param string|null $code_id the code id of the phrase type
      */
@@ -196,6 +174,32 @@ class triple_dsp extends sandbox_typed_dsp
         } else {
             return $phrase_types->get_by_id($this->type_id);
         }
+    }
+
+
+    /*
+     * base elements
+     */
+
+    /**
+     * @returns string simply the word name, but later with mouse over that shows the description
+     */
+    function dsp(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * display a triple with a link to the main page for the triple
+     * @param string|null $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @returns string the html code
+     */
+    function dsp_link(?string $back = '', string $style = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url(api::TRIPLE, $this->id, $back, api::PAR_VIEW_TRIPLES);
+        return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
 
@@ -315,6 +319,11 @@ class triple_dsp extends sandbox_typed_dsp
         }
         return $result;
     }
+
+
+    /*
+     * info
+     */
 
     /**
      * @return bool true if the word has the type "scaling_percent" (e.g. "percent")

@@ -31,13 +31,19 @@
 
 namespace api;
 
-use cfg\phrase_type;
-use html\phrase_dsp;
-use html\triple_dsp;
-use html\verb_dsp;
-use html\word_dsp;
+include_once API_SANDBOX_PATH . 'combine_named.php';
+include_once API_WORD_PATH . 'word.php';
+include_once API_WORD_PATH . 'triple.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once WEB_WORD_PATH . 'triple.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
 
-class phrase_api extends sandbox_named_api
+use html\word_dsp;
+use html\triple_dsp;
+use html\phrase_dsp;
+use JsonSerializable;
+
+class phrase_api extends combine_named_api implements JsonSerializable
 {
 
     // the json field name in the api json message to identify if the figure is a value or result
@@ -63,11 +69,6 @@ class phrase_api extends sandbox_named_api
         self::TN_ZH_CITY
     );
 
-    // used only if the phrase is a triple
-    private ?triple_api $triple;
-
-    // the type of this phrase
-    private ?int $type_id;
 
     /*
      * construct and map
@@ -81,12 +82,13 @@ class phrase_api extends sandbox_named_api
         string $to = '')
     {
         global $phrase_types;
-
-        parent::__construct($id, $name);
-        if ($from != '' and $to != '') {
-            $this->triple = new triple_api($id, $name, $from, $verb, $to);
+        if ($id < 0) {
+            $this->set_obj(new triple_api($id * -1, $name, $from, $verb, $to));
+        } else {
+            $this->set_obj(new word_api($id, $name));
         }
-        $this->set_type($phrase_types->default_id());
+        $this->set_type_id($phrase_types->default_id());
+        parent::__construct($id, $name);
     }
 
     /**
@@ -94,9 +96,10 @@ class phrase_api extends sandbox_named_api
      */
     function reset(): void
     {
-        $this->description = null;
-        $this->triple = null;
-        $this->set_type(null);
+        $this->set_id(0);
+        $this->set_name(null);
+        $this->set_description(null);
+        $this->set_type_id(null);
     }
 
 
@@ -104,24 +107,18 @@ class phrase_api extends sandbox_named_api
      * set and get
      */
 
-    function set_description(?string $description)
+    function set_id(int $id): void
     {
-        $this->description = $description;
+        if ($this->is_word()) {
+            $this->obj()?->set_id($id);
+        } else {
+            $this->obj()?->set_id($id * -1);
+        }
     }
 
-    function description(): ?string
+    function id(): int
     {
-        return $this->description;
-    }
-
-    function set_type(?int $type_id)
-    {
-        $this->type_id = $type_id;
-    }
-
-    function type(): ?int
-    {
-        return $this->type_id;
+        return $this->obj()?->id();
     }
 
 
@@ -144,15 +141,15 @@ class phrase_api extends sandbox_named_api
 
     protected function wrd_dsp(): word_dsp
     {
-        $wrd = new word_dsp($this->id, $this->name);
-        $wrd->set_type_id($this->type());
+        $wrd = new word_dsp($this->id(), $this->name());
+        $wrd->set_type_id($this->type_id());
         return $wrd;
     }
 
     protected function trp_dsp(): triple_dsp
     {
-        $trp = new triple_dsp($this->id * -1, $this->name);
-        $trp->set_type_id($this->type());
+        $trp = new triple_dsp($this->id() * -1, $this->name());
+        $trp->set_type_id($this->type_id());
         return $trp;
     }
 
@@ -166,7 +163,7 @@ class phrase_api extends sandbox_named_api
      */
     function is_word(): bool
     {
-        if ($this->id > 0) {
+        if ($this->obj()::class == word_api::class) {
             return true;
         } else {
             return false;
@@ -175,19 +172,21 @@ class phrase_api extends sandbox_named_api
 
 
     /*
-     * info
+     * interface
      */
 
     /**
-     * @return bool true if one of the phrases that classify this value is of type percent
+     * @return array with the value vars including the private vars
      */
-    function is_percent(): bool
+    function jsonSerialize(): array
     {
+        $vars = parent::jsonSerialize();
         if ($this->is_word()) {
-            return $this->wrd_dsp()->is_percent();
+            $vars[combine_object_api::FLD_CLASS] = self::CLASS_WORD;
         } else {
-            return $this->trp_dsp()->is_percent();
+            $vars[combine_object_api::FLD_CLASS] = self::CLASS_TRIPLE;
         }
+        return $vars;
     }
 
 }

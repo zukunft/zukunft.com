@@ -10,6 +10,7 @@ include_once API_WORD_PATH . 'triple.php';
 //class triple_unit_tests extends TestCase
 use api\triple_api;
 use api\word_api;
+use html\triple_dsp;
 use model\sql_db;
 use model\triple;
 use model\verb;
@@ -52,20 +53,25 @@ class triple_unit_tests
         $t->subheader('API unit tests');
 
         $trp = new triple($usr);
-        $trp->set(1, triple_api::TN_READ, triple_api::TN_READ, verb::IS_A, word_api::TN_READ);
+        $trp->set(1, triple_api::TN_READ_NAME, triple_api::TN_READ, verb::IS_A, word_api::TN_READ);
         $trp->description = 'The mathematical constant Pi';
         $api_trp = $trp->api_obj();
-        $t->assert($t->name . 'api->id', $api_trp->id, $trp->id());
-        $t->assert($t->name . 'api->name', $api_trp->name, $trp->name());
+        $t->assert($t->name . 'api->id', $api_trp->id(), $trp->id());
+        $t->assert($t->name . 'api->name', $api_trp->name(), $trp->name());
         $t->assert($t->name . 'api->description', $api_trp->description, $trp->description);
-        $t->assert($t->name . 'api->from', $api_trp->from()->name, $trp->from->obj->name_dsp());
-        $t->assert($t->name . 'api->to', $api_trp->to()->name, $trp->to->obj->name_dsp());
+        $t->assert($t->name . 'api->from', $api_trp->from()->name(), $trp->from->obj->name_dsp());
+        $t->assert($t->name . 'api->to', $api_trp->to()->name(), $trp->to->obj->name_dsp());
 
 
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new triple($usr), $json_file);
 
+
+        $t->subheader('HTML frontend unit tests');
+
+        $trp = $t->dummy_triple();
+        $t->assert_api_to_dsp($trp, new triple_dsp());
     }
 
 }

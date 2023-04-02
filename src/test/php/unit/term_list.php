@@ -81,7 +81,7 @@ class term_list_unit_tests
 
         $t->subheader('API unit tests');
 
-        $trm_lst = $this->get_term_list_related();
+        $trm_lst = $this->get_term_list_related($t);
         $t->assert_api($trm_lst);
 
     }
@@ -107,12 +107,12 @@ class term_list_unit_tests
      * create a term list test object without using a database connection
      * that matches the all members of word with id 1 (math const)
      */
-    function get_term_list_related(): term_list
+    function get_term_list_related(testing $t): term_list
     {
         global $usr;
         $trm_lst = new term_list($usr);
-        $trm_lst->add($this->get_term(1, triple_api::TN_READ_NAME, 2));
-        $trm_lst->add($this->get_term(1, word_api::TN_READ, 1));
+        $trm_lst->add($t->dummy_triple()->term());
+        $trm_lst->add($t->dummy_word()->term());
         return $trm_lst;
     }
 

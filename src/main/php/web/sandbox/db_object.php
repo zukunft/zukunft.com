@@ -63,16 +63,6 @@ class db_object_dsp
      */
 
     /**
-     * set the vars of this object bases on the api json string
-     * @param string $json_api_msg an api json message as a string
-     * @return void
-     */
-    function set_from_json(string $json_api_msg): void
-    {
-        $this->set_from_json_array(json_decode($json_api_msg));
-    }
-
-    /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
      * @return void

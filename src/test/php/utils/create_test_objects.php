@@ -117,6 +117,7 @@ class test_new_obj extends test_base
         global $usr;
         $wrd = new word($usr);
         $wrd->set(1, word_api::TN_READ);
+        $wrd->set_type(phrase_type::MATH_CONST);
         return $wrd;
     }
 
@@ -125,12 +126,38 @@ class test_new_obj extends test_base
         return new verb(1, verb_api::TN_READ, verb_api::TC_READ);
     }
 
+    function dummy_verb_is(): verb
+    {
+        return new verb(2, verb_api::TN_IS_A, verb_api::TC_IS_A);
+    }
+
     function dummy_triple(): triple
     {
         global $usr;
+        // create first the words used for the triple
+        $wrd_math = $this->dummy_word();
+        $vrb = $this->dummy_verb_is();
+        $wrd_pi = new word($usr);
+        $wrd_pi->set(2, word_api::TN_READ);
+
+        // create the triple itself
         $trp = new triple($usr);
-        $trp->set(1, triple_api::TN_READ);
+        $trp->set(1, triple_api::TN_READ_NAME);
+        $trp->set_from($wrd_pi->phrase());
+        $trp->set_verb($vrb);
+        $trp->set_to($wrd_math->phrase());
+        $trp->set_type(phrase_type::MATH_CONST);
         return $trp;
+    }
+
+    function dummy_phrase(): phrase
+    {
+        return $this->dummy_word()->phrase();
+    }
+
+    function dummy_phrase_triple(): phrase
+    {
+        return $this->dummy_triple()->phrase();
     }
 
     function dummy_value(): value

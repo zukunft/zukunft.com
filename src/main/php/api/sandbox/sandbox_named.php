@@ -80,6 +80,23 @@ class sandbox_named_api extends sandbox_api
         return $this->name;
     }
 
+    /**
+     * @param string|null $description the description of this word, triple, formula, verb, view or component
+     * @return void
+     */
+    function set_description(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string|null the description of the word, triple, formula, verb, view or component
+     */
+    function description(): ?string
+    {
+        return $this->description;
+    }
+
 
     /*
      * logging

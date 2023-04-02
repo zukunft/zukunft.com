@@ -56,6 +56,8 @@ class phrase_type extends type_object
     const CALC = "calc"; // TODO add usage sample
     const LAYER = "view"; // TODO add usage sample
     const OTHER = "type_other";
+    const KEY = "key";
+    const INFO = "information";
 
 
     /*

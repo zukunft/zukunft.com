@@ -80,11 +80,11 @@ class sandbox_typed_api extends sandbox_named_api
     {
         if ($this::class == word_api::class) {
             $phr = new phrase_api($this->id, $this->name);
-            $phr->set_type($this->type_id());
+            $phr->set_type_id($this->type_id());
             return $phr;
         } elseif ($this::class == triple_api::class) {
             $phr =  new phrase_api($this->id * -1, $this->name);
-            $phr->set_type($this->type_id());
+            $phr->set_type_id($this->type_id());
             return $phr;
         } else {
             log_err('Unexpected ' . $this::class);

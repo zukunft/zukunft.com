@@ -1026,7 +1026,8 @@
       "name": "Pi (math)",
       "from": "Pi",
       "verb": "is a",
-      "to": "Mathematical constant"
+      "to": "Mathematical constant",
+      "type": "constant"
     },
     {
       "name": "second (unit)",

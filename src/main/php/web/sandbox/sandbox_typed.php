@@ -73,9 +73,8 @@ class sandbox_typed_dsp extends sandbox_named_dsp
     function set_from_json_array(array $json_array): void
     {
         parent::set_from_json_array($json_array);
-        // TODO combine the controller::API_FLD_TYPE
-        if (array_key_exists(controller::API_FLD_TYPE, $json_array)) {
-            $this->set_type_id($json_array[controller::API_FLD_TYPE]);
+        if (array_key_exists(controller::API_FLD_TYPE_ID, $json_array)) {
+            $this->set_type_id($json_array[controller::API_FLD_TYPE_ID]);
         }
     }
 
@@ -102,7 +101,7 @@ class sandbox_typed_dsp extends sandbox_named_dsp
     {
         $vars = parent::api_array();
 
-        $vars[controller::API_FLD_TYPE] = $this->type_id();
+        $vars[controller::API_FLD_TYPE_ID] = $this->type_id();
         return $vars;
     }
 

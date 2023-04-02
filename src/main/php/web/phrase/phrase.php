@@ -39,7 +39,10 @@ include_once WEB_WORD_PATH . 'triple.php';
 
 use api\combine_object_api;
 use api\phrase_api;
+use api\word_api;
 use controller\controller;
+
+// TODO use extends sandbox_typed_dsp
 
 class phrase_dsp
 {
@@ -49,14 +52,14 @@ class phrase_dsp
      */
 
     // the word or triple object
-    private word_dsp|triple_dsp $obj;
+    private word_dsp|triple_dsp|null $obj;
 
 
     /*
      * construct and map
      */
 
-    function __construct(word_dsp|triple_dsp $phr_obj)
+    function __construct(word_dsp|triple_dsp|null $phr_obj = null)
     {
         $this->set_obj($phr_obj);
     }
@@ -66,28 +69,37 @@ class phrase_dsp
      * set and get
      */
 
+    /**
+     * set the vars of this phrase html display object bases on the api message
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
     function set_from_json(string $json_api_msg): void
     {
-        $json_array = json_decode($json_api_msg);
-        if ($json_array[combine_object_api::FLD_CLASS] == phrase_api::CLASS_WORD) {
-            $fv_dsp = new word_dsp();
-            $fv_dsp->set_from_json_array($json_array);
-            $this->set_obj($fv_dsp);
-        } elseif ($json_array[combine_object_api::FLD_CLASS] == phrase_api::CLASS_TRIPLE) {
-            $fv_dsp = new triple_dsp();
-            $fv_dsp->set_from_json_array($json_array);
-            $this->set_obj($fv_dsp);
+        $json_array = json_decode($json_api_msg, true);
+        if (array_key_exists(combine_object_api::FLD_CLASS, $json_array)) {
+            if ($json_array[combine_object_api::FLD_CLASS] == phrase_api::CLASS_WORD) {
+                $wrd_dsp = new word_dsp();
+                $wrd_dsp->set_from_json_array($json_array);
+                $this->set_obj($wrd_dsp);
+            } elseif ($json_array[combine_object_api::FLD_CLASS] == phrase_api::CLASS_TRIPLE) {
+                $trp_dsp = new triple_dsp();
+                $trp_dsp->set_from_json_array($json_array);
+                $this->set_obj($trp_dsp);
+            } else {
+                log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a phrase');
+            }
         } else {
-            log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a phrase');
+            log_err('Json class missing, but expected for a phrase');
         }
     }
 
-    function set_obj(word_dsp|triple_dsp $obj): void
+    function set_obj(word_dsp|triple_dsp|null $obj = null): void
     {
         $this->obj = $obj;
     }
 
-    function obj(): word_dsp|triple_dsp
+    function obj(): word_dsp|triple_dsp|null
     {
         return $this->obj;
     }
@@ -105,9 +117,9 @@ class phrase_dsp
         }
     }
 
-    function obj_id(): int
+    function obj_id(): ?int
     {
-        return $this->obj()->id();
+        return $this->obj()?->id();
     }
 
     function set_name(?string $name): void
@@ -117,7 +129,7 @@ class phrase_dsp
 
     function name(): ?string
     {
-        return $this->obj()->name();
+        return $this->obj()?->name();
     }
 
     function set_description(?string $description): void
@@ -130,12 +142,12 @@ class phrase_dsp
         return $this->obj()->description;
     }
 
-    function set_type(?int $type_id): void
+    function set_type_id(?int $type_id): void
     {
         $this->obj()->set_type_id($type_id);
     }
 
-    function type(): ?int
+    function type_id(): ?int
     {
         return $this->obj()->type_id();
     }
@@ -151,9 +163,15 @@ class phrase_dsp
     function api_array(): array
     {
         $vars = array();
+        if ($this->is_word()) {
+            $vars[combine_object_api::FLD_CLASS] = phrase_api::CLASS_WORD;
+        } else {
+            $vars[combine_object_api::FLD_CLASS] = phrase_api::CLASS_TRIPLE;
+        }
         $vars[controller::API_FLD_ID] = $this->id();
         $vars[controller::API_FLD_NAME] = $this->name();
         $vars[controller::API_FLD_DESCRIPTION] = $this->description();
+        $vars[controller::API_FLD_TYPE_ID] = $this->type_id();
         return $vars;
     }
 
@@ -167,8 +185,12 @@ class phrase_dsp
      */
     function is_word(): bool
     {
-        if ($this->obj::class == word_dsp::class) {
-            return true;
+        if ($this->obj() != null) {
+            if ($this->obj()::class == word_dsp::class) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
