@@ -117,8 +117,8 @@ class term_api extends combine_named_api implements JsonSerializable
     }
 
     /**
-     * @return int the id of the containing object witch is (corresponding to id())
-     * e.g 1 for a word, 1 for a phrase, 1 for a formula and 1 for a verb
+     * @return int the id of the term generated from the object id
+     * e.g 1 for a word 1, -1 for a triple 1, 2 for a formula 1 and -2 for a verb 1
      */
     function id(): int
     {
@@ -145,7 +145,8 @@ class term_api extends combine_named_api implements JsonSerializable
      */
     function dsp_obj(): phrase_dsp
     {
-        $dsp_obj = new phrase_dsp($this->obj()->dsp_obj(), $this->name());
+        $dsp_obj = new phrase_dsp($this->obj()->dsp_obj());
+        $dsp_obj->set_name($this->description());
         $dsp_obj->set_description($this->description());
         return $dsp_obj;
     }

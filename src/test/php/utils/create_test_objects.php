@@ -42,6 +42,8 @@
 namespace test;
 
 include_once API_REF_PATH . 'ref.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'term.php';
 include_once WEB_PATH . 'formula_display.php';
 include_once WEB_PATH . 'view_display.php';
 
@@ -85,6 +87,7 @@ use model\ref;
 use model\source;
 use model\sys_log_status;
 use model\system_log;
+use model\term;
 use model\triple;
 use model\user;
 use model\value;
@@ -159,6 +162,12 @@ class test_new_obj extends test_base
     {
         return $this->dummy_triple()->phrase();
     }
+
+    function dummy_term(): term
+    {
+        return $this->dummy_word()->term();
+    }
+
 
     function dummy_value(): value
     {
@@ -389,9 +398,7 @@ class test_new_obj extends test_base
      */
     function dsp_obj(object $model_obj, object $dsp_obj): object
     {
-        $api_obj = $model_obj->api_obj();
-        $api_json_msg = json_decode($api_obj->get_json(), true);
-        $dsp_obj->set_from_json(json_encode($api_json_msg));
+        $dsp_obj->set_from_json($model_obj->api_obj()->get_json());
         return $dsp_obj;
     }
 

@@ -32,9 +32,13 @@
 
 namespace test;
 
+include_once WEB_PHRASE_PATH . 'phrase.php';
+
 use api\word_api;
 use cfg\phrase_type;
 use html\phrase_dsp;
+use html\triple_dsp;
+use html\word_dsp;
 use model\phrase;
 use model\sql_db;
 use model\word;
@@ -80,8 +84,10 @@ class phrase_unit_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $fig = $t->dummy_phrase();
-        $t->assert_api_to_dsp($fig, new phrase_dsp());
+        $phr = $t->dummy_phrase();
+        $t->assert_api_to_dsp($phr, new phrase_dsp(new word_dsp()));
+        $phr = $t->dummy_phrase_triple();
+        $t->assert_api_to_dsp($phr, new phrase_dsp(new triple_dsp()));
 
 
         $t->header('Unit tests of the phrase type class (src/main/php/model/phrase/phrase_type.php)');

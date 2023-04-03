@@ -32,9 +32,17 @@
 
 namespace test;
 
+include_once WEB_WORD_PATH . 'word.php';
+include_once WEB_WORD_PATH . 'triple.php';
+include_once WEB_FORMULA_PATH . 'formula.php';
+include_once WEB_VERB_PATH . 'verb.php';
+include_once WEB_PHRASE_PATH . 'term.php';
+
 use api\formula_api;
 use api\triple_api;
 use api\word_api;
+use html\term_dsp;
+use html\word_dsp;
 use model\formula;
 use model\sql_db;
 use model\term;
@@ -90,6 +98,13 @@ class term_unit_tests
         $trm = new term($usr);
         $t->assert_load_sql_id($db_con, $trm);
         $t->assert_load_sql_name($db_con, $trm);
+
+
+        $t->subheader('HTML frontend unit tests');
+
+        $fig = $t->dummy_term();
+        $t->assert_api_to_dsp($fig, new term_dsp(new word_dsp()));
+
     }
 
 }

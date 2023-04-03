@@ -32,6 +32,7 @@
 
 namespace html;
 
+include_once WEB_SANDBOX_PATH . 'combine_named.php';
 include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_PHRASE_PATH . 'phrase.php';
 include_once WEB_WORD_PATH . 'word.php';
@@ -42,28 +43,8 @@ use api\phrase_api;
 use api\word_api;
 use controller\controller;
 
-// TODO use extends sandbox_typed_dsp
-
-class phrase_dsp
+class phrase_dsp extends combine_named_dsp
 {
-
-    /*
-     * object vars
-     */
-
-    // the word or triple object
-    private word_dsp|triple_dsp|null $obj;
-
-
-    /*
-     * construct and map
-     */
-
-    function __construct(word_dsp|triple_dsp|null $phr_obj = null)
-    {
-        $this->set_obj($phr_obj);
-    }
-
 
     /*
      * set and get
@@ -86,6 +67,8 @@ class phrase_dsp
                 $trp_dsp = new triple_dsp();
                 $trp_dsp->set_from_json_array($json_array);
                 $this->set_obj($trp_dsp);
+                // switch the phrase id to the object id
+                $this->set_id($trp_dsp->id());
             } else {
                 log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a phrase');
             }
@@ -94,19 +77,25 @@ class phrase_dsp
         }
     }
 
-    function set_obj(word_dsp|triple_dsp|null $obj = null): void
+    function set_phrase_obj(word_dsp|triple_dsp|null $obj = null): void
     {
         $this->obj = $obj;
     }
 
-    function obj(): word_dsp|triple_dsp|null
+    /**
+     * set the object id based on the given phrase id
+     * must have the same logic as the database view and the api
+     * @param int $id the phrase id that is converted to the object id
+     * @return void
+     */
+    function set_id(int $id): void
     {
-        return $this->obj;
+        $this->set_obj_id(abs($id));
     }
 
     /**
-     * return the phrase id based on the word or triple id
-     * must have the same logic as the database view and the backend
+     * @return int the id of the phrase generated from the object id
+     * e.g 1 for a word with id 1, -1 for a triple with id 1
      */
     function id(): int
     {
@@ -117,39 +106,13 @@ class phrase_dsp
         }
     }
 
-    function obj_id(): ?int
+    /**
+     * @return int the id of the word or triple
+     * e.g 1 for a word with id 1, 1 for a triple with id 1
+     */
+    function obj_id(): int
     {
         return $this->obj()?->id();
-    }
-
-    function set_name(?string $name): void
-    {
-        $this->obj()->set_name($name);
-    }
-
-    function name(): ?string
-    {
-        return $this->obj()?->name();
-    }
-
-    function set_description(?string $description): void
-    {
-        $this->obj()->description = $description;
-    }
-
-    function description(): ?string
-    {
-        return $this->obj()->description;
-    }
-
-    function set_type_id(?int $type_id): void
-    {
-        $this->obj()->set_type_id($type_id);
-    }
-
-    function type_id(): ?int
-    {
-        return $this->obj()->type_id();
     }
 
 

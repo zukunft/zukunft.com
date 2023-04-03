@@ -32,78 +32,82 @@
 
 namespace html;
 
+include_once WEB_SANDBOX_PATH . 'combine_named.php';
 include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_PHRASE_PATH . 'term.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
+include_once WEB_VERB_PATH . 'verb.php';
 
 use api\combine_object_api;
 use api\term_api;
+use controller\controller;
 
-class term_dsp
+class term_dsp extends combine_named_dsp
 {
-
-    /*
-     * object vars
-     */
-
-    // the word, triple, verb or formula object
-    private word_dsp|triple_dsp|verb_dsp|formula_dsp $obj;
-
-
-    /*
-     * construct and map
-     */
-
-    function __construct(word_dsp|triple_dsp|verb_dsp|formula_dsp $trm_obj)
-    {
-        $this->set_obj($trm_obj);
-    }
 
 
     /*
      * set and get
      */
 
+    /**
+     * set the vars of this term html display object bases on the api message
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
     function set_from_json(string $json_api_msg): void
     {
-        $json_array = json_decode($json_api_msg);
+        $json_array = json_decode($json_api_msg, true);
         if ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_WORD) {
-            $fv_dsp = new word_dsp();
-            $fv_dsp->set_from_json_array($json_array);
-            $this->set_obj($fv_dsp);
+            $wrd = new word_dsp();
+            $wrd->set_from_json_array($json_array);
+            $this->set_obj($wrd);
+            // unlike the cases below the switch of the term id to the object id not needed for words
         } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_TRIPLE) {
-            $fv_dsp = new triple_dsp();
-            $fv_dsp->set_from_json_array($json_array);
-            $this->set_obj($fv_dsp);
+            $trp = new triple_dsp();
+            $trp->set_from_json_array($json_array);
+            $this->set_obj($trp);
+            $this->set_id($trp->id());
         } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_VERB) {
-            $fv_dsp = new verb_dsp();
-            $fv_dsp->set_from_json_array($json_array);
-            $this->set_obj($fv_dsp);
+            $vrb = new verb_dsp();
+            $vrb->set_from_json_array($json_array);
+            $this->set_obj($vrb);
+            $this->set_id($vrb->id());
         } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_FORMULA) {
-            $val = new formula_dsp();
-            $val->set_from_json_array($json_array);
-            $this->set_obj($val);
+            $frm = new formula_dsp();
+            $frm->set_from_json_array($json_array);
+            $this->set_obj($frm);
+            $this->set_id($frm->id());
         } else {
             log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a term');
         }
     }
 
-    function set_obj(word_dsp|triple_dsp|verb_dsp|formula_dsp $obj): void
+    function set_term_obj(word_dsp|triple_dsp|verb_dsp|formula_dsp|null $obj): void
     {
         $this->obj = $obj;
     }
 
-    function obj(): word_dsp|triple_dsp|verb_dsp|formula_dsp
+    /**
+     * set the object id based on the given term id
+     * must have the same logic as the database view and the api
+     * @param int $id the term id that is converted to the object id
+     * @return void
+     */
+    function set_id(int $id): void
     {
-        return $this->obj;
+        if ($id % 2 == 0) {
+            $this->set_obj_id(abs($id / 2));
+        } else {
+            $this->set_obj_id(abs(($id + 1) / 2));
+        }
     }
 
     /**
-     * return the term id based on the object id
-     * must have the same logic as the database view and the frontend
+     * @return int the id of the term generated from the object id
+     * e.g 1 for a word 1, -1 for a triple 1, 2 for a formula 1 and -2 for a verb 1
      */
     function id(): int
     {
@@ -120,9 +124,42 @@ class term_dsp
         }
     }
 
+    /**
+     * @return int the id of the object
+     * e.g 1 for a word 1, 1 for a triple 1, 1 for a formula 1 and 1 for a verb 1
+     */
     function obj_id(): int
     {
         return $this->obj()->id();
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     */
+    function api_array(): array
+    {
+        $vars = array();
+        if ($this->is_word()) {
+            $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_WORD;
+        } elseif ($this->is_triple()) {
+            $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_TRIPLE;
+        } elseif ($this->is_formula()) {
+            $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_FORMULA;
+        } elseif ($this->is_verb()) {
+            $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_VERB;
+        } else {
+            log_err('cannot create api message for term ' . $this->dsp_id() . ' because class is unknown');
+        }
+        $vars[controller::API_FLD_ID] = $this->id();
+        $vars[controller::API_FLD_NAME] = $this->name();
+        $vars[controller::API_FLD_DESCRIPTION] = $this->description();
+        $vars[controller::API_FLD_TYPE_ID] = $this->type_id();
+        return $vars;
     }
 
 
