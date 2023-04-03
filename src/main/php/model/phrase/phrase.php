@@ -51,19 +51,26 @@
 
 namespace model;
 
-include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once API_PHRASE_PATH . 'phrase.php';
+include_once API_WORD_PATH . 'word.php';
+include_once API_WORD_PATH . 'triple.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
 
 use api\phrase_api;
 use cfg\phrase_type;
 use cfg\verb_list;
 use controller\controller;
-use formula_dsp_old;
+use html\formula_dsp_old;
 use html\html_selector;
 use html\phrase_dsp;
 use html\triple_dsp;
 use html\word_dsp;
 
-class phrase extends db_object
+class phrase extends combine_named
 {
 
     /*
@@ -106,15 +113,9 @@ class phrase extends db_object
      */
 
     // database duplicate fields
-    public ?object $obj = null;        // if loaded the linked word or triple object
     // TODO deprecate
     private ?user $usr = null;         // the person for whom the word is loaded, so to say the viewer
     public ?int $usage = null;         // a higher number indicates a higher usage
-    public string $description = '';   // simply the word or triple description to reduce the number of "->" on the code
-
-    // in memory only fields
-    public ?string $type_name = null;  //
-    public ?int $link_type_id = null;  // used in the word list to know based on which relation the word was added to the list
 
 
     /*
@@ -133,9 +134,6 @@ class phrase extends db_object
         string $verb = '',
         string $to = '')
     {
-        parent::__construct();
-        $this->set_user($usr);
-
         // create the automatically related objects if requested
         if ($from != ''
             and $verb != ''
@@ -143,11 +141,13 @@ class phrase extends db_object
             $this->obj = new triple($usr);
             $this->obj->set($id * -1, $from, $verb, $to, $name);
         } else {
+            $this->obj = new word($usr);
             if ($name != '') {
-                $this->obj = new word($usr);
                 $this->obj->set($id, $name);
             }
         }
+        parent::__construct();
+        $this->set_user($usr);
     }
 
     /**
@@ -160,10 +160,9 @@ class phrase extends db_object
     function row_mapper(?array $db_row, string $id_fld = self::FLD_ID, string $fld_ext = ''): bool
     {
         $result = false;
-        $this->id = 0;
+        $this->set_obj_id(0);
         if ($db_row != null) {
             if ($db_row[$id_fld] > 0) {
-                $this->id = $db_row[$id_fld];
                 // map a word
                 $wrd = new word($this->usr);
                 $wrd->set_id($db_row[$id_fld]);
@@ -177,7 +176,6 @@ class phrase extends db_object
                 $this->obj = $wrd;
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
-                $this->id = $db_row[$id_fld];
                 // map a triple
                 $trp = new triple($this->usr);
                 $trp->set_id($db_row[$id_fld] * -1);
@@ -206,6 +204,18 @@ class phrase extends db_object
      */
 
     /**
+     * set the object id based on the given term id
+     * must have the same logic as the api and the frontend
+     *
+     * @param int|null $id the term (not the object!) id
+     * @return void
+     */
+    function set_id(?int $id): void
+    {
+        $this->set_obj_id(abs($id));
+    }
+
+    /**
      * set the phrase id based id the word or triple id
      * must have the same logic as the database view and the frontend
      *
@@ -217,10 +227,10 @@ class phrase extends db_object
     {
         if ($class == word::class) {
             $this->obj = new word($this->usr);
-            $this->id = $id;
+            $this->set_obj_id($id);
         } elseif ($class == triple::class) {
             $this->obj = new triple($this->usr);
-            $this->id = $id * -1;
+            $this->set_obj_id($id);
         }
         $this->obj->set_id($id);
     }
@@ -230,7 +240,7 @@ class phrase extends db_object
      * @param string $class the calling class name
      * @return void
      */
-    private function set_obj(string $class): void
+    private function set_obj_from_class(string $class): void
     {
         if ($class == word::class) {
             $this->obj = new word($this->usr);
@@ -251,7 +261,7 @@ class phrase extends db_object
     function set_name(string $name, string $class = ''): void
     {
         if ($class != '' and $this->obj == null) {
-            $this->set_obj($class);
+            $this->set_obj_from_class($class);
         }
         $this->obj->set_name($name);
     }
@@ -273,7 +283,11 @@ class phrase extends db_object
      */
     function id(): ?int
     {
-        return $this->id;
+        if ($this->is_word()) {
+            return $this->obj_id();
+        } else {
+            return $this->obj_id() * -1;
+        }
     }
 
     /**
@@ -483,12 +497,7 @@ class phrase extends db_object
                 $this->id = $wrd->id();
                 log_debug('formula word ' . $this->dsp_id());
             } else {
-                if ($this->type_name == '') {
-                    // TODO check that this ($phrase->load) is never used for an error detection
-                    log_warning('"' . $this->name() . '" not found.', "phrase->load");
-                } else {
-                    log_err('"' . $this->name() . '" has the type ' . $this->type_name . ' which is not expected for a phrase.', "phrase->load");
-                }
+                log_err('"' . $this->name() . '" has unknown type which is not expected for a phrase.', "phrase->load");
             }
         }
         log_debug('done ' . $this->dsp_id());
@@ -573,17 +582,17 @@ class phrase extends db_object
         log_debug($this->dsp_id());
         $result = null;
 
-        if ($this->id == 0 or $this->name() == '') {
+        if ($this->id() == 0 or $this->name() == '') {
             $this->load_by_obj_par();
         }
-        if ($this->id < 0) {
+        if ($this->id() < 0) {
             $lnk = $this->obj;
             $lnk->load_objects(); // try to be on the save side, and it is anyway checked if loading is really needed
             $result = $lnk->from;
-        } elseif ($this->id > 0) {
+        } elseif ($this->id() > 0) {
             $result = $this->obj;
         } else {
-            log_err('"' . $this->name() . '" has the type ' . $this->type_name . ' which is not expected for a phrase.', "phrase->main_word");
+            log_err('"' . $this->name() . '" has unknown type which is not expected for a phrase.', "phrase->main_word");
         }
         log_debug('done ' . $result->dsp_id());
         return $result;
@@ -595,7 +604,7 @@ class phrase extends db_object
     function wrd_lst(): word_list
     {
         $wrd_lst = new word_list($this->usr);
-        if ($this->id < 0) {
+        if ($this->id() < 0) {
             $sub_wrd_lst = $this->wrd_lst();
             foreach ($sub_wrd_lst as $wrd) {
                 $wrd_lst->add($wrd);
@@ -907,11 +916,11 @@ class phrase extends db_object
 
         if ($this->name() <> '') {
             $result .= '"' . $this->name() . '"';
-            if ($this->id > 0) {
-                $result .= ' (' . $this->id . ')';
+            if ($this->id() > 0) {
+                $result .= ' (' . $this->id() . ')';
             }
         } else {
-            $result .= $this->id;
+            $result .= $this->id();
         }
         if ($this->user()->is_set()) {
             $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
@@ -928,7 +937,7 @@ class phrase extends db_object
 
     function name_linked(): string
     {
-        return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
+        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
     }
 
     function dsp_tbl(int $intent = 0): string

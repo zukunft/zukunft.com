@@ -1697,9 +1697,7 @@ class word extends sandbox_typed
     function phrase(): phrase
     {
         $phr = new phrase($this->user());
-        $phr->id = $this->id;
-        $phr->set_name($this->name, self::class);
-        $phr->obj = $this;
+        $phr->set_obj($this);
         log_debug($this->dsp_id());
         return $phr;
     }
@@ -1711,8 +1709,7 @@ class word extends sandbox_typed
     {
         $trm = new term($this->user(), self::class);
         $trm->set_id_from_obj($this->id, self::class);
-        $trm->set_name($this->name);
-        $trm->obj = $this;
+        $trm->set_obj($this);
         log_debug($this->dsp_id());
         return $trm;
     }

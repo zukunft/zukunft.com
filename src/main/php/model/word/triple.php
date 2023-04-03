@@ -432,12 +432,12 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
             $this->fill_api_obj($api_obj);
             $api_obj->name = $this->name();
             $api_obj->description = $this->description;
-            if ($this->from->obj != null) {
-                $api_obj->set_from($this->from->obj->phrase()->api_obj());
+            if ($this->from->obj() != null) {
+                $api_obj->set_from($this->from->obj()->phrase()->api_obj());
             }
             //$api_obj->set_verb($this->verb->api_obj());
-            if ($this->to->obj != null) {
-                $api_obj->set_to($this->to->obj->phrase()->api_obj());
+            if ($this->to->obj() != null) {
+                $api_obj->set_to($this->to->obj()->phrase()->api_obj());
             }
         }
         return $api_obj;
@@ -988,9 +988,9 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
 
         // add the "from" side
         if (isset($this->from)) {
-            if ($this->from->id > 0) {
-                $wrd_lst->add($this->from->obj);
-            } elseif ($this->from->id < 0) {
+            if ($this->from->id() > 0) {
+                $wrd_lst->add($this->from->obj());
+            } elseif ($this->from->id() < 0) {
                 $sub_wrd_lst = $this->from->wrd_lst();
                 foreach ($sub_wrd_lst as $wrd) {
                     $wrd_lst->add($wrd);
@@ -1002,9 +1002,9 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
 
         // add the "to" side
         if (isset($this->to)) {
-            if ($this->to->id > 0) {
-                $wrd_lst->add($this->to->obj);
-            } elseif ($this->to->id < 0) {
+            if ($this->to->id() > 0) {
+                $wrd_lst->add($this->to->obj());
+            } elseif ($this->to->id() < 0) {
                 $sub_wrd_lst = $this->to->wrd_lst();
                 foreach ($sub_wrd_lst as $wrd) {
                     $wrd_lst->add($wrd);
@@ -1028,11 +1028,11 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = get_object_vars($this);
-        if ($this->from->obj != null) {
-            $vars['from'] = $this->from->obj->name_dsp();
+        if ($this->from->obj() != null) {
+            $vars['from'] = $this->from->obj()->name_dsp();
         }
-        if ($this->to->obj != null) {
-            $vars['to'] = $this->to->obj->name_dsp();
+        if ($this->to->obj() != null) {
+            $vars['to'] = $this->to->obj()->name_dsp();
         }
         return $vars;
     }
@@ -1223,7 +1223,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
             $result .= $this->verb->name() . ' '; // e.g. is a
             $result .= $this->to->name();       // e.g. Country
         }
-        $result .= ' (' . $this->from->id . ',' . $this->verb->id() . ',' . $this->to->id;
+        $result .= ' (' . $this->from->id() . ',' . $this->verb->id() . ',' . $this->to->id();
         if ($this->id > 0) {
             $result .= ' -> ' . $this->id . ')';
         }
@@ -1426,22 +1426,22 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
     {
         $phr = new phrase($this->user());
         // the triple has positive id, but the phrase uses a negative id
-        $phr->id = $this->id * -1;
         $phr->set_name($this->name, triple::class);
-        $phr->obj = $this;
+        $phr->set_obj($this);
         log_debug('triple->phrase of ' . $this->dsp_id());
         return $phr;
     }
 
     /**
      * @returns term the triple object cast into a term object
+     * TODO remove lines not needed any more
      */
     function term(): term
     {
         $trm = new term($this->user());
         $trm->set_id_from_obj($this->id, self::class);
         $trm->set_name($this->name(), triple::class);
-        $trm->obj = $this;
+        $trm->set_obj($this);
         log_debug($this->dsp_id());
         return $trm;
     }

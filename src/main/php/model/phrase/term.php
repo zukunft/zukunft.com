@@ -45,6 +45,7 @@
 
 namespace model;
 
+include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once API_PHRASE_PATH . 'term.php';
 include_once API_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'triple.php';
@@ -64,7 +65,7 @@ use html\html_base;
 use html\term_dsp;
 use html\word_dsp;
 
-class term extends db_object
+class term extends combine_named
 {
 
     /*
@@ -91,13 +92,6 @@ class term extends db_object
 
 
     /*
-     * object vars
-     */
-
-    // the term vars, which is probably just the related object
-    public ?object $obj = null;  // the word, triple, formula or verb object
-
-    /*
      * construct and map
      */
 
@@ -107,15 +101,34 @@ class term extends db_object
      */
     function __construct(user $usr, string $class = word::class)
     {
-        parent::__construct();
-        $this->reset();
-        $this->set_obj($class);
+        $this->set_obj_by_class($class);
         $this->set_user($usr);
+        $this->reset();
+        parent::__construct();
     }
 
     function reset(): void
     {
-        $this->id = 0;
+        $this->set_id(0);
+    }
+
+    /**
+     * map the main field from the term view to a term object
+     * @return bool true if at least one term has been loaded
+     */
+    function row_mapper(array $db_row): bool
+    {
+        $result = false;
+        $this->set_id(0);
+        if ($db_row != null) {
+            if ($db_row[self::FLD_ID] != 0) {
+                $this->set_obj_from_id($db_row[self::FLD_ID]);
+                $this->set_name($db_row[self::FLD_NAME]);
+                $this->set_usage($db_row[self::FLD_USAGE]);
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -140,37 +153,48 @@ class term extends db_object
         return $result;
     }
 
-    /**
-     * map the main field from the term view to a term object
-     * @return bool true if at least one term has been loaded
+    /*
+     * set and get
      */
-    function row_mapper(array $db_row): bool
+
+    /**
+     * create the expected object based on the id
+     * must have the same logic as the database view and the frontend
+     * @param int $id the term id as received e.g. from the database view
+     * @return void
+     */
+    private function set_obj_from_id(int $id): void
     {
-        $result = false;
-        $this->id = 0;
-        if ($db_row != null) {
-            if ($db_row[self::FLD_ID] != 0) {
-                $this->id = $db_row[self::FLD_ID];
-                $this->set_obj_from_id();
-                $this->set_name($db_row[self::FLD_NAME]);
-                $this->set_usage($db_row[self::FLD_USAGE]);
-                $result = true;
+        if ($id > 0) {
+            if ($id % 2 == 0) {
+                $this->obj = new formula($this->user());
+            } else {
+                $this->obj = new word($this->user());
+            }
+        } else {
+            if ($id % 2 == 0) {
+                $this->obj = new verb();
+            } else {
+                $this->obj = new triple($this->user());
             }
         }
-        return $result;
+        $this->set_id($id);
     }
 
-    /*
-     * get, set and debug functions
-     */
-
     /**
+     * set the object id based on the given term id
+     * must have the same logic as the api and the frontend
+     *
      * @param int|null $id the term (not the object!) id
      * @return void
      */
     function set_id(?int $id): void
     {
-        $this->id = $id;
+        if ($id % 2 == 0) {
+            $this->set_obj_id(abs($id / 2));
+        } else {
+            $this->set_obj_id(abs(($id + 1) / 2));
+        }
     }
 
     /**
@@ -210,47 +234,12 @@ class term extends db_object
     }
 
     /**
-     * set the id of the word, triple, formula or verb object based on the term id
-     * @return void
-     */
-    private
-    function set_obj_id(): void
-    {
-        $this->obj->id = $this->id_obj();
-    }
-
-    /**
-     * create the expected object based on the id
-     * must have the same logic as the database view and the frontend
-     * @return void
-     */
-    private
-    function set_obj_from_id(): void
-    {
-        if ($this->id > 0) {
-            if ($this->id % 2 == 0) {
-                $this->obj = new formula($this->user());
-            } else {
-                $this->obj = new word($this->user());
-            }
-        } else {
-            if ($this->id % 2 == 0) {
-                $this->obj = new verb();
-            } else {
-                $this->obj = new triple($this->user());
-            }
-        }
-        $this->set_obj_id();
-    }
-
-    /**
      * create the word, triple, formula or verb object based on the given class
      *
      * @param string $class the calling class name
      * @return void
      */
-    private
-    function set_obj(string $class): void
+    private function set_obj_by_class(string $class): void
     {
         if ($class == word::class) {
             $this->obj = new word($this->user());
@@ -276,7 +265,7 @@ class term extends db_object
     function set_name(string $name, string $class = ''): void
     {
         if ($class != '' and $this->obj == null) {
-            $this->set_obj($class);
+            $this->set_obj_by_class($class);
         }
         $this->obj->set_name($name);
     }
@@ -292,7 +281,7 @@ class term extends db_object
     function set_user(user $usr, string $class = ''): void
     {
         if ($class != '' and $this->obj == null) {
-            $this->set_obj($class);
+            $this->set_obj_by_class($class);
         }
         $this->obj->set_user($usr);
     }
@@ -606,7 +595,7 @@ class term extends db_object
             if ($wrd->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
                 $result = $this->load_formula_by_id($id);
             } else {
-                $this->set_id_from_obj($wrd->id, word::class);
+                $this->set_id_from_obj($wrd->id(), word::class);
                 $this->obj = $wrd;
                 $result = true;
             }
@@ -624,7 +613,7 @@ class term extends db_object
         if ($including_triples) {
             $trp = new triple($this->user());
             if ($trp->load_by_id($id, triple::class)) {
-                $this->set_id_from_obj($trp->id, triple::class);
+                $this->set_id_from_obj($trp->id(), triple::class);
                 $this->obj = $trp;
                 $result = true;
             }
@@ -642,7 +631,7 @@ class term extends db_object
         $result = false;
         $frm = new formula($this->user());
         if ($frm->load_by_id($id, formula::class)) {
-            $this->set_id_from_obj($frm->id, formula::class);
+            $this->set_id_from_obj($frm->id(), formula::class);
             $this->obj = $frm;
             $result = true;
         }
@@ -708,7 +697,7 @@ class term extends db_object
             if ($wrd->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
                 $result = $this->load_formula_by_name($name);
             } else {
-                $this->set_id_from_obj($wrd->id, word::class);
+                $this->set_id_from_obj($wrd->id(), word::class);
                 $this->obj = $wrd;
                 $result = true;
             }
@@ -726,7 +715,7 @@ class term extends db_object
         if ($including_triples) {
             $trp = new triple($this->user());
             if ($trp->load_by_name($name, triple::class)) {
-                $this->set_id_from_obj($trp->id, triple::class);
+                $this->set_id_from_obj($trp->id(), triple::class);
                 $this->obj = $trp;
                 $result = true;
             }
@@ -744,7 +733,7 @@ class term extends db_object
         $result = false;
         $frm = new formula($this->user());
         if ($frm->load_by_name($name, formula::class)) {
-            $this->set_id_from_obj($frm->id, formula::class);
+            $this->set_id_from_obj($frm->id(), formula::class);
             $this->obj = $frm;
             $result = true;
         }

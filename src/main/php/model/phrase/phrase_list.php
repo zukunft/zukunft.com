@@ -977,10 +977,10 @@ class phrase_list extends sandbox_list_named
 
         // fill the word list
         foreach ($this->lst as $phr) {
-            if ($phr->obj == null) {
+            if ($phr->obj() == null) {
                 log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
             } else {
-                if ($phr->obj->id() == 0) {
+                if ($phr->obj()->id() == 0) {
                     log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
                 } else {
                     if ($phr->name() == '') {
@@ -988,11 +988,11 @@ class phrase_list extends sandbox_list_named
                         log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                     }
                     // TODO check if old can ge removed: if ($phr->id > 0) {
-                    if (get_class($phr->obj) == word::class or get_class($phr->obj) == word_dsp::class) {
-                        $wrd_lst->add($phr->obj);
-                    } elseif (get_class($phr->obj) == triple::class) {
+                    if (get_class($phr->obj()) == word::class or get_class($phr->obj()) == word_dsp::class) {
+                        $wrd_lst->add($phr->obj());
+                    } elseif (get_class($phr->obj()) == triple::class) {
                         // use the recursive triple function to include the foaf words
-                        $sub_wrd_lst = $phr->obj->wrd_lst();
+                        $sub_wrd_lst = $phr->obj()->wrd_lst();
                         foreach ($sub_wrd_lst->lst as $wrd) {
                             if ($wrd->name() == '') {
                                 $wrd->load();
@@ -1001,7 +1001,7 @@ class phrase_list extends sandbox_list_named
                             $wrd_lst->add($wrd);
                         }
                     } else {
-                        log_err('The phrase list ' . $this->dsp_id() . ' contains ' . $phr->obj->dsp_id() . ', which is neither a word nor a phrase, but it is a ' . get_class($phr->obj), 'phrase_list->wrd_lst_all');
+                        log_err('The phrase list ' . $this->dsp_id() . ' contains ' . $phr->obj()->dsp_id() . ', which is neither a word nor a phrase, but it is a ' . get_class($phr->obj), 'phrase_list->wrd_lst_all');
                     }
                 }
             }
@@ -1020,8 +1020,8 @@ class phrase_list extends sandbox_list_named
         $wrd_lst = new word_list($this->user());
         foreach ($this->lst as $phr) {
             if ($phr->id() > 0 or $phr->name() != '') {
-                if (isset($phr->obj) and $phr->obj::class == word::class) {
-                    $wrd_lst->add($phr->obj);
+                if ($phr->obj() !== null and $phr->obj()::class == word::class) {
+                    $wrd_lst->add($phr->obj());
                 }
             }
         }
@@ -1037,8 +1037,8 @@ class phrase_list extends sandbox_list_named
         $trp_lst = new triple_list($this->user());
         foreach ($this->lst as $phr) {
             if ($phr->id() < 0 or $phr->name() != '') {
-                if (isset($phr->obj) and $phr->obj::class == triple::class) {
-                    $trp_lst->add($phr->obj);
+                if (isset($phr->obj) and $phr->obj()::class == triple::class) {
+                    $trp_lst->add($phr->obj());
                 }
             }
         }

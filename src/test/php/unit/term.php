@@ -41,7 +41,10 @@ include_once WEB_PHRASE_PATH . 'term.php';
 use api\formula_api;
 use api\triple_api;
 use api\word_api;
+use html\formula_dsp;
 use html\term_dsp;
+use html\triple_dsp;
+use html\verb_dsp;
 use html\word_dsp;
 use model\formula;
 use model\sql_db;
@@ -71,20 +74,17 @@ class term_unit_tests
         $t->assert($t->name . 'word id', $trm->id_obj(), $wrd->id());
         $t->assert($t->name . 'word name', $trm->name(), $wrd->name_dsp());
 
-        $trp = new triple($usr);
-        $trp->set(1, triple_api::TN_READ);
+        $trp = $t->dummy_triple();
         $trm = $trp->term();
         $t->assert($t->name . 'triple id', $trm->id_obj(), $trp->id());
         $t->assert($t->name . 'triple name', $trm->name(), $trp->name());
 
-        $frm = new formula($usr);
-        $frm->set(1, formula_api::TN_READ);
+        $frm = $t->dummy_formula();
         $trm = $frm->term();
         $t->assert($t->name . 'formula id', $trm->id_obj(), $frm->id());
         $t->assert($t->name . 'formula name', $trm->name(), $frm->name());
 
-        $vrb = new verb(1, verb::IS_A);
-        $vrb->set_user($usr);
+        $vrb = $t->dummy_verb();
         $trm = $vrb->term();
         $t->assert($t->name . 'verb id', $trm->id_obj(), $vrb->id());
         $t->assert($t->name . 'verb name', $trm->name(), $vrb->name());
@@ -104,6 +104,12 @@ class term_unit_tests
 
         $fig = $t->dummy_term();
         $t->assert_api_to_dsp($fig, new term_dsp(new word_dsp()));
+        $fig = $t->dummy_term_triple();
+        $t->assert_api_to_dsp($fig, new term_dsp(new triple_dsp()));
+        $fig = $t->dummy_term_formula();
+        $t->assert_api_to_dsp($fig, new term_dsp(new formula_dsp()));
+        $fig = $t->dummy_term_verb();
+        $t->assert_api_to_dsp($fig, new term_dsp(new verb_dsp()));
 
     }
 

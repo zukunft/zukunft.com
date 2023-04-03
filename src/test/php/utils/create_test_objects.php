@@ -124,11 +124,20 @@ class test_new_obj extends test_base
         return $wrd;
     }
 
+    /**
+     * @return verb a user defined verb
+     */
     function dummy_verb(): verb
     {
-        return new verb(1, verb_api::TN_READ, verb_api::TC_READ);
+        global $usr;
+        $vrb = new verb(1, verb_api::TN_READ, verb_api::TC_READ);
+        $vrb->set_user($usr);
+        return $vrb;
     }
 
+    /**
+     * @return verb a standard verb with user null
+     */
     function dummy_verb_is(): verb
     {
         return new verb(2, verb_api::TN_IS_A, verb_api::TC_IS_A);
@@ -166,6 +175,21 @@ class test_new_obj extends test_base
     function dummy_term(): term
     {
         return $this->dummy_word()->term();
+    }
+
+    function dummy_term_triple(): term
+    {
+        return $this->dummy_triple()->term();
+    }
+
+    function dummy_term_formula(): term
+    {
+        return $this->dummy_formula()->term();
+    }
+
+    function dummy_term_verb(): term
+    {
+        return $this->dummy_verb()->term();
     }
 
 

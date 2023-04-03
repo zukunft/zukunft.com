@@ -83,7 +83,7 @@ class phrase_api extends combine_named_api implements JsonSerializable
     {
         global $phrase_types;
         if ($id < 0) {
-            $this->set_obj(new triple_api($id * -1, $name, $from, $verb, $to));
+            $this->set_obj(new triple_api($id, $name, $from, $verb, $to));
         } else {
             $this->set_obj(new word_api($id, $name));
         }
@@ -107,18 +107,26 @@ class phrase_api extends combine_named_api implements JsonSerializable
      * set and get
      */
 
+    /**
+     * TODO remove this logic from the API and keep it only in the model, the database view and the frontend
+     *
+     * set the object id based on the given phrase id
+     * must have the same logic as the database view and the frontend
+     * @param int $id the phrase id that is converted to the object id
+     * @return void
+     */
     function set_id(int $id): void
     {
-        if ($this->is_word()) {
-            $this->obj()?->set_id($id);
-        } else {
-            $this->obj()?->set_id($id * -1);
-        }
+        $this->set_obj_id(abs($id));
     }
 
     function id(): int
     {
-        return $this->obj()?->id();
+        if ($this->is_word()) {
+            return $this->obj_id();
+        } else {
+            return $this->obj_id() * -1;
+        }
     }
 
 

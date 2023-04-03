@@ -74,6 +74,7 @@ class sandbox_typed_api extends sandbox_named_api
      */
 
     /**
+     * TODO check if this needs to be moved to the word and triple object
      * @return phrase_api the related phrase api or display object with the basic values filled
      */
     function phrase(): phrase_api
@@ -83,8 +84,9 @@ class sandbox_typed_api extends sandbox_named_api
             $phr->set_type_id($this->type_id());
             return $phr;
         } elseif ($this::class == triple_api::class) {
-            $phr =  new phrase_api($this->id * -1, $this->name);
+            $phr =  new phrase_api($this->id, $this->name);
             $phr->set_type_id($this->type_id());
+            // TODO add from and to if filled
             return $phr;
         } else {
             log_err('Unexpected ' . $this::class);

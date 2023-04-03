@@ -48,6 +48,7 @@ use api\source_api;
 use api\view_api;
 use api\view_cmp_api;
 use api\word_api;
+use Exception;
 
 class sandbox_named extends sandbox
 {
@@ -128,6 +129,28 @@ class sandbox_named extends sandbox
         return $this->name;
     }
 
+    /**
+     * set the description of this named user sandbox object which explains the object for the user
+     * set and get of the description is needed to use the same function for phrase or term
+     *
+     * @param string|null $description the name of this named user sandbox object e.g. word set in the related object
+     * @return void
+     */
+    function set_description(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * get the description of the sandbox object
+     *
+     * @return string|null the description from the object e.g. word using the same function as the phrase and term
+     */
+    function description(): ?string
+    {
+        return $this->description;
+    }
+
 
     /*
      * cast
@@ -142,7 +165,7 @@ class sandbox_named extends sandbox
     {
         $trm = new term($this->user());
         $trm->set_id($this->id());
-        $trm->obj = $this;
+        $trm->set_obj($this);
         return $trm;
     }
 
@@ -624,7 +647,7 @@ class sandbox_named extends sandbox
             or $this->obj_name == sql_db::TBL_FORMULA) {
             $similar_trm = $this->get_term();
             if ($similar_trm->id_obj() > 0) {
-                $result = $similar_trm->obj;
+                $result = $similar_trm->obj();
                 if (!$this->is_similar_named($result)) {
                     log_err($this->dsp_id() . ' is supposed to be similar to ' . $result->dsp_id() . ', but it seems not');
                 }
