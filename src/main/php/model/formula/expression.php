@@ -747,7 +747,7 @@ class expression
         }
         if ($trm != null) {
             if ($trm->id() != 0) {
-                $elm->obj = $trm->obj;
+                $elm->obj = $trm->obj();
                 $elm->symbol = $this->get_db_sym($trm);
             } else {
                 log_warning($elm->type . ' with id ' . $id . ' not found');

@@ -934,8 +934,9 @@ class phrase_list extends sandbox_list_named
                 $wrd_ids = explode(",", $wrd_ids_txt);
                 foreach ($wrd_ids as $id) {
                     if (!in_array($id, $ids)) {
-                        $phr = new phrase($this->user());
-                        $phr->set_id($id);
+                        $wrd = new word($this->user());
+                        $wrd->set_id($id);
+                        $phr = $wrd->phrase();
                         $this->lst[] = $phr;
                         $ids[] = $id;
                     }
@@ -948,10 +949,10 @@ class phrase_list extends sandbox_list_named
             if ($trp_ids_txt != '') {
                 $trp_ids = explode(",", $trp_ids_txt);
                 foreach ($trp_ids as $id) {
-                    $id = $id * -1;
                     if (!in_array($id, $ids)) {
-                        $phr = new phrase($this->user());
-                        $phr->set_id($id);
+                        $trp = new triple($this->user());
+                        $trp->set_id($id);
+                        $phr = $trp->phrase();
                         $this->lst[] = $phr;
                         $ids[] = $id;
                     }

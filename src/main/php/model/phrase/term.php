@@ -77,7 +77,12 @@ class term extends combine_named
     const FLD_ID = 'term_id';
     const FLD_NAME = 'term_name';
     const FLD_USAGE = 'usage'; // included in the database view to be able to show the user the most relevant terms
+    const FLD_TYPE = 'term_type_id'; // the phrase type for word or triple or the formula type for formulas; not used for verbs
 
+    // the common phrase database field names excluding the id and excluding the user specific fields
+    const FLD_NAMES = array(
+        self::FLD_TYPE
+    );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
         sql_db::FLD_DESCRIPTION
@@ -97,14 +102,16 @@ class term extends combine_named
 
     /**
      * always set the user because a term is always user specific
-     * @param user $usr the user who requested to see this term
+     * @param user|word|triple|formula|verb|null $obj the user who requested to see this term
      */
-    function __construct(user $usr, string $class = word::class)
+    function __construct(user|word|triple|formula|verb|null $obj)
     {
-        $this->set_obj_by_class($class);
-        $this->set_user($usr);
-        $this->reset();
-        parent::__construct();
+        if ($obj::class == user::class) {
+            // create a dummy word object to remember the user
+            parent::__construct(new word($obj));
+        } else {
+            parent::__construct($obj);
+        }
     }
 
     function reset(): void
@@ -113,6 +120,7 @@ class term extends combine_named
     }
 
     /**
+     * TODO deprecate and replace with row_mapper_obj
      * map the main field from the term view to a term object
      * @return bool true if at least one term has been loaded
      */
@@ -135,21 +143,22 @@ class term extends combine_named
      * map a complete underlying object to a term
      * @return bool true if at least one term has been loaded
      */
-    function row_mapper_obj(array $db_row, string $class): bool
+    function row_mapper_obj(array $db_row, string $class, string $id_fld, string $name_fld, string $type_fld = '', bool $load_std = false, bool $allow_usr_protect = true): bool
     {
         $result = false;
         if ($class == word::class) {
-            $result = $this->get_word()->row_mapper($db_row);
+            $result = $this->get_word()->row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         } elseif ($class == triple::class) {
-            $result = $this->get_triple()->row_mapper($db_row);
+            $result = $this->get_triple()->row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         } elseif ($class == formula::class) {
-            $result = $this->get_formula()->row_mapper($db_row);
+            $result = $this->get_formula()->row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         } elseif ($class == verb::class) {
             $result = $this->get_verb()->row_mapper($db_row);
         } else {
             log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
         }
-        $this->set_id_from_obj($this->id_obj(), $class);
+        // overwrite the term id in the object with the real object id
+        $this->set_id($db_row[$id_fld]);
         return $result;
     }
 
@@ -158,12 +167,33 @@ class term extends combine_named
      */
 
     /**
+     * create the expected object based on the class name
+     * must have the same logic as the database view and the frontend
+     * @param string $class the term id as received e.g. from the database view
+     * @return void
+     */
+    function set_obj_from_class(string $class): void
+    {
+        if ($class == triple::class) {
+            $this->obj = new triple($this->user());
+        } elseif ($class == formula::class) {
+            $this->obj = new formula($this->user());
+        } elseif ($class == verb::class) {
+            $this->obj = new verb();
+        } else {
+            $this->obj = new word($this->user());
+        }
+    }
+
+    /**
      * create the expected object based on the id
      * must have the same logic as the database view and the frontend
+     * TODO dismiss?
+     *
      * @param int $id the term id as received e.g. from the database view
      * @return void
      */
-    private function set_obj_from_id(int $id): void
+    function set_obj_from_id(int $id): void
     {
         if ($id > 0) {
             if ($id % 2 == 0) {
@@ -185,27 +215,28 @@ class term extends combine_named
      * set the object id based on the given term id
      * must have the same logic as the api and the frontend
      *
-     * @param int|null $id the term (not the object!) id
+     * @param int $id the term (not the object!) id
      * @return void
      */
-    function set_id(?int $id): void
+    function set_id(int $id): void
     {
         if ($id % 2 == 0) {
-            $this->set_obj_id(abs($id / 2));
+            $this->set_obj_id(abs($id) / 2);
         } else {
-            $this->set_obj_id(abs(($id + 1) / 2));
+            $this->set_obj_id((abs($id) + 1) / 2);
         }
     }
 
     /**
      * set the term id based id the word, triple, verb or formula id
      * must have the same logic as the database view and the frontend
+     * TODO deprecate?
      *
-     * @param int|null $id the object id that is converted to the term id
+     * @param int $id the object id that is converted to the term id
      * @param string $class the class of the term object
      * @return void
      */
-    function set_id_from_obj(?int $id, string $class): void
+    function set_id_from_obj(int $id, string $class): void
     {
         if ($id != null) {
             if ($class == word::class) {
@@ -303,41 +334,45 @@ class term extends combine_named
 
     /**
      * @return int the id of the term witch is  (corresponding to id_obj())
-     * e.g 1 for a word, -1 for a triple, 2 for a formula and -2 for a verb
+     * must have the same logic as the database view and the frontend
+     *
+     * e.g.  1 for a word with id 1
+     *  and  3 for a word with id 2
+     *  and -1 for a triple with id 1
+     *  and -3 for a triple with id 2
+     *  and  2 for a formula with id 1
+     *  and  4 for a formula with id 2
+     *  and -2 for a verb with id 1
+     *  and -4 for a verb with id 2
+     * , -1 for a triple, 2 for a formula and -2 for a verb
      */
     function id(): int
     {
-        return $this->id;
+        if ($this->is_word()) {
+            return ($this->obj_id() * 2) - 1;
+        } elseif ($this->is_triple()) {
+            return ($this->obj_id() * -2) + 1;
+        } elseif ($this->is_formula()) {
+            return ($this->obj_id() * 2);
+        } elseif ($this->is_verb()) {
+            return ($this->obj_id() * -2);
+        } else {
+            return 0;
+        }
     }
 
     /**
      * get the object id based on the term id
-     * must have the same logic as the database view and the frontend
      *
-     * @return int the id of the containing object witch is (corresponding to id())
-     * e.g if the term id is  1 and the object is a word    with id 1 simply 1 is returned
-     * but if the term id is -1 and the object is a triple  with id 1   also 1 is returned
-     * and if the term id is  2 and the object is a formula with id 1   also 1 is returned
-     * and if the term id is -2 and the object is a verb    with id 1   also 1 is returned
+     * @return int|null the id of the containing object witch is (corresponding to id())
+     * e.g. for a word    with id 1 simply 1 is returned
+     *  and for a triple  with id 1   also 1 is returned
+     *  and for a formula with id 1   also 1 is returned
+     *  and for a verb    with id 1   also 1 is returned
      */
-    function id_obj(): int
+    function id_obj(): ?int
     {
-        $result = 0;
-        // use directly the object id
-        if (isset($this->obj)) {
-            if ($this->obj->id() != 0) {
-                $result = $this->obj->id();
-            }
-        }
-        // as fallback recreate the id based on the term id
-        if ($result == 0) {
-            if ($this->id % 2 == 0) {
-                $result = abs($this->id) / 2;
-            } else {
-                $result = (abs($this->id) + 1) / 2;
-            }
-        }
-        return $result;
+        return $this->obj?->id();
     }
 
     function name(): string
@@ -556,19 +591,19 @@ class term extends combine_named
 
         if ($class == word::class) {
             if ($this->load_word_by_id($id)) {
-                $result = $this->obj->id;
+                $result = $this->obj_id();
             }
         } elseif ($class == triple::class) {
             if ($this->load_triple_by_id($id, $including_triples)) {
-                $result = $this->obj->id;
+                $result = $this->obj_id();
             }
         } elseif ($class == formula::class) {
             if ($this->load_formula_by_id($id)) {
-                $result = $this->obj->id;
+                $result = $this->obj_id();
             }
         } elseif ($class == verb::class) {
             if ($this->load_verb_by_id($id)) {
-                $result = $this->obj->id;
+                $result = $this->obj_id();
             }
         } else {
             log_err('Unexpected class ' . $class . ' when creating term ' . $this->dsp_id());
@@ -649,7 +684,7 @@ class term extends combine_named
         $vrb->set_name($this->name());
         $vrb->set_user($this->user());
         if ($vrb->load_by_id($id)) {
-            $this->set_id_from_obj($vrb->id() , verb::class);
+            $this->set_id_from_obj($vrb->id(), verb::class);
             $this->obj = $vrb;
             $result = true;
         }
@@ -668,13 +703,13 @@ class term extends combine_named
         $result = 0;
 
         if ($this->load_word_by_name($name)) {
-            $result = $this->obj->id;
+            $result = $this->id();
         } elseif ($this->load_triple_by_name($name, $including_triples)) {
-            $result = $this->obj->id;
+            $result = $this->id();
         } elseif ($this->load_formula_by_name($name)) {
-            $result = $this->obj->id;
+            $result = $this->id();
         } elseif ($this->load_verb_by_name($name)) {
-            $result = $this->obj->id;
+            $result = $this->id();
         }
         log_debug('term->load loaded id "' . $this->id() . '" for ' . $this->name());
 
@@ -751,7 +786,7 @@ class term extends combine_named
         $vrb->set_name($this->name());
         $vrb->set_user($this->user());
         if ($vrb->load_by_name($name)) {
-            $this->set_id_from_obj($vrb->id() , verb::class);
+            $this->set_id_from_obj($vrb->id(), verb::class);
             $this->obj = $vrb;
             $result = true;
         }

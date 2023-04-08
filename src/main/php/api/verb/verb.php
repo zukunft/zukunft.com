@@ -57,9 +57,31 @@ class verb_api extends sandbox_named_api
      * cast
      */
 
-    function term(): term_api|term_dsp
+    function term(): term_api
     {
-        return new term_api($this->id, $this->name, verb::class);
+        return new term_api($this);
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return string the json api message as a text string
+     */
+    function get_json(): string
+    {
+        return json_encode($this->jsonSerialize());
+    }
+
+    /**
+     * an array of the verb vars without empty values that are not needed
+     */
+    function jsonSerialize(): array
+    {
+        $vars = json_decode(json_encode($this), true);
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 }

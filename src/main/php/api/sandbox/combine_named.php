@@ -43,25 +43,13 @@ class combine_named_api extends combine_object_api
      * construct and map
      */
 
-    function __construct(
-        int    $id = 0,
-        string $name = '',
-        string $description = null,
-        int    $type_id = null)
-    {
-        $this->set_obj_id($id);
-        $this->set_name($name);
-        $this->set_description($description);
-        $this->set_type_id($type_id);
-    }
-
     /**
-     * set the object vars of a phrase or term to the neutral initial value
+     * reset the in memory fields used e.g. if some ids are updated
      */
     function reset(): void
     {
         $this->set_obj_id(0);
-        $this->set_name('');
+        $this->set_name(null);
         $this->set_description(null);
         $this->set_type_id(null);
     }

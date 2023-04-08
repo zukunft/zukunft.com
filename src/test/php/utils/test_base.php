@@ -57,6 +57,7 @@ include_once MODEL_USER_PATH . 'user.php';
 use cfg\config;
 use controller\controller;
 use html\html_base;
+use model\combine_object;
 use model\db_object;
 use model\formula;
 use model\library;
@@ -1017,6 +1018,28 @@ class test_base
     }
 
     /**
+     * check the loading by id and name of a combine object
+     *
+     * @param combine_object $usr_obj the combine object e.g. a phrase, term or figure
+     * @param string $name the name
+     * @return bool true if all tests are fine
+     */
+    function assert_load_combine(combine_object $usr_obj, string $name): bool
+    {
+        // check the loading via id and check the name
+        $usr_obj->load_by_id(1, $usr_obj::class);
+        $result = $this->assert($usr_obj::class . '->load', $usr_obj->name(), $name);
+
+        // ... and check the loading via name and check the id
+        if ($result) {
+            $usr_obj->reset();
+            $usr_obj->load_by_name($name, $usr_obj::class);
+            $result = $this->assert($usr_obj::class . '->load', $usr_obj->id(), 1);
+        }
+        return $result;
+    }
+
+    /**
      * check the not changed SQL statements of a user sandbox object e.g. word, triple, value or formulas
      *
      * @param sql_db $db_con does not need to be connected to a real database
@@ -1487,11 +1510,11 @@ class test_base
         }
         foreach ($val->phr_lst()->lst() as $phr) {
             if ($phr->id() == 0) {
-                $phr->obj->set_id($this->next_seq_nbr());
-                if ($phr->obj::class == word::class) {
-                    $phr->set_id($phr->obj->id());
+                $phr->obj()->set_id($this->next_seq_nbr());
+                if ($phr->obj()::class == word::class) {
+                    $phr->set_id($phr->obj()->id());
                 } else {
-                    $phr->set_id($phr->obj->id() * -1);
+                    $phr->set_id($phr->obj()->id() * -1);
                 }
             }
         }

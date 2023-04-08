@@ -43,25 +43,13 @@ class combine_named extends combine_object
      * construct and map
      */
 
-    function __construct(
-        int    $id = 0,
-        string $name = '',
-        string $description = null,
-        int    $type_id = null)
-    {
-        $this->set_obj_id($id);
-        $this->set_name($name);
-        $this->set_description($description);
-        $this->set_type_id($type_id);
-    }
-
     /**
      * set the object vars of a phrase or term to the neutral initial value
      */
     function reset(): void
     {
         $this->set_obj_id(0);
-        $this->set_name('');
+        $this->set_name(null);
         $this->set_description(null);
         $this->set_type_id(null);
     }
@@ -83,13 +71,13 @@ class combine_named extends combine_object
     }
 
     /**
-     * @return int the id of the object
+     * @return int|null the id of the object
      * e.g. 1 for the triple Pi (math)
      * whereas the phrase has the id -1
      * the id of the phrase or term is created
      * by the function id() of phrase or term
      */
-    function obj_id(): int
+    function obj_id(): ?int
     {
         return $this->obj()?->id();
     }

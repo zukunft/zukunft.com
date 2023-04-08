@@ -36,6 +36,7 @@ include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_FORMULA_PATH . 'formula_value_list.php';
 
+use api\phrase_api;
 use api\phrase_list_api;
 use api\value_api;
 use api\view_cmp_api;
@@ -47,6 +48,7 @@ use html\html_base;
 use html\html_selector;
 use html\view_dsp;
 use model\library;
+use model\phrase;
 use model\verb;
 use model\view;
 use model\view_cmp;
@@ -124,14 +126,14 @@ class html_unit_tests
 
         // create a test set of phrase
         $phr_id = 1;
-        $phr_zh = new \api\phrase_api($phr_id, word_api::TN_ZH); $phr_id++;
-        $phr_city = new \api\phrase_api($phr_id, word_api::TN_CITY); $phr_id++;
-        $phr_canton = new \api\phrase_api($phr_id, word_api::TN_CANTON); $phr_id++;
-        $phr_ch = new \api\phrase_api($phr_id, word_api::TN_CH); $phr_id++;
-        $phr_inhabitant = new \api\phrase_api($phr_id, word_api::TN_INHABITANT); $phr_id++;
-        $phr_2019 = new \api\phrase_api($phr_id, word_api::TN_2019); $phr_id++;
-        $phr_mio = new \api\phrase_api($phr_id, word_api::TN_MIO_SHORT);
-        $phr_pct = new \api\phrase_api($phr_id, word_api::TN_PCT);
+        $phr_zh = $this->phrase_api_word( $phr_id, word_api::TN_ZH); $phr_id++;
+        $phr_city = $this->phrase_api_word($phr_id, word_api::TN_CITY); $phr_id++;
+        $phr_canton = $this->phrase_api_word($phr_id, word_api::TN_CANTON); $phr_id++;
+        $phr_ch = $this->phrase_api_word($phr_id, word_api::TN_CH); $phr_id++;
+        $phr_inhabitant = $this->phrase_api_word($phr_id, word_api::TN_INHABITANT); $phr_id++;
+        $phr_2019 = $this->phrase_api_word($phr_id, word_api::TN_2019); $phr_id++;
+        $phr_mio = $this->phrase_api_word($phr_id, word_api::TN_MIO_SHORT);
+        $phr_pct = $this->phrase_api_word($phr_id, word_api::TN_PCT);
 
         // create a test set of phrase groups
         $grp_id = 1;
@@ -214,6 +216,12 @@ class html_unit_tests
         $wrd->set_name(word_api::TN_ADD);
         $cmp->obj = $wrd;
 
+    }
+
+    function phrase_api_word($id, $name): phrase_api
+    {
+        $wrd = new word_api($id, $name);
+        return new phrase_api($wrd);
     }
 
 }

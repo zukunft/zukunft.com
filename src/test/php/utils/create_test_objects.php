@@ -120,6 +120,7 @@ class test_new_obj extends test_base
         global $usr;
         $wrd = new word($usr);
         $wrd->set(1, word_api::TN_READ);
+        $wrd->description = word_api::TD_READ;
         $wrd->set_type(phrase_type::MATH_CONST);
         return $wrd;
     }
@@ -435,12 +436,12 @@ class test_new_obj extends test_base
      * create a new word e.g. for unit testing with a given type
      *
      * @param string $wrd_name the name of the word that should be created
-     * @param int|null $id to force setting the id for unit testing
+     * @param int $id to force setting the id for unit testing
      * @param string|null $wrd_type_code_id the id of the predefined word type which the new word should have
      * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
      * @return word the created word object
      */
-    function new_word(string $wrd_name, ?int $id = null, ?string $wrd_type_code_id = null, ?user $test_usr = null): word
+    function new_word(string $wrd_name, int $id = 0, ?string $wrd_type_code_id = null, ?user $test_usr = null): word
     {
         global $usr;
 
@@ -538,7 +539,7 @@ class test_new_obj extends test_base
                         string  $from_name,
                         string  $verb_code_id,
                         string  $to_name,
-                        ?int    $id = null,
+                        int     $id = 0,
                         ?string $wrd_type_code_id = null,
                         ?user   $test_usr = null): triple
     {
@@ -691,12 +692,12 @@ class test_new_obj extends test_base
      * create a new formula e.g. for unit testing with a given type
      *
      * @param string $frm_name the name of the formula that should be created
-     * @param int|null $id to force setting the id for unit testing
+     * @param int $id to force setting the id for unit testing
      * @param string|null $frm_type_code_id the id of the predefined formula type which the new formula should have
      * @param user|null $test_usr if not null the user for whom the formula should be created to test the user sandbox
      * @return formula the created formula object
      */
-    function new_formula(string $frm_name, ?int $id = null, ?string $frm_type_code_id = null, ?user $test_usr = null): formula
+    function new_formula(string $frm_name, int $id = 0, ?string $frm_type_code_id = null, ?user $test_usr = null): formula
     {
         global $usr;
         global $formula_types;
@@ -980,10 +981,10 @@ class test_new_obj extends test_base
      * create a new verb e.g. for unit testing with a given type
      *
      * @param string $vrb_name the name of the verb that should be created
-     * @param int|null $id to force setting the id for unit testing
+     * @param int $id to force setting the id for unit testing
      * @return verb the created verb object
      */
-    function new_verb(string $vrb_name, ?int $id = null): verb
+    function new_verb(string $vrb_name, int $id = 0): verb
     {
         global $usr;
         if ($id == null) {

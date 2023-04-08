@@ -112,7 +112,7 @@ class phrase_group_unit_tests
         $wrd3->set_id(3);
         $wrd_lst->add($wrd3);
         $phr_grp = new phrase_group($usr);
-        $phr_grp->set_id(null);
+        $phr_grp->set_id(0);
         $phr_grp->phr_lst = $wrd_lst->phrase_lst();
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $phr_grp->get_by_wrd_lst_sql();

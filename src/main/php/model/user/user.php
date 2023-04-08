@@ -170,7 +170,7 @@ class user extends db_object
 
     function reset(): void
     {
-        $this->id = null;
+        $this->id = 0;
         $this->name = null;
         $this->description = null;
         $this->ip_addr = null;

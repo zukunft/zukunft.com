@@ -193,15 +193,21 @@ class word extends sandbox_typed
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = self::FLD_ID): bool
+        string $id_fld = self::FLD_ID,
+        string $name_fld = self::FLD_NAME,
+        string $type_fld = self::FLD_TYPE): bool
     {
-        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
-            $this->name = $db_row[self::FLD_NAME];
-            $this->plural = $db_row[self::FLD_PLURAL];
+            $this->name = $db_row[$name_fld];
+            if (array_key_exists(self::FLD_PLURAL, $db_row)) {
+                $this->plural = $db_row[self::FLD_PLURAL];
+            }
             $this->description = $db_row[self::FLD_DESCRIPTION];
-            $this->type_id = $db_row[self::FLD_TYPE];
-            $this->view_id = $db_row[self::FLD_VIEW];
+            $this->type_id = $db_row[$type_fld];
+            if (array_key_exists(self::FLD_PLURAL, $db_row)) {
+                $this->view_id = $db_row[self::FLD_VIEW];
+            }
         }
         return $result;
     }
@@ -1707,7 +1713,7 @@ class word extends sandbox_typed
      */
     function term(): term
     {
-        $trm = new term($this->user(), self::class);
+        $trm = new term($this->user());
         $trm->set_id_from_obj($this->id, self::class);
         $trm->set_obj($this);
         log_debug($this->dsp_id());

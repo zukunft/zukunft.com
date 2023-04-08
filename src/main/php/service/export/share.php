@@ -36,7 +36,7 @@ $share_types = array();
 class share_type_old {
 
   // database fields
-  public ?int $id             = null; // the database id of the state type
+  public int $id              = 0;    // the database id of the state type
   public ?string $name        = null; // the person who wants to see something
   public ?string $comment     = '';   // the source description that is shown as a mouseover explain to the user
   public ?string $code_id     = '';   // to trigger the code functions linked to this share type

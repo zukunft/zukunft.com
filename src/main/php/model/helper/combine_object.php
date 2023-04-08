@@ -51,6 +51,21 @@ class combine_object
 
 
     /*
+     * construct and map
+     */
+
+    /**
+     * a combine object always covers an existing object
+     * e.g. used to combine word and triple to a phrase
+     * @param object $obj the object that should be covered by a common interface
+     */
+    function __construct(object $obj)
+    {
+        $this->set_obj($obj);
+    }
+
+
+    /*
      * set and get
      */
 

@@ -166,7 +166,7 @@ class sandbox extends db_object
      */
     function reset(): void
     {
-        $this->id = null;
+        $this->id = 0;
         $this->usr_cfg_id = null;
         $this->owner_id = null;
         $this->excluded = false;
@@ -329,19 +329,21 @@ class sandbox extends db_object
         $this->id = 0;
         $result = false;
         if ($db_row != null) {
-            if ($db_row[$id_fld] > 0) {
-                $this->id = $db_row[$id_fld];
-                $this->owner_id = $db_row[self::FLD_USER];
-                $this->set_excluded($db_row[self::FLD_EXCLUDED]);
-                if (!$load_std) {
-                    $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
+            if (array_key_exists($id_fld, $db_row)) {
+                if ($db_row[$id_fld] != 0) {
+                    $this->set_id($db_row[$id_fld]);
+                    $this->owner_id = $db_row[self::FLD_USER];
+                    $this->set_excluded($db_row[self::FLD_EXCLUDED]);
+                    if (!$load_std) {
+                        $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
+                    }
+                    if ($allow_usr_protect) {
+                        $this->row_mapper_usr($db_row, $id_fld);
+                    } else {
+                        $this->row_mapper_std();
+                    }
+                    $result = true;
                 }
-                if ($allow_usr_protect) {
-                    $this->row_mapper_usr($db_row, $id_fld);
-                } else {
-                    $this->row_mapper_std();
-                }
-                $result = true;
             }
         }
         return $result;
@@ -479,9 +481,9 @@ class sandbox extends db_object
         sql_db $db_con,
         string $query_name,
         string $class,
-        array $fields,
-        array $usr_fields,
-        array $usr_num_fields,
+        array  $fields,
+        array  $usr_fields,
+        array  $usr_num_fields,
     ): sql_par
     {
         $qp = new sql_par($class);
@@ -1814,7 +1816,7 @@ class sandbox extends db_object
     function get_similar(): ?sandbox
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new sandbox($this->usr);
+        return new sandbox($this->user());
     }
 
 
@@ -2264,7 +2266,11 @@ class sandbox extends db_object
     {
         $result = '';
         if ($db_rec->type_id <> $this->type_id) {
-            $log = $this->log_upd();
+            if ($this->obj_name == sql_db::TBL_TRIPLE) {
+                $log = $this->log_upd_field();
+            } else {
+                $log = $this->log_upd();
+            }
             $log->old_value = $db_rec->type_name();
             $log->old_id = $db_rec->type_id;
             $log->new_value = $this->type_name();

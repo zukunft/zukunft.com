@@ -114,7 +114,7 @@ class phrase_group extends db_object
 
     private function reset(): void
     {
-        $this->id = null;
+        $this->id = 0;
         $this->grp_name = null;
         $this->auto_name = null;
         $this->phr_lst = new phrase_list($this->usr);

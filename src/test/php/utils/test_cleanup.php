@@ -445,7 +445,7 @@ class testing extends test_api
 
             // set types of some special terms
             if ($name == word_api::TN_2020) {
-                $phr->obj->set_type(phrase_type::TIME);
+                $phr->obj()->set_type(phrase_type::TIME);
             }
 
             $phr_lst->add($phr);
@@ -472,24 +472,25 @@ class testing extends test_api
                 verb_api::TN_READ, verb::CAN_CONTAIN_NAME, verb::CAN_CONTAIN_NAME_REVERSE => verb::class,
                 default => word::class,
             };
-            $trm = new term($usr, $class);
-            $trm->set_id_from_obj($pos, $class);
+            $trm = new term($usr);
+            $trm->set_obj_from_class($class);
+            $trm->set_obj_id($pos);
             $trm->set_name($name);
 
             // ste types of some special terms
             if ($name == formula_api::TN_READ_THIS) {
-                $trm->obj->type_cl = formula_type::THIS;
-                $trm->set_id_from_obj(18, $class);
+                $trm->obj()->type_cl = formula_type::THIS;
+                $trm->set_obj_id(18, $class);
                 $wrd = new word($usr);
                 $wrd->set(174, formula_type::THIS);
-                $trm->obj->name_wrd = $wrd;
+                $trm->obj()->name_wrd = $wrd;
             }
             if ($name == formula_api::TN_READ_PRIOR) {
-                $trm->obj->type_cl = formula_type::PREV;
-                $trm->set_id_from_obj(20, $class);
+                $trm->obj()->type_cl = formula_type::PREV;
+                $trm->set_obj_id(20, $class);
                 $wrd = new word($usr);
                 $wrd->set(176, formula_type::PREV);
-                $trm->obj->name_wrd = $wrd;
+                $trm->obj()->name_wrd = $wrd;
             }
 
             $trm_lst->add($trm);

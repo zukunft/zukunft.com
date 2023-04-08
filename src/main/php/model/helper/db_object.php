@@ -41,7 +41,7 @@ class db_object
 
     // database fields that are used in all model objects
     // the database id is the unique prime key
-    protected ?int $id;
+    protected int $id;
 
     /*
      * construct and map
@@ -52,7 +52,7 @@ class db_object
      */
     function __construct()
     {
-        $this->set_id(null);
+        $this->set_id(0);
     }
 
     /*
@@ -61,18 +61,18 @@ class db_object
 
     /**
      * set the unique database id of a database object
-     * @param int|null $id used in the row mapper and to set a dummy database id for unit tests
+     * @param int $id used in the row mapper and to set a dummy database id for unit tests
      */
-    function set_id(?int $id): void
+    function set_id(int $id): void
     {
         $this->id = $id;
     }
 
     /**
-     * @return int|null the database id which is not 0 if the object has been saved
+     * @return int the database id which is not 0 if the object has been saved
      * the internal null value is used to detect if database saving has been tried
      */
-    function id(): ?int
+    function id(): int
     {
         return $this->id;
     }

@@ -42,6 +42,7 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 
+use controller\controller;
 use html\phrase_dsp;
 use html\word_dsp;
 use html\triple_dsp;
@@ -69,23 +70,9 @@ class term_api extends combine_named_api implements JsonSerializable
      * construct and map
      */
 
-    function __construct(
-        int    $id = 0,
-        string $name = '',
-        string $class = '')
+    function __construct(word_api|triple_api|formula_api|verb_api $obj)
     {
-        if ($class == word::class) {
-            $this->set_term_obj(new word_api());
-        } elseif ($class == triple::class) {
-            $this->set_term_obj(new triple_api());
-        } elseif ($class == formula::class) {
-            $this->set_term_obj(new formula_api());
-        } elseif ($class == verb::class) {
-            $this->set_term_obj(new verb_api());
-        } else {
-            $this->set_term_obj(new word_api());
-        }
-        parent::__construct($id, $name);
+        $this->set_obj($obj);
     }
 
 
@@ -98,7 +85,6 @@ class term_api extends combine_named_api implements JsonSerializable
         $this->obj = $obj;
     }
 
-
     /**
      * TODO remove this logic from the API and keep it only in the model, the database view and the frontend
      *
@@ -110,9 +96,9 @@ class term_api extends combine_named_api implements JsonSerializable
     function set_id(int $id): void
     {
         if ($id % 2 == 0) {
-            $this->set_obj_id(abs($id / 2));
+            $this->set_obj_id(abs($id) / 2);
         } else {
-            $this->set_obj_id(abs(($id + 1) / 2));
+            $this->set_obj_id((abs($id) + 1) / 2);
         }
     }
 
@@ -235,6 +221,7 @@ class term_api extends combine_named_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = parent::jsonSerialize();
+        $vars[controller::API_FLD_ID] = $this->id();
         if ($this->is_word()) {
             $vars[combine_object_api::FLD_CLASS] = self::CLASS_WORD;
         } elseif ($this->is_triple()) {

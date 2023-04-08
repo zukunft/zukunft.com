@@ -2,6 +2,7 @@ PREPARE term_list_by_ids (int,int[]) AS
     SELECT s.term_id,
            u.term_id AS user_term_id,
            s.user_id,
+           s.term_type_id,
            CASE WHEN (u.term_name   <> '' IS NOT TRUE) THEN s.term_name     ELSE u.term_name     END AS term_name,
            CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description   ELSE u.description   END AS description,
            CASE WHEN (u.usage             IS     NULL) THEN s.usage         ELSE u.usage         END AS usage,

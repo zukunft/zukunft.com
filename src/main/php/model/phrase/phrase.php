@@ -109,45 +109,21 @@ class phrase extends combine_named
 
 
     /*
-     * object vars
-     */
-
-    // database duplicate fields
-    // TODO deprecate
-    private ?user $usr = null;         // the person for whom the word is loaded, so to say the viewer
-    public ?int $usage = null;         // a higher number indicates a higher usage
-
-
-    /*
      * construct and map
      */
 
     /**
      * always set the user because a phrase is always user specific
-     * @param user $usr the user who requested to see this phrase
+     * @param user|word|triple|null $obj the word or triple that should be covered by the phrase
      */
-    function __construct(
-        user   $usr,
-        int    $id = 0,
-        string $name = '',
-        string $from = '',
-        string $verb = '',
-        string $to = '')
+    function __construct(user|word|triple|null $obj = null)
     {
-        // create the automatically related objects if requested
-        if ($from != ''
-            and $verb != ''
-            and $to != '') {
-            $this->obj = new triple($usr);
-            $this->obj->set($id * -1, $from, $verb, $to, $name);
+        if ($obj::class == user::class) {
+            // create a dummy word object to remember the user
+            parent::__construct(new word($obj));
         } else {
-            $this->obj = new word($usr);
-            if ($name != '') {
-                $this->obj->set($id, $name);
-            }
+            parent::__construct($obj);
         }
-        parent::__construct();
-        $this->set_user($usr);
     }
 
     /**
@@ -164,7 +140,7 @@ class phrase extends combine_named
         if ($db_row != null) {
             if ($db_row[$id_fld] > 0) {
                 // map a word
-                $wrd = new word($this->usr);
+                $wrd = new word($this->user());
                 $wrd->set_id($db_row[$id_fld]);
                 $wrd->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
                 $wrd->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
@@ -177,7 +153,7 @@ class phrase extends combine_named
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
                 // map a triple
-                $trp = new triple($this->usr);
+                $trp = new triple($this->user());
                 $trp->set_id($db_row[$id_fld] * -1);
                 $trp->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
                 $trp->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
@@ -207,10 +183,10 @@ class phrase extends combine_named
      * set the object id based on the given term id
      * must have the same logic as the api and the frontend
      *
-     * @param int|null $id the term (not the object!) id
+     * @param int $id the term (not the object!) id
      * @return void
      */
-    function set_id(?int $id): void
+    function set_id(int $id): void
     {
         $this->set_obj_id(abs($id));
     }
@@ -226,10 +202,10 @@ class phrase extends combine_named
     function set_id_from_obj(int $id, string $class): void
     {
         if ($class == word::class) {
-            $this->obj = new word($this->usr);
+            $this->obj = new word($this->user());
             $this->set_obj_id($id);
         } elseif ($class == triple::class) {
-            $this->obj = new triple($this->usr);
+            $this->obj = new triple($this->user());
             $this->set_obj_id($id);
         }
         $this->obj->set_id($id);
@@ -243,9 +219,9 @@ class phrase extends combine_named
     private function set_obj_from_class(string $class): void
     {
         if ($class == word::class) {
-            $this->obj = new word($this->usr);
+            $this->obj = new word($this->user());
         } elseif ($class == triple::class) {
-            $this->obj = new triple($this->usr);
+            $this->obj = new triple($this->user());
         } else {
             log_err('Unexpected class ' . $class . ' when creating phrase ' . $this->dsp_id());
         }
@@ -274,7 +250,18 @@ class phrase extends combine_named
      */
     function set_user(user $usr): void
     {
-        $this->usr = $usr;
+        $this->obj()->set_user($usr);
+    }
+
+    /**
+     * set the value to rank the words by usage
+     *
+     * @param int|null $usage a higher value moves the word to the top of the selection list
+     * @return void
+     */
+    function set_usage(?int $usage): void
+    {
+        $this->obj()->set_usage($usage);
     }
 
     /**
@@ -321,7 +308,15 @@ class phrase extends combine_named
      */
     function user(): user
     {
-        return $this->usr;
+        return $this->obj()->user();
+    }
+
+    /**
+     * @return int|null a higher number indicates a higher usage
+     */
+    function usage(): ?int
+    {
+        return $this->obj()->usage();
     }
 
 
@@ -334,23 +329,16 @@ class phrase extends combine_named
      */
     function api_obj(): phrase_api
     {
-        if ($this->is_word()) {
-            return $this->get_word()->api_obj()->phrase();
-        } else {
-            return $this->get_triple()->api_obj()->phrase();
-        }
+        return $this->obj()->api_obj()->phrase();
     }
 
     /**
+     * TODO base this on the api message
      * @return phrase_dsp the phrase object with the display interface functions
      */
     function dsp_obj(): phrase_dsp
     {
-        if ($this->is_word()) {
-            return $this->get_word()->dsp_obj()->phrase();
-        } else {
-            return $this->get_triple()->dsp_obj()->phrase();
-        }
+        return $this->obj()->dsp_obj()->phrase();
     }
 
     function term(): term
@@ -402,7 +390,8 @@ class phrase extends combine_named
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql_db $db_con, string $query_name): sql_par
+    private
+    function load_sql(sql_db $db_con, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -464,21 +453,21 @@ class phrase extends combine_named
 
         // direct load if the type is known
         if ($this->is_triple()) {
-            $trp = new triple($this->usr);
+            $trp = new triple($this->user());
             // TODO use load_by_phrase_id to move the id logic into the triple class
             $result = $trp->load_by_id($this->id * -1, triple::class);
             $this->obj = $trp;
             $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj->name
             log_debug('triple ' . $this->dsp_id());
         } elseif ($this->is_word()) {
-            $wrd = new word($this->usr);
+            $wrd = new word($this->user());
             $result = $wrd->load_by_id($this->id, word::class);
             $this->obj = $wrd;
             $this->set_name($wrd->name());
             log_debug('word ' . $this->dsp_id());
         } elseif ($this->name() <> '') {
             // load via phrase if the type is not yet known
-            $trm = new term($this->usr);
+            $trm = new term($this->user());
             $result = $trm->load_by_name($this->name());
             if ($trm->type() == word::class) {
                 $this->obj = $trm->obj;
@@ -491,10 +480,9 @@ class phrase extends combine_named
             } elseif ($trm->type() == formula::class) {
                 // for the phrase load the related word instead of the formula
                 // TODO integrate this into the phrase loading by load both object a once
-                $wrd = new word($this->usr);
+                $wrd = new word($this->user());
                 $result = $wrd->load_by_name($this->name(), word::class);
-                $this->obj = $wrd;
-                $this->id = $wrd->id();
+                $this->set_obj($wrd);
                 log_debug('formula word ' . $this->dsp_id());
             } else {
                 log_err('"' . $this->name() . '" has unknown type which is not expected for a phrase.', "phrase->load");
@@ -508,15 +496,14 @@ class phrase extends combine_named
     {
         $result = 0;
         if ($this->is_triple()) {
-            $trp = new triple($this->usr);
-            // TODO use load_by_phrase_id to move the id logic into the triple class
-            $result = $trp->load_by_id($this->id * -1, triple::class);
+            $trp = new triple($this->user());
+            $result = $trp->load_by_id($this->obj_id(), triple::class);
             $this->obj = $trp;
             $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj->name
             log_debug('triple ' . $this->dsp_id());
         } elseif ($this->is_word()) {
-            $wrd = new word($this->usr);
-            $result = $wrd->load_by_id($this->id, word::class);
+            $wrd = new word($this->user());
+            $result = $wrd->load_by_id($this->obj_id(), word::class);
             $this->obj = $wrd;
             $this->set_name($wrd->name());
             log_debug('word ' . $this->dsp_id());
@@ -533,7 +520,8 @@ class phrase extends combine_named
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
-    private function load(sql_par $qp): int
+    private
+    function load(sql_par $qp): int
     {
         global $db_con;
 
@@ -603,7 +591,7 @@ class phrase extends combine_named
      */
     function wrd_lst(): word_list
     {
-        $wrd_lst = new word_list($this->usr);
+        $wrd_lst = new word_list($this->user());
         if ($this->id() < 0) {
             $sub_wrd_lst = $this->wrd_lst();
             foreach ($sub_wrd_lst as $wrd) {
@@ -674,12 +662,12 @@ class phrase extends combine_named
     function is_word(): bool
     {
         $result = false;
-        if (isset($this->obj)) {
-            if (get_class($this->obj) == word::class or get_class($this->obj) == word_dsp::class) {
+        if ($this->obj() !== null) {
+            if ($this->obj()::class == word::class or $this->obj()::class == word_dsp::class) {
                 $result = true;
             }
         } else {
-            if ($this->id > 0) {
+            if ($this->id() > 0) {
                 $result = true;
             }
         }
@@ -689,7 +677,8 @@ class phrase extends combine_named
     /**
      * @return bool true if this phrase is a triple or supposed to be a triple
      */
-    private function is_triple(): bool
+    private
+    function is_triple(): bool
     {
         $result = false;
         if (isset($this->obj)) {
@@ -707,7 +696,8 @@ class phrase extends combine_named
     /**
      * @return bool true if this phrase is a formula or supposed to be a formula
      */
-    private function is_formula(): bool
+    private
+    function is_formula(): bool
     {
         $result = false;
         if (isset($this->obj)) {
@@ -726,84 +716,36 @@ class phrase extends combine_named
      * conversion
      */
 
-    function get_word(): word
+    /**
+     * TODO dismiss or base on the api message
+     * @return word_dsp
+     */
+    protected
+    function get_word_dsp(): word_dsp
     {
-        $wrd = new word($this->usr);
-        if ($this->obj != null) {
-            if (get_class($this->obj) == word::class) {
-                $wrd->set_id($this->obj->id());
-                $wrd->usr_cfg_id = $this->obj->usr_cfg_id;
-                $wrd->owner_id = $this->obj->owner_id;
-                $wrd->share_id = $this->obj->share_id;
-                $wrd->protection_id = $this->obj->protection_id;
-                $wrd->set_excluded($this->obj->is_excluded());
-                $wrd->set_name($this->obj->name());
-                $wrd->description = $this->obj->description;
-                $wrd->plural = $this->obj->plural;
-                $wrd->type_id = $this->obj->type_id;
-                $wrd->view_id = $this->obj->view_id;
-                $wrd->set_usage($this->obj->usage());
-            }
-        }
-        return $wrd;
-    }
-
-    protected function get_word_dsp(): word_dsp
-    {
-        $wrd_dsp = new word($this->usr);
+        $wrd_dsp = new word($this->user());
         if (get_class($this->obj) == word_dsp::class) {
             $wrd_dsp = $this->obj;
         } elseif (get_class($this->obj) == word::class) {
-            $wrd_dsp = $this->get_word()->dsp_obj();
+            $wrd_dsp = $this->obj()->dsp_obj();
         }
         return $wrd_dsp;
     }
 
-    protected function get_triple(): triple
-    {
-        $trp = new triple($this->usr);
-        if (get_class($this->obj) == triple::class) {
-            $trp->set_id($this->obj->id());
-            $trp->set_name($this->obj->name());
-            $trp->fob = $this->obj->fob;
-            $trp->tob = $this->obj->tob;
-            $trp->usr_cfg_id = $this->obj->usr_cfg_id;
-            $trp->owner_id = $this->obj->owner_id;
-            $trp->share_id = $this->obj->share_id;
-            $trp->protection_id = $this->obj->protection_id;
-            $trp->set_excluded($this->obj->is_excluded());
-            $trp->description = $this->obj->description;
-            $trp->type_id = $this->obj->type_id;
-            $trp->set_usage($this->obj->usage());
-        }
-        return $trp;
-    }
-
-    protected function get_triple_dsp(): triple_dsp
+    /**
+     * TODO dismiss
+     * @return word_dsp
+     */
+    protected
+    function get_triple_dsp(): triple_dsp
     {
         $lnk_dsp = new triple_dsp();
         if (get_class($this->obj) == triple_dsp::class) {
             $lnk_dsp = $this->obj;
         } elseif (get_class($this->obj) == triple::class) {
-            $lnk_dsp = $this->get_triple()->dsp_obj();
+            $lnk_dsp = $this->obj()->dsp_obj();
         }
         return $lnk_dsp;
-    }
-
-    /**
-     * get the related object
-     * so either the word object
-     * or the triple object
-     */
-    function get_obj(): ?object
-    {
-        $obj = '';
-        if ($this->is_word()) {
-            $obj = $this->get_word();
-        } elseif ($this->is_triple()) {
-            $obj = $this->get_triple();
-        }
-        return $obj;
     }
 
     /**
@@ -844,7 +786,7 @@ class phrase extends combine_named
         if ($do_save) {
             $this->load_by_name($json_value);
             if ($this->id == 0) {
-                $wrd = new word($this->usr);
+                $wrd = new word($this->user());
                 $wrd->load_by_name($json_value, word::class);
                 if ($wrd->id() == 0) {
                     $wrd->set_name($json_value);
@@ -876,7 +818,7 @@ class phrase extends combine_named
     {
         $lib = new library();
         log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
-        $val_lst = new value_list($this->usr);
+        $val_lst = new value_list($this->user());
         $val_lst->phr = $this;
         $val_lst->limit = SQL_ROW_MAX;
         $val_lst->load();
@@ -897,7 +839,7 @@ class phrase extends combine_named
         $lib = new library();
 
         log_debug('for ' . $this->dsp_id());
-        $vrb_lst = new verb_list($this->usr);
+        $vrb_lst = new verb_list($this->user());
         $vrb_lst->load_by_linked_phrases($db_con, $this, $direction);
         log_debug('got ' . $lib->dsp_count($vrb_lst->lst));
         return $vrb_lst;
@@ -928,7 +870,7 @@ class phrase extends combine_named
         return $result;
     }
 
-    // return the name (just because all objects should have a name function)
+// return the name (just because all objects should have a name function)
     function dsp_name(): string
     {
         //$result = $this->name();
@@ -971,13 +913,13 @@ class phrase extends combine_named
 
     function dsp_graph(string $direction, ?verb_list $link_types = null, string $back = ''): string
     {
-        $phr_lst = new phrase_list($this->usr);
+        $phr_lst = new phrase_list($this->user());
         if ($link_types == null) {
             $link_types = $this->vrb_lst($direction);
         }
         if ($link_types != null) {
             foreach ($link_types->lst as $vrb) {
-                $add_lst = new phrase_list($this->usr);
+                $add_lst = new phrase_list($this->user());
                 $add_lst->load_by_phr($this, $vrb, $direction);
                 $phr_lst->merge($add_lst);
             }
@@ -1002,22 +944,22 @@ class phrase extends combine_named
         return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
     }
 
-    // similar to dsp_link
+// similar to dsp_link
     function dsp_link_style($style): string
     {
         return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->obj->description . '" class="' . $style . '">' . $this->name() . '</a>';
     }
 
-    // helper function that returns a word list object just with the word object
+// helper function that returns a word list object just with the word object
     function lst(): phrase_list
     {
-        $phr_lst = new phrase_list($this->usr);
+        $phr_lst = new phrase_list($this->user());
         $phr_lst->add($this);
         log_debug($phr_lst->dsp_name());
         return $phr_lst;
     }
 
-    // returns a list of phrase that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
+// returns a list of phrase that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
     function is(): phrase_list
     {
         $this_lst = $this->lst();
@@ -1031,12 +973,13 @@ class phrase extends combine_named
         return $phr_lst;
     }
 
-    public static function cmp($a, $b)
+    public
+    static function cmp($a, $b)
     {
         return strcmp($a->name(), $b->name());
     }
 
-    // returns a list of words that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
+// returns a list of words that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
     /*  function is () {
         if ($this->id > 0) {
           $wrd_lst = $this->parents();
@@ -1047,8 +990,8 @@ class phrase extends combine_named
         return $wrd_lst;
       } */
 
-    // true if the word id has an "is a" relation to the related word
-    // e.g.for the given word string
+// true if the word id has an "is a" relation to the related word
+// e.g.for the given word string
     function is_a($related_phrase): bool
     {
         log_debug($this->dsp_id() . ',' . $related_phrase->name);
@@ -1063,7 +1006,7 @@ class phrase extends combine_named
         return $result;
     }
 
-    // SQL to list the user phrases (related to a type if needed)
+// SQL to list the user phrases (related to a type if needed)
     function sql_list($type): string
     {
         log_debug();
@@ -1188,9 +1131,9 @@ class phrase extends combine_named
      * display functions
      */
 
-    // create a selector that contains the words and triples
-    // if one form contains more than one selector, $pos is used for identification
-    // $type is a word to preselect the list to only those phrases matching this type
+// create a selector that contains the words and triples
+// if one form contains more than one selector, $pos is used for identification
+// $type is a word to preselect the list to only those phrases matching this type
     function dsp_selector($type, $form_name, $pos, $class, $back): string
     {
         if ($type != null) {
@@ -1227,14 +1170,14 @@ class phrase extends combine_named
         return $result;
     }
 
-    // button to add a new word similar to this phrase
+// button to add a new word similar to this phrase
     function btn_add($back)
     {
         $wrd = $this->main_word();
         return $wrd->btn_add($back);
     }
 
-    // returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
+// returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
     function is_mainly()
     {
         $result = null;
@@ -1256,16 +1199,16 @@ class phrase extends combine_named
         return $wrd->is_time();
     }
 
-    // return true if the word has the type "measure" (e.g. "meter" or "CHF")
-    // in case of a division, these words are excluded from the result
-    // in case of add, it is checked that the added value does not have a different measure
+// return true if the word has the type "measure" (e.g. "meter" or "CHF")
+// in case of a division, these words are excluded from the result
+// in case of add, it is checked that the added value does not have a different measure
     function is_measure()
     {
         $wrd = $this->main_word();
         return $wrd->is_measure();
     }
 
-    // return true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
+// return true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
     function is_scaling()
     {
         $wrd = $this->main_word();
@@ -1291,10 +1234,10 @@ class phrase extends combine_named
         return $result;
     }
 
-    // create a selector that contains the time words
-    // e.g. Q1 can be the first Quarter of a year and in this case the four quarters of a year should be the default selection
-    //      if this is the triple "Q1 of 2018" a list of triples of this year should be the default selection
-    //      if Q1 is a wikidata qualifier a general time selector should be shown
+// create a selector that contains the time words
+// e.g. Q1 can be the first Quarter of a year and in this case the four quarters of a year should be the default selection
+//      if this is the triple "Q1 of 2018" a list of triples of this year should be the default selection
+//      if Q1 is a wikidata qualifier a general time selector should be shown
     function dsp_time_selector($type, $form_name, $pos, $back)
     {
 
@@ -1382,19 +1325,19 @@ class phrase extends combine_named
         */
 
         // try if the word exists
-        $wrd = new word($this->usr);
+        $wrd = new word($this->user());
         $wrd->load_by_name($this->name(), word::class);
         if ($wrd->id() > 0) {
             $this->id = $wrd->phrase()->id;
         } else {
             // try if the triple exists
-            $trp = new triple($this->usr);
+            $trp = new triple($this->user());
             $trp->load_by_name($this->name(), triple::class);
             if ($trp->id() > 0) {
                 $this->id = $trp->phrase()->id * -1;
             } else {
                 // create a word if neither the word nor the triple exists
-                $wrd = new word($this->usr);
+                $wrd = new word($this->user());
                 $wrd->set_name($this->name());
                 $wrd->type_id = $phrase_types->default_id();
                 $result = $wrd->save();

@@ -38,10 +38,12 @@ include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 
+use controller\controller;
 use html\word_dsp;
 use html\triple_dsp;
 use html\phrase_dsp;
 use JsonSerializable;
+use model\word;
 
 class phrase_api extends combine_named_api implements JsonSerializable
 {
@@ -74,38 +76,20 @@ class phrase_api extends combine_named_api implements JsonSerializable
      * construct and map
      */
 
-    function __construct(
-        int    $id = 0,
-        string $name = '',
-        string $from = '',
-        string $verb = '',
-        string $to = '')
+    function __construct(word_api|triple_api $obj)
     {
-        global $phrase_types;
-        if ($id < 0) {
-            $this->set_obj(new triple_api($id, $name, $from, $verb, $to));
-        } else {
-            $this->set_obj(new word_api($id, $name));
-        }
-        $this->set_type_id($phrase_types->default_id());
-        parent::__construct($id, $name);
-    }
-
-    /**
-     * reset the in memory fields used e.g. if some ids are updated
-     */
-    function reset(): void
-    {
-        $this->set_id(0);
-        $this->set_name(null);
-        $this->set_description(null);
-        $this->set_type_id(null);
+        $this->set_obj($obj);
     }
 
 
     /*
      * set and get
      */
+
+    function set_phrase_obj(word_api|triple_api $obj): void
+    {
+        $this->obj = $obj;
+    }
 
     /**
      * TODO remove this logic from the API and keep it only in the model, the database view and the frontend
@@ -189,6 +173,7 @@ class phrase_api extends combine_named_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = parent::jsonSerialize();
+        $vars[controller::API_FLD_ID] = $this->id();
         if ($this->is_word()) {
             $vars[combine_object_api::FLD_CLASS] = self::CLASS_WORD;
         } else {

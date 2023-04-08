@@ -61,7 +61,7 @@ class ip_range
      */
 
     // database fields
-    public ?int $id = null;               // the database id of the reference
+    public int $id = 0;               // the database id of the reference
     public string $from = '';
     public string $to = '';
     public ?string $reason = null;
@@ -77,7 +77,7 @@ class ip_range
 
     function reset(): void
     {
-        $this->id = null;
+        $this->id = 0;
         $this->from = '';
         $this->to = '';
         $this->reason = null;

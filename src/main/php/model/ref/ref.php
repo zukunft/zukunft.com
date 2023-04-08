@@ -209,9 +209,9 @@ class ref extends sandbox_link_with_type
     }
 
     /**
-     * @param int|null $id the database id of the verb
+     * @param int $id the database id of the verb
      */
-    function set_id(?int $id): void
+    function set_id(int $id): void
     {
         $this->id = $id;
     }
@@ -225,9 +225,9 @@ class ref extends sandbox_link_with_type
     }
 
     /**
-     * @return int|null the database id which is not 0 if the object has been saved
+     * @return int the database id which is not 0 if the object has been saved
      */
-    function id(): ?int
+    function id(): int
     {
         return $this->id;
     }

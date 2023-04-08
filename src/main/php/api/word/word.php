@@ -289,9 +289,17 @@ class word_api extends sandbox_typed_api
      * cast
      */
 
+    /**
+     * @return phrase_api the related phrase api or display object with the basic values filled
+     */
+    function phrase(): phrase_api
+    {
+        return new phrase_api($this);
+    }
+
     function term(): term_api
     {
-        return new term_api($this->id, $this->name, word::class);
+        return new term_api($this);
     }
 
     /**

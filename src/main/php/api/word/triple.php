@@ -64,7 +64,7 @@ class triple_api extends sandbox_typed_api
      */
 
     function __construct(
-        int $id = 0,
+        int    $id = 0,
         string $name = '',
         string $from = '',
         string $verb = '',
@@ -72,7 +72,9 @@ class triple_api extends sandbox_typed_api
     )
     {
         parent::__construct($id, $name);
-        $this->set($from, $verb, $to);
+        if ($from != '' or $verb != '' or $to != '') {
+            $this->set($from, $verb, $to);
+        }
     }
 
 
@@ -82,9 +84,15 @@ class triple_api extends sandbox_typed_api
 
     function set(string $from, string $verb, string $to): void
     {
-        $this->set_from(new phrase_api(0, $from));
-        $this->set_verb(new verb_api(0, $verb));
-        $this->set_to(new phrase_api(0, $to));
+        if ($from != '') {
+            $this->set_from(new phrase_api(new word_api(0, $from)));
+        }
+        if ($verb != '') {
+            $this->set_verb(new verb_api(0, $verb));
+        }
+        if ($to != '') {
+            $this->set_to(new phrase_api(new word_api(0, $to)));
+        }
     }
 
     function set_from(phrase_api $from): void
@@ -122,9 +130,17 @@ class triple_api extends sandbox_typed_api
      * cast
      */
 
+    /**
+     * @return phrase_api the related phrase api or display object with the basic values filled
+     */
+    function phrase(): phrase_api
+    {
+        return new phrase_api($this);
+    }
+
     function term(): term_api
     {
-        return new term_api($this->id, $this->name, triple::class);
+        return new term_api($this);
     }
 
 

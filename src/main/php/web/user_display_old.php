@@ -51,6 +51,18 @@ use model\view_cmp_link;
 class user_dsp_old extends user
 {
 
+    /*
+     * set and get
+     */
+
+    /**
+     * @return user|null the person who wants to see the user
+     */
+    function user(): ?user
+    {
+        return $this->viewer;
+    }
+
     /**
      * display the latest changes by the user
      */

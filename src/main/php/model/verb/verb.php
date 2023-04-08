@@ -139,7 +139,7 @@ class verb extends db_object
 
     function reset(): void
     {
-        $this->id = null;
+        $this->id = 0;
         $this->set_user(null);
         $this->code_id = null;
         $this->name = null;
@@ -202,9 +202,9 @@ class verb extends db_object
     }
 
     /**
-     * @param int|null $id the database id of the verb
+     * @param int $id the database id of the verb
      */
-    function set_id(?int $id): void
+    function set_id(int $id): void
     {
         $this->id = $id;
     }
@@ -240,9 +240,9 @@ class verb extends db_object
     }
 
     /**
-     * @return int|null the database id which is not 0 if the object has been saved
+     * @return int the database id which is not 0 if the object has been saved
      */
-    function id(): ?int
+    function id(): int
     {
         return $this->id;
     }
@@ -645,7 +645,7 @@ class verb extends db_object
      */
     private function get_term(): term
     {
-        $trm = new term($this->usr, self::class);
+        $trm = new term($this->usr);
         $trm->set_name($this->name, self::class);
         $trm->load_by_obj_name($this->name, false);
         return $trm;
@@ -659,7 +659,7 @@ class verb extends db_object
         $trm = new term($this->usr);
         $trm->set_id_from_obj($this->id, self::class);
         $trm->set_name($this->name);
-        $trm->obj = $this;
+        $trm->set_obj($this);
         return $trm;
     }
 

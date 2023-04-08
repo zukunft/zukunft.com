@@ -1578,41 +1578,45 @@ SELECT ((w.word_id * 2) - 1) AS term_id,
        w.word_name           AS term_name,
        w.description,
        w.values              AS usage,
+       w.word_type_id        AS term_type_id,
        w.excluded,
        w.share_type_id,
        w.protect_id
-  FROM words AS w
- WHERE w.word_type_id <> 10 OR w.word_type_id IS NULL
+FROM words AS w
+WHERE w.word_type_id <> 10 OR w.word_type_id IS NULL
 UNION
 SELECT ((l.triple_id * -2) + 1)                                                  AS term_id,
        l.user_id,
        CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS term_name,
        l.description,
        l.values                                                                     AS usage,
+       l.word_type_id,
        l.excluded,
        l.share_type_id,
        l.protect_id
-  FROM triples AS l
+FROM triples AS l
 UNION
 SELECT (f.formula_id * 2) AS term_id,
        f.user_id,
        f.formula_name     AS term_name,
        f.description,
        f.usage            AS usage,
+       f.formula_type_id  AS term_type_id,
        f.excluded,
        f.share_type_id,
        f.protect_id
-  FROM formulas AS f
+FROM formulas AS f
 UNION
 SELECT (v.verb_id * -2) AS term_id,
        NULL            AS user_id,
        v.verb_name     AS term_name,
        v.description,
        v.words         AS usage,
+       NULL            AS term_type_id,
        NULL            AS excluded,
        1               AS share_type_id,
        3               AS protect_id
-  FROM verbs AS v
+FROM verbs AS v
 ;
 
 --

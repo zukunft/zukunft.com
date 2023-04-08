@@ -133,7 +133,7 @@ class formula_element extends db_object
     /**
      * @return int|null the database id of the related object
      */
-    function id(): ?int
+    function id(): int
     {
         return $this->obj?->id;
     }

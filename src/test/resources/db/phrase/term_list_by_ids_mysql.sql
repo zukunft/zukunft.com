@@ -2,6 +2,7 @@ PREPARE term_list_by_ids FROM
     'SELECT s.term_id,
             u.term_id AS user_term_id,
             s.user_id,
+            s.term_type_id,
             IF(u.term_name     IS NULL,s.term_name,     u.term_name)     AS term_name,
             IF(u.description   IS NULL,s.description,   u.description)   AS description,
             IF(u.`usage`       IS NULL,s.`usage`,       u.`usage`)       AS `usage`,

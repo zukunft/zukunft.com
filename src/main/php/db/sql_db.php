@@ -35,6 +35,8 @@
 
 namespace model;
 
+include_once MODEL_SYSTEM_PATH . 'log.php';
+
 use Exception;
 use mysqli;
 use mysqli_result;
@@ -1606,7 +1608,7 @@ class sql_db
                     if (str_starts_with($sql, 'PREPARE')) {
                         $result = pg_query($this->postgres_link, $sql);
                     } else {
-                        $result = pg_prepare($this->postgres_link, $sql_name, $sql);
+                         $result = pg_prepare($this->postgres_link, $sql_name, $sql);
                     }
                     if ($result === false) {
                         throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql);
@@ -2330,7 +2332,7 @@ class sql_db
      * TODO get the user specific list of linked objects
      * TODO use always parameterized values
      */
-    function set_where_link_no_fld(?int $id = 0, ?int $id_from = 0, ?int $id_to = 0, ?int $id_type = 0): string
+    function set_where_link_no_fld(int $id = 0, int $id_from = 0, int $id_to = 0, int $id_type = 0): string
     {
         $result = '';
 
@@ -3237,7 +3239,7 @@ class sql_db
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 in the previous set dialect
      */
-    function not_changed_sql(?int $id, int $owner_id = 0): sql_par
+    function not_changed_sql(int $id, int $owner_id = 0): sql_par
     {
         $qp = new sql_par($this->type);
         $qp->name .= 'not_changed';

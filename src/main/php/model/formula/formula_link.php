@@ -188,8 +188,8 @@ class formula_link extends sandbox_link_with_type
     {
         $result = 0;
         if ($this->tob != null) {
-            if ($this->tob->id > 0) {
-                $result = $this->tob->id;
+            if ($this->tob->id() > 0) {
+                $result = $this->tob->id();
             }
         }
         return $result;

@@ -143,7 +143,7 @@ class value extends sandbox_value
      * set the user sandbox type for a value object and set the user, which is needed in all cases
      * @param user $usr the user who requested to see this value
      */
-    function __construct(user $usr, ?int $id = null, ?float $num_val = null, ?phrase_group $phr_grp = null)
+    function __construct(user $usr, int $id = 0, ?float $num_val = null, ?phrase_group $phr_grp = null)
     {
         parent::__construct($usr);
         $this->obj_type = sandbox::TYPE_VALUE;
@@ -799,7 +799,7 @@ class value extends sandbox_value
 
     /**
      * create the source object if needed and set the id
-     * @param int|null $id the id of the source
+     * @param int $id the id of the source
      */
     function set_source_id(?int $id)
     {

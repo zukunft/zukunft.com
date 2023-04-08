@@ -33,6 +33,7 @@
 namespace test;
 
 use api\phrase_api;
+use api\triple_api;
 use api\word_api;
 use html\html_base;
 use html\phrase_dsp;
@@ -51,11 +52,11 @@ class phrase_list_display_unit_tests
 
         // create the phrase list test set
         $lst = new phrase_list_dsp();
-        $phr_city = new phrase_api(-1,  phrase_api::TN_ZH_CITY_NAME,
+        $phr_city = $this->phrase_api_triple(1,  phrase_api::TN_ZH_CITY_NAME,
             word_api::TN_ZH, verb::IS_A, word_api::TN_CITY);
-        $phr_canton = new phrase_api(-2,  phrase_api::TN_ZH_CANTON_NAME,
+        $phr_canton = $this->phrase_api_triple(2,  phrase_api::TN_ZH_CANTON_NAME,
             word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON);
-        $phr_ch = new phrase_api(1, word_api::TN_CH);
+        $phr_ch = $this->phrase_api_word(1, word_api::TN_CH);
         $lst->add_phrase($phr_city->dsp_obj());
         $lst->add_phrase($phr_canton->dsp_obj());
         $lst->add_phrase($phr_ch->dsp_obj());
@@ -72,6 +73,25 @@ class phrase_list_display_unit_tests
         $test_page .= $lst->selector('phrase list test selector', '', 'please select') . '<br>';
 
         $t->html_test($test_page, 'phrase_list', $t);
+    }
+
+    function phrase_api_word(
+        int $id,
+        string $name
+    ): phrase_api {
+        $wrd = new word_api($id, $name);
+        return new phrase_api($wrd);
+    }
+
+    function phrase_api_triple(
+        int $id,
+        string $name,
+        string $from = '',
+        string $verb = '',
+        string $to = ''
+    ): phrase_api {
+        $trp = new triple_api($id, $name, $from, $verb, $to);
+        return new phrase_api($trp);
     }
 
 }

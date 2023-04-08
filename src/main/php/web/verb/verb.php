@@ -63,6 +63,16 @@ class verb_dsp extends sandbox_named_dsp
         parent::set_from_json_array($json_array);
     }
 
+    /**
+     * the verb itself is a type
+     * this funtion is only used as an interface mapping for the term
+     * @return int|null
+     */
+    function type_id(): ?int
+    {
+        return $this->id;
+    }
+
 
     /*
      * casting

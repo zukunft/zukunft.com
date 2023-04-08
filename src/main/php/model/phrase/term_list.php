@@ -111,6 +111,7 @@ class term_list extends sandbox_list_named
         $db_con->set_type(sql_db::VT_TERM);
         $db_con->set_name($qp->name);
 
+        $db_con->set_fields(term::FLD_NAMES);
         $db_con->set_usr_fields(term::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(term::FLD_NAMES_NUM_USR);
 
@@ -164,7 +165,8 @@ class term_list extends sandbox_list_named
         $trm_lst = $db_con->get($qp);
         foreach ($trm_lst as $db_row) {
             $trm = new term($this->user());
-            $trm->row_mapper($db_row);
+            $trm->set_obj_from_id($db_row[term::FLD_ID]);
+            $trm->row_mapper_obj($db_row, $trm->obj()::class, term::FLD_ID, term::FLD_NAME, term::FLD_TYPE);
             if ($trm->id() != 0) {
                 $this->add($trm);
                 $result = true;
@@ -281,7 +283,8 @@ class term_list extends sandbox_list_named
     function term_by_obj_id(int $id, string $class): ?term
     {
         $trm = new term($this->user());
-        $trm->set_id_from_obj($id, $class);
+        $trm->set_obj_from_class($class);
+        $trm->set_obj_id($id);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
             $trm = $this->get_by_id($trm_id);

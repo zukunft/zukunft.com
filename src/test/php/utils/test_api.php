@@ -669,6 +669,13 @@ class test_api extends test_new_obj
         $url = HOST_TESTING . controller::URL_API_PATH . $lib->camelize_ex_1($class);
         $data = array("ids" => implode(",", $ids));
         $actual = json_decode($this->api_call("GET", $url, $data), true);
+
+        // TODO remove
+        global $usr;
+        $lst = new term_list($usr);
+        $lst->load_by_ids((new trm_ids($ids)));
+        $result = $lst->api_obj();
+
         return $this->assert_api_compare($class, $actual, null, $filename, $contains);
     }
 

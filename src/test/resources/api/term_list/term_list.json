@@ -1,12 +1,15 @@
 [
   {
-    "id": 1,
+    "id": -1,
     "name": "Pi (math)",
+    "type_id": 17,
     "class": "triple"
   },
   {
     "id": 1,
     "name": "Mathematical constant",
+    "description": "A mathematical constant that never changes e.g. Pi",
+    "type_id": 17,
     "class": "word"
   }
 ]

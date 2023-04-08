@@ -153,7 +153,29 @@ class formula_api extends sandbox_typed_api
 
     function term(): term_api
     {
-        return new term_api($this->id, $this->name, formula::class);
+        return new term_api($this);
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return string the json api message as a text string
+     */
+    function get_json(): string
+    {
+        return json_encode($this->jsonSerialize());
+    }
+
+    /**
+     * an array of the formula vars without empty values that are not needed
+     */
+    function jsonSerialize(): array
+    {
+        $vars = json_decode(json_encode($this), true);
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 }

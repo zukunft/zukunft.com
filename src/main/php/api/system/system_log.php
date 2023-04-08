@@ -56,7 +56,7 @@ class system_log_api extends db_object
     CONST T2_SOLVE_ID = 'code id 2 of the suggested solver of the problem';
 
     // field names used for JSON creation
-    public ?int $id;
+    public int $id;
     public string $time;
     public string $user;
     public string $text;

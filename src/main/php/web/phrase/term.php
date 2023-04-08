@@ -99,9 +99,9 @@ class term_dsp extends combine_named_dsp
     function set_id(int $id): void
     {
         if ($id % 2 == 0) {
-            $this->set_obj_id(abs($id / 2));
+            $this->set_obj_id(abs($id) / 2);
         } else {
-            $this->set_obj_id(abs(($id + 1) / 2));
+            $this->set_obj_id((abs($id) + 1) / 2);
         }
     }
 
@@ -114,11 +114,11 @@ class term_dsp extends combine_named_dsp
         if ($this->is_word()) {
             return ($this->obj_id() * 2) - 1;
         } elseif ($this->is_triple()) {
-            return ($this->obj_id() * -2) - 1;
+            return ($this->obj_id() * -2) + 1;
         } elseif ($this->is_formula()) {
             return $this->obj_id() * 2;
         } elseif ($this->is_verb()) {
-            return $this->obj_id() * -1;
+            return $this->obj_id() * -2;
         } else {
             return 0;
         }
@@ -158,7 +158,9 @@ class term_dsp extends combine_named_dsp
         $vars[controller::API_FLD_ID] = $this->id();
         $vars[controller::API_FLD_NAME] = $this->name();
         $vars[controller::API_FLD_DESCRIPTION] = $this->description();
-        $vars[controller::API_FLD_TYPE_ID] = $this->type_id();
+        if (!$this->is_verb()) {
+            $vars[controller::API_FLD_TYPE_ID] = $this->type_id();
+        }
         return $vars;
     }
 
