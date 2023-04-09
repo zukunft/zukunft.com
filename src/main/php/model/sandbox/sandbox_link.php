@@ -161,7 +161,7 @@ class sandbox_link extends sandbox
             $result = true;
         } else {
             if ($this->fob != null and $this->tob != null) {
-                if ($this->fob->id > 0 and $this->tob->id > 0) {
+                if ($this->fob->id() > 0 and $this->tob->id() > 0) {
                     $result = true;
                 }
             }

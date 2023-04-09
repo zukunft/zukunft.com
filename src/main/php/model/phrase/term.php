@@ -64,6 +64,7 @@ use cfg\phrase_type;
 use html\html_base;
 use html\term_dsp;
 use html\word_dsp;
+use user_dsp_old;
 
 class term extends combine_named
 {
@@ -106,7 +107,8 @@ class term extends combine_named
      */
     function __construct(user|word|triple|formula|verb|null $obj)
     {
-        if ($obj::class == user::class) {
+        // TODO remove user_dsp_old
+        if ($obj::class == user::class or $obj::class == user_dsp_old::class) {
             // create a dummy word object to remember the user
             parent::__construct(new word($obj));
         } else {

@@ -79,4 +79,9 @@ class combine_object
         return $this->obj;
     }
 
+    function isset(): bool
+    {
+        return $this->obj->isset();
+    }
+
 }

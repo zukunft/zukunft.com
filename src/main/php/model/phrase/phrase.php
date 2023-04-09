@@ -69,6 +69,7 @@ use html\html_selector;
 use html\phrase_dsp;
 use html\triple_dsp;
 use html\word_dsp;
+use user_dsp_old;
 
 class phrase extends combine_named
 {
@@ -118,7 +119,7 @@ class phrase extends combine_named
      */
     function __construct(user|word|triple|null $obj = null)
     {
-        if ($obj::class == user::class) {
+        if ($obj::class == user::class or $obj::class == user_dsp_old::class) {
             // create a dummy word object to remember the user
             parent::__construct(new word($obj));
         } else {
@@ -461,7 +462,7 @@ class phrase extends combine_named
             log_debug('triple ' . $this->dsp_id());
         } elseif ($this->is_word()) {
             $wrd = new word($this->user());
-            $result = $wrd->load_by_id($this->id, word::class);
+            $result = $wrd->load_by_id($this->id(), word::class);
             $this->obj = $wrd;
             $this->set_name($wrd->name());
             log_debug('word ' . $this->dsp_id());
@@ -598,7 +599,7 @@ class phrase extends combine_named
                 $wrd_lst->add($wrd);
             }
         } else {
-            $wrd_lst->add($this->obj);
+            $wrd_lst->add($this->obj());
         }
         return $wrd_lst;
     }
@@ -638,7 +639,7 @@ class phrase extends combine_named
         $qp->name = 'phrase_formula_by_id';
         $db_con->set_name($qp->name);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_where_link_no_fld(null, null, $this->id);
+        $db_con->set_where_link_no_fld(0, 0, $this->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
         $db_row = $db_con->get1($qp);

@@ -425,7 +425,7 @@ class formula_link extends sandbox_link_with_type
                     $result .= ' ';
                 }
                 $result .= $this->tob->name();     // e.g. cash flow statement
-                $result .= ' (' . $this->tob->id . ')';
+                $result .= ' (' . $this->tob->id() . ')';
             }
         }
 
@@ -602,7 +602,7 @@ class formula_link extends sandbox_link_with_type
         global $db_con;
         return $db_con->insert(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id", 'order_nbr'),
-            array($this->fob->id, $this->tob->id, $this->user()->id, $this->order_nbr));
+            array($this->fob->id(), $this->tob->id(), $this->user()->id, $this->order_nbr));
     }
 
     /**
@@ -670,8 +670,8 @@ class formula_link extends sandbox_link_with_type
             // it should not be possible to change the formula or the word, but nevertheless check
             // instead of changing the formula or the word, a new link should be created and the old deleted
             if ($db_rec->fob != null) {
-                if ($db_rec->fob->id <> $this->fob->id
-                    or $db_rec->tob->id <> $this->tob->id) {
+                if ($db_rec->fob->id() <> $this->fob->id()
+                    or $db_rec->tob->id() <> $this->tob->id()) {
                     log_debug("update link settings for id " . $this->id . ": change formula " . $db_rec->formula_id() . " to " . $this->formula_id() . " and " . $db_rec->phrase_id() . " to " . $this->phrase_id());
                     $result .= log_info('The formula link "' . $db_rec->fob->name . '" with "' . $db_rec->tob->name . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->fob->name . '" with "' . $this->tob->name . '" (id ' . $this->fob->id . ',' . $this->tob->id . '). Instead the program should have created a new link.', "formula_link->save");
                 }

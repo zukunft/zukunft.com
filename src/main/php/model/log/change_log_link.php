@@ -46,6 +46,8 @@
 
 namespace model;
 
+use Exception;
+
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 
