@@ -479,9 +479,9 @@ class phrase_list extends sandbox_list_named
             if (!$db_con->connected()) {
                 // add the triple just with the id for unit testing
                 foreach ($trp_ids as $id) {
-                    $wrd = new triple($this->user());
-                    $wrd->set_id($id);
-                    $phr_lst_loaded->add($wrd->phrase());
+                    $trp = new triple($this->user());
+                    $trp->set_id($id);
+                    $phr_lst_loaded->add($trp->phrase());
                     $result = true;
                 }
             } else {
@@ -949,7 +949,8 @@ class phrase_list extends sandbox_list_named
             if ($trp_ids_txt != '') {
                 $trp_ids = explode(",", $trp_ids_txt);
                 foreach ($trp_ids as $id) {
-                    if (!in_array($id, $ids)) {
+                    $phr_id = $id * -1;
+                    if (!in_array($phr_id, $ids)) {
                         $trp = new triple($this->user());
                         $trp->set_id($id);
                         $phr = $trp->phrase();
@@ -1533,7 +1534,9 @@ class phrase_list extends sandbox_list_named
             foreach ($this->lst as $phr) {
                 // use only valid ids
                 if ($phr->id() <> 0) {
-                    $lst[] = $phr->id();
+                    if (!array_key_exists($phr->id(), $lst)) {
+                        $lst[] = $phr->id();
+                    }
                 }
             }
         }
@@ -1550,8 +1553,8 @@ class phrase_list extends sandbox_list_named
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {
                 // use only valid word ids
-                if ($phr->id() > 0) {
-                    $result[] = $phr->id();
+                if ($phr->is_word()) {
+                    $result[] = $phr->obj_id();
                 }
             }
         }
@@ -1568,8 +1571,8 @@ class phrase_list extends sandbox_list_named
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {
                 // use only valid triple ids
-                if ($phr->id() < 0) {
-                    $result[] = $phr->id() * -1;
+                if (!$phr->is_word()) {
+                    $result[] = $phr->obj_id();
                 }
             }
         }

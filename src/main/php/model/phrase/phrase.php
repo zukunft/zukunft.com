@@ -189,6 +189,7 @@ class phrase extends combine_named
      */
     function set_id(int $id): void
     {
+        // TODO check if not set_id should be used
         $this->set_obj_id(abs($id));
     }
 
@@ -456,13 +457,13 @@ class phrase extends combine_named
         if ($this->is_triple()) {
             $trp = new triple($this->user());
             // TODO use load_by_phrase_id to move the id logic into the triple class
-            $result = $trp->load_by_id($this->id * -1, triple::class);
+            $result = $trp->load_by_id($this->obj_id(), triple::class);
             $this->obj = $trp;
             $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj->name
             log_debug('triple ' . $this->dsp_id());
         } elseif ($this->is_word()) {
             $wrd = new word($this->user());
-            $result = $wrd->load_by_id($this->id(), word::class);
+            $result = $wrd->load_by_id($this->obj_id(), word::class);
             $this->obj = $wrd;
             $this->set_name($wrd->name());
             log_debug('word ' . $this->dsp_id());
@@ -472,11 +473,9 @@ class phrase extends combine_named
             $result = $trm->load_by_name($this->name());
             if ($trm->type() == word::class) {
                 $this->obj = $trm->obj;
-                $this->id = $trm->id_obj();
                 log_debug('word ' . $this->dsp_id() . ' by name');
             } elseif ($trm->type() == triple::class) {
                 $this->obj = $trm->obj;
-                $this->id = $trm->id_obj() * -1;
                 log_debug('triple ' . $this->dsp_id() . ' by name');
             } elseif ($trm->type() == formula::class) {
                 // for the phrase load the related word instead of the formula
@@ -1163,7 +1162,7 @@ class phrase extends combine_named
         }
         $sel->bs_class = $class;
         $sel->sql = $this->sql_list($type);
-        $sel->selected = $this->id;
+        $sel->selected = $this->id();
         $sel->dummy_text = '... please select';
         $result .= $sel->display();
 

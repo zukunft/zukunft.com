@@ -49,6 +49,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_group_triple_link.php';
 include_once API_PHRASE_PATH . 'phrase_group.php';
 
 use api\phrase_group_api;
+use cfg\export\exp_obj;
 
 class phrase_group extends db_object
 {
@@ -746,6 +747,33 @@ class phrase_group extends db_object
         return $result;
     }
     */
+
+
+    /**
+     * TODO review
+     * set the phrase group object vars based on an api json array
+     * similar to import_obj but using the database id instead of the names and code id
+     * @param array $api_json the api array
+     * @return user_message false if a value could not be set
+     */
+    function save_from_api_msg(array $api_json, bool $do_save = true): user_message
+    {
+        log_debug();
+        $result = new user_message();
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == exp_obj::FLD_NAME) {
+                $this->grp_name = $value;
+            }
+        }
+
+        if ($result->is_ok() and $do_save) {
+            $result->add_message($this->save_id());
+        }
+
+        return $result;
+    }
 
 
     /*

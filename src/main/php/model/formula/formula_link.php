@@ -367,7 +367,7 @@ class formula_link extends sandbox_link_with_type
         if ($this->formula_id() > 0) {
             $frm = new formula($this->user());
             $frm->load_by_id($this->formula_id(), formula::class);
-            if ($frm->id > 0) {
+            if ($frm->id() > 0) {
                 $this->fob = $frm;
             } else {
                 $result = false;
@@ -376,8 +376,8 @@ class formula_link extends sandbox_link_with_type
         if ($result) {
             if ($this->phrase_id() <> 0) {
                 $phr = new phrase($this->user());
-                $phr->id = $this->phrase_id();
-                if ($phr->load_by_obj_par()) {
+                $phr->load_by_id($this->phrase_id());
+                if ($phr->id() > 0) {
                     $this->tob = $phr;
                 } else {
                     $result = false;

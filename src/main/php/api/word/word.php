@@ -56,8 +56,6 @@ class word_api extends sandbox_typed_api
     const TN_CH = 'Switzerland';
     const TN_READ_GERMANY = 'Germany';
     const TN_ZH = 'Zurich';
-    const TN_ZH_CANTON = 'Zurich (Canton)';
-    const TN_ZH_CITY = 'Zurich (City)';
     const TN_INHABITANTS = 'inhabitants';
     const TN_INHABITANT = 'inhabitant';
     const TN_ONE = 'one';

@@ -125,7 +125,7 @@ function run_phrase_test(testing $t): void
 
     // test the phrase display functions (triple side)
     $phr = new phrase($usr);
-    $phr->set_id($zh_company_id * -1);
+    $phr->set_id_from_obj($zh_company_id, triple::class);
     $phr->load_by_obj_par();
     $result = $phr->name();
     $target = phrase_api::TN_ZH_COMPANY;

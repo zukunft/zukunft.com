@@ -154,7 +154,7 @@ class value extends sandbox_value
         $this->reset();
 
         if ($id != null) {
-            $this->id = $id;
+            $this->set_id($id);
         }
         if ($num_val != null) {
             $this->set_number($num_val);
@@ -471,9 +471,9 @@ class value extends sandbox_value
         $sql_grp = '';
 
         $db_con->set_type(sql_db::TBL_VALUE);
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $qp->name .= 'id';
-        } elseif ($this->grp->id > 0) {
+        } elseif ($this->grp->id() > 0) {
             $qp->name .= 'phrase_group_id';
         } elseif ($this->grp->phr_lst != null) {
             $phr_lst = clone $this->grp->phr_lst;
@@ -492,10 +492,10 @@ class value extends sandbox_value
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
 
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $sql_where = $db_con->where_id(self::FLD_ID, $this->id, true);
-        } elseif ($this->grp->id > 0) {
-            $sql_where = $db_con->where_par(array(phrase_group::FLD_ID), array($this->grp->id), true);
+        } elseif ($this->grp->id() > 0) {
+            $sql_where = $db_con->where_par(array(phrase_group::FLD_ID), array($this->grp->id()), true);
         } elseif ($this->grp->phr_lst != null) {
             // create the SQL to select a phrase group which needs to inside load_sql for correct parameter counting
             $phr_lst = clone $this->grp->phr_lst;
@@ -513,7 +513,7 @@ class value extends sandbox_value
                 if ($sql_grp_where <> '') {
                     $sql_grp_where .= ' AND l' . $pos_prior . '.' . phrase_group::FLD_ID . ' = l' . $pos . '.' . phrase_group::FLD_ID . ' AND ';
                 }
-                $db_con->add_par(sql_db::PAR_INT, $phr->id);
+                $db_con->add_par(sql_db::PAR_INT, $phr->id());
                 $sql_grp_where .= ' l' . $pos . '.word_id = ' . $db_con->par_name();
                 $pos++;
             }
@@ -602,7 +602,7 @@ class value extends sandbox_value
             // if not direct value is found try to get a more specific value
             // similar to formula_value
             /* TODO review with a concrete test
-            if ($this->id <= 0 and isset($this->phr_lst)) {
+            if ($this->id() <= 0 and isset($this->phr_lst)) {
                 if (count($this->phr_lst->lst) > 0) {
 
                     $qp_val = $this->load_sql($db_con);
@@ -612,13 +612,13 @@ class value extends sandbox_value
                     if ($val_ids_rows != null) {
                         if (count($val_ids_rows) > 0) {
                             $val_id_row = $val_ids_rows[0];
-                            $this->id = $val_id_row[self::FLD_ID];
-                            if ($this->id > 0) {
-                                $sql_where = "s.value_id = " . $this->id;
+                            $this->id() = $val_id_row[self::FLD_ID];
+                            if ($this->id() > 0) {
+                                $sql_where = "s.value_id = " . $this->id();
                                 $qp = $this->load_sql($db_con);
                                 $db_val = $db_con->get1($qp);
                                 $this->row_mapper($db_val, true);
-                                log_debug('value->loaded best guess id (' . $this->id . ')');
+                                log_debug('value->loaded best guess id (' . $this->id() . ')');
                             }
                         }
                     }
@@ -642,7 +642,7 @@ class value extends sandbox_value
         log_debug('value->load_best for ' . $this->dsp_id());
         $this->load_by_grp($this->grp);
         // if not found try without scaling
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             $this->load_phrases();
             if (!isset($this->grp->phr_lst)) {
                 log_err('No phrases found for ' . $this->dsp_id() . '.', 'value->load_best');
@@ -654,13 +654,13 @@ class value extends sandbox_value
                 $grp_unscale = $phr_lst_unscaled->get_grp();
                 $this->load_by_grp($grp_unscale);
                 // if not found try with converted measure
-                if ($this->id <= 0) {
+                if ($this->id() <= 0) {
                     // try to get a value with another measure
                     $phr_lst_converted = clone $phr_lst_unscaled;
                     $phr_lst_converted->ex_measure();
                     log_debug('try converted with ' . $phr_lst_converted->dsp_id());
                     $grp_unscale = $phr_lst_converted->get_grp();
-                    $this->grp->id = $grp_unscale->id;
+                    $this->grp->set_id($grp_unscale->id());
                     $this->load_by_grp($grp_unscale);
                     // TODO:
                     // check if there are any matching values at all
@@ -743,13 +743,13 @@ class value extends sandbox_value
     function load_grp_by_id()
     {
         // if the group object is missing
-        if ($this->grp->id > 0) {
+        if ($this->grp->id() > 0) {
             // ... load the group related objects means the word and triple list
             $grp = new phrase_group($this->user()); // in case the word names and word links can be user specific maybe the owner should be used here
-            $grp->id = $this->grp->id;
+            $grp->set_id($this->grp->id());
             $grp->get();
             $grp->load(); // to make sure that the word and triple object lists are loaded
-            if ($grp->id > 0) {
+            if ($grp->id() > 0) {
                 $this->grp = $grp;
             }
         }
@@ -762,7 +762,7 @@ class value extends sandbox_value
 
                 // these if's are only needed for debugging to avoid accessing an unset object, which would cause a crash
                 if (isset($this->grp->phr_lst)) {
-                    log_debug('got ' . $this->grp->phr_lst->dsp_name() . ' from group ' . $this->grp->id . ' for "' . $this->user()->name . '"');
+                    log_debug('got ' . $this->grp->phr_lst->dsp_name() . ' from group ' . $this->grp->id() . ' for "' . $this->user()->name . '"');
                 }
                 $wrd_lst = $this->wrd_lst();
                 $trp_lst = $this->trp_lst();
@@ -792,7 +792,7 @@ class value extends sandbox_value
     {
         $result = 0;
         if ($this->source != null) {
-            $result = $this->source->id;
+            $result = $this->source->id();
         }
         return $result;
     }
@@ -808,7 +808,7 @@ class value extends sandbox_value
                 if ($this->source == null) {
                     $this->source = new source($this->user());
                 }
-                $this->source->id = $id;
+                $this->source->set_id($id);
             }
         }
     }
@@ -865,7 +865,7 @@ class value extends sandbox_value
         $result = true;
 
         // reload the value to include all changes
-        log_debug('value->check id ' . $this->id . ', for user ' . $this->user()->name);
+        log_debug('value->check id ' . $this->id() . ', for user ' . $this->user()->name);
         $this->load_by_id($this->id());
         log_debug('value->check load phrases');
         $this->load_phrases();
@@ -918,14 +918,14 @@ class value extends sandbox_value
                     if (count($scale_wrd_lst->lst()) == 1) {
                         $scale_wrd = $scale_wrd_lst->lst()[0];
                         log_debug('word (' . $scale_wrd->name() . ')');
-                        if ($scale_wrd->id > 0) {
+                        if ($scale_wrd->id() > 0) {
                             $frm = $scale_wrd->formula();
                             $frm->usr = $this->user(); // temp solution utils the bug of not setting is found
                             if (!isset($frm)) {
                                 log_warning('No scaling formula defined for "' . $scale_wrd->name() . '".', "value->scale");
                             } else {
                                 $formula_text = $frm->ref_text;
-                                log_debug('scaling formula "' . $frm->name() . '" (' . $frm->id . '): ' . $formula_text);
+                                log_debug('scaling formula "' . $frm->name() . '" (' . $frm->id() . '): ' . $formula_text);
                                 if ($formula_text <> "") {
                                     $l_part = $lib->str_left_of($formula_text, expression::CHAR_CALC);
                                     $r_part = $lib->str_right_of($formula_text, expression::CHAR_CALC);
@@ -943,7 +943,7 @@ class value extends sandbox_value
                                             // test if it is a valid scale formula
                                             if ($fv_wrd->is_type(phrase_type::SCALING_HIDDEN)
                                                 and $r_wrd->is_type(phrase_type::SCALING)) {
-                                                $wrd_symbol = expression::WORD_START . $r_wrd->id . expression::WORD_END;
+                                                $wrd_symbol = expression::WORD_START . $r_wrd->id() . expression::WORD_END;
                                                 log_debug('replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->number . ')');
                                                 $r_part = str_replace($wrd_symbol, $this->number, $r_part);
                                                 log_debug('replace done (' . $r_part . ')');
@@ -1172,7 +1172,7 @@ class value extends sandbox_value
             $src->set_name($value);
             if ($msg->is_ok() and $do_save) {
                 $src->load_by_name($value);
-                if ($src->id == 0) {
+                if ($src->id() == 0) {
                     $src->save();
                 }
             }
@@ -1257,7 +1257,7 @@ class value extends sandbox_value
      */
     function fv_lst_depending(): formula_value_list
     {
-        log_debug('value->fv_lst_depending group id "' . $this->grp->id . '" for user ' . $this->user()->name . '');
+        log_debug('value->fv_lst_depending group id "' . $this->grp->id() . '" for user ' . $this->user()->name . '');
         $fv_lst = new formula_value_list($this->user());
         $fv_lst->load($this->grp, true);
 
@@ -1310,7 +1310,7 @@ class value extends sandbox_value
      */
     function not_used(): bool
     {
-        log_debug('value->not_used (' . $this->id . ')');
+        log_debug('value->not_used (' . $this->id() . ')');
         $result = true;
 
         // to review: maybe replace by a database foreign key check
@@ -1332,12 +1332,12 @@ class value extends sandbox_value
      */
     function not_changed(): bool
     {
-        log_debug('value->not_changed id ' . $this->id . ' by someone else than the owner (' . $this->owner_id . ')');
+        log_debug('value->not_changed id ' . $this->id() . ' by someone else than the owner (' . $this->owner_id . ')');
 
         global $db_con;
         $result = true;
 
-        if ($this->id == 0) {
+        if ($this->id() == 0) {
             log_err('The id must be set to check if the formula has been changed');
         } else {
             $qp = $this->not_changed_sql($db_con);
@@ -1346,7 +1346,7 @@ class value extends sandbox_value
                 $result = false;
             }
         }
-        log_debug('value->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result));
+        log_debug('value->not_changed for ' . $this->id() . ' is ' . zu_dsp_bool($result));
         return $result;
     }
 
@@ -1403,7 +1403,7 @@ class value extends sandbox_value
         $result = true;
 
         if (!$this->has_usr_cfg()) {
-            log_debug('value->add_usr_cfg for "' . $this->id . ' und user ' . $this->user()->name);
+            log_debug('value->add_usr_cfg for "' . $this->id() . ' und user ' . $this->user()->name);
 
             // check again if there ist not yet a record
             $qp = $this->usr_cfg_sql($db_con);
@@ -1469,7 +1469,7 @@ class value extends sandbox_value
     $log->field     = 'word_value';
     $log->old_value = $this->number;
     $log->new_value = '';
-    $log->row_id    = $this->id;
+    $log->row_id    = $this->id();
     $log->add();
 
     return $log;
@@ -1529,7 +1529,7 @@ class value extends sandbox_value
                         if ($sql == '') {
                             $sql = 'INSERT INTO ' . $table_name . ' (value_id, ' . $field_name . ') VALUES ';
                         }
-                        $sql .= " (" . $this->id . "," . $add_id . ") ";
+                        $sql .= " (" . $this->id() . "," . $add_id . ") ";
                         $add_nbr++;
                         if ($add_nbr < count($add_ids)) {
                             $sql .= ",";
@@ -1547,7 +1547,7 @@ class value extends sandbox_value
                         if ($sql_result) {
                             $sql_error = pg_result_error($sql_result);
                             if ($sql_error != '') {
-                                log_err('Error adding new group links "' . $lib->dsp_array($add_ids) . '" for ' . $this->id . ' using ' . $sql . ' failed due to ' . $sql_error);
+                                log_err('Error adding new group links "' . $lib->dsp_array($add_ids) . '" for ' . $this->id() . ' using ' . $sql . ' failed due to ' . $sql_error);
                             }
                         }
                     } catch (Exception $e) {
@@ -1566,12 +1566,12 @@ class value extends sandbox_value
                 $sql_ids = $lib->sql_array($del_ids,
                 ' AND ' . $field_name . ' IN (', ')');
                 $sql = 'DELETE FROM ' . $table_name . ' 
-               WHERE value_id = ' . $this->id . $sql_ids;
+               WHERE value_id = ' . $this->id() . $sql_ids;
                 //$sql_result = $db_con->exe($sql, "value->upd_phr_links_delete", array());
                 try {
                     $sql_result = $db_con->exe($sql);
                     if ($sql_result != '') {
-                        $msg = 'Removing the phrase group links "' . $lib->dsp_array($del_ids) . '" from ' . $this->id . ' failed because: ' . $sql_result;
+                        $msg = 'Removing the phrase group links "' . $lib->dsp_array($del_ids) . '" from ' . $this->id() . ' failed because: ' . $sql_result;
                         log_warning($msg);
                         $result = $msg;
                     }
@@ -1589,14 +1589,14 @@ class value extends sandbox_value
     /*
     // set the parameter for the log entry to link a word to value
     function log_add_link($wrd_id) {
-    zu_debug('value->log_add_link word "'.$wrd_id.'" to value '.$this->id);
+    zu_debug('value->log_add_link word "'.$wrd_id.'" to value '.$this->id());
     $log = New user_log_link;
     $log->usr       = $this->user();
     $log->action    = user_log::ACTION_ADD;
     $log->table     = 'value_phrase_links';
-    $log->new_from  = $this->id;
+    $log->new_from  = $this->id();
     $log->new_to    = $wrd_id;
-    $log->row_id    = $this->id;
+    $log->row_id    = $this->id();
     $log->link_text = 'word';
     $log->add_link_ref();
 
@@ -1605,14 +1605,14 @@ class value extends sandbox_value
 
     // set the parameter for the log entry to unlink a word to value
     function log_del_link($wrd_id) {
-    zu_debug('value->log_del_link word "'.$wrd_id.'" from value '.$this->id);
+    zu_debug('value->log_del_link word "'.$wrd_id.'" from value '.$this->id());
     $log = New user_log_link;
     $log->usr       = $this->user();
     $log->action    = user_log::ACTION_DELETE;
     $log->table     = 'value_phrase_links';
-    $log->old_from  = $this->id;
+    $log->old_from  = $this->id();
     $log->old_to    = $wrd_id;
-    $log->row_id    = $this->id;
+    $log->row_id    = $this->id();
     $log->link_text = 'word';
     $log->add_link_ref();
 
@@ -1651,13 +1651,13 @@ class value extends sandbox_value
 
     if ($this->can_change()) {
       // log the delete attempt first
-      $log = $this->log_del_link($wrd->id);
+      $log = $this->log_del_link($wrd->id());
       if ($log->id() > 0) {
         // remove the link
         $db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
-        $result = $db_con->delete(array("value_id","phrase_id"), array($this->id,$wrd->id));
+        $result = $db_con->delete(array("value_id","phrase_id"), array($this->id,$wrd->id()));
         //$result = str_replace ('1','',$result);
       }
     } else {
@@ -1681,12 +1681,12 @@ class value extends sandbox_value
         if (!$db_con->update($this->id, value::FLD_LAST_UPDATE, 'Now()')) {
             $result = 'setting of value update trigger failed';
         }
-        log_debug('value->save_field_trigger_update timestamp of ' . $this->id . ' updated to "' . $this->last_update->format('Y-m-d H:i:s') . '"');
+        log_debug('value->save_field_trigger_update timestamp of ' . $this->id() . ' updated to "' . $this->last_update->format('Y-m-d H:i:s') . '"');
 
         // trigger the batch job
         // save the pending update to the database for the batch calculation
-        log_debug('value->save_field_trigger_update group id "' . $this->grp->id . '" for user ' . $this->user()->name . '');
-        if ($this->id > 0) {
+        log_debug('value->save_field_trigger_update group id "' . $this->grp->id() . '" for user ' . $this->user()->name . '');
+        if ($this->id() > 0) {
             $job = new batch_job($this->user());
             $job->type = $job_types->id(job_type_list::VALUE_UPDATE);
             $job->obj = $this;
@@ -1709,7 +1709,7 @@ class value extends sandbox_value
             $log->old_value = $db_rec->number();
             $log->new_value = $this->number();
             $log->std_value = $std_rec->number();
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_VALUE);
             $result .= $this->save_field_do($db_con, $log);
             // updating the number is definitely relevant for calculation, so force to update the timestamp
@@ -1734,7 +1734,7 @@ class value extends sandbox_value
             $log->new_id = $this->get_source_id();
             $log->std_value = $std_rec->source_name();
             $log->std_id = $std_rec->get_source_id();
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(source::FLD_ID);
             $result = $this->save_field_do($db_con, $log);
         }
@@ -1755,7 +1755,7 @@ class value extends sandbox_value
         $result .= $this->save_field_share($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_protection($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        log_debug('value->save_fields all fields for "' . $this->id . '" has been saved');
+        log_debug('value->save_fields all fields for "' . $this->id() . '" has been saved');
         return $result;
     }
 
@@ -1773,7 +1773,7 @@ class value extends sandbox_value
         $this->load_phrases();
         $std_rec->load_phrases();
 
-        if ($db_rec->grp->id <> $this->grp->id) {
+        if ($db_rec->grp->id() <> $this->grp->id()) {
             log_debug('value->save_id_fields to ' . $this->dsp_id() . ' from "' . $db_rec->dsp_id() . '" (standard ' . $std_rec->dsp_id() . ')');
 
             $log = $this->log_upd();
@@ -1786,16 +1786,16 @@ class value extends sandbox_value
             if (isset($std_rec->grp)) {
                 $log->std_value = $std_rec->grp->name();
             }
-            $log->old_id = $db_rec->grp->id;
-            $log->new_id = $this->grp->id;
-            $log->std_id = $std_rec->grp->id;
-            $log->row_id = $this->id;
+            $log->old_id = $db_rec->grp->id();
+            $log->new_id = $this->grp->id();
+            $log->std_id = $std_rec->grp->id();
+            $log->row_id = $this->id();
             $log->set_field(change_log_field::FLD_VALUE_GROUP);
             if ($log->add()) {
                 $db_con->set_type(sql_db::TBL_VALUE);
                 $result = $db_con->update($this->id,
                     array(phrase_group::FLD_ID),
-                    array($this->grp->id));
+                    array($this->grp->id()));
             }
         }
         log_debug('value->save_id_fields group updated for ' . $this->dsp_id());
@@ -1808,7 +1808,7 @@ class value extends sandbox_value
           $log->old_value = $db_rec->time_stamp;
           $log->new_value = $this->time_stamp;
           $log->std_value = $std_rec->time_stamp;
-          $log->row_id    = $this->id;
+          $log->row_id    = $this->id();
           $log->field     = 'time_stamp';
           if ($log->add()) {
             $result .= $db_con->update($this->id, array("time_stamp"),
@@ -1829,16 +1829,16 @@ class value extends sandbox_value
         $result = '';
 
         // if the phrases or time has changed, check if value with the same phrases/time already exists
-        if ($db_rec->grp->id <> $this->grp->id or $db_rec->time_stamp <> $this->time_stamp) {
+        if ($db_rec->grp->id() <> $this->grp->id() or $db_rec->time_stamp <> $this->time_stamp) {
             // check if a value with the same phrases/time is already in the database
             $chk_val = new value($this->user());
             //$chk_val->time_phr = $this->time_phr;
             //$chk_val->time_stamp = $this->time_stamp;
             $chk_val->load_by_grp($this->grp);
             log_debug('value->save_id_if_updated check value loaded');
-            if ($chk_val->id > 0) {
+            if ($chk_val->id() > 0) {
                 // TODO if the target value is already in the database combine the user changes with this values
-                // $this->id = $chk_val->id;
+                // $this->id() = $chk_val->id();
                 // $result .= $this->save();
                 log_debug('value->save_id_if_updated update the existing ' . $chk_val->dsp_id());
             } else {
@@ -1861,14 +1861,14 @@ class value extends sandbox_value
                     // .. and create a deletion request for all users ???
 
                     // ... and create a new display component link
-                    $this->id = 0;
+                    $this->set_id(0);
                     $this->owner_id = $this->user()->id();
                     $result .= $this->add($db_con)->get_last_message();
                     log_debug('value->save_id_if_updated recreate the value "' . $db_rec->dsp_id() . '" as ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                 }
             }
         } else {
-            log_debug('value->save_id_if_updated no id field updated (group ' . $db_rec->grp->id . '=' . $this->grp->id . ')');
+            log_debug('value->save_id_if_updated no id field updated (group ' . $db_rec->grp->id() . '=' . $this->grp->id() . ')');
         }
 
         log_debug('value->save_id_if_updated for ' . $this->dsp_id() . ' has been done');
@@ -1894,12 +1894,12 @@ class value extends sandbox_value
         if ($log->id() > 0) {
             // insert the value
             $db_con->set_type(sql_db::TBL_VALUE);
-            $this->id = $db_con->insert(
+            $this->set_id($db_con->insert(
                 array(phrase_group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE),
-                array($this->grp->id, $this->user()->id, $this->number, "Now()"));
-            if ($this->id > 0) {
+                array($this->grp->id, $this->user()->id, $this->number, "Now()")));
+            if ($this->id() > 0) {
                 // update the reference in the log
-                if (!$log->add_ref($this->id)) {
+                if (!$log->add_ref($this->id())) {
                     $result->add_message('adding the value reference in the system log failed');
                 }
 
@@ -1907,13 +1907,13 @@ class value extends sandbox_value
                 $upd_result = $this->upd_phr_links();
                 if ($upd_result != '') {
                     $result->add_message('Adding the phrase links of the value failed because ' . $upd_result);
-                    $this->id = 0;
+                    $this->set_id(0);
                 }
 
-                if ($this->id > 0) {
+                if ($this->id() > 0) {
                     // create an empty db_rec element to force saving of all set fields
                     $db_val = new value($this->user());
-                    $db_val->id = $this->id;
+                    $db_val->set_id($this->id());
                     $db_val->number = $this->number; // ... but not the field saved already with the insert
                     $std_val = clone $db_val;
                     // save the value fields
@@ -1921,7 +1921,7 @@ class value extends sandbox_value
                 }
 
             } else {
-                $result->add_message("Adding value " . $this->id . " failed.");
+                $result->add_message("Adding value " . $this->id() . " failed.");
             }
         }
 
@@ -1943,39 +1943,39 @@ class value extends sandbox_value
         $db_con->set_usr($this->user()->id());
 
         // check if a new value is supposed to be added
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             log_debug('value->save check if a value for "' . $this->name() . '" and user ' . $this->user()->name . ' is already in the database');
             // check if a value for this words is already in the database
             $db_chk = new value($this->user());
             //$db_chk->time_phr = $this->time_phr;
             //$db_chk->time_stamp = $this->time_stamp;
             $db_chk->load_by_grp($this->grp);
-            if ($db_chk->id > 0) {
-                if ($this->grp->id != 0 and !$this->user()->is_set()) {
+            if ($db_chk->id() > 0) {
+                if ($this->grp->id() != 0 and !$this->user()->is_set()) {
                     log_debug('value for "' . $this->grp->name() . '" and user ' . $this->user()->name . ' is already in the database and will be updated');
                 } else {
                     log_debug('value is empty');
                 }
-                $this->id = $db_chk->id;
+                $this->set_id($db_chk->id());
             }
         }
 
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             log_debug('value->save "' . $this->name() . '": ' . $this->number . ' for user ' . $this->user()->name . ' as a new value');
 
             $result .= $this->add($db_con)->get_last_message();
         } else {
-            log_debug('update id ' . $this->id . ' to save "' . $this->number . '" for user ' . $this->user()->id());
+            log_debug('update id ' . $this->id() . ' to save "' . $this->number . '" for user ' . $this->user()->id());
             // update a value
             // TODO: if no one else has ever changed the value, change to default value, else create a user overwrite
 
             // read the database value to be able to check if something has been changed
             // done first, because it needs to be done for user and general values
             $db_rec = new value($this->user());
-            $db_rec->load_by_id($this->id);
-            log_debug("old database value loaded (" . $db_rec->number . ") with group " . $db_rec->grp->id . ".");
+            $db_rec->load_by_id($this->id());
+            log_debug("old database value loaded (" . $db_rec->number . ") with group " . $db_rec->grp->id() . ".");
             $std_rec = new value($this->user()); // user must also be set to allow to take the ownership
-            $std_rec->id = $this->id;
+            $std_rec->set_id($this->id());
             $std_rec->load_standard();
             log_debug("standard value settings loaded (" . $std_rec->number . ")");
 

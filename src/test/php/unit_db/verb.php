@@ -32,10 +32,14 @@
 
 namespace test;
 
+include_once API_WORD_PATH . 'word.php';
+include_once API_WORD_PATH . 'triple.php';
+
 use api\word_api;
-use cfg\verb_list;
-use model\verb;
+use api\triple_api;
 use model\word;
+use model\verb;
+use cfg\verb_list;
 
 class verb_unit_db_tests
 {
@@ -79,11 +83,11 @@ class verb_unit_db_tests
         $parts = $switzerland->direct_parts();
         $t->assert_contains('direct parts of ' . word_api::TN_CH,
             $parts->names(),
-            array(word_api::TN_ZH_CANTON)
+            array(triple_api::TN_ZH_CANTON)
         );
         $t->assert_contains_not('direct parts of ' . word_api::TN_CH,
             $parts->names(),
-            array(word_api::TN_ZH_CITY)
+            array(triple_api::TN_ZH_CITY)
         );
 
         // 'is part of' - test the recursive selection of the members via 'is part of' verb
@@ -91,7 +95,7 @@ class verb_unit_db_tests
         $parts = $switzerland->parts();
         $t->assert_contains('parts of ' . word_api::TN_CH . ' and parts of the parts',
             $parts->names(),
-            array(word_api::TN_ZH_CANTON, word_api::TN_ZH_CITY)
+            array(triple_api::TN_ZH_CANTON, triple_api::TN_ZH_CITY)
         );
 
 

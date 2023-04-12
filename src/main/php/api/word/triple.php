@@ -48,6 +48,10 @@ class triple_api extends sandbox_typed_api
     const TN_READ = 'Pi';
     const TN_READ_NAME = 'Pi (math)';
 
+    const TN_ZH_CANTON = 'Zurich (Canton)';
+    const TN_ZH_CITY = 'Zurich (City)';
+
+
 
     /*
      * object vars
