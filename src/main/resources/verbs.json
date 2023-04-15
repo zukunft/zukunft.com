@@ -17,7 +17,8 @@
       "description": "the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...",
       "name_plural_reverse": "are",
       "name_plural": "are",
-      "name_reverse": "are"
+      "name_reverse": "are",
+      "protection": "admin_protection"
     },
     {
       "name": "is part of",

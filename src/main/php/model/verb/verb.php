@@ -36,12 +36,16 @@ namespace model;
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_LOG_PATH . 'change_log_named.php';
 include_once API_VERB_PATH . 'verb.php';
+include_once SERVICE_EXPORT_PATH . 'verb_exp.php';
+include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
 
 use api\verb_api;
 use cfg\export\exp_obj;
+use cfg\export\sandbox_exp_named;
 use html\html_base;
 use html\html_selector;
 use html\verb_dsp;
+use verb_exp;
 
 class verb extends db_object
 {
@@ -484,17 +488,17 @@ class verb extends db_object
             if ($key == exp_obj::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == self::FLD_PLURAL_REVERSE) {
-                $this->rev_plural = $value;
+            if ($key == self::FLD_REVERSE) {
+                $this->reverse = $value;
             }
             if ($key == self::FLD_PLURAL) {
                 $this->plural = $value;
             }
-            if ($key == self::FLD_REVERSE) {
-                $this->reverse = $value;
-            }
             if ($key == self::FLD_FORMULA) {
                 $this->frm_name = $value;
+            }
+            if ($key == self::FLD_PLURAL_REVERSE) {
+                $this->rev_plural = $value;
             }
         }
 
@@ -504,6 +508,49 @@ class verb extends db_object
         }
 
 
+        return $result;
+    }
+
+    /**
+     * create a verb object for the export
+     * @param bool $do_load can be set to false for unit testing
+     * @return sandbox_exp_named a reduced word object that can be used to create a JSON message
+     */
+    function export_obj(bool $do_load = true): verb_exp
+    {
+        global $share_types;
+        global $protection_types;
+
+        log_debug();
+        $result = new verb_exp();
+
+        if ($this->name <> '') {
+            $result->name = $this->name();
+        }
+        if ($this->code_id <> '') {
+            $result->code_id = $this->code_id;
+        }
+        if ($this->description <> '') {
+            $result->description = $this->description;
+        }
+        if ($this->plural <> '') {
+            $result->name_plural = $this->plural;
+        }
+        if ($this->reverse <> '') {
+            $result->name_reverse = $this->reverse;
+        }
+        if ($this->rev_plural <> '') {
+            $result->name_plural_reverse = $this->rev_plural;
+        }
+
+        // TODO add the protection type
+        /*
+        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protection_type::NO_PROTECT)) {
+            $result->protection = $this->protection_type_code_id();
+        }
+        */
+
+        log_debug(json_encode($result));
         return $result;
     }
 

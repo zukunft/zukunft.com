@@ -37,6 +37,7 @@ use html\verb_dsp;
 use model\phrase;
 use model\sql_db;
 use model\verb;
+use model\word;
 use model\word_select_direction;
 
 class verb_unit_tests
@@ -45,11 +46,13 @@ class verb_unit_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init
         $db_con = new sql_db();
         $t->name = 'verb->';
         $t->resource_path = 'db/verb/';
+        $json_file = 'unit/verb/is_a.json';
         $usr->set_id(1);
 
 
@@ -61,6 +64,15 @@ class verb_unit_tests
         $t->assert_load_sql_id($db_con, $vrb);
         $t->assert_load_sql_name($db_con, $vrb);
         $t->assert_load_sql_code_id($db_con, $vrb);
+
+
+        $t->subheader('Im- and Export tests');
+
+        $vrb = new verb();
+        // set the admin user if this is needed for the import e.g. for verbs
+        $vrb->set_user($usr_sys);
+        $t->assert_json($vrb, $json_file);
+
 
         $t->subheader('HTML frontend unit tests');
 
