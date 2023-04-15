@@ -44,6 +44,7 @@ use cfg\phrase_type;
 use api\word_list_api;
 use html\word_dsp;
 use html\word_list_dsp;
+use im_export\export;
 
 class word_list extends sandbox_list
 {
@@ -1098,6 +1099,29 @@ class word_list extends sandbox_list
     /*
      * im- and export functions
      */
+
+    /**
+     * import a word list object from a JSON array object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(array $json_obj, bool $do_save = true): user_message
+    {
+        $result = new user_message();
+        foreach ($json_obj as $key => $value) {
+            $wrd = new word($this->user());
+            $result->add($wrd->import_obj($value, $do_save));
+            // add a dummy id for unit testing
+            if (!$do_save) {
+                $wrd->set_id($key + 1);
+            }
+            $this->add($wrd);
+        }
+
+        return $result;
+    }
 
     /**
      * create a list of word objects for the export

@@ -1,7 +1,6 @@
 [
   {
     "name": "time_word",
-    "share": "",
     "protection": "",
     "plural": "",
     "description": "",
@@ -11,7 +10,6 @@
   },
   {
     "name": "measure_word",
-    "share": "",
     "protection": "",
     "plural": "",
     "description": "",
@@ -21,7 +19,6 @@
   },
   {
     "name": "scale_word",
-    "share": "",
     "protection": "",
     "plural": "",
     "description": "",

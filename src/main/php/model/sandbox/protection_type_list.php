@@ -62,11 +62,14 @@ class protection_type_list extends type_list
     {
         $this->lst = array();
         $this->hash = array();
-        $type = new type_object(protection_type::NO_PROTECT, protection_type::NO_PROTECT, '', 2);
+        $type = new type_object(protection_type::NO_PROTECT, protection_type::NO_PROTECT, '', 1);
+        $this->add($type);
+        $type = new type_object(protection_type::USER, protection_type::USER, '', 2);
         $this->add($type);
         $type = new type_object(protection_type::ADMIN, protection_type::ADMIN, '', 3);
         $this->add($type);
-
+        $type = new type_object(protection_type::NO_CHANGE, protection_type::NO_CHANGE, '', 4);
+        $this->add($type);
     }
 
     /**

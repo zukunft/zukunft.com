@@ -63,6 +63,7 @@ class export
     const USERS = 'users';
     const VERBS = 'verbs';
     const WORDS = 'words';
+    const PHRASES = 'phrases';
     const TRIPLES = 'triples';
     const FORMULAS = 'formulas';
     const SOURCES = 'sources';

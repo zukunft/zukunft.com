@@ -31,7 +31,9 @@
 
 namespace cfg\export;
 
-class word_exp extends sandbox_exp_named
+use JsonSerializable;
+
+class word_exp extends sandbox_exp_named implements JsonSerializable
 {
 
     // field names used for JSON creation
@@ -51,6 +53,19 @@ class word_exp extends sandbox_exp_named
 
         $this->view = '';
         $this->refs = [];
+    }
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array of the word vars excluding empty and default field values
+     */
+    function jsonSerialize(): array
+    {
+        $vars = get_object_vars($this);
+        return array_filter($vars, fn($value) => !is_null($value));
     }
 
 }
