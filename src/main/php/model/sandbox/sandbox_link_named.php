@@ -31,6 +31,8 @@
 
 namespace model;
 
+use cfg\export\exp_obj;
+
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
 class sandbox_link_named extends sandbox_link
@@ -74,6 +76,36 @@ class sandbox_link_named extends sandbox_link
     {
         return $this->name;
     }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * import the name and dscription of a sandbox link object
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(array $in_ex_json, bool $do_save = true): user_message
+    {
+        $result = parent::import_obj($in_ex_json, $do_save);
+
+        // reset of object not needed, because the calling function has just created the object
+        foreach ($in_ex_json as $key => $value) {
+            if ($key == exp_obj::FLD_NAME) {
+                $this->set_name($value);
+            }
+            if ($key == exp_obj::FLD_DESCRIPTION) {
+                $this->description = $value;
+            }
+        }
+
+        return $result;
+    }
+
 
     /*
      * save function

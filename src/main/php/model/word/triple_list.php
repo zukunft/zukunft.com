@@ -43,6 +43,7 @@ namespace model;
 
 use cfg\verb_list;
 use html\html_base;
+use html\word_dsp;
 
 class triple_list
 {
@@ -206,8 +207,8 @@ class triple_list
                 $fields[] = triple::FLD_TO;
             }
             if ($vrb != null) {
-                if ($vrb->id()  > 0) {
-                    $db_con->add_par(sql_db::PAR_INT, $vrb->id() );
+                if ($vrb->id() > 0) {
+                    $db_con->add_par(sql_db::PAR_INT, $vrb->id());
                     $fields[] = verb::FLD_ID;
                     $qp->name .= '_and_vrb';
                 }
@@ -360,7 +361,7 @@ class triple_list
         }
         // with additional verb selection
         if (isset($this->vrb)) {
-            if ($this->vrb->id()  > 0) {
+            if ($this->vrb->id() > 0) {
                 $sql_name_type = '_and_vrb';
             }
         }
@@ -453,8 +454,8 @@ class triple_list
 
         // if a verb is set, select only the word links with the given verb
         if (isset($this->vrb)) {
-            if ($this->vrb->id()  > 0) {
-                $sql_type = 'AND l.verb_id = ' . $this->vrb->id() ;
+            if ($this->vrb->id() > 0) {
+                $sql_type = 'AND l.verb_id = ' . $this->vrb->id();
             }
         }
         // if a list of verb is set, select the word links included in the list
@@ -543,7 +544,7 @@ class triple_list
                         $new_link->row_mapper($db_lnk);
                         if ($new_link->id() > 0) {
                             // fill the verb
-                            if ($new_link->verb->id()  > 0) {
+                            if ($new_link->verb->id() > 0) {
                                 $new_verb = new verb;
                                 $new_verb->set_user($this->user());
                                 $new_verb->row_mapper($db_lnk);
@@ -628,6 +629,52 @@ class triple_list
         return $result;
     }
 
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * import a triple list object from a JSON array object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(array $json_obj, bool $do_save = true): user_message
+    {
+        $result = new user_message();
+        foreach ($json_obj as $key => $value) {
+            $trp = new triple($this->user());
+            $result->add($trp->import_obj($value, $do_save));
+            // add a dummy id for unit testing
+            if (!$do_save) {
+                $trp->set_id($key + 1);
+            }
+            $this->add($trp);
+        }
+
+        return $result;
+    }
+
+    /**
+     * create a list of word objects for the export
+     * @return array with the reduced word objects that can be used to create a JSON message
+     */
+    function export_obj(): array
+    {
+        $exp_triples = array();
+        foreach ($this->lst as $trp) {
+            if (get_class($trp) == triple::class) {
+                $exp_triples[] = $trp->export_obj();
+            } else {
+                log_err('The function triple_list->export_obj returns ' . $trp->dsp_id() . ', which is ' . get_class($trp) . ', but not a word.', 'export->get');
+            }
+        }
+        return $exp_triples;
+    }
+
+
     /*
      * display functions
      */
@@ -705,18 +752,18 @@ class triple_list
                 if ($lnk->verb == null) {
                     log_warning('graph->display type is missing');
                 } else {
-                    if ($lnk->verb->id()  <> $prev_verb_id) {
+                    if ($lnk->verb->id() <> $prev_verb_id) {
                         log_debug('graph->display type "' . $lnk->verb->name() . '"');
 
                         // select the same side of the verb
                         if ($this->direction == word_select_direction::DOWN) {
-                            $directional_link_type_id = $lnk->verb->id() ;
+                            $directional_link_type_id = $lnk->verb->id();
                         } else {
-                            $directional_link_type_id = $lnk->verb->id()  * -1;
+                            $directional_link_type_id = $lnk->verb->id() * -1;
                         }
 
                         // display the link type
-                        if ($lnk->verb->id()  == $next_lnk->verb->id() ) {
+                        if ($lnk->verb->id() == $next_lnk->verb->id()) {
                             $result .= $this->wrd->plural;
                             if ($this->direction == word_select_direction::DOWN) {
                                 $result .= " " . $lnk->verb->rev_plural;
@@ -733,7 +780,7 @@ class triple_list
                         }
                     }
                     $result .= $html->dsp_tbl_start_half();
-                    $prev_verb_id = $lnk->verb->id() ;
+                    $prev_verb_id = $lnk->verb->id();
 
                     // display the word
                     if ($lnk->from == null) {
@@ -775,7 +822,7 @@ class triple_list
                         }
                     }
 
-                    if ($lnk->verb->id()  <> $next_lnk->verb->id() ) {
+                    if ($lnk->verb->id() <> $next_lnk->verb->id()) {
                         if ($lnk->from == null) {
                             log_warning('graph->display from is missing');
                         } else {

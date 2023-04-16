@@ -38,16 +38,16 @@ class sandbox_exp_named extends exp_obj
 {
 
     // field names used for JSON creation
-    public ?string $name = '';       // the name of the object
-    public ?string $share = null;    // the share permissions of the object; null means that the default share type is used whereas an empty string means that the share type should be overwritten with the default share type
-    public ?string $protection= '';  // the protection of the given object; TODO check that empty string over writes the setting
+    public ?string $name = '';        // the name of the object
+    public ?string $share = null;     // the share permissions of the object; null means that the default share type is used whereas an empty string means that the share type should be overwritten with the default share type
+    public ?string $protection= null; // the protection of the given object; TODO check that empty string over writes the setting
 
     // reset the search values of this object
     function reset()
     {
         $this->name = '';
         $this->share = null;
-        $this->protection = '';
+        $this->protection = null;
     }
 
 }

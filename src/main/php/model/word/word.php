@@ -657,7 +657,7 @@ class word extends sandbox_typed
         $qp->name = 'word_formula_by_id';
         $db_con->set_name($qp->name);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_where_link_no_fld(null, null, $this->id);
+        $db_con->set_where_link_no_fld(0, 0, $this->id);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
         $db_row = $db_con->get1($qp);
@@ -690,12 +690,12 @@ class word extends sandbox_typed
         global $protection_types;
 
         log_debug();
-        $result = new user_message();
 
         // reset all parameters for the word object but keep the user
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
+        $result = parent::import_obj($in_ex_json, $do_save);
         foreach ($in_ex_json as $key => $value) {
             if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
@@ -713,12 +713,7 @@ class word extends sandbox_typed
                     $this->description = $value;
                 }
             }
-            if ($key == share_type::JSON_FLD) {
-                $this->share_id = $share_types->id($value);
-            }
-            if ($key == protection_type::JSON_FLD) {
-                $this->protection_id = $protection_types->id($value);
-            }
+            // TODO change to view object like in triple
             if ($key == exp_obj::FLD_VIEW) {
                 $wrd_view = new view($this->user());
                 if ($do_save) {

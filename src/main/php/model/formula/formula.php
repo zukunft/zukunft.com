@@ -1362,7 +1362,7 @@ class formula extends sandbox_typed
         global $protection_types;
 
         log_debug();
-        $result = new user_message;
+        $result = parent::import_obj($in_ex_json, $do_save);
 
         // reset the all parameters for the formula object but keep the user
         $usr = $this->user();
@@ -1384,12 +1384,6 @@ class formula extends sandbox_typed
                 if ($value <> '') {
                     $this->description = $value;
                 }
-            }
-            if ($key == share_type::JSON_FLD) {
-                $this->share_id = $share_types->id($value);
-            }
-            if ($key == protection_type::JSON_FLD) {
-                $this->protection_id = $protection_types->id($value);
             }
         }
 

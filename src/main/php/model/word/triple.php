@@ -443,6 +443,16 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         return $phrase_types->name($this->type_id);
     }
 
+    /**
+     * get the code_id of the word type
+     * @return string the code_id of the word type
+     */
+    function type_code_id(): string
+    {
+        global $phrase_types;
+        return $phrase_types->code_id($this->type_id);
+    }
+
 
     /*
      * cast
@@ -1120,15 +1130,9 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         global $protection_types;
 
         log_debug();
-        $result = new user_message();
+        $result = parent::import_obj($in_ex_json, $do_save);
 
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_NAME) {
-                $this->set_name($value);
-            }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
-                $this->description = $value;
-            }
             if ($key == exp_obj::FLD_TYPE) {
                 $this->type_id = $phrase_types->id($value);
             }
@@ -1164,11 +1168,17 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
                 }
                 $this->verb = $vrb;
             }
-            if ($key == share_type::JSON_FLD) {
-                $this->share_id = $share_types->id($value);
-            }
-            if ($key == protection_type::JSON_FLD) {
-                $this->protection_id = $protection_types->id($value);
+            if ($key == exp_obj::FLD_VIEW) {
+                $trp_view = new view($this->user());
+                if ($do_save) {
+                    $trp_view->load_by_name($value, view::class);
+                    if ($trp_view->id == 0) {
+                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                    }
+                } else {
+                    $trp_view->set_name($value);
+                }
+                $this->view = $trp_view;
             }
         }
 
@@ -1212,6 +1222,10 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
      */
     function export_obj(bool $do_load = true): exp_obj
     {
+        global $phrase_types;
+        global $share_types;
+        global $protection_types;
+
         log_debug();
         $result = new triple_exp();
 
@@ -1221,9 +1235,31 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         if ($this->description <> '') {
             $result->description = $this->description;
         }
-        $result->from = $this->from->name();
-        $result->verb = $this->verb->name();
-        $result->to = $this->to->name();
+        if ($this->type_id > 0) {
+            if ($this->type_id <> $phrase_types->default_id()) {
+                $result->type = $this->type_code_id();
+            }
+        }
+        if ($this->from->name() <> '') {
+            $result->from = $this->from->name();
+        }
+        if ($this->verb->name() <> '') {
+            $result->verb = $this->verb->name();
+        }
+        if ($this->to->name() <> '') {
+            $result->to = $this->to->name();
+        }
+
+        // add the share type
+        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type::PUBLIC)) {
+            $result->share = $this->share_type_code_id();
+        }
+
+        // add the protection type
+        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protection_type::NO_PROTECT)) {
+            $result->protection = $this->protection_type_code_id();
+        }
+
         if (isset($this->view)) {
             $result->view = $this->view->name();
         }

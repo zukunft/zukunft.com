@@ -38,6 +38,8 @@
 
 namespace model;
 
+use Exception;
+
 include_once MODEL_LOG_PATH . 'change_log_link.php';
 
 class sandbox_link extends sandbox

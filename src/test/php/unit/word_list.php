@@ -269,12 +269,16 @@ class word_list_unit_tests
         $json = json_decode(json_encode($wrd_lst->export_obj()));
         $json_expected = json_decode(file_get_contents(PATH_TEST_FILES . 'export/word/word_list.json'));
         $result = $lib->json_is_similar($json, $json_expected);
+        // TODO remove, for faster debugging only
+        $json_expected_txt = json_encode($json_expected);
+        $json_actual_txt = json_encode($json);
         $t->assert('JSON export word list', $result, true);
 
 
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new word_list($usr), $json_file);
+
     }
 
     /**

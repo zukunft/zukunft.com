@@ -55,6 +55,7 @@ class word_exp extends sandbox_exp_named implements JsonSerializable
         $this->refs = [];
     }
 
+
     /*
      * interface
      */

@@ -1096,8 +1096,9 @@ class word_list extends sandbox_list
         return $result;
     }
 
+
     /*
-     * im- and export functions
+     * im- and export
      */
 
     /**

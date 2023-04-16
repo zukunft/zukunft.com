@@ -55,6 +55,7 @@ class triple_list_unit_tests
         $db_con = new sql_db();
         $t->name = 'triple_list->';
         $t->resource_path = 'db/triple/';
+        $json_file = 'unit/triple/triple_list.json';
         $usr->set_id(1);
 
         $t->header('Unit tests of the word link list class (src/main/php/model/word/triple_list.php)');
@@ -549,6 +550,11 @@ class triple_list_unit_tests
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
+
+
+        $t->subheader('Im- and Export tests');
+
+        $t->assert_json(new triple_list($usr), $json_file);
 
     }
 

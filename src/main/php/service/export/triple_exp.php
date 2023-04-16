@@ -31,28 +31,46 @@
 
 namespace cfg\export;
 
-class triple_exp extends sandbox_exp_link
+use JsonSerializable;
+
+class triple_exp extends sandbox_exp_link implements JsonSerializable
 {
 
     // field names used for JSON creation
     public ?string $description = '';
-    public ?string $from = '';
-    public ?string $verb = '';
-    public ?string $to = '';
+    public ?string $from = null;
+    public ?string $verb = null;
+    public ?string $to = null;
+    public ?string $type = '';
     public ?string $view = '';
-    public ?array $refs = [];
+    public ?array $refs = null;
 
     function reset()
     {
         parent::reset();
 
         $this->description = '';
-        $this->from = '';
-        $this->verb = '';
-        $this->to = '';
+        $this->type = '';
+        $this->from = null;
+        $this->verb = null;
+        $this->to = null;
 
         $this->view = '';
-        $this->refs = [];
+        $this->refs = null;
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array of the word vars excluding empty and default field values
+     */
+    function jsonSerialize(): array
+    {
+        $vars = get_object_vars($this);
+        return array_filter($vars, fn($value) => !is_null($value));
     }
 
 }

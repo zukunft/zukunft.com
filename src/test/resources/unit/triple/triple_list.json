@@ -1,0 +1,32 @@
+[
+  {
+    "name": "time triple",
+    "description": "a public time triple like minute without protection",
+    "type": "time",
+    "view": "time view",
+    "refs": []
+  },
+  {
+    "name": "measure triple",
+    "share": "personal",
+    "protection": "user_protection",
+    "description": "a personal measure triple that user without personal login cannot change",
+    "type": "measure",
+    "view": "measure view",
+    "refs": []
+  },
+  {
+    "name": "scale triple",
+    "share": "group",
+    "protection": "no_change",
+    "description": "a scaling triple for an organisation that cannot be changed at all",
+    "type": "scaling",
+    "view": "scale triple view"
+  },
+  {
+    "name": "private triple",
+    "share": "private",
+    "protection": "admin_protection",
+    "description": "a triple that can be viewed an changed only by an admin"
+  }
+]

@@ -36,11 +36,15 @@ class sandbox_exp_link extends exp_obj
 {
     // field names used for JSON creation
     public ?string $name = '';   // the target (to) object name, which cannot be empty; the source (from) object is defined by the placement in the JSON
+    public ?string $share = null;     // the share permissions of the object; null means that the default share type is used whereas an empty string means that the share type should be overwritten with the default share type
+    public ?string $protection= null; // the protection of the given object; TODO check that empty string over writes the setting
 
     // reset the search values of this object
     function reset()
     {
         $this->name = '';
+        $this->share = null;
+        $this->protection = null;
     }
 
 }

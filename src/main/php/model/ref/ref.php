@@ -505,13 +505,12 @@ class ref extends sandbox_link_with_type
      */
     function import_obj(array $in_ex_json, bool $do_save = true): user_message
     {
-        $result = new user_message();
+        $result = parent::import_obj($in_ex_json, $do_save);
 
         $ref_lst = new ref_type_list();
         // reset of object not needed, because the calling function has just created the object
         foreach ($in_ex_json as $key => $value) {
             if ($key == exp_obj::FLD_NAME) {
-                $this->name = $value;
                 $this->external_key = $value;
             }
             if ($key == exp_obj::FLD_TYPE) {

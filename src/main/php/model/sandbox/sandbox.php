@@ -104,6 +104,7 @@ class sandbox extends db_object
         sql_db::TBL_VIEW_COMPONENT_LINK
     );
 
+
     /*
      * object vars
      */
@@ -713,8 +714,8 @@ class sandbox extends db_object
      */
 
     /**
-     * dummy function to import a user sandbox object from a json string
-     * to be overwritten by the child object
+     * function to import the core user sandbox object values from a json string
+     * e.g. the share and protection settings
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
@@ -722,7 +723,27 @@ class sandbox extends db_object
      */
     function import_obj(array $in_ex_json, bool $do_save = true): user_message
     {
-        return new user_message();
+        global $share_types;
+        global $protection_types;
+
+        $result = new user_message();
+        foreach ($in_ex_json as $key => $value) {
+            if ($key == share_type::JSON_FLD) {
+                $this->share_id = $share_types->id($value);
+                if ($this->share_id < 0) {
+                    $lib = new library();
+                    $result->add_message('share type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
+                }
+            }
+            if ($key == protection_type::JSON_FLD) {
+                $this->protection_id = $protection_types->id($value);
+                if ($this->protection_id < 0) {
+                    $lib = new library();
+                    $result->add_message('protection type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
+                }
+            }
+        }
+        return $result;
     }
 
     /**
