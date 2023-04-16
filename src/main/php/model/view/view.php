@@ -749,19 +749,16 @@ class view extends sandbox_typed
     function import_obj(array $in_ex_json, bool $do_save = true): user_message
     {
         log_debug();
-        $result = new user_message;
 
         // reset the all parameters for the word object but keep the user
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
+        $result = parent::import_obj($in_ex_json, $do_save);
 
         // first save the parameters of the view itself
         foreach ($in_ex_json as $key => $value) {
 
-            if ($key == exp_obj::FLD_NAME) {
-                $this->name = $value;
-            }
             if ($key == exp_obj::FLD_TYPE) {
                 if ($value != '') {
                     $type_id = $this->type_id_by_code_id($value);
@@ -771,9 +768,6 @@ class view extends sandbox_typed
                         $this->type_id = $type_id;
                     }
                 }
-            }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
-                $this->description = $value;
             }
             if ($key == exp_obj::FLD_CODE_ID) {
                 if ($value != '') {

@@ -569,13 +569,10 @@ class view_cmp extends sandbox_typed
      */
     function import_obj(array $in_ex_json, bool $do_save = true): user_message
     {
-        $result = new user_message();
+        $result = parent::import_obj($in_ex_json, $do_save);
 
         foreach ($in_ex_json as $key => $value) {
 
-            if ($key == exp_obj::FLD_NAME) {
-                $this->name = $value;
-            }
             if ($key == self::FLD_POSITION or $key == self::FLD_POSITION_OLD) {
                 $this->order_nbr = $value;
             }
@@ -585,9 +582,6 @@ class view_cmp extends sandbox_typed
                         $this->type_id = $this->type_id_by_code_id($value);
                     }
                 }
-            }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
-                $this->description = $value;
             }
         }
 

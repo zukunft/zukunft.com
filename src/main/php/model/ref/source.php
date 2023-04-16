@@ -372,18 +372,11 @@ class source extends sandbox_typed
         global $source_types;
 
         log_debug();
-        $result = new user_message();
+        $result = parent::import_obj($in_ex_json, $do_save);
 
         foreach ($in_ex_json as $key => $value) {
-
-            if ($key == exp_obj::FLD_NAME) {
-                $this->name = $value;
-            }
             if ($key == self::FLD_URL) {
                 $this->url = $value;
-            }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
-                $this->description = $value;
             }
             if ($key == exp_obj::FLD_TYPE) {
                 $this->type_id = $source_types->id($value);

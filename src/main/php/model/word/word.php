@@ -697,20 +697,12 @@ class word extends sandbox_typed
         $this->set_user($usr);
         $result = parent::import_obj($in_ex_json, $do_save);
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_NAME) {
-                $this->name = $value;
-            }
             if ($key == exp_obj::FLD_TYPE) {
                 $this->type_id = $phrase_types->id($value);
             }
             if ($key == self::FLD_PLURAL) {
                 if ($value <> '') {
                     $this->plural = $value;
-                }
-            }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
                 }
             }
             // TODO change to view object like in triple

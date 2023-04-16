@@ -1362,27 +1362,19 @@ class formula extends sandbox_typed
         global $protection_types;
 
         log_debug();
-        $result = parent::import_obj($in_ex_json, $do_save);
 
         // reset the all parameters for the formula object but keep the user
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
+        $result = parent::import_obj($in_ex_json, $do_save);
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_NAME) {
-                $this->set_name($value);
-            }
             if ($key == exp_obj::FLD_TYPE) {
                 $this->type_id = $formula_types->id($value);
             }
             if ($key == self::FLD_EXPRESSION) {
                 if ($value <> '') {
                     $this->usr_text = $value;
-                }
-            }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
                 }
             }
         }

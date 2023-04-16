@@ -1126,8 +1126,6 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
     function import_obj(array $in_ex_json, bool $do_save = true): user_message
     {
         global $phrase_types;
-        global $share_types;
-        global $protection_types;
 
         log_debug();
         $result = parent::import_obj($in_ex_json, $do_save);
