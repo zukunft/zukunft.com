@@ -1047,6 +1047,30 @@ class phrase_list extends sandbox_list_named
         return $trp_lst;
     }
 
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * create a list of phrase objects for the export
+     * TODO check if needed
+     * @return array with the reduced word objects that can be used to create a JSON message
+     */
+    function export_obj(): array
+    {
+        $exp_phrases = array();
+        foreach ($this->lst as $phr) {
+            if (get_class($phr) == triple::class) {
+                $exp_phrases[] = $phr->export_obj();
+            } else {
+                log_err('The function phrase_list->export_obj returns ' . $phr->dsp_id() . ', which is ' . get_class($phr) . ', but not a word.', 'export->get');
+            }
+        }
+        return $exp_phrases;
+    }
+
+
     /*
       tree building function
       ----------------------
@@ -1458,25 +1482,6 @@ class phrase_list extends sandbox_list_named
         // TODO check why this is needed
         if ($result == '' and $do_save) {
             $result->add_message($this->save());
-        }
-
-        return $result;
-    }
-
-    /**
-     * import a phrase list object from a JSON array object
-     *
-     * @param array $json_obj an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
-    {
-        $result = new user_message();
-        foreach ($json_obj as $key => $value) {
-            if ($key == export::WORDS) {
-                $result->add($this->import_lst($value, $do_save));
-            }
         }
 
         return $result;

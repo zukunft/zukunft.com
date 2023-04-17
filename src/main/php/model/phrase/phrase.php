@@ -165,9 +165,9 @@ class phrase extends combine_named
                 // not yet loaded with initial load
                 // $trp->name = $db_row[triple::FLD_NAME_GIVEN . $fld_ext];
                 // $trp->owner_id = $db_row[_sandbox::FLD_USER . $fld_ext];
-                // $trp->from->id = $db_row[triple::FLD_FROM];
-                // $trp->to->id = $db_row[triple::FLD_TO];
-                // $trp->verb->id = $db_row[verb::FLD_ID];
+                // $trp->from->set_id($db_row[triple::FLD_FROM]);
+                // $trp->to->set_id($db_row[triple::FLD_TO]);
+                // $trp->verb->set_id($db_row[verb::FLD_ID]);
                 $this->obj = $trp;
                 $result = true;
             }
@@ -686,7 +686,7 @@ class phrase extends combine_named
                 $result = true;
             }
         } else {
-            if ($this->id < 0) {
+            if ($this->id() < 0) {
                 $result = true;
             }
         }
@@ -705,7 +705,7 @@ class phrase extends combine_named
                 $result = true;
             }
         } else {
-            if ($this->id < 0) {
+            if ($this->id() < 0) {
                 $result = true;
             }
         }
@@ -766,46 +766,6 @@ class phrase extends combine_named
         }
     }
 
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * import a phrase object from a JSON array object
-     *
-     * @param string $json_value an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(string $json_value, bool $do_save = true): user_message
-    {
-        global $phrase_types;
-
-        $result = new user_message();
-        if ($do_save) {
-            $this->load_by_name($json_value);
-            if ($this->id == 0) {
-                $wrd = new word($this->user());
-                $wrd->load_by_name($json_value, word::class);
-                if ($wrd->id() == 0) {
-                    $wrd->set_name($json_value);
-                    $wrd->type_id = $phrase_types->id(phrase_type::TIME);
-                    $result->add_message($wrd->save());
-                }
-                if ($wrd->id() == 0) {
-                    $result->add_message('Cannot add word "' . $json_value . '" when importing ' . $this->dsp_id());
-                } else {
-                    $this->id = $wrd->id();
-                }
-            }
-        } else {
-            // used for unit testing
-            $this->set_name($json_value, word::class);
-        }
-
-        return $result;
-    }
 
     /*
      * data retrieval functions
@@ -933,7 +893,7 @@ class phrase extends combine_named
      */
     function display(): string
     {
-        return '<a href="/http/view.php?words=' . $this->id . '">' . $this->name() . '</a>';
+        return '<a href="/http/view.php?words=' . $this->id() . '">' . $this->name() . '</a>';
     }
 
     /**
@@ -941,13 +901,13 @@ class phrase extends combine_named
      */
     function dsp_link(): string
     {
-        return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
+        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
     }
 
 // similar to dsp_link
     function dsp_link_style($style): string
     {
-        return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->obj->description . '" class="' . $style . '">' . $this->name() . '</a>';
+        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '" class="' . $style . '">' . $this->name() . '</a>';
     }
 
 // helper function that returns a word list object just with the word object
@@ -981,7 +941,7 @@ class phrase extends combine_named
 
 // returns a list of words that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
     /*  function is () {
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
           $wrd_lst = $this->parents();
         } else {
         }
@@ -1002,7 +962,7 @@ class phrase extends combine_named
             $result = true;
         }
 
-        log_debug(zu_dsp_bool($result) . $this->id);
+        log_debug(zu_dsp_bool($result) . $this->id());
         return $result;
     }
 
@@ -1328,13 +1288,13 @@ class phrase extends combine_named
         $wrd = new word($this->user());
         $wrd->load_by_name($this->name(), word::class);
         if ($wrd->id() > 0) {
-            $this->id = $wrd->phrase()->id;
+            $this->set_obj_id($wrd->id());
         } else {
             // try if the triple exists
             $trp = new triple($this->user());
             $trp->load_by_name($this->name(), triple::class);
             if ($trp->id() > 0) {
-                $this->id = $trp->phrase()->id * -1;
+                $this->set_obj_id($trp->id());
             } else {
                 // create a word if neither the word nor the triple exists
                 $wrd = new word($this->user());
@@ -1344,7 +1304,7 @@ class phrase extends combine_named
                 if ($wrd->id() == 0) {
                     log_err('Cannot add from word ' . $this->dsp_id(), 'phrase->save');
                 } else {
-                    $this->id = $wrd->phrase()->id;
+                    $this->set_obj_id($wrd->id());
                 }
             }
         }

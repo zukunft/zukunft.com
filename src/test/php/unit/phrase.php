@@ -98,6 +98,9 @@ class phrase_unit_tests
         $phr_typ = $phrase_types->get_by_code_id(phrase_type::PERCENT);
         $t->assert_api($phr_typ, 'phrase_type');
 
+
+        $t->subheader('Combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');
+
     }
 
 }

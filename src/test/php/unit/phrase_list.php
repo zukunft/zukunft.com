@@ -121,6 +121,8 @@ class phrase_list_unit_tests
         $t->assert_api($phr_lst);
 
 
+        $t->subheader('Combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');
+
     }
 
     /**
