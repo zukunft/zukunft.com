@@ -1,0 +1,10 @@
+[
+  {
+    "name": "scale minute to sec",
+    "expression": "\"second\" = \"minute\" * 60",
+    "description": "scale from minute to second and the other way round",
+    "type": "reversible",
+    "share": "personal",
+    "protection": "admin_protection"
+  }
+]

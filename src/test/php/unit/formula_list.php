@@ -51,6 +51,7 @@ class formula_list_unit_tests
         $db_con = new sql_db();
         $t->name = 'formula_list->';
         $t->resource_path = 'db/formula/';
+        $json_file = 'unit/formula/formula_list.json';
 
         $t->header('Unit tests of the formula list class (src/main/php/model/formula/formula_list.php)');
 
@@ -110,6 +111,11 @@ class formula_list_unit_tests
 
         $frm_lst = $t->dummy_formula_list();
         $t->assert_api($frm_lst);
+
+
+        $t->subheader('Im- and Export tests');
+
+        $t->assert_json(new formula_list($usr), $json_file);
 
     }
 

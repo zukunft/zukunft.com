@@ -300,6 +300,7 @@ class formula extends sandbox_typed
         }
         return $this->usr_text;
     }
+
     function ref_text(): string
     {
         if ($this->ref_text_dirty) {
@@ -861,7 +862,7 @@ class formula extends sandbox_typed
                     $phr_lst->load_by_ids_old((new phr_ids($phr_ids)));
                     log_debug('number of words and triples ' . $lib->dsp_count($phr_lst->lst()));
                 } else {
-                    log_debug( 'no words are assigned to ' . $this->dsp_id());
+                    log_debug('no words are assigned to ' . $this->dsp_id());
                 }
             }
         } else {
@@ -1465,9 +1466,11 @@ class formula extends sandbox_typed
 
         if ($do_load) {
             $phr_lst = $this->assign_phr_lst_direct();
-            foreach ($phr_lst->lst() as $phr) {
-                // TODO add the link type
-                $result->assigned_word = $phr->name();
+            if ($phr_lst != null) {
+                foreach ($phr_lst->lst() as $phr) {
+                    // TODO add the link type
+                    $result->assigned_word = $phr->name();
+                }
             }
         }
 

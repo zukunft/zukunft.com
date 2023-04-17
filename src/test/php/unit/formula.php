@@ -110,6 +110,7 @@ class formula_unit_tests
 
         $t->assert_json(new formula($usr), $json_file);
 
+
         $t->subheader('Expression tests');
 
         // get the id of the phrases that should be added to the result based on the formula reference text

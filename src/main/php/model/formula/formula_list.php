@@ -344,6 +344,52 @@ class formula_list extends sandbox_list
         return $this->load_int($qp);
     }
 
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * import a list of formulas from a JSON array object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(array $json_obj, bool $do_save = true): user_message
+    {
+        $result = new user_message();
+        foreach ($json_obj as $key => $value) {
+            $frm = new formula($this->user());
+            $result->add($frm->import_obj($value, $do_save));
+            // add a dummy id for unit testing
+            if (!$do_save) {
+                $frm->set_id($key + 1);
+            }
+            $this->add($frm);
+        }
+
+        return $result;
+    }
+
+    /**
+     * create a list of formula objects for the export
+     * @return array with the reduced word objects that can be used to create a JSON message
+     */
+    function export_obj(): array
+    {
+        $exp_formulas = array();
+        foreach ($this->lst as $frm) {
+            if (get_class($frm) == formula::class) {
+                $exp_formulas[] = $frm->export_obj();
+            } else {
+                log_err('The function formula_list->export_obj returns ' . $frm->dsp_id() . ', which is ' . get_class($frm) . ', but not a formula.', 'export->get');
+            }
+        }
+        return $exp_formulas;
+    }
+
+
     /*
      * modification
      */
@@ -372,6 +418,7 @@ class formula_list extends sandbox_list
         return $db_con->count(sql_db::TBL_FORMULA);
     }
 
+
     /*
      * upgrade functions
      */
@@ -396,6 +443,7 @@ class formula_list extends sandbox_list
 
         return $result;
     }
+
 
     /*
      * display functions
