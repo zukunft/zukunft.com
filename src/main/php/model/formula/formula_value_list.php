@@ -255,6 +255,49 @@ class formula_value_list
 
 
     /*
+     * im- and export
+     */
+
+    /**
+     * import a list of results from a JSON array object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(array $json_obj, bool $do_save = true): user_message
+    {
+        $result = new user_message();
+        $id = 1;
+        foreach ($json_obj as $key => $res_json) {
+            $res = new formula_value($this->user());
+            $result->add($res->import_obj($res_json, $do_save));
+            // add a dummy id for unit testing
+            if (!$do_save) {
+                $res->set_id($id);
+                $id++;
+            }
+            $this->add($res);
+        }
+
+        return $result;
+    }
+
+    /**
+     * create a list of results for the export
+     * @return array with the reduced results that can be used to create a JSON message
+     */
+    function export_obj(): array
+    {
+        $exp_results = array();
+        foreach ($this->lst as $res) {
+            $exp_results[] = $res->export_obj();
+        }
+        return $exp_results;
+    }
+
+
+    /*
      * display functions
      */
 

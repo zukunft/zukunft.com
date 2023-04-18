@@ -59,6 +59,7 @@ class formula_value_unit_tests
         $json_file = 'unit/result/result_import_part.json';
         $usr->set_id(1);
 
+
         $t->header('Unit tests of the formula value class (src/main/php/model/formula/formula_value.php)');
 
         $t->subheader('SQL creation tests');
@@ -119,42 +120,7 @@ class formula_value_unit_tests
 
         $t->subheader('Im- and Export tests');
 
-        //$t->assert_json(new formula_value($usr), $json_file);
-
-
-        $t->header('Unit tests of the formula value list class (src/main/php/model/formula/formula_value_list.php)');
-
-        $t->subheader('SQL creation tests');
-
-        // sql to load a list of formula values by the formula id
-        $fv_lst = new formula_value_list($usr);
-        $frm = new formula($usr);
-        $frm->set_id(1);
-        $t->assert_load_list_sql($db_con, $fv_lst, $frm);
-
-        // sql to load a list of formula values by the phrase group id
-        $fv_lst = new formula_value_list($usr);
-        $grp = new phrase_group($usr);
-        $grp->set_id(2);
-        $t->assert_load_list_sql($db_con, $fv_lst, $grp);
-
-        // sql to load a list of formula values by the source phrase group id
-        $fv_lst = new formula_value_list($usr);
-        $grp = new phrase_group($usr);
-        $grp->set_id(2);
-        $t->assert_load_list_sql($db_con, $fv_lst, $grp, true);
-
-        // sql to load a list of formula values by the word id
-        $fv_lst = new formula_value_list($usr);
-        $wrd = new word($usr);
-        $wrd->set_id(2);
-        $t->assert_load_list_sql($db_con, $fv_lst, $wrd);
-
-        // sql to load a list of formula values by the triple id
-        $fv_lst = new formula_value_list($usr);
-        $trp = new triple($usr);
-        $trp->set_id(3);
-        $t->assert_load_list_sql($db_con, $fv_lst, $trp);
+        $t->assert_json(new formula_value($usr), $json_file);
 
     }
 

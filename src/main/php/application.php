@@ -2,8 +2,8 @@
 
 /*
 
-  application.php - the application settings
-  ---------------
+  model/application.php - the application settings
+  ---------------------
 
   This file is part of zukunft.com - calc with words
 
