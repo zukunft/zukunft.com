@@ -47,9 +47,9 @@ class formula_value_api extends sandbox_value_api implements JsonSerializable
      * const for system testing
      */
 
-    const TV_INT = 123456;
-    const TV_FLOAT = 12.3456;
-
+    CONST TV_INT = 123456;
+    CONST TV_FLOAT = 12.3456;
+    CONST TV_INCREASE_LONG = '0.0078718332961637'; // the increase of the swiss inhabitants from 2019 to 2020
 
     /*
      * object vars

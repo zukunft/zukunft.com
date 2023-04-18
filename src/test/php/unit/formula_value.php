@@ -47,8 +47,6 @@ use model\word;
 class formula_value_unit_tests
 {
 
-    CONST TN_INCREASE_CH_CAPITA_2020 = '0.0078718332961637';
-
     function run(testing $t): void
     {
 
@@ -58,6 +56,7 @@ class formula_value_unit_tests
         $db_con = new sql_db();
         $t->name = 'formula_value->';
         $t->resource_path = 'db/result/';
+        $json_file = 'unit/result/result_import_part.json';
         $usr->set_id(1);
 
         $t->header('Unit tests of the formula value class (src/main/php/model/formula/formula_value.php)');
@@ -116,6 +115,11 @@ class formula_value_unit_tests
         // ... for percent values
         $fv = $t->dummy_formula_value_pct();
         $t->assert('formula_value->val_formatted test percent formatting', $fv->val_formatted(), '1.23 %');
+
+
+        $t->subheader('Im- and Export tests');
+
+        //$t->assert_json(new formula_value($usr), $json_file);
 
 
         $t->header('Unit tests of the formula value list class (src/main/php/model/formula/formula_value_list.php)');

@@ -14,6 +14,11 @@ use html\phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO add the im and export unit test (assert_json) to all base objects (exlude the combine object)
+    TODO add api unit test (assert_api) to all objects
+    TODO rename formula value (fv_) to result (res_)
+    TODO move all test const to the api class or a test class
+    TODO chack the all used object are loaded with include once
     TODO base the html frontend objects (_dsp) on the api JSON using the set_from_json function
     TODO check that in the API            messages the database id is used for all preloaded types e.g. phrase type
     TODO check that in the im- and export messages the     code id is used for all preloaded types e.g. phrase type

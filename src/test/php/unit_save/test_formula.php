@@ -31,6 +31,7 @@
 */
 
 use api\formula_api;
+use api\formula_value_api;
 use api\word_api;
 use cfg\formula_type;
 use model\change_log_field;
@@ -180,7 +181,7 @@ function run_formula_test(testing $t): void
     if ($fv_lst->lst != null) {
         $fv->save_if_updated();
         $result = $fv->value;
-        $target = formula_value_unit_tests::TN_INCREASE_CH_CAPITA_2020;
+        $target = formula_value_api::TV_INCREASE_LONG;
         $t->dsp('formula_value->save_if_updated "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
     }
 
@@ -190,7 +191,7 @@ function run_formula_test(testing $t): void
     } else {
         $result = '';
     }
-    $target = formula_value_unit_tests::TN_INCREASE_CH_CAPITA_2020;
+    $target = formula_value_api::TV_INCREASE_LONG;
     $t->dsp('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
 
     // test the scaling mainly to check the scaling handling of the results later

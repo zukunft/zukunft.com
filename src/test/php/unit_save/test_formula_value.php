@@ -33,6 +33,7 @@
 */
 
 use api\formula_api;
+use api\formula_value_api;
 use api\word_api;
 use model\formula_value;
 use model\formula_value_list;
@@ -69,7 +70,7 @@ function run_formula_value_test(testing $t): void
         $result = 'no ' . word_api::TN_INHABITANTS . ' ' . formula_api::TN_ADD . ' value found for ' . word_api::TN_CH;
     }
     // TODO review
-    $target = formula_value_unit_tests::TN_INCREASE_CH_CAPITA_2020;
+    $target = formula_value_api::TV_INCREASE_LONG;
     $t->dsp('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, TIMEOUT_LIMIT_LONG);
 
     // test load result with time
@@ -88,7 +89,7 @@ function run_formula_value_test(testing $t): void
         $result = 'no ' . word_api::TN_2020 . ' ' . word_api::TN_INHABITANTS . ' ' . formula_api::TN_ADD . ' value found for ' . word_api::TN_CH;
     }
     //$result = $ch_increase->phr_grp_id;
-    $target = formula_value_unit_tests::TN_INCREASE_CH_CAPITA_2020;
+    $target = formula_value_api::TV_INCREASE_LONG;
     if (isset($time_phr) and isset($ch_up_grp)) {
         $t->dsp('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result);
     } else {
