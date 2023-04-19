@@ -49,7 +49,7 @@ class view_component_unit_tests
         $db_con = new sql_db();
         $t->name = 'view_component->';
         $t->resource_path = 'db/view/';
-        $json_file = 'unit/view/car_costs.json';
+        $json_file = 'unit/view/component_import.json';
         $usr->set_id(1);
 
         $t->header('Unit tests of the view component class (src/main/php/model/view/view_component.php)');
@@ -89,8 +89,7 @@ class view_component_unit_tests
 
         $t->subheader('Im- and Export tests');
 
-        // TODO use view_dsp for testing and activate
-        //$t->assert_json(new view_dsp_old($usr), $json_file);
+        $t->assert_json(new view_cmp($usr), $json_file);
 
     }
 
