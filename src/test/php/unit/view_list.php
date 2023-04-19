@@ -36,6 +36,7 @@ use api\word_api;
 use cfg\phrase_type;
 use cfg\view_sys_list;
 use model\sql_db;
+use model\view_list;
 
 class view_list_unit_tests
 {
@@ -48,6 +49,7 @@ class view_list_unit_tests
         $db_con = new sql_db();
         $t->name = 'view_list->';
         $t->resource_path = 'db/view/';
+        $json_file = 'unit/view/view_list.json';
         $usr->set_id(1);
 
         $t->header('Unit tests of the view list class (src/main/php/model/view/view_list.php)');
@@ -57,6 +59,11 @@ class view_list_unit_tests
         // load the system views
         $sys_dsp_lst = new view_sys_list($usr);
         $this->assert_sql_sys_views($t, $db_con, $sys_dsp_lst);
+
+
+        $t->subheader('Im- and Export tests');
+
+        $t->assert_json(new view_list($usr), $json_file);
 
     }
 

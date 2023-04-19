@@ -161,7 +161,7 @@ class test_unit extends testing
         (new string_unit_tests)->run($this); // test functions not yet split into single unit tests
         (new system_unit_tests)->run($this);
         (new test_api)->run_openapi_test($this);
-        (new user_unit_tests)->run($this);
+        (new user_unit_tests)->run($this);  // add import test
         (new sandbox_unit_tests)->run($this);
         (new word_unit_tests)->run($this);
         (new word_list_unit_tests)->run($this);
@@ -185,7 +185,7 @@ class test_unit extends testing
         (new formula_element_unit_tests)->run($this);
         (new expression_unit_tests)->run($this);
         (new view_unit_tests)->run($this);
-        (new view_list_unit_tests)->run($this);  // add import test
+        (new view_list_unit_tests)->run($this);
         (new view_component_unit_tests())->run($this);  // add import test
         (new view_component_link_unit_tests)->run($this);
         (new ref_unit_tests)->run($this);  // add import tests

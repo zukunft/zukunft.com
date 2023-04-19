@@ -102,5 +102,48 @@ class view_list extends sandbox_list
         }
     }
 
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * import a list of views from a JSON array object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(array $json_obj, bool $do_save = true): user_message
+    {
+        $result = new user_message();
+        $id = 1;
+        foreach ($json_obj as $key => $dsp_json) {
+            $dsp = new view($this->user());
+            $result->add($dsp->import_obj($dsp_json, $do_save));
+            // add a dummy id for unit testing
+            if (!$do_save) {
+                $dsp->set_id($id);
+                $id++;
+            }
+            $this->add($dsp);
+        }
+
+        return $result;
+    }
+
+    /**
+     * create a list of views for the export
+     * @return array with the reduced results that can be used to create a JSON message
+     */
+    function export_obj(bool $do_load = true): array
+    {
+        $exp_views = array();
+        foreach ($this->lst as $dsp) {
+            $exp_views[] = $dsp->export_obj($do_load);
+        }
+        return $exp_views;
+    }
+
 }
 
