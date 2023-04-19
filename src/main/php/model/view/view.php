@@ -35,6 +35,8 @@ include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_cmp.php';
 include_once MODEL_VIEW_PATH . 'view_cmp_link.php';
 include_once MODEL_VIEW_PATH . 'view_cmp_dsp.php'; // TODO move to web namespace
+include_once SERVICE_EXPORT_PATH . 'view_exp.php';
+include_once SERVICE_EXPORT_PATH . 'view_cmp_exp.php';
 
 use api\view_api;
 use cfg\export\exp_obj;

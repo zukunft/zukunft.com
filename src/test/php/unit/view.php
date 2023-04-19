@@ -104,14 +104,11 @@ class view_unit_tests
         $dsp->code_id = view_api::TI_READ;
         $t->assert_api($dsp);
 
-        /*
-         * im- and export tests
-         */
 
         $t->subheader('Im- and Export tests');
 
-        // TODO use view_dsp for testing and activate
-        //$t->assert_json(new view_dsp_old($usr), $json_file);
+        $t->assert_json(new view($usr), $json_file);
+
 
         /*
          * Display tests
