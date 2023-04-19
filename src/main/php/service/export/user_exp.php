@@ -32,7 +32,9 @@
 
 namespace cfg\export;
 
-class _user_exp extends sandbox_exp_named
+include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
+
+class user_exp extends sandbox_exp_named
 {
 
     // field names used for JSON creation

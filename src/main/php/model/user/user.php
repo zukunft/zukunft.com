@@ -51,9 +51,10 @@ include_once DB_PATH . 'sql_par.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
+include_once SERVICE_EXPORT_PATH . 'user_exp.php';
 
 use api\user_api;
-use cfg\export\_user_exp;
+use cfg\export\user_exp;
 use cfg\export\exp_obj;
 use html\user_dsp;
 use html\word_dsp;
@@ -769,7 +770,7 @@ class user extends db_object
     function export_obj(bool $do_load = true): exp_obj
     {
         log_debug();
-        $result = new _user_exp();
+        $result = new user_exp();
 
         // add the source parameters
         $result->name = $this->name;

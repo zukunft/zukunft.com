@@ -49,7 +49,7 @@ class user_unit_tests
         $db_con = new sql_db();
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
-        $json_file = '';
+        $json_file = 'unit/user/user_import.json';
         $usr->set_id(1);
 
         $t->header('Unit tests of the user class (src/main/php/model/user/user.php)');
@@ -74,7 +74,7 @@ class user_unit_tests
 
         $t->subheader('Im- and Export tests');
 
-        //$t->assert_json(new user(), $json_file);
+        $t->assert_json(new user(), $json_file);
 
     }
 
