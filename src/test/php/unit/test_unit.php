@@ -167,32 +167,32 @@ class test_unit extends testing
         (new word_list_unit_tests)->run($this);
         (new verb_unit_tests)->run($this);
         (new triple_unit_tests)->run($this);
-        (new triple_list_unit_tests)->run($this);
+        (new triple_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new phrase_unit_tests)->run($this);
-        (new phrase_list_unit_tests)->run($this);
-        (new phrase_group_unit_tests)->run($this);
+        (new phrase_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new phrase_group_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new term_unit_tests)->run($this);
-        (new term_list_unit_tests)->run($this);
-        (new value_unit_tests)->run($this);
-        (new value_list_unit_tests)->run($this);
-        (new value_phrase_link_unit_tests)->run($this);
-        (new formula_unit_tests)->run($this);
-        (new formula_list_unit_tests)->run($this);
-        (new formula_link_unit_tests)->run($this);
-        (new result_unit_tests)->run($this);
-        (new result_list_unit_tests)->run($this);
-        (new figure_unit_tests)->run($this);
-        (new formula_element_unit_tests)->run($this);
-        (new expression_unit_tests)->run($this);
-        (new view_unit_tests)->run($this);
-        (new view_list_unit_tests)->run($this);
-        (new view_component_unit_tests())->run($this);
-        (new view_component_link_unit_tests)->run($this);
-        (new ref_unit_tests)->run($this);
-        (new language_unit_tests)->run($this);
-        (new change_log_unit_tests)->run($this);  // TODO for version 0.0.6 add import test
-        (new system_log_unit_tests)->run($this);
-        (new batch_job_unit_tests)->run($this);
+        (new term_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new value_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new value_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new value_phrase_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new formula_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new formula_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new formula_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new result_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new result_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new figure_unit_tests)->run($this); // TODO complete assert_api_to_dsp with all cases
+        (new formula_element_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new expression_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new view_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new view_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new view_component_unit_tests())->run($this); // TODO add assert_api_to_dsp
+        (new view_component_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new ref_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new language_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new change_log_unit_tests)->run($this); // TODO add assert_api_to_dsp  // TODO for version 0.0.6 add import test
+        (new system_log_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new batch_job_unit_tests)->run($this); // TODO add assert_api_to_dsp
 
         // do the UI unit tests
         (new html_unit_tests)->run($this);

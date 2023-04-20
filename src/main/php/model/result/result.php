@@ -125,7 +125,7 @@ class result extends db_object
 
     function __construct(user $usr)
     {
-        db_object::__construct();
+        parent::__construct();
         $this->reset($usr);
     }
 

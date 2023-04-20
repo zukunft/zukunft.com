@@ -89,6 +89,7 @@ use model\sys_log_status;
 use model\system_log;
 use model\term;
 use model\triple;
+use model\triple_list;
 use model\user;
 use model\value;
 use model\verb;
@@ -99,7 +100,7 @@ use model\word;
 use model\word_list;
 use view_dsp_old;
 
-class test_new_obj extends test_base
+class create_test_objects extends test_base
 {
 
     CONST DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
@@ -123,6 +124,14 @@ class test_new_obj extends test_base
         $wrd->description = word_api::TD_READ;
         $wrd->set_type(phrase_type::MATH_CONST);
         return $wrd;
+    }
+
+    function dummy_word_list(): word_list
+    {
+        global $usr;
+        $lst = new word_list($usr);
+        $lst->add($this->dummy_word());
+        return $lst;
     }
 
     /**
@@ -161,6 +170,14 @@ class test_new_obj extends test_base
         $trp->set_to($wrd_math->phrase());
         $trp->set_type(phrase_type::MATH_CONST);
         return $trp;
+    }
+
+    function dummy_triple_list(): triple_list
+    {
+        global $usr;
+        $lst = new triple_list($usr);
+        $lst->add($this->dummy_triple());
+        return $lst;
     }
 
     function dummy_phrase(): phrase

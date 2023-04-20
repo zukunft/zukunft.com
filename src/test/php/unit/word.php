@@ -106,6 +106,7 @@ class word_unit_tests
 
         $wrd = $t->dummy_word();
         $t->assert_api_to_dsp($wrd, new word_dsp());
+
     }
 
 }

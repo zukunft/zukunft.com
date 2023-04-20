@@ -33,8 +33,10 @@
 namespace test;
 
 include_once MODEL_WORD_PATH . 'triple_list.php';
+include_once WEB_WORD_PATH . 'triple_list.php';
 
 use cfg\verb_list;
+use html\triple_list_dsp;
 use model\library;
 use model\phrase;
 use model\sql_db;
@@ -81,40 +83,40 @@ class triple_list_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
 
         // sql to load by word link list by ids
-        $wrd_lnk_lst = new triple_list($usr);
-        $wrd_lnk_lst->ids = [1, 2, 3];
-        $created_sql = $wrd_lnk_lst->load_sql($db_con);
+        $trp_lst = new triple_list($usr);
+        $trp_lst->ids = [1, 2, 3];
+        $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_ids_old.sql'); // order adjusted based on the number of usage
         $t->dsp('triple_list->load_sql by IDs', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        //$t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
+        //$t->assert_sql_name_unique($trp_lst->load_sql_name());
 
         // sql to load by word link list by word and up
         $wrd = new word($usr);
         $wrd->set_id(1);
-        $wrd_lnk_lst = new triple_list($usr);
-        $wrd_lnk_lst->wrd = $wrd;
-        $wrd_lnk_lst->direction = triple_list::DIRECTION_UP;
-        $created_sql = $wrd_lnk_lst->load_sql($db_con);
+        $trp_lst = new triple_list($usr);
+        $trp_lst->wrd = $wrd;
+        $trp_lst->direction = triple_list::DIRECTION_UP;
+        $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_up.sql');
         $t->dsp('triple_list->load_sql by word and up', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
+        $t->assert_sql_name_unique($trp_lst->load_sql_name());
 
         // sql to load by word link list by word and down
         $wrd = new word($usr);
         $wrd->set_id(2);
-        $wrd_lnk_lst = new triple_list($usr);
-        $wrd_lnk_lst->wrd = $wrd;
-        $wrd_lnk_lst->direction = triple_list::DIRECTION_DOWN;
-        $created_sql = $wrd_lnk_lst->load_sql($db_con);
+        $trp_lst = new triple_list($usr);
+        $trp_lst->wrd = $wrd;
+        $trp_lst->direction = triple_list::DIRECTION_DOWN;
+        $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_down.sql');
         $t->dsp('triple_list->load_sql by word and down', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
+        $t->assert_sql_name_unique($trp_lst->load_sql_name());
 
         // sql to load by word link list by word list and up
         $wrd_lst = new word_list($usr);
@@ -124,15 +126,15 @@ class triple_list_unit_tests
         $wrd = new word($usr);
         $wrd->set_id(2);
         $wrd_lst->add($wrd);
-        $wrd_lnk_lst = new triple_list($usr);
-        $wrd_lnk_lst->wrd_lst = $wrd_lst;
-        $wrd_lnk_lst->direction = triple_list::DIRECTION_UP;
-        $created_sql = $wrd_lnk_lst->load_sql($db_con);
+        $trp_lst = new triple_list($usr);
+        $trp_lst->wrd_lst = $wrd_lst;
+        $trp_lst->direction = triple_list::DIRECTION_UP;
+        $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_up.sql');
         $t->dsp('triple_list->load_sql by word list and up', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
+        $t->assert_sql_name_unique($trp_lst->load_sql_name());
 
         // sql to load by word link list by word list and down
         $wrd_lst = new word_list($usr);
@@ -142,15 +144,15 @@ class triple_list_unit_tests
         $wrd = new word($usr);
         $wrd->set_id(3);
         $wrd_lst->add($wrd);
-        $wrd_lnk_lst = new triple_list($usr);
-        $wrd_lnk_lst->wrd_lst = $wrd_lst;
-        $wrd_lnk_lst->direction = triple_list::DIRECTION_DOWN;
-        $created_sql = $wrd_lnk_lst->load_sql($db_con);
+        $trp_lst = new triple_list($usr);
+        $trp_lst->wrd_lst = $wrd_lst;
+        $trp_lst->direction = triple_list::DIRECTION_DOWN;
+        $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_down.sql');
         $t->dsp('triple_list->load_sql by word list and down', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
+        $t->assert_sql_name_unique($trp_lst->load_sql_name());
 
         // sql to load by word link list by word list and down filtered by a verb
         $wrd_lst = new word_list($usr);
@@ -162,16 +164,16 @@ class triple_list_unit_tests
         $wrd_lst->add($wrd);
         $vrb = new verb();
         $vrb->set_id(2);
-        $wrd_lnk_lst = new triple_list($usr);
-        $wrd_lnk_lst->wrd_lst = $wrd_lst;
-        $wrd_lnk_lst->vrb = $vrb;
-        $wrd_lnk_lst->direction = triple_list::DIRECTION_DOWN;
-        $created_sql = $wrd_lnk_lst->load_sql($db_con);
+        $trp_lst = new triple_list($usr);
+        $trp_lst->wrd_lst = $wrd_lst;
+        $trp_lst->vrb = $vrb;
+        $trp_lst->direction = triple_list::DIRECTION_DOWN;
+        $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_up_verb.sql');
         $t->dsp('triple_list->load_sql by word list and down filtered by a verb', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
+        $t->assert_sql_name_unique($trp_lst->load_sql_name());
 
         // sql to load by word link list by word list and down filtered by a verb list
         $wrd_lst = new word_list($usr);
@@ -183,21 +185,27 @@ class triple_list_unit_tests
         $wrd_lst->add($wrd);
         $vrb_lst = new verb_list($usr);
         $vrb_lst->ids = [1, 2];
-        $wrd_lnk_lst = new triple_list($usr);
-        $wrd_lnk_lst->wrd_lst = $wrd_lst;
-        $wrd_lnk_lst->vrb_lst = $vrb_lst;
-        $wrd_lnk_lst->direction = triple_list::DIRECTION_DOWN;
-        $created_sql = $wrd_lnk_lst->load_sql($db_con);
+        $trp_lst = new triple_list($usr);
+        $trp_lst->wrd_lst = $wrd_lst;
+        $trp_lst->vrb_lst = $vrb_lst;
+        $trp_lst->direction = triple_list::DIRECTION_DOWN;
+        $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_down_verb.sql');
         $t->dsp('triple_list->load_sql by word list and down filtered by a verb list', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
+        $t->assert_sql_name_unique($trp_lst->load_sql_name());
 
 
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new triple_list($usr), $json_file);
+
+
+        $t->subheader('HTML frontend unit tests');
+
+        $trp_lst = $t->dummy_triple_list();
+        $t->assert_api_to_dsp($trp_lst, new triple_list_dsp());
 
     }
 
@@ -242,7 +250,7 @@ class triple_list_unit_tests
         triple_list $lst,
         phrase      $phr,
         ?verb       $vrb = null,
-        string      $direction = triple_list::DIRECTION_BOTH)
+        string      $direction = triple_list::DIRECTION_BOTH): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

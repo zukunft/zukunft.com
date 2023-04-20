@@ -92,7 +92,18 @@ class word_dsp extends sandbox_typed_dsp
      */
     function set_from_json(string $json_api_msg): void
     {
-        $this->set_from_json_array(json_decode($json_api_msg, true));
+        parent::set_from_json_array(json_decode($json_api_msg, true));
+    }
+
+    /**
+     * dummy function to be overwritten by the child object
+     * @param array $json_array an api single object json message
+     * @return void
+     */
+    function set_obj_from_json_array(array $json_array): void
+    {
+        $wrd = new word_dsp();
+        $wrd->set_from_json_array($json_array);
     }
 
     /**

@@ -60,6 +60,7 @@ class figure extends combine_object
         value::FLD_NAMES
     );
 
+
     /*
      * construct and map
      */
@@ -70,7 +71,7 @@ class figure extends combine_object
      */
     function __construct(value|result $obj)
     {
-        $this->set_obj($obj);
+        parent::__construct($obj);
     }
 
     /**
@@ -83,17 +84,17 @@ class figure extends combine_object
     function row_mapper(?array $db_row, string $id_fld = self::FLD_ID, string $fld_ext = ''): bool
     {
         $result = false;
-        $this->id = 0;
+        $this->set_id(0);
         if ($db_row != null) {
             if ($db_row[$id_fld] > 0) {
-                $this->id = $db_row[$id_fld];
+                $this->set_obj_id($db_row[$id_fld]);
                 // map a user value
                 $val = new value($this->user());
                 $val->row_mapper($db_row);
                 $this->set_obj($val);
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
-                $this->id = $db_row[$id_fld];
+                $this->set_obj_id($db_row[$id_fld]);
                 // map a formula result
                 $res = new result($this->user());
                 $res->row_mapper($db_row);
@@ -110,6 +111,29 @@ class figure extends combine_object
     /*
      * set and get
      */
+
+    /**
+     * set the object id based on the given term id
+     * must have the same logic as the api and the frontend
+     *
+     * @param int $id the term (not the object!) id
+     * @return void
+     */
+    function set_id(int $id): void
+    {
+        // TODO check if not set_id should be used
+        $this->set_obj_id(abs($id));
+    }
+
+    /**
+     * @param int $id the id of the object
+     * the id of the value or result is
+     * created dynamically by the child class
+     */
+    function set_obj_id(int $id): void
+    {
+        $this->obj()?->set_id($id);
+    }
 
     /**
      * @return int the figure id based on the value or result id

@@ -96,7 +96,7 @@ use model\view;
 use model\view_cmp;
 use model\word;
 
-class test_api extends test_new_obj
+class test_api extends create_test_objects
 {
     // path
     const TEST_ROOT_PATH = '/home/timon/git/zukunft.com/';

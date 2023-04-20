@@ -40,6 +40,8 @@
 
 namespace model;
 
+include_once API_WORD_PATH . 'word_list.php';
+
 use cfg\phrase_type;
 use api\word_list_api;
 use html\word_dsp;

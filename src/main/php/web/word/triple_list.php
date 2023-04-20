@@ -2,8 +2,8 @@
 
 /*
 
-    word_list_dsp.php - a list function to create the HTML code to display a word list
-    -----------------
+    web/word/triple_list_dsp.php - a list function to create the HTML code to display a triple list
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -35,10 +35,16 @@ include_once WEB_SANDBOX_PATH . 'list.php';
 //include_once CFG_PATH . 'phrase_type.php';
 
 use cfg\phrase_type;
+use html\formula_dsp;
+use html\html_base;
+use html\html_selector;
+use html\list_dsp;
+use html\word_dsp;
+use html\word_list_dsp;
 use model\term_list;
 use model\user;
 
-class word_list_dsp extends list_dsp
+class triple_list_dsp extends list_dsp
 {
 
     /*
@@ -46,10 +52,10 @@ class word_list_dsp extends list_dsp
      */
 
     /**
-     * add a word to the list
-     * @returns bool true if the word has been added
+     * add a triple to the list
+     * @returns bool true if the triple has been added
      */
-    function add(word_dsp $phr): bool
+    function add(triple_dsp $phr): bool
     {
         return parent::add_obj($phr);
     }
@@ -60,7 +66,7 @@ class word_list_dsp extends list_dsp
      */
 
     /**
-     * set the vars of this word html display object bases on the api message
+     * set the vars of this triple html display object bases on the api message
      * @param string $json_api_msg an api json message as a string
      * @return void
      */
@@ -76,7 +82,7 @@ class word_list_dsp extends list_dsp
 
     /**
      * @param string $back the back trace url for the undo functionality
-     * @return string with a list of the word names with html links
+     * @return string with a list of the triple names with html links
      * ex. names_linked
      */
     function dsp(string $back = ''): string
@@ -86,7 +92,7 @@ class word_list_dsp extends list_dsp
 
     /**
      * @param string $back the back trace url for the undo functionality
-     * @return array with a list of the word names with html links
+     * @return array with a list of the triple names with html links
      */
     function names_linked(string $back = ''): array
     {
@@ -100,9 +106,9 @@ class word_list_dsp extends list_dsp
     }
 
     /**
-     * show all words of the list as table row (ex display)
+     * show all triples of the list as table row (ex display)
      * @param string $back the back trace url for the undo functionality
-     * @return string the html code with all words of the list
+     * @return string the html code with all triples of the list
      */
     function tbl(string $back = ''): string
     {
@@ -118,7 +124,7 @@ class word_list_dsp extends list_dsp
     }
 
     /**
-     * @returns string the html code to select a word from this list
+     * @returns string the html code to select a triple from this list
      */
     function selector(string $name = '', string $form = '', int $selected = 0): string
     {
@@ -130,11 +136,11 @@ class word_list_dsp extends list_dsp
         return $sel->dsp();
     }
 
-    // display a list of words that match to the given pattern
+    // display a list of triples that match to the given pattern
     // TODO REVIEW
-    function dsp_like($word_pattern, user $usr): string
+    function dsp_like($triple_pattern, user $usr): string
     {
-        log_debug($word_pattern . ',u' . $usr->id());
+        log_debug($triple_pattern . ',u' . $usr->id());
 
         global $db_con;
         global $phrase_types;
@@ -144,25 +150,25 @@ class word_list_dsp extends list_dsp
         $back = 1;
         $trm_lst = new term_list($usr);
 
-        // get the link types related to the word
-        $sql = " ( SELECT t.word_id AS id, t.word_name AS name, 'word' AS type
-                 FROM words t 
-                WHERE t.word_name like '" . $word_pattern . "%' 
-                  AND t.word_type_id <> " . $phrase_types->id(phrase_type::FORMULA_LINK) . ")
+        // get the link types related to the triple
+        $sql = " ( SELECT t.triple_id AS id, t.triple_name AS name, 'triple' AS type
+                 FROM triples t 
+                WHERE t.triple_name like '" . $triple_pattern . "%' 
+                  AND t.triple_type_id <> " . $phrase_types->id(phrase_type::FORMULA_LINK) . ")
        UNION ( SELECT f.formula_id AS id, f.formula_name AS name, 'formula' AS type
                  FROM formulas f 
-                WHERE f.formula_name like '" . $word_pattern . "%' )
+                WHERE f.formula_name like '" . $triple_pattern . "%' )
              ORDER BY name
                 LIMIT 200;";
         //$db_con->usr_id = $this->usr->id;
         $db_lst = $db_con->get_old($sql);
 
-        // loop over the words and display it with the link
+        // loop over the triples and display it with the link
         foreach ($db_lst as $db_row) {
             //while ($entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
-            if ($db_row['type'] == "word") {
-                $wrd = new word_dsp($db_row['id'], $db_row['name']);
-                $result .= $wrd->tr();
+            if ($db_row['type'] == "triple") {
+                $wrd = new triple_dsp($db_row['id'], $db_row['name']);
+                $result .= $wrd->triple();
             }
             if ($db_row['type'] == "formula") {
                 $frm = new formula_dsp();
@@ -187,9 +193,9 @@ class word_list_dsp extends list_dsp
      * and delete list of "2016", "2017","2018"
      * the result is "2014", "2015"
      *
-     * @param word_list_dsp $del_lst is the list of phrases that should be removed from this list object
+     * @param triple_list_dsp $del_lst is the list of phrases that should be removed from this list object
      */
-    private function diff(word_list_dsp $del_lst): void
+    private function diff(triple_list_dsp $del_lst): void
     {
         if (!$this->is_empty()) {
             $result = array();
@@ -205,9 +211,9 @@ class word_list_dsp extends list_dsp
 
     /**
      * merge as a function, because the array_merge does not create an object
-     * @param word_list_dsp $new_wrd_lst with the words that should be added
+     * @param triple_list_dsp $new_wrd_lst with the triples that should be added
      */
-    function merge(word_list_dsp $new_wrd_lst)
+    function merge(triple_list_dsp $new_wrd_lst)
     {
         foreach ($new_wrd_lst->lst as $new_wrd) {
             $this->add($new_wrd);
@@ -216,11 +222,11 @@ class word_list_dsp extends list_dsp
 
     /**
      * @param string $type the ENUM string of the fixed type
-     * @return word_list_dsp with the all words of the give type
+     * @return triple_list_dsp with the all triples of the give type
      */
-    private function filter(string $type): word_list_dsp
+    private function filter(string $type): triple_list_dsp
     {
-        $result = new word_list_dsp();
+        $result = new triple_list_dsp();
         foreach ($this->lst as $wrd) {
             if ($wrd->is_type($type)) {
                 $result->add($wrd);
@@ -230,27 +236,27 @@ class word_list_dsp extends list_dsp
     }
 
     /**
-     * get all time words from this list of words
+     * get all time triples from this list of triples
      */
-    function time_lst(): word_list_dsp
+    function time_lst(): triple_list_dsp
     {
         return $this->filter(phrase_type::TIME);
     }
 
     /**
-     * get all measure words from this list of words
+     * get all measure triples from this list of triples
      */
-    function measure_lst(): word_list_dsp
+    function measure_lst(): triple_list_dsp
     {
         return $this->filter(phrase_type::MEASURE);
     }
 
     /**
-     * get all scaling words from this list of words
+     * get all scaling triples from this list of triples
      */
-    function scaling_lst(): word_list_dsp
+    function scaling_lst(): triple_list_dsp
     {
-        $result = new word_list_dsp();
+        $result = new triple_list_dsp();
         foreach ($this->lst as $wrd) {
             if ($wrd->is_scaling()) {
                 $result->add($wrd);
@@ -260,10 +266,10 @@ class word_list_dsp extends list_dsp
     }
 
     /**
-     * get all measure and scaling words from this list of words
-     * @returns word_list_dsp words that are usually shown after a number
+     * get all measure and scaling triples from this list of triples
+     * @returns triple_list_dsp triples that are usually shown after a number
      */
-    function measure_scale_lst(): word_list_dsp
+    function measure_scale_lst(): triple_list_dsp
     {
         $scale_lst = $this->scaling_lst();
         $measure_lst = $this->measure_lst();
@@ -272,20 +278,20 @@ class word_list_dsp extends list_dsp
     }
 
     /**
-     * get all measure words from this list of words
+     * get all measure triples from this list of triples
      */
-    function percent_lst(): word_list_dsp
+    function percent_lst(): triple_list_dsp
     {
         return $this->filter(phrase_type::PERCENT);
     }
 
     /**
-     * like names_linked, but without measure and time words
-     * because measure words are usually shown after the number
+     * like names_linked, but without measure and time triples
+     * because measure triples are usually shown after the number
      * TODO call this from the display object t o avoid casting again
-     * @returns word_list_dsp a word
+     * @returns triple_list_dsp a triple
      */
-    function ex_measure_and_time_lst(): word_list_dsp
+    function ex_measure_and_time_lst(): triple_list_dsp
     {
         $wrd_lst_ex = clone $this;
         $wrd_lst_ex->ex_time();
@@ -296,7 +302,7 @@ class word_list_dsp extends list_dsp
     }
 
     /**
-     * Exclude all time words from this word list
+     * Exclude all time triples from this triple list
      */
     function ex_time(): void
     {
@@ -304,7 +310,7 @@ class word_list_dsp extends list_dsp
     }
 
     /**
-     * Exclude all measure words from this word list
+     * Exclude all measure triples from this triple list
      */
     function ex_measure(): void
     {
@@ -312,7 +318,7 @@ class word_list_dsp extends list_dsp
     }
 
     /**
-     * Exclude all measure words from this word list
+     * Exclude all measure triples from this triple list
      */
     function ex_scaling(): void
     {
@@ -320,7 +326,7 @@ class word_list_dsp extends list_dsp
     }
 
     /**
-     * Exclude all measure words from this word list
+     * Exclude all measure triples from this triple list
      */
     function ex_percent(): void
     {

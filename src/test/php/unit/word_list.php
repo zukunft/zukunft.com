@@ -33,6 +33,7 @@
 namespace test;
 
 include_once MODEL_WORD_PATH . 'word_list.php';
+include_once WEB_WORD_PATH . 'word_list.php';
 
 use api\word_api;
 use cfg\phrase_type;
@@ -41,6 +42,7 @@ use model\sql_db;
 use model\word;
 use model\word_list;
 use model\word_select_direction;
+use html\word_list_dsp;
 
 class word_list_unit_tests
 {
@@ -63,7 +65,7 @@ class word_list_unit_tests
 
         // load by word ids
         $wrd_lst = new word_list($usr);
-        $wrd_ids = array(3,2,4);
+        $wrd_ids = array(3, 2, 4);
         $this->assert_sql_by_ids($t, $db_con, $wrd_lst, $wrd_ids);
 
         // load by word names
@@ -279,6 +281,12 @@ class word_list_unit_tests
 
         $t->assert_json(new word_list($usr), $json_file);
 
+
+        $t->subheader('HTML frontend unit tests');
+
+        $wrd_lst = $t->dummy_word_list();
+        $t->assert_api_to_dsp($wrd_lst, new word_list_dsp());
+
     }
 
     /**
@@ -289,9 +297,9 @@ class word_list_unit_tests
      * @param sql_db $db_con the test database connection
      * @param word_list $lst the empty word list object
      * @param array $ids filled with a list of word ids to be used for the query creation
-     * @return bool true if all tests are fine
+     * @return void
      */
-    private function assert_sql_by_ids(testing $t, sql_db $db_con, word_list $lst, array $ids): bool
+    private function assert_sql_by_ids(testing $t, sql_db $db_con, word_list $lst, array $ids): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -300,11 +308,10 @@ class word_list_unit_tests
 
         // ... and check the MySQL query syntax
         if ($result) {
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_by_ids($db_con, $ids);
-        $t->assert_qp($qp, sql_db::MYSQL);
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $lst->load_sql_by_ids($db_con, $ids);
+            $t->assert_qp($qp, sql_db::MYSQL);
         }
-        return $result;
     }
 
     /**

@@ -41,8 +41,12 @@
 
 namespace model;
 
+include_once API_WORD_PATH . 'triple_list.php';
+
+use api\triple_list_api;
 use cfg\verb_list;
 use html\html_base;
+use html\triple_list_dsp;
 use html\word_dsp;
 
 class triple_list
@@ -99,6 +103,36 @@ class triple_list
     {
         return $this->usr;
     }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @return triple_list_api the word list object with the display interface functions
+     */
+    function api_obj(): triple_list_api
+    {
+        $api_obj = new triple_list_api();
+        foreach ($this->lst as $wrd) {
+            $api_obj->add($wrd->api_obj());
+        }
+        return $api_obj;
+    }
+
+    /**
+     * @return triple_list_dsp the word list object with the display interface functions
+     */
+    function dsp_obj(): triple_list_dsp
+    {
+        $dsp_obj = new triple_list_dsp();
+        foreach ($this->lst as $wrd) {
+            $dsp_obj->add($wrd->dsp_obj());
+        }
+        return $dsp_obj;
+    }
+
 
     /*
      * load functions

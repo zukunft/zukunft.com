@@ -33,6 +33,8 @@
 
 namespace html;
 
+use model\library;
+
 class list_dsp
 {
     // the protected main var
@@ -62,6 +64,29 @@ class list_dsp
     /*
      * set and get
      */
+
+    /**
+     * set the vars of this object bases on the api json array
+     * @param array $json_array an api list json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        foreach ($json_array as $value) {
+            $this->set_obj_from_json_array($value);
+        }
+    }
+
+    /**
+     * dummy function to be overwritten by the child object
+     * @param array $json_array an api single object json message
+     * @return void
+     */
+    function set_obj_from_json_array(array $json_array): void
+    {
+        $lib = new library();
+        log_err('Unexpect use of set_obj_from_json_array ' . $lib->dsp_array($json_array) . ' of list_dsp object');
+    }
 
     /**
      * @returns true if the list has been replaced
@@ -102,8 +127,27 @@ class list_dsp
         return true;
     }
 
+
     /*
-     * information functions
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $result = array();
+        foreach ($this->lst as $obj) {
+            $result[] = $obj->api_array();
+        }
+        return $result;
+    }
+
+
+    /*
+     * info
      */
 
     /**
