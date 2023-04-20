@@ -160,7 +160,7 @@ class file_import
             }
 
             // remember the result and view that should be validated after the import
-            $fv_to_validate = new result_list($usr_import);
+            $res_to_validate = new result_list($usr_import);
             $frm_to_calc = new formula_list($usr_import);
             $dsp_to_validate = new view_list($usr_import);
             $pos = 0;
@@ -285,11 +285,11 @@ class file_import
                 } elseif ($key == export::CALC_VALIDATION) {
                     // TODO add a unit test
                     foreach ($json_obj as $value) {
-                        $fv = new result($this->usr);
-                        $import_result = $fv->import_obj($value);
+                        $res = new result($this->usr);
+                        $import_result = $res->import_obj($value);
                         if ($import_result->is_ok()) {
                             $this->calc_validations_done++;
-                            $fv_to_validate->add($fv);
+                            $res_to_validate->add($res);
                         } else {
                             $this->calc_validations_failed++;
                         }
@@ -335,9 +335,9 @@ class file_import
                     }
                 }
             }
-            if (!$fv_to_validate->is_empty()) {
-                foreach ($fv_to_validate as $fv) {
-                    log_debug($fv->dsp_id());
+            if (!$res_to_validate->is_empty()) {
+                foreach ($res_to_validate as $res) {
+                    log_debug($res->dsp_id());
                 }
             }
         }

@@ -183,7 +183,7 @@ class view_cmp_dsp_old extends view_cmp
     }
 
     // show a list of formula results related to a word
-    function formula_values($wrd, string $back = ''): string
+    function results($wrd, string $back = ''): string
     {
         global $view_component_types;
         $result = '';

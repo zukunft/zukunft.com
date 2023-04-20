@@ -42,7 +42,7 @@ class figure_list extends sandbox_list
 {
 
     // array $lst is the list of figures
-    public ?bool $fig_missing = false; // true if at least one of the formula values is not set which means is NULL (but zero is a value)
+    public ?bool $fig_missing = false; // true if at least one of the results is not set which means is NULL (but zero is a value)
 
 
     /*

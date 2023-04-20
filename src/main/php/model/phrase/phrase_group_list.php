@@ -312,7 +312,7 @@ class phrase_group_list
          so "Sales" and "Cost" are words of the formula
          if "Sales" and "Cost" for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. "ABB")
          the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"
-         so the result would be to add 4 formula values to the list:
+         so the result would be to add 4 results to the list:
          1. calculate "operating income" for "ABB", "EUR" and "2016"
          2. calculate "operating income" for "ABB", "CHF" and "2016"
          3. calculate "operating income" for "ABB", "EUR" and "2017"
@@ -397,14 +397,15 @@ class phrase_group_list
         */
 
         // create the value or result selection
+        // TODO use sql builder
         if ($type == 'value') {
             $sql_select = 'SELECT v.value_id,
                             v.phrase_group_id
                        FROM values v';
         } else {
-            $sql_select = 'SELECT v.formula_value_id AS value_id,
+            $sql_select = 'SELECT v.result_id AS value_id,
                             v.phrase_group_id
-                       FROM formula_values v';
+                       FROM results v';
         }
 
         // combine the selections
@@ -422,7 +423,7 @@ class phrase_group_list
     }
 
     // combined code to add values assigned by a word or a predefined formula like "this", "prior" or "next"
-    private function add_grp_by_phr($type, $frm_linked, $frm_used, $phr_frm, $phr_lst_fv): int
+    private function add_grp_by_phr($type, $frm_linked, $frm_used, $phr_frm, $phr_lst_res): int
     {
         $lib = new library();
 
@@ -463,16 +464,16 @@ class phrase_group_list
                 $used_phr_lst->del($phr_frm);
                 log_debug('removed formula phrase ' . $phr_frm->dsp_id() . ' from used_phr_lst ' . $used_phr_lst->dsp_id());
                 // exclude the result phrases
-                $phr_lst_fv_name = '';
-                if (isset($phr_lst_fv)) {
-                    $used_phr_lst->diff($phr_lst_fv);
-                    log_debug('removed result phrases ' . $phr_lst_fv->dsp_id() . ' from used_phr_lst ' . $used_phr_lst->dsp_id());
-                    $phr_lst_fv_name = $phr_lst_fv->dsp_id();
+                $phr_lst_res_name = '';
+                if (isset($phr_lst_res)) {
+                    $used_phr_lst->diff($phr_lst_res);
+                    log_debug('removed result phrases ' . $phr_lst_res->dsp_id() . ' from used_phr_lst ' . $used_phr_lst->dsp_id());
+                    $phr_lst_res_name = $phr_lst_res->dsp_id();
                 }
                 // add the group to the calculation list if the group is not yet in the list
                 $grp_to_add = $used_phr_lst->get_grp();
                 if ($grp_to_add->id() <> $val_grp->id()) {
-                    log_debug('group ' . $grp_to_add->dsp_id() . ' used instead of ' . $val_grp->dsp_id() . ' because ' . $phr_frm->dsp_id() . ' and  ' . $phr_lst_fv_name . ' are part of the formula and have been remove from the phrase group selection');
+                    log_debug('group ' . $grp_to_add->dsp_id() . ' used instead of ' . $val_grp->dsp_id() . ' because ' . $phr_frm->dsp_id() . ' and  ' . $phr_lst_res_name . ' are part of the formula and have been remove from the phrase group selection');
                     $changed++;
                 }
                 /* TODO deprecate now
@@ -489,25 +490,25 @@ class phrase_group_list
         return $added;
     }
 
-    function get_by_val_with_one_phr_each($frm_linked, $frm_used, $phr_frm, $phr_lst_fv): int
+    function get_by_val_with_one_phr_each($frm_linked, $frm_used, $phr_frm, $phr_lst_res): int
     {
-        return $this->add_grp_by_phr('value', $frm_linked, $frm_used, $phr_frm, $phr_lst_fv);
+        return $this->add_grp_by_phr('value', $frm_linked, $frm_used, $phr_frm, $phr_lst_res);
     }
 
-    function get_by_val_special($frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_fv): int
+    function get_by_val_special($frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_res): int
     {
-        return $this->add_grp_by_phr('value', $frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_fv);
+        return $this->add_grp_by_phr('value', $frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_res);
     }
 
-    function get_by_fv_with_one_phr_each($frm_linked, $frm_used, $phr_frm, $phr_lst_fv): int
+    function get_by_res_with_one_phr_each($frm_linked, $frm_used, $phr_frm, $phr_lst_res): int
     {
-        return $this->add_grp_by_phr('formula result', $frm_linked, $frm_used, $phr_frm, $phr_lst_fv);
+        return $this->add_grp_by_phr('formula result', $frm_linked, $frm_used, $phr_frm, $phr_lst_res);
     }
 
     //
-    function get_by_fv_special($frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_fv): int
+    function get_by_res_special($frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_res): int
     {
-        return $this->add_grp_by_phr('formula result', $frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_fv);
+        return $this->add_grp_by_phr('formula result', $frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_res);
     }
 
     /*

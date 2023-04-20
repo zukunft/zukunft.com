@@ -200,10 +200,10 @@ class value_list_dsp extends list_dsp
                 $result .= '      ' . $dsp_phr_lst->name_linked() . ' <a href="/http/value_edit.php?id=' . $val->id . '&back=' . $this->phr->id . '">' . $val->dsp_obj()->val_formatted() . '</a>';
                 log_debug('linked words ' . $val->id . ' done');
                 // to review
-                // list the related formula values
-                $fv_lst = new result_list($this->user());
-                $fv_lst->load_by_val($val);
-                $result .= $fv_lst->frm_links_html();
+                // list the related results
+                $res_lst = new result_list($this->user());
+                $res_lst->load_by_val($val);
+                $result .= $res_lst->frm_links_html();
                 $result .= '    </td>';
                 log_debug('formula results ' . $val->id . ' loaded');
 

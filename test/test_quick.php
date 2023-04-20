@@ -143,8 +143,8 @@ if ($start_usr->id() > 0) {
             run_formula_link_test($t);
             run_formula_link_list_test($t);
             run_formula_trigger_test($t);
-            run_formula_value_test($t);
-            run_formula_value_list_test($t);
+            run_result_test($t);
+            run_result_list_test($t);
             run_formula_element_test($t);
             run_formula_element_list_test($t);
             run_formula_element_group_test($t);

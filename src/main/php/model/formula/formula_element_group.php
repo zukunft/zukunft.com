@@ -52,7 +52,7 @@ class formula_element_group
 
     public ?array $lst = null;           // array of formula elements such as a word, verb or formula
     public ?phrase_list $phr_lst = null; // phrase list object with the context to retrieve the element number
-    public ?user $usr = null;            // the formula values can differ for each user; this is the user who wants to see the result
+    public ?user $usr = null;            // the results can differ for each user; this is the user who wants to see the result
 
     public ?string $symbol = null; // the formula reference text for this element group; used to fill in the numbers into the formula
 
@@ -232,10 +232,10 @@ class formula_element_group
      *    e.g. 1 for the formula elements <"this"> and the context <"Switzerland" "inhabitants">
      *      the latest number of Swiss inhabitants should be returned
      *    e.g. 2 for the formula elements <"journey time max premium" "percent"> and the context <"Zurich" "land lot" "minutes">
-     *      the formula value for <"journey time max premium" "percent" "Zurich" "land lot"> should be returned
+     *      the result for <"journey time max premium" "percent" "Zurich" "land lot"> should be returned
      *      and if no value is found, the next best match should be returned
      *    e.g. 3 for the formula element <"Share price"> and the context <"Nestlé">
-     *      the formula value for <"Share price" "Nestlé" "2016" "CHF"> should be returned
+     *      the result for <"Share price" "Nestlé" "2016" "CHF"> should be returned
      *      if the last share price is from 2016 and CHF is the most important (used) currency
      *
      * @return figure_list
@@ -309,7 +309,7 @@ class formula_element_group
 
             // try to get a normal value set by the user directly for the phrase list
             // display the word group value and offer the user to change it
-            // e.g. if the user has overwritten a formula value use the user overwrite
+            // e.g. if the user has overwritten a result use the user overwrite
             log_debug('load word value for ' . $val_phr_lst->dsp_id());
             $wrd_val = new value($this->usr);
             // TODO create $wrd_val->load_best();
@@ -331,29 +331,29 @@ class formula_element_group
                 }
 
                 // get the word group result, which means a formula result
-                log_debug('load formula value for ' . $val_phr_lst->dsp_name());
-                $grp_fv = new result($this->usr);
+                log_debug('load result for ' . $val_phr_lst->dsp_name());
+                $grp_res = new result($this->usr);
                 /*
-                $grp_fv->phr_grp_id = $val_phr_grp->id;
+                $grp_res->phr_grp_id = $val_phr_grp->id;
                 if ($val_time_phr != null) {
-                    $grp_fv->time_phr = $val_time_phr;
+                    $grp_res->time_phr = $val_time_phr;
                 }
-                $grp_fv->load_obj_vars();
+                $grp_res->load_obj_vars();
                 */
                 if ($val_time_phr == null) {
                     $time_id = null;
                 } else {
                     $time_id = $val_time_phr->id();
                 }
-                $grp_fv->load_by_grp($val_phr_grp->id(), $time_id);
+                $grp_res->load_by_grp($val_phr_grp->id(), $time_id);
 
                 // save the value to the result
-                if ($grp_fv->id() > 0) {
-                    $fig = $grp_fv->figure();
+                if ($grp_res->id() > 0) {
+                    $fig = $grp_res->figure();
                     $fig->set_symbol($this->symbol);
                     $fig_lst->add($fig);
 
-                    log_debug('formula value for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name() . '" (word group ' . $val_phr_grp->id() . ', user ' . $this->usr->id() . ') = ' . $grp_fv->value);
+                    log_debug('result for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name() . '" (word group ' . $val_phr_grp->id() . ', user ' . $this->usr->id() . ') = ' . $grp_res->value);
                 } else {
                     // if there is also not a formula result at least one number of the formula is not valid
                     $fig_lst->fig_missing = True;

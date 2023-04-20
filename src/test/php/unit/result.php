@@ -56,42 +56,42 @@ class result_unit_tests
         $usr->set_id(1);
 
 
-        $t->header('Unit tests of the formula value class (src/main/php/model/formula/result.php)');
+        $t->header('Unit tests of the result class (src/main/php/model/formula/result.php)');
 
         $t->subheader('SQL creation tests');
 
-        // check the sql to load a formula value by the id
-        $fv = new result($usr);
+        // check the sql to load a result by the id
+        $res = new result($usr);
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $fv->load_sql_by_id($db_con, 1);
+        $qp = $res->load_sql_by_id($db_con, 1);
         $t->assert_qp($qp, sql_db::POSTGRES);
 
         // ... and the same for MySQL databases instead of Postgres
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $fv->load_sql_by_id($db_con, 1);
+        $qp = $res->load_sql_by_id($db_con, 1);
         $t->assert_qp($qp, sql_db::MYSQL);
 
-        // check the sql to load a formula value by the phrase group
-        $fv->reset($usr);
-        $fv->phr_grp_id = 1;
+        // check the sql to load a result by the phrase group
+        $res->reset($usr);
+        $res->phr_grp_id = 1;
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $fv->load_by_grp_sql($db_con);
+        $qp = $res->load_by_grp_sql($db_con);
         $t->assert_qp($qp, sql_db::POSTGRES);
 
         // ... and the same for MySQL databases instead of Postgres
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $fv->load_by_grp_sql($db_con);
+        $qp = $res->load_by_grp_sql($db_con);
         $t->assert_qp($qp, sql_db::MYSQL);
 
         // ... and additional to the phrase group the time
         $db_con->db_type = sql_db::POSTGRES;
-        $fv->time_id = 2;
-        $qp = $fv->load_by_grp_time_sql($db_con);
+        $res->time_id = 2;
+        $qp = $res->load_by_grp_time_sql($db_con);
         $t->assert_qp($qp, sql_db::POSTGRES);
 
         // ... and the same for MySQL databases instead of Postgres
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $fv->load_by_grp_time_sql($db_con);
+        $qp = $res->load_by_grp_time_sql($db_con);
         $t->assert_qp($qp, sql_db::MYSQL);
 
         $t->subheader('Display tests');
@@ -101,17 +101,17 @@ class result_unit_tests
         $wrd_const = $t->new_word(word_api::TN_READ);
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_const->phrase());
-        $fv->phr_lst = $phr_lst;
-        $fv->value = result_api::TV_INT;
-        $t->assert('result->val_formatted test big numbers', $fv->val_formatted(), "123'456");
+        $res->phr_lst = $phr_lst;
+        $res->value = result_api::TV_INT;
+        $t->assert('result->val_formatted test big numbers', $res->val_formatted(), "123'456");
 
         // ... for small values 12.35 instead of 12.34 due to rounding
-        $fv->value = result_api::TV_FLOAT;
-        $t->assert('result->val_formatted test small numbers', $fv->val_formatted(), "12.35");
+        $res->value = result_api::TV_FLOAT;
+        $t->assert('result->val_formatted test small numbers', $res->val_formatted(), "12.35");
 
         // ... for percent values
-        $fv = $t->dummy_formula_value_pct();
-        $t->assert('result->val_formatted test percent formatting', $fv->val_formatted(), '1.23 %');
+        $res = $t->dummy_result_pct();
+        $t->assert('result->val_formatted test percent formatting', $res->val_formatted(), '1.23 %');
 
 
         $t->subheader('Im- and Export tests');

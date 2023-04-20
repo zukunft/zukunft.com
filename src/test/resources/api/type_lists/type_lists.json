@@ -545,7 +545,7 @@
           "id": 1,
           "code_id": "value_update",
           "name": "update value",
-          "comment": "if a value is updated all the depending formula values should be calculated again"
+          "comment": "if a value is updated all the depending results should be calculated again"
         },
         {
           "id": 2,

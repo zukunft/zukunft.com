@@ -95,9 +95,9 @@ class figure extends combine_object
             } elseif ($db_row[$id_fld] < 0) {
                 $this->id = $db_row[$id_fld];
                 // map a formula result
-                $fv = new result($this->user());
-                $fv->row_mapper($db_row);
-                $this->set_obj($fv);
+                $res = new result($this->user());
+                $res->row_mapper($db_row);
+                $this->set_obj($res);
                 $result = true;
             } else {
                 log_warning('figure with id 0 is not expected');

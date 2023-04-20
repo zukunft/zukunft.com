@@ -94,7 +94,7 @@ class view_dsp_old extends view
             $result .= $cmp_dsp->table($wrd); // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
             $result .= $cmp_dsp->num_list($wrd, $back); // a word list with some key numbers e.g. all companies with the PE ratio
             $result .= $cmp_dsp->formulas($wrd); // display all formulas related to the given word
-            $result .= $cmp_dsp->formula_values($wrd); // show a list of formula results related to a word
+            $result .= $cmp_dsp->results($wrd); // show a list of formula results related to a word
             $result .= $cmp_dsp->word_children($wrd); // show all words that are based on the given start word
             $result .= $cmp_dsp->word_parents($wrd); // show all word that this words is based on
             $result .= $cmp_dsp->json_export($wrd, $back); // offer to configure and create an JSON file

@@ -500,7 +500,7 @@ class value extends sandbox_value
             // create the SQL to select a phrase group which needs to inside load_sql for correct parameter counting
             $phr_lst = clone $this->grp->phr_lst;
 
-            // the phrase groups with the least number of additional words that have at least one formula value
+            // the phrase groups with the least number of additional words that have at least one result
             $sql_grp_from = '';
             $sql_grp_where = '';
             $pos = 1;
@@ -931,17 +931,17 @@ class value extends sandbox_value
                                     $r_part = $lib->str_right_of($formula_text, expression::CHAR_CALC);
                                     $exp = new expression($this->user());
                                     $exp->set_ref_text($frm->ref_text);
-                                    $fv_phr_lst = $exp->fv_phr_lst();
+                                    $res_phr_lst = $exp->res_phr_lst();
                                     $phr_lst = $exp->phr_lst();
-                                    if (!$fv_phr_lst->is_empty()) {
-                                        $fv_wrd_lst = $fv_phr_lst->wrd_lst_all();
+                                    if (!$res_phr_lst->is_empty()) {
+                                        $res_wrd_lst = $res_phr_lst->wrd_lst_all();
                                         $wrd_lst = $phr_lst->wrd_lst_all();
-                                        if (count($fv_wrd_lst->lst()) == 1 and count($wrd_lst->lst()) == 1) {
-                                            $fv_wrd = $fv_wrd_lst->lst()[0];
+                                        if (count($res_wrd_lst->lst()) == 1 and count($wrd_lst->lst()) == 1) {
+                                            $res_wrd = $res_wrd_lst->lst()[0];
                                             $r_wrd = $wrd_lst->lst()[0];
 
                                             // test if it is a valid scale formula
-                                            if ($fv_wrd->is_type(phrase_type::SCALING_HIDDEN)
+                                            if ($res_wrd->is_type(phrase_type::SCALING_HIDDEN)
                                                 and $r_wrd->is_type(phrase_type::SCALING)) {
                                                 $wrd_symbol = expression::WORD_START . $r_wrd->id() . expression::WORD_END;
                                                 log_debug('replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->number . ')');
@@ -1255,14 +1255,14 @@ class value extends sandbox_value
      * get a list of all formula results that are depending on this value
      * TODO: add a loop over the calculation if the are more formula results needs to be updated than defined with SQL_ROW_MAX
      */
-    function fv_lst_depending(): result_list
+    function res_lst_depending(): result_list
     {
-        log_debug('value->fv_lst_depending group id "' . $this->grp->id() . '" for user ' . $this->user()->name . '');
-        $fv_lst = new result_list($this->user());
-        $fv_lst->load($this->grp, true);
+        log_debug('value->res_lst_depending group id "' . $this->grp->id() . '" for user ' . $this->user()->name . '');
+        $res_lst = new result_list($this->user());
+        $res_lst->load($this->grp, true);
 
         log_debug('done');
-        return $fv_lst;
+        return $res_lst;
     }
 
 

@@ -101,7 +101,7 @@ class result_list
 
 
     /**
-     * create the SQL to load a list of formula values link to
+     * create the SQL to load a list of results link to
      * a formula
      * a phrase group
      *   either of the source or the result
@@ -182,7 +182,7 @@ class result_list
     }
 
     /**
-     * create the SQL to load a list of formula values link to a formula
+     * create the SQL to load a list of results link to a formula
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param formula $frm a named object used for selection e.g. a formula
@@ -194,7 +194,7 @@ class result_list
     }
 
     /**
-     * load a list of formula values linked to a formula
+     * load a list of results linked to a formula
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param formula $frm a named object used for selection e.g. a formula
@@ -210,9 +210,9 @@ class result_list
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $fv = new result($this->usr);
-                    $fv->row_mapper($db_row);
-                    $this->lst[] = $fv;
+                    $res = new result($this->usr);
+                    $res->row_mapper($db_row);
+                    $this->lst[] = $res;
                     $result = true;
                 }
             }
@@ -222,7 +222,7 @@ class result_list
     }
 
     /**
-     * load a list of formula values linked to
+     * load a list of results linked to
      * a formula
      * a phrase group
      *   either of the source or the result
@@ -243,9 +243,9 @@ class result_list
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $fv = new result($this->usr);
-                    $fv->row_mapper($db_row);
-                    $this->lst[] = $fv;
+                    $res = new result($this->usr);
+                    $res->row_mapper($db_row);
+                    $this->lst[] = $res;
                     $result = true;
                 }
             }
@@ -311,18 +311,18 @@ class result_list
 
         if ($debug > 10) {
             if (isset($this->lst)) {
-                foreach ($this->lst as $fv) {
-                    $result .= $fv->dsp_id();
-                    $result .= ' (' . $fv->id() . ') - ';
+                foreach ($this->lst as $res) {
+                    $result .= $res->dsp_id();
+                    $result .= ' (' . $res->id() . ') - ';
                 }
             }
         } else {
             $nbr = 1;
             if (isset($this->lst)) {
-                foreach ($this->lst as $fv) {
+                foreach ($this->lst as $res) {
                     if ($nbr <= 5) {
-                        $result .= $fv->dsp_id();
-                        $result .= ' (' . $fv->id() . ') - ';
+                        $result .= $res->dsp_id();
+                        $result .= ' (' . $res->id() . ') - ';
                     }
                     $nbr++;
                 }
@@ -349,8 +349,8 @@ class result_list
 
         $name_lst = array();
         if (isset($this->lst)) {
-            foreach ($this->lst as $fv) {
-                $name_lst[] = $fv->name();
+            foreach ($this->lst as $res) {
+                $name_lst[] = $res->name();
             }
         }
 
@@ -373,10 +373,10 @@ class result_list
     {
         $result = array();
         if (isset($this->lst)) {
-            foreach ($this->lst as $fv) {
+            foreach ($this->lst as $res) {
                 // use only valid ids
-                if ($fv->id() <> 0) {
-                    $result[] = $fv->id();
+                if ($res->id() <> 0) {
+                    $result[] = $res->id();
                 }
             }
         }
@@ -391,54 +391,54 @@ class result_list
         $result = array();
         $lib = new library();
         if (isset($this->lst)) {
-            foreach ($this->lst as $fv) {
-                $result[] = $fv->name();
+            foreach ($this->lst as $res) {
+                $result[] = $res->name();
 
                 // check user consistency (can be switched off once the program ist stable)
-                if (!isset($fv->usr)) {
-                    log_err('The user of a formula result list element differs from the list user.', 'fv_lst->names', 'The user of "' . $fv->name() . '" is missing, but the list user is "' . $this->user()->name . '".', (new Exception)->getTraceAsString(), $this->usr);
-                } elseif ($fv->usr <> $this->usr) {
-                    log_err('The user of a formula result list element differs from the list user.', 'fv_lst->names', 'The user "' . $fv->usr->name . '" of "' . $fv->name() . '" does not match the list user "' . $this->user()->name . '".', (new Exception)->getTraceAsString(), $this->usr);
+                if (!isset($res->usr)) {
+                    log_err('The user of a formula result list element differs from the list user.', 'res_lst->names', 'The user of "' . $res->name() . '" is missing, but the list user is "' . $this->user()->name . '".', (new Exception)->getTraceAsString(), $this->usr);
+                } elseif ($res->usr <> $this->usr) {
+                    log_err('The user of a formula result list element differs from the list user.', 'res_lst->names', 'The user "' . $res->usr->name . '" of "' . $res->name() . '" does not match the list user "' . $this->user()->name . '".', (new Exception)->getTraceAsString(), $this->usr);
                 }
             }
         }
-        log_debug('fv_lst->names (' . $lib->dsp_array($result) . ')');
+        log_debug('res_lst->names (' . $lib->dsp_array($result) . ')');
         return $result;
     }
 
     /**
      * create the html code to show the formula results to the user
-     * TODO move to formula_value_list_min_display
+     * TODO move to result_list_min_display
      */
     function display(string $back = ''): string
     {
         $lib = new library();
         $html = new html_base();
 
-        log_debug("fv_lst->display (" . $lib->dsp_count($this->lst) . ")");
+        log_debug("res_lst->display (" . $lib->dsp_count($this->lst) . ")");
         $result = ''; // reset the html code var
 
         // prepare to show where the user uses different word than a normal viewer
         //$row_nbr = 0;
         $result .= $html->dsp_tbl_start_half();
         if ($this->lst != null) {
-            foreach ($this->lst as $fv) {
+            foreach ($this->lst as $res) {
                 //$row_nbr++;
                 $result .= '<tr>';
                 /*if ($row_nbr == 1) {
                   $result .= '<th>words</th>';
                   $result .= '<th>value</th>';
                 } */
-                $fv->load_phrases(); // load any missing objects if needed
-                $phr_lst = clone $fv->phr_lst;
-                if (isset($fv->time_phr)) {
-                    log_debug("add time " . $fv->time_phr->name() . ".");
-                    $phr_lst->add($fv->time_phr);
+                $res->load_phrases(); // load any missing objects if needed
+                $phr_lst = clone $res->phr_lst;
+                if (isset($res->time_phr)) {
+                    log_debug("add time " . $res->time_phr->name() . ".");
+                    $phr_lst->add($res->time_phr);
                 }
                 $phr_lst_dsp = $phr_lst->dsp_obj();
                 $result .= '</tr><tr>';
                 $result .= '<td>' . $phr_lst_dsp->name_linked() . '</td>';
-                $result .= '<td>' . $fv->display_linked($back) . '</td>';
+                $result .= '<td>' . $res->display_linked($back) . '</td>';
                 $result .= '</tr>';
             }
         }
@@ -449,7 +449,7 @@ class result_list
     }
 
     /*
-     * create functions - build new formula values
+     * create functions - build new results
      */
 
     /*
@@ -464,7 +464,7 @@ class result_list
      *      so Sales and Cost are words of the formula
      *      if Sales and Cost for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. ABB)
      *      the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"
-     *      so the result would be to add 4 formula values to the list:
+     *      so the result would be to add 4 results to the list:
      *      1. calculate "operating income" for "ABB", "EUR" and "2016"
      *      2. calculate "operating income" for "ABB", "CHF" and "2016"
      *      3. calculate "operating income" for "ABB", "EUR" and "2017"
@@ -533,7 +533,7 @@ class result_list
                        $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
     {
         $lib = new library();
-        log_debug('fv_lst->frm_upd_lst_usr(' . $frm->name() . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
+        log_debug('res_lst->frm_upd_lst_usr(' . $frm->name() . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
         $result = new batch_job_list($usr);
         $added = 0;
 
@@ -541,13 +541,13 @@ class result_list
 
         // TODO: check if the formula words are different for the user
 
-        // TODO: check if the assigned words, formula words OR the user has different values or formula values
+        // TODO: check if the assigned words, formula words OR the user has different values or results
 
         // TODO: filter the words if just a value has been updated
         /*    if (!empty($val_wrd_lst)) {
-              zu_debug('fv_lst->frm_upd_lst_usr -> update related words ('.implode(",",$val_wrd_lst).')');
+              zu_debug('res_lst->frm_upd_lst_usr -> update related words ('.implode(",",$val_wrd_lst).')');
               $used_word_ids = array_intersect($is_word_ids, array_keys($val_wrd_lst));
-              zu_debug('fv_lst->frm_upd_lst_usr -> needed words ('.implode(",",$used_word_ids).' instead of '.implode(",",$is_word_ids).')');
+              zu_debug('res_lst->frm_upd_lst_usr -> needed words ('.implode(",",$used_word_ids).' instead of '.implode(",",$is_word_ids).')');
             } else {
               $used_word_ids = $is_word_ids;
             } */
@@ -575,9 +575,9 @@ class result_list
         // loop over the word categories assigned to the formulas
         // get the words where the formula is used including the based on the assigned word e.g. Company or year
         //$sql_result = zuf_wrd_lst ($frm_lst->ids, $this->user()->id);
-        //zu_debug('fv_lst->frm_upd_lst_usr -> number of formula assigned words '. mysqli_num_rows ($sql_result));
+        //zu_debug('res_lst->frm_upd_lst_usr -> number of formula assigned words '. mysqli_num_rows ($sql_result));
         //while ($frm_row = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
-        //zu_debug('fv_lst->frm_upd_lst_usr -> formula '.$frm_row['formula_name'].' ('.$frm_row['resolved_text'].') linked to '.zut_name($frm_row['word_id'], $this->user()->id));
+        //zu_debug('res_lst->frm_upd_lst_usr -> formula '.$frm_row['formula_name'].' ('.$frm_row['resolved_text'].') linked to '.zut_name($frm_row['word_id'], $this->user()->id));
 
         // also use the formula for all related words e.g. if the formula should be used for "Company" use it also for "ABB"
         //$is_word_ids = zut_ids_are($frm_row['word_id'], $this->user()->id); // should later be taken from the original array to increase speed
@@ -598,7 +598,7 @@ class result_list
 
           if (zuf_has_verb($frm_row['formula_text'], $this->user()->id)) {
             // special case
-            zu_debug('fv_lst->frm_upd_lst_usr -> formula has verb ('.$frm_row['formula_text'].')');
+            zu_debug('res_lst->frm_upd_lst_usr -> formula has verb ('.$frm_row['formula_text'].')');
           } else {
 
             // include all results of the underlying formulas
@@ -617,22 +617,22 @@ class result_list
             }
 
             // include the results of the underlying formulas, but only the once related to one of the words assigned to the formula
-            $result_fv = zuc_upd_lst_fv($val_wrd_lst, $phr_id, $frm_ids, $frm_row, $this->user()->id);
-            $result = array_merge($result, $result_fv);
+            $result_res = zuc_upd_lst_res($val_wrd_lst, $phr_id, $frm_ids, $frm_row, $this->user()->id);
+            $result = array_merge($result, $result_res);
 
             // get all values related to assigned word and to the formula words
             // and based on this value get the unique word list
             // e.g. if the formula text contains the word "Sales" all values that are related to Sales should be taken into account
             //      $frm_phr_ids is the list of words for the value selection, so in this case it would contain "Sales"
             $frm_phr_ids = zuf_phr_ids ($frm_row['formula_text'], $this->user()->id);
-            zu_debug('fv_lst->frm_upd_lst_usr -> frm_phr_ids1 ('.implode(",",$frm_phr_ids).')');
+            zu_debug('res_lst->frm_upd_lst_usr -> frm_phr_ids1 ('.implode(",",$frm_phr_ids).')');
 
             // add word words for the special formulas
             // e.g. if the formula text contains the special word "prior" and the formula is linked to "Year" and "2016" is a "Year"
             //      than the "prior" of "2016" is "2015", so the word "2015" should be included in the value selection
             $frm_phr_ids = array_unique (array_merge ($frm_phr_ids, $special_frm_phr_ids));
             $frm_phr_ids = array_filter($frm_phr_ids);
-            zu_debug('fv_lst->frm_upd_lst_usr -> frm_phr_ids2 ('.implode(",",$frm_phr_ids).')');
+            zu_debug('res_lst->frm_upd_lst_usr -> frm_phr_ids2 ('.implode(",",$frm_phr_ids).')');
 
             $result_val = $this->add_frm_val($phr_id, $frm_phr_ids, $frm_row, $this->user()->id);
             // $result_val = zuc_upd_lst_val($phr_id, $frm_phr_ids, $frm_row, $this->user()->id);
@@ -667,7 +667,7 @@ class result_list
     }
 
     /**
-     * get the formula value that needs to be recalculated if one formula has been updated
+     * get the result that needs to be recalculated if one formula has been updated
      * TODO should returns a batch_job_list with all formula results that may need to be updated if a formula is updated
      * @param formula $frm - the formula that has been updated
      * $usr - to define which user view should be updated
@@ -741,25 +741,25 @@ class result_list
 
         // get the phrase name of the formula e.g. "percent"
         $exp = $frm->expression();
-        $phr_lst_fv = $exp->fv_phr_lst();
-        if (isset($phr_lst_fv)) {
-            log_debug('For ' . $frm->usr_text . ' formula results with the result phrases ' . $phr_lst_fv->dsp_name() . ' should not be used for calculation to avoid loops');
+        $phr_lst_res = $exp->res_phr_lst();
+        if (isset($phr_lst_res)) {
+            log_debug('For ' . $frm->usr_text . ' formula results with the result phrases ' . $phr_lst_res->dsp_name() . ' should not be used for calculation to avoid loops');
         }
 
         // depending on the formula setting (all words or at least one word)
-        // create a formula value list with all needed word combinations
+        // create a result list with all needed word combinations
         // TODO this get all values that
         // 1. have at least one assigned word and one formula word (one of each)
         // 2. remove all assigned words and formula words from the value word list
         // 3. aggregate the word list for all values
         // this is a kind of word group list, where for each word group list several results are possible,
-        // because there may be one value and several formula values for the same word group
+        // because there may be one value and several results for the same word group
         log_debug('get all values used in the formula ' . $frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->dsp_name());
         $phr_grp_lst_val = new phrase_group_list($this->usr); // by default the calling user is used, but if needed the value for other users also needs to be updated
-        $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_fv);
-        $phr_grp_lst_val->get_by_fv_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_fv);
-        $phr_grp_lst_val->get_by_val_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_fv); // for predefined formulas ...
-        $phr_grp_lst_val->get_by_fv_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_fv); // ... such as "this"
+        $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
+        $phr_grp_lst_val->get_by_res_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
+        $phr_grp_lst_val->get_by_val_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_res); // for predefined formulas ...
+        $phr_grp_lst_val->get_by_res_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_res); // ... such as "this"
         $phr_grp_lst_used = clone $phr_grp_lst_val;
 
         // first calculate the standard values for all user and then the user specific values
@@ -802,11 +802,11 @@ class result_list
     function val_upd_lst($val, $usr)
     {
         // check if the default value has been updated and if yes, update the default value
-        // get all formula values
+        // get all results
     }
 
     /**
-     * load all formula values related to one value
+     * load all results related to one value
      * TODO review: the table value_formula_links is not yet filled
      *              split the backend and frontend part
      *              target is: if a value is changed, what needs to be updated?
@@ -827,20 +827,20 @@ class result_list
         $db_con->usr_id = $this->user()->id();
         $db_lst = $db_con->get_old($sql);
         if ($db_lst != null) {
-            foreach ($db_lst as $db_fv) {
-                $frm_id = $db_fv[formula::FLD_ID];
-                $formula_text = $db_fv[formula::FLD_FORMULA_TEXT];
+            foreach ($db_lst as $db_res) {
+                $frm_id = $db_res[formula::FLD_ID];
+                $formula_text = $db_res[formula::FLD_FORMULA_TEXT];
                 $phr_lst_used = clone $phr_lst;
                 $frm = new formula($this->usr);
                 $frm->load_by_id($frm_id);
                 $back = '';
-                $fv_list = $frm->to_num($phr_lst_used);
-                $formula_value = $fv_list->get_first();
-                // if the formula value is empty use the id to be able to select the formula
-                if ($formula_value == '') {
-                    $formula_value = $db_fv[formula::FLD_ID];
+                $res_list = $frm->to_num($phr_lst_used);
+                $result = $res_list->get_first();
+                // if the result is empty use the id to be able to select the formula
+                if ($result == '') {
+                    $result = $db_res[formula::FLD_ID];
                 }
-                $formula_links .= ' <a href="/http/formula_edit.php?id=' . $db_fv[formula::FLD_ID] . '">' . $formula_value . '</a> ';
+                $formula_links .= ' <a href="/http/formula_edit.php?id=' . $db_res[formula::FLD_ID] . '">' . $result . '</a> ';
             }
         }
 
@@ -848,7 +848,7 @@ class result_list
             $result .= ' (or ' . $formula_links . ')';
         }
 
-        log_debug("fv_lst->val_phr_lst ... done.");
+        log_debug("res_lst->val_phr_lst ... done.");
         return $result;
     }
 
@@ -861,8 +861,8 @@ class result_list
     {
         $result = '';
         $formula_links = '';
-        foreach ($this->lst as $fv) {
-            $formula_links .= ' <a href="/http/formula_edit.php?id=' . $fv->frm->id . '&back=' . $back->url_encode() . '">' . $fv->number . '</a> ';
+        foreach ($this->lst as $res) {
+            $formula_links .= ' <a href="/http/formula_edit.php?id=' . $res->frm->id . '&back=' . $back->url_encode() . '">' . $res->number . '</a> ';
         }
         if ($formula_links <> '') {
             $result .= ' (or ' . $formula_links . ')';
@@ -871,18 +871,18 @@ class result_list
     }
 
     /**
-     * add one formula value to the formula value list, but only if it is not yet part of the phrase list
-     * @param result $fv_to_add the calculation result that should be added to the list
+     * add one result to the result list, but only if it is not yet part of the phrase list
+     * @param result $res_to_add the calculation result that should be added to the list
      */
-    function add(result $fv_to_add): void
+    function add(result $res_to_add): void
     {
-        log_debug($fv_to_add->dsp_id());
-        if (!in_array($fv_to_add->id(), $this->ids())) {
-            if ($fv_to_add->id() <> 0) {
-                $this->lst[] = $fv_to_add;
+        log_debug($res_to_add->dsp_id());
+        if (!in_array($res_to_add->id(), $this->ids())) {
+            if ($res_to_add->id() <> 0) {
+                $this->lst[] = $res_to_add;
             }
         } else {
-            log_debug($fv_to_add->dsp_id() . ' not added, because it is already in the list');
+            log_debug($res_to_add->dsp_id() . ' not added, because it is already in the list');
         }
     }
 
@@ -893,9 +893,9 @@ class result_list
     {
         log_debug($lst_to_merge->dsp_id() . ' to ' . $this->dsp_id());
         if (isset($lst_to_merge->lst)) {
-            foreach ($lst_to_merge->lst as $new_fv) {
-                log_debug('add ' . $new_fv->dsp_id());
-                $this->add($new_fv);
+            foreach ($lst_to_merge->lst as $new_res) {
+                log_debug('add ' . $new_res->dsp_id());
+                $this->add($new_res);
             }
         }
         log_debug('to ' . $this->dsp_id());

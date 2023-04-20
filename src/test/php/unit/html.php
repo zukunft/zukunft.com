@@ -182,25 +182,25 @@ class html_unit_tests
         $val_ch->set_number(value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 
         // create the formula result for the inhabitants of the city of zurich
-        $fv_id = 1;
-        $fv_city = new \controller\result\result_api($fv_id); $fv_id++;
-        $fv_city->set_grp($phr_grp_city_pct);
+        $res_id = 1;
+        $res_city = new \controller\result\result_api($res_id); $res_id++;
+        $res_city->set_grp($phr_grp_city_pct);
         $ch_val_scaled = value_api::TV_CH_INHABITANTS_2019_IN_MIO * 1000000;
-        $fv_city->set_number(value_api::TV_CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
+        $res_city->set_number(value_api::TV_CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
 
         // create the formula result for the inhabitants of the city of zurich
-        $fv_canton = new \controller\result\result_api($fv_id); $fv_id++;
-        $fv_canton->set_grp($phr_grp_canton_pct);
-        $fv_canton->set_number(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO / value_api::TV_CH_INHABITANTS_2019_IN_MIO);
+        $res_canton = new \controller\result\result_api($res_id); $res_id++;
+        $res_canton->set_grp($phr_grp_canton_pct);
+        $res_canton->set_number(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO / value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 
         // create the formula result list and the table to display the results
-        $fv_lst = new result_list_dsp();
-        $fv_lst->add($fv_city->dsp_obj());
-        $fv_lst->add($fv_canton->dsp_obj());
-        $t->html_test($fv_lst->table(), 'table_formula_value', $t);
+        $res_lst = new result_list_dsp();
+        $res_lst->add($res_city->dsp_obj());
+        $res_lst->add($res_canton->dsp_obj());
+        $t->html_test($res_lst->table(), 'table_result', $t);
 
         // create the same table as above, but within a context
-        $t->html_test($fv_lst->table($phr_lst_context->dsp_obj()), 'table_formula_value_context', $t);
+        $t->html_test($res_lst->table($phr_lst_context->dsp_obj()), 'table_result_context', $t);
 
 
         $t->subheader('View component tests');

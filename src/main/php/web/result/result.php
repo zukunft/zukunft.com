@@ -2,8 +2,8 @@
 
 /*
 
-    /web/formula_value_dsp.php - the display extension of the api formula value object
-    -------------------------
+    /web/result_dsp.php - the display extension of the api result object
+    -------------------
 
     to creat the HTML code to display a formula
 

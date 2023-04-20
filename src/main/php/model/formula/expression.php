@@ -316,10 +316,10 @@ class expression
      * @returns phrase_list with the phrases that should be added to the result of a formula
      * e.g. for >"percent" = ( "this" - "prior" ) / "prior"< a list with the phrase "percent" will be returned
      */
-    function fv_phr_lst(?term_list $trm_lst = null): phrase_list
+    function res_phr_lst(?term_list $trm_lst = null): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
-        $phr_ids = $this->phr_id_lst($this->fv_part());
+        $phr_ids = $this->phr_id_lst($this->res_part());
         if ($trm_lst == null) {
             $phr_lst->load_names_by_ids($phr_ids);
         } else {
@@ -466,7 +466,7 @@ class expression
         // check the formula indicator "=" and convert the left and right part separately
         $pos = strpos($this->usr_text, self::CHAR_CALC);
         if ($pos >= 0) {
-            $left_part = $this->fv_part_usr();
+            $left_part = $this->res_part_usr();
             $right_part = $this->r_part_usr();
             $left_part = $this->get_ref_part($left_part, $trm_lst);
             // continue with the right part of the expression only if the left part has been fine
@@ -492,7 +492,7 @@ class expression
         // check the formula indicator "=" and convert the left and right part separately
         $pos = strpos($this->ref_text, self::CHAR_CALC);
         if ($pos > 0) {
-            $left_part = $this->fv_part();
+            $left_part = $this->res_part();
             $right_part = $this->r_part();
             log_debug('(l:' . $left_part . ',r:' . $right_part . '"');
             $left_part = $this->get_usr_part($left_part, $trm_lst);
@@ -565,14 +565,14 @@ class expression
      * find the position of the formula indicator "="
      * use the part left of it to add the words to the result
      */
-    function fv_part(): string
+    function res_part(): string
     {
         $lib = new library();
         $result = $lib->str_left_of($this->ref_text, self::CHAR_CALC);
         return trim($result);
     }
 
-    function fv_part_usr(): string
+    function res_part_usr(): string
     {
         $lib = new library();
         $result = $lib->str_left_of($this->usr_text, self::CHAR_CALC);

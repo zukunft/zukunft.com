@@ -936,26 +936,26 @@ class word extends sandbox_typed
                 if ($wrd_grp->id > 0) {
                     log_debug('got group ' . $wrd_grp->id);
                     $in_value = $wrd_grp->result(0);
-                    $fv_text = '';
+                    $res_text = '';
                     // temp solution to be reviewed
                     if ($in_value['id'] > 0) {
-                        $fv = new result($this->user());
-                        $fv->load_by_id($in_value['id']);
-                        if ($fv->value <> 0) {
-                            $fv_text = $fv->val_formatted();
+                        $res = new result($this->user());
+                        $res->load_by_id($in_value['id']);
+                        if ($res->value <> 0) {
+                            $res_text = $res->val_formatted();
                         } else {
-                            $fv_text = '';
+                            $res_text = '';
                         }
                     }
-                    if ($fv_text <> '') {
+                    if ($res_text <> '') {
                         //$back = $row_phr->id;
                         if (!isset($back)) {
                             $back = $this->id;
                         }
                         if ($in_value['usr'] > 0) {
-                            $result .= '      <p class="right_ref"><a href="/http/formula_result.php?id=' . $in_value['id'] . '&phrase=' . $row_phr->id . '&group=' . $wrd_grp->id . '&back=' . $back . '" class="user_specific">' . $fv_text . '</a></p>' . "\n";
+                            $result .= '      <p class="right_ref"><a href="/http/formula_result.php?id=' . $in_value['id'] . '&phrase=' . $row_phr->id . '&group=' . $wrd_grp->id . '&back=' . $back . '" class="user_specific">' . $res_text . '</a></p>' . "\n";
                         } else {
-                            $result .= '      <p class="right_ref"><a href="/http/formula_result.php?id=' . $in_value['id'] . '&phrase=' . $row_phr->id . '&group=' . $wrd_grp->id . '&back=' . $back . '">' . $fv_text . '</a></p>' . "\n";
+                            $result .= '      <p class="right_ref"><a href="/http/formula_result.php?id=' . $in_value['id'] . '&phrase=' . $row_phr->id . '&group=' . $wrd_grp->id . '&back=' . $back . '">' . $res_text . '</a></p>' . "\n";
                         }
                     }
                 }

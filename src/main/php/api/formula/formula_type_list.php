@@ -2,7 +2,7 @@
 
 /*
 
-    api/formula/formula_type_List.php - the minimal formula type list object
+    api/formula/formula_type_list.php - the minimal formula type list object
     -------------------------
 
 

@@ -16,7 +16,7 @@ use html\phrase_group_dsp;
     but first this needs to be fixed:
     TODO add api unit test (assert_api) to all objects
     TODO make sure that im-and export and api check all objects fields
-    TODO rename formula value (fv_) to result (res_)
+    TODO rename result (res_) to result (res_)
     TODO move all test const to the api class or a test class
     TODO check the all used object are loaded with include once
     TODO base the html frontend objects (_dsp) on the api JSON using the set_from_json function

@@ -55,39 +55,39 @@ class result_list_unit_tests
         $usr->set_id(1);
 
 
-        $t->header('Unit tests of the formula value list class (src/main/php/model/formula/result_list.php)');
+        $t->header('Unit tests of the result list class (src/main/php/model/formula/result_list.php)');
 
         $t->subheader('SQL creation tests');
 
-        // sql to load a list of formula values by the formula id
-        $fv_lst = new result_list($usr);
+        // sql to load a list of results by the formula id
+        $res_lst = new result_list($usr);
         $frm = new formula($usr);
         $frm->set_id(1);
-        $t->assert_load_list_sql($db_con, $fv_lst, $frm);
+        $t->assert_load_list_sql($db_con, $res_lst, $frm);
 
-        // sql to load a list of formula values by the phrase group id
-        $fv_lst = new result_list($usr);
+        // sql to load a list of results by the phrase group id
+        $res_lst = new result_list($usr);
         $grp = new phrase_group($usr);
         $grp->set_id(2);
-        $t->assert_load_list_sql($db_con, $fv_lst, $grp);
+        $t->assert_load_list_sql($db_con, $res_lst, $grp);
 
-        // sql to load a list of formula values by the source phrase group id
-        $fv_lst = new result_list($usr);
+        // sql to load a list of results by the source phrase group id
+        $res_lst = new result_list($usr);
         $grp = new phrase_group($usr);
         $grp->set_id(2);
-        $t->assert_load_list_sql($db_con, $fv_lst, $grp, true);
+        $t->assert_load_list_sql($db_con, $res_lst, $grp, true);
 
-        // sql to load a list of formula values by the word id
-        $fv_lst = new result_list($usr);
+        // sql to load a list of results by the word id
+        $res_lst = new result_list($usr);
         $wrd = new word($usr);
         $wrd->set_id(2);
-        $t->assert_load_list_sql($db_con, $fv_lst, $wrd);
+        $t->assert_load_list_sql($db_con, $res_lst, $wrd);
 
-        // sql to load a list of formula values by the triple id
-        $fv_lst = new result_list($usr);
+        // sql to load a list of results by the triple id
+        $res_lst = new result_list($usr);
         $trp = new triple($usr);
         $trp->set_id(3);
-        $t->assert_load_list_sql($db_con, $fv_lst, $trp);
+        $t->assert_load_list_sql($db_con, $res_lst, $trp);
 
 
         $t->subheader('Im- and Export tests');

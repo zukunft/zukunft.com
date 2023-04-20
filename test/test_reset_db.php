@@ -261,7 +261,7 @@ function run_db_seq_reset(): void
     $seq_names = array(
         'value_phrase_links_value_phrase_link_id_seq',
         'values_value_id_seq',
-        'formula_values_formula_value_id_seq',
+        'results_result_id_seq',
         'formula_elements_formula_element_id_seq',
         'formula_element_types_formula_element_type_id_seq',
         'formula_links_formula_link_id_seq',

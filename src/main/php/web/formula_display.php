@@ -69,18 +69,18 @@ class formula_dsp_old extends formula
 
     /**
      * display the most interesting formula result for one word
-     * TODO define the criteria and review the formula value loading
+     * TODO define the criteria and review the result loading
      */
     function dsp_result(phrase $phr, $back): string
     {
         log_debug('for "' . $phr->name() . '" and formula ' . $this->dsp_id());
-        $fv = new result($this->user());
-        $fv->frm = $this;
-        $fv->phr = $phr;
-        log_debug('load fv');
-        $fv->load_obj_vars();
+        $res = new result($this->user());
+        $res->frm = $this;
+        $res->phr = $phr;
+        log_debug('load result');
+        $res->load_obj_vars();
         log_debug('display');
-        return $fv->display($back);
+        return $res->display($back);
     }
 
     /**
@@ -238,9 +238,9 @@ class formula_dsp_old extends formula
 
         // display some sample values
         log_debug("value list");
-        $fv_lst = new result_list($this->user());
-        $fv_lst->load($this);
-        $sample_val = $fv_lst->display($back);
+        $res_lst = new result_list($this->user());
+        $res_lst->load($this);
+        $sample_val = $res_lst->display($back);
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {
                 $result .= $html->dsp_text_h3("Results for " . $this->name_wrd->dsp_obj()->dsp_link($back), "change_hist");

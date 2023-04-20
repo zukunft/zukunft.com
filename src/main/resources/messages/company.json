@@ -44,7 +44,7 @@
     },
     {
       "name": "Company list with main ratios",
-      "comment": "List the most interesting companies with the main ratios",
+      "comment": "list the most interesting companies with the main ratios",
       "view_components": [
         {
           "pos": "1",

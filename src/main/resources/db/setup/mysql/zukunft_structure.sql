@@ -285,18 +285,18 @@ CREATE TABLE IF NOT EXISTS `formula_types`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`formula_values`
+-- Table structure for table`results`
 --
 
-CREATE TABLE IF NOT EXISTS `formula_values`
+CREATE TABLE IF NOT EXISTS `results`
 (
-    `formula_value_id`       int(11)   NOT NULL,
+    `result_id`       int(11)   NOT NULL,
     `formula_id`             int(11)   NOT NULL,
     `user_id`                int(11)        DEFAULT NULL,
     `source_phrase_group_id` int(11)        DEFAULT NULL,
     `source_time_id`    int(11)        DEFAULT NULL,
     `phrase_group_id`        int(11)        DEFAULT '0' COMMENT 'temp field for fast data collection; no single links to terms because this is just a cache table and can be recreated by the underlying tables',
-    `formula_value`          double    NOT NULL,
+    `result`          double    NOT NULL,
     `last_update`            timestamp NULL DEFAULT NULL COMMENT 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty',
     `dirty`                  tinyint(4)     DEFAULT NULL
 ) ENGINE = InnoDB
@@ -1794,10 +1794,10 @@ ALTER TABLE `formula_types`
     ADD PRIMARY KEY (`formula_type_id`);
 
 --
--- Indexes for table`formula_values`
+-- Indexes for table`results`
 --
-ALTER TABLE `formula_values`
-    ADD PRIMARY KEY (`formula_value_id`),
+ALTER TABLE `results`
+    ADD PRIMARY KEY (`result_id`),
     ADD UNIQUE KEY `formula_id_2` (`formula_id`, `user_id`, `phrase_group_id`,
                                    `source_phrase_group_id`, `source_time_id`),
     ADD KEY `user_id` (`user_id`);
@@ -2332,10 +2332,10 @@ ALTER TABLE `formula_link_types`
 ALTER TABLE `formula_types`
     MODIFY `formula_type_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`formula_values`
+-- AUTO_INCREMENT for table`results`
 --
-ALTER TABLE `formula_values`
-    MODIFY `formula_value_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `results`
+    MODIFY `result_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`import_source`
 --
@@ -2605,11 +2605,11 @@ ALTER TABLE `formula_links`
     ADD CONSTRAINT `formula_links_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
--- Constraints for table`formula_values`
+-- Constraints for table`results`
 --
-ALTER TABLE `formula_values`
-    ADD CONSTRAINT `formula_values_fk_1` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`),
-    ADD CONSTRAINT `formula_values_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+ALTER TABLE `results`
+    ADD CONSTRAINT `results_fk_1` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`),
+    ADD CONSTRAINT `results_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table`phrase_group_word_links`

@@ -32,6 +32,9 @@
 
 */
 
+use model\formula_list;
+use model\result_list;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
@@ -72,8 +75,8 @@ if ($usr->id() > 0) {
         foreach ($frm_lst as $frm_request) {
 
             // build the calculation queue
-            $calc_fv_lst = new result_list($usr);
-            $calc_lst = $calc_fv_lst->frm_upd_lst($frm_request, $back);
+            $calc_res_lst = new result_list($usr);
+            $calc_lst = $calc_res_lst->frm_upd_lst($frm_request, $back);
             log_debug("calculate queue is build (number of values to check: " . $lib->dsp_count($calc_lst->lst()) . ")");
 
             // execute the queue
@@ -81,12 +84,12 @@ if ($usr->id() > 0) {
 
                 // calculate one formula result
                 $frm = clone $r->frm;
-                $fv_lst = $frm->calc($r->wrd_lst);
+                $res_lst = $frm->calc($r->wrd_lst);
 
                 // show the user the progress every two seconds
                 if ($last_msg_time + UI_MIN_RESPONSE_TIME < time()) {
                     $calc_pct = ($calc_pos / sizeof($calc_lst->lst())) * 100;
-                    echo "" . round($calc_pct, 2) . "% calculated (" . $r->frm->name . " for " . $r->wrd_lst->name_linked() . " = " . $fv_lst->names() . ")<br>";
+                    echo "" . round($calc_pct, 2) . "% calculated (" . $r->frm->name . " for " . $r->wrd_lst->name_linked() . " = " . $res_lst->names() . ")<br>";
                     ob_flush();
                     flush();
                     $last_msg_time = time();

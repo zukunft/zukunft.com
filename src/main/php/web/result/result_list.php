@@ -2,8 +2,8 @@
 
 /*
 
-    formula_value_list_min_display.php - the display extension of the api formula value list object
-    ----------------------------------
+    result_list_min_display.php - the display extension of the api result list object
+    ---------------------------
 
     to creat the HTML code to display a list of formula results
 
@@ -48,11 +48,11 @@ class result_list_dsp extends list_value_dsp
      * add a formula result to the list
      * @returns bool true if the formula result has been added
      */
-    function add(result_dsp $fv): bool
+    function add(result_dsp $res): bool
     {
         $result = false;
-        if (!in_array($fv->id(), $this->id_lst())) {
-            $this->lst[] = $fv;
+        if (!in_array($res->id(), $this->id_lst())) {
+            $this->lst[] = $res;
             $this->set_lst_dirty();
             $result = true;
         }
@@ -85,15 +85,15 @@ class result_list_dsp extends list_value_dsp
         }
         $header_rows = '';
         $rows = '';
-        foreach ($this->lst() as $fv) {
+        foreach ($this->lst() as $res) {
             $row_nbr++;
             if ($row_nbr == 1) {
                 $header = $html->th($head_text);
                 $header .= $html->th('value');
                 $header_rows = $html->tr($header);
             }
-            $row = $html->td($fv->name_linked($common_phrases));
-            $row .= $html->td($fv->value_linked($back));
+            $row = $html->td($res->name_linked($common_phrases));
+            $row .= $html->td($res->value_linked($back));
             $rows .= $html->tr($row);
         }
 

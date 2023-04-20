@@ -2,7 +2,7 @@
 
 /*
 
-    value_List_min.php - the minimal value list object
+    value_list_min.php - the minimal value list object
     ------------------
 
 

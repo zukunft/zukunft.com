@@ -646,33 +646,33 @@ class phrase_group extends db_object
 
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
-        $sql = "SELECT formula_value_id AS id,
+        $sql = "SELECT result_id AS id,
                    result    AS num,
                    user_id          AS usr,
                    last_update      AS upd
-              FROM formula_values 
+              FROM results 
              WHERE phrase_group_id = " . $this->id . "
                AND user_id = " . $this->user()->id() . ";";
         $result = $db_con->get1_old($sql);
 
         // if no user specific result is found, get the standard result
         if ($result === false) {
-            $sql = "SELECT formula_value_id AS id,
+            $sql = "SELECT result_id AS id,
                      result    AS num,
                      user_id          AS usr,
                      last_update      AS upd
-                FROM formula_values 
+                FROM results 
                WHERE phrase_group_id = " . $this->id . "
                  AND (user_id = 0 OR user_id IS NULL);";
             $result = $db_con->get1_old($sql);
 
             // get any time value: to be adjusted to: use the latest
             if ($result === false) {
-                $sql = "SELECT formula_value_id AS id,
+                $sql = "SELECT result_id AS id,
                        result    AS num,
                        user_id          AS usr,
                        last_update      AS upd
-                  FROM formula_values 
+                  FROM results 
                  WHERE phrase_group_id = " . $this->id . "
                    AND (user_id = 0 OR user_id IS NULL);";
                 $result = $db_con->get1_old($sql);

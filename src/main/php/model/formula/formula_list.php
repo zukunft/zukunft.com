@@ -498,15 +498,15 @@ class formula_list extends sandbox_list
                     //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
                     //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($this->back));
                     $frm_dsp = $frm->dsp_obj_old();
-                    $formula_value = '';
+                    $result = '';
                     if ($frm->name_wrd != null) {
-                        $formula_value = $frm_dsp->dsp_result($frm->name_wrd->phrase(), $this->back);
+                        $result = $frm_dsp->dsp_result($frm->name_wrd->phrase(), $this->back);
                     }
-                    // if the formula value is empty use the id to be able to select the formula
-                    if ($formula_value == '') {
+                    // if the result is empty use the id to be able to select the formula
+                    if ($result == '') {
                         $result .= $frm_dsp->id();
                     } else {
-                        $result .= ' value ' . $formula_value;
+                        $result .= ' value ' . $result;
                     }
                     $result .= ' ' . $frm_dsp->name_linked($this->back);
                     if ($type == 'short') {

@@ -87,7 +87,7 @@ class view_list extends sandbox_list
     }
 
     /**
-     * add one formula value to the formula value list, but only if it is not yet part of the phrase list
+     * add one result to the result list, but only if it is not yet part of the phrase list
      * @param view $dsp_to_add the calculation result that should be added to the list
      */
     function add(view $dsp_to_add): void

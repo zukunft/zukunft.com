@@ -215,8 +215,8 @@ class test_new_obj extends test_base
      */
     function dummy_figure_result(): figure
     {
-        $fv = $this->dummy_formula_value();
-        return $fv->figure();
+        $res = $this->dummy_result();
+        return $res->figure();
     }
 
     function dummy_formula(): formula
@@ -236,29 +236,29 @@ class test_new_obj extends test_base
         return $lst;
     }
 
-    function dummy_formula_value(): result
+    function dummy_result(): result
     {
         global $usr;
-        $fv = new result($usr);
+        $res = new result($usr);
         $wrd = $this->dummy_word();
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd->phrase());
-        $fv->set_id(1);
-        $fv->phr_lst = $phr_lst;
-        $fv->value = result_api::TV_INT;
-        return $fv;
+        $res->set_id(1);
+        $res->phr_lst = $phr_lst;
+        $res->value = result_api::TV_INT;
+        return $res;
     }
 
-    function dummy_formula_value_pct(): result
+    function dummy_result_pct(): result
     {
         global $usr;
-        $fv = new result($usr);
+        $res = new result($usr);
         $wrd_pct = $this->new_word(word_api::TN_PCT, 2, phrase_type::PERCENT);
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_pct->phrase());
-        $fv->phr_lst = $phr_lst;
-        $fv->value = 0.01234;
-        return $fv;
+        $res->phr_lst = $phr_lst;
+        $res->value = 0.01234;
+        return $res;
     }
 
     function dummy_source(): source

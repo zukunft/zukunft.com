@@ -67,14 +67,14 @@ if ($session_usr->id() > 0) {
 
     // explain the result
     if ($frm_val_id > 0 or $frm_id > 0) {
-        $fv = new result($session_usr);
-        $fv->load_by_id($frm_val_id);
-        if ($fv->id() > 0) {
-            $result .= $fv->explain($phr_id, $back);
+        $res = new result($session_usr);
+        $res->load_by_id($frm_val_id);
+        if ($res->id() > 0) {
+            $result .= $res->explain($phr_id, $back);
         } else {
             $result .= log_err("Formula result with id " . $frm_val_id . ' not found.', "formula_result.php");
         }
-        log_debug('formula_result.php explained (id' . $fv->id() . ' for user ' . $session_usr->name . ')');
+        log_debug('formula_result.php explained (id' . $res->id() . ' for user ' . $session_usr->name . ')');
     } else {
         // ... or complain about a wrong call
         $url_txt = "";

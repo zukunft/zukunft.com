@@ -89,7 +89,7 @@ verbs are also named as triples
 (verb X creates term X so if word X wants to be added there already is a term X, therefore blocking the input)
 - exp (EXPression)         - a formula text that implies a data selection and lead to a number
 - elm (ELeMents)           - a structured reference for terms, verbs or formulas mostly used for formula elements (cancel? replace with term?)
-- fv (Formula Value)       - the calculated result of a formula (rename to result? and if use RESult)
+- res (RESult)             - the calculated number of a formula
 - fig (FIGure)             - either a value set by the user or a calculated formula result
 - usr (USeR)               - the person who is logged in
 - log                      - to save all changes in a user readable format

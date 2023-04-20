@@ -2075,7 +2075,7 @@ class sandbox extends db_object
                     $result->add_message($msg);
                 }
 
-                // and the corresponding formula values
+                // and the corresponding results
                 if ($result->is_ok()) {
                     $db_con->set_type(sql_db::TBL_RESULT);
                     $db_con->set_usr($this->user()->id);

@@ -5,7 +5,7 @@
     model/system/batch_job.php - object to combine all parameters for one calculation or cleanup request
     --------------------------
 
-    This may lead to several formula values,
+    This may lead to several results,
 
     This file is part of zukunft.com - calc with words
 
@@ -380,14 +380,14 @@ class batch_job extends db_object
         // load all depending formula results
         if (isset($this->obj)) {
             log_debug('get list for user ' . $this->obj->user()->name);
-            $fv_lst = $this->obj->fv_lst_depending();
-            if ($fv_lst != null) {
-                log_debug('got ' . $fv_lst->dsp_id());
-                if ($fv_lst->lst != null) {
-                    foreach ($fv_lst->lst as $fv) {
-                        log_debug('update ' . get_class($fv) . ' ' . $fv->dsp_id());
-                        $fv->update();
-                        log_debug('update ' . get_class($fv) . ' ' . $fv->dsp_id() . ' done');
+            $res_lst = $this->obj->res_lst_depending();
+            if ($res_lst != null) {
+                log_debug('got ' . $res_lst->dsp_id());
+                if ($res_lst->lst != null) {
+                    foreach ($res_lst->lst as $res) {
+                        log_debug('update ' . get_class($res) . ' ' . $res->dsp_id());
+                        $res->update();
+                        log_debug('update ' . get_class($res) . ' ' . $res->dsp_id() . ' done');
                     }
                 }
             }

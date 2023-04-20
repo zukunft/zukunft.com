@@ -31,6 +31,7 @@
 
 use api\figure_api;
 use controller\controller;
+use model\result;
 use model\user;
 use model\value;
 
@@ -71,9 +72,9 @@ if ($usr->id() > 0) {
         $fig = $val->figure();
         $result = $fig->api_obj();
     } elseif ($fig_id < 0) {
-        $fv = new result($usr);
-        $fv->load_by_id($fig_id);
-        $fig = $fv->figure();
+        $res = new result($usr);
+        $res->load_by_id($fig_id);
+        $fig = $res->figure();
         $result = $fig->api_obj();
     } else {
         $msg = 'figure id is missing';

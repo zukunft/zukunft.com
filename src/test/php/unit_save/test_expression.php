@@ -76,8 +76,8 @@ function run_expression_test(testing $t): void
 
     // test the expression processing of the user readable part
     $target = '"' . word_api::TN_PCT . '"';
-    $result = $exp->fv_part_usr();
-    $t->assert('fv_part_usr for "' . $frm->usr_text . '"', $result, $target, TIMEOUT_LIMIT_LONG); // ??? why???
+    $result = $exp->res_part_usr();
+    $t->assert('res_part_usr for "' . $frm->usr_text . '"', $result, $target, TIMEOUT_LIMIT_LONG); // ??? why???
     $target = '( "' . formula_api::TN_READ_THIS .  '" - "' . formula_api::TN_READ_PRIOR .  '" ) / "' . formula_api::TN_READ_PRIOR .  '"';
     $result = $exp->r_part_usr();
     $t->assert('r_part_usr for "' . $frm->usr_text . '"', $result, $target);
@@ -96,17 +96,17 @@ function run_expression_test(testing $t): void
     $t->assert('get_usr_text for "' . $exp_db->ref_text() . '"', $result, $target);
 
     // test getting phrases that should be added to the result of a formula
-    $phr_lst_fv = $exp->fv_phr_lst();
-    if ($phr_lst_fv != null) {
-        $result = $phr_lst_fv->dsp_name();
+    $phr_lst_res = $exp->res_phr_lst();
+    if ($phr_lst_res != null) {
+        $result = $phr_lst_res->dsp_name();
     }
     $target = '"' . word_api::TN_PCT . '"';
-    $t->assert('fv_phr_lst for "' . $exp->dsp_id() . '"', $result, $target, TIMEOUT_LIMIT_LONG); // ??? why???
+    $t->assert('res_phr_lst for "' . $exp->dsp_id() . '"', $result, $target, TIMEOUT_LIMIT_LONG); // ??? why???
 
     // ... and the phrases used in the formula
-    $phr_lst_fv = $exp_pe->phr_lst();
-    if ($phr_lst_fv != null) {
-        $result = $phr_lst_fv->dsp_name();
+    $phr_lst_res = $exp_pe->phr_lst();
+    if ($phr_lst_res != null) {
+        $result = $phr_lst_res->dsp_name();
     }
     $target = '"' . word_api::TN_EARNING . '","' . word_api::TN_PRICE . '"';
     $t->assert('phr_lst for "' . $exp_pe->dsp_id() . '"', $result, $target);

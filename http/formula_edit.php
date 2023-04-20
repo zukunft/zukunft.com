@@ -122,11 +122,11 @@ if ($usr->id() > 0) {
                 // because formula changing may need several updates the edit view is shown again
                 //$result .= dsp_go_back($back, $usr);
 
-                // trigger to update the related formula values / results
-                if ($frm->needs_fv_upd) {
+                // trigger to update the related results / results
+                if ($frm->needs_res_upd) {
                     // update the formula results
                     $phr_lst = $frm->assign_phr_lst();
-                    //$fv_list = $frm->calc($phr_lst);
+                    //$res_list = $frm->calc($phr_lst);
                 }
             } else {
                 // ... or in case of a problem prepare to show the message

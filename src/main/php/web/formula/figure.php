@@ -79,9 +79,9 @@ class figure_dsp
         $json_array = json_decode($json_api_msg, true);
         if (array_key_exists(combine_object_api::FLD_CLASS, $json_array)) {
             if ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_RESULT) {
-                $fv_dsp = new result_dsp();
-                $fv_dsp->set_from_json_array($json_array);
-                $this->set_obj($fv_dsp);
+                $res_dsp = new result_dsp();
+                $res_dsp->set_from_json_array($json_array);
+                $this->set_obj($res_dsp);
             } elseif ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_VALUE) {
                 $val = new value_dsp();
                 $val->set_from_json_array($json_array);

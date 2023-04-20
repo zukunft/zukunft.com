@@ -1139,10 +1139,10 @@ class value_list extends sandbox_list
                 $result .= '      ' . $dsp_phr_lst->name_linked() . $ref_edit;
                 log_debug('linked words ' . $val->id . ' done');
                 // to review
-                // list the related formula values
-                $fv_lst = new result_list($this->user());
-                $fv_lst->load_by_val($val);
-                $result .= $fv_lst->frm_links_html();
+                // list the related results
+                $res_lst = new result_list($this->user());
+                $res_lst->load_by_val($val);
+                $result .= $res_lst->frm_links_html();
                 $result .= '    </td>';
                 log_debug('formula results ' . $val->id . ' loaded');
 

@@ -90,7 +90,7 @@ class expression_unit_tests
         $trm_names = $exp->get_usr_names();
         $trm_lst = $t->term_list_for_tests($trm_names);
         $exp->ref_text($trm_lst);
-        $phr_lst = $exp->fv_phr_lst($trm_lst);
+        $phr_lst = $exp->res_phr_lst($trm_lst);
         $result = $phr_lst->dsp_id();
         $target = '"' . formula_api::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
@@ -171,8 +171,8 @@ class expression_unit_tests
         $t->dsp_contains($test_name, $target, $result);
 
         $test_name = 'getting phrases that should be added to the result of a formula for "' . $exp->dsp_id() . '"';
-        $phr_lst_fv = $exp->fv_phr_lst($trm_lst);
-        $result = $phr_lst_fv->dsp_name();
+        $phr_lst_res = $exp->res_phr_lst($trm_lst);
+        $result = $phr_lst_res->dsp_name();
         $target = '"' . word_api::TN_PCT . '"';
         $t->assert($test_name, $result, $target);
 
@@ -197,7 +197,7 @@ class expression_unit_tests
         $test_name = 'result phrase list with id from the reference text';
         $exp_scale = new expression($usr);
         $exp_scale->set_ref_text(formula_api::TR_SCALE_MIO);
-        $phr_lst = $exp_scale->phr_id_lst_as_phr_lst($exp_scale->fv_part());
+        $phr_lst = $exp_scale->phr_id_lst_as_phr_lst($exp_scale->res_part());
         $result = $phr_lst->dsp_id();
         $target = '1';
         $t->assert($test_name, $result, $target);

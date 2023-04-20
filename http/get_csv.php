@@ -69,7 +69,7 @@ if ($usr->id() > 0) {
     $frm_lst->load_by_names($word_names);
     foreach ($frm_lst AS $frm) {
         if ($frm->ref_text <> '') {
-            $val_lst = $frm->get_fv_lst();
+            $val_lst = $frm->get_res_lst();
             if (!$val_lst->is_empty()) {
                 $result .= $frm->ref_text . ',name' . "\r\n<br>";
                 foreach ($val_lst as $val) {

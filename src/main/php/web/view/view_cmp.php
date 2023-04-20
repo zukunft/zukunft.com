@@ -126,7 +126,7 @@ class view_cmp_dsp extends view_cmp_api
      * TODO move code from view_cmp_dsp_old
      * @return string a dummy text
      */
-    function formula_values(): string
+    function results(): string
     {
         global $view_component_types;
         if ($view_component_types->code_id($this->type_id) == view_cmp_type::FORMULA_RESULTS) {

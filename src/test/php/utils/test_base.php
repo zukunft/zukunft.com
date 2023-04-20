@@ -212,7 +212,7 @@ include_once $path_unit_save . 'test_expression.php';
 include_once $path_unit_save . 'test_formula.php';
 include_once $path_unit_save . 'test_formula_link.php';
 include_once $path_unit_save . 'test_formula_trigger.php';
-include_once $path_unit_save . 'test_formula_value.php';
+include_once $path_unit_save . 'test_result.php';
 include_once $path_unit_save . 'test_formula_element.php';
 include_once $path_unit_save . 'test_formula_element_group.php';
 include_once $path_unit_save . 'test_batch.php';
@@ -927,7 +927,7 @@ class test_base
      * check the SQL statements for loading a list of objects in all allowed SQL database dialects
      *
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param object $lst_obj the list object e.g. a formula value list
+     * @param object $lst_obj the list object e.g. a result list
      * @param object $select_obj the named user sandbox or phrase group object used for the selection e.g. a formula
      * @param object|null $select_obj2 a second named object used for selection e.g. a time phrase
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id

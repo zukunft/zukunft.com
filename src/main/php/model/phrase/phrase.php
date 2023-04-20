@@ -17,11 +17,11 @@
         disadvantages:
             the formula name is saved twice
 
-    2. The formula value can directly be overwritten by the user
+    2. The result can directly be overwritten by the user
         advantages:
             the formula name is only saved once
         disadvantages:
-            the probably huge formula value table needs an extra field to indicate user overwrites which makes the use of key/value databases more complicated
+            the probably huge result table needs an extra field to indicate user overwrites which makes the use of key/value databases more complicated
 
     There is a word increase and a formula that calculates the increase, so the solution 1. with formula link words is implemented
 

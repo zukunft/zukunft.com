@@ -2,7 +2,7 @@
 
 /*
 
-    api/formula/formula_value_List.php - the minimal result value list object
+    api/formula/result_list.php - the minimal result value list object
     ----------------------------------
 
 
@@ -35,7 +35,7 @@ namespace controller\result;
 use api\list_value_api;
 use result\result_list_dsp;
 
-class formula_value_list_api extends list_value_api
+class result_list_api extends list_value_api
 {
 
     /*
@@ -51,11 +51,11 @@ class formula_value_list_api extends list_value_api
      * add a formula result to the list
      * @returns bool true if the formula result has been added
      */
-    function add(result_api $fv): bool
+    function add(result_api $res): bool
     {
         $result = false;
-        if (!in_array($fv->id(), $this->id_lst())) {
-            $this->lst[] = $fv;
+        if (!in_array($res->id(), $this->id_lst())) {
+            $this->lst[] = $res;
             $this->set_lst_dirty();
             $result = true;
         }
@@ -74,10 +74,10 @@ class formula_value_list_api extends list_value_api
     {
         // cast the single list objects
         $lst_dsp = array();
-        foreach ($this->lst as $fv) {
-            if ($fv != null) {
-                $fv_dsp = $fv->dsp_obj();
-                $lst_dsp[] = $fv_dsp;
+        foreach ($this->lst as $res) {
+            if ($res != null) {
+                $res_dsp = $res->dsp_obj();
+                $lst_dsp[] = $res_dsp;
             }
         }
         return new result_list_dsp($lst_dsp);

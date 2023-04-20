@@ -106,7 +106,7 @@ if ($session_usr->id() > 0) {
         // delete all formula results if requested
         if ($refresh == 1) {
             log_debug('refresh all formula results for ' . $frm1->id);
-            $frm1->fv_del();
+            $frm1->res_del();
             log_debug('old formula results for ' . $frm_id . ' deleted');
         }
 
@@ -129,18 +129,18 @@ if ($session_usr->id() > 0) {
 
             foreach ($frm_lst->lst() as $frm) {
                 log_debug('calculate "' . $frm->dsp_text() . '" for ' . $phr_lst->name_linked());
-                $fv_lst = $frm->calc($phr_lst);
+                $res_lst = $frm->calc($phr_lst);
 
                 // display the single result if requested
-                if (!empty($fv_lst)) {
-                    $fv = $fv_lst[0];
+                if (!empty($res_lst)) {
+                    $res = $res_lst[0];
                     if ($debug > 0) {
-                        if (is_null($fv->phr_lst) > 0) {
+                        if (is_null($res->phr_lst) > 0) {
                             $debug_text = '' . $frm->name_linked() . ' for ';
                         } else {
-                            $debug_text = '' . $frm->name_linked() . ' for ' . $fv->phr_lst->name_linked();
+                            $debug_text = '' . $frm->name_linked() . ' for ' . $res->phr_lst->name_linked();
                         }
-                        $debug_text .= ' = ' . $fv->display_linked($back) . ' (<a href="/http/formula_test.php?id=' . $frm_id . '&phrases=' . $phr_ids_txt . '&user=' . $usr->id() . '&back=' . $back . '&debug=' . $debug_next_level . '">more details</a>)';
+                        $debug_text .= ' = ' . $res->display_linked($back) . ' (<a href="/http/formula_test.php?id=' . $frm_id . '&phrases=' . $phr_ids_txt . '&user=' . $usr->id() . '&back=' . $back . '&debug=' . $debug_next_level . '">more details</a>)';
                         log_debug($debug_text);
                     }
                 }
@@ -160,9 +160,9 @@ if ($session_usr->id() > 0) {
             // the standard value will always be checked first
             // and after that the user specific value will be calculated if needed
             // TODO: but only if the user has done some changes
-            $calc_fv_lst = new result_list($usr);
+            $calc_res_lst = new result_list($usr);
             foreach ($frm_lst->lst() as $frm) {
-                $calc_lst = $calc_fv_lst->frm_upd_lst($frm, $back);
+                $calc_lst = $calc_res_lst->frm_upd_lst($frm, $back);
             }
 
             log_debug("calculate queue is build (number of values to test: " . $lib->dsp_count($calc_lst->lst()) . ")");
@@ -174,16 +174,16 @@ if ($session_usr->id() > 0) {
 
                     // calculate one formula result
                     $frm = clone $r->frm;
-                    $fv_lst = $frm->calc($r->phr_lst);
+                    $res_lst = $frm->calc($r->phr_lst);
 
-                    if (!empty($fv_lst)) {
+                    if (!empty($res_lst)) {
                         // display the single result if requested
                         if ($debug > 3) {
-                            foreach ($fv_lst as $fv) {
-                                if ($fv->is_updated) {
+                            foreach ($res_lst as $res) {
+                                if ($res->is_updated) {
                                     //$debug_text  = ''.$r->frm->name.' for '.$r->phr_lst->name_linked();
                                     $debug_text = '' . $r->frm->name . ' for ' . $r->phr_lst->name_linked();
-                                    $debug_text .= ' = ' . $fv->display_linked($back) . ' (<a href="/http/formula_test.php?id=' . $frm_id;
+                                    $debug_text .= ' = ' . $res->display_linked($back) . ' (<a href="/http/formula_test.php?id=' . $frm_id;
                                     if (implode(",", $r->phr_lst->ids) <> "") {
                                         $debug_text .= '&phrases=' . implode(",", $r->phr_lst->ids);
                                     }
@@ -194,11 +194,11 @@ if ($session_usr->id() > 0) {
                                 }
                             }
                         } else {
-                            $fv = $fv_lst[0];
-                            if ($fv->is_updated) {
+                            $res = $res_lst[0];
+                            if ($res->is_updated) {
                                 //$debug_text  = ''.$r->frm->name.' for '.$r->phr_lst->name_linked();
-                                $debug_text = '' . $r->frm->name . ' for ' . $fv->src_phr_lst->name_linked();
-                                $debug_text .= ' = ' . $fv->display_linked($back) . ' (<a href="/http/formula_test.php?id=' . $frm_id;
+                                $debug_text = '' . $r->frm->name . ' for ' . $res->src_phr_lst->name_linked();
+                                $debug_text .= ' = ' . $res->display_linked($back) . ' (<a href="/http/formula_test.php?id=' . $frm_id;
                                 if (implode(",", $r->phr_lst->ids) <> "") {
                                     $debug_text .= '&phrases=' . implode(",", $r->phr_lst->ids);
                                 }
@@ -210,8 +210,8 @@ if ($session_usr->id() > 0) {
                         // show the user the progress every two seconds
                         if ($last_msg_time + UI_MIN_RESPONSE_TIME < time()) {
                             $calc_pct = ($calc_pos / sizeof($calc_lst->lst())) * 100;
-                            if ($fv->is_updated) {
-                                echo "" . round($calc_pct, 2) . "% processed (calculate " . $r->frm->name_linked($back) . " for " . $r->phr_lst->name_linked() . " = " . $fv->display_linked($back) . ")<br>";
+                            if ($res->is_updated) {
+                                echo "" . round($calc_pct, 2) . "% processed (calculate " . $r->frm->name_linked($back) . " for " . $r->phr_lst->name_linked() . " = " . $res->display_linked($back) . ")<br>";
                             } else {
                                 echo "" . round($calc_pct, 2) . "% processed (check " . $r->frm->name_linked($back) . " for " . $r->phr_lst->name_linked() . ")<br>";
                             }

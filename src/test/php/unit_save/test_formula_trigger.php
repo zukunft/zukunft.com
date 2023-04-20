@@ -97,11 +97,11 @@ function run_formula_trigger_test(testing $t): void
     $t->dsp('value->check best value for "' . $phr_lst2->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // calculate the increase and check the result
-    $fv_lst = $frm->calc($phr_lst2);
-    if ($fv_lst != null) {
-        if (count($fv_lst) > 0) {
-            $fv = $fv_lst[0];
-            $result = trim($fv->display(0));
+    $res_lst = $frm->calc($phr_lst2);
+    if ($res_lst != null) {
+        if (count($res_lst) > 0) {
+            $res = $res_lst[0];
+            $result = trim($res->display(0));
         } else {
             $result = '';
         }

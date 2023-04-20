@@ -2,7 +2,7 @@
 
 /*
 
-    user_type_List_min.php - the api object to transfer a list of user setings to the frontend that changes very rarely
+    user_type_list_min.php - the api object to transfer a list of user settings to the frontend that changes very rarely
     ----------------------
 
 

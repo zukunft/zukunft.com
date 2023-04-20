@@ -59,7 +59,7 @@ class result extends db_object
      * database link
      */
 
-    // database fields only used for formula values
+    // database fields only used for results
     const FLD_ID = 'result_id';
     const FLD_SOURCE_GRP = 'source_phrase_group_id';
     const FLD_SOURCE_TIME = 'source_time_id';
@@ -107,8 +107,8 @@ class result extends db_object
     public ?phrase $src_time_phr = null;       // the time word object created while loading
     public ?phrase_list $phr_lst = null;       // the phrase list obj (not a list of phrase objects) filled while loading
     public ?phrase $time_phr = null;           // the time word object created while loading
-    public ?bool $val_missing = False;         // true if at least one of the formula values is not set which means is NULL (but zero is a value)
-    public ?bool $is_updated = False;          // true if the formula value has been calculated, but not yet saved
+    public ?bool $val_missing = False;         // true if at least one of the results is not set which means is NULL (but zero is a value)
+    public ?bool $is_updated = False;          // true if the result has been calculated, but not yet saved
     public ?string $ref_text = null;           // the formula text in the database reference format on which the result is based
     public ?string $num_text = null;           // the formula text filled with numbers used for the result calculation
     public ?DateTime $last_val_update = null;  // the time of the last update of an underlying value, formula result or formula
@@ -140,7 +140,7 @@ class result extends db_object
      * map the database fields to the object fields
      *
      * @param array $db_row with the data directly from the database
-     * @return bool true if a formula value has been loaded and is valid
+     * @return bool true if a result has been loaded and is valid
      */
     function row_mapper(array $db_row): bool
     {
@@ -239,7 +239,7 @@ class result extends db_object
      */
 
     /**
-     * create the SQL to load a formula values
+     * create the SQL to load a results
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $query_name the unique name of the query e.g. id or name
@@ -260,10 +260,10 @@ class result extends db_object
     }
 
     /**
-     * create the SQL to load a formula values by the id
+     * create the SQL to load a results by the id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param int $id the id of the formula value
+     * @param int $id the id of the result
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
@@ -278,7 +278,7 @@ class result extends db_object
     }
 
     /**
-     * prepare the query parameter to load a formula values by phrase group id
+     * prepare the query parameter to load a results by phrase group id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
@@ -294,7 +294,7 @@ class result extends db_object
     }
 
     /**
-     * create the query parameter to load a formula values
+     * create the query parameter to load a results
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param sql_par $qp the query parameters as previous defined
@@ -312,7 +312,7 @@ class result extends db_object
     }
 
     /**
-     * create the SQL to load a formula values by phrase group id and time phrase
+     * create the SQL to load a results by phrase group id and time phrase
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
@@ -328,7 +328,7 @@ class result extends db_object
     }
 
     /**
-     * create the SQL to load a formula values by phrase group id
+     * create the SQL to load a results by phrase group id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
@@ -342,9 +342,9 @@ class result extends db_object
     }
 
     /**
-     * load (or force reload from database of) a formula value by the id
+     * load (or force reload from database of) a result by the id
      *
-     * @return bool true if formula value has been loaded
+     * @return bool true if result has been loaded
      */
     function load_by_id(int $id = 0, string $class = self::class): int
     {
@@ -352,7 +352,7 @@ class result extends db_object
         $result = 0;
 
         if ($id > 0) {
-            // if the id is given load the formula value from the database
+            // if the id is given load the result from the database
             $this->reset($this->user());
             $this->id = $id;
         } else {
@@ -362,7 +362,7 @@ class result extends db_object
                 $this->reset($this->user());
                 $this->id = $id;
             } else {
-                log_err('The formula value id and the user must be set ' .
+                log_err('The result id and the user must be set ' .
                     'to load a ' . self::class, self::class . '->load_by_id');
             }
         }
@@ -377,9 +377,9 @@ class result extends db_object
     }
 
     /**
-     * load all a formula value by the phrase group id and time phrase
+     * load all a result by the phrase group id and time phrase
      *
-     * @return bool true if formula value has been loaded
+     * @return bool true if result has been loaded
      */
     function load_by_grp(int $grp_id, ?int $time_phr_id = null): bool
     {
@@ -387,7 +387,7 @@ class result extends db_object
         $result = false;
 
         if ($grp_id <= 0) {
-            log_err('The formula value phrase group id and the user must be set ' .
+            log_err('The result phrase group id and the user must be set ' .
                 'to load a ' . self::class, self::class . '->load_by_grp');
         } else {
             $this->reset($this->user());
@@ -409,9 +409,9 @@ class result extends db_object
     }
 
     /**
-     * load all a formula value by a give phrase list and if set the time phrase
+     * load all a result by a give phrase list and if set the time phrase
      *
-     * @return bool true if formula value has been loaded
+     * @return bool true if result has been loaded
      */
     function load_by_phr_lst(phrase_list $phr_lst, ?int $time_phr_id = null): bool
     {
@@ -422,7 +422,7 @@ class result extends db_object
             $grp = $phr_lst->get_grp();
             $result = $this->load_by_grp($grp->id(), $time_phr_id);
         } else {
-            log_err('The formula value phrase list and the user must be set ' .
+            log_err('The result phrase list and the user must be set ' .
                 'to load a ' . self::class, self::class . '->load_by_phr_lst');
         }
 
@@ -430,7 +430,7 @@ class result extends db_object
     }
 
     /**
-     * create the SQL to load a formula values by a given where statement
+     * create the SQL to load a results by a given where statement
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $sql_where the ready to use SQL where statement
@@ -471,7 +471,7 @@ class result extends db_object
     }
 
     /**
-     * set the SQL query parameters to load a formula value
+     * set the SQL query parameters to load a result
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
@@ -525,7 +525,7 @@ class result extends db_object
 
             $db_con->set_type(sql_db::TBL_RESULT);
             $qp = new sql_par(self::class);
-            $qp->name = 'fv_by_';
+            $qp->name = 'res_by_';
 
             // create the source phrase list if just the word is given
             if ($this->phr_lst == null and $this->phr != null) {
@@ -649,11 +649,11 @@ class result extends db_object
                 log_debug('check best guess');
                 if ($this->id() <= 0) {
                     if (!isset($phr_lst)) {
-                        log_debug('no formula value found for ' . $qp->sql . ', but phrase list is also not set');
+                        log_debug('no result found for ' . $qp->sql . ', but phrase list is also not set');
                     } else {
                         log_debug('try best guess');
                         if (count($phr_lst->lst) > 0) {
-                            // the phrase groups with the least number of additional words that have at least one formula value
+                            // the phrase groups with the least number of additional words that have at least one result
                             $sql_grp_from = '';
                             $sql_grp_where = '';
                             $pos = 1;
@@ -678,8 +678,8 @@ class result extends db_object
                             // count the number of phrases per group
                             // and add the user specific phrase links
                             // select also the time
-                            $sql_val = "SELECT formula_value_id 
-                            FROM formula_values
+                            $sql_val = "SELECT result_id 
+                            FROM results
                           WHERE phrase_group_id IN (" . $sql_grp . ");";
                             log_debug('sql val "' . $sql_val . '"');
                             //$db_con = new mysql;
@@ -690,9 +690,9 @@ class result extends db_object
                                     $val_id_row = $val_ids_rows[0];
                                     $this->set_id($val_id_row[self::FLD_ID]);
                                     if ($this->id() > 0) {
-                                        $qp->name .= '_guess_fv_id';
+                                        $qp->name .= '_guess_res_id';
                                         $db_con->add_par(sql_db::PAR_INT, $this->id());
-                                        $sql_where = "formula_value_id = " . $db_con->par_name();
+                                        $sql_where = "result_id = " . $db_con->par_name();
                                         $this->load_rec($qp, $sql_where);
                                         log_debug('best guess id (' . $this->id() . ')');
                                     }
@@ -860,11 +860,11 @@ class result extends db_object
         log_debug();
         $result = new user_message;
 
-        foreach ($json_obj as $key => $fv) {
+        foreach ($json_obj as $key => $res) {
 
             if ($key == export::WORDS) {
                 $phr_lst = new phrase_list($this->user());
-                $result->add($phr_lst->import_lst($fv, $do_save));
+                $result->add($phr_lst->import_lst($res, $do_save));
                 if ($result->is_ok() and $do_save) {
                     $phr_grp = $phr_lst->get_grp();
                     log_debug('got word group ' . $phr_grp->dsp_id());
@@ -876,16 +876,16 @@ class result extends db_object
 
             /*
             if ($key == exp_obj::FLD_TIMESTAMP) {
-                if (strtotime($fv)) {
-                    $this->time_stamp = get_datetime($fv, $this->dsp_id(), 'JSON import');
+                if (strtotime($res)) {
+                    $this->time_stamp = get_datetime($res, $this->dsp_id(), 'JSON import');
                 } else {
-                    log_err('Cannot add timestamp "' . $fv . '" when importing ' . $this->dsp_id(), 'value->import_obj');
+                    log_err('Cannot add timestamp "' . $res . '" when importing ' . $this->dsp_id(), 'value->import_obj');
                 }
             }
             */
 
             if ($key == exp_obj::FLD_NUMBER) {
-                $this->value = $fv;
+                $this->value = $res;
             }
 
         }
@@ -901,10 +901,10 @@ class result extends db_object
     }
 
     /**
-     * create an JSON formula value object for the export
+     * create an JSON result object for the export
      * to enable the validation of the results during import
      *
-     * @param bool $do_load true if the formula value should be validated again before export
+     * @param bool $do_load true if the result should be validated again before export
      *                      use false for a faster export
      * @return result_exp the filled formula validation object used for JSON creation
      */
@@ -1264,10 +1264,10 @@ class result extends db_object
         return $result;
     }
 
-    // update (calculate) all formula values that are depending
+    // update (calculate) all results that are depending
     // e.g. if the PE ratio for ABB, 2018 has been updated,
     //      the target price for ABB, 2018 needs to be updated if it is based on the PE ratio
-    // so:  get a list of all formulas, where the formula value is used
+    // so:  get a list of all formulas, where the result is used
     //      based on the frm id and the word group
     function update_depending(): array
     {
@@ -1289,8 +1289,8 @@ class result extends db_object
         // get formula results that may need an update (maybe include also word groups that have any word of the updated word group)
         if (!empty($frm_ids)) {
             $sql_in = $lib->sql_array($frm_ids, ' formula_id IN (', ') ');
-            $sql = "SELECT formula_value_id, formula_id
-                FROM formula_values 
+            $sql = "SELECT result_id, formula_id
+                FROM results 
                WHERE " . $sql_in . "
                  AND phrase_group_id = " . $this->phr_grp_id . "
                  AND user_id         = " . $this->user()->id() . ";";
@@ -1299,18 +1299,18 @@ class result extends db_object
             $val_rows = $db_con->get_old($sql);
             foreach ($val_rows as $val_row) {
                 $frm_ids[] = $val_row[formula::FLD_ID];
-                $fv_upd = new result($this->user());
-                $fv_upd->load_by_id($val_row[self::FLD_ID]);
-                $fv_upd->update();
+                $res_upd = new result($this->user());
+                $res_upd->load_by_id($val_row[self::FLD_ID]);
+                $res_upd->update();
                 // if the value is really updated, remember the value is to check if this triggers more updates
-                $result[] = $fv_upd->save();
+                $result[] = $res_upd->save();
             }
         }
 
         return $result;
     }
 
-    // update the result of this formula value (without loading or saving)
+    // update the result of this result (without loading or saving)
     function update()
     {
         log_debug('result->update ' . $this->dsp_id());
@@ -1335,10 +1335,10 @@ class result extends db_object
 
     private function save_without_time(): string
     {
-        $fv_no_time = clone $this;
-        $fv_no_time->src_time_phr = null;
-        $fv_no_time->time_phr = null;
-        return $fv_no_time->save();
+        $res_no_time = clone $this;
+        $res_no_time->src_time_phr = null;
+        $res_no_time->time_phr = null;
+        return $res_no_time->save();
     }
 
 
@@ -1352,10 +1352,10 @@ class result extends db_object
     // TODO add check
     private function has_no_time_value(): bool
     {
-        $fv_check = clone $this;
-        $phr_lst_ex_time = $fv_check->phr_lst;
+        $res_check = clone $this;
+        $phr_lst_ex_time = $res_check->phr_lst;
         $phr_lst_ex_time->ex_time();
-        return !$fv_check->load_by_phr_lst($phr_lst_ex_time);
+        return !$res_check->load_by_phr_lst($phr_lst_ex_time);
     }
 
     // check if a single formula result needs to be saved to the database
@@ -1424,9 +1424,9 @@ class result extends db_object
                 // get the default time for the words e.g. if the increase for ABB sales is calculated the last reported sales increase is assumed
                 $lst_ex_time = $this->phr_lst->wrd_lst_all();
                 $lst_ex_time->ex_time();
-                $fv_default_time = $lst_ex_time->assume_time(); // must be the same function called used in 2num
-                if (isset($fv_default_time)) {
-                    log_debug('save "' . $this->value . '" for ' . $this->phr_lst->dsp_id() . ' and default time ' . $fv_default_time->dsp_id());
+                $res_default_time = $lst_ex_time->assume_time(); // must be the same function called used in 2num
+                if (isset($res_default_time)) {
+                    log_debug('save "' . $this->value . '" for ' . $this->phr_lst->dsp_id() . ' and default time ' . $res_default_time->dsp_id());
                 } else {
                     log_debug('save "' . $this->value . '" for ' . $this->phr_lst->dsp_id());
                 }
@@ -1435,9 +1435,9 @@ class result extends db_object
                     log_info('No result calculated for "' . $this->frm->name() . '" based on ' . $this->src_phr_lst->dsp_id() . ' for user ' . $this->user()->id() . '.', "result->save_if_updated");
                 } else {
                     // save the default value if the result time is the "newest"
-                    if (isset($fv_default_time)) {
-                        log_debug('check if result time ' . $this->time_phr->dsp_id() . ' is the default time ' . $fv_default_time->dsp_id());
-                        if ($this->time_phr->id() == $fv_default_time->id()) {
+                    if (isset($res_default_time)) {
+                        log_debug('check if result time ' . $this->time_phr->dsp_id() . ' is the default time ' . $res_default_time->dsp_id());
+                        if ($this->time_phr->id() == $res_default_time->id()) {
                             // if there is not yet a general value for all user, save it now
                             $result .= $this->save_without_time();
                         }
@@ -1449,12 +1449,12 @@ class result extends db_object
                     }
 
                     // save the result
-                    $fv_id = $this->save();
+                    $res_id = $this->save();
 
                     if ($debug > 0) {
                         $debug_txt = 'result = ' . $this->value . ' saved for ' . $this->phr_lst->name_linked();
                         if ($debug > 3) {
-                            $debug_txt .= ' (group id "' . $this->phr_grp_id . '" and the result time is ' . $this->time_phr->name_linked() . ') as id "' . $fv_id . '" based on ' . $this->src_phr_lst->name_linked() . ' (group id "' . $this->src_phr_grp_id . '" and the result time is ' . $this->src_time_phr->name_linked() . ')';
+                            $debug_txt .= ' (group id "' . $this->phr_grp_id . '" and the result time is ' . $this->time_phr->name_linked() . ') as id "' . $res_id . '" based on ' . $this->src_phr_lst->name_linked() . ' (group id "' . $this->src_phr_grp_id . '" and the result time is ' . $this->src_time_phr->name_linked() . ')';
                         }
                         if (!$this->is_std) {
                             $debug_txt .= ' for user "' . $this->user()->name . '"';
@@ -1507,11 +1507,11 @@ class result extends db_object
             $this->save_prepare_wrds();
             log_debug("group id " . $this->phr_grp_id . " and source group id " . $this->src_phr_grp_id);
 
-            // to check if a database update is needed to create a second fv object with the database values
-            $fv_db = clone $this;
-            $fv_db->load_obj_vars();
-            $row_id = $fv_db->id;
-            $db_val = $fv_db->value;
+            // to check if a database update is needed to create a second res object with the database values
+            $res_db = clone $this;
+            $res_db->load_obj_vars();
+            $row_id = $res_db->id;
+            $db_val = $res_db->value;
 
             // if value exists, check it an update is needed
             if ($row_id > 0) {

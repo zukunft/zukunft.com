@@ -292,25 +292,25 @@ CREATE TABLE IF NOT EXISTS formula_types
 -- --------------------------------------------------------
 
 --
--- Table structure for table formula_values
+-- Table structure for table results
 --
 
-CREATE TABLE IF NOT EXISTS formula_values
+CREATE TABLE IF NOT EXISTS results
 (
-    formula_value_id       BIGSERIAL PRIMARY KEY,
+    result_id       BIGSERIAL PRIMARY KEY,
     formula_id             bigint           NOT NULL,
     user_id                bigint                DEFAULT NULL,
     source_phrase_group_id bigint                DEFAULT NULL,
     source_time_id    bigint                DEFAULT NULL,
     phrase_group_id        bigint                DEFAULT 0,
-    formula_value          double precision NOT NULL,
+    result          double precision NOT NULL,
     last_update            timestamp        NULL DEFAULT NULL,
     dirty                  smallint              DEFAULT NULL
 );
 
-COMMENT ON TABLE formula_values is 'temp table to cache the formula results';
-COMMENT ON COLUMN formula_values.phrase_group_id is 'temp field for fast data collection; no single links to terms because this is just a cache table and can be recreated by the underlying tables';
-COMMENT ON COLUMN formula_values.last_update is 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty';
+COMMENT ON TABLE results is 'temp table to cache the formula results';
+COMMENT ON COLUMN results.phrase_group_id is 'temp field for fast data collection; no single links to terms because this is just a cache table and can be recreated by the underlying tables';
+COMMENT ON COLUMN results.last_update is 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty';
 
 -- --------------------------------------------------------
 
@@ -1762,11 +1762,11 @@ CREATE INDEX formula_link_idx ON formula_links (formula_id);
 CREATE INDEX formula_link_type_idx ON formula_links (link_type_id);
 
 --
--- Indexes for table formula_values
+-- Indexes for table results
 --
-CREATE UNIQUE INDEX formula_value_idx ON formula_values (formula_id, user_id, phrase_group_id,
+CREATE UNIQUE INDEX result_idx ON results (formula_id, user_id, phrase_group_id,
                                                          source_phrase_group_id, source_time_id);
-CREATE INDEX formula_value_user_idx ON formula_values (user_id);
+CREATE INDEX result_user_idx ON results (user_id);
 
 --
 -- Indexes for table phrase_groups
@@ -2046,11 +2046,11 @@ ALTER TABLE formula_links
     ADD CONSTRAINT formula_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table formula_values
+-- Constraints for table results
 --
-ALTER TABLE formula_values
-    ADD CONSTRAINT formula_values_fk_1 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
-    ADD CONSTRAINT formula_values_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+ALTER TABLE results
+    ADD CONSTRAINT results_fk_1 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- Constraints for table phrase_group_word_links

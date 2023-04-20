@@ -122,8 +122,8 @@ class formula_unit_tests
         $trm_lst->add($wrd->term());
         $exp = new expression($usr);
         $exp->set_ref_text('{w205}={w203}*1000000');
-        $result = $exp->fv_phr_lst($trm_lst);
-        $t->assert('Expression->fv_phr_lst for ' . formula_api::TF_READ_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
+        $result = $exp->res_phr_lst($trm_lst);
+        $t->assert('Expression->res_phr_lst for ' . formula_api::TF_READ_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
 
         // get the special formulas used in a formula to calculate the result
         // e.g. "next" is a special formula to get the following values
@@ -134,7 +134,7 @@ class formula_unit_tests
         $frm_next->id = 1;
         $frm_has_next = new formula($usr);
         $frm_has_next->usr_text = '=next';
-        $t->assert('Expression->fv_phr_lst for ' . formula_api::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
+        $t->assert('Expression->res_phr_lst for ' . formula_api::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
         */
 
         // test the calculation of one value
@@ -156,10 +156,10 @@ class formula_unit_tests
 
         $frm = $t->new_formula(formula_api::TN_ADD, 1);
         $frm->set_user_text(formula_api::TF_INCREASE, $trm_lst);
-        $fv_lst = $frm->to_num($phr_lst);
+        $res_lst = $frm->to_num($phr_lst);
         // TODO activate
-        //$fv = $fv_lst->lst[0];
-        //$result = $fv->num_text;
+        //$res = $res_lst->lst[0];
+        //$result = $res->num_text;
         $target = '=(' . value_api::TV_CH_INHABITANTS_2020_IN_MIO . '-' .
             value_api::TV_CH_INHABITANTS_2019_IN_MIO . ')/' .
             value_api::TV_CH_INHABITANTS_2019_IN_MIO;

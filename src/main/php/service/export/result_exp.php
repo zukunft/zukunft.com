@@ -2,7 +2,7 @@
 
 /*
 
-  result_exp.php - the simple export object for a formula value
+  result_exp.php - the simple export object for a result
   ---------------------
   
   This file is part of zukunft.com - calc with words
