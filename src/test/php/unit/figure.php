@@ -32,12 +32,12 @@
 
 namespace test;
 
-include_once API_FORMULA_PATH . 'formula_value.php';
+include_once API_RESULT_PATH . 'result.php';
 include_once API_VALUE_PATH . 'value.php';
 include_once WEB_FORMULA_PATH . 'figure.php';
 
-use api\formula_value_api;
 use api\value_api;
+use controller\result\result_api;
 use html\api;
 use html\figure_dsp;
 
@@ -73,7 +73,7 @@ class figure_unit_tests
         $fig = $t->dummy_figure_result();
         $t->assert('figure result id', $fig->id(), -1);
         $t->assert('figure result obj id', $fig->obj_id(), 1);
-        $t->assert('figure result number', $fig->number(), formula_value_api::TV_INT);
+        $t->assert('figure result number', $fig->number(), result_api::TV_INT);
 
         $fig = $t->dummy_figure_value();
         $t->assert('figure value symbol', $fig->symbol(), "");

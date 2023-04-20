@@ -32,7 +32,7 @@
 namespace model;
 
 include_once SERVICE_EXPORT_PATH . 'formula_exp.php';
-include_once MODEL_FORMULA_PATH . 'formula_value_list.php';
+include_once MODEL_RESULT_PATH . 'result_list.php';
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
@@ -40,6 +40,7 @@ include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 include_once MODEL_FORMULA_PATH . 'formula_type.php';
+include_once MODEL_FORMULA_PATH . 'expression.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once API_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
@@ -908,17 +909,17 @@ class formula extends sandbox_typed
 
         global $db_con;
 
-        $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
+        $db_con->set_type(sql_db::TBL_RESULT);
         $db_con->set_usr($this->user()->id);
         return $db_con->delete($this->fld_id(), $this->id);
     }
 
     /**
-     * @return formula_value with the value from this formula
+     * @return result with the value from this formula
      */
-    private function create_result(phrase_list $phr_lst): formula_value
+    private function create_result(phrase_list $phr_lst): result
     {
-        $rst = new formula_value($this->user());
+        $rst = new result($this->user());
         $rst->frm = $this;
         $rst->ref_text = $this->ref_text_r;
         $rst->num_text = $this->ref_text_r;
@@ -936,7 +937,7 @@ class formula extends sandbox_typed
      * @param phrase_list $phr_lst
      * TODO verbs
      */
-    function to_num(phrase_list $phr_lst): formula_value_list
+    function to_num(phrase_list $phr_lst): result_list
     {
         log_debug('get numbers for ' . $this->dsp_id() . ' and ' . $phr_lst->dsp_id());
         $lib = new library();
@@ -949,12 +950,12 @@ class formula extends sandbox_typed
         }
 
         // create the formula value list
-        $fv_lst = new formula_value_list($this->user());
+        $fv_lst = new result_list($this->user());
 
         // create a master formula value object to only need to fill it with the numbers in the code below
-        $fv_init = $this->create_result($phr_lst); // maybe move the constructor of formula_value_list?
+        $fv_init = $this->create_result($phr_lst); // maybe move the constructor of result_list?
 
-        // load the formula element groups; similar parts is used in the explain method in formula_value
+        // load the formula element groups; similar parts is used in the explain method in result
         // e.g. for "Sales differentiator Sector / Total Sales" the element groups are
         //      "Sales differentiator Sector" and "Total Sales" where
         //      the element group "Sales differentiator Sector" has the elements: "Sales" (of type word), "differentiator" (verb), "Sector" (word)
@@ -1335,11 +1336,11 @@ class formula extends sandbox_typed
     }
 
     /**
-     * @return formula_value_list a list of all formula results linked to this formula
+     * @return result_list a list of all formula results linked to this formula
      */
-    function get_fv_lst(): formula_value_list
+    function get_fv_lst(): result_list
     {
-        $fv_lst = new formula_value_list($this->user());
+        $fv_lst = new result_list($this->user());
         $fv_lst->load_by_frm($this);
         return $fv_lst;
     }

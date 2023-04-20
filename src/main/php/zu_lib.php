@@ -14,7 +14,6 @@ use html\phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
-    TODO add the im and export unit test (assert_json) to all base objects (exlude the combine object)
     TODO add api unit test (assert_api) to all objects
     TODO make sure that im-and export and api check all objects fields
     TODO rename formula value (fv_) to result (res_)
@@ -285,6 +284,7 @@ const MODEL_VERB_PATH = MODEL_PATH . 'verb' . DIRECTORY_SEPARATOR;
 const MODEL_VALUE_PATH = MODEL_PATH . 'value' . DIRECTORY_SEPARATOR;
 const MODEL_REF_PATH = MODEL_PATH . 'ref' . DIRECTORY_SEPARATOR;
 const MODEL_FORMULA_PATH = MODEL_PATH . 'formula' . DIRECTORY_SEPARATOR;
+const MODEL_RESULT_PATH = MODEL_PATH . 'result' . DIRECTORY_SEPARATOR;
 const MODEL_VIEW_PATH = MODEL_PATH . 'view' . DIRECTORY_SEPARATOR;
 const API_PATH = PHP_PATH . 'api' . DIRECTORY_SEPARATOR; // path of the api objects for the message creation to the frontend
 const API_SANDBOX_PATH = API_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
@@ -297,6 +297,7 @@ const API_PHRASE_PATH = API_PATH . 'phrase' . DIRECTORY_SEPARATOR;
 const API_VERB_PATH = API_PATH . 'verb' . DIRECTORY_SEPARATOR;
 const API_VALUE_PATH = API_PATH . 'value' . DIRECTORY_SEPARATOR;
 const API_FORMULA_PATH = API_PATH . 'formula' . DIRECTORY_SEPARATOR;
+const API_RESULT_PATH = API_PATH . 'result' . DIRECTORY_SEPARATOR;
 const API_VIEW_PATH = API_PATH . 'view' . DIRECTORY_SEPARATOR;
 const API_REF_PATH = API_PATH . 'ref' . DIRECTORY_SEPARATOR;
 const WEB_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR; // path of the pure html frontend objects
@@ -311,6 +312,7 @@ const WEB_PHRASE_PATH = WEB_PATH . 'phrase' . DIRECTORY_SEPARATOR;
 const WEB_VERB_PATH = WEB_PATH . 'verb' . DIRECTORY_SEPARATOR;
 const WEB_VALUE_PATH = WEB_PATH . 'value' . DIRECTORY_SEPARATOR;
 const WEB_FORMULA_PATH = WEB_PATH . 'formula' . DIRECTORY_SEPARATOR;
+const WEB_RESULT_PATH = WEB_PATH . 'result' . DIRECTORY_SEPARATOR;
 const WEB_VIEW_PATH = WEB_PATH . 'view' . DIRECTORY_SEPARATOR;
 const WEB_REF_PATH = WEB_PATH . 'ref' . DIRECTORY_SEPARATOR;
 

@@ -82,7 +82,7 @@ class sql_db
     const TBL_FORMULA_LINK_TYPE = 'formula_link_type';
     const TBL_FORMULA_ELEMENT = 'formula_element';
     const TBL_FORMULA_ELEMENT_TYPE = 'formula_element_type';
-    const TBL_FORMULA_VALUE = 'formula_value';
+    const TBL_RESULT = 'result';
     const TBL_FIGURE = 'figure';
     const TBL_VIEW = 'view';
     const TBL_VIEW_TYPE = 'view_type';
@@ -151,7 +151,7 @@ class sql_db
         sql_db::TBL_VALUE,
         sql_db::TBL_VALUE_TIME_SERIES,
         sql_db::TBL_FORMULA_LINK,
-        sql_db::TBL_FORMULA_VALUE,
+        sql_db::TBL_RESULT,
         sql_db::TBL_FORMULA_ELEMENT,
         sql_db::TBL_VIEW_COMPONENT_LINK,
         sql_db::TBL_VALUE_PHRASE_LINK,

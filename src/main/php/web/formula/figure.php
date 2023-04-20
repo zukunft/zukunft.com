@@ -43,6 +43,7 @@ use api\figure_api;
 use api\phrase_list_api;
 use api\sandbox_value_api;
 use controller\controller;
+use result\result_dsp;
 
 class figure_dsp
 {
@@ -51,7 +52,7 @@ class figure_dsp
      * object vars
      */
 
-    private value_dsp|formula_value_dsp|null $obj;
+    private value_dsp|result_dsp|null $obj;
 
 
     /*
@@ -78,7 +79,7 @@ class figure_dsp
         $json_array = json_decode($json_api_msg, true);
         if (array_key_exists(combine_object_api::FLD_CLASS, $json_array)) {
             if ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_RESULT) {
-                $fv_dsp = new formula_value_dsp();
+                $fv_dsp = new result_dsp();
                 $fv_dsp->set_from_json_array($json_array);
                 $this->set_obj($fv_dsp);
             } elseif ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_VALUE) {
@@ -93,12 +94,12 @@ class figure_dsp
         }
     }
 
-    function set_obj(value_dsp|formula_value_dsp|null $obj): void
+    function set_obj(value_dsp|result_dsp|null $obj): void
     {
         $this->obj = $obj;
     }
 
-    function obj(): value_dsp|formula_value_dsp|null
+    function obj(): value_dsp|result_dsp|null
     {
         return $this->obj;
     }
@@ -169,7 +170,7 @@ class figure_dsp
      */
     function is_result(): bool
     {
-        if ($this->obj()::class == formula_value_dsp::class) {
+        if ($this->obj()::class == result_dsp::class) {
             return true;
         } else {
             return false;

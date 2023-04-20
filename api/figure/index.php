@@ -29,11 +29,10 @@
   
 */
 
+use api\figure_api;
 use controller\controller;
 use model\user;
-use model\formula_value;
 use model\value;
-use api\figure_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
@@ -45,7 +44,7 @@ include_once PHP_PATH . 'zu_lib.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'message_header.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_FORMULA_PATH . 'formula_value.php';
+include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once API_FORMULA_PATH . 'figure.php';
 
@@ -72,7 +71,7 @@ if ($usr->id() > 0) {
         $fig = $val->figure();
         $result = $fig->api_obj();
     } elseif ($fig_id < 0) {
-        $fv = new formula_value($usr);
+        $fv = new result($usr);
         $fv->load_by_id($fig_id);
         $fig = $fv->figure();
         $result = $fig->api_obj();

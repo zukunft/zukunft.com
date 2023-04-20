@@ -57,6 +57,7 @@ use cfg\protection_type;
 use cfg\share_type;
 use cfg\verb_list;
 use controller\controller;
+use result;
 use html\api;
 use html\button;
 use html\html_base;
@@ -938,7 +939,7 @@ class word extends sandbox_typed
                     $fv_text = '';
                     // temp solution to be reviewed
                     if ($in_value['id'] > 0) {
-                        $fv = new formula_value($this->user());
+                        $fv = new result($this->user());
                         $fv->load_by_id($in_value['id']);
                         if ($fv->value <> 0) {
                             $fv_text = $fv->val_formatted();

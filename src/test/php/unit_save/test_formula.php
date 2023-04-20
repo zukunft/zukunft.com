@@ -31,9 +31,9 @@
 */
 
 use api\formula_api;
-use api\formula_value_api;
 use api\word_api;
 use cfg\formula_type;
+use controller\result\result_api;
 use model\change_log_field;
 use model\change_log_named;
 use model\change_log_table;
@@ -42,7 +42,6 @@ use model\formula_list;
 use model\phrase_list;
 use model\sandbox_named;
 use model\word;
-use test\formula_value_unit_tests;
 use test\testing;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 use const test\TIMEOUT_LIMIT_PAGE;
@@ -181,8 +180,8 @@ function run_formula_test(testing $t): void
     if ($fv_lst->lst != null) {
         $fv->save_if_updated();
         $result = $fv->value;
-        $target = formula_value_api::TV_INCREASE_LONG;
-        $t->dsp('formula_value->save_if_updated "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
+        $target = result_api::TV_INCREASE_LONG;
+        $t->dsp('result->save_if_updated "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
     }
 
     $fv_lst = $frm->calc($phr_lst);
@@ -191,7 +190,7 @@ function run_formula_test(testing $t): void
     } else {
         $result = '';
     }
-    $target = formula_value_api::TV_INCREASE_LONG;
+    $target = result_api::TV_INCREASE_LONG;
     $t->dsp('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
 
     // test the scaling mainly to check the scaling handling of the results later

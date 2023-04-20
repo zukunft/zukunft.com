@@ -39,8 +39,8 @@
 include_once SERVICE_EXPORT_PATH . 'export.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_FORMULA_PATH . 'formula_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_value.php';
-include_once MODEL_FORMULA_PATH . 'formula_value_list.php';
+include_once MODEL_RESULT_PATH . 'result.php';
+include_once MODEL_RESULT_PATH . 'result_list.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range.php';
 include_once MODEL_HELPER_PATH . 'library.php';
 include_once MODEL_REF_PATH . 'ref.php';
@@ -56,21 +56,20 @@ include_once MODEL_VIEW_PATH . 'view_list.php';
 use im_export\export;
 use model\formula;
 use model\formula_list;
-use model\formula_value;
-use model\formula_value_list;
 use model\ip_range;
 use model\library;
+use model\ref;
+use model\result_list;
+use model\source;
+use model\triple;
 use model\user;
 use model\user_message;
-use model\ref;
-use model\source;
-use model\word;
-use model\triple;
 use model\value;
 use model\value_list;
 use model\verb;
 use model\view;
 use model\view_list;
+use model\word;
 
 class file_import
 {
@@ -161,7 +160,7 @@ class file_import
             }
 
             // remember the result and view that should be validated after the import
-            $fv_to_validate = new formula_value_list($usr_import);
+            $fv_to_validate = new result_list($usr_import);
             $frm_to_calc = new formula_list($usr_import);
             $dsp_to_validate = new view_list($usr_import);
             $pos = 0;
@@ -286,7 +285,7 @@ class file_import
                 } elseif ($key == export::CALC_VALIDATION) {
                     // TODO add a unit test
                     foreach ($json_obj as $value) {
-                        $fv = new formula_value($this->usr);
+                        $fv = new result($this->usr);
                         $import_result = $fv->import_obj($value);
                         if ($import_result->is_ok()) {
                             $this->calc_validations_done++;

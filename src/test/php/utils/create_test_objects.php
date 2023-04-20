@@ -48,7 +48,6 @@ include_once WEB_PATH . 'formula_display.php';
 include_once WEB_PATH . 'view_display.php';
 
 use api\formula_api;
-use api\formula_value_api;
 use api\phrase_group_api;
 use api\ref_api;
 use api\source_api;
@@ -66,6 +65,7 @@ use cfg\phrase_type;
 use cfg\ref_type_list;
 use cfg\source_type;
 use cfg\system_log_list;
+use controller\result\result_api;
 use DateTime;
 use html\formula_dsp_old;
 use model\batch_job;
@@ -79,11 +79,11 @@ use model\figure;
 use model\formula;
 use model\formula_link;
 use model\formula_list;
-use model\formula_value;
 use model\phrase;
 use model\phrase_group;
 use model\phrase_list;
 use model\ref;
+use model\result;
 use model\source;
 use model\sys_log_status;
 use model\system_log;
@@ -236,23 +236,23 @@ class test_new_obj extends test_base
         return $lst;
     }
 
-    function dummy_formula_value(): formula_value
+    function dummy_formula_value(): result
     {
         global $usr;
-        $fv = new formula_value($usr);
+        $fv = new result($usr);
         $wrd = $this->dummy_word();
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd->phrase());
         $fv->set_id(1);
         $fv->phr_lst = $phr_lst;
-        $fv->value = formula_value_api::TV_INT;
+        $fv->value = result_api::TV_INT;
         return $fv;
     }
 
-    function dummy_formula_value_pct(): formula_value
+    function dummy_formula_value_pct(): result
     {
         global $usr;
-        $fv = new formula_value($usr);
+        $fv = new result($usr);
         $wrd_pct = $this->new_word(word_api::TN_PCT, 2, phrase_type::PERCENT);
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_pct->phrase());

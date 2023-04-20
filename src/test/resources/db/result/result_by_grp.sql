@@ -1,12 +1,12 @@
-PREPARE formula_value_by_id FROM
-   'SELECT formula_value_id,
+PREPARE result_by_grp (int) AS
+    SELECT result_id,
            formula_id,
            user_id,
            source_phrase_group_id,
            source_time_id,
            phrase_group_id,
-           formula_value,
+           result,
            last_update,
            dirty
-      FROM formula_values
-     WHERE formula_value_id = ?';
+      FROM results
+     WHERE phrase_group_id = $1;

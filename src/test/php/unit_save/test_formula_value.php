@@ -33,13 +33,12 @@
 */
 
 use api\formula_api;
-use api\formula_value_api;
 use api\word_api;
-use model\formula_value;
-use model\formula_value_list;
+use controller\result\result_api;
 use model\phrase_list;
+use model\result;
+use model\result_list;
 use model\value;
-use test\formula_value_unit_tests;
 use test\testing;
 use const test\TIMEOUT_LIMIT_LONG;
 use const test\TIMEOUT_LIMIT_PAGE;
@@ -49,7 +48,7 @@ function run_formula_value_test(testing $t): void
 
     global $usr;
 
-    $t->header('Test the formula value class (classes/formula_value.php)');
+    $t->header('Test the formula value class (classes/result.php)');
 
     // test load result without time
     $phr_lst = new phrase_list($usr);
@@ -60,7 +59,7 @@ function run_formula_value_test(testing $t): void
     $phr_lst->add_name(word_api::TN_INHABITANTS);
     $ch_up_grp = $phr_lst->get_grp();
     if ($ch_up_grp->id() > 0) {
-        $ch_increase = new formula_value($usr);
+        $ch_increase = new result($usr);
         $ch_increase->load_by_grp($ch_up_grp->id());
         $result = $ch_increase->value;
         if ($result == null) {
@@ -70,7 +69,7 @@ function run_formula_value_test(testing $t): void
         $result = 'no ' . word_api::TN_INHABITANTS . ' ' . formula_api::TN_ADD . ' value found for ' . word_api::TN_CH;
     }
     // TODO review
-    $target = formula_value_api::TV_INCREASE_LONG;
+    $target = result_api::TV_INCREASE_LONG;
     $t->dsp('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, TIMEOUT_LIMIT_LONG);
 
     // test load result with time
@@ -79,7 +78,7 @@ function run_formula_value_test(testing $t): void
     $phr_lst->ex_time();
     $ch_up_grp = $phr_lst->get_grp();
     if ($ch_up_grp->id() > 0) {
-        $ch_increase = new formula_value($usr);
+        $ch_increase = new result($usr);
         $ch_increase->load_by_grp($ch_up_grp->id(), $time_phr->id());
         $result = $ch_increase->value;
         if ($result == null) {
@@ -89,7 +88,7 @@ function run_formula_value_test(testing $t): void
         $result = 'no ' . word_api::TN_2020 . ' ' . word_api::TN_INHABITANTS . ' ' . formula_api::TN_ADD . ' value found for ' . word_api::TN_CH;
     }
     //$result = $ch_increase->phr_grp_id;
-    $target = formula_value_api::TV_INCREASE_LONG;
+    $target = result_api::TV_INCREASE_LONG;
     if (isset($time_phr) and isset($ch_up_grp)) {
         $t->dsp('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result);
     } else {
@@ -113,7 +112,7 @@ function run_formula_value_test(testing $t): void
     $result = $mio_val->scale($dest_wrd_lst);
     $result = $mio_val->scale($dest_wrd_lst);
     */
-    $k_val = new formula_value($usr);
+    $k_val = new result($usr);
     //$result = $mio_val->check();
     $k_val->load_by_grp($ch_k_grp->id());
     $result = $k_val->value;
@@ -161,62 +160,62 @@ function run_formula_value_list_test(testing $t): void
 
     global $usr;
 
-    $t->header('Test the formula value list class (classes/formula_value_list.php)');
+    $t->header('Test the formula value list class (classes/result_list.php)');
 
     // load results by formula
     $frm = $t->load_formula(formula_api::TN_RENAMED);
-    $fv_lst = new formula_value_list($usr);
+    $fv_lst = new result_list($usr);
     $fv_lst->load($frm);
     $result = $fv_lst->dsp_id();
     $target = '0.0078';
-    $t->dsp_contains(', formula_value_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // load results by phrase group
     $grp = $t->load_phrase_group(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_IN_K));
-    $fv_lst = new formula_value_list($usr);
+    $fv_lst = new result_list($usr);
     $fv_lst->load($grp);
     $result = $fv_lst->dsp_id();
     $target = '8505.251';
-    $t->dsp_contains(', formula_value_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // ... and also with time selection
     $grp = $t->load_phrase_group(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_IN_K, word_api::TN_2020));
-    $fv_lst = new formula_value_list($usr);
+    $fv_lst = new result_list($usr);
     $fv_lst->load($grp);
     $result = $fv_lst->dsp_id();
-    $t->dsp_contains(', formula_value_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // load results by source phrase group
     $grp = $t->load_phrase_group(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO));
-    $fv_lst = new formula_value_list($usr);
+    $fv_lst = new result_list($usr);
     $fv_lst->load($grp, true);
     $result = $fv_lst->dsp_id();
     $target = '0.0078';
-    $t->dsp_contains(', formula_value_list->load of the formula results for source ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', result_list->load of the formula results for source ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // ... and also with time selection
     $time_phr = $t->load_phrase(word_api::TN_2020);
-    $fv_lst = new formula_value_list($usr);
+    $fv_lst = new result_list($usr);
     $fv_lst->load($grp, true);
     $result = $fv_lst->dsp_id();
-    $t->dsp_contains(', formula_value_list->load of the formula results for ' . $grp->dsp_id() . ' and ' . $time_phr->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' and ' . $time_phr->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // load results by word id
     $wrd = $t->load_word(word_api::TN_INHABITANTS);
-    $fv_lst = new formula_value_list($usr);
+    $fv_lst = new result_list($usr);
     $fv_lst->load($wrd);
     $result = $fv_lst->dsp_id();
     $target = '0.0078';
-    $t->dsp_contains(', formula_value_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // TODO add PE frm test
     //$frm = $t->load_formula(TF_PE);
     $frm = $t->load_formula(formula_api::TN_ADD);
-    $fv_lst = new formula_value_list($usr);
+    $fv_lst = new result_list($usr);
     $fv_lst->load($frm);
     $result = $fv_lst->dsp_id();
     $target = '"Sales","' . word_api::TN_PCT . '","increase","' . word_api::TN_RENAMED . '","2017"';
     $target = word_api::TN_INHABITANTS;
-    $t->dsp_contains(', formula_value_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
 }

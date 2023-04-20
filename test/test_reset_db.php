@@ -129,7 +129,7 @@ function run_db_truncate(): void
         sql_db::TBL_VALUE_PHRASE_LINK,
         sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE,
         sql_db::TBL_VALUE,
-        sql_db::TBL_FORMULA_VALUE,
+        sql_db::TBL_RESULT,
         sql_db::TBL_FORMULA_ELEMENT,
         sql_db::TBL_FORMULA_ELEMENT_TYPE,
         sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK,

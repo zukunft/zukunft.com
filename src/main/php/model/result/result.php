@@ -2,7 +2,7 @@
 
 /*
 
-    model/formula/formula_value.php - the calculated numeric result of a formula
+    model/formula/result.php - the calculated numeric result of a formula
     -------------------------------
 
     TODO: add these function
@@ -43,16 +43,16 @@
 
 namespace model;
 
-include_once SERVICE_EXPORT_PATH . 'formula_value_exp.php';
+include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 
 use cfg\export\exp_obj;
-use cfg\export\formula_value_exp;
-use im_export\export;
-use api\formula_value_api;
-use html\html_base;
+use cfg\export\result_exp;
+use controller\result\result_api;
 use DateTime;
+use html\html_base;
+use im_export\export;
 
-class formula_value extends db_object
+class result extends db_object
 {
 
     /*
@@ -60,12 +60,12 @@ class formula_value extends db_object
      */
 
     // database fields only used for formula values
-    const FLD_ID = 'formula_value_id';
+    const FLD_ID = 'result_id';
     const FLD_SOURCE_GRP = 'source_phrase_group_id';
     const FLD_SOURCE_TIME = 'source_time_id';
     const FLD_GRP = 'phrase_group_id';
     const FLD_TIME = 'time_word_id';
-    const FLD_VALUE = 'formula_value';
+    const FLD_VALUE = 'result';
     const FLD_LAST_UPDATE = 'last_update';
     const FLD_DIRTY = 'dirty';
 
@@ -125,7 +125,7 @@ class formula_value extends db_object
 
     function __construct(user $usr)
     {
-        parent::__construct();
+        db_object::__construct();
         $this->reset($usr);
     }
 
@@ -222,11 +222,11 @@ class formula_value extends db_object
      */
 
     /**
-     * @return formula_value_api the formula result frontend api object
+     * @return result_api the formula result frontend api object
      */
     function api_obj(): object
     {
-        $api_obj = new formula_value_api($this->id);
+        $api_obj = new result_api($this->id);
         $api_obj->set_number($this->value);
         $grp = $this->phr_lst->get_grp();
         $api_obj->set_grp($grp->api_obj());
@@ -251,7 +251,7 @@ class formula_value extends db_object
         $qp = new sql_par($class);
         $qp->name .= $query_name;
 
-        $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
+        $db_con->set_type(sql_db::TBL_RESULT);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
         $db_con->set_fields(self::FLD_NAMES);
@@ -523,7 +523,7 @@ class formula_value extends db_object
                 log_debug('group not found!');
             }
 
-            $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
+            $db_con->set_type(sql_db::TBL_RESULT);
             $qp = new sql_par(self::class);
             $qp->name = 'fv_by_';
 
@@ -631,7 +631,7 @@ class formula_value extends db_object
 
         // check the all minimal input parameters
         if (!$this->user()->is_set()) {
-            log_err("The user id must be set to load a result.", "formula_value->load");
+            log_err("The user id must be set to load a result.", "result->load");
         } else {
 
             // prepare the selection of the result
@@ -639,7 +639,7 @@ class formula_value extends db_object
 
             // check if a valid identification is given and load the result
             if (!$qp->has_par()) {
-                log_err("Either the database ID (" . $this->id() . ") or the source or result words or word group and the user (" . $this->user()->id() . ") must be set to load a result.", "formula_value->load");
+                log_err("Either the database ID (" . $this->id() . ") or the source or result words or word group and the user (" . $this->user()->id() . ") must be set to load a result.", "result->load");
             } else {
                 $result = $this->load_rec($qp);
 
@@ -740,7 +740,7 @@ class formula_value extends db_object
             }
         }
         if ($this->src_phr_lst->empty()) {
-            log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_phr_grp_id . ').', "formula_value->load_phr_lst_src");
+            log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_phr_grp_id . ').', "result->load_phr_lst_src");
         }
     }
 
@@ -765,7 +765,7 @@ class formula_value extends db_object
             }
         }
         if ($this->phr_lst->empty()) {
-            log_warning("Missing result phrases for the calculated value " . $this->id(), "formula_value->load_phr_lst");
+            log_warning("Missing result phrases for the calculated value " . $this->id(), "result->load_phr_lst");
         }
     }
 
@@ -777,7 +777,7 @@ class formula_value extends db_object
     {
         if ($this->src_time_id <> 0) {
             if ($this->src_time_phr == null or $force_reload) {
-                log_debug('formula_value->load_time_wrd_src for source time "' . $this->src_time_id . '"');
+                log_debug('result->load_time_wrd_src for source time "' . $this->src_time_id . '"');
                 $time_phr = new phrase($this->user());
                 $time_phr->set_id($this->src_time_id);
                 $time_phr->load_by_obj_par();
@@ -785,7 +785,7 @@ class formula_value extends db_object
                     $this->src_time_phr = $time_phr;
                     if ($this->src_phr_lst != null) {
                         $this->src_phr_lst->add($time_phr);
-                        log_debug('formula_value->load_time_wrd_src source time word "' . $time_phr->name() . '" added');
+                        log_debug('result->load_time_wrd_src source time word "' . $time_phr->name() . '" added');
                     }
                 }
             }
@@ -800,7 +800,7 @@ class formula_value extends db_object
     {
         if ($this->time_id <> 0) {
             if ($this->time_phr == null or $force_reload) {
-                log_debug('formula_value->load_phr_lst for time "' . $this->time_id . '"');
+                log_debug('result->load_phr_lst for time "' . $this->time_id . '"');
                 $time_phr = new phrase($this->user());
                 $time_phr->set_id($this->time_id);
                 $time_phr->load_by_obj_par();
@@ -808,7 +808,7 @@ class formula_value extends db_object
                     $this->time_phr = $time_phr;
                     if ($this->phr_lst != null) {
                         $this->phr_lst->add($time_phr);
-                        log_debug('formula_value->load_time_wrd time word "' . $time_phr->name() . '" added');
+                        log_debug('result->load_time_wrd time word "' . $time_phr->name() . '" added');
                     }
                 }
             }
@@ -906,22 +906,22 @@ class formula_value extends db_object
      *
      * @param bool $do_load true if the formula value should be validated again before export
      *                      use false for a faster export
-     * @return formula_value_exp the filled formula validation object used for JSON creation
+     * @return result_exp the filled formula validation object used for JSON creation
      */
-    function export_obj(bool $do_load = true): formula_value_exp
+    function export_obj(bool $do_load = true): result_exp
     {
         log_debug();
-        $result = new formula_value_exp();
+        $result = new result_exp();
 
         // reload the value parameters
         if ($do_load) {
             $this->load_by_id();
-            log_debug(formula_value::class . '->export_obj load phrases');
+            log_debug(result::class . '->export_obj load phrases');
             $this->load_phrases();
         }
 
         // add the phrases
-        log_debug(formula_value::class . '->export_obj get phrases');
+        log_debug(result::class . '->export_obj get phrases');
         $phr_lst = array();
         // TODO use either word and triple export_obj function or phrase
         if ($this->phr_lst != null) {
@@ -999,26 +999,26 @@ class formula_value extends db_object
         $result = '';
 
         if (!is_null($this->value)) {
-            log_debug('formula_value->val_formatted');
+            log_debug('result->val_formatted');
             if ($this->phr_lst == null) {
                 $this->load_phrases();
-                log_debug('formula_value->val_formatted loaded');
+                log_debug('result->val_formatted loaded');
             }
-            log_debug('formula_value->val_formatted check ' . $this->dsp_id());
+            log_debug('result->val_formatted check ' . $this->dsp_id());
             if ($this->phr_lst->has_percent()) {
                 $result = round($this->value * 100, $this->user()->percent_decimals) . ' %';
-                log_debug('formula_value->val_formatted percent of ' . $this->value);
+                log_debug('result->val_formatted percent of ' . $this->value);
             } else {
                 if ($this->value >= 1000 or $this->value <= -1000) {
-                    log_debug('formula_value->val_formatted format');
+                    log_debug('result->val_formatted format');
                     $result .= number_format($this->value, 0, $this->user()->dec_point, $this->user()->thousand_sep);
                 } else {
-                    log_debug('formula_value->val_formatted round');
+                    log_debug('result->val_formatted round');
                     $result = round($this->value, 2);
                 }
             }
         }
-        log_debug('formula_value->val_formatted done');
+        log_debug('result->val_formatted done');
         return $result;
     }
 
@@ -1098,7 +1098,7 @@ class formula_value extends db_object
 
     function name_linked(): string
     {
-        log_debug('formula_value->name_linked ');
+        log_debug('result->name_linked ');
         $result = '';
 
         if (isset($this->phr_lst)) {
@@ -1108,7 +1108,7 @@ class formula_value extends db_object
             $result .= '@' . $this->time_phr->name_linked();
         }
 
-        log_debug('formula_value->name done');
+        log_debug('result->name done');
         return $result;
     }
 
@@ -1157,7 +1157,7 @@ class formula_value extends db_object
     {
         $lib = new library();
         $html = new html_base();
-        log_debug('formula_value->explain ' . $this->dsp_id() . ' for user ' . $this->user()->name);
+        log_debug('result->explain ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $result = '';
 
         // display the leading word
@@ -1215,7 +1215,7 @@ class formula_value extends db_object
 
         // check the element consistency and if it fails, create a warning
         if (!isset($this->src_phr_lst)) {
-            log_warning("Missing source words for the calculated value " . $this->dsp_id(), "formula_value->explain");
+            log_warning("Missing source words for the calculated value " . $this->dsp_id(), "result->explain");
         } else {
 
             $elm_nbr = 0;
@@ -1299,7 +1299,7 @@ class formula_value extends db_object
             $val_rows = $db_con->get_old($sql);
             foreach ($val_rows as $val_row) {
                 $frm_ids[] = $val_row[formula::FLD_ID];
-                $fv_upd = new formula_value($this->user());
+                $fv_upd = new result($this->user());
                 $fv_upd->load_by_id($val_row[self::FLD_ID]);
                 $fv_upd->update();
                 // if the value is really updated, remember the value is to check if this triggers more updates
@@ -1313,12 +1313,12 @@ class formula_value extends db_object
     // update the result of this formula value (without loading or saving)
     function update()
     {
-        log_debug('formula_value->update ' . $this->dsp_id());
+        log_debug('result->update ' . $this->dsp_id());
         // check parameters
         if (!isset($this->phr_lst)) {
-            log_err("Phrase list is missing.", "formula_value->update");
+            log_err("Phrase list is missing.", "result->update");
         } elseif ($this->frm->id() <= 0) {
-            log_err("Formula ID is missing.", "formula_value->update");
+            log_err("Formula ID is missing.", "result->update");
         } else {
             // prepare update
             $this->load_phrases();
@@ -1329,7 +1329,7 @@ class formula_value extends db_object
             $frm->calc($phr_lst, '');
 
             //$this->save_if_updated ();
-            log_debug('formula_value->update ' . $this->dsp_id() . ' to ' . $this->value . ' done');
+            log_debug('result->update ' . $this->dsp_id() . ' to ' . $this->value . ' done');
         }
     }
 
@@ -1375,7 +1375,7 @@ class formula_value extends db_object
                 } else {
                     log_debug($this->dsp_id() . ' not saved because the result has been calculated after the last parameter update ');
                 }
-                //zu_debug('formula_value->save_if_updated -> save '.$this->dsp_id().' not saved because the result has been calculated at '.$this->last_update.' which is after the last parameter update at '.$this->last_update);
+                //zu_debug('result->save_if_updated -> save '.$this->dsp_id().' not saved because the result has been calculated at '.$this->last_update.' which is after the last parameter update at '.$this->last_update);
             } else {
                 if (isset($this->last_val_update) and isset($this->last_update)) {
                     log_debug('save ' . $this->dsp_id() . ' because parameters have been updated at ' . $this->last_val_update->format('Y-m-d H:i:s') . ' and the formula result update is from ' . $this->last_update->format('Y-m-d H:i:s'));
@@ -1389,10 +1389,10 @@ class formula_value extends db_object
                 }
                 // check the formula result consistency
                 if (!isset($this->phr_lst)) {
-                    log_warning('The result phrases for ' . $this->dsp_id() . ' are missing.', 'formula_value->save_if_updated');
+                    log_warning('The result phrases for ' . $this->dsp_id() . ' are missing.', 'result->save_if_updated');
                 }
                 if (!isset($this->src_phr_lst)) {
-                    log_warning('The source phrases for ' . $this->dsp_id() . ' are missing.', 'formula_value->save_if_updated');
+                    log_warning('The source phrases for ' . $this->dsp_id() . ' are missing.', 'result->save_if_updated');
                 }
 
                 // add the formula name word, but not is the result words are defined in the formula
@@ -1432,7 +1432,7 @@ class formula_value extends db_object
                 }
 
                 if (!isset($this->value)) {
-                    log_info('No result calculated for "' . $this->frm->name() . '" based on ' . $this->src_phr_lst->dsp_id() . ' for user ' . $this->user()->id() . '.', "formula_value->save_if_updated");
+                    log_info('No result calculated for "' . $this->frm->name() . '" based on ' . $this->src_phr_lst->dsp_id() . ' for user ' . $this->user()->id() . '.', "result->save_if_updated");
                 } else {
                     // save the default value if the result time is the "newest"
                     if (isset($fv_default_time)) {
@@ -1481,16 +1481,16 @@ class formula_value extends db_object
 
         // check the parameters e.g. a result must always be linked to a formula
         if ($this->frm->id() <= 0) {
-            log_err("Formula id missing.", "formula_value->save");
+            log_err("Formula id missing.", "result->save");
         } elseif (empty($this->phr_lst)) {
-            log_err("No words for the result.", "formula_value->save");
+            log_err("No words for the result.", "result->save");
         } elseif (empty($this->src_phr_lst)) {
-            log_err("No words for the calculation.", "formula_value->save");
+            log_err("No words for the calculation.", "result->save");
         } elseif (!$this->user()->is_set()) {
-            log_err("User missing.", "formula_value->save");
+            log_err("User missing.", "result->save");
         } else {
             if ($debug > 0) {
-                $debug_txt = 'formula_value->save (' . $this->value . ' for formula ' . $this->frm->id() . ' with ' . $this->phr_lst->dsp_name() . ' based on ' . $this->src_phr_lst->dsp_name();
+                $debug_txt = 'result->save (' . $this->value . ' for formula ' . $this->frm->id() . ' with ' . $this->phr_lst->dsp_name() . ' based on ' . $this->src_phr_lst->dsp_name();
                 if (!$this->is_std) {
                     $debug_txt .= ' and user ' . $this->user()->id();
                 }
@@ -1501,7 +1501,7 @@ class formula_value extends db_object
             // build the database object because the is anyway needed
             //$db_con = new mysql;
             $db_con->set_usr($this->user()->id);
-            $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
+            $db_con->set_type(sql_db::TBL_RESULT);
 
             // build the word list if needed to separate the time word from the word list
             $this->save_prepare_wrds();
@@ -1516,9 +1516,9 @@ class formula_value extends db_object
             // if value exists, check it an update is needed
             if ($row_id > 0) {
                 if ($db_con->sf($db_val) <> $db_con->sf($this->value)) {
-                    $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
+                    $db_con->set_type(sql_db::TBL_RESULT);
                     if ($db_con->update($row_id,
-                        array(formula_value::FLD_VALUE, formula_value::FLD_LAST_UPDATE),
+                        array(result::FLD_VALUE, result::FLD_LAST_UPDATE),
                         array($this->value, 'Now()'))) {
                         $this->id = $row_id;
                         $result = $row_id;
@@ -1534,22 +1534,22 @@ class formula_value extends db_object
                 $field_values = array();
                 $field_names[] = formula::FLD_ID;
                 $field_values[] = $this->frm->id();
-                $field_names[] = formula_value::FLD_VALUE;
+                $field_names[] = result::FLD_VALUE;
                 $field_values[] = $this->value;
-                $field_names[] = formula_value::FLD_GRP;
+                $field_names[] = result::FLD_GRP;
                 $field_values[] = $this->phr_grp_id;
-                $field_names[] = formula_value::FLD_SOURCE_GRP;
+                $field_names[] = result::FLD_SOURCE_GRP;
                 $field_values[] = $this->src_phr_grp_id;
-                $field_names[] = formula_value::FLD_SOURCE_TIME;
+                $field_names[] = result::FLD_SOURCE_TIME;
                 $field_values[] = $this->src_time_id;
                 if (!$this->is_std) {
                     $field_names[] = sandbox::FLD_USER;
                     $field_values[] = $this->user()->id();
                 }
-                $field_names[] = formula_value::FLD_LAST_UPDATE;
+                $field_names[] = result::FLD_LAST_UPDATE;
                 //$field_values[] = 'Now()'; // replaced with time of last change that has been included in the calculation
                 $field_values[] = $this->last_val_update->format('Y-m-d H:i:s');
-                $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
+                $db_con->set_type(sql_db::TBL_RESULT);
                 $id = $db_con->insert($field_names, $field_values);
                 $this->id = $id;
                 $result = $id;

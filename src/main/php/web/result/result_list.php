@@ -32,14 +32,15 @@
 
 */
 
-namespace html;
+namespace result;
+
+use html\html_base;
+use html\list_value_dsp;
+use html\phrase_list_dsp;
 
 include_once WEB_SANDBOX_PATH . 'list_value.php';
 
-use api\formula_value_list_api;
-use api\phrase_list_api;
-
-class formula_value_list_dsp extends list_value_dsp
+class result_list_dsp extends list_value_dsp
 {
 
 
@@ -47,7 +48,7 @@ class formula_value_list_dsp extends list_value_dsp
      * add a formula result to the list
      * @returns bool true if the formula result has been added
      */
-    function add(formula_value_dsp $fv): bool
+    function add(result_dsp $fv): bool
     {
         $result = false;
         if (!in_array($fv->id(), $this->id_lst())) {

@@ -35,8 +35,7 @@
 namespace html;
 
 use api\phrase_list_api;
-use api\value_list_api;
-use model\formula_value_list;
+use result_list;
 use model\phrase;
 use model\word_list;
 
@@ -202,7 +201,7 @@ class value_list_dsp extends list_dsp
                 log_debug('linked words ' . $val->id . ' done');
                 // to review
                 // list the related formula values
-                $fv_lst = new formula_value_list($this->user());
+                $fv_lst = new result_list($this->user());
                 $fv_lst->load_by_val($val);
                 $result .= $fv_lst->frm_links_html();
                 $result .= '    </td>';

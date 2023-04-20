@@ -332,7 +332,7 @@ class formula_element_group
 
                 // get the word group result, which means a formula result
                 log_debug('load formula value for ' . $val_phr_lst->dsp_name());
-                $grp_fv = new formula_value($this->usr);
+                $grp_fv = new result($this->usr);
                 /*
                 $grp_fv->phr_grp_id = $val_phr_grp->id;
                 if ($val_time_phr != null) {

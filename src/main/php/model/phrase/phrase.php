@@ -866,7 +866,7 @@ class phrase extends combine_named
         if (isset($this->obj)) {
             $result = $this->obj->dsp_tbl_row();
         } else {
-            log_err('The phrase object is missing for ' . $this->dsp_id() . '.', "formula_value->load");
+            log_err('The phrase object is missing for ' . $this->dsp_id() . '.', "result->load");
         }
         return $result;
     }

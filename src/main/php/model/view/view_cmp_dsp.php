@@ -31,6 +31,7 @@
 
 namespace model;
 
+use result_list;
 use html\html_base;
 use html\html_selector;
 use html\word_dsp;
@@ -189,7 +190,7 @@ class view_cmp_dsp_old extends view_cmp
         if ($this->type_id == $view_component_types->id(view_cmp_type::FORMULA_RESULTS)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
             $result .= "<br><br>calculated values<br>";
-            $frm_val_lst = new formula_value_list($this->user());
+            $frm_val_lst = new result_list($this->user());
             $frm_val_lst->load($wrd);
             $result .= $frm_val_lst->display($back);
         }

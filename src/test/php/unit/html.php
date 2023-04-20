@@ -34,25 +34,22 @@ namespace test;
 
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'button.php';
-include_once WEB_FORMULA_PATH . 'formula_value_list.php';
+include_once WEB_RESULT_PATH . 'result_list.php';
 
 use api\phrase_api;
-use api\phrase_list_api;
 use api\value_api;
 use api\view_cmp_api;
 use api\word_api;
 use cfg\verb_list;
 use html\button;
-use html\formula_value_list_dsp;
 use html\html_base;
 use html\html_selector;
-use html\view_dsp;
 use model\library;
-use model\phrase;
 use model\verb;
 use model\view;
 use model\view_cmp;
 use model\view_cmp_type;
+use result\result_list_dsp;
 
 class html_unit_tests
 {
@@ -186,18 +183,18 @@ class html_unit_tests
 
         // create the formula result for the inhabitants of the city of zurich
         $fv_id = 1;
-        $fv_city = new \api\formula_value_api($fv_id); $fv_id++;
+        $fv_city = new \controller\result\result_api($fv_id); $fv_id++;
         $fv_city->set_grp($phr_grp_city_pct);
         $ch_val_scaled = value_api::TV_CH_INHABITANTS_2019_IN_MIO * 1000000;
         $fv_city->set_number(value_api::TV_CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
 
         // create the formula result for the inhabitants of the city of zurich
-        $fv_canton = new \api\formula_value_api($fv_id); $fv_id++;
+        $fv_canton = new \controller\result\result_api($fv_id); $fv_id++;
         $fv_canton->set_grp($phr_grp_canton_pct);
         $fv_canton->set_number(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO / value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 
         // create the formula result list and the table to display the results
-        $fv_lst = new formula_value_list_dsp();
+        $fv_lst = new result_list_dsp();
         $fv_lst->add($fv_city->dsp_obj());
         $fv_lst->add($fv_canton->dsp_obj());
         $t->html_test($fv_lst->table(), 'table_formula_value', $t);

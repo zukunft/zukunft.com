@@ -30,8 +30,6 @@
 */
 
 // for callable php files the standard zukunft.com header to load all classes and allow debugging
-use model\db_cl;
-use model\formula_value;
 use model\user;
 use model\view;
 
@@ -69,7 +67,7 @@ if ($session_usr->id() > 0) {
 
     // explain the result
     if ($frm_val_id > 0 or $frm_id > 0) {
-        $fv = new formula_value($session_usr);
+        $fv = new result($session_usr);
         $fv->load_by_id($frm_val_id);
         if ($fv->id() > 0) {
             $result .= $fv->explain($phr_id, $back);

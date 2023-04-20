@@ -30,9 +30,10 @@
 
 */
 
-namespace api;
+namespace controller\result;
 
-use html\formula_value_list_dsp;
+use api\list_value_api;
+use result\result_list_dsp;
 
 class formula_value_list_api extends list_value_api
 {
@@ -50,7 +51,7 @@ class formula_value_list_api extends list_value_api
      * add a formula result to the list
      * @returns bool true if the formula result has been added
      */
-    function add(formula_value_api $fv): bool
+    function add(result_api $fv): bool
     {
         $result = false;
         if (!in_array($fv->id(), $this->id_lst())) {
@@ -67,9 +68,9 @@ class formula_value_list_api extends list_value_api
      */
 
     /**
-     * @returns formula_value_list_dsp the cast object with the HTML code generating functions
+     * @returns result_list_dsp the cast object with the HTML code generating functions
      */
-    function dsp_obj(): formula_value_list_dsp
+    function dsp_obj(): result_list_dsp
     {
         // cast the single list objects
         $lst_dsp = array();
@@ -79,7 +80,7 @@ class formula_value_list_api extends list_value_api
                 $lst_dsp[] = $fv_dsp;
             }
         }
-        return new formula_value_list_dsp($lst_dsp);
+        return new result_list_dsp($lst_dsp);
     }
 
 }

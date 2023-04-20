@@ -133,7 +133,7 @@ class value_dsp_old extends value
     /**
      * depending on the word list format the numeric value
      * format the value for on screen display
-     * similar to the corresponding function in the "formula_value" class
+     * similar to the corresponding function in the "result" class
      * @returns string the HTML code to display this value
      */
     function val_formatted(): string

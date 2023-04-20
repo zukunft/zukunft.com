@@ -72,8 +72,8 @@
     value_list_display.php
     source.php
     formula_link.php
-    formula_value.php
-    formula_value_list.php
+    result.php
+    result_list.php
     batch_job.php
     batch_job_list.php
     view.php

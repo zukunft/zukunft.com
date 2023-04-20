@@ -39,6 +39,7 @@ use cfg\export\source_exp;
 use cfg\export\value_list_exp;
 use cfg\protection_type;
 use cfg\share_type;
+use result_list;
 use html\button;
 use html\html_base;
 
@@ -1139,7 +1140,7 @@ class value_list extends sandbox_list
                 log_debug('linked words ' . $val->id . ' done');
                 // to review
                 // list the related formula values
-                $fv_lst = new formula_value_list($this->user());
+                $fv_lst = new result_list($this->user());
                 $fv_lst->load_by_val($val);
                 $result .= $fv_lst->frm_links_html();
                 $result .= '    </td>';

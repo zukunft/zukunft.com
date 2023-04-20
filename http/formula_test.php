@@ -39,9 +39,7 @@
 */
 
 use html\html_base;
-use model\db_cl;
 use model\formula_list;
-use model\formula_value_list;
 use model\library;
 use model\phr_ids;
 use model\phrase_list;
@@ -162,7 +160,7 @@ if ($session_usr->id() > 0) {
             // the standard value will always be checked first
             // and after that the user specific value will be calculated if needed
             // TODO: but only if the user has done some changes
-            $calc_fv_lst = new formula_value_list($usr);
+            $calc_fv_lst = new result_list($usr);
             foreach ($frm_lst->lst() as $frm) {
                 $calc_lst = $calc_fv_lst->frm_upd_lst($frm, $back);
             }

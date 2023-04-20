@@ -2,7 +2,7 @@
 
 /*
 
-    api/formula/formula_value.php - the minimal result value object
+    api/formula/result.php - the minimal result value object
     ---------------------
 
 
@@ -30,17 +30,18 @@
 
 */
 
-namespace api;
+namespace controller\result;
 
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 include_once API_PATH . 'controller.php';
-include_once WEB_FORMULA_PATH . 'formula_value.php';
+include_once WEB_RESULT_PATH . 'result.php';
 
+use api\sandbox_value_api;
 use controller\controller;
-use html\formula_value_dsp;
 use JsonSerializable;
+use result\result_dsp;
 
-class formula_value_api extends sandbox_value_api implements JsonSerializable
+class result_api extends sandbox_value_api implements JsonSerializable
 {
 
     /*
@@ -75,11 +76,11 @@ class formula_value_api extends sandbox_value_api implements JsonSerializable
      */
 
     /**
-     * @returns formula_value_dsp the cast object with the HTML code generating functions
+     * @returns result_dsp the cast object with the HTML code generating functions
      */
-    function dsp_obj(): formula_value_dsp
+    function dsp_obj(): result_dsp
     {
-        $dsp_obj = new formula_value_dsp($this->id);
+        $dsp_obj = new result_dsp($this->id);
         $dsp_obj->set_grp($this->grp()->dsp_obj());
         $dsp_obj->set_number($this->number());
         return $dsp_obj;

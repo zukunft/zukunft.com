@@ -37,7 +37,7 @@ namespace model;
 include_once MODEL_HELPER_PATH . 'combine_object.php';
 include_once API_FORMULA_PATH . 'figure.php';
 include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_FORMULA_PATH . 'formula_value.php';
+include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_USER_PATH . 'user.php';
 
@@ -66,9 +66,9 @@ class figure extends combine_object
 
     /**
      * a figure is either created based on a user value or formula result
-     * @param value|formula_value $obj
+     * @param value|result $obj
      */
-    function __construct(value|formula_value $obj)
+    function __construct(value|result $obj)
     {
         $this->set_obj($obj);
     }
@@ -95,7 +95,7 @@ class figure extends combine_object
             } elseif ($db_row[$id_fld] < 0) {
                 $this->id = $db_row[$id_fld];
                 // map a formula result
-                $fv = new formula_value($this->user());
+                $fv = new result($this->user());
                 $fv->row_mapper($db_row);
                 $this->set_obj($fv);
                 $result = true;
@@ -229,7 +229,7 @@ class figure extends combine_object
      */
     function is_result(): bool
     {
-        if ($this->obj()::class == formula_value::class) {
+        if ($this->obj()::class == result::class) {
             return true;
         } else {
             return false;

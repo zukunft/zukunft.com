@@ -31,13 +31,9 @@
 
 namespace html;
 
-use html\api;
-use html\button;
-use html\html_base;
-use html\html_selector;
+use model\result;
+use model\result_list;
 use model\formula;
-use model\formula_value;
-use model\formula_value_list;
 use model\phrase;
 use user_log_display;
 
@@ -78,7 +74,7 @@ class formula_dsp_old extends formula
     function dsp_result(phrase $phr, $back): string
     {
         log_debug('for "' . $phr->name() . '" and formula ' . $this->dsp_id());
-        $fv = new formula_value($this->user());
+        $fv = new result($this->user());
         $fv->frm = $this;
         $fv->phr = $phr;
         log_debug('load fv');
@@ -242,7 +238,7 @@ class formula_dsp_old extends formula
 
         // display some sample values
         log_debug("value list");
-        $fv_lst = new formula_value_list($this->user());
+        $fv_lst = new result_list($this->user());
         $fv_lst->load($this);
         $sample_val = $fv_lst->display($back);
         if (trim($sample_val) <> "") {

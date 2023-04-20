@@ -2,7 +2,7 @@
 
 /*
 
-  formula_value_exp.php - the simple export object for a formula value
+  result_exp.php - the simple export object for a formula value
   ---------------------
   
   This file is part of zukunft.com - calc with words
@@ -31,7 +31,7 @@
 
 namespace cfg\export;
 
-class formula_value_exp extends exp_obj
+class result_exp extends exp_obj
 {
 
     // field names used for JSON creation

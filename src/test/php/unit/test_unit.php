@@ -179,8 +179,8 @@ class test_unit extends testing
         (new formula_unit_tests)->run($this);
         (new formula_list_unit_tests)->run($this);
         (new formula_link_unit_tests)->run($this);
-        (new formula_value_unit_tests)->run($this);
-        (new formula_value_list_unit_tests)->run($this);
+        (new result_unit_tests)->run($this);
+        (new result_list_unit_tests)->run($this);
         (new figure_unit_tests)->run($this);
         (new formula_element_unit_tests)->run($this);
         (new expression_unit_tests)->run($this);
@@ -190,7 +190,7 @@ class test_unit extends testing
         (new view_component_link_unit_tests)->run($this);
         (new ref_unit_tests)->run($this);
         (new language_unit_tests)->run($this);
-        (new change_log_unit_tests)->run($this);  // add import test
+        (new change_log_unit_tests)->run($this);  // TODO for version 0.0.6 add import test
         (new system_log_unit_tests)->run($this);
         (new batch_job_unit_tests)->run($this);
 

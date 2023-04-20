@@ -72,7 +72,7 @@ if ($usr->id() > 0) {
         foreach ($frm_lst as $frm_request) {
 
             // build the calculation queue
-            $calc_fv_lst = new formula_value_list($usr);
+            $calc_fv_lst = new result_list($usr);
             $calc_lst = $calc_fv_lst->frm_upd_lst($frm_request, $back);
             log_debug("calculate queue is build (number of values to check: " . $lib->dsp_count($calc_lst->lst()) . ")");
 

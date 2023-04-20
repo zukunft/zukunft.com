@@ -61,7 +61,7 @@ function run_math_test(testing $t)
     $t->dsp(", zuc_math: the result for formula \"" . $math_text . "\"", $target, $result, TIMEOUT_LIMIT_LONG);
 
     // test zuc_parse
-    /*$formula_id = $formula_value;
+    /*$formula_id = $result;
     $target = "45548";
     $word_array =           array($word_abb,$word_revenues,$word_CHF);
     $word_ids = zut_sql_ids(array($word_abb,$word_revenues,$word_CHF, $word_2013));

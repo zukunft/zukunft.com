@@ -647,7 +647,7 @@ class phrase_group extends db_object
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $sql = "SELECT formula_value_id AS id,
-                   formula_value    AS num,
+                   result    AS num,
                    user_id          AS usr,
                    last_update      AS upd
               FROM formula_values 
@@ -658,7 +658,7 @@ class phrase_group extends db_object
         // if no user specific result is found, get the standard result
         if ($result === false) {
             $sql = "SELECT formula_value_id AS id,
-                     formula_value    AS num,
+                     result    AS num,
                      user_id          AS usr,
                      last_update      AS upd
                 FROM formula_values 
@@ -669,7 +669,7 @@ class phrase_group extends db_object
             // get any time value: to be adjusted to: use the latest
             if ($result === false) {
                 $sql = "SELECT formula_value_id AS id,
-                       formula_value    AS num,
+                       result    AS num,
                        user_id          AS usr,
                        last_update      AS upd
                   FROM formula_values 

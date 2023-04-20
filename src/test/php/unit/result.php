@@ -2,7 +2,7 @@
 
 /*
 
-    test/unit/formula_value.php - unit testing of the FORMULA VALUE functions
+    test/unit/result.php - unit testing of the FORMULA VALUE functions
     ---------------------------
   
 
@@ -32,19 +32,15 @@
 
 namespace test;
 
-use api\formula_value_api;
-use api\word_api;
-use cfg\phrase_type;
-use model\formula;
-use model\formula_value;
-use model\formula_value_list;
-use model\phrase_group;
-use model\phrase_list;
-use model\sql_db;
-use model\triple;
-use model\word;
+include_once API_RESULT_PATH . 'result.php';
 
-class formula_value_unit_tests
+use api\word_api;
+use controller\result\result_api;
+use model\phrase_list;
+use model\result;
+use model\sql_db;
+
+class result_unit_tests
 {
 
     function run(testing $t): void
@@ -54,18 +50,18 @@ class formula_value_unit_tests
 
         // init
         $db_con = new sql_db();
-        $t->name = 'formula_value->';
+        $t->name = 'result->';
         $t->resource_path = 'db/result/';
         $json_file = 'unit/result/result_import_part.json';
         $usr->set_id(1);
 
 
-        $t->header('Unit tests of the formula value class (src/main/php/model/formula/formula_value.php)');
+        $t->header('Unit tests of the formula value class (src/main/php/model/formula/result.php)');
 
         $t->subheader('SQL creation tests');
 
         // check the sql to load a formula value by the id
-        $fv = new formula_value($usr);
+        $fv = new result($usr);
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $fv->load_sql_by_id($db_con, 1);
         $t->assert_qp($qp, sql_db::POSTGRES);
@@ -106,21 +102,21 @@ class formula_value_unit_tests
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_const->phrase());
         $fv->phr_lst = $phr_lst;
-        $fv->value = formula_value_api::TV_INT;
-        $t->assert('formula_value->val_formatted test big numbers', $fv->val_formatted(), "123'456");
+        $fv->value = result_api::TV_INT;
+        $t->assert('result->val_formatted test big numbers', $fv->val_formatted(), "123'456");
 
         // ... for small values 12.35 instead of 12.34 due to rounding
-        $fv->value = formula_value_api::TV_FLOAT;
-        $t->assert('formula_value->val_formatted test small numbers', $fv->val_formatted(), "12.35");
+        $fv->value = result_api::TV_FLOAT;
+        $t->assert('result->val_formatted test small numbers', $fv->val_formatted(), "12.35");
 
         // ... for percent values
         $fv = $t->dummy_formula_value_pct();
-        $t->assert('formula_value->val_formatted test percent formatting', $fv->val_formatted(), '1.23 %');
+        $t->assert('result->val_formatted test percent formatting', $fv->val_formatted(), '1.23 %');
 
 
         $t->subheader('Im- and Export tests');
 
-        $t->assert_json(new formula_value($usr), $json_file);
+        $t->assert_json(new result($usr), $json_file);
 
     }
 

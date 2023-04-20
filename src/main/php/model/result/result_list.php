@@ -2,7 +2,7 @@
 
 /*
 
-    model/formula/formula_value_list.php - a list of formula results
+    model/formula/result_list.php - a list of formula results
     ------------------------------------
 
     This file is part of zukunft.com - calc with words
@@ -31,10 +31,11 @@
 
 namespace model;
 
+use html\back_trace;
 use html\html_base;
 use html\word_dsp;
 
-class formula_value_list
+class result_list
 {
 
     /*
@@ -121,7 +122,7 @@ class formula_value_list
                 $sql_by .= formula::FLD_ID;
             } elseif (get_class($obj) == phrase_group::class) {
                 if ($by_source) {
-                    $sql_by .= formula_value::FLD_SOURCE_GRP;
+                    $sql_by .= result::FLD_SOURCE_GRP;
                 } else {
                     $sql_by .= phrase_group::FLD_ID;
                 }
@@ -136,10 +137,10 @@ class formula_value_list
                 ') must be set to load a ' . self::class, self::class . '->load_sql');
             $qp->name = '';
         } else {
-            $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
+            $db_con->set_type(sql_db::TBL_RESULT);
             $qp->name .= $sql_by;
             $db_con->set_name(substr($qp->name, 0, 62));
-            $db_con->set_fields(formula_value::FLD_NAMES);
+            $db_con->set_fields(result::FLD_NAMES);
             $db_con->set_usr($this->user()->id());
             if ($obj->id() > 0) {
                 if (get_class($obj) == formula::class or get_class($obj) == formula_dsp_old::class) {
@@ -149,7 +150,7 @@ class formula_value_list
                     $db_con->add_par(sql_db::PAR_INT, $obj->id());
                     $link_fields = array();
                     if ($by_source) {
-                        $link_fields[] = formula_value::FLD_SOURCE_GRP;
+                        $link_fields[] = result::FLD_SOURCE_GRP;
                     } else {
                         $link_fields[] = phrase_group::FLD_ID;
                     }
@@ -158,19 +159,19 @@ class formula_value_list
                     // TODO check if the results are still correct if the user has excluded the word
                     $db_con->add_par(sql_db::PAR_INT, $obj->id(), false, true);
                     $db_con->set_join_fields(
-                        array(formula_value::FLD_GRP),
+                        array(result::FLD_GRP),
                         sql_db::TBL_PHRASE_GROUP_WORD_LINK,
-                        formula_value::FLD_GRP,
-                        formula_value::FLD_GRP);
+                        result::FLD_GRP,
+                        result::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(word::FLD_ID));
                 } elseif (get_class($obj) == triple::class) {
                     // TODO check if the results are still correct if the user has excluded the triple
                     $db_con->add_par(sql_db::PAR_INT, $obj->id(), false, true);
                     $db_con->set_join_fields(
-                        array(formula_value::FLD_GRP),
+                        array(result::FLD_GRP),
                         sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
-                        formula_value::FLD_GRP,
-                        formula_value::FLD_GRP);
+                        result::FLD_GRP,
+                        result::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(triple::FLD_ID));
                 }
             }
@@ -209,7 +210,7 @@ class formula_value_list
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $fv = new formula_value($this->usr);
+                    $fv = new result($this->usr);
                     $fv->row_mapper($db_row);
                     $this->lst[] = $fv;
                     $result = true;
@@ -242,7 +243,7 @@ class formula_value_list
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $fv = new formula_value($this->usr);
+                    $fv = new result($this->usr);
                     $fv->row_mapper($db_row);
                     $this->lst[] = $fv;
                     $result = true;
@@ -270,7 +271,7 @@ class formula_value_list
         $result = new user_message();
         $id = 1;
         foreach ($json_obj as $key => $res_json) {
-            $res = new formula_value($this->user());
+            $res = new result($this->user());
             $result->add($res->import_obj($res_json, $do_save));
             // add a dummy id for unit testing
             if (!$do_save) {
@@ -529,7 +530,7 @@ class formula_value_list
      */
     function frm_upd_lst_usr(
         formula $frm,
-                $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
+                       $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
     {
         $lib = new library();
         log_debug('fv_lst->frm_upd_lst_usr(' . $frm->name() . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
@@ -786,9 +787,9 @@ class formula_value_list
         return $result;
     }
 
-    function get_first(): formula_value
+    function get_first(): result
     {
-        $result = new formula_value($this->usr);
+        $result = new result($this->usr);
         if (count($this->lst) > 0) {
             $result = $this->lst[0];
         }
@@ -871,9 +872,9 @@ class formula_value_list
 
     /**
      * add one formula value to the formula value list, but only if it is not yet part of the phrase list
-     * @param formula_value $fv_to_add the calculation result that should be added to the list
+     * @param result $fv_to_add the calculation result that should be added to the list
      */
-    function add(formula_value $fv_to_add): void
+    function add(result $fv_to_add): void
     {
         log_debug($fv_to_add->dsp_id());
         if (!in_array($fv_to_add->id(), $this->ids())) {
@@ -888,7 +889,7 @@ class formula_value_list
     /**
      * combine two calculation queues
      */
-    function merge(formula_value_list $lst_to_merge): formula_value_list
+    function merge(result_list $lst_to_merge): result_list
     {
         log_debug($lst_to_merge->dsp_id() . ' to ' . $this->dsp_id());
         if (isset($lst_to_merge->lst)) {

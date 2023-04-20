@@ -67,7 +67,7 @@ class value_dsp extends sandbox_value_dsp
     /**
      * depending on the word list format the numeric value
      * format the value for on screen display
-     * similar to the corresponding function in the "formula_value" class
+     * similar to the corresponding function in the "result" class
      * @returns string the html text with the formatted value
      */
     function val_formatted(): string

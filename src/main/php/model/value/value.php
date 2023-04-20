@@ -70,8 +70,8 @@ use cfg\share_type;
 use controller\controller;
 use DateTime;
 use Exception;
-use im_export\export;
 use html\value_dsp;
+use im_export\export;
 use math;
 
 class value extends sandbox_value
@@ -600,7 +600,7 @@ class value extends sandbox_value
             $result = $this->row_mapper($db_val);
 
             // if not direct value is found try to get a more specific value
-            // similar to formula_value
+            // similar to result
             /* TODO review with a concrete test
             if ($this->id() <= 0 and isset($this->phr_lst)) {
                 if (count($this->phr_lst->lst) > 0) {
@@ -1255,10 +1255,10 @@ class value extends sandbox_value
      * get a list of all formula results that are depending on this value
      * TODO: add a loop over the calculation if the are more formula results needs to be updated than defined with SQL_ROW_MAX
      */
-    function fv_lst_depending(): formula_value_list
+    function fv_lst_depending(): result_list
     {
         log_debug('value->fv_lst_depending group id "' . $this->grp->id() . '" for user ' . $this->user()->name . '');
-        $fv_lst = new formula_value_list($this->user());
+        $fv_lst = new result_list($this->user());
         $fv_lst->load($this->grp, true);
 
         log_debug('done');

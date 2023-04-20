@@ -118,7 +118,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     if ($msg->is_ok()) {
         //
         $msg->add($db_con->del_field(sql_db::TBL_VALUE, 'time_word_id'));
-        $msg->add($db_con->del_field(sql_db::TBL_FORMULA_VALUE, 'time_word_id'));
+        $msg->add($db_con->del_field(sql_db::TBL_RESULT, 'time_word_id'));
     }
 
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
@@ -134,6 +134,9 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->change_table_name(sql_db::TBL_USER_PREFIX . 'word_link', sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE);
     $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'word_link_id', sql_db::TBL_USER_PREFIX . 'triple_id');
     $result .= $db_con->change_table_name('view_word_link', sql_db::TBL_VIEW_TERM_LINK);
+    $result .= $db_con->change_table_name('formula_values', sql_db::TBL_RESULT);
+    $result .= $db_con->change_column_name(sql_db::TBL_RESULT, 'formula_value_id', 'result_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_RESULT, 'formula_value', 'result');
     //
     $result .= $db_con->change_table_name('languages_forms', sql_db::TBL_LANGUAGE_FORM);
     $result .= $db_con->add_column(sql_db::TBL_USER_PROFILE, 'right_level', 'smallint');
@@ -213,7 +216,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'protection_type_id', 'protect_id');
     $result .= $db_con->change_column_name(sql_db::TBL_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
     $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
-    $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_VALUE, 'source_time_word_id', 'source_time_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_RESULT, 'source_time_word_id', 'source_time_id');
     if (!$db_con->has_column($db_con->get_table_name(sql_db::TBL_TRIPLE), 'name_generated')) {
         $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'name', 'triple_name');
         $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'description', 'name_given');

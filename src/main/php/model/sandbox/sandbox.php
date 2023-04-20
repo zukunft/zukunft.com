@@ -2077,7 +2077,7 @@ class sandbox extends db_object
 
                 // and the corresponding formula values
                 if ($result->is_ok()) {
-                    $db_con->set_type(sql_db::TBL_FORMULA_VALUE);
+                    $db_con->set_type(sql_db::TBL_RESULT);
                     $db_con->set_usr($this->user()->id);
                     $msg = $db_con->delete(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);

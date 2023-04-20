@@ -32,11 +32,14 @@
 
 */
 
-namespace html;
+namespace result;
+
+use html\phrase_list_dsp;
+use html\sandbox_value_dsp;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 
-class formula_value_dsp extends sandbox_value_dsp
+class result_dsp extends sandbox_value_dsp
 {
     /**
      * @param phrase_list_dsp|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again

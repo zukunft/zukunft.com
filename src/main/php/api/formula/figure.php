@@ -34,6 +34,7 @@ namespace api;
 
 include_once API_SANDBOX_PATH . 'combine_object.php';
 
+use controller\result\result_api;
 use JsonSerializable;
 
 class figure_api extends combine_object_api implements JsonSerializable
@@ -48,7 +49,7 @@ class figure_api extends combine_object_api implements JsonSerializable
      * construct and map
      */
 
-    function __construct(value_api|formula_value_api|null $val_obj = null)
+    function __construct(value_api|result_api|null $val_obj = null)
     {
         $this->set_obj($val_obj);
     }
@@ -73,7 +74,7 @@ class figure_api extends combine_object_api implements JsonSerializable
      */
     function is_result(): bool
     {
-        if ($this->obj()::class == formula_value_api::class) {
+        if ($this->obj()::class == result_api::class) {
             return true;
         } else {
             return false;
