@@ -29,16 +29,24 @@
 
 */
 
-namespace html;
+namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
 use api\phrase_api;
 use cfg\phrase_type;
+use html\api;
+use html\button;
+use html\html_base;
+use html\word\word as word_dsp;
+use html\phrase\phrase as phrase_dsp;
+use html\sandbox_typed_dsp;
+use html\phrase\term as term_dsp;
+use html\verb_dsp;
 use model\phrase;
 use model\phrase_list;
 
-class triple_dsp extends sandbox_typed_dsp
+class triple extends sandbox_typed_dsp
 {
 
     // the form names to change the word

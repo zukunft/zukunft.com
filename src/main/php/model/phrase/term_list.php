@@ -39,7 +39,7 @@ include_once WEB_PHRASE_PATH . 'term_list.php';
 include_once API_PHRASE_PATH . 'term_list.php';
 
 use api\term_list_api;
-use html\term_list_dsp;
+use html\phrase\term_list as term_list_dsp;;
 
 class term_list extends sandbox_list_named
 {

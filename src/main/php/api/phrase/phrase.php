@@ -39,9 +39,9 @@ include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 
 use controller\controller;
-use html\word_dsp;
-use html\triple_dsp;
-use html\phrase_dsp;
+use html\word\word as word_dsp;
+use html\word\triple as triple_dsp;
+use html\phrase\phrase as phrase_dsp;
 use JsonSerializable;
 use model\word;
 

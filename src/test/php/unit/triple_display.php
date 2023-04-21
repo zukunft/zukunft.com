@@ -34,8 +34,8 @@ namespace test;
 
 use api\word_api;
 use html\html_base;
-use html\triple_dsp;
-use html\word_dsp;
+use html\word\word as word_dsp;
+use html\word\triple as triple_dsp;
 
 class triple_display_unit_tests
 {

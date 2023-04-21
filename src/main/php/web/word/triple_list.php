@@ -29,7 +29,7 @@
 
 */
 
-namespace html;
+namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
 //include_once CFG_PATH . 'phrase_type.php';
@@ -39,12 +39,12 @@ use html\formula_dsp;
 use html\html_base;
 use html\html_selector;
 use html\list_dsp;
-use html\word_dsp;
-use html\word_list_dsp;
+use html\word\triple as triple_dsp;
+use html\word\triple_list as triple_list_dsp;
 use model\term_list;
 use model\user;
 
-class triple_list_dsp extends list_dsp
+class triple_list extends list_dsp
 {
 
     /*
@@ -58,21 +58,6 @@ class triple_list_dsp extends list_dsp
     function add(triple_dsp $phr): bool
     {
         return parent::add_obj($phr);
-    }
-
-
-    /*
-     * set and get
-     */
-
-    /**
-     * set the vars of this triple html display object bases on the api message
-     * @param string $json_api_msg an api json message as a string
-     * @return void
-     */
-    function set_from_json(string $json_api_msg): void
-    {
-        $this->set_from_json_array(json_decode($json_api_msg, true));
     }
 
 
@@ -168,7 +153,7 @@ class triple_list_dsp extends list_dsp
             //while ($entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
             if ($db_row['type'] == "triple") {
                 $wrd = new triple_dsp($db_row['id'], $db_row['name']);
-                $result .= $wrd->triple();
+                $result .= $wrd->tr();
             }
             if ($db_row['type'] == "formula") {
                 $frm = new formula_dsp();

@@ -34,6 +34,8 @@ namespace html;
 use api\view_cmp_api;
 use model\view_cmp_type;
 
+use html\phrase\phrase as phrase_dsp;
+
 class view_cmp_dsp extends view_cmp_api
 {
 

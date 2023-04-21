@@ -66,7 +66,17 @@ class list_dsp
      */
 
     /**
-     * set the vars of this object bases on the api json array
+     * set the vars of these list display objects bases on the api message
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
+    function set_from_json(string $json_api_msg): void
+    {
+        $this->set_from_json_array(json_decode($json_api_msg, true));
+    }
+
+    /**
+     * set the vars of these list display objects bases on the api json array
      * @param array $json_array an api list json message
      * @return void
      */

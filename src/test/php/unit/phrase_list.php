@@ -33,6 +33,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 use api\triple_api;
 use api\word_api;
 use cfg\phrase_type;
+use html\phrase\phrase_list as phrase_list_dsp;
 use model\library;
 use model\phr_ids;
 use model\phrase;
@@ -119,6 +120,12 @@ class phrase_list_unit_tests
 
         $phr_lst = $this->get_phrase_list_related($t);
         $t->assert_api($phr_lst);
+
+
+        $t->subheader('HTML frontend unit tests');
+
+        $phr_lst = $t->dummy_phrase_list();
+        $t->assert_api_to_dsp($phr_lst, new phrase_list_dsp());
 
 
         $t->subheader('Combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');

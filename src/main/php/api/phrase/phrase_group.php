@@ -33,7 +33,7 @@
 namespace api;
 
 use html\phrase_group_dsp;
-use html\phrase_list_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
 
 class phrase_group_api extends sandbox_named_api
 {

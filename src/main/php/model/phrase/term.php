@@ -62,8 +62,8 @@ include_once WEB_PHRASE_PATH . 'term.php';
 use api\term_api;
 use cfg\phrase_type;
 use html\html_base;
-use html\term_dsp;
-use html\word_dsp;
+use html\phrase\term as term_dsp;
+use html\word\word as word_dsp;
 use user_dsp_old;
 
 class term extends combine_named

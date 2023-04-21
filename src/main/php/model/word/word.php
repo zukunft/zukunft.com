@@ -62,7 +62,7 @@ use html\api;
 use html\button;
 use html\html_base;
 use html\html_selector;
-use html\word_dsp;
+use html\word\word as word_dsp;
 use user_log_display;
 use view_dsp_old;
 

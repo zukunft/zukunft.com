@@ -34,7 +34,7 @@ namespace model;
 
 use html\api;
 use html\html_base;
-use html\word_dsp;
+use html\word\word as word_dsp;
 
 class value_dsp_old extends value
 {

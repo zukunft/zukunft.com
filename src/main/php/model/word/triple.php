@@ -44,7 +44,7 @@ use cfg\share_type;
 use controller\controller;
 use api\triple_api;
 use html\html_base;
-use html\triple_dsp;
+use html\word\triple as triple_dsp;
 use JsonSerializable;
 
 global $phrase_types;

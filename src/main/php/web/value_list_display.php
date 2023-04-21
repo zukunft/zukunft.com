@@ -31,7 +31,7 @@
 
 use html\api;
 use html\html_base;
-use html\word_dsp;
+use html\word\word as word_dsp;
 use model\library;
 
 class value_list_dsp_old extends value_list

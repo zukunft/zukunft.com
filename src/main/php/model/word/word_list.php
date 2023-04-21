@@ -44,8 +44,8 @@ include_once API_WORD_PATH . 'word_list.php';
 
 use cfg\phrase_type;
 use api\word_list_api;
-use html\word_dsp;
-use html\word_list_dsp;
+use html\word\word as word_dsp;
+use html\word\word_list as word_list_dsp;
 use im_export\export;
 
 class word_list extends sandbox_list

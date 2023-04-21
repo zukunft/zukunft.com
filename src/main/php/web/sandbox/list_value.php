@@ -38,6 +38,7 @@ namespace html;
 include_once WEB_SANDBOX_PATH . 'list.php';
 
 use api\phrase_list_api;
+use html\phrase\phrase_list as phrase_list_dsp;
 
 class list_value_dsp extends list_dsp
 {

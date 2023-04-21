@@ -34,7 +34,7 @@ namespace model;
 use result_list;
 use html\html_base;
 use html\html_selector;
-use html\word_dsp;
+use html\word\word as word_dsp;
 use user_log_display;
 use value_list_dsp_old;
 use view_dsp_old;

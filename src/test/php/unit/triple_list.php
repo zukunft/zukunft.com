@@ -36,7 +36,7 @@ include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once WEB_WORD_PATH . 'triple_list.php';
 
 use cfg\verb_list;
-use html\triple_list_dsp;
+use html\word\triple_list as triple_list_dsp;
 use model\library;
 use model\phrase;
 use model\sql_db;

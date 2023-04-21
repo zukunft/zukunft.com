@@ -34,7 +34,7 @@
 
 namespace result;
 
-use html\phrase_list_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox_value_dsp;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';

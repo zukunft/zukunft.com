@@ -32,7 +32,7 @@
 
 use api\value_api;
 use api\word_api;
-use html\word_dsp;
+use html\word\word as word_dsp;
 use model\phrase_list;
 use model\value;
 use model\value_list;

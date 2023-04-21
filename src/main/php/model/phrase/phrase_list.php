@@ -52,7 +52,7 @@ use cfg\phrase_type;
 use cfg\verb_list;
 use cfg\word_type_list;
 use im_export\export;
-use html\word_dsp;
+use html\word\word as word_dsp;
 
 class phrase_list extends sandbox_list_named
 {

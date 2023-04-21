@@ -33,7 +33,7 @@
 namespace api;
 
 use cfg\phrase_type;
-use html\word_list_dsp;
+use html\word\word_list as word_list_dsp;
 
 class word_list_api extends list_api
 {

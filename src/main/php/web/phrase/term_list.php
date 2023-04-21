@@ -2,8 +2,8 @@
 
 /*
 
-    /web/phrase_list_dsp.php - the display extension of the api phrase list object
-    -----------------------
+    /web/phrase/term_list_dsp.php - the display extension of the api phrase list object
+    -----------------------------
 
     mainly links to the word and triple display functions
 
@@ -32,11 +32,14 @@
 
 */
 
-namespace html;
+namespace html\phrase;
+
+use html\html_selector;
+use html\list_dsp;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
 
-class term_list_dsp extends list_dsp
+class term_list extends list_dsp
 {
 
     /**

@@ -33,7 +33,7 @@ namespace model;
 
 use html\back_trace;
 use html\html_base;
-use html\word_dsp;
+use html\word\word as word_dsp;
 
 class result_list
 {

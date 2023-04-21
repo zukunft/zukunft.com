@@ -34,7 +34,7 @@ namespace test;
 
 use api\word_api;
 use html\html_base;
-use html\word_dsp;
+use html\word\word as word_dsp;
 
 class word_display_unit_tests
 {

@@ -57,7 +57,7 @@ use api\user_api;
 use cfg\export\user_exp;
 use cfg\export\exp_obj;
 use html\user_dsp;
-use html\word_dsp;
+use html\word\word as word_dsp;
 
 class user extends db_object
 {

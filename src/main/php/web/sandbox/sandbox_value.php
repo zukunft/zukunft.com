@@ -37,6 +37,7 @@ namespace html;
 use api\sandbox_api;
 use api\sandbox_value_api;
 use controller\controller;
+use html\phrase\phrase_list as phrase_list_dsp;
 
 include_once WEB_SANDBOX_PATH . 'db_object.php';
 

@@ -42,7 +42,7 @@ use model\sql_db;
 use model\word;
 use model\word_list;
 use model\word_select_direction;
-use html\word_list_dsp;
+use html\word\word_list as word_list_dsp;
 
 class word_list_unit_tests
 {

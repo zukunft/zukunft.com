@@ -41,7 +41,7 @@ use model\sql_db;
 use cfg\phrase_type;
 use model\word;
 use api\word_api;
-use html\word_dsp;
+use html\word\word as word_dsp;
 
 class word_unit_tests
 {

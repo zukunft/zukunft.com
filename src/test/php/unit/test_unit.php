@@ -167,9 +167,9 @@ class test_unit extends testing
         (new word_list_unit_tests)->run($this);
         (new verb_unit_tests)->run($this);
         (new triple_unit_tests)->run($this);
-        (new triple_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new triple_list_unit_tests)->run($this);
         (new phrase_unit_tests)->run($this);
-        (new phrase_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new phrase_list_unit_tests)->run($this);
         (new phrase_group_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new term_unit_tests)->run($this);
         (new term_list_unit_tests)->run($this); // TODO add assert_api_to_dsp

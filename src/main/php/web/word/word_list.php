@@ -29,16 +29,20 @@
 
 */
 
-namespace html;
+namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
 //include_once CFG_PATH . 'phrase_type.php';
 
 use cfg\phrase_type;
+use html\formula_dsp;
+use html\html_base;
+use html\html_selector;
+use html\list_dsp;
 use model\term_list;
 use model\user;
 
-class word_list_dsp extends list_dsp
+class word_list extends list_dsp
 {
 
     /*
@@ -49,24 +53,9 @@ class word_list_dsp extends list_dsp
      * add a word to the list
      * @returns bool true if the word has been added
      */
-    function add(word_dsp $phr): bool
+    function add(word $phr): bool
     {
         return parent::add_obj($phr);
-    }
-
-
-    /*
-     * set and get
-     */
-
-    /**
-     * set the vars of this word html display object bases on the api message
-     * @param string $json_api_msg an api json message as a string
-     * @return void
-     */
-    function set_from_json(string $json_api_msg): void
-    {
-        $this->set_from_json_array(json_decode($json_api_msg, true));
     }
 
 
@@ -161,7 +150,7 @@ class word_list_dsp extends list_dsp
         foreach ($db_lst as $db_row) {
             //while ($entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
             if ($db_row['type'] == "word") {
-                $wrd = new word_dsp($db_row['id'], $db_row['name']);
+                $wrd = new word($db_row['id'], $db_row['name']);
                 $result .= $wrd->tr();
             }
             if ($db_row['type'] == "formula") {
@@ -187,9 +176,9 @@ class word_list_dsp extends list_dsp
      * and delete list of "2016", "2017","2018"
      * the result is "2014", "2015"
      *
-     * @param word_list_dsp $del_lst is the list of phrases that should be removed from this list object
+     * @param word_list $del_lst is the list of phrases that should be removed from this list object
      */
-    private function diff(word_list_dsp $del_lst): void
+    private function diff(word_list $del_lst): void
     {
         if (!$this->is_empty()) {
             $result = array();
@@ -205,9 +194,9 @@ class word_list_dsp extends list_dsp
 
     /**
      * merge as a function, because the array_merge does not create an object
-     * @param word_list_dsp $new_wrd_lst with the words that should be added
+     * @param word_list $new_wrd_lst with the words that should be added
      */
-    function merge(word_list_dsp $new_wrd_lst)
+    function merge(word_list $new_wrd_lst): void
     {
         foreach ($new_wrd_lst->lst as $new_wrd) {
             $this->add($new_wrd);
@@ -216,11 +205,11 @@ class word_list_dsp extends list_dsp
 
     /**
      * @param string $type the ENUM string of the fixed type
-     * @return word_list_dsp with the all words of the give type
+     * @return word_list with the all words of the give type
      */
-    private function filter(string $type): word_list_dsp
+    private function filter(string $type): word_list
     {
-        $result = new word_list_dsp();
+        $result = new word_list();
         foreach ($this->lst as $wrd) {
             if ($wrd->is_type($type)) {
                 $result->add($wrd);
@@ -232,7 +221,7 @@ class word_list_dsp extends list_dsp
     /**
      * get all time words from this list of words
      */
-    function time_lst(): word_list_dsp
+    function time_lst(): word_list
     {
         return $this->filter(phrase_type::TIME);
     }
@@ -240,7 +229,7 @@ class word_list_dsp extends list_dsp
     /**
      * get all measure words from this list of words
      */
-    function measure_lst(): word_list_dsp
+    function measure_lst(): word_list
     {
         return $this->filter(phrase_type::MEASURE);
     }
@@ -248,9 +237,9 @@ class word_list_dsp extends list_dsp
     /**
      * get all scaling words from this list of words
      */
-    function scaling_lst(): word_list_dsp
+    function scaling_lst(): word_list
     {
-        $result = new word_list_dsp();
+        $result = new word_list();
         foreach ($this->lst as $wrd) {
             if ($wrd->is_scaling()) {
                 $result->add($wrd);
@@ -261,9 +250,9 @@ class word_list_dsp extends list_dsp
 
     /**
      * get all measure and scaling words from this list of words
-     * @returns word_list_dsp words that are usually shown after a number
+     * @returns word_list words that are usually shown after a number
      */
-    function measure_scale_lst(): word_list_dsp
+    function measure_scale_lst(): word_list
     {
         $scale_lst = $this->scaling_lst();
         $measure_lst = $this->measure_lst();
@@ -274,7 +263,7 @@ class word_list_dsp extends list_dsp
     /**
      * get all measure words from this list of words
      */
-    function percent_lst(): word_list_dsp
+    function percent_lst(): word_list
     {
         return $this->filter(phrase_type::PERCENT);
     }
@@ -283,9 +272,9 @@ class word_list_dsp extends list_dsp
      * like names_linked, but without measure and time words
      * because measure words are usually shown after the number
      * TODO call this from the display object t o avoid casting again
-     * @returns word_list_dsp a word
+     * @returns word_list a word
      */
-    function ex_measure_and_time_lst(): word_list_dsp
+    function ex_measure_and_time_lst(): word_list
     {
         $wrd_lst_ex = clone $this;
         $wrd_lst_ex->ex_time();

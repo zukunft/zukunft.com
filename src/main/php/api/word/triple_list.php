@@ -32,10 +32,8 @@
 
 namespace api;
 
-use api\list_api;
-use api\triple_api;
 use cfg\phrase_type;
-use html\triple_list_dsp;
+use html\word\triple_list;
 
 class triple_list_api extends list_api
 {
@@ -64,11 +62,11 @@ class triple_list_api extends list_api
      */
 
     /**
-     * @returns triple_list_dsp the cast object with the HTML code generating functions
+     * @returns triple_list the cast object with the HTML code generating functions
      */
-    function dsp_obj(): triple_list_dsp
+    function dsp_obj(): triple_list
     {
-        $dsp_obj = new triple_list_dsp();
+        $dsp_obj = new triple_list();
 
         // cast the single list objects
         $lst_dsp = array();

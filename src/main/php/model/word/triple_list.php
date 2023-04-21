@@ -46,8 +46,7 @@ include_once API_WORD_PATH . 'triple_list.php';
 use api\triple_list_api;
 use cfg\verb_list;
 use html\html_base;
-use html\triple_list_dsp;
-use html\word_dsp;
+use html\word\triple_list as triple_list_dsp;
 
 class triple_list
 {
@@ -122,11 +121,11 @@ class triple_list
     }
 
     /**
-     * @return triple_list_dsp the word list object with the display interface functions
+     * @return triple_list the word list object with the display interface functions
      */
-    function dsp_obj(): triple_list_dsp
+    function dsp_obj(): triple_list
     {
-        $dsp_obj = new triple_list_dsp();
+        $dsp_obj = new triple_list();
         foreach ($this->lst as $wrd) {
             $dsp_obj->add($wrd->dsp_obj());
         }

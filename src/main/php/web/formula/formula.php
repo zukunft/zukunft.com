@@ -36,6 +36,8 @@ namespace html;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
+use html\phrase\term as term_dsp;
+
 class formula_dsp extends sandbox_typed_dsp
 {
 

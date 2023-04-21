@@ -37,7 +37,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 
 use model\verb;
-use html\term_dsp;
+use html\phrase\term as term_dsp;
 
 class verb_api extends sandbox_named_api
 {

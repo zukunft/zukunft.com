@@ -32,7 +32,7 @@
 
 namespace api;
 
-use html\word_list_dsp;
+use html\word\word_list as word_list_dsp;
 
 class view_cmp_list_api extends list_api
 {

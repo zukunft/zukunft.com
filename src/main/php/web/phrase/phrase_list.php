@@ -30,12 +30,21 @@
 
 */
 
-namespace html;
+namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
 
-class phrase_list_dsp extends list_dsp
+use html\html_base;
+use html\html_selector;
+use html\list_dsp;
+use html\phrase\phrase as phrase_dsp;
+
+class phrase_list extends list_dsp
 {
+
+    /*
+     * display
+     */
 
     /**
      * @returns string the html code to display the phrases with the most useful link
@@ -120,10 +129,10 @@ class phrase_list_dsp extends list_dsp
 
     /**
      * removes all terms from this list that are not in the given list
-     * @param phrase_list_dsp $new_lst the terms that should remain in this list
-     * @returns phrase_list_dsp with the phrases of this list and the new list
+     * @param phrase_list $new_lst the terms that should remain in this list
+     * @returns phrase_list with the phrases of this list and the new list
      */
-    function intersect(phrase_list_dsp $new_lst): phrase_list_dsp
+    function intersect(phrase_list $new_lst): phrase_list
     {
         if (!$new_lst->is_empty()) {
             if ($this->is_empty()) {
@@ -131,7 +140,7 @@ class phrase_list_dsp extends list_dsp
             } else {
                 // next line would work if array_intersect could handle objects
                 // $this->lst = array_intersect($this->lst, $new_lst->lst());
-                $found_lst = new phrase_list_dsp();
+                $found_lst = new phrase_list();
                 foreach ($new_lst->lst() as $phr) {
                     if (in_array($phr->id(), $this->id_lst())) {
                         $found_lst->add_phrase($phr);
@@ -144,12 +153,12 @@ class phrase_list_dsp extends list_dsp
     }
 
     /**
-     * @returns phrase_list_dsp with the phrases that are used in all values of the list
+     * @returns phrase_list with the phrases that are used in all values of the list
      */
-    protected function common_phrases(): phrase_list_dsp
+    protected function common_phrases(): phrase_list
     {
         // get common words
-        $common_phr_lst = new phrase_list_dsp();
+        $common_phr_lst = new phrase_list();
         foreach ($this->lst as $val) {
             if ($val != null) {
                 if ($val->phr_lst() != null) {
@@ -170,12 +179,12 @@ class phrase_list_dsp extends list_dsp
     {
         return parent::add_obj($phr);
     }
-    function remove(phrase_list_dsp $del_lst): phrase_list_dsp
+    function remove(phrase_list $del_lst): phrase_list
     {
         if (!$del_lst->is_empty()) {
             // next line would work if array_intersect could handle objects
             // $this->lst = array_intersect($this->lst, $new_lst->lst());
-            $remain_lst = new phrase_list_dsp();
+            $remain_lst = new phrase_list();
             foreach ($this->lst() as $phr) {
                 if (!in_array($phr->id(), $del_lst->id_lst())) {
                     $remain_lst->add_phrase($phr);

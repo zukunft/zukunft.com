@@ -190,6 +190,15 @@ class create_test_objects extends test_base
         return $this->dummy_triple()->phrase();
     }
 
+    function dummy_phrase_list(): phrase_list
+    {
+        global $usr;
+        $lst = new phrase_list($usr);
+        $lst->add($this->dummy_phrase());
+        $lst->add($this->dummy_phrase_triple());
+        return $lst;
+    }
+
     function dummy_term(): term
     {
         return $this->dummy_word()->term();

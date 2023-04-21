@@ -36,9 +36,9 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 
 use api\word_api;
 use cfg\phrase_type;
-use html\phrase_dsp;
-use html\triple_dsp;
-use html\word_dsp;
+use html\word\word as word_dsp;
+use html\word\triple as triple_dsp;
+use html\phrase\phrase as phrase_dsp;
 use model\phrase;
 use model\sql_db;
 use model\word;

@@ -29,7 +29,7 @@
   
 */
 
-namespace html;
+namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
@@ -40,8 +40,17 @@ use api\sandbox_api;
 use api\phrase_api;
 use cfg\phrase_type;
 use controller\controller;
+use html\api;
+use html\back_trace;
+use html\button;
+use html\html_base;
+use html\html_selector;
+use html\msg;
+use html\phrase\phrase as phrase_dsp;
+use html\sandbox_typed_dsp;
+use html\phrase\term as term_dsp;
 
-class word_dsp extends sandbox_typed_dsp
+class word extends sandbox_typed_dsp
 {
 
     // default view settings
@@ -102,7 +111,7 @@ class word_dsp extends sandbox_typed_dsp
      */
     function set_obj_from_json_array(array $json_array): void
     {
-        $wrd = new word_dsp();
+        $wrd = new word();
         $wrd->set_from_json_array($json_array);
     }
 

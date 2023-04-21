@@ -43,12 +43,12 @@ include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 
 use controller\controller;
-use html\phrase_dsp;
-use html\word_dsp;
-use html\triple_dsp;
+use html\phrase\phrase as phrase_dsp;
+use html\word\word as word_dsp;
+use html\word\triple as triple_dsp;
 use html\formula_dsp;
 use html\verb_dsp;
-use html\term_dsp;
+use html\phrase\term as term_dsp;
 use cfg\phrase_type;
 use model\word;
 use model\triple;

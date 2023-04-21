@@ -35,7 +35,7 @@
 // --------------------------------------
 
 use api\word_api;
-use html\word_dsp;
+use html\word\word as word_dsp;
 use const test\TIMEOUT_LIMIT_PAGE;
 use const test\TIMEOUT_LIMIT_PAGE_SEMI;
 

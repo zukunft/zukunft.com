@@ -41,6 +41,7 @@ include_once API_SANDBOX_PATH . 'sandbox_value.php';
 use api\sandbox_api;
 use api\sandbox_value_api;
 use controller\controller;
+use html\phrase\phrase_list as phrase_list_dsp;
 
 class value_dsp extends sandbox_value_dsp
 {

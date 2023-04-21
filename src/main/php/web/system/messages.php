@@ -38,6 +38,7 @@ class msg
     const WORD_RENAME = 'rename_word';
     const WORD_DELETE = 'delete_word';
     const WORD_UNLINK = 'unlink_word';
+    const TRIPLE_DELETE = 'delete_word';
     const PLEASE_SELECT = 'please_select';
     const IP_BLOCK_PRE_ADDR = 'ip_block_pre_addr';
     const IP_BLOCK_POST_ADDR = 'ip_block_post_addr';
@@ -56,6 +57,7 @@ class msg
                 $msg_text = 'rename word';
                 break;
             case self::WORD_DELETE:
+            case self::TRIPLE_DELETE:
                 $msg_text = 'Delete word';
                 break;
             case self::WORD_UNLINK:

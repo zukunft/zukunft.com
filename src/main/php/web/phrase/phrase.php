@@ -30,7 +30,7 @@
 
 */
 
-namespace html;
+namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'combine_named.php';
 include_once API_SANDBOX_PATH . 'combine_object.php';
@@ -41,9 +41,17 @@ include_once WEB_WORD_PATH . 'triple.php';
 use api\combine_object_api;
 use api\phrase_api;
 use api\word_api;
+use html\api;
+use html\button;
+use html\combine_named_dsp;
+use html\html_base;
+use html\html_selector;
+use html\msg;
+use html\word\word as word_dsp;
+use html\word\triple as triple_dsp;
 use controller\controller;
 
-class phrase_dsp extends combine_named_dsp
+class phrase extends combine_named_dsp
 {
 
     /*
@@ -212,10 +220,31 @@ class phrase_dsp extends combine_named_dsp
     function dsp_unlink(int $link_id): string
     {
         $result = '    <td>' . "\n";
-        $result .= btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id());
+        $result .= $this->btn_del();
         $result .= '    </td>' . "\n";
 
         return $result;
+    }
+
+    /*
+     * buttons
+     */
+
+    /**
+     * @returns string the html code to display a bottom to exclude the word for the current user
+     *                 or if no one uses the word delete the complete word
+     */
+    function btn_del(): string
+    {
+        if ($this->is_word()) {
+            $obj_name = api::WORD;
+            $msg = msg::WORD_DELETE;
+        } else {
+            $obj_name = api::TRIPLE;
+            $msg = msg::TRIPLE_DELETE;
+        }
+        $url = (new html_base())->url($obj_name . api::REMOVE, $this->id(), $this->id());
+        return (new button((new msg())->txt($msg), $url))->del();
     }
 
     //

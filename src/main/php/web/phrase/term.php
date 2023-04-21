@@ -30,7 +30,7 @@
 
 */
 
-namespace html;
+namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'combine_named.php';
 include_once API_SANDBOX_PATH . 'combine_object.php';
@@ -43,8 +43,13 @@ include_once WEB_VERB_PATH . 'verb.php';
 use api\combine_object_api;
 use api\term_api;
 use controller\controller;
+use html\combine_named_dsp;
+use html\formula_dsp;
+use html\verb_dsp;
+use html\word\word as word_dsp;
+use html\word\triple as triple_dsp;
 
-class term_dsp extends combine_named_dsp
+class term extends combine_named_dsp
 {
 
 

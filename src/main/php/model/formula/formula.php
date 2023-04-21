@@ -57,7 +57,7 @@ use DateTime;
 use Exception;
 use html\formula_dsp;
 use html\formula_dsp_old;
-use html\word_dsp;
+use html\word\word as word_dsp;
 use math;
 
 class formula extends sandbox_typed

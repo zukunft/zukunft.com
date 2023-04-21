@@ -36,6 +36,10 @@ namespace html;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 
+use html\word\word as word_dsp;
+use html\phrase\phrase as phrase_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
+
 class phrase_group_dsp extends sandbox_named_dsp
 {
 
