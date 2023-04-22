@@ -173,7 +173,7 @@ class test_unit extends testing
         (new phrase_group_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new term_unit_tests)->run($this);
         (new term_list_unit_tests)->run($this);
-        (new value_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new value_unit_tests)->run($this);
         (new value_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new value_phrase_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new formula_unit_tests)->run($this); // TODO add assert_api_to_dsp

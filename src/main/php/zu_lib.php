@@ -143,7 +143,7 @@ use html\phrase_group_dsp;
     TODO include IP blacklist by default for admin users
     TODO add log_info on all database actions to detect the costly code parts
     TODO move the environment variables to a setting YAML like application.yaml, application-dev.yaml, application-int.yaml or application-prod.yaml in springboot
-    TODO create a sanity API for monitor tools like checkmk or platforms like openshift
+    TODO create a sanity API for monitor tools like checkMK or platforms like openshift
     TODO create an "always on" thread for the backend
     TODO create a LaTeX extension for charts and values, so that studies can be recreated based on the LaTeX document
     TODO for fail over in the underlying technologies, create a another backend in python and java  and allow the user to select or auto select the backend technology
@@ -168,7 +168,7 @@ use html\phrase_group_dsp;
               if the time or space saving is real remove the old and unused data (fixed reorg)
               set the max number of value group tables per pod to e.g. 900
               check the context overlapping between two pods
-              and suggest data transfer if this will reduce trafic
+              and suggest data transfer if this will reduce traffic
 
 
     TODO create a table startup page with a

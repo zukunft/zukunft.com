@@ -36,6 +36,7 @@ include_once MODEL_VALUE_PATH . 'value_time_series.php';
 
 use api\phrase_group_api;
 use api\value_api;
+use html\value_dsp;
 use model\phrase_group;
 use model\sql_db;
 use model\value;
@@ -85,6 +86,13 @@ class value_unit_tests
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new value($usr), $json_file);
+
+
+        $t->subheader('HTML frontend unit tests');
+
+        $val = $t->dummy_value();
+        // TODO add class field to api message
+        $t->assert_api_to_dsp($val, new value_dsp());
 
 
         $t->subheader('Convert and API unit tests');

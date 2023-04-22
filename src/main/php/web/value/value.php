@@ -103,7 +103,24 @@ class value_dsp extends sandbox_value_dsp
      */
     function set_from_json(string $json_api_msg): void
     {
-        $this->set_from_json_array(json_decode($json_api_msg));
+        $this->set_from_json_array(json_decode($json_api_msg, true));
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+        $vars[controller::API_FLD_PHRASES] = $this->grp()->phr_lst()->api_array();
+        $vars[controller::API_FLD_NUMBER] = $this->number();
+        return $vars;
     }
 
 
