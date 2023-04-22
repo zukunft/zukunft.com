@@ -48,7 +48,7 @@ use cfg\verb_list;
 use html\html_base;
 use html\word\triple_list as triple_list_dsp;
 
-class triple_list
+class triple_list extends sandbox_list
 {
     const DIRECTION_UP = 'up';
     const DIRECTION_DOWN = 'down';
@@ -64,44 +64,6 @@ class triple_list
     public ?verb $vrb = null;     // show the graph elements related to this verb
     public ?verb_list $vrb_lst = null; // show the graph elements related to these verbs
     public string $direction = self::DIRECTION_DOWN;  // either up, down or both
-
-    /*
-     * construct and map
-     */
-
-    /**
-     * always set the user because a triple list is always user specific
-     * @param user $usr the user who requested to see this triple list
-     */
-    function __construct(user $usr)
-    {
-        $this->lst = array();
-        $this->set_user($usr);
-    }
-
-
-    /*
-     * set and get
-     */
-
-    /**
-     * set the user of the triple list
-     *
-     * @param user $usr the person who wants to access the triples
-     * @return void
-     */
-    function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    /**
-     * @return user the person who wants to see the triples
-     */
-    function user(): user
-    {
-        return $this->usr;
-    }
 
 
     /*

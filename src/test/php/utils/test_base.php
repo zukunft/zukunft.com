@@ -68,6 +68,7 @@ use model\source;
 use model\sql_db;
 use model\sql_par;
 use model\triple;
+use model\triple_list;
 use model\trm_ids;
 use model\user;
 use model\value;
@@ -75,6 +76,7 @@ use model\value_list;
 use model\verb;
 use model\view;
 use model\word;
+use model\word_list;
 use user_dsp_old;
 
 const HOST_TESTING = 'http://localhost/';
@@ -1458,6 +1460,18 @@ class test_base
             $this->set_val_id_for_unit_tests($usr_obj);
         } elseif ($usr_obj::class == formula::class) {
             $this->set_frm_id_for_unit_tests($usr_obj);
+        } elseif ($usr_obj::class == word_list::class) {
+            foreach ($usr_obj->lst() as $wrd) {
+                if ($wrd->id() == 0) {
+                    $wrd->set_id($this->next_seq_nbr());
+                }
+            }
+        } elseif ($usr_obj::class == triple_list::class) {
+            foreach ($usr_obj->lst() as $trp) {
+                if ($trp->id() == 0) {
+                    $trp->set_id($this->next_seq_nbr());
+                }
+            }
         } elseif ($usr_obj::class == phrase_list::class) {
             foreach ($usr_obj->lst() as $phr) {
                 if ($phr->id() == 0) {

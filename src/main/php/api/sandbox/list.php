@@ -33,7 +33,9 @@
 
 namespace api;
 
-class list_api
+use JsonSerializable;
+
+class list_api implements JsonSerializable
 {
     // the protected main var
     protected array $lst;
@@ -175,7 +177,19 @@ class list_api
      */
     function get_json(): string
     {
-        return json_encode($this);
+        return json_encode($this->jsonSerialize());
+    }
+
+    /**
+     * @return array with the value vars including the protected vars
+     */
+    function jsonSerialize(): array
+    {
+        $vars = [];
+        foreach ($this->lst as $obj) {
+            $vars[] = $obj->jsonSerialize();
+        }
+        return $vars;
     }
 
 }

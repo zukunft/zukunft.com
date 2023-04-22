@@ -32,9 +32,11 @@
 namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
+
 //include_once CFG_PATH . 'phrase_type.php';
 
 use cfg\phrase_type;
+use html\word\word as word_dsp;
 use html\formula\formula as formula_dsp;
 use html\html_base;
 use html\html_selector;
@@ -46,6 +48,23 @@ class word_list extends list_dsp
 {
 
     /*
+     * set and get
+     */
+
+    /**
+     * set the vars of a word object based on the given json
+     * @param array $json_array an api single object json message
+     * @return object a word set based on the given json
+     */
+    function set_obj_from_json_array(array $json_array): object
+    {
+        $wrd = new word_dsp();
+        $wrd->set_from_json_array($json_array);
+        return $wrd;
+    }
+
+
+    /*
      * modify
      */
 
@@ -53,9 +72,9 @@ class word_list extends list_dsp
      * add a word to the list
      * @returns bool true if the word has been added
      */
-    function add(word $phr): bool
+    function add(word_dsp $wrd): bool
     {
-        return parent::add_obj($phr);
+        return parent::add_obj($wrd);
     }
 
 

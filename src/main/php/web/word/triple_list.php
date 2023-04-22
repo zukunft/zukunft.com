@@ -48,6 +48,23 @@ class triple_list extends list_dsp
 {
 
     /*
+     * set and get
+     */
+
+    /**
+     * set the vars of a triple object based on the given json
+     * @param array $json_array an api single object json message
+     * @return object a triple set based on the given json
+     */
+    function set_obj_from_json_array(array $json_array): object
+    {
+        $wrd = new triple_dsp();
+        $wrd->set_from_json_array($json_array);
+        return $wrd;
+    }
+
+
+    /*
      * modify
      */
 

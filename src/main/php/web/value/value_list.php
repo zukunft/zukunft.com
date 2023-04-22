@@ -42,10 +42,26 @@ use model\word_list;
 class value_list_dsp extends list_dsp
 {
 
-    function __construct(array $lst = array())
+    /*
+     * set and get
+     */
+
+    /**
+     * set the vars of a value object based on the given json
+     * @param array $json_array an api single object json message
+     * @return object a value set based on the given json
+     */
+    function set_obj_from_json_array(array $json_array): object
     {
-        parent::__construct($lst);
+        $wrd = new value_dsp();
+        $wrd->set_from_json_array($json_array);
+        return $wrd;
     }
+
+
+    /*
+     * modify
+     */
 
     /**
      * add a value to the list

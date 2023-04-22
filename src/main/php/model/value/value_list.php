@@ -31,6 +31,7 @@
 
 namespace model;
 
+include_once API_VALUE_PATH . 'value_list.php';
 include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 
 use api\value_list_api;
@@ -431,6 +432,40 @@ class value_list extends sandbox_list
 
 
     /*
+     * modification functions
+     */
+
+    /**
+     * add one value to the value list, but only if it is not yet part of the list
+     * @param value|null $val_to_add the value object to be added to the list
+     * @returns bool true the value has been added
+     */
+    function add(?value $val_to_add): bool
+    {
+        $result = false;
+        // check parameters
+        if ($val_to_add != null) {
+            if (get_class($val_to_add) <> value::class) {
+                log_err("Object to add must be of type value, but it is " . get_class($val_to_add), "value_list->add");
+            } else {
+                if ($val_to_add->id() <> 0 or $val_to_add->grp->name() != '') {
+                    if (count($this->id_lst()) > 0) {
+                        if (!in_array($val_to_add->id(), $this->id_lst())) {
+                            parent::add_obj($val_to_add);
+                            $result = true;
+                        }
+                    } else {
+                        parent::add_obj($val_to_add);
+                        $result = true;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+
+    /*
      * im- and export
      */
 
@@ -693,6 +728,25 @@ class value_list extends sandbox_list
         log_debug('done');
         return $result;
     }
+
+    /**
+     * @return array with the sorted value ids
+     */
+    function id_lst(): array
+    {
+        $lst = array();
+        if (count($this->lst) > 0) {
+            foreach ($this->lst as $val) {
+                // use only valid ids
+                if ($val->id() <> 0) {
+                    $lst[] = $val->id();
+                }
+            }
+        }
+        asort($lst);
+        return $lst;
+    }
+
 
     /*
     filter and select functions

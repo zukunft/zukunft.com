@@ -174,16 +174,16 @@ class test_unit extends testing
         (new term_unit_tests)->run($this);
         (new term_list_unit_tests)->run($this);
         (new value_unit_tests)->run($this);
-        (new value_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
-        (new value_phrase_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new value_list_unit_tests)->run($this);
+        (new value_phrase_link_unit_tests)->run($this);
         (new formula_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new formula_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new formula_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new result_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new result_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new figure_unit_tests)->run($this); // TODO complete assert_api_to_dsp with all cases
-        (new formula_element_unit_tests)->run($this); // TODO add assert_api_to_dsp
-        (new expression_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new formula_element_unit_tests)->run($this);
+        (new expression_unit_tests)->run($this);
         (new view_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new view_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new view_component_unit_tests())->run($this); // TODO add assert_api_to_dsp

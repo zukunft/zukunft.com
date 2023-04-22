@@ -93,6 +93,7 @@ use model\triple;
 use model\triple_list;
 use model\user;
 use model\value;
+use model\value_list;
 use model\verb;
 use model\view;
 use model\view_cmp;
@@ -231,12 +232,19 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-
     function dummy_value(): value
     {
         global $usr;
         $grp = new phrase_group($usr, 1,  array(phrase_group_api::TN_READ));
         return new value($usr, 1, round(value_api::TV_READ, 13), $grp);
+    }
+
+    function dummy_value_list(): value_list
+    {
+        global $usr;
+        $lst = new value_list($usr);
+        $lst->add($this->dummy_value());
+        return $lst;
     }
 
     /**
