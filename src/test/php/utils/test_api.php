@@ -145,8 +145,7 @@ class test_api extends create_test_objects
 
         $this->assert_api_get_list(type_lists::class);
         $this->assert_api_get_list(phrase_list::class, [1, -1]);
-        // TODO add formula and ver to the term list test
-        $this->assert_api_get_list(term_list::class, [1, -1]);
+        $this->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $this->assert_api_get_list(formula_list::class, [1]);
         $this->assert_api_chg_list(
             change_log_list::class,
@@ -760,7 +759,7 @@ class test_api extends create_test_objects
      * @param string $file to overwrite the class based filename
      * @return string with the expected json message
      */
-    private function api_json_expected(string $class, string $file = ''): string
+    function api_json_expected(string $class, string $file = ''): string
     {
         if ($file == '') {
             $file = $class;

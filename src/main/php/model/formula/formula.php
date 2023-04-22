@@ -55,7 +55,7 @@ use cfg\protection_type;
 use cfg\share_type;
 use DateTime;
 use Exception;
-use html\formula_dsp;
+use html\formula\formula as formula_dsp;
 use html\formula_dsp_old;
 use html\word\word as word_dsp;
 use math;
@@ -207,15 +207,23 @@ class formula extends sandbox_typed
     {
         global $formula_types;
         $lib = new library();
-        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_name($db_row[$name_fld]);
-            $this->ref_text = $db_row[self::FLD_FORMULA_TEXT];
-            $this->usr_text = $db_row[self::FLD_FORMULA_USER_TEXT];
+            if (array_key_exists(self::FLD_FORMULA_TEXT, $db_row)) {
+                $this->ref_text = $db_row[self::FLD_FORMULA_TEXT];
+            }
+            if (array_key_exists(self::FLD_FORMULA_USER_TEXT, $db_row)) {
+                $this->usr_text = $db_row[self::FLD_FORMULA_USER_TEXT];
+            }
             $this->description = $db_row[self::FLD_DESCRIPTION];
             $this->type_id = $db_row[$type_fld];
-            $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
-            $this->need_all_val = $lib->get_bool($db_row[self::FLD_ALL_NEEDED]);
+            if (array_key_exists(self::FLD_LAST_UPDATE, $db_row)) {
+                $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
+            }
+            if (array_key_exists(self::FLD_ALL_NEEDED, $db_row)) {
+                $this->need_all_val = $lib->get_bool($db_row[self::FLD_ALL_NEEDED]);
+            }
 
             if ($this->type_id > 0) {
                 $this->type_cl = $formula_types->code_id($this->type_id);

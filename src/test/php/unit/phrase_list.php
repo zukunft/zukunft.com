@@ -118,7 +118,7 @@ class phrase_list_unit_tests
 
         $t->subheader('API unit tests');
 
-        $phr_lst = $this->get_phrase_list_related($t);
+        $phr_lst = $t->dummy_phrase_list();
         $t->assert_api($phr_lst);
 
 
@@ -141,19 +141,6 @@ class phrase_list_unit_tests
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($this->get_phrase_add());
         $phr_lst->add($this->get_time_phrase());
-        return $phr_lst;
-    }
-
-    /**
-     * create a phrase list test object without using a database connection
-     * that matches the all members of word with id 1 (math const)
-     */
-    function get_phrase_list_related(testing $t): phrase_list
-    {
-        global $usr;
-        $phr_lst = new phrase_list($usr);
-        $phr_lst->add($t->dummy_word()->phrase());
-        $phr_lst->add($t->dummy_triple()->phrase());
         return $phr_lst;
     }
 

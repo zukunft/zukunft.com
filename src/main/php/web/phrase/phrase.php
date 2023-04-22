@@ -139,7 +139,7 @@ class phrase extends combine_named_dsp
         } else {
             $vars[combine_object_api::FLD_CLASS] = phrase_api::CLASS_TRIPLE;
         }
-        $vars[controller::API_FLD_ID] = $this->id();
+        $vars[controller::API_FLD_ID] = $this->obj_id();
         $vars[controller::API_FLD_NAME] = $this->name();
         $vars[controller::API_FLD_DESCRIPTION] = $this->description();
         $vars[controller::API_FLD_TYPE_ID] = $this->type_id();

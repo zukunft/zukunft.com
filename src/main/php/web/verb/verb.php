@@ -29,14 +29,17 @@
 
 */
 
-namespace html;
+namespace html\verb;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 
 use api\verb_api;
+use html\api;
+use html\html_base;
 use html\phrase\term as term_dsp;
+use html\sandbox_named_dsp;
 
-class verb_dsp extends sandbox_named_dsp
+class verb extends sandbox_named_dsp
 {
 
     /*
@@ -66,7 +69,7 @@ class verb_dsp extends sandbox_named_dsp
 
     /**
      * the verb itself is a type
-     * this funtion is only used as an interface mapping for the term
+     * this function is only used as an interface mapping for the term
      * @return int|null
      */
     function type_id(): ?int

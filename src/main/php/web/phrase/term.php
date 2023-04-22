@@ -44,8 +44,8 @@ use api\combine_object_api;
 use api\term_api;
 use controller\controller;
 use html\combine_named_dsp;
-use html\formula_dsp;
-use html\verb_dsp;
+use html\formula\formula as formula_dsp;
+use html\verb\verb as verb_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 
@@ -145,6 +145,9 @@ class term extends combine_named_dsp
 
     /**
      * @return array the json message array to send the updated data to the backend
+     * corresponding to the api jsonSerialize function:
+     * use the object id not the term id because the class is included
+     * maybe to reduce traffic remove the class but than the term id needs to be used
      */
     function api_array(): array
     {
@@ -160,7 +163,7 @@ class term extends combine_named_dsp
         } else {
             log_err('cannot create api message for term ' . $this->dsp_id() . ' because class is unknown');
         }
-        $vars[controller::API_FLD_ID] = $this->id();
+        $vars[controller::API_FLD_ID] = $this->obj_id();
         $vars[controller::API_FLD_NAME] = $this->name();
         $vars[controller::API_FLD_DESCRIPTION] = $this->description();
         if (!$this->is_verb()) {

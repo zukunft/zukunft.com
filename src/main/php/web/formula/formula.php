@@ -32,13 +32,16 @@
 
 */
 
-namespace html;
+namespace html\formula;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
+use html\api;
+use html\html_base;
 use html\phrase\term as term_dsp;
+use html\sandbox_typed_dsp;
 
-class formula_dsp extends sandbox_typed_dsp
+class formula extends sandbox_typed_dsp
 {
 
     /*
@@ -64,7 +67,7 @@ class formula_dsp extends sandbox_typed_dsp
      * set and get
      */
 
-    function set_usr_text(string $usr_text)
+    function set_usr_text(string $usr_text): void
     {
         $this->usr_text = $usr_text;
     }

@@ -1,15 +1,26 @@
 [
   {
-    "id": -1,
+    "id": 1,
+    "name": "Mathematical constant",
+    "description": "A mathematical constant that never changes e.g. Pi",
+    "type_id": 17,
+    "class": "word"
+  },
+  {
+    "id": 1,
     "name": "Pi (math)",
     "type_id": 17,
     "class": "triple"
   },
   {
     "id": 1,
-    "name": "Mathematical constant",
-    "description": "A mathematical constant that never changes e.g. Pi",
-    "type_id": 17,
-    "class": "word"
+    "name": "scale minute to sec",
+    "type_id": 1,
+    "class": "formula"
+  },
+  {
+    "id": 1,
+    "name": "not set",
+    "class": "verb"
   }
 ]

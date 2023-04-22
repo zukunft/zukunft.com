@@ -34,13 +34,50 @@ namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
 
+use api\combine_object_api;
+use api\term_api;
 use html\html_base;
 use html\html_selector;
 use html\list_dsp;
+use html\word\word as word_dsp;
+use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
+use model\library;
 
 class phrase_list extends list_dsp
 {
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the vars of a phrase object based on the given json
+     * @param array $json_array an api single object json message
+     * @return object a term_dsp with the word or triple set based on the given json
+     */
+    function set_obj_from_json_array(array $json_array): object
+    {
+        $trm = null;
+        if (array_key_exists(combine_object_api::FLD_CLASS, $json_array)) {
+            if ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_WORD) {
+                $wrd = new word_dsp();
+                $wrd->set_from_json_array($json_array);
+                $trm = $wrd->phrase();
+            } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_TRIPLE) {
+                $trp = new triple_dsp();
+                $trp->set_from_json_array($json_array);
+                $trm = $trp->phrase();
+            } else {
+                log_err('class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected.');
+            }
+        } else {
+            $lib = new library();
+            log_err('json key ' . combine_object_api::FLD_CLASS . ' is missing in ' . $lib->dsp_array($json_array));
+        }
+        return $trm;
+    }
+
 
     /*
      * display

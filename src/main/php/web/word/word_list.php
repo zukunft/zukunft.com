@@ -35,7 +35,7 @@ include_once WEB_SANDBOX_PATH . 'list.php';
 //include_once CFG_PATH . 'phrase_type.php';
 
 use cfg\phrase_type;
-use html\formula_dsp;
+use html\formula\formula as formula_dsp;
 use html\html_base;
 use html\html_selector;
 use html\list_dsp;

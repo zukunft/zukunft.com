@@ -557,29 +557,6 @@ class test_base
     }
 
     /**
-     * check if the frontend API json can be created
-     * and if the export based recreation of the backend object result to the similar object
-     *
-     * @param object $usr_obj the object which frontend API functions should be tested
-     * @return bool true if the reloaded backend object has no relevant differences
-     */
-    function assert_api_json(object $usr_obj): bool
-    {
-        $lib = new library();
-        $original_json = json_decode(json_encode($usr_obj->export_obj(false)), true);
-        $api_obj = $usr_obj->api_obj();
-        $api_json = json_decode(json_encode($api_obj), true);
-        $db_obj = $api_obj->db_obj($usr_obj->user(), get_class($api_obj));
-        $db_obj->set_by_api_json($api_json);
-        $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
-        $result = $lib->json_is_similar($original_json, $recreated_json);
-        // TODO remove, for faster debugging only
-        $json_in_txt = json_encode($original_json);
-        $json_ex_txt = json_encode($recreated_json);
-        return $this->assert($this->name . 'API check', $result, true);
-    }
-
-    /**
      * check if the
      *
      * @param object $usr_obj the api object used a a base for the message

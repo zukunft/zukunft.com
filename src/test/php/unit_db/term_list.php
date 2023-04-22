@@ -32,8 +32,11 @@
 
 namespace test;
 
-use api\triple_api;
 use api\word_api;
+use api\triple_api;
+use api\formula_api;
+use api\verb_api;
+use model\library;
 use model\term_list;
 use model\trm_ids;
 
@@ -46,16 +49,28 @@ class term_list_unit_db_tests
         global $usr;
 
         // init
+        $lib = new library();
         $t->name = 'term list read db->';
 
         $t->header('Test the term list class (classes/term_list.php)');
 
         // test load by term list by ids
         $trm_lst = new term_list($usr);
-        $trm_lst->load_by_ids((new trm_ids([1, -1])));
+        $trm_lst->load_by_ids((new trm_ids([1, -1, 2, -2])));
         $result = $trm_lst->name();
-        $target = '"' . word_api::TN_READ . '","' . triple_api::TN_READ_NAME . '"'; // order adjusted based on the number of usage
+        $target = '"' . word_api::TN_READ . '","' .
+            triple_api::TN_READ_NAME . '","' .
+            verb_api::TN_READ . '","' .
+            formula_api::TN_READ . '"'; // order adjusted based on the number of usage
         $t->assert('load by ids for ' . $trm_lst->dsp_id(), $result, $target);
+
+        // test the api message creation of the api index file
+        // TODO add this to all db read tests for all API call functions
+        $result = json_decode(json_encode($trm_lst->api_obj()), true);
+        $class_for_file = $t->class_without_namespace(term_list::class);
+        $target = json_decode($t->api_json_expected($class_for_file), true);
+        $t->assert('api json based on id loading for ' . $trm_lst->dsp_id(), $lib->json_is_similar($target, $result), true);
+
     }
 
 }

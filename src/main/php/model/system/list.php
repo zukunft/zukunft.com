@@ -200,7 +200,9 @@ class base_list
     protected function add_obj(object $obj_to_add): bool
     {
         $result = false;
-        if (!in_array($obj_to_add->id(), $this->id_pos_lst())) {
+        $id_to_add = $obj_to_add->id();
+        $id_lst = $this->id_pos_lst();
+        if (!in_array($obj_to_add->id(), $this->ids())) {
             $this->lst[] = $obj_to_add;
             $this->set_lst_dirty();
             $result = true;

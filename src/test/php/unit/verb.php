@@ -33,7 +33,7 @@
 namespace test;
 
 use cfg\verb_list;
-use html\verb_dsp;
+use html\verb\verb as verb_dsp;
 use model\phrase;
 use model\sql_db;
 use model\verb;

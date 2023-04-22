@@ -32,6 +32,8 @@
 
 namespace model;
 
+use api\combine_object_api;
+use controller\controller;
 use DateTime;
 use Exception;
 
@@ -513,6 +515,35 @@ class library
 
     }
 
+    private static function sort_array_by_class($a, $b): int
+    {
+        return strcmp($a[combine_object_api::FLD_CLASS], $b[combine_object_api::FLD_CLASS]);
+    }
+
+    private static function sort_array_by_id($a, $b): int
+    {
+        return $a[controller::API_FLD_ID] - $b[controller::API_FLD_ID];
+    }
+
+    private static function sort_by_class_and_id(?array $a): ?array
+    {
+        if ($a != null) {
+            if (count($a) > 0) {
+                if (array_key_exists(0, $a)) {
+                    if (is_array($a[0])) {
+                        if (array_key_exists(combine_object_api::FLD_CLASS, $a[0])) {
+                            usort($a, array('model\library', 'sort_array_by_class'));
+                        }
+                        if (array_key_exists(controller::API_FLD_ID, $a[0])) {
+                            usort($a, array('model\library', 'sort_array_by_id'));
+                        }
+                    }
+                }
+            }
+        }
+        return $a;
+    }
+
     /**
      * check if the import JSON array matches the export JSON array
      * @param array|null $json_in a JSON array that is can contain empty field
@@ -521,6 +552,10 @@ class library
      */
     function json_is_similar(?array $json_in, ?array $json_ex): bool
     {
+        // sort multidimensional arrays by class and id if useful
+        $json_in = $this->sort_by_class_and_id($json_in);
+        $json_ex = $this->sort_by_class_and_id($json_ex);
+
         // this is for compare, so a null value is considered to be the same as an empty array
         if ($json_in == null) {
             $json_in = [];

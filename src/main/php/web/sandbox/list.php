@@ -83,19 +83,20 @@ class list_dsp
     function set_from_json_array(array $json_array): void
     {
         foreach ($json_array as $value) {
-            $this->set_obj_from_json_array($value);
+            $this->add_obj($this->set_obj_from_json_array($value));
         }
     }
 
     /**
      * dummy function to be overwritten by the child object
      * @param array $json_array an api single object json message
-     * @return void
+     * @return object a combine display object with data set based on the given json
      */
-    function set_obj_from_json_array(array $json_array): void
+    function set_obj_from_json_array(array $json_array): object
     {
         $lib = new library();
         log_err('Unexpect use of set_obj_from_json_array ' . $lib->dsp_array($json_array) . ' of list_dsp object');
+        return $lib;
     }
 
     /**

@@ -36,7 +36,7 @@ include_once API_SANDBOX_PATH . 'sandbox_typed.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 
-use html\formula_dsp;
+use html\formula\formula as formula_dsp;
 
 class formula_api extends sandbox_typed_api
 {

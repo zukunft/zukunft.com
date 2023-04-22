@@ -42,7 +42,7 @@ use html\word\word as word_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\sandbox_typed_dsp;
 use html\phrase\term as term_dsp;
-use html\verb_dsp;
+use html\verb\verb as verb_dsp;
 use model\phrase;
 use model\phrase_list;
 

@@ -88,6 +88,7 @@ use model\source;
 use model\sys_log_status;
 use model\system_log;
 use model\term;
+use model\term_list;
 use model\triple;
 use model\triple_list;
 use model\user;
@@ -217,6 +218,17 @@ class create_test_objects extends test_base
     function dummy_term_verb(): term
     {
         return $this->dummy_verb()->term();
+    }
+
+    function dummy_term_list(): term_list
+    {
+        global $usr;
+        $lst = new term_list($usr);
+        $lst->add($this->dummy_term());
+        $lst->add($this->dummy_term_triple());
+        $lst->add($this->dummy_term_formula());
+        $lst->add($this->dummy_term_verb());
+        return $lst;
     }
 
 

@@ -155,7 +155,7 @@ class term extends combine_named
         } elseif ($class == formula::class) {
             $result = $this->get_formula()->row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         } elseif ($class == verb::class) {
-            $result = $this->get_verb()->row_mapper($db_row);
+            $result = $this->get_verb()->row_mapper($db_row, $id_fld, $name_fld);
         } else {
             log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
         }

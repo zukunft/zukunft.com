@@ -46,8 +46,8 @@ use controller\controller;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
-use html\formula_dsp;
-use html\verb_dsp;
+use html\formula\formula as formula_dsp;
+use html\verb\verb as verb_dsp;
 use html\phrase\term as term_dsp;
 use cfg\phrase_type;
 use model\word;
@@ -217,11 +217,14 @@ class term_api extends combine_named_api implements JsonSerializable
 
     /**
      * @return array with the value vars including the private vars
+     * corresponding to the web api_array function:
+     * use the object id not the term id because the class is included
+     * maybe to reduce traffic remove the class but than the term id needs to be used
      */
     function jsonSerialize(): array
     {
         $vars = parent::jsonSerialize();
-        $vars[controller::API_FLD_ID] = $this->id();
+        $vars[controller::API_FLD_ID] = $this->obj_id();
         if ($this->is_word()) {
             $vars[combine_object_api::FLD_CLASS] = self::CLASS_WORD;
         } elseif ($this->is_triple()) {

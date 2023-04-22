@@ -44,7 +44,7 @@ use cfg\export\exp_obj;
 use cfg\export\sandbox_exp_named;
 use html\html_base;
 use html\html_selector;
-use html\verb_dsp;
+use html\verb\verb as verb_dsp;
 use verb_exp;
 
 class verb extends db_object
@@ -161,18 +161,31 @@ class verb extends db_object
      * @param array $db_row is an array with the database values
      * @return bool true if the verb is loaded and valid
      */
-    function row_mapper(array $db_row): bool
+    function row_mapper(
+        array  $db_row,
+        string $id_fld = self::FLD_ID,
+        string $name_fld = self::FLD_NAME): bool
     {
         $result = false;
         if ($db_row != null) {
-            if ($db_row[self::FLD_ID] > 0) {
-                $this->set_id($db_row[self::FLD_ID]);
-                $this->code_id = $db_row[sql_db::FLD_CODE_ID];
-                $this->set_name($db_row[self::FLD_NAME]);
-                $this->plural = $db_row[self::FLD_PLURAL];
-                $this->reverse = $db_row[self::FLD_REVERSE];
-                $this->rev_plural = $db_row[self::FLD_PLURAL_REVERSE];
-                $this->frm_name = $db_row[self::FLD_FORMULA];
+            if ($db_row[$id_fld] != 0) {
+                $this->set_id($db_row[$id_fld]);
+                if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
+                    $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+                }
+                $this->set_name($db_row[$name_fld]);
+                if (array_key_exists(self::FLD_PLURAL, $db_row)) {
+                    $this->plural = $db_row[self::FLD_PLURAL];
+                }
+                if (array_key_exists(self::FLD_REVERSE, $db_row)) {
+                    $this->reverse = $db_row[self::FLD_REVERSE];
+                }
+                if (array_key_exists(self::FLD_PLURAL_REVERSE, $db_row)) {
+                    $this->rev_plural = $db_row[self::FLD_PLURAL_REVERSE];
+                }
+                if (array_key_exists(self::FLD_FORMULA, $db_row)) {
+                    $this->frm_name = $db_row[self::FLD_FORMULA];
+                }
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
                 if ($db_row[self::FLD_WORDS] == null) {
                     $this->usage = 0;

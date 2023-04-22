@@ -32,6 +32,7 @@ use api\formula_api;
 use api\triple_api;
 use api\word_api;
 use html\html_base;
+use html\phrase\term_list as term_list_dsp;
 use model\formula;
 use model\sql_db;
 use model\term;
@@ -79,10 +80,17 @@ class term_list_unit_tests
         $t->assert_load_sql_trm_ids($db_con, $lst);
         $t->assert_load_sql_like($db_con, $lst);
 
+
         $t->subheader('API unit tests');
 
-        $trm_lst = $this->get_term_list_related($t);
+        $trm_lst = $t->dummy_term_list();
         $t->assert_api($trm_lst);
+
+
+        $t->subheader('HTML frontend unit tests');
+
+        $trm_lst = $t->dummy_term_list();
+        $t->assert_api_to_dsp($trm_lst, new term_list_dsp());
 
     }
 

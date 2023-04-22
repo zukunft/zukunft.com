@@ -172,7 +172,7 @@ class test_unit extends testing
         (new phrase_list_unit_tests)->run($this);
         (new phrase_group_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new term_unit_tests)->run($this);
-        (new term_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new term_list_unit_tests)->run($this);
         (new value_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new value_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new value_phrase_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
@@ -214,7 +214,7 @@ class test_unit extends testing
     /**
      * create the system log status list for the unit tests without database connection
      */
-    function init_sys_log_status()
+    function init_sys_log_status(): void
     {
         global $sys_log_stati;
 
@@ -226,7 +226,7 @@ class test_unit extends testing
     /**
      * create the system user list for the unit tests without database connection
      */
-    function init_sys_users()
+    function init_sys_users(): void
     {
         global $system_users;
 
@@ -238,7 +238,7 @@ class test_unit extends testing
     /**
      * create the user profiles for the unit tests without database connection
      */
-    function init_user_profiles()
+    function init_user_profiles(): void
     {
         global $user_profiles;
 
@@ -250,7 +250,7 @@ class test_unit extends testing
     /**
      * create word type array for the unit tests without database connection
      */
-    function init_word_types()
+    function init_word_types(): void
     {
         global $phrase_types;
 
@@ -262,7 +262,7 @@ class test_unit extends testing
     /**
      * create verb array for the unit tests without database connection
      */
-    function init_verbs()
+    function init_verbs(): void
     {
         global $verbs;
 
@@ -274,7 +274,7 @@ class test_unit extends testing
     /**
      * create formula type array for the unit tests without database connection
      */
-    function init_formula_types()
+    function init_formula_types(): void
     {
         global $formula_types;
 
@@ -286,7 +286,7 @@ class test_unit extends testing
     /**
      * create formula link type array for the unit tests without database connection
      */
-    function init_formula_link_types()
+    function init_formula_link_types(): void
     {
         global $formula_link_types;
 
@@ -298,7 +298,7 @@ class test_unit extends testing
     /**
      * create formula element type array for the unit tests without database connection
      */
-    function init_formula_element_types()
+    function init_formula_element_types(): void
     {
         global $formula_element_types;
 
@@ -310,7 +310,7 @@ class test_unit extends testing
     /**
      * create an array of the system views for the unit tests without database connection
      */
-    function init_views(user $usr)
+    function init_views(user $usr): void
     {
         global $system_views;
 
@@ -322,7 +322,7 @@ class test_unit extends testing
     /**
      * create view type array for the unit tests without database connection
      */
-    function init_view_types()
+    function init_view_types(): void
     {
         global $view_types;
 
@@ -334,7 +334,7 @@ class test_unit extends testing
     /**
      * create view component type array for the unit tests without database connection
      */
-    function init_view_component_types()
+    function init_view_component_types(): void
     {
         global $view_component_types;
 
@@ -346,7 +346,7 @@ class test_unit extends testing
     /**
      * create view component position type array for the unit tests without database connection
      */
-    function init_view_component_pos_types()
+    function init_view_component_pos_types(): void
     {
         global $view_component_position_types;
 
@@ -358,7 +358,7 @@ class test_unit extends testing
     /**
      * create view component link type array for the unit tests without database connection
      */
-    function init_view_component_link_types()
+    function init_view_component_link_types(): void
     {
         global $view_component_link_types;
 
@@ -370,7 +370,7 @@ class test_unit extends testing
     /**
      * create ref type array for the unit tests without database connection
      */
-    function init_ref_types()
+    function init_ref_types(): void
     {
         global $ref_types;
 
@@ -382,7 +382,7 @@ class test_unit extends testing
     /**
      * create source type array for the unit tests without database connection
      */
-    function init_source_types()
+    function init_source_types(): void
     {
         global $source_types;
 
@@ -394,7 +394,7 @@ class test_unit extends testing
     /**
      * create share type array for the unit tests without database connection
      */
-    function init_share_types()
+    function init_share_types(): void
     {
         global $share_types;
 
@@ -406,7 +406,7 @@ class test_unit extends testing
     /**
      * create protection type array for the unit tests without database connection
      */
-    function init_protection_types()
+    function init_protection_types(): void
     {
         global $protection_types;
 
@@ -418,7 +418,7 @@ class test_unit extends testing
     /**
      * create languages array for the unit tests without database connection
      */
-    function init_languages()
+    function init_languages(): void
     {
         global $languages;
 
@@ -430,7 +430,7 @@ class test_unit extends testing
     /**
      * create language forms array for the unit tests without database connection
      */
-    function init_language_forms()
+    function init_language_forms(): void
     {
         global $language_forms;
 
@@ -442,7 +442,7 @@ class test_unit extends testing
     /**
      * create the job types array for the unit tests without database connection
      */
-    function init_job_types()
+    function init_job_types(): void
     {
         global $job_types;
 
@@ -453,7 +453,7 @@ class test_unit extends testing
     /**
      * create log table array for the unit tests without database connection
      */
-    function init_log_actions()
+    function init_log_actions(): void
     {
         global $change_log_actions;
 
@@ -465,7 +465,7 @@ class test_unit extends testing
     /**
      * create log table array for the unit tests without database connection
      */
-    function init_log_tables()
+    function init_log_tables(): void
     {
         global $change_log_tables;
 
@@ -477,7 +477,7 @@ class test_unit extends testing
     /**
      * create log field array for the unit tests without database connection
      */
-    function init_log_fields()
+    function init_log_fields(): void
     {
         global $change_log_fields;
 
