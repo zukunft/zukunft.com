@@ -36,6 +36,7 @@ namespace html\formula;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
+use controller\controller;
 use html\api;
 use html\html_base;
 use html\phrase\term as term_dsp;
@@ -67,6 +68,40 @@ class formula extends sandbox_typed_dsp
      * set and get
      */
 
+    /**
+     * set the vars of this named sandbox object html display object bases on the api message
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
+    function set_from_json(string $json_api_msg): void
+    {
+        $this->set_from_json_array(json_decode($json_api_msg, true));
+    }
+
+    /**
+     * dummy function to be overwritten by the child object
+     * @param array $json_array an api single object json message
+     * @return void
+     */
+    function set_obj_from_json_array(array $json_array): void
+    {
+        $wrd = new formula();
+        $wrd->set_from_json_array($json_array);
+    }
+
+    /**
+     * set the vars of this object bases on the api json array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        parent::set_from_json_array($json_array);
+        if (array_key_exists(controller::API_FLD_USER_TEXT, $json_array)) {
+            $this->set_usr_text($json_array[controller::API_FLD_USER_TEXT]);
+        }
+    }
     function set_usr_text(string $usr_text): void
     {
         $this->usr_text = $usr_text;
@@ -75,6 +110,23 @@ class formula extends sandbox_typed_dsp
     function usr_text(): string
     {
         return $this->usr_text;
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+
+        $vars[controller::API_FLD_USER_TEXT] = $this->usr_text();
+        return array_filter($vars, fn($value) => !is_null($value));
     }
 
 

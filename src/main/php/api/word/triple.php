@@ -232,26 +232,4 @@ class triple_api extends sandbox_typed_api
         return $result;
     }
 
-
-    /*
-     * interface
-     */
-
-    /**
-     * @return string the json api message as a text string
-     */
-    function get_json(): string
-    {
-        return json_encode($this->jsonSerialize());
-    }
-
-    /**
-     * an array of the triple vars
-     */
-    function jsonSerialize(): array
-    {
-        $vars = json_decode(json_encode($this), true);
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-    }
-
 }

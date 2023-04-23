@@ -16,6 +16,7 @@
     "id": 1,
     "name": "scale minute to sec",
     "type_id": 1,
+    "user_text": "\"second\" = \"minute\" * 60",
     "class": "formula"
   },
   {

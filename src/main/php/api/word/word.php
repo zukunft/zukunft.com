@@ -35,6 +35,7 @@ namespace api;
 use cfg\phrase_type;
 use html\phrase\term as term_dsp;
 use html\word\word as word_dsp;
+use JsonSerializable;
 use model\word;
 
 class word_api extends sandbox_typed_api
@@ -312,29 +313,6 @@ class word_api extends sandbox_typed_api
             $wrd_dsp->set_parent($this->parent->dsp_obj());
         }
         return $wrd_dsp;
-    }
-
-
-    /*
-     * interface
-     */
-
-    /**
-     * @return string the json api message as a text string
-     */
-    function get_json(): string
-    {
-        return json_encode($this->jsonSerialize());
-    }
-
-    /**
-     * an array of the word vars without empty values that are not needed
-     * TODO check how to remove a description via API
-     */
-    function jsonSerialize(): array
-    {
-        $vars = json_decode(json_encode($this), true);
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 }

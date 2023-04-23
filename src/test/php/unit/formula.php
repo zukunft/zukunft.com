@@ -44,6 +44,7 @@ use model\phrase_list;
 use model\sql_db;
 use model\term_list;
 use model\word;
+use html\formula\formula as formula_dsp;
 
 class formula_unit_tests
 {
@@ -98,17 +99,16 @@ class formula_unit_tests
         $t->assert_qp($qp, sql_db::MYSQL);
 
 
-        $t->subheader('Convert tests');
-
-        // casting API
-        $frm = new formula($usr);
-        $frm->set(1, formula_api::TN_READ, formula_type::CALC);
-        $t->assert_api($frm);
-
-
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new formula($usr), $json_file);
+
+
+        $t->subheader('API and HTML frontend unit tests');
+
+        $frm = $t->dummy_formula();
+        $t->assert_api($frm);
+        $t->assert_api_to_dsp($frm, new formula_dsp());
 
 
         $t->subheader('Expression tests');

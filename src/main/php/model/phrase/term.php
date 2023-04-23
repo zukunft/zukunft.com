@@ -60,6 +60,7 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 
 use api\term_api;
+use api\word_api;
 use cfg\phrase_type;
 use html\html_base;
 use html\phrase\term as term_dsp;
@@ -85,8 +86,13 @@ class term extends combine_named
         self::FLD_TYPE
     );
     // list of the user specific database field names
+    // some fields like the formula expression are only used for one term class e.g. formula
+    // this is done because the total number of terms is expected to be less than 10 million
+    // which database should be able to handle and only a few hundred are expected to be sent to via api at once
     const FLD_NAMES_USR = array(
-        sql_db::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION,
+        formula::FLD_FORMULA_TEXT,
+        formula::FLD_FORMULA_USER_TEXT
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
@@ -433,7 +439,7 @@ class term extends combine_named
             return $this->get_verb()->api_obj()->term();
         } else {
             log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
-            return (new term_api());
+            return (new term_api(new word_api()));
         }
     }
 

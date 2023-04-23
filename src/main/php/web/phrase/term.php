@@ -169,6 +169,9 @@ class term extends combine_named_dsp
         if (!$this->is_verb()) {
             $vars[controller::API_FLD_TYPE_ID] = $this->type_id();
         }
+        if ($this->is_formula()) {
+            $vars[controller::API_FLD_USER_TEXT] = $this->obj()->usr_text();
+        }
         return $vars;
     }
 

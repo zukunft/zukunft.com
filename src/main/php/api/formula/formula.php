@@ -109,7 +109,7 @@ class formula_api extends sandbox_typed_api
      */
 
     // the formula expression as shown to the user
-    private string $usr_text;
+    private string $user_text;
 
 
     /*
@@ -119,21 +119,21 @@ class formula_api extends sandbox_typed_api
     function __construct(int $id = 0, string $name = '')
     {
         parent::__construct($id, $name);
-        $this->usr_text = '';
+        $this->user_text = '';
     }
 
     /*
      * set and get
      */
 
-    function set_usr_text(string $usr_text)
+    function set_usr_text(string $usr_text): void
     {
-        $this->usr_text = $usr_text;
+        $this->user_text = $usr_text;
     }
 
     function usr_text(): string
     {
-        return $this->usr_text;
+        return $this->user_text;
     }
 
 
@@ -162,19 +162,11 @@ class formula_api extends sandbox_typed_api
      */
 
     /**
-     * @return string the json api message as a text string
-     */
-    function get_json(): string
-    {
-        return json_encode($this->jsonSerialize());
-    }
-
-    /**
-     * an array of the formula vars without empty values that are not needed
+     * @return array with the formula vars without empty values that are not needed
      */
     function jsonSerialize(): array
     {
-        $vars = json_decode(json_encode($this), true);
+        $vars = get_object_vars($this);
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

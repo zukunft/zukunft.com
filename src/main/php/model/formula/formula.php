@@ -82,7 +82,7 @@ class formula extends sandbox_typed
     const FLD_TYPE = 'formula_type_id';
     const FLD_FORMULA_TEXT = 'formula_text';       // the internal formula expression with the database references
     const FLD_FORMULA_USER_TEXT = 'resolved_text'; // the formula expression as shown to the user which can include formatting for better readability
-    //const FLD_REF_TEXT = "ref_text";               // the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
+    //const FLD_REF_TEXT = "ref_text";             // the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
     const FLD_FORMULA_TYPE = 'formula_type_id';    // the id of the formula type
     const FLD_ALL_NEEDED = 'all_values_needed';    // the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"
     const FLD_LAST_UPDATE = 'last_update';

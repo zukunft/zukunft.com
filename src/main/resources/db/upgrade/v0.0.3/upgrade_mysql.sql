@@ -105,7 +105,9 @@ select ((`words`.`word_id` * 2) - 1) AS `term_id`,
        `words`.`word_type_id`      AS `term_type_id`,
        `words`.`excluded`          AS `excluded`,
        `words`.`share_type_id`     AS `share_type_id`,
-       `words`.`protect_id`        AS `protect_id`
+       `words`.`protect_id`        AS `protect_id`,
+       ''                          AS `formula_text`,
+       ''                          AS `resolved_text`
 from `words`
 where `words`.`word_type_id` <> 10 OR `words`.`word_type_id` is null
 union
@@ -117,7 +119,9 @@ select ((`triples`.`triple_id` * -2) + 1) AS `term_id`,
        `triples`.`word_type_id`            AS `term_type_id`,
        `triples`.`excluded`                AS `excluded`,
        `triples`.`share_type_id`           AS `share_type_id`,
-       `triples`.`protect_id`              AS `protect_id`
+       `triples`.`protect_id`              AS `protect_id`,
+       ''                                  AS `formula_text`,
+       ''                                  AS `resolved_text`
 from `triples`
 union
 select (`formulas`.`formula_id` * 2) AS `term_id`,
@@ -128,7 +132,9 @@ select (`formulas`.`formula_id` * 2) AS `term_id`,
        `formulas`.`formula_type_id` AS `term_type_id`,
        `formulas`.`excluded`        AS `excluded`,
        `formulas`.`share_type_id`   AS `share_type_id`,
-       `formulas`.`protect_id`      AS `protect_id`
+       `formulas`.`protect_id`      AS `protect_id`,
+       `formulas`.`formula_text`    AS `formula_text`,
+       `formulas`.`resolved_text`   AS `resolved_text`
 from `formulas`
 union
 select (`verbs`.`verb_id` * -2) AS `term_id`,
@@ -139,7 +145,9 @@ select (`verbs`.`verb_id` * -2) AS `term_id`,
        NULL                    AS `term_type_id`,
        NULL                    AS `excluded`,
        1                       AS `share_type_id`,
-       3                       AS `protect_id`
+       3                       AS `protect_id`,
+       ''                      AS `formula_text`,
+       ''                      AS `resolved_text`
 from `verbs`
 ;
 
@@ -157,7 +165,9 @@ select ((`user_words`.`word_id` * 2) - 1) AS `term_id`,
        `user_words`.`values`              AS `usage`,
        `user_words`.`excluded`            AS `excluded`,
        `user_words`.`share_type_id`       AS `share_type_id`,
-       `user_words`.`protect_id`          AS `protect_id`
+       `user_words`.`protect_id`          AS `protect_id`,
+       ''                                 AS `formula_text`,
+       ''                                 AS `resolved_text`
 from `user_words`
 where `user_words`.`word_type_id` <> 10
 union
@@ -168,7 +178,9 @@ select ((`user_triples`.`triple_id` * -2) + 1) AS `term_id`,
        `user_triples`.`values`                    AS `usage`,
        `user_triples`.`excluded`                  AS `excluded`,
        `user_triples`.`share_type_id`             AS `share_type_id`,
-       `user_triples`.`protect_id`                AS `protect_id`
+       `user_triples`.`protect_id`                AS `protect_id`,
+       ''                                         AS `formula_text`,
+       ''                                         AS `resolved_text`
 from `user_triples`
 union
 select (`user_formulas`.`formula_id` * 2) AS `term_id`,
@@ -178,7 +190,9 @@ select (`user_formulas`.`formula_id` * 2) AS `term_id`,
        `user_formulas`.`usage`            AS `usage`,
        `user_formulas`.`excluded`         AS `excluded`,
        `user_formulas`.`share_type_id`    AS `share_type_id`,
-       `user_formulas`.`protect_id`       AS `protect_id`
+       `user_formulas`.`protect_id`       AS `protect_id`,
+       `user_formulas`.`formula_text`     AS `formula_text`,
+       `user_formulas`.`resolved_text`    AS `resolved_text`
 from `user_formulas`
 union
 select (`verbs`.`verb_id` * -2) AS `term_id`,
@@ -188,7 +202,9 @@ select (`verbs`.`verb_id` * -2) AS `term_id`,
        `verbs`.`words`          AS `usage`,
        NULL                     AS `excluded`,
        1                        AS `share_type_id`,
-       3                        AS `protect_id`
+       3                        AS `protect_id`,
+       ''                       AS `formula_text`,
+       ''                       AS `resolved_text`
 from `verbs`
 ;
 

@@ -270,6 +270,7 @@ class create_test_objects extends test_base
         global $usr;
         $frm = new formula($usr);
         $frm->set(1, formula_api::TN_READ);
+        $frm->set_user_text(formula_api::TF_READ);
         $frm->set_type(formula_type::CALC);
         return $frm;
     }

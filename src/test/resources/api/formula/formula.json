@@ -2,5 +2,6 @@
   "id": 1,
   "name": "scale minute to sec",
   "description": "",
+  "user_text": "\"second\" = \"minute\" * 60",
   "type_id": 1
 }
