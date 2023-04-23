@@ -31,52 +31,31 @@
 
 namespace model;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once API_RESULT_PATH . 'result_list.php';
+
+use api\result_list_api;
+use Exception;
 use html\back_trace;
+use html\formula_dsp_old;
 use html\html_base;
 use html\word\word as word_dsp;
 
-class result_list
+class result_list extends sandbox_list
 {
 
     /*
-     * object vars
-     */
-
-    public array $lst;   // list of the formula results
-    public user $usr;    // the person who wants to see the results
-
-    /*
-     * construct and map
-     */
-
-    function __construct(user $usr)
-    {
-        $this->lst = array();
-        $this->set_user($usr);
-    }
-
-
-    /*
-     * set and get
+     * cast
      */
 
     /**
-     * set the user of the value list
-     *
-     * @param user|null $usr the person who wants to access the values
-     * @return void
+     * @return result_list_api frontend API object filled with the relevant data of this object
      */
-    function set_user(?user $usr): void
+    function api_obj(): result_list_api
     {
-        $this->usr = $usr;
-    }
-
-    /**
-     * @return user|null the person who wants to see the values
-     */
-    function user(): ?user
-    {
-        return $this->usr;
+        $api_obj = new result_list_api();
+        $api_obj->set_lst($this->api_lst());
+        return $api_obj;
     }
 
     /*
@@ -210,7 +189,7 @@ class result_list
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $res = new result($this->usr);
+                    $res = new result($this->user());
                     $res->row_mapper($db_row);
                     $this->lst[] = $res;
                     $result = true;
@@ -243,7 +222,7 @@ class result_list
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $res = new result($this->usr);
+                    $res = new result($this->user());
                     $res->row_mapper($db_row);
                     $this->lst[] = $res;
                     $result = true;
@@ -396,9 +375,9 @@ class result_list
 
                 // check user consistency (can be switched off once the program ist stable)
                 if (!isset($res->usr)) {
-                    log_err('The user of a formula result list element differs from the list user.', 'res_lst->names', 'The user of "' . $res->name() . '" is missing, but the list user is "' . $this->user()->name . '".', (new Exception)->getTraceAsString(), $this->usr);
-                } elseif ($res->usr <> $this->usr) {
-                    log_err('The user of a formula result list element differs from the list user.', 'res_lst->names', 'The user "' . $res->usr->name . '" of "' . $res->name() . '" does not match the list user "' . $this->user()->name . '".', (new Exception)->getTraceAsString(), $this->usr);
+                    log_err('The user of a formula result list element differs from the list user.', 'res_lst->names', 'The user of "' . $res->name() . '" is missing, but the list user is "' . $this->user()->name . '".', (new Exception)->getTraceAsString(), $this->user());
+                } elseif ($res->usr <> $this->user()) {
+                    log_err('The user of a formula result list element differs from the list user.', 'res_lst->names', 'The user "' . $res->usr->name . '" of "' . $res->name() . '" does not match the list user "' . $this->user()->name . '".', (new Exception)->getTraceAsString(), $this->user());
                 }
             }
         }
@@ -755,7 +734,7 @@ class result_list
         // this is a kind of word group list, where for each word group list several results are possible,
         // because there may be one value and several results for the same word group
         log_debug('get all values used in the formula ' . $frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->dsp_name());
-        $phr_grp_lst_val = new phrase_group_list($this->usr); // by default the calling user is used, but if needed the value for other users also needs to be updated
+        $phr_grp_lst_val = new phrase_group_list($this->user()); // by default the calling user is used, but if needed the value for other users also needs to be updated
         $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
         $phr_grp_lst_val->get_by_res_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
         $phr_grp_lst_val->get_by_val_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_res); // for predefined formulas ...
@@ -789,7 +768,7 @@ class result_list
 
     function get_first(): result
     {
-        $result = new result($this->usr);
+        $result = new result($this->user());
         if (count($this->lst) > 0) {
             $result = $this->lst[0];
         }
@@ -831,7 +810,7 @@ class result_list
                 $frm_id = $db_res[formula::FLD_ID];
                 $formula_text = $db_res[formula::FLD_FORMULA_TEXT];
                 $phr_lst_used = clone $phr_lst;
-                $frm = new formula($this->usr);
+                $frm = new formula($this->user());
                 $frm->load_by_id($frm_id);
                 $back = '';
                 $res_list = $frm->to_num($phr_lst_used);

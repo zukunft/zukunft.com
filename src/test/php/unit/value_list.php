@@ -54,7 +54,7 @@ class value_list_unit_tests
     public value_list $lst;
     public sql_db $db_con;
 
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;

@@ -167,8 +167,8 @@ function run_formula_test(testing $t): void
 
     $frm = $t->load_formula(formula_api::TN_ADD);
     $res_lst = $frm->to_num($phr_lst);
-    if ($res_lst->lst != null) {
-        $res = $res_lst->lst[0];
+    if ($res_lst->lst() != null) {
+        $res = $res_lst->lst()[0];
         $result = $res->num_text;
     } else {
         $res = null;
@@ -177,7 +177,7 @@ function run_formula_test(testing $t): void
     $target = '=(8.505251-8.438822)/8.438822';
     $t->dsp('formula->to_num "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
 
-    if ($res_lst->lst != null) {
+    if ($res_lst->lst() != null) {
         $res->save_if_updated();
         $result = $res->value;
         $target = result_api::TV_INCREASE_LONG;

@@ -30,7 +30,9 @@
 
 */
 
-namespace controller\result;
+namespace api;
+
+include_once API_SANDBOX_PATH . 'list_value.php';
 
 use api\list_value_api;
 use html\result\result_list as result_list_dsp;

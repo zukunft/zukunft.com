@@ -989,15 +989,15 @@ class formula extends sandbox_typed
             if ($fig_lst->lst() != null) {
                 if (count($fig_lst->lst()) == 1) {
                     // if no figure is found use the master result as placeholder
-                    if ($res_lst->lst != null) {
-                        if (count($res_lst->lst) == 0) {
-                            $res_lst->lst[] = $res_init;
+                    if ($res_lst->lst() != null) {
+                        if (count($res_lst->lst()) == 0) {
+                            $res_lst->add_obj($res_init);
                         }
                     } else {
-                        $res_lst->lst[] = $res_init;
+                        $res_lst->add_obj($res_init);
                     }
                     // fill each results created by any previous number filling
-                    foreach ($res_lst->lst as $res) {
+                    foreach ($res_lst->lst() as $res) {
                         // fill each results created by any previous number filling
                         if ($res->val_missing == False) {
                             if ($fig_lst->fig_missing and $this->need_all_val) {
@@ -1015,11 +1015,11 @@ class formula extends sandbox_typed
                     }
                 } elseif (count($fig_lst->lst()) > 1) {
                     // create the formula result object only if at least one figure if found
-                    if (count($res_lst->lst) == 0) {
-                        $res_lst->lst[] = $res_init;
+                    if (count($res_lst->lst()) == 0) {
+                        $res_lst->add_obj($res_init);
                     }
                     // if there is more than one number to fill replicate each previous result, so in fact it multiplies the number of results
-                    foreach ($res_lst->lst as $res) {
+                    foreach ($res_lst->lst() as $res) {
                         $res_master = clone $res;
                         $fig_nbr = 1;
                         foreach ($fig_lst->lst() as $fig) {
@@ -1044,7 +1044,7 @@ class formula extends sandbox_typed
                                                     $res_std->last_val_update = $fig->last_update();
                                                 }
                                                 log_debug('one figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $res->num_text . '"');
-                                                $res_lst->lst[] = $res_std;
+                                                $res_lst->add_obj($res_std);
                                                 // ... and split into a user specific part
                                                 $res->is_std = false;
                                             }
@@ -1069,7 +1069,7 @@ class formula extends sandbox_typed
                                                     $res_std->last_val_update = $fig->last_update();
                                                 }
                                                 log_debug('one figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $res->num_text . '"');
-                                                $res_lst->lst[] = $res_std;
+                                                $res_lst->add_obj($res_std);
                                                 // ... and split into a user specific part
                                                 $res_master->is_std = false;
                                             }
@@ -1082,7 +1082,7 @@ class formula extends sandbox_typed
                                             $res->last_val_update = $fig->last_update();
                                         }
                                         log_debug('one figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $res->num_text . '"');
-                                        $res_lst->lst[] = $res_new;
+                                        $res_lst->add_obj($res_new);
                                     }
                                     log_debug('figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $res->num_text . '"');
                                     $fig_nbr++;
@@ -1105,7 +1105,7 @@ class formula extends sandbox_typed
                 log_debug('for ' . $phr_lst->dsp_id() . ' all value are filled');
             } else {
                 log_debug('some needed values missing for ' . $phr_lst->dsp_id());
-                foreach ($res_lst->lst as $res) {
+                foreach ($res_lst->lst() as $res) {
                     log_debug('some needed values missing for ' . $res->dsp_id() . ' so switch off');
                     $res->val_missing = True;
                 }
@@ -1114,8 +1114,8 @@ class formula extends sandbox_typed
 
         // calculate the final numeric results
         $lib = new library();
-        if ($res_lst->lst != null) {
-            foreach ($res_lst->lst as $res) {
+        if ($res_lst->lst() != null) {
+            foreach ($res_lst->lst() as $res) {
                 // at least the formula update should be used
                 if ($res->last_val_update < $this->last_update) {
                     $res->last_val_update = $this->last_update;
@@ -1235,12 +1235,12 @@ class formula extends sandbox_typed
             // $res_lst is a list of all results saved in the database
             $res_lst = $this->to_num($phr_lst);
             if (isset($res_add_phr_lst)) {
-                log_debug($lib->dsp_count($res_lst->lst) . ' formula results to save');
+                log_debug($lib->dsp_count($res_lst->lst()) . ' formula results to save');
             }
 
             // save the numeric results
-            if ($res_lst->lst != null) {
-                foreach ($res_lst->lst as $res) {
+            if ($res_lst->lst() != null) {
+                foreach ($res_lst->lst() as $res) {
                     if ($res->val_missing) {
                         // check if res needs to be removed from the database
                         log_debug('some values missing for ' . $res->dsp_id());
@@ -1313,7 +1313,7 @@ class formula extends sandbox_typed
             }
 
 
-            $result = $res_lst->lst;
+            $result = $res_lst->lst();
         }
 
         log_debug('done');

@@ -71,8 +71,6 @@ class value_list extends sandbox_list
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->lst = array();
-        $this->set_user($usr);
     }
 
 
@@ -88,19 +86,6 @@ class value_list extends sandbox_list
         $api_obj = new value_list_api();
         $api_obj->set_lst($this->api_lst());
         return $api_obj;
-    }
-
-    /**
-     * @return array with the API object of the values
-     */
-    function api_lst(): array
-    {
-        $api_lst = array();
-        foreach ($this->lst as $val) {
-            $api_lst[] = $val->api_obj();
-        }
-
-        return $api_lst;
     }
 
 

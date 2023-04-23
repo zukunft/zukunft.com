@@ -73,6 +73,19 @@ class base_list
      * set and get
      */
 
+    /**
+     * @return array with the API object of the values
+     */
+    function api_lst(): array
+    {
+        $api_lst = array();
+        foreach ($this->lst as $val) {
+            $api_lst[] = $val->api_obj();
+        }
+
+        return $api_lst;
+    }
+
     function set_offset(int $offset): void
     {
         $this->offset = $offset;

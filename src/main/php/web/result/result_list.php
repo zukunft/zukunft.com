@@ -44,6 +44,26 @@ include_once WEB_SANDBOX_PATH . 'list_value.php';
 class result_list extends list_value_dsp
 {
 
+    /*
+     * set and get
+     */
+
+    /**
+     * set the vars of a result object based on the given json
+     * @param array $json_array an api single object json message
+     * @return object a result set based on the given json
+     */
+    function set_obj_from_json_array(array $json_array): object
+    {
+        $wrd = new result_dsp();
+        $wrd->set_from_json_array($json_array);
+        return $wrd;
+    }
+
+
+    /*
+     * modify
+     */
 
     /**
      * add a formula result to the list

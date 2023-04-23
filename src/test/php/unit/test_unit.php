@@ -180,7 +180,7 @@ class test_unit extends testing
         (new formula_list_unit_tests)->run($this);
         (new formula_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new result_unit_tests)->run($this);
-        (new result_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new result_list_unit_tests)->run($this);
         (new figure_unit_tests)->run($this); // TODO complete assert_api_to_dsp with all cases
         (new formula_element_unit_tests)->run($this);
         (new expression_unit_tests)->run($this);

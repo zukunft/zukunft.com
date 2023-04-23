@@ -383,8 +383,8 @@ class batch_job extends db_object
             $res_lst = $this->obj->res_lst_depending();
             if ($res_lst != null) {
                 log_debug('got ' . $res_lst->dsp_id());
-                if ($res_lst->lst != null) {
-                    foreach ($res_lst->lst as $res) {
+                if ($res_lst->lst() != null) {
+                    foreach ($res_lst->lst() as $res) {
                         log_debug('update ' . get_class($res) . ' ' . $res->dsp_id());
                         $res->update();
                         log_debug('update ' . get_class($res) . ' ' . $res->dsp_id() . ' done');

@@ -84,6 +84,7 @@ use model\phrase_group;
 use model\phrase_list;
 use model\ref;
 use model\result;
+use model\result_list;
 use model\source;
 use model\sys_log_status;
 use model\system_log;
@@ -247,24 +248,6 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    /**
-     * @return figure with all vars set for unit testing - user value case
-     */
-    function dummy_figure_value(): figure
-    {
-        $val = $this->dummy_value();
-        return $val->figure();
-    }
-
-    /**
-     * @return figure with all vars set for unit testing - user value case
-     */
-    function dummy_figure_result(): figure
-    {
-        $res = $this->dummy_result();
-        return $res->figure();
-    }
-
     function dummy_formula(): formula
     {
         global $usr;
@@ -306,6 +289,33 @@ class create_test_objects extends test_base
         $res->phr_lst = $phr_lst;
         $res->value = 0.01234;
         return $res;
+    }
+
+    function dummy_result_list(): result_list
+    {
+        global $usr;
+        $lst = new result_list($usr);
+        $lst->add($this->dummy_result());
+        $lst->add($this->dummy_result_pct());
+        return $lst;
+    }
+
+    /**
+     * @return figure with all vars set for unit testing - user value case
+     */
+    function dummy_figure_value(): figure
+    {
+        $val = $this->dummy_value();
+        return $val->figure();
+    }
+
+    /**
+     * @return figure with all vars set for unit testing - user value case
+     */
+    function dummy_figure_result(): figure
+    {
+        $res = $this->dummy_result();
+        return $res->figure();
     }
 
     function dummy_source(): source

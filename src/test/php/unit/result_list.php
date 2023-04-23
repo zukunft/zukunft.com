@@ -38,6 +38,7 @@ use model\result_list;
 use model\sql_db;
 use model\triple;
 use model\word;
+use html\result\result_list as result_list_dsp;
 
 class result_list_unit_tests
 {
@@ -93,6 +94,12 @@ class result_list_unit_tests
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new result_list($usr), $json_file);
+
+
+        $t->subheader('HTML frontend unit tests');
+
+        $trp_lst = $t->dummy_result_list();
+        $t->assert_api_to_dsp($trp_lst, new result_list_dsp());
 
     }
 
