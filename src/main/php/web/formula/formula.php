@@ -69,7 +69,9 @@ class formula extends sandbox_typed_dsp
      */
 
     /**
-     * set the vars of this named sandbox object html display object bases on the api message
+     * repeat here the sandbox object function to force to include all formula object fields
+     * TODO check if the parent function can be used
+     *
      * @param string $json_api_msg an api json message as a string
      * @return void
      */
@@ -79,7 +81,7 @@ class formula extends sandbox_typed_dsp
     }
 
     /**
-     * dummy function to be overwritten by the child object
+     * repeat here the sandbox object function to force to include all formula object fields
      * @param array $json_array an api single object json message
      * @return void
      */
@@ -90,7 +92,7 @@ class formula extends sandbox_typed_dsp
     }
 
     /**
-     * set the vars of this object bases on the api json array
+     * set the vars this formula bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
      * @return void
@@ -102,6 +104,7 @@ class formula extends sandbox_typed_dsp
             $this->set_usr_text($json_array[controller::API_FLD_USER_TEXT]);
         }
     }
+
     function set_usr_text(string $usr_text): void
     {
         $this->usr_text = $usr_text;

@@ -31,9 +31,9 @@
 */
 
 use api\formula_api;
+use api\result_api;
 use api\word_api;
 use cfg\formula_type;
-use controller\result\result_api;
 use model\change_log_field;
 use model\change_log_named;
 use model\change_log_table;

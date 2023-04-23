@@ -33,7 +33,7 @@
 namespace controller\result;
 
 use api\list_value_api;
-use result\result_list_dsp;
+use html\result\result_list as result_list_dsp;
 
 class result_list_api extends list_value_api
 {

@@ -34,8 +34,9 @@ namespace test;
 
 include_once API_RESULT_PATH . 'result.php';
 
+use api\result_api;
 use api\word_api;
-use controller\result\result_api;
+use html\result\result as result_dsp;
 use model\phrase_list;
 use model\result;
 use model\sql_db;
@@ -117,6 +118,12 @@ class result_unit_tests
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new result($usr), $json_file);
+
+
+        $t->subheader('HTML frontend unit tests');
+
+        $val = $t->dummy_result();
+        $t->assert_api_to_dsp($val, new result_dsp());
 
     }
 

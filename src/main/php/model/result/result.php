@@ -45,9 +45,9 @@ namespace model;
 
 include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 
+use api\result_api;
 use cfg\export\exp_obj;
 use cfg\export\result_exp;
-use controller\result\result_api;
 use DateTime;
 use html\html_base;
 use im_export\export;

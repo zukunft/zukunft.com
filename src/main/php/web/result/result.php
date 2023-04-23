@@ -32,15 +32,65 @@
 
 */
 
-namespace result;
+namespace html\result;
 
+use controller\controller;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox_value_dsp;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 
-class result_dsp extends sandbox_value_dsp
+class result extends sandbox_value_dsp
 {
+
+    /*
+     * set and get
+     */
+
+    /**
+     * repeat here the sandbox object function to force to include all result object fields
+     * TODO check if the parent function can be used
+     *
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
+    function set_from_json(string $json_api_msg): void
+    {
+        $this->set_from_json_array(json_decode($json_api_msg, true));
+    }
+
+    /**
+     * repeat here the sandbox object function to force to include all result object fields
+     * @param array $json_array an api single object json message
+     * @return void
+     */
+    function set_obj_from_json_array(array $json_array): void
+    {
+        $wrd = new result();
+        $wrd->set_from_json_array($json_array);
+    }
+
+    /**
+     * set the vars of this result bases on the api json array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        parent::set_from_json_array($json_array);
+        /* TODO add all result fields that are not part of the sandbox value object
+        if (array_key_exists(controller::API_FLD_USER_TEXT, $json_array)) {
+            $this->set_usr_text($json_array[controller::API_FLD_USER_TEXT]);
+        }
+        */
+    }
+
+
+    /*
+     * display
+     */
+
     /**
      * @param phrase_list_dsp|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
      * @returns string the html code to display the phrase group with reference links
@@ -50,19 +100,20 @@ class result_dsp extends sandbox_value_dsp
         return $this->grp()->name_linked($phr_lst_header);
     }
 
-
     /*
-     * set and get
+     * interface
      */
 
     /**
-     * set the vars of this object bases on the api json string
-     * @param string $json_api_msg an api json message as a string
-     * @return void
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
      */
-    function set_from_json(string $json_api_msg): void
+    function api_array(): array
     {
-        $this->set_from_json_array(json_decode($json_api_msg));
+        $vars = parent::api_array();
+        $vars[controller::API_FLD_PHRASES] = $this->grp()->phr_lst()->api_array();
+        $vars[controller::API_FLD_NUMBER] = $this->number();
+        return $vars;
     }
 
 }

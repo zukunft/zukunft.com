@@ -32,15 +32,16 @@
 
 */
 
-namespace result;
+namespace html\result;
 
 use html\html_base;
 use html\list_value_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
+use html\result\result as result_dsp;
 
 include_once WEB_SANDBOX_PATH . 'list_value.php';
 
-class result_list_dsp extends list_value_dsp
+class result_list extends list_value_dsp
 {
 
 

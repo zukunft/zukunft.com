@@ -30,7 +30,7 @@
 
 */
 
-namespace controller\result;
+namespace api;
 
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 include_once API_PATH . 'controller.php';
@@ -39,7 +39,7 @@ include_once WEB_RESULT_PATH . 'result.php';
 use api\sandbox_value_api;
 use controller\controller;
 use JsonSerializable;
-use result\result_dsp;
+use html\result\result as result_dsp;
 
 class result_api extends sandbox_value_api implements JsonSerializable
 {
@@ -85,6 +85,7 @@ class result_api extends sandbox_value_api implements JsonSerializable
         $dsp_obj->set_number($this->number());
         return $dsp_obj;
     }
+
 
     /*
      * interface

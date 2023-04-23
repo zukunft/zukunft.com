@@ -37,6 +37,7 @@ include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_RESULT_PATH . 'result_list.php';
 
 use api\phrase_api;
+use api\result_api;
 use api\value_api;
 use api\view_cmp_api;
 use api\word_api;
@@ -49,7 +50,7 @@ use model\verb;
 use model\view;
 use model\view_cmp;
 use model\view_cmp_type;
-use result\result_list_dsp;
+use html\result\result_list as result_list_dsp;
 
 class html_unit_tests
 {
@@ -183,13 +184,13 @@ class html_unit_tests
 
         // create the formula result for the inhabitants of the city of zurich
         $res_id = 1;
-        $res_city = new \controller\result\result_api($res_id); $res_id++;
+        $res_city = new result_api($res_id); $res_id++;
         $res_city->set_grp($phr_grp_city_pct);
         $ch_val_scaled = value_api::TV_CH_INHABITANTS_2019_IN_MIO * 1000000;
         $res_city->set_number(value_api::TV_CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
 
         // create the formula result for the inhabitants of the city of zurich
-        $res_canton = new \controller\result\result_api($res_id); $res_id++;
+        $res_canton = new result_api($res_id); $res_id++;
         $res_canton->set_grp($phr_grp_canton_pct);
         $res_canton->set_number(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO / value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 

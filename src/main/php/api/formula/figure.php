@@ -34,7 +34,6 @@ namespace api;
 
 include_once API_SANDBOX_PATH . 'combine_object.php';
 
-use controller\result\result_api;
 use JsonSerializable;
 
 class figure_api extends combine_object_api implements JsonSerializable

@@ -43,7 +43,7 @@ use api\figure_api;
 use api\phrase_list_api;
 use api\sandbox_value_api;
 use controller\controller;
-use result\result_dsp;
+use html\result\result as result_dsp;
 
 class figure_dsp
 {

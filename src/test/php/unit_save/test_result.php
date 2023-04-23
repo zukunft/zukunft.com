@@ -33,8 +33,8 @@
 */
 
 use api\formula_api;
+use api\result_api;
 use api\word_api;
-use controller\result\result_api;
 use model\phrase_list;
 use model\result;
 use model\result_list;
