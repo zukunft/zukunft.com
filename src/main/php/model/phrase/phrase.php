@@ -367,7 +367,6 @@ class phrase extends combine_named
             if ($msg->is_ok()) {
                 $this->obj = $wrd;
             }
-            return $msg;
         } else {
             $trp = new triple($this->user());
             $api_json[controller::API_FLD_ID] = $api_json[controller::API_FLD_ID] * -1;
@@ -375,8 +374,8 @@ class phrase extends combine_named
             if ($msg->is_ok()) {
                 $this->obj = $trp;
             }
-            return $msg;
         }
+        return $msg;
     }
 
 

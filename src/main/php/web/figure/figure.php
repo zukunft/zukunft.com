@@ -30,7 +30,7 @@
 
 */
 
-namespace html;
+namespace html\figure;
 
 include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_FORMULA_PATH . 'figure.php';
@@ -43,9 +43,13 @@ use api\figure_api;
 use api\phrase_list_api;
 use api\sandbox_value_api;
 use controller\controller;
+use html\api;
+use html\html_base;
+use html\phrase_group_dsp;
 use html\result\result as result_dsp;
+use html\value\value as value_dsp;
 
-class figure_dsp
+class figure
 {
 
     /*

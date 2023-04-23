@@ -34,12 +34,12 @@ namespace test;
 
 include_once API_RESULT_PATH . 'result.php';
 include_once API_VALUE_PATH . 'value.php';
-include_once WEB_FORMULA_PATH . 'figure.php';
+include_once WEB_FIGURE_PATH . 'figure.php';
 
 use api\result_api;
 use api\value_api;
+use html\figure\figure as figure_dsp;
 use html\api;
-use html\figure_dsp;
 
 class figure_unit_tests
 {

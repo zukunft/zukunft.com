@@ -32,14 +32,19 @@
 
 */
 
-namespace html;
+namespace html\value;
 
 use api\phrase_list_api;
-use result_list;
+use html\button;
+use html\html_base;
+use html\list_dsp;
+use html\value\value as value_dsp;
+use html\word\word_list as word_list_dsp;
+use model\result_list;
 use model\phrase;
 use model\word_list;
 
-class value_list_dsp extends list_dsp
+class value_list extends list_dsp
 {
 
     /*
@@ -79,9 +84,9 @@ class value_list_dsp extends list_dsp
     }
 
     /**
-     * @returns value_list_dsp the cast object with the HTML code generating functions
+     * @returns value_list the cast object with the HTML code generating functions
      */
-    function dsp_obj(): value_list_dsp
+    function dsp_obj(): value_list
     {
         // cast the single list objects
         $lst_dsp = array();
@@ -92,7 +97,7 @@ class value_list_dsp extends list_dsp
             }
         }
 
-        return new value_list_dsp($lst_dsp);
+        return new value_list($lst_dsp);
     }
 
     /**

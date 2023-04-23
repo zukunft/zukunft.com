@@ -39,7 +39,7 @@
 
 use api\formula_api;
 use api\word_api;
-use html\figure_dsp;
+use html\figure\figure as figure_dsp;
 use model\library;
 use model\phrase_list;
 use test\test_api;

@@ -43,6 +43,7 @@ use controller\controller;
 use html\api;
 use html\back_trace;
 use html\button;
+use html\change_log_named_dsp;
 use html\html_base;
 use html\html_selector;
 use html\msg;

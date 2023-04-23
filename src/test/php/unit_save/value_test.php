@@ -34,7 +34,7 @@ include_once MODEL_VALUE_PATH . 'value_dsp.php';
 
 use api\value_api;
 use api\word_api;
-use html\figure_dsp;
+use html\figure\figure as figure_dsp;
 use model\change_log_field;
 use model\change_log_named;
 use model\change_log_table;

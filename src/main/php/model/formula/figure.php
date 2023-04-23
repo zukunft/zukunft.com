@@ -42,8 +42,9 @@ include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_USER_PATH . 'user.php';
 
 use api\figure_api;
+use controller\controller;
 use DateTime;
-use html\figure_dsp;
+use html\figure\figure as figure_dsp;
 
 class figure extends combine_object
 {
@@ -67,11 +68,16 @@ class figure extends combine_object
 
     /**
      * a figure is either created based on a user value or formula result
-     * @param value|result $obj
+     * @param user|value|result|null $obj
      */
-    function __construct(value|result $obj)
+    function __construct(user|value|result|null $obj)
     {
-        parent::__construct($obj);
+        if ($obj::class == user::class) {
+            // create a dummy value object to remember the user
+            parent::__construct(new value($obj));
+        } else {
+            parent::__construct($obj);
+        }
     }
 
     /**
@@ -242,6 +248,32 @@ class figure extends combine_object
         $fig_dsp->set_from_json($json_msg);
         return $fig_dsp;
     }
+
+    /**
+     * map a figure api json to this model figure object
+     * @param array $api_json the api array with the figure values that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = new user_message();
+
+        if ($api_json[controller::API_FLD_ID] > 0) {
+            $val = new value($this->user());
+            $msg->add($val->set_by_api_json($api_json));
+            if ($msg->is_ok()) {
+                $this->obj = $val;
+            }
+        } else {
+            $res = new result($this->user());
+            $api_json[controller::API_FLD_ID] = $api_json[controller::API_FLD_ID] * -1;
+            $msg->add($res->set_by_api_json($api_json));
+            if ($msg->is_ok()) {
+                $this->obj = $res;
+            }
+        }
+        return $msg;
+    }
+
 
 
     /*

@@ -32,7 +32,7 @@
 
 */
 
-namespace html;
+namespace html\value;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 include_once API_SANDBOX_PATH . 'sandbox.php';
@@ -41,9 +41,13 @@ include_once API_SANDBOX_PATH . 'sandbox_value.php';
 use api\sandbox_api;
 use api\sandbox_value_api;
 use controller\controller;
+use html\api;
+use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
+use html\figure\figure as figure_dsp;
+use html\sandbox_value_dsp;
 
-class value_dsp extends sandbox_value_dsp
+class value extends sandbox_value_dsp
 {
 
 
@@ -150,6 +154,19 @@ class value_dsp extends sandbox_value_dsp
         } else {
             return false;
         }
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @returns figure_dsp the figure display object base on this value object
+     */
+    function figure(): figure_dsp
+    {
+        return new figure_dsp($this);
     }
 
 

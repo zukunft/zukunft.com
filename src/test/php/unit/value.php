@@ -36,7 +36,7 @@ include_once MODEL_VALUE_PATH . 'value_time_series.php';
 
 use api\phrase_group_api;
 use api\value_api;
-use html\value_dsp;
+use html\value\value as value_dsp;
 use model\phrase_group;
 use model\sql_db;
 use model\value;

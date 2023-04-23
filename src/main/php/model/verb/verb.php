@@ -187,10 +187,12 @@ class verb extends db_object
                     $this->frm_name = $db_row[self::FLD_FORMULA];
                 }
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
-                if ($db_row[self::FLD_WORDS] == null) {
-                    $this->usage = 0;
-                } else {
-                    $this->usage = $db_row[self::FLD_WORDS];
+                if (array_key_exists(self::FLD_WORDS, $db_row)) {
+                    if ($db_row[self::FLD_WORDS] == null) {
+                        $this->usage = 0;
+                    } else {
+                        $this->usage = $db_row[self::FLD_WORDS];
+                    }
                 }
                 $result = true;
             } else {

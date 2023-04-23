@@ -37,6 +37,7 @@ namespace html\result;
 use controller\controller;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox_value_dsp;
+use html\figure\figure as figure_dsp;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 
@@ -99,6 +100,20 @@ class result extends sandbox_value_dsp
     {
         return $this->grp()->name_linked($phr_lst_header);
     }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @returns figure_dsp the figure display object base on this value object
+     */
+    function figure(): figure_dsp
+    {
+        return new figure_dsp($this);
+    }
+
 
     /*
      * interface

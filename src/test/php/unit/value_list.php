@@ -35,7 +35,7 @@ namespace test;
 include_once WEB_VALUE_PATH . 'value_list.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 
-use html\value_list_dsp;
+use html\value\value_list as value_list_dsp;
 use model\library;
 use model\phrase;
 use model\sql_db;

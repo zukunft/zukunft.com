@@ -70,7 +70,7 @@ use cfg\share_type;
 use controller\controller;
 use DateTime;
 use Exception;
-use html\value_dsp;
+use html\value\value as value_dsp;
 use im_export\export;
 use math;
 

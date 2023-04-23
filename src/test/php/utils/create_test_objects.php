@@ -76,6 +76,7 @@ use model\change_log_list;
 use model\change_log_named;
 use model\change_log_table;
 use model\figure;
+use model\figure_list;
 use model\formula;
 use model\formula_link;
 use model\formula_list;
@@ -316,6 +317,15 @@ class create_test_objects extends test_base
     {
         $res = $this->dummy_result();
         return $res->figure();
+    }
+
+    function dummy_figure_list(): figure_list
+    {
+        global $usr;
+        $lst = new figure_list($usr);
+        $lst->add($this->dummy_figure_value());
+        $lst->add($this->dummy_figure_result());
+        return $lst;
     }
 
     function dummy_source(): source

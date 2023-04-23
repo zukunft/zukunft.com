@@ -44,7 +44,7 @@ namespace model;
 
 include_once MODEL_FORMULA_PATH . 'figure_list.php';
 
-use html\figure_dsp;
+use html\figure\figure as figure_dsp;
 use test\test_api;
 
 class formula_element_group

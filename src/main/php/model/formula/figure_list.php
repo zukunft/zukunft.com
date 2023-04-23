@@ -35,7 +35,7 @@ include_once API_FORMULA_PATH . 'figure_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
 use api\figure_list_api;
-use html\figure_dsp;
+use html\figure\figure as figure_dsp;
 use test\test_api;
 
 class figure_list extends sandbox_list
@@ -63,6 +63,30 @@ class figure_list extends sandbox_list
 
 
     /*
+     * set and get
+     */
+
+    /**
+     * map a figure list api json to this model figure list object
+     * @param array $api_json the api array with the figures that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = new user_message();
+
+        foreach ($api_json as $json_phr) {
+            $fig = new figure($this->user());
+            $msg->add($fig->set_by_api_json($json_phr));
+            if ($msg->is_ok()) {
+                $this->add($fig);
+            }
+        }
+
+        return $msg;
+    }
+
+
+    /*
      * load
      */
 
@@ -71,13 +95,14 @@ class figure_list extends sandbox_list
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_object_sql(sql_db $db_con, string $query_name): sql_par
+    function load_sql(sql_db $db_con, string $query_name): sql_par
     {
-        $db_con->set_type(sql_db::TBL_FIGURE);
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
+        $db_con->set_type(sql_db::VT_FIGURE);
         $db_con->set_name($qp->name);
+
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(figure::FLD_NAMES);
         //$db_con->set_usr_fields(figure::FLD_NAMES_USR_NO_NAME);
@@ -95,7 +120,7 @@ class figure_list extends sandbox_list
      */
     function load_object_sql_by_ids(sql_db $db_con, array $ids): sql_par
     {
-        $qp = $this->load_object_sql($db_con, count($ids) . 'ids');
+        $qp = $this->load_sql($db_con, count($ids) . 'ids');
         $db_con->set_where_id_in(figure::FLD_ID, $ids);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
