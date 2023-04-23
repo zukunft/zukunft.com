@@ -29,12 +29,52 @@
 
 */
 
-namespace html;
+namespace html\formula;
+
+use html\html_base;
+use html\html_selector;
+use html\list_dsp;
+use html\formula\formula as formula_dsp;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
 
-class formula_list_dsp extends list_dsp
+class formula_list extends list_dsp
 {
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the vars of a formula object based on the given json
+     * @param array $json_array an api single object json message
+     * @return object a formula set based on the given json
+     */
+    function set_obj_from_json_array(array $json_array): object
+    {
+        $wrd = new formula_dsp();
+        $wrd->set_from_json_array($json_array);
+        return $wrd;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * add a formula to the list
+     * @returns bool true if the formula has been added
+     */
+    function add(formula_dsp $wrd): bool
+    {
+        return parent::add_obj($wrd);
+    }
+
+
+    /*
+     * display
+     */
 
     /**
      * @param string $back the back trace url for the undo functionality

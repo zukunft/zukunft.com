@@ -29,9 +29,11 @@
 namespace test;
 
 include_once MODEL_FORMULA_PATH . 'formula_list.php';
+include_once WEB_FORMULA_PATH . 'formula_list.php';
 
 use api\formula_api;
 use api\word_api;
+use html\formula\formula_list as formula_list_dsp;
 use model\formula_list;
 use model\sql_db;
 use model\word;
@@ -116,6 +118,12 @@ class formula_list_unit_tests
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new formula_list($usr), $json_file);
+
+
+        $t->subheader('HTML frontend unit tests');
+
+        $trp_lst = $t->dummy_formula_list();
+        $t->assert_api_to_dsp($trp_lst, new formula_list_dsp());
 
     }
 

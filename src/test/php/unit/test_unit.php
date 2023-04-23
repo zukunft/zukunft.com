@@ -176,8 +176,8 @@ class test_unit extends testing
         (new value_unit_tests)->run($this);
         (new value_list_unit_tests)->run($this);
         (new value_phrase_link_unit_tests)->run($this);
-        (new formula_unit_tests)->run($this); // TODO add assert_api_to_dsp
-        (new formula_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new formula_unit_tests)->run($this);
+        (new formula_list_unit_tests)->run($this);
         (new formula_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new result_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new result_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
