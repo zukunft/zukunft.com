@@ -58,7 +58,7 @@ class figure extends combine_object
 
     // the common figure database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
-        value::FLD_NAMES
+        phrase_group::FLD_ID
     );
 
 

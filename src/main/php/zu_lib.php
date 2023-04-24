@@ -15,6 +15,8 @@ use html\phrase_group_dsp;
 
     but first this needs to be fixed:
     TODO add api unit test (assert_api_to_dsp) to all objects
+    TODO add at least one HTML test for each class
+    TODO remove all dsp_obj functions from the model classes
     TODO make sure that im-and export and api check all objects fields
     TODO move all test const to the api class or a test class
     TODO check the all used object are loaded with include once

@@ -118,7 +118,7 @@ class figure_list extends sandbox_list
      * @param array $ids phrase ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_object_sql_by_ids(sql_db $db_con, array $ids): sql_par
+    function load_sql_by_ids(sql_db $db_con, array $ids): sql_par
     {
         $qp = $this->load_sql($db_con, count($ids) . 'ids');
         $db_con->set_where_id_in(figure::FLD_ID, $ids);
@@ -168,7 +168,7 @@ class figure_list extends sandbox_list
     function load_by_ids(array $ids): bool
     {
         global $db_con;
-        $qp = $this->load_object_sql_by_ids($db_con, $ids);
+        $qp = $this->load_sql_by_ids($db_con, $ids);
         return $this->load($qp);
     }
 

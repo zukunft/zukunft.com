@@ -57,14 +57,11 @@ class figure_list_unit_tests
 
         $t->header('Unit tests of the figure list class (src/main/php/model/figure/figure_list.php)');
 
-        $t->subheader('SQL creation tests');
+        $t->subheader('SQL statement creation tests');
 
-        // sql to load a list of results by the formula id
+        // load by figase ids
         $fig_lst = new figure_list($usr);
-        $fig = new figure($usr);
-        $fig->set_id(1);
-        // TODO active
-        //$t->assert_load_list_sql($db_con, $fig_lst, $fig);
+        $this->assert_sql_by_ids($t, $db_con, $fig_lst, array(1, -1));
 
 
         $t->subheader('Im- and Export tests');
@@ -80,4 +77,28 @@ class figure_list_unit_tests
 
     }
 
+    /**
+     * test the SQL statement creation for a figure list in all SQL dialect
+     * and check if the statement name is unique
+     *
+     * @param testing $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param figure_list $lst the empty figure list object
+     * @param array $ids filled with a list of word ids to be used for the query creation
+     * @return void true if all tests are fine
+     */
+    private function assert_sql_by_ids(testing $t, sql_db $db_con, figure_list $lst, array $ids): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_ids($db_con, $ids);
+        $result = $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $lst->load_sql_by_ids($db_con, $ids);
+            $result = $t->assert_qp($qp, sql_db::MYSQL);
+        }
+    }
 }
