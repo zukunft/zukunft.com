@@ -157,7 +157,7 @@ class figure
         } else {
             $vars[combine_object_api::FLD_CLASS] = figure_api::CLASS_VALUE;
         }
-        $vars[controller::API_FLD_ID] = $this->id();
+        $vars[controller::API_FLD_ID] = $this->obj_id();
         $vars[sandbox_value_api::FLD_NUMBER] = $this->number();
         $vars[controller::API_FLD_PHRASES] = $this->obj->grp()->api_array();
         return $vars;

@@ -85,6 +85,8 @@ use html\phrase_group_dsp;
     TODO create unit tests
     TODO cleanup object by removing duplicates
     TODO call include only if needed
+    TODO allow to link views, components and formulas to define a successor
+    TODO for phrases define the successor via special verbs
     TODO use the git concept of merge and rebase for group changes e.g. if some formulas are assigned to a group these formulas can be used by all members of a group
     TODO additional to the git concept of merge allow also subscribe or auto merge
     TODO create a simple value table with the compressed phrase ids as a key and the value as a key-value table
