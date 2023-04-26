@@ -44,30 +44,15 @@ use api\phrase_list_api;
 use api\sandbox_value_api;
 use controller\controller;
 use html\api;
+use html\combine_named_dsp;
 use html\html_base;
 use html\phrase_group_dsp;
 use html\result\result as result_dsp;
 use html\value\value as value_dsp;
+use model\result;
 
-class figure
+class figure extends combine_named_dsp
 {
-
-    /*
-     * object vars
-     */
-
-    private value_dsp|result_dsp|null $obj;
-
-
-    /*
-     * construct and map
-     */
-
-    function __construct()
-    {
-        $this->set_obj(null);
-    }
-
 
     /*
      * set and get
@@ -98,26 +83,20 @@ class figure
         }
     }
 
-    function set_obj(value_dsp|result_dsp|null $obj): void
-    {
-        $this->obj = $obj;
-    }
-
-    function obj(): value_dsp|result_dsp|null
-    {
-        return $this->obj;
-    }
-
     /**
      * @return int the figure id based on the value or result id
      * must have the same logic as the database view and the frontend
      */
     function id(): int
     {
-        if ($this->is_result()) {
-            return $this->obj_id() * -1;
+        if ($this->obj() == null) {
+            return 0;
         } else {
-            return $this->obj_id();
+            if ($this->is_result()) {
+                return $this->obj_id() * -1;
+            } else {
+                return $this->obj_id();
+            }
         }
     }
 
@@ -127,7 +106,11 @@ class figure
      */
     function obj_id(): int
     {
-        return $this->obj()->id();
+        if ($this->obj() == null) {
+            return 0;
+        } else {
+            return $this->obj()->id();
+        }
     }
 
     function grp(): phrase_group_dsp
@@ -174,10 +157,14 @@ class figure
      */
     function is_result(): bool
     {
-        if ($this->obj()::class == result_dsp::class) {
-            return true;
-        } else {
+        if ($this->obj() == null) {
             return false;
+        } else {
+            if ($this->obj()::class == result_dsp::class) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 

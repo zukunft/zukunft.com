@@ -71,9 +71,8 @@ class figure_list_unit_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        // TODO active
-        //$fig_lst = $t->dummy_figure_list();
-        //$t->assert_api_to_dsp($fig_lst, new figure_list_dsp());
+        $fig_lst = $t->dummy_figure_list();
+        $t->assert_api_to_dsp($fig_lst, new figure_list_dsp());
 
     }
 

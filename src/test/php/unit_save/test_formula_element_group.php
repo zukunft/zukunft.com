@@ -40,6 +40,7 @@
 use api\formula_api;
 use api\word_api;
 use html\figure\figure as figure_dsp;
+use html\value\value as value_dsp;
 use model\library;
 use model\phrase_list;
 use test\test_api;
@@ -123,7 +124,7 @@ function run_formula_element_group_test(testing $t): void
 
             if (isset($fig)) {
                 $t = new test_api();
-                $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
+                $fig_dsp = $t->dsp_obj($fig, new figure_dsp(new value_dsp()));
                 $result = $fig_dsp->display();
                 $target = "8.51";
                 $t->dsp('figure->display', $target, $result);

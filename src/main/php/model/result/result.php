@@ -126,6 +126,8 @@ class result extends db_object
     function __construct(user $usr)
     {
         parent::__construct();
+        $this->last_update = new DateTime();
+        $this->last_val_update = new DateTime();
         $this->reset($usr);
     }
 

@@ -45,6 +45,7 @@ namespace model;
 include_once MODEL_FORMULA_PATH . 'figure_list.php';
 
 use html\figure\figure as figure_dsp;
+use html\result\result as result_dsp;
 use test\test_api;
 
 class formula_element_group
@@ -383,7 +384,7 @@ class formula_element_group
         foreach ($fig_lst->lst() as $fig) {
             log_debug('display figure');
             $t = new test_api();
-            $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
+            $fig_dsp = $t->dsp_obj($fig, new figure_dsp(new result_dsp()));
             $result .= $fig_dsp->display_linked($back);
         }
 

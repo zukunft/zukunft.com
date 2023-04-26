@@ -35,6 +35,7 @@ include_once MODEL_VALUE_PATH . 'value_dsp.php';
 use api\value_api;
 use api\word_api;
 use html\figure\figure as figure_dsp;
+use html\value\value as value_dsp;
 use model\change_log_field;
 use model\change_log_named;
 use model\change_log_table;
@@ -229,7 +230,7 @@ function run_value_test(testing $t): void
     $mio_val = new value_dsp_old($t->usr1);
     $mio_val->load_by_grp($phr_lst->get_grp());
     $fig = $mio_val->figure();
-    $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
+    $fig_dsp = $t->dsp_obj($fig, new figure_dsp(new value_dsp()));
     $result = $fig_dsp->display_linked('1');
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1" title="1.55">1.55</a>';
     $diff = $lib->str_diff($result, $target);

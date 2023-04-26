@@ -197,9 +197,9 @@ class figure extends combine_object
     }
 
     /**
-     * @return DateTime the timestamp of the last update either from the formula result or the db value from a user or source
+     * @return DateTime|null the timestamp of the last update either from the formula result or the db value from a user or source
      */
-    function last_update(): DateTime
+    function last_update(): ?DateTime
     {
         return $this->obj()->last_update();
     }

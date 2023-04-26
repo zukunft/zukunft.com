@@ -75,9 +75,6 @@ class value_time_series extends sandbox_value
     public phrase_group $grp;  // phrases (word or triple) group object for this value
     public ?source $source;    // the source object
 
-    // database fields additional to the user sandbox fields for the value object
-    public DateTime $last_update; // the time of the last update of fields that may influence the calculated results
-
     /*
      * construct and map
      */

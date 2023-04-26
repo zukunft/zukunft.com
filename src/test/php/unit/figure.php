@@ -39,7 +39,10 @@ include_once WEB_FIGURE_PATH . 'figure.php';
 use api\result_api;
 use api\value_api;
 use html\figure\figure as figure_dsp;
+use html\value\value as value_dsp;
+use html\result\result as result_dsp;
 use html\api;
+use model\value_dsp_old;
 
 class figure_unit_tests
 {
@@ -94,12 +97,12 @@ class figure_unit_tests
         $t->subheader('HTML frontend unit tests');
 
         $fig = $t->dummy_figure_value();
-        $t->assert_api_to_dsp($fig, new figure_dsp());
+        $t->assert_api_to_dsp($fig, new figure_dsp(new value_dsp()));
         $fig = $t->dummy_figure_result();
-        $t->assert_api_to_dsp($fig, new figure_dsp());
+        $t->assert_api_to_dsp($fig, new figure_dsp(new result_dsp()));
 
         $fig = $t->dummy_figure_value();
-        $dsp = $t->dsp_obj($fig, new figure_dsp());
+        $dsp = $t->dsp_obj($fig, new figure_dsp(new value_dsp()));
         $html_link = $dsp->display_linked();
         $t->assert_text_contains('figure html link', $html_link, api::RESULT_EDIT);
 

@@ -36,6 +36,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
 use api\figure_list_api;
 use html\figure\figure as figure_dsp;
+use html\value\value as value_dsp;
 use test\test_api;
 
 class figure_list extends sandbox_list
@@ -279,7 +280,7 @@ class figure_list extends sandbox_list
 
         foreach ($this->lst as $fig) {
             $t = new test_api();
-            $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
+            $fig_dsp = $t->dsp_obj($fig, new figure_dsp(new value_dsp()));
             $result .= $fig_dsp->display($back) . ' ';
         }
 

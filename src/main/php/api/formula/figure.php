@@ -61,10 +61,32 @@ class figure_api extends combine_object_api implements JsonSerializable
     function id(): int
     {
         if ($this->is_result()) {
-            return $this->id() * -1;
+            return $this->obj_id() * -1;
         } else {
-            return  $this->id();
+            return  $this->obj_id();
         }
+    }
+
+    /**
+     * @return int the id of the containing object
+     * e.g if the figure id is  1 and the object is a value  with id 1 simply 1 is returned
+     * but if the figure id is -1 and the object is a result with id 1   also 1 is returned
+     */
+    function id_obj(): int
+    {
+        if ($this->obj == null) {
+            return 0;
+        } else {
+            return $this->obj->id();
+        }
+    }
+
+    /**
+     * @return int|null the id of the object
+     */
+    function obj_id(): ?int
+    {
+        return $this->obj()?->id();
     }
 
     /**

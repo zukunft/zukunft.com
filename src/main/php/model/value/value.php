@@ -122,9 +122,6 @@ class value extends sandbox_value
     public ?source $source;    // the source object
     private string $symbol = '';               // the symbol of the related formula element
 
-    // simple database fields
-    public ?DateTime $last_update = null; // the time of the last update of fields that may influence the calculated results
-
     // deprecated fields
     public ?DateTime $time_stamp = null;  // the time stamp for this value (if this is set, the time wrd is supposed to be empty and the value is saved in the time_series table)
 
@@ -162,6 +159,7 @@ class value extends sandbox_value
         if ($phr_grp != null) {
             $this->set_grp($phr_grp);
         }
+        $this->set_last_update(new DateTime());
     }
 
     function reset(): void
