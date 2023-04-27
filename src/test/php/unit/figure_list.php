@@ -64,9 +64,10 @@ class figure_list_unit_tests
         $this->assert_sql_by_ids($t, $db_con, $fig_lst, array(1, -1));
 
 
-        $t->subheader('Im- and Export tests');
-        // TODO active
-        //$t->assert_json(new figure_list($usr), $json_file);
+        $t->subheader('API unit tests');
+
+        $fig_lst = $t->dummy_figure_list();
+        $t->assert_api($fig_lst);
 
 
         $t->subheader('HTML frontend unit tests');
