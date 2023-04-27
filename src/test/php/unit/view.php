@@ -33,6 +33,7 @@
 namespace test;
 
 use api\view_api;
+use html\view\view as view_dsp;
 use model\library;
 use model\sql_db;
 use model\view;
@@ -108,6 +109,13 @@ class view_unit_tests
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new view($usr), $json_file);
+
+
+        $t->subheader('API and HTML frontend unit tests');
+
+        $dsp = $t->dummy_view();
+        $t->assert_api($dsp);
+        $t->assert_api_to_dsp($dsp, new view_dsp());
 
 
         /*

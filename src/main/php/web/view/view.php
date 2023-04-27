@@ -3,7 +3,10 @@
 /*
 
     /web/view/view.php - the display extension of the api view object
-    -----------------
+    ------------------
+
+    to creat the HTML code to display a view
+
 
     This file is part of zukunft.com - calc with words
 
@@ -29,49 +32,82 @@
 
 */
 
-namespace html;
+namespace html\view;
 
-include_once WEB_VIEW_PATH . 'view_cmp_list.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
-use api\view_api;
-use api\view_cmp_api;
-use model\view;
+use controller\controller;
+use html\api;
+use html\html_base;
+use html\phrase\term as term_dsp;
+use html\sandbox_typed_dsp;
 
-class view_dsp extends view_api
+class view extends sandbox_typed_dsp
 {
 
-    function list_sort(): string
+    /*
+     * object vars
+     */
+
+    // used for system views
+    private string $code_id;
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * repeat here the sandbox object function to force to include all view object fields
+     *
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
+    function set_from_json(string $json_api_msg): void
     {
-        return $this->components()->dsp();
+        $this->set_from_json_array(json_decode($json_api_msg, true));
     }
 
-
-    private function components(): view_cmp_list_dsp
+    /**
+     * repeat here the sandbox object function to force to include all view object fields
+     * @param array $json_array an api single object json message
+     * @return void
+     */
+    function set_obj_from_json_array(array $json_array): void
     {
-        $lst = new view_cmp_list_dsp();
-        foreach ($this->cmp_lst as $cmp) {
-            $lst->add($cmp->dsp_obj());
+        $wrd = new view();
+        $wrd->set_from_json_array($json_array);
+    }
+
+    /**
+     * set the vars this view bases on the api json array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        parent::set_from_json_array($json_array);
+        if (array_key_exists(controller::API_FLD_CODE_ID, $json_array)) {
+            $this->code_id = $json_array[controller::API_FLD_CODE_ID];
         }
-        return $lst;
     }
 
-    function dsp_system_view(): string
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
     {
-        $result = '';
-        switch ($this->code_id) {
-            case view::COMPONENT_ADD:
-                $cmp = new view_cmp_dsp(0);
-                $result = $cmp->form_edit('', '', '', '', '');
-                break;
-            case view::COMPONENT_EDIT:
-                $cmp = new view_cmp_dsp(1, view_cmp_api::TN_READ);
-                $result = $cmp->form_edit('', '', '', '', '');
-                break;
-            case view::COMPONENT_DEL:
-                // TODO fill
-                $result = 'del';
-                break;
-        }
-        return $result;
+        $vars = parent::api_array();
+        $vars[controller::API_FLD_CODE_ID] = $this->code_id;
+
+        return array_filter($vars, fn($value) => !is_null($value));
     }
+
 }

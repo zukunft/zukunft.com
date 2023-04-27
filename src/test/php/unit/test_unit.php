@@ -182,10 +182,10 @@ class test_unit extends testing
         (new result_unit_tests)->run($this);
         (new result_list_unit_tests)->run($this);
         (new figure_unit_tests)->run($this);
-        (new figure_list_unit_tests)->run($this); // TODO complete assert_api_to_dsp with all cases
+        (new figure_list_unit_tests)->run($this);
         (new formula_element_unit_tests)->run($this);
         (new expression_unit_tests)->run($this);
-        (new view_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new view_unit_tests)->run($this);
         (new view_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new view_component_unit_tests())->run($this); // TODO add assert_api_to_dsp
         (new view_component_link_unit_tests)->run($this); // TODO add assert_api_to_dsp

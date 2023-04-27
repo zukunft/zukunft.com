@@ -353,6 +353,8 @@ class create_test_objects extends test_base
         global $usr;
         $dsp = new view($usr);
         $dsp->set(1, view_api::TN_READ);
+        $dsp->description = view_api::TD_READ;
+        $dsp->code_id = view_api::TI_READ;
         return $dsp;
     }
 

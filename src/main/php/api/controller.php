@@ -78,6 +78,7 @@ class controller
     // the json field name in the api json message which is supposed to contain the database id of an object type
     // e.g. for the word api message it contains the id of the phrase type
     const API_FLD_TYPE_ID = 'type_id';
+    const API_FLD_CODE_ID = 'code_id';
     const API_FLD_PHRASES = 'phrases';
     // a float number used for values and results
     const API_FLD_NUMBER = 'number';

@@ -38,11 +38,13 @@ include_once MODEL_VIEW_PATH . 'view_cmp_dsp.php'; // TODO move to web namespace
 include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'view_cmp_exp.php';
 
+include_once WEB_VIEW_PATH . 'view_old.php';
+
 use api\view_api;
 use cfg\export\exp_obj;
 use cfg\export\view_exp;
 use cfg\type_list;
-use html\view_dsp;
+use html\view_dsp_old;
 
 class view extends sandbox_typed
 {
@@ -298,16 +300,17 @@ class view extends sandbox_typed
 
         $api_obj->set_type_id($this->type_id);
         $api_obj->code_id = $this->code_id;
+        $api_obj->description = $this->description;
 
         return $api_obj;
     }
 
     /**
-     * @return view_dsp the view object with the html creation functions
+     * @return view_dsp_old the view object with the html creation functions
      */
     function dsp_obj(): object
     {
-        $dsp_obj = new view_dsp();
+        $dsp_obj = new view_dsp_old();
 
         parent::fill_dsp_obj($dsp_obj);
 
