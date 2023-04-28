@@ -50,18 +50,6 @@ class result extends sandbox_value_dsp
 
     /**
      * repeat here the sandbox object function to force to include all result object fields
-     * TODO check if the parent function can be used
-     *
-     * @param string $json_api_msg an api json message as a string
-     * @return void
-     */
-    function set_from_json(string $json_api_msg): void
-    {
-        $this->set_from_json_array(json_decode($json_api_msg, true));
-    }
-
-    /**
-     * repeat here the sandbox object function to force to include all result object fields
      * @param array $json_array an api single object json message
      * @return void
      */

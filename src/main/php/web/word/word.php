@@ -96,17 +96,7 @@ class word extends sandbox_typed_dsp
      */
 
     /**
-     * set the vars of this word html display object bases on the api message
-     * @param string $json_api_msg an api json message as a string
-     * @return void
-     */
-    function set_from_json(string $json_api_msg): void
-    {
-        parent::set_from_json_array(json_decode($json_api_msg, true));
-    }
-
-    /**
-     * dummy function to be overwritten by the child object
+     * create the word object and fill it base on the json message
      * @param array $json_array an api single object json message
      * @return void
      */
