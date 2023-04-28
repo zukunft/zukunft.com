@@ -59,7 +59,7 @@ class figure_list_unit_tests
 
         $t->subheader('SQL statement creation tests');
 
-        // load by figase ids
+        // load by figure ids
         $fig_lst = new figure_list($usr);
         $this->assert_sql_by_ids($t, $db_con, $fig_lst, array(1, -1));
 

@@ -96,22 +96,13 @@ class view_unit_tests
         $expected_sql = $t->file('db/view/view_components_by_view_id_mysql.sql');
         $t->dsp('view->load_components_sql for MySQL', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        $t->subheader('Convert tests');
-
-        // casting API
-        $dsp = new view($usr);
-        $dsp->set(1, view_api::TN_READ);
-        $dsp->description = view_api::TD_READ;
-        $dsp->code_id = view_api::TI_READ;
-        $t->assert_api($dsp);
-
 
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new view($usr), $json_file);
 
 
-        $t->subheader('API and HTML frontend unit tests');
+        $t->subheader('API and frontend cast unit tests');
 
         $dsp = $t->dummy_view();
         $t->assert_api($dsp);

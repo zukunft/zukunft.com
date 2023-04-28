@@ -29,12 +29,40 @@
   
 */
 
-namespace html;
+namespace html\ref;
 
-use api\ref_api;
+use html\db_object_dsp;
+use html\phrase\phrase as phrase_dsp;
+use html\sandbox_typed_dsp;
 
-class ref_dsp extends ref_api
+class ref extends sandbox_typed_dsp
 {
+
+    /*
+     * object vars
+     */
+
+    public ?phrase_dsp $phr;
+    public ?string $external_key; // maybe use field name instead
+    public ?int $type_id;
+    public ?int $source_id;
+    public ?string $url;
+    public ?string $description;
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * @return string the name of the reference type e.g. wikidata
+     */
+    function type_name(): string
+    {
+        global $ref_types;
+        return $ref_types->name($this->type_id);
+    }
+
 
     /**
      * @returns string simply the ref name, but later with mouse over that shows the description

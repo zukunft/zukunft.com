@@ -50,7 +50,7 @@ include_once WEB_REF_PATH . 'source.php';
 use api\source_api;
 use cfg\export\exp_obj;
 use cfg\export\source_exp;
-use html\source_dsp;
+use html\source_dsp_old;
 
 class source extends sandbox_typed
 {
@@ -198,11 +198,11 @@ class source extends sandbox_typed
     }
 
     /**
-     * @return source_dsp the source object with the display interface functions
+     * @return source_dsp_old the source object with the display interface functions
      */
-    function dsp_obj(): source_dsp
+    function dsp_obj(): source_dsp_old
     {
-        $dsp_obj = new source_dsp();
+        $dsp_obj = new source_dsp_old();
         if (!$this->is_excluded()) {
             parent::fill_dsp_obj($dsp_obj);
             $dsp_obj->url = $this->url;

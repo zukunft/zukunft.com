@@ -35,6 +35,8 @@ namespace test;
 use api\source_api;
 use cfg\ref_type_list;
 use cfg\source_type_list;
+use html\ref\ref as ref_dsp;
+use html\ref\source as source_dsp;
 use model\ref;
 use model\source;
 use model\sql_db;
@@ -55,21 +57,22 @@ class ref_unit_tests
 
         $t->header('Unit tests of the reference class (src/main/php/model/ref/ref.php)');
 
-        $t->subheader('SQL user sandbox statement tests');
+        $t->subheader('SQL statement tests');
         $ref = new ref($usr);
         $t->assert_load_sql_id($db_con, $ref);
 
-        $t->subheader('API unit tests');
-        $ref = $t->dummy_reference();
-        $t->assert_api($ref);
+        // sql to load the ref types
+        $ref_type_list = new ref_type_list();
+        $t->assert_load_sql_all($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);
 
         $t->subheader('Im- and Export tests');
         $t->assert_json(new ref($usr), $json_file);
 
-        $t->subheader('SQL statement tests');
-        // sql to load the ref types
-        $ref_type_list = new ref_type_list();
-        $t->assert_load_sql_all($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);
+        $t->subheader('API and frontend cast unit tests');
+        $ref = $t->dummy_reference();
+        $t->assert_api($ref);
+        // TODO activate
+        //$t->assert_api_to_dsp($ref, new ref_dsp());
 
 
         // init for source
@@ -79,20 +82,12 @@ class ref_unit_tests
 
         $t->header('Unit tests of the source class (src/main/php/model/ref/source.php)');
 
-        $t->subheader('SQL user sandbox statement tests');
+        $t->subheader('SQL statement tests');
         $src = new source($usr);
         $t->assert_load_sql_id($db_con, $src);
         $t->assert_load_sql_name($db_con, $src);
         $t->assert_load_sql_code_id($db_con, $src);
 
-        $t->subheader('API unit tests');
-        $src = $t->dummy_source();
-        $t->assert_api_msg($db_con, $src);
-
-        $t->subheader('Im- and Export tests');
-        $t->assert_json(new source($usr), $json_file);
-
-        $t->subheader('SQL statement tests');
         // sql to load a source by id
         $src = new source($usr);
         $src->set_id(4);
@@ -109,6 +104,14 @@ class ref_unit_tests
         // sql to load the source types
         $source_type_list = new source_type_list();
         $t->assert_load_sql_all($db_con, $source_type_list, sql_db::TBL_SOURCE_TYPE);
+
+        $t->subheader('Im- and Export tests');
+        $t->assert_json(new source($usr), $json_file);
+
+        $t->subheader('API and frontend cast unit tests');
+        $src = $t->dummy_source();
+        $t->assert_api_msg($db_con, $src);
+        $t->assert_api_to_dsp($src, new source_dsp());
 
     }
 

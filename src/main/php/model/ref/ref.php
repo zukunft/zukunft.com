@@ -63,7 +63,7 @@ use cfg\export\ref_exp;
 use cfg\ref_type;
 use cfg\ref_type_list;
 use api\ref_api;
-use html\ref_dsp;
+use html\ref\ref as ref_dsp;
 
 class ref extends sandbox_link_with_type
 {

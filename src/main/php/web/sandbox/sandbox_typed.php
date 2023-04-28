@@ -32,7 +32,6 @@
 
 namespace html;
 
-use api\sandbox_typed_api;
 use controller\controller;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
@@ -40,14 +39,11 @@ include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 class sandbox_typed_dsp extends sandbox_named_dsp
 {
 
-    // the json field names in the api json message which is supposed to be the same as the var $id
-    const FLD_TYPE = 'type';
-
     // all named objects can have a type that links predefined functionality to it
     // e.g. all value assigned with the percent word are per default shown as percent with two decimals
     // the frontend object just contains the id of the type
     // because the type can be fast selected from the preloaded type list
-    public ?int $type_id;
+    private ?int $type_id;
 
 
     /*
@@ -100,7 +96,6 @@ class sandbox_typed_dsp extends sandbox_named_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-
         $vars[controller::API_FLD_TYPE_ID] = $this->type_id();
         return $vars;
     }

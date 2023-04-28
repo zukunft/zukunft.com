@@ -84,6 +84,7 @@ class controller
     const API_FLD_NUMBER = 'number';
     // the formula expression in a human-readable format
     const API_FLD_USER_TEXT = 'user_text';
+    const API_FLD_URL = 'url';
 
     // path parameters
     const PATH_API_REDIRECT = '/../../'; // get from the __DIR__ to the php root path
