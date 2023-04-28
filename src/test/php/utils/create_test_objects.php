@@ -100,6 +100,7 @@ use model\verb;
 use model\view;
 use model\view_cmp;
 use model\view_cmp_link;
+use model\view_cmp_type;
 use model\word;
 use model\word_list;
 use view_dsp_old;
@@ -361,9 +362,10 @@ class create_test_objects extends test_base
     function dummy_component(): view_cmp
     {
         global $usr;
-        $dsp = new view_cmp($usr);
-        $dsp->set(1, view_cmp_api::TN_READ);
-        return $dsp;
+        $cmp = new view_cmp($usr);
+        $cmp->set(1, view_cmp_api::TN_READ, view_cmp_type::PHRASE_NAME);
+        $cmp->description = view_cmp_api::TD_READ;
+        return $cmp;
     }
 
     /**

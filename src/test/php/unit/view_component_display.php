@@ -34,7 +34,7 @@ namespace test;
 
 use api\view_cmp_api;
 use html\html_base;
-use html\view_cmp_dsp;
+use html\view_cmp_dsp_old;
 
 class view_component_display_unit_tests
 {
@@ -58,10 +58,10 @@ class view_component_display_unit_tests
         $test_page .= 'view header<br>';
         $test_page .= $wrd->header() . '<br>';
         */
-        $cmp = new view_cmp_dsp(0);
+        $cmp = new view_cmp_dsp_old(0);
         $test_page .= 'add mask<br>';
         $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
-        $cmp = new view_cmp_dsp(1, view_cmp_api::TN_READ);
+        $cmp = new view_cmp_dsp_old(1, view_cmp_api::TN_READ);
         $cmp->description = view_cmp_api::TD_READ;
         $test_page .= 'edit mask<br>';
         $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';

@@ -187,7 +187,7 @@ class test_unit extends testing
         (new expression_unit_tests)->run($this);
         (new view_unit_tests)->run($this);
         (new view_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
-        (new view_component_unit_tests())->run($this); // TODO add assert_api_to_dsp
+        (new view_component_unit_tests())->run($this);
         (new view_component_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new ref_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new language_unit_tests)->run($this); // TODO add assert_api_to_dsp

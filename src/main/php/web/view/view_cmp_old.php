@@ -36,7 +36,7 @@ use model\view_cmp_type;
 
 use html\phrase\phrase as phrase_dsp;
 
-class view_cmp_dsp extends view_cmp_api
+class view_cmp_dsp_old extends view_cmp_api
 {
 
     const FORM_ADD = 'view_component_add';

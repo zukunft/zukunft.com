@@ -60,11 +60,11 @@ class view_dsp_old extends view_api
         $result = '';
         switch ($this->code_id) {
             case view::COMPONENT_ADD:
-                $cmp = new view_cmp_dsp(0);
+                $cmp = new view_cmp_dsp_old(0);
                 $result = $cmp->form_edit('', '', '', '', '');
                 break;
             case view::COMPONENT_EDIT:
-                $cmp = new view_cmp_dsp(1, view_cmp_api::TN_READ);
+                $cmp = new view_cmp_dsp_old(1, view_cmp_api::TN_READ);
                 $result = $cmp->form_edit('', '', '', '', '');
                 break;
             case view::COMPONENT_DEL:

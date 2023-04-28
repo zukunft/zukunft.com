@@ -32,9 +32,12 @@
 
 namespace test;
 
+include_once WEB_VIEW_PATH . 'component.php';
+
 use model\sql_db;
 use model\view_cmp;
 use model\view_cmp_type;
+use html\view\component as component_dsp;
 use api\view_api;
 use api\view_cmp_api;
 
@@ -81,10 +84,9 @@ class view_component_unit_tests
         $t->subheader('Convert tests');
 
         // casting API
-        $cmp = new view_cmp($usr);
-        $cmp->set(1, view_cmp_api::TN_READ, view_cmp_type::PHRASE_NAME);
-        $cmp->description = view_cmp_api::TD_READ;
+        $cmp = $t->dummy_component();
         $t->assert_api($cmp);
+        $t->assert_api_to_dsp($cmp, new component_dsp());
 
 
         $t->subheader('Im- and Export tests');

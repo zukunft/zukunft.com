@@ -33,12 +33,12 @@
 
 namespace model;
 
-include_once WEB_VIEW_PATH . 'view_cmp.php';
+include_once WEB_VIEW_PATH . 'view_cmp_old.php';
 
 use api\view_cmp_api;
 use cfg\export\exp_obj;
 use cfg\export\view_cmp_exp;
-use html\view_cmp_dsp;
+use html\view_cmp_dsp_old;
 
 class view_cmp extends sandbox_typed
 {
@@ -177,13 +177,13 @@ class view_cmp extends sandbox_typed
     }
 
     /**
-     * @return view_cmp_dsp the view component object with the html creation functions
+     * @return view_cmp_dsp_old the view component object with the html creation functions
      */
     function dsp_obj(): object
     {
         global $view_component_types;
 
-        $dsp_obj = new view_cmp_dsp();
+        $dsp_obj = new view_cmp_dsp_old();
 
         parent::fill_dsp_obj($dsp_obj);
 
