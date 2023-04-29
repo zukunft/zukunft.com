@@ -3,3 +3,4 @@ source_type_id, type_name, code_id
 2, 'XBRL', 'xbrl'
 3, 'CSV', 'csv'
 4, 'PDF', 'pdf'
+5, 'API', 'api'

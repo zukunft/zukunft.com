@@ -131,6 +131,16 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
+    function dummy_word2(): word
+    {
+        global $usr;
+        $wrd = new word($usr);
+        $wrd->set(2, word_api::TN_READ);
+        $wrd->description = word_api::TD_READ;
+        $wrd->set_type(phrase_type::MATH_CONST);
+        return $wrd;
+    }
+
     function dummy_word_list(): word_list
     {
         global $usr;
@@ -333,6 +343,15 @@ class create_test_objects extends test_base
     {
         global $usr;
         $src = new source($usr);
+        $src->set(2, source_api::TN_READ_API, source_type::PDF);
+        $src->description = source_api::TD_READ_API;
+        $src->url = source_api::TU_READ_API;
+        return $src;
+    }
+    function dummy_source1(): source
+    {
+        global $usr;
+        $src = new source($usr);
         $src->set(1, source_api::TN_READ_API, source_type::PDF);
         $src->description = source_api::TD_READ_API;
         $src->url = source_api::TU_READ_API;
@@ -343,9 +362,12 @@ class create_test_objects extends test_base
     {
         global $usr;
         $ref = new ref($usr);
-        $ref->set(1);
-        $ref->phr = $this->dummy_word()->phrase();
+        $ref->set(3);
+        $ref->phr = $this->dummy_word2()->phrase();
+        $ref->source = $this->dummy_source1();
         $ref->external_key = ref_api::TK_READ;
+        $ref->url = ref_api::TU_READ;
+        $ref->description = ref_api::TD_READ;
         return $ref;
     }
 
@@ -1170,7 +1192,7 @@ class create_test_objects extends test_base
         global $reference_types;
         $msg = new api_message($db_con, ref::class);
         $ref = new ref_api();
-        $ref->phr = $this->dummy_word()->phrase()->api_obj();
+        $ref->phrase_id = $this->dummy_word()->phrase()->id();
         $ref->external_key = ref_api::TK_ADD_API;
         $ref->description = ref_api::TD_ADD_API;
         $ref->url = ref_api::TU_ADD_API;

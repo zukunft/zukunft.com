@@ -1,0 +1,18 @@
+{
+  "version": "0.0.3",
+  "time": "2023-04-29 09:51:30",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "base sources"
+  ],
+  "sources": [
+    {
+      "name": "wikidata",
+      "description": "the base API link to wikidata",
+      "type": "api",
+      "code_id": "wikidata",
+      "url": "https://www.wikidata.org/wiki/"
+    }
+  ]
+}
+

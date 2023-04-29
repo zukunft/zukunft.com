@@ -49,7 +49,9 @@ class ref_api extends sandbox_api
     // persevered reference names for unit and integration tests
     const TN_READ = 'wikidata';
     const TN_ADD = 'System Test Reference Name';
-    const TK_READ = 'Mathematical_constant';
+    const TK_READ = 'Q167';
+    const TU_READ = 'https://www.wikidata.org/wiki/';
+    const TD_READ = 'ratio of the circumference of a circle to its diameter';
 
     // must be the same as in /resource/api/source/source_put.json
     const TK_ADD_API = 'System Test Reference API added';
@@ -67,7 +69,7 @@ class ref_api extends sandbox_api
      * object vars
      */
 
-    public ?phrase_api $phr;
+    public ?int $phrase_id;
     public ?string $external_key;
     public ?int $type_id;
     public ?int $source_id;

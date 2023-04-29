@@ -77,6 +77,7 @@ class ref extends sandbox_link_with_type
     const FLD_EX_KEY = 'external_key';
     const FLD_TYPE = 'ref_type_id';
     const FLD_URL = 'url';
+    const FLD_SOURCE = 'source_id';
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
@@ -132,6 +133,8 @@ class ref extends sandbox_link_with_type
     function __construct(user $usr)
     {
         parent::__construct($usr);
+        $this->obj_type = sandbox::TYPE_LINK;
+        $this->obj_name = sql_db::TBL_REF;
         $this->create_objects($usr);
         $this->external_key = null;
         $this->source = null;
@@ -179,7 +182,7 @@ class ref extends sandbox_link_with_type
             $this->external_key = $db_row[self::FLD_EX_KEY];
             $this->ref_type = $lst->get_ref_type_by_id($db_row[self::FLD_TYPE]);
             $this->url = $db_row[self::FLD_URL];
-            $this->description = $db_row[self::FLD_URL];
+            $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
             if ($db_row[source::FLD_ID] != null) {
                 if ($db_row[source::FLD_ID] > 0) {
                     $this->source = new source($this->user());
@@ -245,8 +248,13 @@ class ref extends sandbox_link_with_type
         $api_obj = new ref_api();
         if (!$this->is_excluded()) {
             parent::fill_api_obj($api_obj);
-            $api_obj->phr = $this->phr->api_obj();
+            if ($this->phr != null) {
+                $api_obj->phrase_id = $this->phr->id();
+            }
             $api_obj->external_key = $this->external_key;
+            if ($this->source != null) {
+                $api_obj->source_id = $this->source->id();
+            }
             $api_obj->url = $this->url;
             $api_obj->description = $this->description;
         }
@@ -262,7 +270,7 @@ class ref extends sandbox_link_with_type
         if (!$this->is_excluded()) {
             parent::fill_dsp_obj($dsp_obj);
             $dsp_obj->phr = $this->phr->dsp_obj();
-            $dsp_obj->external_key = $this->external_key;
+            $dsp_obj->set_external_key($this->external_key);
             $dsp_obj->url = $this->url;
             $dsp_obj->description = $this->description;
         }
@@ -299,7 +307,7 @@ class ref extends sandbox_link_with_type
      */
     function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(sql_db::TBL_SOURCE);
+        $db_con->set_type(sql_db::TBL_REF);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -493,6 +501,35 @@ class ref extends sandbox_link_with_type
 
 
     /*
+     * Interface
+     */
+
+    /**
+     * @return int the id of the source or zero if no source is defined
+     */
+    function source_id(): int
+    {
+        $result = 0;
+        if ($this->source != null) {
+            $result = $this->source->id();
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the name of the source or an empty string if no source is defined
+     */
+    function source_name(): string
+    {
+        $result = '';
+        if ($this->source != null) {
+            $result = $this->source->name();
+        }
+        return $result;
+    }
+
+
+    /*
      * im- and export
      */
 
@@ -510,8 +547,17 @@ class ref extends sandbox_link_with_type
         $ref_lst = new ref_type_list();
         // reset of object not needed, because the calling function has just created the object
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_NAME) {
-                $this->external_key = $value;
+            if ($key == exp_obj::FLD_SOURCE) {
+                $src = new source($this->user());
+                if ($do_save) {
+                    $src->load_by_name($value, source::class);
+                    if ($src->id == 0) {
+                        $result->add_message('Cannot find source "' . $value . '" when importing ' . $this->dsp_id());
+                    }
+                } else {
+                    $src->set_name($value);
+                }
+                $this->source = $src;
             }
             if ($key == exp_obj::FLD_TYPE) {
                 $this->ref_type = $ref_lst->get_ref_type($value);
@@ -522,6 +568,15 @@ class ref extends sandbox_link_with_type
                     $this->ref_type = $ref_lst->get_ref_type($value);
                     log_debug('ref_type set based on ' . $value . ' (' . $this->ref_type->name . ')');
                 }
+            }
+            if ($key == exp_obj::FLD_NAME) {
+                $this->external_key = $value;
+            }
+            if ($key == exp_obj::FLD_DESCRIPTION) {
+                $this->description = $value;
+            }
+            if ($key == self::FLD_URL) {
+                $this->url = $value;
             }
         }
         // to be able to log the object names
@@ -542,11 +597,20 @@ class ref extends sandbox_link_with_type
     {
         $result = new ref_exp();
 
-        if ($this->external_key <> '') {
-            $result->name = $this->external_key;
+        if ($this->source != null) {
+            $result->source = $this->source->name();
         }
         if ($this->ref_type <> '') {
             $result->type = $this->ref_type->code_id;
+        }
+        if ($this->external_key <> '') {
+            $result->name = $this->external_key;
+        }
+        if ($this->description <> '') {
+            $result->description = $this->description;
+        }
+        if ($this->url <> '') {
+            $result->url = $this->url;
         }
 
         return $result;
@@ -682,6 +746,98 @@ class ref extends sandbox_link_with_type
     }
 
     /**
+     * set the update parameters for the description
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param ref|sandbox $db_rec the database record before the saving
+     * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
+     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     */
+    private function save_field_description(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): string
+    {
+        $result = '';
+        // if the plural is not set, don't overwrite any db entry
+        if ($this->description <> Null) {
+            if ($this->description <> $db_rec->description) {
+                $log = $this->log_upd_field();
+                $log->old_value = $db_rec->description;
+                $log->new_value = $this->description;
+                $log->std_value = $std_rec->description;
+                $log->row_id = $this->id;
+                $log->set_field(sandbox_named::FLD_DESCRIPTION);
+                $result = $this->save_field_do($db_con, $log);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * set the update parameters for the reference url
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param ref|sandbox $db_rec the database record before the saving
+     * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
+     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     */
+    private function save_field_url(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): string
+    {
+        $result = '';
+        // if the plural is not set, don't overwrite any db entry
+        if ($this->url <> Null) {
+            if ($this->url <> $db_rec->url) {
+                $log = $this->log_upd_field();
+                $log->old_value = $db_rec->url;
+                $log->new_value = $this->url;
+                $log->std_value = $std_rec->url;
+                $log->row_id = $this->id;
+                $log->set_field(self::FLD_URL);
+                $result = $this->save_field_do($db_con, $log);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * set the update parameters for the reference url
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param ref|sandbox $db_rec the database record before the saving
+     * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
+     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     */
+    private function save_field_source(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): string
+    {
+        $result = '';
+        if ($db_rec->source_id() <> $this->source_id()) {
+            $log = $this->log_upd_field();
+            $log->old_value = $db_rec->source_name();
+            $log->old_id = $db_rec->source_id();
+            $log->new_value = $this->source_name();
+            $log->new_id = $this->source_id();
+            $log->std_value = $std_rec->source_name();
+            $log->std_id = $std_rec->source_id();
+            $log->row_id = $this->id();
+            $log->set_field(self::FLD_SOURCE);
+            $result = $this->save_field_do($db_con, $log);
+        }
+        return $result;
+    }
+
+    /**
+     * save all updated reference fields
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param ref|sandbox $db_rec the database record before the saving
+     * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
+     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     */
+    function save_fields(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): string
+    {
+        $result = parent::save_fields($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_description($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_url($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_source($db_con, $db_rec, $std_rec);
+        log_debug('all fields for "' . $this->dsp_id() . '" has been saved');
+        return $result;
+    }
+
+    /**
      * update a ref in the database or update the existing
      * @return user_message the database id of the created reference or 0 if not successful
      */
@@ -707,6 +863,16 @@ class ref extends sandbox_link_with_type
                 if (!$log->add_ref($this->id)) {
                     $result->add_message('Adding reference ' . $this->dsp_id() . ' in the log failed.');
                     log_err($result->get_message(), 'ref->add');
+                } else {
+                    // create an empty db_rec element to force saving of all set fields
+                    $db_rec = clone $this;
+                    $db_rec->reset();
+                    $db_rec->fob = $this->fob;
+                    $db_rec->tob = $this->tob;
+                    $db_rec->set_user($this->user());
+                    $std_rec = clone $db_rec;
+                    // save the object fields
+                    $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
                 }
             } else {
                 $result->add_message('Adding reference ' . $this->dsp_id() . ' failed.');
@@ -744,7 +910,7 @@ class ref extends sandbox_link_with_type
      */
     function save(): string
     {
-        log_debug('ref->save ' . $this->dsp_id());
+        log_debug();
 
         global $db_con;
         $result = '';
@@ -769,10 +935,10 @@ class ref extends sandbox_link_with_type
 
         // create a new object or update an existing
         if ($this->id <= 0) {
-            log_debug('ref->save add');
+            log_debug('add ' . $this->dsp_id());
             $result .= $this->add()->get_message();
         } else {
-            log_debug('ref->save update');
+            log_debug('update ' . $this->dsp_id());
 
             // read the database values to be able to check if something has been changed;
             // done first, because it needs to be done for user and general object values
@@ -780,6 +946,10 @@ class ref extends sandbox_link_with_type
             $db_rec->reset();
             $db_rec->load_by_id($this->id);
             log_debug('ref->save reloaded from db');
+            $std_rec = new ref($this->user()); // must also be set to allow to take the ownership
+            $std_rec->id = $this->id;
+            $std_rec->load_standard();
+            log_debug("standard reference settings loaded (" . $std_rec->id . ")");
 
             // if needed log the change and update the database
             if ($this->external_key <> $db_rec->external_key) {
@@ -791,7 +961,14 @@ class ref extends sandbox_link_with_type
                     }
                 }
             }
+
+            // if everything has been fine until here
+            // update the
+            if ($result == '') {
+                $result = $this->save_fields($db_con, $db_rec, $std_rec);
+            }
         }
+
         return $result;
     }
 

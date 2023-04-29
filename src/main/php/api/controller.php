@@ -79,12 +79,15 @@ class controller
     // e.g. for the word api message it contains the id of the phrase type
     const API_FLD_TYPE_ID = 'type_id';
     const API_FLD_CODE_ID = 'code_id';
+    const API_FLD_PHRASE = 'phrase_id';
     const API_FLD_PHRASES = 'phrases';
+    const API_FLD_SOURCE = 'source_id';
     // a float number used for values and results
     const API_FLD_NUMBER = 'number';
     // the formula expression in a human-readable format
     const API_FLD_USER_TEXT = 'user_text';
     const API_FLD_URL = 'url';
+    const API_FLD_EXTERNAL_KEY = 'external_key';
 
     // path parameters
     const PATH_API_REDIRECT = '/../../'; // get from the __DIR__ to the php root path

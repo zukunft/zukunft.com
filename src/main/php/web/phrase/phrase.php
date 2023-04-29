@@ -65,7 +65,16 @@ class phrase extends combine_named_dsp
      */
     function set_from_json(string $json_api_msg): void
     {
-        $json_array = json_decode($json_api_msg, true);
+        $this->set_from_json_array(json_decode($json_api_msg, true));
+    }
+
+    /**
+     * set the vars of this phrase frontend object bases on the api json array
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
         if (array_key_exists(combine_object_api::FLD_CLASS, $json_array)) {
             if ($json_array[combine_object_api::FLD_CLASS] == phrase_api::CLASS_WORD) {
                 $wrd_dsp = new word_dsp();

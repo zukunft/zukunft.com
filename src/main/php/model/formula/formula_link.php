@@ -645,7 +645,7 @@ class formula_link extends sandbox_link_with_type
         }
 
         if ($this->id <= 0) {
-            log_debug('new link from "' . $this->fob->name() . '" to "' . $this->tob->name() . '"');
+            log_debug('new formula link from "' . $this->fob->name() . '" to "' . $this->tob->name() . '"');
             $result .= $this->add()->get_last_message();
         } else {
             log_debug('update "' . $this->id . '"');

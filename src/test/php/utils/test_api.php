@@ -135,9 +135,9 @@ class test_api extends create_test_objects
         $this->assert_api_get_by_text(view::class, view_api::TN_READ);
         $this->assert_api_get(view_cmp::class);
         $this->assert_api_get_by_text(view_cmp::class, view_cmp_api::TN_READ);
-        $this->assert_api_get(source::class);
+        $this->assert_api_get(source::class, 2);
         $this->assert_api_get_by_text(source::class, source_api::TN_READ_API);
-        $this->assert_api_get(ref::class);
+        $this->assert_api_get(ref::class, 3);
         $this->assert_api_get(batch_job::class);
         $this->assert_api_get(phrase_type::class);
         $this->assert_api_get(language::class);

@@ -53,6 +53,27 @@ class combine_object_dsp
      * set and get
      */
 
+    /**
+     * set the vars of this combine frontend object bases on the api message
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
+    function set_from_json(string $json_api_msg): void
+    {
+        $this->set_from_json_array(json_decode($json_api_msg, true));
+    }
+
+    /**
+     * set the vars of this combine frontend object bases on the api json array
+     * dummy function that should be overwritten by the child object
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        log_err('This set_from_json_array function should have been overwritten by the child object');
+    }
+
     function set_obj(object $obj): void
     {
         $this->obj = $obj;

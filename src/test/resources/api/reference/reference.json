@@ -1,14 +1,8 @@
 {
-  "id": 1,
-  "phr": {
-    "id": 1,
-    "name": "Mathematical constant",
-    "description": "A mathematical constant that never changes e.g. Pi",
-    "type_id": 17,
-    "class": "word"
-  },
-  "external_key": "Mathematical_constant",
-  "type_id": null,
-  "url": null,
-  "description": null
+  "id": 3,
+  "phrase_id": 2,
+  "external_key": "Q167",
+  "source_id": 1,
+  "url": "https:\/\/www.wikidata.org\/wiki\/",
+  "description": "ratio of the circumference of a circle to its diameter"
 }

@@ -71,8 +71,7 @@ class ref_unit_tests
         $t->subheader('API and frontend cast unit tests');
         $ref = $t->dummy_reference();
         $t->assert_api($ref);
-        // TODO activate
-        //$t->assert_api_to_dsp($ref, new ref_dsp());
+        $t->assert_api_to_dsp($ref, new ref_dsp());
 
 
         // init for source

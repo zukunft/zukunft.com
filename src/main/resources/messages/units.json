@@ -26,6 +26,13 @@
         {
           "name": "Pi",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q167",
+          "source": "wikidata",
+          "type": "wikidata",
+          "description": "ratio of the circumference of a circle to its diameter",
+          "url": "https:\/\/www.wikidata.org\/wiki\/"
         }
       ]
     },

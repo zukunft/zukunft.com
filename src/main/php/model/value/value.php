@@ -799,7 +799,7 @@ class value extends sandbox_value
      * create the source object if needed and set the id
      * @param int $id the id of the source
      */
-    function set_source_id(?int $id)
+    function set_source_id(?int $id): void
     {
         if ($id != null) {
             if ($id <> 0) {
@@ -813,6 +813,7 @@ class value extends sandbox_value
 
     /**
      * load the source and return the source name
+     * TODO avoid unneeded loading of sources
      */
     function source_name(): string
     {

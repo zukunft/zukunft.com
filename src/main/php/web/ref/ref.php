@@ -31,9 +31,13 @@
 
 namespace html\ref;
 
+use controller\controller;
 use html\db_object_dsp;
 use html\phrase\phrase as phrase_dsp;
+use html\word\word as word_dsp;
+use html\ref\source as source_dsp;
 use html\sandbox_typed_dsp;
+use html\word\word;
 
 class ref extends sandbox_typed_dsp
 {
@@ -43,16 +47,41 @@ class ref extends sandbox_typed_dsp
      */
 
     public ?phrase_dsp $phr;
-    public ?string $external_key; // maybe use field name instead
+    private ?source $source;
+    private ?string $external_key; // maybe use field name instead
     public ?int $type_id;
-    public ?int $source_id;
     public ?string $url;
-    public ?string $description;
 
 
     /*
      * set and get
      */
+
+    /**
+     * set the vars of this source frontend object bases on the api json array
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        parent::set_from_json_array($json_array);
+        if (array_key_exists(controller::API_FLD_PHRASE, $json_array)) {
+            $phr = new phrase_dsp(new word_dsp());
+            $phr->set_id($json_array[controller::API_FLD_PHRASE]);
+            $this->phr = $phr;
+        }
+        if (array_key_exists(controller::API_FLD_SOURCE, $json_array)) {
+            $src = new source_dsp();
+            $src->set_id($json_array[controller::API_FLD_SOURCE]);
+            $this->source = $src;
+        }
+        if (array_key_exists(controller::API_FLD_EXTERNAL_KEY, $json_array)) {
+            $this->set_external_key($json_array[controller::API_FLD_EXTERNAL_KEY]);
+        }
+        if (array_key_exists(controller::API_FLD_URL, $json_array)) {
+            $this->set_url($json_array[controller::API_FLD_URL]);
+        }
+    }
 
     /**
      * @return string the name of the reference type e.g. wikidata
@@ -63,6 +92,30 @@ class ref extends sandbox_typed_dsp
         return $ref_types->name($this->type_id);
     }
 
+    function set_external_key(?string $external_key): void
+    {
+        $this->external_key = $external_key;
+    }
+
+    function external_key(): ?string
+    {
+        return $this->external_key;
+    }
+
+    function set_url(?string $url): void
+    {
+        $this->url = $url;
+    }
+
+    function url(): ?string
+    {
+        return $this->url;
+    }
+
+
+    /*
+     * display
+     */
 
     /**
      * @returns string simply the ref name, but later with mouse over that shows the description
@@ -70,6 +123,24 @@ class ref extends sandbox_typed_dsp
     function dsp(): string
     {
         return $this->type_name() . ' ' . $this->external_key;
+    }
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+        $vars[controller::API_FLD_URL] = $this->url();
+        $vars[controller::API_FLD_EXTERNAL_KEY] = $this->external_key();
+        $vars[controller::API_FLD_PHRASE] = $this->phr->id();
+        $vars[controller::API_FLD_SOURCE] = $this->source->id();
+        return $vars;
     }
 
 }

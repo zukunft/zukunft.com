@@ -36,14 +36,20 @@ include_once SERVICE_EXPORT_PATH . 'sandbox_exp_link.php';
 class ref_exp extends sandbox_exp_link
 {
 
-    // field names used for JSON creation
-    public ?string $type = '';
+    // reference specific field names used for JSON creation
+    public ?string $source = '';      // the name of the source
+    public ?string $type = '';        // additional to the source for the case that one source have different APIs
+    public ?string $description = ''; // to add a comment for special cases
+    public ?string $url = '';         // to overwrite the url of the source for special cases
 
-    function reset()
+    function reset(): void
     {
         parent::reset();
 
+        $this->source = '';
         $this->type = '';
+        $this->description = '';
+        $this->url = '';
     }
 
 }
