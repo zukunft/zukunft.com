@@ -103,13 +103,13 @@ class term_unit_tests
         $t->subheader('HTML frontend unit tests');
 
         $fig = $t->dummy_term();
-        $t->assert_api_to_dsp($fig, new term_dsp(new word_dsp()));
+        $t->assert_api_to_dsp($fig, new term_dsp());
         $fig = $t->dummy_term_triple();
-        $t->assert_api_to_dsp($fig, new term_dsp(new triple_dsp()));
+        $t->assert_api_to_dsp($fig, new term_dsp());
         $fig = $t->dummy_term_formula();
-        $t->assert_api_to_dsp($fig, new term_dsp(new formula_dsp()));
+        $t->assert_api_to_dsp($fig, new term_dsp());
         $fig = $t->dummy_term_verb();
-        $t->assert_api_to_dsp($fig, new term_dsp(new verb_dsp()));
+        $t->assert_api_to_dsp($fig, new term_dsp());
 
     }
 

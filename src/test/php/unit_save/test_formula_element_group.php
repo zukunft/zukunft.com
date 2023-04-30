@@ -124,7 +124,7 @@ function run_formula_element_group_test(testing $t): void
 
             if (isset($fig)) {
                 $t = new test_api();
-                $fig_dsp = $t->dsp_obj($fig, new figure_dsp(new value_dsp()));
+                $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
                 $result = $fig_dsp->display();
                 $target = "8.51";
                 $t->dsp('figure->display', $target, $result);

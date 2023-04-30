@@ -277,20 +277,24 @@ class triple extends sandbox_typed_dsp
 
 
     /*
-     * casting
+     * cast
      */
 
     /**
      * @returns phrase_dsp the phrase display object base on this triple object
      */
-    function phrase_dsp(): phrase_dsp
+    function phrase(): phrase_dsp
     {
-        return new phrase_dsp($this);
+        $phr = new phrase_dsp();
+        $phr->set_obj($this);
+        return $phr;
     }
 
     function term(): term_dsp
     {
-        return new term_dsp($this);
+        $trm = new term_dsp();
+        $trm->set_obj($this);
+        return $trm;
     }
 
 
@@ -329,19 +333,6 @@ class triple extends sandbox_typed_dsp
     function is_percent(): bool
     {
         return $this->is_type(phrase_type::PERCENT);
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return phrase_dsp the related phrase api or display object with the basic values filled
-     */
-    function phrase(): phrase_dsp
-    {
-        return new phrase_dsp($this);
     }
 
 }

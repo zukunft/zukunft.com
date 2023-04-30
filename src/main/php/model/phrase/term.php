@@ -458,7 +458,7 @@ class term extends combine_named
             return $this->get_verb()->dsp_obj()->term();
         } else {
             log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
-            return (new term_dsp((new word_dsp())));
+            return (new term_dsp());
         }
     }
 

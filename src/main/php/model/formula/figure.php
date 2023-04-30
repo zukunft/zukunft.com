@@ -239,6 +239,14 @@ class figure extends combine_object
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @returns figure_dsp the cast object with the HTML code generating functions
      */
     function dsp_obj(): figure_dsp

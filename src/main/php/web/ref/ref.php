@@ -66,7 +66,9 @@ class ref extends sandbox_typed_dsp
     {
         parent::set_from_json_array($json_array);
         if (array_key_exists(controller::API_FLD_PHRASE, $json_array)) {
-            $phr = new phrase_dsp(new word_dsp());
+            $phr = new phrase_dsp();
+            $wrd = new word_dsp();
+            $phr->set_obj($wrd);
             $phr->set_id($json_array[controller::API_FLD_PHRASE]);
             $this->phr = $phr;
         }

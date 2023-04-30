@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/word_display.php - TESTing of the WORD DISPLAY functions
-    --------------------------
+    test/unit/html/word.php - testing of the html frontend functions for words
+    -----------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -37,7 +37,7 @@ use html\html_base;
 use html\word\word as word_dsp;
 use test\testing;
 
-class word_display_unit_tests
+class word
 {
     function run(testing $t): void
     {

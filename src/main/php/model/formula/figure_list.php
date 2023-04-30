@@ -280,7 +280,7 @@ class figure_list extends sandbox_list
 
         foreach ($this->lst as $fig) {
             $t = new test_api();
-            $fig_dsp = $t->dsp_obj($fig, new figure_dsp(new value_dsp()));
+            $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
             $result .= $fig_dsp->display($back) . ' ';
         }
 

@@ -69,12 +69,14 @@ class verb extends sandbox_named_dsp
 
 
     /*
-     * casting
+     * cast
      */
 
     function term(): term_dsp
     {
-        return new term_dsp($this);
+        $trm = new term_dsp();
+        $trm->set_obj($this);
+        return $trm;
     }
 
     /**

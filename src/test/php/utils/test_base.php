@@ -157,12 +157,13 @@ include_once $path_unit_dsp . 'test_display.php';
 include_once $path_unit_dsp . 'change_log_display.php';
 include_once $path_unit_dsp . 'type_lists.php';
 include_once $path_unit_dsp . 'user_display.php';
-include_once $path_unit_dsp . 'word_display.php';
+include_once $path_unit_dsp . 'word.php';
 include_once $path_unit_dsp . 'word_list_display.php';
 include_once $path_unit_dsp . 'triple_display.php';
 include_once $path_unit_dsp . 'phrase_list_display.php';
 include_once $path_unit_dsp . 'value_list_display.php';
 include_once $path_unit_dsp . 'view_component_display.php';
+include_once $path_unit_dsp . 'figure.php';
 
 
 // load the unit testing modules with database read only

@@ -166,7 +166,9 @@ class value extends sandbox_value_dsp
      */
     function figure(): figure_dsp
     {
-        return new figure_dsp($this);
+        $fig = new figure_dsp();
+        $fig->set_obj($this);
+        return $fig;
     }
 
 

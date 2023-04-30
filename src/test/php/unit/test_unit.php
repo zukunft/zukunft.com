@@ -94,8 +94,9 @@ use test\html\triple_display_unit_tests;
 use test\html\type_list_display_unit_tests;
 use test\html\user_display_unit_tests;
 use test\html\view_component_display_unit_tests;
-use test\html\word_display_unit_tests;
+use test\html\word as word_html_tests;
 use test\html\word_list_display_unit_tests;
+use test\html\figure as figure_html_tests;
 
 class test_unit extends testing
 {
@@ -207,10 +208,11 @@ class test_unit extends testing
         (new html_unit_tests)->run($this);
         (new type_list_display_unit_tests)->run($this);
         (new user_display_unit_tests)->run($this);
-        (new word_display_unit_tests)->run($this);
+        (new word_html_tests)->run($this);
         (new word_list_display_unit_tests)->run($this);
         (new triple_display_unit_tests)->run($this);
         (new phrase_list_display_unit_tests)->run($this);
+        (new figure_html_tests())->run($this);
         (new view_component_display_unit_tests)->run($this);
         (new change_log_display_unit_tests)->run($this);
 

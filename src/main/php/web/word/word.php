@@ -39,7 +39,7 @@ include_once API_PHRASE_PATH . 'phrase.php';
 use cfg\phrase_type;
 use html\api;
 use html\button;
-use html\change_log_named_dsp;
+use html\log\change_log_named as change_log_named_dsp;
 use html\html_base;
 use html\html_selector;
 use html\msg;
@@ -471,12 +471,16 @@ class word extends sandbox_typed_dsp
      */
     function phrase(): phrase_dsp
     {
-        return new phrase_dsp($this);
+        $phr = new phrase_dsp();
+        $phr->set_obj($this);
+        return $phr;
     }
 
     function term(): term_dsp
     {
-        return new term_dsp($this);
+        $trm = new term_dsp();
+        $trm->set_obj($this);
+        return $trm;
     }
 
 

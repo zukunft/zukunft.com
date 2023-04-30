@@ -127,7 +127,9 @@ class formula extends sandbox_typed_dsp
 
     function term(): term_dsp
     {
-        return new term_dsp($this);
+        $trm = new term_dsp();
+        $trm->set_obj($this);
+        return $trm;
     }
 
 

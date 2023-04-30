@@ -88,7 +88,8 @@ class phrase_group extends sandbox_named_dsp
         foreach ($json_array as $phr_json) {
             $wrd = new word_dsp();
             $wrd->set_from_json_array($phr_json);
-            $phr = new phrase_dsp($wrd);
+            $phr = new phrase_dsp();
+            $phr->set_obj($wrd);
             $this->lst[] = $phr;
         }
     }

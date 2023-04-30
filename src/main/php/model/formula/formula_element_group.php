@@ -384,7 +384,7 @@ class formula_element_group
         foreach ($fig_lst->lst() as $fig) {
             log_debug('display figure');
             $t = new test_api();
-            $fig_dsp = $t->dsp_obj($fig, new figure_dsp(new result_dsp()));
+            $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
             $result .= $fig_dsp->display_linked($back);
         }
 

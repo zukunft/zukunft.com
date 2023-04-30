@@ -35,6 +35,7 @@
 namespace html;
 
 use controller\controller;
+use html\word\word;
 
 include_once WEB_SANDBOX_PATH . 'combine_object.php';
 
@@ -45,9 +46,11 @@ class combine_named_dsp extends combine_object_dsp
      * construct and map
      */
 
-    function __construct(object $obj)
+    function __construct(?string $api_json = null)
     {
-        $this->set_obj($obj);
+        if ($api_json != null) {
+            $this->set_from_json($api_json);
+        }
     }
 
     /**
