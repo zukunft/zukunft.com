@@ -154,16 +154,36 @@ include_once $path_unit . 'system_log.php';
 // load the testing functions for creating HTML code
 include_once $path_unit . 'html.php';
 include_once $path_unit_dsp . 'test_display.php';
-include_once $path_unit_dsp . 'change_log_display.php';
+include_once $path_unit_dsp . 'change_log.php';
 include_once $path_unit_dsp . 'type_lists.php';
-include_once $path_unit_dsp . 'user_display.php';
+include_once $path_unit_dsp . 'user.php';
 include_once $path_unit_dsp . 'word.php';
-include_once $path_unit_dsp . 'word_list_display.php';
-include_once $path_unit_dsp . 'triple_display.php';
-include_once $path_unit_dsp . 'phrase_list_display.php';
-include_once $path_unit_dsp . 'value_list_display.php';
-include_once $path_unit_dsp . 'view_component_display.php';
+include_once $path_unit_dsp . 'word_list.php';
+include_once $path_unit_dsp . 'verb.php';
+include_once $path_unit_dsp . 'triple.php';
+//include_once $path_unit_dsp . 'phrase.php';
+include_once $path_unit_dsp . 'phrase_list.php';
+//include_once $path_unit_dsp . 'phrase_group.php';
+//include_once $path_unit_dsp . 'term.php';
+//include_once $path_unit_dsp . 'term_list.php';
+//include_once $path_unit_dsp . 'value.php';
+include_once $path_unit_dsp . 'value_list.php';
+//include_once $path_unit_dsp . 'formula.php';
+//include_once $path_unit_dsp . 'formula_list.php';
+//include_once $path_unit_dsp . 'result.php';
+//include_once $path_unit_dsp . 'result_list.php';
 include_once $path_unit_dsp . 'figure.php';
+//include_once $path_unit_dsp . 'figure_list.php';
+//include_once $path_unit_dsp . 'view.php';
+//include_once $path_unit_dsp . 'view_list.php';
+include_once $path_unit_dsp . 'component.php';
+//include_once $path_unit_dsp . 'component_list.php';
+//include_once $path_unit_dsp . 'source.php';
+//include_once $path_unit_dsp . 'reference.php';
+//include_once $path_unit_dsp . 'language.php';
+//include_once $path_unit_dsp . 'change_log.php';
+//include_once $path_unit_dsp . 'system_log.php';
+//include_once $path_unit_dsp . 'batch_job.php';
 
 
 // load the unit testing modules with database read only

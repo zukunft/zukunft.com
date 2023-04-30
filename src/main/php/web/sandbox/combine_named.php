@@ -43,29 +43,6 @@ class combine_named_dsp extends combine_object_dsp
 {
 
     /*
-     * construct and map
-     */
-
-    function __construct(?string $api_json = null)
-    {
-        if ($api_json != null) {
-            $this->set_from_json($api_json);
-        }
-    }
-
-    /**
-     * set the object vars of a phrase or term to the neutral initial value
-     */
-    function reset(): void
-    {
-        $this->set_obj_id(0);
-        $this->set_name('');
-        $this->set_description(null);
-        $this->set_type_id(null);
-    }
-
-
-    /*
      * set and get
      */
 

@@ -133,14 +133,13 @@ class phrase_api extends combine_named_api implements JsonSerializable
 
     protected function wrd_dsp(): word_dsp
     {
-        $wrd = new word_dsp($this->id(), $this->name());
-        $wrd->set_type_id($this->type_id());
-        return $wrd;
+        $api_json = $this->get_json();
+        return new word_dsp($api_json);
     }
 
     protected function trp_dsp(): triple_dsp
     {
-        $trp = new triple_dsp($this->id() * -1, $this->name());
+        $trp = new triple_dsp($this->get_json());
         $trp->set_type_id($this->type_id());
         return $trp;
     }

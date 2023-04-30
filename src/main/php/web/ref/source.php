@@ -53,6 +53,8 @@ class source extends sandbox_typed_dsp
         parent::set_from_json_array($json_array);
         if (array_key_exists(controller::API_FLD_URL, $json_array)) {
             $this->set_url($json_array[controller::API_FLD_URL]);
+        } else {
+            $this->set_url(null);
         }
     }
 

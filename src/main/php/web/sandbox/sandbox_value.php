@@ -56,13 +56,14 @@ class sandbox_value_dsp extends db_object_dsp
      * construct and map
      */
 
-    function __construct(int $id = 0)
+    /**
+     * the html display object are always filled base on the api message
+     * @param string|null $api_json the api message to set all object vars
+     */
+    function __construct(?string $api_json = null)
     {
-        parent::__construct($id);
-
-        $this->grp = new phrase_group_dsp();
-        $this->number = null;
-        $this->is_std = true;
+        $this->set_grp(new phrase_group_dsp());
+        parent::__construct($api_json);
     }
 
 
@@ -70,12 +71,12 @@ class sandbox_value_dsp extends db_object_dsp
      * set and get
      */
 
-    function set_grp(phrase_group_dsp $grp)
+    function set_grp(phrase_group_dsp $grp): void
     {
         $this->grp = $grp;
     }
 
-    function set_number(?float $number)
+    function set_number(?float $number): void
     {
         $this->number = $number;
     }
@@ -122,13 +123,24 @@ class sandbox_value_dsp extends db_object_dsp
         if (array_key_exists(controller::API_FLD_ID, $json_array)) {
             $this->set_id($json_array[controller::API_FLD_ID]);
         } else {
+            $this->set_id(0);
             log_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
         if (array_key_exists(sandbox_value_api::FLD_NUMBER, $json_array)) {
             $this->set_number($json_array[sandbox_value_api::FLD_NUMBER]);
+        } else {
+            $this->set_number(null);
+        }
+        if (array_key_exists(controller::API_FLD_IS_STD, $json_array)) {
+            $this->set_is_std($json_array[controller::API_FLD_IS_STD]);
+        } else {
+            $this->set_is_std();
         }
         if (array_key_exists(controller::API_FLD_PHRASES, $json_array)) {
             $this->grp()->set_from_json_array($json_array[controller::API_FLD_PHRASES]);
+        } else {
+            $this->set_grp(new phrase_group_dsp());
+            log_err('Mandatory field phrase group missing in API JSON ' . json_encode($json_array));
         }
     }
 

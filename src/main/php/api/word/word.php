@@ -51,6 +51,7 @@ class word_api extends sandbox_typed_api
     const TN_READ = 'Mathematical constant';
     const TD_READ = 'A mathematical constant that never changes e.g. Pi';
     const TN_CONST = 'Pi';
+    const TD_CONST = 'Pi';
     const TN_COUNTRY = 'Country';
     const TN_CANTON = 'Canton';
     const TN_CITY = 'City';

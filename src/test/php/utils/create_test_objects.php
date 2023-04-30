@@ -131,12 +131,12 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
-    function dummy_word2(): word
+    function dummy_word_pi(): word
     {
         global $usr;
         $wrd = new word($usr);
-        $wrd->set(2, word_api::TN_READ);
-        $wrd->description = word_api::TD_READ;
+        $wrd->set(2, word_api::TN_CONST);
+        $wrd->description = word_api::TD_CONST;
         $wrd->set_type(phrase_type::MATH_CONST);
         return $wrd;
     }
@@ -363,7 +363,7 @@ class create_test_objects extends test_base
         global $usr;
         $ref = new ref($usr);
         $ref->set(3);
-        $ref->phr = $this->dummy_word2()->phrase();
+        $ref->phr = $this->dummy_word_pi()->phrase();
         $ref->source = $this->dummy_source1();
         $ref->external_key = ref_api::TK_READ;
         $ref->url = ref_api::TU_READ;

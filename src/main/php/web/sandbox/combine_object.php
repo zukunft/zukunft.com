@@ -50,6 +50,22 @@ class combine_object_dsp
 
 
     /*
+     * construct and map
+     */
+
+    /**
+     * the html display object are always filled base on the api message
+     * @param string|null $api_json the api message to set all object vars
+     */
+    function __construct(?string $api_json = null)
+    {
+        if ($api_json != null) {
+            $this->set_from_json($api_json);
+        }
+    }
+
+
+    /*
      * set and get
      */
 

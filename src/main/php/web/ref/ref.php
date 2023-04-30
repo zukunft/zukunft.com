@@ -59,6 +59,7 @@ class ref extends sandbox_typed_dsp
 
     /**
      * set the vars of this source frontend object bases on the api json array
+     * because called from the constructor the null value must be set if the parameter is missing
      * @param array $json_array an api json message
      * @return void
      */
@@ -71,17 +72,25 @@ class ref extends sandbox_typed_dsp
             $phr->set_obj($wrd);
             $phr->set_id($json_array[controller::API_FLD_PHRASE]);
             $this->phr = $phr;
+        } else {
+            $this->phr = null;
         }
         if (array_key_exists(controller::API_FLD_SOURCE, $json_array)) {
             $src = new source_dsp();
             $src->set_id($json_array[controller::API_FLD_SOURCE]);
             $this->source = $src;
+        } else {
+            $this->source = null;
         }
         if (array_key_exists(controller::API_FLD_EXTERNAL_KEY, $json_array)) {
             $this->set_external_key($json_array[controller::API_FLD_EXTERNAL_KEY]);
+        } else {
+            $this->set_external_key(null);
         }
         if (array_key_exists(controller::API_FLD_URL, $json_array)) {
             $this->set_url($json_array[controller::API_FLD_URL]);
+        } else {
+            $this->set_url(null);
         }
     }
 

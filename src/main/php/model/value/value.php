@@ -233,7 +233,8 @@ class value extends sandbox_value
      */
     function dsp_obj(): value_dsp
     {
-        return $this->api_obj()->dsp_obj();
+        $api_json = $this->api_obj()->get_json();
+        return new value_dsp($api_json);
     }
 
     /**

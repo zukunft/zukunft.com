@@ -96,7 +96,29 @@ use test\html\user_display_unit_tests;
 use test\html\view_component_display_unit_tests;
 use test\html\word as word_html_tests;
 use test\html\word_list_display_unit_tests;
+use test\html\verb as verb_html_tests;
+//use test\html\phrase_list as phrase_list_html_tests;
+//use test\html\phrase_group as phrase_group_html_tests;
+//use test\html\term as term_html_tests;
+//use test\html\term_list as term_list_html_tests;
+//use test\html\value as value_html_tests;
+//use test\html\value_list as value_list_html_tests;
+//use test\html\formula as formula_html_tests;
+//use test\html\formula_list as formula_list_html_tests;
+//use test\html\result as result_html_tests;
+//use test\html\result_list'result_list_html_tests;
 use test\html\figure as figure_html_tests;
+//use test\html\figure_list as figure_list_html_tests;
+//use test\html\view as view_html_tests;
+//use test\html\view_list as view_list_html_tests;
+//use test\html\component as component_html_tests;
+//use test\html\component_list as component_list_html_tests;
+//use test\html\source as source_html_tests;
+//use test\html\reference as reference_html_tests;
+//use test\html\language as language_html_tests;
+//use test\html\change_log as change_log_html_tests;
+//use test\html\system_log as system_log_html_tests;
+//use test\html\batch_job as batch_job_html_tests;
 
 class test_unit extends testing
 {
@@ -188,12 +210,12 @@ class test_unit extends testing
         (new formula_unit_tests)->run($this);
         (new formula_list_unit_tests)->run($this);
         (new formula_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new formula_element_unit_tests)->run($this);
+        (new expression_unit_tests)->run($this);
         (new result_unit_tests)->run($this);
         (new result_list_unit_tests)->run($this);
         (new figure_unit_tests)->run($this);
         (new figure_list_unit_tests)->run($this);
-        (new formula_element_unit_tests)->run($this);
-        (new expression_unit_tests)->run($this);
         (new view_unit_tests)->run($this);
         (new view_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new view_component_unit_tests())->run($this);
@@ -210,11 +232,31 @@ class test_unit extends testing
         (new user_display_unit_tests)->run($this);
         (new word_html_tests)->run($this);
         (new word_list_display_unit_tests)->run($this);
+        (new verb_html_tests())->run($this);
         (new triple_display_unit_tests)->run($this);
+        //(new phrase_html_tests)->run($this);
         (new phrase_list_display_unit_tests)->run($this);
+        //(new phrase_group_html_tests)->run($this);
+        //(new term_html_tests)->run($this);
+        //(new term_list_html_tests)->run($this);
+        //(new value_html_tests)->run($this);
+        //(new value_list_html_tests)->run($this);
+        //(new formula_html_tests)->run($this);
+        //(new formula_list_html_tests)->run($this);
+        //(new result_html_tests)->run($this);
+        //(new result_list_html_tests)->run($this);
         (new figure_html_tests())->run($this);
+        //(new figure_list_html_tests)->run($this);
+        //(new view_html_tests)->run($this);
+        //(new view_list_html_tests)->run($this);
         (new view_component_display_unit_tests)->run($this);
+        //(new component_list_html_tests)->run($this);
+        //(new source_html_tests)->run($this);
+        //(new reference_html_tests)->run($this);
+        //(new language_html_tests)->run($this);
         (new change_log_display_unit_tests)->run($this);
+        //(new system_log_html_tests)->run($this);
+        //(new batch_job_html_tests)->run($this);
 
         // restore the global vars
         $db_con = $global_db_con;

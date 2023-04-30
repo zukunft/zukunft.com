@@ -44,19 +44,22 @@ class db_object_dsp
     // fields for the backend link
     public int $id; // the database id of the object, which is the same as the related database object in the backend
 
+
     /*
      * construct and map
      */
 
-    function __construct(int $id = 0)
+    /**
+     * the html display object are always filled base on the api message
+     * @param string|null $api_json the api message to set all object vars
+     */
+    function __construct(?string $api_json = null)
     {
-        $this->id = 0;
-
-        // set the id if included in new call
-        if ($id <> 0) {
-            $this->id = $id;
+        if ($api_json != null) {
+            $this->set_from_json($api_json);
         }
     }
+
 
     /*
      * set and get
@@ -82,6 +85,7 @@ class db_object_dsp
         if (array_key_exists(controller::API_FLD_ID, $json_array)) {
             $this->set_id($json_array[controller::API_FLD_ID]);
         } else {
+            $this->set_id(0);
             log_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
     }

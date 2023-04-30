@@ -62,15 +62,15 @@ class phrase_group extends sandbox_named_dsp
      * construct and map
      */
 
-    function __construct(int $id = 0, string $name = '')
+    /**
+     * the html display object are always filled base on the api message
+     * @param string|null $api_json the api message to set all object vars
+     */
+    function __construct(?string $api_json = null)
     {
-        parent::__construct($id, $name);
-        $this->lst = [];
-
-        $this->id_lst = array();
-        $this->lst_dirty = false;
-        $this->name_linked = '';
-        $this->name_dirty = true;
+        $this->set_name('');
+        $this->set_dirty();
+        parent::__construct($api_json);
     }
 
 
@@ -193,7 +193,7 @@ class phrase_group extends sandbox_named_dsp
     {
         $result = '';
         if ($this->name_dirty() or $phr_lst_header != null) {
-            if ($this->name <> '') {
+            if ($this->name() <> '') {
                 $result .= $this->name();
             } else {
                 $lst_to_show = $this->phr_lst();

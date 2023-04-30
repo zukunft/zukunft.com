@@ -78,17 +78,6 @@ class word extends sandbox_typed_dsp
 
 
     /*
-     * construct and map
-     */
-
-    function __construct(int $id = 0, string $name = '', ?string $description = null)
-    {
-        parent::__construct($id, $name, $description);
-        $this->set_parent(null);
-    }
-
-
-    /*
      * set and get
      */
 
@@ -114,9 +103,13 @@ class word extends sandbox_typed_dsp
         parent::set_from_json_array($json_array);
         if (array_key_exists(self::FLD_PLURAL, $json_array)) {
             $this->set_plural($json_array[self::FLD_PLURAL]);
+        } else {
+            $this->set_plural(null);
         }
         if (array_key_exists(self::FLD_PARENT, $json_array)) {
             $this->set_parent($json_array[self::FLD_PARENT]);
+        } else {
+            $this->set_parent(null);
         }
     }
 

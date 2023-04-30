@@ -50,18 +50,6 @@ class sandbox_named_dsp extends db_object_dsp
 
 
     /*
-     * construct and map
-     */
-
-    function __construct(int $id = 0, string $name = '', ?string $description = null)
-    {
-        parent::__construct($id);
-        $this->set_name($name);
-        $this->set_description($description);
-    }
-
-
-    /*
      * set and get
      */
 
@@ -76,10 +64,13 @@ class sandbox_named_dsp extends db_object_dsp
         if (array_key_exists(sandbox_named_api::FLD_NAME, $json_array)) {
             $this->set_name($json_array[sandbox_named_api::FLD_NAME]);
         } else {
+            $this->set_name('');
             log_err('Mandatory field name missing in API JSON ' . json_encode($json_array));
         }
         if (array_key_exists(sandbox_named_api::FLD_DESCRIPTION, $json_array)) {
             $this->set_description($json_array[sandbox_named_api::FLD_DESCRIPTION]);
+        } else {
+            $this->set_description(null);
         }
     }
 

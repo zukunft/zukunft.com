@@ -54,17 +54,6 @@ class formula extends sandbox_typed_dsp
 
 
     /*
-     * construct and map
-     */
-
-    function __construct(int $id = 0, string $name = '')
-    {
-        parent::__construct($id, $name);
-        $this->usr_text = '';
-    }
-
-
-    /*
      * set and get
      */
 
@@ -90,6 +79,8 @@ class formula extends sandbox_typed_dsp
         parent::set_from_json_array($json_array);
         if (array_key_exists(controller::API_FLD_USER_TEXT, $json_array)) {
             $this->set_usr_text($json_array[controller::API_FLD_USER_TEXT]);
+        } else {
+            $this->set_usr_text(null);
         }
     }
 

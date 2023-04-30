@@ -71,6 +71,8 @@ class result extends sandbox_value_dsp
         /* TODO add all result fields that are not part of the sandbox value object
         if (array_key_exists(controller::API_FLD_USER_TEXT, $json_array)) {
             $this->set_usr_text($json_array[controller::API_FLD_USER_TEXT]);
+        } else {
+            $this->set_usr_text(null);
         }
         */
     }

@@ -47,17 +47,6 @@ class sandbox_typed_dsp extends sandbox_named_dsp
 
 
     /*
-     * construct and map
-     */
-
-    function __construct(int $id = 0, string $name = '', ?string $description = null, ?int $type_id = null)
-    {
-        parent::__construct($id, $name);
-        $this->set_type_id($type_id);
-    }
-
-
-    /*
      * set and get
      */
 
@@ -71,6 +60,8 @@ class sandbox_typed_dsp extends sandbox_named_dsp
         parent::set_from_json_array($json_array);
         if (array_key_exists(controller::API_FLD_TYPE_ID, $json_array)) {
             $this->set_type_id($json_array[controller::API_FLD_TYPE_ID]);
+        } else {
+            $this->set_type_id(null);
         }
     }
 

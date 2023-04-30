@@ -108,10 +108,7 @@ class value_api extends sandbox_value_api implements JsonSerializable
      */
     function dsp_obj(): value_dsp
     {
-        $dsp_obj = new value_dsp($this->id);
-        $dsp_obj->set_grp($this->grp()->dsp_obj());
-        $dsp_obj->set_number($this->number());
-        return $dsp_obj;
+        return new value_dsp($this->get_json());
     }
 
 
@@ -131,8 +128,8 @@ class value_api extends sandbox_value_api implements JsonSerializable
 
         // remove vars from the json that have the default value
         if ($this->is_std) {
-            if (array_key_exists('is_std', $vars)) {
-                unset($vars['is_std']);
+            if (array_key_exists(controller::API_FLD_IS_STD, $vars)) {
+                unset($vars[controller::API_FLD_IS_STD]);
             }
         }
 

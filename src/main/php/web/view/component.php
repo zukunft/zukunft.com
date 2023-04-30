@@ -50,7 +50,7 @@ class component extends sandbox_typed_dsp
      */
 
     // used for system components
-    private string $code_id;
+    private ?string $code_id;
 
 
     /*
@@ -79,6 +79,8 @@ class component extends sandbox_typed_dsp
         parent::set_from_json_array($json_array);
         if (array_key_exists(controller::API_FLD_CODE_ID, $json_array)) {
             $this->code_id = $json_array[controller::API_FLD_CODE_ID];
+        } else {
+            $this->code_id = null;
         }
     }
 

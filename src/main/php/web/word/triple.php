@@ -71,23 +71,6 @@ class triple extends sandbox_typed_dsp
 
 
     /*
-     * construct and map
-     */
-
-    function __construct(
-        int $id = 0,
-        string $name = '',
-        string $from = '',
-        string $verb = '',
-        string $to = ''
-    )
-    {
-        parent::__construct($id, $name);
-        $this->set($from, $verb, $to);
-    }
-
-
-    /*
      * set and get
      */
 
@@ -101,12 +84,18 @@ class triple extends sandbox_typed_dsp
         parent::set_from_json_array($json_array);
         if (array_key_exists(self::FLD_FROM, $json_array)) {
             $this->set_from($json_array[self::FLD_FROM]);
+        } else {
+            $this->set_from(new phrase_dsp());
         }
         if (array_key_exists(self::FLD_VERB, $json_array)) {
             $this->set_verb($json_array[self::FLD_VERB]);
+        } else {
+            $this->set_verb(new verb_dsp());
         }
         if (array_key_exists(self::FLD_TO, $json_array)) {
             $this->set_to($json_array[self::FLD_TO]);
+        } else {
+            $this->set_to(new phrase_dsp());
         }
     }
 

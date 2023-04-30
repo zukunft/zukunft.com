@@ -323,6 +323,14 @@ class verb extends db_object
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @return verb_dsp the verb frontend api object
      */
     function dsp_obj(): verb_dsp

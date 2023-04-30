@@ -88,6 +88,7 @@ class controller
     const API_FLD_USER_TEXT = 'user_text';
     const API_FLD_URL = 'url';
     const API_FLD_EXTERNAL_KEY = 'external_key';
+    const API_FLD_IS_STD = 'is_std';
 
     // path parameters
     const PATH_API_REDIRECT = '/../../'; // get from the __DIR__ to the php root path
