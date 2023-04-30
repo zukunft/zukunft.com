@@ -57,14 +57,14 @@ use cfg\protection_type;
 use cfg\share_type;
 use cfg\verb_list;
 use controller\controller;
-use result;
 use html\api;
 use html\button;
 use html\html_base;
 use html\html_selector;
+use html\log\user_log_display;
+use html\view\view_dsp_old;
 use html\word\word as word_dsp;
-use user_log_display;
-use view_dsp_old;
+use result;
 
 class word extends sandbox_typed
 {

@@ -29,12 +29,13 @@
 
 */
 
-namespace html;
+namespace html\log;
 
 use api\change_log_list_api;
 use html\html_base;
+use html\system\back_trace;
 
-class change_log_list_dsp extends change_log_list_api
+class change_log_list extends change_log_list_api
 {
 
     /**

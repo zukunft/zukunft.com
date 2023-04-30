@@ -32,12 +32,14 @@
 
 */
 
-namespace html;
+namespace html\user;
 
 use api\type_list_api;
+use html\html_base;
+use html\html_selector;
 use model\library;
 
-class type_list_dsp extends type_list_api
+class user_type_list extends type_list_api
 {
 
     function list(string $class, string $title = ''): string

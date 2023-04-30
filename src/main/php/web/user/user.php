@@ -29,11 +29,12 @@
 
 */
 
-namespace html;
+namespace html\user;
 
 use api\user_api;
+use html\html_base;
 
-class user_dsp extends user_api
+class user extends user_api
 {
 
     const FORM_EDIT = 'user_edit';

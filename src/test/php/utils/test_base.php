@@ -95,7 +95,8 @@ $path_test = $root_path . 'src/test/php/';     // the test base path
 $path_utils = $path_test . 'utils/';           // for the general tests and test setup
 $path_unit = $path_test . 'unit/';             // for unit tests
 $path_unit_db = $path_test . 'unit_db/';       // for the unit tests with database real only
-$path_unit_dsp = $path_test . 'unit_display/'; // for the unit tests that create HTML code
+$path_unit_dsp = $path_unit . 'html/';         // for the unit tests that create HTML code
+$path_unit_dsp_old = $path_test . 'unit_display/'; // for the unit tests that create HTML code
 $path_unit_ui = $path_test . 'unit_ui/';       // for the unit tests that create JSON messages for the frontend
 $path_unit_save = $path_test . 'unit_save/';   // for the unit tests that save to database (and cleanup the test data after completion)
 $path_it = $path_test . 'integration/';        // for integration tests
@@ -130,7 +131,6 @@ include_once $path_unit . 'term_list.php';
 include_once $path_unit . 'value.php';
 include_once $path_unit . 'value_phrase_link.php';
 include_once $path_unit . 'value_list.php';
-include_once $path_unit . 'value_list_display.php';
 include_once $path_unit . 'formula.php';
 include_once $path_unit . 'formula_list.php';
 include_once $path_unit . 'formula_link.php';
@@ -143,7 +143,6 @@ include_once $path_unit . 'expression.php';
 include_once $path_unit . 'view.php';
 include_once $path_unit . 'view_list.php';
 include_once $path_unit . 'view_component.php';
-include_once $path_unit . 'view_component_display.php';
 include_once $path_unit . 'view_component_link.php';
 include_once $path_unit . 'verb.php';
 include_once $path_unit . 'ref.php';
@@ -154,14 +153,16 @@ include_once $path_unit . 'system_log.php';
 
 // load the testing functions for creating HTML code
 include_once $path_unit . 'html.php';
-include_once $path_unit . 'user_display.php';
-include_once $path_unit . 'word_display.php';
-include_once $path_unit . 'word_list_display.php';
-include_once $path_unit . 'triple_display.php';
-include_once $path_unit . 'phrase_list_display.php';
-include_once $path_unit . 'change_log_display.php';
 include_once $path_unit_dsp . 'test_display.php';
+include_once $path_unit_dsp . 'change_log_display.php';
 include_once $path_unit_dsp . 'type_lists.php';
+include_once $path_unit_dsp . 'user_display.php';
+include_once $path_unit_dsp . 'word_display.php';
+include_once $path_unit_dsp . 'word_list_display.php';
+include_once $path_unit_dsp . 'triple_display.php';
+include_once $path_unit_dsp . 'phrase_list_display.php';
+include_once $path_unit_dsp . 'value_list_display.php';
+include_once $path_unit_dsp . 'view_component_display.php';
 
 
 // load the unit testing modules with database read only
@@ -232,7 +233,7 @@ include_once $path_it . 'test_export.php';
 include_once $path_dev . 'test_legacy.php';
 
 // TODO to be dismissed
-include_once WEB_PATH . 'user_display_old.php';
+include_once WEB_USER_PATH . 'user_display_old.php';
 
 // the fixed system user used for testing
 const TEST_USER_ID = "2";

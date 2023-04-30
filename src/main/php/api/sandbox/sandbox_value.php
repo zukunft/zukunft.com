@@ -39,7 +39,7 @@ include_once API_PHRASE_PATH . 'phrase_list.php';
 include_once API_PHRASE_PATH . 'phrase_group.php';
 include_once WEB_PHRASE_PATH . 'phrase_group.php';
 
-use html\phrase_group_dsp;
+use html\phrase\phrase_group as phrase_group_dsp;
 
 class sandbox_value_api extends sandbox_api
 {

@@ -30,7 +30,7 @@
 
 */
 
-namespace test;
+namespace test\html;
 
 include_once WEB_WORD_PATH . 'word_list.php';
 
@@ -39,6 +39,7 @@ use cfg\phrase_type;
 use html\html_base;
 use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
+use test\testing;
 
 class word_list_display_unit_tests
 {

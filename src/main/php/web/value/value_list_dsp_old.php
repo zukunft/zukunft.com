@@ -29,10 +29,16 @@
   
 */
 
+namespace html\value;
+
 use html\api;
 use html\html_base;
 use html\word\word as word_dsp;
 use model\library;
+use phr_ids;
+use phrase_group;
+use phrase_list;
+use value_list;
 
 class value_list_dsp_old extends value_list
 {

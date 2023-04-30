@@ -31,6 +31,7 @@
 
 use controller\controller;
 use html\html_base;
+use html\view\view_dsp_old;
 use model\formula;
 use model\phrase;
 use model\user;

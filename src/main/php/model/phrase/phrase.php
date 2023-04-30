@@ -64,11 +64,11 @@ use api\phrase_api;
 use cfg\phrase_type;
 use cfg\verb_list;
 use controller\controller;
-use html\formula_dsp_old;
+use formula\formula_dsp_old;
 use html\html_selector;
 use html\phrase\phrase as phrase_dsp;
-use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
+use html\word\word as word_dsp;
 use user_dsp_old;
 
 class phrase extends combine_named

@@ -33,6 +33,7 @@
 use html\api;
 use html\button;
 use html\html_base;
+use html\view\view_dsp_old;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

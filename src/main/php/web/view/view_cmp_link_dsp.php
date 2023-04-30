@@ -29,9 +29,9 @@
 
 */
 
-namespace html;
+namespace html\view;
 
-use view_cmp_link;
+use model\view_cmp_link;
 
 class view_cmp_link_dsp extends view_cmp_link
 {

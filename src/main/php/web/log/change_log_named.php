@@ -29,7 +29,7 @@
 
 */
 
-namespace html;
+namespace html\log;
 
 include_once API_SANDBOX_PATH . 'user_config.php';
 
@@ -38,11 +38,12 @@ use api\user_config;
 use html\api;
 use html\button;
 use html\html_base;
+use html\system\back_trace;
 use model\change_log_action;
 use model\change_log_table;
 use model\formula;
 
-class change_log_named_dsp extends change_log_named_api
+class change_log_named extends change_log_named_api
 {
 
 

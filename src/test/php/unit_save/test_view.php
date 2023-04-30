@@ -33,9 +33,9 @@
 use api\view_api;
 use api\word_api;
 use cfg\view_type;
+use html\view\view_dsp_old;
 use model\change_log_named;
 use model\change_log_table;
-use model\db_cl;
 use model\sandbox_named;
 use model\view;
 use model\word;

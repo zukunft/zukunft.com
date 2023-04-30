@@ -30,16 +30,15 @@
 
 */
 
-namespace test;
+namespace test\html;
 
 use api\phrase_api;
 use api\triple_api;
 use api\word_api;
 use html\html_base;
-use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
-use html\word\word as word_dsp;
 use model\verb;
+use test\testing;
 
 class phrase_list_display_unit_tests
 {

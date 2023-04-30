@@ -113,7 +113,7 @@ function run_display_test(testing $t): void
 
     $t->header('Test the display HTML class (classes/display_html.php )');
 
-    $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../main/resources/style/style.css" /> </head> <body class="center_form">'));
+    $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../../main/resources/style/style.css" /> </head> <body class="center_form">'));
     $target = htmlspecialchars(trim('<title>Header test (zukunft.com)</title>'));
     $result = htmlspecialchars(trim($html->header('Header test', 'center_form')));
     $t->dsp_contains(", dsp_header", $target, $result);

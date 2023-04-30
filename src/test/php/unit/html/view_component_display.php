@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/word_display.php - TESTing of the WORD DISPLAY functions
-    --------------------------
+    test/unit/view_component_display.php - TESTing of the COMPONENT DISPLAY functions
+    ------------------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -30,24 +30,25 @@
 
 */
 
-namespace test;
+namespace test\html;
 
-use api\word_api;
+use api\view_cmp_api;
 use html\html_base;
-use html\word\word as word_dsp;
+use html\view_cmp_dsp_old;
+use test\testing;
 
-class word_display_unit_tests
+class view_component_display_unit_tests
 {
     function run(testing $t): void
     {
         global $usr;
         $html = new html_base();
 
-        $t->subheader('Word tests');
+        $t->subheader('Component tests');
 
-        $wrd = new word_dsp(1, word_api::TN_READ);
-        $wrd_pi = new word_dsp(2, word_api::TN_CONST);
-        $test_page = $html->text_h2('Word display test');
+        //$wrd_pi = new word_dsp(2, word_api::TN_CONST);
+        $test_page = $html->text_h2('Component display test');
+        /*
         $test_page .= 'with tooltip: ' . $wrd->dsp() . '<br>';
         $test_page .= 'with link: ' . $wrd->dsp_link() . '<br>';
         $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
@@ -57,13 +58,15 @@ class word_display_unit_tests
         $test_page .= 'unlink in columns: ' . $wrd_pi->dsp_unlink($wrd->id()) . '<br>';
         $test_page .= 'view header<br>';
         $test_page .= $wrd->header() . '<br>';
+        */
+        $cmp = new view_cmp_dsp_old(0);
         $test_page .= 'add mask<br>';
-        $test_page .= $wrd->form_add('') . '<br>';
+        $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
+        $cmp = new view_cmp_dsp_old(1, view_cmp_api::TN_READ);
+        $cmp->description = view_cmp_api::TD_READ;
         $test_page .= 'edit mask<br>';
-        $test_page .= $wrd->form_edit('', '', '', '') . '<br>';
-        $test_page .= 'del mask<br>';
-        $test_page .= $wrd->form_del('') . '<br>';
-        $t->html_test($test_page, 'word', $t);
+        $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
+        $t->html_test($test_page, 'view_cmp', $t);
     }
 
 }

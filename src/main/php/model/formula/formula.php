@@ -55,8 +55,8 @@ use cfg\protection_type;
 use cfg\share_type;
 use DateTime;
 use Exception;
+use formula\formula_dsp_old;
 use html\formula\formula as formula_dsp;
-use html\formula_dsp_old;
 use html\word\word as word_dsp;
 use math;
 

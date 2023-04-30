@@ -29,11 +29,11 @@
 
 */
 
-namespace html;
+namespace html\view;
 
 use api\view_list_api;
 
-class view_list_dsp extends view_list_api
+class view_list extends view_list_api
 {
 
     /**

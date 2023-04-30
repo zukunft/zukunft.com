@@ -32,7 +32,7 @@
 
 use cfg\system_log_list;
 use html\html_base;
-use model\db_cl;
+use html\view\view_dsp_old;
 use model\system_log;
 use model\user;
 use model\user_profile;

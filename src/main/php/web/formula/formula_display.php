@@ -29,13 +29,17 @@
   
 */
 
-namespace html;
+namespace formula;
 
-use model\result;
-use model\result_list;
+use html\api;
+use html\button;
+use html\html_base;
+use html\html_selector;
+use html\log\user_log_display;
 use model\formula;
 use model\phrase;
-use user_log_display;
+use model\result;
+use model\result_list;
 
 class formula_dsp_old extends formula
 {

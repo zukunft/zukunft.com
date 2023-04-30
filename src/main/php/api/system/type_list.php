@@ -38,7 +38,7 @@ include_once API_SANDBOX_PATH . 'list.php';
 include_once WEB_SANDBOX_PATH . 'list.php';
 
 use JsonSerializable;
-use html\type_list_dsp;
+use html\user\user_type_list as type_list_dsp;
 use model\verb;
 use model\view;
 

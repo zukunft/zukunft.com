@@ -31,13 +31,13 @@
 
 namespace model;
 
-use result_list;
 use html\html_base;
 use html\html_selector;
+use html\log\user_log_display;
+use html\value\value_list_dsp_old;
+use html\view\view_dsp_old;
 use html\word\word as word_dsp;
-use user_log_display;
-use value_list_dsp_old;
-use view_dsp_old;
+use result_list;
 
 class view_cmp_dsp_old extends view_cmp
 {

@@ -31,6 +31,8 @@
 
 use cfg\system_log_list;
 use html\html_base;
+use html\log\user_log_display;
+use html\view\view_dsp_old;
 use model\formula;
 use model\formula_link;
 use model\phrase;

@@ -33,7 +33,7 @@
 /* standard zukunft header for callable php files to allow debugging and lib loading */
 
 use html\html_base;
-use model\db_cl;
+use html\view\view_dsp_old;
 use model\source;
 use model\user;
 use model\view;

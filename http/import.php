@@ -31,6 +31,7 @@
 */
 
 use html\html_base;
+use html\view\view_dsp_old;
 use model\user;
 use model\view;
 

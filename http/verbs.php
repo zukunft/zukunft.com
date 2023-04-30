@@ -31,6 +31,8 @@
 // Zukunft.com verb list
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use html\view\view_dsp_old;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';

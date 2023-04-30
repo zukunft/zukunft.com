@@ -32,11 +32,12 @@
 
 namespace test;
 
-include_once WEB_PATH . 'user_log_display.php';
+include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once MODEL_LOG_PATH . 'change_log_named.php';
 include_once MODEL_LOG_PATH . 'change_log_link.php';
 
 use api\triple_api;
+use html\log\user_log_display;
 use model\change_log_field;
 use model\change_log_link;
 use model\change_log_list;
@@ -47,7 +48,6 @@ use model\sql_db;
 use model\triple;
 use model\user;
 use model\word;
-use user_log_display;
 
 class change_log_unit_tests
 {

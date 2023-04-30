@@ -2,9 +2,13 @@
 
 /*
 
-    test/unit/triple_display.php - TESTing of the TRIPLE DISPLAY functions
-    ----------------------------
-  
+    back_trace.php - list of links that the user has called in the past
+    --------------
+
+    used to implement CTRL-Z
+
+    TODO if possible should be included in the request using a json body
+    TODO allow tree based back and force steps
 
     This file is part of zukunft.com - calc with words
 
@@ -27,31 +31,28 @@
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-
+  
 */
 
-namespace test;
+namespace html\system;
 
-use api\word_api;
-use html\html_base;
-use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
-
-class triple_display_unit_tests
+class back_trace
 {
-    function run(testing $t): void
+    public ?array $url_lst = null;
+
+    /** encode the back trace for an url */
+    function url_encode(): string
     {
-        global $usr;
-        $html = new html_base();
+        $result = '';
+        if ($this->url_lst != null) {
+            foreach ($this->url_lst as $url) {
+                if ($result == '') {
+                    $result = $url;
+                }
+            }
 
-        $t->subheader('Triple tests');
-
-        $trp = new triple_dsp(-1, word_api::TN_READ);
-        $wrd = new word_dsp(1, word_api::TN_READ);
-        $test_page = $html->text_h2('Triple display test');
-        $test_page .= 'with tooltip: ' . $trp->dsp() . '<br>';
-        $test_page .= 'edit button: ' . $trp->btn_edit($wrd->phrase()) . '<br>';
-        $t->html_test($test_page, 'triple', $t);
+        }
+        return $result;
     }
 
 }

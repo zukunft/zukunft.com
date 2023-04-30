@@ -44,8 +44,8 @@ namespace test;
 include_once API_REF_PATH . 'ref.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
-include_once WEB_PATH . 'formula_display.php';
-include_once WEB_PATH . 'view_display.php';
+include_once WEB_FORMULA_PATH . 'formula_display.php';
+include_once WEB_VIEW_PATH . 'view_dsp_old.php';
 
 use api\formula_api;
 use api\phrase_group_api;
@@ -67,7 +67,8 @@ use cfg\ref_type_list;
 use cfg\source_type;
 use cfg\system_log_list;
 use DateTime;
-use html\formula_dsp_old;
+use formula\formula_dsp_old;
+use html\view\view_dsp_old;
 use model\batch_job;
 use model\batch_job_list;
 use model\change_log_action;
@@ -103,7 +104,6 @@ use model\view_cmp_link;
 use model\view_cmp_type;
 use model\word;
 use model\word_list;
-use view_dsp_old;
 
 class create_test_objects extends test_base
 {

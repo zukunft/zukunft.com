@@ -29,9 +29,11 @@
   
 */
 
-namespace html;
+namespace html\hist;
 
-use word;
+use html\html_base;
+use html\word\word as word_dsp;
+use model\word;
 
 class hist_log_dsp
 {

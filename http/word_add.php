@@ -49,6 +49,7 @@ Delete a word (check if nothing is depending on the word to delete)
 /* standard zukunft header for callable php files to allow debugging and lib loading */
 
 use html\html_base;
+use html\view\view_dsp_old;
 use model\term;
 use model\triple;
 use model\user;

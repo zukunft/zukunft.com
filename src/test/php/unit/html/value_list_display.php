@@ -30,13 +30,15 @@
 
 */
 
-namespace test;
+namespace test\html;
 
 use api\phrase_api;
 use api\phrase_group_api;
 use api\phrase_list_api;
 use api\word_api;
 use html\html_base;
+use test\testing;
+use test\value_api;
 
 class value_list_display_unit_tests
 {

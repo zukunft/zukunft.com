@@ -30,6 +30,8 @@
   
 */
 
+namespace html\sandbox;
+
 use html\html_selector;
 use model\sandbox_value;
 

@@ -63,16 +63,6 @@ include_once MODEL_LOG_PATH . 'change_log_table.php';
 include_once MODEL_LOG_PATH . 'change_log_field.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 
-use model\sql_db;
-use model\user_list;
-use model\user_profile;
-use model\user;
-use model\sys_log_status;
-use model\change_log_action;
-use model\change_log_field;
-use model\change_log_table;
-use model\formula_element_type_list;
-use model\formula_link_type_list;
 use cfg\formula_type_list;
 use cfg\job_type_list;
 use cfg\language_form_list;
@@ -88,6 +78,24 @@ use cfg\view_cmp_type_list;
 use cfg\view_sys_list;
 use cfg\view_type_list;
 use cfg\word_type_list;
+use model\change_log_action;
+use model\change_log_field;
+use model\change_log_table;
+use model\formula_element_type_list;
+use model\formula_link_type_list;
+use model\sql_db;
+use model\sys_log_status;
+use model\user;
+use model\user_list;
+use model\user_profile;
+use test\html\change_log_display_unit_tests;
+use test\html\phrase_list_display_unit_tests;
+use test\html\triple_display_unit_tests;
+use test\html\type_list_display_unit_tests;
+use test\html\user_display_unit_tests;
+use test\html\view_component_display_unit_tests;
+use test\html\word_display_unit_tests;
+use test\html\word_list_display_unit_tests;
 
 class test_unit extends testing
 {

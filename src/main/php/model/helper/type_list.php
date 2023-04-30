@@ -45,7 +45,7 @@ use model\sql_par;
 use model\library;
 use model\verb;
 use api\type_list_api;
-use html\type_list_dsp;
+use html\user\user_type_list as type_list_dsp;
 
 class type_list
 {

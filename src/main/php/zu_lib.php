@@ -1,7 +1,7 @@
 <?php
 
-/*use html\phrase_group_dsp;
-use html\phrase_group_dsp;
+/*use html\phrase\phrase_group as phrase_group_dsp;
+use html\phrase\phrase_group as phrase_group_dsp;
 
 
     zu_lib.php - the main ZUkunft.com LIBrary
@@ -255,9 +255,9 @@ use cfg\type_lists;
 use cfg\verb_list;
 use cfg\view_sys_list;
 use html\html_base;
+use html\view\view_dsp_old;
 use model\library;
 use model\sql_db;
-use model\sql_par;
 use model\sys_log_level;
 use model\user;
 use test\testing;

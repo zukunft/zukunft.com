@@ -36,20 +36,17 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once API_PHRASE_PATH . 'phrase.php';
 
-use api\sandbox_api;
-use api\phrase_api;
 use cfg\phrase_type;
-use controller\controller;
 use html\api;
-use html\back_trace;
 use html\button;
 use html\change_log_named_dsp;
 use html\html_base;
 use html\html_selector;
 use html\msg;
 use html\phrase\phrase as phrase_dsp;
-use html\sandbox_typed_dsp;
 use html\phrase\term as term_dsp;
+use html\sandbox_typed_dsp;
+use html\system\back_trace;
 
 class word extends sandbox_typed_dsp
 {

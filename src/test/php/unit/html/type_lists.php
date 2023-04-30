@@ -2,11 +2,11 @@
 
 /*
 
-    test/unit/user_display.php - TESTing of the USER DISPLAY functions
-    --------------------------
+    test/unit_display/formula_type_list.php - TESTing of the FORMULA TYPE LIST html user interface functions
+    ---------------------------------------
   
 
-    This file is part of zukunft.com - calc with words
+    This file is part of zukunft.com - calc with phrases
 
     zukunft.com is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as
@@ -30,30 +30,32 @@
 
 */
 
-namespace test;
+namespace test\html;
 
-include_once WEB_USER_PATH . 'user.php';
-
+use cfg\formula_type_list;
 use html\html_base;
-use html\user_dsp;
+use test\testing;
 
-class user_display_unit_tests
+class type_list_display_unit_tests
 {
     function run(testing $t): void
     {
-        global $usr;
+
         $html = new html_base();
 
-        $t->subheader('User tests');
+        $t->subheader('Type list tests');
 
-        $usr_dsp = new user_dsp();
-        $usr_dsp->id = 1;
-        $usr_dsp->name = 'zukunft.com';
-        $usr_dsp->email = 'heang@zukunft.com';
-        $usr_dsp->first_name = 'Heang';
-        $usr_dsp->last_name = 'Lor';
-        $test_page = $usr_dsp->form_edit(1) . '<br>';
-        $t->html_test($test_page, 'user', $t);
+        // create the formula type list test set
+        $lst = new formula_type_list();
+        $lst->load_dummy();
+
+        // test the type list display functions
+        $test_page = $html->text_h2('type list display test');
+
+        $test_page .= 'selector: ' . '<br>';
+        $test_page .= $lst->dsp_obj()->selector() . '<br>';
+
+        $t->html_test($test_page, 'types', $t);
     }
 
 }

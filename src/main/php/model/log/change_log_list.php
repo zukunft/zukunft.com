@@ -39,7 +39,7 @@ include_once WEB_LOG_PATH . 'change_log_list.php';
 include_once MODEL_SYSTEM_PATH . 'list.php';
 
 use api\change_log_list_api;
-use html\change_log_list_dsp;
+use html\log\change_log_list as change_log_list_dsp;
 use model\base_list;
 
 class change_log_list extends base_list

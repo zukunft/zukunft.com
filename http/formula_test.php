@@ -39,6 +39,7 @@
 */
 
 use html\html_base;
+use html\view\view_dsp_old;
 use model\formula_list;
 use model\library;
 use model\phr_ids;

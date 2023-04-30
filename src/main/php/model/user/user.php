@@ -56,7 +56,7 @@ include_once SERVICE_EXPORT_PATH . 'user_exp.php';
 use api\user_api;
 use cfg\export\user_exp;
 use cfg\export\exp_obj;
-use html\user_dsp;
+use html\user\user as user_dsp;
 use html\word\word as word_dsp;
 
 class user extends db_object

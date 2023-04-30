@@ -29,12 +29,15 @@
   
 */
 
+namespace html\view;
+
 use cfg\view_type;
+use dsp_list;
 use html\api;
 use html\button;
 use html\html_base;
 use html\html_selector;
-use model\db_cl;
+use html\log\user_log_display;
 use model\view;
 use model\word;
 

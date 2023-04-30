@@ -37,7 +37,7 @@ include_once WEB_LOG_PATH . 'change_log_named.php';
 
 use api\change_log_named_api;
 use api\user_config;
-use html\change_log_named_dsp;
+use html\log\change_log_named as change_log_named_dsp;
 use Exception;
 
 class change_log_named extends change_log
