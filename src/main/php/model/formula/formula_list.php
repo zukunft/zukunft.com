@@ -97,8 +97,8 @@ class formula_list extends sandbox_list
     function api_obj(): formula_list_api
     {
         $api_obj = new formula_list_api();
-        foreach ($this->lst as $wrd) {
-            $api_obj->add($wrd->api_obj());
+        foreach ($this->lst as $frm) {
+            $api_obj->add($frm->api_obj());
         }
         return $api_obj;
     }

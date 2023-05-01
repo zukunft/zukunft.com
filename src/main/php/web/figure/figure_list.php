@@ -85,15 +85,55 @@ class figure_list extends list_dsp
      * add a figure to the list
      * @returns bool true if the figure has been added
      */
-    function add(figure_dsp $val): bool
+    function add(figure_dsp $fig): bool
     {
         $result = false;
-        if (!in_array($val->id(), $this->id_lst())) {
-            $this->lst[] = $val;
+        if (!in_array($fig->id(), $this->id_lst())) {
+            $this->lst[] = $fig;
             $this->set_lst_dirty();
             $result = true;
         }
         return $result;
+    }
+
+    /*
+     * display
+     */
+
+    /**
+     * @return string with a list of the figure names with html links
+     * ex. names_linked
+     */
+    function display(): string
+    {
+        $figures = array();
+        foreach ($this->lst as $fig) {
+            $figures[] = $fig->display();
+        }
+        return implode(', ', $figures);
+    }
+
+    /**
+     * @param string $back the back trace url for the undo functionality
+     * @return string with a list of the figure names with html links
+     * ex. names_linked
+     */
+    function display_linked(string $back = ''): string
+    {
+        return implode(', ', $this->names_linked($back));
+    }
+
+    /**
+     * @param string $back the back trace url for the undo functionality
+     * @return array with a list of the figure names with html links
+     */
+    function names_linked(string $back = ''): array
+    {
+        $names = array();
+        foreach ($this->lst as $fig) {
+            $names[] = $fig->display_linked();
+        }
+        return $names;
     }
 
     /**

@@ -102,6 +102,7 @@ use model\view;
 use model\view_cmp;
 use model\view_cmp_link;
 use model\view_cmp_type;
+use model\view_list;
 use model\word;
 use model\word_list;
 
@@ -381,6 +382,14 @@ class create_test_objects extends test_base
         return $dsp;
     }
 
+    function dummy_view_list(): view_list
+    {
+        global $usr;
+        $lst = new view_list($usr);
+        $lst->add($this->dummy_view());
+        return $lst;
+    }
+
     function dummy_component(): view_cmp
     {
         global $usr;
@@ -388,6 +397,14 @@ class create_test_objects extends test_base
         $cmp->set(1, view_cmp_api::TN_READ, view_cmp_type::PHRASE_NAME);
         $cmp->description = view_cmp_api::TD_READ;
         return $cmp;
+    }
+
+    function dummy_component_list(): component_list
+    {
+        global $usr;
+        $lst = new component_list($usr);
+        $lst->add($this->dummy_component());
+        return $lst;
     }
 
     /**

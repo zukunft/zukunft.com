@@ -173,7 +173,7 @@ class figure extends combine_named_dsp
      * display
      */
 
-    function val_formatted(): float
+    function val_formatted(): string
     {
         return $this->obj()->val_formatted();
     }

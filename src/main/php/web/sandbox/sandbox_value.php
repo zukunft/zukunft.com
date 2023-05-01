@@ -158,6 +158,62 @@ class sandbox_value_dsp extends db_object_dsp
         return $this->number;
     }
 
+    /**
+     * depending on the word list format the numeric value
+     * format the value for on screen display
+     * similar to the corresponding function in the "result" class
+     * @returns string the html text with the formatted value
+     */
+    function val_formatted(): string
+    {
+        global $usr;
+        $result = '';
+
+        // TODO check that the phrases are set
+
+        if (!$this->is_null()) {
+            if ($this->is_percent()) {
+                $result = round($this->number() * 100, $usr->percent_decimals) . "%";
+            } else {
+                if ($this->number() >= 1000 or $this->number() <= -1000) {
+                    $result .= number_format($this->number(), 0, $usr->dec_point, $usr->thousand_sep);
+                } else {
+                    $result = round($this->number(), 2);
+                }
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * @return bool true if one of the phrases that classify this value is of type percent
+     */
+    function is_percent(): bool
+    {
+        if ($this->grp()->has_percent()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if the value is not available
+     */
+    function is_null(): bool
+    {
+        if ($this->number() == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
 
 

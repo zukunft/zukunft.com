@@ -32,9 +32,10 @@
 
 namespace api;
 
-use html\view_list_dsp;
+use html\view\view_list as view_list_dsp;
+use JsonSerializable;
 
-class view_list_api extends list_api
+class view_list_api extends list_api implements JsonSerializable
 {
 
     /*
@@ -80,6 +81,22 @@ class view_list_api extends list_api
         $dsp_obj->set_lst_dirty();
 
         return $dsp_obj;
+    }
+
+    /*
+     * interface
+     */
+
+    /**
+     * an array of the value vars including the private vars
+     */
+    function jsonSerialize(): array
+    {
+        $vars = [];
+        foreach ($this->lst as $dsp) {
+            $vars[] = json_decode(json_encode($dsp));
+        }
+        return $vars;
     }
 
 }

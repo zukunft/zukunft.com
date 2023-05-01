@@ -31,7 +31,10 @@
 
 namespace model;
 
+include_once API_VIEW_PATH . 'view_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+
+use api\view_list_api;
 
 global $system_views;
 
@@ -62,6 +65,31 @@ class view_list extends sandbox_list
     function user(): user
     {
         return $this->usr;
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @return view_list_api the view list object with the display interface functions
+     */
+    function api_obj(): view_list_api
+    {
+        $api_obj = new view_list_api();
+        foreach ($this->lst as $dsp) {
+            $api_obj->add($dsp->api_obj());
+        }
+        return $api_obj;
+    }
+
+    /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
     }
 
 

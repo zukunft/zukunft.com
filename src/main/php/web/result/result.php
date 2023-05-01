@@ -101,6 +101,7 @@ class result extends sandbox_value_dsp
     }
 
 
+
     /*
      * cast
      */
