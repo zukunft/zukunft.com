@@ -132,7 +132,7 @@ class formula_dsp_old extends formula
         $sel->sql = sql_lst("formula_type");
         $sel->selected = $this->type_id;
         $sel->dummy_text = 'select a predefined type if needed';
-        $result .= $sel->display() . ' ';
+        $result .= $sel->display_old() . ' ';
         return $result;
     }
 
@@ -211,7 +211,7 @@ class formula_dsp_old extends formula
             } else {
                 $sel->selected = 0;
             }
-            $result .= $sel->display();
+            $result .= $sel->display_old();
         } else {
             if ($this->id > 0) {
                 $url = $html->url(formula::class . api::UPDATE, $this->id, $back, '', 'add_link=1');
@@ -247,7 +247,7 @@ class formula_dsp_old extends formula
         $sample_val = $res_lst->display($back);
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {
-                $result .= $html->dsp_text_h3("Results for " . $this->name_wrd->dsp_obj()->dsp_link($back), "change_hist");
+                $result .= $html->dsp_text_h3("Results for " . $this->name_wrd->dsp_obj()->display_linked($back), "change_hist");
             }
             $result .= $sample_val;
         }

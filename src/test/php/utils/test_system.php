@@ -76,7 +76,7 @@ function run_system_test(testing $t): void
     if ($usr_test->id() > 0) {
         $result = 'permitted!';
     }
-    $t->dsp('IP blocking for ' . $usr_test->ip_addr, $target, $result);
+    $t->display('IP blocking for ' . $usr_test->ip_addr, $target, $result);
 
 
     $t->header('Test the user class (classes/user.php)');
@@ -87,7 +87,7 @@ function run_system_test(testing $t): void
     $usr_test->load_by_name(user::SYSTEM_TEST_NAME);
     $target = '<a href="/http/user.php?id=' . $usr_test->id() . '">zukunft.com system test</a>';
     $result = $usr->display();
-    $t->dsp('user->load for id ' . $wrd_company->id(), $target, $result);
+    $t->display('user->load for id ' . $wrd_company->id(), $target, $result);
 
 
     $t->header('Test the user list class (classes/user_list.php)');

@@ -131,7 +131,7 @@ class ref extends sandbox_typed_dsp
     /**
      * @returns string simply the ref name, but later with mouse over that shows the description
      */
-    function dsp(): string
+    function display(): string
     {
         return $this->type_name() . ' ' . $this->external_key;
     }

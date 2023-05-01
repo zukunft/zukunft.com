@@ -1020,7 +1020,7 @@ class word extends sandbox_typed
         $sel->sql = $sql;
         $sel->selected = $id;
         $sel->dummy_text = '';
-        $result .= $sel->display();
+        $result .= $sel->display_old();
 
         if ($this->user()->is_admin()) {
             // admin users should always have the possibility to create a new link type
@@ -1043,7 +1043,7 @@ class word extends sandbox_typed
         $sel->sql = sql_lst_usr("word", $this->user());
         $sel->selected = $id;
         $sel->dummy_text = '... or select an existing word to link it';
-        $result .= $sel->display();
+        $result .= $sel->display_old();
 
         return $result;
     }
@@ -1068,7 +1068,7 @@ class word extends sandbox_typed
         $sel->sql = sql_lst_usr("word", $this->user());
         $sel->selected = $id;
         $sel->dummy_text = '';
-        $result .= $sel->display();
+        $result .= $sel->display_old();
 
         log_debug('word_dsp->selector_word ... done ' . $id);
         return $result;
@@ -1090,7 +1090,7 @@ class word extends sandbox_typed
         $sel->sql = sql_lst("word_type");
         $sel->selected = $this->type_id;
         $sel->dummy_text = '';
-        $result .= $sel->display();
+        $result .= $sel->display_old();
         return $result;
     }
 

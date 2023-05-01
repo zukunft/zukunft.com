@@ -523,7 +523,7 @@ class view_dsp_old extends view
                 $sel->name = 'add_view_component';
                 $sel->sql = sql_lst_usr("view_component", $this->user());
                 $sel->selected = 0; // no default view component to add defined yet, maybe use the last???
-                $result .= $sel->display();
+                $result .= $sel->display_old();
 
                 $result .= dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
             } elseif ($add_cmp < 0) {
@@ -534,7 +534,7 @@ class view_dsp_old extends view
                 $sel->name = 'new_entry_type';
                 $sel->sql = sql_lst("view_component_type");
                 $sel->selected = $this->type_id;  // ??? should this not be the default entry type
-                $result .= $sel->display();
+                $result .= $sel->display_old();
                 $result .= dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
                 $result .= (new button("add view component", "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&add_entry=1&back=" . $back))->add();
@@ -566,7 +566,7 @@ class view_dsp_old extends view
         $sel->sql = sql_lst("view_type");
         $sel->selected = $this->type_id;
         $sel->dummy_text = '';
-        $result .= $sel->display();
+        $result .= $sel->display_old();
         return $result;
     }
 

@@ -73,12 +73,12 @@ class word_list_display_unit_tests
 
         // test the word list display functions
         $test_page = $html->text_h2('Word list display test');
-        $test_page .= 'names with links: ' . $lst->dsp() . '<br>';
+        $test_page .= 'names with links: ' . $lst->display() . '<br>';
         $test_page .= 'table cells<br>';
         $test_page .= $lst->tbl();
-        $test_page .= 'all word types: ' . '<br>' . $lst_long->dsp() . '<br>';
-        $test_page .= 'ex measure and time: ' . '<br>' . $lst_long->ex_measure_and_time_lst()->dsp() . '<br>';
-        $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->dsp() . '<br>';
+        $test_page .= 'all word types: ' . '<br>' . $lst_long->display() . '<br>';
+        $test_page .= 'ex measure and time: ' . '<br>' . $lst_long->ex_measure_and_time_lst()->display() . '<br>';
+        $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->display() . '<br>';
 
         $test_page .= 'selector: ' . '<br>';
         $test_page .= $lst_long->selector() . '<br>';

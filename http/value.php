@@ -67,7 +67,7 @@ if ($usr->id() > 0) {
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(explode(",", $wrd_names));
 
-        $result .= $wrd_lst->dsp_obj()->dsp();
+        $result .= $wrd_lst->dsp_obj()->display();
         $result .= ' = ';
         $val = $wrd_lst->value();
         $result .= $val->display_linked($back);

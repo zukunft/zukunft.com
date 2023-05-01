@@ -2,9 +2,9 @@
 
 /*
 
-    test_verb.php - TESTing of the VERB class
-    -------------
-
+    test/unit/html/phrase.php - testing of the phrase display functions
+    -------------------------
+  
 
     This file is part of zukunft.com - calc with words
 
@@ -30,41 +30,29 @@
 
 */
 
+namespace test\html;
+
 use api\word_api;
-use model\verb;
-use model\word_select_direction;
+use html\html_base;
+use html\phrase\phrase as phrase_dsp;
 use test\testing;
 
-function run_verb_test(testing $t): void
+class phrase
 {
+    function run(testing $t): void
+    {
+        $html = new html_base();
 
-    global $usr;
-    global $verbs;
+        $t->subheader('Phrase tests');
 
-    $t->header('Test the verb class (classes/verb.php)');
-
-    // check the loading of the "is a" verb
-    $vrb = new verb;
-    $vrb->set_user($usr);
-    $vrb->load_by_id($verbs->id(verb::IS_A));
-    $target = 'is a';
-    $result = $vrb->name();
-    $t->display('verb->load ', $target, $result);
-
-
-    $t->header('Test the verb list class (classes/verb_list.php)');
-
-    // check the loading of the "is a" verb
-    $wrd_ZH = $t->load_word(word_api::TN_ZH);
-    $vrb_lst = $wrd_ZH->link_types(word_select_direction::UP);
-    $target = 'is a';
-    $result = '';
-    // select the first verb
-    foreach ($vrb_lst->lst as $vrb) {
-        if ($result == '') {
-            $result = $vrb->name();
-        }
+        $wrd = new phrase_dsp($t->dummy_word()->phrase()->api_json());
+        $trp = new phrase_dsp($t->dummy_triple()->phrase()->api_json());
+        $test_page = $html->text_h2('Phrase display test');
+        $test_page .= 'word phrase with tooltip: ' . $wrd->display() . '<br>';
+        $test_page .= 'word phrase with link: ' . $wrd->display_linked() . '<br>';
+        $test_page .= 'triple phrase with tooltip: ' . $trp->display() . '<br>';
+        $test_page .= 'triple phrase with link: ' . $trp->display_linked() . '<br>';
+        $t->html_test($test_page, 'phrase', $t);
     }
-    $t->display('verb_list->load ', $target, $result);
 
 }

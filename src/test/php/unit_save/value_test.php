@@ -103,7 +103,7 @@ function run_value_test(testing $t): void
         $val_by_phr_lst->load_by_grp($phr_lst->get_grp());
         $result = $val_by_phr_lst->number();
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
-        $t->dsp(', value->load for another word list ' . $phr_lst->dsp_name(), $target, $result);
+        $t->display(', value->load for another word list ' . $phr_lst->dsp_name(), $target, $result);
 
         // test load by value id
         $val = new value($t->usr1);
@@ -111,13 +111,13 @@ function run_value_test(testing $t): void
             $val->load_by_id($val_by_phr_lst->id(), value::class);
             $result = $val->number();
             $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
-            $t->dsp(', value->load for value id "' . $ch_inhabitants->id() . '"', $target, $result);
+            $t->display(', value->load for value id "' . $ch_inhabitants->id() . '"', $target, $result);
 
             // test rebuild_grp_id by value id
             $result = $val->check();
             $target = true;
         }
-        $t->dsp(', value->check for value id "' . $ch_inhabitants->id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->check for value id "' . $ch_inhabitants->id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     }
 
     // test another rebuild_grp_id by value id
@@ -145,20 +145,20 @@ function run_value_test(testing $t): void
     }
     if ($chk_val->id() <= 0) {
         $result = 'No value found for ' . $chk_phr_grp->dsp_id() . '.';
-        $t->dsp(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     } else {
         $result = $chk_val->check();
-        $t->dsp(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
         // ... and check the number
         $result = $chk_val->number();
         $target = value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO;
-        $t->dsp(', value->load for "' . $chk_phr_grp->dsp_id() . '"', $target, $result);
+        $t->display(', value->load for "' . $chk_phr_grp->dsp_id() . '"', $target, $result);
 
         // ... and check the words loaded
         $result = $chk_val->name();
         $target = '2020,Canton,Zurich,inhabitants,million';
-        $t->dsp(', value->load words', $target, $result);
+        $t->display(', value->load words', $target, $result);
 
         // ... and check the word reloading by group
         $lib = new library();
@@ -171,7 +171,7 @@ function run_value_test(testing $t): void
         } else {
             $result = '';
         }
-        $t->dsp(', value->load_phrases reloaded words', $target, $result);
+        $t->display(', value->load_phrases reloaded words', $target, $result);
     }
 
     // test load the word list object
@@ -201,7 +201,7 @@ function run_value_test(testing $t): void
         }
     }
     $target = array();
-    $t->dsp(', value->load for group id "' . $grp->id() . '"', $target, $result);
+    $t->display(', value->load for group id "' . $grp->id() . '"', $target, $result);
 
     // test the formatting of a value (percent)
     $pct_val = $t->load_value(array(
@@ -213,7 +213,7 @@ function run_value_test(testing $t): void
         word_api::TN_2020));
     $result = $pct_val->dsp_obj()->display(0);
     $target = number_format(round(value_api::TV_PCT * 100, 2), 2) . '%';
-    $t->dsp(', value->val_formatted for ' . $pct_val->dsp_id(), $target, $result);
+    $t->display(', value->val_formatted for ' . $pct_val->dsp_id(), $target, $result);
 
     // test the scaling of a value
     $phr_lst = $t->load_phrase_list(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
@@ -223,7 +223,7 @@ function run_value_test(testing $t): void
     $mio_val->load_by_grp($phr_lst->get_grp());
     $result = $mio_val->scale($dest_phr_lst);
     $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO * 1000000;
-    $t->dsp(', value->val_scaling for a word list ' . $phr_lst->dsp_id() . '', $target, $result);
+    $t->display(', value->val_scaling for a word list ' . $phr_lst->dsp_id() . '', $target, $result);
 
     // test the figure object creation
     $phr_lst = $t->load_phrase_list(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
@@ -238,12 +238,12 @@ function run_value_test(testing $t): void
         log_err('Unexpected diff ' . $diff);
         $target = $result;
     }
-    $t->dsp(', value->figure->display_linked for word list ' . $phr_lst->dsp_id() . '', $target, $result);
+    $t->display(', value->figure->display_linked for word list ' . $phr_lst->dsp_id() . '', $target, $result);
 
     // test the HTML code creation
     $result = $mio_val->display();
     $target = number_format(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, DEFAULT_DEC_POINT, DEFAULT_THOUSAND_SEP);
-    $t->dsp(', value->display', $target, $result);
+    $t->display(', value->display', $target, $result);
 
     // test the HTML code creation including the hyperlink
     $result = $mio_val->display_linked('1');
@@ -254,7 +254,7 @@ function run_value_test(testing $t): void
         log_err('Unexpected diff ' . $diff);
         $target = $result;
     }
-    $t->dsp(', value->display_linked', $target, $result);
+    $t->display(', value->display_linked', $target, $result);
 
     // change the number to force using the thousand separator
     $mio_val->set_number(value_api::TV_INT);
@@ -266,19 +266,19 @@ function run_value_test(testing $t): void
         log_err('Unexpected diff ' . $diff);
         $target = $result;
     }
-    $t->dsp(', value->display_linked', $target, $result);
+    $t->display(', value->display_linked', $target, $result);
 
     // convert the user input for the database
     $mio_val->usr_value = value_api::TV_USER_HIGH_QUOTE;
     $result = $mio_val->convert();
     $target = value_api::TV_INT;
-    $t->dsp(', value->convert user input', $target, $result);
+    $t->display(', value->convert user input', $target, $result);
 
     // convert the user input with space for the database
     $mio_val->usr_value = value_api::TV_USER_SPACE;
     $result = $mio_val->convert();
     $target = value_api::TV_INT;
-    $t->dsp(', value->convert user input', $target, $result);
+    $t->display(', value->convert user input', $target, $result);
 
     // test adding a value in the database
     // as it is call from value_add.php with all phrases in an id list including the time phrase,
@@ -289,7 +289,7 @@ function run_value_test(testing $t): void
     $add_val->set_number(value_api::TV_BIG);
     $result = $add_val->save();
     $target = '';
-    $t->dsp(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     $test_val_lst[] = $add_val->id();
 
 
@@ -303,14 +303,14 @@ function run_value_test(testing $t): void
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system test added 123456789';
-    $t->dsp(', value->save logged for "' . $phr_grp->name() . '"', $target, $result);
+    $t->display(', value->save logged for "' . $phr_grp->name() . '"', $target, $result);
 
     // ... check if the value has been added
     $added_val = new value($t->usr1);
     $added_val->load_by_grp($phr_grp);
     $result = $added_val->number();
     $target = '123456789';
-    $t->dsp(', value->load the value previous saved for "' . $phr_grp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display(', value->load the value previous saved for "' . $phr_grp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     // remember the added value id to be able to remove the test
     $added_val_id = $added_val->id();
     $test_val_lst[] = $added_val->id();
@@ -322,7 +322,7 @@ function run_value_test(testing $t): void
     $add_val2->set_number(value_api::TV_BIGGER);
     $result = $add_val2->save();
     $target = '';
-    $t->dsp(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // test if a value with time stamp can be saved
     /*
@@ -333,7 +333,7 @@ function run_value_test(testing $t): void
     $add_val_ts->time_stamp = new DateTime('2020-05-15');
     $result = $add_val_ts->save();
     $target = '';
-    $t->dsp(', value->save ' . $add_val_ts->number() . ' for ' . $phr_lst_ts->name() . ' and ' . $add_val_ts->time_stamp->format(DateTimeInterface::ATOM) . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display(', value->save ' . $add_val_ts->number() . ' for ' . $phr_lst_ts->name() . ' and ' . $add_val_ts->time_stamp->format(DateTimeInterface::ATOM) . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     */
 
     // ... check if the value adding has been logged
@@ -346,14 +346,14 @@ function run_value_test(testing $t): void
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system test added 234567890';
-    $t->dsp(', value->save logged for "' . $phr_grp2->name() . '"', $target, $result);
+    $t->display(', value->save logged for "' . $phr_grp2->name() . '"', $target, $result);
 
     // ... check if the value has been added
     $added_val2 = new value($t->usr1);
     $added_val2->load_by_grp($phr_grp2);
     $result = $added_val2->number();
     $target = '234567890';
-    $t->dsp(', value->load the value previous saved for "' . $phr_grp2->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display(', value->load the value previous saved for "' . $phr_grp2->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     // remember the added value id to be able to remove the test
     $test_val_lst[] = $added_val2->id();
 
@@ -363,7 +363,7 @@ function run_value_test(testing $t): void
     $added_val->set_number(987654321);
     $result = $added_val->save();
     $target = '';
-    $t->dsp(', word->save update value id "' . $added_val_id . '" from  "' . $add_val->number() . '" to "' . $added_val->number() . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display(', word->save update value id "' . $added_val_id . '" from  "' . $add_val->number() . '" to "' . $added_val->number() . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the value change has been logged
     if ($added_val->id() > 0) {
@@ -375,14 +375,14 @@ function run_value_test(testing $t): void
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system test changed 123456789 to 987654321';
-    $t->dsp(', value->save logged for "' . word_api::TN_RENAMED . '"', $target, $result);
+    $t->display(', value->save logged for "' . word_api::TN_RENAMED . '"', $target, $result);
 
     // ... check if the value has really been updated
     $added_val = new value($t->usr1);
     $added_val->load_by_id($added_val_id);
     $result = $added_val->number();
     $target = '987654321';
-    $t->dsp(', value->load the value previous updated for "' . word_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display(', value->load the value previous updated for "' . word_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if a user specific value is created if another user changes the value
     /*$wrd_lst = New word_list;
@@ -400,7 +400,7 @@ function run_value_test(testing $t): void
     $val_usr2->set_number(23456);
     $result = $val_usr2->save();
     $target = '';
-    $t->dsp(', value->save ' . $val_usr2->number() . ' for ' . $phr_lst->name() . ' and user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display(', value->save ' . $val_usr2->number() . ' for ' . $phr_lst->name() . ' and user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the value change for the other user has been logged
     $val_usr2 = new value($t->usr2);
@@ -414,21 +414,21 @@ function run_value_test(testing $t): void
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system test partner changed 987654321 to 23456';
-    $t->dsp(', value->save logged for user "' . $t->usr2->name . '"', $target, $result);
+    $t->display(', value->save logged for user "' . $t->usr2->name . '"', $target, $result);
 
     // ... check if the value has really been updated
     $added_val_usr2 = new value($t->usr2);
     $added_val_usr2->load_by_grp($phr_grp);
     $result = $added_val_usr2->number();
     $target = '23456';
-    $t->dsp(', value->load the value previous updated for "' . $phr_grp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display(', value->load the value previous updated for "' . $phr_grp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the value for the original user remains unchanged
     $added_val = new value($t->usr1);
     $added_val->load_by_grp($phr_grp);
     $result = $added_val->number();
     $target = '987654321';
-    $t->dsp(', value->load for user "' . $t->usr1->name . '" is still', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display(', value->load for user "' . $t->usr1->name . '" is still', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if undo all specific changes removes the user value
     $added_val_usr2 = new value($t->usr2);
@@ -436,7 +436,7 @@ function run_value_test(testing $t): void
     $added_val_usr2->set_number(987654321);
     $result = $added_val_usr2->save();
     $target = '';
-    $t->dsp(', value->save change to ' . $val_usr2->number() . ' for ' . $phr_grp->name() . ' and user "' . $t->usr2->name . '" should undo the user change', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display(', value->save change to ' . $val_usr2->number() . ' for ' . $phr_grp->name() . ' and user "' . $t->usr2->name . '" should undo the user change', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the value change for the other user has been logged
     $val_usr2 = new value($t->usr2);
@@ -450,14 +450,14 @@ function run_value_test(testing $t): void
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system test partner changed 23456 to 987654321';
-    $t->dsp(', value->save logged for user "' . $t->usr2->name . '"', $target, $result);
+    $t->display(', value->save logged for user "' . $t->usr2->name . '"', $target, $result);
 
     // ... check if the value has really been changed back
     $added_val_usr2 = new value($t->usr2);
     $added_val_usr2->load_by_grp($phr_grp);
     $result = $added_val_usr2->number();
     $target = '987654321';
-    $t->dsp(', value->load the value previous updated for "' . $phr_grp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display(', value->load the value previous updated for "' . $phr_grp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // test adding a value
     // if the word is not used, the user can add or remove words
@@ -474,7 +474,7 @@ function run_value_test(testing $t): void
     $wrd_lst = $added_val->wrd_lst;
     $result = $wrd_lst->does_contain(TW_CHF);
     $target = false;
-    $t->dsp(', value->add_wrd has "'.TW_CHF.'" been removed from the word list of the value', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display(', value->add_wrd has "'.TW_CHF.'" been removed from the word list of the value', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // test to link an additional word to a value
     $added_val = New value;
@@ -488,7 +488,7 @@ function run_value_test(testing $t): void
     // does the word list contain TW_EUR
     $result = $wrd_lst->does_contain(TW_EUR);
     $target = true;
-    $t->dsp(', value->add_wrd has "'.TW_EUR.'" been added to the word list of the value', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display(', value->add_wrd has "'.TW_EUR.'" been added to the word list of the value', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     */
 
 

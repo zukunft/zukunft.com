@@ -86,6 +86,14 @@ class type_list
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @return type_list_dsp the word frontend api object
      */
     function dsp_obj(): object

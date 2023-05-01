@@ -49,8 +49,8 @@ class view_component_display_unit_tests
         //$wrd_pi = new word_dsp(2, word_api::TN_CONST);
         $test_page = $html->text_h2('Component display test');
         /*
-        $test_page .= 'with tooltip: ' . $wrd->dsp() . '<br>';
-        $test_page .= 'with link: ' . $wrd->dsp_link() . '<br>';
+        $test_page .= 'with tooltip: ' . $wrd->display() . '<br>';
+        $test_page .= 'with link: ' . $wrd->display_linked() . '<br>';
         $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
         $test_page .= 'table<br>';
         $test_page .= $html->tbl($wrd->th() . $wrd_pi->tr());

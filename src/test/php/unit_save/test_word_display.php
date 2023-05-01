@@ -72,7 +72,7 @@ function run_word_display_test(testing $t): void
     $target = 'Nothing linked to "Zurich" until now. Click here to link it.';
     $link_types = $wrd_ZH->link_types($direction);
     $result = $wrd_ZH->dsp_graph($direction, $link_types, 0);
-    $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_ZH->name(), $target, $result);
+    $t->display('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_ZH->name(), $target, $result);
 
     // ... and the graph display for 2019
     $wrd_2020 = new word($usr);
@@ -123,7 +123,7 @@ function run_word_display_test(testing $t): void
     $target = word_api::TN_2020;
     $target = word_api::TN_ZH;
     $result = $wrd_ZH->dsp_val_list($wrd_year, $wrd_year->is_mainly(), 0);
-    //$t->dsp('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
+    //$t->display('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
     $t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // the value table for Company
@@ -140,7 +140,7 @@ function run_word_display_test(testing $t): void
     $target = substr($target,0,200);
     $result = $wrd_company->dsp_val_list ($wrd_ratios, $back);
     $result = substr($result,0,200);
-    $t->dsp('word_dsp->dsp_val_list compare to old for '.$wrd_company->name, $target, $result);
+    $t->display('word_dsp->dsp_val_list compare to old for '.$wrd_company->name, $target, $result);
     */
 
 
@@ -155,7 +155,7 @@ function run_word_display_test(testing $t): void
     $sel->sql = $phr_corp->sql_list($phr_corp);
     $sel->selected = $phr_ZH_INS->id();
     $sel->dummy_text = '... please select';
-    $result .= $sel->display();
+    $result .= $sel->display_old();
     $target = phrase_api::TN_ZH_COMPANY;
     $t->dsp_contains(', display_selector->display of all ' . $phr_corp->name() . ' with ' . $phr_ZH_INS->dsp_name() . ' selected', $target, $result);
 

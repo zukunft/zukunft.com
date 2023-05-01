@@ -464,7 +464,7 @@ class formula_link extends sandbox_link_with_type
 
         $this->load_objects();
         if (isset($this->fob) and isset($this->tob)) {
-            $result = $this->fob->name_linked($back) . ' to ' . $this->tob->dsp_link();
+            $result = $this->fob->name_linked($back) . ' to ' . $this->tob->display_linked();
         } else {
             $result .= log_err("The formula or the linked word cannot be loaded.", "formula_link->name");
         }

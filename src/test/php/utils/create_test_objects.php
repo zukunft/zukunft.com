@@ -608,7 +608,7 @@ class create_test_objects extends test_base
     {
         $wrd = $this->add_word($wrd_name, $wrd_type_code_id, $test_usr);
         $target = $wrd_name;
-        $this->dsp('testing->add_word', $target, $wrd->name());
+        $this->display('testing->add_word', $target, $wrd->name());
         return $wrd;
     }
 
@@ -759,7 +759,7 @@ class create_test_objects extends test_base
                 $target = $lnk_test->name();
             }
         }
-        $this->dsp('word link', $target, $result_text, TIMEOUT_LIMIT_DB);
+        $this->display('word link', $target, $result_text, TIMEOUT_LIMIT_DB);
         return $result;
     }
 
@@ -838,7 +838,7 @@ class create_test_objects extends test_base
     function test_formula(string $frm_name, string $frm_text): formula
     {
         $frm = $this->add_formula($frm_name, $frm_text);
-        $this->dsp('formula', $frm_name, $frm->name());
+        $this->display('formula', $frm_name, $frm->name());
         return $frm;
     }
 
@@ -877,7 +877,7 @@ class create_test_objects extends test_base
             $ref->save();
         }
         $target = $external_key;
-        $this->dsp('ref', $target, $ref->external_key);
+        $this->display('ref', $target, $ref->external_key);
         return $ref;
     }
 
@@ -898,7 +898,7 @@ class create_test_objects extends test_base
     function test_phrase(string $phr_name): phrase
     {
         $phr = $this->load_phrase($phr_name);
-        $this->dsp('phrase', $phr_name, $phr->name());
+        $this->display('phrase', $phr_name, $phr->name());
         return $phr;
     }
 
@@ -918,7 +918,7 @@ class create_test_objects extends test_base
         $wrd_lst = $this->load_word_list($array_of_word_str);
         $target = '"' . implode('","', $array_of_word_str) . '"';
         $result = $wrd_lst->name();
-        $this->dsp(', word list', $target, $result);
+        $this->display(', word list', $target, $result);
         return $wrd_lst;
     }
 
@@ -938,7 +938,7 @@ class create_test_objects extends test_base
         $phr_lst = $this->load_phrase_list($array_of_word_str);
         $target = '"' . implode('","', $array_of_word_str) . '"';
         $result = $phr_lst->dsp_name();
-        $this->dsp(', phrase list', $target, $result);
+        $this->display(', phrase list', $target, $result);
         return $phr_lst;
     }
 
@@ -1037,7 +1037,7 @@ class create_test_objects extends test_base
     {
         $val = $this->add_value($array_of_word_str, $target);
         $result = $val->number();
-        $this->dsp(', value->load for ' . $val->name(), $target, $result);
+        $this->display(', value->load for ' . $val->name(), $target, $result);
         return $val;
     }
 
@@ -1066,7 +1066,7 @@ class create_test_objects extends test_base
     {
         $val = $this->add_value_by_phr_grp($phr_grp, $target);
         $result = $val->number();
-        $this->dsp(', value->load for ' . $val->name(), $target, $result);
+        $this->display(', value->load for ' . $val->name(), $target, $result);
         return $val;
     }
 
@@ -1118,7 +1118,7 @@ class create_test_objects extends test_base
     function test_source(string $src_name): source
     {
         $src = $this->add_source($src_name);
-        $this->dsp('source', $src_name, $src->name());
+        $this->display('source', $src_name, $src->name());
         return $src;
     }
 
@@ -1241,7 +1241,7 @@ class create_test_objects extends test_base
     function test_view(string $dsp_name, ?user $test_usr = null): view
     {
         $dsp = $this->add_view($dsp_name, $test_usr);
-        $this->dsp('view', $dsp_name, $dsp->name());
+        $this->display('view', $dsp_name, $dsp->name());
         return $dsp;
     }
 
@@ -1287,7 +1287,7 @@ class create_test_objects extends test_base
     function test_view_component(string $cmp_name, string $type_code_id = '', ?user $test_usr = null): view_cmp
     {
         $cmp = $this->add_view_component($cmp_name, $type_code_id, $test_usr);
-        $this->dsp('view component', $cmp_name, $cmp->name());
+        $this->display('view component', $cmp_name, $cmp->name());
         return $cmp;
     }
 
@@ -1302,7 +1302,7 @@ class create_test_objects extends test_base
         $lnk->order_nbr = $pos;
         $result = $lnk->save();
         $target = '';
-        $this->dsp('view component link', $target, $result);
+        $this->display('view component link', $target, $result);
         return $lnk;
     }
 
@@ -1335,7 +1335,7 @@ class create_test_objects extends test_base
             if ($frm_lnk->id() > 0) {
                 $result = $frm_lnk->fob->name() . ' is linked to ' . $frm_lnk->tob->name();
                 $target = $formula_name . ' is linked to ' . $word_name;
-                $this->dsp('formula_link', $target, $result);
+                $this->display('formula_link', $target, $result);
             } else {
                 if ($autocreate) {
                     $frm_lnk->save();

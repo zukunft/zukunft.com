@@ -485,6 +485,14 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @return triple_dsp the triple object with the display interface functions
      */
     function dsp_obj(): object
@@ -1362,7 +1370,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
      * TODO include the user sandbox in the selection
      */
     private
-    function dsp(): string
+    function display(): string
     {
         log_debug("triple->dsp " . $this->id() . ".");
 
@@ -1442,7 +1450,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         log_debug("triple->dsp_del " . $this->id() . ".");
         $result = ''; // reset the html code var
 
-        $result .= \html\btn_yesno('Is "' . $this->dsp() . '" wrong?', '/http/link_del.php?id=' . $this->id() . '&back=' . $back);
+        $result .= \html\btn_yesno('Is "' . $this->display() . '" wrong?', '/http/link_del.php?id=' . $this->id() . '&back=' . $back);
         $result .= '<br><br>... and "' . $this->dsp_r() . '" is also wrong.<br><br>If you press Yes, both rules will be removed.';
 
         return $result;
@@ -1451,7 +1459,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
     /**
      * simply to display a single triple in a table
      */
-    function dsp_link(): string
+    function display_linked(): string
     {
         return '<a href="/http/view.php?link=' . $this->id() . '" title="' . $this->name() . '">' . $this->name() . '</a>';
     }
@@ -1467,7 +1475,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
             $result .= '&nbsp;';
             $intent = $intent - 1;
         }
-        $result .= '      ' . $this->dsp_link() . "\n";
+        $result .= '      ' . $this->display_linked() . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }

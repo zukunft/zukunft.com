@@ -83,6 +83,14 @@ class triple_list extends sandbox_list
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @return triple_list the word list object with the display interface functions
      */
     function dsp_obj(): triple_list

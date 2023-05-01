@@ -86,14 +86,14 @@ class phrase_list extends list_dsp
     /**
      * @returns string the html code to display the phrases with the most useful link
      */
-    function dsp_link(): string
+    function display_linked(): string
     {
         $result = '';
         foreach ($this->lst as $phr) {
-            if ($result != '' and $phr->dsp_link() != '') {
+            if ($result != '' and $phr->display_linked() != '') {
                 $result .= ', ';
             }
-            $result .= $phr->dsp_link();
+            $result .= $phr->display_linked();
         }
         return $result;
     }
@@ -104,7 +104,7 @@ class phrase_list extends list_dsp
      */
     private function plural(): string
     {
-        return $this->dsp_link() . 's';
+        return $this->display_linked() . 's';
     }
 
     /**
@@ -137,7 +137,7 @@ class phrase_list extends list_dsp
         $sel->lst = $this->lst_key();
         $sel->selected = $selected;
 
-        return $sel->dsp();
+        return $sel->display();
     }
 
 

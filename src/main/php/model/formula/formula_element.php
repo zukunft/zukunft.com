@@ -233,7 +233,7 @@ class formula_element extends db_object
             if ($this->obj->id() <> 0) {
                 // TODO replace with phrase
                 if ($this->type == word::class) {
-                    $result = $this->obj->dsp_obj()->dsp_link($back);
+                    $result = $this->obj->dsp_obj()->display_linked($back);
                 }
                 if ($this->type == verb::class) {
                     $result = $this->name();

@@ -171,7 +171,7 @@ class triple extends sandbox_typed_dsp
     /**
      * @returns string simply the word name, but later with mouse over that shows the description
      */
-    function dsp(): string
+    function display(): string
     {
         return $this->name();
     }
@@ -182,7 +182,7 @@ class triple extends sandbox_typed_dsp
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
-    function dsp_link(?string $back = '', string $style = ''): string
+    function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
         $url = $html->url(api::TRIPLE, $this->id, $back, api::PAR_VIEW_TRIPLES);

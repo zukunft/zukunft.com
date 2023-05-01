@@ -335,6 +335,14 @@ class phrase extends combine_named
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * TODO base this on the api message
      * @return phrase_dsp the phrase object with the display interface functions
      */
@@ -898,7 +906,7 @@ class phrase extends combine_named
     /**
      * simply to display a single word or triple link
      */
-    function dsp_link(): string
+    function display_linked(): string
     {
         return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
     }
@@ -1123,7 +1131,7 @@ class phrase extends combine_named
         $sel->sql = $this->sql_list($type);
         $sel->selected = $this->id();
         $sel->dummy_text = '... please select';
-        $result .= $sel->display();
+        $result .= $sel->display_old();
 
         log_debug('done ');
         return $result;

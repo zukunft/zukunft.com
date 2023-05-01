@@ -63,14 +63,14 @@ function run_source_test(testing $t): void
     $src_by_id->load_by_id($src_by_name->id(), source::class);
     $target = source_api::TN_READ;
     $result = $src_by_id->name();
-    $t->dsp('source->load of ' . $src_read->id() . ' by id ' . $src_by_name->id(), $target, $result);
+    $t->display('source->load of ' . $src_read->id() . ' by id ' . $src_by_name->id(), $target, $result);
 
     // test the creation of a new source
     $src_add = new source($t->usr1);
     $src_add->set_name(source_api::TN_ADD);
     $result = $src_add->save();
     $target = '';
-    $t->dsp('source->save for "' . source_api::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
+    $t->display('source->save for "' . source_api::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
 
     // ... check if the source creation has been logged
     if ($src_add->id() > 0) {
@@ -82,7 +82,7 @@ function run_source_test(testing $t): void
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system test added ' . source_api::TN_ADD;
-    $t->dsp('source->save logged for "' . source_api::TN_ADD . '"', $target, $result);
+    $t->display('source->save logged for "' . source_api::TN_ADD . '"', $target, $result);
 
     // ... test if the new source has been created
     $src_added = $t->load_source(source_api::TN_ADD);
@@ -91,13 +91,13 @@ function run_source_test(testing $t): void
         $result = $src_added->name();
     }
     $target = source_api::TN_ADD;
-    $t->dsp('source->load of added source "' . source_api::TN_ADD . '"', $target, $result);
+    $t->display('source->load of added source "' . source_api::TN_ADD . '"', $target, $result);
 
     // check if the source can be renamed
     $src_added->set_name(source_api::TN_RENAMED);
     $result = $src_added->save();
     $target = '';
-    $t->dsp('source->save rename "' . source_api::TN_ADD . '" to "' . source_api::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB);
+    $t->display('source->save rename "' . source_api::TN_ADD . '" to "' . source_api::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB);
 
     // check if the source renaming was successful
     $src_renamed = new source($t->usr1);
@@ -107,7 +107,7 @@ function run_source_test(testing $t): void
         }
     }
     $target = source_api::TN_RENAMED;
-    $t->dsp('source->load renamed source "' . source_api::TN_RENAMED . '"', $target, $result);
+    $t->display('source->load renamed source "' . source_api::TN_RENAMED . '"', $target, $result);
 
     // check if the source renaming has been logged
     $log = new change_log_named;
@@ -117,23 +117,23 @@ function run_source_test(testing $t): void
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test changed ' . source_api::TN_ADD . ' to ' . source_api::TN_RENAMED;
-    $t->dsp('source->save rename logged for "' . source_api::TN_RENAMED . '"', $target, $result);
+    $t->display('source->save rename logged for "' . source_api::TN_RENAMED . '"', $target, $result);
 
     // check if the source parameters can be added
     $src_renamed->url = source_api::TU_ADD;
     $src_renamed->description = source_api::TD_ADD;
     $result = $src_renamed->save();
     $target = '';
-    $t->dsp('source->save all source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display('source->save all source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if the source parameters have been added
     $src_reloaded = $t->load_source(source_api::TN_RENAMED);
     $result = $src_reloaded->url;
     $target = source_api::TU_ADD;
-    $t->dsp('source->load url for "' . source_api::TN_RENAMED . '"', $target, $result);
+    $t->display('source->load url for "' . source_api::TN_RENAMED . '"', $target, $result);
     $result = $src_reloaded->description;
     $target = source_api::TD_ADD;
-    $t->dsp('source->load description for "' . source_api::TN_RENAMED . '"', $target, $result);
+    $t->display('source->load description for "' . source_api::TN_RENAMED . '"', $target, $result);
 
     // check if the source parameter adding have been logged
     $log = new change_log_named;
@@ -144,12 +144,12 @@ function run_source_test(testing $t): void
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added ' . source_api::TU_ADD;
     //$target = 'zukunft.com system test partner changed ' . source_api::TEST_URL_CHANGED . ' to ' . source_api::TEST_URL;
-    $t->dsp('source->load url for "' . source_api::TN_RENAMED . '" logged', $target, $result);
+    $t->display('source->load url for "' . source_api::TN_RENAMED . '" logged', $target, $result);
     $log->set_field(sandbox_named::FLD_DESCRIPTION);
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added ' . source_api::TD_ADD;
     //$target = 'zukunft.com system test partner changed System Test Source Description Changed to System Test Source Description';
-    $t->dsp('source->load description for "' . source_api::TN_RENAMED . '" logged', $target, $result);
+    $t->display('source->load description for "' . source_api::TN_RENAMED . '" logged', $target, $result);
 
     // check if a user specific source is created if another user changes the source
     $src_usr2 = new source($t->usr2);
@@ -158,26 +158,26 @@ function run_source_test(testing $t): void
     $src_usr2->description = source_api::TEST_DESCRIPTION_CHANGED;
     $result = $src_usr2->save();
     $target = '';
-    $t->dsp('source->save all source fields for user 2 beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display('source->save all source fields for user 2 beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if a user specific source changes have been saved
     $src_usr2_reloaded = new source($t->usr2);
     $src_usr2_reloaded->load_by_name(source_api::TN_RENAMED, source::class);
     $result = $src_usr2_reloaded->url;
     $target = source_api::TEST_URL_CHANGED;
-    $t->dsp('source->load url for "' . source_api::TN_RENAMED . '"', $target, $result);
+    $t->display('source->load url for "' . source_api::TN_RENAMED . '"', $target, $result);
     $result = $src_usr2_reloaded->description;
     $target = source_api::TEST_DESCRIPTION_CHANGED;
-    $t->dsp('source->load description for "' . source_api::TN_RENAMED . '"', $target, $result);
+    $t->display('source->load description for "' . source_api::TN_RENAMED . '"', $target, $result);
 
     // check the source for the original user remains unchanged
     $src_reloaded = $t->load_source(source_api::TN_RENAMED);
     $result = $src_reloaded->url;
     $target = source_api::TU_ADD;
-    $t->dsp('source->load url for "' . source_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
+    $t->display('source->load url for "' . source_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
     $result = $src_reloaded->description;
     $target = source_api::TD_ADD;
-    $t->dsp('source->load description for "' . source_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
+    $t->display('source->load description for "' . source_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
 
     // check if undo all specific changes removes the user source
     $src_usr2 = new source($t->usr2);
@@ -186,17 +186,17 @@ function run_source_test(testing $t): void
     $src_usr2->description = source_api::TD_ADD;
     $result = $src_usr2->save();
     $target = '';
-    $t->dsp('source->save undo the user source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display('source->save undo the user source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if a user specific source changes have been saved
     $src_usr2_reloaded = new source($t->usr2);
     $src_usr2_reloaded->load_by_name(source_api::TN_RENAMED, source::class);
     $result = $src_usr2_reloaded->url;
     $target = source_api::TU_ADD;
-    $t->dsp('source->load url for "' . source_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
+    $t->display('source->load url for "' . source_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
     $result = $src_usr2_reloaded->description;
     $target = source_api::TD_ADD;
-    $t->dsp('source->load description for "' . source_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
+    $t->display('source->load description for "' . source_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
 
     // TODO create and check the display functions
 

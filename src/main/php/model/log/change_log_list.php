@@ -72,6 +72,14 @@ class change_log_list extends base_list
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @return change_log_list_dsp the word list object with the display interface functions
      */
     function dsp_obj(): change_log_list_dsp

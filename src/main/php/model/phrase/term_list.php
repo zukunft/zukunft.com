@@ -66,6 +66,14 @@ class term_list extends sandbox_list_named
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @return term_list_dsp the word object with the display interface functions
      */
     function dsp_obj(): term_list_dsp

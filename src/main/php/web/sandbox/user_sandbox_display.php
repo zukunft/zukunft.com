@@ -52,7 +52,7 @@ class user_sandbox_display extends sandbox_value
             $sel->sql = sql_lst("share_type");
             $sel->selected = $this->share_id;
             $sel->dummy_text = 'please define the share level';
-            $result .= 'share type ' . $sel->display() . ' ';
+            $result .= 'share type ' . $sel->display_old() . ' ';
         }
 
         log_debug($this->dsp_id() . ' done');
@@ -74,7 +74,7 @@ class user_sandbox_display extends sandbox_value
             $sel->selected = $this->protection_id;
             log_debug($this->dsp_id() . ' id ' . $this->protection_id);
             $sel->dummy_text = 'please define the protection level';
-            $result .= 'protection ' . $sel->display() . ' ';
+            $result .= 'protection ' . $sel->display_old() . ' ';
         }
 
         log_debug($this->dsp_id() . ' done');

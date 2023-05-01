@@ -63,7 +63,7 @@ class user_type_list extends type_list_api
         $sel->form = $form;
         $sel->lst = $this->lst_key();
         $sel->selected = $selected;
-        return $sel->dsp();
+        return $sel->display();
     }
 
 }

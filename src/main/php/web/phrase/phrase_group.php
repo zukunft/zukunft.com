@@ -206,7 +206,7 @@ class phrase_group extends sandbox_named_dsp
                     if ($result <> '') {
                         $result .= ', ';
                     }
-                    $result .= $phr->dsp_link();
+                    $result .= $phr->display_linked();
                 }
             }
             $this->unset_name_dirty();

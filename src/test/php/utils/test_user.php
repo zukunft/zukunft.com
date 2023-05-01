@@ -66,7 +66,7 @@ function run_user_test(testing $t): void
     $ip_addr = '2.204.210.217';
     $result = $usr->ip_check($ip_addr);
     $target = '';
-    $t->dsp(', usr->ip_check', $target, $result);
+    $t->display(', usr->ip_check', $target, $result);
 
     // TODO add a test signup process to
 

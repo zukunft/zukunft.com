@@ -362,7 +362,7 @@ class view_cmp_dsp_old extends view_cmp
             $sel->sql = sql_lst_usr("view", $this->user());
             $sel->selected = 0;
             $sel->dummy_text = 'select a view where the view component should also be used';
-            $result .= $sel->display();
+            $result .= $sel->display_old();
 
             $result .= $html->dsp_form_end('', $back);
         } else {
@@ -389,7 +389,7 @@ class view_cmp_dsp_old extends view_cmp
         $sel->bs_class = $class;
         $sel->sql = sql_lst("view_component_type");
         $sel->selected = $this->type_id;
-        $result .= $sel->display() . ' ';
+        $result .= $sel->display_old() . ' ';
         return $result;
     }
 
@@ -402,14 +402,14 @@ class view_cmp_dsp_old extends view_cmp
         $sel->dummy_text = 'not set';
         $sel->name = 'word_row';
         if (isset($this->wrd_row)) {
-            $sel->label = "Rows taken from " . $this->wrd_row->dsp_obj()->dsp_link() . ":";
+            $sel->label = "Rows taken from " . $this->wrd_row->dsp_obj()->display_linked() . ":";
         } else {
             $sel->label = "Take rows from:";
         }
         $sel->bs_class = $class;
         $sel->sql = sql_lst_usr("word", $this->user());
         $sel->selected = $this->word_id_row;
-        $result .= $sel->display() . ' ';
+        $result .= $sel->display_old() . ' ';
         return $result;
     }
 
@@ -422,14 +422,14 @@ class view_cmp_dsp_old extends view_cmp
         $sel->dummy_text = 'not set';
         $sel->name = 'word_col';
         if (isset($this->wrd_col)) {
-            $sel->label = "Columns taken from " . $this->wrd_col->dsp_obj()->dsp_link() . ":";
+            $sel->label = "Columns taken from " . $this->wrd_col->dsp_obj()->display_linked() . ":";
         } else {
             $sel->label = "Take columns from:";
         }
         $sel->bs_class = $class;
         $sel->sql = sql_lst_usr("word", $this->user());
         $sel->selected = $this->word_id_col;
-        $result .= $sel->display() . ' ';
+        $result .= $sel->display_old() . ' ';
         return $result;
     }
 

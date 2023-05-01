@@ -161,7 +161,7 @@ include_once $path_unit_dsp . 'word.php';
 include_once $path_unit_dsp . 'word_list.php';
 include_once $path_unit_dsp . 'verb.php';
 include_once $path_unit_dsp . 'triple.php';
-//include_once $path_unit_dsp . 'phrase.php';
+include_once $path_unit_dsp . 'phrase.php';
 include_once $path_unit_dsp . 'phrase_list.php';
 //include_once $path_unit_dsp . 'phrase_group.php';
 //include_once $path_unit_dsp . 'term.php';
@@ -482,7 +482,7 @@ class test_base
             $result = '';
             log_warning('result of test ' . $msg . ' has been null');
         }
-        return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
+        return $this->display(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
     }
 
     /**
@@ -507,7 +507,7 @@ class test_base
         if (strpos($result, $target) !== null) {
             $result = $target;
         }
-        return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
+        return $this->display(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
     }
 
     /**
@@ -530,7 +530,7 @@ class test_base
         string $test_type = ''): bool
     {
         $result = array_intersect($result, $target);
-        return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
+        return $this->display(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
     }
 
     /**
@@ -553,7 +553,7 @@ class test_base
         string $test_type = ''): bool
     {
         $result = array_diff($target, $result);
-        return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
+        return $this->display(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
     }
 
     /**
@@ -1206,7 +1206,7 @@ class test_base
      *
      * @return bool true if the test result is fine
      */
-    function dsp(
+    function display(
         string       $msg,
         string|array $target,
         string|array $result,
@@ -1378,7 +1378,7 @@ class test_base
         } else {
             $result = $target;
         }
-        return $this->dsp($test_text, $target, $result, $exe_max_time, $comment, 'contains');
+        return $this->display($test_text, $target, $result, $exe_max_time, $comment, 'contains');
     }
 
 

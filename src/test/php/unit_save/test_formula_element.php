@@ -74,7 +74,7 @@ function run_formula_element_test(testing $t): void
             } elseif ($pos == 3) {
                 $target = 'word "System Test Word Total" (' . $wrd_total->id() . ') for user 2 (zukunft.com system test)';
             }
-            $t->dsp('formula_element->dsp_id', $target, $result);
+            $t->display('formula_element->dsp_id', $target, $result);
 
             $result = $elm->name();
             if ($pos == 0) {
@@ -86,7 +86,7 @@ function run_formula_element_test(testing $t): void
             } elseif ($pos == 3) {
                 $target = 'System Test Word Total';
             }
-            $t->dsp('formula_element->dsp_id', $target, $result);
+            $t->display('formula_element->dsp_id', $target, $result);
 
             $result = $elm->name_linked($back);
             if ($pos == 0) {
@@ -98,14 +98,14 @@ function run_formula_element_test(testing $t): void
             } elseif ($pos == 3) {
                 $target = '<a href="/http/view.php?words=' . $wrd_total->id() . '&back=0" title="System Test Word Total">System Test Word Total</a>';
             }
-            $t->dsp('formula_element->dsp_id', $target, $result);
+            $t->display('formula_element->dsp_id', $target, $result);
 
             $pos++;
         }
     } else {
         $result = 'formula element list not set';
         $target = '';
-        $t->dsp('expression->element_lst', $target, $result);
+        $t->display('expression->element_lst', $target, $result);
     }
 
 }
@@ -129,7 +129,7 @@ function run_formula_element_list_test(testing $t): void
     } else {
         $result = 'formula element list not set';
         $target = '';
-        $t->dsp('formula_element_list->dsp_id', $target, $result);
+        $t->display('formula_element_list->dsp_id', $target, $result);
     }
 
 }

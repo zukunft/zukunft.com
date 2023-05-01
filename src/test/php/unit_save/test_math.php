@@ -58,7 +58,7 @@ function run_math_test(testing $t)
     $math_text = "(-10744--10744)/-10744";
     $target = 0;
     $result = $calc->parse($math_text);
-    $t->dsp(", zuc_math: the result for formula \"" . $math_text . "\"", $target, $result, TIMEOUT_LIMIT_LONG);
+    $t->display(", zuc_math: the result for formula \"" . $math_text . "\"", $target, $result, TIMEOUT_LIMIT_LONG);
 
     // test zuc_parse
     /*$formula_id = $result;
@@ -67,42 +67,42 @@ function run_math_test(testing $t)
     $word_ids = zut_sql_ids(array($word_abb,$word_revenues,$word_CHF, $word_2013));
     $debug = false;
     $result = zuc_parse($formula_id, ZUP_RESULT_TYPE_VALUE, $word_ids);
-    $t->dsp(", zuc_parse: the result for formula with id ".$formula_id, $target, $result); */
+    $t->display(", zuc_parse: the result for formula with id ".$formula_id, $target, $result); */
 
     // test zuc_is_text_only
     $formula = "\"this is just a text\"";
     $target = true;
     $result = $calc->is_text_only($formula);
-    $t->dsp(", zuc_is_text_only: a text like " . $formula, $target, $result);
+    $t->display(", zuc_is_text_only: a text like " . $formula, $target, $result);
 
     // test zuc_pos_separator
     $formula = "1+(2-1)";
     $separator = "+";
     $target = 1;
     $result = $calc->pos_separator($formula, $separator, 0);
-    $t->dsp(", zuc_pos_separator: separator " . $separator . " is in " . $formula . " at ", $target, $result);
+    $t->display(", zuc_pos_separator: separator " . $separator . " is in " . $formula . " at ", $target, $result);
 
     // test zuc_has_bracket
     $math_text = "(2 - 1) * 2";
     $result = $calc->has_bracket($math_text);
-    $t->dsp(", zuc_has_bracket: the result for formula \"" . $math_text . "\"", true, $result);
+    $t->display(", zuc_has_bracket: the result for formula \"" . $math_text . "\"", true, $result);
 
     // test zuc_has_formula
     $formula = "{f4} / {f5}";
     $result = $calc->has_formula($formula);
-    $t->dsp(", zuc_has_formula: the result for formula \"" . $formula . "\"", true, $result);
+    $t->display(", zuc_has_formula: the result for formula \"" . $formula . "\"", true, $result);
 
     // test zuc_is_date
     $date_text = "01.02.2013";
     $result = $calc->is_date($date_text);
-    $t->dsp(", zuc_is_date: the result for \"" . $date_text . "\"", true, $result);
+    $t->display(", zuc_is_date: the result for \"" . $date_text . "\"", true, $result);
 
 
     // test zuc_pos_word
     $formula_text = "{w6}";
     $target = "0";
     $result = $calc->pos_word($formula_text);
-    $t->dsp(", zuc_pos_word: the result for formula \"" . $formula_text . "\"", $target, $result);
+    $t->display(", zuc_pos_word: the result for formula \"" . $formula_text . "\"", $target, $result);
 
     // test zut_keep_only_specific
     /*$word_array = array();
@@ -112,7 +112,7 @@ function run_math_test(testing $t)
     $target = $word_array; // because 83 (Country) should be excluded
     $word_array[] = $word_country;
     $result = zut_keep_only_specific($word_array);
-    $t->dsp(", zut_keep_only_specific: the result for word array \"".implode(",",$word_array)."\"", $target, $result);
+    $t->display(", zut_keep_only_specific: the result for word array \"".implode(",",$word_array)."\"", $target, $result);
     */
 
     $time_phr = $t->load_phrase(word_api::TN_2020);
@@ -121,19 +121,19 @@ function run_math_test(testing $t)
     $math_text = "(3 - 1) * 2";
     $target = "2 * 2";
     $result = $calc->math_bracket($math_text, array(), $time_phr);
-    $t->dsp(", zuc_math_bracket: the result for formula \"" . $math_text . "\"", $target, $result);
+    $t->display(", zuc_math_bracket: the result for formula \"" . $math_text . "\"", $target, $result);
 
     // test zuc_math_parse
     $math_text = "3 - 1";
     $target = 2;
     $result = $calc->parse($math_text, math::RESULT_TYPE_VALUE, $time_phr);
-    $t->dsp(", zuc_math_parse: the result for formula \"" . $math_text . "\"", $target, $result);
+    $t->display(", zuc_math_parse: the result for formula \"" . $math_text . "\"", $target, $result);
 
     // test zuc_math_parse
     $math_text = "2 * 2";
     $target = 4;
     $result = $calc->parse($math_text, math::RESULT_TYPE_VALUE, $time_phr);
-    $t->dsp(", zuc_math_parse: the result for formula \"" . $math_text . "\"", $target, $result);
+    $t->display(", zuc_math_parse: the result for formula \"" . $math_text . "\"", $target, $result);
 
     // test zuc_is_math_symbol_or_num
     $formula_part_text = "/{f19}";
@@ -141,13 +141,13 @@ function run_math_test(testing $t)
     $wrd_lst->load_by_names(array(TW_ABB, TW_SALES, TW_MIO));
     $target = 1;
     $result = $calc->is_math_symbol_or_num($formula_part_text);
-    $t->dsp(", zuc_is_math_symbol_or_num: the result for formula \"" . $formula_part_text . "\"", $target, $result);
+    $t->display(", zuc_is_math_symbol_or_num: the result for formula \"" . $formula_part_text . "\"", $target, $result);
 
     // test zuc_get_math_symbol
     $formula_part_text = "/{f19}";
     $target = "/";
     $result = $calc->get_math_symbol($formula_part_text);
-    $t->dsp(", zuc_get_math_symbol: the result for formula \"" . $formula_part_text . "\"", $target, $result);
+    $t->display(", zuc_get_math_symbol: the result for formula \"" . $formula_part_text . "\"", $target, $result);
 
 
     /*

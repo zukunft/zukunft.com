@@ -97,6 +97,7 @@ use test\html\view_component_display_unit_tests;
 use test\html\word as word_html_tests;
 use test\html\word_list_display_unit_tests;
 use test\html\verb as verb_html_tests;
+use test\html\phrase as phrase_html_tests;
 //use test\html\phrase_list as phrase_list_html_tests;
 //use test\html\phrase_group as phrase_group_html_tests;
 //use test\html\term as term_html_tests;
@@ -234,7 +235,7 @@ class test_unit extends testing
         (new word_list_display_unit_tests)->run($this);
         (new verb_html_tests())->run($this);
         (new triple_display_unit_tests)->run($this);
-        //(new phrase_html_tests)->run($this);
+        (new phrase_html_tests)->run($this);
         (new phrase_list_display_unit_tests)->run($this);
         //(new phrase_group_html_tests)->run($this);
         //(new term_html_tests)->run($this);

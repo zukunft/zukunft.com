@@ -197,15 +197,15 @@ class phrase extends combine_named_dsp
     /**
      * @returns string the html code to display with mouse over that shows the description
      */
-    function dsp(): string
+    function display(): string
     {
-        return $this->obj()->dsp();
+        return $this->obj()->display();
     }
 
     /**
      * @returns string the html code to display the phrase with reference links
      */
-    function dsp_link(): string
+    function display_linked(): string
     {
         return $this->obj()->name();
     }
@@ -297,7 +297,7 @@ class phrase extends combine_named_dsp
         $sel->sql = $this->sql_list($type);
         $sel->selected = $this->id();
         $sel->dummy_text = '... please select';
-        $result .= $sel->display();
+        $result .= $sel->display_old();
 
         return $result;
     }

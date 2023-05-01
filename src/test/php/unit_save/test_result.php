@@ -70,7 +70,7 @@ function run_result_test(testing $t): void
     }
     // TODO review
     $target = result_api::TV_INCREASE_LONG;
-    $t->dsp('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, TIMEOUT_LIMIT_LONG);
+    $t->display('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, TIMEOUT_LIMIT_LONG);
 
     // test load result with time
     $phr_lst->add_name(word_api::TN_2020);
@@ -90,9 +90,9 @@ function run_result_test(testing $t): void
     //$result = $ch_increase->phr_grp_id;
     $target = result_api::TV_INCREASE_LONG;
     if (isset($time_phr) and isset($ch_up_grp)) {
-        $t->dsp('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result);
+        $t->display('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result);
     } else {
-        $t->dsp('value->val_formatted incl time for ', $target, $result);
+        $t->display('value->val_formatted incl time for ', $target, $result);
     }
 
     // test the scaling
@@ -121,7 +121,7 @@ function run_result_test(testing $t): void
     }
     $target = 8505.251;
     // TODO reactivate
-    //$t->dsp('value->val_scaling for a tern list ' . $phr_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE);
+    //$t->display('value->val_scaling for a tern list ' . $phr_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test getting the "best guess" value
     // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
@@ -138,7 +138,7 @@ function run_result_test(testing $t): void
     if ($result != $target) {
         $target = 0.007871833296164;
     }
-    $t->dsp('value->load the best guess for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->display('value->load the best guess for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
     */
 
     /*

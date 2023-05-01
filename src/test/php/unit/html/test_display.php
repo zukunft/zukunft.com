@@ -70,7 +70,7 @@ function run_display_test(testing $t): void
     $cmp->set_name(view_api::TN_READ_NESN_2016);
     $result = $cmp->dsp_obj()->html();
     $target = view_api::TN_READ_NESN_2016;
-    $t->dsp('view_component_dsp->text', $target, $result);
+    $t->display('view_component_dsp->text', $target, $result);
 
 
     $t->header('Test the display button class (src/main/php/web/html/button.php )');
@@ -92,23 +92,23 @@ function run_display_test(testing $t): void
 
     $target = '<a href="/http/view.php" title="Undo test"><img src="/src/main/resources/images/button_undo.svg" alt="Undo test"></a>';
     $result = (new button('Undo test', '/http/view.php'))->undo();
-    $t->dsp(", btn_undo", $target, $result);
+    $t->display(", btn_undo", $target, $result);
 
     $target = '<a href="/http/view.php" title="Find test"><img src="/src/main/resources/images/button_find.svg" alt="Find test"></a>';
     $result = (new button('Find test', '/http/view.php'))->find();
-    $t->dsp(", btn_find", $target, $result);
+    $t->display(", btn_find", $target, $result);
 
     $target = '<a href="/http/view.php" title="Show all test"><img src="/src/main/resources/images/button_filter_off.svg" alt="Show all test"></a>';
     $result = (new button('Show all test', '/http/view.php'))->unfilter();
-    $t->dsp(", btn_unfilter", $target, $result);
+    $t->display(", btn_unfilter", $target, $result);
 
     $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
     $result = (new button('YesNo test', '/http/view.php'))->yesno();
-    $t->dsp(", btn_yesno", $target, $result);
+    $t->display(", btn_yesno", $target, $result);
 
     $target = '<a href="/http/view.php?words=1" title="back"><img src="/src/main/resources/images/button_back.svg" alt="back"></a>';
     $result = (new button(''))->back();
-    $t->dsp(", btn_back", $target, $result);
+    $t->display(", btn_back", $target, $result);
 
 
     $t->header('Test the display HTML class (classes/display_html.php )');

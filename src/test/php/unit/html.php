@@ -68,7 +68,7 @@ class html_unit_tests
 
         $created_html = $html->about();
         $expected_html = $t->file('web/html/about.html');
-        $t->dsp('html_selector', $lib->trim_html($expected_html), $lib->trim_html($created_html));
+        $t->display('html_selector', $lib->trim_html($expected_html), $lib->trim_html($created_html));
 
 
         $t->subheader('Selector tests');
@@ -88,7 +88,7 @@ class html_unit_tests
         $sel->lst = $sel_lst;
         $sel->selected = 3;
         $body = $html->form_start($sel->form);
-        $body .= $sel->display();
+        $body .= $sel->display_old();
         $body .= $html->form_end($sel->name, '');
         $t->html_test($body, 'selector', $t);
 

@@ -273,6 +273,14 @@ class user extends db_object
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @return user_dsp the user frontend display object with all fields filled
      */
     function dsp_obj(): user_dsp

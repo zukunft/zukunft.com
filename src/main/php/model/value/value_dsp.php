@@ -309,10 +309,10 @@ class value_dsp_old extends value
                 }
                 // prepare a new value display
                 $row_value = $db_row["word_value"];
-                $word_names = $wrd->dsp_obj()->dsp_link(api::STYLE_GREY);
+                $word_names = $wrd->dsp_obj()->display_linked(api::STYLE_GREY);
                 $value_id = $new_value_id;
             } else {
-                $word_names .= ", " . $wrd->dsp_obj()->dsp_link(api::STYLE_GREY);
+                $word_names .= ", " . $wrd->dsp_obj()->display_linked(api::STYLE_GREY);
             }
         }
         // display the last row if there has been at least one word
@@ -635,7 +635,7 @@ class value_dsp_old extends value
                 $samples = $this->dsp_samples($main_wrd->id, $this->ids(), 10, $back);
                 log_debug("value->dsp_edit samples.");
                 if (trim($samples) <> "") {
-                    $result .= $html->dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->dsp_link(api::STYLE_GREY) . '" values as an indication', 'change_hist');
+                    $result .= $html->dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->display_linked(api::STYLE_GREY) . '" values as an indication', 'change_hist');
                     $result .= $samples;
                 }
             }

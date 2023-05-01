@@ -306,6 +306,14 @@ class view extends sandbox_typed
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @return view_dsp_old the view object with the html creation functions
      */
     function dsp_obj(): object

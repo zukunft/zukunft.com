@@ -68,7 +68,7 @@ function run_batch_job_test(testing $t): void
     $val->load_by_grp($phr_lst->get_grp());
     $result = $val->number();
     $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
-    $t->dsp('batch_job->value to link', $target, $result);
+    $t->display('batch_job->value to link', $target, $result);
 
     // test adding a batch job
     $job = new batch_job($usr);
@@ -78,7 +78,7 @@ function run_batch_job_test(testing $t): void
     if ($result > 0) {
         $target = $result;
     }
-    $t->dsp('batch_job->add has number "' . $result . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display('batch_job->add has number "' . $result . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
 }
 
@@ -106,6 +106,6 @@ function run_batch_job_list_test(testing $t): void
     if ($result->is_ok()) {
         $target = $result->get_last_message();
     }
-    $t->dsp('batch_job->add has number "' . $result->get_last_message() . '"', $target, $result->get_last_message(), TIMEOUT_LIMIT_DB_MULTI);
+    $t->display('batch_job->add has number "' . $result->get_last_message() . '"', $target, $result->get_last_message(), TIMEOUT_LIMIT_DB_MULTI);
 
 }

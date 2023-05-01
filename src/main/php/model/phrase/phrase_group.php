@@ -188,6 +188,14 @@ class phrase_group extends db_object
         return $api_obj;
     }
 
+    /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
 
     /*
      * set and get function

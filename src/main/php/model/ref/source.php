@@ -198,6 +198,14 @@ class source extends sandbox_typed
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @return source_dsp_old the source object with the display interface functions
      */
     function dsp_obj(): source_dsp_old

@@ -445,7 +445,7 @@ class user_dsp_old extends user
                     if ($frm_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $frm_usr->tob->dsp_link();
+                        $sandbox_usr_txt = $frm_usr->tob->display_linked();
                         //$sandbox_usr_txt = $frm_usr->link_name;
                     }
 
@@ -453,7 +453,7 @@ class user_dsp_old extends user
                     if ($frm_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
-                        $sandbox_std_txt = $frm_std->tob->dsp_link();
+                        $sandbox_std_txt = $frm_std->tob->display_linked();
                         //$sandbox_std_txt = $frm_std->link_name;
                     }
 
@@ -484,7 +484,7 @@ class user_dsp_old extends user
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $sandbox_other .= $frm_lnk_other->tob->dsp_link();
+                        $sandbox_other .= $frm_lnk_other->tob->display_linked();
                     }
                     $sandbox_other = '<a href="/http/user_formula_link.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 

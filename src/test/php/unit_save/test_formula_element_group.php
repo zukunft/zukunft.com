@@ -88,24 +88,24 @@ function run_formula_element_group_test(testing $t): void
         // test debug id first
         $result = $elm_grp->dsp_id();
         $target = '"this" ('.$frm_this->id().') and "Switzerland","inhabitants","million"';
-        $t->dsp('formula_element_group->dsp_id', $target, $result);
+        $t->display('formula_element_group->dsp_id', $target, $result);
 
         // test symbol for text replacement in the formula expression text
         $result = $elm_grp->build_symbol();
         $target = '{f'.$frm_this->id().'}';
-        $t->dsp('formula_element_group->build_symbol', $target, $result);
+        $t->display('formula_element_group->build_symbol', $target, $result);
 
         // test the display name that can be used for user debugging
         $result = trim($elm_grp->dsp_names());
         $target = trim('<a href="/http/formula_edit.php?id='.$frm_this->id().'" title="this">this</a>');
-        $t->dsp('formula_element_group->dsp_names', $target, $result);
+        $t->display('formula_element_group->dsp_names', $target, $result);
 
         // test if the values for an element group are displayed correctly
         $time_phr = $phr_lst->assume_time();
         $result = $elm_grp->dsp_values($time_phr);
         $fig_lst = $elm_grp->figures();
         $target = '<a href="/http/result_edit.php?id='.$fig_lst->get_first_id().'" title="8.51">8.51</a>';
-        $t->dsp('formula_element_group->dsp_values', $target, $result);
+        $t->display('formula_element_group->dsp_values', $target, $result);
 
         // remember the figure list for the figure and figure list class test
         $fig_lst = $elm_grp->figures();
@@ -127,17 +127,17 @@ function run_formula_element_group_test(testing $t): void
                 $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
                 $result = $fig_dsp->display();
                 $target = "8.51";
-                $t->dsp('figure->display', $target, $result);
+                $t->display('figure->display', $target, $result);
 
                 $result = $fig_dsp->display_linked();
                 //$target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
                 $target = '<a href="/http/result_edit.php?id='.$fig->id().'" title="8.51">8.51</a>';
-                $t->dsp('figure->display_linked', $target, $result);
+                $t->display('figure->display_linked', $target, $result);
             }
         } else {
             $result = 'figure list is empty';
             $target = 'this (3) and "System Test Word Parent e.g. Switzerland","System Test Word Unit e.g. inhabitant"';
-            $t->dsp('formula_element_group->figures', $target, $result);
+            $t->display('formula_element_group->figures', $target, $result);
         }
 
 
@@ -163,16 +163,16 @@ function run_formula_element_group_test(testing $t): void
         $result = str_replace("'","&#39;",$result);
         $target = str_replace("'","&#39;",$target);
         */
-        $t->dsp('figure_list->dsp_id', $target, $result);
+        $t->display('figure_list->dsp_id', $target, $result);
 
         $result = $fig_lst->display();
         $target = "8.51 ";
-        $t->dsp('figure_list->display', $target, $result);
+        $t->display('figure_list->display', $target, $result);
 
     } else {
         $result = 'formula element group list is empty';
         $target = 'this (3) and "ABB","Sales","CHF","million","' . word_api::TN_2015 . '"@';
-        $t->dsp('formula_element_group->dsp_names', $target, $result);
+        $t->display('formula_element_group->dsp_names', $target, $result);
     }
 
 }

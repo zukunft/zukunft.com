@@ -43,7 +43,7 @@ class view_cmp_list_dsp extends view_cmp_list_api
      * @return string with a list of the word names with html links
      * ex. names_linked
      */
-    function dsp(string $back = ''): string
+    function display(string $back = ''): string
     {
         return implode(', ', $this->names_linked($back));
     }
@@ -57,7 +57,7 @@ class view_cmp_list_dsp extends view_cmp_list_api
         $result = array();
         foreach ($this->lst as $wrd) {
             if (!$wrd->is_hidden()) {
-                $result[] = $wrd->dsp_obj()->dsp_link($back);
+                $result[] = $wrd->dsp_obj()->display_linked($back);
             }
         }
         return $result;

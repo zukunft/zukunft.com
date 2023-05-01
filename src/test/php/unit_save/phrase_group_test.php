@@ -56,7 +56,7 @@ function run_phrase_group_test(testing $t): void
         $target = $result;
         $id_without_year = $result;
     }
-    $t->dsp('phrase_group->load by ids for ' . implode(",", $wrd_lst->names()), $target, $result);
+    $t->display('phrase_group->load by ids for ' . implode(",", $wrd_lst->names()), $target, $result);
 
     // ... and if the time word is correctly excluded
     $wrd_lst = new word_list($usr);
@@ -69,7 +69,7 @@ function run_phrase_group_test(testing $t): void
     if ($result > 0) {
         $target = $result;
     }
-    $t->dsp('phrase_group->load by ids excluding time for ' . implode(",", $wrd_lst->names()), $target, $result);
+    $t->display('phrase_group->load by ids excluding time for ' . implode(",", $wrd_lst->names()), $target, $result);
 
     // load based on id
     if ($phr_grp->id() > 0) {
@@ -83,7 +83,7 @@ function run_phrase_group_test(testing $t): void
         );
     }
     $target = array(word_api::TN_CH) ;
-    $t->dsp('phrase_group->load for id ' . $phr_grp->id(), $target, $result);
+    $t->display('phrase_group->load for id ' . $phr_grp->id(), $target, $result);
 
     // test getting the phrase group id based on word and word link ids
     $phr_lst = new phrase_list($usr);
@@ -93,12 +93,12 @@ function run_phrase_group_test(testing $t): void
     if ($result > 0) {
         $target = $result;
     }
-    $t->dsp('phrase_group->load by ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->display('phrase_group->load by ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test names
     $result = implode(",", $zh_city_grp->names());
     $target = phrase_api::TN_ZH_CITY . ',' . word_api::TN_INHABITANTS;
-    $t->dsp('phrase_group->names', $target, $result);
+    $t->display('phrase_group->names', $target, $result);
 
     // test if the phrase group links are correctly recreated when a group is updated
     $phr_lst = new phrase_list($usr);
@@ -109,7 +109,7 @@ function run_phrase_group_test(testing $t): void
     $grp_check->load();
     $result = $grp_check->load_link_ids_for_testing();
     $target = $grp->phr_lst->id_lst();
-    $t->dsp('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // second test if the phrase group links are correctly recreated when a group is updated
     $phr_lst = new phrase_list($usr);
@@ -120,7 +120,7 @@ function run_phrase_group_test(testing $t): void
     $grp_check->load();
     $result = $grp_check->load_link_ids_for_testing();
     $target = $grp->phr_lst->id_lst();
-    $t->dsp('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test value
     // test value_scaled

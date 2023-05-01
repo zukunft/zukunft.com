@@ -262,6 +262,14 @@ class ref extends sandbox_link_with_type
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @return ref_dsp the ref object with the display interface functions
      */
     function dsp_obj(): ref_dsp

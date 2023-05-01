@@ -49,7 +49,7 @@ class html_selector
     public ?int $selected = null;   // id of the selected object
     public string $dummy_text = ''; // text for the NULL result if allowed
 
-    function dsp(): string
+    function display(): string
     {
         $result = $this->start_selector($this->form, $this->name, $this->label, $this->bs_class, $this->attribute);
 
@@ -79,7 +79,7 @@ class html_selector
     /**
      * TODO deprecate because it is base on an sql query, but should always be based on a list
      */
-    function display(): string
+    function display_old(): string
     {
         log_debug('selector->display (' . $this->name . ',' . $this->form . ',' . $this->sql . ',s' . $this->selected . ',' . $this->dummy_text . ')');
 

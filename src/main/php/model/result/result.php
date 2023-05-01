@@ -235,6 +235,14 @@ class result extends db_object
         return $api_obj;
     }
 
+    /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
 
     /*
      * loading
@@ -1188,9 +1196,9 @@ class result extends db_object
 
         // display the measure and scaling of the value
         if ($val_wrd_lst->has_percent()) {
-            $result .= 'from ' . $val_wrd_lst->api_obj()->measure_scale_lst()->dsp_obj()->dsp();
+            $result .= 'from ' . $val_wrd_lst->api_obj()->measure_scale_lst()->dsp_obj()->display();
         } else {
-            $result .= 'in ' . $val_wrd_lst->api_obj()->measure_scale_lst()->dsp_obj()->dsp();
+            $result .= 'in ' . $val_wrd_lst->api_obj()->measure_scale_lst()->dsp_obj()->display();
         }
         $result .= '</br></br>' . "\n";
 

@@ -43,6 +43,6 @@ function run_db_link_test(testing $t): void
     $id = change_log_table::WORD;
     $target = 5;
     $result = $change_log_tables->id($id);
-    $t->dsp(", sql_code_link " . $id, $target, $result);
+    $t->display(", sql_code_link " . $id, $target, $result);
 
 }

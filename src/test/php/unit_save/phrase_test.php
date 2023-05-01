@@ -107,7 +107,7 @@ function run_phrase_test(testing $t): void
     $phr->load_by_obj_par();
     $result = $phr->name();
     $target = word_api::TN_COMPANY;
-    $t->dsp('phrase->load word by id ' . $wrd_company->id(), $target, $result);
+    $t->display('phrase->load word by id ' . $wrd_company->id(), $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
     $target = ' <td><a href="/http/view.php?words=' . $wrd_company->id() . '" title="System Test Word Group e.g. Company">' . word_api::TN_COMPANY . '</a></td> ';
@@ -121,7 +121,7 @@ function run_phrase_test(testing $t): void
         log_err('Unexpected diff ' . $diff);
         $target = $result;
     }
-    $t->dsp('phrase->dsp_tbl word for ' . TEST_WORD, $target, $result);
+    $t->display('phrase->dsp_tbl word for ' . TEST_WORD, $target, $result);
 
     // test the phrase display functions (triple side)
     $phr = new phrase($usr);
@@ -129,7 +129,7 @@ function run_phrase_test(testing $t): void
     $phr->load_by_obj_par();
     $result = $phr->name();
     $target = phrase_api::TN_ZH_COMPANY;
-    $t->dsp('phrase->load triple by id ' . $zh_company_id, $target, $result);
+    $t->display('phrase->load triple by id ' . $zh_company_id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
     $target = ' <td> <a href="/http/view.php?link=' . $lnk_company->id() . '" title="' . phrase_api::TN_ZH_COMPANY . '">' . phrase_api::TN_ZH_COMPANY . '</a></td> ';
@@ -143,7 +143,7 @@ function run_phrase_test(testing $t): void
         log_err('Unexpected diff ' . $diff);
         $target = $result;
     }
-    $t->dsp('phrase->dsp_tbl triple for ' . $zh_company_id, $target, $result);
+    $t->display('phrase->dsp_tbl triple for ' . $zh_company_id, $target, $result);
 
     // test the phrase selector
     $form_name = 'test_phrase_selector';
@@ -173,6 +173,6 @@ function run_phrase_test(testing $t): void
         $result = $is_phr->name();
     }
     $target = TEST_WORD;
-    $t->dsp('phrase->is_mainly for ' . $phr->name(), $target, $result);
+    $t->display('phrase->is_mainly for ' . $phr->name(), $target, $result);
 
 }

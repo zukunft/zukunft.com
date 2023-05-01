@@ -634,7 +634,7 @@ class verb extends db_object
         $sel->lst = $sel_lst;
         $sel->selected = $this->id;
         $sel->dummy_text = '';
-        $result .= $sel->display();
+        $result .= $sel->display_old();
 
         log_debug('admin id ' . $this->id);
         if ($this->user()->is_set()) {

@@ -134,7 +134,7 @@ class formula extends sandbox_typed_dsp
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
-    function dsp_link(?string $back = '', string $style = ''): string
+    function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
         $url = $html->url(api::FORMULA, $this->id, $back, api::PAR_VIEW_FORMULAS);

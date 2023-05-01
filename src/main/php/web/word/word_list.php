@@ -87,7 +87,7 @@ class word_list extends list_dsp
      * @return string with a list of the word names with html links
      * ex. names_linked
      */
-    function dsp(string $back = ''): string
+    function display(string $back = ''): string
     {
         return implode(', ', $this->names_linked($back));
     }
@@ -101,7 +101,7 @@ class word_list extends list_dsp
         $result = array();
         foreach ($this->lst as $wrd) {
             if (!$wrd->is_hidden()) {
-                $result[] = $wrd->dsp_link($back);
+                $result[] = $wrd->display_linked($back);
             }
         }
         return $result;
@@ -119,7 +119,7 @@ class word_list extends list_dsp
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst as $wrd) {
-            $lnk = $wrd->dsp_link($back);
+            $lnk = $wrd->display_linked($back);
             $cols .= $html->td($lnk);
         }
         return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);
@@ -135,7 +135,7 @@ class word_list extends list_dsp
         $sel->form = $form;
         $sel->lst = $this->lst_key();
         $sel->selected = $selected;
-        return $sel->dsp();
+        return $sel->display();
     }
 
     // display a list of words that match to the given pattern

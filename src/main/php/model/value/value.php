@@ -228,6 +228,14 @@ class value extends sandbox_value
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * just to shorten the code
      * @return value_dsp the value frontend object
      */

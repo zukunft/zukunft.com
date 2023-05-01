@@ -444,6 +444,14 @@ class term extends combine_named
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @return term_dsp the phrase object with the display interface functions
      */
     function dsp_obj(): term_dsp

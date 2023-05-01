@@ -50,7 +50,7 @@ class triple_display_unit_tests
         $trp = new triple_dsp('{"class":"triple","id":1,"name":"' . word_api::TN_READ . '"}');
         $wrd = new word_dsp('{"class":"word","id":-1,"name":"' . word_api::TN_READ . '"}');
         $test_page = $html->text_h2('Triple display test');
-        $test_page .= 'with tooltip: ' . $trp->dsp() . '<br>';
+        $test_page .= 'with tooltip: ' . $trp->display() . '<br>';
         $test_page .= 'edit button: ' . $trp->btn_edit($wrd->phrase()) . '<br>';
         $t->html_test($test_page, 'triple', $t);
     }

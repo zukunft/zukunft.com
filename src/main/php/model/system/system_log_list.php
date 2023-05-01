@@ -111,6 +111,14 @@ class system_log_list extends base_list
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @return system_log_list_dsp a filled frontend display object
      */
     function dsp_obj(): system_log_list_dsp

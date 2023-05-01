@@ -70,7 +70,7 @@ function run_phrase_group_list_test(testing $t): void
     $target = word_api::TN_CH . ',' . word_api::TN_INHABITANTS . ',' . word_api::TN_MIO .
         ' and ' . word_api::TN_CANTON . ',' . word_api::TN_ZH . ',' . word_api::TN_INHABITANTS . ',' . word_api::TN_MIO .
         ' and ' . word_api::TN_CITY . ',' . word_api::TN_ZH . ',' . word_api::TN_INHABITANTS . ',' . word_api::TN_MIO;
-    $t->dsp('phrase_group_list->add of ' . $country_grp->dsp_id() . ', ' . $country_grp->dsp_id() . ', ' . $city_grp->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->display('phrase_group_list->add of ' . $country_grp->dsp_id() . ', ' . $country_grp->dsp_id() . ', ' . $city_grp->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
 
     // test getting the common phrases of several group
@@ -89,6 +89,6 @@ function run_phrase_group_list_test(testing $t): void
     $phr_lst = $grp_lst->common_phrases();
     $result = $phr_lst->dsp_name();
     $target = '"' . word_api::TN_INHABITANTS . '","' . word_api::TN_MIO . '"';
-    $t->dsp('phrase_group_list->common_phrases of ' . $grp_lst->dsp_id(), $target, $result);
+    $t->display('phrase_group_list->common_phrases of ' . $grp_lst->dsp_id(), $target, $result);
 
 }

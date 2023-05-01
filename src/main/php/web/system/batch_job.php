@@ -47,7 +47,7 @@ class batch_job_dsp extends batch_job_api
     /**
      * @returns string simply the batch_job name, but later with mouse over that shows the description
      */
-    function dsp(): string
+    function display(): string
     {
         return $this->type()->name;
     }
@@ -58,7 +58,7 @@ class batch_job_dsp extends batch_job_api
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
-    function dsp_link(?string $back = '', string $style = ''): string
+    function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
         $url = $html->url(api::VIEW, $this->id, $back, api::PAR_VIEW_WORDS);
@@ -72,7 +72,7 @@ class batch_job_dsp extends batch_job_api
      */
     function td(string $back = '', string $style = '', int $intent = 0): string
     {
-        $cell_text = $this->dsp_link($back, $style);
+        $cell_text = $this->display_linked($back, $style);
         return (new html_base)->td($cell_text, $intent);
     }
 
@@ -83,7 +83,7 @@ class batch_job_dsp extends batch_job_api
      */
     function th(string $back = '', string $style = ''): string
     {
-        return (new html_base)->th($this->dsp_link($back, $style));
+        return (new html_base)->th($this->display_linked($back, $style));
     }
 
     /**

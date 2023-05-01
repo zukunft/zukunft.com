@@ -129,6 +129,14 @@ class change_log_named extends change_log
 
     }
 
+    /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
     function dsp_obj(): change_log_named_dsp
     {
         $dsp_obj = new change_log_named_dsp();

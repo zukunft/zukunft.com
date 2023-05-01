@@ -244,24 +244,24 @@ class term extends combine_named_dsp
     /**
      * @returns string the html code to display with mouse over that shows the description
      */
-    function dsp(): string
+    function display(): string
     {
-        return $this->obj()->dsp();
+        return $this->obj()->display();
     }
 
     /**
      * @returns string the html code to display the phrase with reference links
      */
-    function dsp_link(): string
+    function display_linked(): string
     {
         if ($this->is_word()) {
-            return $this->obj()->dsp_link();
+            return $this->obj()->display_linked();
         } elseif ($this->is_triple()) {
-            return $this->obj()->dsp_link();
+            return $this->obj()->display_linked();
         } elseif ($this->is_formula()) {
-            return $this->obj()->dsp_link();
+            return $this->obj()->display_linked();
         } elseif ($this->is_verb()) {
-            return $this->obj()->dsp_link();
+            return $this->obj()->display_linked();
         } else {
             $msg = 'Unexpected term type ' . $this->dsp_id();
             log_err($msg);

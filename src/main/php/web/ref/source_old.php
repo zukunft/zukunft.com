@@ -42,7 +42,7 @@ class source_dsp_old extends source_api
     /**
      * @returns string simply the source name, but later with mouse over that shows the description
      */
-    function dsp(): string
+    function display(): string
     {
         return $this->name;
     }
@@ -98,7 +98,7 @@ class source_dsp_old extends source_api
         $sel->sql = sql_lst_usr("source", $this->user());
         $sel->selected = $this->id;
         $sel->dummy_text = 'please define the source';
-        $result .= '      taken from ' . $sel->display() . ' ';
+        $result .= '      taken from ' . $sel->display_old() . ' ';
         $result .= '    <td>' . \html\btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id . '&back=' . $back) . '</td>';
         $result .= '    <td>' . \html\btn_add("Add new source", '/http/source_add.php?back=' . $back) . '</td>';
         return $result;
@@ -117,7 +117,7 @@ class source_dsp_old extends source_api
         $sel->sql = sql_lst("source_type");
         $sel->selected = $this->type_id;
         $sel->dummy_text = 'please select the source type';
-        $result .= $sel->display();
+        $result .= $sel->display_old();
         return $result;
     }
 

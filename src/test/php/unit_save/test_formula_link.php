@@ -70,7 +70,7 @@ function run_formula_link_test(testing $t): void
     $phr->load_by_name(word_api::TN_RENAMED);
     $result = $frm->link_phr($phr);
     $target = '';
-    $t->dsp('formula_link->link_phr "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display('formula_link->link_phr "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check the correct logging
     $log = new change_log_link;
@@ -80,7 +80,7 @@ function run_formula_link_test(testing $t): void
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test linked System Test Formula Renamed to ' . word_api::TN_RENAMED;
-    $t->dsp('formula_link->link_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result);
+    $t->display('formula_link->link_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result);
 
     // ... check if the link can be loaded by formula and phrase id and base on the id the correct formula and phrase objects are loaded
     $frm_lnk = new formula_link($t->usr1);
@@ -97,14 +97,14 @@ function run_formula_link_test(testing $t): void
         $result = $frm_lnk2->fob->dsp_obj()->name();
     }
     $target = $frm->dsp_obj_old()->name();
-    $t->dsp('formula_link->load by formula id and link id "' . $frm->dsp_obj_old()->name(), $target, $result);
+    $t->display('formula_link->load by formula id and link id "' . $frm->dsp_obj_old()->name(), $target, $result);
 
     $result = '';
     if ($frm_lnk2->tob != null) {
         $result = $frm_lnk2->tob->name();
     }
     $target = $phr->name();
-    $t->dsp('formula_link->load by phrase id and link id "' . $phr->dsp_name(), $target, $result);
+    $t->display('formula_link->load by phrase id and link id "' . $phr->dsp_name(), $target, $result);
 
     // ... check if the link is shown correctly
     $frm = $t->load_formula(formula_api::TN_RENAMED);
@@ -112,7 +112,7 @@ function run_formula_link_test(testing $t): void
     echo $phr_lst->dsp_id() . '<br>';
     $result = $phr_lst->does_contain($phr);
     $target = true;
-    $t->dsp('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr1->name . '"', $target, $result);
+    $t->display('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr1->name . '"', $target, $result);
 
     // ... check if the link is shown correctly also for the second user
     // ... the second user has excluded the word at this point, so even if the word is linked the word link is nevertheless false
@@ -122,7 +122,7 @@ function run_formula_link_test(testing $t): void
     $phr_lst = $frm->assign_phr_ulst();
     $result = $phr_lst->does_contain($phr);
     $target = false;
-    $t->dsp('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr2->name . '"', $target, $result);
+    $t->display('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr2->name . '"', $target, $result);
 
     // ... check if the value update has been triggered
 
@@ -133,7 +133,7 @@ function run_formula_link_test(testing $t): void
     $phr->load_by_name(word_api::TN_RENAMED);
     $result = $frm->unlink_phr($phr);
     $target = '';
-    $t->dsp('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the removal of the link for the second user has been logged
     $log = new change_log_link;
@@ -143,7 +143,7 @@ function run_formula_link_test(testing $t): void
     $log->usr = $t->usr2;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test partner unlinked System Test Formula Renamed from ' . word_api::TN_RENAMED . '';
-    $t->dsp('formula_link->unlink_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
+    $t->display('formula_link->unlink_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
 
 
     // ... check if the link is really not used any more for the second user
@@ -152,7 +152,7 @@ function run_formula_link_test(testing $t): void
     $phr_lst = $frm->assign_phr_ulst();
     $result = $phr_lst->does_contain($phr);
     $target = false;
-    $t->dsp('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr2->name . '" not any more', $target, $result);
+    $t->display('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr2->name . '" not any more', $target, $result);
 
 
     // ... check if the value update for the second user has been triggered
@@ -162,14 +162,14 @@ function run_formula_link_test(testing $t): void
     $phr_lst = $frm->assign_phr_ulst();
     $result = $phr_lst->does_contain($phr);
     $target = true;
-    $t->dsp('formula->assign_phr_ulst still contains "' . $phr->name() . '" for user "' . $t->usr1->name . '"', $target, $result);
+    $t->display('formula->assign_phr_ulst still contains "' . $phr->name() . '" for user "' . $t->usr1->name . '"', $target, $result);
 
     // ... check if the values for the first user are still the same
 
     // if the first user also removes the link, both records should be deleted
     $result = $frm->unlink_phr($phr);
     $target = '';
-    $t->dsp('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check the correct logging
     $log = new change_log_link;
@@ -179,14 +179,14 @@ function run_formula_link_test(testing $t): void
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test unlinked System Test Formula Renamed from ' . word_api::TN_RENAMED . '';
-    $t->dsp('formula_link->unlink_phr logged of "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result);
+    $t->display('formula_link->unlink_phr logged of "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result);
 
     // check if the formula is not used any more for both users
     $frm = $t->load_formula(formula_api::TN_RENAMED);
     $phr_lst = $frm->assign_phr_ulst();
     $result = $phr_lst->does_contain($phr);
     $target = false;
-    $t->dsp('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr1->name . '" not any more', $target, $result);
+    $t->display('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr1->name . '" not any more', $target, $result);
 
 
     // ... and the values have been updated
@@ -198,7 +198,7 @@ function run_formula_link_test(testing $t): void
     $phr->load_by_name(word::TEST_NAME_CHANGED);
     $result = $frm->link_phr($phr);
     $target = '1';
-    $t->dsp('formula_link->link_phr "'.$phr->name().'" to "'.$frm->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display('formula_link->link_phr "'.$phr->name().'" to "'.$frm->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     */
 
     // ... if the second user changes the link

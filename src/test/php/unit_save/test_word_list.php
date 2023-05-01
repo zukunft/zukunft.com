@@ -260,7 +260,7 @@ function run_word_list_test(testing $t): void
     $wrd_lst_ex->ex_time();
     $result = $wrd_lst_ex->name();
     $target = '"' . word_api::TN_MIO . '","' . word_api::TN_CHF . '","' . word_api::TN_ZH . '"'; // the creation should be tested, but how?
-    $t->dsp('word_list->ex_time for ' . $wrd_lst->name(), $target, $result);
+    $t->display('word_list->ex_time for ' . $wrd_lst->name(), $target, $result);
 
     // add a test value
     $t->test_value(array(word_api::TN_ZH, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO), value_api::TV_INT);
@@ -276,7 +276,7 @@ function run_word_list_test(testing $t): void
     if ($result > 0) {
         $target = $result;
     }
-    $t->dsp('phrase_group->get_id for "' . implode('","', $wrd_lst->names()) . '"', $target, $result);
+    $t->display('phrase_group->get_id for "' . implode('","', $wrd_lst->names()) . '"', $target, $result);
 
     // test word list value
     $val = $wrd_lst->value();
@@ -295,7 +295,7 @@ function run_word_list_test(testing $t): void
     $val = $wrd_lst->value();
     $result = $val->number();
     $target = value_api::TV_FLOAT;
-    $t->dsp('word_list->value for ' . $wrd_lst->dsp_id(), $target, $result);
+    $t->display('word_list->value for ' . $wrd_lst->dsp_id(), $target, $result);
 
     // test assume time
     $wrd_lst = new word_list($usr);
@@ -303,7 +303,7 @@ function run_word_list_test(testing $t): void
     $abb_last_year = $wrd_lst->assume_time();
     $result = $abb_last_year->name();
     $target = word_api::TN_2021;
-    $t->dsp('word_list->assume_time for ' . $wrd_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_DB);
+    $t->display('word_list->assume_time for ' . $wrd_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_DB);
 
 
     // word sort
@@ -312,7 +312,7 @@ function run_word_list_test(testing $t): void
     $wrd_lst->name_sort();
     $target = '"' . word_api::TN_CANTON . '","' . word_api::TN_CITY . '","' . word_api::TN_COMPANY . '"';
     $result = $wrd_lst->dsp_name();
-    $t->dsp('word_list->sort for "' . word_api::TN_ZH . '"', $target, $result);
+    $t->display('word_list->sort for "' . word_api::TN_ZH . '"', $target, $result);
 
     /*
      * test the class functions not yet tested above
@@ -343,7 +343,7 @@ function run_word_list_test(testing $t): void
     $wrd_lst->diff($del_wrd_lst);
     $result = $wrd_lst->names();
     $target = array("April","December","February","January","March","November","October","September");
-    $t->dsp('word_list->diff of ' . $wrd_lst->dsp_id() . ' with ' . $del_wrd_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_DB);
+    $t->display('word_list->diff of ' . $wrd_lst->dsp_id() . ' with ' . $del_wrd_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_DB);
 
 }
 

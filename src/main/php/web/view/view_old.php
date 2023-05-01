@@ -42,7 +42,7 @@ class view_dsp_old extends view_api
 
     function list_sort(): string
     {
-        return $this->components()->dsp();
+        return $this->components()->display();
     }
 
 

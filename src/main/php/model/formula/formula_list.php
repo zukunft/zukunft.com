@@ -104,6 +104,14 @@ class formula_list extends sandbox_list
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @return formula_list_dsp the formula list object with the display interface functions
      */
     function dsp_obj(): formula_list_dsp

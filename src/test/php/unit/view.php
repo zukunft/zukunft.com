@@ -85,7 +85,7 @@ class view_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $dsp->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/view/view_components_by_view_id.sql');
-        $t->dsp('view->load_components_sql by view id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->display('view->load_components_sql by view id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($dsp->load_components_sql($db_con)->name);
@@ -94,7 +94,7 @@ class view_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $dsp->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/view/view_components_by_view_id_mysql.sql');
-        $t->dsp('view->load_components_sql for MySQL', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->display('view->load_components_sql for MySQL', $lib->trim($expected_sql), $lib->trim($created_sql));
 
 
         $t->subheader('Im- and Export tests');
@@ -126,7 +126,7 @@ class view_unit_tests
         $wrd->set_name(word::TEST_NAME);
         $result = $dsp->display($wrd, 1);
         $target = '';
-        $t->dsp('view->display', $target, $result);
+        $t->display('view->display', $target, $result);
         */
 
     }

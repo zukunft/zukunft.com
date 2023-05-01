@@ -102,14 +102,14 @@ class term_list extends list_dsp
     /**
      * @returns string the html code to display the phrases with the most useful link
      */
-    function dsp(): string
+    function display(): string
     {
         $result = '';
         foreach ($this->lst as $trm) {
-            if ($result != '' and $trm->dsp_link() != '') {
+            if ($result != '' and $trm->display_linked() != '') {
                 $result .= ', ';
             }
-            $result .= $trm->dsp_link();
+            $result .= $trm->display_linked();
         }
         return $result;
     }
@@ -125,7 +125,7 @@ class term_list extends list_dsp
         $sel->lst = $this->lst_key();
         $sel->selected = $selected;
 
-        return $sel->dsp();
+        return $sel->display();
     }
 
     function add(object $obj): bool

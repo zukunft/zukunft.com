@@ -63,7 +63,7 @@ class phrase_list_display_unit_tests
         // test the phrase list display functions
         $test_page = $html->text_h2('phrase list display test');
         /*
-        $test_page .= 'names with links: ' . $lst->dsp() . '<br>';
+        $test_page .= 'names with links: ' . $lst->display() . '<br>';
         $test_page .= 'table cells<br>';
         $test_page .= $lst->tbl();
         */

@@ -80,6 +80,14 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * TODO base the display object on the api object as already done in value
      * @return phrase_list_dsp_old the word object with the display interface functions
      */

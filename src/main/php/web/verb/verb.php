@@ -79,13 +79,27 @@ class verb extends sandbox_named_dsp
         return $trm;
     }
 
+
+    /*
+     * display
+     */
+
+    /**
+     * display the verb with the tooltip
+     * @returns string the html code
+     */
+    function display(): string
+    {
+        return $this->name();
+    }
+
     /**
      * display the verb with a link to the main page for the verb
      * @param string|null $back the back trace url for the undo functionality
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
-    function dsp_link(?string $back = '', string $style = ''): string
+    function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
         $url = $html->url(api::VERB, $this->id, $back, api::PAR_VIEW_VERBS);

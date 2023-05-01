@@ -88,6 +88,14 @@ class batch_job_list extends base_list
         return $api_obj;
     }
 
+    /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
 
     /*
      * load interface

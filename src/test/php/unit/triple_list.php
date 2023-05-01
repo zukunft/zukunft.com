@@ -87,7 +87,7 @@ class triple_list_unit_tests
         $trp_lst->ids = [1, 2, 3];
         $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_ids_old.sql'); // order adjusted based on the number of usage
-        $t->dsp('triple_list->load_sql by IDs', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->display('triple_list->load_sql by IDs', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         //$t->assert_sql_name_unique($trp_lst->load_sql_name());
@@ -100,7 +100,7 @@ class triple_list_unit_tests
         $trp_lst->direction = triple_list::DIRECTION_UP;
         $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_up.sql');
-        $t->dsp('triple_list->load_sql by word and up', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->display('triple_list->load_sql by word and up', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($trp_lst->load_sql_name());
@@ -113,7 +113,7 @@ class triple_list_unit_tests
         $trp_lst->direction = triple_list::DIRECTION_DOWN;
         $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_down.sql');
-        $t->dsp('triple_list->load_sql by word and down', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->display('triple_list->load_sql by word and down', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($trp_lst->load_sql_name());
@@ -131,7 +131,7 @@ class triple_list_unit_tests
         $trp_lst->direction = triple_list::DIRECTION_UP;
         $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_up.sql');
-        $t->dsp('triple_list->load_sql by word list and up', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->display('triple_list->load_sql by word list and up', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($trp_lst->load_sql_name());
@@ -149,7 +149,7 @@ class triple_list_unit_tests
         $trp_lst->direction = triple_list::DIRECTION_DOWN;
         $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_down.sql');
-        $t->dsp('triple_list->load_sql by word list and down', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->display('triple_list->load_sql by word list and down', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($trp_lst->load_sql_name());
@@ -170,7 +170,7 @@ class triple_list_unit_tests
         $trp_lst->direction = triple_list::DIRECTION_DOWN;
         $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_up_verb.sql');
-        $t->dsp('triple_list->load_sql by word list and down filtered by a verb', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->display('triple_list->load_sql by word list and down filtered by a verb', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($trp_lst->load_sql_name());
@@ -191,7 +191,7 @@ class triple_list_unit_tests
         $trp_lst->direction = triple_list::DIRECTION_DOWN;
         $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_down_verb.sql');
-        $t->dsp('triple_list->load_sql by word list and down filtered by a verb list', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->display('triple_list->load_sql by word list and down filtered by a verb list', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($trp_lst->load_sql_name());

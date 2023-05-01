@@ -114,7 +114,7 @@ class formula_link_unit_tests
         $json_ex = json_decode(json_encode($lnk->export_obj(false)), true);
         $result = json_is_similar($json_in, $json_ex);
         $target = true;
-        $t->dsp('formula_link->import check name', $target, $result);
+        $t->display('formula_link->import check name', $target, $result);
         */
 
         $t->name = 'formula_link_list->';

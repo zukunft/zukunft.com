@@ -126,7 +126,7 @@ class value_list extends list_dsp
         if ($header_phrases->count() <= 0) {
             $head_text = 'description';
         } else {
-            $head_text = $header_phrases->dsp_obj()->dsp_link();
+            $head_text = $header_phrases->dsp_obj()->display_linked();
         }
 
         // display the single values
