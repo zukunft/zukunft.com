@@ -31,12 +31,14 @@
 
 namespace html;
 
-use api\view_cmp_api;
+include_once API_VIEW_PATH . 'component.php';
+
+use api\component_api;
 use model\view_cmp_type;
 
 use html\phrase\phrase as phrase_dsp;
 
-class view_cmp_dsp_old extends view_cmp_api
+class component_dsp_old extends component_api
 {
 
     const FORM_ADD = 'view_component_add';

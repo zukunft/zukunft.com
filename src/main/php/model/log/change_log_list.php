@@ -231,12 +231,12 @@ class change_log_list extends base_list
 
     /**
      * load a list of the view changes of a view component
-     * @param view_cmp $cmp the view to which the view component changes should be loaded
+     * @param component $cmp the view to which the view component changes should be loaded
      * @param string $field_name the field that has been change e.g. 'view_id'
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_cmp(view_cmp $cmp, string $field_name = ''): bool
+    function load_by_fld_of_cmp(component $cmp, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(

@@ -31,8 +31,8 @@
 
 use controller\controller;
 use model\user;
-use model\view_cmp;
-use api\view_cmp_api;
+use model\component;
+use api\component_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
@@ -55,7 +55,7 @@ $cmp_id = $_GET[controller::URL_VAR_ID] ?? 0;
 $cmp_name = $_GET[controller::URL_VAR_NAME] ?? '';
 
 $msg = '';
-$result = new view_cmp_api(); // reset the html code var
+$result = new component_api(); // reset the html code var
 
 // load the session user parameters
 $usr = new user;
@@ -64,7 +64,7 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    $cmp = new view_cmp($usr);
+    $cmp = new component($usr);
     if ($cmp_id > 0) {
         $cmp->load_by_id($cmp_id);
         $result = $cmp->api_obj();

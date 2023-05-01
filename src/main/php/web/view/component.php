@@ -86,6 +86,29 @@ class component extends sandbox_typed_dsp
 
 
     /*
+     * display
+     */
+
+    /**
+     * TODO review these simplified function
+     * @return string
+     */
+    function display(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO review these simplified function
+     * @return string
+     */
+    function display_linked(): string
+    {
+        return $this->name();
+    }
+
+
+    /*
      * interface
      */
 

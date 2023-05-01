@@ -1,6 +1,6 @@
-PREPARE view_cmp_link_by_view_and_cmp_id FROM
+PREPARE view_component_link_by_id FROM
    'SELECT     s.view_component_link_id,
-               u.view_component_link_id  AS user_view_component_link_id,
+               u.view_component_link_id AS user_view_component_link_id,
                s.user_id,
                s.view_id,
                s.view_component_id,
@@ -11,5 +11,4 @@ PREPARE view_cmp_link_by_view_and_cmp_id FROM
                IF(u.protect_id    IS NULL, s.protect_id,    u.protect_id)    AS protect_id
           FROM view_component_links s
      LEFT JOIN user_view_component_links u ON s.view_component_link_id = u.view_component_link_id AND u.user_id = ?
-         WHERE s.view_id = ?
-           AND s.view_component_id = ?';
+         WHERE s.view_component_link_id = ?';

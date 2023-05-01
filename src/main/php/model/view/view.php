@@ -32,8 +32,8 @@
 namespace model;
 
 include_once WEB_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_cmp.php';
-include_once MODEL_VIEW_PATH . 'view_cmp_link.php';
+include_once MODEL_VIEW_PATH . 'component.php';
+include_once MODEL_VIEW_PATH . 'view_component_link.php';
 include_once MODEL_VIEW_PATH . 'view_cmp_dsp.php'; // TODO move to web namespace
 include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'view_cmp_exp.php';
@@ -478,7 +478,7 @@ class view extends sandbox_typed
      */
     function load_components_sql(sql_db $db_con): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con, view_cmp::class);
+        $qp = parent::load_sql_obj_vars($db_con, component::class);
         if ($this->id != 0) {
             $qp->name .= 'view_id';
         } elseif ($this->name != '') {
@@ -490,19 +490,19 @@ class view extends sandbox_typed
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
         $db_con->set_usr($this->user()->id());
         $db_con->set_name($qp->name);
-        $db_con->set_fields(view_cmp_link::FLD_NAMES);
-        $db_con->set_usr_num_fields(view_cmp_link::FLD_NAMES_NUM_USR);
+        $db_con->set_fields(view_component_link::FLD_NAMES);
+        $db_con->set_usr_num_fields(view_component_link::FLD_NAMES_NUM_USR);
         $db_con->set_join_fields(
-            view_cmp::FLD_NAMES,
-            sql_db::TBL_VIEW_COMPONENT);
+            component::FLD_NAMES,
+            sql_db::TBL_COMPONENT);
         $db_con->set_join_usr_fields(
-            array_merge(view_cmp::FLD_NAMES_USR, array(view_cmp::FLD_NAME)),
-            sql_db::TBL_VIEW_COMPONENT);
+            array_merge(component::FLD_NAMES_USR, array(component::FLD_NAME)),
+            sql_db::TBL_COMPONENT);
         $db_con->set_join_usr_num_fields(
-            view_cmp::FLD_NAMES_NUM_USR,
-            sql_db::TBL_VIEW_COMPONENT);
+            component::FLD_NAMES_NUM_USR,
+            sql_db::TBL_COMPONENT);
         $db_con->add_par(sql_db::PAR_INT, $this->id);
-        $db_con->set_order(view_cmp_link::FLD_ORDER_NBR);
+        $db_con->set_order(view_component_link::FLD_ORDER_NBR);
         $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID));
         $qp->par = $db_con->get_par();
 
@@ -530,17 +530,17 @@ class view extends sandbox_typed
                 // this is only for the view of the active user, so a direct exclude can be done
                 if ((is_null($db_entry[self::FLD_EXCLUDED]) or $db_entry[self::FLD_EXCLUDED] == 0)
                     and (is_null($db_entry[self::FLD_EXCLUDED . '2']) or $db_entry[self::FLD_EXCLUDED . '2'] == 0)) {
-                    $new_entry = new view_cmp_dsp_old($this->user());
-                    $new_entry->id = $db_entry[view_cmp::FLD_ID];
+                    $new_entry = new component_dsp_old($this->user());
+                    $new_entry->id = $db_entry[component::FLD_ID];
                     $new_entry->owner_id = $db_entry[sandbox::FLD_USER];
-                    $new_entry->order_nbr = $db_entry[view_cmp_link::FLD_ORDER_NBR];
-                    $new_entry->name = $db_entry[view_cmp::FLD_NAME];
-                    $new_entry->word_id_row = $db_entry[view_cmp::FLD_ROW_PHRASE . '2'];
-                    $new_entry->link_type_id = $db_entry[view_cmp::FLD_LINK_TYPE . '2'];
-                    $new_entry->type_id = $db_entry[view_cmp::FLD_TYPE . '2'];
+                    $new_entry->order_nbr = $db_entry[view_component_link::FLD_ORDER_NBR];
+                    $new_entry->name = $db_entry[component::FLD_NAME];
+                    $new_entry->word_id_row = $db_entry[component::FLD_ROW_PHRASE . '2'];
+                    $new_entry->link_type_id = $db_entry[component::FLD_LINK_TYPE . '2'];
+                    $new_entry->type_id = $db_entry[component::FLD_TYPE . '2'];
                     $new_entry->formula_id = $db_entry[formula::FLD_ID . '2'];
-                    $new_entry->word_id_col = $db_entry[view_cmp::FLD_COL_PHRASE . '2'];
-                    $new_entry->word_id_col2 = $db_entry[view_cmp::FLD_COL2_PHRASE . '2'];
+                    $new_entry->word_id_col = $db_entry[component::FLD_COL_PHRASE . '2'];
+                    $new_entry->word_id_col2 = $db_entry[component::FLD_COL2_PHRASE . '2'];
                     if (!$new_entry->load_phrases()) {
                         $result = false;
                     }
@@ -627,12 +627,12 @@ class view extends sandbox_typed
 
     /**
      * add a new component to this view
-     * @param view_cmp $cmp the view component that should be added
+     * @param component $cmp the view component that should be added
      * @param int|null $pos is set the position, where the
      * @return string an empty string if the new component link has been saved to the database
      *                or the message that should be shown to the user
      */
-    function add_cmp(view_cmp $cmp, ?int $pos = null, bool $do_save = true): string
+    function add_cmp(component $cmp, ?int $pos = null, bool $do_save = true): string
     {
         $result = '';
         $lib = new library();
@@ -643,7 +643,7 @@ class view extends sandbox_typed
             } else {
                 if ($do_save) {
                     $cmp->save();
-                    $cmp_lnk = new view_cmp_link($this->user());
+                    $cmp_lnk = new view_component_link($this->user());
                     $cmp_lnk->dsp->id = $this->id;
                     $cmp_lnk->cmp->id = $cmp->id;
                     $cmp_lnk->order_nbr = $cmp->order_nbr;
@@ -670,10 +670,10 @@ class view extends sandbox_typed
         if ($view_component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_up");
         } else {
-            $cmp = new view_cmp_dsp_old($this->user());
+            $cmp = new component_dsp_old($this->user());
             $cmp->id = $view_component_id;
             $cmp->load_obj_vars();
-            $cmp_lnk = new view_cmp_link($this->user());
+            $cmp_lnk = new view_component_link($this->user());
             $cmp_lnk->fob = $this;
             $cmp_lnk->tob = $cmp;
             $cmp_lnk->load_obj_vars();
@@ -692,10 +692,10 @@ class view extends sandbox_typed
         if ($view_component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_down");
         } else {
-            $cmp = new view_cmp_dsp_old($this->user());
+            $cmp = new component_dsp_old($this->user());
             $cmp->id = $view_component_id;
             $cmp->load_obj_vars();
-            $cmp_lnk = new view_cmp_link($this->user());
+            $cmp_lnk = new view_component_link($this->user());
             $cmp_lnk->fob = $this;
             $cmp_lnk->tob = $cmp;
             $cmp_lnk->load_obj_vars();
@@ -813,7 +813,7 @@ class view extends sandbox_typed
                 $json_lst = $value;
                 $cmp_pos = 1;
                 foreach ($json_lst as $json_cmp) {
-                    $cmp = new view_cmp($usr);
+                    $cmp = new component($usr);
                     $cmp->import_obj($json_cmp, $do_save);
                     // on import first add all view components to the view object and save them all at once
                     $result->add_message($this->add_cmp($cmp, $cmp_pos, $do_save));
@@ -950,7 +950,7 @@ class view extends sandbox_typed
         $result = new user_message();
 
         // collect all component links where this view is used
-        $lnk_lst = new view_cmp_link_list($this->user());
+        $lnk_lst = new view_component_link_list($this->user());
         $lnk_lst->load_by_view($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion

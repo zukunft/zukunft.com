@@ -1,10 +1,10 @@
-PREPARE view_cmp_link_list_by_view_id (int, int) AS
+PREPARE view_component_link_list_by_view_component_id (int, int) AS
     SELECT s.view_component_link_id,
            u.view_component_link_id AS user_view_component_link_id,
            s.user_id,
            s.view_id,
            s.view_component_id,
-           l.view_id,
+           l.view_component_id,
            CASE WHEN (u.order_nbr     IS NULL) THEN s.order_nbr     ELSE u.order_nbr     END AS order_nbr,
            CASE WHEN (u.position_type IS NULL) THEN s.position_type ELSE u.position_type END AS position_type,
            CASE WHEN (u.excluded      IS NULL) THEN s.excluded      ELSE u.excluded      END AS excluded,
@@ -13,5 +13,5 @@ PREPARE view_cmp_link_list_by_view_id (int, int) AS
       FROM view_component_links s
  LEFT JOIN user_view_component_links u
         ON s.view_component_link_id = u.view_component_link_id AND u.user_id = $1
- LEFT JOIN views l ON s.view_id = l.view_id
-     WHERE s.view_id = $2;
+ LEFT JOIN view_components l ON s.view_component_id = l.view_component_id
+     WHERE s.view_component_id = $2;

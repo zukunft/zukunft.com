@@ -1,4 +1,4 @@
-PREPARE view_cmp_by_usr_cfg FROM
+PREPARE component_by_usr_cfg FROM
    'SELECT view_component_id,
            view_component_name,
            description,

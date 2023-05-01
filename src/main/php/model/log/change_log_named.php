@@ -271,7 +271,7 @@ class change_log_named extends change_log
         } elseif ($type == view::class) {
             $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VIEW) . " 
                      OR f.table_id = " . $change_log_tables->id(change_log_table::VIEW_USR) . ") AND ";
-        } elseif ($type == view_cmp::class) {
+        } elseif ($type == component::class) {
             $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VIEW_COMPONENT) . " 
                      OR f.table_id = " . $change_log_tables->id(change_log_table::VIEW_COMPONENT_USR) . ") AND ";
         }

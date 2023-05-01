@@ -39,7 +39,7 @@ use api\value_api;
 use api\source_api;
 use api\formula_api;
 use api\view_api;
-use api\view_cmp_api;
+use api\component_api;
 use model\change_log_field;
 use model\change_log_list;
 use model\word;
@@ -149,7 +149,7 @@ class change_log_unit_db_tests
         // ... and if the first entry is the setting the view component name
         $first_change = $lst->lst()[0];
         $t->assert('first view component change is setting', $first_change->old_value, '');
-        $t->assert('... the name', $first_change->new_value, view_cmp_api::TN_READ);
+        $t->assert('... the name', $first_change->new_value, component_api::TN_READ);
 
         // TODO add ref
 

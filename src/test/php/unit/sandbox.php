@@ -698,7 +698,7 @@ class sandbox_unit_tests
         $t->display('Postgres formula_link load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the view_component load_standard SQL creation
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
+        $db_con->set_type(sql_db::TBL_COMPONENT);
         $db_con->set_fields(array(sandbox_named::FLD_DESCRIPTION, 'view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
@@ -717,7 +717,7 @@ class sandbox_unit_tests
         $t->display('Postgres view_component load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the view_component load SQL creation
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
+        $db_con->set_type(sql_db::TBL_COMPONENT);
         $db_con->set_usr_fields(array(sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
@@ -1093,7 +1093,7 @@ class sandbox_unit_tests
         $t->display('MySQL formula_link load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the view_component load_standard SQL creation
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
+        $db_con->set_type(sql_db::TBL_COMPONENT);
         $db_con->set_fields(array(sandbox_named::FLD_DESCRIPTION, 'view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
@@ -1112,7 +1112,7 @@ class sandbox_unit_tests
         $t->display('MySQL view_component load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the view_component load SQL creation
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
+        $db_con->set_type(sql_db::TBL_COMPONENT);
         $db_con->set_usr_fields(array(sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);

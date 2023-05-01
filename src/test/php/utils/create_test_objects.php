@@ -44,6 +44,8 @@ namespace test;
 include_once API_REF_PATH . 'ref.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_VIEW_PATH . 'component.php';
+include_once MODEL_VIEW_PATH . 'component_list.php';
 include_once WEB_FORMULA_PATH . 'formula_display.php';
 include_once WEB_VIEW_PATH . 'view_dsp_old.php';
 
@@ -57,7 +59,7 @@ use api\triple_api;
 use api\value_api;
 use api\verb_api;
 use api\view_api;
-use api\view_cmp_api;
+use api\component_api;
 use api\word_api;
 use api_message;
 use cfg\formula_type;
@@ -76,6 +78,7 @@ use model\change_log_field;
 use model\change_log_list;
 use model\change_log_named;
 use model\change_log_table;
+use model\component_list;
 use model\figure;
 use model\figure_list;
 use model\formula;
@@ -99,8 +102,8 @@ use model\value;
 use model\value_list;
 use model\verb;
 use model\view;
-use model\view_cmp;
-use model\view_cmp_link;
+use model\component;
+use model\view_component_link;
 use model\view_cmp_type;
 use model\view_list;
 use model\word;
@@ -390,12 +393,12 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    function dummy_component(): view_cmp
+    function dummy_component(): component
     {
         global $usr;
-        $cmp = new view_cmp($usr);
-        $cmp->set(1, view_cmp_api::TN_READ, view_cmp_type::PHRASE_NAME);
-        $cmp->description = view_cmp_api::TD_READ;
+        $cmp = new component($usr);
+        $cmp->set(1, component_api::TN_READ, view_cmp_type::PHRASE_NAME);
+        $cmp->description = component_api::TD_READ;
         return $cmp;
     }
 
@@ -1267,7 +1270,7 @@ class create_test_objects extends test_base
      * component test creation
      */
 
-    function load_view_component(string $cmp_name, ?user $test_usr = null): view_cmp
+    function load_view_component(string $cmp_name, ?user $test_usr = null): component
     {
         global $usr;
 
@@ -1275,12 +1278,12 @@ class create_test_objects extends test_base
             $test_usr = $usr;
         }
 
-        $cmp = new view_cmp($test_usr);
-        $cmp->load_by_name($cmp_name, view_cmp::class);
+        $cmp = new component($test_usr);
+        $cmp->load_by_name($cmp_name, component::class);
         return $cmp;
     }
 
-    function add_view_component(string $cmp_name, string $type_code_id = '', ?user $test_usr = null): view_cmp
+    function add_view_component(string $cmp_name, string $type_code_id = '', ?user $test_usr = null): component
     {
         global $usr;
         global $view_component_types;
@@ -1301,19 +1304,19 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function test_view_component(string $cmp_name, string $type_code_id = '', ?user $test_usr = null): view_cmp
+    function test_view_component(string $cmp_name, string $type_code_id = '', ?user $test_usr = null): component
     {
         $cmp = $this->add_view_component($cmp_name, $type_code_id, $test_usr);
         $this->display('view component', $cmp_name, $cmp->name());
         return $cmp;
     }
 
-    function test_view_cmp_lnk(string $dsp_name, string $cmp_name, int $pos): view_cmp_link
+    function test_view_cmp_lnk(string $dsp_name, string $cmp_name, int $pos): view_component_link
     {
         global $usr;
         $dsp = $this->load_view($dsp_name);
         $cmp = $this->load_view_component($cmp_name);
-        $lnk = new view_cmp_link($usr);
+        $lnk = new view_component_link($usr);
         $lnk->fob = $dsp;
         $lnk->tob = $cmp;
         $lnk->order_nbr = $pos;

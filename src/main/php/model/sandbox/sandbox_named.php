@@ -39,14 +39,14 @@ include_once API_FORMULA_PATH . 'formula.php';
 include_once API_PHRASE_PATH . 'phrase.php';
 include_once API_REF_PATH . 'source.php';
 include_once API_VIEW_PATH . 'view.php';
-include_once API_VIEW_PATH . 'view_cmp.php';
+include_once API_VIEW_PATH . 'component.php';
 include_once API_WORD_PATH . 'word.php';
 
 use api\formula_api;
 use api\phrase_api;
 use api\source_api;
 use api\view_api;
-use api\view_cmp_api;
+use api\component_api;
 use api\word_api;
 use cfg\export\exp_obj;
 use Exception;
@@ -439,8 +439,8 @@ class sandbox_named extends sandbox
                     if (in_array($this->name, view_api::RESERVED_VIEWS)) {
                         $result = '"' . $this->name() . '" is a reserved view name for system testing. Please use another name';
                     }
-                } elseif ($this->obj_name == sql_db::TBL_VIEW_COMPONENT) {
-                    if (in_array($this->name, view_cmp_api::RESERVED_VIEW_COMPONENTS)) {
+                } elseif ($this->obj_name == sql_db::TBL_COMPONENT) {
+                    if (in_array($this->name, component_api::RESERVED_VIEW_COMPONENTS)) {
                         $result = '"' . $this->name() . '" is a reserved view component name for system testing. Please use another name';
                     }
                 } elseif ($this->obj_name == sql_db::TBL_SOURCE) {

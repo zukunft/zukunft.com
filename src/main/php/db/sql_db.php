@@ -85,7 +85,7 @@ class sql_db
     const TBL_RESULT = 'result';
     const TBL_VIEW = 'view';
     const TBL_VIEW_TYPE = 'view_type';
-    const TBL_VIEW_COMPONENT = 'view_component';
+    const TBL_COMPONENT = 'view_component';
     const TBL_VIEW_COMPONENT_LINK = 'view_component_link';
     const TBL_VIEW_COMPONENT_TYPE = 'view_component_type';
     const TBL_VIEW_COMPONENT_LINK_TYPE = 'view_component_link_type';

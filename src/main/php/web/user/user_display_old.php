@@ -46,9 +46,9 @@ use model\user;
 use model\value;
 use model\verb;
 use model\view;
-use model\view_cmp;
-use model\view_cmp_dsp_old;
-use model\view_cmp_link;
+use model\component;
+use model\component_dsp_old;
+use model\view_component_link;
 
 class user_dsp_old extends user
 {
@@ -913,7 +913,7 @@ class user_dsp_old extends user
                 $row_nbr++;
 
                 // create the view_component object with the minimal parameter needed
-                $dsp_usr = new view_cmp_dsp_old($this);
+                $dsp_usr = new component_dsp_old($this);
                 $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->description = $sbx_row['usr_comment'];
@@ -977,7 +977,7 @@ class user_dsp_old extends user
                         // to review: load all user view_components with one query
                         $cmp_other = clone $dsp_usr;
                         $cmp_other->set_user($usr_other);
-                        $cmp_other->set_name($cmp_other_row[view_cmp::FLD_NAME]);
+                        $cmp_other->set_name($cmp_other_row[component::FLD_NAME]);
                         $cmp_other->description = $cmp_other_row[sandbox_named::FLD_DESCRIPTION];
                         $cmp_other->type_id = $cmp_other_row['view_component_type_id'];
                         $cmp_other->set_excluded($cmp_other_row[sandbox::FLD_EXCLUDED]);
@@ -1082,7 +1082,7 @@ class user_dsp_old extends user
                 $row_nbr++;
 
                 // create the view_component_link objects with the minimal parameter needed
-                $dsp_usr = new view_cmp_link($this);
+                $dsp_usr = new view_component_link($this);
                 $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->dsp->set_id($sbx_row[view::FLD_ID]);
                 $dsp_usr->cmp->set_id($sbx_row['view_component_id']);

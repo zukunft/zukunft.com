@@ -32,9 +32,9 @@
 
 namespace test\html;
 
-use api\view_cmp_api;
+use api\component_api;
 use html\html_base;
-use html\view_cmp_dsp_old;
+use html\component_dsp_old;
 use test\testing;
 
 class component
@@ -59,11 +59,11 @@ class component
         $test_page .= 'view header<br>';
         $test_page .= $wrd->header() . '<br>';
         */
-        $cmp = new view_cmp_dsp_old(0);
+        $cmp = new component_dsp_old(0);
         $test_page .= 'add mask<br>';
         $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
-        $cmp = new view_cmp_dsp_old(1, view_cmp_api::TN_READ);
-        $cmp->description = view_cmp_api::TD_READ;
+        $cmp = new component_dsp_old(1, component_api::TN_READ);
+        $cmp->description = component_api::TD_READ;
         $test_page .= 'edit mask<br>';
         $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
         $t->html_test($test_page, 'view_cmp', $t);

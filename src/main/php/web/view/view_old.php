@@ -31,10 +31,10 @@
 
 namespace html;
 
-include_once WEB_VIEW_PATH . 'view_cmp_list.php';
+include_once WEB_VIEW_PATH . 'view_cmp_list_old.php';
 
 use api\view_api;
-use api\view_cmp_api;
+use api\component_api;
 use model\view;
 
 class view_dsp_old extends view_api
@@ -46,9 +46,9 @@ class view_dsp_old extends view_api
     }
 
 
-    private function components(): view_cmp_list_dsp
+    private function components(): component_list_dsp_old
     {
-        $lst = new view_cmp_list_dsp();
+        $lst = new component_list_dsp_old();
         foreach ($this->cmp_lst as $cmp) {
             $lst->add($cmp->dsp_obj());
         }
@@ -60,11 +60,11 @@ class view_dsp_old extends view_api
         $result = '';
         switch ($this->code_id) {
             case view::COMPONENT_ADD:
-                $cmp = new view_cmp_dsp_old(0);
+                $cmp = new component_dsp_old(0);
                 $result = $cmp->form_edit('', '', '', '', '');
                 break;
             case view::COMPONENT_EDIT:
-                $cmp = new view_cmp_dsp_old(1, view_cmp_api::TN_READ);
+                $cmp = new component_dsp_old(1, component_api::TN_READ);
                 $result = $cmp->form_edit('', '', '', '', '');
                 break;
             case view::COMPONENT_DEL:

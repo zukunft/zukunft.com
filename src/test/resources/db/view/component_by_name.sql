@@ -1,4 +1,4 @@
-PREPARE view_cmp_by_name (int, text) AS
+PREPARE component_by_name (int, text) AS
     SELECT     s.view_component_id,
                u.view_component_id AS user_view_component_id,
                s.user_id,

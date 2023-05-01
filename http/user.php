@@ -39,8 +39,8 @@ use model\user;
 use model\user_profile;
 use model\value;
 use model\view;
-use model\view_cmp;
-use model\view_cmp_link;
+use model\component;
+use model\view_component_link;
 use model\word;
 
 $debug = $_GET['debug'] ?? 0;
@@ -130,14 +130,14 @@ if ($usr->id() > 0) {
 
     // undo user changes for formulas
     if ($undo_cmp > 0) {
-        $cmp = new view_cmp($usr);
+        $cmp = new component($usr);
         $cmp->set_id($undo_cmp);
         $cmp->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_cmp_lnk > 0) {
-        $cmp_lnk = new view_cmp_link($usr);
+        $cmp_lnk = new view_component_link($usr);
         $cmp_lnk->set_id($undo_cmp_lnk);
         $cmp_lnk->del_usr_cfg();
     }

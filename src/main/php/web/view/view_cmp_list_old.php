@@ -2,9 +2,8 @@
 
 /*
 
-    api/view/view_cmp_list_api.php - a list object of minimal/api view component objects
-    -----------------
-
+    view_cmp_list_dsp.php - a list function to create the HTML code to display a view component list
+    ---------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,56 +29,38 @@
 
 */
 
-namespace api;
+namespace html;
 
-use html\word\word_list as word_list_dsp;
+include_once API_VIEW_PATH . 'component_list.php';
 
-class view_cmp_list_api extends list_api
+use api\component_list_api;
+
+class component_list_dsp_old extends component_list_api
 {
 
-    /*
-     * construct and map
+    /**
+     * @param string $back the back trace url for the undo functionality
+     * @return string with a list of the word names with html links
+     * ex. names_linked
      */
-
-    function __construct(array $lst = array())
+    function display(string $back = ''): string
     {
-        parent::__construct($lst);
+        return implode(', ', $this->names_linked($back));
     }
 
     /**
-     * add a view component to the list
-     * @returns bool true if at least one view component has been added
+     * @param string $back the back trace url for the undo functionality
+     * @return array with a list of the word names with html links
      */
-    function add(word_api $phr): bool
+    function names_linked(string $back = ''): array
     {
-        return parent::add_obj($phr);
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @returns word_list_dsp the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): word_list_dsp
-    {
-        $dsp_obj = new word_list_dsp();
-
-        // cast the single list objects
-        $lst_dsp = array();
+        $result = array();
         foreach ($this->lst as $wrd) {
-            if ($wrd != null) {
-                $wrd_dsp = $wrd->dsp_obj();
-                $lst_dsp[] = $wrd_dsp;
+            if (!$wrd->is_hidden()) {
+                $result[] = $wrd->dsp_obj()->display_linked($back);
             }
         }
-
-        $dsp_obj->set_lst($lst_dsp);
-        $dsp_obj->set_lst_dirty();
-
-        return $dsp_obj;
+        return $result;
     }
 
 }

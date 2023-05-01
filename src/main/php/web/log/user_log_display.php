@@ -42,7 +42,7 @@ use model\sql_db;
 use model\user;
 use model\value;
 use model\view;
-use model\view_cmp;
+use model\component;
 use model\word;
 
 class user_log_display
@@ -116,7 +116,7 @@ class user_log_display
         } elseif ($this->type == view::class) {
             $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VIEW) . " 
                      OR f.table_id = " . $change_log_tables->id(change_log_table::VIEW_USR) . ") AND ";
-        } elseif ($this->type == view_cmp::class) {
+        } elseif ($this->type == component::class) {
             $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VIEW_COMPONENT) . " 
                      OR f.table_id = " . $change_log_tables->id(change_log_table::VIEW_COMPONENT_USR) . ") AND ";
         }

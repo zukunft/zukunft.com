@@ -33,14 +33,14 @@
 namespace test;
 
 use api\view_api;
-use api\view_cmp_api;
+use api\component_api;
 use cfg\view_cmp_type_list;
 use cfg\view_sys_list;
 use cfg\view_type;
 use cfg\view_type_list;
 use model\db_cl;
 use model\view;
-use model\view_cmp;
+use model\component;
 use model\view_cmp_type;
 
 class view_unit_db_tests
@@ -114,13 +114,13 @@ class view_unit_db_tests
 
         $t->subheader('View component db read tests');
 
-        $test_name = 'load view component ' . view_cmp_api::TN_READ . ' by name and id';
-        $cmp = new view_cmp($usr);
-        $cmp->load_by_name(view_cmp_api::TN_READ, view_cmp::class);
-        $cmp_by_id = new view_cmp($usr);
-        $cmp_by_id->load_by_id($cmp->id(), view_cmp::class);
-        $t->assert($test_name, $cmp_by_id->name(), view_cmp_api::TN_READ);
-        $t->assert($test_name, $cmp_by_id->description, view_cmp_api::TD_READ);
+        $test_name = 'load view component ' . component_api::TN_READ . ' by name and id';
+        $cmp = new component($usr);
+        $cmp->load_by_name(component_api::TN_READ, component::class);
+        $cmp_by_id = new component($usr);
+        $cmp_by_id->load_by_id($cmp->id(), component::class);
+        $t->assert($test_name, $cmp_by_id->name(), component_api::TN_READ);
+        $t->assert($test_name, $cmp_by_id->description, component_api::TD_READ);
 
 
         $t->subheader('View component types tests');

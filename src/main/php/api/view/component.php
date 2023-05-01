@@ -32,7 +32,7 @@
 
 namespace api;
 
-class view_cmp_api extends sandbox_typed_api
+class component_api extends sandbox_typed_api
 {
 
     /*

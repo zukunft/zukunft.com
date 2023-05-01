@@ -35,7 +35,7 @@
 
 namespace model;
 
-class view_cmp_link extends sandbox_link_with_type
+class view_component_link extends sandbox_link_with_type
 {
 
     /*
@@ -50,7 +50,7 @@ class view_cmp_link extends sandbox_link_with_type
     // all database field names excluding the id
     const FLD_NAMES = array(
         view::FLD_ID,
-        view_cmp::FLD_ID
+        component::FLD_ID
     );
     // list of the user specific database field names
     const FLD_NAMES_NUM_USR = array(
@@ -81,7 +81,7 @@ class view_cmp_link extends sandbox_link_with_type
      */
 
     public view $dsp;
-    public view_cmp $cmp;
+    public component $cmp;
 
     public ?int $order_nbr = null;          // to sort the display item
 
@@ -99,7 +99,7 @@ class view_cmp_link extends sandbox_link_with_type
         $this->obj_type = sandbox::TYPE_LINK;
         $this->obj_name = sql_db::TBL_VIEW_COMPONENT_LINK;
         $this->from_name = sql_db::TBL_VIEW;
-        $this->to_name = sql_db::TBL_VIEW_COMPONENT;
+        $this->to_name = sql_db::TBL_COMPONENT;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_LINK;
 
@@ -124,7 +124,7 @@ class view_cmp_link extends sandbox_link_with_type
     private function reset_objects(user $usr)
     {
         $this->dsp = new view($usr);     // the display (view) object (used to save the correct name in the log)
-        $this->cmp = new view_cmp($usr); // the display component (view entry) object (used to save the correct name in the log)
+        $this->cmp = new component($usr); // the display component (view entry) object (used to save the correct name in the log)
 
         // assign the object specific objects to the standard link object
         // to enable the usage of the standard user sandbox link function for this view component link object
@@ -150,7 +150,7 @@ class view_cmp_link extends sandbox_link_with_type
         $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->dsp->id = $db_row[view::FLD_ID];
-            $this->cmp->id = $db_row[view_cmp::FLD_ID];
+            $this->cmp->id = $db_row[component::FLD_ID];
             $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
             $this->pos_type_id = $db_row[self::FLD_POS_TYPE];
         }
@@ -191,7 +191,7 @@ class view_cmp_link extends sandbox_link_with_type
         $db_con->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id()); is needed
         $db_con->set_fields(array(sql_db::FLD_USER_ID));
-        $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
+        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES_NUM_USR,
             array(sql_db::FLD_USER_ID)));
@@ -241,7 +241,7 @@ class view_cmp_link extends sandbox_link_with_type
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
-        $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
+        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
@@ -269,15 +269,15 @@ class view_cmp_link extends sandbox_link_with_type
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
-        $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
+        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id > 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select_by_field_list(array(view_cmp_link::FLD_ID));
+            $qp->sql = $db_con->select_by_field_list(array(view_component_link::FLD_ID));
         } elseif ($this->dsp->id > 0 and $this->cmp->id > 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->dsp->id);
             $db_con->add_par(sql_db::PAR_INT, $this->cmp->id);
-            $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID, view_cmp::FLD_ID));
+            $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID, component::FLD_ID));
         }
         $qp->par = $db_con->get_par();
 
@@ -363,7 +363,7 @@ class view_cmp_link extends sandbox_link_with_type
 
     function to_field(): string
     {
-        return view_cmp::FLD_ID;
+        return component::FLD_ID;
     }
 
     function all_fields(): array
@@ -461,7 +461,7 @@ class view_cmp_link extends sandbox_link_with_type
                 $order_nbr = 1;
                 foreach ($this->fob->cmp_lst as $entry) {
                     // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                    $cmp_lnk = new view_cmp_link($this->user());
+                    $cmp_lnk = new view_component_link($this->user());
                     $cmp_lnk->fob = $this->fob;
                     $cmp_lnk->tob = $entry;
                     $cmp_lnk->load_obj_vars();
@@ -482,7 +482,7 @@ class view_cmp_link extends sandbox_link_with_type
                     // check if correction was successful
                     $order_nbr = 0;
                     foreach ($this->fob->cmp_lst as $entry) {
-                        $cmp_lnk = new view_cmp_link($this->user());
+                        $cmp_lnk = new view_component_link($this->user());
                         $cmp_lnk->fob = $this->fob;
                         $cmp_lnk->tob = $entry;
                         $cmp_lnk->load_obj_vars();
@@ -500,7 +500,7 @@ class view_cmp_link extends sandbox_link_with_type
                 $prev_entry_down = false;
                 foreach ($this->fob->cmp_lst as $entry) {
                     // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                    $cmp_lnk = new view_cmp_link($this->user());
+                    $cmp_lnk = new view_component_link($this->user());
                     $cmp_lnk->fob = $this->fob;
                     $cmp_lnk->tob = $entry;
                     $cmp_lnk->load_obj_vars();
@@ -623,12 +623,12 @@ class view_cmp_link extends sandbox_link_with_type
      * set the update parameters for the view component order_nbr
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param view_cmp_link $db_rec the view component link as saved in the database before the update
-     * @param view_cmp_link $std_rec the default parameter used for this view component link
+     * @param view_component_link $db_rec the view component link as saved in the database before the update
+     * @param view_component_link $std_rec the default parameter used for this view component link
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
     private
-    function save_field_order_nbr(sql_db $db_con, view_cmp_link $db_rec, view_cmp_link $std_rec): string
+    function save_field_order_nbr(sql_db $db_con, view_component_link $db_rec, view_component_link $std_rec): string
     {
         $result = '';
         if ($db_rec->order_nbr <> $this->order_nbr) {
@@ -647,11 +647,11 @@ class view_cmp_link extends sandbox_link_with_type
      * save all updated view_component_link fields excluding the name, because already done when adding a view_component_link
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param view_cmp_link|sandbox $db_rec the view component link as saved in the database before the update
-     * @param view_cmp_link|sandbox $std_rec the default parameter used for this view component link
+     * @param view_component_link|sandbox $db_rec the view component link as saved in the database before the update
+     * @param view_component_link|sandbox $std_rec the default parameter used for this view component link
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
-    function save_fields(sql_db $db_con, view_cmp_link|sandbox $db_rec, view_cmp_link|sandbox $std_rec): string
+    function save_fields(sql_db $db_con, view_component_link|sandbox $db_rec, view_component_link|sandbox $std_rec): string
     {
         $result = $this->save_field_order_nbr($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);

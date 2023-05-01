@@ -36,7 +36,7 @@ use html\button;
 use html\html_base;
 use model\db_cl;
 use model\view;
-use model\view_cmp_dsp_old;
+use model\component_dsp_old;
 use model\view_cmp_type;
 use test\testing;
 use const test\TW_ABB;
@@ -64,7 +64,7 @@ function run_display_test(testing $t): void
     $t->header('Test the view component display class (classes/view_component_dsp.php)');
 
     // test if a simple text component can be created
-    $cmp = new view_cmp_dsp_old($usr);
+    $cmp = new component_dsp_old($usr);
     $cmp->type_id = $view_component_types->id(view_cmp_type::TEXT);
     $cmp->set_id(1);
     $cmp->set_name(view_api::TN_READ_NESN_2016);

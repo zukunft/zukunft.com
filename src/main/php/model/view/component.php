@@ -35,12 +35,12 @@ namespace model;
 
 include_once WEB_VIEW_PATH . 'view_cmp_old.php';
 
-use api\view_cmp_api;
+use api\component_api;
 use cfg\export\exp_obj;
 use cfg\export\view_cmp_exp;
-use html\view_cmp_dsp_old;
+use html\component_dsp_old;
 
-class view_cmp extends sandbox_typed
+class component extends sandbox_typed
 {
 
     /*
@@ -133,7 +133,7 @@ class view_cmp extends sandbox_typed
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->obj_name = sql_db::TBL_VIEW_COMPONENT;
+        $this->obj_name = sql_db::TBL_COMPONENT;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_NAME;
     }
@@ -167,11 +167,11 @@ class view_cmp extends sandbox_typed
      */
 
     /**
-     * @return view_cmp_api the view component frontend api object
+     * @return component_api the view component frontend api object
      */
     function api_obj(): object
     {
-        $api_obj = new view_cmp_api();
+        $api_obj = new component_api();
         $this->fill_api_obj($api_obj);
         return $api_obj;
     }
@@ -185,13 +185,13 @@ class view_cmp extends sandbox_typed
     }
 
     /**
-     * @return view_cmp_dsp_old the view component object with the html creation functions
+     * @return component_dsp_old the view component object with the html creation functions
      */
     function dsp_obj(): object
     {
         global $view_component_types;
 
-        $dsp_obj = new view_cmp_dsp_old();
+        $dsp_obj = new component_dsp_old();
 
         parent::fill_dsp_obj($dsp_obj);
 
@@ -294,7 +294,7 @@ class view_cmp extends sandbox_typed
      */
     function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
+        $db_con->set_type(sql_db::TBL_COMPONENT);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -338,7 +338,7 @@ class view_cmp extends sandbox_typed
         $qp = parent::load_sql_obj_vars($db_con, $class);
         $qp->name .= $query_name;
 
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
+        $db_con->set_type(sql_db::TBL_COMPONENT);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
@@ -365,7 +365,7 @@ class view_cmp extends sandbox_typed
             log_err('Either the id, code_id or name must be set to get a view');
         }
 
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
+        $db_con->set_type(sql_db::TBL_COMPONENT);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
@@ -543,7 +543,7 @@ class view_cmp extends sandbox_typed
         $result = array();
 
         if ($this->id > 0 and $this->user()->is_set()) {
-            $lst = new view_cmp_link_list($this->user());
+            $lst = new view_component_link_list($this->user());
             $lst->load_by_component($this);
             $result = $lst->view_ids();
         } else {
@@ -740,7 +740,7 @@ class view_cmp extends sandbox_typed
     {
         log_debug($this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
 
-        $dsp_lnk = new view_cmp_link($this->user());
+        $dsp_lnk = new view_component_link($this->user());
         $dsp_lnk->fob = $dsp;
         $dsp_lnk->tob = $this;
         $dsp_lnk->order_nbr = $order_nbr;
@@ -757,7 +757,7 @@ class view_cmp extends sandbox_typed
 
         if (isset($dsp) and $this->user()->is_set()) {
             log_debug($this->dsp_id() . ' from "' . $dsp->name . '" (' . $dsp->id . ')');
-            $dsp_lnk = new view_cmp_link($this->user());
+            $dsp_lnk = new view_component_link($this->user());
             $dsp_lnk->fob = $dsp;
             $dsp_lnk->tob = $this;
             $dsp_lnk->load_obj_vars();
@@ -780,7 +780,7 @@ class view_cmp extends sandbox_typed
             log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
             // check again if there ist not yet a record
-            $db_con->set_type(sql_db::TBL_VIEW_COMPONENT, true);
+            $db_con->set_type(sql_db::TBL_COMPONENT, true);
             $qp = new sql_par(self::class);
             $qp->name = 'view_cmp_del_usr_cfg_if';
             $db_con->set_name($qp->name);
@@ -795,7 +795,7 @@ class view_cmp extends sandbox_typed
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT);
+                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT);
                 $log_id = $db_con->insert(array('view_component_id', sandbox::FLD_USER), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view_component failed.');
@@ -819,7 +819,7 @@ class view_cmp extends sandbox_typed
      */
     function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT);
+        $db_con->set_type(sql_db::TBL_COMPONENT);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
@@ -831,11 +831,11 @@ class view_cmp extends sandbox_typed
      * set the update parameters for the word row
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param view_cmp $db_rec the view component as saved in the database before the update
-     * @param view_cmp $std_rec the default parameter used for this view component
+     * @param component $db_rec the view component as saved in the database before the update
+     * @param component $std_rec the default parameter used for this view component
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
-    function save_field_wrd_row(sql_db $db_con, view_cmp $db_rec, view_cmp $std_rec): string
+    function save_field_wrd_row(sql_db $db_con, component $db_rec, component $std_rec): string
     {
         $result = '';
         if ($db_rec->word_id_row <> $this->word_id_row) {
@@ -857,11 +857,11 @@ class view_cmp extends sandbox_typed
      * set the update parameters for the word col
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param view_cmp $db_rec the view component as saved in the database before the update
-     * @param view_cmp $std_rec the default parameter used for this view component
+     * @param component $db_rec the view component as saved in the database before the update
+     * @param component $std_rec the default parameter used for this view component
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
-    function save_field_wrd_col(sql_db $db_con, view_cmp $db_rec, view_cmp $std_rec): string
+    function save_field_wrd_col(sql_db $db_con, component $db_rec, component $std_rec): string
     {
         $result = '';
         if ($db_rec->word_id_col <> $this->word_id_col) {
@@ -883,11 +883,11 @@ class view_cmp extends sandbox_typed
      * set the update parameters for the word col2
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param view_cmp $db_rec the view component as saved in the database before the update
-     * @param view_cmp $std_rec the default parameter used for this view component
+     * @param component $db_rec the view component as saved in the database before the update
+     * @param component $std_rec the default parameter used for this view component
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
-    function save_field_wrd_col2(sql_db $db_con, view_cmp $db_rec, view_cmp $std_rec): string
+    function save_field_wrd_col2(sql_db $db_con, component $db_rec, component $std_rec): string
     {
         $result = '';
         if ($db_rec->word_id_col2 <> $this->word_id_col2) {
@@ -909,11 +909,11 @@ class view_cmp extends sandbox_typed
      * set the update parameters for the formula
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param view_cmp $db_rec the view component as saved in the database before the update
-     * @param view_cmp $std_rec the default parameter used for this view component
+     * @param component $db_rec the view component as saved in the database before the update
+     * @param component $std_rec the default parameter used for this view component
      * @returns string any message that should be shown to the user or an empty string if everything is fine
      */
-    function save_field_formula(sql_db $db_con, view_cmp $db_rec, view_cmp $std_rec): string
+    function save_field_formula(sql_db $db_con, component $db_rec, component $std_rec): string
     {
         $result = '';
         if ($db_rec->formula_id <> $this->formula_id) {
@@ -935,11 +935,11 @@ class view_cmp extends sandbox_typed
      * save all updated view_component fields excluding the name, because already done when adding a view_component
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param view_cmp|sandbox $db_rec the view component as saved in the database before the update
-     * @param view_cmp|sandbox $std_rec the default parameter used for this view component
+     * @param component|sandbox $db_rec the view component as saved in the database before the update
+     * @param component|sandbox $std_rec the default parameter used for this view component
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
-    function save_fields(sql_db $db_con, view_cmp|sandbox $db_rec, view_cmp|sandbox $std_rec): string
+    function save_fields(sql_db $db_con, component|sandbox $db_rec, component|sandbox $std_rec): string
     {
         $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_wrd_row($db_con, $db_rec, $std_rec);
@@ -959,7 +959,7 @@ class view_cmp extends sandbox_typed
         $result = new user_message();
 
         // collect all component links where this component is used
-        $lnk_lst = new view_cmp_link_list($this->user());
+        $lnk_lst = new view_component_link_list($this->user());
         $lnk_lst->load_by_component($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion

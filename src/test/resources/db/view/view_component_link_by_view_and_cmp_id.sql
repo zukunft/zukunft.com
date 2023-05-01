@@ -1,4 +1,4 @@
-PREPARE view_cmp_link_by_link_obj_ids (int, int, int) AS
+PREPARE view_component_link_by_view_and_cmp_id (int, int, int) AS
     SELECT     s.view_component_link_id,
                u.view_component_link_id                                                          AS user_view_component_link_id,
                s.user_id,

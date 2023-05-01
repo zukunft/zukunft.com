@@ -1,6 +1,6 @@
-PREPARE view_cmp_link_by_id (int, int) AS
+PREPARE view_component_link_by_link_obj_ids (int, int, int) AS
     SELECT     s.view_component_link_id,
-               u.view_component_link_id AS user_view_component_link_id,
+               u.view_component_link_id                                                          AS user_view_component_link_id,
                s.user_id,
                s.view_id,
                s.view_component_id,
@@ -11,4 +11,5 @@ PREPARE view_cmp_link_by_id (int, int) AS
                CASE WHEN (u.protect_id    IS NULL) THEN s.protect_id    ELSE u.protect_id    END AS protect_id
           FROM view_component_links s
      LEFT JOIN user_view_component_links u ON s.view_component_link_id = u.view_component_link_id AND u.user_id = $1
-         WHERE s.view_component_link_id = $2;
+         WHERE s.view_id = $2
+           AND s.view_component_id = $3;

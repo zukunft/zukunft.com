@@ -34,7 +34,7 @@ use html\html_base;
 use html\view\view_dsp_old;
 use model\user;
 use model\view;
-use model\view_cmp;
+use model\component;
 use model\word;
 
 $debug = $_GET['debug'] ?? 0;
@@ -96,7 +96,7 @@ if ($usr->id() > 0) {
 
         // unlink an entry
         if (isset($_GET['del'])) {
-            $cmp = new view_cmp($usr);
+            $cmp = new component($usr);
             $cmp->load_by_id($_GET['del']);
             $cmp->unlink($dsp_edit);
         }
@@ -104,7 +104,7 @@ if ($usr->id() > 0) {
         // check if a existing view element should be added
         if (isset($_GET['add_view_component'])) {
             if ($_GET['add_view_component'] > 0) {
-                $cmp = new view_cmp($usr);
+                $cmp = new component($usr);
                 $cmp->load_by_id($_GET['add_view_component']);
                 $order_nbr = $cmp->next_nbr($dsp_edit->id());
                 $cmp->link($dsp_edit, $order_nbr);
@@ -114,7 +114,7 @@ if ($usr->id() > 0) {
         // check if a new view element should be added
         if (isset($_GET['entry_name']) and isset($_GET['new_entry_type'])) {
             if ($_GET['entry_name'] <> '' and $_GET['new_entry_type'] > 0) {
-                $cmp = new view_cmp($usr);
+                $cmp = new component($usr);
                 $cmp->set_name($_GET['entry_name']);
                 $add_result = $cmp->save();
                 if ($add_result == '') {

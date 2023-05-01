@@ -29,36 +29,69 @@
 
 */
 
-namespace html;
+namespace html\view;
 
-include_once API_VIEW_PATH . 'view_cmp_list.php';
+include_once WEB_SANDBOX_PATH . 'list.php';
 
-use api\view_cmp_list_api;
+use html\list_dsp;
+use html\view\component as component_dsp;
 
-class view_cmp_list_dsp extends view_cmp_list_api
+class component_list extends list_dsp
 {
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the vars of a view object based on the given json
+     * @param array $json_array an api single object json message
+     * @return object a view set based on the given json
+     */
+    function set_obj_from_json_array(array $json_array): object
+    {
+        $wrd = new component_dsp();
+        $wrd->set_from_json_array($json_array);
+        return $wrd;
+    }
+
+
+    /*
+     * display
+     */
+
+    /**
+     * @return string with a list of the component names with html links
+     * ex. names_linked
+     */
+    function display(): string
+    {
+        $components = array();
+        foreach ($this->lst as $cmp) {
+            $components[] = $cmp->name();
+        }
+        return implode(', ', $components);
+    }
 
     /**
      * @param string $back the back trace url for the undo functionality
-     * @return string with a list of the word names with html links
+     * @return string with a list of the component names with html links
      * ex. names_linked
      */
-    function display(string $back = ''): string
+    function display_linked(string $back = ''): string
     {
         return implode(', ', $this->names_linked($back));
     }
 
     /**
      * @param string $back the back trace url for the undo functionality
-     * @return array with a list of the word names with html links
+     * @return array with a list of the component names with html links
      */
     function names_linked(string $back = ''): array
     {
         $result = array();
-        foreach ($this->lst as $wrd) {
-            if (!$wrd->is_hidden()) {
-                $result[] = $wrd->dsp_obj()->display_linked($back);
-            }
+        foreach ($this->lst as $cmp) {
+            $result[] = $cmp->display_linked($back);
         }
         return $result;
     }

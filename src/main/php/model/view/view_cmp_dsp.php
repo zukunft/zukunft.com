@@ -31,6 +31,8 @@
 
 namespace model;
 
+include_once MODEL_VIEW_PATH . 'component.php';
+
 use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
@@ -39,7 +41,7 @@ use html\view\view_dsp_old;
 use html\word\word as word_dsp;
 use result_list;
 
-class view_cmp_dsp_old extends view_cmp
+class component_dsp_old extends component
 {
 
     /**
@@ -442,7 +444,7 @@ class view_cmp_dsp_old extends view_cmp
         $log_dsp = new user_log_display($this->user());
         $log_dsp->id = $this->id;
         $log_dsp->usr = $this->user();
-        $log_dsp->type = view_cmp::class;
+        $log_dsp->type = component::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;
@@ -461,7 +463,7 @@ class view_cmp_dsp_old extends view_cmp
 
         $log_dsp = new user_log_display($this->user());
         $log_dsp->id = $this->id;
-        $log_dsp->type = view_cmp::class;
+        $log_dsp->type = component::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;

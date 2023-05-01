@@ -33,7 +33,7 @@
 use html\html_base;
 use html\view\view_dsp_old;
 use model\user;
-use model\view_cmp_dsp_old;
+use model\component_dsp_old;
 use model\word;
 
 $debug = $_GET['debug'] ?? 0;
@@ -65,7 +65,7 @@ if ($usr->id() > 0) {
         $dsp = new view_dsp_old($usr);
 
         // create the view component object to apply the user changes to it
-        $cmp = new view_cmp_dsp_old($usr);
+        $cmp = new component_dsp_old($usr);
         $result .= $cmp->load_by_id($_GET['id']);
 
         // get the word used as a sample to illustrate the changes

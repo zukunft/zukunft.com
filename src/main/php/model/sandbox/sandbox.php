@@ -100,7 +100,7 @@ class sandbox extends db_object
         sql_db::TBL_FORMULA,
         sql_db::TBL_FORMULA_LINK,
         sql_db::TBL_VIEW,
-        sql_db::TBL_VIEW_COMPONENT,
+        sql_db::TBL_COMPONENT,
         sql_db::TBL_VIEW_COMPONENT_LINK
     );
 
@@ -2095,7 +2095,7 @@ class sandbox extends db_object
             }
 
             // for view components first delete all links
-            if ($this->obj_name == sql_db::TBL_VIEW_COMPONENT) {
+            if ($this->obj_name == sql_db::TBL_COMPONENT) {
                 $msg = $this->del_links();
                 $result->add($msg);
             }

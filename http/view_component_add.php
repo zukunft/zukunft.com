@@ -34,7 +34,7 @@ use html\html_base;
 use html\view\view_dsp_old;
 use model\user;
 use model\view;
-use model\view_cmp_dsp_old;
+use model\component_dsp_old;
 use model\word;
 
 $debug = $_GET['debug'] ?? 0;
@@ -67,7 +67,7 @@ if ($usr->id() > 0) {
     $back = $_GET['back'];
 
     // create the view component object to apply the user changes to it
-    $cmp = new view_cmp_dsp_old($usr);
+    $cmp = new component_dsp_old($usr);
     $cmp->set_id($_GET['id']);
     $result .= $cmp->load_obj_vars();
 

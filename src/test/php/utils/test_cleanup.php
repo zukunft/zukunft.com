@@ -38,7 +38,7 @@ use api\source_api;
 use api\triple_api;
 use api\verb_api;
 use api\view_api;
-use api\view_cmp_api;
+use api\component_api;
 use api\word_api;
 use cfg\formula_type;
 use cfg\phrase_type;
@@ -108,11 +108,11 @@ class testing extends test_api
         // secure cleanup the test views
         // TODO: if a user has changed the view during the test, delete also the user views
 
-        $result .= $this->test_view_cmp_unlink(view_api::TN_COMPLETE, view_cmp_api::TN_TITLE);
-        $result .= $this->test_view_cmp_unlink(view_api::TN_COMPLETE, view_cmp_api::TN_VALUES);
-        $result .= $this->test_view_cmp_unlink(view_api::TN_COMPLETE, view_cmp_api::TN_RESULTS);
-        $result .= $this->test_view_cmp_unlink(view_api::TN_TABLE, view_cmp_api::TN_TITLE);
-        $result .= $this->test_view_cmp_unlink(view_api::TN_TABLE, view_cmp_api::TN_TABLE);
+        $result .= $this->test_view_cmp_unlink(view_api::TN_COMPLETE, component_api::TN_TITLE);
+        $result .= $this->test_view_cmp_unlink(view_api::TN_COMPLETE, component_api::TN_VALUES);
+        $result .= $this->test_view_cmp_unlink(view_api::TN_COMPLETE, component_api::TN_RESULTS);
+        $result .= $this->test_view_cmp_unlink(view_api::TN_TABLE, component_api::TN_TITLE);
+        $result .= $this->test_view_cmp_unlink(view_api::TN_TABLE, component_api::TN_TABLE);
 
         // load the test view
         $dsp = $this->load_view(view_api::TN_ADD);
@@ -127,22 +127,22 @@ class testing extends test_api
         }
 
         // load the first test view component
-        $cmp = $this->load_view_component(view_cmp_api::TN_ADD);
+        $cmp = $this->load_view_component(component_api::TN_ADD);
         if ($cmp->id() <= 0) {
-            $cmp = $this->load_view_component(view_cmp_api::TN_RENAMED);
+            $cmp = $this->load_view_component(component_api::TN_RENAMED);
         }
 
         // load the first test view component for user 2
-        $cmp_usr2 = $this->load_view_component(view_cmp_api::TN_ADD, $this->usr2);
+        $cmp_usr2 = $this->load_view_component(component_api::TN_ADD, $this->usr2);
         if ($cmp_usr2->id() <= 0) {
-            $cmp_usr2 = $this->load_view_component(view_cmp_api::TN_RENAMED, $this->usr2);
+            $cmp_usr2 = $this->load_view_component(component_api::TN_RENAMED, $this->usr2);
         }
 
         // load the second test view component
-        $cmp2 = $this->load_view_component(view_cmp_api::TN_ADD2);
+        $cmp2 = $this->load_view_component(component_api::TN_ADD2);
 
         // load the second test view component for user 2
-        $cmp2_usr2 = $this->load_view_component(view_cmp_api::TN_ADD2, $this->usr2);
+        $cmp2_usr2 = $this->load_view_component(component_api::TN_ADD2, $this->usr2);
 
         // check if the test components have been unlinked for user 2
         if ($dsp_usr2->id() > 0 and $cmp_usr2->id() > 0) {
@@ -176,7 +176,7 @@ class testing extends test_api
         }
 
         // request to delete the added test views
-        foreach (view_cmp_api::RESERVED_VIEW_COMPONENTS as $cmp_name) {
+        foreach (component_api::RESERVED_VIEW_COMPONENTS as $cmp_name) {
             $cmp = $this->load_view_component($cmp_name);
             if ($cmp->id() > 0) {
                 $msg = $cmp->del();
@@ -198,9 +198,9 @@ class testing extends test_api
         }
 
         // reload the first test view component for user 2
-        $cmp_usr2 = $this->load_view_component(view_cmp_api::TN_ADD, $this->usr2);
+        $cmp_usr2 = $this->load_view_component(component_api::TN_ADD, $this->usr2);
         if ($cmp_usr2->id() <= 0) {
-            $cmp_usr2 = $this->load_view_component(view_cmp_api::TN_RENAMED, $this->usr2);
+            $cmp_usr2 = $this->load_view_component(component_api::TN_RENAMED, $this->usr2);
         }
 
         // request to delete the test view component for user 2
@@ -208,13 +208,13 @@ class testing extends test_api
             $msg = $cmp_usr2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of first component "' . view_cmp_api::TN_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of first component "' . component_api::TN_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
         }
 
         // reload the first test view component
-        $cmp = $this->load_view_component(view_cmp_api::TN_ADD);
+        $cmp = $this->load_view_component(component_api::TN_ADD);
         if ($cmp->id() <= 0) {
-            $cmp = $this->load_view_component(view_cmp_api::TN_RENAMED);
+            $cmp = $this->load_view_component(component_api::TN_RENAMED);
         }
 
         // request to delete the test view component
@@ -222,18 +222,18 @@ class testing extends test_api
             $msg = $cmp->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of first component "' . view_cmp_api::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of first component "' . component_api::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
         }
 
         // reload the second test view component
-        $cmp2 = $this->load_view_component(view_cmp_api::TN_ADD2);
+        $cmp2 = $this->load_view_component(component_api::TN_ADD2);
 
         // request to delete the second added test view component
         if ($cmp2->id() > 0) {
             $msg = $cmp2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of second component "' . view_cmp_api::TN_ADD2 . '"', $target, $result, TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of second component "' . component_api::TN_ADD2 . '"', $target, $result, TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the second added test view component for user 2
@@ -241,7 +241,7 @@ class testing extends test_api
             $msg = $cmp2_usr2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of second component "' . view_cmp_api::TN_ADD2 . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of second component "' . component_api::TN_ADD2 . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
         }
 
         // reload the test view for user 2
@@ -393,7 +393,7 @@ class testing extends test_api
         $html->echo_html($db_con->seq_reset(sql_db::TBL_FORMULA));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_FORMULA_LINK));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_VIEW));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_VIEW_COMPONENT));
+        $html->echo_html($db_con->seq_reset(sql_db::TBL_COMPONENT));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_VIEW_COMPONENT_LINK));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_SOURCE));
 

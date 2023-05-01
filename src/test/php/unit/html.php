@@ -39,7 +39,7 @@ include_once WEB_RESULT_PATH . 'result_list.php';
 use api\phrase_api;
 use api\result_api;
 use api\value_api;
-use api\view_cmp_api;
+use api\component_api;
 use api\word_api;
 use cfg\verb_list;
 use html\button;
@@ -48,7 +48,7 @@ use html\html_selector;
 use model\library;
 use model\verb;
 use model\view;
-use model\view_cmp;
+use model\component;
 use model\view_cmp_type;
 use html\result\result_list as result_list_dsp;
 
@@ -112,9 +112,9 @@ class html_unit_tests
 
         $dsp = new view($usr);
         $dsp->set_id(1);
-        $cmp1 = new view_cmp($usr);
+        $cmp1 = new component($usr);
         $cmp1->set_id(1);
-        $cmp1->set_name(view_cmp_api::TN_READ);
+        $cmp1->set_name(component_api::TN_READ);
         $cmp1->set_type(view_cmp_type::TEXT);
         $dsp->add_cmp($cmp1);
         $t->html_test($dsp->dsp_obj()->list_sort(), 'list_view_cmp', $t);
@@ -206,8 +206,8 @@ class html_unit_tests
 
         $t->subheader('View component tests');
 
-        $cmp = new view_cmp($usr);
-        $cmp->set(1, view_cmp_api::TN_ADD, view_cmp_type::TEXT);
+        $cmp = new component($usr);
+        $cmp->set(1, component_api::TN_ADD, view_cmp_type::TEXT);
         $t->html_test($cmp->dsp_obj()->html(), 'view_cmp_text', $t);
 
         $wrd = new \api\word_api();

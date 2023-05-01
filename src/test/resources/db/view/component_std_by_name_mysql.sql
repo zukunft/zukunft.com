@@ -1,4 +1,4 @@
-PREPARE view_cmp_std_by_name FROM
+PREPARE component_std_by_name FROM
     'SELECT view_component_id,
             view_component_name,
             description,

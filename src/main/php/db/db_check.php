@@ -163,10 +163,10 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->add_column(sql_db::TBL_VIEW, 'protect_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(sql_db::TBL_VIEW_COMPONENT, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(sql_db::TBL_VIEW_COMPONENT, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_COMPONENT, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_COMPONENT, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT, 'protect_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_VIEW_COMPONENT_LINK, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_VIEW_COMPONENT_LINK, 'protect_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT_LINK, 'share_type_id', 'smallint');
@@ -195,8 +195,8 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_ELEMENT_TYPE, 'formula_element_type_name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_VIEW, 'comment', sandbox_named::FLD_DESCRIPTION);
     $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW, 'comment', sandbox_named::FLD_DESCRIPTION);
-    $result .= $db_con->change_column_name(sql_db::TBL_VIEW_COMPONENT, 'comment', sandbox_named::FLD_DESCRIPTION);
-    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT, 'comment', sandbox_named::FLD_DESCRIPTION);
+    $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT, 'comment', sandbox_named::FLD_DESCRIPTION);
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT, 'comment', sandbox_named::FLD_DESCRIPTION);
     $result .= $db_con->change_column_name(sql_db::TBL_VIEW_COMPONENT_TYPE, 'view_component_type_name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_TYPE, 'name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_REF_TYPE, 'ref_type_name', 'type_name');

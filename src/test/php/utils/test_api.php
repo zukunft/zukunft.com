@@ -60,7 +60,7 @@ use api\system_log_api;
 use api\type_api;
 use api\verb_api;
 use api\view_api;
-use api\view_cmp_api;
+use api\component_api;
 use api\word_api;
 use api_message;
 use cfg\language;
@@ -93,7 +93,7 @@ use model\user_message;
 use model\value;
 use model\verb;
 use model\view;
-use model\view_cmp;
+use model\component;
 use model\word;
 
 class test_api extends create_test_objects
@@ -133,8 +133,8 @@ class test_api extends create_test_objects
         $this->assert_api_get_by_text(formula::class, formula_api::TN_READ);
         $this->assert_api_get(view::class);
         $this->assert_api_get_by_text(view::class, view_api::TN_READ);
-        $this->assert_api_get(view_cmp::class);
-        $this->assert_api_get_by_text(view_cmp::class, view_cmp_api::TN_READ);
+        $this->assert_api_get(component::class);
+        $this->assert_api_get_by_text(component::class, component_api::TN_READ);
         $this->assert_api_get(source::class, 2);
         $this->assert_api_get_by_text(source::class, source_api::TN_READ_API);
         $this->assert_api_get(ref::class, 3);
@@ -776,8 +776,8 @@ class test_api extends create_test_objects
     {
         $lib = new library();
         $result = $class;
-        if ($class == view_cmp::class) {
-            $result = view_cmp_api::API_NAME;
+        if ($class == component::class) {
+            $result = component_api::API_NAME;
         }
         if ($class == ref::class) {
             $result = ref_api::API_NAME;

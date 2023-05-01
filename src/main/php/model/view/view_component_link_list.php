@@ -33,7 +33,7 @@
 
 namespace model;
 
-class view_cmp_link_list extends sandbox_list
+class view_component_link_list extends sandbox_list
 {
 
     /**
@@ -47,7 +47,7 @@ class view_cmp_link_list extends sandbox_list
         $result = false;
         foreach ($db_rows as $db_row) {
             if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0) {
-                $dsp_cmp_lnk = new view_cmp_link($this->user());
+                $dsp_cmp_lnk = new view_component_link($this->user());
                 $dsp_cmp_lnk->row_mapper($db_row);
                 $this->lst[] = $dsp_cmp_lnk;
                 $result = true;
@@ -61,10 +61,10 @@ class view_cmp_link_list extends sandbox_list
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param view|null $dsp if set to get all links for this view
-     * @param view_cmp|null $cmp if set to get all links for this view component
+     * @param component|null $cmp if set to get all links for this view component
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, ?view $dsp = null, ?view_cmp $cmp = null): sql_par
+    function load_sql(sql_db $db_con, ?view $dsp = null, ?component $cmp = null): sql_par
     {
         $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
         $qp = new sql_par(self::class);
@@ -76,7 +76,7 @@ class view_cmp_link_list extends sandbox_list
             }
         } elseif ($cmp != null) {
             if ($cmp->id() > 0) {
-                $sql_by = view_cmp::FLD_ID;
+                $sql_by = component::FLD_ID;
             }
         }
         if ($sql_by == '') {
@@ -87,12 +87,12 @@ class view_cmp_link_list extends sandbox_list
             $qp->name .= $sql_by;
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
-            $db_con->set_fields(view_cmp_link::FLD_NAMES);
-            $db_con->set_usr_num_fields(view_cmp_link::FLD_NAMES_NUM_USR);
+            $db_con->set_fields(view_component_link::FLD_NAMES);
+            $db_con->set_usr_num_fields(view_component_link::FLD_NAMES_NUM_USR);
             if ($dsp != null) {
                 $db_con->set_join_fields(array(view::FLD_ID), sql_db::TBL_VIEW);
             } else {
-                $db_con->set_join_fields(array(view_cmp::FLD_ID), sql_db::TBL_VIEW_COMPONENT);
+                $db_con->set_join_fields(array(component::FLD_ID), sql_db::TBL_COMPONENT);
             }
             if ($dsp != null) {
                 if ($dsp->id() > 0) {
@@ -102,7 +102,7 @@ class view_cmp_link_list extends sandbox_list
             } elseif ($cmp != null) {
                 if ($cmp->id() > 0) {
                     $db_con->add_par(sql_db::PAR_INT, $cmp->id());
-                    $qp->sql = $db_con->select_by_field_list(array(view_cmp::FLD_ID));
+                    $qp->sql = $db_con->select_by_field_list(array(component::FLD_ID));
                 }
             }
             $qp->par = $db_con->get_par();
@@ -115,10 +115,10 @@ class view_cmp_link_list extends sandbox_list
      * load all view component links of given view or view component
      *
      * @param view|null $dsp if set to get all links for this view
-     * @param view_cmp|null $cmp if set to get all links for this view component
+     * @param component|null $cmp if set to get all links for this view component
      * @return bool true if value or phrases are found
      */
-    private function load(?view $dsp = null, ?view_cmp $cmp = null): bool
+    private function load(?view $dsp = null, ?component $cmp = null): bool
     {
         global $db_con;
         $result = false;
@@ -153,10 +153,10 @@ class view_cmp_link_list extends sandbox_list
     /**
      * interface function to load all values linked to a given phrase
      *
-     * @param view_cmp $cmp if set to get all links for this view component
+     * @param component $cmp if set to get all links for this view component
      * @return bool true if phrases are found
      */
-    function load_by_component(view_cmp $cmp): bool
+    function load_by_component(component $cmp): bool
     {
         return $this->load(null, $cmp);
     }

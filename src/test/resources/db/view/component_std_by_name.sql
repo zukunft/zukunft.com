@@ -1,4 +1,4 @@
-PREPARE view_cmp_by_usr_cfg (int, int) AS
+PREPARE component_std_by_name (text) AS
     SELECT view_component_id,
            view_component_name,
            description,
@@ -10,7 +10,7 @@ PREPARE view_cmp_by_usr_cfg (int, int) AS
            word_id_col2,
            excluded,
            share_type_id,
-           protect_id
-      FROM user_view_components
-     WHERE view_component_id = $1
-       AND user_id = $2;
+           protect_id,
+           user_id
+      FROM view_components
+     WHERE view_component_name = $1;

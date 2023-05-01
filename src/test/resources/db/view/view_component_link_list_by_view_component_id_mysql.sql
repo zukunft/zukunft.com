@@ -1,4 +1,4 @@
-PREPARE view_cmp_link_list_by_view_component_id FROM
+PREPARE view_component_link_list_by_view_component_id FROM
     'SELECT s.view_component_link_id,
             u.view_component_link_id AS user_view_component_link_id,
             s.user_id,

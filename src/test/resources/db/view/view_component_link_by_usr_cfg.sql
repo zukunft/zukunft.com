@@ -1,4 +1,4 @@
-PREPARE view_cmp_link_by_usr_cfg (int, int) AS
+PREPARE view_component_link_by_usr_cfg (int, int) AS
     SELECT view_component_link_id,
            order_nbr,
            position_type,

@@ -35,11 +35,11 @@ namespace test;
 include_once WEB_VIEW_PATH . 'component.php';
 
 use model\sql_db;
-use model\view_cmp;
+use model\component;
 use model\view_cmp_type;
 use html\view\component as component_dsp;
 use api\view_api;
-use api\view_cmp_api;
+use api\component_api;
 
 class view_component_unit_tests
 {
@@ -60,7 +60,7 @@ class view_component_unit_tests
 
         $t->subheader('SQL user sandbox statement tests');
 
-        $cmp = new view_cmp($usr);
+        $cmp = new component($usr);
         $t->assert_load_sql_id($db_con, $cmp);
         $t->assert_load_sql_name($db_con, $cmp);
 
@@ -68,14 +68,14 @@ class view_component_unit_tests
         $t->subheader('SQL statement tests');
 
         // sql to load the view components by id
-        $cmp = new view_cmp($usr);
+        $cmp = new component($usr);
         $cmp->set_id(2);
         //$t->assert_load_sql($db_con, $cmp);
         $t->assert_load_standard_sql($db_con, $cmp);
         $t->assert_user_config_sql($db_con, $cmp);
 
         // sql to load the view components by name
-        $cmp = new view_cmp($usr);
+        $cmp = new component($usr);
         $cmp->set_name(view_api::TN_ADD);
         //$t->assert_load_sql($db_con, $cmp);
         $t->assert_load_standard_sql($db_con, $cmp);
@@ -91,7 +91,7 @@ class view_component_unit_tests
 
         $t->subheader('Im- and Export tests');
 
-        $t->assert_json(new view_cmp($usr), $json_file);
+        $t->assert_json(new component($usr), $json_file);
 
     }
 
