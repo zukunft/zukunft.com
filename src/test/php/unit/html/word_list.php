@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/word_list_display.php - TESTing of the WORD LIST DISPLAY functions
-    -------------------------------
+    test/unit/html/word_list.php - testing of the word list html frontend functions
+    ----------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -41,7 +41,7 @@ use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
 use test\testing;
 
-class word_list_display_unit_tests
+class word_list
 {
     function run(testing $t): void
     {

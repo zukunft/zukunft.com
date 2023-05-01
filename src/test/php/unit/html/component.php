@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/view_component_display.php - TESTing of the COMPONENT DISPLAY functions
-    ------------------------------------
+    test/unit/html/component.php - testing of the component display functions
+    ----------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -37,7 +37,7 @@ use html\html_base;
 use html\view_cmp_dsp_old;
 use test\testing;
 
-class view_component_display_unit_tests
+class component
 {
     function run(testing $t): void
     {

@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/triple_display.php - TESTing of the TRIPLE DISPLAY functions
-    ----------------------------
+    test/unit/html/triple.php - testing of the html frontend functions for triples
+    -------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -38,7 +38,7 @@ use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use test\testing;
 
-class triple_display_unit_tests
+class triple
 {
     function run(testing $t): void
     {

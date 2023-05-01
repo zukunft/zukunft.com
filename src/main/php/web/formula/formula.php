@@ -129,6 +129,15 @@ class formula extends sandbox_typed_dsp
      */
 
     /**
+     * display the formula name with the tooltip
+     * @returns string the html code
+     */
+    function display(): string
+    {
+        return $this->name();
+    }
+
+    /**
      * display the formula name with a link to the main page for the formula
      * @param string|null $back the back trace url for the undo functionality
      * @param string $style the CSS style that should be used

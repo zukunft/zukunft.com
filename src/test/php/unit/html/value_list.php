@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/value_list_display.php - TESTing of the VALUE LIST DISPLAY functions
-    --------------------------------
+    test/unit/html/value_list.php - testing of the value list html frontend functions
+    -----------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -35,12 +35,12 @@ namespace test\html;
 use api\phrase_api;
 use api\phrase_group_api;
 use api\phrase_list_api;
+use api\value_api;
 use api\word_api;
 use html\html_base;
 use test\testing;
-use test\value_api;
 
-class value_list_display_unit_tests
+class value_list
 {
     function run(testing $t): void
     {

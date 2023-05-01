@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/user_display.php - TESTing of the USER DISPLAY functions
-    --------------------------
+    test/unit/html/user.php - testing of the user html frontend functions
+    -----------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -38,7 +38,7 @@ use html\html_base;
 use html\user\user as user_dsp;
 use test\testing;
 
-class user_display_unit_tests
+class user
 {
     function run(testing $t): void
     {

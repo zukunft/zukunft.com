@@ -168,7 +168,7 @@ include_once $path_unit_dsp . 'phrase_list.php';
 //include_once $path_unit_dsp . 'term_list.php';
 //include_once $path_unit_dsp . 'value.php';
 include_once $path_unit_dsp . 'value_list.php';
-//include_once $path_unit_dsp . 'formula.php';
+include_once $path_unit_dsp . 'formula.php';
 //include_once $path_unit_dsp . 'formula_list.php';
 //include_once $path_unit_dsp . 'result.php';
 //include_once $path_unit_dsp . 'result_list.php';

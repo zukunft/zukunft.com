@@ -2,7 +2,7 @@
 
 /*
 
-    test/unit/html/figure.php - testing of the html frontend functions for figures
+    test/unit/html/figure.php - testing of the html frontend functions for phrases
     -------------------------
   
 

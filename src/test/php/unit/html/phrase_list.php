@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/phrase_list_display.php - TESTing of the PHRASE LIST DISPLAY functions
-    ---------------------------------
+    test/unit/html/phrase_list.php - testing of the html frontend functions for phrase lists
+    ------------------------------
   
 
     This file is part of zukunft.com - calc with phrases
@@ -40,7 +40,7 @@ use html\phrase\phrase_list as phrase_list_dsp;
 use model\verb;
 use test\testing;
 
-class phrase_list_display_unit_tests
+class phrase_list
 {
     function run(testing $t): void
     {

@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/html/change_log.php - testing of the change log display functions
-    -----------------------------
+    test/unit/html/formula.php - testing of the html frontend functions for formulas
+    --------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -32,39 +32,24 @@
 
 namespace test\html;
 
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-
 use html\html_base;
-use html\system\back_trace;
+use html\formula\formula as formula_dsp;
 use test\testing;
 
-class change_log
+class formula
 {
     function run(testing $t): void
     {
         global $usr;
         $html = new html_base();
 
-        $t->subheader('Change log display unit tests');
+        $t->subheader('formula tests');
 
-        //$wrd_pi = new word_dsp(2, word_api::TN_CONST);
-        $test_page = $html->text_h2('Change log display test');
-
-        // prepare test data
-        $back = new back_trace();
-
-        $test_page .= 'simple list of changes of a word<br>';
-        $log_lst = $t->dummy_change_log_list_named();
-        $log_dsp = $log_lst->dsp_obj();
-        $test_page .= $log_dsp->tbl($back);
-
-        $test_page .= 'condensed list of changes of a word<br>';
-        $log_lst = $t->dummy_change_log_list_named();
-        $log_dsp = $log_lst->dsp_obj();
-        $back = new back_trace();
-        $test_page .= $log_dsp->tbl($back, true, true);
-
-        $t->html_test($test_page, 'change_log', $t);
+        $frm = new formula_dsp($t->dummy_formula()->api_json());
+        $test_page = $html->text_h2('formula display test');
+        $test_page .= 'with tooltip: ' . $frm->display() . '<br>';
+        $test_page .= 'with link: ' . $frm->display_linked() . '<br>';
+        $t->html_test($test_page, 'formula', $t);
     }
 
 }

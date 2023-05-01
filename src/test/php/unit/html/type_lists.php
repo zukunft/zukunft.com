@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit_display/formula_type_list.php - TESTing of the FORMULA TYPE LIST html user interface functions
-    ---------------------------------------
+    test/unit/html/type_list.php - testing of the type list html user interface functions
+    ----------------------------
   
 
     This file is part of zukunft.com - calc with phrases
@@ -36,7 +36,7 @@ use cfg\formula_type_list;
 use html\html_base;
 use test\testing;
 
-class type_list_display_unit_tests
+class type_list
 {
     function run(testing $t): void
     {
