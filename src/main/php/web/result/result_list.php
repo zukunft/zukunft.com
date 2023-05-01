@@ -81,8 +81,48 @@ class result_list extends list_value_dsp
     }
 
 
+    /*
+     * display
+     */
+
     /**
-     * @return string the html code to show the formula results as a table to the user
+     * @return string with a list of the result names with html links
+     * ex. names_linked
+     */
+    function display(): string
+    {
+        $results = array();
+        foreach ($this->lst as $res) {
+            $results[] = $res->display();
+        }
+        return implode(', ', $results);
+    }
+
+    /**
+     * @param string $back the back trace url for the undo functionality
+     * @return string with a list of the result names with html links
+     * ex. names_linked
+     */
+    function display_linked(string $back = ''): string
+    {
+        return implode(', ', $this->names_linked($back));
+    }
+
+    /**
+     * @param string $back the back trace url for the undo functionality
+     * @return array with a list of the result names with html links
+     */
+    function names_linked(string $back = ''): array
+    {
+        $result = array();
+        foreach ($this->lst as $res) {
+            $result[] = $res->display_linked();
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the html code to show the results as a table to the user
      */
     function table(phrase_list_dsp $context_phr_lst = null, string $back = ''): string
     {
@@ -113,7 +153,7 @@ class result_list extends list_value_dsp
                 $header .= $html->th('value');
                 $header_rows = $html->tr($header);
             }
-            $row = $html->td($res->name_linked($common_phrases));
+            $row = $html->td($res->display_linked($common_phrases));
             $row .= $html->td($res->value_linked($back));
             $rows .= $html->tr($row);
         }

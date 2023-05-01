@@ -77,11 +77,24 @@ class formula_list extends list_dsp
      */
 
     /**
+     * @return string with a list of the formula names with html links
+     * ex. names_linked
+     */
+    function display(): string
+    {
+        $names = array();
+        foreach ($this->lst as $frm) {
+            $names[] = $frm->display();
+        }
+        return implode(', ', $names);
+    }
+
+    /**
      * @param string $back the back trace url for the undo functionality
      * @return string with a list of the formula names with html links
      * ex. names_linked
      */
-    function display(string $back = ''): string
+    function display_linked(string $back = ''): string
     {
         return implode(', ', $this->names_linked($back));
     }
@@ -93,10 +106,8 @@ class formula_list extends list_dsp
     function names_linked(string $back = ''): array
     {
         $result = array();
-        foreach ($this->lst as $wrd) {
-            if (!$wrd->is_hidden()) {
-                $result[] = $wrd->dsp_obj()->display_linked($back);
-            }
+        foreach ($this->lst as $frm) {
+            $result[] = $frm->display_linked($back);
         }
         return $result;
     }

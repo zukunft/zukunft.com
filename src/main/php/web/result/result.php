@@ -86,7 +86,16 @@ class result extends sandbox_value_dsp
      * @param phrase_list_dsp|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
      * @returns string the html code to display the phrase group with reference links
      */
-    function name_linked(phrase_list_dsp $phr_lst_header = null): string
+    function display(phrase_list_dsp $phr_lst_header = null): string
+    {
+        return $this->grp()->display($phr_lst_header);
+    }
+
+    /**
+     * @param phrase_list_dsp|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
+     * @returns string the html code to display the phrase group with reference links
+     */
+    function display_linked(phrase_list_dsp $phr_lst_header = null): string
     {
         return $this->grp()->display_linked($phr_lst_header);
     }

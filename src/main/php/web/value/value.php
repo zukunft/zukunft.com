@@ -173,21 +173,21 @@ class value extends sandbox_value_dsp
 
 
     /*
-     * deprecated function names
+     * display
      */
 
-    function display_linked(string $back): string
-    {
-        return $this->ref_edit($back);
-    }
-
-    function display(string $back): string
+    function display(string $back = ''): string
     {
         if (!$this->is_std()) {
             return '<span class="user_specific">' . $this->val_formatted() . '</span>';
         } else {
             return $this->val_formatted();
         }
+    }
+
+    function display_linked(string $back = ''): string
+    {
+        return $this->ref_edit($back);
     }
 
 }
