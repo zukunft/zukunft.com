@@ -43,9 +43,9 @@ use html\phrase\phrase_list as phrase_list_dsp;
 class list_value_dsp extends list_dsp
 {
 
-    function __construct(array $lst = array())
+    function __construct(?string $api_json = null)
     {
-        parent::__construct($lst);
+        parent::__construct($api_json);
     }
 
 

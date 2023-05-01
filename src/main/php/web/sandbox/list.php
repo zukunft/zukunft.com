@@ -48,15 +48,15 @@ class list_dsp
      * construct and map
      */
 
-    function __construct(array $lst = array())
+    function __construct(?string $api_json = null)
     {
         $this->lst = array();
 
         $this->id_lst = array();
         $this->lst_dirty = false;
 
-        if (count($lst) > 0) {
-            $this->set_lst($lst);
+        if ($api_json != null) {
+            $this->set_from_json($api_json);
         }
     }
 

@@ -57,7 +57,7 @@ class value extends sandbox_value_dsp
      */
     function name_linked(phrase_list_dsp $phr_lst_exclude): string
     {
-        return $this->grp()->name_linked($phr_lst_exclude);
+        return $this->grp()->display_linked($phr_lst_exclude);
     }
 
     /**

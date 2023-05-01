@@ -106,6 +106,21 @@ class term_list extends list_dsp
     {
         $result = '';
         foreach ($this->lst as $trm) {
+            if ($result != '' and $trm->display() != '') {
+                $result .= ', ';
+            }
+            $result .= $trm->display();
+        }
+        return $result;
+    }
+
+    /**
+     * @returns string the html code to display the phrases with the most useful link
+     */
+    function display_linked(): string
+    {
+        $result = '';
+        foreach ($this->lst as $trm) {
             if ($result != '' and $trm->display_linked() != '') {
                 $result .= ', ';
             }

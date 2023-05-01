@@ -130,6 +130,15 @@ class phrase_group extends sandbox_named_dsp
         return $this->name_dirty;
     }
 
+    function set_lst_dsp(array $lst): void
+    {
+        $phr_lst_dsp = array();
+        foreach ($lst as $phr) {
+            $phr_lst_dsp[] = $phr->dsp_obj();
+        }
+        $this->set_lst($phr_lst_dsp);
+    }
+
     /**
      * @returns array with all unique phrase ids og this list
      */
@@ -150,6 +159,21 @@ class phrase_group extends sandbox_named_dsp
     }
 
     /**
+     * @returns phrase_list_dsp the list of phrases as an object
+     */
+    function phr_lst(): phrase_list_dsp
+    {
+        $result = new phrase_list_dsp();
+        $result->set_lst($this->lst());
+        return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
      * add a phrase to the list
      * @returns bool true if the phrase has been added
      */
@@ -164,16 +188,6 @@ class phrase_group extends sandbox_named_dsp
         return $result;
     }
 
-    /**
-     * @returns phrase_list_dsp the list of phrases as an object
-     */
-    function phr_lst(): phrase_list_dsp
-    {
-        $result = new phrase_list_dsp();
-        $result->set_lst($this->lst());
-        return $result;
-    }
-
 
     /*
      * info
@@ -185,11 +199,46 @@ class phrase_group extends sandbox_named_dsp
     }
 
 
+    /*
+     * display
+     */
+
+    /**
+     * @param phrase_list_dsp|null $phr_lst_header list of phrases already shown in the header
+     * @return string
+     */
+    function display(phrase_list_dsp $phr_lst_header = null): string
+    {
+        $result = '';
+        if ($this->name_dirty() or $phr_lst_header != null) {
+            if ($this->name() <> '') {
+                $result .= $this->name();
+            } else {
+                $lst_to_show = $this->phr_lst();
+                if ($phr_lst_header != null) {
+                    if (!$phr_lst_header->is_empty()) {
+                        $lst_to_show->remove($phr_lst_header);
+                    }
+                }
+                foreach ($lst_to_show->lst() as $phr) {
+                    if ($result <> '') {
+                        $result .= ', ';
+                    }
+                    $result .= $phr->display();
+                }
+            }
+            $this->unset_name_dirty();
+        } else {
+            $result = $this->name();
+        }
+        return $result;
+    }
+
     /**
      * @param phrase_list_dsp|null $phr_lst_header list of phrases already shown in the header and don't need to be include in the result
      * @return string
      */
-    function name_linked(phrase_list_dsp $phr_lst_header = null): string
+    function display_linked(phrase_list_dsp $phr_lst_header = null): string
     {
         $result = '';
         if ($this->name_dirty() or $phr_lst_header != null) {
@@ -214,20 +263,6 @@ class phrase_group extends sandbox_named_dsp
             $result = $this->name();
         }
         return $result;
-    }
-
-
-    /*
-     * set and get
-     */
-
-    function set_lst_dsp(array $lst): void
-    {
-        $phr_lst_dsp = array();
-        foreach ($lst as $phr) {
-            $phr_lst_dsp[] = $phr->dsp_obj();
-        }
-        $this->set_lst($phr_lst_dsp);
     }
 
 

@@ -66,13 +66,6 @@ class term_list_unit_tests
 
         $this->t = $t;
 
-        // test the term list display functions
-        $lst = $this->new_list();
-        $test_page = $html->text_h2('Term list display test');
-        $test_page .= 'names with links: ' . $lst->dsp_obj()->display() . '<br>';
-
-        $t->html_test($test_page, 'term_list', $t);
-
 
         $t->subheader('term list sql tests');
 

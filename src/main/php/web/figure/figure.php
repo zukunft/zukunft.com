@@ -184,7 +184,7 @@ class figure extends combine_named_dsp
      */
     function name_linked(phrase_list_api $phr_lst_header = null): string
     {
-        return $this->grp()->name_linked($phr_lst_header);
+        return $this->grp()->display_linked($phr_lst_header);
     }
 
 
