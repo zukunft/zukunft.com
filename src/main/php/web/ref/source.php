@@ -91,7 +91,7 @@ class source extends sandbox_typed_dsp
      */
 
     /**
-     * display the formula name with the tooltip
+     * display the source name with the tooltip
      * @returns string the html code
      */
     function display(): string
@@ -100,7 +100,7 @@ class source extends sandbox_typed_dsp
     }
 
     /**
-     * display the formula name with a link to the main page for the formula
+     * display the source name with a link to the main page for the source
      * @param string|null $back the back trace url for the undo functionality
      * @param string $style the CSS style that should be used
      * @returns string the html code
@@ -108,7 +108,7 @@ class source extends sandbox_typed_dsp
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(api::SOURCE, $this->id, $back, api::PAR_VIEW_FORMULAS);
+        $url = $html->url(api::SOURCE, $this->id, $back, api::PAR_VIEW_SOURCES);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
