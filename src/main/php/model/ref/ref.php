@@ -277,9 +277,9 @@ class ref extends sandbox_link_with_type
         $dsp_obj = new ref_dsp();
         if (!$this->is_excluded()) {
             parent::fill_dsp_obj($dsp_obj);
-            $dsp_obj->phr = $this->phr->dsp_obj();
+            $dsp_obj->set_phrase($this->phr->dsp_obj());
             $dsp_obj->set_external_key($this->external_key);
-            $dsp_obj->url = $this->url;
+            $dsp_obj->set_url($this->url);
             $dsp_obj->description = $this->description;
         }
         return $dsp_obj;

@@ -53,6 +53,7 @@ class api
     const VIEW = 'view';
     const LINK = 'link';
     const SOURCE = 'source';
+    const LANGUAGE = 'language';
 
     // class extensions of all possible the fixed views
     const CREATE = '_add';
@@ -72,6 +73,7 @@ class api
     const PAR_VIEW_VERBS = 'verbs';  // to select the verbs that should be display
     const PAR_LOG_STATUS = 'status'; // to set the status of a log entry
     const PAR_VIEW_SOURCES = 'sources';  // to select the formulas that should be display
+    const PAR_VIEW_LANGUAGES = 'languages';  // to select the formulas that should be display
 
     // styles used
     const STYLE_GREY = 'grey';

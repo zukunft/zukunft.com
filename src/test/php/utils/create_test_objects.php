@@ -64,6 +64,7 @@ use api\word_api;
 use api_message;
 use cfg\formula_type;
 use cfg\job_type_list;
+use cfg\language;
 use cfg\phrase_type;
 use cfg\ref_type_list;
 use cfg\source_type;
@@ -408,6 +409,11 @@ class create_test_objects extends test_base
         $lst = new component_list($usr);
         $lst->add($this->dummy_component());
         return $lst;
+    }
+
+    function dummy_language(): language
+    {
+        return new language(language::DEFAULT, language::TN_READ, 'English is the default', 1);
     }
 
     /**

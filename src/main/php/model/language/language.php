@@ -32,9 +32,10 @@
 namespace cfg;
 
 
+use JsonSerializable;
 use model\library;
 
-class language extends type_object
+class language extends type_object implements JsonSerializable
 {
 
     /*
@@ -53,7 +54,40 @@ class language extends type_object
     const DEFAULT = "english";
     const TN_READ = "English";
 
-    
+
+    /*
+     * interface
+     */
+
+    /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->get_json();
+    }
+
+    /**
+     * @return string the json api message as a text string
+     */
+    function get_json(): string
+    {
+        return json_encode($this->jsonSerialize());
+    }
+
+    /**
+     * @return array with the sandbox vars without empty values that are not needed
+     * the message from the backend to the frontend does not need to include empty fields
+     * the message from the frontend to the backend on the other side must include empty fields
+     * to be able to unset fields in the backend
+     */
+    function jsonSerialize(): array
+    {
+        $vars = get_object_vars($this);
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+
     /*
      * load
      */

@@ -8,7 +8,7 @@
     use GET to retrieve a JSON that can be imported into another zukunft.com pod
     use PUT to import data from a JSON in the zukunft.com exchange format
 
-    This file is part of zukunft.com - calc with values
+    This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as

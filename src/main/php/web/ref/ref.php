@@ -135,7 +135,7 @@ class ref extends sandbox_typed_dsp
     function type_name(): string
     {
         global $ref_types;
-        return $ref_types->name($this->type_id);
+        return $ref_types->name($this->type_id());
     }
 
     function set_external_key(?string $external_key): void
