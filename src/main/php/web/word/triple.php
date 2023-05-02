@@ -143,7 +143,7 @@ class triple extends sandbox_typed_dsp
     {
         global $phrase_types;
         if ($code_id == null) {
-            $this->set_type_id(null);
+            $this->set_type_id();
         } else {
             $this->set_type_id($phrase_types->id($code_id));
         }

@@ -61,11 +61,11 @@ class sandbox_typed_dsp extends sandbox_named_dsp
         if (array_key_exists(controller::API_FLD_TYPE_ID, $json_array)) {
             $this->set_type_id($json_array[controller::API_FLD_TYPE_ID]);
         } else {
-            $this->set_type_id(null);
+            $this->set_type_id();
         }
     }
 
-    function set_type_id(?int $type_id): void
+    function set_type_id(?int $type_id = null): void
     {
         $this->type_id = $type_id;
     }

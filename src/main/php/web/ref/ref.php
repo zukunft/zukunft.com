@@ -46,11 +46,26 @@ class ref extends sandbox_typed_dsp
      * object vars
      */
 
-    public ?phrase_dsp $phr;
+    private ?phrase_dsp $phr;
     private ?source $source;
     private ?string $external_key; // maybe use field name instead
-    public ?int $type_id;
-    public ?string $url;
+    private ?string $url;
+
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * the html display object are always filled base on the api message
+     * @param string|null $api_json the api message to set all object vars
+     */
+    function __construct(?string $api_json = null)
+    {
+        $this->set_phrase();
+        $this->set_type_id();
+        parent::__construct($api_json);
+    }
 
 
     /*
@@ -94,6 +109,26 @@ class ref extends sandbox_typed_dsp
         }
     }
 
+    function set_phrase(?phrase_dsp $phr = null): void
+    {
+        $this->phr = $phr;
+    }
+
+    function phrase(): ?phrase_dsp
+    {
+        return $this->phr;
+    }
+
+    function set_sourced(?source $src = null): void
+    {
+        $this->source = $src;
+    }
+
+    function source(): ?source
+    {
+        return $this->source;
+    }
+
     /**
      * @return string the name of the reference type e.g. wikidata
      */
@@ -132,6 +167,14 @@ class ref extends sandbox_typed_dsp
      * @returns string simply the ref name, but later with mouse over that shows the description
      */
     function display(): string
+    {
+        return $this->type_name() . ' ' . $this->external_key;
+    }
+
+    /**
+     * @returns string simply the ref name, but later with mouse over that shows the description
+     */
+    function display_linked(): string
     {
         return $this->type_name() . ' ' . $this->external_key;
     }

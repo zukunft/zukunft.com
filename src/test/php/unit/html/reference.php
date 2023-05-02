@@ -2,7 +2,7 @@
 
 /*
 
-    test/unit/html/source.php - testing of the html frontend functions for sources
+    test/unit/html/reference.php - testing of the html frontend functions for references
     -------------------------
   
 
@@ -33,23 +33,23 @@
 namespace test\html;
 
 use html\html_base;
-use html\ref\source as source_dsp;
+use html\ref\ref as ref_dsp;
 use test\testing;
 
-class source
+class reference
 {
     function run(testing $t): void
     {
         global $usr;
         $html = new html_base();
 
-        $t->subheader('source tests');
+        $t->subheader('reference tests');
 
-        $src = new source_dsp($t->dummy_source()->api_json());
-        $test_page = $html->text_h2('source display test');
-        $test_page .= 'with tooltip: ' . $src->display() . '<br>';
-        $test_page .= 'with link: ' . $src->display_linked() . '<br>';
-        $t->html_test($test_page, 'source', $t);
+        $ref = new ref_dsp($t->dummy_reference()->api_json());
+        $test_page = $html->text_h2('reference display test');
+        $test_page .= 'with tooltip: ' . $ref->display() . '<br>';
+        $test_page .= 'with link: ' . $ref->display_linked() . '<br>';
+        $t->html_test($test_page, 'reference', $t);
     }
 
 }

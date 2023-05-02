@@ -178,7 +178,7 @@ include_once $path_unit_dsp . 'view_list.php';
 include_once $path_unit_dsp . 'component.php';
 include_once $path_unit_dsp . 'component_list.php';
 include_once $path_unit_dsp . 'source.php';
-//include_once $path_unit_dsp . 'reference.php';
+include_once $path_unit_dsp . 'reference.php';
 //include_once $path_unit_dsp . 'language.php';
 include_once $path_unit_dsp . 'change_log.php';
 //include_once $path_unit_dsp . 'system_log.php';
