@@ -32,6 +32,8 @@
 namespace html\ref;
 
 use controller\controller;
+use html\api;
+use html\html_base;
 use html\sandbox_typed_dsp;
 
 class source extends sandbox_typed_dsp
@@ -82,6 +84,32 @@ class source extends sandbox_typed_dsp
         $vars = parent::api_array();
         $vars[controller::API_FLD_URL] = $this->url();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+    /*
+     * display
+     */
+
+    /**
+     * display the formula name with the tooltip
+     * @returns string the html code
+     */
+    function display(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * display the formula name with a link to the main page for the formula
+     * @param string|null $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @returns string the html code
+     */
+    function display_linked(?string $back = '', string $style = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url(api::SOURCE, $this->id, $back, api::PAR_VIEW_FORMULAS);
+        return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
 }

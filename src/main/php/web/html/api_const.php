@@ -52,6 +52,7 @@ class api
     const FORMULA = 'formula';
     const VIEW = 'view';
     const LINK = 'link';
+    const SOURCE = 'source';
 
     // class extensions of all possible the fixed views
     const CREATE = '_add';

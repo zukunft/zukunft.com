@@ -111,7 +111,7 @@ use test\html\view as view_html_tests;
 use test\html\view_list as view_list_html_tests;
 use test\html\component as component_html_tests;
 use test\html\component_list as component_list_html_tests;
-//use test\html\source as source_html_tests;
+use test\html\source as source_html_tests;
 //use test\html\reference as reference_html_tests;
 //use test\html\language as language_html_tests;
 use test\html\change_log as change_log_html_tests;;
@@ -249,7 +249,7 @@ class test_unit extends testing
         (new view_list_html_tests)->run($this);
         (new component_html_tests)->run($this);
         (new component_list_html_tests)->run($this);
-        //(new source_html_tests)->run($this);
+        (new source_html_tests)->run($this);
         //(new reference_html_tests)->run($this);
         //(new language_html_tests)->run($this);
         (new change_log_html_tests)->run($this);
