@@ -33,19 +33,19 @@ namespace test;
 
 include_once MODEL_SYSTEM_PATH . 'ip_range.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
-include_once MODEL_SYSTEM_PATH . 'system_log_list.php';
-include_once API_SYSTEM_PATH . 'system_log.php';
+include_once MODEL_LOG_PATH . 'system_log_list.php';
+include_once API_LOG_PATH . 'system_log.php';
 
-use api\system_log_api;
 use cfg\config;
-use cfg\system_log_list;
+use controller\log\system_log_api;
 use DateTime;
 use model\ip_range;
 use model\ip_range_list;
 use model\library;
-use model\sys_log_status;
 use model\sql_db;
+use model\sys_log_status;
 use model\system_log;
+use model\system_log_list;
 
 class system_unit_tests
 {

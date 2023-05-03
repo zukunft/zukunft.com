@@ -68,9 +68,11 @@ class controller
     const URL_VAR_WORD_ID = 'word_id';
     const URL_VAR_WORD_FLD = 'word_field';
 
-    // field names of the api json messages
-    const API_FLD_ID = 'id';  // the json field name in the api json message which is supposed to be the same as the var $id
-    const API_FLD_NAME = 'name';
+    // json field names of the api json messages
+    // which is supposed to be the same as the corresponding var of the api object
+    // so that the
+    const API_FLD_ID = 'id';     // the unique database id used to save the changes
+    const API_FLD_NAME = 'name'; // the unique name of the object which is also a database index
     const API_FLD_DESCRIPTION = 'description';
     // the json field name in the api json message which is supposed to contain the code id of an object type
     // e.g. for the word api message it contains the id of the phrase type
@@ -89,6 +91,19 @@ class controller
     const API_FLD_URL = 'url';
     const API_FLD_EXTERNAL_KEY = 'external_key';
     const API_FLD_IS_STD = 'is_std';
+    const API_FLD_TIME = 'time'; // e.g. the timestamp of a log entry
+    const API_FLD_TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested
+    const API_FLD_TIME_START = 'start_time'; // e.g. the timestamp of a log entry
+    const API_FLD_TIME_END = 'end_time'; // e.g. the timestamp of a log entry
+    const API_FLD_USER_ID = 'user_id';
+    const API_FLD_TEXT = 'text';
+    const API_FLD_STATUS = 'status';
+    const API_FLD_PRIORITY = 'priority';
+    const API_FLD_TRACE = 'trace';
+    const API_FLD_PRG_PART = 'prg_part';
+    const API_FLD_OWNER = 'owner';
+    const API_BODY = 'body';
+    const API_BODY_SYS_LOG = 'system_log';
 
     // path parameters
     const PATH_API_REDIRECT = '/../../'; // get from the __DIR__ to the php root path
@@ -332,16 +347,20 @@ class controller
         }
     }
 
-    public
-    function check_api_msg(array $api_msg): array
+    /**
+     * @param array $api_msg the complete api message including the header and in some cases several body parts
+     * @param string $body_key to select a body part of the api message
+     * @return array
+     */
+    public function check_api_msg(array $api_msg, string $body_key = controller::API_BODY): array
     {
         $msg_ok = true;
         $body = array();
         // TODO check transfer time
         // TODO check if version matches
         if ($msg_ok) {
-            if (array_key_exists('body', $api_msg)) {
-                $body = $api_msg['body'];
+            if (array_key_exists($body_key, $api_msg)) {
+                $body = $api_msg[$body_key];
             } else {
                 $msg_ok = false;
             }

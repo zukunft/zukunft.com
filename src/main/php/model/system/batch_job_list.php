@@ -82,8 +82,8 @@ class batch_job_list extends base_list
     function api_obj(): batch_job_list_api
     {
         $api_obj = new batch_job_list_api();
-        foreach ($this->lst as $wrd) {
-            $api_obj->add($wrd->api_obj());
+        foreach ($this->lst as $job) {
+            $api_obj->add($job->api_obj());
         }
         return $api_obj;
     }

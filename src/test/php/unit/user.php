@@ -6,7 +6,7 @@
     ------------------
 
 
-    This file is part of zukunft.com - calc with users
+    This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as

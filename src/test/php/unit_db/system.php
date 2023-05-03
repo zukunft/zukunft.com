@@ -32,7 +32,7 @@
 
 namespace test;
 
-include_once MODEL_SYSTEM_PATH . 'system_log.php';
+include_once MODEL_LOG_PATH . 'system_log.php';
 
 use cfg\job_type_list;
 use cfg\type_lists;

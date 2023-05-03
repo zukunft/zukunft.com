@@ -5,7 +5,7 @@
     /web/ref/source.php - the extension of the source API objects to create source base html code
     -------------------
 
-    This file is part of the frontend of zukunft.com - calc with sources
+    This file is part of the frontend of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as

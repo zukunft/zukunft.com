@@ -29,7 +29,7 @@
   
 */
 
-namespace cfg;
+namespace model;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
@@ -38,20 +38,15 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_SYSTEM_PATH . 'list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SYSTEM_PATH . 'system_error_log_status_list.php';
-include_once MODEL_SYSTEM_PATH . 'system_log.php';
-include_once API_SYSTEM_PATH . 'system_log.php';
-include_once API_SYSTEM_PATH . 'system_log_list.php';
-include_once WEB_SYSTEM_PATH . 'system_log_list.php';
+include_once MODEL_LOG_PATH . 'system_log.php';
+include_once API_LOG_PATH . 'system_log.php';
+include_once API_LOG_PATH . 'system_log_list.php';
+include_once WEB_LOG_PATH . 'system_log_list.php';
+include_once WEB_LOG_PATH . 'system_log_list_old.php';
 
-use api\system_log_list_api;
-use html\system_log_list_dsp;
-use model\base_list;
-use model\sandbox;
-use model\sql_db;
-use model\sql_par;
-use model\sys_log_status;
-use model\system_log;
-use model\user;
+use cfg\type_object;
+use controller\log\system_log_list_api;
+use html\log\system_log_list_dsp_old;
 
 class system_log_list extends base_list
 {
@@ -119,12 +114,12 @@ class system_log_list extends base_list
     }
 
     /**
-     * @return system_log_list_dsp a filled frontend display object
+     * @return system_log_list_dsp_old a filled frontend display object
      */
-    function dsp_obj(): system_log_list_dsp
+    function dsp_obj(): system_log_list_dsp_old
     {
         global $db_con;
-        $dsp_obj = new system_log_list_dsp($db_con, $this->usr);
+        $dsp_obj = new system_log_list_dsp_old($db_con, $this->usr);
         foreach ($this->lst as $log) {
             //$dsp_obj->add($log->dsp_obj());
             $dsp_obj->system_log[] = $log->get_api_obj();

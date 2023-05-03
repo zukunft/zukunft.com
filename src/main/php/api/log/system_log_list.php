@@ -29,11 +29,12 @@
 
 */
 
-namespace api;
+namespace controller\log;
 
 include_once API_PATH . 'message_header.php';
 
 use api_message;
+use controller\controller;
 use model\sql_db;
 use model\user;
 
@@ -45,7 +46,7 @@ class system_log_list_api extends api_message
 
     function __construct(sql_db $db_con, ?user $usr = null)
     {
-        parent::__construct($db_con, 'system_log');
+        parent::__construct($db_con, controller::API_BODY_SYS_LOG);
         $this->type = api_message::SYS_LOG;
         $this->system_log = null;
         if ($usr != null) {

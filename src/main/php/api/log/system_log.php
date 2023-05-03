@@ -29,7 +29,7 @@
 
 */
 
-namespace api;
+namespace controller\log;
 
 include_once API_USER_PATH . 'user.php';
 include_once WEB_HTML_PATH . 'html_base.php';

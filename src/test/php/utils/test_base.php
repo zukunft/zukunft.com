@@ -181,8 +181,8 @@ include_once $path_unit_dsp . 'source.php';
 include_once $path_unit_dsp . 'reference.php';
 include_once $path_unit_dsp . 'language.php';
 include_once $path_unit_dsp . 'change_log.php';
-//include_once $path_unit_dsp . 'system_log.php';
-//include_once $path_unit_dsp . 'batch_job.php';
+include_once $path_unit_dsp . 'system_log.php';
+include_once $path_unit_dsp . 'batch_job.php';
 
 
 // load the unit testing modules with database read only

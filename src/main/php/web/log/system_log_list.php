@@ -2,8 +2,8 @@
 
 /*
 
-    /web/system/batch_job_list.php - the display extension of the system error log api object
-    -------------------------------
+    /web/log/system_log_list.php - the display extension of the system error log api object
+    ----------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,17 +30,17 @@
 
 */
 
-namespace html\system;
+namespace html\log;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
-include_once WEB_SYSTEM_PATH . 'batch_job.php';
+include_once WEB_LOG_PATH . 'system_log.php';
 
 use controller\controller;
 use html\html_base;
 use html\list_dsp;
-use html\system\batch_job as batch_job_dsp;
+use html\log\system_log as system_log_dsp;
 
-class batch_job_list extends list_dsp
+class system_log_list extends list_dsp
 {
 
     /*
@@ -55,24 +55,23 @@ class batch_job_list extends list_dsp
      */
     function set_from_json_array(array $json_array): void
     {
-        // TODO activate
-        //$ctrl = new controller();
-        //$json_array = $ctrl->check_api_msg($json_array, controller::API_BODY_SYS_LOG);
+        $ctrl = new controller();
+        $json_array = $ctrl->check_api_msg($json_array, controller::API_BODY_SYS_LOG);
         foreach ($json_array as $value) {
             $this->add_obj($this->set_obj_from_json_array($value));
         }
     }
 
     /**
-     * set the vars of a batch job object based on the given json
+     * set the vars of a system log object based on the given json
      * @param array $json_array an api single object json message
-     * @return object a batch job set based on the given json
+     * @return object a system log set based on the given json
      */
     function set_obj_from_json_array(array $json_array): object
     {
-        $job = new batch_job_dsp();
-        $job->set_from_json_array($json_array);
-        return $job;
+        $sys_log = new system_log_dsp();
+        $sys_log->set_from_json_array($json_array);
+        return $sys_log;
     }
 
 
@@ -81,12 +80,12 @@ class batch_job_list extends list_dsp
      */
 
     /**
-     * add a batch_job to the list
-     * @returns bool true if the batch_job has been added
+     * add a system_log to the list
+     * @returns bool true if the system_log has been added
      */
-    function add(batch_job_dsp $job): bool
+    function add(system_log_dsp $sys_log): bool
     {
-        return parent::add_obj($job);
+        return parent::add_obj($sys_log);
     }
 
 
@@ -95,17 +94,35 @@ class batch_job_list extends list_dsp
      */
 
     /**
-     * @return string with a table of the batch job entries for users
+     * @return string with a table of the system log entries for users
      */
     function display(): string
     {
         $html = new html_base();
         $result = '';
-        foreach ($this->lst as $job) {
+        foreach ($this->lst as $sys_log) {
             if ($result == '') {
-                $result .= $job->header();
+                $result .= $sys_log->header();
             }
-            $result .= $html->tr($job->display());
+            $result .= $html->tr($sys_log->display());
+        }
+        return $html->tbl($result);
+    }
+
+    /**
+     * @param string $back the back trace url for the undo functionality
+     * @return string with a list of the system_log names with html links
+     * ex. names_linked
+     */
+    function display_admin(string $back = '', string $style = ''): string
+    {
+        $html = new html_base();
+        $result = '';
+        foreach ($this->lst as $sys_log) {
+            if ($result == '') {
+                $result .= $sys_log->header_admin();
+            }
+            $result .= $html->tr($sys_log->display_admin($back, $style));
         }
         return $html->tbl($result);
     }

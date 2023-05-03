@@ -5,7 +5,7 @@
     formula_list_dsp.php - a list function to create the HTML code to display a formula list
     -----------------
 
-    This file is part of zukunft.com - calc with formulas
+    This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as

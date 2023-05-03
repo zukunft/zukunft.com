@@ -5,7 +5,7 @@
     /web/ref/ref.php - the extension of the reference API objects to create ref base html code
     ----------------
 
-    This file is part of the frontend of zukunft.com - calc with refs
+    This file is part of the frontend of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as

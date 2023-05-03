@@ -76,6 +76,7 @@ include_once API_SYSTEM_PATH . 'batch_job.php';
 use api\batch_job_api;
 use cfg\job_type_list;
 use DateTime;
+use DateTimeInterface;
 
 class batch_job extends db_object
 {
@@ -147,10 +148,10 @@ class batch_job extends db_object
      * always set the user because a term is always user specific
      * @param user $usr the user who requested to see this term
      */
-    function __construct(user $usr)
+    function __construct(user $usr, DateTime $request_time = new DateTime())
     {
         parent::__construct();
-        $this->request_time = new DateTime();
+        $this->request_time = $request_time;
         $this->usr = $usr;
         $this->status = self::STATUS_NEW;
         $this->priority = self::PRIO_LOWEST;
@@ -212,9 +213,14 @@ class batch_job extends db_object
     {
         $api_obj = new batch_job_api($this->usr);
         $api_obj->id = $this->id;
-        $api_obj->request_time = $this->request_time;
-        $api_obj->start_time = $this->start_time;
-        $api_obj->end_time = $this->end_time;
+        // TODO use time zone?
+        $api_obj->request_time = $this->request_time->format(DateTimeInterface::ATOM);
+        if ($this->start_time != null) {
+            $api_obj->start_time = $this->start_time->format(DateTimeInterface::ATOM);
+        }
+        if ($this->end_time != null) {
+            $api_obj->end_time = $this->end_time->format(DateTimeInterface::ATOM);
+        }
         $api_obj->type = $this->type;
         $api_obj->status = $this->status;
         $api_obj->priority = $this->priority;

@@ -32,15 +32,7 @@
 
 namespace test;
 
-use api\word_api;
-use api\verb_api;
-use api\triple_api;
-use api\value_api;
-use api\source_api;
-use api\formula_api;
-use api\view_api;
-use api\component_api;
-use cfg\system_log_list;
+use model\system_log_list;
 use model\user;
 
 class system_log_unit_db_tests

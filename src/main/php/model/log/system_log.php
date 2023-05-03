@@ -38,11 +38,11 @@ include_once MODEL_LOG_PATH . 'change_log_named.php';
 include_once MODEL_LOG_PATH . 'change_log_action.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
-include_once API_SYSTEM_PATH . 'system_log.php';
+include_once API_LOG_PATH . 'system_log.php';
 
 use cfg\type_list;
 use cfg\type_object;
-use api\system_log_api;
+use controller\log\system_log_api;
 use DateTime;
 
 class system_log extends db_object

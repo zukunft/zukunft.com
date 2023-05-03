@@ -2,9 +2,9 @@
 
 /*
 
-    test/unit/html/figure_list.php - testing of the html frontend functions for figure lists
-    -------------------------------
-
+    test/unit/html/batch_job.php - testing of the batch job display functions
+    -----------------------------
+  
 
     This file is part of zukunft.com - calc with words
 
@@ -32,25 +32,27 @@
 
 namespace test\html;
 
+include_once WEB_SYSTEM_PATH . 'batch_job_list.php';
+
 use html\html_base;
-use html\figure\figure_list as figure_list_dsp;
+use html\system\batch_job_list as batch_job_list_dsp;
 use test\testing;
 
-class figure_list
+class batch_job
 {
     function run(testing $t): void
     {
-
         $html = new html_base();
 
-        $t->subheader('figure list tests');
+        $t->subheader('batch job display unit tests');
 
-        // test the figure list display functions
-        $lst = new figure_list_dsp($t->dummy_figure_list()->api_json());
-        $test_page = $html->text_h2('figure list display test');
-        $test_page .= 'figure list with tooltip: ' . $lst->display() . '<br>';
-        $test_page .= 'figure list with link: ' . $lst->display_linked() . '<br>';
-        $t->html_test($test_page, 'figure_list', $t);
+        // test the batch job html display functions
+        $test_page = $html->text_h2('batch job display test');
+        $log_lst = new batch_job_list_dsp($t->dummy_job_list()->api_json());
+        $test_page .= 'user view of a table with batch job entries<br>';
+        $test_page .= $log_lst->display() . '<br>';
+
+        $t->html_test($test_page, 'batch_job', $t);
     }
 
 }

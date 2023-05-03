@@ -30,10 +30,10 @@
 
 */
 
-use cfg\system_log_list;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\system_log;
+use model\system_log_list;
 use model\user;
 use model\user_profile;
 use model\view;

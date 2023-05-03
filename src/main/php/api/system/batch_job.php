@@ -50,25 +50,25 @@ class batch_job_api extends db_object
 
     // field names used for JSON creation
     public int $id;
-    public ?DateTime $request_time;
-    public ?DateTime $start_time;
-    public ?DateTime $end_time;
+    public string $request_time;
+    public string $start_time;
+    public string $end_time;
     public string $user;
     public string $type;
     public string $status;
-    public string $priority;
+    public int $priority;
 
     function __construct(user $usr)
     {
         parent::__construct();
         $this->set_user($usr);
         $this->id = 0;
-        $this->request_time = null;
-        $this->start_time = null;
-        $this->end_time = null;
+        $this->request_time = '';
+        $this->start_time = '';
+        $this->end_time = '';
         $this->type = '';
         $this->status = '';
-        $this->priority = '';
+        $this->priority = 0;
     }
 
     /**

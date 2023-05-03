@@ -30,14 +30,15 @@
 
 */
 
-namespace html;
+namespace html\log;
 
-include_once API_SYSTEM_PATH . 'system_log_list.php';
+include_once API_LOG_PATH . 'system_log_list.php';
 
-use api\system_log_list_api;
+use controller\log\system_log_list_api;
+use html\html_base;
 use model\user;
 
-class system_log_list_dsp extends system_log_list_api
+class system_log_list_dsp_old extends system_log_list_api
 {
 
     /**

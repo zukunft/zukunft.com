@@ -5,7 +5,7 @@
     /web/system/batch_job.php - the extension of the batch_job API objects to create batch_job base html code
     -------------------------
 
-    This file is part of the frontend of zukunft.com - calc with batch_jobs
+    This file is part of the frontend of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as
@@ -29,15 +29,171 @@
   
 */
 
-namespace html;
+namespace html\system;
 
-use api\batch_job_api;
-use api\phrase_api;
-use back_trace;
-use cfg\phrase_type;
+use controller\controller;
+use DateTime;
+use DateTimeInterface;
+use Exception;
+use html\api;
+use html\db_object_dsp;
+use html\html_base;
 
-class batch_job_dsp extends batch_job_api
+class batch_job extends db_object_dsp
 {
+
+    /*
+     * object vars
+     */
+
+    private DateTime $request_time;
+    private ?DateTime $start_time;
+    private ?DateTime $end_time;
+    private int $user_id;
+    public string $type;
+    private string $status;
+    private int $priority;
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the vars of this batch job html object bases on the api json array
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        parent::set_from_json_array($json_array);
+        // TODO use empty date instead?
+        $request_timestamp = new DateTime();
+        if (array_key_exists(controller::API_FLD_TIME_REQUEST, $json_array)) {
+            try {
+                $request_timestamp = new DateTime($json_array[controller::API_FLD_TIME_REQUEST]);
+            } catch (Exception $e) {
+                // TODO avoid loops if date writing in log_err fails ?
+                log_err('Error converting system log timestamp ' . $json_array[controller::API_FLD_TIME_REQUEST]
+                    . ' because ' . $e->getMessage());
+            }
+        } else {
+            log_err('Mandatory time missing in API JSON ' . json_encode($json_array));
+        }
+        $this->set_request_time($request_timestamp);
+        $start_time = null;
+        if (array_key_exists(controller::API_FLD_TIME_START, $json_array)) {
+            try {
+                $request_timestamp = new DateTime($json_array[controller::API_FLD_TIME_START]);
+            } catch (Exception $e) {
+                // TODO avoid loops if date writing in log_err fails ?
+                log_err('Error converting system log timestamp ' . $json_array[controller::API_FLD_TIME_START]
+                    . ' because ' . $e->getMessage());
+            }
+        }
+        $this->set_start_time($start_time);
+        $end_time = null;
+        if (array_key_exists(controller::API_FLD_TIME_END, $json_array)) {
+            try {
+                $request_timestamp = new DateTime($json_array[controller::API_FLD_TIME_END]);
+            } catch (Exception $e) {
+                // TODO avoid loops if date writing in log_err fails ?
+                log_err('Error converting system log timestamp ' . $json_array[controller::API_FLD_TIME_END]
+                    . ' because ' . $e->getMessage());
+            }
+        }
+        $this->set_end_time($end_time);
+        if (array_key_exists(controller::API_FLD_USER_ID, $json_array)) {
+            $this->set_user_id($json_array[controller::API_FLD_USER_ID]);
+        } else {
+            $this->set_user_id(0);
+        }
+        if (array_key_exists(controller::API_FLD_TYPE, $json_array)) {
+            $this->set_type($json_array[controller::API_FLD_TYPE]);
+        } else {
+            $this->set_type('');
+        }
+        if (array_key_exists(controller::API_FLD_STATUS, $json_array)) {
+            $this->set_status($json_array[controller::API_FLD_STATUS]);
+        } else {
+            $this->set_status('');
+        }
+        if (array_key_exists(controller::API_FLD_PRIORITY, $json_array)) {
+            $this->set_priority($json_array[controller::API_FLD_PRIORITY]);
+        } else {
+            $this->set_priority(0);
+        }
+    }
+
+    function set_request_time(DateTime $iso_time_str): void
+    {
+        $this->request_time = $iso_time_str;
+    }
+
+    function request_time(): DateTime
+    {
+        return $this->request_time;
+    }
+
+    function set_start_time(?DateTime $iso_time_str): void
+    {
+        $this->start_time = $iso_time_str;
+    }
+
+    function start_time(): ?DateTime
+    {
+        return $this->start_time;
+    }
+
+    function set_end_time(?DateTime $iso_time_str): void
+    {
+        $this->end_time = $iso_time_str;
+    }
+
+    function end_time(): ?DateTime
+    {
+        return $this->end_time;
+    }
+
+    function set_user_id(int $user_id): void
+    {
+        $this->user_id = $user_id;
+    }
+
+    function user_id(): int
+    {
+        return $this->user_id;
+    }
+
+    function set_type(int $type): void
+    {
+        $this->type = $type;
+    }
+
+    function type(): int
+    {
+        return $this->type;
+    }
+
+    function set_status(string $status): void
+    {
+        $this->status = $status;
+    }
+
+    function status(): string
+    {
+        return $this->status;
+    }
+
+    function set_priority(int $priority): void
+    {
+        $this->priority = $priority;
+    }
+
+    function priority(): int
+    {
+        return $this->priority;
+    }
 
 
     /*
@@ -45,53 +201,71 @@ class batch_job_dsp extends batch_job_api
      */
 
     /**
-     * @returns string simply the batch_job name, but later with mouse over that shows the description
+     * @returns string the html code to show one batch job for non admin users
      */
     function display(): string
     {
-        return $this->type()->name;
+        $html = new html_base();
+        $result = '';
+        // TODO replace with the user date format setting,
+        //      which can also be the local system setting
+        //      or the pod setting
+        $result .= $html->td($this->request_time()->format(DateTimeInterface::ATOM));
+        if ($this->start_time() != null) {
+            $result .= $html->td($this->start_time()->format(DateTimeInterface::ATOM));
+        } else {
+            $result .= $html->td('');
+        }
+        if ($this->end_time() != null) {
+            $result .= $html->td($this->end_time()->format(DateTimeInterface::ATOM));
+        } else {
+            $result .= $html->td('');
+        }
+        // TODO show the username instead of the id
+        $result .= $html->td($this->user_id());
+        $result .= $html->td($this->type());
+        $result .= $html->td($this->status());
+        $result .= $html->td($this->priority());
+        return $result;
     }
 
     /**
-     * display a batch_job with a link to the main page for the batch_job
-     * @param string|null $back the back trace url for the undo functionality
-     * @param string $style the CSS style that should be used
-     * @returns string the html code
+     * @returns string the html code to show the table header for system log entries and non admin users
      */
-    function display_linked(?string $back = '', string $style = ''): string
+    function header(): string
     {
         $html = new html_base();
-        $url = $html->url(api::VIEW, $this->id, $back, api::PAR_VIEW_WORDS);
-        return $html->ref($url, $this->name(), $this->description(), $style);
+        // TODO replace with language specific headers
+        $result = $html->th('request time');
+        $result .= $html->th('start time');
+        $result .= $html->th('end time');
+        $result .= $html->th('user');
+        $result .= $html->th('type');
+        $result .= $html->th('status');
+        $result .= $html->th('priority');
+        return $html->tr($result);
     }
 
-    /**
-     * @param string $back the back trace url for the undo functionality
-     * @param string $style the CSS style that should be used
-     * @returns string the batch_job as a table cell
+
+    /*
+     * interface
      */
-    function td(string $back = '', string $style = '', int $intent = 0): string
-    {
-        $cell_text = $this->display_linked($back, $style);
-        return (new html_base)->td($cell_text, $intent);
-    }
 
     /**
-     * @param string $back the back trace url for the undo functionality
-     * @param string $style the CSS style that should be used
-     * @returns string the batch_job as a table cell
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
      */
-    function th(string $back = '', string $style = ''): string
+    function api_array(): array
     {
-        return (new html_base)->th($this->display_linked($back, $style));
-    }
-
-    /**
-     * @return string the html code for a table row with the batch_job
-     */
-    function tr(): string
-    {
-        return (new html_base())->tr($this->td());
+        $vars = parent::api_array();
+        $vars[controller::API_FLD_TIME_REQUEST] = $this->request_time()->format(DateTimeInterface::ATOM);
+        $vars[controller::API_FLD_TIME_START] = $this->start_time()->format(DateTimeInterface::ATOM);
+        $vars[controller::API_FLD_TIME_END] = $this->end_time()->format(DateTimeInterface::ATOM);
+        $vars[controller::API_FLD_USER_ID] = $this->user_id();
+        $vars[controller::API_FLD_TYPE] = $this->type();
+        $vars[controller::API_FLD_STATUS] = $this->status();
+        $vars[controller::API_FLD_PRIORITY] = $this->priority();
+        return $vars;
     }
 
 }

@@ -2,9 +2,9 @@
 
 /*
 
-    test/unit/html/figure_list.php - testing of the html frontend functions for figure lists
-    -------------------------------
-
+    test/unit/html/system_log.php - testing of the system log display functions
+    -----------------------------
+  
 
     This file is part of zukunft.com - calc with words
 
@@ -33,24 +33,26 @@
 namespace test\html;
 
 use html\html_base;
-use html\figure\figure_list as figure_list_dsp;
+use html\log\system_log_list as system_log_list_dsp;
 use test\testing;
 
-class figure_list
+class system_log
 {
     function run(testing $t): void
     {
-
         $html = new html_base();
 
-        $t->subheader('figure list tests');
+        $t->subheader('system log display unit tests');
 
-        // test the figure list display functions
-        $lst = new figure_list_dsp($t->dummy_figure_list()->api_json());
-        $test_page = $html->text_h2('figure list display test');
-        $test_page .= 'figure list with tooltip: ' . $lst->display() . '<br>';
-        $test_page .= 'figure list with link: ' . $lst->display_linked() . '<br>';
-        $t->html_test($test_page, 'figure_list', $t);
+        // test the system log html display functions
+        $test_page = $html->text_h2('system log display test');
+        $log_lst = new system_log_list_dsp($t->dummy_system_log_list()->api_json());
+        $test_page .= 'user view of a table with system log entries<br>';
+        $test_page .= $log_lst->display() . '<br>';
+        $test_page .= 'admin view of a table with system log entries<br>';
+        $test_page .= $log_lst->display_admin() . '<br>';
+
+        $t->html_test($test_page, 'system_log', $t);
     }
 
 }

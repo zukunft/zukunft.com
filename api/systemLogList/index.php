@@ -30,9 +30,9 @@
 */
 
 use controller\controller;
+use controller\log\system_log_list_api;
+use model\system_log_list;
 use model\user;
-use cfg\system_log_list;
-use api\system_log_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
@@ -44,8 +44,8 @@ include_once PHP_PATH . 'zu_lib.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'message_header.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_SYSTEM_PATH . 'system_log_list.php';
-include_once API_SYSTEM_PATH . 'system_log_list.php';
+include_once MODEL_LOG_PATH . 'system_log_list.php';
+include_once API_LOG_PATH . 'system_log_list.php';
 
 // open database
 $db_con = prg_start("api/log", "", false);

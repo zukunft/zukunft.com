@@ -61,6 +61,8 @@ include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
 include_once MODEL_LOG_PATH . 'change_log_action.php';
 include_once MODEL_LOG_PATH . 'change_log_table.php';
 include_once MODEL_LOG_PATH . 'change_log_field.php';
+include_once MODEL_LOG_PATH . 'system_log.php';
+include_once MODEL_LOG_PATH . 'system_log_list.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 
 use cfg\formula_type_list;
@@ -115,8 +117,8 @@ use test\html\source as source_html_tests;
 use test\html\reference as reference_html_tests;
 use test\html\language as language_html_tests;
 use test\html\change_log as change_log_html_tests;;
-//use test\html\system_log as system_log_html_tests;
-//use test\html\batch_job as batch_job_html_tests;
+use test\html\system_log as system_log_html_tests;
+use test\html\batch_job as batch_job_html_tests;
 
 class test_unit extends testing
 {
@@ -253,8 +255,8 @@ class test_unit extends testing
         (new reference_html_tests)->run($this);
         (new language_html_tests)->run($this);
         (new change_log_html_tests)->run($this);
-        //(new system_log_html_tests)->run($this);
-        //(new batch_job_html_tests)->run($this);
+        (new system_log_html_tests)->run($this);
+        (new batch_job_html_tests)->run($this);
 
         // restore the global vars
         $db_con = $global_db_con;
