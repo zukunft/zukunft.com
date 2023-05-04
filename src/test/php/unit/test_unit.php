@@ -98,7 +98,7 @@ use test\html\verb as verb_html_tests;
 use test\html\triple as triple_html_tests;
 use test\html\phrase as phrase_html_tests;
 use test\html\phrase_list as phrase_list_html_tests;;
-//use test\html\phrase_group as phrase_group_html_tests;
+use test\html\phrase_group as phrase_group_html_tests;
 use test\html\term as term_html_tests;
 use test\html\term_list as term_list_html_tests;
 use test\html\value as value_html_tests;

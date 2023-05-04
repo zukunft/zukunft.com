@@ -36,6 +36,7 @@ namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 
+use controller\controller;
 use html\sandbox_named_dsp;
 use html\word\word as word_dsp;
 use html\phrase\phrase as phrase_dsp;
@@ -85,12 +86,27 @@ class phrase_group extends sandbox_named_dsp
      */
     function set_from_json_array(array $json_array): void
     {
-        foreach ($json_array as $phr_json) {
-            $wrd = new word_dsp();
-            $wrd->set_from_json_array($phr_json);
-            $phr = new phrase_dsp();
-            $phr->set_obj($wrd);
-            $this->lst[] = $phr;
+        if (array_key_exists(controller::API_FLD_ID, $json_array)) {
+            parent::set_from_json_array($json_array);
+            if (array_key_exists(controller::API_FLD_PHRASES, $json_array)) {
+                $phr_lst = $json_array[controller::API_FLD_PHRASES];
+                foreach ($phr_lst as $phr_json) {
+                    $wrd = new word_dsp();
+                    $wrd->set_from_json_array($phr_json);
+                    $phr = new phrase_dsp();
+                    $phr->set_obj($wrd);
+                    $this->lst[] = $phr;
+                }
+            }
+        } else {
+            // create phrase group based on the phrase list as fallback
+            foreach ($json_array as $phr_json) {
+                $wrd = new word_dsp();
+                $wrd->set_from_json_array($phr_json);
+                $phr = new phrase_dsp();
+                $phr->set_obj($wrd);
+                $this->lst[] = $phr;
+            }
         }
     }
 

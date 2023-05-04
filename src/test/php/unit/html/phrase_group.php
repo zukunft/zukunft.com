@@ -44,10 +44,11 @@ class phrase_group
 
         $t->subheader('Phrase group tests');
 
-        $wrd = new phrase_group_dsp($t->dummy_phrase_list()->api_json());
+        $api_msg = $t->dummy_phrase_group()->api_json();
+        $grp = new phrase_group_dsp($api_msg);
         $test_page = $html->text_h2('Phrase group display test');
-        $test_page .= 'word phrase with tooltip: ' . $wrd->display() . '<br>';
-        $test_page .= 'word phrase with link: ' . $wrd->display_linked() . '<br>';
+        $test_page .= 'phrase group with tooltip: ' . $grp->display() . '<br>';
+        $test_page .= 'phrase group with link: ' . $grp->display_linked() . '<br>';
         $t->html_test($test_page, 'phrase group', $t);
     }
 

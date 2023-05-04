@@ -219,6 +219,15 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    function dummy_phrase_group(): phrase_group
+    {
+        global $usr;
+        $lst = $this->dummy_phrase_list();
+        $grp = $lst->get_grp();
+        $grp->grp_name = phrase_group_api::TN_READ;
+        return $grp;
+    }
+
     function dummy_term(): term
     {
         return $this->dummy_word()->term();

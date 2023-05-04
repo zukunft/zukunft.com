@@ -32,10 +32,12 @@
 
 namespace api;
 
+use controller\controller;
 use html\phrase\phrase_group as phrase_group_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
+use JsonSerializable;
 
-class phrase_group_api extends sandbox_named_api
+class phrase_group_api extends sandbox_named_api implements JsonSerializable
 {
 
     /*
@@ -190,7 +192,8 @@ class phrase_group_api extends sandbox_named_api
      */
     function dsp_obj(): phrase_group_dsp
     {
-        $result = new phrase_group_dsp($this->id);
+        $result = new phrase_group_dsp();
+        $result->set_id($this->id());
         $result->set_lst_dsp($this->lst());
         return $result;
     }
@@ -208,6 +211,20 @@ class phrase_group_api extends sandbox_named_api
     function load_phrases(): bool
     {
         return $this->load_phrases();
+    }
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array with the value vars including the protected vars
+     */
+    function jsonSerialize(): array
+    {
+        $vars = parent::jsonSerialize();
+        $vars[controller::API_FLD_PHRASES] = json_decode(json_encode($this->phr_lst()));
+        return $vars;
     }
 
 }
