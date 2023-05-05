@@ -146,6 +146,62 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
+    function dummy_word_2019(): word
+    {
+        global $usr;
+        $wrd = new word($usr);
+        $wrd->set(9, word_api::TN_2019);
+        return $wrd;
+    }
+
+    function dummy_word_mio(): word
+    {
+        global $usr;
+        $wrd = new word($usr);
+        $wrd->set(155, word_api::TN_MIO_SHORT);
+        return $wrd;
+    }
+
+    function dummy_word_ch(): word
+    {
+        global $usr;
+        $wrd = new word($usr);
+        $wrd->set(181, word_api::TN_CH);
+        return $wrd;
+    }
+
+    function dummy_word_canton(): word
+    {
+        global $usr;
+        $wrd = new word($usr);
+        $wrd->set(182, word_api::TN_CANTON);
+        return $wrd;
+    }
+
+    function dummy_word_city(): word
+    {
+        global $usr;
+        $wrd = new word($usr);
+        $wrd->set(183, word_api::TN_CITY);
+        return $wrd;
+    }
+
+    function dummy_word_zh(): word
+    {
+        global $usr;
+        $wrd = new word($usr);
+        $wrd->set(184, word_api::TN_ZH);
+        return $wrd;
+    }
+
+    function dummy_word_inhabitant(): word
+    {
+        global $usr;
+        $wrd = new word($usr);
+        $wrd->set(186, word_api::TN_INHABITANT);
+        return $wrd;
+    }
+
     function dummy_word_list(): word_list
     {
         global $usr;

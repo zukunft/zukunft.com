@@ -236,11 +236,11 @@ class test_unit extends testing
         (new triple_html_tests)->run($this);
         (new phrase_html_tests)->run($this);
         (new phrase_list_html_tests)->run($this);
-        //(new phrase_group_html_tests)->run($this);
+        (new phrase_group_html_tests)->run($this);
         (new term_html_tests)->run($this);
         (new term_list_html_tests)->run($this);
         (new value_html_tests)->run($this);
-        //(new value_list_html_tests)->run($this);
+        (new value_list_html_tests)->run($this);
         (new formula_html_tests)->run($this);
         (new formula_list_html_tests)->run($this);
         (new result_html_tests)->run($this);

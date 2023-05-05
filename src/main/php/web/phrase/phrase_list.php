@@ -33,6 +33,8 @@
 namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
 
 use api\combine_object_api;
 use api\term_api;
@@ -42,6 +44,7 @@ use html\list_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
 use model\library;
 
 class phrase_list extends list_dsp
@@ -216,12 +219,12 @@ class phrase_list extends list_dsp
     {
         return parent::add_obj($phr);
     }
-    function remove(phrase_list $del_lst): phrase_list
+    function remove(phrase_list_dsp $del_lst): phrase_list_dsp
     {
         if (!$del_lst->is_empty()) {
             // next line would work if array_intersect could handle objects
             // $this->lst = array_intersect($this->lst, $new_lst->lst());
-            $remain_lst = new phrase_list();
+            $remain_lst = new phrase_list_dsp();
             foreach ($this->lst() as $phr) {
                 if (!in_array($phr->id(), $del_lst->id_lst())) {
                     $remain_lst->add_phrase($phr);
@@ -230,6 +233,80 @@ class phrase_list extends list_dsp
             $this->set_lst($remain_lst->lst);
         }
         return $this;
+    }
+
+    /**
+     * @return string one string with all names of the list and reduced in size mainly for debugging
+     * this function is called from dsp_id, so no other call is allowed
+     */
+    function dsp_name(): string
+    {
+        global $debug;
+        $lib = new library();
+
+        $name_lst = $this->names();
+        if ($debug > 10) {
+            $result = '"' . implode('","', $name_lst) . '"';
+        } else {
+            $result = '"' . implode('","', array_slice($name_lst, 0, 7));
+            if (count($name_lst) > 8) {
+                $result .= ' ... total ' . $lib->dsp_count($this->lst);
+            }
+            $result .= '"';
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return string one string with all names of the list
+     */
+    function name(): string
+    {
+        $name_lst = $this->names();
+        return '"' . implode('","', $name_lst) . '"';
+    }
+
+    /**
+     * @return array with all phrase names in alphabetic order
+     * this function is called from dsp_id, so no call of another function is allowed
+     * TODO move to a parent object for phrase list and term list
+     */
+    function names(): array
+    {
+        $name_lst = array();
+        foreach ($this->lst as $phr) {
+            if ($phr != null) {
+                $name_lst[] = $phr->name();
+            }
+        }
+        // TODO allow to fix the order
+        asort($name_lst);
+        return $name_lst;
+    }
+
+    /**
+     * @return array all phrases that are part of each phrase group of the list
+     */
+    function common(phrase_list_dsp $filter_lst): array
+    {
+        $result = array();
+        $lib = new library();
+        log_debug('of ' . $this->dsp_name() . ' and ' . $filter_lst->name());
+        if (count($this->lst) > 0) {
+            foreach ($this->lst as $phr) {
+                if (isset($phr)) {
+                    log_debug('check if "' . $phr->name() . '" is in ' . $filter_lst->name());
+                    if (in_array($phr, $filter_lst->lst)) {
+                        $result[] = $phr;
+                    }
+                }
+            }
+            $this->lst = $result;
+            $this->id_lst();
+        }
+        log_debug($lib->dsp_count($this->lst));
+        return $result;
     }
 
 }

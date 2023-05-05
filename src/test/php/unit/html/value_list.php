@@ -32,67 +32,78 @@
 
 namespace test\html;
 
-use api\phrase_api;
 use api\phrase_group_api;
 use api\phrase_list_api;
 use api\value_api;
-use api\word_api;
+use api\value_list_api;
 use html\html_base;
+use model\phrase_list;
+use html\phrase\phrase_list as phrase_list_dsp;
+use html\value\value_list as value_list_dsp;
 use test\testing;
 
 class value_list
 {
     function run(testing $t): void
     {
+        global $usr;
         $html = new html_base();
 
         $t->subheader('Value list tests');
 
         // create a test set of phrase
-        $phr_id = 1;
-        $phr_zh = new phrase_api($phr_id, word_api::TN_ZH); $phr_id++;
-        $phr_city = new phrase_api($phr_id, word_api::TN_CITY); $phr_id++;
-        $phr_canton = new phrase_api($phr_id, word_api::TN_CANTON); $phr_id++;
-        $phr_ch = new phrase_api($phr_id, word_api::TN_CH); $phr_id++;
-        $phr_inhabitant = new phrase_api($phr_id, word_api::TN_INHABITANT); $phr_id++;
-        $phr_2019 = new phrase_api($phr_id, word_api::TN_2019); $phr_id++;
-        $phr_mio = new phrase_api($phr_id, word_api::TN_MIO_SHORT);
+        $phr_zh = $t->dummy_word_zh()->phrase();
+        $phr_city = $t->dummy_word_city()->phrase();
+        $phr_canton = $t->dummy_word_canton()->phrase();
+        $phr_ch = $t->dummy_word_city()->phrase();
+        $phr_inhabitant = $t->dummy_word_inhabitant()->phrase();
+        $phr_2019 = $t->dummy_word_2019()->phrase();
+        $phr_mio = $t->dummy_word_mio()->phrase();
 
         // create a test set of phrase groups
         $grp_id = 1;
-        $phr_grp_city = new phrase_group_api($grp_id); $grp_id++;
-        $phr_grp_city->add($phr_zh);
-        $phr_grp_city->add($phr_city);
-        $phr_grp_city->add($phr_inhabitant);
-        $phr_grp_city->add($phr_2019);
-        $phr_grp_canton = new phrase_group_api($grp_id); $grp_id++;
-        $phr_grp_canton->add($phr_zh);
-        $phr_grp_canton->add($phr_canton);
-        $phr_grp_canton->add($phr_inhabitant);
-        $phr_grp_canton->add($phr_mio);
-        $phr_grp_canton->add($phr_2019);
-        $phr_grp_ch = new phrase_group_api($grp_id);
-        $phr_grp_ch->add($phr_ch);
-        $phr_grp_ch->add($phr_mio);
-        $phr_grp_ch->add($phr_inhabitant);
-        $phr_grp_ch->add($phr_2019);
-        $phr_lst_context = new phrase_list_api();
+        $phr_lst_city = new phrase_list($usr);
+        $phr_lst_city->add($phr_zh);
+        $phr_lst_city->add($phr_city);
+        $phr_lst_city->add($phr_inhabitant);
+        $phr_lst_city->add($phr_2019);
+        $phr_grp_city = $phr_lst_city->get_grp();
+        $phr_grp_city->set_id($grp_id);
+        $grp_id++;
+        $phr_lst_canton = new phrase_list($usr);
+        $phr_lst_canton->add($phr_zh);
+        $phr_lst_canton->add($phr_canton);
+        $phr_lst_canton->add($phr_inhabitant);
+        $phr_lst_canton->add($phr_mio);
+        $phr_lst_canton->add($phr_2019);
+        $phr_grp_canton = $phr_lst_canton->get_grp();
+        $phr_grp_canton->set_id($grp_id);
+        $grp_id++;
+        $phr_lst_ch = new phrase_list($usr);
+        $phr_lst_ch->add($phr_ch);
+        $phr_lst_ch->add($phr_mio);
+        $phr_lst_ch->add($phr_inhabitant);
+        $phr_lst_ch->add($phr_2019);
+        $phr_grp_ch = $phr_lst_ch->get_grp();
+        $phr_grp_ch->set_id($grp_id);
+        $phr_lst_context = new phrase_list($usr);
         $phr_lst_context->add($phr_inhabitant);
+        $phr_lst_context_dsp = new phrase_list_dsp($phr_lst_context->api_json());
 
         // create the value for the inhabitants of the city of zurich
         $val_id = 1;
-        $val_city = new \api\value_api($val_id); $val_id++;
-        $val_city->set_grp($phr_grp_city);
+        $val_city = new value_api($val_id); $val_id++;
+        $val_city->set_grp($phr_grp_city->api_obj());
         $val_city->set_number(value_api::TV_CITY_ZH_INHABITANTS_2019);
 
         // create the value for the inhabitants of the city of zurich
-        $val_canton = new \api\value_api($val_id); $val_id++;
-        $val_canton->set_grp($phr_grp_canton);
+        $val_canton = new value_api($val_id); $val_id++;
+        $val_canton->set_grp($phr_grp_canton->api_obj());
         $val_canton->set_number(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
         // create the value for the inhabitants of Switzerland
-        $val_ch = new \api\value_api($val_id);
-        $val_ch->set_grp($phr_grp_ch);
+        $val_ch = new value_api($val_id);
+        $val_ch->set_grp($phr_grp_ch->api_obj());
         $val_ch->set_number(value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 
         // create the value list and the table to display the results
@@ -102,17 +113,19 @@ class value_list
         // TODO optional "(in mio)" formatting for scale words
         // TODO move time words to column headline
         // TODO use language based plural for inhabitant
-        $val_lst = new \api\value_list_api();
+        $val_lst = new value_list_api();
         $val_lst->add($val_city);
         $val_lst->add($val_canton);
         $val_lst->add($val_ch);
-        $t->html_test($val_lst->dsp_obj()->table(), 'table_value', $t);
 
+        $test_page = $html->text_h2('Value list display test');
+        $lst_dsp = new value_list_dsp($val_lst->get_json());
+        $test_page .= 'without context: ' . $lst_dsp->table() . '<br>';
         // create the same table as above, but within a context
-        $t->html_test(
-            $phr_lst_context->dsp_obj()->headline()
-            . $val_lst->dsp_obj()->table($phr_lst_context),
-            'table_value_context', $t);
+        $header_html = $phr_lst_context_dsp->headline();
+        $table_html = $lst_dsp->table($phr_lst_context_dsp);
+        $test_page .= 'with context: ' . $header_html . $table_html . '<br>';
+        $t->html_test($test_page, 'value_list', $t);
 
     }
 

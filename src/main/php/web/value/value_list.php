@@ -34,12 +34,17 @@
 
 namespace html\value;
 
+include_once WEB_PHRASE_PATH . 'phrase_group_list.php';
+
 use api\phrase_list_api;
 use html\button;
 use html\html_base;
 use html\list_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
+use html\phrase\phrase_group_list as phrase_group_list_dsp;
 use html\value\value as value_dsp;
 use html\word\word_list as word_list_dsp;
+use model\library;
 use model\result_list;
 use model\phrase;
 use model\word_list;
@@ -101,11 +106,11 @@ class value_list extends list_dsp
     }
 
     /**
-     * @param phrase_list_api|null $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again
+     * @param phrase_list_dsp|null $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again
      * @param string $back
      * @return string the html code to show the values as a table to the user
      */
-    function table(phrase_list_api $context_phr_lst = null, string $back = ''): string
+    function table(phrase_list_dsp $context_phr_lst = null, string $back = ''): string
     {
         $html = new html_base();
 
@@ -126,7 +131,7 @@ class value_list extends list_dsp
         if ($header_phrases->count() <= 0) {
             $head_text = 'description';
         } else {
-            $head_text = $header_phrases->dsp_obj()->display_linked();
+            $head_text = $header_phrases->display_linked();
         }
 
         // display the single values
@@ -222,7 +227,7 @@ class value_list extends list_dsp
                 log_debug('linked words ' . $val->id . ' done');
                 // to review
                 // list the related results
-                $res_lst = new result_list($this->user());
+                $res_lst = new result_list_dsp();
                 $res_lst->load_by_val($val);
                 $result .= $res_lst->frm_links_html();
                 $result .= '    </td>';
@@ -250,11 +255,6 @@ class value_list extends list_dsp
 
         // allow the user to add a completely new value
         log_debug('new');
-        if (empty($common_phr_ids)) {
-            $common_phr_lst = new word_list($this->user());
-            $common_phr_ids[] = $this->phr->id;
-            $common_phr_lst->load_by_ids($common_phr_ids);
-        }
 
         $common_phr_lst = $common_phr_lst->phrase_lst();
 
@@ -275,6 +275,39 @@ class value_list extends list_dsp
         log_debug("done");
 
         return $result;
+    }
+
+    /**
+     * @return phrase_list_dsp a list of phrases used for each value
+     * similar to the model function with the same name
+     */
+    function common_phrases(): phrase_list_dsp
+    {
+        $lib = new library();
+        $grp_lst = $this->phrase_groups();
+        $phr_lst = $grp_lst->common_phrases();
+        log_debug($lib->dsp_count($phr_lst->lst()));
+        return $phr_lst;
+    }
+
+    /**
+     * return a list of phrase groups for all values of this list
+     */
+    function phrase_groups(): phrase_group_list_dsp
+    {
+        log_debug();
+        $lib = new library();
+        $grp_lst = new phrase_group_list_dsp();
+        foreach ($this->lst as $grp) {
+            if (isset($grp->grp)) {
+                $grp_lst->lst[] = $grp->grp;
+            } else {
+                log_err("The phrase group for value " . $grp->id . " cannot be loaded.", "value_list->phrase_groups");
+            }
+        }
+
+        log_debug($lib->dsp_count($grp_lst->lst));
+        return $grp_lst;
     }
 
 }
