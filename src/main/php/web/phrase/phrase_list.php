@@ -288,16 +288,14 @@ class phrase_list extends list_dsp
     /**
      * @return array all phrases that are part of each phrase group of the list
      */
-    function common(phrase_list_dsp $filter_lst): array
+    function common(array $filter_lst): array
     {
         $result = array();
         $lib = new library();
-        log_debug('of ' . $this->dsp_name() . ' and ' . $filter_lst->name());
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {
                 if (isset($phr)) {
-                    log_debug('check if "' . $phr->name() . '" is in ' . $filter_lst->name());
-                    if (in_array($phr, $filter_lst->lst)) {
+                    if (in_array($phr, $filter_lst)) {
                         $result[] = $phr;
                     }
                 }

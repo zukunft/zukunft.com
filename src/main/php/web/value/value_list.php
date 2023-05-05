@@ -43,11 +43,7 @@ use html\list_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\phrase_group_list as phrase_group_list_dsp;
 use html\value\value as value_dsp;
-use html\word\word_list as word_list_dsp;
 use model\library;
-use model\result_list;
-use model\phrase;
-use model\word_list;
 
 class value_list extends list_dsp
 {
@@ -88,22 +84,10 @@ class value_list extends list_dsp
         return $result;
     }
 
-    /**
-     * @returns value_list the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): value_list
-    {
-        // cast the single list objects
-        $lst_dsp = array();
-        foreach ($this->lst as $val) {
-            if ($val != null) {
-                $val_dsp = $val->dsp_obj();
-                $lst_dsp[] = $val_dsp;
-            }
-        }
 
-        return new value_list($lst_dsp);
-    }
+    /*
+     * display
+     */
 
     /**
      * @param phrase_list_dsp|null $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again
@@ -134,6 +118,10 @@ class value_list extends list_dsp
             $head_text = $header_phrases->display_linked();
         }
 
+        // TODO add a button to add a new value using
+        //$btn_new = $common_phrases->btn_add_value();
+        $btn_new = '';
+
         // display the single values
         $header_rows = '';
         $rows = '';
@@ -147,135 +135,18 @@ class value_list extends list_dsp
             $row = $html->td($val->name_linked($common_phrases));
             $row .= $html->td($val->value_linked($back));
             $rows .= $html->tr($row);
+            // TODO add button to delete a value or add a similar value
+            //$btn_del = $val->btn_del();
+            //$btn_add = $val->btn_add();
         }
 
-        return $html->tbl($header_rows . $rows, $html::SIZE_HALF);
+        return $html->tbl($header_rows . $rows, $html::SIZE_HALF) . $btn_new;
     }
 
-    /**
-     * return the html code to display all values related to a given word
-     * $phr->id is the related word that should not be included in the display
-     * $this->user()->id is a parameter, because the viewer must not be the owner of the value
-     * TODO move remaining parts to the table() function
-     * TODO add back
+
+    /*
+     * info
      */
-    function table_old(string $back): string
-    {
-        $result = '';
-        $html = new html_base();
-
-        log_debug();
-        $common_phr_ids = array();
-
-        // display the common words
-        if (!empty($common_phr_ids)) {
-            $common_phr_lst = new word_list_dsp();
-            //$common_phr_lst->load_by_ids($common_phr_ids);
-            $result .= ' in (' . implode(",", $common_phr_lst->names_linked()) . ')<br>';
-        }
-
-        // instead of the saved result maybe display the calculated result based on formulas that matches the word pattern
-        $result .= $html->dsp_tbl_start();
-
-        // the reused button object
-        $btn = new button;
-
-        // to avoid repeating the same words in each line and to offer a useful "add new value"
-        $last_phr_lst = array();
-
-        log_debug('add new button');
-        foreach ($this->lst as $val) {
-            //$this->user()->id()  = $val->usr->id;
-
-            // get the words
-            $val->load_phrases();
-            if (isset($val->phr_lst)) {
-                $val_phr_lst = $val->phr_lst;
-
-                // remove the main word from the list, because it should not be shown on each line
-                log_debug('remove main ' . $val->id);
-                $dsp_phr_lst = $val_phr_lst->dsp_obj();
-                log_debug('cloned ' . $val->id);
-                if (isset($this->phr)) {
-                    if (isset($this->phr->id)) {
-                        $dsp_phr_lst->diff_by_ids(array($this->phr->id));
-                    }
-                }
-                log_debug('removed ' . $this->phr->id);
-                $dsp_phr_lst->diff_by_ids($common_phr_ids);
-                // remove the words of the previous row, because it should not be shown on each line
-                if (isset($last_phr_lst->ids)) {
-                    $dsp_phr_lst->diff_by_ids($last_phr_lst->ids);
-                }
-
-                //if (isset($val->time_phr)) {
-                log_debug('add time ' . $val->id);
-                if ($val->time_phr != null) {
-                    if ($val->time_phr->id > 0) {
-                        $time_phr = new phrase($val->usr);
-                        $time_phr->load_by_id($val->time_phr->id());
-                        $val->time_phr = $time_phr;
-                        $dsp_phr_lst->add($time_phr);
-                        log_debug('add time word ' . $val->time_phr->name());
-                    }
-                }
-
-                $result .= '  <tr>';
-                $result .= '    <td>';
-                log_debug('words ' . $val->id);
-                $result .= '      ' . $dsp_phr_lst->name_linked() . ' <a href="/http/value_edit.php?id=' . $val->id . '&back=' . $this->phr->id . '">' . $val->dsp_obj()->val_formatted() . '</a>';
-                log_debug('linked words ' . $val->id . ' done');
-                // to review
-                // list the related results
-                $res_lst = new result_list_dsp();
-                $res_lst->load_by_val($val);
-                $result .= $res_lst->frm_links_html();
-                $result .= '    </td>';
-                log_debug('formula results ' . $val->id . ' loaded');
-
-                if ($last_phr_lst != $val_phr_lst) {
-                    $last_phr_lst = $val_phr_lst;
-                    $result .= '    <td>';
-                    $result .= \html\btn_add_value($val_phr_lst, Null, $this->phr->id);
-
-                    $result .= '    </td>';
-                }
-                $result .= '    <td>';
-                $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->phr->id);
-                $result .= '    </td>';
-                $result .= '    <td>';
-                $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->phr->id);
-                $result .= '    </td>';
-                $result .= '  </tr>';
-            }
-        }
-        log_debug('add new button done');
-
-        $result .= $html->dsp_tbl_end();
-
-        // allow the user to add a completely new value
-        log_debug('new');
-
-        $common_phr_lst = $common_phr_lst->phrase_lst();
-
-        // TODO review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): view_component_dsp->all(Object(word_dsp), 291, 17
-        /*
-        if (get_class($this->phr) == word::class or get_class($this->phr) == word_dsp::class) {
-            $this->phr = $this->phr->phrase();
-        }
-        */
-        if (isset($common_phr_lst)) {
-            if (!empty($common_phr_lst->lst())) {
-                $common_phr_lst->add($this->phr);
-                $phr_lst_dsp = $common_phr_lst->dsp_obj();
-                $result .= $phr_lst_dsp->btn_add_value($back);
-            }
-        }
-
-        log_debug("done");
-
-        return $result;
-    }
 
     /**
      * @return phrase_list_dsp a list of phrases used for each value
@@ -298,11 +169,12 @@ class value_list extends list_dsp
         log_debug();
         $lib = new library();
         $grp_lst = new phrase_group_list_dsp();
-        foreach ($this->lst as $grp) {
-            if (isset($grp->grp)) {
-                $grp_lst->lst[] = $grp->grp;
+        foreach ($this->lst as $val) {
+            $grp = $val->grp();
+            if ($grp != null) {
+                $grp_lst->lst[] = $grp;
             } else {
-                log_err("The phrase group for value " . $grp->id . " cannot be loaded.", "value_list->phrase_groups");
+                log_err("The phrase group for value " . $val->id . " cannot be loaded.", "value_list->phrase_groups");
             }
         }
 

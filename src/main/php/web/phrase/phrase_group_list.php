@@ -68,11 +68,10 @@ class phrase_group_list
      * set and get
      */
 
-
     /**
      * add a phrase group if it is not yet part of the list
      */
-    function add($grp)
+    function add($grp): void
     {
         log_debug($grp->id());
         $do_add = false;
@@ -107,21 +106,59 @@ class phrase_group_list
         $result = new phrase_list_dsp();
         $pos = 0;
         foreach ($this->lst as $grp) {
-            $grp->load();
             if ($pos == 0) {
-                if (isset($grp->phr_lst)) {
-                    $result = clone $grp->phr_lst;
+                if ($grp->lst() != null) {
+                    $result->set_lst($grp->lst());
                 }
             } else {
-                if (isset($grp->phr_lst)) {
+                if ($grp->lst() != null) {
                     //$result = $result->concat_unique($grp->phr_lst);
-                    $result->common($grp->phr_lst);
+                    $result->common($grp->lst());
                 }
             }
             log_debug($result->dsp_name());
             $pos++;
         }
         log_debug($lib->dsp_count($result->lst()));
+        return $result;
+    }
+
+    /*
+     * display
+     */
+
+    /**
+     * @return string with to identify the phrase group list
+     */
+    function dsp_id(): string
+    {
+        global $debug;
+        $lib = new library();
+        $result = '';
+        // check the object setup
+        if (count($this->lst) <> count($this->time_lst)) {
+            $result .= 'The number of groups (' . $lib->dsp_count($this->lst) . ') are not equal the number of times (' . $lib->dsp_count($this->time_lst) . ') of this phrase group list';
+        } else {
+
+            $pos = 0;
+            foreach ($this->lst as $phr_lst) {
+                if ($debug > $pos) {
+                    if ($result <> '') {
+                        $result .= ' / ';
+                    }
+                    $result .= $phr_lst->name();
+                    $phr_time = $this->time_lst[$pos];
+                    if (!is_null($phr_time)) {
+                        $result .= '@' . $phr_time->name();
+                    }
+                    $pos++;
+                }
+            }
+            if (count($this->lst) > $pos) {
+                $result .= ' ... total ' . $lib->dsp_count($this->lst);
+            }
+
+        }
         return $result;
     }
 
