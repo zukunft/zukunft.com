@@ -64,6 +64,7 @@ include_once MODEL_LOG_PATH . 'change_log_table.php';
 include_once MODEL_LOG_PATH . 'change_log_field.php';
 
 use api\type_lists_api;
+use controller\controller;
 use model\change_log_action;
 use model\change_log_field;
 use model\change_log_table;
@@ -80,6 +81,7 @@ class type_lists
     /*
      * cast
      */
+
     function api_obj(): type_lists_api
     {
         global $db_con;
@@ -108,29 +110,29 @@ class type_lists
 
         log_debug();
         $lst = new type_lists_api($db_con);
-        $lst->add($user_profiles->api_obj(), 'user_profiles');
-        $lst->add($phrase_types->api_obj(), 'phrase_types');
-        $lst->add($formula_types->api_obj(), 'formula_types');
-        $lst->add($formula_link_types->api_obj(), 'formula_link_types');
-        $lst->add($formula_element_types->api_obj(), 'formula_element_types');
-        $lst->add($view_types->api_obj(), 'view_types');
-        $lst->add($view_component_types->api_obj(), 'view_component_types');
-        //$lst->add($view_component_link_types->api_obj(), 'view_component_link_types');
-        $lst->add($view_component_position_types->api_obj(), 'view_component_position_types');
-        $lst->add($ref_types->api_obj(), 'ref_types');
-        $lst->add($source_types->api_obj(), 'source_types');
-        $lst->add($share_types->api_obj(), 'share_types');
-        $lst->add($protection_types->api_obj(), 'protection_types');
-        $lst->add($languages->api_obj(), 'languages');
-        $lst->add($language_forms->api_obj(), 'language_forms');
-        $lst->add($sys_log_stati->api_obj(), 'sys_log_stati');
-        $lst->add($job_types->api_obj(), 'job_types');
-        $lst->add($change_log_actions->api_obj(), 'change_log_actions');
-        $lst->add($change_log_tables->api_obj(), 'change_log_tables');
-        $lst->add($change_log_fields->api_obj(), 'change_log_fields');
-        $lst->add($verbs->api_obj(), 'verbs');
+        $lst->add($user_profiles->api_obj(), controller::API_LIST_USER_PROFILES);
+        $lst->add($phrase_types->api_obj(), controller::API_LIST_PHRASE_TYPES);
+        $lst->add($formula_types->api_obj(), controller::API_LIST_FORMULA_TYPES);
+        $lst->add($formula_link_types->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
+        $lst->add($formula_element_types->api_obj(), controller::API_LIST_FORMULA_ELEMENT_TYPES);
+        $lst->add($view_types->api_obj(), controller::API_LIST_VIEW_TYPES);
+        $lst->add($view_component_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_TYPES);
+        //$lst->add($view_component_link_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
+        $lst->add($view_component_position_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_POSITION_TYPES);
+        $lst->add($ref_types->api_obj(), controller::API_LIST_REF_TYPES);
+        $lst->add($source_types->api_obj(), controller::API_LIST_SOURCE_TYPES);
+        $lst->add($share_types->api_obj(), controller::API_LIST_SHARE_TYPES);
+        $lst->add($protection_types->api_obj(), controller::API_LIST_PROTECTION_TYPES);
+        $lst->add($languages->api_obj(), controller::API_LIST_LANGUAGES);
+        $lst->add($language_forms->api_obj(), controller::API_LIST_LANGUAGE_FORMS);
+        $lst->add($sys_log_stati->api_obj(), controller::API_LIST_SYS_LOG_STATI);
+        $lst->add($job_types->api_obj(), controller::API_LIST_JOB_TYPES);
+        $lst->add($change_log_actions->api_obj(), controller::API_LIST_CHANGE_LOG_ACTIONS);
+        $lst->add($change_log_tables->api_obj(), controller::API_LIST_CHANGE_LOG_TABLES);
+        $lst->add($change_log_fields->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
+        $lst->add($verbs->api_obj(), controller::API_LIST_VERBS);
         if ($system_views != null) {
-            $lst->add($system_views->api_obj(), 'system_views');
+            $lst->add($system_views->api_obj(), controller::API_LIST_SYSTEM_VIEWS);
         }
         log_debug('done');
         return $lst;

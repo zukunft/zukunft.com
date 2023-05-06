@@ -74,6 +74,7 @@ class controller
     const API_FLD_ID = 'id';     // the unique database id used to save the changes
     const API_FLD_NAME = 'name'; // the unique name of the object which is also a database index
     const API_FLD_DESCRIPTION = 'description';
+    const API_FLD_COMMENT = 'comment';
     // the json field name in the api json message which is supposed to contain the code id of an object type
     // e.g. for the word api message it contains the id of the phrase type
     const API_FLD_TYPE = 'type';
@@ -104,6 +105,29 @@ class controller
     const API_FLD_OWNER = 'owner';
     const API_BODY = 'body';
     const API_BODY_SYS_LOG = 'system_log';
+    const API_TYPE_LISTS = 'type_lists';
+    const API_LIST_USER_PROFILES = 'user_profiles';
+    const API_LIST_PHRASE_TYPES = 'phrase_types';
+    const API_LIST_FORMULA_TYPES = 'formula_types';
+    const API_LIST_FORMULA_LINK_TYPES = 'formula_link_types';
+    const API_LIST_FORMULA_ELEMENT_TYPES = 'formula_element_types';
+    const API_LIST_VIEW_TYPES = 'view_types';
+    const API_LIST_VIEW_COMPONENT_TYPES = 'view_component_types';
+    //    const API_LIST_VIEW_COMPONENT_LINK_TYPES = 'view_component_link_types';
+    const API_LIST_VIEW_COMPONENT_POSITION_TYPES = 'view_component_position_types';
+    const API_LIST_REF_TYPES = 'ref_types';
+    const API_LIST_SOURCE_TYPES = 'source_types';
+    const API_LIST_SHARE_TYPES = 'share_types';
+    const API_LIST_PROTECTION_TYPES = 'protection_types';
+    const API_LIST_LANGUAGES = 'languages';
+    const API_LIST_LANGUAGE_FORMS = 'language_forms';
+    const API_LIST_SYS_LOG_STATI = 'sys_log_stati';
+    const API_LIST_JOB_TYPES = 'job_types';
+    const API_LIST_CHANGE_LOG_ACTIONS = 'change_log_actions';
+    const API_LIST_CHANGE_LOG_TABLES = 'change_log_tables';
+    const API_LIST_CHANGE_LOG_FIELDS = 'change_log_fields';
+    const API_LIST_VERBS = 'verbs';
+    const API_LIST_SYSTEM_VIEWS = 'system_views';
 
     // path parameters
     const PATH_API_REDIRECT = '/../../'; // get from the __DIR__ to the php root path

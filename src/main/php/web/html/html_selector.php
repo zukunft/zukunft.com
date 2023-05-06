@@ -51,7 +51,7 @@ class html_selector
 
     function display(): string
     {
-        $result = $this->start_selector($this->form, $this->name, $this->label, $this->bs_class, $this->attribute);
+        $result = $this->start_selector();
 
         if ($this->dummy_text == '') {
             $this->dummy_text = (new msg())->txt(msg::PLEASE_SELECT);
@@ -85,7 +85,7 @@ class html_selector
 
         global $db_con;
 
-        $result = $this->start_selector($this->form, $this->name, $this->label, $this->bs_class, $this->attribute);
+        $result = $this->start_selector();
 
         /*
         if ($this->dummy_text == '') {
@@ -124,27 +124,27 @@ class html_selector
     /**
      * @returns string the HTML code that starts a selector field
      */
-    private function start_selector($form, $field, $label, $class, $attribute): string
+    private function start_selector(): string
     {
         $result = '';
         // 06.11.2019: removed, check the calling functions
         /*
         if ($label == '') {
-          $label == $field;
+          $label == $this->name;
         }
         */
         if (UI_USE_BOOTSTRAP) {
-            $result .= '<div class="form-group ' . $class . '">';
-            if ($label != "") {
-                $result .= '<label for="' . $field . '">' . $label . '</label>';
+            $result .= '<div class="form-group ' . $this->bs_class . '">';
+            if ($this->label != "") {
+                $result .= '<label for="' . $this->name . '">' . $this->label . '</label>';
             }
-            if ($form != "") {
-                $result .= '<select class="form-control" name="' . $field . '" form="' . $form . '" id="' . $field . '" ' . $attribute . '>';
+            if ($this->form != "") {
+                $result .= '<select class="form-control" name="' . $this->name . '" form="' . $this->form . '" id="' . $this->name . '" ' . $this->attribute . '>';
             } else {
-                $result .= '<select class="form-control" name="' . $field . '" id="' . $field . '" ' . $attribute . '>';
+                $result .= '<select class="form-control" name="' . $this->name . '" id="' . $this->name . '" ' . $this->attribute . '>';
             }
         } else {
-            $result .= $label . ' <select name="' . $field . '" form="' . $form . '">';
+            $result .= $this->label . ' <select name="' . $this->name . '" form="' . $this->form . '">';
         }
         return $result;
     }

@@ -34,6 +34,7 @@ namespace api;
 include_once API_PATH . 'message_header.php';
 
 use api_message;
+use controller\controller;
 use model\sql_db;
 use JsonSerializable;
 
@@ -46,7 +47,7 @@ class type_lists_api extends api_message implements JsonSerializable
     function __construct(sql_db $db_con)
     {
         parent::__construct($db_con, 'type_lists');
-        $this->type = api_message::TYPE_LISTS;
+        $this->type = controller::API_TYPE_LISTS;
     }
 
     function add(type_list_api $lst_to_add, string $api_name): void
@@ -63,9 +64,8 @@ class type_lists_api extends api_message implements JsonSerializable
      */
     function jsonSerialize(): array
     {
-        $json = [];
-        $json[] = json_decode(json_encode((array)$this));
-        return $json;
+        $vars = get_object_vars($this);
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 

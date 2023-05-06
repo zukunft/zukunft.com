@@ -32,8 +32,12 @@
 
 namespace test\html;
 
+include_once WEB_TYPES_PATH . 'type_list.php';
+
 use cfg\formula_type_list;
 use html\html_base;
+use html\types\protection;
+use html\types\type_list as type_list_dsp;
 use test\testing;
 
 class type_list
@@ -46,14 +50,20 @@ class type_list
         $t->subheader('Type list tests');
 
         // create the formula type list test set
-        $lst = new formula_type_list();
-        $lst->load_dummy();
+        $frm_lst = new formula_type_list();
+        $frm_lst->load_dummy();
+
+        // load the types from the api message
+        $api_msg = $t->dummy_type_lists_api()->get_json();
+        $sys_lst = new type_list_dsp($api_msg);
 
         // test the type list display functions
         $test_page = $html->text_h2('type list display test');
 
-        $test_page .= 'selector: ' . '<br>';
-        $test_page .= $lst->dsp_obj()->selector() . '<br>';
+        $test_page .= 'formula type selector from dummy: ' . '<br>';
+        $test_page .= $frm_lst->dsp_obj()->selector() . '<br>';
+        $test_page .= 'protection selector from api message: ' . '<br>';
+        $test_page .= (new protection())->selector() . '<br>';
 
         $t->html_test($test_page, 'types', $t);
     }

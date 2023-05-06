@@ -56,17 +56,32 @@ use api\ref_api;
 use api\result_api;
 use api\source_api;
 use api\triple_api;
+use api\type_lists_api;
 use api\value_api;
 use api\verb_api;
 use api\view_api;
 use api\word_api;
 use api_message;
 use cfg\formula_type;
+use cfg\formula_type_list;
 use cfg\job_type_list;
 use cfg\language;
+use cfg\language_form_list;
+use cfg\language_list;
 use cfg\phrase_type;
+use cfg\protection_type_list;
 use cfg\ref_type_list;
+use cfg\share_type_list;
 use cfg\source_type;
+use cfg\source_type_list;
+use cfg\type_lists;
+use cfg\user_profile_list;
+use cfg\verb_list;
+use cfg\view_cmp_pos_type_list;
+use cfg\view_cmp_type_list;
+use cfg\view_type_list;
+use cfg\word_type_list;
+use controller\controller;
 use controller\log\system_log_api;
 use DateTime;
 use formula\formula_dsp_old;
@@ -83,7 +98,9 @@ use model\component_list;
 use model\figure;
 use model\figure_list;
 use model\formula;
+use model\formula_element_type_list;
 use model\formula_link;
+use model\formula_link_type_list;
 use model\formula_list;
 use model\phrase;
 use model\phrase_group;
@@ -113,11 +130,86 @@ use model\word_list;
 class create_test_objects extends test_base
 {
 
-    CONST DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
+    const DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
 
     /*
      * dummy objects for unit tests
      */
+
+    function dummy_type_lists_api(): type_lists_api
+    {
+        global $db_con;
+        $user_profiles = new user_profile_list();
+        $phrase_types = new word_type_list();
+        $formula_types = new formula_type_list();
+        $formula_link_types = new formula_link_type_list();
+        $formula_element_types = new formula_element_type_list();
+        $view_types = new view_type_list();
+        $view_component_types = new view_cmp_type_list();
+        //$view_component_link_types = new view_component_link_type_list();
+        $view_component_position_types = new view_cmp_pos_type_list();
+        $ref_types = new ref_type_list();
+        $source_types = new source_type_list();
+        $share_types = new share_type_list();
+        $protection_types = new protection_type_list();
+        $languages = new language_list();
+        $language_forms = new language_form_list();
+        $sys_log_stati = new sys_log_status();
+        $job_types = new job_type_list();
+        $change_log_actions = new change_log_action();
+        $change_log_tables = new change_log_table();
+        $change_log_fields = new change_log_field();
+        $verbs = new verb_list();
+        //$system_views = new view_list();
+
+        $user_profiles->load_dummy();
+        $phrase_types->load_dummy();
+        $formula_types->load_dummy();
+        $formula_link_types->load_dummy();
+        $formula_element_types->load_dummy();
+        $view_types->load_dummy();
+        $view_component_types->load_dummy();
+        //$view_component_link_types->load_dummy();
+        $view_component_position_types->load_dummy();
+        $ref_types->load_dummy();
+        $source_types->load_dummy();
+        $share_types->load_dummy();
+        $protection_types->load_dummy();
+        $languages->load_dummy();
+        $language_forms->load_dummy();
+        $sys_log_stati->load_dummy();
+        $job_types->load_dummy();
+        $change_log_actions->load_dummy();
+        $change_log_tables->load_dummy();
+        $change_log_fields->load_dummy();
+        $verbs->load_dummy();
+        //$system_views->load_dummy();
+
+        $lst = new type_lists_api($db_con);
+        $lst->add($user_profiles->api_obj(), controller::API_LIST_USER_PROFILES);
+        $lst->add($phrase_types->api_obj(), controller::API_LIST_PHRASE_TYPES);
+        $lst->add($formula_types->api_obj(), controller::API_LIST_FORMULA_TYPES);
+        $lst->add($formula_link_types->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
+        $lst->add($formula_element_types->api_obj(), controller::API_LIST_FORMULA_ELEMENT_TYPES);
+        $lst->add($view_types->api_obj(), controller::API_LIST_VIEW_TYPES);
+        $lst->add($view_component_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_TYPES);
+        //$lst->add($view_component_link_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
+        $lst->add($view_component_position_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_POSITION_TYPES);
+        $lst->add($ref_types->api_obj(), controller::API_LIST_REF_TYPES);
+        $lst->add($source_types->api_obj(), controller::API_LIST_SOURCE_TYPES);
+        $lst->add($share_types->api_obj(), controller::API_LIST_SHARE_TYPES);
+        $lst->add($protection_types->api_obj(), controller::API_LIST_PROTECTION_TYPES);
+        $lst->add($languages->api_obj(), controller::API_LIST_LANGUAGES);
+        $lst->add($language_forms->api_obj(), controller::API_LIST_LANGUAGE_FORMS);
+        $lst->add($sys_log_stati->api_obj(), controller::API_LIST_SYS_LOG_STATI);
+        $lst->add($job_types->api_obj(), controller::API_LIST_JOB_TYPES);
+        $lst->add($change_log_actions->api_obj(), controller::API_LIST_CHANGE_LOG_ACTIONS);
+        $lst->add($change_log_tables->api_obj(), controller::API_LIST_CHANGE_LOG_TABLES);
+        $lst->add($change_log_fields->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
+        $lst->add($verbs->api_obj(), controller::API_LIST_VERBS);
+        //$lst->add($system_views->api_obj(), controller::API_LIST_SYSTEM_VIEWS);
+        return $lst;
+    }
 
     function dummy_user(): user
     {
@@ -318,7 +410,7 @@ class create_test_objects extends test_base
     function dummy_value(): value
     {
         global $usr;
-        $grp = new phrase_group($usr, 1,  array(phrase_group_api::TN_READ));
+        $grp = new phrase_group($usr, 1, array(phrase_group_api::TN_READ));
         return new value($usr, 1, round(value_api::TV_READ, 13), $grp);
     }
 
@@ -418,6 +510,7 @@ class create_test_objects extends test_base
         $src->url = source_api::TU_READ_API;
         return $src;
     }
+
     function dummy_source1(): source
     {
         global $usr;

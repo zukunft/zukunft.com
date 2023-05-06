@@ -44,7 +44,6 @@ class api_message
 
     // the message types for fast format detection
     const SYS_LOG = 'sys_log';
-    const TYPE_LISTS = 'type_lists';
 
 
     /*
