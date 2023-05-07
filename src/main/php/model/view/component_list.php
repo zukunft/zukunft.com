@@ -39,33 +39,6 @@ use api\component_list_api;
 class component_list extends sandbox_list
 {
 
-    public user $usr;   // the user object of the person for whom the verb list is loaded, so to say the componenter
-
-
-    /*
-     * set and get
-     */
-
-    /**
-     * set the user of the phrase list
-     *
-     * @param user $usr the person who wants to access the phrases
-     * @return void
-     */
-    function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    /**
-     * @return user the person who wants to see the phrases
-     */
-    function user(): user
-    {
-        return $this->usr;
-    }
-
-
     /*
      * cast
      */

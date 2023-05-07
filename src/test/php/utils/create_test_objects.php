@@ -139,6 +139,7 @@ class create_test_objects extends test_base
     function dummy_type_lists_api(): type_lists_api
     {
         global $db_con;
+        global $usr;
         $user_profiles = new user_profile_list();
         $phrase_types = new word_type_list();
         $formula_types = new formula_type_list();
@@ -160,7 +161,6 @@ class create_test_objects extends test_base
         $change_log_tables = new change_log_table();
         $change_log_fields = new change_log_field();
         $verbs = new verb_list();
-        //$system_views = new view_list();
 
         $user_profiles->load_dummy();
         $phrase_types->load_dummy();
@@ -183,7 +183,6 @@ class create_test_objects extends test_base
         $change_log_tables->load_dummy();
         $change_log_fields->load_dummy();
         $verbs->load_dummy();
-        //$system_views->load_dummy();
 
         $lst = new type_lists_api($db_con);
         $lst->add($user_profiles->api_obj(), controller::API_LIST_USER_PROFILES);
@@ -207,7 +206,10 @@ class create_test_objects extends test_base
         $lst->add($change_log_tables->api_obj(), controller::API_LIST_CHANGE_LOG_TABLES);
         $lst->add($change_log_fields->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
         $lst->add($verbs->api_obj(), controller::API_LIST_VERBS);
-        //$lst->add($system_views->api_obj(), controller::API_LIST_SYSTEM_VIEWS);
+
+        $system_views = $this->dummy_view_list();
+        $lst->add($system_views->api_obj(), controller::API_LIST_SYSTEM_VIEWS);
+
         return $lst;
     }
 
@@ -546,7 +548,6 @@ class create_test_objects extends test_base
 
     function dummy_view_with_components(): view
     {
-        global $usr;
         $dsp = $this->dummy_view();
         $dsp->cmp_lst = $this->dummy_component_list();
         return $dsp;
@@ -556,7 +557,7 @@ class create_test_objects extends test_base
     {
         global $usr;
         $lst = new view_list($usr);
-        $lst->add($this->dummy_view());
+        $lst->add($this->dummy_view_with_components());
         return $lst;
     }
 

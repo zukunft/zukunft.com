@@ -50,10 +50,11 @@ class type_lists_api extends api_message implements JsonSerializable
         $this->type = controller::API_TYPE_LISTS;
     }
 
-    function add(type_list_api $lst_to_add, string $api_name): void
+    function add(type_list_api|view_list_api $lst_to_add, string $api_name): void
     {
         $this->type_lists[$api_name] = $lst_to_add;
     }
+
 
     /*
      * interface

@@ -97,6 +97,11 @@ class view extends sandbox_typed_dsp
         return $this->cmp_lst;
     }
 
+    function code_id(): string
+    {
+        return $this->code_id;
+    }
+
 
     /*
      * display

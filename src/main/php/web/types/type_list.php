@@ -37,7 +37,7 @@ include_once WEB_TYPES_PATH . 'protection.php';
 
 use controller\controller;
 use html\types\type_object as type_object_dsp;
-use html\types\protection as protection_dsp;
+use html\view\view_list as view_list_dsp;
 
 class type_list
 {
@@ -321,15 +321,6 @@ class type_list
         $html_verbs->set_obj_from_json_array($json_array);
     }
 
-    function set_system_views(array $json_array = null): void
-    {
-        global $html_system_views;
-        $html_system_views = new type_list();
-        if ($json_array != null) {
-            $html_system_views->set_obj_from_json_array($json_array);
-        }
-    }
-
     function set_sys_log_stati(array $json_array = null): void
     {
         global $html_sys_log_stati;
@@ -381,6 +372,13 @@ class type_list
             );
             $this->add_obj($typ);
         }
+    }
+
+    function set_system_views(array $json_array = null): void
+    {
+        global $html_system_views;
+        $html_system_views = new view_list_dsp();
+        $html_system_views->set_from_json_array($json_array);
     }
 
     /**

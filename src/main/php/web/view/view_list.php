@@ -51,9 +51,21 @@ class view_list extends list_dsp
      */
     function set_obj_from_json_array(array $json_array): object
     {
-        $wrd = new view_dsp();
-        $wrd->set_from_json_array($json_array);
-        return $wrd;
+        $dsp = new view_dsp();
+        $dsp->set_from_json_array($json_array);
+        return $dsp;
+    }
+
+    function get(string $code_id): view_dsp
+    {
+        // TODO use a hash list
+        $result = new view_dsp();
+        foreach ($this->lst as $dsp) {
+            if ($dsp->code_id() == $code_id) {
+                $result = $dsp;
+            }
+        }
+        return $result;
     }
 
 

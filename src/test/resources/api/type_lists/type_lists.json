@@ -1284,213 +1284,264 @@
     "system_views": [
       {
         "id": 1,
-        "code_id": "word",
         "name": "Word",
-        "comment": "the default view for words"
+        "description": "the default view for words",
+        "code_id": "word",
+        "components": []
       },
       {
         "id": 2,
-        "code_id": "entry_view",
         "name": "Start view",
-        "comment": "A dynamic start mask that shows a interesting fact"
+        "description": "A dynamic start mask that shows a interesting fact",
+        "type_id": 2,
+        "code_id": "entry_view",
+        "components": [
+          {
+            "id": 1,
+            "name": "Name",
+            "type_id": 8
+          }
+        ]
       },
       {
         "id": 3,
-        "code_id": "word_add",
         "name": "Add New Word",
-        "comment": ""
+        "code_id": "word_add",
+        "components": [
+          {
+            "id": 2,
+            "name": "form title"
+          },
+          {
+            "id": 3,
+            "name": "hidden back stack"
+          },
+          {
+            "id": 4,
+            "name": "confirm button"
+          },
+          {
+            "id": 5,
+            "name": "name form field"
+          }
+        ]
       },
       {
         "id": 4,
-        "code_id": "word_edit",
         "name": "Change Word",
-        "comment": ""
+        "code_id": "word_edit",
+        "components": []
       },
       {
         "id": 5,
-        "code_id": "word_del",
         "name": "Delete Word",
-        "comment": "Exclude or delete a word"
+        "description": "Exclude or delete a word",
+        "code_id": "word_del",
+        "components": []
       },
       {
         "id": 6,
-        "code_id": "word_find",
         "name": "Search",
-        "comment": "The search page for all words and formulas"
+        "description": "The search page for all words and formulas",
+        "code_id": "word_find",
+        "components": []
       },
       {
         "id": 7,
-        "code_id": "value",
         "name": "Display Number",
-        "comment": ""
+        "code_id": "value",
+        "components": []
       },
       {
         "id": 8,
-        "code_id": "value_add",
         "name": "Add New Number",
-        "comment": ""
+        "code_id": "value_add",
+        "components": []
       },
       {
         "id": 9,
-        "code_id": "value_edit",
         "name": "Change Number",
-        "comment": ""
+        "code_id": "value_edit",
+        "components": []
       },
       {
         "id": 10,
-        "code_id": "value_del",
         "name": "Delete Number",
-        "comment": ""
+        "code_id": "value_del",
+        "components": []
       },
       {
         "id": 11,
-        "code_id": "formula_add",
         "name": "Add New Formula",
-        "comment": ""
+        "code_id": "formula_add",
+        "components": []
       },
       {
         "id": 12,
-        "code_id": "formula_edit",
         "name": "Change Formula",
-        "comment": ""
+        "code_id": "formula_edit",
+        "components": []
       },
       {
         "id": 13,
-        "code_id": "formula_del",
         "name": "Delete Formula",
-        "comment": "To confirm the exclusion or deleting of a formula"
+        "description": "To confirm the exclusion or deleting of a formula",
+        "code_id": "formula_del",
+        "components": []
       },
       {
         "id": 14,
-        "code_id": "formula_explain",
         "name": "Explain Formula Result",
-        "comment": "Explain the formula result"
+        "description": "Explain the formula result",
+        "code_id": "formula_explain",
+        "components": []
       },
       {
         "id": 15,
-        "code_id": "formula_test",
         "name": "Formula test",
-        "comment": "To debug the formula"
+        "description": "To debug the formula",
+        "code_id": "formula_test",
+        "components": []
       },
       {
         "id": 16,
-        "code_id": "source_add",
         "name": "Add New Source",
-        "comment": ""
+        "code_id": "source_add",
+        "components": []
       },
       {
         "id": 17,
-        "code_id": "source_edit",
         "name": "Change Source",
-        "comment": ""
+        "code_id": "source_edit",
+        "components": []
       },
       {
         "id": 18,
-        "code_id": "source_del",
         "name": "Delete Source",
-        "comment": "Delete an external data source"
+        "description": "Delete an external data source",
+        "code_id": "source_del",
+        "components": []
       },
       {
         "id": 19,
-        "code_id": "verbs",
         "name": "Verb List",
-        "comment": "List all available ways how to link two words"
+        "description": "List all available ways how to link two words",
+        "code_id": "verbs",
+        "components": []
       },
       {
         "id": 20,
-        "code_id": "verb_add",
         "name": "Add New Verb",
-        "comment": ""
+        "code_id": "verb_add",
+        "components": []
       },
       {
         "id": 21,
-        "code_id": "verb_edit",
         "name": "Change Verb",
-        "comment": "Rename a tern link type"
+        "description": "Rename a tern link type",
+        "code_id": "verb_edit",
+        "components": []
       },
       {
         "id": 22,
-        "code_id": "verb_del",
         "name": "Delete verb",
-        "comment": "Exclude or delete a verb"
+        "description": "Exclude or delete a verb",
+        "code_id": "verb_del",
+        "components": []
       },
       {
         "id": 23,
-        "code_id": "triple_add",
         "name": "Add New Triple",
-        "comment": ""
+        "code_id": "triple_add",
+        "components": []
       },
       {
         "id": 24,
-        "code_id": "triple_edit",
         "name": "Change Triple",
-        "comment": "Rename a triple"
+        "description": "Rename a triple",
+        "code_id": "triple_edit",
+        "components": []
       },
       {
         "id": 25,
-        "code_id": "triple_del",
         "name": "Delete triple",
-        "comment": "Exclude or delete a triple"
+        "description": "Exclude or delete a triple",
+        "code_id": "triple_del",
+        "components": []
       },
       {
         "id": 26,
-        "code_id": "user",
         "name": "User Settings",
-        "comment": "to change the user settings"
+        "description": "to change the user settings",
+        "code_id": "user",
+        "components": []
       },
       {
         "id": 27,
-        "code_id": "error_log",
         "name": "Error Log",
-        "comment": "simple confirm page for a new error that has been logged in the database"
+        "description": "simple confirm page for a new error that has been logged in the database",
+        "code_id": "error_log",
+        "components": []
       },
       {
         "id": 28,
-        "code_id": "error_update",
         "name": "System Error List",
-        "comment": "List the system errors and allow the user to change the status"
+        "description": "List the system errors and allow the user to change the status",
+        "code_id": "error_update",
+        "components": []
       },
       {
         "id": 29,
-        "code_id": "import",
         "name": "Import",
-        "comment": "Select a file to import data"
+        "description": "Select a file to import data",
+        "code_id": "import",
+        "components": []
       },
       {
         "id": 30,
-        "code_id": "view_add",
         "name": "Add View",
-        "comment": ""
+        "code_id": "view_add",
+        "components": []
       },
       {
         "id": 31,
-        "code_id": "view_edit",
         "name": "Change View",
-        "comment": "Rename a view"
+        "description": "Rename a view",
+        "code_id": "view_edit",
+        "components": []
       },
       {
         "id": 32,
-        "code_id": "view_del",
         "name": "Delete View",
-        "comment": "Exclude or delete a view"
+        "description": "Exclude or delete a view",
+        "code_id": "view_del",
+        "components": []
       },
       {
         "id": 33,
-        "code_id": "view_entry_add",
         "name": "Add View Component",
-        "comment": ""
+        "code_id": "view_entry_add",
+        "components": [
+          {
+            "id": 6,
+            "name": "System view component field",
+            "type_id": 17
+          }
+        ]
       },
       {
         "id": 34,
-        "code_id": "view_entry_edit",
         "name": "Change View Component",
-        "comment": "Adjust a view component"
+        "description": "Adjust a view component",
+        "code_id": "view_entry_edit",
+        "components": []
       },
       {
         "id": 35,
-        "code_id": "view_entry_del",
         "name": "Delete View Component",
-        "comment": "Exclude or delete a view component"
+        "description": "Exclude or delete a view component",
+        "code_id": "view_entry_del",
+        "components": []
       }
     ]
   }

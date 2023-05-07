@@ -34,6 +34,7 @@ namespace test\html;
 
 include_once WEB_TYPES_PATH . 'type_list.php';
 
+use api\view_api;
 use cfg\formula_type_list;
 use html\html_base;
 use html\types\protection;
@@ -55,7 +56,11 @@ class type_list
 
         // load the types from the api message
         $api_msg = $t->dummy_type_lists_api()->get_json();
-        $sys_lst = new type_list_dsp($api_msg);
+        new type_list_dsp($api_msg);
+
+        // check if the system views have set
+        global $html_system_views;
+        $dsp = $html_system_views->get(view_api::TI_READ);
 
         // test the type list display functions
         $test_page = $html->text_h2('type list display test');

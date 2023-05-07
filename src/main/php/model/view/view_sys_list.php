@@ -37,6 +37,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 
+use api\view_list_api;
 use model\sql_db;
 use model\sql_par;
 use model\user;
@@ -79,6 +80,24 @@ class view_sys_list extends type_list
         return $this->usr;
     }
 
+
+    /*
+     * cast
+     */
+
+    /**
+     * @return view_list_api the object type list frontend api object
+     */
+    function api_obj(): object
+    {
+        $api_obj = new view_list_api();
+        foreach ($this->lst as $dsp) {
+            $api_obj->add($dsp->api_obj());
+        }
+        return $api_obj;
+    }
+
+
     /*
      * loading functions
      */
@@ -90,8 +109,10 @@ class view_sys_list extends type_list
      */
     function load_sql_list(sql_db $db_con): sql_par
     {
+        // TODO check the user
+        global $usr;
         $this->lst = [];
-        $dsp_lst = new view_list($this->user());
+        $dsp_lst = new view_list($usr);
         $qp = $dsp_lst->load_sql($db_con, self::class);
         $qp->name .= 'sys_views';
         $db_con->set_name($qp->name);
@@ -115,9 +136,10 @@ class view_sys_list extends type_list
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
-                $vrb = new view($this->usr);
-                $vrb->row_mapper($db_row);
-                $this->lst[$db_row[$db_con->get_id_field_name($db_type)]] = $vrb;
+                $dsp = new view($this->usr);
+                $dsp->row_mapper($db_row);
+                $dsp->load_components();
+                $this->lst[$db_row[$db_con->get_id_field_name($db_type)]] = $dsp;
             }
         }
         return $this->lst;

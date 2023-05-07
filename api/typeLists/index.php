@@ -59,7 +59,7 @@ $msg .= $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
-    $sys_typ_lst = new type_lists($usr);
+    $sys_typ_lst = new type_lists();
     $sys_typ_lst->load($db_con, $usr);
     $result = $sys_typ_lst->api_obj();
 }

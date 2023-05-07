@@ -33,6 +33,7 @@ namespace model;
 
 include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'component.php';
+include_once MODEL_VIEW_PATH . 'component_list.php';
 include_once MODEL_VIEW_PATH . 'view_component_link.php';
 include_once MODEL_VIEW_PATH . 'view_cmp_dsp.php'; // TODO move to web namespace
 include_once SERVICE_EXPORT_PATH . 'view_exp.php';
@@ -522,7 +523,6 @@ class view extends sandbox_typed
         log_debug($this->dsp_id());
 
         global $db_con;
-        $lib = new library();
         $result = true;
 
         $db_con->usr_id = $this->user()->id();
