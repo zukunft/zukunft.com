@@ -34,17 +34,15 @@ namespace cfg\export;
 class view_exp extends sandbox_exp_named
 {
 
-    // field names used for JSON creation
+    // additional view fields used for JSON creation
     public ?string $description = '';
     public ?string $type = '';
     public ?array $view_components = null;
 
-    function reset()
+    function reset(): void
     {
         parent::reset();
-
         $this->type = '';
-
         $this->view_components = null;
     }
 

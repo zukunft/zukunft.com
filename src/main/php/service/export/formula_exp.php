@@ -42,7 +42,7 @@ class formula_exp extends sandbox_exp_named
     public ?string $type = '';
     public ?string $assigned_word = '';
 
-    function reset()
+    function reset(): void
     {
         parent::reset();
 

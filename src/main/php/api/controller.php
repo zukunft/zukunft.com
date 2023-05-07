@@ -84,6 +84,7 @@ class controller
     const API_FLD_CODE_ID = 'code_id';
     const API_FLD_PHRASE = 'phrase_id';
     const API_FLD_PHRASES = 'phrases';
+    const API_FLD_COMPONENTS = 'components';
     const API_FLD_SOURCE = 'source_id';
     // a float number used for values and results
     const API_FLD_NUMBER = 'number';

@@ -42,7 +42,7 @@ class view_cmp_exp extends sandbox_exp_named
     public ?string $column2 = '';
     public ?string $description = '';
 
-    function reset()
+    function reset(): void
     {
         parent::reset();
 

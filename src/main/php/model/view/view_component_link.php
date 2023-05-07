@@ -459,35 +459,39 @@ class view_component_link extends sandbox_link_with_type
                 log_debug('view_component_link->move check order numbers for ' . $this->fob->dsp_id());
                 // TODO define the common sorting start number, which is 1 and not 0
                 $order_nbr = 1;
-                foreach ($this->fob->cmp_lst as $entry) {
-                    // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                    $cmp_lnk = new view_component_link($this->user());
-                    $cmp_lnk->fob = $this->fob;
-                    $cmp_lnk->tob = $entry;
-                    $cmp_lnk->load_obj_vars();
-                    // fix any wrong order numbers
-                    if ($cmp_lnk->order_nbr != $order_nbr) {
-                        log_debug('view_component_link->move check order number of the view component ' . $entry->dsp_id() . ' corrected from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
-                        //zu_err('Order number of the view component "'.$entry->name.'" corrected from '.$cmp_lnk->order_nbr.' to '.$order_nbr.'.', "view_component_link->move");
-                        $cmp_lnk->order_nbr = $order_nbr;
-                        $cmp_lnk->save();
-                        $order_number_corrected = true;
+                if ($this->cmp_lst != null) {
+                    foreach ($this->fob->cmp_lst->lst() as $entry) {
+                        // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
+                        $cmp_lnk = new view_component_link($this->user());
+                        $cmp_lnk->fob = $this->fob;
+                        $cmp_lnk->tob = $entry;
+                        $cmp_lnk->load_obj_vars();
+                        // fix any wrong order numbers
+                        if ($cmp_lnk->order_nbr != $order_nbr) {
+                            log_debug('view_component_link->move check order number of the view component ' . $entry->dsp_id() . ' corrected from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
+                            //zu_err('Order number of the view component "'.$entry->name.'" corrected from '.$cmp_lnk->order_nbr.' to '.$order_nbr.'.', "view_component_link->move");
+                            $cmp_lnk->order_nbr = $order_nbr;
+                            $cmp_lnk->save();
+                            $order_number_corrected = true;
+                        }
+                        log_debug('view_component_link->move check order numbers checked for ' . $this->fob->dsp_id() . ' and ' . $entry->dsp_id() . ' at position ' . $order_nbr);
+                        $order_nbr++;
                     }
-                    log_debug('view_component_link->move check order numbers checked for ' . $this->fob->dsp_id() . ' and ' . $entry->dsp_id() . ' at position ' . $order_nbr);
-                    $order_nbr++;
                 }
                 if ($order_number_corrected) {
                     log_debug('view_component_link->move reload after correction');
                     $this->fob->load_components();
                     // check if correction was successful
                     $order_nbr = 0;
-                    foreach ($this->fob->cmp_lst as $entry) {
-                        $cmp_lnk = new view_component_link($this->user());
-                        $cmp_lnk->fob = $this->fob;
-                        $cmp_lnk->tob = $entry;
-                        $cmp_lnk->load_obj_vars();
-                        if ($cmp_lnk->order_nbr != $order_nbr) {
-                            log_err('Component link ' . $cmp_lnk->dsp_id() . ' should have position ' . $order_nbr . ', but is ' . $cmp_lnk->order_nbr, "view_component_link->move");
+                    if ($this->cmp_lst != null) {
+                        foreach ($this->fob->cmp_lst->lst() as $entry) {
+                            $cmp_lnk = new view_component_link($this->user());
+                            $cmp_lnk->fob = $this->fob;
+                            $cmp_lnk->tob = $entry;
+                            $cmp_lnk->load_obj_vars();
+                            if ($cmp_lnk->order_nbr != $order_nbr) {
+                                log_err('Component link ' . $cmp_lnk->dsp_id() . ' should have position ' . $order_nbr . ', but is ' . $cmp_lnk->order_nbr, "view_component_link->move");
+                            }
                         }
                     }
                 }
@@ -498,47 +502,49 @@ class view_component_link extends sandbox_link_with_type
                 $order_nbr = 1;
                 $prev_entry = null;
                 $prev_entry_down = false;
-                foreach ($this->fob->cmp_lst as $entry) {
-                    // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                    $cmp_lnk = new view_component_link($this->user());
-                    $cmp_lnk->fob = $this->fob;
-                    $cmp_lnk->tob = $entry;
-                    $cmp_lnk->load_obj_vars();
-                    if ($prev_entry_down) {
-                        if (isset($prev_entry)) {
-                            log_debug('view_component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
-                            $prev_entry->order_nbr = $order_nbr;
-                            $prev_entry->save();
-                            $prev_entry = null;
+                if ($this->cmp_lst != null) {
+                    foreach ($this->fob->cmp_lst->lst() as $entry) {
+                        // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
+                        $cmp_lnk = new view_component_link($this->user());
+                        $cmp_lnk->fob = $this->fob;
+                        $cmp_lnk->tob = $entry;
+                        $cmp_lnk->load_obj_vars();
+                        if ($prev_entry_down) {
+                            if (isset($prev_entry)) {
+                                log_debug('view_component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
+                                $prev_entry->order_nbr = $order_nbr;
+                                $prev_entry->save();
+                                $prev_entry = null;
+                            }
+                            log_debug('view_component_link->move order number of the view component "' . $cmp_lnk->tob->name() . '" changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in "' . $this->fob->name() . '"');
+                            $cmp_lnk->order_nbr = $order_nbr - 1;
+                            $cmp_lnk->save();
+                            $result = true;
+                            $prev_entry_down = false;
                         }
-                        log_debug('view_component_link->move order number of the view component "' . $cmp_lnk->tob->name() . '" changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in "' . $this->fob->name() . '"');
-                        $cmp_lnk->order_nbr = $order_nbr - 1;
-                        $cmp_lnk->save();
-                        $result = true;
-                        $prev_entry_down = false;
-                    }
-                    if ($entry->id == $this->cmp->id) {
-                        if ($direction == 'up') {
-                            if ($cmp_lnk->order_nbr > 0) {
-                                log_debug('view_component_link->move order number of the view component ' . $cmp_lnk->tob->dsp_id() . ' changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in ' . $this->fob->dsp_id());
-                                $cmp_lnk->order_nbr = $order_nbr - 1;
-                                $cmp_lnk->save();
-                                $result = true;
-                                if (isset($prev_entry)) {
-                                    log_debug('view_component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
-                                    $prev_entry->order_nbr = $order_nbr;
-                                    $prev_entry->save();
+                        if ($entry->id == $this->cmp->id) {
+                            if ($direction == 'up') {
+                                if ($cmp_lnk->order_nbr > 0) {
+                                    log_debug('view_component_link->move order number of the view component ' . $cmp_lnk->tob->dsp_id() . ' changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in ' . $this->fob->dsp_id());
+                                    $cmp_lnk->order_nbr = $order_nbr - 1;
+                                    $cmp_lnk->save();
+                                    $result = true;
+                                    if (isset($prev_entry)) {
+                                        log_debug('view_component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
+                                        $prev_entry->order_nbr = $order_nbr;
+                                        $prev_entry->save();
+                                    }
+                                }
+                            } else {
+                                if ($cmp_lnk->order_nbr > 0) {
+                                    $prev_entry = $cmp_lnk;
+                                    $prev_entry_down = true;
                                 }
                             }
-                        } else {
-                            if ($cmp_lnk->order_nbr > 0) {
-                                $prev_entry = $cmp_lnk;
-                                $prev_entry_down = true;
-                            }
                         }
+                        $prev_entry = $cmp_lnk;
+                        $order_nbr++;
                     }
-                    $prev_entry = $cmp_lnk;
-                    $order_nbr++;
                 }
             }
 

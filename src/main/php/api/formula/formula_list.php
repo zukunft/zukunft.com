@@ -49,7 +49,7 @@ class formula_list_api extends list_api implements JsonSerializable
 
     /**
      * add a formula to the list
-     * @returns bool true if the phrase has been added
+     * @returns bool true if the formula has been added
      */
     function add(formula_api $frm): bool
     {

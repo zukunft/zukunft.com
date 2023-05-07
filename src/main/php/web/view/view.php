@@ -40,7 +40,7 @@ use controller\controller;
 use html\api;
 use html\button;
 use html\html_base;
-use html\phrase\term as term_dsp;
+use html\view\component_list as component_list_dsp;
 use html\sandbox_typed_dsp;
 use html\word\word;
 
@@ -53,6 +53,7 @@ class view extends sandbox_typed_dsp
 
     // used for system views
     private string $code_id;
+    private component_list_dsp $cmp_lst;
 
 
     /*
@@ -84,7 +85,18 @@ class view extends sandbox_typed_dsp
         } else {
             $this->code_id = null;
         }
+        $cmp_lst = new component_list_dsp();
+        if (array_key_exists(controller::API_FLD_COMPONENTS, $json_array)) {
+            $cmp_lst->set_from_json_array($json_array[controller::API_FLD_COMPONENTS]);
+        }
+        $this->cmp_lst = $cmp_lst;
     }
+
+    function component_list(): component_list_dsp
+    {
+        return $this->cmp_lst;
+    }
+
 
     /*
      * display
@@ -146,23 +158,25 @@ class view extends sandbox_typed_dsp
         log_debug('"' . $wrd->name() . '" with the view ' . $this->dsp_id() . '"');
 
         $result = '';
-        foreach ($this->cmp_lst as $cmp) {
-            log_debug('"' . $cmp->name . '" type "' . $cmp->type_id . '"');
+        if (!$this->cmp_lst->is_empty()) {
+            foreach ($this->cmp_lst->lst() as $cmp) {
+                log_debug('"' . $cmp->name . '" type "' . $cmp->type_id . '"');
 
-            // list of all possible view components
-            $cmp_dsp = $cmp->dsp_obj();
-            $result .= $cmp_dsp->text();        // just to display a simple text
-            $result .= $cmp_dsp->word_name($wrd->phrase()->dsp_obj()); // show the word name and give the user the possibility to change the word name
-            $result .= $cmp_dsp->table($wrd); // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
-            $result .= $cmp_dsp->num_list($wrd, $back); // a word list with some key numbers e.g. all companies with the PE ratio
-            $result .= $cmp_dsp->formulas($wrd); // display all formulas related to the given word
-            $result .= $cmp_dsp->results($wrd); // show a list of formula results related to a word
-            $result .= $cmp_dsp->word_children($wrd); // show all words that are based on the given start word
-            $result .= $cmp_dsp->word_parents($wrd); // show all word that this words is based on
-            $result .= $cmp_dsp->json_export($wrd, $back); // offer to configure and create an JSON file
-            $result .= $cmp_dsp->xml_export($wrd, $back); // offer to configure and create an XML file
-            $result .= $cmp_dsp->csv_export($wrd, $back); // offer to configure and create an CSV file
-            $result .= $cmp_dsp->all($wrd->phrase(), $back); // shows all: all words that link to the given word and all values related to the given word
+                // list of all possible view components
+                $cmp_dsp = $cmp->dsp_obj();
+                $result .= $cmp_dsp->text();        // just to display a simple text
+                $result .= $cmp_dsp->word_name($wrd->phrase()->dsp_obj()); // show the word name and give the user the possibility to change the word name
+                $result .= $cmp_dsp->table($wrd); // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
+                $result .= $cmp_dsp->num_list($wrd, $back); // a word list with some key numbers e.g. all companies with the PE ratio
+                $result .= $cmp_dsp->formulas($wrd); // display all formulas related to the given word
+                $result .= $cmp_dsp->results($wrd); // show a list of formula results related to a word
+                $result .= $cmp_dsp->word_children($wrd); // show all words that are based on the given start word
+                $result .= $cmp_dsp->word_parents($wrd); // show all word that this words is based on
+                $result .= $cmp_dsp->json_export($wrd, $back); // offer to configure and create an JSON file
+                $result .= $cmp_dsp->xml_export($wrd, $back); // offer to configure and create an XML file
+                $result .= $cmp_dsp->csv_export($wrd, $back); // offer to configure and create an CSV file
+                $result .= $cmp_dsp->all($wrd->phrase(), $back); // shows all: all words that link to the given word and all values related to the given word
+            }
         }
 
         log_debug('done');
@@ -349,7 +363,7 @@ class view extends sandbox_typed_dsp
     {
         $vars = parent::api_array();
         $vars[controller::API_FLD_CODE_ID] = $this->code_id;
-
+        $vars[controller::API_FLD_COMPONENTS] = $this->cmp_lst->api_array();
         return array_filter($vars, fn($value) => !is_null($value));
     }
 

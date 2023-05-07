@@ -545,19 +545,19 @@ class ref extends sandbox_link_with_type
      * import a link to external database from an imported json object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, bool $do_save = true): user_message
+    function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
-        $result = parent::import_obj($in_ex_json, $do_save);
+        $result = parent::import_obj($in_ex_json, $test_obj);
 
         $ref_lst = new ref_type_list();
         // reset of object not needed, because the calling function has just created the object
         foreach ($in_ex_json as $key => $value) {
             if ($key == exp_obj::FLD_SOURCE) {
                 $src = new source($this->user());
-                if ($do_save) {
+                if (!$test_obj) {
                     $src->load_by_name($value, source::class);
                     if ($src->id == 0) {
                         $result->add_message('Cannot find source "' . $value . '" when importing ' . $this->dsp_id());
@@ -588,9 +588,11 @@ class ref extends sandbox_link_with_type
             }
         }
         // to be able to log the object names
-        if ($this->load_objects()) {
-            if ($result->is_ok() and $do_save) {
-                $result->add_message($this->save());
+        if (!$test_obj) {
+            if ($this->load_objects()) {
+                if ($result->is_ok()) {
+                    $result->add_message($this->save());
+                }
             }
         }
 

@@ -361,18 +361,18 @@ class formula_list extends sandbox_list
      * import a list of formulas from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
+    function import_obj(array $json_obj, object $test_obj = null): user_message
     {
         $result = new user_message();
         foreach ($json_obj as $key => $value) {
             $frm = new formula($this->user());
-            $result->add($frm->import_obj($value, $do_save));
+            $result->add($frm->import_obj($value, $test_obj));
             // add a dummy id for unit testing
-            if (!$do_save) {
-                $frm->set_id($key + 1);
+            if ($test_obj) {
+                $frm->set_id($test_obj->seq_id());
             }
             $this->add($frm);
         }
@@ -404,12 +404,12 @@ class formula_list extends sandbox_list
 
     /**
      * add one formula to the formula list, but only if it is not yet part of the list
-     * @param formula|null $obj_to_add the formula backend object that should be added
+     * @param formula|null $frm_to_add the formula backend object that should be added
      * @returns bool true the formula has been added
      */
-    function add(?formula $obj_to_add): bool
+    function add(?formula $frm_to_add): bool
     {
-        return parent::add_obj($obj_to_add);
+        return parent::add_obj($frm_to_add);
     }
 
 
@@ -421,7 +421,7 @@ class formula_list extends sandbox_list
      * @param sql_db $db_con the active database connection
      * @return int|null the total number of formulas (without user specific changes)
      */
-    function count(sql_db $db_con): ?int
+    function count_db(sql_db $db_con): ?int
     {
         return $db_con->count(sql_db::TBL_FORMULA);
     }
@@ -435,7 +435,7 @@ class formula_list extends sandbox_list
     {
         $result = true;
 
-        $total = $this->count($db_con);
+        $total = $this->count_db($db_con);
         $page = 1;
         $pages = ceil($total / self::UPDATE_BLOCK_SIZE);
         while ($page <= $pages and $result) {

@@ -50,8 +50,8 @@ class figure_list_api extends list_api implements JsonSerializable
     }
 
     /**
-     * add a phrase to the list
-     * @returns bool true if the phrase has been added
+     * add a figure to the list
+     * @returns bool true if the figure has been added
      */
     function add(figure_api $phr): bool
     {

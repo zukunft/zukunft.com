@@ -115,8 +115,8 @@ class view_list extends sandbox_list
     }
 
     /**
-     * add one result to the result list, but only if it is not yet part of the phrase list
-     * @param view $dsp_to_add the calculation result that should be added to the list
+     * add one view to the view list, but only if it is not yet part of the phrase list
+     * @param view $dsp_to_add the view that should be added to the list
      */
     function add(view $dsp_to_add): void
     {
@@ -139,21 +139,15 @@ class view_list extends sandbox_list
      * import a list of views from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
+    function import_obj(array $json_obj, object $test_obj = null): user_message
     {
         $result = new user_message();
-        $id = 1;
-        foreach ($json_obj as $key => $dsp_json) {
+        foreach ($json_obj as $dsp_json) {
             $dsp = new view($this->user());
-            $result->add($dsp->import_obj($dsp_json, $do_save));
-            // add a dummy id for unit testing
-            if (!$do_save) {
-                $dsp->set_id($id);
-                $id++;
-            }
+            $result->add($dsp->import_obj($dsp_json, $test_obj));
             $this->add($dsp);
         }
 

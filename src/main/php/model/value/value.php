@@ -990,20 +990,26 @@ class value extends sandbox_value
      * import a value from an external object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, bool $do_save = true): user_message
+    function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
         log_debug();
-        $result = new user_message();
+        $result = parent::import_obj($in_ex_json, $test_obj);
+
+        if ($test_obj) {
+            $do_save = false;
+        } else {
+            $do_save = true;
+        }
 
         $get_ownership = false;
         foreach ($in_ex_json as $key => $value) {
 
             if ($key == export::WORDS) {
                 $phr_lst = new phrase_list($this->user());
-                $result->add($phr_lst->import_lst($value, $do_save));
+                $result->add($phr_lst->import_lst($value, $test_obj));
                 if ($result->is_ok()) {
                     $phr_grp = $phr_lst->get_grp($do_save);
                     $this->grp = $phr_grp;
@@ -1014,8 +1020,11 @@ class value extends sandbox_value
 
         }
 
-        if ($result->is_ok() and $do_save) {
-            $result->add_message($this->save());
+        // save the value in the database
+        if (!$test_obj) {
+            if ($result->is_ok()) {
+                $result->add_message($this->save());
+            }
         }
 
         // try to get the ownership if requested
@@ -1572,7 +1581,7 @@ class value extends sandbox_value
                 log_debug('del ' . implode(",", $del_ids) . '');
                 $del_nbr = 0;
                 $sql_ids = $lib->sql_array($del_ids,
-                ' AND ' . $field_name . ' IN (', ')');
+                    ' AND ' . $field_name . ' IN (', ')');
                 $sql = 'DELETE FROM ' . $table_name . ' 
                WHERE value_id = ' . $this->id() . $sql_ids;
                 //$sql_result = $db_con->exe($sql, "value->upd_phr_links_delete", array());

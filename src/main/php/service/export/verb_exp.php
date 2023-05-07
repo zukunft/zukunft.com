@@ -42,7 +42,7 @@ class verb_exp extends sandbox_exp_named
     public ?string $name_plural = '';
     public ?string $name_plural_reverse = '';
 
-    function reset()
+    function reset(): void
     {
         sandbox_exp_named::reset();
 

@@ -43,7 +43,7 @@ class word_exp extends sandbox_exp_named implements JsonSerializable
     public ?string $view = '';
     public ?array $refs = [];
 
-    function reset()
+    function reset(): void
     {
         parent::reset();
 

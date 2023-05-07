@@ -57,6 +57,7 @@ class api_message
     public string $user;      // for fast debugging
     public string $version;   // to prevent communication error due to incompatible program versions
     public string $timestamp; // for automatic delay problem detection
+    public string $config;    // timestamp of the configuration to include the config in the response if needed
     public object $body;      // the json payload of the message
 
 

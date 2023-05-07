@@ -83,6 +83,7 @@ class figure_list extends list_dsp
 
     /**
      * add a figure to the list
+     * @param figure_dsp $fig the figure frontend object that should be added to the list
      * @returns bool true if the figure has been added
      */
     function add(figure_dsp $fig): bool

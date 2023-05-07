@@ -45,7 +45,7 @@ class user_exp extends sandbox_exp_named
     public ?string $profile = null;
     public ?string $code_id = null;
 
-    function reset()
+    function reset(): void
     {
         sandbox_exp_named::reset();
 

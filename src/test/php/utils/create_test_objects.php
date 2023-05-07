@@ -544,6 +544,14 @@ class create_test_objects extends test_base
         return $dsp;
     }
 
+    function dummy_view_with_components(): view
+    {
+        global $usr;
+        $dsp = $this->dummy_view();
+        $dsp->cmp_lst = $this->dummy_component_list();
+        return $dsp;
+    }
+
     function dummy_view_list(): view_list
     {
         global $usr;

@@ -43,7 +43,7 @@ class sandbox_exp_named extends exp_obj
     public ?string $protection= null; // the protection of the given object; TODO check that empty string over writes the setting
 
     // reset the search values of this object
-    function reset()
+    function reset(): void
     {
         $this->name = '';
         $this->share = null;

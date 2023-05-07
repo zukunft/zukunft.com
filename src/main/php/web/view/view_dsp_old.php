@@ -87,7 +87,7 @@ class view_dsp_old extends view
 
         $result = '';
         $this->load_components();
-        foreach ($this->cmp_lst as $cmp) {
+        foreach ($this->cmp_lst->lst() as $cmp) {
             log_debug('"' . $cmp->name . '" type "' . $cmp->type_id . '"');
 
             // list of all possible view components

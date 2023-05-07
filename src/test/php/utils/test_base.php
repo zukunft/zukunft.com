@@ -71,6 +71,7 @@ use model\triple;
 use model\triple_list;
 use model\trm_ids;
 use model\user;
+use model\user_profile;
 use model\value;
 use model\value_list;
 use model\verb;
@@ -665,10 +666,15 @@ class test_base
      */
     function assert_json(object $usr_obj, string $json_file_name): bool
     {
+        global $user_profiles;
         $lib = new library();
         $file_text = file_get_contents(PATH_TEST_FILES . $json_file_name);
         $json_in = json_decode($file_text, true);
-        $usr_obj->import_obj($json_in, false);
+        if ($usr_obj::class == user::class) {
+            $usr_obj->import_obj($json_in, $user_profiles->id(user_profile::ADMIN), $this);
+        } else {
+            $usr_obj->import_obj($json_in, $this);
+        }
         $this->set_id_for_unit_tests($usr_obj);
         $json_ex = json_decode(json_encode($usr_obj->export_obj(false)), true);
         $result = $lib->json_is_similar($json_in, $json_ex);

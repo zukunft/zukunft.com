@@ -81,7 +81,7 @@ class system_unit_tests
 
         // sql to load by id
         $db_con->db_type = sql_db::POSTGRES;
-        $ip_range->id = 1;
+        $ip_range->set_id(1);
         $ip_range->set_user($usr);
         $created_sql = $ip_range->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/system/ip_blocked.sql');
@@ -196,7 +196,7 @@ class system_unit_tests
         $json_in = json_decode(file_get_contents(PATH_TEST_FILES . 'unit/system/ip_blacklist.json'), true);
         $ip_range = new ip_range();
         $ip_range->set_user($usr);
-        $ip_range->import_obj($json_in, false);
+        $ip_range->import_obj($json_in, $t);
         $json_ex = json_decode(json_encode($ip_range->export_obj()), true);
         $result = $lib->json_is_similar($json_in, $json_ex);
         $t->assert('ip_range->import check', $result, true);
@@ -211,7 +211,7 @@ class system_unit_tests
         $json_in = json_decode(file_get_contents(PATH_TEST_FILES . 'unit/system/ip_blacklist.json'), true);
         $ip_range = new ip_range();
         $ip_range->set_user($usr);
-        $ip_range->import_obj($json_in, false);
+        $ip_range->import_obj($json_in, $t);
         $test_ip = '66.249.64.95';
         $result = $ip_range->includes($test_ip);
         $t->assert('ip_range->includes check', $result, true);

@@ -90,14 +90,20 @@ use model\sys_log_status;
 use model\user;
 use model\user_list;
 use model\user_profile;
-use test\html\type_list as type_list_html_tests;;
+use test\html\type_list as type_list_html_tests;
+
+;
+
 use test\html\user as user_html_tests;
 use test\html\word as word_html_tests;
 use test\html\word_list as word_list_html_tests;
 use test\html\verb as verb_html_tests;
 use test\html\triple as triple_html_tests;
 use test\html\phrase as phrase_html_tests;
-use test\html\phrase_list as phrase_list_html_tests;;
+use test\html\phrase_list as phrase_list_html_tests;
+
+;
+
 use test\html\phrase_group as phrase_group_html_tests;
 use test\html\term as term_html_tests;
 use test\html\term_list as term_list_html_tests;
@@ -116,12 +122,17 @@ use test\html\component_list as component_list_html_tests;
 use test\html\source as source_html_tests;
 use test\html\reference as reference_html_tests;
 use test\html\language as language_html_tests;
-use test\html\change_log as change_log_html_tests;;
+use test\html\change_log as change_log_html_tests;
+
+;
+
 use test\html\system_log as system_log_html_tests;
 use test\html\batch_job as batch_job_html_tests;
 
 class test_unit extends testing
 {
+
+    private int $seq_id = 0;
 
     /**
      * run all unit test in a useful order
@@ -503,6 +514,7 @@ class test_unit extends testing
         $job_types->load_dummy();
 
     }
+
     /**
      * create log table array for the unit tests without database connection
      */
@@ -537,6 +549,15 @@ class test_unit extends testing
         $change_log_fields = new change_log_field();
         $change_log_fields->load_dummy();
 
+    }
+
+    /**
+     * @return int the next dummy id for unit testing
+     */
+    function seq_id(): int
+    {
+        $this->seq_id++;
+        return $this->seq_id;
     }
 
 }

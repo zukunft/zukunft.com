@@ -326,9 +326,9 @@ class change_log_list extends base_list
      */
 
     /**
-     * add one named change to the change list
+     * add one change log entry to the change list
      * @param change_log_named|null $chg_to_add the change that should be added to the list
-     * @returns bool true the phrase has been added
+     * @returns bool true the log entry has been added
      */
     function add(?change_log_named $chg_to_add): bool
     {

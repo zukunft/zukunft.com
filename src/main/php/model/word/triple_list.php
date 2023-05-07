@@ -614,6 +614,7 @@ class triple_list extends sandbox_list
 
     /**
      * add one triple to the triple list, but only if it is not yet part of the list
+     * @param triple
      * @return bool true if the triple has been added to the list
      *              and false if the triple already exists
      */
@@ -641,19 +642,15 @@ class triple_list extends sandbox_list
      * import a triple list object from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
+    function import_obj(array $json_obj, object $test_obj = null): user_message
     {
         $result = new user_message();
-        foreach ($json_obj as $key => $value) {
+        foreach ($json_obj as $value) {
             $trp = new triple($this->user());
-            $result->add($trp->import_obj($value, $do_save));
-            // add a dummy id for unit testing
-            if (!$do_save) {
-                $trp->set_id($key + 1);
-            }
+            $result->add($trp->import_obj($value, $test_obj));
             $this->add($trp);
         }
 
@@ -863,14 +860,6 @@ class triple_list extends sandbox_list
             }
         }
         return $result;
-    }
-
-    /**
-     * returns the number of phrases in this list
-     */
-    function count(): int
-    {
-        return count($this->lst);
     }
 
     /**

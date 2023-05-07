@@ -114,31 +114,7 @@ class term_list_api extends list_api implements JsonSerializable
 
 
     /*
-     * information
-     */
-
-    /**
-     * @returns int the number of terms of the protected list
-     */
-    function count(): int
-    {
-        return count($this->lst);
-    }
-
-    /**
-     * @returns true if the list does not contain any term
-     */
-    function is_empty(): bool
-    {
-        if ($this->count() <= 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /*
-     * modification functions
+     * modify
      */
 
     /**

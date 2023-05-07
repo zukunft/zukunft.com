@@ -51,9 +51,9 @@ class word_list_api extends list_api
      * add a word to the list
      * @returns bool true if the word has been added
      */
-    function add(word_api $phr): bool
+    function add(word_api $wrd): bool
     {
-        return parent::add_obj($phr);
+        return parent::add_obj($wrd);
     }
 
 

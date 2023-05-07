@@ -483,15 +483,15 @@ class verb extends db_object
      * add a verb in the database from an imported json object of external database from
      *
      * @param array $json_obj an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
+    function import_obj(array $json_obj, object $test_obj = null): user_message
     {
         global $verbs;
 
         log_debug();
-        $result = new user_message();
+        $result = parent::import_db_obj($this, $test_obj);
 
         // reset all parameters of this verb object but keep the user
         $usr = $this->usr;
@@ -526,20 +526,20 @@ class verb extends db_object
         }
 
         // save the verb in the database
-        if ($do_save) {
-            $result->add_message($this->save());
+        if (!$test_obj) {
+            if ($result->is_ok()) {
+                $result->add_message($this->save());
+            }
         }
-
 
         return $result;
     }
 
     /**
      * create a verb object for the export
-     * @param bool $do_load can be set to false for unit testing
-     * @return sandbox_exp_named a reduced word object that can be used to create a JSON message
+     * @return verb_exp a reduced word object that can be used to create a JSON message
      */
-    function export_obj(bool $do_load = true): verb_exp
+    function export_obj(): verb_exp
     {
         global $share_types;
         global $protection_types;
@@ -1069,7 +1069,7 @@ class verb extends db_object
     /**
      * create a new verb
      */
-    private function add($db_con): string
+    private function add(sql_db $db_con): string
     {
         log_debug('verb->add the verb ' . $this->dsp_id());
         $result = '';

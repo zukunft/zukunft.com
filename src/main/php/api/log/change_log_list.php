@@ -47,9 +47,9 @@ class change_log_list_api extends list_api implements JsonSerializable
     }
 
     /**
-     * add a word to the list
+     * add a change log entry to the list
      * @param change_log_named_api $chg one change of a user sandbox object
-     * @returns bool true if the word has been added
+     * @returns bool true if the log entry has been added
      */
     function add(change_log_named_api $chg): bool
     {

@@ -77,6 +77,28 @@ class db_object
         return $this->id;
     }
 
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * general part to import a database object from a JSON array object
+     *
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_db_obj(db_object $db_obj, object $test_obj = null): user_message
+    {
+        $result = new user_message();
+        // add a dummy id for unit testing
+        if ($test_obj) {
+            $db_obj->set_id($test_obj->seq_id());
+        }
+        return $result;
+    }
+
+
     /*
      * information
      */

@@ -65,9 +65,9 @@ class view_list extends list_dsp
      * add a view to the list
      * @returns bool true if the view has been added
      */
-    function add(view_dsp $wrd): bool
+    function add(view_dsp $dsp): bool
     {
-        return parent::add_obj($wrd);
+        return parent::add_obj($dsp);
     }
 
 

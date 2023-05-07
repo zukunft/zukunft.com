@@ -128,7 +128,7 @@ class formula_element_list extends sandbox_list
 
     /**
      * add one formula element to the list and keep the order (contrary to the parent function)
-     * @returns bool true the term has been added
+     * @returns bool true the element has been added
      */
     function add(?formula_element $elm_to_add): bool
     {

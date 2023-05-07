@@ -48,7 +48,7 @@ class component_list_api extends list_api
 
     /**
      * add a view component to the list
-     * @returns bool true if at least one view component has been added
+     * @returns bool true if at least one component has been added
      */
     function add(component_api $phr): bool
     {

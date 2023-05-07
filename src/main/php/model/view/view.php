@@ -137,7 +137,7 @@ class view extends sandbox_typed
     public ?string $code_id = null;   // to select internal predefined views
 
     // in memory only fields
-    public ?array $cmp_lst = null;  // array of the view component objects in correct order
+    public ?component_list $cmp_lst;  // array of the view component objects in correct order
 
 
     /*
@@ -154,6 +154,7 @@ class view extends sandbox_typed
         $this->obj_name = sql_db::TBL_VIEW;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_NAME;
+        $this->cmp_lst = null;
     }
 
     function reset(): void
@@ -301,6 +302,9 @@ class view extends sandbox_typed
         $api_obj->set_type_id($this->type_id);
         $api_obj->code_id = $this->code_id;
         $api_obj->description = $this->description;
+        if ($this->cmp_lst != null) {
+            $api_obj->components = $this->cmp_lst->api_obj();
+        }
 
         return $api_obj;
     }
@@ -433,7 +437,7 @@ class view extends sandbox_typed
         $db_con_tmp->set_type(sql_db::TBL_VIEW);
         $db_con->set_name($qp->name);
         $db_con_tmp->set_usr($this->user()->id());
-        $db_con_tmp->set_where_std($phr->id);
+        $db_con_tmp->set_where_std($phr->id());
         $sql = "SELECT u.view_id, count(u.user_id) AS users
                        FROM words w 
                   LEFT JOIN user_words u ON u.word_id = w.word_id 
@@ -524,7 +528,7 @@ class view extends sandbox_typed
         $db_con->usr_id = $this->user()->id();
         $qp = $this->load_components_sql($db_con);
         $db_lst = $db_con->get($qp);
-        $this->cmp_lst = array();
+        $this->cmp_lst = new component_list($this->user());
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
                 // this is only for the view of the active user, so a direct exclude can be done
@@ -544,11 +548,11 @@ class view extends sandbox_typed
                     if (!$new_entry->load_phrases()) {
                         $result = false;
                     }
-                    $this->cmp_lst[] = $new_entry;
+                    $this->cmp_lst->add($new_entry);
                 }
             }
         }
-        log_debug($lib->dsp_count($this->cmp_lst) . ' loaded for ' . $this->dsp_id());
+        log_debug($this->cmp_lst->count() . ' loaded for ' . $this->dsp_id());
 
         return $result;
     }
@@ -629,19 +633,23 @@ class view extends sandbox_typed
      * add a new component to this view
      * @param component $cmp the view component that should be added
      * @param int|null $pos is set the position, where the
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return string an empty string if the new component link has been saved to the database
      *                or the message that should be shown to the user
      */
-    function add_cmp(component $cmp, ?int $pos = null, bool $do_save = true): string
+    function add_cmp(component $cmp, ?int $pos = null, object $test_obj = null): string
     {
         $result = '';
         $lib = new library();
         if ($pos != null) {
-            $this->cmp_lst[] = $cmp;
-            if (count($this->cmp_lst) != $cmp->order_nbr) {
-                $result .= 'view component "' . $cmp->name . '" has been expected to be at position ' . $cmp->order_nbr . ' in ' . $this->name . ', but it is at position ' . $lib->dsp_count($this->cmp_lst);
+            if ($this->cmp_lst == null) {
+                $this->cmp_lst = new component_list($this->user());
+            }
+            $this->cmp_lst->add($cmp);
+            if ($this->cmp_lst->count() != $cmp->order_nbr) {
+                $result .= 'view component "' . $cmp->name . '" has been expected to be at position ' . $cmp->order_nbr . ' in ' . $this->name . ', but it is at position ' . $this->cmp_lst->count();
             } else {
-                if ($do_save) {
+                if (!$test_obj) {
                     $cmp->save();
                     $cmp_lnk = new view_component_link($this->user());
                     $cmp_lnk->dsp->id = $this->id;
@@ -756,10 +764,10 @@ class view extends sandbox_typed
      * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit testing object
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, bool $do_save = true): user_message
+    function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
         log_debug();
 
@@ -767,7 +775,7 @@ class view extends sandbox_typed
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
-        $result = parent::import_obj($in_ex_json, $do_save);
+        $result = parent::import_obj($in_ex_json, $test_obj);
 
         // first save the parameters of the view itself
         foreach ($in_ex_json as $key => $value) {
@@ -791,7 +799,7 @@ class view extends sandbox_typed
             }
         }
 
-        if ($do_save) {
+        if (!$test_obj) {
             if ($this->name == '') {
                 $result->add_message('name in view missing');
             } else {
@@ -803,8 +811,6 @@ class view extends sandbox_typed
                     log_debug($this->dsp_id());
                 }
             }
-        } else {
-            log_debug($result->all_message_text());
         }
 
         // after saving (or remembering) add the view components
@@ -814,9 +820,9 @@ class view extends sandbox_typed
                 $cmp_pos = 1;
                 foreach ($json_lst as $json_cmp) {
                     $cmp = new component($usr);
-                    $cmp->import_obj($json_cmp, $do_save);
+                    $cmp->import_obj($json_cmp, $test_obj);
                     // on import first add all view components to the view object and save them all at once
-                    $result->add_message($this->add_cmp($cmp, $cmp_pos, $do_save));
+                    $result->add_message($this->add_cmp($cmp, $cmp_pos, $test_obj));
                     $cmp_pos++;
                 }
             }
@@ -848,7 +854,7 @@ class view extends sandbox_typed
             $this->load_components();
         }
         if ($this->cmp_lst != null) {
-            foreach ($this->cmp_lst as $cmp) {
+            foreach ($this->cmp_lst->lst() as $cmp) {
                 $result->view_components[] = $cmp->export_obj();
             }
         }

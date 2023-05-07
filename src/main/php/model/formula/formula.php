@@ -1370,10 +1370,10 @@ class formula extends sandbox_typed
      * import a formula from a JSON object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, bool $do_save = true): user_message
+    function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
         global $formula_types;
         global $share_types;
@@ -1385,7 +1385,7 @@ class formula extends sandbox_typed
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
-        $result = parent::import_obj($in_ex_json, $do_save);
+        $result = parent::import_obj($in_ex_json, $test_obj);
         foreach ($in_ex_json as $key => $value) {
             if ($key == exp_obj::FLD_TYPE) {
                 $this->type_id = $formula_types->id($value);
@@ -1403,8 +1403,10 @@ class formula extends sandbox_typed
         }
 
         // save the formula in the database
-        if ($do_save) {
-            $result->add_message($this->save());
+        if (!$test_obj) {
+            if ($result->is_ok()) {
+                $result->add_message($this->save());
+            }
         }
 
         // assign the formula to the words and triple
@@ -1415,10 +1417,10 @@ class formula extends sandbox_typed
                     if ($key == self::FLD_ASSIGN) {
                         if (is_array($value)) {
                             foreach ($value as $lnk_phr_name) {
-                                $result->add_message($this->assign_phrase($lnk_phr_name, $do_save));
+                                $result->add_message($this->assign_phrase($lnk_phr_name, $test_obj));
                             }
                         } else {
-                            $result->add_message($this->assign_phrase($value, $do_save));
+                            $result->add_message($this->assign_phrase($value, $test_obj));
                         }
                     }
                 }
@@ -1428,11 +1430,11 @@ class formula extends sandbox_typed
         return $result;
     }
 
-    private function assign_phrase(string $phr_name, bool $do_save = true): string
+    private function assign_phrase(string $phr_name, object $test_obj = null): string
     {
         $result = '';
         $phr = new phrase($this->user());
-        if ($do_save) {
+        if (!$test_obj) {
             $phr->load_by_name($phr_name);
             if ($this->id() > 0 and $phr->id() <> 0) {
                 $frm_lnk = new formula_link($this->user());

@@ -271,8 +271,9 @@ class phrase_group_list
 
     /**
      * add a phrase group if it is not yet part of the list
+     * @param phrase_group $grp
      */
-    function add($grp)
+    function add(phrase_group $grp): void
     {
         log_debug($grp->id());
         $do_add = false;

@@ -183,8 +183,8 @@ class type_list_api extends list_api implements JsonSerializable
      */
 
     /**
-     * add a value to the list
-     * @returns bool true if the value has been added
+     * add a type to the list
+     * @returns bool true if the type has been added
      */
     function add(type_api $type): bool
     {

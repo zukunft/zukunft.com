@@ -731,7 +731,7 @@ class word_list extends sandbox_list
      * add one word to the word list, but only if it is not yet part of the word list
      * @param word $wrd_to_add the word object that should be added
      */
-    function add(word $wrd_to_add)
+    function add(word $wrd_to_add): void
     {
         log_debug('->add ' . $wrd_to_add->dsp_id());
         if (!in_array($wrd_to_add->id(), $this->ids())) {
@@ -1115,19 +1115,15 @@ class word_list extends sandbox_list
      * import a word list object from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
+    function import_obj(array $json_obj, object $test_obj = null): user_message
     {
         $result = new user_message();
-        foreach ($json_obj as $key => $value) {
+        foreach ($json_obj as $value) {
             $wrd = new word($this->user());
-            $result->add($wrd->import_obj($value, $do_save));
-            // add a dummy id for unit testing
-            if (!$do_save) {
-                $wrd->set_id($key + 1);
-            }
+            $result->add($wrd->import_obj($value, $test_obj));
             $this->add($wrd);
         }
 
@@ -1181,16 +1177,9 @@ class word_list extends sandbox_list
         return $lib->sql_array($this->ids());
     }
 
-    /**
-     * @return int the number of phrases in this list
-     */
-    function count(): int
-    {
-        return count($this->lst);
-    }
 
     /*
-     *  display functions
+     *  display
      */
 
     /**

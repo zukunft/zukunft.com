@@ -31,6 +31,7 @@
 
 namespace html\phrase;
 
+use html\phrase\phrase_group as phrase_group_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use model\library;
 use model\phrase;
@@ -56,7 +57,6 @@ class phrase_group_list
 
     /**
      * always set the user because a phrase group list is always user specific
-     * @param user $usr the user who requested to see the phrase groups
      */
     function __construct()
     {
@@ -71,7 +71,7 @@ class phrase_group_list
     /**
      * add a phrase group if it is not yet part of the list
      */
-    function add($grp): void
+    function add(phrase_group_dsp $grp): void
     {
         log_debug($grp->id());
         $do_add = false;

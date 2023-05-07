@@ -80,5 +80,5 @@ class view_api extends sandbox_typed_api
     public ?string $code_id = null;
 
     // the components linked to this view
-    public array $cmp_lst = [];
+    public ?component_list_api $components = null;
 }

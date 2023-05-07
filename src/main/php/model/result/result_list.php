@@ -251,21 +251,15 @@ class result_list extends sandbox_list
      * import a list of results from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
+    function import_obj(array $json_obj, object $test_obj = null): user_message
     {
         $result = new user_message();
-        $id = 1;
-        foreach ($json_obj as $key => $res_json) {
+        foreach ($json_obj as $res_json) {
             $res = new result($this->user());
-            $result->add($res->import_obj($res_json, $do_save));
-            // add a dummy id for unit testing
-            if (!$do_save) {
-                $res->set_id($id);
-                $id++;
-            }
+            $result->add($res->import_obj($res_json, $test_obj));
             $this->add($res);
         }
 

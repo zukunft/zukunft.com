@@ -114,6 +114,7 @@ class result extends db_object
     public ?DateTime $last_val_update = null;  // the time of the last update of an underlying value, formula result or formula
     //                                            if this is later than the last update the result needs to be updated
     private string $symbol = '';               // the symbol of the related formula element
+    private phrase_group $grp;                 // the phrase group of the result
 
     // to be dismissed
     public ?phrase $phr = null;  // to get the most interesting result for this word
@@ -136,6 +137,7 @@ class result extends db_object
         $this->set_id(0);
         $this->set_user($usr);
         $this->frm = new formula($usr);
+        $this->grp = new phrase_group($usr);
     }
 
     /**
@@ -173,6 +175,16 @@ class result extends db_object
     /*
      * set and get
      */
+
+    function set_grp(phrase_group $grp): void
+    {
+        $this->grp = $grp;
+    }
+
+    function grp(phrase_group $grp): phrase_group
+    {
+        return $this->grp;
+    }
 
     function set_symbol(string $symbol): void
     {
@@ -862,23 +874,23 @@ class result extends db_object
      * validate a formulas value by comparing the external object result with the calculated result
      *
      * @param array $json_obj an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
+    function import_obj(array $json_obj, object $test_obj = null): user_message
     {
         log_debug();
-        $result = new user_message;
+        $result = parent::import_db_obj($this, $test_obj);
 
         foreach ($json_obj as $key => $res) {
 
             if ($key == export::WORDS) {
                 $phr_lst = new phrase_list($this->user());
-                $result->add($phr_lst->import_lst($res, $do_save));
-                if ($result->is_ok() and $do_save) {
+                $result->add($phr_lst->import_lst($res, $test_obj));
+                if ($result->is_ok()) {
                     $phr_grp = $phr_lst->get_grp();
                     log_debug('got word group ' . $phr_grp->dsp_id());
-                    $this->grp = $phr_grp;
+                    $this->set_grp($phr_grp);
                     log_debug('set grp id to ' . $this->grp->id());
                 }
                 $this->phr_lst = $phr_lst;
@@ -900,11 +912,14 @@ class result extends db_object
 
         }
 
-        if ($result->is_ok() and $do_save) {
-            $this->save();
-            log_debug($this->dsp_id());
-        } else {
-            log_debug($result->all_message_text());
+        // save the result in the database
+        if (!$test_obj) {
+            if ($result->is_ok()) {
+                $this->save();
+                log_debug($this->dsp_id());
+            } else {
+                log_debug($result->all_message_text());
+            }
         }
 
         return $result;

@@ -126,6 +126,7 @@ class base_list
         return $result;
     }
 
+
     /**
      * to be called after the lists have been updated
      * but the index list have not yet been updated
@@ -147,8 +148,20 @@ class base_list
 
 
     /*
-     *  information functions
+     * information
      */
+
+    /**
+     * @returns int the number of elements in the list
+     */
+    function count(): int
+    {
+        if ($this->lst == null) {
+            return 0;
+        } else {
+            return count($this->lst);
+        }
+    }
 
     /**
      * @return bool true if the list is already empty

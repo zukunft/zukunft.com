@@ -1,0 +1,14 @@
+{
+  "id": 1,
+  "name": "Word",
+  "description": "the default view for words",
+  "code_id": "word",
+  "components": [
+    {
+      "id": 1,
+      "name": "Name",
+      "description": "simply show the word name",
+      "type_id": 8
+    }
+  ]
+}

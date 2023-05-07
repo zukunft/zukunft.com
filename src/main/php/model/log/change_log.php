@@ -266,7 +266,7 @@ class change_log extends db_object
         if ($table_name == "") {
             log_err("missing table name", "user_log->set_table");
         }
-        if ($this->usr->id <= 0) {
+        if ($this->usr->id() <= 0) {
             log_err("missing user", "user_log->set_table");
         }
 
@@ -390,6 +390,7 @@ class change_log extends db_object
     }
 
     /**
+     * TODO review
      * log a user change of a word, value or formula
      */
     function add(): bool

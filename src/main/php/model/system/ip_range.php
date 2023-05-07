@@ -32,7 +32,7 @@
 
 namespace model;
 
-class ip_range
+class ip_range extends db_object
 {
 
     const OBJ_NAME = 'ip range';
@@ -61,7 +61,6 @@ class ip_range
      */
 
     // database fields
-    public int $id = 0;               // the database id of the reference
     public string $from = '';
     public string $to = '';
     public ?string $reason = null;
@@ -207,11 +206,21 @@ class ip_range
         return $result;
     }
 
-    function load_by_id(int $id): bool
+    /**
+     * load an ip range from the database selected by id
+     * @param int $id the id of an ip range
+     * @param string $class the name of this ip range class
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id, string $class = self::class): int
     {
         $this->reset();
         $this->id = $id;
-        return $this->load();
+        if ($this->load()) {
+            return $this->id();
+        } else {
+            return 0;
+        }
     }
 
 
@@ -223,12 +232,12 @@ class ip_range
      * import an ip range from an imported json object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
+    function import_obj(array $json_obj, object $test_obj = null): user_message
     {
-        $result = new user_message();
+        $result = parent::import_db_obj($this, $test_obj);
 
         // reset of object not needed, because the calling function has just created the object
         foreach ($json_obj as $key => $value) {
@@ -245,8 +254,12 @@ class ip_range
                 $this->active = $value;
             }
         }
-        if ($result->is_ok() and $do_save) {
-            $result->add_message($this->save());
+
+        // save the ip range in the database
+        if (!$test_obj) {
+            if ($result->is_ok()) {
+                $result->add_message($this->save());
+            }
         }
 
         return $result;

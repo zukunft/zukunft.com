@@ -536,7 +536,7 @@ class testing extends test_api
         return $result;
     }
 
-    function html_test(string $body, string $filename, testing $t)
+    function html_test(string $body, string $filename, testing $t): void
     {
         $lib = new library();
 

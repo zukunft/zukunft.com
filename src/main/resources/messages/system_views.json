@@ -27,7 +27,38 @@
     },
     {
       "name": "Add New Word",
-      "code_id": "word_add"
+      "code_id": "word_add",
+      "view_components": [
+        {
+          "pos": "1",
+          "name": "form title",
+          "code_id": "form_title",
+          "description": "show the language specific title of a add, change or delete form",
+          "type": "system_component",
+          "ui_msg_code_id": "form_word_add_title"
+        },
+        {
+          "pos": "2",
+          "name": "hidden back stack",
+          "code_id": "form_back_stack",
+          "description": "field that contains the stack for the undo actions",
+          "type": "system_component"
+        },
+        {
+          "pos": "3",
+          "name": "confirm button",
+          "code_id": "form_confirm_button",
+          "description": "switch on that the form saving needs an extra confirm by the user",
+          "type": "system_component"
+        },
+        {
+          "pos": "4",
+          "name": "name form field",
+          "code_id": "form_field_name",
+          "description": "the name field in a form",
+          "type": "system_component"
+        }
+      ]
     },
     {
       "name": "Change Word",
@@ -169,7 +200,7 @@
         {
           "pos": "1",
           "name": "System view component field",
-          "code_id": "system_field",
+          "code_id": "system_component",
           "description": "display a user sandbox object field and allow the user to change it"
         }
       ]

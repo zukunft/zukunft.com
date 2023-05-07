@@ -434,8 +434,10 @@ class change_log_link extends change_log
         return $result;
     }
 
-    // similar to add_link, but additional fix the references as a text for fast displaying
-    // $link_text is used for fixed links such as the source for values
+    /**
+     * similar to add_link, but additional fix the references as a text for fast displaying
+     * $link_text is used for fixed links such as the source for values
+     */
     function add(): bool
     {
         log_debug('do "' . $this->action . '" of "' . $this->table() . '" for user ' . $this->usr->dsp_id());

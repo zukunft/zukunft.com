@@ -466,10 +466,10 @@ class value_list extends sandbox_list
      * import a value from an external object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): user_message
+    function import_obj(array $json_obj, object $test_obj = null): user_message
     {
         global $share_types;
         global $protection_types;
@@ -481,11 +481,17 @@ class value_list extends sandbox_list
         $val = new value($this->user());
         $phr_lst = new phrase_list($this->user());
 
+        if ($test_obj) {
+            $do_save = false;
+        } else {
+            $do_save = true;
+        }
+
         foreach ($json_obj as $key => $value) {
 
             if ($key == self::FLD_EX_CONTEXT) {
                 $phr_lst = new phrase_list($this->user());
-                $result->add($phr_lst->import_lst($value, $do_save));
+                $result->add($phr_lst->import_lst($value, $test_obj));
                 $val->grp = $phr_lst->get_grp($do_save);
             }
 
@@ -508,10 +514,14 @@ class value_list extends sandbox_list
             if ($key == source_exp::FLD_REF) {
                 $src = new source($this->user());
                 $src->set_name($value);
-                if ($result->is_ok() and $do_save) {
-                    $src->load_by_name($value);
-                    if ($src->id() == 0) {
-                        $result->add_message($src->save());
+                if ($test_obj) {
+                    $src->set_id($test_obj->seq_id());
+                } else {
+                    if ($result->is_ok()) {
+                        $src->load_by_name($value);
+                        if ($src->id() == 0) {
+                            $result->add_message($src->save());
+                        }
                     }
                 }
                 $val->source = $src;
@@ -523,15 +533,18 @@ class value_list extends sandbox_list
                         $val_to_add = clone $val;
                         $phr_lst_to_add = clone $phr_lst;
                         $val_phr = new phrase($this->user());
-                        if ($do_save) {
-                            $val_phr->load_by_name($val_key);
-                        } else {
+                        if ($test_obj) {
                             $val_phr->set_name($val_key, word::class);
+                            $val_phr->set_id($test_obj->seq_id());
+                        } else {
+                            $val_phr->load_by_name($val_key);
                         }
                         $phr_lst_to_add->add($val_phr);
                         $val_to_add->set_number($val_number);
                         $val_to_add->grp = $phr_lst_to_add->get_grp($do_save);
-                        if ($do_save) {
+                        if ($test_obj) {
+                            $val_to_add->set_id($test_obj->seq_id());
+                        } else {
                             $result->add_message($val_to_add->save());
                         }
                         $this->lst[] = $val_to_add;

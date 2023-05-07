@@ -51,9 +51,9 @@ class triple_list_api extends list_api
      * add a triple to the list
      * @returns bool true if the triple has been added
      */
-    function add(triple_api $phr): bool
+    function add(triple_api $trp): bool
     {
-        return parent::add_obj($phr);
+        return parent::add_obj($trp);
     }
 
 

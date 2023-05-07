@@ -49,8 +49,10 @@ class view_dsp_old extends view_api
     private function components(): component_list_dsp_old
     {
         $lst = new component_list_dsp_old();
-        foreach ($this->cmp_lst as $cmp) {
-            $lst->add($cmp->dsp_obj());
+        if ($this->components != null) {
+            foreach ($this->components->lst() as $cmp) {
+                $lst->add($cmp->dsp_obj());
+            }
         }
         return $lst;
     }

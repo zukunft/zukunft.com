@@ -368,9 +368,15 @@
       },
       {
         "id": 16,
-        "code_id": "system_field",
-        "name": "system field",
-        "comment": "the internal component to display a system and allow the user to change the order"
+        "code_id": "json_export",
+        "name": "JSON Export",
+        "comment": "To start or configure the JSON export"
+      },
+      {
+        "id": 17,
+        "code_id": "system_component",
+        "name": "system component",
+        "comment": "a system component where the user can only change the order"
       }
     ],
     "view_component_position_types": [

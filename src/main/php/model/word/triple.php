@@ -1094,13 +1094,13 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
      * get a phrase based on the name (and save it if needed and requested)
      *
      * @param string $name the name of the phrase
-     * @param bool $do_save to switch off saving for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return phrase the created phrase object
      */
-    private function import_phrase(string $name, bool $do_save = true): phrase
+    private function import_phrase(string $name, object $test_obj = null): phrase
     {
         $result = new phrase($this->user());
-        if ($do_save) {
+        if (!$test_obj) {
             $result->load_by_name($name);
             if ($result->id() == 0) {
                 // if there is no word or triple with the name yet, automatically create a word
@@ -1128,15 +1128,15 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
      * import a triple from a json object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, bool $do_save = true): user_message
+    function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
         global $phrase_types;
 
         log_debug();
-        $result = parent::import_obj($in_ex_json, $do_save);
+        $result = parent::import_obj($in_ex_json, $test_obj);
 
         foreach ($in_ex_json as $key => $value) {
             if ($key == exp_obj::FLD_TYPE) {
@@ -1147,7 +1147,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
                     $lib = new library();
                     $result->add_message('from name should not be empty at ' . $lib->dsp_array($in_ex_json));
                 } else {
-                    $this->from = $this->import_phrase($value, $do_save);
+                    $this->from = $this->import_phrase($value, $test_obj);
                 }
             }
             if ($key == self::FLD_EX_TO) {
@@ -1155,18 +1155,20 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
                     $lib = new library();
                     $result->add_message('to name should not be empty at ' . $lib->dsp_array($in_ex_json));
                 } else {
-                    $this->to = $this->import_phrase($value, $do_save);
+                    $this->to = $this->import_phrase($value, $test_obj);
                 }
             }
             if ($key == self::FLD_EX_VERB) {
                 $vrb = new verb;
                 $vrb->set_user($this->user());
-                if ($result->is_ok() and $do_save) {
-                    $vrb->load_by_name($value);
-                    if ($vrb->id() <= 0) {
-                        $result->add_message('verb "' . $value . '" not found');
-                        if ($this->name <> '') {
-                            $result->add_message('for triple "' . $this->name . '"');
+                if (!$test_obj) {
+                    if ($result->is_ok()) {
+                        $vrb->load_by_name($value);
+                        if ($vrb->id() <= 0) {
+                            $result->add_message('verb "' . $value . '" not found');
+                            if ($this->name <> '') {
+                                $result->add_message('for triple "' . $this->name . '"');
+                            }
                         }
                     }
                 } else {
@@ -1176,7 +1178,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
             }
             if ($key == exp_obj::FLD_VIEW) {
                 $trp_view = new view($this->user());
-                if ($do_save) {
+                if (!$test_obj) {
                     $trp_view->load_by_name($value, view::class);
                     if ($trp_view->id == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
@@ -1188,9 +1190,9 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
             }
         }
 
-        // save the word in the database
-        if ($result->is_ok()) {
-            if ($do_save) {
+        // save the triple in the database
+        if (!$test_obj) {
+            if ($result->is_ok()) {
                 // remove unneeded given names
                 $this->set_names();
                 $result->add_message($this->save());
@@ -1201,17 +1203,19 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         if ($result->is_ok()) {
             log_debug('saved ' . $this->dsp_id());
 
-            if ($this->id() <= 0 and $do_save) {
-                $result->add_message('Triple ' . $this->dsp_id() . ' cannot be saved');
-            } else {
-                foreach ($in_ex_json as $key => $value) {
-                    if ($result->is_ok()) {
-                        if ($key == self::FLD_REFS) {
-                            foreach ($value as $ref_data) {
-                                $ref_obj = new ref($this->user());
-                                $ref_obj->phr = $this->phrase();
-                                $result->add($ref_obj->import_obj($ref_data, $do_save));
-                                $this->ref_lst[] = $ref_obj;
+            if (!$test_obj) {
+                if ($this->id() <= 0) {
+                    $result->add_message('Triple ' . $this->dsp_id() . ' cannot be saved');
+                } else {
+                    foreach ($in_ex_json as $key => $value) {
+                        if ($result->is_ok()) {
+                            if ($key == self::FLD_REFS) {
+                                foreach ($value as $ref_data) {
+                                    $ref_obj = new ref($this->user());
+                                    $ref_obj->phr = $this->phrase();
+                                    $result->add($ref_obj->import_obj($ref_data, $test_obj));
+                                    $this->ref_lst[] = $ref_obj;
+                                }
                             }
                         }
                     }

@@ -1322,13 +1322,10 @@ class phrase_list extends sandbox_list_named
         return $phr_lst;
     }
 
-    /**
-     * @returns int the number of phrases in this list
+
+    /*
+     * information
      */
-    function count(): int
-    {
-        return count($this->lst);
-    }
 
     /**
      * @returns bool true if the phrase list is empty
@@ -1448,10 +1445,10 @@ class phrase_list extends sandbox_list_named
      * import a phrase list from an inner part of a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_lst(array $json_obj, bool $do_save = true): user_message
+    function import_lst(array $json_obj, object $test_obj = null): user_message
     {
         global $phrase_types;
 
@@ -1460,7 +1457,7 @@ class phrase_list extends sandbox_list_named
             if ($value != '') {
                 $phr = new phrase($this->user());
                 if ($result->is_ok()) {
-                    if ($do_save) {
+                    if (!$test_obj) {
                         $phr->load_by_name($value);
                         if ($phr->id() == 0) {
                             // for new phrase use the word object
@@ -1480,6 +1477,7 @@ class phrase_list extends sandbox_list_named
                     } else {
                         // fallback for unit tests
                         $phr->set_name($value, word::class);
+                        $phr->set_id($test_obj->seq_id());
                     }
                 }
                 $this->add($phr);
@@ -1488,7 +1486,7 @@ class phrase_list extends sandbox_list_named
 
         // save the word in the database
         // TODO check why this is needed
-        if ($result == '' and $do_save) {
+        if ($result == '' and $test_obj == null) {
             $result->add_message($this->save());
         }
 

@@ -104,8 +104,9 @@ class list_api implements JsonSerializable
         return true;
     }
 
+
     /*
-     * information functions
+     * information
      */
 
     /**

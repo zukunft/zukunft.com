@@ -713,15 +713,15 @@ class user extends db_object
      *
      * @param array $json_obj an array with the data of the json object
      * @param int $profile_id the profile of the user how has initiated the import mainly used to prevent any user to gain additional rights
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, int $profile_id, bool $do_save = true): user_message
+    function import_obj(array $json_obj, int $profile_id, object $test_obj = null): user_message
     {
         global $user_profiles;
 
         log_debug();
-        $result = new user_message();
+        $result = parent::import_db_obj($this, $test_obj);
 
         // reset all parameters of this user object
         $this->reset();
@@ -755,14 +755,16 @@ class user extends db_object
             }
         }
 
-        // save the word in the database
-        if ($result->is_ok() and $do_save) {
-            // check the importing profile and make sure that gaining additional privileges is impossible
-            // the user profiles must always be in the order that the lower ID has same or less rights
-            // TODO use the right level of the profile
-            if ($profile_id >= $this->profile_id) {
-                global $db_con;
-                $result->add_message($this->save($db_con));
+        // save the user in the database
+        if (!$test_obj) {
+            if ($result->is_ok()) {
+                // check the importing profile and make sure that gaining additional privileges is impossible
+                // the user profiles must always be in the order that the lower ID has same or less rights
+                // TODO use the right level of the profile
+                if ($profile_id >= $this->profile_id) {
+                    global $db_con;
+                    $result->add_message($this->save($db_con));
+                }
             }
         }
 

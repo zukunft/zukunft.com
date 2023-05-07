@@ -45,7 +45,7 @@ class source_exp extends sandbox_exp_named
     public ?string $type = null;
     public ?string $code_id = null;
 
-    function reset()
+    function reset(): void
     {
         parent::reset();
 

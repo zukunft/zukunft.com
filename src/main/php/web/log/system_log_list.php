@@ -80,8 +80,9 @@ class system_log_list extends list_dsp
      */
 
     /**
-     * add a system_log to the list
-     * @returns bool true if the system_log has been added
+     * add a system log entry to the list
+     * @param system_log_dsp $sys_log the log frontend entry that should be added to the list
+     * @returns bool true if the system log entry has been added
      */
     function add(system_log_dsp $sys_log): bool
     {

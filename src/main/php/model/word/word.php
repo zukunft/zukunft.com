@@ -689,10 +689,10 @@ class word extends sandbox_typed
      * import a word from a json data word object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, bool $do_save = true): user_message
+    function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
         global $phrase_types;
         global $share_types;
@@ -704,7 +704,7 @@ class word extends sandbox_typed
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
-        $result = parent::import_obj($in_ex_json, $do_save);
+        $result = parent::import_obj($in_ex_json, $test_obj);
         foreach ($in_ex_json as $key => $value) {
             if ($key == exp_obj::FLD_TYPE) {
                 $this->type_id = $phrase_types->id($value);
@@ -717,7 +717,7 @@ class word extends sandbox_typed
             // TODO change to view object like in triple
             if ($key == exp_obj::FLD_VIEW) {
                 $wrd_view = new view($this->user());
-                if ($do_save) {
+                if (!$test_obj) {
                     $wrd_view->load_by_name($value, view::class);
                     if ($wrd_view->id == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
@@ -736,8 +736,8 @@ class word extends sandbox_typed
             $this->type_id = $phrase_types->default_id();
         }
         // save the word in the database
-        if ($result->is_ok()) {
-            if ($do_save) {
+        if (!$test_obj) {
+            if ($result->is_ok()) {
                 // TODO should save not return the error reason that should be shown to the user if it fails?
                 $result->add_message($this->save());
             }
@@ -747,7 +747,7 @@ class word extends sandbox_typed
         if ($result->is_ok()) {
             log_debug('saved ' . $this->dsp_id());
 
-            if ($this->id <= 0 and $do_save) {
+            if ($this->id <= 0) {
                 $result->add_message('Word ' . $this->dsp_id() . ' cannot be saved');
             } else {
                 foreach ($in_ex_json as $key => $value) {
@@ -756,7 +756,7 @@ class word extends sandbox_typed
                             foreach ($value as $ref_data) {
                                 $ref_obj = new ref($this->user());
                                 $ref_obj->phr = $this->phrase();
-                                $result->add($ref_obj->import_obj($ref_data, $do_save));
+                                $result->add($ref_obj->import_obj($ref_data, $test_obj));
                                 $this->ref_lst[] = $ref_obj;
                             }
                         }
