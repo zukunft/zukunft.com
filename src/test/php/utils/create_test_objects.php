@@ -62,6 +62,7 @@ use api\verb_api;
 use api\view_api;
 use api\word_api;
 use api_message;
+use html\word\word as word_dsp;
 use cfg\formula_type;
 use cfg\formula_type_list;
 use cfg\job_type_list;
@@ -228,6 +229,12 @@ class create_test_objects extends test_base
         $wrd->description = word_api::TD_READ;
         $wrd->set_type(phrase_type::MATH_CONST);
         return $wrd;
+    }
+
+    function dummy_word_dsp(): word_dsp
+    {
+        $wrd = $this->dummy_word();
+        return new word_dsp($wrd->api_json());
     }
 
     function dummy_word_pi(): word

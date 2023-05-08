@@ -32,7 +32,7 @@
 namespace html\ref;
 
 use controller\controller;
-use html\db_object_dsp;
+use html\db_object;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use html\ref\source as source_dsp;

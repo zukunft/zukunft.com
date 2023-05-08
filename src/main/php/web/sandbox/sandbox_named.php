@@ -37,6 +37,7 @@ include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
 use api\sandbox_named_api;
 use controller\controller;
+use html\sandbox\db_object as db_object_dsp;
 
 class sandbox_named_dsp extends db_object_dsp
 {
@@ -130,15 +131,14 @@ class sandbox_named_dsp extends db_object_dsp
     function dsp_id(): string
     {
         $result = '';
-        if ($this->name <> '') {
-            $result .= '"' . $this->name . '"';
-            if ($this->id > 0) {
-                $result .= ' (' . $this->id . ')';
+        if ($this->name() <> '') {
+            $result .= '"' . $this->name() . '"';
+            if ($this->id() != 0) {
+                $result .= ' (' . $this->id() . ')';
             }
         } else {
-            $result .= $this->id;
+            $result .= $this->id();
         }
-        $result .= '';
         return $result;
     }
 

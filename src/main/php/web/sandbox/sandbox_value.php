@@ -34,13 +34,14 @@
 
 namespace html;
 
+include_once WEB_SANDBOX_PATH . 'db_object.php';
+
 use api\sandbox_api;
 use api\sandbox_value_api;
 use controller\controller;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\phrase_group as phrase_group_dsp;
-
-include_once WEB_SANDBOX_PATH . 'db_object.php';
+use html\sandbox\db_object as db_object_dsp;
 
 class sandbox_value_dsp extends db_object_dsp
 {

@@ -37,6 +37,7 @@ include_once WEB_TYPES_PATH . 'type_list.php';
 use api\view_api;
 use cfg\formula_type_list;
 use html\html_base;
+use html\view\view as view_dsp;
 use html\types\protection;
 use html\types\type_list as type_list_dsp;
 use test\testing;
@@ -58,10 +59,6 @@ class type_list
         $api_msg = $t->dummy_type_lists_api()->get_json();
         new type_list_dsp($api_msg);
 
-        // check if the system views have set
-        global $html_system_views;
-        $dsp = $html_system_views->get(view_api::TI_READ);
-
         // test the type list display functions
         $test_page = $html->text_h2('type list display test');
 
@@ -69,6 +66,15 @@ class type_list
         $test_page .= $frm_lst->dsp_obj()->selector() . '<br>';
         $test_page .= 'protection selector from api message: ' . '<br>';
         $test_page .= (new protection())->selector() . '<br>';
+
+        // check if the system views have set
+        global $html_system_views;
+        $dsp = $html_system_views->get(view_api::TI_READ);
+        $wrd = $t->dummy_word_dsp();
+        $back = '';
+        $test_page .= 'simple mask: ' . '<br>';
+        // TODO activate
+        //$test_page .= $dsp->show($wrd, $back) . '<br>';
 
         $t->html_test($test_page, 'types', $t);
     }

@@ -32,13 +32,13 @@
 
 */
 
-namespace html;
+namespace html\sandbox;
 
 include_once API_SANDBOX_PATH . 'sandbox.php';
 
 use controller\controller;
 
-class db_object_dsp
+class db_object
 {
 
     // fields for the backend link
@@ -114,6 +114,20 @@ class db_object_dsp
         $vars = array();
         $vars[controller::API_FLD_ID] = $this->id();
         return $vars;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * usually overwritten by the child object
+     * @return string the id of the object used mainly for debugging
+     */
+    function dsp_id(): string
+    {
+        return $this->id();
     }
 
 }

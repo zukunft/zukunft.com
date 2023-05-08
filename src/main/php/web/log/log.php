@@ -35,7 +35,7 @@ include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once API_PATH . 'controller.php';
 
 use DateTimeInterface;
-use html\db_object_dsp;
+use html\sandbox\db_object as db_object_dsp;
 use controller\controller;
 use DateTime;
 use Exception;

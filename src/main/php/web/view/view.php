@@ -40,9 +40,11 @@ use controller\controller;
 use html\api;
 use html\button;
 use html\html_base;
+use html\system\back_trace;
 use html\view\component_list as component_list_dsp;
 use html\sandbox_typed_dsp;
 use html\word\word;
+use html\sandbox\db_object as db_object_dsp;
 
 class view extends sandbox_typed_dsp
 {
@@ -126,28 +128,29 @@ class view extends sandbox_typed_dsp
     }
 
     /**
-     * returns the html code for a view: this is the main function of this lib
-     * view_id is used to force the display to a set form; e.g. display the sectors of a company instead of the balance sheet
-     * view_type_id is used to .... remove???
-     * word_id - id of the starting word to display; can be a single word, a comma separated list of word ids, a word group or a word triple
+     * create the html code to view a sandbox object
+     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
+     * @param string $back the history of the user actions to allow rollbacks
+     * @return string the html code for a view: this is the main function of this lib
+     * TODO use backtrace or use a global backtrace var
      */
-    function show($wrd, $back): string
+    function show(db_object_dsp $dbo, string $back): string
     {
-        log_debug('"' . $wrd->name() . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id() . ')  for user "' . $this->user()->name . '"');
+        log_debug($dbo->dsp_id() . ' with the view ' . $this->dsp_id());
         $result = '';
 
         // check and correct the parameters
         if ($back == '') {
-            $back = $wrd->id;
+            $back = $dbo->id();
         }
 
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             log_err("The view id must be loaded to display it.", "view->display");
         } else {
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open();
             $result .= $this->dsp_navbar($back);
-            $result .= $this->dsp_entries($wrd, $back);
+            $result .= $this->dsp_entries($dbo, $back);
             $result .= $this->dsp_type_close();
         }
         log_debug('done');
@@ -354,6 +357,47 @@ class view extends sandbox_typed_dsp
             $result = $result . '</h1>';
         }
         return $result;
+    }
+
+    private function dsp_user(): string
+    {
+        return '';
+    }
+
+    /**
+     * TODO fill
+     * @return string
+     */
+    private function dsp_logout(): string
+    {
+        return '';
+    }
+
+    /**
+     * TODO fill
+     * @return string
+     */
+    private function dsp_view_name($back): string
+    {
+        return '';
+    }
+
+    /**
+     * TODO fill
+     * @return string
+     */
+    private function is_system(): bool
+    {
+        return false;
+    }
+
+    /**
+     * TODO fill
+     * @return string
+     */
+    private function user(): string
+    {
+        return '';
     }
 
     /*
