@@ -469,6 +469,9 @@ class word extends sandbox_typed_dsp
         return $phr;
     }
 
+    /**
+     * @returns term_dsp the word object cast into a term object
+     */
     function term(): term_dsp
     {
         $trm = new term_dsp();

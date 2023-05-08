@@ -73,8 +73,7 @@ class type_list
         $wrd = $t->dummy_word_dsp();
         $back = '';
         $test_page .= 'simple mask: ' . '<br>';
-        // TODO activate
-        //$test_page .= $dsp->show($wrd, $back) . '<br>';
+        $test_page .= $dsp->show($wrd, $back) . '<br>';
 
         $t->html_test($test_page, 'types', $t);
     }

@@ -39,8 +39,10 @@ include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 use controller\controller;
 use html\api;
 use html\html_base;
+use html\phrase\phrase as phrase_dsp;
 use html\phrase\term as term_dsp;
 use html\sandbox_typed_dsp;
+use model\view_cmp_type;
 
 class component extends sandbox_typed_dsp
 {
@@ -105,6 +107,172 @@ class component extends sandbox_typed_dsp
     function display_linked(): string
     {
         return $this->name();
+    }
+
+    /**
+     * @return string a fixed text
+     */
+    function text(): string
+    {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::TEXT) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * @return string the name of a phrase and give the user the possibility to change the phrase name
+     */
+    function word_name(phrase_dsp $phr): string
+    {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::PHRASE_NAME) {
+            return $phr->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function table(): string
+    {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::VALUES_RELATED) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function num_list(): string
+    {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::WORD_VALUE) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function formulas(): string
+    {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::FORMULAS) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function results(): string
+    {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::FORMULA_RESULTS) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function word_children(): string
+    {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::WORDS_DOWN) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function word_parents(): string
+    {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::WORDS_UP) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function json_export(): string
+    {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::JSON_EXPORT) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function xml_export(): string
+    {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::XML_EXPORT) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function csv_export(): string
+    {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::CSV_EXPORT) {
+            return $this->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO move code from view_cmp_dsp_old
+     * @return string a dummy text
+     */
+    function all(): string
+    {
+        global $view_component_types;
+        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::VALUES_ALL) {
+            return $this->name();
+        } else {
+            return '';
+        }
     }
 
 

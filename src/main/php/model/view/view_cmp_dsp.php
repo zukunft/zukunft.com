@@ -36,10 +36,12 @@ include_once MODEL_VIEW_PATH . 'component.php';
 use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
+use html\sandbox\db_object as db_object_dsp;
 use html\value\value_list_dsp_old;
 use html\view\view_dsp_old;
 use html\word\word as word_dsp;
-use result_list;
+use html\phrase\phrase as phrase_dsp;
+use html\result\result_list;
 
 class component_dsp_old extends component
 {
@@ -199,17 +201,26 @@ class component_dsp_old extends component
         return $result;
     }
 
-    // show all words that are based on the given start word
-    // and related to the main word
-    // later the start word should be selected automatically based on what most users has clicked on
-    function word_children($wrd): string
+    /**
+     * show all phrases that are based on the given start phrase
+     * and related to the main word
+     * later the start word should be selected automatically based on what most users has clicked on
+     */
+    function word_children(db_object_dsp $dbo): string
     {
         global $view_component_types;
         $result = '';
 
-        if ($this->type_id == $view_component_types->id(view_cmp_type::WORDS_DOWN)) {
-            log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
-            $result .= $wrd->dsp_graph(word_select_direction::DOWN);
+        // TODO use this kind of check for all components
+        if ($dbo::class != phrase_dsp::class) {
+            $msg = 'children component is only allowed for phrases, but not ' . $dbo::class . $dbo->dsp_id();
+            log_warning($msg);
+            $result = $msg;
+        } else {
+            if ($this->type_id == $view_component_types->id(view_cmp_type::WORDS_DOWN)) {
+                log_debug('in view ' . $this->dsp_id() . ' for word ' . $dbo->name() . ' and user ' . $this->user()->name);
+                $result .= $dbo->dsp_graph(word_select_direction::DOWN);
+            }
         }
 
         return $result;

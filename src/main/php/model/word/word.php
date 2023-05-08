@@ -1689,8 +1689,9 @@ class word extends sandbox_typed
         return $result;
     }
 
+
     /*
-     * convert functions
+     * convert
      */
 
     /**

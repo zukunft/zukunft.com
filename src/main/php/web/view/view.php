@@ -159,11 +159,12 @@ class view extends sandbox_typed_dsp
     }
 
     /**
-     * return the html code of all view components
+     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
+     * @return string the html code of all view components
      */
-    private function dsp_entries($wrd, $back): string
+    private function dsp_entries(db_object_dsp $dbo, string $back): string
     {
-        log_debug('"' . $wrd->name() . '" with the view ' . $this->dsp_id() . '"');
+        log_debug('"' . $dbo->dsp_id() . '" with the view ' . $this->dsp_id() . '"');
 
         $result = '';
         if (!$this->cmp_lst->is_empty()) {
@@ -171,19 +172,18 @@ class view extends sandbox_typed_dsp
                 log_debug('"' . $cmp->name . '" type "' . $cmp->type_id . '"');
 
                 // list of all possible view components
-                $cmp_dsp = $cmp->dsp_obj();
-                $result .= $cmp_dsp->text();        // just to display a simple text
-                $result .= $cmp_dsp->word_name($wrd->phrase()->dsp_obj()); // show the word name and give the user the possibility to change the word name
-                $result .= $cmp_dsp->table($wrd); // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
-                $result .= $cmp_dsp->num_list($wrd, $back); // a word list with some key numbers e.g. all companies with the PE ratio
-                $result .= $cmp_dsp->formulas($wrd); // display all formulas related to the given word
-                $result .= $cmp_dsp->results($wrd); // show a list of formula results related to a word
-                $result .= $cmp_dsp->word_children($wrd); // show all words that are based on the given start word
-                $result .= $cmp_dsp->word_parents($wrd); // show all word that this words is based on
-                $result .= $cmp_dsp->json_export($wrd, $back); // offer to configure and create an JSON file
-                $result .= $cmp_dsp->xml_export($wrd, $back); // offer to configure and create an XML file
-                $result .= $cmp_dsp->csv_export($wrd, $back); // offer to configure and create an CSV file
-                $result .= $cmp_dsp->all($wrd->phrase(), $back); // shows all: all words that link to the given word and all values related to the given word
+                $result .= $cmp->text();        // just to display a simple text
+                $result .= $cmp->word_name($dbo->phrase()); // show the word name and give the user the possibility to change the word name
+                $result .= $cmp->table($dbo); // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
+                $result .= $cmp->num_list($dbo, $back); // a word list with some key numbers e.g. all companies with the PE ratio
+                $result .= $cmp->formulas($dbo); // display all formulas related to the given word
+                $result .= $cmp->results($dbo); // show a list of formula results related to a word
+                $result .= $cmp->word_children($dbo); // show all words that are based on the given start word
+                $result .= $cmp->word_parents($dbo); // show all word that this words is based on
+                $result .= $cmp->json_export($dbo, $back); // offer to configure and create an JSON file
+                $result .= $cmp->xml_export($dbo, $back); // offer to configure and create an XML file
+                $result .= $cmp->csv_export($dbo, $back); // offer to configure and create an CSV file
+                $result .= $cmp->all($dbo, $back); // shows all: all words that link to the given word and all values related to the given word
             }
         }
 

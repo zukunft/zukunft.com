@@ -109,12 +109,12 @@ class ref extends sandbox_typed_dsp
         }
     }
 
-    function set_phrase(?phrase_dsp $phr = null): void
+    function set_phrase(phrase_dsp $phr = null): void
     {
         $this->phr = $phr;
     }
 
-    function phrase(): ?phrase_dsp
+    function phrase(): phrase_dsp
     {
         return $this->phr;
     }

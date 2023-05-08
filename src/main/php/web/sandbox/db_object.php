@@ -37,6 +37,8 @@ namespace html\sandbox;
 include_once API_SANDBOX_PATH . 'sandbox.php';
 
 use controller\controller;
+use html\phrase\phrase as phrase_dsp;
+use html\phrase\term as term_dsp;
 
 class db_object
 {
@@ -128,6 +130,24 @@ class db_object
     function dsp_id(): string
     {
         return $this->id();
+    }
+
+
+    /*
+     * dummy function overwritten by the child classes
+     */
+
+    function phrase(): phrase_dsp
+    {
+        return new phrase_dsp();
+    }
+
+    /**
+     * @returns term_dsp the word object cast into a term object
+     */
+    function term(): term_dsp
+    {
+        return new term_dsp();
     }
 
 }
