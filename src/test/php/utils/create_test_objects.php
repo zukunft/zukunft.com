@@ -564,10 +564,10 @@ class create_test_objects extends test_base
     {
         global $usr;
         $dsp = new view($usr);
-        $dsp->set(1, view_api::TN_FORM);
+        $dsp->set(2, view_api::TN_FORM);
         $dsp->description = view_api::TD_FORM;
         $dsp->code_id = view_api::TI_FORM;
-        $dsp->cmp_lst = $this->dummy_component_list();
+        $dsp->cmp_lst = $this->dummy_components_word_add();
         return $dsp;
     }
 
@@ -576,6 +576,7 @@ class create_test_objects extends test_base
         global $usr;
         $lst = new view_list($usr);
         $lst->add($this->dummy_view_with_components());
+        $lst->add($this->dummy_view_word_add());
         return $lst;
     }
 
@@ -588,11 +589,95 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
+    function dummy_component_word_add_title(): component
+    {
+        global $usr;
+        $cmp = new component($usr);
+        $cmp->set(1, component_api::TN_FORM_TITLE, view_cmp_type::FORM_TITLE);
+        $cmp->description = component_api::TD_FORM_TITLE;
+        $cmp->code_id = component_api::TI_FORM_TITLE;
+        return $cmp;
+    }
+
+    function dummy_component_word_add_back_stack(): component
+    {
+        global $usr;
+        $cmp = new component($usr);
+        $cmp->set(1, component_api::TN_FORM_BACK, view_cmp_type::FORM_BACK);
+        $cmp->description = component_api::TD_FORM_BACK;
+        $cmp->code_id = component_api::TI_FORM_BACK;
+        return $cmp;
+    }
+
+    function dummy_component_word_add_button_confirm(): component
+    {
+        global $usr;
+        $cmp = new component($usr);
+        $cmp->set(1, component_api::TN_FORM_CONFIRM, view_cmp_type::FORM_CONFIRM);
+        $cmp->description = component_api::TD_FORM_CONFIRM;
+        $cmp->code_id = component_api::TI_FORM_CONFIRM;
+        return $cmp;
+    }
+
+    function dummy_component_word_add_name(): component
+    {
+        global $usr;
+        $cmp = new component($usr);
+        $cmp->set(1, component_api::TN_FORM_NAME, view_cmp_type::FORM_NAME);
+        $cmp->description = component_api::TD_FORM_NAME;
+        $cmp->code_id = component_api::TI_FORM_NAME;
+        return $cmp;
+    }
+
+    function dummy_component_word_add_description(): component
+    {
+        global $usr;
+        $cmp = new component($usr);
+        $cmp->set(1, component_api::TN_FORM_DESCRIPTION, view_cmp_type::FORM_DESCRIPTION);
+        $cmp->description = component_api::TD_FORM_DESCRIPTION;
+        $cmp->code_id = component_api::TI_FORM_DESCRIPTION;
+        return $cmp;
+    }
+
+    function dummy_component_word_add_cancel(): component
+    {
+        global $usr;
+        $cmp = new component($usr);
+        $cmp->set(1, component_api::TN_FORM_CANCEL, view_cmp_type::FORM_CANCEL);
+        $cmp->description = component_api::TD_FORM_CANCEL;
+        $cmp->code_id = component_api::TI_FORM_CANCEL;
+        return $cmp;
+    }
+
+    function dummy_component_word_add_save(): component
+    {
+        global $usr;
+        $cmp = new component($usr);
+        $cmp->set(1, component_api::TN_FORM_SAVE, view_cmp_type::FORM_SAVE);
+        $cmp->description = component_api::TD_FORM_SAVE;
+        $cmp->code_id = component_api::TI_FORM_SAVE;
+        return $cmp;
+    }
+
     function dummy_component_list(): component_list
     {
         global $usr;
         $lst = new component_list($usr);
         $lst->add($this->dummy_component());
+        return $lst;
+    }
+
+    function dummy_components_word_add(): component_list
+    {
+        global $usr;
+        $lst = new component_list($usr);
+        $lst->add($this->dummy_component_word_add_title());
+        $lst->add($this->dummy_component_word_add_back_stack());
+        $lst->add($this->dummy_component_word_add_button_confirm());
+        $lst->add($this->dummy_component_word_add_name());
+        $lst->add($this->dummy_component_word_add_description());
+        $lst->add($this->dummy_component_word_add_cancel());
+        $lst->add($this->dummy_component_word_add_save());
         return $lst;
     }
 

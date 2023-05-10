@@ -50,5 +50,12 @@ class view_cmp_type
     const CSV_EXPORT = "csv_export";
     const VIEW_SELECT = "view_select";
     const LINK = "link";
+    const FORM_TITLE = "form_title";
+    const FORM_BACK = "form_back_stack";
+    const FORM_CONFIRM = "form_confirm_status";
+    const FORM_NAME = "form_field_name";
+    const FORM_DESCRIPTION = "form_field_description";
+    const FORM_CANCEL = "system_button_cancel";
+    const FORM_SAVE = "system_button_save";
 
 }

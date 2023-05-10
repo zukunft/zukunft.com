@@ -374,9 +374,45 @@
       },
       {
         "id": 17,
-        "code_id": "system_component",
-        "name": "system component",
-        "comment": "a system component where the user can only change the order"
+        "code_id": "system_form_title",
+        "name": "system form title",
+        "comment": "a form title only allowed for system views where the user can only change the order"
+      },
+      {
+        "id": 18,
+        "code_id": "system_form_back_stack",
+        "name": "system form hidden back stack",
+        "comment": "the hidden form field with the back stack only allowed for system views where the user can only change the order"
+      },
+      {
+        "id": 19,
+        "code_id": "system_form_confirm_status",
+        "name": "system form confirm status",
+        "comment": "the hidden form field for the user confirm status only allowed for system views where the user can only change the order"
+      },
+      {
+        "id": 20,
+        "code_id": "field_name",
+        "name": "form field name",
+        "comment": "the form field for the name of a word or formula"
+      },
+      {
+        "id": 21,
+        "code_id": "field_description",
+        "name": "form field description",
+        "comment": "the form field for the description of a word or formula"
+      },
+      {
+        "id": 22,
+        "code_id": "system_button_cancel",
+        "name": "button cancel",
+        "comment": "a button of a form to cancel the form action"
+      },
+      {
+        "id": 23,
+        "code_id": "system_button_save",
+        "name": "button save",
+        "comment": "a button of a form to save the changes to the database"
       }
     ],
     "view_component_position_types": [
@@ -1318,11 +1354,23 @@
           },
           {
             "id": 4,
-            "name": "confirm button"
+            "name": "hidden confirm status"
           },
           {
             "id": 5,
             "name": "name form field"
+          },
+          {
+            "id": 6,
+            "name": "description form field"
+          },
+          {
+            "id": 7,
+            "name": "cancel button"
+          },
+          {
+            "id": 8,
+            "name": "save button"
           }
         ]
       },
@@ -1523,9 +1571,8 @@
         "code_id": "view_entry_add",
         "components": [
           {
-            "id": 6,
-            "name": "System view component field",
-            "type_id": 17
+            "id": 9,
+            "name": "System view component field"
           }
         ]
       },

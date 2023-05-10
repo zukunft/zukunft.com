@@ -43,8 +43,8 @@ class view_api extends sandbox_typed_api
 
     // persevered view names for unit and integration tests
     // TN_* means 'test name'
-    // TD_* means 'description'
-    // TI_* means 'code id'
+    // TD_* means 'test description'
+    // TI_* means 'test code id'
     const TN_READ = 'Word';
     const TD_READ = 'the default view for words';
     const TI_READ = 'word';

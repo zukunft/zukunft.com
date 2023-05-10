@@ -162,6 +162,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add a request time to each frontend request to check the automatically the response times
     TODO check that all external links from external libraries are removed, so that the cookie disclaimer can be avoided
     TODO reduce the size of the api messages to improve speed
+    TODO add a slider for admin to set the balance between speed and memory usage in the backend (with a default balanced setting and a auto optimize function)
+    TODO add a slider for the user to set the balance between speed and memory usage in the frontend and display the effect in a chart with speed increase vs memory usage
+
 
     TODO add data optimizers for read time, write time and space usage
          e.g. select the queries most often used with the longest exe time by data transferred

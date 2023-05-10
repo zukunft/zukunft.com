@@ -1210,6 +1210,12 @@ class test_base
     /**
      * display the result of one test e.g. if adding a value has been successful
      *
+     * @param string $msg the message show to the admin / developer to identify the test
+     * @param string|array $target the expected result
+     * @param string|array $result the actual result
+     * @param float $exe_max_time the expected time to create the result to identify unexpected slow functions
+     * @param string $comment optional and additional information to explain the test
+     * @param string $test_type 'contains' to check only that the expected target is part of the actual result
      * @return bool true if the test result is fine
      */
     function display(
@@ -1320,16 +1326,23 @@ class test_base
             $msg .= ' (' . $comment . ')';
         }
 
-        return $this->assert_dsp($msg, $test_result, $exe_max_time);
+        return $this->assert_dsp($msg, $test_result, $target, $result, $exe_max_time);
     }
 
     /**
      * @param string $msg the message that describes the test for the developer
-     * @param bool $test_result
-     * @param float $exe_max_time
+     * @param bool $test_result true if the test is fine
+     * @param string|array $target the expected result (added here just for fast debugging)
+     * @param string|array $result the actual result (added here just for fast debugging)
+     * @param float $exe_max_time the expected time to create the result to identify unexpected slow functions
      * @return bool true if the test result is fine
      */
-    private function assert_dsp(string $msg, bool $test_result, float $exe_max_time = TIMEOUT_LIMIT): bool
+    private function assert_dsp(
+        string $msg,
+        bool $test_result,
+        string|array $target = '',
+        string|array $result = '',
+        float $exe_max_time = TIMEOUT_LIMIT): bool
     {
         // calculate the execution time
         $final_msg = '';
@@ -1347,7 +1360,17 @@ class test_base
                 $test_result = true;
             }
         } else {
-            $final_msg .= '<p style="color:red">Error' . $msg;
+            if (is_array($result)) {
+                $lib = new library();
+                $result = $lib->dsp_array($result);
+            }
+            if (is_array($target)) {
+                $lib = new library();
+                $target = $lib->dsp_array($target);
+            }
+            $final_msg .= '<p style="color:red">Error' . $msg . '</p>'
+                . '<p>actual: ' . $result . '</p>'
+                . '<p>expected: ' . $target . '</p>';
             $this->error_counter++;
             // TODO: create a ticket after version 0.1 where hopefully more than one developer is working on the project
         }
