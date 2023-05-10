@@ -545,6 +545,11 @@ class testing extends test_api
         $t->display($filename, $lib->trim_html($expected_html), $lib->trim_html($created_html));
     }
 
+    function html_view_test(string $body, string $filename, testing $t): void
+    {
+        $this->html_test($body, 'views/' . $filename, $t);
+    }
+
     private function html_page(string $body): string
     {
         $html = new html_base();

@@ -44,7 +44,7 @@ class sandbox_named_dsp extends db_object_dsp
 
     // the unique name of the object that is shown to the user
     // the name must always be set
-    public string $name;
+    public string $name = '';
 
     // the mouse over tooltip for the named object e.g. word, triple, formula, verb, view or component
     public ?string $description = null;

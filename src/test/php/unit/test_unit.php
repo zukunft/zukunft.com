@@ -91,6 +91,7 @@ use model\user;
 use model\user_list;
 use model\user_profile;
 use test\html\type_list as type_list_html_tests;
+use test\html\system_views as system_views_html_tests;
 
 ;
 
@@ -268,6 +269,7 @@ class test_unit extends testing
         (new change_log_html_tests)->run($this);
         (new system_log_html_tests)->run($this);
         (new batch_job_html_tests)->run($this);
+        (new system_views_html_tests)->run($this);
 
         // restore the global vars
         $db_con = $global_db_con;

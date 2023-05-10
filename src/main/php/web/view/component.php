@@ -48,14 +48,6 @@ class component extends sandbox_typed_dsp
 {
 
     /*
-     * object vars
-     */
-
-    // used for system components
-    private ?string $code_id;
-
-
-    /*
      * set and get
      */
 
@@ -114,8 +106,8 @@ class component extends sandbox_typed_dsp
      */
     function text(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::TEXT) {
+        $f = $this->type_code_id();
+        if ($this->type_code_id() == view_cmp_type::TEXT) {
             return $this->name();
         } else {
             return '';
@@ -127,8 +119,7 @@ class component extends sandbox_typed_dsp
      */
     function word_name(phrase_dsp $phr): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::PHRASE_NAME) {
+        if ($this->type_code_id() == view_cmp_type::PHRASE_NAME) {
             return $phr->name();
         } else {
             return '';
@@ -141,8 +132,7 @@ class component extends sandbox_typed_dsp
      */
     function table(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::VALUES_RELATED) {
+        if ($this->type_code_id() == view_cmp_type::VALUES_RELATED) {
             return $this->name();
         } else {
             return '';
@@ -155,8 +145,7 @@ class component extends sandbox_typed_dsp
      */
     function num_list(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::WORD_VALUE) {
+        if ($this->type_code_id() == view_cmp_type::WORD_VALUE) {
             return $this->name();
         } else {
             return '';
@@ -169,8 +158,7 @@ class component extends sandbox_typed_dsp
      */
     function formulas(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::FORMULAS) {
+        if ($this->type_code_id() == view_cmp_type::FORMULAS) {
             return $this->name();
         } else {
             return '';
@@ -183,8 +171,7 @@ class component extends sandbox_typed_dsp
      */
     function results(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::FORMULA_RESULTS) {
+        if ($this->type_code_id() == view_cmp_type::FORMULA_RESULTS) {
             return $this->name();
         } else {
             return '';
@@ -197,8 +184,7 @@ class component extends sandbox_typed_dsp
      */
     function word_children(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::WORDS_DOWN) {
+        if ($this->type_code_id() == view_cmp_type::WORDS_DOWN) {
             return $this->name();
         } else {
             return '';
@@ -211,8 +197,7 @@ class component extends sandbox_typed_dsp
      */
     function word_parents(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id()) == view_cmp_type::WORDS_UP) {
+        if ($this->type_code_id() == view_cmp_type::WORDS_UP) {
             return $this->name();
         } else {
             return '';
@@ -276,9 +261,16 @@ class component extends sandbox_typed_dsp
     }
 
 
+    function type_code_id(): string
+    {
+        global $view_component_types;
+        return $view_component_types->code_id($this->type_id());
+    }
+
+
     /*
-     * interface
-     */
+      * interface
+      */
 
     /**
      * @return array the json message array to send the updated data to the backend

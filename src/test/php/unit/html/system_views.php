@@ -32,50 +32,31 @@
 
 namespace test\html;
 
-include_once WEB_TYPES_PATH . 'type_list.php';
-
-use api\view_api;
-use cfg\formula_type_list;
 use html\html_base;
-use html\view\view as view_dsp;
-use html\types\protection;
-use html\types\type_list as type_list_dsp;
+use html\word\word as word_dsp;
 use test\testing;
 
-class type_list
+class system_views
 {
     function run(testing $t): void
     {
 
+        global $html_system_views;
+
         $html = new html_base();
 
-        $t->subheader('Type list tests');
-
-        // create the formula type list test set
-        $frm_lst = new formula_type_list();
-        $frm_lst->load_dummy();
-
-        // load the types from the api message
-        $api_msg = $t->dummy_type_lists_api()->get_json();
-        new type_list_dsp($api_msg);
+        $t->subheader('System view tests');
 
         // test the type list display functions
-        $test_page = $html->text_h2('type list display test');
+        $test_page = $html->text_h2('add word');
+        $back = '';
+        $wrd = $t->dummy_word_dsp();
 
         // check if the system views have set
-        global $html_system_views;
-        $dsp = $html_system_views->get(view_api::TI_READ);
-        $wrd = $t->dummy_word_dsp();
-        $back = '';
-        $test_page .= 'simple mask: ' . '<br>';
+        $dsp = $html_system_views->get(word_dsp::FORM_ADD);
         $test_page .= $dsp->show($wrd, $back) . '<br>';
 
-        $test_page .= 'formula type selector from dummy: ' . '<br>';
-        $test_page .= $frm_lst->dsp_obj()->selector() . '<br>';
-        $test_page .= 'protection selector from api message: ' . '<br>';
-        $test_page .= (new protection())->selector() . '<br>';
-
-        $t->html_test($test_page, 'types', $t);
+        $t->html_view_test($test_page, word_dsp::FORM_ADD, $t);
     }
 
 }
