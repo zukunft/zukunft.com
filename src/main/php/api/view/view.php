@@ -53,6 +53,11 @@ class view_api extends sandbox_typed_api
     const TN_COMPLETE = 'System Test View Complete';
     const TN_TABLE = 'System Test View Table';
 
+    // to test a system view (add word) as unit test without database
+    const TN_FORM = 'Add word';
+    const TD_FORM = 'system form to add a word';
+    const TI_FORM = 'word_add';
+
     const TN_READ_RATIO = 'Company ratios';
     const TN_READ_NESN_2016 = 'Nestlé Financial Statement 2016';
 

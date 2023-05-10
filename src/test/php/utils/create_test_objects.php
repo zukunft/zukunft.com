@@ -560,6 +560,17 @@ class create_test_objects extends test_base
         return $dsp;
     }
 
+    function dummy_view_word_add(): view
+    {
+        global $usr;
+        $dsp = new view($usr);
+        $dsp->set(1, view_api::TN_FORM);
+        $dsp->description = view_api::TD_FORM;
+        $dsp->code_id = view_api::TI_FORM;
+        $dsp->cmp_lst = $this->dummy_component_list();
+        return $dsp;
+    }
+
     function dummy_view_list(): view_list
     {
         global $usr;
