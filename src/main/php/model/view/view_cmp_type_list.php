@@ -63,6 +63,20 @@ class view_cmp_type_list extends type_list
         $this->add($type);
         $type = new type_object(view_cmp_type::PHRASE_NAME, view_cmp_type::PHRASE_NAME, '', 8);
         $this->add($type);
+        $type = new type_object(view_cmp_type::FORM_TITLE, view_cmp_type::FORM_TITLE, '', 17);
+        $this->add($type);
+        $type = new type_object(view_cmp_type::FORM_BACK, view_cmp_type::FORM_BACK, '', 18);
+        $this->add($type);
+        $type = new type_object(view_cmp_type::FORM_CONFIRM, view_cmp_type::FORM_CONFIRM, '', 19);
+        $this->add($type);
+        $type = new type_object(view_cmp_type::FORM_NAME, view_cmp_type::FORM_NAME, '', 20);
+        $this->add($type);
+        $type = new type_object(view_cmp_type::FORM_DESCRIPTION, view_cmp_type::FORM_DESCRIPTION, '', 21);
+        $this->add($type);
+        $type = new type_object(view_cmp_type::FORM_CANCEL, view_cmp_type::FORM_CANCEL, '', 22);
+        $this->add($type);
+        $type = new type_object(view_cmp_type::FORM_SAVE, view_cmp_type::FORM_SAVE, '', 23);
+        $this->add($type);
     }
 
     /**

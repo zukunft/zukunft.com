@@ -70,7 +70,8 @@ class component extends sandbox_typed_dsp
         $result = '';
 
         // list of all possible view components
-        $result .= match ($this->type_code_id()) {
+        $type_code_id = $this->type_code_id();
+        $result .= match ($type_code_id) {
             view_cmp_type::TEXT => $this->text(),  // just to display a simple text
             view_cmp_type::PHRASE_NAME => $this->word_name($dbo->phrase()), // show the word name and give the user the possibility to change the word name
             view_cmp_type::VALUES_RELATED => $this->table($dbo), // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
@@ -83,7 +84,7 @@ class component extends sandbox_typed_dsp
             view_cmp_type::XML_EXPORT => $this->xml_export($dbo, $back), // offer to configure and create an XML file
             view_cmp_type::CSV_EXPORT => $this->csv_export($dbo, $back), // offer to configure and create an CSV file
             view_cmp_type::VALUES_ALL => $this->all($dbo, $back), // shows all: all words that link to the given word and all values related to the given word
-            default => 'program code for component type ' . $this->type_code_id() . ' missing'
+            default => 'program code for component type ' . $type_code_id . ' missing'
         };
 
         return $result;
