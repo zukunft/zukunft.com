@@ -159,35 +159,21 @@ class view extends sandbox_typed_dsp
     }
 
     /**
+     * create the html code for all components of this view
+     *
      * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
      * @return string the html code of all view components
      */
     private function dsp_entries(db_object_dsp $dbo, string $back): string
     {
-        log_debug('"' . $dbo->dsp_id() . '" with the view ' . $this->dsp_id() . '"');
-
+        log_debug($this->dsp_id());
         $result = '';
         if (!$this->cmp_lst->is_empty()) {
             foreach ($this->cmp_lst->lst() as $cmp) {
-                log_debug('"' . $cmp->name . '" type "' . $cmp->type_id . '"');
-
-                // list of all possible view components
-                $result .= $cmp->text();        // just to display a simple text
-                $result .= $cmp->word_name($dbo->phrase()); // show the word name and give the user the possibility to change the word name
-                $result .= $cmp->table($dbo); // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
-                $result .= $cmp->num_list($dbo, $back); // a word list with some key numbers e.g. all companies with the PE ratio
-                $result .= $cmp->formulas($dbo); // display all formulas related to the given word
-                $result .= $cmp->results($dbo); // show a list of formula results related to a word
-                $result .= $cmp->word_children($dbo); // show all words that are based on the given start word
-                $result .= $cmp->word_parents($dbo); // show all word that this words is based on
-                $result .= $cmp->json_export($dbo, $back); // offer to configure and create an JSON file
-                $result .= $cmp->xml_export($dbo, $back); // offer to configure and create an XML file
-                $result .= $cmp->csv_export($dbo, $back); // offer to configure and create an CSV file
-                $result .= $cmp->all($dbo, $back); // shows all: all words that link to the given word and all values related to the given word
+                $result .= $cmp->dsp_entries($dbo, $back);
             }
         }
 
-        log_debug('done');
         return $result;
     }
 
