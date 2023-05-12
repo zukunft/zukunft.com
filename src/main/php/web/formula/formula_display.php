@@ -44,16 +44,6 @@ use model\result_list;
 class formula_dsp_old extends formula
 {
 
-    // create the HTML code to display the formula name with the HTML link
-    function name_linked(?string $back = ''): string
-    {
-        if ($back) {
-            return '<a href="/http/formula_edit.php?id=' . $this->id . '">' . $this->name . '</a>';
-        } else {
-            return '<a href="/http/formula_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
-        }
-    }
-
     // create the HTML code to display the formula text in the human-readable format including links to the formula elements
     function dsp_text(string $back = ''): string
     {

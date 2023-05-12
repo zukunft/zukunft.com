@@ -58,6 +58,7 @@ use cfg\export\user_exp;
 use cfg\export\exp_obj;
 use html\user\user as user_dsp;
 use html\word\word as word_dsp;
+use user_dsp_old;
 
 class user extends db_object
 {
@@ -870,7 +871,9 @@ class user extends db_object
         return $result;
     }
 
-    // load the last word used by the user
+    /**
+     * load the last word used by the user
+     */
     function last_wrd(): word_dsp
     {
         if ($this->wrd_id <= 0) {

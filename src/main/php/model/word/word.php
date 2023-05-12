@@ -64,7 +64,7 @@ use html\html_selector;
 use html\log\user_log_display;
 use html\view\view_dsp_old;
 use html\word\word as word_dsp;
-use result;
+use html\formula\formula as formula_dsp;
 
 class word extends sandbox_typed
 {
@@ -1134,7 +1134,8 @@ class word extends sandbox_typed
             $result .= $html->dsp_form_hidden("name", $this->name);
             $result .= '  to change the name of "' . $this->name . '" rename the ';
             $frm = $this->formula();
-            $result .= $frm->dsp_obj_old()->name_linked($back);
+            $frm_html = new formula_dsp($frm->api_json());
+            $result .= $frm_html->display_linked($back);
             $result .= '.<br> ';
         } else {
             $result .= $html->dsp_form_text("name", $this->name, "Name:", "col-sm-4");

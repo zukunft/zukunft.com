@@ -452,25 +452,6 @@ class term extends combine_named
     }
 
     /**
-     * @return term_dsp the phrase object with the display interface functions
-     */
-    function dsp_obj(): term_dsp
-    {
-        if ($this->is_word()) {
-            return $this->get_word()->dsp_obj()->term();
-        } elseif ($this->is_triple()) {
-            return $this->get_triple()->dsp_obj()->term();
-        } elseif ($this->is_formula()) {
-            return $this->get_formula()->dsp_obj()->term();
-        } elseif ($this->is_verb()) {
-            return $this->get_verb()->dsp_obj()->term();
-        } else {
-            log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
-            return (new term_dsp());
-        }
-    }
-
-    /**
      * @return phrase the word or triple cast as a phrase
      */
     public

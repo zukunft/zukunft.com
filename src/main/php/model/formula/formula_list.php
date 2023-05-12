@@ -35,7 +35,8 @@ include_once API_FORMULA_PATH . 'formula_list.php';
 
 use api\formula_list_api;
 use cfg\config;
-use html\formula_list_dsp;
+use html\formula\formula as formula_dsp;
+use html\formula\formula_list as formula_list_dsp;
 
 class formula_list extends sandbox_list
 {
@@ -506,6 +507,7 @@ class formula_list extends sandbox_list
                     //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
                     //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($this->back));
                     $frm_dsp = $frm->dsp_obj_old();
+                    $frm_html = new formula_dsp($frm->api_json());
                     $result = '';
                     if ($frm->name_wrd != null) {
                         $result = $frm_dsp->dsp_result($frm->name_wrd->phrase(), $this->back);
@@ -516,7 +518,7 @@ class formula_list extends sandbox_list
                     } else {
                         $result .= ' value ' . $result;
                     }
-                    $result .= ' ' . $frm_dsp->name_linked($this->back);
+                    $result .= ' ' . $frm_html->edit_link($this->back);
                     if ($type == 'short') {
                         $result .= ' ' . $frm_dsp->btn_del($this->back);
                         $result .= ', ';

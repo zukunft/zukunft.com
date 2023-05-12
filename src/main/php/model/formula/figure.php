@@ -247,17 +247,6 @@ class figure extends combine_object
     }
 
     /**
-     * @returns figure_dsp the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): figure_dsp
-    {
-        $fig_dsp = new figure_dsp();
-        $json_msg = json_encode($this->api_obj());
-        $fig_dsp->set_from_json($json_msg);
-        return $fig_dsp;
-    }
-
-    /**
      * map a figure api json to this model figure object
      * @param array $api_json the api array with the figure values that should be mapped
      */

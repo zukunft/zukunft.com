@@ -32,6 +32,7 @@
 use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
+use html\word\triple as triple_dsp;
 use model\triple;
 use model\user;
 use model\view;
@@ -62,23 +63,23 @@ if ($usr->id() > 0) {
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // create the link object to have a place to update the parameters
-    $lnk = new triple($usr);
-    $lnk->load_by_id($_GET['id']);
+    $trp = new triple($usr);
+    $trp->load_by_id($_GET['id']);
 
     // edit the link or ask for confirmation
-    if ($lnk->id() <= 0) {
+    if ($trp->id() <= 0) {
         $result .= log_err("No triple found to change because the id is missing.", "link_edit.php");
     } else {
 
         if ($_GET['confirm'] == 1) {
 
             // get the parameters
-            $lnk->from->set_id($_GET['phrase1']); // the word or triple linked from
-            $lnk->verb->set_id($_GET['verb']);    // the link type (verb)
-            $lnk->to->set_id($_GET['phrase2']); // the word or triple linked to
+            $trp->from->set_id($_GET['phrase1']); // the word or triple linked from
+            $trp->verb->set_id($_GET['verb']);    // the link type (verb)
+            $trp->to->set_id($_GET['phrase2']); // the word or triple linked to
 
             // save the changes
-            $upd_result = $lnk->save();
+            $upd_result = $trp->save();
 
             // if update was successful ...
             if (str_replace('1', '', $upd_result) == '') {
@@ -97,7 +98,8 @@ if ($usr->id() > 0) {
             $result .= $html->dsp_err($msg);
 
             // display the word link to allow the user to change it
-            $result .= $lnk->dsp_obj()->form_edit($back);
+            $trp_html = new triple_dsp($trp->api_json());
+            $result .= $trp_html->form_edit($back);
         }
     }
 }

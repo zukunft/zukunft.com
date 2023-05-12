@@ -50,6 +50,7 @@ use cfg\export\exp_obj;
 use cfg\export\result_exp;
 use DateTime;
 use html\html_base;
+use html\formula\formula as formula_dsp;
 use im_export\export;
 
 class result extends db_object
@@ -1220,8 +1221,8 @@ class result extends db_object
         // display the formula with links
         $frm = new formula($this->user());
         $frm->load_by_id($this->frm->id(), formula::class);
-        $api_json = $frm->api_obj();
-        $result .= ' based on</br>' . $frm->name_linked($back);
+        $frm_html = new formula_dsp($frm->api_json());
+        $result .= ' based on</br>' . $frm_html->display_linked($back);
         $result .= ' ' . $frm->dsp_text($back) . "\n";
         $result .= ' ' . $frm->btn_edit($back) . "\n";
         $result .= '</br></br>' . "\n";

@@ -34,6 +34,7 @@ use api\formula_api;
 use api\result_api;
 use api\word_api;
 use cfg\formula_type;
+use html\formula\formula as formula_dsp;
 use model\change_log_field;
 use model\change_log_named;
 use model\change_log_table;
@@ -247,8 +248,9 @@ function run_formula_test(test_cleanup $t): void
 
     // ... in HTML format with link
     $frm_increase = $t->load_formula(formula_api::TN_ADD);
-    $result = $frm_dsp->name_linked($back);
-    $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id() . '&back=0">' . formula_api::TN_ADD . '</a>';
+    $frm_html = new formula_dsp($frm->api_json());
+    $result = $frm_html->edit_link($back);
+    $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id() . '&back=0" title="' . formula_api::TN_ADD . '">' . formula_api::TN_ADD . '</a>';
     $t->display('formula->display for ' . $frm->dsp_id(), $target, $result);
 
     // ... the formula result selected by the word and in percent

@@ -31,6 +31,7 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 use html\view\view_dsp_old;
+use html\word\word as word_dsp;
 use model\user;
 use model\view;
 use model\word;
@@ -87,7 +88,8 @@ if ($usr->id() > 0) {
     $result .= $dsp->selector_page($word_id, $back);
 
     // show the changes
-    $result .= $wrd->dsp_obj()->log_view($back);
+    $wrd_html = new word_dsp($wrd->api_json());
+    $result .= $wrd_html->log_view($back);
 }
 
 echo $result;
