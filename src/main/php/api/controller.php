@@ -186,9 +186,9 @@ class controller
     const DSP_ADD = "view_add";
     const DSP_EDIT = "view_edit";
     const DSP_DEL = "view_del";
-    const DSP_COMPONENT_ADD = "view_entry_add";
-    const DSP_COMPONENT_EDIT = "view_entry_edit";
-    const DSP_COMPONENT_DEL = "view_entry_del";
+    const DSP_COMPONENT_ADD = "component_add";
+    const DSP_COMPONENT_EDIT = "component_edit";
+    const DSP_COMPONENT_DEL = "component_del";
 
 
     /*

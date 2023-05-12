@@ -57,6 +57,7 @@ include_once MODEL_USER_PATH . 'user.php';
 use cfg\config;
 use controller\controller;
 use html\html_base;
+use html\view\view as view_dsp;
 use model\combine_object;
 use model\db_object;
 use model\formula;
@@ -653,8 +654,11 @@ class test_base
 
         $dsp = new view($usr);
         $dsp->load_by_code_id($dsp_code_id);
+        $dsp_html = new view_dsp;
+        $dsp_html->set_from_json($dsp->api_json());
 
-        $actual = $dsp->dsp_obj()->dsp_system_view();
+
+        $actual = $dsp_html->dsp_system_view();
         return $this->assert_html($this->name . ' view ' . $dsp_code_id, $actual, $filename);
     }
 

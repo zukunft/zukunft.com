@@ -2106,7 +2106,7 @@ ALTER TABLE `user_component_links`
     ADD PRIMARY KEY (`component_link_id`, `user_id`),
     ADD KEY `user_id` (`user_id`),
     ADD KEY `position_type` (`position_type`),
-    ADD KEY `view_entry_link_id` (`component_link_id`);
+    ADD KEY `component_link_id` (`component_link_id`);
 
 --
 -- Indexes for table`user_words`

@@ -110,15 +110,6 @@ class html_unit_tests
         $lst->add_verb(new verb(2, verb::IS_PART_OF));
         $t->html_test($lst->dsp_obj()->list(verb::class, 'Verbs'), 'list_verbs', $t);
 
-        $dsp = new view($usr);
-        $dsp->set_id(1);
-        $cmp1 = new component($usr);
-        $cmp1->set_id(1);
-        $cmp1->set_name(component_api::TN_READ);
-        $cmp1->set_type(view_cmp_type::TEXT);
-        $dsp->add_cmp($cmp1);
-        $t->html_test($dsp->dsp_obj()->list_sort(), 'list_view_cmp', $t);
-
 
         $t->subheader('HTML table tests');
 

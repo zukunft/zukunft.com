@@ -1574,7 +1574,7 @@
       {
         "id": 33,
         "name": "Add View Component",
-        "code_id": "view_entry_add",
+        "code_id": "component_add",
         "components": [
           {
             "id": 9,
@@ -1586,14 +1586,14 @@
         "id": 34,
         "name": "Change View Component",
         "description": "Adjust a view component",
-        "code_id": "view_entry_edit",
+        "code_id": "component_edit",
         "components": []
       },
       {
         "id": 35,
         "name": "Delete View Component",
         "description": "Exclude or delete a view component",
-        "code_id": "view_entry_del",
+        "code_id": "component_del",
         "components": []
       }
     ]

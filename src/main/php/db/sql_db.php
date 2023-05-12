@@ -1318,12 +1318,6 @@ class sql_db
         if ($result == 'value_ts_datas') {
             $result = 'value_ts_data';
         }
-        if ($result == 'view_entrys') {
-            $result = 'view_entries';
-        }
-        if ($result == 'user_view_entrys') {
-            $result = 'user_view_entries';
-        }
         if ($result == 'sys_logs') {
             $result = 'sys_log';
         }
@@ -1394,9 +1388,6 @@ class sql_db
         }
         $result = $type . sql_db::FLD_EXT_ID;
         // exceptions for nice english
-        if ($type == 'view_entrie') {
-            $result = 'view_entry_id';
-        }
         if ($result == 'sys_log_statuss_id') {
             $result = 'sys_log_status_id';
         }

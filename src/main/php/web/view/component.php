@@ -357,4 +357,56 @@ class component extends sandbox_typed_dsp
         return array_filter($vars, fn($value) => !is_null($value));
     }
 
+
+    /*
+     * to be replaced
+     */
+
+    /**
+     * HTML code to edit all component fields
+     * @param string $dsp_type the html code to display the type selector
+     * @param string $phr_row the html code to select the phrase for the row
+     * @param string $phr_col the html code to select the phrase for the column
+     * @param string $phr_cols the html code to select the phrase for the second column
+     * @param string $dsp_log the html code of the change log
+     * @param string $back the html code to be opened in case of a back action
+     * @return string the html code to display the edit page
+     */
+    function form_edit(
+        string $dsp_type,
+        string $phr_row,
+        string $phr_col,
+        string $phr_cols,
+        string $dsp_log,
+        string $back = ''): string
+    {
+        $html = new html_base();
+        $result = '';
+
+        $hidden_fields = '';
+        if ($this->id <= 0) {
+            $script = controller::DSP_COMPONENT_ADD;
+            $fld_ext = '_add';
+            $header = $html->text_h2('Create a view element');
+        } else {
+            $script = controller::DSP_COMPONENT_EDIT;
+            $fld_ext = '';
+            $header = $html->text_h2('Change "' . $this->name . '"');
+            $hidden_fields .= $html->form_hidden("id", $this->id);
+        }
+        $hidden_fields .= $html->form_hidden("back", $back);
+        $hidden_fields .= $html->form_hidden("confirm", '1');
+        $detail_fields = $html->form_text("name" . $fld_ext, $this->name(), "Name");
+        $detail_fields .= $html->form_text("description" . $fld_ext, $this->description, "Description");
+        $detail_fields .= $dsp_type;
+        $detail_row = $html->fr($detail_fields) . '<br>';
+        $result = $header
+            . $html->form($script, $hidden_fields . $detail_row)
+            . '<br>';
+
+        $result .= $dsp_log;
+
+        return $result;
+    }
+
 }

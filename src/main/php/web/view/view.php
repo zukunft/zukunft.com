@@ -36,9 +36,11 @@ namespace html\view;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
+use api\component_api;
 use controller\controller;
 use html\api;
 use html\button;
+use html\component_dsp_old;
 use html\html_base;
 use html\system\back_trace;
 use html\view\component_list as component_list_dsp;
@@ -407,6 +409,7 @@ class view extends sandbox_typed_dsp
         return '';
     }
 
+
     /*
      * interface
      */
@@ -421,6 +424,31 @@ class view extends sandbox_typed_dsp
         $vars[controller::API_FLD_CODE_ID] = $this->code_id;
         $vars[controller::API_FLD_COMPONENTS] = $this->cmp_lst->api_array();
         return array_filter($vars, fn($value) => !is_null($value));
+    }
+
+
+    /*
+     * to review
+     */
+
+    function dsp_system_view(): string
+    {
+        $result = '';
+        switch ($this->code_id) {
+            case controller::DSP_COMPONENT_ADD:
+                $cmp = new component_dsp_old(0);
+                $result = $cmp->form_edit('', '', '', '', '');
+                break;
+            case controller::DSP_COMPONENT_EDIT:
+                $cmp = new component_dsp_old(1, component_api::TN_READ);
+                $result = $cmp->form_edit('', '', '', '', '');
+                break;
+            case controller::DSP_COMPONENT_DEL:
+                // TODO fill
+                $result = 'del';
+                break;
+        }
+        return $result;
     }
 
 }

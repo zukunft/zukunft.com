@@ -34,7 +34,7 @@ namespace test\html;
 
 use api\component_api;
 use html\html_base;
-use html\component_dsp_old;
+use html\view\component as component_dsp;
 use test\test_cleanup;
 
 class component
@@ -59,10 +59,13 @@ class component
         $test_page .= 'view header<br>';
         $test_page .= $wrd->header() . '<br>';
         */
-        $cmp = new component_dsp_old(0);
+        $cmp = new component_dsp();
+        $cmp->set_id(0);
         $test_page .= 'add mask<br>';
         $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
-        $cmp = new component_dsp_old(1, component_api::TN_READ);
+        $cmp = new component_dsp();
+        $cmp->set_id(1);
+        $cmp->set_name(component_api::TN_READ);
         $cmp->description = component_api::TD_READ;
         $test_page .= 'edit mask<br>';
         $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
