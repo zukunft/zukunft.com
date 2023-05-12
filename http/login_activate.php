@@ -48,6 +48,8 @@ $msg = '';
 $_SESSION['logged'] = FALSE;
 
 if (isset($_POST['submit'])) {
+    $html = new html_base();
+
     $usr_id = $_POST['id'];
     $debug = $_POST['debug'];
     log_debug("login_activate (user: " . $usr_id . ")");
@@ -143,7 +145,7 @@ if (!$_SESSION['logged']) {
         }
     }
     if ($usr_id > 0) {
-        $result .= dsp_form_center();
+        $result .= $html->dsp_form_center();
         $result .= $html->logo_big();
         $result .= '<br><br>';
         $result .= '<form action="login_activate.php" method="post">';

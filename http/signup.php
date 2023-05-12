@@ -134,7 +134,7 @@ if (isset($error)) {
     unset($error);
 }
 $html = new html_base();
-$result .= dsp_form_center();
+$result .= $html->dsp_form_center();
 $result .= $html->logo_big();
 $result .= '<br><br>';
 $result .= '<p>Please signup for <b>alpha testing</b> of zukunft.com.</p>';

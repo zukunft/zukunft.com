@@ -55,6 +55,7 @@ $back = $_GET['back'];     // the word id from which this value change has been 
 log_debug('import.php check user ');
 if ($usr->id() > 0) {
 
+    $html = new html_base();
     load_usr_data();
 
     // prepare the display
@@ -161,7 +162,7 @@ if ($usr->id() > 0) {
         $result .= $dsp->dsp_navbar($back);
         $result .= $html->dsp_err($msg);
 
-        $result .= dsp_form_file_select();
+        $result .= $html->dsp_form_file_select();
         // $result .= dsp_btn_text ('Start import', '/http/import.php?confirm=1&filepath='.);
         /*
         if ($fileName == '') {

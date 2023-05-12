@@ -1417,7 +1417,8 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
      */
     function dsp_add(string $back = ''): string
     {
-        log_debug("triple->dsp_add.");
+        log_debug();
+        $html = new html_base();
         $result = ''; // reset the html code var
 
         // at least to create the dummy objects to display the selectors
@@ -1428,10 +1429,10 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         //$result .= 'Create a combined word (semantic triple):<br>';
         $result .= '<br>Define a new relation for <br><br>';
         $result .= '<b>' . $this->from->name() . '</b> ';
-        $result .= dsp_form_start($form_name);
-        $result .= dsp_form_hidden("back", $back);
-        $result .= dsp_form_hidden("confirm", '1');
-        $result .= dsp_form_hidden("from", $this->from->id());
+        $result .= $html->dsp_form_start($form_name);
+        $result .= $html->input("back", $back);
+        $result .= $html->input("confirm", '1');
+        $result .= $html->input("from", $this->from->id());
         $result .= '<div class="form-row">';
         if (isset($this->verb)) {
             $result .= $this->verb->dsp_selector('both', $form_name, "col-sm-6", $back);
@@ -1441,7 +1442,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         }
         $result .= '</div>';
         $result .= '<br>';
-        $result .= dsp_form_end('', $back);
+        $result .= $html->dsp_form_end('', $back);
 
         return $result;
     }

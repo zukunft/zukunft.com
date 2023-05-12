@@ -29,6 +29,7 @@
   
 */
 
+use html\html_base;
 use html\view\view_dsp_old;
 use model\formula;
 use model\user;
@@ -51,6 +52,8 @@ $result .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
+    $html = new html_base();
+
     load_usr_data();
 
     // prepare the display
@@ -72,7 +75,7 @@ if ($usr->id() > 0) {
         if ($confirm == 1) {
             $frm->del();
 
-            $result .= dsp_go_back($back, $usr);
+            $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
             $result .= $dsp->dsp_navbar($back);
@@ -84,7 +87,7 @@ if ($usr->id() > 0) {
             }
         }
     } else {
-        $result .= dsp_go_back($back, $usr);
+        $result .= $html->dsp_go_back($back, $usr);
     }
 }
 

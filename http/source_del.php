@@ -30,6 +30,7 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use html\html_base;
 use html\view\view_dsp_old;
 use model\source;
 use model\user;
@@ -41,6 +42,7 @@ include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("source_del");
+$html = new html_base();
 
 global $system_views;
 
@@ -74,7 +76,7 @@ if ($usr->id() > 0) {
         if ($confirm == 1) {
             $src->del();
 
-            $result .= dsp_go_back($back, $usr);
+            $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
             $result .= $dsp->dsp_navbar($back);
@@ -82,7 +84,7 @@ if ($usr->id() > 0) {
             $result .= \html\btn_yesno("Delete " . $src->name() . "? ", "/http/source_del.php?id=" . $src_id . "&back=" . $back);
         }
     } else {
-        $result .= dsp_go_back($back, $usr);
+        $result .= $html->dsp_go_back($back, $usr);
     }
 }
 

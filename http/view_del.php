@@ -30,7 +30,10 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use html\html_base;
 use html\view\view_dsp_old;
+use model\user;
+use model\view;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
@@ -38,6 +41,7 @@ include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("view_del");
+$html = new html_base();
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -69,7 +73,7 @@ if ($usr->id() > 0) {
         if ($confirm == 1) {
             $dsp_del->del();
 
-            $result .= dsp_go_back($back, $usr);
+            $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
             $result .= $dsp->dsp_navbar($back);
@@ -77,7 +81,7 @@ if ($usr->id() > 0) {
             $result .= \html\btn_yesno("Delete " . $dsp_del->name() . "? ", "/http/view_del.php?id=" . $dsp_del_id . "&back=" . $back);
         }
     } else {
-        $result .= dsp_go_back($back, $usr);
+        $result .= $html->dsp_go_back($back, $usr);
     }
 }
 

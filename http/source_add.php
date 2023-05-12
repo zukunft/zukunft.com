@@ -58,6 +58,8 @@ echo $usr->get(); // if the usr identification fails, show any message immediate
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
+    $html = new html_base();
+
     load_usr_data();
 
     // prepare the display
@@ -105,7 +107,7 @@ if ($usr->id() > 0) {
                     $usr->set_source($src->id());
 
                     // ... and display the calling view
-                    $result .= dsp_go_back($back, $usr);
+                    $result .= $html->dsp_go_back($back, $usr);
                 } else {
                     // ... or in case of a problem prepare to show the message
                     $msg .= $add_result;

@@ -217,6 +217,8 @@ class button
         log_debug();
         $result = '';
 
+        $html = new html_base();
+
         // group the modal box with the button
         $result .= '<div class="container">';
 
@@ -245,7 +247,7 @@ class button
         $result .= '          <button type="button" class="save" data-dismiss="modal">&times;</button>';
         $result .= '        </div>';
         $result .= '        <div class="modal-body">';
-        $result .= dsp_form_start($form_name);
+        $result .= $html->dsp_form_start($form_name);
         $result .= '            ' . $phr_time->name_dsp();
         $result .= '            <input type="hidden" name="phrases" value="' . implode(",", $phr_lst->ids()) . '">';
         $result .= '            <input type="hidden" name="back" value="' . $back . '">';

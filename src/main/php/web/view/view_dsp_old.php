@@ -287,8 +287,8 @@ class view_dsp_old extends view
     }
 
     /*
-    java script functions using bootstrap
-    */
+     * JavaScript functions using bootstrap
+     */
 
     // same as dsp_navbar_html, but using bootstrap
     private function dsp_navbar_bs($show_view, $back): string
@@ -525,7 +525,7 @@ class view_dsp_old extends view
                 $sel->selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $sel->display_old();
 
-                $result .= dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
+                $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: <input type="text" name="entry_name"> ';
                 $sel = new html_selector;
@@ -535,7 +535,7 @@ class view_dsp_old extends view
                 $sel->sql = sql_lst("view_component_type");
                 $sel->selected = $this->type_id;  // ??? should this not be the default entry type
                 $result .= $sel->display_old();
-                $result .= dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
+                $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
                 $result .= (new button("add view component", "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&add_entry=1&back=" . $back))->add();
             }
@@ -545,7 +545,7 @@ class view_dsp_old extends view
         }
 
         if (UI_USE_BOOTSTRAP) {
-            $result .= dsp_tbl_end();
+            $result .= $html->dsp_tbl_end();
         }
 
         return $result;

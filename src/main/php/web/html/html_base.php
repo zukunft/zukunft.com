@@ -753,9 +753,9 @@ class html_base
             header("Location: view.php?words=1"); // go back to the fallback page
         } else {
             if (is_numeric($back)) {
-                header("Location: view.php?words=" . $back . ""); // go back to the calling page and try to avoid double change script calls
+                header("Location: view.php?words=" . $back); // go back to the calling page and try to avoid double change script calls
             } else {
-                header("Location: " . $back . ""); // go back to the calling page and try to avoid double change script calls
+                header("Location: " . $back); // go back to the calling page and try to avoid double change script calls
             }
         }
 
@@ -1051,7 +1051,9 @@ class html_base
         return $result;
     }
 
-// display a file selector form
+    /**
+     * display a file selector form
+     */
     function dsp_form_file_select(): string
     {
         $result = '';

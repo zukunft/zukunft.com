@@ -31,7 +31,10 @@
 // Zukunft.com verb list
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use cfg\verb_list;
 use html\view\view_dsp_old;
+use model\user;
+use model\view;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
@@ -50,6 +53,8 @@ $result .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
+    $html = new \html\html_base();
+
     load_usr_data();
 
     // prepare the display
@@ -60,7 +65,7 @@ if ($usr->id() > 0) {
     $result .= $dsp->dsp_navbar($back);
 
     // display the verb list
-    $result .= dsp_text_h2("Word link types");
+    $result .= $html->dsp_text_h2("Word link types");
     $vrb_lst = new verb_list($usr);
     $vrb_lst->load($db_con);
     $result .= $vrb_lst->dsp_list();

@@ -45,6 +45,7 @@ include_once PHP_PATH . 'zu_lib.php';
 
 // open database
 $db_con = prg_start("test_base_config");
+$html = new html_base();
 
 global $system_views;
 
@@ -75,7 +76,6 @@ if ($usr->id() > 0) {
         // start base configuration load and check
         // ---------------------------------------
 
-        $html = new html_base();
         $html->echo($dsp->dsp_navbar($back));
 
         $html->echo("loading of base configuration started<br>");
@@ -84,7 +84,7 @@ if ($usr->id() > 0) {
 
         $html->echo("loading of base configuration finished<br>");
 
-        $html->echo(dsp_go_back($back, $usr));
+        $html->echo($html->dsp_go_back($back, $usr));
     }
 }
 

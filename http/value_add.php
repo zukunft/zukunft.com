@@ -124,7 +124,7 @@ if ($usr->id() > 0) {
         }
 
         log_debug("go back to " . $back . ".");
-        $result .= dsp_go_back($back, $usr);
+        $result .= $html->dsp_go_back($back, $usr);
     }
 
     // if nothing yet done display the add view (and any message on the top)

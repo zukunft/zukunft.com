@@ -31,6 +31,9 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 use html\view\view_dsp_old;
+use model\user;
+use model\view;
+use model\word;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
@@ -48,6 +51,8 @@ $result .= $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
+
+    $html = new \html\html_base();
 
     load_usr_data();
 
@@ -71,9 +76,9 @@ if ($usr->id() > 0) {
     $wrd = new word($usr);
     if ($word_id > 0) {
         $wrd->load_by_id($word_id);
-        $result .= dsp_text_h2('Select the display format for "' . $wrd->name() . '"');
+        $result .= $html->dsp_text_h2('Select the display format for "' . $wrd->name() . '"');
     } else {
-        $result .= dsp_text_h2('The word is missing for which the display format should be changed. If you can explain how to reproduce this error message, please report the steps on https://github.com/zukunft/zukunft.com/issues.');
+        $result .= $html->dsp_text_h2('The word is missing for which the display format should be changed. If you can explain how to reproduce this error message, please report the steps on https://github.com/zukunft/zukunft.com/issues.');
     }
 
     // allow to change to type

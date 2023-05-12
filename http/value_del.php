@@ -34,6 +34,9 @@ use html\api;
 use html\button;
 use html\html_base;
 use html\view\view_dsp_old;
+use model\user;
+use model\value;
+use model\view;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
@@ -75,7 +78,7 @@ if ($usr->id() > 0) {
             // actually delete the value (at least for this user)
             $val->del();
 
-            $result .= dsp_go_back($back, $usr);
+            $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
             $result .= $dsp->dsp_navbar($back);
@@ -85,7 +88,7 @@ if ($usr->id() > 0) {
             $result .= (new button('Delete ' . $val->number() . ' for ' . $val->phr_lst()->dsp_name() . '? ', $url))->yesno();
         }
     } else {
-        $result .= dsp_go_back($back, $usr);
+        $result .= $html->dsp_go_back($back, $usr);
     }
 }
 

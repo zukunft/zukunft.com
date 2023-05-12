@@ -96,7 +96,7 @@ if ($usr->id() > 0) {
 
 if (!$_SESSION['logged']) {
     $html = new html_base();
-    $result .= dsp_form_center();
+    $result .= $html->dsp_form_center();
     $result .= $html->logo_big();
     $result .= '<br><br>';
     $result .= '<form action="login.php" method="post">';

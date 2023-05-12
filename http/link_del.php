@@ -29,7 +29,11 @@
   
 */
 
+use html\html_base;
 use html\view\view_dsp_old;
+use model\triple;
+use model\user;
+use model\view;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
@@ -47,6 +51,8 @@ $result .= $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
+
+    $html = new html_base();
 
     load_usr_data();
 
@@ -69,7 +75,7 @@ if ($usr->id() > 0) {
         if ($confirm == 1) {
             $lnk->del();
 
-            $result .= dsp_go_back($back, $usr);
+            $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
             $result .= $dsp->dsp_navbar($back);
@@ -77,7 +83,7 @@ if ($usr->id() > 0) {
             $result .= $lnk->dsp_del($back);
         }
     } else {
-        $result .= dsp_go_back($back, $usr);
+        $result .= $html->dsp_go_back($back, $usr);
     }
 }
 

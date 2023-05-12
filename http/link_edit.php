@@ -82,7 +82,7 @@ if ($usr->id() > 0) {
             // if update was successful ...
             if (str_replace('1', '', $upd_result) == '') {
                 // ... display the calling view
-                $result .= dsp_go_back($back, $usr);
+                $result .= $html->dsp_go_back($back, $usr);
             } else {
                 // ... or in case of a problem prepare to show the message
                 $msg .= $upd_result;

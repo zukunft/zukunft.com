@@ -137,7 +137,7 @@ if ($usr->id() > 0) {
 
                     // if linking was successful ...
                     if (str_replace('1', '', $add_result) == '') {
-                        $result .= dsp_go_back($back, $usr);
+                        $result .= $html->dsp_go_back($back, $usr);
                     } else {
                         // ... or in case of a problem prepare to show the message
                         $msg .= $add_result;

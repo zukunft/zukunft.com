@@ -54,6 +54,8 @@ $result .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
+    $html = new \html\html_base();
+
     load_usr_data();
 
     // prepare the display
@@ -92,7 +94,7 @@ if ($usr->id() > 0) {
                 $usr->set_source($src->id());
 
                 // ... and display the calling view
-                $result .= dsp_go_back($back, $usr);
+                $result .= $html->dsp_go_back($back, $usr);
             } else {
                 // ... or in case of a problem prepare to show the message
                 $msg .= $upd_result;
@@ -104,7 +106,7 @@ if ($usr->id() > 0) {
         if ($result == '') {
             // show the header
             $result .= $dsp->dsp_navbar($back);
-            $result .= dsp_err($msg);
+            $result .= $html->dsp_err($msg);
 
             // show the source and its relations, so that the user can change it
             $result .= $src->dsp_obj()->dsp_edit($back);

@@ -90,7 +90,7 @@ if ($usr->id() > 0) {
             if (str_replace('1', '', $add_result) == '') {
                 // TODO call the dsp_edit view and set the new view as the default view for the sample term
                 // display the calling view (or call the view component edit
-                $result .= dsp_go_back($back, $usr);
+                $result .= $html->dsp_go_back($back, $usr);
             } else {
                 // ... or in case of a problem prepare to show the message
                 $msg .= $add_result;

@@ -111,7 +111,7 @@ function run_display_test(testing $t): void
     $t->display(", btn_back", $target, $result);
 
 
-    $t->header('Test the display HTML class (classes/display_html.php )');
+    $t->header('Test the display HTML class');
 
     $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../../main/resources/style/style.css" /> </head> <body class="center_form">'));
     $target = htmlspecialchars(trim('<title>Header test (zukunft.com)</title>'));

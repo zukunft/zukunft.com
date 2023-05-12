@@ -108,7 +108,7 @@ if ($usr->id() > 0) {
                     // if adding was successful ...
                     if (str_replace('1', '', $add_result) == '') {
                         // ... and display the calling view
-                        $result .= dsp_go_back($back, $usr);
+                        $result .= $html->dsp_go_back($back, $usr);
                     } else {
                         // ... or in case of a problem prepare to show the message
                         $msg .= $add_result;

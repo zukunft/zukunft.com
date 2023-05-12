@@ -597,7 +597,7 @@ class value_dsp_old extends value
         } else {
             $result .= '  is <input type="text" name="value">';
         }
-        $result .= dsp_form_end("Save", $back);
+        $result .= $html->dsp_form_end("Save", $back);
         $result .= '<br><br>';
         log_debug('load source');
         $src = $this->load_source();

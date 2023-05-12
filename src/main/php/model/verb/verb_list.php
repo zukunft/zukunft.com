@@ -41,6 +41,7 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 
+use html\html_base;
 use model\phrase;
 use model\sql_db;
 use model\sql_par;
@@ -506,7 +507,8 @@ class verb_list extends type_list
      */
     function dsp_list(): string
     {
-        return dsp_list($this->lst, "link_type");
+        $html = new html_base();
+        return $html->dsp_list($this->lst, "link_type");
     }
 
 }

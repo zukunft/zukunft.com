@@ -57,6 +57,8 @@ $back = $_GET['back'];     // the word id from which this value change has been 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
+    $html = new html_base();
+
     load_usr_data();
 
     // prepare the display
@@ -84,7 +86,7 @@ if ($usr->id() > 0) {
 
         $html->echo("loading of base configuration finished<br>");
 
-        $html->echo(dsp_go_back($back, $usr));
+        $html->echo($html->dsp_go_back($back, $usr));
     }
 }
 
