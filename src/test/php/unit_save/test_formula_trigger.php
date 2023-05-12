@@ -35,12 +35,12 @@ use api\value_api;
 use api\word_api;
 use model\phrase_list;
 use model\value;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 use const test\TIMEOUT_LIMIT_LONG;
 use const test\TV_TEST_SALES_INCREASE_2017_FORMATTED;
 
-function run_formula_trigger_test(testing $t): void
+function run_formula_trigger_test(test_cleanup $t): void
 {
 
     global $usr;

@@ -31,9 +31,9 @@
 
 namespace html\view;
 
-use model\view_component_link;
+use model\component_link;
 
-class view_component_link_dsp extends view_component_link
+class component_link_dsp extends component_link
 {
 
     /**
@@ -66,7 +66,7 @@ class view_component_link_dsp extends view_component_link
             and isset($this->tob)) {
             $result = $this->fob->name_linked(NULL, $back) . ' to ' . $this->tob->name_linked($back);
         } else {
-            $result .= log_err("The view name or the component name cannot be loaded.", "view_component_link->name");
+            $result .= log_err("The view name or the component name cannot be loaded.", "component_link->name");
         }
 
         return $result;

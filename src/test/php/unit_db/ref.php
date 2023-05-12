@@ -42,7 +42,7 @@ use model\ref;
 class ref_unit_db_tests
 {
 
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;

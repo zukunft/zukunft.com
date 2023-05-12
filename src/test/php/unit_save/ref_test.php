@@ -34,10 +34,10 @@ use api\word_api;
 use cfg\ref_type;
 use cfg\ref_type_list;
 use model\ref;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE_LONG;
 
-function run_ref_test(testing $t): void
+function run_ref_test(test_cleanup $t): void
 {
 
     global $usr;

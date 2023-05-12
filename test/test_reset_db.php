@@ -137,12 +137,12 @@ function run_db_truncate(): void
         sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA,
         sql_db::TBL_FORMULA,
         sql_db::TBL_FORMULA_TYPE,
-        sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT_LINK,
-        sql_db::TBL_VIEW_COMPONENT_LINK,
-        sql_db::TBL_VIEW_COMPONENT_LINK_TYPE,
+        sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK,
+        sql_db::TBL_COMPONENT_LINK,
+        sql_db::TBL_COMPONENT_LINK_TYPE,
         sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT,
         sql_db::TBL_COMPONENT,
-        sql_db::TBL_VIEW_COMPONENT_TYPE,
+        sql_db::TBL_COMPONENT_TYPE,
         sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW,
         sql_db::TBL_VIEW,
         sql_db::TBL_VIEW_TYPE,
@@ -203,9 +203,9 @@ function run_preloaded_truncate(): void
     global $formula_link_types;
     global $formula_element_types;
     global $view_types;
-    global $view_component_types;
-    global $view_component_link_types;
-    global $view_component_position_types;
+    global $component_types;
+    global $component_link_types;
+    global $component_position_types;
     global $ref_types;
     global $source_types;
     global $share_types;
@@ -227,10 +227,10 @@ function run_preloaded_truncate(): void
     $formula_link_types = new formula_link_type_list();
     $formula_element_types = new formula_element_type_list();
     $view_types = new view_type_list();
-    $view_component_types = new view_cmp_type_list();
+    $component_types = new view_cmp_type_list();
     // not yet needed?
-    //$view_component_link_types = new view_component_link_type_list();
-    $view_component_position_types = new view_cmp_pos_type_list();
+    //$component_link_types = new component_link_type_list();
+    $component_position_types = new view_cmp_pos_type_list();
     $ref_types = new ref_type_list();
     $source_types = new source_type_list();
     $share_types = new share_type_list();
@@ -267,10 +267,10 @@ function run_db_seq_reset(): void
         'formula_links_formula_link_id_seq',
         'formulas_formula_id_seq',
         'formula_types_formula_type_id_seq',
-        'view_component_links_view_component_link_id_seq',
-        'view_component_link_types_view_component_link_type_id_seq',
-        'view_components_view_component_id_seq',
-        'view_component_types_view_component_type_id_seq',
+        'component_links_component_link_id_seq',
+        'component_link_types_component_link_type_id_seq',
+        'components_component_id_seq',
+        'component_types_component_type_id_seq',
         'views_view_id_seq',
         'view_types_view_type_id_seq',
         'phrase_groups_phrase_group_id_seq',

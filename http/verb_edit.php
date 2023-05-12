@@ -30,6 +30,7 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\user;
@@ -58,7 +59,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(view::VERB_EDIT);
+    $dsp->load_by_code_id(controller::DSP_VERB_EDIT);
     $back = $_GET['back']; // the original calling page that should be shown after the change is finished
 
     // create the verb object to have an place to update the parameters

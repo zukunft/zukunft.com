@@ -36,11 +36,11 @@ include_once WEB_USER_PATH . 'user.php';
 
 use html\html_base;
 use html\user\user as user_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class user
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         global $usr;
         $html = new html_base();

@@ -2,7 +2,7 @@
 
 /*
 
-  test/unit/view_component_link.php - unit testing of the VIEW COMPONENT LINK functions
+  test/unit/component_link.php - unit testing of the VIEW COMPONENT LINK functions
   ---------------------------------
   
 
@@ -32,17 +32,17 @@
 
 namespace test;
 
-include_once MODEL_VIEW_PATH . 'view_component_link_list.php';
+include_once MODEL_VIEW_PATH . 'component_link_list.php';
 
 use model\sql_db;
 use model\view;
 use model\component;
-use model\view_component_link;
-use model\view_component_link_list;
+use model\component_link;
+use model\component_link_list;
 
-class view_component_link_unit_tests
+class component_link_unit_tests
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;
@@ -53,13 +53,13 @@ class view_component_link_unit_tests
         $t->resource_path = 'db/view/';
         $usr->set_id(1);
 
-        $t->header('Unit tests of the view component link class (src/main/php/model/view/view_component_link.php)');
+        $t->header('Unit tests of the view component link class (src/main/php/model/view/component_link.php)');
 
 
         $t->subheader('SQL user sandbox statement tests');
 
         // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
-        $vcl = new view_component_link($usr);
+        $vcl = new component_link($usr);
         $t->assert_load_sql_id($db_con, $vcl);
         $t->assert_load_sql_link($db_con, $vcl);
 
@@ -67,13 +67,13 @@ class view_component_link_unit_tests
         $t->subheader('SQL statement tests');
 
         // sql to load a view component link by the id
-        $lnk = new view_component_link($usr);
+        $lnk = new component_link($usr);
         $lnk->set_id(1);
         //$t->assert_load_sql($db_con, $lnk);
         $t->assert_user_config_sql($db_con, $lnk);
 
         // sql to load a list of value by the phrase ids
-        $lnk = new view_component_link($usr);
+        $lnk = new component_link($usr);
         $lnk->dsp->set_id(1);
         $lnk->cmp->set_id(2);
         $t->assert_load_sql_obj_vars($db_con, $lnk);
@@ -82,13 +82,13 @@ class view_component_link_unit_tests
         $t->subheader('Database list query creation tests');
 
         // sql to load a view component link list by view id
-        $dsp_cmp_lnk_lst = new view_component_link_list($usr);
+        $dsp_cmp_lnk_lst = new component_link_list($usr);
         $dsp = new view($usr);
         $dsp->set_id(2);
         $this->assert_lst_sql_all($t, $db_con, $dsp_cmp_lnk_lst, $dsp);
 
         // sql to load a view component link list by component id
-        $dsp_cmp_lnk_lst = new view_component_link_list($usr);
+        $dsp_cmp_lnk_lst = new component_link_list($usr);
         $cmp = new component($usr);
         $cmp->set_id(3);
         $this->assert_lst_sql_all($t, $db_con, $dsp_cmp_lnk_lst, null, $cmp);
@@ -99,14 +99,14 @@ class view_component_link_unit_tests
      * test the SQL statement creation for a value phrase link list in all SQL dialect
      * and check if the statement name is unique
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
-     * @param view_component_link_list $lst filled with an id to be able to load
+     * @param component_link_list $lst filled with an id to be able to load
      * @param view|null $dsp the view used for selection
      * @param component|null $cmp the component used for selection
      * @return void
      */
-    private function assert_lst_sql_all(testing $t, sql_db $db_con, view_component_link_list $lst, ?view $dsp = null, ?component $cmp = null): void
+    private function assert_lst_sql_all(test_cleanup $t, sql_db $db_con, component_link_list $lst, ?view $dsp = null, ?component $cmp = null): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

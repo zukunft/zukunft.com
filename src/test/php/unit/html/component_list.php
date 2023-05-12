@@ -36,11 +36,11 @@ include_once WEB_VIEW_PATH . 'component_list.php';
 
 use html\html_base;
 use html\view\component_list as component_list_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class component_list
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         $html = new html_base();

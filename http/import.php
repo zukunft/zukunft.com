@@ -30,6 +30,7 @@
 
 */
 
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\user;
@@ -60,7 +61,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(view::IMPORT);
+    $dsp->load_by_code_id(controller::DSP_IMPORT);
 
     // get the filepath of the data that are supposed to be imported
     $fileName = $_FILES["fileToUpload"]["name"];

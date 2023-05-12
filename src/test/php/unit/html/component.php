@@ -35,11 +35,11 @@ namespace test\html;
 use api\component_api;
 use html\html_base;
 use html\component_dsp_old;
-use test\testing;
+use test\test_cleanup;
 
 class component
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         global $usr;
         $html = new html_base();

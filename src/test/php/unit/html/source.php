@@ -34,11 +34,11 @@ namespace test\html;
 
 use html\html_base;
 use html\ref\source as source_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class source
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         global $usr;
         $html = new html_base();

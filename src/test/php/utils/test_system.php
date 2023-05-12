@@ -32,13 +32,13 @@
 
 use model\user;
 use model\user_list;
-use test\testing;
+use test\test_cleanup;
 use const test\TEST_EMAIL;
 use const test\TEST_USER_DESCRIPTION;
 use const test\TEST_USER_IP;
 use const test\TEST_WORD;
 
-function run_system_test(testing $t): void
+function run_system_test(test_cleanup $t): void
 {
 
     global $usr;

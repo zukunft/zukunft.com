@@ -35,9 +35,9 @@
 // -----------------------------------------------
 
 use model\user;
-use test\testing;
+use test\test_cleanup;
 
-function run_user_test(testing $t): void
+function run_user_test(test_cleanup $t): void
 {
 
     global $usr;

@@ -36,11 +36,11 @@ use model\change_log_named;
 use model\change_log_table;
 use model\sandbox_named;
 use model\source;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 
-function create_test_sources(testing $t): void
+function create_test_sources(test_cleanup $t): void
 {
 
     $t->header('Check if all base sources are exist');
@@ -49,7 +49,7 @@ function create_test_sources(testing $t): void
 
 }
 
-function run_source_test(testing $t): void
+function run_source_test(test_cleanup $t): void
 {
    $t->header('Test the source class (src/main/php/model/ref/source.php)');
 

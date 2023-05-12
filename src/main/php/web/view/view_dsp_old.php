@@ -297,7 +297,7 @@ class view_dsp_old extends view
         $result = '<nav class="navbar bg-light fixed-top">';
         $result .= $html->logo();
         $result .= '  <form action="/http/find.php" class="form-inline my-2 my-lg-0">';
-        $result .= '    <input name="pattern" class="form-control mr-sm-2" type="search" placeholder="word or formula">';
+        $result .= $this->input_search_pattern();
         $result .= '    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>';
         $result .= '  </form>';
         $result .= '  <div class="col-sm-2">';
@@ -348,6 +348,16 @@ class view_dsp_old extends view
         $result .= '<br>';
         $result .= '<br>';
         return $result;
+    }
+
+    private function input_search_pattern(): string
+    {
+        $html = new html_base();
+        return $html->input(
+            'pattern', '',
+            html_base::INPUT_SEARCH,
+            html_base::BS_SM_2,
+            'word or formula');
     }
 
     /*
@@ -502,7 +512,7 @@ class view_dsp_old extends view
             log_debug('loaded');
             $dsp_list = new dsp_list;
             $dsp_list->lst = $this->cmp_lst;
-            $dsp_list->id_field = "view_component_id";
+            $dsp_list->id_field = "component_id";
             $dsp_list->script_name = "view_edit.php";
             $dsp_list->class_edit = view::class;
             $dsp_list->script_parameter = $this->id . "&back=" . $back . "&word=" . $wrd->id;
@@ -520,19 +530,20 @@ class view_dsp_old extends view
                 $sel = new html_selector;
                 $sel->form = 'view_edit';
                 $sel->dummy_text = 'Select a view component ...';
-                $sel->name = 'add_view_component';
-                $sel->sql = sql_lst_usr("view_component", $this->user());
+                $sel->name = 'add_component';
+                $sel->sql = sql_lst_usr("component", $this->user());
                 $sel->selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $sel->display_old();
 
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
             } elseif ($add_cmp < 0) {
-                $result .= 'Name of the new display element: <input type="text" name="entry_name"> ';
+                $result .= 'Name of the new display element: ';
+                $result .= $html->input('entry_name', '', html_base::INPUT_TEXT);
                 $sel = new html_selector;
                 $sel->form = 'view_edit';
                 $sel->dummy_text = 'Select a type ...';
                 $sel->name = 'new_entry_type';
-                $sel->sql = sql_lst("view_component_type");
+                $sel->sql = sql_lst("component_type");
                 $sel->selected = $this->type_id;  // ??? should this not be the default entry type
                 $result .= $sel->display_old();
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);

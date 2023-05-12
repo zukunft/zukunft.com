@@ -30,6 +30,7 @@
 
 */
 
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\user;
@@ -67,7 +68,7 @@ if ($db_con == null) {
 
         // show view header
         $dsp = new view_dsp_old($usr);
-        $dsp->set_id($system_views->id(view::WORD_FIND));
+        $dsp->set_id($system_views->id(controller::DSP_WORD_FIND));
         $result .= $dsp->dsp_navbar($back);
 
         $find_str = $_GET['pattern'];

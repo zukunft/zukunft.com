@@ -91,9 +91,9 @@ class type_lists
         global $formula_link_types;
         global $formula_element_types;
         global $view_types;
-        global $view_component_types;
-        global $view_component_link_types;
-        global $view_component_position_types;
+        global $component_types;
+        global $component_link_types;
+        global $component_position_types;
         global $ref_types;
         global $source_types;
         global $share_types;
@@ -116,9 +116,9 @@ class type_lists
         $lst->add($formula_link_types->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
         $lst->add($formula_element_types->api_obj(), controller::API_LIST_FORMULA_ELEMENT_TYPES);
         $lst->add($view_types->api_obj(), controller::API_LIST_VIEW_TYPES);
-        $lst->add($view_component_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_TYPES);
-        //$lst->add($view_component_link_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
-        $lst->add($view_component_position_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_POSITION_TYPES);
+        $lst->add($component_types->api_obj(), controller::API_LIST_COMPONENT_TYPES);
+        //$lst->add($component_link_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
+        $lst->add($component_position_types->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
         $lst->add($ref_types->api_obj(), controller::API_LIST_REF_TYPES);
         $lst->add($source_types->api_obj(), controller::API_LIST_SOURCE_TYPES);
         $lst->add($share_types->api_obj(), controller::API_LIST_SHARE_TYPES);
@@ -152,9 +152,9 @@ class type_lists
         global $formula_link_types;
         global $formula_element_types;
         global $view_types;
-        global $view_component_types;
-        global $view_component_link_types;
-        global $view_component_position_types;
+        global $component_types;
+        global $component_link_types;
+        global $component_position_types;
         global $ref_types;
         global $source_types;
         global $share_types;
@@ -191,13 +191,13 @@ class type_lists
         $formula_element_types->load($db_con);
         $view_types = new view_type_list();
         $view_types->load($db_con);
-        $view_component_types = new view_cmp_type_list();
-        $view_component_types->load($db_con);
+        $component_types = new view_cmp_type_list();
+        $component_types->load($db_con);
         // not yet needed?
-        //$view_component_link_types = new view_component_link_type_list();
-        //$view_component_link_types->load($db_con);
-        $view_component_position_types = new view_cmp_pos_type_list();
-        $view_component_position_types->load($db_con);
+        //$component_link_types = new component_link_type_list();
+        //$component_link_types->load($db_con);
+        $component_position_types = new view_cmp_pos_type_list();
+        $component_position_types->load($db_con);
         $ref_types = new ref_type_list();
         $ref_types->load($db_con);
         $source_types = new source_type_list();

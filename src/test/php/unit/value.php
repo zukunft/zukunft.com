@@ -45,7 +45,7 @@ use model\value_time_series;
 class value_unit_tests
 {
 
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;
@@ -131,12 +131,12 @@ class value_unit_tests
     /**
      * similar to assert_load_sql of the testing class but select a value by the phrase group
      *
-     * @param testing $t the testing object with the error counter
+     * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a verb
      * @return bool true if all tests are fine
      */
-    function assert_load_sql_grp(testing $t, sql_db $db_con, object $usr_obj): bool
+    function assert_load_sql_grp(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
     {
         global $usr;
 

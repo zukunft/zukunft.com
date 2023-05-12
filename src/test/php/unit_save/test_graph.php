@@ -35,10 +35,10 @@ use model\triple_list;
 use model\value_list;
 use model\verb;
 use model\word;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE;
 
-function run_graph_test(testing $t): void
+function run_graph_test(test_cleanup $t): void
 {
 
     global $usr;

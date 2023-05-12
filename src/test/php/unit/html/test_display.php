@@ -38,14 +38,14 @@ use model\db_cl;
 use model\view;
 use model\component_dsp_old;
 use model\view_cmp_type;
-use test\testing;
+use test\test_cleanup;
 use const test\TW_ABB;
 
-function run_display_test(testing $t): void
+function run_display_test(test_cleanup $t): void
 {
 
     global $usr;
-    global $view_component_types;
+    global $component_types;
     $html = new html_base();
 
     $is_connected = true; // assumes that the test is done with an internet connection, but if not connected, just show the warning once
@@ -61,16 +61,16 @@ function run_display_test(testing $t): void
     //$t->dsp_contains(', view_dsp->display is "'.$result.'" which should contain '.$wrd_abb->name.'', $target, $result);
 
 
-    $t->header('Test the view component display class (classes/view_component_dsp.php)');
+    $t->header('Test the view component display class (classes/component_dsp.php)');
 
     // test if a simple text component can be created
     $cmp = new component_dsp_old($usr);
-    $cmp->type_id = $view_component_types->id(view_cmp_type::TEXT);
+    $cmp->type_id = $component_types->id(view_cmp_type::TEXT);
     $cmp->set_id(1);
     $cmp->set_name(view_api::TN_READ_NESN_2016);
     $result = $cmp->dsp_obj()->html();
     $target = view_api::TN_READ_NESN_2016;
-    $t->display('view_component_dsp->text', $target, $result);
+    $t->display('component_dsp->text', $target, $result);
 
 
     $t->header('Test the display button class (src/main/php/web/html/button.php )');

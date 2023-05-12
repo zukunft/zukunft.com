@@ -38,7 +38,7 @@ use model\user;
 class system_log_unit_db_tests
 {
 
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $db_con;

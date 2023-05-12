@@ -30,6 +30,7 @@
 
 */
 
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\system_log;
@@ -65,7 +66,7 @@ if ($usr->id() > 0) {
     load_usr_data();
 
     $dsp = new view_dsp_old($usr);
-    $dsp->set_id($system_views->id(view::ERR_UPD));
+    $dsp->set_id($system_views->id(controller::DSP_ERR_UPD));
     $result .= $dsp->dsp_navbar($back);
 
     if ($usr->id() > 0 and $usr->profile_id == $user_profiles->id(user_profile::ADMIN)) {

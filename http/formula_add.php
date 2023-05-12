@@ -32,6 +32,7 @@
 */
 
 // header for all zukunft.com code 
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\formula;
@@ -61,7 +62,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(view::FORMULA_ADD);
+    $dsp->load_by_code_id(controller::DSP_FORMULA_ADD);
     $back = $_GET['back'];
 
     // init the formula object

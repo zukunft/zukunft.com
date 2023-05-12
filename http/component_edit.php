@@ -2,7 +2,7 @@
 
 /*
 
-  view_component_edit.php - adjust a view element
+  component_edit.php - adjust a view element
   -----------------------
   
   This file is part of zukunft.com - calc with words
@@ -41,7 +41,7 @@ const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
-$db_con = prg_start("view_component_edit");
+$db_con = prg_start("component_edit");
 $html = new html_base();
 
 $result = ''; // reset the html code var
@@ -59,7 +59,7 @@ if ($usr->id() > 0) {
 
     // get the view component id
     if (!isset($_GET['id'])) {
-        log_info("The view component id must be set to display a view.", "view_component_edit.php", '', (new Exception)->getTraceAsString(), $usr);
+        log_info("The view component id must be set to display a view.", "component_edit.php", '', (new Exception)->getTraceAsString(), $usr);
     } else {
         // init the display object to show the standard elements such as the header
         $dsp = new view_dsp_old($usr);

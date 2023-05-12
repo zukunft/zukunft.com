@@ -39,12 +39,12 @@ use model\change_log_table;
 use model\sandbox_named;
 use model\view;
 use model\word;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 use const test\TIMEOUT_LIMIT_LONG;
 
-function create_test_views(testing $t): void
+function create_test_views(test_cleanup $t): void
 {
     $t->header('Check if all base views are existing');
 
@@ -54,7 +54,7 @@ function create_test_views(testing $t): void
 
 }
 
-function run_view_test(testing $t): void
+function run_view_test(test_cleanup $t): void
 {
     global $view_types;
 

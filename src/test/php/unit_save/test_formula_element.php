@@ -33,9 +33,9 @@
 use api\formula_api;
 use api\word_api;
 use model\verb;
-use test\testing;
+use test\test_cleanup;
 
-function run_formula_element_test(testing $t): void
+function run_formula_element_test(test_cleanup $t): void
 {
     global $verbs;
 
@@ -110,7 +110,7 @@ function run_formula_element_test(testing $t): void
 
 }
 
-function run_formula_element_list_test(testing $t): void
+function run_formula_element_list_test(test_cleanup $t): void
 {
 
     $back = 0;

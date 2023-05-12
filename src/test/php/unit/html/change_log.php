@@ -36,11 +36,11 @@ include_once WEB_SYSTEM_PATH . 'back_trace.php';
 
 use html\html_base;
 use html\system\back_trace;
-use test\testing;
+use test\test_cleanup;
 
 class change_log
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         global $usr;
         $html = new html_base();

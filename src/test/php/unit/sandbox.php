@@ -56,7 +56,7 @@ global $db_con;
 
 class sandbox_unit_tests
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;
@@ -609,58 +609,58 @@ class sandbox_unit_tests
                   WHERE s.view_id = $1;";
         $t->display('Postgres view load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // test the view_component_link load_standard SQL creation
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
-        $db_con->set_link_fields(view::FLD_ID, 'view_component_id');
+        // test the component_link load_standard SQL creation
+        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
+        $db_con->set_link_fields(view::FLD_ID, 'component_id');
         $db_con->set_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1, 2, 3);
         $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT view_component_link_id,
+        $expected_sql = "SELECT component_link_id,
                      view_id,
-                     view_component_id,
+                     component_id,
                      order_nbr,
                      position_type,
                      excluded
-                FROM view_component_links 
-               WHERE view_component_link_id = $1;";
-        $t->display('Postgres view_component_link load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+                FROM component_links 
+               WHERE component_link_id = $1;";
+        $t->display('Postgres component_link load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same but select by the link ids
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
-        $db_con->set_link_fields(view::FLD_ID, 'view_component_id');
+        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
+        $db_con->set_link_fields(view::FLD_ID, 'component_id');
         $db_con->set_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(0, 2, 3);
         $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT view_component_link_id,
+        $expected_sql = "SELECT component_link_id,
                      view_id,
-                     view_component_id,
+                     component_id,
                      order_nbr,
                      position_type,
                      excluded
-                FROM view_component_links 
-               WHERE view_id = $1 AND view_component_id = $2;";
-        $t->display('Postgres view_component_link load_standard select by link ids', $lib->trim($expected_sql), $lib->trim($created_sql));
+                FROM component_links 
+               WHERE view_id = $1 AND component_id = $2;";
+        $t->display('Postgres component_link load_standard select by link ids', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // test the view_component_link load SQL creation
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
-        $db_con->set_link_fields(view::FLD_ID, 'view_component_id');
+        // test the component_link load SQL creation
+        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
+        $db_con->set_link_fields(view::FLD_ID, 'component_id');
         $db_con->set_usr_num_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1, 2, 3);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT 
-                        s.view_component_link_id, 
-                        u.view_component_link_id AS user_view_component_link_id, 
+                        s.component_link_id, 
+                        u.component_link_id AS user_component_link_id, 
                         s.user_id, 
                         s.view_id, 
-                        s.view_component_id, 
+                        s.component_id, 
                         CASE WHEN (u.order_nbr     IS NULL) THEN s.order_nbr     ELSE u.order_nbr     END AS order_nbr, 
                         CASE WHEN (u.position_type IS NULL) THEN s.position_type ELSE u.position_type END AS position_type, 
                         CASE WHEN (u.excluded      IS NULL) THEN s.excluded      ELSE u.excluded      END AS excluded 
-                   FROM view_component_links s 
-              LEFT JOIN user_view_component_links u ON s.view_component_link_id = u.view_component_link_id 
+                   FROM component_links s 
+              LEFT JOIN user_component_links u ON s.component_link_id = u.component_link_id 
                                                    AND u.user_id = 1 
-                  WHERE s.view_component_link_id = $1;";
-        $t->display('Postgres view_component_link load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+                  WHERE s.component_link_id = $1;";
+        $t->display('Postgres component_link load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the formula_link load_standard SQL creation
         $db_con->set_type(sql_db::TBL_FORMULA_LINK);
@@ -697,49 +697,49 @@ class sandbox_unit_tests
                   WHERE s.formula_link_id = $1;";
         $t->display('Postgres formula_link load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // test the view_component load_standard SQL creation
+        // test the component load_standard SQL creation
         $db_con->set_type(sql_db::TBL_COMPONENT);
-        $db_con->set_fields(array(sandbox_named::FLD_DESCRIPTION, 'view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array(sandbox_named::FLD_DESCRIPTION, 'component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT view_component_id,
-                     view_component_name,
+        $expected_sql = "SELECT component_id,
+                     component_name,
                      description,
-                     view_component_type_id,
+                     component_type_id,
                      word_id_row,
                      link_type_id,
                      formula_id,
                      word_id_col,
                      word_id_col2,
                      excluded
-                FROM view_components
-               WHERE view_component_id = $1;";
-        $t->display('Postgres view_component load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+                FROM components
+               WHERE component_id = $1;";
+        $t->display('Postgres component load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // test the view_component load SQL creation
+        // test the component load SQL creation
         $db_con->set_type(sql_db::TBL_COMPONENT);
         $db_con->set_usr_fields(array(sandbox_named::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
+        $db_con->set_usr_num_fields(array('component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT 
-                        s.view_component_id,
-                        u.view_component_id AS user_view_component_id,  
+                        s.component_id,
+                        u.component_id AS user_component_id,  
                         s.user_id,  
-                        CASE WHEN (u.view_component_name <> '' IS NOT TRUE) THEN s.view_component_name    ELSE u.view_component_name    END AS view_component_name,  
+                        CASE WHEN (u.component_name <> '' IS NOT TRUE) THEN s.component_name    ELSE u.component_name    END AS component_name,  
                         CASE WHEN (u.description         <> '' IS NOT TRUE) THEN s.description            ELSE u.description            END AS description,   
-                        CASE WHEN (u.view_component_type_id    IS NULL)     THEN s.view_component_type_id ELSE u.view_component_type_id END AS view_component_type_id,  
+                        CASE WHEN (u.component_type_id    IS NULL)     THEN s.component_type_id ELSE u.component_type_id END AS component_type_id,  
                         CASE WHEN (u.word_id_row               IS NULL)     THEN s.word_id_row            ELSE u.word_id_row            END AS word_id_row,  
                         CASE WHEN (u.link_type_id              IS NULL)     THEN s.link_type_id           ELSE u.link_type_id           END AS link_type_id,  
                         CASE WHEN (u.formula_id                IS NULL)     THEN s.formula_id             ELSE u.formula_id             END AS formula_id,  
                         CASE WHEN (u.word_id_col               IS NULL)     THEN s.word_id_col            ELSE u.word_id_col            END AS word_id_col,  
                         CASE WHEN (u.word_id_col2              IS NULL)     THEN s.word_id_col2           ELSE u.word_id_col2           END AS word_id_col2,  
                         CASE WHEN (u.excluded                  IS NULL)     THEN s.excluded               ELSE u.excluded               END AS excluded
-                   FROM view_components s 
-              LEFT JOIN user_view_components u ON s.view_component_id = u.view_component_id 
+                   FROM components s 
+              LEFT JOIN user_components u ON s.component_id = u.component_id 
                                               AND u.user_id = 1 
-                  WHERE s.view_component_id = $1;";
-        $t->display('Postgres view_component load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+                  WHERE s.component_id = $1;";
+        $t->display('Postgres component load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the triple load_standard SQL creation
         $db_con->set_type(sql_db::TBL_TRIPLE);
@@ -1019,42 +1019,42 @@ class sandbox_unit_tests
                WHERE s.triple_id = 1;";
         $t->display('MySQL user sandbox link select by where text', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // test the view_component_link load_standard SQL creation
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
-        $db_con->set_link_fields(view::FLD_ID, 'view_component_id');
+        // test the component_link load_standard SQL creation
+        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
+        $db_con->set_link_fields(view::FLD_ID, 'component_id');
         $db_con->set_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT 
-                        view_component_link_id,
+                        component_link_id,
                         view_id,
-                        view_component_id,
+                        component_id,
                         order_nbr,
                         position_type,
                         excluded
-                   FROM view_component_links 
-                  WHERE view_component_link_id = ?;";
-        $t->display('MySQL view_component_link load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+                   FROM component_links 
+                  WHERE component_link_id = ?;";
+        $t->display('MySQL component_link load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // test the view_component_link load SQL creation
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
-        $db_con->set_link_fields(view::FLD_ID, 'view_component_id');
+        // test the component_link load SQL creation
+        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
+        $db_con->set_link_fields(view::FLD_ID, 'component_id');
         $db_con->set_usr_num_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1, 2, 3);
         $created_sql = $db_con->select_by_set_id();
         $sql_avoid_code_check_prefix = "SELECT";
         $expected_sql = $sql_avoid_code_check_prefix . " 
-                        s.view_component_link_id, 
-                        u.view_component_link_id AS user_view_component_link_id, 
-                        s.user_id, s.view_id, s.view_component_id, 
+                        s.component_link_id, 
+                        u.component_link_id AS user_component_link_id, 
+                        s.user_id, s.view_id, s.component_id, 
                         IF(u.order_nbr     IS NULL, s.order_nbr,     u.order_nbr)     AS order_nbr, 
                         IF(u.position_type IS NULL, s.position_type, u.position_type) AS position_type, 
                         IF(u.excluded      IS NULL, s.excluded,      u.excluded)      AS excluded 
-                   FROM view_component_links s 
-              LEFT JOIN user_view_component_links u ON s.view_component_link_id = u.view_component_link_id 
+                   FROM component_links s 
+              LEFT JOIN user_component_links u ON s.component_link_id = u.component_link_id 
                                                    AND u.user_id = 1 
-                  WHERE s.view_component_link_id = ?;";
-        $t->display('MySQL view_component_link load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+                  WHERE s.component_link_id = ?;";
+        $t->display('MySQL component_link load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the formula_link load_standard SQL creation
         $db_con->set_type(sql_db::TBL_FORMULA_LINK);
@@ -1092,49 +1092,49 @@ class sandbox_unit_tests
                   WHERE s.formula_link_id = ?;";
         $t->display('MySQL formula_link load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // test the view_component load_standard SQL creation
+        // test the component load_standard SQL creation
         $db_con->set_type(sql_db::TBL_COMPONENT);
-        $db_con->set_fields(array(sandbox_named::FLD_DESCRIPTION, 'view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array(sandbox_named::FLD_DESCRIPTION, 'component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT view_component_id,
-                     view_component_name,
+        $expected_sql = "SELECT component_id,
+                     component_name,
                      description,
-                     view_component_type_id,
+                     component_type_id,
                      word_id_row,
                      link_type_id,
                      formula_id,
                      word_id_col,
                      word_id_col2,
                      excluded
-                FROM view_components
-               WHERE view_component_id = ?;";
-        $t->display('MySQL view_component load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+                FROM components
+               WHERE component_id = ?;";
+        $t->display('MySQL component load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // test the view_component load SQL creation
+        // test the component load SQL creation
         $db_con->set_type(sql_db::TBL_COMPONENT);
         $db_con->set_usr_fields(array(sandbox_named::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
+        $db_con->set_usr_num_fields(array('component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
         $sql_avoid_code_check_prefix = "SELECT";
-        $expected_sql = $sql_avoid_code_check_prefix . " s.view_component_id,
-                       u.view_component_id AS user_view_component_id,
+        $expected_sql = $sql_avoid_code_check_prefix . " s.component_id,
+                       u.component_id AS user_component_id,
                        s.user_id,
-                       IF(u.view_component_name IS NULL,    s.view_component_name,    u.view_component_name)    AS view_component_name,
+                       IF(u.component_name IS NULL,    s.component_name,    u.component_name)    AS component_name,
                        IF(u.description IS NULL,            s.description,            u.description)            AS description,
-                       IF(u.view_component_type_id IS NULL, s.view_component_type_id, u.view_component_type_id) AS view_component_type_id,
+                       IF(u.component_type_id IS NULL, s.component_type_id, u.component_type_id) AS component_type_id,
                        IF(u.word_id_row IS NULL,            s.word_id_row,            u.word_id_row)            AS word_id_row,
                        IF(u.link_type_id IS NULL,           s.link_type_id,           u.link_type_id)           AS link_type_id,
                        IF(u.formula_id IS NULL,             s.formula_id,             u.formula_id)             AS formula_id,
                        IF(u.word_id_col IS NULL,            s.word_id_col,            u.word_id_col)            AS word_id_col,
                        IF(u.word_id_col2 IS NULL,           s.word_id_col2,           u.word_id_col2)           AS word_id_col2,
                        IF(u.excluded IS NULL,               s.excluded,               u.excluded)               AS excluded
-                  FROM view_components s
-             LEFT JOIN user_view_components u ON s.view_component_id = u.view_component_id 
+                  FROM components s
+             LEFT JOIN user_components u ON s.component_id = u.component_id 
                                              AND u.user_id = 1 
-                 WHERE s.view_component_id = ?;";
-        $t->display('MySQL view_component load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
+                 WHERE s.component_id = ?;";
+        $t->display('MySQL component load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the triple load_standard SQL creation
         $db_con->set_type(sql_db::TBL_TRIPLE);
@@ -1334,24 +1334,24 @@ class sandbox_unit_tests
 
         // the view component link query by type (used in word_display->assign_dsp_ids)
         $db_con->db_type = sql_db::POSTGRES;
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
+        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
         //$db_con->set_join_fields(array('position_type'), 'position_type');
-        $db_con->set_fields(array(view::FLD_ID, 'view_component_id'));
+        $db_con->set_fields(array(view::FLD_ID, 'component_id'));
         $db_con->set_usr_num_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
-        $db_con->set_where_text('s.view_component_id = 1');
+        $db_con->set_where_text('s.component_id = 1');
         $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "SELECT s.view_component_link_id,
-                     u.view_component_link_id AS user_view_component_link_id,
+        $expected_sql = "SELECT s.component_link_id,
+                     u.component_link_id AS user_component_link_id,
                      s.user_id,
                      s.view_id, 
-                     s.view_component_id,
+                     s.component_id,
                      CASE WHEN (u.order_nbr   IS NULL) THEN s.order_nbr   ELSE u.order_nbr   END AS order_nbr,
                      CASE WHEN (u.position_type   IS NULL) THEN s.position_type   ELSE u.position_type   END AS position_type,
                      CASE WHEN (u.excluded   IS NULL) THEN s.excluded   ELSE u.excluded   END AS excluded
-                FROM view_component_links s
-           LEFT JOIN user_view_component_links u ON s.view_component_link_id = u.view_component_link_id 
+                FROM component_links s
+           LEFT JOIN user_component_links u ON s.component_link_id = u.component_link_id 
                                             AND u.user_id = 1  
-               WHERE s.view_component_id = 1;";
+               WHERE s.component_id = 1;";
         $t->display('phrase load word link query by type', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // the view component link max order number query (used in word_display->next_nbr)
@@ -1360,14 +1360,14 @@ class sandbox_unit_tests
         $created_sql = $sql_avoid_code_check_prefix . " max(m.order_nbr) AS max_order_nbr
                 FROM ( SELECT 
                               " . $db_con->get_usr_field("order_nbr", "l", "u", sql_db::FLD_FORMAT_VAL) . " 
-                          FROM view_component_links l 
-                    LEFT JOIN user_view_component_links u ON u.view_component_link_id = l.view_component_link_id 
+                          FROM component_links l 
+                    LEFT JOIN user_component_links u ON u.component_link_id = l.component_link_id 
                                                       AND u.user_id = 1 
                         WHERE l.view_id = 1 ) AS m;";
         $expected_sql = "SELECT max(m.order_nbr) AS max_order_nbr
                        FROM ( SELECT CASE WHEN (u.order_nbr   IS NULL) THEN l.order_nbr   ELSE u.order_nbr   END AS order_nbr
-                                FROM view_component_links l 
-                           LEFT JOIN user_view_component_links u ON u.view_component_link_id = l.view_component_link_id 
+                                FROM component_links l 
+                           LEFT JOIN user_component_links u ON u.component_link_id = l.component_link_id 
                                                                 AND u.user_id = 1
                                WHERE l.view_id = 1 ) AS m;";
         $t->display('phrase load word link query by type', $lib->trim($expected_sql), $lib->trim($created_sql));

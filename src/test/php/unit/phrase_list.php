@@ -50,7 +50,7 @@ class phrase_list_unit_tests
     const FILE_EXT = '.sql';
     const FILE_MYSQL = '_mysql';
 
-    public testing $test;
+    public test_cleanup $test;
     public phrase_list $lst;
     public sql_db $db_con;
 
@@ -59,7 +59,7 @@ class phrase_list_unit_tests
      * TODO create a common test result object to return
      * TODO capsule all unit tests in a class like this example
      */
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;
@@ -232,13 +232,13 @@ class phrase_list_unit_tests
      * test the SQL statement creation for a phrase list in all SQL dialect
      * and check if the statement name is unique
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param phrase_list $lst the empty phrase list object
      * @param phr_ids $ids filled with a list of word ids to be used for the query creation
      * @return bool true if all tests are fine
      */
-    private function assert_sql_by_ids(testing $t, sql_db $db_con, phrase_list $lst, phr_ids $ids): bool
+    private function assert_sql_by_ids(test_cleanup $t, sql_db $db_con, phrase_list $lst, phr_ids $ids): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -259,18 +259,18 @@ class phrase_list_unit_tests
      * to get the linked phrases
      *
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param testing $t the testing object with the error counting of this test run
+     * @param test_cleanup $t the testing object with the error counting of this test run
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param int $verb_id to select only words linked with this verb
      * @param string $direction to define the link direction
      * @return bool true if all tests are fine
      */
     function assert_load_sql_linked_phrases(
-        sql_db  $db_con,
-        testing $t,
-        object  $usr_obj,
-        int     $verb_id,
-        string  $direction): bool
+        sql_db       $db_con,
+        test_cleanup $t,
+        object       $usr_obj,
+        int          $verb_id,
+        string       $direction): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

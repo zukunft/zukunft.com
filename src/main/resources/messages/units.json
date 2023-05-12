@@ -1354,7 +1354,7 @@
       "name": "base units",
       "comment": "view the base units with the formulas",
       "type": "detail_view",
-      "view_components": [
+      "components": [
         {
           "pos": "1",
           "name": "Name",

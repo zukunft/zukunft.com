@@ -5,7 +5,7 @@
     "type": "default",
     "share": "",
     "protection": "",
-    "view_components": [
+    "components": [
       {
         "position": 1,
         "name": "Component Name",

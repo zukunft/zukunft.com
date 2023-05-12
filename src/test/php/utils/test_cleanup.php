@@ -57,7 +57,7 @@ use model\value;
 use model\verb;
 use model\word;
 
-class testing extends test_api
+class test_cleanup extends test_api
 {
     // queries to check if removing of the test rows is complete
     const CLEAN_CHECK_WORDS = 'db/cleanup/test_words.sql';
@@ -127,22 +127,22 @@ class testing extends test_api
         }
 
         // load the first test view component
-        $cmp = $this->load_view_component(component_api::TN_ADD);
+        $cmp = $this->load_component(component_api::TN_ADD);
         if ($cmp->id() <= 0) {
-            $cmp = $this->load_view_component(component_api::TN_RENAMED);
+            $cmp = $this->load_component(component_api::TN_RENAMED);
         }
 
         // load the first test view component for user 2
-        $cmp_usr2 = $this->load_view_component(component_api::TN_ADD, $this->usr2);
+        $cmp_usr2 = $this->load_component(component_api::TN_ADD, $this->usr2);
         if ($cmp_usr2->id() <= 0) {
-            $cmp_usr2 = $this->load_view_component(component_api::TN_RENAMED, $this->usr2);
+            $cmp_usr2 = $this->load_component(component_api::TN_RENAMED, $this->usr2);
         }
 
         // load the second test view component
-        $cmp2 = $this->load_view_component(component_api::TN_ADD2);
+        $cmp2 = $this->load_component(component_api::TN_ADD2);
 
         // load the second test view component for user 2
-        $cmp2_usr2 = $this->load_view_component(component_api::TN_ADD2, $this->usr2);
+        $cmp2_usr2 = $this->load_component(component_api::TN_ADD2, $this->usr2);
 
         // check if the test components have been unlinked for user 2
         if ($dsp_usr2->id() > 0 and $cmp_usr2->id() > 0) {
@@ -177,12 +177,12 @@ class testing extends test_api
 
         // request to delete the added test views
         foreach (component_api::RESERVED_VIEW_COMPONENTS as $cmp_name) {
-            $cmp = $this->load_view_component($cmp_name);
+            $cmp = $this->load_component($cmp_name);
             if ($cmp->id() > 0) {
                 $msg = $cmp->del();
                 $result .= $msg->get_last_message();
                 $target = '';
-                $this->display('view_component->del of "' . $cmp_name . '"', $target, $result);
+                $this->display('component->del of "' . $cmp_name . '"', $target, $result);
             }
         }
 
@@ -198,9 +198,9 @@ class testing extends test_api
         }
 
         // reload the first test view component for user 2
-        $cmp_usr2 = $this->load_view_component(component_api::TN_ADD, $this->usr2);
+        $cmp_usr2 = $this->load_component(component_api::TN_ADD, $this->usr2);
         if ($cmp_usr2->id() <= 0) {
-            $cmp_usr2 = $this->load_view_component(component_api::TN_RENAMED, $this->usr2);
+            $cmp_usr2 = $this->load_component(component_api::TN_RENAMED, $this->usr2);
         }
 
         // request to delete the test view component for user 2
@@ -212,9 +212,9 @@ class testing extends test_api
         }
 
         // reload the first test view component
-        $cmp = $this->load_view_component(component_api::TN_ADD);
+        $cmp = $this->load_component(component_api::TN_ADD);
         if ($cmp->id() <= 0) {
-            $cmp = $this->load_view_component(component_api::TN_RENAMED);
+            $cmp = $this->load_component(component_api::TN_RENAMED);
         }
 
         // request to delete the test view component
@@ -226,7 +226,7 @@ class testing extends test_api
         }
 
         // reload the second test view component
-        $cmp2 = $this->load_view_component(component_api::TN_ADD2);
+        $cmp2 = $this->load_component(component_api::TN_ADD2);
 
         // request to delete the second added test view component
         if ($cmp2->id() > 0) {
@@ -394,7 +394,7 @@ class testing extends test_api
         $html->echo_html($db_con->seq_reset(sql_db::TBL_FORMULA_LINK));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_VIEW));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_COMPONENT));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_VIEW_COMPONENT_LINK));
+        $html->echo_html($db_con->seq_reset(sql_db::TBL_COMPONENT_LINK));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_SOURCE));
 
         if ($result == '') {
@@ -536,7 +536,7 @@ class testing extends test_api
         return $result;
     }
 
-    function html_test(string $body, string $filename, testing $t): void
+    function html_test(string $body, string $filename, test_cleanup $t): void
     {
         $lib = new library();
 
@@ -545,7 +545,7 @@ class testing extends test_api
         $t->display($filename, $lib->trim_html($expected_html), $lib->trim_html($created_html));
     }
 
-    function html_view_test(string $body, string $filename, testing $t): void
+    function html_view_test(string $body, string $filename, test_cleanup $t): void
     {
         $this->html_test($body, 'views/' . $filename, $t);
     }

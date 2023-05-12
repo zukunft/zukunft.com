@@ -49,7 +49,7 @@ use model\system_log_list;
 
 class system_unit_tests
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;
@@ -171,8 +171,8 @@ class system_unit_tests
         $t->assert_load_sql($db_con, $formula_element_types);
         $view_types = new view_type_list();
         $t->assert_load_sql($db_con, $view_types);
-        $view_component_types = new view_cmp_type_list();
-        $t->assert_load_sql($db_con, $view_component_types);
+        $component_types = new view_cmp_type_list();
+        $t->assert_load_sql($db_con, $component_types);
         $ref_types = new ref_type_list();
         $t->assert_load_sql($db_con, $ref_types);
         $share_types = new share_type_list();

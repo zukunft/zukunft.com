@@ -45,13 +45,13 @@ class term_list_unit_tests
 {
 
     // to avoid the need to forward the test setup to every function
-    public testing $t;
+    public test_cleanup $t;
 
     /**
      * execute all term list unit tests and add the test result to the given testing object
-     * @param testing $t the testing object to cumulate the testing results
+     * @param test_cleanup $t the testing object to cumulate the testing results
      */
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         // init
         $db_con = new sql_db();
@@ -108,7 +108,7 @@ class term_list_unit_tests
      * create a term list test object without using a database connection
      * that matches the all members of word with id 1 (math const)
      */
-    function get_term_list_related(testing $t): term_list
+    function get_term_list_related(test_cleanup $t): term_list
     {
         global $usr;
         $trm_lst = new term_list($usr);

@@ -123,7 +123,7 @@ use model\value_list;
 use model\verb;
 use model\view;
 use model\view_cmp_type;
-use model\view_component_link;
+use model\component_link;
 use model\view_list;
 use model\word;
 use model\word_list;
@@ -147,9 +147,9 @@ class create_test_objects extends test_base
         $formula_link_types = new formula_link_type_list();
         $formula_element_types = new formula_element_type_list();
         $view_types = new view_type_list();
-        $view_component_types = new view_cmp_type_list();
-        //$view_component_link_types = new view_component_link_type_list();
-        $view_component_position_types = new view_cmp_pos_type_list();
+        $component_types = new view_cmp_type_list();
+        //$component_link_types = new component_link_type_list();
+        $component_position_types = new view_cmp_pos_type_list();
         $ref_types = new ref_type_list();
         $source_types = new source_type_list();
         $share_types = new share_type_list();
@@ -169,9 +169,9 @@ class create_test_objects extends test_base
         $formula_link_types->load_dummy();
         $formula_element_types->load_dummy();
         $view_types->load_dummy();
-        $view_component_types->load_dummy();
-        //$view_component_link_types->load_dummy();
-        $view_component_position_types->load_dummy();
+        $component_types->load_dummy();
+        //$component_link_types->load_dummy();
+        $component_position_types->load_dummy();
         $ref_types->load_dummy();
         $source_types->load_dummy();
         $share_types->load_dummy();
@@ -192,9 +192,9 @@ class create_test_objects extends test_base
         $lst->add($formula_link_types->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
         $lst->add($formula_element_types->api_obj(), controller::API_LIST_FORMULA_ELEMENT_TYPES);
         $lst->add($view_types->api_obj(), controller::API_LIST_VIEW_TYPES);
-        $lst->add($view_component_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_TYPES);
-        //$lst->add($view_component_link_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
-        $lst->add($view_component_position_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_POSITION_TYPES);
+        $lst->add($component_types->api_obj(), controller::API_LIST_COMPONENT_TYPES);
+        //$lst->add($component_link_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
+        $lst->add($component_position_types->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
         $lst->add($ref_types->api_obj(), controller::API_LIST_REF_TYPES);
         $lst->add($source_types->api_obj(), controller::API_LIST_SOURCE_TYPES);
         $lst->add($share_types->api_obj(), controller::API_LIST_SHARE_TYPES);
@@ -1557,7 +1557,7 @@ class create_test_objects extends test_base
      * component test creation
      */
 
-    function load_view_component(string $cmp_name, ?user $test_usr = null): component
+    function load_component(string $cmp_name, ?user $test_usr = null): component
     {
         global $usr;
 
@@ -1570,40 +1570,40 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function add_view_component(string $cmp_name, string $type_code_id = '', ?user $test_usr = null): component
+    function add_component(string $cmp_name, string $type_code_id = '', ?user $test_usr = null): component
     {
         global $usr;
-        global $view_component_types;
+        global $component_types;
 
         if ($test_usr == null) {
             $test_usr = $usr;
         }
 
-        $cmp = $this->load_view_component($cmp_name, $test_usr);
+        $cmp = $this->load_component($cmp_name, $test_usr);
         if ($cmp->id() == 0 or $cmp->id() == Null) {
             $cmp->set_user($test_usr);
             $cmp->set_name($cmp_name);
             if ($type_code_id != '') {
-                $cmp->type_id = $view_component_types->id($type_code_id);
+                $cmp->type_id = $component_types->id($type_code_id);
             }
             $cmp->save();
         }
         return $cmp;
     }
 
-    function test_view_component(string $cmp_name, string $type_code_id = '', ?user $test_usr = null): component
+    function test_component(string $cmp_name, string $type_code_id = '', ?user $test_usr = null): component
     {
-        $cmp = $this->add_view_component($cmp_name, $type_code_id, $test_usr);
+        $cmp = $this->add_component($cmp_name, $type_code_id, $test_usr);
         $this->display('view component', $cmp_name, $cmp->name());
         return $cmp;
     }
 
-    function test_view_cmp_lnk(string $dsp_name, string $cmp_name, int $pos): view_component_link
+    function test_view_cmp_lnk(string $dsp_name, string $cmp_name, int $pos): component_link
     {
         global $usr;
         $dsp = $this->load_view($dsp_name);
-        $cmp = $this->load_view_component($cmp_name);
-        $lnk = new view_component_link($usr);
+        $cmp = $this->load_component($cmp_name);
+        $lnk = new component_link($usr);
         $lnk->fob = $dsp;
         $lnk->tob = $cmp;
         $lnk->order_nbr = $pos;
@@ -1617,7 +1617,7 @@ class create_test_objects extends test_base
     {
         $result = '';
         $dsp = $this->load_view($dsp_name);
-        $cmp = $this->load_view_component($cmp_name);
+        $cmp = $this->load_component($cmp_name);
         if ($dsp->id() > 0 and $cmp->id() > 0) {
             $result = $cmp->unlink($dsp);
         }

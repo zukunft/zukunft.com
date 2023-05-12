@@ -37,13 +37,13 @@ class view_exp extends sandbox_exp_named
     // additional view fields used for JSON creation
     public ?string $description = '';
     public ?string $type = '';
-    public ?array $view_components = null;
+    public ?array $components = null;
 
     function reset(): void
     {
         parent::reset();
         $this->type = '';
-        $this->view_components = null;
+        $this->components = null;
     }
 
 }

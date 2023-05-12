@@ -48,7 +48,7 @@ use model\user;
 use model\value;
 use model\verb;
 use model\view;
-use model\view_component_link;
+use model\component_link;
 
 class user_dsp_old extends user
 {
@@ -856,9 +856,9 @@ class user_dsp_old extends user
     }
 
     /**
-     * display view_component changes by the user which are not (yet) standard
+     * display component changes by the user which are not (yet) standard
      */
-    function dsp_sandbox_view_component($back): string
+    function dsp_sandbox_component($back): string
     {
         log_debug($this->id);
 
@@ -869,50 +869,50 @@ class user_dsp_old extends user
         // create the databased link
         $db_con->usr_id = $this->id;
 
-        // get all values changed by the user to a non standard view_component
+        // get all values changed by the user to a non standard component
         if (SQL_DB_TYPE == sql_db::POSTGRES) {
             $sql = "SELECT
-                    u.view_component_id AS id, 
+                    u.component_id AS id, 
                     m.user_id AS owner_id, 
-                    CASE WHEN (u.view_component_name    <> '' IS NOT TRUE) THEN m.view_component_name    ELSE u.view_component_name    END AS usr_name, 
-                    m.view_component_name                                                                                   AS std_name, 
+                    CASE WHEN (u.component_name    <> '' IS NOT TRUE) THEN m.component_name    ELSE u.component_name    END AS usr_name, 
+                    m.component_name                                                                                   AS std_name, 
                     CASE WHEN (u.description            <> '' IS NOT TRUE) THEN m.description            ELSE u.description            END AS usr_description, 
                     m.description                                                                                           AS std_description, 
-                    CASE WHEN (u.view_component_type_id <> '' IS NOT TRUE) THEN m.view_component_type_id ELSE u.view_component_type_id END AS usr_type, 
-                    m.view_component_type_id                                                                                AS std_type, 
+                    CASE WHEN (u.component_type_id <> '' IS NOT TRUE) THEN m.component_type_id ELSE u.component_type_id END AS usr_type, 
+                    m.component_type_id                                                                                AS std_type, 
                     CASE WHEN (u.excluded               <> '' IS NOT TRUE) THEN m.excluded               ELSE u.excluded               END AS usr_excluded,
                     m.excluded                                                                                              AS std_excluded
-               FROM user_view_components u,
-                    view_components m
+               FROM user_components u,
+                    components m
               WHERE u.user_id = " . $this->id . "
-                AND u.view_component_id = m.view_component_id;";
+                AND u.component_id = m.component_id;";
         } else {
             $sql = "SELECT
-                    u.view_component_id AS id, 
+                    u.component_id AS id, 
                     m.user_id AS owner_id, 
-                    IF(u.view_component_name    IS NULL, m.view_component_name,    u.view_component_name)    AS usr_name, 
-                    m.view_component_name                                                                    AS std_name, 
+                    IF(u.component_name    IS NULL, m.component_name,    u.component_name)    AS usr_name, 
+                    m.component_name                                                                    AS std_name, 
                     IF(u.description            IS NULL, m.description,            u.description)            AS usr_description, 
                     m.description                                                                            AS std_description, 
-                    IF(u.view_component_type_id IS NULL, m.view_component_type_id, u.view_component_type_id) AS usr_type, 
-                    m.view_component_type_id                                                                 AS std_type, 
+                    IF(u.component_type_id IS NULL, m.component_type_id, u.component_type_id) AS usr_type, 
+                    m.component_type_id                                                                 AS std_type, 
                     IF(u.excluded               IS NULL, m.excluded,               u.excluded)               AS usr_excluded,
                     m.excluded                                                                               AS std_excluded
-               FROM user_view_components u,
-                    view_components m
+               FROM user_components u,
+                    components m
               WHERE u.user_id = " . $this->id . "
-                AND u.view_component_id = m.view_component_id;";
+                AND u.component_id = m.component_id;";
         }
         $sbx_lst = $db_con->get_old($sql);
 
         if (count($sbx_lst) > 0) {
-            // prepare to show where the user uses different view_component than a normal viewer
+            // prepare to show where the user uses different component than a normal viewer
             $row_nbr = 0;
             $result .= $html->dsp_tbl_start();
             foreach ($sbx_lst as $sbx_row) {
                 $row_nbr++;
 
-                // create the view_component object with the minimal parameter needed
+                // create the component object with the minimal parameter needed
                 $dsp_usr = new component_dsp_old($this);
                 $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->set_name($sbx_row['usr_name']);
@@ -939,34 +939,34 @@ class user_dsp_old extends user
                     //$dsp_usr->del_usr_cfg();
                 } else {
 
-                    // format the user view_component
+                    // format the user component
                     if ($dsp_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
                         $sandbox_usr_txt = $dsp_usr->name();
                     }
-                    $sandbox_usr_txt = '<a href="/http/view_component_edit.php?id=' . $dsp_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
+                    $sandbox_usr_txt = '<a href="/http/component_edit.php?id=' . $dsp_usr->id() . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
 
-                    // format the standard view_component
+                    // format the standard component
                     if ($dsp_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
                         $sandbox_std_txt = $dsp_std->name();
                     }
 
-                    // format the view_component of other users
+                    // format the component of other users
                     $sandbox_other = '';
-                    $sql_other = "SELECT m.view_component_id, 
+                    $sql_other = "SELECT m.component_id, 
                                u.user_id, 
-                               u.view_component_name, 
+                               u.component_name, 
                                u.comment, 
-                               u.view_component_type_id, 
+                               u.component_type_id, 
                                u.excluded
-                          FROM user_view_components u,
-                               view_components m
+                          FROM user_components u,
+                               components m
                          WHERE u.user_id <> " . $this->id . "
-                           AND u.view_component_id = m.view_component_id
-                           AND u.view_component_id = " . $sbx_row['id'] . "
+                           AND u.component_id = m.component_id
+                           AND u.component_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
                     $sbx_lst_other = $db_con->get_old($sql_other);
@@ -974,12 +974,12 @@ class user_dsp_old extends user
                         $usr_other = new user;
                         $usr_other->load_by_id($cmp_other_row[user::FLD_ID]);
 
-                        // to review: load all user view_components with one query
+                        // to review: load all user components with one query
                         $cmp_other = clone $dsp_usr;
                         $cmp_other->set_user($usr_other);
                         $cmp_other->set_name($cmp_other_row[component::FLD_NAME]);
                         $cmp_other->description = $cmp_other_row[sandbox_named::FLD_DESCRIPTION];
-                        $cmp_other->type_id = $cmp_other_row['view_component_type_id'];
+                        $cmp_other->type_id = $cmp_other_row['component_type_id'];
                         $cmp_other->set_excluded($cmp_other_row[sandbox::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
@@ -989,10 +989,10 @@ class user_dsp_old extends user
                     $sandbox_other = '<a href="/http/user.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id . '&undo_view_component=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard view_component " . $sbx_row['std_view_component'], $url) . '</td>';
+                    $url = '/http/user.php?id=' . $this->id . '&undo_component=' . $sbx_row['id'] . '&back=' . $back;
+                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard component " . $sbx_row['std_component'], $url) . '</td>';
 
-                    // display the view_component changes by the user
+                    // display the component changes by the user
                     $result .= '<tr>';
                     // display headline
                     if ($row_nbr == 1) {
@@ -1021,7 +1021,7 @@ class user_dsp_old extends user
     }
 
     /**
-     * display view_component_link changes by the user which are not (yet) standard
+     * display component_link changes by the user which are not (yet) standard
      */
     function dsp_sandbox_view_link($back): string
     {
@@ -1034,42 +1034,42 @@ class user_dsp_old extends user
         // create the databased link
         $db_con->usr_id = $this->id;
 
-        // get all values changed by the user to a non standard view_component_link
+        // get all values changed by the user to a non standard component_link
         $sql = '';
         if (SQL_DB_TYPE == sql_db::POSTGRES) {
         } else {
             if (SQL_DB_TYPE == sql_db::POSTGRES) {
                 $sql = "SELECT 
-                    u.view_component_link_id AS id, 
+                    u.component_link_id AS id, 
                     l.user_id            AS owner_id, 
                     l.view_id, 
-                    l.view_component_id, 
+                    l.component_id, 
                     CASE WHEN (u.order_nbr     <> '' IS NOT TRUE) THEN l.order_nbr     ELSE u.order_nbr     END AS usr_order, 
                     l.order_nbr                                                                  AS std_order, 
                     CASE WHEN (u.position_type <> '' IS NOT TRUE) THEN l.position_type ELSE u.position_type END AS usr_type, 
                     l.position_type                                                              AS std_type, 
                     CASE WHEN (u.excluded      <> '' IS NOT TRUE) THEN l.excluded      ELSE u.excluded      END AS usr_excluded,
                     l.excluded                                                                   AS std_excluded
-               FROM user_view_component_links u,
-                    view_component_links l
+               FROM user_component_links u,
+                    component_links l
               WHERE u.user_id = " . $this->id . "
-                AND u.view_component_link_id = l.view_component_link_id;";
+                AND u.component_link_id = l.component_link_id;";
             } else {
                 $sql = "SELECT 
-                    u.view_component_link_id AS id, 
+                    u.component_link_id AS id, 
                     l.user_id            AS owner_id, 
                     l.view_id, 
-                    l.view_component_id, 
+                    l.component_id, 
                     IF(u.order_nbr     IS NULL, l.order_nbr,     u.order_nbr)     AS usr_order, 
                     l.order_nbr                                                   AS std_order, 
                     IF(u.position_type IS NULL, l.position_type, u.position_type) AS usr_type, 
                     l.position_type                                               AS std_type, 
                     IF(u.excluded      IS NULL, l.excluded,      u.excluded)      AS usr_excluded,
                     l.excluded                                                    AS std_excluded
-               FROM user_view_component_links u,
-                    view_component_links l
+               FROM user_component_links u,
+                    component_links l
               WHERE u.user_id = " . $this->id . "
-                AND u.view_component_link_id = l.view_component_link_id;";
+                AND u.component_link_id = l.component_link_id;";
             }
         }
         $sbx_lst = $db_con->get_old($sql);
@@ -1081,11 +1081,11 @@ class user_dsp_old extends user
             foreach ($sbx_lst as $sbx_row) {
                 $row_nbr++;
 
-                // create the view_component_link objects with the minimal parameter needed
-                $dsp_usr = new view_component_link($this);
+                // create the component_link objects with the minimal parameter needed
+                $dsp_usr = new component_link($this);
                 $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->dsp->set_id($sbx_row[view::FLD_ID]);
-                $dsp_usr->cmp->set_id($sbx_row['view_component_id']);
+                $dsp_usr->cmp->set_id($sbx_row['component_id']);
                 $dsp_usr->order_nbr = $sbx_row['usr_order'];
                 $dsp_usr->position_type = $sbx_row['usr_type'];
                 $dsp_usr->set_excluded($sbx_row['usr_excluded']);
@@ -1108,35 +1108,35 @@ class user_dsp_old extends user
                     $dsp_usr->del_usr_cfg();
                 } else {
 
-                    // prepare the row view_component_links
+                    // prepare the row component_links
                     $sandbox_item_name = $dsp_usr->name_linked($back);
 
-                    // format the user view_component_link
+                    // format the user component_link
                     if ($dsp_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
                         $sandbox_usr_txt = $dsp_usr->order_nbr;
                     }
 
-                    // format the standard view_component_link
+                    // format the standard component_link
                     if ($dsp_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
                         $sandbox_std_txt = $dsp_std->order_nbr;
                     }
 
-                    // format the view_component_link of other users
+                    // format the component_link of other users
                     $sandbox_other = '';
-                    $sql_other = "SELECT l.view_component_link_id, 
+                    $sql_other = "SELECT l.component_link_id, 
                                u.user_id, 
                                u.order_nbr, 
                                u.position_type, 
                                u.excluded
-                          FROM user_view_component_links u,
-                               view_component_links l
+                          FROM user_component_links u,
+                               component_links l
                          WHERE u.user_id <> " . $this->id . "
-                           AND u.view_component_link_id = l.view_component_link_id
-                           AND u.view_component_link_id = " . $sbx_row['id'] . "
+                           AND u.component_link_id = l.component_link_id
+                           AND u.component_link_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
                     $sbx_lst_other = $db_con->get_old($sql_other);
@@ -1144,7 +1144,7 @@ class user_dsp_old extends user
                         $usr_other = new user;
                         $usr_other->load_by_id($dsp_lnk_other_row[user::FLD_ID]);
 
-                        // to review: load all user view_component_links with one query
+                        // to review: load all user component_links with one query
                         $dsp_lnk_other = clone $dsp_usr;
                         $dsp_lnk_other->set_user($usr_other);
                         $dsp_lnk_other->order_nbr = $dsp_lnk_other_row['order_nbr'];
@@ -1155,13 +1155,13 @@ class user_dsp_old extends user
                         }
                         $sandbox_other .= $dsp_lnk_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user_view_component_link.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = '<a href="/http/user_component_link.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id . '&undo_view_component_link=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard view_component_link " . $sbx_row['std_view_component_link'], $url) . '</td>';
+                    $url = '/http/user.php?id=' . $this->id . '&undo_component_link=' . $sbx_row['id'] . '&back=' . $back;
+                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard component_link " . $sbx_row['std_component_link'], $url) . '</td>';
 
-                    // display the view_component_link changes by the user
+                    // display the component_link changes by the user
                     $result .= '<tr>';
                     // display headline
                     if ($row_nbr == 1) {
@@ -1379,7 +1379,7 @@ class user_dsp_old extends user
         $result .= $this->dsp_sandbox_wrd($back);
         $result .= $this->dsp_sandbox_wrd_link($back);
         $result .= $this->dsp_sandbox_view($back);
-        $result .= $this->dsp_sandbox_view_component($back);
+        $result .= $this->dsp_sandbox_component($back);
         $result .= $this->dsp_sandbox_view_link($back);
         $result .= $this->dsp_sandbox_source($back);
         return $result;

@@ -2,7 +2,7 @@
 
 /*
 
-  view_component_del.php - delete a view
+  component_del.php - delete a view
   ----------------------
   
   This file is part of zukunft.com - calc with words
@@ -30,6 +30,7 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\component;
@@ -41,7 +42,7 @@ const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
-$db_con = prg_start("view_component_del");
+$db_con = prg_start("component_del");
 $html = new html_base();
 
 $result = ''; // reset the html code var
@@ -58,7 +59,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(view::DEL);
+    $dsp->load_by_code_id(controller::DSP_DEL);
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // get the parameters
@@ -81,7 +82,7 @@ if ($usr->id() > 0) {
 
             // TODO: display how the views would be changed
 
-            $result .= \html\btn_yesno('Delete the view element "' . $cmp_del->name() . '"? ', '/http/view_component_del.php?id=' . $cmp_del_id . '&back=' . $back);
+            $result .= \html\btn_yesno('Delete the view element "' . $cmp_del->name() . '"? ', '/http/component_del.php?id=' . $cmp_del_id . '&back=' . $back);
         }
     } else {
         $result .= $html->dsp_go_back($back, $usr);

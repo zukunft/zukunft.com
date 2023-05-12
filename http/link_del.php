@@ -29,6 +29,7 @@
   
 */
 
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\triple;
@@ -58,7 +59,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(view::LINK_DEL);
+    $dsp->load_by_code_id(controller::DSP_TRIPLE_DEL);
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // get the parameters

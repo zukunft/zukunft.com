@@ -978,16 +978,16 @@ COMMENT ON TABLE user_views is 'user specific mask settings';
 -- --------------------------------------------------------
 
 --
--- Table structure for table user_view_components
+-- Table structure for table user_components
 --
 
-CREATE TABLE IF NOT EXISTS user_view_components
+CREATE TABLE IF NOT EXISTS user_components
 (
-    view_component_id      bigint   NOT NULL,
+    component_id      bigint   NOT NULL,
     user_id                bigint   NOT NULL,
-    view_component_name    varchar(200)      DEFAULT NULL,
+    component_name    varchar(200)      DEFAULT NULL,
     description            text,
-    view_component_type_id bigint            DEFAULT NULL,
+    component_type_id bigint            DEFAULT NULL,
     word_id_row            bigint            DEFAULT NULL,
     word_id_col            bigint            DEFAULT NULL,
     word_id_col2           bigint            DEFAULT NULL,
@@ -1001,12 +1001,12 @@ CREATE TABLE IF NOT EXISTS user_view_components
 -- --------------------------------------------------------
 
 --
--- Table structure for table user_view_component_links
+-- Table structure for table user_component_links
 --
 
-CREATE TABLE IF NOT EXISTS user_view_component_links
+CREATE TABLE IF NOT EXISTS user_component_links
 (
-    view_component_link_id bigint   NOT NULL,
+    component_link_id bigint   NOT NULL,
     user_id                bigint   NOT NULL,
     order_nbr              bigint            DEFAULT NULL,
     position_type          bigint            DEFAULT NULL,
@@ -1240,16 +1240,16 @@ COMMENT ON COLUMN views.view_name is 'for easy selection';
 -- --------------------------------------------------------
 
 --
--- Table structure for table view_components
+-- Table structure for table components
 --
 
-CREATE TABLE IF NOT EXISTS view_components
+CREATE TABLE IF NOT EXISTS components
 (
-    view_component_id           BIGSERIAL PRIMARY KEY,
+    component_id                BIGSERIAL PRIMARY KEY,
     user_id                     bigint       NOT NULL,
-    view_component_name         varchar(100) NOT NULL,
+    component_name              varchar(100) NOT NULL,
     description                 text,
-    view_component_type_id      bigint                DEFAULT NULL,
+    component_type_id           bigint                DEFAULT NULL,
     word_id_row                 bigint                DEFAULT NULL,
     formula_id                  bigint                DEFAULT NULL,
     word_id_col                 bigint                DEFAULT NULL,
@@ -1257,33 +1257,33 @@ CREATE TABLE IF NOT EXISTS view_components
     excluded                    smallint              DEFAULT NULL,
     share_type_id               smallint              DEFAULT NULL,
     protect_id                  smallint     NOT NULL DEFAULT '1',
-    linked_view_component_id    bigint                DEFAULT NULL,
-    view_component_link_type_id bigint                DEFAULT NULL,
+    linked_component_id         bigint                DEFAULT NULL,
+    component_link_type_id      bigint                DEFAULT NULL,
     link_type_id                bigint                DEFAULT NULL
 );
 
-COMMENT ON TABLE view_components is 'the single components of a mask';
-COMMENT ON COLUMN view_components.view_component_name is 'just for easy selection';
-COMMENT ON COLUMN view_components.word_id_row is 'for a tree the related value the start node';
-COMMENT ON COLUMN view_components.formula_id is 'used for type 6';
-COMMENT ON COLUMN view_components.word_id_col is 'to define the type for the table columns';
-COMMENT ON COLUMN view_components.word_id_col2 is 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart';
-COMMENT ON COLUMN view_components.linked_view_component_id is 'to link this mask entry to another mask entry';
-COMMENT ON COLUMN view_components.view_component_link_type_id is 'to define how this entry links to the other entry';
-COMMENT ON COLUMN view_components.link_type_id is 'e.g. for type 4 to select possible terms';
+COMMENT ON TABLE components is 'the single components of a mask';
+COMMENT ON COLUMN components.component_name is 'just for easy selection';
+COMMENT ON COLUMN components.word_id_row is 'for a tree the related value the start node';
+COMMENT ON COLUMN components.formula_id is 'used for type 6';
+COMMENT ON COLUMN components.word_id_col is 'to define the type for the table columns';
+COMMENT ON COLUMN components.word_id_col2 is 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart';
+COMMENT ON COLUMN components.linked_component_id is 'to link this mask entry to another mask entry';
+COMMENT ON COLUMN components.component_link_type_id is 'to define how this entry links to the other entry';
+COMMENT ON COLUMN components.link_type_id is 'e.g. for type 4 to select possible terms';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table view_component_links
+-- Table structure for table component_links
 --
 
-CREATE TABLE IF NOT EXISTS view_component_links
+CREATE TABLE IF NOT EXISTS component_links
 (
-    view_component_link_id BIGSERIAL PRIMARY KEY,
+    component_link_id      BIGSERIAL PRIMARY KEY,
     user_id                bigint   NOT NULL,
     view_id                bigint   NOT NULL,
-    view_component_id      bigint   NOT NULL,
+    component_id           bigint   NOT NULL,
     order_nbr              bigint   NOT NULL,
     position_type          bigint   NOT NULL DEFAULT '2',
     excluded               smallint          DEFAULT NULL,
@@ -1291,18 +1291,18 @@ CREATE TABLE IF NOT EXISTS view_component_links
     protect_id             smallint NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE view_component_links is 'A named mask entry can be used in several masks e.g. the company name';
-COMMENT ON COLUMN view_component_links.position_type is '1=side, 2 =below';
+COMMENT ON TABLE component_links is 'A named mask entry can be used in several masks e.g. the company name';
+COMMENT ON COLUMN component_links.position_type is '1=side, 2 =below';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table view_component_link_types
+-- Table structure for table component_link_types
 --
 
-CREATE TABLE IF NOT EXISTS view_component_link_types
+CREATE TABLE IF NOT EXISTS component_link_types
 (
-    view_component_link_type_id BIGSERIAL PRIMARY KEY,
+    component_link_type_id      BIGSERIAL PRIMARY KEY,
     type_name                   varchar(200) NOT NULL,
     code_id                     varchar(50)  NOT NULL
 );
@@ -1310,34 +1310,34 @@ CREATE TABLE IF NOT EXISTS view_component_link_types
 -- --------------------------------------------------------
 
 --
--- Table structure for table view_component_position_types
+-- Table structure for table component_position_types
 --
 
-CREATE TABLE IF NOT EXISTS view_component_position_types
+CREATE TABLE IF NOT EXISTS component_position_types
 (
-    view_component_position_type_id BIGSERIAL PRIMARY KEY,
+    component_position_type_id      BIGSERIAL PRIMARY KEY,
     type_name                       varchar(100) NOT NULL,
     description                     text         NOT NULL,
     code_id                         varchar(50)  NOT NULL
 );
 
-COMMENT ON TABLE view_component_position_types is 'sideways or down';
+COMMENT ON TABLE component_position_types is 'sideways or down';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table view_component_types
+-- Table structure for table component_types
 --
 
-CREATE TABLE IF NOT EXISTS view_component_types
+CREATE TABLE IF NOT EXISTS component_types
 (
-    view_component_type_id BIGSERIAL PRIMARY KEY,
+    component_type_id BIGSERIAL PRIMARY KEY,
     type_name              varchar(100) NOT NULL,
     description            text DEFAULT NULL,
     code_id                varchar(100) NOT NULL
 );
 
-COMMENT ON TABLE view_component_types is 'fixed text, term or formula result';
+COMMENT ON TABLE component_types is 'fixed text, term or formula result';
 
 -- --------------------------------------------------------
 
@@ -1931,22 +1931,22 @@ CREATE INDEX user_view_type_idx ON user_views (view_type_id);
 CREATE INDEX user_view_idx ON user_views (view_id);
 
 --
--- Indexes for table user_view_components
+-- Indexes for table user_components
 --
-ALTER TABLE user_view_components
-    ADD CONSTRAINT user_view_component_pkey PRIMARY KEY (view_component_id, user_id);
-CREATE INDEX user_view_component_user_idx ON user_view_components (user_id);
-CREATE INDEX user_view_component_idx ON user_view_components (view_component_id);
-CREATE INDEX user_view_component_type_idx ON user_view_components (view_component_type_id);
+ALTER TABLE user_components
+    ADD CONSTRAINT user_component_pkey PRIMARY KEY (component_id, user_id);
+CREATE INDEX user_component_user_idx ON user_components (user_id);
+CREATE INDEX user_component_idx ON user_components (component_id);
+CREATE INDEX user_component_type_idx ON user_components (component_type_id);
 
 --
--- Indexes for table user_view_component_links
+-- Indexes for table user_component_links
 --
-ALTER TABLE user_view_component_links
-    ADD CONSTRAINT user_view_component_link_pkey PRIMARY KEY (view_component_link_id, user_id);
-CREATE INDEX user_view_component_link_user_idx ON user_view_component_links (user_id);
-CREATE INDEX user_view_component_link_position_idx ON user_view_component_links (position_type);
-CREATE INDEX user_view_component_link_view_idx ON user_view_component_links (view_component_link_id);
+ALTER TABLE user_component_links
+    ADD CONSTRAINT user_component_link_pkey PRIMARY KEY (component_link_id, user_id);
+CREATE INDEX user_component_link_user_idx ON user_component_links (user_id);
+CREATE INDEX user_component_link_position_idx ON user_component_links (position_type);
+CREATE INDEX user_component_link_view_idx ON user_component_links (component_link_id);
 
 --
 -- Indexes for table user_words
@@ -1992,16 +1992,16 @@ CREATE INDEX value_time_series_idx ON value_ts_data (value_time_series_id, val_t
 CREATE INDEX view_type_idx ON views (view_type_id);
 
 --
--- Indexes for table view_components
+-- Indexes for table components
 --
-CREATE INDEX view_component_formula_idx ON view_components (formula_id);
+CREATE INDEX component_formula_idx ON components (formula_id);
 
 --
--- Indexes for table view_component_links
+-- Indexes for table component_links
 --
-CREATE INDEX view_component_link_idx ON view_component_links (view_id);
-CREATE INDEX view_component_link_component_idx ON view_component_links (view_component_id);
-CREATE INDEX view_component_link_position__idx ON view_component_links (position_type);
+CREATE INDEX component_link_idx ON component_links (view_id);
+CREATE INDEX component_link_component_idx ON component_links (component_id);
+CREATE INDEX component_link_position__idx ON component_links (position_type);
 
 
 --
@@ -2198,20 +2198,20 @@ ALTER TABLE user_views
     ADD CONSTRAINT user_views_fk_3 FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 --
--- Constraints for table user_view_components
+-- Constraints for table user_components
 --
-ALTER TABLE user_view_components
-    ADD CONSTRAINT user_view_components_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_view_components_fk_2 FOREIGN KEY (view_component_id) REFERENCES view_components (view_component_id),
-    ADD CONSTRAINT user_view_components_fk_3 FOREIGN KEY (view_component_type_id) REFERENCES view_component_types (view_component_type_id);
+ALTER TABLE user_components
+    ADD CONSTRAINT user_components_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_components_fk_2 FOREIGN KEY (component_id) REFERENCES components (component_id),
+    ADD CONSTRAINT user_components_fk_3 FOREIGN KEY (component_type_id) REFERENCES component_types (component_type_id);
 
 --
--- Constraints for table user_view_component_links
+-- Constraints for table user_component_links
 --
-ALTER TABLE user_view_component_links
-    ADD CONSTRAINT user_view_component_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_view_component_links_fk_2 FOREIGN KEY (view_component_link_id) REFERENCES view_component_links (view_component_link_id),
-    ADD CONSTRAINT user_view_component_links_fk_3 FOREIGN KEY (position_type) REFERENCES view_component_position_types (view_component_position_type_id);
+ALTER TABLE user_component_links
+    ADD CONSTRAINT user_component_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_component_links_fk_2 FOREIGN KEY (component_link_id) REFERENCES component_links (component_link_id),
+    ADD CONSTRAINT user_component_links_fk_3 FOREIGN KEY (position_type) REFERENCES component_position_types (component_position_type_id);
 
 --
 -- Constraints for table user_words
@@ -2239,18 +2239,18 @@ ALTER TABLE values
     ADD CONSTRAINT values_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
--- Constraints for table view_components
+-- Constraints for table components
 --
-ALTER TABLE view_components
-    ADD CONSTRAINT view_components_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+ALTER TABLE components
+    ADD CONSTRAINT components_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
--- Constraints for table view_component_links
+-- Constraints for table component_links
 --
-ALTER TABLE view_component_links
-    ADD CONSTRAINT view_component_links_fk_1 FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT view_component_links_fk_2 FOREIGN KEY (position_type) REFERENCES view_component_position_types (view_component_position_type_id),
-    ADD CONSTRAINT view_component_links_fk_3 FOREIGN KEY (view_component_id) REFERENCES view_components (view_component_id);
+ALTER TABLE component_links
+    ADD CONSTRAINT component_links_fk_1 FOREIGN KEY (view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT component_links_fk_2 FOREIGN KEY (position_type) REFERENCES component_position_types (component_position_type_id),
+    ADD CONSTRAINT component_links_fk_3 FOREIGN KEY (component_id) REFERENCES components (component_id);
 
 --
 -- Constraints for table words

@@ -30,7 +30,9 @@
 */
 
 // for callable php files the standard zukunft.com header to load all classes and allow debugging
+use controller\controller;
 use html\view\view_dsp_old;
+use model\result;
 use model\user;
 use model\view;
 
@@ -55,7 +57,7 @@ if ($session_usr->id() > 0) {
 
     // show the header
     $dsp = new view_dsp_old($session_usr);
-    $dsp->set_id($system_views->id(view::FORMULA_EXPLAIN));
+    $dsp->set_id($system_views->id(controller::DSP_FORMULA_EXPLAIN));
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
     $result .= $dsp->dsp_navbar($back);
 

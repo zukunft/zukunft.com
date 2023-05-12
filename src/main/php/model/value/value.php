@@ -68,10 +68,10 @@ use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
 use controller\controller;
-use DateTime;
-use Exception;
 use html\value\value as value_dsp;
 use im_export\export;
+use DateTime;
+use Exception;
 use math;
 
 class value extends sandbox_value
@@ -243,29 +243,6 @@ class value extends sandbox_value
     {
         $api_json = $this->api_obj()->get_json();
         return new value_dsp($api_json);
-    }
-
-    /**
-     * @return value_dsp_old the value object with the display interface functions
-     */
-    function dsp_obj_old(): object
-    {
-        $dsp_obj = new value_dsp_old($this->user());
-
-        parent::fill_dsp_obj($dsp_obj);
-
-        $dsp_obj->grp = $this->grp;
-        $dsp_obj->source = $this->source;
-        $dsp_obj->time_stamp = $this->time_stamp;
-        $dsp_obj->last_update = $this->last_update;
-
-        $dsp_obj->update_time = $this->update_time;
-        $dsp_obj->share_id = $this->share_id;
-        $dsp_obj->protection_id = $this->protection_id;
-
-        $dsp_obj->usr_value = $this->usr_value;
-
-        return $dsp_obj;
     }
 
 

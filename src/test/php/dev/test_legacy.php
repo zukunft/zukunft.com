@@ -30,9 +30,9 @@
 
 */
 
-use test\testing;
+use test\test_cleanup;
 
-function run_legacy_test(testing $t): void
+function run_legacy_test(test_cleanup $t): void
 {
 
     $t->header('Test calc functions');

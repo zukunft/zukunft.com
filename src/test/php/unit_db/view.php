@@ -38,6 +38,7 @@ use cfg\view_cmp_type_list;
 use cfg\view_sys_list;
 use cfg\view_type;
 use cfg\view_type_list;
+use controller\controller;
 use model\db_cl;
 use model\view;
 use model\component;
@@ -46,14 +47,14 @@ use model\view_cmp_type;
 class view_unit_db_tests
 {
 
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $db_con;
         global $usr;
         global $view_types;
         global $system_views;
-        global $view_component_types;
+        global $component_types;
 
         // init
         $t->header('Unit database tests of the view class (src/main/php/model/value/view.php)');
@@ -98,17 +99,17 @@ class view_unit_db_tests
         $t->assert('load', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $system_views->id(view::WORD);
+        $result = $system_views->id(controller::DSP_WORD);
         $target = 0;
         if ($result > 0) {
             $target = $result; // just check if the id is found
         }
-        $t->assert('check' . view::WORD, $result, $target);
+        $t->assert('check' . controller::DSP_WORD, $result, $target);
 
         // check all system views
-        $t->assert_view(view::COMPONENT_ADD);
-        $t->assert_view(view::COMPONENT_EDIT);
-        $t->assert_view(view::COMPONENT_DEL);
+        $t->assert_view(controller::DSP_COMPONENT_ADD);
+        $t->assert_view(controller::DSP_COMPONENT_EDIT);
+        $t->assert_view(controller::DSP_COMPONENT_DEL);
 
 
 
@@ -132,7 +133,7 @@ class view_unit_db_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $view_component_types->id(view_cmp_type::TEXT);
+        $result = $component_types->id(view_cmp_type::TEXT);
         $t->assert('check type' . view_cmp_type::TEXT, $result, 3);
     }
 

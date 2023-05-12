@@ -38,6 +38,7 @@ include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 
 use api\view_list_api;
+use controller\controller;
 use model\sql_db;
 use model\sql_par;
 use model\user;
@@ -167,10 +168,10 @@ class view_sys_list extends type_list
     function load_dummy(): void {
         parent::load_dummy();
         $dsp = new view($this->usr);
-        $dsp->set_name(view::WORD);
-        $dsp->code_id = view::WORD;
+        $dsp->set_name(controller::DSP_WORD);
+        $dsp->code_id = controller::DSP_WORD;
         $this->lst[2] = $dsp;
-        $this->hash[view::WORD] = 2;
+        $this->hash[controller::DSP_WORD] = 2;
     }
 
     /**
@@ -178,7 +179,7 @@ class view_sys_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(view::WORD);
+        return parent::id(controller::DSP_WORD);
     }
 
 }

@@ -32,6 +32,7 @@
 
 /* standard zukunft header for callable php files to allow debugging and lib loading */
 
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\phrase_list_dsp_old;
@@ -64,7 +65,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(view::WORD_ADD);
+    $dsp->load_by_code_id(controller::DSP_WORD_ADD);
     $back = $_GET['back']; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters

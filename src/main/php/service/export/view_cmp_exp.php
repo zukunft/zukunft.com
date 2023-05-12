@@ -2,7 +2,7 @@
 
 /*
 
-  view_component_exp.php - the simple export object for a view component including the position that is save in the component link
+  component_exp.php - the simple export object for a view component including the position that is save in the component link
   ----------------------
   
   This file is part of zukunft.com - calc with words

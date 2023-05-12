@@ -43,7 +43,7 @@ use model\sys_log_status;
 class system_unit_db_tests
 {
 
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;

@@ -60,10 +60,10 @@ class change_log_table extends type_list
     const FORMULA_LINK_USR = 'user_formula_links';
     const VIEW = 'views';
     const VIEW_USR = 'user_views';
-    const VIEW_LINK = 'view_component_links';
-    const VIEW_LINK_USR = 'user_view_component_links';
-    const VIEW_COMPONENT = 'view_components';
-    const VIEW_COMPONENT_USR = 'user_view_components';
+    const VIEW_LINK = 'component_links';
+    const VIEW_LINK_USR = 'user_component_links';
+    const VIEW_COMPONENT = 'components';
+    const VIEW_COMPONENT_USR = 'user_components';
     const REF = 'refs';
     const SOURCE = 'sources';
 

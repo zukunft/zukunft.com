@@ -50,8 +50,8 @@ class sandbox_link extends sandbox
 
     // database fields only used for objects that link two objects
     // TODO create a more specific object that covers all the objects that could be linked e.g. linkable_object
-    public ?string $from_name = null;  // the name of the from object type e.g. view for view_component_links
-    public ?string $to_name = '';      // the name of the  to  object type e.g. view for view_component_links
+    public ?string $from_name = null;  // the name of the from object type e.g. view for component_links
+    public ?string $to_name = '';      // the name of the  to  object type e.g. view for component_links
 
     /**
      * reset the search values of this object

@@ -130,7 +130,7 @@ use test\html\change_log as change_log_html_tests;
 use test\html\system_log as system_log_html_tests;
 use test\html\batch_job as batch_job_html_tests;
 
-class test_unit extends testing
+class test_unit extends test_cleanup
 {
 
     private int $seq_id = 0;
@@ -186,9 +186,9 @@ class test_unit extends testing
         $this->init_formula_element_types();
         $this->init_views($usr);
         $this->init_view_types();
-        $this->init_view_component_types();
-        $this->init_view_component_link_types();
-        $this->init_view_component_pos_types();
+        $this->init_component_types();
+        $this->init_component_link_types();
+        $this->init_component_pos_types();
         $this->init_ref_types();
         $this->init_source_types();
         $this->init_share_types();
@@ -230,8 +230,8 @@ class test_unit extends testing
         (new figure_list_unit_tests)->run($this);
         (new view_unit_tests)->run($this);
         (new view_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
-        (new view_component_unit_tests())->run($this);
-        (new view_component_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new component_unit_tests())->run($this);
+        (new component_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new ref_unit_tests)->run($this);
         (new language_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new change_log_unit_tests)->run($this); // TODO add assert_api_to_dsp  // TODO for version 0.0.6 add import test
@@ -400,36 +400,36 @@ class test_unit extends testing
     /**
      * create view component type array for the unit tests without database connection
      */
-    function init_view_component_types(): void
+    function init_component_types(): void
     {
-        global $view_component_types;
+        global $component_types;
 
-        $view_component_types = new view_cmp_type_list();
-        $view_component_types->load_dummy();
+        $component_types = new view_cmp_type_list();
+        $component_types->load_dummy();
 
     }
 
     /**
      * create view component position type array for the unit tests without database connection
      */
-    function init_view_component_pos_types(): void
+    function init_component_pos_types(): void
     {
-        global $view_component_position_types;
+        global $component_position_types;
 
-        $view_component_position_types = new view_cmp_pos_type_list();
-        $view_component_position_types->load_dummy();
+        $component_position_types = new view_cmp_pos_type_list();
+        $component_position_types->load_dummy();
 
     }
 
     /**
      * create view component link type array for the unit tests without database connection
      */
-    function init_view_component_link_types(): void
+    function init_component_link_types(): void
     {
-        global $view_component_link_types;
+        global $component_link_types;
 
-        $view_component_link_types = new view_cmp_link_type_list();
-        $view_component_link_types->load_dummy();
+        $component_link_types = new view_cmp_link_type_list();
+        $component_link_types->load_dummy();
 
     }
 

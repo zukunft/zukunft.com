@@ -546,7 +546,7 @@
       "name": "Company sheet",
       "comment": "The income statement, balance sheet or cash flow sheet of a big company",
       "type": "detail_view",
-      "view_components": [
+      "components": [
         {
           "pos": "1",
           "name": "Cash Flow Statement",
@@ -570,7 +570,7 @@
       "name": "complete",
       "comment": "Show a word, all related words to edit the word tree and the linked formulas with some results",
       "type": "word_default",
-      "view_components": [
+      "components": [
         {
           "pos": "1",
           "name": "Name",
@@ -597,7 +597,7 @@
       "name": "Company list with main ratios",
       "comment": "List the most interesting companies with the main ratios",
       "type": "detail_view",
-      "view_components": [
+      "components": [
         {
           "pos": "1",
           "name": "Company with ratios",

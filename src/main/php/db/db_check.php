@@ -134,11 +134,28 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->change_table_name(sql_db::TBL_USER_PREFIX . 'word_link', sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE);
     $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'word_link_id', sql_db::TBL_USER_PREFIX . 'triple_id');
     $result .= $db_con->change_table_name('view_word_link', sql_db::TBL_VIEW_TERM_LINK);
-    $result .= $db_con->change_table_name('formula_values', sql_db::TBL_RESULT);
+    $result .= $db_con->change_table_name('formula_value', sql_db::TBL_RESULT);
     $result .= $db_con->change_column_name(sql_db::TBL_RESULT, 'formula_value_id', 'result_id');
     $result .= $db_con->change_column_name(sql_db::TBL_RESULT, 'formula_value', 'result');
+    $result .= $db_con->change_table_name('view_component', sql_db::TBL_COMPONENT);
+    $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT, 'view_component_id', 'component_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT, 'view_component_name', 'component_name');
+    $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT, 'linked_view_component_id', 'linked_component_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT, 'view_component_link_type_id', 'component_link_type_id');
+    $result .= $db_con->change_table_name(sql_db::TBL_USER_PREFIX . 'view_components', sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT);
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT, 'view_component_id', 'component_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT, 'view_component_name', 'component_name');
+    $result .= $db_con->change_table_name('view_component_link', sql_db::TBL_COMPONENT_LINK);
+    $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_LINK, 'view_component_id', 'component_id');
+    $result .= $db_con->change_table_name(sql_db::TBL_USER_PREFIX . 'view_component_links', sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK);
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK, 'view_component_id', 'component_id');
+    $result .= $db_con->change_table_name('view_component_link_type', sql_db::TBL_COMPONENT_LINK_TYPE);
+    $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_LINK_TYPE, 'view_component_link_id', 'component_link_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_LINK_TYPE, 'view_component_id', 'component_id');
+    $result .= $db_con->change_table_name('view_component_position_type', sql_db::TBL_COMPONENT_POS_TYPE);
+    $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_POS_TYPE, 'view_component_position_type_id', 'component_position_type_id');
     //
-    $result .= $db_con->change_table_name('languages_forms', sql_db::TBL_LANGUAGE_FORM);
+    $result .= $db_con->change_table_name('languages_form', sql_db::TBL_LANGUAGE_FORM);
     $result .= $db_con->add_column(sql_db::TBL_USER_PROFILE, 'right_level', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'protect_id', 'smallint');
@@ -167,15 +184,15 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->add_column(sql_db::TBL_COMPONENT, 'protect_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(sql_db::TBL_VIEW_COMPONENT_LINK, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(sql_db::TBL_VIEW_COMPONENT_LINK, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT_LINK, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT_LINK, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_COMPONENT_LINK, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_COMPONENT_LINK, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK, 'protect_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_VALUE_TIME_SERIES, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_VALUE_TIME_SERIES, 'protect_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE_TIME_SERIES, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE_TIME_SERIES, 'protect_id', 'smallint');
-    $result .= $db_con->add_column(sql_db::TBL_VIEW_COMPONENT_POS_TYPE, 'code_id', 'varchar(50)');
+    $result .= $db_con->add_column(sql_db::TBL_COMPONENT_POS_TYPE, 'code_id', 'varchar(50)');
     $result .= $db_con->add_column(sql_db::TBL_SOURCE_TYPE, 'description', 'text');
     $result .= $db_con->add_column(sql_db::TBL_REF, 'user_id', 'bigint');
     $result .= $db_con->add_column(sql_db::TBL_REF, 'source_id', 'bigint');
@@ -197,7 +214,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW, 'comment', sandbox_named::FLD_DESCRIPTION);
     $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT, 'comment', sandbox_named::FLD_DESCRIPTION);
     $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT, 'comment', sandbox_named::FLD_DESCRIPTION);
-    $result .= $db_con->change_column_name(sql_db::TBL_VIEW_COMPONENT_TYPE, 'view_component_type_name', 'type_name');
+    $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_TYPE, 'component_type_name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_TYPE, 'name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_REF_TYPE, 'ref_type_name', 'type_name');
     $result .= $db_con->change_column_name(sql_db::TBL_REF_TYPE, 'source_type_name', 'type_name');
@@ -236,7 +253,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->remove_prefix(sql_db::TBL_SYS_LOG_STATUS, 'code_id', 'log_status_');
     $result .= $db_con->remove_prefix(sql_db::TBL_TASK_TYPE, 'code_id', 'job_');
     $result .= $db_con->remove_prefix(sql_db::TBL_VIEW, 'code_id', 'dsp_');
-    $result .= $db_con->remove_prefix(sql_db::TBL_VIEW_COMPONENT_TYPE, 'code_id', 'dsp_comp_type_');
+    $result .= $db_con->remove_prefix(sql_db::TBL_COMPONENT_TYPE, 'code_id', 'dsp_comp_type_');
     $result .= $db_con->remove_prefix(sql_db::TBL_VERB, 'code_id', 'vrb_');
     $result .= $db_con->change_code_id(sql_db::TBL_VERB, 'vrb_contains', 'is_part_of');
     $result .= $db_con->column_allow_null(sql_db::TBL_WORD, 'plural');
@@ -244,7 +261,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->column_allow_null(sql_db::TBL_CHANGE_TABLE, 'description');
     $result .= $db_con->column_allow_null(sql_db::TBL_CHANGE_FIELD, 'code_id');
     $result .= $db_con->column_allow_null(sql_db::TBL_VIEW, 'comment');
-    $result .= $db_con->column_allow_null(sql_db::TBL_VIEW_COMPONENT_TYPE, 'description');
+    $result .= $db_con->column_allow_null(sql_db::TBL_COMPONENT_TYPE, 'description');
     $result .= $db_con->column_allow_null(sql_db::TBL_VALUE, sandbox::FLD_EXCLUDED);
     $result .= $db_con->column_allow_null(sql_db::TBL_VALUE, 'protect_id');
     $result .= $db_con->column_allow_null(sql_db::TBL_FORMULA_LINK, 'link_type_id');
@@ -277,7 +294,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
         //$result .= $db_con->exe_try('Finally add the new views', $sql);
     }
     $result .= $db_con->add_foreign_key('users_fk_2', sql_db::TBL_USER, 'user_profile_id', sql_db::TBL_USER_PROFILE, 'profile_id');
-    // TODO change prime key for postgres user_sources, user_values, user_view, user_view_components and user_view_component_links
+    // TODO change prime key for postgres user_sources, user_values, user_view, user_components and user_component_links
 
     if ($db_con->db_type == sql_db::MYSQL) {
 

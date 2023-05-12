@@ -32,13 +32,13 @@
 
 use api\word_api;
 use model\word_list;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_LONG;
 use const test\TW_ABB;
 use const test\TW_MIO;
 use const test\TW_SALES;
 
-function run_math_test(testing $t)
+function run_math_test(test_cleanup $t)
 {
 
     global $usr;

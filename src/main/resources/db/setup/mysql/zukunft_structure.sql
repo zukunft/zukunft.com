@@ -969,16 +969,16 @@ CREATE TABLE IF NOT EXISTS `user_views`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`user_view_components`
+-- Table structure for table`user_components`
 --
 
-CREATE TABLE IF NOT EXISTS `user_view_components`
+CREATE TABLE IF NOT EXISTS `user_components`
 (
-    `view_component_id`      int(11) NOT NULL,
+    `component_id`      int(11) NOT NULL,
     `user_id`                int(11) NOT NULL,
-    `view_component_name`    varchar(200) DEFAULT NULL,
+    `component_name`    varchar(200) DEFAULT NULL,
     `description`            text,
-    `view_component_type_id` int(11)      DEFAULT NULL,
+    `component_type_id` int(11)      DEFAULT NULL,
     `word_id_row`            int(11)      DEFAULT NULL,
     `word_id_col`            int(11)      DEFAULT NULL,
     `word_id_col2`           int(11)      DEFAULT NULL,
@@ -993,12 +993,12 @@ CREATE TABLE IF NOT EXISTS `user_view_components`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`user_view_component_links`
+-- Table structure for table`user_component_links`
 --
 
-CREATE TABLE IF NOT EXISTS `user_view_component_links`
+CREATE TABLE IF NOT EXISTS `user_component_links`
 (
-    `view_component_link_id` int(11) NOT NULL,
+    `component_link_id` int(11) NOT NULL,
     `user_id`                int(11) NOT NULL,
     `order_nbr`              int(11)    DEFAULT NULL,
     `position_type`          int(11)    DEFAULT NULL,
@@ -1219,16 +1219,16 @@ CREATE TABLE IF NOT EXISTS `views`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`view_components`
+-- Table structure for table`components`
 --
 
-CREATE TABLE IF NOT EXISTS `view_components`
+CREATE TABLE IF NOT EXISTS `components`
 (
-    `view_component_id`           int(11)      NOT NULL,
+    `component_id`           int(11)      NOT NULL,
     `user_id`                     int(11)      NOT NULL,
-    `view_component_name`         varchar(100) NOT NULL COMMENT 'just for easy selection',
+    `component_name`         varchar(100) NOT NULL COMMENT 'just for easy selection',
     `description`                 text,
-    `view_component_type_id`      int(11)    DEFAULT NULL,
+    `component_type_id`      int(11)    DEFAULT NULL,
     `word_id_row`                 int(11)    DEFAULT NULL COMMENT 'for a tree the related value the start node',
     `formula_id`                  int(11)    DEFAULT NULL COMMENT 'used for type 6',
     `word_id_col`                 int(11)    DEFAULT NULL COMMENT 'to define the type for the table columns',
@@ -1236,8 +1236,8 @@ CREATE TABLE IF NOT EXISTS `view_components`
     `excluded`                    tinyint(4) DEFAULT NULL,
     `share_type_id`               smallint   DEFAULT NULL,
     `protect_id`                  smallint   DEFAULT NULL,
-    `linked_view_component_id`    int(11)    DEFAULT NULL COMMENT 'to link this mask entry to another mask entry',
-    `view_component_link_type_id` int(11)    DEFAULT NULL COMMENT 'to define how this entry links to the other entry',
+    `linked_component_id`    int(11)    DEFAULT NULL COMMENT 'to link this mask entry to another mask entry',
+    `component_link_type_id` int(11)    DEFAULT NULL COMMENT 'to define how this entry links to the other entry',
     `link_type_id`                int(11)    DEFAULT NULL COMMENT 'e.g. for type 4 to select possible terms'
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 11
@@ -1246,15 +1246,15 @@ CREATE TABLE IF NOT EXISTS `view_components`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`view_component_links`
+-- Table structure for table`component_links`
 --
 
-CREATE TABLE IF NOT EXISTS `view_component_links`
+CREATE TABLE IF NOT EXISTS `component_links`
 (
-    `view_component_link_id` int(11) NOT NULL,
+    `component_link_id` int(11) NOT NULL,
     `user_id`                int(11) NOT NULL,
     `view_id`                int(11) NOT NULL,
-    `view_component_id`      int(11) NOT NULL,
+    `component_id`      int(11) NOT NULL,
     `order_nbr`              int(11) NOT NULL,
     `position_type`          int(11) NOT NULL DEFAULT '2' COMMENT '1=side, 2 =below',
     `excluded`               tinyint(4)       DEFAULT NULL,
@@ -1267,12 +1267,12 @@ CREATE TABLE IF NOT EXISTS `view_component_links`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`view_component_link_types`
+-- Table structure for table`component_link_types`
 --
 
-CREATE TABLE IF NOT EXISTS `view_component_link_types`
+CREATE TABLE IF NOT EXISTS `component_link_types`
 (
-    `view_component_link_type_id` int(11)      NOT NULL,
+    `component_link_type_id` int(11)      NOT NULL,
     `type_name`                   varchar(200) NOT NULL,
     `code_id`                     varchar(50)  NOT NULL
 ) ENGINE = InnoDB
@@ -1281,12 +1281,12 @@ CREATE TABLE IF NOT EXISTS `view_component_link_types`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`view_component_position_types`
+-- Table structure for table`component_position_types`
 --
 
-CREATE TABLE IF NOT EXISTS `view_component_position_types`
+CREATE TABLE IF NOT EXISTS `component_position_types`
 (
-    `view_component_position_type_id` int(11)      NOT NULL,
+    `component_position_type_id` int(11)      NOT NULL,
     `type_name`                       varchar(100) NOT NULL,
     `description`                     text         NOT NULL,
     `code_id`                         varchar(50)  NOT NULL
@@ -1297,12 +1297,12 @@ CREATE TABLE IF NOT EXISTS `view_component_position_types`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`view_component_types`
+-- Table structure for table`component_types`
 --
 
-CREATE TABLE IF NOT EXISTS `view_component_types`
+CREATE TABLE IF NOT EXISTS `component_types`
 (
-    `view_component_type_id` int(11)      NOT NULL,
+    `component_type_id` int(11)      NOT NULL,
     `type_name`              varchar(100) NOT NULL,
     `description`            text DEFAULT NULL,
     `code_id`                varchar(100) NOT NULL
@@ -2091,22 +2091,22 @@ ALTER TABLE `user_views`
     ADD KEY `view_id` (`view_id`);
 
 --
--- Indexes for table`user_view_components`
+-- Indexes for table`user_components`
 --
-ALTER TABLE `user_view_components`
-    ADD PRIMARY KEY (`view_component_id`, `user_id`),
+ALTER TABLE `user_components`
+    ADD PRIMARY KEY (`component_id`, `user_id`),
     ADD KEY `user_id` (`user_id`),
-    ADD KEY `view_component_id` (`view_component_id`),
-    ADD KEY `view_component_type_id` (`view_component_type_id`);
+    ADD KEY `component_id` (`component_id`),
+    ADD KEY `component_type_id` (`component_type_id`);
 
 --
--- Indexes for table`user_view_component_links`
+-- Indexes for table`user_component_links`
 --
-ALTER TABLE `user_view_component_links`
-    ADD PRIMARY KEY (`view_component_link_id`, `user_id`),
+ALTER TABLE `user_component_links`
+    ADD PRIMARY KEY (`component_link_id`, `user_id`),
     ADD KEY `user_id` (`user_id`),
     ADD KEY `position_type` (`position_type`),
-    ADD KEY `view_entry_link_id` (`view_component_link_id`);
+    ADD KEY `view_entry_link_id` (`component_link_id`);
 
 --
 -- Indexes for table`user_words`
@@ -2190,38 +2190,38 @@ ALTER TABLE `views`
     ADD KEY `view_type_id` (`view_type_id`);
 
 --
--- Indexes for table`view_components`
+-- Indexes for table`components`
 --
-ALTER TABLE `view_components`
-    ADD PRIMARY KEY (`view_component_id`),
+ALTER TABLE `components`
+    ADD PRIMARY KEY (`component_id`),
     ADD KEY `formula_id` (`formula_id`);
 
 --
--- Indexes for table`view_component_links`
+-- Indexes for table`component_links`
 --
-ALTER TABLE `view_component_links`
-    ADD PRIMARY KEY (`view_component_link_id`),
+ALTER TABLE `component_links`
+    ADD PRIMARY KEY (`component_link_id`),
     ADD KEY `view_id` (`view_id`),
-    ADD KEY `view_component_id` (`view_component_id`),
+    ADD KEY `component_id` (`component_id`),
     ADD KEY `view_position_type_id` (`position_type`);
 
 --
--- Indexes for table`view_component_link_types`
+-- Indexes for table`component_link_types`
 --
-ALTER TABLE `view_component_link_types`
-    ADD PRIMARY KEY (`view_component_link_type_id`);
+ALTER TABLE `component_link_types`
+    ADD PRIMARY KEY (`component_link_type_id`);
 
 --
--- Indexes for table`view_component_position_types`
+-- Indexes for table`component_position_types`
 --
-ALTER TABLE `view_component_position_types`
-    ADD PRIMARY KEY (`view_component_position_type_id`);
+ALTER TABLE `component_position_types`
+    ADD PRIMARY KEY (`component_position_type_id`);
 
 --
--- Indexes for table`view_component_types`
+-- Indexes for table`component_types`
 --
-ALTER TABLE `view_component_types`
-    ADD PRIMARY KEY (`view_component_type_id`);
+ALTER TABLE `component_types`
+    ADD PRIMARY KEY (`component_type_id`);
 
 --
 -- Indexes for table`view_link_types`
@@ -2518,30 +2518,30 @@ ALTER TABLE `verb_usages`
 ALTER TABLE `views`
     MODIFY `view_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`view_components`
+-- AUTO_INCREMENT for table`components`
 --
-ALTER TABLE `view_components`
-    MODIFY `view_component_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `components`
+    MODIFY `component_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`view_component_links`
+-- AUTO_INCREMENT for table`component_links`
 --
-ALTER TABLE `view_component_links`
-    MODIFY `view_component_link_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `component_links`
+    MODIFY `component_link_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`view_component_link_types`
+-- AUTO_INCREMENT for table`component_link_types`
 --
-ALTER TABLE `view_component_link_types`
-    MODIFY `view_component_link_type_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `component_link_types`
+    MODIFY `component_link_type_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`view_component_position_types`
+-- AUTO_INCREMENT for table`component_position_types`
 --
-ALTER TABLE `view_component_position_types`
-    MODIFY `view_component_position_type_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `component_position_types`
+    MODIFY `component_position_type_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`view_component_types`
+-- AUTO_INCREMENT for table`component_types`
 --
-ALTER TABLE `view_component_types`
-    MODIFY `view_component_type_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `component_types`
+    MODIFY `component_type_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`view_link_types`
 --
@@ -2755,20 +2755,20 @@ ALTER TABLE `user_views`
     ADD CONSTRAINT `user_views_fk_3` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`);
 
 --
--- Constraints for table`user_view_components`
+-- Constraints for table`user_components`
 --
-ALTER TABLE `user_view_components`
-    ADD CONSTRAINT `user_view_components_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `user_view_components_fk_2` FOREIGN KEY (`view_component_id`) REFERENCES `view_components` (`view_component_id`),
-    ADD CONSTRAINT `user_view_components_fk_3` FOREIGN KEY (`view_component_type_id`) REFERENCES `view_component_types` (`view_component_type_id`);
+ALTER TABLE `user_components`
+    ADD CONSTRAINT `user_components_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+    ADD CONSTRAINT `user_components_fk_2` FOREIGN KEY (`component_id`) REFERENCES `components` (`component_id`),
+    ADD CONSTRAINT `user_components_fk_3` FOREIGN KEY (`component_type_id`) REFERENCES `component_types` (`component_type_id`);
 
 --
--- Constraints for table`user_view_component_links`
+-- Constraints for table`user_component_links`
 --
-ALTER TABLE `user_view_component_links`
-    ADD CONSTRAINT `user_view_component_links_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `user_view_component_links_fk_2` FOREIGN KEY (`view_component_link_id`) REFERENCES `view_component_links` (`view_component_link_id`),
-    ADD CONSTRAINT `user_view_component_links_fk_3` FOREIGN KEY (`position_type`) REFERENCES `view_component_position_types` (`view_component_position_type_id`);
+ALTER TABLE `user_component_links`
+    ADD CONSTRAINT `user_component_links_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+    ADD CONSTRAINT `user_component_links_fk_2` FOREIGN KEY (`component_link_id`) REFERENCES `component_links` (`component_link_id`),
+    ADD CONSTRAINT `user_component_links_fk_3` FOREIGN KEY (`position_type`) REFERENCES `component_position_types` (`component_position_type_id`);
 
 --
 -- Constraints for table`user_words`
@@ -2796,18 +2796,18 @@ ALTER TABLE `values`
     ADD CONSTRAINT `values_fk_4` FOREIGN KEY (`protect_id`) REFERENCES `protection_types` (`protect_id`);
 
 --
--- Constraints for table`view_components`
+-- Constraints for table`components`
 --
-ALTER TABLE `view_components`
-    ADD CONSTRAINT `view_components_fk_2` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`);
+ALTER TABLE `components`
+    ADD CONSTRAINT `components_fk_2` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`);
 
 --
--- Constraints for table`view_component_links`
+-- Constraints for table`component_links`
 --
-ALTER TABLE `view_component_links`
-    ADD CONSTRAINT `view_component_links_fk_1` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`),
-    ADD CONSTRAINT `view_component_links_fk_2` FOREIGN KEY (`position_type`) REFERENCES `view_component_position_types` (`view_component_position_type_id`),
-    ADD CONSTRAINT `view_component_links_fk_3` FOREIGN KEY (`view_component_id`) REFERENCES `view_components` (`view_component_id`);
+ALTER TABLE `component_links`
+    ADD CONSTRAINT `component_links_fk_1` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`),
+    ADD CONSTRAINT `component_links_fk_2` FOREIGN KEY (`position_type`) REFERENCES `component_position_types` (`component_position_type_id`),
+    ADD CONSTRAINT `component_links_fk_3` FOREIGN KEY (`component_id`) REFERENCES `components` (`component_id`);
 
 --
 -- Constraints for table`words`

@@ -5,6 +5,9 @@
     controller.php - the base class for API controller
     --------------
 
+    includes all const for the API
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -52,7 +55,11 @@ use model\word;
 class controller
 {
 
-    // the parameter names used in the url or in th result json
+    /*
+     * URL
+     */
+
+    // the parameter names used in the url or in the result json
     const URL_API_PATH = 'api/';
     const URL_VAR_ID = 'id'; // the internal database id that should never be shown to the user
     const URL_VAR_ID_LST = 'ids'; // a comma seperated list of internal database ids
@@ -67,6 +74,11 @@ class controller
     // used for the change log
     const URL_VAR_WORD_ID = 'word_id';
     const URL_VAR_WORD_FLD = 'word_field';
+
+
+    /*
+     * API
+     */
 
     // json field names of the api json messages
     // which is supposed to be the same as the corresponding var of the api object
@@ -113,9 +125,9 @@ class controller
     const API_LIST_FORMULA_LINK_TYPES = 'formula_link_types';
     const API_LIST_FORMULA_ELEMENT_TYPES = 'formula_element_types';
     const API_LIST_VIEW_TYPES = 'view_types';
-    const API_LIST_VIEW_COMPONENT_TYPES = 'view_component_types';
-    //    const API_LIST_VIEW_COMPONENT_LINK_TYPES = 'view_component_link_types';
-    const API_LIST_VIEW_COMPONENT_POSITION_TYPES = 'view_component_position_types';
+    const API_LIST_COMPONENT_TYPES = 'component_types';
+    // const API_LIST_COMPONENT_LINK_TYPES = 'component_link_types';
+    const API_LIST_COMPONENT_POSITION_TYPES = 'component_position_types';
     const API_LIST_REF_TYPES = 'ref_types';
     const API_LIST_SOURCE_TYPES = 'source_types';
     const API_LIST_SHARE_TYPES = 'share_types';
@@ -133,6 +145,55 @@ class controller
     // path parameters
     const PATH_API_REDIRECT = '/../../'; // get from the __DIR__ to the php root path
     const PATH_MAIN_LIB = 'src/main/php/zu_lib.php'; // the main php library the contains all other paths
+
+
+    /*
+     * VIEWS
+     */
+
+    // list of the view used by the program that are never supposed to be changed
+    // also the list of the view code_id
+    const DSP_START = "start";
+    const DSP_WORD = "word";
+    const DSP_WORD_ADD = "word_add";
+    const DSP_WORD_EDIT = "word_edit";
+    const DSP_WORD_DEL = "word_del";
+    const DSP_WORD_FIND = "word_find";
+    const DSP_VALUE_DISPLAY = "value";
+    const DSP_VALUE_ADD = "value_add";
+    const DSP_VALUE_EDIT = "value_edit";
+    const DSP_VALUE_DEL = "value_del";
+    const DSP_FORMULA_ADD = "formula_add";
+    const DSP_FORMULA_EDIT = "formula_edit";
+    const DSP_FORMULA_DEL = "formula_del";
+    const DSP_FORMULA_EXPLAIN = "formula_explain";
+    const DSP_FORMULA_TEST = "formula_test";
+    const DSP_SOURCE_ADD = "source_add";
+    const DSP_SOURCE_EDIT = "source_edit";
+    const DSP_SOURCE_DEL = "source_del";
+    const DSP_VERBS = "verbs";
+    const DSP_VERB_ADD = "verb_add";
+    const DSP_VERB_EDIT = "verb_edit";
+    const DSP_VERB_DEL = "verb_del";
+    const DSP_TRIPLE_ADD = "triple_add";
+    const DSP_TRIPLE_EDIT = "triple_edit";
+    const DSP_TRIPLE_DEL = "triple_del";
+    const DSP_USER = "user";
+    const DSP_ERR_LOG = "error_log";
+    const DSP_ERR_UPD = "error_update";
+    const DSP_IMPORT = "import";
+    // views to edit views
+    const DSP_ADD = "view_add";
+    const DSP_EDIT = "view_edit";
+    const DSP_DEL = "view_del";
+    const DSP_COMPONENT_ADD = "view_entry_add";
+    const DSP_COMPONENT_EDIT = "view_entry_edit";
+    const DSP_COMPONENT_DEL = "view_entry_del";
+
+
+    /*
+     * functions
+     */
 
     /**
      * response to a get request

@@ -39,11 +39,11 @@ use model\phrase_list;
 use model\result;
 use model\result_list;
 use model\value;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_LONG;
 use const test\TIMEOUT_LIMIT_PAGE;
 
-function run_result_test(testing $t): void
+function run_result_test(test_cleanup $t): void
 {
 
     global $usr;
@@ -155,7 +155,7 @@ function run_result_test(testing $t): void
 
 }
 
-function run_result_list_test(testing $t): void
+function run_result_list_test(test_cleanup $t): void
 {
 
     global $usr;

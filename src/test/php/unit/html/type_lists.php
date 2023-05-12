@@ -40,11 +40,11 @@ use html\html_base;
 use html\view\view as view_dsp;
 use html\types\protection;
 use html\types\type_list as type_list_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class type_list
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         $html = new html_base();

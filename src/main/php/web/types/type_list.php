@@ -116,25 +116,25 @@ class type_list
             log_err('Mandatory view_types missing in API JSON ' . json_encode($json_array));
             $this->set_view_types();
         }
-        if (array_key_exists(controller::API_LIST_VIEW_COMPONENT_TYPES, $json_array)) {
-            $this->set_view_component_types($json_array[controller::API_LIST_VIEW_COMPONENT_TYPES]);
+        if (array_key_exists(controller::API_LIST_COMPONENT_TYPES, $json_array)) {
+            $this->set_component_types($json_array[controller::API_LIST_COMPONENT_TYPES]);
         } else {
-            log_err('Mandatory view_component_types missing in API JSON ' . json_encode($json_array));
-            $this->set_view_component_types();
+            log_err('Mandatory component_types missing in API JSON ' . json_encode($json_array));
+            $this->set_component_types();
         }
         /*
         if (array_key_exists(controller::API_LIST_VIEW_COMPONENT_LINK_TYPES, $json_array)) {
-            $this->set_view_component_link_types($json_array[controller::API_LIST_VIEW_COMPONENT_LINK_TYPES]);
+            $this->set_component_link_types($json_array[controller::API_LIST_VIEW_COMPONENT_LINK_TYPES]);
         } else {
-            log_err('Mandatory view_component_link_types missing in API JSON ' . json_encode($json_array));
-            $this->set_view_component_link_types();
+            log_err('Mandatory component_link_types missing in API JSON ' . json_encode($json_array));
+            $this->set_component_link_types();
         }
         */
-        if (array_key_exists(controller::API_LIST_VIEW_COMPONENT_POSITION_TYPES, $json_array)) {
-            $this->set_view_component_position_types($json_array[controller::API_LIST_VIEW_COMPONENT_POSITION_TYPES]);
+        if (array_key_exists(controller::API_LIST_COMPONENT_POSITION_TYPES, $json_array)) {
+            $this->set_component_position_types($json_array[controller::API_LIST_COMPONENT_POSITION_TYPES]);
         } else {
-            log_err('Mandatory view_component_position_types missing in API JSON ' . json_encode($json_array));
-            $this->set_view_component_position_types();
+            log_err('Mandatory component_position_types missing in API JSON ' . json_encode($json_array));
+            $this->set_component_position_types();
         }
         if (array_key_exists(controller::API_LIST_REF_TYPES, $json_array)) {
             $this->set_ref_types($json_array[controller::API_LIST_REF_TYPES]);
@@ -251,25 +251,25 @@ class type_list
         $html_view_types->set_obj_from_json_array($json_array);
     }
 
-    function set_view_component_types(array $json_array = null): void
+    function set_component_types(array $json_array = null): void
     {
-        global $html_view_component_types;
-        $html_view_component_types = new type_list();
-        $html_view_component_types->set_obj_from_json_array($json_array);
+        global $html_component_types;
+        $html_component_types = new type_list();
+        $html_component_types->set_obj_from_json_array($json_array);
     }
 
-    function set_view_component_link_types(array $json_array = null): void
+    function set_component_link_types(array $json_array = null): void
     {
-        global $html_view_component_link_types;
-        $html_view_component_link_types = new type_list();
-        $html_view_component_link_types->set_obj_from_json_array($json_array);
+        global $html_component_link_types;
+        $html_component_link_types = new type_list();
+        $html_component_link_types->set_obj_from_json_array($json_array);
     }
 
-    function set_view_component_position_types(array $json_array = null): void
+    function set_component_position_types(array $json_array = null): void
     {
-        global $html_view_component_position_types;
-        $html_view_component_position_types = new type_list();
-        $html_view_component_position_types->set_obj_from_json_array($json_array);
+        global $html_component_position_types;
+        $html_component_position_types = new type_list();
+        $html_component_position_types->set_obj_from_json_array($json_array);
     }
 
     function set_ref_types(array $json_array = null): void

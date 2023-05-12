@@ -41,16 +41,16 @@ use html\phrase\phrase as phrase_dsp;
 class component_dsp_old extends component_api
 {
 
-    const FORM_ADD = 'view_component_add';
-    const FORM_EDIT = 'view_component_edit';
+    const FORM_ADD = 'component_add';
+    const FORM_EDIT = 'component_edit';
 
     /**
      * @returns string the html code to display this view component
      */
     function html(?phrase_dsp $phr = null): string
     {
-        global $view_component_types;
-        return match ($view_component_types->code_id($this->type_id)) {
+        global $component_types;
+        return match ($component_types->code_id($this->type_id)) {
             view_cmp_type::TEXT => $this->text(),
             view_cmp_type::PHRASE_NAME => $this->word_name($phr),
             view_cmp_type::VALUES_RELATED => $this->table(),
@@ -63,8 +63,8 @@ class component_dsp_old extends component_api
      */
     function text(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id) == view_cmp_type::TEXT) {
+        global $component_types;
+        if ($component_types->code_id($this->type_id) == view_cmp_type::TEXT) {
             return $this->name();
         } else {
             return '';
@@ -76,8 +76,8 @@ class component_dsp_old extends component_api
      */
     function word_name(phrase_dsp $phr): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id) == view_cmp_type::PHRASE_NAME) {
+        global $component_types;
+        if ($component_types->code_id($this->type_id) == view_cmp_type::PHRASE_NAME) {
             return $phr->name();
         } else {
             return '';
@@ -90,8 +90,8 @@ class component_dsp_old extends component_api
      */
     function table(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id) == view_cmp_type::VALUES_RELATED) {
+        global $component_types;
+        if ($component_types->code_id($this->type_id) == view_cmp_type::VALUES_RELATED) {
             return $this->name();
         } else {
             return '';
@@ -104,8 +104,8 @@ class component_dsp_old extends component_api
      */
     function num_list(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id) == view_cmp_type::WORD_VALUE) {
+        global $component_types;
+        if ($component_types->code_id($this->type_id) == view_cmp_type::WORD_VALUE) {
             return $this->name();
         } else {
             return '';
@@ -118,8 +118,8 @@ class component_dsp_old extends component_api
      */
     function formulas(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id) == view_cmp_type::FORMULAS) {
+        global $component_types;
+        if ($component_types->code_id($this->type_id) == view_cmp_type::FORMULAS) {
             return $this->name();
         } else {
             return '';
@@ -132,8 +132,8 @@ class component_dsp_old extends component_api
      */
     function results(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id) == view_cmp_type::FORMULA_RESULTS) {
+        global $component_types;
+        if ($component_types->code_id($this->type_id) == view_cmp_type::FORMULA_RESULTS) {
             return $this->name();
         } else {
             return '';
@@ -146,8 +146,8 @@ class component_dsp_old extends component_api
      */
     function word_children(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id) == view_cmp_type::WORDS_DOWN) {
+        global $component_types;
+        if ($component_types->code_id($this->type_id) == view_cmp_type::WORDS_DOWN) {
             return $this->name();
         } else {
             return '';
@@ -160,8 +160,8 @@ class component_dsp_old extends component_api
      */
     function word_parents(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id) == view_cmp_type::WORDS_UP) {
+        global $component_types;
+        if ($component_types->code_id($this->type_id) == view_cmp_type::WORDS_UP) {
             return $this->name();
         } else {
             return '';
@@ -174,8 +174,8 @@ class component_dsp_old extends component_api
      */
     function json_export(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id) == view_cmp_type::JSON_EXPORT) {
+        global $component_types;
+        if ($component_types->code_id($this->type_id) == view_cmp_type::JSON_EXPORT) {
             return $this->name();
         } else {
             return '';
@@ -188,8 +188,8 @@ class component_dsp_old extends component_api
      */
     function xml_export(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id) == view_cmp_type::XML_EXPORT) {
+        global $component_types;
+        if ($component_types->code_id($this->type_id) == view_cmp_type::XML_EXPORT) {
             return $this->name();
         } else {
             return '';
@@ -202,8 +202,8 @@ class component_dsp_old extends component_api
      */
     function csv_export(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id) == view_cmp_type::CSV_EXPORT) {
+        global $component_types;
+        if ($component_types->code_id($this->type_id) == view_cmp_type::CSV_EXPORT) {
             return $this->name();
         } else {
             return '';
@@ -216,8 +216,8 @@ class component_dsp_old extends component_api
      */
     function all(): string
     {
-        global $view_component_types;
-        if ($view_component_types->code_id($this->type_id) == view_cmp_type::VALUES_ALL) {
+        global $component_types;
+        if ($component_types->code_id($this->type_id) == view_cmp_type::VALUES_ALL) {
             return $this->name();
         } else {
             return '';

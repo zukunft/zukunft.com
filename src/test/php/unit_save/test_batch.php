@@ -39,10 +39,10 @@ use model\batch_job_list;
 use model\db_cl;
 use model\phrase_list;
 use model\value;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 
-function run_batch_job_test(testing $t): void
+function run_batch_job_test(test_cleanup $t): void
 {
 
     global $usr;
@@ -82,7 +82,7 @@ function run_batch_job_test(testing $t): void
 
 }
 
-function run_batch_job_list_test(testing $t): void
+function run_batch_job_list_test(test_cleanup $t): void
 {
 
     global $usr;

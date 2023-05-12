@@ -37,11 +37,11 @@ use api\word_api;
 use html\html_base;
 use html\phrase\term_list as term_list_dsp;
 use model\verb;
-use test\testing;
+use test\test_cleanup;
 
 class term_list
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         $html = new html_base();

@@ -78,9 +78,9 @@
     batch_job_list.php
     view.php
     view_display.php
-    view_component.php (ex view_component)
-    view_component_dsp.php
-    view_component_link.php
+    component.php (ex component)
+    component_dsp.php
+    component_link.php
     web/html/button.php
     json.php
     xml.php
@@ -222,8 +222,8 @@ if ($start_usr->id() > 0) {
             create_test_formulas($t);
             create_test_formula_links($t);
             create_test_views($t);
-            create_test_view_components($t);
-            create_test_view_component_links($t);
+            create_test_components($t);
+            create_test_component_links($t);
             create_test_values($t);
 
             run_db_link_test($t);
@@ -264,8 +264,8 @@ if ($start_usr->id() > 0) {
             run_batch_job_test($t);
             run_batch_job_list_test($t);
             run_view_test($t);
-            run_view_component_test($t);
-            run_view_component_link_test($t);
+            run_component_test($t);
+            run_component_link_test($t);
             run_display_test($t);
             run_export_test($t);
             //run_permission_test ($t);

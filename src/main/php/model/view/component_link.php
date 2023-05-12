@@ -2,7 +2,7 @@
 
 /*
 
-    model/view/view_component_link.php - link a single display component/element to a view
+    model/view/component_link.php - link a single display component/element to a view
     ----------------------------------
 
     TODO  if a link is owned by someone, who has deleted it, it can be changed by anyone else
@@ -35,7 +35,9 @@
 
 namespace model;
 
-class view_component_link extends sandbox_link_with_type
+use html\view\view_dsp_old;
+
+class component_link extends sandbox_link_with_type
 {
 
     /*
@@ -43,7 +45,7 @@ class view_component_link extends sandbox_link_with_type
      */
 
     // the database and JSON object field names used only for formula links
-    const FLD_ID = 'view_component_link_id';
+    const FLD_ID = 'component_link_id';
     const FLD_ORDER_NBR = 'order_nbr';
     const FLD_POS_TYPE = 'position_type';
 
@@ -97,7 +99,7 @@ class view_component_link extends sandbox_link_with_type
     {
         parent::__construct($usr);
         $this->obj_type = sandbox::TYPE_LINK;
-        $this->obj_name = sql_db::TBL_VIEW_COMPONENT_LINK;
+        $this->obj_name = sql_db::TBL_COMPONENT_LINK;
         $this->from_name = sql_db::TBL_VIEW;
         $this->to_name = sql_db::TBL_COMPONENT;
 
@@ -181,7 +183,7 @@ class view_component_link extends sandbox_link_with_type
             $this->id = 0;
         }
 
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
+        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
         $qp = new sql_par(self::class);
         if ($this->id != 0) {
             $qp->name .= 'std_id';
@@ -238,7 +240,7 @@ class view_component_link extends sandbox_link_with_type
         $qp = parent::load_sql_obj_vars($db_con, $class);
         $qp->name .= $query_name;
 
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
+        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
@@ -266,14 +268,14 @@ class view_component_link extends sandbox_link_with_type
                 'to load a ' . self::class, self::class . '->load_sql');
         }
 
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
+        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id > 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select_by_field_list(array(view_component_link::FLD_ID));
+            $qp->sql = $db_con->select_by_field_list(array(component_link::FLD_ID));
         } elseif ($this->dsp->id > 0 and $this->cmp->id > 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->dsp->id);
             $db_con->add_par(sql_db::PAR_INT, $this->cmp->id);
@@ -295,7 +297,7 @@ class view_component_link extends sandbox_link_with_type
 
         // check the all minimal input parameters are set
         if (!$this->user()->is_set()) {
-            log_err("The user id must be set to load a view component link.", "view_component_link->load");
+            log_err("The user id must be set to load a view component link.", "component_link->load");
         } else {
 
             // try to get the search values from the objects
@@ -316,12 +318,12 @@ class view_component_link extends sandbox_link_with_type
                 if ($this->id > 0) {
                     //if (is_null($db_item[self::FLD_EXCLUDED]) OR $db_item[self::FLD_EXCLUDED] == 0) {
                     //}
-                    log_debug('view_component_link->load of ' . $this->id . ' done');
+                    log_debug('component_link->load of ' . $this->id . ' done');
                     $result = true;
                 }
             }
         }
-        log_debug('view_component_link->load of ' . $this->id . ' done and quit');
+        log_debug('component_link->load of ' . $this->id . ' done and quit');
         return $result;
     }
 
@@ -416,8 +418,8 @@ class view_component_link extends sandbox_link_with_type
      */
     private function pos_type_name(): string
     {
-        global $view_component_position_types;
-        return $view_component_position_types->name($this->type_id);
+        global $component_position_types;
+        return $component_position_types->name($this->type_id);
     }
 
     // remember the move of a display component
@@ -442,60 +444,60 @@ class view_component_link extends sandbox_link_with_type
 
         // check the all minimal input parameters
         if ($this->id <= 0) {
-            log_err("Cannot load the view component link.", "view_component_link->move");
+            log_err("Cannot load the view component link.", "component_link->move");
         } elseif ($this->dsp->id <= 0 or $this->cmp->id <= 0) {
-            log_err("The view component id and the view component id must be given to move it.", "view_component_link->move");
+            log_err("The view component id and the view component id must be given to move it.", "component_link->move");
         } else {
-            log_debug('view_component_link->move ' . $direction . ' ' . $this->dsp_id());
+            log_debug('component_link->move ' . $direction . ' ' . $this->dsp_id());
 
             // new reorder code that can create a separate order for each user
             if (!isset($this->fob) or !isset($this->tob)) {
-                log_err("The view component and the view component cannot be loaded to move them.", "view_component_link->move");
+                log_err("The view component and the view component cannot be loaded to move them.", "component_link->move");
             } else {
                 $this->fob->load_components();
 
                 // correct any wrong order numbers e.g. a missing number
                 $order_number_corrected = false;
-                log_debug('view_component_link->move check order numbers for ' . $this->fob->dsp_id());
+                log_debug('component_link->move check order numbers for ' . $this->fob->dsp_id());
                 // TODO define the common sorting start number, which is 1 and not 0
                 $order_nbr = 1;
                 if ($this->cmp_lst != null) {
                     foreach ($this->fob->cmp_lst->lst() as $entry) {
                         // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                        $cmp_lnk = new view_component_link($this->user());
+                        $cmp_lnk = new component_link($this->user());
                         $cmp_lnk->fob = $this->fob;
                         $cmp_lnk->tob = $entry;
                         $cmp_lnk->load_obj_vars();
                         // fix any wrong order numbers
                         if ($cmp_lnk->order_nbr != $order_nbr) {
-                            log_debug('view_component_link->move check order number of the view component ' . $entry->dsp_id() . ' corrected from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
-                            //zu_err('Order number of the view component "'.$entry->name.'" corrected from '.$cmp_lnk->order_nbr.' to '.$order_nbr.'.', "view_component_link->move");
+                            log_debug('component_link->move check order number of the view component ' . $entry->dsp_id() . ' corrected from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
+                            //zu_err('Order number of the view component "'.$entry->name.'" corrected from '.$cmp_lnk->order_nbr.' to '.$order_nbr.'.', "component_link->move");
                             $cmp_lnk->order_nbr = $order_nbr;
                             $cmp_lnk->save();
                             $order_number_corrected = true;
                         }
-                        log_debug('view_component_link->move check order numbers checked for ' . $this->fob->dsp_id() . ' and ' . $entry->dsp_id() . ' at position ' . $order_nbr);
+                        log_debug('component_link->move check order numbers checked for ' . $this->fob->dsp_id() . ' and ' . $entry->dsp_id() . ' at position ' . $order_nbr);
                         $order_nbr++;
                     }
                 }
                 if ($order_number_corrected) {
-                    log_debug('view_component_link->move reload after correction');
+                    log_debug('component_link->move reload after correction');
                     $this->fob->load_components();
                     // check if correction was successful
                     $order_nbr = 0;
                     if ($this->cmp_lst != null) {
                         foreach ($this->fob->cmp_lst->lst() as $entry) {
-                            $cmp_lnk = new view_component_link($this->user());
+                            $cmp_lnk = new component_link($this->user());
                             $cmp_lnk->fob = $this->fob;
                             $cmp_lnk->tob = $entry;
                             $cmp_lnk->load_obj_vars();
                             if ($cmp_lnk->order_nbr != $order_nbr) {
-                                log_err('Component link ' . $cmp_lnk->dsp_id() . ' should have position ' . $order_nbr . ', but is ' . $cmp_lnk->order_nbr, "view_component_link->move");
+                                log_err('Component link ' . $cmp_lnk->dsp_id() . ' should have position ' . $order_nbr . ', but is ' . $cmp_lnk->order_nbr, "component_link->move");
                             }
                         }
                     }
                 }
-                log_debug('view_component_link->move order numbers checked for ' . $this->fob->dsp_id());
+                log_debug('component_link->move order numbers checked for ' . $this->fob->dsp_id());
 
                 // actually move the selected component
                 // TODO what happens if the another user has deleted some components?
@@ -505,18 +507,18 @@ class view_component_link extends sandbox_link_with_type
                 if ($this->cmp_lst != null) {
                     foreach ($this->fob->cmp_lst->lst() as $entry) {
                         // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                        $cmp_lnk = new view_component_link($this->user());
+                        $cmp_lnk = new component_link($this->user());
                         $cmp_lnk->fob = $this->fob;
                         $cmp_lnk->tob = $entry;
                         $cmp_lnk->load_obj_vars();
                         if ($prev_entry_down) {
                             if (isset($prev_entry)) {
-                                log_debug('view_component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
+                                log_debug('component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
                                 $prev_entry->order_nbr = $order_nbr;
                                 $prev_entry->save();
                                 $prev_entry = null;
                             }
-                            log_debug('view_component_link->move order number of the view component "' . $cmp_lnk->tob->name() . '" changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in "' . $this->fob->name() . '"');
+                            log_debug('component_link->move order number of the view component "' . $cmp_lnk->tob->name() . '" changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in "' . $this->fob->name() . '"');
                             $cmp_lnk->order_nbr = $order_nbr - 1;
                             $cmp_lnk->save();
                             $result = true;
@@ -525,12 +527,12 @@ class view_component_link extends sandbox_link_with_type
                         if ($entry->id == $this->cmp->id) {
                             if ($direction == 'up') {
                                 if ($cmp_lnk->order_nbr > 0) {
-                                    log_debug('view_component_link->move order number of the view component ' . $cmp_lnk->tob->dsp_id() . ' changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in ' . $this->fob->dsp_id());
+                                    log_debug('component_link->move order number of the view component ' . $cmp_lnk->tob->dsp_id() . ' changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in ' . $this->fob->dsp_id());
                                     $cmp_lnk->order_nbr = $order_nbr - 1;
                                     $cmp_lnk->save();
                                     $result = true;
                                     if (isset($prev_entry)) {
-                                        log_debug('view_component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
+                                        log_debug('component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
                                         $prev_entry->order_nbr = $order_nbr;
                                         $prev_entry->save();
                                     }
@@ -549,11 +551,11 @@ class view_component_link extends sandbox_link_with_type
             }
 
             // force reloading view components
-            log_debug('view_component_link->move reload');
+            log_debug('component_link->move reload');
             $this->fob->load_components();
         }
 
-        log_debug('view_component_link->move done');
+        log_debug('component_link->move done');
         return $result;
     }
 
@@ -569,7 +571,7 @@ class view_component_link extends sandbox_link_with_type
         return $this->move('down');
     }
 
-    // create a database record to save user specific settings for this view_component_link
+    // create a database record to save user specific settings for this component_link
     protected function add_usr_cfg(string $class = self::class): bool
     {
         global $db_con;
@@ -577,13 +579,13 @@ class view_component_link extends sandbox_link_with_type
 
         if (!$this->has_usr_cfg()) {
             if (isset($this->fob) and isset($this->tob)) {
-                log_debug('view_component_link->add_usr_cfg for "' . $this->fob->name() . '"/"' . $this->tob->name() . '" by user "' . $this->user()->name . '"');
+                log_debug('component_link->add_usr_cfg for "' . $this->fob->name() . '"/"' . $this->tob->name() . '" by user "' . $this->user()->name . '"');
             } else {
-                log_debug('view_component_link->add_usr_cfg for "' . $this->id . '" and user "' . $this->user()->name . '"');
+                log_debug('component_link->add_usr_cfg for "' . $this->id . '" and user "' . $this->user()->name . '"');
             }
 
             // check again if there is not yet a record
-            $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK, true);
+            $db_con->set_type(sql_db::TBL_COMPONENT_LINK, true);
             $qp = new sql_par(self::class);
             $qp->name = 'view_cmp_link_add_usr_cfg';
             $db_con->set_name($qp->name);
@@ -597,10 +599,10 @@ class view_component_link extends sandbox_link_with_type
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW_COMPONENT_LINK);
+                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK);
                 $log_id = $db_con->insert(array(self::FLD_ID, sandbox::FLD_USER), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
-                    log_err('Insert of user_view_component_link failed.');
+                    log_err('Insert of user_component_link failed.');
                     $result = false;
                 } else {
                     $result = true;
@@ -621,7 +623,7 @@ class view_component_link extends sandbox_link_with_type
      */
     function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
     {
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
+        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
         return parent::usr_cfg_sql($db_con, $class);
     }
 
@@ -629,12 +631,12 @@ class view_component_link extends sandbox_link_with_type
      * set the update parameters for the view component order_nbr
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param view_component_link $db_rec the view component link as saved in the database before the update
-     * @param view_component_link $std_rec the default parameter used for this view component link
+     * @param component_link $db_rec the view component link as saved in the database before the update
+     * @param component_link $std_rec the default parameter used for this view component link
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
     private
-    function save_field_order_nbr(sql_db $db_con, view_component_link $db_rec, view_component_link $std_rec): string
+    function save_field_order_nbr(sql_db $db_con, component_link $db_rec, component_link $std_rec): string
     {
         $result = '';
         if ($db_rec->order_nbr <> $this->order_nbr) {
@@ -650,14 +652,14 @@ class view_component_link extends sandbox_link_with_type
     }
 
     /**
-     * save all updated view_component_link fields excluding the name, because already done when adding a view_component_link
+     * save all updated component_link fields excluding the name, because already done when adding a component_link
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param view_component_link|sandbox $db_rec the view component link as saved in the database before the update
-     * @param view_component_link|sandbox $std_rec the default parameter used for this view component link
+     * @param component_link|sandbox $db_rec the view component link as saved in the database before the update
+     * @param component_link|sandbox $std_rec the default parameter used for this view component link
      * @returns string any message that should be shown to the user or a empty string if everything is fine
      */
-    function save_fields(sql_db $db_con, view_component_link|sandbox $db_rec, view_component_link|sandbox $std_rec): string
+    function save_fields(sql_db $db_con, component_link|sandbox $db_rec, component_link|sandbox $std_rec): string
     {
         $result = $this->save_field_order_nbr($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);

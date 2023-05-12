@@ -42,7 +42,7 @@ use model\word_select_direction;
 
 class verb_unit_tests
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;
@@ -102,14 +102,14 @@ class verb_unit_tests
     /**
      * similar to $t->assert_load_sql but calling load_by_linked_phrases_sql instead of load_sql
      *
-     * @param testing $t the forwarded testing object
+     * @param test_cleanup $t the forwarded testing object
      * @param sql_db $db_con does not need to be connected to a real database
      * @param verb_list $vrb_lst the verb list object used for testing
      * @param phrase $phr the phrase used for testing
      * @param string $direction
      */
     private function assert_load_by_linked_phrases_sql(
-        testing $t, sql_db $db_con, verb_list $vrb_lst, phrase $phr, string $direction
+        test_cleanup $t, sql_db $db_con, verb_list $vrb_lst, phrase $phr, string $direction
     ): void
     {
         // check the Postgres query syntax

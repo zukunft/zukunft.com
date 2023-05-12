@@ -306,8 +306,8 @@ class component extends sandbox_typed_dsp
 
     private function type_code_id(): string
     {
-        global $view_component_types;
-        return $view_component_types->code_id($this->type_id());
+        global $component_types;
+        return $component_types->code_id($this->type_id());
     }
 
 

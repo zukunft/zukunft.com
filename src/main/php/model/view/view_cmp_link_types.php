@@ -2,7 +2,7 @@
 
 /*
 
-    model/view/view_component_link_types.php - to define the behaviour if a component is linked to a view
+    model/view/component_link_types.php - to define the behaviour if a component is linked to a view
     ----------------------------------------
 
     TODO check if really needed
@@ -38,7 +38,7 @@ include_once DB_PATH . 'sql_db.php';
 use cfg\type_list;
 use model\sql_db;
 
-global $view_component_link_types;
+global $component_link_types;
 
 class view_cmp_link_type_list extends type_list
 {
@@ -47,7 +47,7 @@ class view_cmp_link_type_list extends type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_VIEW_COMPONENT_LINK_TYPE): bool
+    function load(sql_db $db_con, string $db_type = sql_db::TBL_COMPONENT_LINK_TYPE): bool
     {
         return parent::load($db_con, $db_type);
     }

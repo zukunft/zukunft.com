@@ -39,7 +39,7 @@ use model\library;
 
 class expression_unit_tests
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;
@@ -205,17 +205,17 @@ class expression_unit_tests
     }
 
     /**
-     * @param testing $t just the testing object to count the number of errors and warnings
+     * @param test_cleanup $t just the testing object to count the number of errors and warnings
      * @param string $test_name which part should be tested e.g. with fixed formulas
      * @param string $usr_frm_exp the formula expression in the human-readable format
      * @param string $db_ref_frm_exp the formula expression in the database reference format
      * @return void
      */
     private function frm_exp_convert(
-        testing $t,
-        string  $test_name,
-        string  $usr_frm_exp,
-        string  $db_ref_frm_exp
+        test_cleanup $t,
+        string       $test_name,
+        string       $usr_frm_exp,
+        string       $db_ref_frm_exp
     ): void
     {
         global $usr;

@@ -42,13 +42,13 @@ use model\change_log_link;
 use model\change_log_table;
 use model\triple;
 use model\verb;
-use test\testing;
+use test\test_cleanup;
 use const test\TEST_WORD;
 use const test\TIMEOUT_LIMIT_DB;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 use const test\TIMEOUT_LIMIT_PAGE_SEMI;
 
-function run_triple_test(testing $t): void
+function run_triple_test(test_cleanup $t): void
 {
 
     global $verbs;
@@ -221,6 +221,6 @@ function run_triple_test(testing $t): void
 
     // ... and the owner should now be the second user
 
-    // the code changes and tests for formula link should be moved the view_component_link
+    // the code changes and tests for formula link should be moved the component_link
 
 }

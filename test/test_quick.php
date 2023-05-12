@@ -33,6 +33,10 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
+
+use model\user;
+use test\test_unit_read_db;
+
 $debug = $_GET['debug'] ?? 0;
 
 // load the main functions
@@ -114,8 +118,8 @@ if ($start_usr->id() > 0) {
             create_test_formulas($t);
             create_test_formula_links($t);
             create_test_views($t);
-            create_test_view_components($t);
-            create_test_view_component_links($t);
+            create_test_components($t);
+            create_test_component_links($t);
             create_test_values($t);
 
             run_db_link_test($t);
@@ -151,8 +155,8 @@ if ($start_usr->id() > 0) {
             run_batch_job_test($t);
             run_batch_job_list_test($t);
             run_view_test($t);
-            run_view_component_test($t);
-            run_view_component_link_test($t);
+            run_component_test($t);
+            run_component_link_test($t);
             run_display_test($t);
             run_export_test($t);
             //run_permission_test ($t);

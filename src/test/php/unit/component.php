@@ -2,7 +2,7 @@
 
 /*
 
-    test/unit/view_component.php - unit testing of the view component functions
+    test/unit/component.php - unit testing of the view component functions
     ----------------------------
   
 
@@ -41,21 +41,21 @@ use html\view\component as component_dsp;
 use api\view_api;
 use api\component_api;
 
-class view_component_unit_tests
+class component_unit_tests
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;
 
         // init
         $db_con = new sql_db();
-        $t->name = 'view_component->';
+        $t->name = 'component->';
         $t->resource_path = 'db/view/';
         $json_file = 'unit/view/component_import.json';
         $usr->set_id(1);
 
-        $t->header('Unit tests of the view component class (src/main/php/model/view/view_component.php)');
+        $t->header('Unit tests of the view component class (src/main/php/model/view/component.php)');
 
 
         $t->subheader('SQL user sandbox statement tests');

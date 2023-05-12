@@ -30,6 +30,7 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\user;
@@ -57,7 +58,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(view::DEL);
+    $dsp->load_by_code_id(controller::DSP_DEL);
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // get the parameters

@@ -36,11 +36,11 @@ include_once WEB_SYSTEM_PATH . 'batch_job_list.php';
 
 use html\html_base;
 use html\system\batch_job_list as batch_job_list_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class batch_job
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         $html = new html_base();
 

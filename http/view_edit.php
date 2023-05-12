@@ -30,6 +30,7 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\user;
@@ -60,7 +61,7 @@ if ($usr->id() > 0) {
 
     // prepare the display to edit the view
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(view::ADD);
+    $dsp->load_by_code_id(controller::DSP_ADD);
     $back = $_GET['back'];
 
     // create the view object that the user can change
@@ -102,10 +103,10 @@ if ($usr->id() > 0) {
         }
 
         // check if a existing view element should be added
-        if (isset($_GET['add_view_component'])) {
-            if ($_GET['add_view_component'] > 0) {
+        if (isset($_GET['add_component'])) {
+            if ($_GET['add_component'] > 0) {
                 $cmp = new component($usr);
-                $cmp->load_by_id($_GET['add_view_component']);
+                $cmp->load_by_id($_GET['add_component']);
                 $order_nbr = $cmp->next_nbr($dsp_edit->id());
                 $cmp->link($dsp_edit, $order_nbr);
             }

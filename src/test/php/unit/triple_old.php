@@ -42,7 +42,7 @@ use model\word;
 
 class triple_unit_tests_old
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;

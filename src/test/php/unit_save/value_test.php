@@ -43,10 +43,10 @@ use model\library;
 use model\phrase_list;
 use model\value;
 use model\value_dsp_old;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 
-function run_value_test(testing $t): void
+function run_value_test(test_cleanup $t): void
 {
 
     global $test_val_lst;

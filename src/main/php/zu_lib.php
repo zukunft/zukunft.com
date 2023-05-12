@@ -264,7 +264,7 @@ use model\library;
 use model\sql_db;
 use model\sys_log_level;
 use model\user;
-use test\testing;
+use test\test_cleanup;
 
 // the fixed system user
 const SYSTEM_USER_ID = 1; //
@@ -511,8 +511,8 @@ define("BASE_CODE_LINK_FILES", serialize(array(
     'user_official_types',
     'user_profiles',
     'user_types',
-    'view_component_position_types',
-    'view_component_types',
+    'component_position_types',
+    'component_types',
     'view_link_types',
     'view_types',
     'word_types'
@@ -1044,7 +1044,7 @@ function prg_version_is_newer($prg_version_to_check, $this_version = PRG_VERSION
 /**
  * unit_test for prg_version_is_newer
  */
-function prg_version_is_newer_test(testing $t): void
+function prg_version_is_newer_test(test_cleanup $t): void
 {
     $result = zu_dsp_bool(prg_version_is_newer('0.0.1'));
     $target = 'false';

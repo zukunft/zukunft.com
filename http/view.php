@@ -34,6 +34,7 @@
 */
 
 // for callable php files the standard zukunft.com header to load all classes and allow debugging
+use controller\controller;
 use html\api;
 use html\view\view_dsp_old;
 use model\user;
@@ -90,7 +91,7 @@ if ($usr->id() > 0) {
                     $view_id = $wrd->view_id();
                     if ($view_id <= 0) {
                         // if no one has set a view for this word, use the fallback view
-                        $view_id = $system_views->id(view::WORD);
+                        $view_id = $system_views->id(controller::DSP_WORD);
                     }
                 }
             }
@@ -104,7 +105,7 @@ if ($usr->id() > 0) {
 
             // use a fallback if the view is empty
             if ($dsp_text == '' or $dsp->name() == '') {
-                $view_id = $system_views->id(view::START);
+                $view_id = $system_views->id(controller::DSP_START);
                 $dsp->load_by_id($view_id, view::class);
                 $dsp_text = $dsp->display($wrd, $back);
             }

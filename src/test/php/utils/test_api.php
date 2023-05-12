@@ -258,10 +258,10 @@ class test_api extends create_test_objects
     /**
      * check if the main parts of the openapi definition matches the code
      *
-     * @param testing $t
+     * @param test_cleanup $t
      * @return void
      */
-    function run_openapi_test(testing $t): void
+    function run_openapi_test(test_cleanup $t): void
     {
 
         // init

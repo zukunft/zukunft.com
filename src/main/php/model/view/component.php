@@ -2,7 +2,7 @@
 
 /*
 
-    model/view/view_component.php - a single display object like a headline or a table
+    model/view/component.php - a single display object like a headline or a table
     -----------------------------
 
     TODO rename to component (to always use a single word)
@@ -48,9 +48,9 @@ class component extends sandbox_typed
      */
 
     // the database and JSON object field names used only for view components links
-    const FLD_ID = 'view_component_id';
-    const FLD_NAME = 'view_component_name';
-    const FLD_TYPE = 'view_component_type_id';
+    const FLD_ID = 'component_id';
+    const FLD_NAME = 'component_name';
+    const FLD_TYPE = 'component_type_id';
     const FLD_ROW_PHRASE = 'word_id_row';
     const FLD_COL_PHRASE = 'word_id_col';
     const FLD_COL2_PHRASE = 'word_id_col2';
@@ -189,14 +189,14 @@ class component extends sandbox_typed
      */
     function dsp_obj(): object
     {
-        global $view_component_types;
+        global $component_types;
 
         $dsp_obj = new component_dsp_old();
 
         parent::fill_dsp_obj($dsp_obj);
 
         $dsp_obj->set_type_id($this->type_id);
-        //$dsp_obj->set_type($view_component_types->get_by_id($this->type_id)->code_id());
+        //$dsp_obj->set_type($component_types->get_by_id($this->type_id)->code_id());
 
         return $dsp_obj;
     }
@@ -262,8 +262,8 @@ class component extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        global $view_component_types;
-        $this->type_id = $view_component_types->id($type_code_id);
+        global $component_types;
+        $this->type_id = $component_types->id($type_code_id);
     }
 
 
@@ -276,8 +276,8 @@ class component extends sandbox_typed
      */
     function type_name(): string
     {
-        global $view_component_types;
-        return $view_component_types->name($this->type_id);
+        global $component_types;
+        return $component_types->name($this->type_id);
     }
 
 
@@ -387,16 +387,16 @@ class component extends sandbox_typed
     // load the missing view component parameters from the database
     function load_obj_vars(): bool
     {
-        log_debug('view_component->load');
+        log_debug('component->load');
 
         global $db_con;
         $result = false;
 
         // check the minimal input parameters
         if (!$this->user()->is_set()) {
-            log_err("The user id must be set to load a view component.", "view_component->load");
+            log_err("The user id must be set to load a view component.", "component->load");
         } elseif ($this->id <= 0 and $this->name == '') {
-            log_err("Either the database ID (" . $this->id . ") or the display item name (" . $this->name . ") and the user (" . $this->user()->id() . ") must be set to find a display item.", "view_component->load");
+            log_err("Either the database ID (" . $this->id . ") or the display item name (" . $this->name . ") and the user (" . $this->user()->id() . ") must be set to find a display item.", "component->load");
         } else {
 
             $qp = $this->load_sql_obj_vars($db_con);
@@ -405,11 +405,11 @@ class component extends sandbox_typed
             $this->row_mapper($db_cmp);
             if ($this->id > 0) {
                 $this->load_phrases();
-                log_debug('view_component->load of ' . $this->dsp_id() . ' done');
+                log_debug('component->load of ' . $this->dsp_id() . ' done');
                 $result = true;
             }
         }
-        log_debug('view_component->load of ' . $this->dsp_id() . ' quit');
+        log_debug('component->load of ' . $this->dsp_id() . ' quit');
         return $result;
     }
 
@@ -531,8 +531,8 @@ class component extends sandbox_typed
      */
     private function type_id_by_code_id(string $code_id): int
     {
-        global $view_component_types;
-        return $view_component_types->id($code_id);
+        global $component_types;
+        return $component_types->id($code_id);
     }
 
     /**
@@ -543,11 +543,11 @@ class component extends sandbox_typed
         $result = array();
 
         if ($this->id > 0 and $this->user()->is_set()) {
-            $lst = new view_component_link_list($this->user());
+            $lst = new component_link_list($this->user());
             $lst->load_by_component($this);
             $result = $lst->view_ids();
         } else {
-            log_err("The user id must be set to list the view_component links.", "view_component->assign_dsp_ids");
+            log_err("The user id must be set to list the component links.", "component->assign_dsp_ids");
         }
 
         return $result;
@@ -559,7 +559,7 @@ class component extends sandbox_typed
     function name_linked(string $back = ''): string
     {
 
-        return '<a href="/http/view_component_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
+        return '<a href="/http/component_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
     }
 
 
@@ -609,7 +609,7 @@ class component extends sandbox_typed
      */
     function export_obj(bool $do_load = true): exp_obj
     {
-        log_debug('view_component->export_obj ' . $this->dsp_id());
+        log_debug('component->export_obj ' . $this->dsp_id());
         $result = new view_cmp_exp();
 
         // add the component parameters
@@ -651,8 +651,8 @@ class component extends sandbox_typed
     /*  private function link_type_name() {
         if ($this->type_id > 0) {
           $sql = "SELECT type_name
-                    FROM view_component_types
-                   WHERE view_component_type_id = ".$this->type_id.";";
+                    FROM component_types
+                   WHERE component_type_id = ".$this->type_id.";";
           $db_con = new mysql;
           $db_con->usr_id = $this->user()->id();
           $db_type = $db_con->get1($sql);
@@ -662,7 +662,7 @@ class component extends sandbox_typed
       } */
 
     /*
-      to link and unlink a view_component
+      to link and unlink a component
     */
 
     /**
@@ -670,20 +670,20 @@ class component extends sandbox_typed
      */
     function next_nbr($view_id)
     {
-        log_debug('view_component->next_nbr for view "' . $view_id . '"');
+        log_debug('component->next_nbr for view "' . $view_id . '"');
 
         global $db_con;
 
         $result = 1;
         if ($view_id == '' or $view_id == Null or $view_id == 0) {
-            log_err('Cannot get the next position, because the view_id is not set', 'view_component->next_nbr');
+            log_err('Cannot get the next position, because the view_id is not set', 'component->next_nbr');
         } else {
             $sql_avoid_code_check_prefix = "SELECT";
             $sql = $sql_avoid_code_check_prefix . " max(m.order_nbr) AS max_order_nbr
                 FROM ( SELECT 
                               " . $db_con->get_usr_field("order_nbr", "l", "u", sql_db::FLD_FORMAT_VAL) . " 
-                          FROM view_component_links l 
-                    LEFT JOIN user_view_component_links u ON u.view_component_link_id = l.view_component_link_id 
+                          FROM component_links l 
+                    LEFT JOIN user_component_links u ON u.component_link_id = l.component_link_id 
                                                       AND u.user_id = " . $this->user()->id() . " 
                         WHERE l.view_id = " . $view_id . " ) AS m;";
             //$db_con = new mysql;
@@ -706,7 +706,7 @@ class component extends sandbox_typed
     // set the log entry parameters for a value update
     function log_link($dsp): bool
     {
-        log_debug('view_component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id());
+        log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id());
         $log = new change_log_link;
         $log->usr = $this->user();
         $log->action = change_log_action::ADD;
@@ -742,7 +742,7 @@ class component extends sandbox_typed
     {
         log_debug($this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
 
-        $dsp_lnk = new view_component_link($this->user());
+        $dsp_lnk = new component_link($this->user());
         $dsp_lnk->fob = $dsp;
         $dsp_lnk->tob = $this;
         $dsp_lnk->order_nbr = $order_nbr;
@@ -759,20 +759,20 @@ class component extends sandbox_typed
 
         if (isset($dsp) and $this->user()->is_set()) {
             log_debug($this->dsp_id() . ' from "' . $dsp->name . '" (' . $dsp->id . ')');
-            $dsp_lnk = new view_component_link($this->user());
+            $dsp_lnk = new component_link($this->user());
             $dsp_lnk->fob = $dsp;
             $dsp_lnk->tob = $this;
             $dsp_lnk->load_obj_vars();
             $msg = $dsp_lnk->del();
             $result .= $msg->get_last_message();
         } else {
-            $result .= log_err("Cannot unlink view component, because view is not set.", "view_component.php");
+            $result .= log_err("Cannot unlink view component, because view is not set.", "component.php");
         }
 
         return $result;
     }
 
-    // create a database record to save user specific settings for this view_component
+    // create a database record to save user specific settings for this component
     protected function add_usr_cfg(string $class = self::class): bool
     {
         global $db_con;
@@ -787,20 +787,20 @@ class component extends sandbox_typed
             $qp->name = 'view_cmp_del_usr_cfg_if';
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
-            $db_con->set_fields(array('view_component_id'));
+            $db_con->set_fields(array('component_id'));
             $db_con->set_where_std($this->id);
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
-                $this->usr_cfg_id = $db_row['view_component_id'];
+                $this->usr_cfg_id = $db_row['component_id'];
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT);
-                $log_id = $db_con->insert(array('view_component_id', sandbox::FLD_USER), array($this->id, $this->user()->id()));
+                $log_id = $db_con->insert(array('component_id', sandbox::FLD_USER), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
-                    log_err('Insert of user_view_component failed.');
+                    log_err('Insert of user_component failed.');
                     $result = false;
                 } else {
                     // TODO check if correct in all cases
@@ -934,7 +934,7 @@ class component extends sandbox_typed
     }
 
     /**
-     * save all updated view_component fields excluding the name, because already done when adding a view_component
+     * save all updated component fields excluding the name, because already done when adding a component
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component|sandbox $db_rec the view component as saved in the database before the update
@@ -961,7 +961,7 @@ class component extends sandbox_typed
         $result = new user_message();
 
         // collect all component links where this component is used
-        $lnk_lst = new view_component_link_list($this->user());
+        $lnk_lst = new component_link_list($this->user());
         $lnk_lst->load_by_component($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion

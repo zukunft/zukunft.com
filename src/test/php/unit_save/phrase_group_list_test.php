@@ -34,10 +34,10 @@ use api\word_api;
 use model\phrase_group_list;
 use model\phrase_list;
 use model\word_list;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE;
 
-function run_phrase_group_list_test(testing $t): void
+function run_phrase_group_list_test(test_cleanup $t): void
 {
 
     global $usr;

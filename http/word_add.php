@@ -48,6 +48,7 @@ Delete a word (check if nothing is depending on the word to delete)
 
 /* standard zukunft header for callable php files to allow debugging and lib loading */
 
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\term;
@@ -61,7 +62,7 @@ const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 /* open database */
-$db_con = prg_start("word_add");
+$db_con = prg_start(controller::DSP_WORD_ADD);
 $html = new html_base();
 
 $result = ''; // reset the html code var
@@ -78,7 +79,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(view::WORD_ADD);
+    $dsp->load_by_code_id(controller::DSP_WORD_ADD);
     $back = $_GET['back']; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
@@ -129,7 +130,6 @@ if ($usr->id() > 0) {
                   // maybe ask for confirmation
                   // change the link type to "formula link"
                   $wrd->type_id = cl(SQL_WORD_TYPE_FORMULA_LINK);
-                  zu_debug('word_add -> changed type to ('.$wrd->type_id.')');
                 } else {
                 */
                 $msg .= $trm->id_used_msg();

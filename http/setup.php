@@ -10,6 +10,8 @@
 
 // standard start for all php code that can be called
 use cfg\phrase_type;
+use controller\controller;
+use model\user;
 
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 const ROOT_PATH = __DIR__ . '/../';
@@ -46,18 +48,18 @@ if ($usr->id() > 0) {
         // create all code linked records in the database
         // created in the database because on one hand, they can be used like all user added records
         // on the other side, these records have special function that are defined in the code
-        // the code link always is done with the field "code_id"
+        // link always is done with the field "code_id"
         // this way the user can give the record another name without using the code link
         // maybe the code link should be shown to the user for
-        sql_code_link(view::WORD_ADD, "Add new words", $db_con);
-        sql_code_link(view::WORD_EDIT, "Word Edit", $db_con);
-        sql_code_link(view::VALUE_ADD, "Add new values", $db_con);
-        sql_code_link(view::VALUE_EDIT, "Value Edit", $db_con);
-        sql_code_link(view::FORMULA_ADD, "Add new formula", $db_con);
-        sql_code_link(view::FORMULA_EDIT, "Formula Edit", $db_con);
-        sql_code_link(view::ADD, "Add new view", $db_con);
-        sql_code_link(view::EDIT, "view Edit", $db_con);
-        sql_code_link(view::IMPORT, "Import", $db_con);
+        sql_code_link(controller::DSP_WORD_ADD, "Add new words", $db_con);
+        sql_code_link(controller::DSP_WORD_EDIT, "Word Edit", $db_con);
+        sql_code_link(controller::DSP_VALUE_ADD, "Add new values", $db_con);
+        sql_code_link(controller::DSP_VALUE_EDIT, "Value Edit", $db_con);
+        sql_code_link(controller::DSP_FORMULA_ADD, "Add new formula", $db_con);
+        sql_code_link(controller::DSP_FORMULA_EDIT, "Formula Edit", $db_con);
+        sql_code_link(controller::DSP_ADD, "Add new view", $db_con);
+        sql_code_link(controller::DSP_EDIT, "view Edit", $db_con);
+        sql_code_link(controller::DSP_IMPORT, "Import", $db_con);
 
         sql_code_link(phrase_type::TIME, "Time Word", $db_con);
         //sql_code_link(DBL_LINK_TYPE_IS,      "is a", $db_con);

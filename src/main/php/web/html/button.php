@@ -249,10 +249,10 @@ class button
         $result .= '        <div class="modal-body">';
         $result .= $html->dsp_form_start($form_name);
         $result .= '            ' . $phr_time->name_dsp();
-        $result .= '            <input type="hidden" name="phrases" value="' . implode(",", $phr_lst->ids()) . '">';
-        $result .= '            <input type="hidden" name="back" value="' . $back . '">';
-        $result .= '            <input type="hidden" name="confirm" value="1">';
-        $result .= '            <input type="text" name="value" value="0">';
+        $result .= $html->input('phrases', implode(",", $phr_lst->ids()), html_base::INPUT_HIDDEN);
+        $result .= $html->input('back', $back, html_base::INPUT_HIDDEN);
+        $result .= $html->input('confirm', '1', html_base::INPUT_HIDDEN);
+        $result .= $html->input('value', '0', html_base::INPUT_TEXT);
         $result .= '            ' . $common_lst_ex_main->name_dsp();
         $result .= '          </form>';
         $result .= '        </div>';

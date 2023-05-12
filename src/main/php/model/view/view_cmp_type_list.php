@@ -2,7 +2,7 @@
 
 /*
 
-    model/view/view_component_type_list.php - to link coded functionality to a view component
+    model/view/component_type_list.php - to link coded functionality to a view component
     ---------------------------------------
 
     This file is part of zukunft.com - calc with words
@@ -39,7 +39,7 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 use model\sql_db;
 use model\view_cmp_type;
 
-global $view_component_types;
+global $component_types;
 
 class view_cmp_type_list extends type_list
 {
@@ -49,7 +49,7 @@ class view_cmp_type_list extends type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_VIEW_COMPONENT_TYPE): bool
+    function load(sql_db $db_con, string $db_type = sql_db::TBL_COMPONENT_TYPE): bool
     {
         return parent::load($db_con, $db_type);
     }

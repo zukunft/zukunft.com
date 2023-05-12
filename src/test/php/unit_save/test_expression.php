@@ -33,11 +33,11 @@
 use api\formula_api;
 use api\word_api;
 use model\expression;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_LONG;
 use const test\TIMEOUT_LIMIT_PAGE_LONG;
 
-function run_expression_test(testing $t): void
+function run_expression_test(test_cleanup $t): void
 {
 
     global $usr;

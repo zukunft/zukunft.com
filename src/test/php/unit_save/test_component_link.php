@@ -2,7 +2,7 @@
 
 /*
 
-  test_view_component_link.php - TESTing of the VIEW COMPONENT LINK class
+  test_component_link.php - TESTing of the VIEW COMPONENT LINK class
   ----------------------------
   
 
@@ -36,11 +36,11 @@ use model\change_log_link;
 use model\change_log_table;
 use model\view;
 use model\component;
-use model\view_component_link;
-use test\testing;
+use model\component_link;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 
-function create_test_view_component_links(testing $t): void
+function create_test_component_links(test_cleanup $t): void
 {
     $t->header('Check if all base view component links are existing');
 
@@ -52,14 +52,14 @@ function create_test_view_component_links(testing $t): void
     $t->test_view_cmp_lnk(view_api::TN_TABLE, component_api::TN_TABLE, 2);
 }
 
-function run_view_component_link_test(testing $t): void
+function run_component_link_test(test_cleanup $t): void
 {
 
-    $t->header('Test the view component link class (classes/view_component_link.php)');
+    $t->header('Test the view component link class (classes/component_link.php)');
 
     // prepare testing by creating the view and components needed for testing
     $dsp = $t->test_view(view_api::TN_RENAMED);
-    $cmp = $t->test_view_component(component_api::TN_ADD);
+    $cmp = $t->test_component(component_api::TN_ADD);
 
     // link the test view component to another view
     $order_nbr = $cmp->next_nbr($dsp->id());
@@ -78,14 +78,14 @@ function run_view_component_link_test(testing $t): void
     $t->display('view component_link->link_dsp logged for "' . $dsp->name() . '" to "' . $cmp->name() . '"', $target, $result);
 
     // ... check if the link is shown correctly
-    $cmp = $t->load_view_component(component_api::TN_ADD);
+    $cmp = $t->load_component(component_api::TN_ADD);
     $dsp_lst = $cmp->assign_dsp_ids();
     $result = $dsp->is_in_list($dsp_lst);
     $target = true;
     $t->display('view component->assign_dsp_ids contains "' . $dsp->name() . '" for user "' . $t->usr1->name . '"', $target, $result);
 
     // ... check if the link is shown correctly also for the second user
-    $cmp = $t->load_view_component(component_api::TN_ADD, $t->usr2);
+    $cmp = $t->load_component(component_api::TN_ADD, $t->usr2);
     $dsp_lst = $cmp->assign_dsp_ids();
     $result = $dsp->is_in_list($dsp_lst);
     $target = true;
@@ -94,7 +94,7 @@ function run_view_component_link_test(testing $t): void
     // ... check if the value update has been triggered
 
     // if second user removes the new link
-    $cmp = $t->load_view_component(component_api::TN_ADD, $t->usr2);
+    $cmp = $t->load_component(component_api::TN_ADD, $t->usr2);
     $dsp = new view($t->usr2);
     $dsp->load_by_name(view_api::TN_RENAMED, view::class);
     $result = $cmp->unlink($dsp);
@@ -113,7 +113,7 @@ function run_view_component_link_test(testing $t): void
 
 
     // ... check if the link is really not used any more for the second user
-    $cmp = $t->load_view_component(component_api::TN_ADD, $t->usr2);
+    $cmp = $t->load_component(component_api::TN_ADD, $t->usr2);
     $dsp_lst = $cmp->assign_dsp_ids();
     $result = $dsp->is_in_list($dsp_lst);
     $target = false;
@@ -123,7 +123,7 @@ function run_view_component_link_test(testing $t): void
     // ... check if the value update for the second user has been triggered
 
     // ... check if the link is still used for the first user
-    $cmp = $t->load_view_component(component_api::TN_ADD);
+    $cmp = $t->load_component(component_api::TN_ADD);
     $dsp_lst = $cmp->assign_dsp_ids();
     $result = $dsp->is_in_list($dsp_lst);
     $target = true;
@@ -147,7 +147,7 @@ function run_view_component_link_test(testing $t): void
     $t->display('view component_link->unlink_dsp logged of "' . $dsp->name() . '" from "' . $cmp->name() . '"', $target, $result);
 
     // check if the view component is not used any more for both users
-    $cmp = $t->load_view_component(component_api::TN_ADD);
+    $cmp = $t->load_component(component_api::TN_ADD);
     $dsp_lst = $cmp->assign_dsp_ids();
     $result = $dsp->is_in_list($dsp_lst);
     $target = false;
@@ -160,7 +160,7 @@ function run_view_component_link_test(testing $t): void
     // load the view and view component objects
     $dsp = $t->load_view(view_api::TN_RENAMED);
     $dsp2 = $t->load_view(view_api::TN_RENAMED, $t->usr2);
-    $cmp = $t->load_view_component(component_api::TN_ADD,);
+    $cmp = $t->load_component(component_api::TN_ADD,);
     // create a second view element to be able to test the change of the view order
     $cmp2 = new component($t->usr1);
     $cmp2->set_name(component_api::TN_ADD2);
@@ -170,7 +170,7 @@ function run_view_component_link_test(testing $t): void
         $result = $cmp2->description;
     }
     $target = 'Just added a second view component for testing';
-    $t->display('view_component->save for adding a second one "' . $cmp2->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->display('component->save for adding a second one "' . $cmp2->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // insert the link again for the first user
     $order_nbr = $cmp->next_nbr($dsp->id());
@@ -217,7 +217,7 @@ function run_view_component_link_test(testing $t): void
     }
 
     // ... if the second user changes the link e.g. the order
-    $cmp_lnk = new view_component_link($t->usr2);
+    $cmp_lnk = new component_link($t->usr2);
     $cmp_lnk->fob = $dsp2;
     $cmp_lnk->tob = $cmp2;
     $cmp_lnk->load_obj_vars();
@@ -293,7 +293,7 @@ function run_view_component_link_test(testing $t): void
     $t->display('view component_link->unlink again second component "' . $dsp->name() . '" from "' . $cmp2->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
 
-    // the code changes and tests for view component link should be moved the view_component_link
+    // the code changes and tests for view component link should be moved the component_link
 
 
 }

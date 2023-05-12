@@ -220,6 +220,11 @@ class view extends sandbox_typed_dsp
         return $result;
     }
 
+    /*
+     * JavaScript functions using bootstrap
+     */
+
+    // same as dsp_navbar_html, but using bootstrap
     private function dsp_navbar_bs(bool $show_view, string $back): string
     {
         $lib = new library();

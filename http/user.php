@@ -30,6 +30,7 @@
 
 */
 
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\formula;
@@ -40,7 +41,7 @@ use model\user_profile;
 use model\value;
 use model\view;
 use model\component;
-use model\view_component_link;
+use model\component_link;
 use model\word;
 
 $debug = $_GET['debug'] ?? 0;
@@ -81,7 +82,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(view::USER);
+    $dsp->load_by_code_id(controller::DSP_USER);
 
     // do user change
     $result .= $usr->upd_pars($_GET);
@@ -137,7 +138,7 @@ if ($usr->id() > 0) {
 
     // undo user changes for formulas
     if ($undo_cmp_lnk > 0) {
-        $cmp_lnk = new view_component_link($usr);
+        $cmp_lnk = new component_link($usr);
         $cmp_lnk->set_id($undo_cmp_lnk);
         $cmp_lnk->del_usr_cfg();
     }

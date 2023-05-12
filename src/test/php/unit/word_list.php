@@ -46,7 +46,7 @@ use html\word\word_list as word_list_dsp;
 
 class word_list_unit_tests
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;
@@ -293,13 +293,13 @@ class word_list_unit_tests
      * test the SQL statement creation for a word list in all SQL dialect
      * and check if the statement name is unique
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param word_list $lst the empty word list object
      * @param array $ids filled with a list of word ids to be used for the query creation
      * @return void
      */
-    private function assert_sql_by_ids(testing $t, sql_db $db_con, word_list $lst, array $ids): void
+    private function assert_sql_by_ids(test_cleanup $t, sql_db $db_con, word_list $lst, array $ids): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -317,13 +317,13 @@ class word_list_unit_tests
     /**
      * similar to assert_sql_by_ids, but for word names
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param word_list $lst the empty word list object
      * @param array $words filled with a list of word names to be used for the query creation
      * @return void
      */
-    private function assert_sql_by_names(testing $t, sql_db $db_con, word_list $lst, array $words): void
+    private function assert_sql_by_names(test_cleanup $t, sql_db $db_con, word_list $lst, array $words): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -339,13 +339,13 @@ class word_list_unit_tests
     /**
      * similar to assert_sql_by_ids, but for a phrase group
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param word_list $lst the empty word list object
      * @param int $grp_id the phrase group id that should be used for selecting the words
      * @return void
      */
-    private function assert_sql_by_group_id(testing $t, sql_db $db_con, word_list $lst, int $grp_id): void
+    private function assert_sql_by_group_id(test_cleanup $t, sql_db $db_con, word_list $lst, int $grp_id): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -361,13 +361,13 @@ class word_list_unit_tests
     /**
      * similar to assert_sql_by_ids, but for a type
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param word_list $lst the empty word list object
      * @param int $type_id the phrase group id that should be used for selecting the words
      * @return void
      */
-    private function assert_sql_by_type_id(testing $t, sql_db $db_con, word_list $lst, int $type_id): void
+    private function assert_sql_by_type_id(test_cleanup $t, sql_db $db_con, word_list $lst, int $type_id): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -383,13 +383,13 @@ class word_list_unit_tests
     /**
      * similar to assert_sql_by_ids, but for a type
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param word_list $lst the empty word list object
      * @param string $pattern the text pattern to select the words
      * @return void
      */
-    private function assert_sql_by_pattern(testing $t, sql_db $db_con, word_list $lst, string $pattern): void
+    private function assert_sql_by_pattern(test_cleanup $t, sql_db $db_con, word_list $lst, string $pattern): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -405,14 +405,14 @@ class word_list_unit_tests
     /**
      * similar to assert_sql_by_ids, but for a linked words
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param word_list $lst the empty word list object
      * @param int $verb_id to select only words linked with this verb
      * @param string $direction to define the link direction
      * @return void
      */
-    private function assert_sql_by_linked_words(testing $t, sql_db $db_con, word_list $lst, int $verb_id, string $direction): void
+    private function assert_sql_by_linked_words(test_cleanup $t, sql_db $db_con, word_list $lst, int $verb_id, string $direction): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

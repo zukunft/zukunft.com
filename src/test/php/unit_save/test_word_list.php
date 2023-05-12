@@ -42,10 +42,10 @@ use model\phrase_group;
 use model\verb;
 use model\word_list;
 use model\word_select_direction;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB;
 
-function run_word_list_test(testing $t): void
+function run_word_list_test(test_cleanup $t): void
 {
 
     global $usr;

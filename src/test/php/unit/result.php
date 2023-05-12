@@ -44,7 +44,7 @@ use model\sql_db;
 class result_unit_tests
 {
 
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;

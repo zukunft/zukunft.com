@@ -34,7 +34,7 @@ namespace model;
 include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'component.php';
 include_once MODEL_VIEW_PATH . 'component_list.php';
-include_once MODEL_VIEW_PATH . 'view_component_link.php';
+include_once MODEL_VIEW_PATH . 'component_link.php';
 include_once MODEL_VIEW_PATH . 'view_cmp_dsp.php'; // TODO move to web namespace
 include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'view_cmp_exp.php';
@@ -60,7 +60,7 @@ class view extends sandbox_typed
     const FLD_TYPE = 'view_type_id';
     const FLD_DESCRIPTION = 'description';
     // the JSON object field names
-    const FLD_COMPONENT = 'view_components';
+    const FLD_COMPONENT = 'components';
 
     // all database field names excluding the id
     const FLD_NAMES = array(
@@ -85,49 +85,6 @@ class view extends sandbox_typed
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
-
-
-    /*
-     * code links
-     */
-
-    // list of the view used by the program that are never supposed to be changed
-    const START = "start";
-    const WORD = "word";
-    const WORD_ADD = "word_add";
-    const WORD_EDIT = "word_edit";
-    const WORD_DEL = "word_del";
-    const WORD_FIND = "word_find";
-    const VALUE_DISPLAY = "value";
-    const VALUE_ADD = "value_add";
-    const VALUE_EDIT = "value_edit";
-    const VALUE_DEL = "value_del";
-    const FORMULA_ADD = "formula_add";
-    const FORMULA_EDIT = "formula_edit";
-    const FORMULA_DEL = "formula_del";
-    const FORMULA_EXPLAIN = "formula_explain";
-    const FORMULA_TEST = "formula_test";
-    const SOURCE_ADD = "source_add";
-    const SOURCE_EDIT = "source_edit";
-    const SOURCE_DEL = "source_del";
-    const VERBS = "verbs";
-    const VERB_ADD = "verb_add";
-    const VERB_EDIT = "verb_edit";
-    const VERB_DEL = "verb_del";
-    const LINK_ADD = "triple_add";
-    const LINK_EDIT = "triple_edit";
-    const LINK_DEL = "triple_del";
-    const USER = "user";
-    const ERR_LOG = "error_log";
-    const ERR_UPD = "error_update";
-    const IMPORT = "import";
-    // views to edit views
-    const ADD = "view_add";
-    const EDIT = "view_edit";
-    const DEL = "view_del";
-    const COMPONENT_ADD = "view_entry_add";
-    const COMPONENT_EDIT = "view_entry_edit";
-    const COMPONENT_DEL = "view_entry_del";
 
 
     /*
@@ -492,11 +449,11 @@ class view extends sandbox_typed
             log_err("Either the database ID (" . $this->id . "), the view name (" . $this->name . ") or the code_id (" . $this->code_id . ")  must be set to load the components of a view.", "view->load_components_sql");
         }
 
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
+        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
         $db_con->set_usr($this->user()->id());
         $db_con->set_name($qp->name);
-        $db_con->set_fields(view_component_link::FLD_NAMES);
-        $db_con->set_usr_num_fields(view_component_link::FLD_NAMES_NUM_USR);
+        $db_con->set_fields(component_link::FLD_NAMES);
+        $db_con->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
         $db_con->set_join_fields(
             component::FLD_NAMES,
             sql_db::TBL_COMPONENT);
@@ -507,7 +464,7 @@ class view extends sandbox_typed
             component::FLD_NAMES_NUM_USR,
             sql_db::TBL_COMPONENT);
         $db_con->add_par(sql_db::PAR_INT, $this->id);
-        $db_con->set_order(view_component_link::FLD_ORDER_NBR);
+        $db_con->set_order(component_link::FLD_ORDER_NBR);
         $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID));
         $qp->par = $db_con->get_par();
 
@@ -537,7 +494,7 @@ class view extends sandbox_typed
                     $new_entry = new component_dsp_old($this->user());
                     $new_entry->id = $db_entry[component::FLD_ID];
                     $new_entry->owner_id = $db_entry[sandbox::FLD_USER];
-                    $new_entry->order_nbr = $db_entry[view_component_link::FLD_ORDER_NBR];
+                    $new_entry->order_nbr = $db_entry[component_link::FLD_ORDER_NBR];
                     $new_entry->name = $db_entry[component::FLD_NAME];
                     $new_entry->word_id_row = $db_entry[component::FLD_ROW_PHRASE . '2'];
                     $new_entry->link_type_id = $db_entry[component::FLD_LINK_TYPE . '2'];
@@ -651,7 +608,7 @@ class view extends sandbox_typed
             } else {
                 if (!$test_obj) {
                     $cmp->save();
-                    $cmp_lnk = new view_component_link($this->user());
+                    $cmp_lnk = new component_link($this->user());
                     $cmp_lnk->dsp->id = $this->id;
                     $cmp_lnk->cmp->id = $cmp->id;
                     $cmp_lnk->order_nbr = $cmp->order_nbr;
@@ -671,17 +628,17 @@ class view extends sandbox_typed
      * in case of an error the error message is returned
      * if everything is fine an empty string is returned
      */
-    function entry_up($view_component_id): string
+    function entry_up($component_id): string
     {
         $result = '';
         // check the all minimal input parameters
-        if ($view_component_id <= 0) {
+        if ($component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_up");
         } else {
             $cmp = new component_dsp_old($this->user());
-            $cmp->id = $view_component_id;
+            $cmp->id = $component_id;
             $cmp->load_obj_vars();
-            $cmp_lnk = new view_component_link($this->user());
+            $cmp_lnk = new component_link($this->user());
             $cmp_lnk->fob = $this;
             $cmp_lnk->tob = $cmp;
             $cmp_lnk->load_obj_vars();
@@ -693,17 +650,17 @@ class view extends sandbox_typed
     /**
      * move one view component one place down
      */
-    function entry_down($view_component_id): string
+    function entry_down($component_id): string
     {
         $result = '';
         // check the all minimal input parameters
-        if ($view_component_id <= 0) {
+        if ($component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_down");
         } else {
             $cmp = new component_dsp_old($this->user());
-            $cmp->id = $view_component_id;
+            $cmp->id = $component_id;
             $cmp->load_obj_vars();
-            $cmp_lnk = new view_component_link($this->user());
+            $cmp_lnk = new component_link($this->user());
             $cmp_lnk->fob = $this;
             $cmp_lnk->tob = $cmp;
             $cmp_lnk->load_obj_vars();
@@ -807,7 +764,7 @@ class view extends sandbox_typed
 
                 if ($result->is_ok()) {
                     // TODO save also the links
-                    //$dsp_lnk = new view_component_link();
+                    //$dsp_lnk = new component_link();
                     log_debug($this->dsp_id());
                 }
             }
@@ -855,7 +812,7 @@ class view extends sandbox_typed
         }
         if ($this->cmp_lst != null) {
             foreach ($this->cmp_lst->lst() as $cmp) {
-                $result->view_components[] = $cmp->export_obj();
+                $result->components[] = $cmp->export_obj();
             }
         }
 
@@ -956,7 +913,7 @@ class view extends sandbox_typed
         $result = new user_message();
 
         // collect all component links where this view is used
-        $lnk_lst = new view_component_link_list($this->user());
+        $lnk_lst = new component_link_list($this->user());
         $lnk_lst->load_by_view($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion

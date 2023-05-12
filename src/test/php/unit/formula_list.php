@@ -44,7 +44,7 @@ class formula_list_unit_tests
     /**
      * execute all formula list unit tests and return the test result
      */
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;

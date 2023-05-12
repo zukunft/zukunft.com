@@ -41,7 +41,7 @@ use model\sql_db;
 
 class formula_link_unit_tests
 {
-    function run(testing $t)
+    function run(test_cleanup $t)
     {
 
         global $usr;

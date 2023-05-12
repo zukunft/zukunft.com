@@ -38,7 +38,7 @@ use cfg\language_form;
 class language_unit_tests
 {
 
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         // init

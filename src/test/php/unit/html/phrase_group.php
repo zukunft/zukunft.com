@@ -34,11 +34,11 @@ namespace test\html;
 
 use html\html_base;
 use html\phrase\phrase_group as phrase_group_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class phrase_group
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         $html = new html_base();
 

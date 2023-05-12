@@ -35,9 +35,9 @@ use api\phrase_api;
 use api\word_api;
 use model\term;
 use model\verb;
-use test\testing;
+use test\test_cleanup;
 
-function run_term_test(testing $t): void
+function run_term_test(test_cleanup $t): void
 {
 
     global $usr;

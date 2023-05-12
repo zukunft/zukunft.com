@@ -76,7 +76,7 @@
       "name": "Food ingredients",
       "comment": "List the ingredients of one product",
       "type": "detail_view",
-      "view_components": [
+      "components": [
         {
           "pos": "1",
           "name": "Name",

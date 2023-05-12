@@ -44,7 +44,7 @@ use model\value_phrase_link_list;
 class value_phrase_link_unit_tests
 {
 
-    function run(testing $t)
+    function run(test_cleanup $t)
     {
 
         global $usr;
@@ -93,14 +93,14 @@ class value_phrase_link_unit_tests
      * test the SQL statement creation for a value phrase link list in all SQL dialect
      * and check if the statement name is unique
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param value_phrase_link_list $lst filled with an id to be able to load
      * @param phrase|null $phr the phrase used for selection
      * @param value|null $val the value used for selection
      * @return void
      */
-    private function assert_lst_sql_all(testing $t, sql_db $db_con, value_phrase_link_list $lst, ?phrase $phr = null, ?value $val = null)
+    private function assert_lst_sql_all(test_cleanup $t, sql_db $db_con, value_phrase_link_list $lst, ?phrase $phr = null, ?value $val = null)
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

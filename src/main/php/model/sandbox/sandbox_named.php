@@ -683,7 +683,7 @@ class sandbox_named extends sandbox
                 }
             }
         } else {
-            // used for view, view_component, source, ...
+            // used for view, component, source, ...
             $db_chk = clone $this;
             $db_chk->reset();
             $db_chk->set_user($this->user());

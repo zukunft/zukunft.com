@@ -33,9 +33,9 @@
 use api\phrase_api;
 use api\value_api;
 use api\word_api;
-use test\testing;
+use test\test_cleanup;
 
-function create_test_values(testing $t): void
+function create_test_values(test_cleanup $t): void
 {
     $t->header('Check if all base values exist or create them if needed');
 

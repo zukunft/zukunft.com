@@ -1,8 +1,8 @@
 PREPARE component_by_usr_cfg (int, int) AS
-    SELECT view_component_id,
-           view_component_name,
+    SELECT component_id,
+           component_name,
            description,
-           view_component_type_id,
+           component_type_id,
            word_id_row,
            link_type_id,
            formula_id,
@@ -11,6 +11,6 @@ PREPARE component_by_usr_cfg (int, int) AS
            excluded,
            share_type_id,
            protect_id
-      FROM user_view_components
-     WHERE view_component_id = $1
+      FROM user_components
+     WHERE component_id = $1
        AND user_id = $2;

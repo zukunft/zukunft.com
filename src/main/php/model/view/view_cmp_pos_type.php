@@ -2,7 +2,7 @@
 
 /*
 
-  model/view/view_component_pos_type.php - ENUM of the view component position types
+  model/view/component_pos_type.php - ENUM of the view component position types
   --------------------------------------
   
   This file is part of zukunft.com - calc with words

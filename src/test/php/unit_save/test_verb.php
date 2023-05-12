@@ -33,9 +33,9 @@
 use api\word_api;
 use model\verb;
 use model\word_select_direction;
-use test\testing;
+use test\test_cleanup;
 
-function run_verb_test(testing $t): void
+function run_verb_test(test_cleanup $t): void
 {
 
     global $usr;

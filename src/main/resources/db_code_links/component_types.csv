@@ -1,4 +1,4 @@
-view_component_type_id, type_name, description, code_id
+component_type_id, type_name, description, code_id
 1, 'word selector', '', 'word_select'
 2, 'view selector', 'to select an existing mask e.g. to set the default view', 'view_select'
 3, 'text', 'simply to display a variable text', 'text'

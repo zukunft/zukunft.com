@@ -38,12 +38,12 @@ use model\change_log_table;
 use model\sandbox_named;
 use model\verb;
 use model\word;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT;
 use const test\TIMEOUT_LIMIT_DB;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 
-function create_test_words(testing $t): void
+function create_test_words(test_cleanup $t): void
 {
 
     $t->header('Check if all base words are correct');
@@ -75,7 +75,7 @@ function create_test_words(testing $t): void
 
 }
 
-function run_word_tests(testing $t): void
+function run_word_tests(test_cleanup $t): void
 {
     global $phrase_types;
 

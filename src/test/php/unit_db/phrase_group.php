@@ -39,7 +39,7 @@ use model\phrase_list;
 
 class phrase_group_unit_db_tests
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $db_con;

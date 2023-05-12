@@ -42,7 +42,7 @@ use html\figure\figure_list as figure_list_dsp;
 class figure_list_unit_tests
 {
 
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;
@@ -81,13 +81,13 @@ class figure_list_unit_tests
      * test the SQL statement creation for a figure list in all SQL dialect
      * and check if the statement name is unique
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param figure_list $lst the empty figure list object
      * @param array $ids filled with a list of word ids to be used for the query creation
      * @return void true if all tests are fine
      */
-    private function assert_sql_by_ids(testing $t, sql_db $db_con, figure_list $lst, array $ids): void
+    private function assert_sql_by_ids(test_cleanup $t, sql_db $db_con, figure_list $lst, array $ids): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

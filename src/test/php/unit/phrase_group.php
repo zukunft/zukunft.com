@@ -53,7 +53,7 @@ use model\word_list;
 
 class phrase_group_unit_tests
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;
@@ -172,12 +172,12 @@ class phrase_group_unit_tests
     /**
      * similar to $t->assert_load_sql but calling load_by_group_id_sql instead of load_sql
      *
-     * @param testing $t the forwarded testing object
+     * @param test_cleanup $t the forwarded testing object
      * @param sql_db $db_con does not need to be connected to a real database
      * @param phrase_group_link $phr_grp_lnk the phrase group triple or word link object used for testing
      * @param phrase_group $grp the phrase group object to select the links
      */
-    private function assert_load_by_group_id_sql(testing $t, sql_db $db_con, phrase_group_link $phr_grp_lnk, phrase_group $grp)
+    private function assert_load_by_group_id_sql(test_cleanup $t, sql_db $db_con, phrase_group_link $phr_grp_lnk, phrase_group $grp)
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

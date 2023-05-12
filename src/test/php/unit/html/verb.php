@@ -34,11 +34,11 @@ namespace test\html;
 
 use html\html_base;
 use html\verb\verb as verb_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class verb
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         $html = new html_base();
 

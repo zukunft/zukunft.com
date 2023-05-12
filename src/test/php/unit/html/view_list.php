@@ -36,11 +36,11 @@ include_once WEB_VIEW_PATH . 'view_list.php';
 
 use html\html_base;
 use html\view\view_list as view_list_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class view_list
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         $html = new html_base();

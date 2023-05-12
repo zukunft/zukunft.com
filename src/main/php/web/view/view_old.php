@@ -35,6 +35,7 @@ include_once WEB_VIEW_PATH . 'view_cmp_list_old.php';
 
 use api\view_api;
 use api\component_api;
+use controller\controller;
 use model\view;
 
 class view_dsp_old extends view_api
@@ -61,15 +62,15 @@ class view_dsp_old extends view_api
     {
         $result = '';
         switch ($this->code_id) {
-            case view::COMPONENT_ADD:
+            case controller::DSP_COMPONENT_ADD:
                 $cmp = new component_dsp_old(0);
                 $result = $cmp->form_edit('', '', '', '', '');
                 break;
-            case view::COMPONENT_EDIT:
+            case controller::DSP_COMPONENT_EDIT:
                 $cmp = new component_dsp_old(1, component_api::TN_READ);
                 $result = $cmp->form_edit('', '', '', '', '');
                 break;
-            case view::COMPONENT_DEL:
+            case controller::DSP_COMPONENT_DEL:
                 // TODO fill
                 $result = 'del';
                 break;

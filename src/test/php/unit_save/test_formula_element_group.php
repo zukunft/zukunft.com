@@ -44,9 +44,9 @@ use html\value\value as value_dsp;
 use model\library;
 use model\phrase_list;
 use test\test_api;
-use test\testing;
+use test\test_cleanup;
 
-function run_formula_element_group_test(testing $t): void
+function run_formula_element_group_test(test_cleanup $t): void
 {
 
     global $usr;

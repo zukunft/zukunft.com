@@ -2,7 +2,7 @@
 
 /*
 
-    model/view/view_component_display.php - to display a single display component like a headline or a table
+    model/view/component_display.php - to display a single display component like a headline or a table
     -------------------------------------
 
     This file is part of zukunft.com - calc with words
@@ -51,10 +51,10 @@ class component_dsp_old extends component
      */
     function html(): string
     {
-        global $view_component_types;
+        global $component_types;
         $result = '';
         switch ($this->type_id) {
-            case $view_component_types->id(view_cmp_type::TEXT):
+            case $component_types->id(view_cmp_type::TEXT):
                 $result .= $this->text();
                 break;
             default:
@@ -68,10 +68,10 @@ class component_dsp_old extends component
      */
     function text(): string
     {
-        global $view_component_types;
+        global $component_types;
 
         $result = '';
-        if ($this->type_id == $view_component_types->id(view_cmp_type::TEXT)) {
+        if ($this->type_id == $component_types->id(view_cmp_type::TEXT)) {
             $result .= " " . $this->name();
         }
         return $result;
@@ -82,11 +82,11 @@ class component_dsp_old extends component
      */
     function word_name(word $wrd): string
     {
-        global $view_component_types;
+        global $component_types;
         $result = '';
-        if ($this->type_id == $view_component_types->id(view_cmp_type::PHRASE_NAME)) {
+        if ($this->type_id == $component_types->id(view_cmp_type::PHRASE_NAME)) {
             if (!isset($wrd)) {
-                $result .= log_err('No word selected for "' . $this->name . '".', "view_component_dsp->word_name");
+                $result .= log_err('No word selected for "' . $this->name . '".', "component_dsp->word_name");
             } else {
                 $wrd_dsp = new word_dsp();
                 $wrd_dsp->set_id($wrd->id());
@@ -111,9 +111,9 @@ class component_dsp_old extends component
 
     function table($phr): string
     {
-        global $view_component_types;
+        global $component_types;
         $result = '';
-        if ($this->type_id == $view_component_types->id(view_cmp_type::VALUES_RELATED)) {
+        if ($this->type_id == $component_types->id(view_cmp_type::VALUES_RELATED)) {
             log_debug('of view component ' . $this->dsp_id() . ' for "' . $phr->name() . '" with columns "' . $this->wrd_row->name . '" and user "' . $this->user()->name . '"');
             $val_lst = new value_list_dsp_old($this->user());
             $val_lst->phr = $phr;
@@ -127,15 +127,15 @@ class component_dsp_old extends component
      */
     function num_list($wrd, $back): string
     {
-        global $view_component_types;
+        global $component_types;
         $result = '';
 
-        if ($this->type_id == $view_component_types->id(view_cmp_type::WORD_VALUE)) {
+        if ($this->type_id == $component_types->id(view_cmp_type::WORD_VALUE)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
 
             // check the parameters
             if (get_class($wrd) <> word_dsp::class) {
-                $result .= log_warning('The word parameter has type ' . get_class($wrd) . ', but should be word_dsp.', "view_component_dsp->num_list");
+                $result .= log_warning('The word parameter has type ' . get_class($wrd) . ', but should be word_dsp.', "component_dsp->num_list");
                 $wrd_dsp = new word_dsp($wrd->id, $wrd->name);
                 $wrd = $wrd_dsp;
             }
@@ -144,7 +144,7 @@ class component_dsp_old extends component
             if (isset($this->wrd_col)) {
                 $result .= $wrd->dsp_val_list($this->wrd_col, $this->wrd_col->is_mainly(), $back);
             } else {
-                $result .= log_err('Column definition is missing for ' . $this->dsp_id() . '.', "view_component_dsp->num_list");
+                $result .= log_err('Column definition is missing for ' . $this->dsp_id() . '.', "component_dsp->num_list");
             }
         }
         return $result;
@@ -160,10 +160,10 @@ class component_dsp_old extends component
     // display all formulas related to the given word
     function formulas($wrd, string $back = ''): string
     {
-        global $view_component_types;
+        global $component_types;
         $result = '';
         $html = new html_base();
-        if ($this->type_id == $view_component_types->id(view_cmp_type::FORMULAS)) {
+        if ($this->type_id == $component_types->id(view_cmp_type::FORMULAS)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
             $result .= $html->dsp_text_h2('Formulas');
 
@@ -189,9 +189,9 @@ class component_dsp_old extends component
     // show a list of formula results related to a word
     function results($wrd, string $back = ''): string
     {
-        global $view_component_types;
+        global $component_types;
         $result = '';
-        if ($this->type_id == $view_component_types->id(view_cmp_type::FORMULA_RESULTS)) {
+        if ($this->type_id == $component_types->id(view_cmp_type::FORMULA_RESULTS)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
             $result .= "<br><br>calculated values<br>";
             $frm_val_lst = new result_list($this->user());
@@ -208,7 +208,7 @@ class component_dsp_old extends component
      */
     function word_children(db_object_dsp $dbo): string
     {
-        global $view_component_types;
+        global $component_types;
         $result = '';
 
         // TODO use this kind of check for all components
@@ -217,7 +217,7 @@ class component_dsp_old extends component
             log_warning($msg);
             $result = $msg;
         } else {
-            if ($this->type_id == $view_component_types->id(view_cmp_type::WORDS_DOWN)) {
+            if ($this->type_id == $component_types->id(view_cmp_type::WORDS_DOWN)) {
                 log_debug('in view ' . $this->dsp_id() . ' for word ' . $dbo->name() . ' and user ' . $this->user()->name);
                 $result .= $dbo->dsp_graph(word_select_direction::DOWN);
             }
@@ -229,9 +229,9 @@ class component_dsp_old extends component
     // show all word that this words is based on
     function word_parents($wrd): string
     {
-        global $view_component_types;
+        global $component_types;
         $result = '';
-        if ($this->type_id == $view_component_types->id(view_cmp_type::WORDS_DOWN)) {
+        if ($this->type_id == $component_types->id(view_cmp_type::WORDS_DOWN)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
             $result .= $wrd->dsp_graph(word_select_direction::UP);
         }
@@ -241,9 +241,9 @@ class component_dsp_old extends component
     // configure the json export
     function json_export($wrd, $back): string
     {
-        global $view_component_types;
+        global $component_types;
         $result = '';
-        if ($this->type_id == $view_component_types->id(view_cmp_type::JSON_EXPORT)) {
+        if ($this->type_id == $component_types->id(view_cmp_type::JSON_EXPORT)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
             $result .= '<br>';
             $result .= $wrd->config_json_export($back);
@@ -255,9 +255,9 @@ class component_dsp_old extends component
     // configure the xml export
     function xml_export($wrd, $back): string
     {
-        global $view_component_types;
+        global $component_types;
         $result = '';
-        if ($this->type_id == $view_component_types->id(view_cmp_type::XML_EXPORT)) {
+        if ($this->type_id == $component_types->id(view_cmp_type::XML_EXPORT)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
             $result .= '<br>';
             $result .= $wrd->config_xml_export($back);
@@ -269,9 +269,9 @@ class component_dsp_old extends component
     // configure the csv export
     function csv_export($wrd, $back): string
     {
-        global $view_component_types;
+        global $component_types;
         $result = '';
-        if ($this->type_id == $view_component_types->id(view_cmp_type::CSV_EXPORT)) {
+        if ($this->type_id == $component_types->id(view_cmp_type::CSV_EXPORT)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
             $result .= '<br>';
             $result .= $wrd->config_csv_export($back);
@@ -289,11 +289,11 @@ class component_dsp_old extends component
     function all(phrase $phr, string $back = ''): string
     {
         global $verbs;
-        global $view_component_types;
+        global $component_types;
         log_debug('for word ' . $phr->name());
 
         $result = '';
-        if ($this->type_id == $view_component_types->id(view_cmp_type::VALUES_ALL)) {
+        if ($this->type_id == $component_types->id(view_cmp_type::VALUES_ALL)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $phr->name() . ' and user ' . $this->user()->name);
             $result .= '<br>';
             $phrases_down = $phr->dsp_graph(word_select_direction::DOWN);
@@ -326,7 +326,7 @@ class component_dsp_old extends component
     {
         log_debug('me' . $this->id . ',m' . $view_id . ',t' . $wrd->id . ')');
         $result = '    <td>' . "\n";
-        $result .= \html\btn_del("unlink view", "/http/view_component_edit.php?id=" . $this->id . "&unlink_view=" . $view_id . "&word=" . $wrd->id . "&back=" . $back);
+        $result .= \html\btn_del("unlink view", "/http/component_edit.php?id=" . $this->id . "&unlink_view=" . $view_id . "&word=" . $wrd->id . "&back=" . $back);
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -347,8 +347,8 @@ class component_dsp_old extends component
         }
 
         $sql = "SELECT m.view_id, m.view_name 
-              FROM view_component_links l, views m 
-             WHERE l.view_component_id = " . $this->id . " 
+              FROM component_links l, views m 
+             WHERE l.component_id = " . $this->id . " 
                AND l.view_id = m.view_id;";
         //$db_con = New mysql;
         $db_con->usr_id = $this->user()->id();
@@ -370,7 +370,7 @@ class component_dsp_old extends component
         $result .= '    <td>';
         if ($add_link == 1) {
             $sel = new html_selector;
-            $sel->form = 'view_component_edit';
+            $sel->form = 'component_edit';
             $sel->name = 'link_view';
             $sel->sql = sql_lst_usr("view", $this->user());
             $sel->selected = 0;
@@ -379,7 +379,7 @@ class component_dsp_old extends component
 
             $result .= $html->dsp_form_end('', $back);
         } else {
-            $result .= '      ' . \html\btn_add('add new', '/http/view_component_edit.php?id=' . $this->id . '&add_link=1&word=' . $wrd->id . '&back=' . $back);
+            $result .= '      ' . \html\btn_add('add new', '/http/component_edit.php?id=' . $this->id . '&add_link=1&word=' . $wrd->id . '&back=' . $back);
         }
         $result .= '    </td>';
         $result .= '  </tr>';
@@ -400,7 +400,7 @@ class component_dsp_old extends component
         $sel->name = 'type';
         $sel->label = "Type:";
         $sel->bs_class = $class;
-        $sel->sql = sql_lst("view_component_type");
+        $sel->sql = sql_lst("component_type");
         $sel->selected = $this->type_id;
         $result .= $sel->display_old() . ' ';
         return $result;
@@ -500,10 +500,10 @@ class component_dsp_old extends component
 
         // show the view component name
         if ($this->id <= 0) {
-            $script = "view_component_add";
+            $script = "component_add";
             $result .= $html->dsp_text_h2('Create a view element for <a href="/http/view.php?words=' . $wrd->id . '">' . $wrd->name() . '</a>');
         } else {
-            $script = "view_component_edit";
+            $script = "component_edit";
             $result .= $html->dsp_text_h2('Edit the view element "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id . '">' . $wrd->name() . '</a>) ');
         }
         $result .= '<div class="row">';
@@ -531,7 +531,7 @@ class component_dsp_old extends component
         $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
         if ($add_link <= 0) {
             if ($this->id > 0) {
-                $result .= $html->dsp_form_end('', $back, "/http/view_component_del.php?id=" . $this->id . "&back=" . $back);
+                $result .= $html->dsp_form_end('', $back, "/http/component_del.php?id=" . $this->id . "&back=" . $back);
             } else {
                 $result .= $html->dsp_form_end('', $back, '');
             }

@@ -39,11 +39,11 @@ use model\formula_link;
 use model\formula_link_list;
 use model\phrase;
 use model\phrase_list;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 use const test\TIMEOUT_LIMIT_PAGE_LONG;
 
-function create_test_formula_links(testing $t): void
+function create_test_formula_links(test_cleanup $t): void
 {
     $t->header('Check if all base formulas link correctly');
 
@@ -57,7 +57,7 @@ function create_test_formula_links(testing $t): void
 
 }
 
-function run_formula_link_test(testing $t): void
+function run_formula_link_test(test_cleanup $t): void
 {
     $t->header('Test the formula link class (classes/formula_link.php)');
 
@@ -211,11 +211,11 @@ function run_formula_link_test(testing $t): void
 
     // ... and the owner should now be the second user
 
-    // the code changes and tests for formula link should be moved the view_component_link
+    // the code changes and tests for formula link should be moved the component_link
 
 }
 
-function run_formula_link_list_test(testing $t): void
+function run_formula_link_list_test(test_cleanup $t): void
 {
 
     $t->header('Test the formula link list class (classes/formula_link_list.php)');

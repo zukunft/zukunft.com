@@ -50,11 +50,11 @@ class value_list_unit_tests
     const FILE_EXT = '.sql';
     const FILE_MYSQL = '_mysql';
 
-    public testing $test;
+    public test_cleanup $test;
     public value_list $lst;
     public sql_db $db_con;
 
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;

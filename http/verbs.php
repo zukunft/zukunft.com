@@ -32,6 +32,7 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 use cfg\verb_list;
+use controller\controller;
 use html\view\view_dsp_old;
 use model\user;
 use model\view;
@@ -59,7 +60,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(view::VERBS);
+    $dsp->load_by_code_id(controller::DSP_VERBS);
 
     // show the header
     $result .= $dsp->dsp_navbar($back);

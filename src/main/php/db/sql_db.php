@@ -85,11 +85,11 @@ class sql_db
     const TBL_RESULT = 'result';
     const TBL_VIEW = 'view';
     const TBL_VIEW_TYPE = 'view_type';
-    const TBL_COMPONENT = 'view_component';
-    const TBL_VIEW_COMPONENT_LINK = 'view_component_link';
-    const TBL_VIEW_COMPONENT_TYPE = 'view_component_type';
-    const TBL_VIEW_COMPONENT_LINK_TYPE = 'view_component_link_type';
-    const TBL_VIEW_COMPONENT_POS_TYPE = 'view_component_position_type';
+    const TBL_COMPONENT = 'component';
+    const TBL_COMPONENT_LINK = 'component_link';
+    const TBL_COMPONENT_TYPE = 'component_type';
+    const TBL_COMPONENT_LINK_TYPE = 'component_link_type';
+    const TBL_COMPONENT_POS_TYPE = 'component_position_type';
     const TBL_VIEW_TERM_LINK = 'view_term_link';
 
     const TBL_CHANGE = 'change';
@@ -153,7 +153,7 @@ class sql_db
         sql_db::TBL_FORMULA_LINK,
         sql_db::TBL_RESULT,
         sql_db::TBL_FORMULA_ELEMENT,
-        sql_db::TBL_VIEW_COMPONENT_LINK,
+        sql_db::TBL_COMPONENT_LINK,
         sql_db::TBL_VALUE_PHRASE_LINK,
         sql_db::TBL_PHRASE_GROUP_WORD_LINK,
         sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
@@ -167,7 +167,7 @@ class sql_db
     ];
     // tables that link two named tables
     // TODO set automatically by set_link_fields???
-    const DB_TYPES_LINK = [sql_db::TBL_TRIPLE, sql_db::TBL_FORMULA_LINK, sql_db::TBL_VIEW_COMPONENT_LINK, sql_db::TBL_REF];
+    const DB_TYPES_LINK = [sql_db::TBL_TRIPLE, sql_db::TBL_FORMULA_LINK, sql_db::TBL_COMPONENT_LINK, sql_db::TBL_REF];
 
     const ORDER_ASC = 'ASC';
     const ORDER_DESC = 'DESC';
@@ -1340,8 +1340,8 @@ class sql_db
         if ($result == 'calc_and_cleanup_task_typess') {
             $result = 'calc_and_cleanup_task_types';
         }
-        if ($result == 'view_component_typess') {
-            $result = 'view_component_types';
+        if ($result == 'component_typess') {
+            $result = 'component_types';
         }
         if ($result == 'user_profiless') {
             $result = 'user_profiles';
@@ -1441,10 +1441,10 @@ class sql_db
         if ($result == 'view_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
-        if ($result == 'view_component_type_name') {
+        if ($result == 'component_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
-        if ($result == 'view_component_position_type_name') {
+        if ($result == 'component_position_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'formula_element_type_name') {

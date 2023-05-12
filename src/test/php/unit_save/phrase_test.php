@@ -39,7 +39,7 @@ use model\phrase;
 use model\triple;
 use model\verb;
 use model\word;
-use test\testing;
+use test\test_cleanup;
 use const test\TEST_WORD;
 use const test\TIMEOUT_LIMIT_PAGE;
 use const test\TIMEOUT_LIMIT_PAGE_SEMI;
@@ -53,7 +53,7 @@ use const test\TW_CF;
 use const test\TW_TAX;
 use const test\TW_VESTAS;
 
-function create_test_phrases(testing $t): void
+function create_test_phrases(test_cleanup $t): void
 {
     $t->header('Check if all base phrases are correct');
 
@@ -71,14 +71,14 @@ function create_test_phrases(testing $t): void
     $t->test_phrase(phrase_api::TN_ZH_COMPANY);
 }
 
-function create_base_times(testing $t): void
+function create_base_times(test_cleanup $t): void
 {
     $t->header('Check if base time words are correct');
 
     zu_test_time_setup($t);
 }
 
-function run_phrase_test(testing $t): void
+function run_phrase_test(test_cleanup $t): void
 {
 
     global $usr;

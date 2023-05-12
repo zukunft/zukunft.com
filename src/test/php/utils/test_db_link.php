@@ -31,9 +31,9 @@
 */
 
 use model\change_log_table;
-use test\testing;
+use test\test_cleanup;
 
-function run_db_link_test(testing $t): void
+function run_db_link_test(test_cleanup $t): void
 {
     global $change_log_tables;
 

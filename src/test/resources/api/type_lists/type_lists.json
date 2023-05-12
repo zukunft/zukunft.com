@@ -275,7 +275,7 @@
         "comment": "to show the more details than the standard view"
       }
     ],
-    "view_component_types": [
+    "component_types": [
       {
         "id": 1,
         "code_id": "word_select",
@@ -421,7 +421,7 @@
         "comment": "just to indicate that a form ends"
       }
     ],
-    "view_component_position_types": [
+    "component_position_types": [
       {
         "id": 1,
         "code_id": "below",
@@ -774,26 +774,26 @@
       },
       {
         "id": 16,
-        "code_id": "view_component_links",
-        "name": "view_component_links",
+        "code_id": "component_links",
+        "name": "component_links",
         "comment": ""
       },
       {
         "id": 17,
-        "code_id": "user_view_component_links",
-        "name": "user_view_component_links",
+        "code_id": "user_component_links",
+        "name": "user_component_links",
         "comment": ""
       },
       {
         "id": 18,
-        "code_id": "view_components",
-        "name": "view_components",
+        "code_id": "components",
+        "name": "components",
         "comment": ""
       },
       {
         "id": 19,
-        "code_id": "user_view_components",
-        "name": "user_view_components",
+        "code_id": "user_components",
+        "name": "user_components",
         "comment": ""
       },
       {
@@ -1112,8 +1112,8 @@
       },
       {
         "id": 50,
-        "code_id": "18view_component_name",
-        "name": "18view_component_name",
+        "code_id": "18component_name",
+        "name": "18component_name",
         "comment": ""
       },
       {
@@ -1124,8 +1124,8 @@
       },
       {
         "id": 52,
-        "code_id": "18view_component_type_id",
-        "name": "18view_component_type_id",
+        "code_id": "18component_type_id",
+        "name": "18component_type_id",
         "comment": ""
       },
       {
@@ -1136,8 +1136,8 @@
       },
       {
         "id": 54,
-        "code_id": "19view_component_type_id",
-        "name": "19view_component_type_id",
+        "code_id": "19component_type_id",
+        "name": "19component_type_id",
         "comment": ""
       },
       {

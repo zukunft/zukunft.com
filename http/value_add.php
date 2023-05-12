@@ -30,6 +30,7 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\user;
@@ -58,7 +59,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(view::VALUE_ADD);
+    $dsp->load_by_code_id(controller::DSP_VALUE_ADD);
     $back = $_GET['back'];     // the word id from which this value change has been called (maybe later any page)
 
     // create the object to store the parameters so that if the add form is shown again it is already filled

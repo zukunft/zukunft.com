@@ -42,11 +42,11 @@ use model\formula_list;
 use model\phrase_list;
 use model\sandbox_named;
 use model\word;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 use const test\TIMEOUT_LIMIT_PAGE;
 
-function create_test_formulas(testing $t): void
+function create_test_formulas(test_cleanup $t): void
 {
     $t->header('Check if all base formulas are correct');
 
@@ -60,7 +60,7 @@ function create_test_formulas(testing $t): void
     $t->test_formula(formula_api::TN_SCALE_BIL, formula_api::TF_SCALE_BIL);
 }
 
-function run_formula_test(testing $t): void
+function run_formula_test(test_cleanup $t): void
 {
 
     global $formula_types;
@@ -506,7 +506,7 @@ function run_formula_test(testing $t): void
 
 }
 
-function run_formula_list_test(testing $t): void
+function run_formula_list_test(test_cleanup $t): void
 {
 
     $t->header('est the formula list class (classes/formula_list.php)');

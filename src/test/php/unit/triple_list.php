@@ -47,7 +47,7 @@ use model\word_list;
 
 class triple_list_unit_tests
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;
@@ -213,13 +213,13 @@ class triple_list_unit_tests
      * test the SQL statement creation for a triple list in all SQL dialect
      * and check if the statement name is unique
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param triple_list $lst the empty triple list object
      * @param array $ids filled with a list of word ids to be used for the query creation
      * @return void
      */
-    private function assert_sql_by_ids(testing $t, sql_db $db_con, triple_list $lst, array $ids): void
+    private function assert_sql_by_ids(test_cleanup $t, sql_db $db_con, triple_list $lst, array $ids): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -236,7 +236,7 @@ class triple_list_unit_tests
      * test the SQL statement creation for a triple list in all SQL dialect
      * and check if the statement name is unique
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param triple_list $lst the empty triple list object
      * @param phrase $phr the phrase which should be used for selecting the words or triples
@@ -245,12 +245,12 @@ class triple_list_unit_tests
      * @return void
      */
     private function assert_sql_by_phr(
-        testing     $t,
-        sql_db      $db_con,
-        triple_list $lst,
-        phrase      $phr,
-        ?verb       $vrb = null,
-        string      $direction = triple_list::DIRECTION_BOTH): void
+        test_cleanup $t,
+        sql_db       $db_con,
+        triple_list  $lst,
+        phrase       $phr,
+        ?verb        $vrb = null,
+        string       $direction = triple_list::DIRECTION_BOTH): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

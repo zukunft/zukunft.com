@@ -38,6 +38,7 @@
 
 */
 
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\user;
@@ -106,7 +107,7 @@ if ($usr->id() > 0) {
 
         // prepare the display to edit the view
         $dsp = new view_dsp_old($usr);
-        $dsp->set_id($system_views->id(view::ERR_LOG));
+        $dsp->set_id($system_views->id(controller::DSP_ERR_LOG));
         $result .= $dsp->dsp_navbar($back);
         //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
         $result .= err_dsp($err_id, $usr->id());

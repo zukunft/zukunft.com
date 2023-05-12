@@ -33,7 +33,7 @@
 
 namespace model;
 
-class view_component_link_list extends sandbox_list
+class component_link_list extends sandbox_list
 {
 
     /**
@@ -47,7 +47,7 @@ class view_component_link_list extends sandbox_list
         $result = false;
         foreach ($db_rows as $db_row) {
             if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0) {
-                $dsp_cmp_lnk = new view_component_link($this->user());
+                $dsp_cmp_lnk = new component_link($this->user());
                 $dsp_cmp_lnk->row_mapper($db_row);
                 $this->lst[] = $dsp_cmp_lnk;
                 $result = true;
@@ -66,7 +66,7 @@ class view_component_link_list extends sandbox_list
      */
     function load_sql(sql_db $db_con, ?view $dsp = null, ?component $cmp = null): sql_par
     {
-        $db_con->set_type(sql_db::TBL_VIEW_COMPONENT_LINK);
+        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
         $qp = new sql_par(self::class);
         $sql_by = '';
 
@@ -87,8 +87,8 @@ class view_component_link_list extends sandbox_list
             $qp->name .= $sql_by;
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
-            $db_con->set_fields(view_component_link::FLD_NAMES);
-            $db_con->set_usr_num_fields(view_component_link::FLD_NAMES_NUM_USR);
+            $db_con->set_fields(component_link::FLD_NAMES);
+            $db_con->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
             if ($dsp != null) {
                 $db_con->set_join_fields(array(view::FLD_ID), sql_db::TBL_VIEW);
             } else {

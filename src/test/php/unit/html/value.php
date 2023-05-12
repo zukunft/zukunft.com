@@ -34,11 +34,11 @@ namespace test\html;
 
 use html\html_base;
 use html\value\value as value_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class value
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         $html = new html_base();
 

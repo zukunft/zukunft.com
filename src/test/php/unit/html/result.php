@@ -34,11 +34,11 @@ namespace test\html;
 
 use html\html_base;
 use html\result\result as result_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class result
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         $html = new html_base();
 

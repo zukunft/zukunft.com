@@ -39,11 +39,11 @@ use cfg\phrase_type;
 use html\html_base;
 use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class word_list
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         $html = new html_base();
 

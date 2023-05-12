@@ -34,11 +34,11 @@ namespace test\html;
 
 use html\html_base;
 use html\log\system_log_list as system_log_list_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class system_log
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         $html = new html_base();
 

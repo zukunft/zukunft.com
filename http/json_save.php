@@ -32,6 +32,9 @@
 
 use controller\controller;
 use im_export\json_io;
+use model\library;
+use model\phrase_list;
+use model\user;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

@@ -41,11 +41,11 @@ include_once WEB_SYSTEM_PATH . 'language.php';
 
 use html\html_base;
 use html\system\language as language_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class language
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         global $usr;
         $html = new html_base();

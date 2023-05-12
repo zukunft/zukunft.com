@@ -16,7 +16,7 @@
       "description": "A dynamic start mask that shows a interesting fact",
       "type": "entry",
       "code_id": "entry_view",
-      "view_components": [
+      "components": [
         {
           "pos": "1",
           "name": "Name",
@@ -28,7 +28,7 @@
     {
       "name": "Add New Word",
       "code_id": "word_add",
-      "view_components": [
+      "components": [
         {
           "pos": "1",
           "name": "form title",
@@ -217,7 +217,7 @@
     {
       "name": "Add View Component",
       "code_id": "view_entry_add",
-      "view_components": [
+      "components": [
         {
           "pos": "1",
           "name": "System view component field",
@@ -239,7 +239,7 @@
     {
       "name": "complete",
       "description": "Show a word, all related words to edit the word tree and the linked formulas with some results",
-      "view_components": [
+      "components": [
         {
           "pos": "1",
           "name": "Name",

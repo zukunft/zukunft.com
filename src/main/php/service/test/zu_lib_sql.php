@@ -60,7 +60,7 @@
   zu_sql_word_values     - get only the values related to one word
   zu_sql_word_lst_value  - 
   zu_sql_value_lst_words - get all words related to a value list
-  zu_sql_view_components    - all parts of a view 
+  zu_sql_components    - all parts of a view 
   zu_sql_verbs           - get all possible word link types
   
 
@@ -79,7 +79,7 @@
   zu_sql_views           - zu_sql_views
   zu_sql_views_user      - returns all non internal views
   zu_sql_view_types
-  zu_sql_view_component_types - returns all view entry types 
+  zu_sql_component_types - returns all view entry types 
   
   
   
@@ -87,7 +87,7 @@
   ----------
 
   zu_sql_words - 
-  zu_sql_views, zu_sql_view_types, zu_sql_view_component_types
+  zu_sql_views, zu_sql_view_types, zu_sql_component_types
   
   code ids
   preset records that are linked to the program code

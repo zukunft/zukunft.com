@@ -38,6 +38,7 @@ class html_base
 {
 
     // html const used in zukunft.com
+    const INPUT_TEXT = 'text';
     const INPUT_SUBMIT = 'submit';
     const INPUT_SEARCH = 'search';
     const INPUT_HIDDEN = 'hidden';

@@ -31,6 +31,9 @@
 */
 
 use controller\controller;
+use model\library;
+use model\phrase_list;
+use model\user;
 
 Header('Content-type: text/xml');
 

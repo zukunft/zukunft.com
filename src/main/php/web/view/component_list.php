@@ -32,6 +32,7 @@
 namespace html\view;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
+include_once WEB_VIEW_PATH . 'component.php';
 
 use html\list_dsp;
 use html\view\component as component_dsp;

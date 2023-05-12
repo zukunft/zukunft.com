@@ -29,6 +29,7 @@
   
 */
 
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\formula;
@@ -58,7 +59,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_id($system_views->id(view::FORMULA_DEL));
+    $dsp->load_by_id($system_views->id(controller::DSP_FORMULA_DEL));
     $back = $_GET['back'];
 
     // get the parameters

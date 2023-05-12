@@ -1,10 +1,10 @@
 PREPARE component_by_name FROM
-    'SELECT s.view_component_id,
-            u.view_component_id AS user_view_component_id,
+    'SELECT s.component_id,
+            u.component_id AS user_component_id,
             s.user_id,
-            IF(u.view_component_name    IS NULL, s.view_component_name,    u.view_component_name)    AS view_component_name,
+            IF(u.component_name    IS NULL, s.component_name,    u.component_name)    AS component_name,
             IF(u.description            IS NULL, s.description,            u.description)            AS description,
-            IF(u.view_component_type_id IS NULL, s.view_component_type_id, u.view_component_type_id) AS view_component_type_id,
+            IF(u.component_type_id IS NULL, s.component_type_id, u.component_type_id) AS component_type_id,
             IF(u.word_id_row            IS NULL, s.word_id_row,            u.word_id_row)            AS word_id_row,
             IF(u.link_type_id           IS NULL, s.link_type_id,           u.link_type_id)           AS link_type_id,
             IF(u.formula_id             IS NULL, s.formula_id,             u.formula_id)             AS formula_id,
@@ -13,7 +13,7 @@ PREPARE component_by_name FROM
             IF(u.excluded               IS NULL, s.excluded,               u.excluded)               AS excluded,
             IF(u.share_type_id          IS NULL, s.share_type_id,          u.share_type_id)          AS share_type_id,
             IF(u.protect_id             IS NULL, s.protect_id,             u.protect_id)             AS protect_id
-       FROM view_components s
-  LEFT JOIN user_view_components u  ON s.view_component_id = u.view_component_id AND u.user_id = ?
-      WHERE (u.view_component_name = ?
-         OR (s.view_component_name = ? AND u.view_component_name IS NULL))';
+       FROM components s
+  LEFT JOIN user_components u  ON s.component_id = u.component_id AND u.user_id = ?
+      WHERE (u.component_name = ?
+         OR (s.component_name = ? AND u.component_name IS NULL))';

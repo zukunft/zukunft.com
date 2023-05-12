@@ -39,7 +39,7 @@ use model\sql_db;
 
 class formula_element_unit_tests
 {
-    function run(testing $t)
+    function run(test_cleanup $t)
     {
 
         global $usr;
@@ -81,13 +81,13 @@ class formula_element_unit_tests
      * test the SQL statement creation for a formula element list in all SQL dialect
      * and check if the statement name is unique
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param formula_element_list $lst the empty formula element list object
      * @param int $frm_id id of the formula to be used for the query creation
      * @return void
      */
-    private function assert_sql_by_frm_id(testing $t, sql_db $db_con, formula_element_list $lst, int $frm_id)
+    private function assert_sql_by_frm_id(test_cleanup $t, sql_db $db_con, formula_element_list $lst, int $frm_id)
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -104,13 +104,13 @@ class formula_element_unit_tests
      * test the SQL statement creation for a formula element list in all SQL dialect
      * and check if the statement name is unique
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param formula_element_list $lst the empty formula element list object
      * @param int $frm_id id of the formula to be used for the query creation
      * @return void
      */
-    private function assert_sql_by_frm_and_type_id(testing              $t,
+    private function assert_sql_by_frm_and_type_id(test_cleanup         $t,
                                                    sql_db               $db_con,
                                                    formula_element_list $lst,
                                                    int                  $frm_id,

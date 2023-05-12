@@ -40,7 +40,7 @@ use model\view_list;
 
 class view_list_unit_tests
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;
@@ -71,12 +71,12 @@ class view_list_unit_tests
      * test the SQL statement creation for a word list in all SQL dialect
      * and check if the statement name is unique
      *
-     * @param testing $t the test environment
+     * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param view_sys_list $lst
      * @return void
      */
-    private function assert_sql_sys_views(testing $t, sql_db $db_con, view_sys_list $lst): void
+    private function assert_sql_sys_views(test_cleanup $t, sql_db $db_con, view_sys_list $lst): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

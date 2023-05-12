@@ -2,7 +2,7 @@
 
 /*
 
-    model/view/view_component_type.php - ENUM of the view component types
+    model/view/component_type.php - ENUM of the view component types
     ----------------------------------
 
     This file is part of zukunft.com - calc with words

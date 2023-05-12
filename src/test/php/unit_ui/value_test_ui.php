@@ -38,7 +38,7 @@ use model\value;
 use model\value_list;
 use model\word;
 use model\word_list;
-use test\testing;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB;
 use const test\TIMEOUT_LIMIT_PAGE;
 use const test\TIMEOUT_LIMIT_PAGE_LONG;
@@ -47,7 +47,7 @@ use const test\TV_NESN_SALES_2016_FORMATTED;
 use const test\TW_2014;
 use const test\TW_CF;
 
-function run_value_ui_test(testing $t): void
+function run_value_ui_test(test_cleanup $t): void
 {
 
     global $usr;

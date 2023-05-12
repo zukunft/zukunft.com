@@ -143,8 +143,8 @@ include_once $path_unit . 'figure_list.php';
 include_once $path_unit . 'expression.php';
 include_once $path_unit . 'view.php';
 include_once $path_unit . 'view_list.php';
-include_once $path_unit . 'view_component.php';
-include_once $path_unit . 'view_component_link.php';
+include_once $path_unit . 'component.php';
+include_once $path_unit . 'component_link.php';
 include_once $path_unit . 'verb.php';
 include_once $path_unit . 'ref.php';
 include_once $path_unit . 'language.php';
@@ -243,8 +243,8 @@ include_once $path_unit_save . 'test_formula_element.php';
 include_once $path_unit_save . 'test_formula_element_group.php';
 include_once $path_unit_save . 'test_batch.php';
 include_once $path_unit_save . 'test_view.php';
-include_once $path_unit_save . 'test_view_component.php';
-include_once $path_unit_save . 'test_view_component_link.php';
+include_once $path_unit_save . 'test_component.php';
+include_once $path_unit_save . 'test_component_link.php';
 include_once $path_unit_save . 'test_value.php';
 
 // load the integration test functions
@@ -1636,7 +1636,7 @@ class test_base
 // testing functions to create the main time value
 // -----------------------------------------------
 
-function zu_test_time_setup(testing $t): string
+function zu_test_time_setup(test_cleanup $t): string
 {
     global $db_con;
 

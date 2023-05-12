@@ -1,8 +1,8 @@
 PREPARE component_std_by_name (text) AS
-    SELECT view_component_id,
-           view_component_name,
+    SELECT component_id,
+           component_name,
            description,
-           view_component_type_id,
+           component_type_id,
            word_id_row,
            link_type_id,
            formula_id,
@@ -12,5 +12,5 @@ PREPARE component_std_by_name (text) AS
            share_type_id,
            protect_id,
            user_id
-      FROM view_components
-     WHERE view_component_name = $1;
+      FROM components
+     WHERE component_name = $1;

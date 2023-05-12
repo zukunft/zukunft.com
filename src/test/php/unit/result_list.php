@@ -43,7 +43,7 @@ use html\result\result_list as result_list_dsp;
 class result_list_unit_tests
 {
 
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
 
         global $usr;

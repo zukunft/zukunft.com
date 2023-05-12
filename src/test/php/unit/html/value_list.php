@@ -40,11 +40,11 @@ use html\html_base;
 use model\phrase_list;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\value\value_list as value_list_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class value_list
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         global $usr;
         $html = new html_base();

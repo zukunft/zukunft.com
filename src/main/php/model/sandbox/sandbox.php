@@ -101,7 +101,7 @@ class sandbox extends db_object
         sql_db::TBL_FORMULA_LINK,
         sql_db::TBL_VIEW,
         sql_db::TBL_COMPONENT,
-        sql_db::TBL_VIEW_COMPONENT_LINK
+        sql_db::TBL_COMPONENT_LINK
     );
 
 

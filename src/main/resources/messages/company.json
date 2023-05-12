@@ -30,7 +30,7 @@
     {
       "name": "Company sheet",
       "comment": "The income statement, balance sheet or cash flow sheet of a big company",
-      "view_components": [
+      "components": [
         {
           "pos": "1",
           "name": "Name",
@@ -45,7 +45,7 @@
     {
       "name": "Company list with main ratios",
       "comment": "list the most interesting companies with the main ratios",
-      "view_components": [
+      "components": [
         {
           "pos": "1",
           "name": "Company with ratios"

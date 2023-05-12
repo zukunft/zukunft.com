@@ -2,7 +2,7 @@
 
 /*
 
-  view_component_add.php - adjust a view element
+  component_add.php - adjust a view element
   ----------------------
   
   This file is part of zukunft.com - calc with words
@@ -30,6 +30,7 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use model\user;
@@ -42,7 +43,7 @@ const ROOT_PATH = __DIR__ . '/../';
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
-$db_con = prg_start("view_component_add");
+$db_con = prg_start("component_add");
 $html = new html_base();
 
 global $system_views;
@@ -62,7 +63,7 @@ if ($usr->id() > 0) {
 
     // init the display object to show the standard elements such as the header
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_id($system_views->id(view::COMPONENT_ADD));
+    $dsp->load_by_id($system_views->id(controller::DSP_COMPONENT_ADD));
     // the calling stack to move back to page where the user has come from after adding the view component is done
     $back = $_GET['back'];
 

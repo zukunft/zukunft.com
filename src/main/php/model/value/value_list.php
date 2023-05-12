@@ -40,7 +40,6 @@ use cfg\export\source_exp;
 use cfg\export\value_list_exp;
 use cfg\protection_type;
 use cfg\share_type;
-use result_list;
 use html\button;
 use html\html_base;
 
@@ -1236,7 +1235,7 @@ class value_list extends sandbox_list
 
         $common_phr_lst = $common_phr_lst->phrase_lst();
 
-        // TODO review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): view_component_dsp->all(Object(word_dsp), 291, 17
+        // TODO review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): component_dsp->all(Object(word_dsp), 291, 17
         /*
         if (get_class($this->phr) == word::class or get_class($this->phr) == word_dsp::class) {
             $this->phr = $this->phr->phrase();

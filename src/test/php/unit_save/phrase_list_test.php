@@ -38,7 +38,7 @@ use model\phrase_list;
 use model\triple;
 use model\verb;
 use model\word_list;
-use test\testing;
+use test\test_cleanup;
 use const test\TEST_WORD;
 use const test\TW_2017;
 use const test\TW_ABB;
@@ -47,7 +47,7 @@ use const test\TW_MIO;
 use const test\TW_SALES;
 use const test\TW_VESTAS;
 
-function run_phrase_list_test(testing $t)
+function run_phrase_list_test(test_cleanup $t)
 {
 
     global $usr;

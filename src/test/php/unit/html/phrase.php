@@ -35,11 +35,11 @@ namespace test\html;
 use api\word_api;
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;
-use test\testing;
+use test\test_cleanup;
 
 class phrase
 {
-    function run(testing $t): void
+    function run(test_cleanup $t): void
     {
         $html = new html_base();
 

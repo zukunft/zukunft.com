@@ -2363,7 +2363,7 @@ components:
           type: string
           description: reference to the view type used for views used by the system e.g. formula_edit
           example: formula_edit
-        view_components:
+        components:
           $ref: '#/components/schemas/ViewComponentList'
     ViewComponentList:
       type: array
