@@ -37,6 +37,19 @@ namespace html;
 class html_base
 {
 
+    // html const used in zukunft.com
+    const INPUT_SUBMIT = 'submit';
+    const INPUT_SEARCH = 'search';
+    const INPUT_HIDDEN = 'hidden';
+
+    // bootstrap const used in zukunft.com
+    const BS_FORM = 'form-control';
+    const BS_BTN = 'btn btn-space';
+    const BS_BTN_SUCCESS = 'btn-outline-success';
+    const BS_BTN_CANCEL = 'btn-outline-secondary';
+    const BS_SM_2 = 'mr-sm-2';
+
+
     const IMG_LOGO = "/src/main/resources/images/ZUKUNFT_logo.svg";
 
     const SIZE_FULL = 'full';
@@ -434,7 +447,7 @@ class html_base
         string $back = '',
         string $del_call = ''): string
     {
-        return $this->form_start($form_name) . $tbl_rows . $this->form_end($submit_name, $back, $del_call);
+        return $this->form_start($form_name) . $tbl_rows . $this->form_end_with_submit($submit_name, $back, $del_call);
     }
 
     /**
@@ -471,23 +484,6 @@ class html_base
     }
 
     /**
-     * start a html form; the form name must be identical with the php script name
-     * @param string $form_name the name and id of the form
-     * @returns string the HTML code to start a form
-     */
-    function form_start(string $form_name): string
-    {
-        // switch on post forms for private values
-        // return '<form action="'.$form_name.'.php" method="post" id="'.$form_name.'">';
-        if ($form_name == 'user_edit') {
-            $script_name = 'user';
-        } else {
-            $script_name = $form_name;
-        }
-        return '<form action="/http/' . $script_name . '.php" id="' . $form_name . '">';
-    }
-
-    /**
      * add the hidden field
      * @param string $name the internal name of the field
      * @param string $value the value that should be returned
@@ -501,7 +497,7 @@ class html_base
     /**
      * end a html form
      */
-    function form_end(string $submit_name, string $back, $del_call = ''): string
+    function form_end_with_submit(string $submit_name, string $back, $del_call = ''): string
     {
         $result = '';
         if (UI_USE_BOOTSTRAP) {
@@ -1084,6 +1080,105 @@ class html_base
         $result .= ' </form>';
         //}
         return $result;
+    }
+
+
+    /*
+     * base elements - functions for all html elements used in zukunft.com
+     */
+
+    function button(string $text, string $style= '', string $type = ''): string
+    {
+        if ($style == '') {
+            $style = self::BS_BTN_SUCCESS;
+        }
+        $class = ' class="'. self::BS_BTN . ' ' . $style . '"';
+        if ($type == '') {
+            $type = self::INPUT_SUBMIT;
+        }
+        $type = ' type="' . $type . '"';
+        return '<button' . $class . $type . '>' . $text . '</button>';
+    }
+
+    function label(string $text, string $for = ''): string
+    {
+        if ($for == '') {
+            $for = strtolower($text);
+        }
+        return '<label for="' . $for . '">' . $text . '</label>';
+    }
+
+    function input(
+        string $name = '',
+        string $value = '',
+        string $type = '',
+        string $class_add = '',
+        string $placeholder = ''): string
+    {
+        if ($name != '') {
+            $id = strtolower($name);
+            $name = ' name="' . $name . '"';
+        } else {
+            $id = '1';
+        }
+        if ($value != '') {
+            $value = ' value="' . $value . '"';
+        }
+        if ($type == '') {
+            $type = self::INPUT_SUBMIT;
+        }
+        $type = ' type="' . $type . '"';
+        if ($class_add != '' and $class_add[0] != ' ') {
+            $class_add = ' ' . $class_add;
+        }
+        $class = ' class="' . self::BS_FORM . $class_add . '"';
+        if ($placeholder != '') {
+            $placeholder = ' placeholder="' . $placeholder . '"';
+        }
+        $id = ' id="' . $id . '"';
+        return '<input' . $class . $type . $name . $id . $value . $placeholder . '>';
+    }
+
+    function div(string $text, string $class = ''): string
+    {
+        if ($class == '') {
+            $class = 'form-group col-sm-4';
+        }
+        return '<div class="' . $class . '">' . $text . '</div>';
+    }
+
+    /**
+     * start a html form; the form name must be identical with the php script name
+     * @param string $form_name the name and id of the form
+     * @returns string the HTML code to start a form
+     */
+    function form_start(string $form_name): string
+    {
+        // switch on post forms for private values
+        // return '<form action="'.$form_name.'.php" method="post" id="'.$form_name.'">';
+        if ($form_name == 'user_edit') {
+            $script_name = 'user';
+        } else {
+            $script_name = $form_name;
+        }
+        $action = ' action="/http/' . $script_name . '.php"';
+        $id = ' id="' . $form_name . '"';
+
+        return '<form' . $action . $id . '>';
+    }
+
+    function form_field(string $name, string $value, string $id = ''): string
+    {
+        $text = $this->label($name) . $this->input($name, $value);
+        return $this->div($text);
+    }
+
+    /**
+     * end a html form
+     */
+    function form_end(): string
+    {
+        return '</form>';
     }
 
 

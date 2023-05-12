@@ -413,6 +413,12 @@
         "code_id": "system_button_save",
         "name": "button save",
         "comment": "a button of a form to save the changes to the database"
+      },
+      {
+        "id": 24,
+        "code_id": "form_end",
+        "name": "form end",
+        "comment": "just to indicate that a form ends"
       }
     ],
     "view_component_position_types": [

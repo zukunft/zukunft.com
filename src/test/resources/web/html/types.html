@@ -10,31 +10,28 @@
 <div class="container"><h4>type list display test</h4>simple mask:<br>
     <nav class="navbar bg-light fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
             src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><input name="pattern"
-                                                                              class="form-control mr-sm-2" type="search"
-                                                                              placeholder="word or formula">
+        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="pattern"></label><input
+                class="form-control mr-sm-2" type="search" name="pattern" id="pattern" placeholder="word or formula">
             <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
         </form>
         <div class="col-sm-2">
             <ul class="nav navbar-nav">
                 <li class="active"></li>
                 <li class="active"></li>
-                <li class="active"><a href=""
-                                      title="adjust the view /http/html\view\view_edit.php?id=1&html\word\word=1&back=1"><i
-                        class="far fa-edit"></i></a><a href="/http/html\view\view_add.php&back=1"
-                                                       title="create a new view"><i class="far fa-plus-square"></i></a>
-                </li>
+                <li class="active"><a href="" title="adjust the view /http/view_edit.php?id=1"><i
+                        class="far fa-edit"></i></a><a href="/http/view_add.php" title="create a new view"><i
+                        class="far fa-plus-square"></i></a></li>
             </ul>
         </div>
     </nav>
-    <br><br><br><br><br>Mathematical constant<br>formula type selector from dummy:<br>
-    <div class="form-group "><select class="form-control" name="" id="">
+    <br><br><br><br><br>Mathematical constant<br><label for="formula type">formula type selector from dummy:</label>
+    <div class="form-group "><select class="form-control" name="formula type" id="formula type">
         <option value="0" selected>please select ...</option>
         <option value="1">default</option>
         <option value="2">reversible</option>
     </select></div>
-    <br>protection selector from api message:<br>
-    <div class="form-group "><select class="form-control" name="" id="">
+    <br><label for="protection">protection selector from api message:</label>
+    <div class="form-group "><select class="form-control" name="protection" id="protection">
         <option value="0" selected>please select ...</option>
         <option value="1">no_protection</option>
         <option value="2">user_protection</option>

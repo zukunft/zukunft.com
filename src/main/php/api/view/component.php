@@ -84,6 +84,9 @@ class component_api extends sandbox_typed_api
     const TN_FORM_SAVE = 'save button';
     const TI_FORM_SAVE = 'form_save_button';
     const TD_FORM_SAVE = 'button to save the form field into the database';
+    const TN_FORM_END = 'form end';
+    const TI_FORM_END = 'form_end';
+    const TD_FORM_END = 'just to indicate the end of the form';
 
     // array of view names that used for testing and remove them after the test
     const RESERVED_VIEW_COMPONENTS = array(

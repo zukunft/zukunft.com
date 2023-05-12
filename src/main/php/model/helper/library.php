@@ -235,20 +235,18 @@ class library
      */
     function str_right_of_or_all(?string $text, ?string $maker): string
     {
-        $result = "";
         if ($text == null) {
             $text = "";
         }
+        $result = $text;
         if ($maker == null) {
             $maker = "";
         }
-        if ($text !== $maker) {
-            if (strpos($text, $maker) > 0) {
-                if (substr($text, strpos($text, $maker), strlen($maker)) === $maker) {
-                    $result = substr($text, strpos($text, $maker) + strlen($maker));
+        if ($result !== $maker) {
+            while (strpos($result, $maker) > 0) {
+                if (substr($result, strpos($result, $maker), strlen($maker)) === $maker) {
+                    $result = substr($result, strpos($result, $maker) + strlen($maker));
                 }
-            } else {
-                $result = $text;
             }
         }
         return $result;

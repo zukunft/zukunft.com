@@ -34,19 +34,32 @@ namespace model;
 class view_cmp_type
 {
     // list of the view component types that have a coded functionality
+
+    // just to display a simple text
     const TEXT = "text";
     const WORD = "fixed";
     const WORD_SELECT = "word_select";
+    // show all word that this words is based on
     const WORDS_UP = "word_list_up";
+    // show all words that are based on the given start word
     const WORDS_DOWN = "word_list_down";
+    // show the word name and give the user the possibility to change the word name
     const PHRASE_NAME = "word_name";
+    // a word list with some key numbers e.g. all companies with the PE ratio
     const WORD_VALUE = "word_value_list";
+    // shows all: all words that link to the given word and all values related to the given word
     const VALUES_ALL = "values_all";
+    // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
     const VALUES_RELATED = "values_related";
+    // display all formulas related to the given word
     const FORMULAS = "formula_list";
+    // show a list of formula results related to a word
     const FORMULA_RESULTS = "formula_results";
+    // offer to configure and create an JSON file
     const JSON_EXPORT = "json_export";
+    // offer to configure and create an XML file
     const XML_EXPORT = "xml_export";
+    // offer to configure and create an CSV file
     const CSV_EXPORT = "csv_export";
     const VIEW_SELECT = "view_select";
     const LINK = "link";
@@ -57,5 +70,7 @@ class view_cmp_type
     const FORM_DESCRIPTION = "form_field_description";
     const FORM_CANCEL = "system_button_cancel";
     const FORM_SAVE = "system_button_save";
+    // simple close the form section
+    const FORM_END = "form_end";
 
 }

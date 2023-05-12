@@ -43,6 +43,7 @@ use html\phrase\phrase as phrase_dsp;
 use html\phrase\term as term_dsp;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox_typed_dsp;
+use model\library;
 use model\view_cmp_type;
 
 class component extends sandbox_typed_dsp
@@ -72,19 +73,28 @@ class component extends sandbox_typed_dsp
         // list of all possible view components
         $type_code_id = $this->type_code_id();
         $result .= match ($type_code_id) {
-            view_cmp_type::TEXT => $this->text(),  // just to display a simple text
-            view_cmp_type::PHRASE_NAME => $this->word_name($dbo->phrase()), // show the word name and give the user the possibility to change the word name
-            view_cmp_type::VALUES_RELATED => $this->table($dbo), // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
-            view_cmp_type::WORD_VALUE => $this->num_list($dbo, $back), // a word list with some key numbers e.g. all companies with the PE ratio
-            view_cmp_type::FORMULAS => $this->formulas($dbo), // display all formulas related to the given word
-            view_cmp_type::FORMULA_RESULTS => $this->results($dbo), // show a list of formula results related to a word
-            view_cmp_type::WORDS_DOWN => $this->word_children($dbo), // show all words that are based on the given start word
-            view_cmp_type::WORDS_UP => $this->word_parents($dbo), // show all word that this words is based on
-            view_cmp_type::JSON_EXPORT => $this->json_export($dbo, $back), // offer to configure and create an JSON file
-            view_cmp_type::XML_EXPORT => $this->xml_export($dbo, $back), // offer to configure and create an XML file
-            view_cmp_type::CSV_EXPORT => $this->csv_export($dbo, $back), // offer to configure and create an CSV file
-            view_cmp_type::VALUES_ALL => $this->all($dbo, $back), // shows all: all words that link to the given word and all values related to the given word
-            default => 'program code for component type ' . $type_code_id . ' missing'
+            view_cmp_type::TEXT => $this->text(),
+            view_cmp_type::WORD => $this->display_name(),
+            view_cmp_type::PHRASE_NAME => $this->word_name($dbo->phrase()),
+            view_cmp_type::VALUES_RELATED => $this->table($dbo),
+            view_cmp_type::WORD_VALUE => $this->num_list($dbo, $back),
+            view_cmp_type::FORMULAS => $this->formulas($dbo),
+            view_cmp_type::FORMULA_RESULTS => $this->results($dbo),
+            view_cmp_type::WORDS_DOWN => $this->word_children($dbo),
+            view_cmp_type::WORDS_UP => $this->word_parents($dbo),
+            view_cmp_type::JSON_EXPORT => $this->json_export($dbo, $back),
+            view_cmp_type::XML_EXPORT => $this->xml_export($dbo, $back),
+            view_cmp_type::CSV_EXPORT => $this->csv_export($dbo, $back),
+            view_cmp_type::VALUES_ALL => $this->all($dbo, $back),
+            view_cmp_type::FORM_TITLE => $this->form_tile($dbo, $back),
+            view_cmp_type::FORM_BACK => $this->form_back($dbo, $back),
+            view_cmp_type::FORM_CONFIRM => $this->form_confirm($dbo, $back),
+            view_cmp_type::FORM_NAME => $this->form_name($dbo, $back),
+            view_cmp_type::FORM_DESCRIPTION => $this->form_description($dbo, $back),
+            view_cmp_type::FORM_CANCEL => $this->form_cancel($dbo, $back),
+            view_cmp_type::FORM_SAVE => $this->form_save($dbo, $back),
+            view_cmp_type::FORM_END => $this->form_end(),
+            default => 'program code for component type ' . $type_code_id . ' missing<br>'
         };
 
         return $result;
@@ -214,8 +224,87 @@ class component extends sandbox_typed_dsp
         return $this->name();
     }
 
+    /**
+     * @return string the html code to start a new form and display the tile
+     * TODO replace _add with a parameter value
+     */
+    function form_tile(db_object_dsp $dbo): string
+    {
+        $lib = new library();
+        $html = new html_base();
+        $form_name = $lib->class_to_name($dbo::class) . '_add';
+        return $html->form_start($form_name);
+    }
 
-    function type_code_id(): string
+    /**
+     * @return string the html code to include the back trace into the form result
+     */
+    function form_back(): string
+    {
+        $html = new html_base();
+        return $html->input('back', '', html_base::INPUT_HIDDEN);
+    }
+
+    /**
+     * @return string the html code to check if the form changes has already confirmed by the user
+     */
+    function form_confirm(): string
+    {
+        $html = new html_base();
+        return $html->input('confirm', '1', html_base::INPUT_HIDDEN);
+    }
+
+    /**
+     * @return string the html code to request the object name from the user
+     */
+    function form_name(db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field('Name', $dbo->name());
+    }
+
+    /**
+     * @return string the html code to request the description from the user
+     */
+    function form_description(db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field('Description', $dbo->description());
+    }
+
+    /**
+     * @return string the html code for a form cancel button
+     */
+    function form_cancel(): string
+    {
+        $html = new html_base();
+        return $html->button('Cancel', html_base::BS_BTN_CANCEL);
+    }
+
+    /**
+     * @return string the html code for a form save button
+     */
+    function form_save(): string
+    {
+        $html = new html_base();
+        return $html->button('Save');
+    }
+
+    /**
+     * @return string that simply closes the form
+     */
+    function form_end(): string
+    {
+        $html = new html_base();
+        return $html->form_end();
+    }
+
+
+    /*
+     * info
+     */
+
+    private function type_code_id(): string
     {
         global $view_component_types;
         return $view_component_types->code_id($this->type_id());

@@ -22,3 +22,4 @@ view_component_type_id, type_name, description, code_id
 21, 'form field description', 'the form field for the description of a word or formula', 'field_description'
 22, 'button cancel', 'a button of a form to cancel the form action', 'system_button_cancel'
 23, 'button save', 'a button of a form to save the changes to the database', 'system_button_save'
+24, 'form end', 'just to indicate that a form ends', 'form_end'

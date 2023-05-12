@@ -296,6 +296,7 @@ function dsp_form_start($form_name): string
 function dsp_form_end($submit_name, $back, $del_call = ''): string
 {
     $result = '';
+    $html = new html_base();
     if (UI_USE_BOOTSTRAP) {
         if ($submit_name == "") {
             $result .= '<button type="submit" class="btn btn-outline-success btn-space">Save</button>';
@@ -313,11 +314,7 @@ function dsp_form_end($submit_name, $back, $del_call = ''): string
             $result .= '<a href="' . $del_call . '" class="btn btn-outline-danger" role="button">delete</a>';
         }
     } else {
-        if ($submit_name == "") {
-            $result .= '<input type="submit">';
-        } else {
-            $result .= '<input type="submit" value="' . $submit_name . '">';
-        }
+        $result .= $html->input('', $submit_name);
         if ($back <> "") {
             $result .= \html\btn_back($back);
         }

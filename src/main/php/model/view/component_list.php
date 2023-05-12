@@ -86,6 +86,7 @@ class component_list extends sandbox_list
     }
 
     /**
+     * TODO check if the position is set and if not set it
      * add one component to the component list, but only if it is not yet part of the component list
      * @param component $cmp_to_add the component that should be added to the list
      */

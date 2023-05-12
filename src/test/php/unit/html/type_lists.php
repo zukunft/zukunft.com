@@ -70,10 +70,10 @@ class type_list
         $test_page .= 'simple mask: ' . '<br>';
         $test_page .= $dsp->show($wrd, $back) . '<br>';
 
-        $test_page .= 'formula type selector from dummy: ' . '<br>';
-        $test_page .= $frm_lst->dsp_obj()->selector() . '<br>';
-        $test_page .= 'protection selector from api message: ' . '<br>';
-        $test_page .= (new protection())->selector() . '<br>';
+        $test_page .= $html->label('formula type selector from dummy: ', 'formula type');
+        $test_page .= $frm_lst->dsp_obj()->selector('formula type') . '<br>';
+        $test_page .= $html->label('protection selector from api message: ', 'protection');
+        $test_page .= (new protection())->selector('protection') . '<br>';
 
         $t->html_test($test_page, 'types', $t);
     }

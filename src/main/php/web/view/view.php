@@ -45,6 +45,7 @@ use html\view\component_list as component_list_dsp;
 use html\sandbox_typed_dsp;
 use html\word\word;
 use html\sandbox\db_object as db_object_dsp;
+use model\library;
 
 class view extends sandbox_typed_dsp
 {
@@ -219,13 +220,15 @@ class view extends sandbox_typed_dsp
         return $result;
     }
 
-    private function dsp_navbar_bs($show_view, $back): string
+    private function dsp_navbar_bs(bool $show_view, string $back): string
     {
+        $lib = new library();
         $html = new html_base();
         $result = '<nav class="navbar bg-light fixed-top">';
         $result .= $html->logo();
         $result .= '  <form action="/http/find.php" class="form-inline my-2 my-lg-0">';
-        $result .= '    <input name="pattern" class="form-control mr-sm-2" type="search" placeholder="word or formula">';
+        $result .= '<label for="pattern"></label>';
+        $result .= $this->input_search_pattern();
         $result .= '    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>';
         $result .= '  </form>';
         $result .= '  <div class="col-sm-2">';
@@ -239,9 +242,12 @@ class view extends sandbox_typed_dsp
         if ($show_view) {
             $result .= '      <li class="active">';
             $result .= $this->dsp_view_name($back);
-            $url_edit = $html->url(view::class . api::UPDATE, $this->id, $back, '', word::class . '=' . $back);
+            $class = $lib->class_to_name(view::class);
+            //$url_edit = $html->url($class . api::UPDATE, $this->id, $back, '', word::class . '=' . $back);
+            $url_edit = $html->url($class . api::UPDATE, $this->id, '', '');
             $result .= (new button('adjust the view ' . $url_edit))->edit();
-            $url_add = $html->url(view::class . api::CREATE, 0, $back, '', word::class . '=' . $back);
+            //$url_add = $html->url($class . api::CREATE, 0, $back, '', word::class . '=' . $back);
+            $url_add = $html->url($class . api::CREATE, 0, '', '');
             $result .= (new button('create a new view', $url_add))->add();
             $result .= '      </li>';
         }
@@ -278,6 +284,16 @@ class view extends sandbox_typed_dsp
         return $result;
     }
 
+    private function input_search_pattern(): string
+    {
+        $html = new html_base();
+        return $html->input(
+            'pattern', '',
+            html_base::INPUT_SEARCH,
+            html_base::BS_SM_2,
+            'word or formula');
+    }
+
     /**
      * show the standard top right corner, where the user can log in or change the settings
      * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
@@ -291,7 +307,7 @@ class view extends sandbox_typed_dsp
         $result .= '<td class="right_ref">';
         if ($this->is_system() and !$this->user()->is_admin()) {
             $result .= (new button('find a word or formula', $html->url(api::SEARCH)))->find() . ' - ';
-            $result .= '' . $this->name . ' ';
+            $result .= $this->name . ' ';
         } else {
             $result .= (new button('find a word or formula', '/http/find.php?word=' . $back))->find() . ' - ';
             $result .= $this->dsp_view_name($back);

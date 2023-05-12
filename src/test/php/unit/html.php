@@ -89,7 +89,7 @@ class html_unit_tests
         $sel->selected = 3;
         $body = $html->form_start($sel->form);
         $body .= $sel->display_old();
-        $body .= $html->form_end($sel->name, '');
+        $body .= $html->form_end_with_submit($sel->name, '');
         $t->html_test($body, 'selector', $t);
 
         // ... and check if the prepared sql name is unique

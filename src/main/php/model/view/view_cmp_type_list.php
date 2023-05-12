@@ -77,6 +77,8 @@ class view_cmp_type_list extends type_list
         $this->add($type);
         $type = new type_object(view_cmp_type::FORM_SAVE, view_cmp_type::FORM_SAVE, '', 23);
         $this->add($type);
+        $type = new type_object(view_cmp_type::FORM_END, view_cmp_type::FORM_END, '', 24);
+        $this->add($type);
     }
 
     /**

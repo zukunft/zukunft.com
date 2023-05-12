@@ -134,8 +134,19 @@ class db_object
 
 
     /*
-     * dummy function overwritten by the child classes
+     * dummy functions to prevent polymorph warning
+     * overwritten by the child classes
      */
+
+    function name(): string
+    {
+        return '';
+    }
+
+    function description(): string
+    {
+        return '';
+    }
 
     function phrase(): phrase_dsp
     {

@@ -603,7 +603,7 @@ class create_test_objects extends test_base
     {
         global $usr;
         $cmp = new component($usr);
-        $cmp->set(1, component_api::TN_FORM_BACK, view_cmp_type::FORM_BACK);
+        $cmp->set(2, component_api::TN_FORM_BACK, view_cmp_type::FORM_BACK);
         $cmp->description = component_api::TD_FORM_BACK;
         $cmp->code_id = component_api::TI_FORM_BACK;
         return $cmp;
@@ -613,7 +613,7 @@ class create_test_objects extends test_base
     {
         global $usr;
         $cmp = new component($usr);
-        $cmp->set(1, component_api::TN_FORM_CONFIRM, view_cmp_type::FORM_CONFIRM);
+        $cmp->set(3, component_api::TN_FORM_CONFIRM, view_cmp_type::FORM_CONFIRM);
         $cmp->description = component_api::TD_FORM_CONFIRM;
         $cmp->code_id = component_api::TI_FORM_CONFIRM;
         return $cmp;
@@ -623,7 +623,7 @@ class create_test_objects extends test_base
     {
         global $usr;
         $cmp = new component($usr);
-        $cmp->set(1, component_api::TN_FORM_NAME, view_cmp_type::FORM_NAME);
+        $cmp->set(4, component_api::TN_FORM_NAME, view_cmp_type::FORM_NAME);
         $cmp->description = component_api::TD_FORM_NAME;
         $cmp->code_id = component_api::TI_FORM_NAME;
         return $cmp;
@@ -633,7 +633,7 @@ class create_test_objects extends test_base
     {
         global $usr;
         $cmp = new component($usr);
-        $cmp->set(1, component_api::TN_FORM_DESCRIPTION, view_cmp_type::FORM_DESCRIPTION);
+        $cmp->set(5, component_api::TN_FORM_DESCRIPTION, view_cmp_type::FORM_DESCRIPTION);
         $cmp->description = component_api::TD_FORM_DESCRIPTION;
         $cmp->code_id = component_api::TI_FORM_DESCRIPTION;
         return $cmp;
@@ -643,7 +643,7 @@ class create_test_objects extends test_base
     {
         global $usr;
         $cmp = new component($usr);
-        $cmp->set(1, component_api::TN_FORM_CANCEL, view_cmp_type::FORM_CANCEL);
+        $cmp->set(6, component_api::TN_FORM_CANCEL, view_cmp_type::FORM_CANCEL);
         $cmp->description = component_api::TD_FORM_CANCEL;
         $cmp->code_id = component_api::TI_FORM_CANCEL;
         return $cmp;
@@ -653,9 +653,19 @@ class create_test_objects extends test_base
     {
         global $usr;
         $cmp = new component($usr);
-        $cmp->set(1, component_api::TN_FORM_SAVE, view_cmp_type::FORM_SAVE);
+        $cmp->set(7, component_api::TN_FORM_SAVE, view_cmp_type::FORM_SAVE);
         $cmp->description = component_api::TD_FORM_SAVE;
         $cmp->code_id = component_api::TI_FORM_SAVE;
+        return $cmp;
+    }
+
+    function dummy_component_word_add_form_end(): component
+    {
+        global $usr;
+        $cmp = new component($usr);
+        $cmp->set(8, component_api::TN_FORM_END, view_cmp_type::FORM_END);
+        $cmp->description = component_api::TD_FORM_END;
+        $cmp->code_id = component_api::TI_FORM_END;
         return $cmp;
     }
 
@@ -678,6 +688,7 @@ class create_test_objects extends test_base
         $lst->add($this->dummy_component_word_add_description());
         $lst->add($this->dummy_component_word_add_cancel());
         $lst->add($this->dummy_component_word_add_save());
+        $lst->add($this->dummy_component_word_add_form_end());
         return $lst;
     }
 
