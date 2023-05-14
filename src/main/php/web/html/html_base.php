@@ -660,7 +660,7 @@ class html_base
             }
         }
         $url_add = $this->url($class . api::CREATE, 0, $back);
-        $result .= (new button('Add ' . $class, $url_add))->add();
+        $result .= (new button($url_add, $back))->add($class . api::CREATE);
         $result .= '<br>';
 
         return $result;

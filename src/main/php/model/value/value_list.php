@@ -40,6 +40,8 @@ use cfg\export\source_exp;
 use cfg\export\value_list_exp;
 use cfg\protection_type;
 use cfg\share_type;
+use controller\controller;
+use html\api;
 use html\button;
 use html\html_base;
 
@@ -1147,9 +1149,6 @@ class value_list extends sandbox_list
         log_debug('tbl_start');
         $result .= $html->dsp_tbl_start();
 
-        // the reused button object
-        $btn = new button;
-
         // to avoid repeating the same words in each line and to offer a useful "add new value"
         $last_phr_lst = array();
 
@@ -1205,17 +1204,25 @@ class value_list extends sandbox_list
                 $result .= '    </td>';
                 log_debug('formula results ' . $val->id . ' loaded');
 
+                // the reused button object
+
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
+                    $url = $html->url(controller::DSP_VALUE_ADD, $val->id(), $back);
+                    $btn = new button($url, $back);
                     $result .= \html\btn_add_value($val_phr_lst, Null, $this->phr->id());
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
+                $url = $html->url(controller::DSP_VALUE_EDIT, $val->id(), $back);
+                $btn = new button($url, $back);
                 $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->phr->id());
                 $result .= '    </td>';
                 $result .= '    <td>';
+                $url = $html->url(controller::DSP_VALUE_DEL, $val->id(), $back);
+                $btn = new button($url, $back);
                 $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->phr->id());
                 $result .= '    </td>';
                 $result .= '  </tr>';

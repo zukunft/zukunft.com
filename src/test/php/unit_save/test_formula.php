@@ -231,6 +231,7 @@ function run_formula_test(test_cleanup $t): void
     // test the formula display functions
     $frm = $t->load_formula(formula_api::TN_ADD);
     $frm_dsp = $frm->dsp_obj_old();
+    $frm_html = new formula_dsp($frm->api_json());
     $exp = $frm->expression();
     $result = $exp->dsp_id();
     $target = '""percent" = ( "this" - "prior" ) / "prior"" ({w'.$wrd_percent->id().'}=({f'.$frm_this->id().'}-{f'.$frm_prior->id().'})/{f'.$frm_prior->id().'})';
@@ -248,7 +249,6 @@ function run_formula_test(test_cleanup $t): void
 
     // ... in HTML format with link
     $frm_increase = $t->load_formula(formula_api::TN_ADD);
-    $frm_html = new formula_dsp($frm->api_json());
     $result = $frm_html->edit_link($back);
     $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id() . '&back=0" title="' . formula_api::TN_ADD . '">' . formula_api::TN_ADD . '</a>';
     $t->display('formula->display for ' . $frm->dsp_id(), $target, $result);

@@ -428,7 +428,7 @@ class word extends sandbox_typed_dsp
     function btn_del(): string
     {
         $url = (new html_base())->url(api::WORD . api::REMOVE, $this->id, $this->id);
-        return (new button((new msg())->txt(msg::WORD_DELETE), $url))->del();
+        return (new button((new msg())->txt(msg::WORD_DEL), $url))->del();
     }
 
     /**

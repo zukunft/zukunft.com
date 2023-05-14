@@ -34,6 +34,7 @@ use controller\controller;
 use html\api;
 use html\button;
 use html\html_base;
+use html\msg;
 use html\view\view_dsp_old;
 use model\user;
 use model\value;
@@ -86,7 +87,9 @@ if ($usr->id() > 0) {
 
             $val->load_phrases();
             $url = $html->url(api::VALUE . api::REMOVE, $val_id, $back);
-            $result .= (new button('Delete ' . $val->number() . ' for ' . $val->phr_lst()->dsp_name() . '? ', $url))->yesno();
+            $ui_msg = new msg();
+            $result .= (new button($url, $back))->yesno(
+                msg::VALUE_DEL, $val->number() . $ui_msg->txt(msg::FOR) . $val->phr_lst()->dsp_name() . '?');
         }
     } else {
         $result .= $html->dsp_go_back($back, $usr);

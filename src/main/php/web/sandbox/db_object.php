@@ -37,6 +37,7 @@ namespace html\sandbox;
 include_once API_SANDBOX_PATH . 'sandbox.php';
 
 use controller\controller;
+use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\term as term_dsp;
 
@@ -131,6 +132,23 @@ class db_object
     {
         return $this->id();
     }
+
+
+    /*
+     * display
+     */
+
+    /**
+     * create the html url to create, change or delete this database object
+     * @param string $view_code_id the code id of the view as defined in the api controller class
+     * @param string|null $back the back trace url for the undo functionality
+     * @returns string the html code
+     */
+    function obj_url(string $view_code_id, ?string $back = ''): string
+    {
+        return (new html_base())->url($view_code_id, $this->id(), $back);
+    }
+
 
 
     /*

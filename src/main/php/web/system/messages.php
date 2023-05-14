@@ -35,10 +35,23 @@ namespace html;
 class msg
 {
 
-    const WORD_RENAME = 'rename_word';
-    const WORD_DELETE = 'delete_word';
+    // text to be shon in buttons
+    const WORD_ADD = 'word_add';
+    const WORD_EDIT = 'word_edit';
+    const WORD_DEL = 'word_del';
     const WORD_UNLINK = 'unlink_word';
-    const TRIPLE_DELETE = 'delete_word';
+    const VERB_ADD = 'verb_add';
+    const VERB_EDIT = 'verb_edit';
+    const VERB_DEL = 'verb_del';
+    const TRIPLE_ADD = 'triple_add';
+    const TRIPLE_EDIT = 'triple_edit';
+    const TRIPLE_DEL = 'triple_del';
+    const VALUE_ADD = 'value_add';
+    const VALUE_EDIT = 'value_edit';
+    const VALUE_DEL = 'value_del';
+    const FORMULA_ADD = 'formula_add';
+    const FORMULA_EDIT = 'formula_edit';
+    const FORMULA_DEL = 'formula_del';
     const PLEASE_SELECT = 'please_select';
     const IP_BLOCK_PRE_ADDR = 'ip_block_pre_addr';
     const IP_BLOCK_POST_ADDR = 'ip_block_post_addr';
@@ -46,45 +59,44 @@ class msg
     const FORM_WORD_ADD_TITLE = 'form_word_add_title';
     const FORM_WORD_FLD_NAME = 'form_word_fld_name';
 
+    // language elements to create a text
+    CONST FOR = 'for'; // e.g. to indicate which phrases a value is assigned to
+
+    /**
+     * @param string $message_id the id const of the message that should be shown
+     * @return string the message text in the user specific language that should be shown to the user
+     */
     function txt(string $message_id): string
     {
-        $msg_text = '';
         // to be replaced with a get_cfg function
         $user_language = 'en';
         // $msg_file = yaml_parse_file('/resources/translation/en.yaml');
-        switch ($message_id) {
-            case self::WORD_RENAME:
-                $msg_text = 'rename word';
-                break;
-            case self::WORD_DELETE:
-            case self::TRIPLE_DELETE:
-                $msg_text = 'Delete word';
-                break;
-            case self::WORD_UNLINK:
-                $msg_text = 'Unlink word';
-                break;
-            case self::PLEASE_SELECT:
-                $msg_text = 'please select ...';
-                break;
-            case self::IP_BLOCK_PRE_ADDR:
-                $msg_text = 'Your IP ';
-                break;
-            case self::IP_BLOCK_POST_ADDR:
-                $msg_text = ' is blocked at the moment because ';
-                break;
-            case self::IP_BLOCK_SOLUTION:
-                $msg_text = '. If you think, this should not be the case, ' .
-                    'please request the unblocking with an email to admin@zukunft.com.';
-                break;
-            case self::FORM_WORD_ADD_TITLE:
-                $msg_text = 'Add a new word';
-                break;
-            case self::FORM_WORD_FLD_NAME:
-                $msg_text = 'Word name';
-                break;
-            default:
-                $msg_text = $message_id . ' (translation missing)';
-                log_warning('translation missing for '.  $message_id);
+        $msg_text = match ($message_id) {
+            self::WORD_ADD, self::TRIPLE_ADD => 'add new word',
+            self::WORD_EDIT, self::TRIPLE_EDIT => 'rename word',
+            self::WORD_DEL, self::TRIPLE_DEL => 'Delete word',
+            self::VERB_ADD => 'add new verb',
+            self::VERB_EDIT => 'change verb',
+            self::VERB_DEL => 'delete verb',
+            self::VALUE_ADD => 'add new value',
+            self::VALUE_EDIT => 'change value',
+            self::VALUE_DEL => 'delete value',
+            self::FORMULA_ADD => 'add new formula',
+            self::FORMULA_EDIT => 'change formula',
+            self::FORMULA_DEL => 'delete this formula',
+            self::WORD_UNLINK => 'Unlink word',
+            self::PLEASE_SELECT => 'please select ...',
+            self::IP_BLOCK_PRE_ADDR => 'Your IP ',
+            self::IP_BLOCK_POST_ADDR => ' is blocked at the moment because ',
+            self::IP_BLOCK_SOLUTION => '. If you think, this should not be the , ' .
+                'please request the unblocking with an email to admin@zukunft.com.',
+            self::FORM_WORD_ADD_TITLE => 'Add a new word',
+            self::FORM_WORD_FLD_NAME => 'Word name',
+            self::FOR => ' for ',
+            default => $message_id . ' (translation missing)',
+        };
+        if ($msg_text == $message_id . ' (translation missing)') {
+            log_warning('translation missing for ' . $message_id);
         }
         return $msg_text;
     }

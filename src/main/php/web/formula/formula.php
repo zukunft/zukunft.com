@@ -38,7 +38,9 @@ include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
 use controller\controller;
 use html\api;
+use html\button;
 use html\html_base;
+use html\msg;
 use html\phrase\term as term_dsp;
 use html\sandbox_typed_dsp;
 
@@ -151,15 +153,54 @@ class formula extends sandbox_typed_dsp
     }
 
     /**
+     * @param string|null $back the back trace url for the undo functionality
+     * @returns string the html url to change a formula
+     */
+    function edit_url(?string $back = ''): string
+    {
+        return $this->obj_url(controller::DSP_FORMULA_EDIT, $back);
+    }
+
+    /**
      * display the formula name with a link to change the formula
      * @param string|null $back the back trace url for the undo functionality
      * @returns string the html code
      */
     function edit_link(?string $back = ''): string
     {
-        $html = new html_base();
-        $url = $html->url(api::FORMULA . api::UPDATE, $this->id, $back);
-        return $html->ref($url, $this->name(), $this->name());
+        return (new html_base())->ref($this->edit_url($back), $this->name(), $this->name());
+    }
+
+    /**
+     * create the HTML code for a button to create a new formula
+     * @param string $back the stack trace for the undo functionality
+     * @return string html code to change to formula
+     */
+    function btn_add(string $back = ''): string
+    {
+        $url = $this->obj_url(controller::DSP_FORMULA_ADD, $back);
+        return (new button($url, $back))->add(msg::FORMULA_ADD, $this->name);
+    }
+
+    /**
+     * create the HTML code for a button to change the formula
+     * @param string $back the stack trace for the undo functionality
+     * @return string html code to change to formula
+     */
+    function btn_edit(string $back = ''): string
+    {
+        return (new button('', $this->edit_url($back)))->edit(msg::FORMULA_EDIT, msg::FOR . $this->name);
+    }
+
+    /**
+     * create the HTML code for a button to delete or exclude this formula
+     * @param string $back the stack trace for the undo functionality
+     * @return string html code to change to formula
+     */
+    function btn_del(string $back = ''): string
+    {
+        $url = $this->obj_url(controller::DSP_FORMULA_DEL, $back);
+        return (new button('Change ' . self::class . $this->name, $url))->del();
     }
 
 }

@@ -58,12 +58,37 @@ class button
      * construct and capsule
      */
 
-    function __construct(string $title = '', string $url = '', string $back = '')
+    /**
+     * @param string $url the url that is called if the button is pressed
+     * @param string $back the history of changes by the user to be able to perform correct undo actions
+     */
+    function __construct(string $url = '', string $back = '')
     {
-        $this->title = $title;
         $this->call = $url;
         $this->back = $back;
     }
+
+
+    /*
+     * set
+     */
+
+    /**
+     * set the button user test
+     * @param string $ui_msg_id the const message id that indicates what should be shown to the user in the language that he has selected
+     * @param string $explain additional information that should be shown to the user
+     */
+    function set(string $ui_msg_id = '', string $explain = ''): void
+    {
+        if ($ui_msg_id != '') {
+            $ui_msg = new msg();
+            $this->title = $ui_msg->txt($ui_msg_id);
+        }
+        if ($explain != '') {
+            $this->title .= $explain;
+        }
+    }
+
 
     /*
      * HTML code
@@ -85,18 +110,39 @@ class button
     }
 
     // button function to keep the image call on one place
-    function add(): string
+    function add(string $ui_msg_id = '', string $explain = ''): string
     {
+        if ($ui_msg_id != '') {
+            $ui_msg = new msg();
+            $this->title = $ui_msg->txt($ui_msg_id);
+        }
+        if ($explain != '') {
+            $this->title .= $explain;
+        }
         return $this->html_fa(self::IMG_ADD_FA);
     } // an add button to create a new entry
 
-    function edit(): string
+    function edit(string $ui_msg_id = '', string $explain = ''): string
     {
+        if ($ui_msg_id != '') {
+            $ui_msg = new msg();
+            $this->title = $ui_msg->txt($ui_msg_id);
+        }
+        if ($explain != '') {
+            $this->title .= $explain;
+        }
         return $this->html_fa(self::IMG_EDIT_FA);
     } // an edit button to adjust an entry
 
-    function del(): string
+    function del(string $ui_msg_id = '', string $explain = ''): string
     {
+        if ($ui_msg_id != '') {
+            $ui_msg = new msg();
+            $this->title = $ui_msg->txt($ui_msg_id);
+        }
+        if ($explain != '') {
+            $this->title .= $explain;
+        }
         return $this->html_fa(self::IMG_DEL_FA);
     } // an delete button to remove an entry
 
@@ -160,10 +206,18 @@ class button
     /**
      * the old zuh_btn_confirm without description, replace with zuh_btn_confirm
      */
-    function yesno(): string
+    function yesno(string $ui_msg_id = '', string $explain): string
     {
         $html = new html_base();
         //zu_debug("button->yesno ".$this->title.".", 10);
+
+        if ($ui_msg_id != '') {
+            $ui_msg = new msg();
+            $this->title = $ui_msg->txt($ui_msg_id);
+        }
+        if ($explain != '') {
+            $this->title .= $explain;
+        }
 
         $result = $html->dsp_text_h3($this->title);
         $result .= '<a href="' . $this->call . '&confirm=1" title="Yes">Yes</a>/<a href="' . $this->call . '&confirm=-1" title="No">No</a>';
