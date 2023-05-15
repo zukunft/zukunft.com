@@ -31,11 +31,13 @@
 
 namespace formula;
 
+use controller\controller;
 use html\api;
 use html\button;
 use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
+use html\msg;
 use model\formula;
 use model\phrase;
 use model\result;
@@ -78,14 +80,25 @@ class formula_dsp_old extends formula
     }
 
     /**
+     * create the html url to create, change or delete this database object
+     * @param string $view_code_id the code id of the view as defined in the api controller class
+     * @param string|null $back the back trace url for the undo functionality
+     * @returns string the html code
+     */
+    function obj_url(string $view_code_id, ?string $back = ''): string
+    {
+        return (new html_base())->url($view_code_id, $this->id(), $back);
+    }
+
+    /**
      * create the HTML code for a button to change the formula
      * @param string $back the stack trace for the undo functionality
      * @return string html code to change to formula
      */
     function btn_edit(string $back = ''): string
     {
-        $url = (new html_base())->url(self::class . api::UPDATE, $this->id, $back);
-        return (new button('Change ' . self::class . $this->name, $url))->edit();
+        $url = $this->obj_url(controller::DSP_FORMULA_EDIT);
+        return (new button($url, $back))->edit(msg::FORMULA_EDIT, msg::FOR . $this->name);
     }
 
     /**
@@ -95,8 +108,8 @@ class formula_dsp_old extends formula
      */
     function btn_del(string $back = ''): string
     {
-        $url = (new html_base())->url(self::class . api::REMOVE, $this->id, $back);
-        return (new button('Delete ' . self::class . $this->name, $url))->del();
+        $url = $this->obj_url(controller::DSP_FORMULA_DEL);
+        return (new button($url, $back))->del(msg::FORMULA_DEL, msg::OF . $this->name);
     }
 
     // allow the user to unlink a word
@@ -105,7 +118,7 @@ class formula_dsp_old extends formula
         log_debug($phr_id);
         $result = '    <td>' . "\n";
         $url = api::PATH_FIXED . self::class . api::UPDATE . api::EXT .'?id=' . $this->id . '&unlink_phrase=' . $phr_id . '&back=' . $back;
-        $result .=  (new button("unlink word", $url))->del();
+        $result .=  (new button($url, $back))->del(msg::FORMULA_UNLINK);
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -204,8 +217,9 @@ class formula_dsp_old extends formula
             $result .= $sel->display_old();
         } else {
             if ($this->id > 0) {
-                $url = $html->url(formula::class . api::UPDATE, $this->id, $back, '', 'add_link=1');
-                $result .= '      ' . (new button('add new', $url))->add();
+                $url = $this->obj_url(controller::DSP_FORMULA_ADD);
+                // TODO check if 'add_link=1' is needed
+                $result .= (new button($url, $back))->add(msg::FORMULA_ADD);
             }
         }
         $result .= '    </td>';

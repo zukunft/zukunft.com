@@ -150,7 +150,6 @@ class db_object
     }
 
 
-
     /*
      * dummy functions to prevent polymorph warning
      * overwritten by the child classes

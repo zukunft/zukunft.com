@@ -52,6 +52,8 @@ class msg
     const FORMULA_ADD = 'formula_add';
     const FORMULA_EDIT = 'formula_edit';
     const FORMULA_DEL = 'formula_del';
+    const FORMULA_LINK = 'formula_link';
+    const FORMULA_UNLINK = 'formula_unlink';
     const PLEASE_SELECT = 'please_select';
     const IP_BLOCK_PRE_ADDR = 'ip_block_pre_addr';
     const IP_BLOCK_POST_ADDR = 'ip_block_post_addr';
@@ -61,6 +63,7 @@ class msg
 
     // language elements to create a text
     CONST FOR = 'for'; // e.g. to indicate which phrases a value is assigned to
+    CONST OF = 'of';   // e.g. to indicate which word would be deleted
 
     /**
      * @param string $message_id the id const of the message that should be shown
@@ -84,6 +87,8 @@ class msg
             self::FORMULA_ADD => 'add new formula',
             self::FORMULA_EDIT => 'change formula',
             self::FORMULA_DEL => 'delete this formula',
+            self::FORMULA_LINK => 'assign formula to ',
+            self::FORMULA_UNLINK => 'unassigned formula from ',
             self::WORD_UNLINK => 'Unlink word',
             self::PLEASE_SELECT => 'please select ...',
             self::IP_BLOCK_PRE_ADDR => 'Your IP ',
@@ -93,6 +98,7 @@ class msg
             self::FORM_WORD_ADD_TITLE => 'Add a new word',
             self::FORM_WORD_FLD_NAME => 'Word name',
             self::FOR => ' for ',
+            self::OF => ' of ',
             default => $message_id . ' (translation missing)',
         };
         if ($msg_text == $message_id . ' (translation missing)') {

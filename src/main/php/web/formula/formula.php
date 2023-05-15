@@ -153,22 +153,14 @@ class formula extends sandbox_typed_dsp
     }
 
     /**
-     * @param string|null $back the back trace url for the undo functionality
-     * @returns string the html url to change a formula
-     */
-    function edit_url(?string $back = ''): string
-    {
-        return $this->obj_url(controller::DSP_FORMULA_EDIT, $back);
-    }
-
-    /**
      * display the formula name with a link to change the formula
      * @param string|null $back the back trace url for the undo functionality
      * @returns string the html code
      */
     function edit_link(?string $back = ''): string
     {
-        return (new html_base())->ref($this->edit_url($back), $this->name(), $this->name());
+        $url = $this->obj_url(controller::DSP_FORMULA_EDIT, $back);
+        return (new html_base())->ref($url, $this->name(), $this->name());
     }
 
     /**
@@ -178,7 +170,7 @@ class formula extends sandbox_typed_dsp
      */
     function btn_add(string $back = ''): string
     {
-        $url = $this->obj_url(controller::DSP_FORMULA_ADD, $back);
+        $url = $this->obj_url(controller::DSP_FORMULA_ADD);
         return (new button($url, $back))->add(msg::FORMULA_ADD, $this->name);
     }
 
@@ -189,7 +181,8 @@ class formula extends sandbox_typed_dsp
      */
     function btn_edit(string $back = ''): string
     {
-        return (new button('', $this->edit_url($back)))->edit(msg::FORMULA_EDIT, msg::FOR . $this->name);
+        $url = $this->obj_url(controller::DSP_FORMULA_EDIT);
+        return (new button($url, $back))->edit(msg::FORMULA_EDIT, msg::FOR . $this->name);
     }
 
     /**
@@ -199,8 +192,8 @@ class formula extends sandbox_typed_dsp
      */
     function btn_del(string $back = ''): string
     {
-        $url = $this->obj_url(controller::DSP_FORMULA_DEL, $back);
-        return (new button('Change ' . self::class . $this->name, $url))->del();
+        $url = $this->obj_url(controller::DSP_FORMULA_DEL);
+        return (new button($url, $back))->del(msg::FORMULA_DEL, msg::OF . $this->name);
     }
 
 }

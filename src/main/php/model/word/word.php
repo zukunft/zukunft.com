@@ -1230,11 +1230,13 @@ class word extends sandbox_typed
     {
         global $verbs;
         global $phrase_types;
+        $html = new html_base();
         $vrb_is = $verbs->id(verb::IS_A);
         $wrd_type = $phrase_types->default_id(); // maybe base it on the other linked words
         $wrd_add_title = "add a new " . $this->name();
-        $wrd_add_call = "/http/word_add.php?verb=" . $vrb_is . "&word=" . $this->id . "&type=" . $wrd_type . "&back=" . $back;
-        return (new button($wrd_add_call, $back))->add('', $wrd_add_title);
+        $url = $html->url(controller::DSP_WORD_ADD, 0, $back,
+            "verb=" . $vrb_is . "&word=" . $this->id . "&type=" . $wrd_type);
+        return (new button($url, $back))->add('', $wrd_add_title);
     }
 
     /**
