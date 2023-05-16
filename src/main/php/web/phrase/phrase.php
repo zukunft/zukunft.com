@@ -247,13 +247,13 @@ class phrase extends combine_named_dsp
     {
         if ($this->is_word()) {
             $obj_name = api::WORD;
-            $msg = msg::WORD_DEL;
+            $ui_msg_id = msg::WORD_DEL;
         } else {
             $obj_name = api::TRIPLE;
-            $msg = msg::TRIPLE_DEL;
+            $ui_msg_id = msg::TRIPLE_DEL;
         }
         $url = (new html_base())->url($obj_name . api::REMOVE, $this->id(), $this->id());
-        return (new button((new msg())->txt($msg), $url))->del();
+        return (new button($url))->del($ui_msg_id);
     }
 
     //

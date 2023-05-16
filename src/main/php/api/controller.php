@@ -178,6 +178,9 @@ class controller
     const DSP_TRIPLE_ADD = "triple_add";
     const DSP_TRIPLE_EDIT = "triple_edit";
     const DSP_TRIPLE_DEL = "triple_del";
+    const DSP_VIEW_ADD = "view_add";
+    const DSP_VIEW_EDIT = "view_edit";
+    const DSP_VIEW_DEL = "view_del";
     const DSP_USER = "user";
     const DSP_ERR_LOG = "error_log";
     const DSP_ERR_UPD = "error_update";

@@ -80,13 +80,7 @@ class button
      */
     function set(string $ui_msg_id = '', string $explain = ''): void
     {
-        if ($ui_msg_id != '') {
-            $ui_msg = new msg();
-            $this->title = $ui_msg->txt($ui_msg_id);
-        }
-        if ($explain != '') {
-            $this->title .= $explain;
-        }
+        $this->set_ui_msg($ui_msg_id, $explain);
     }
 
 
@@ -109,8 +103,7 @@ class button
         return '<a href="' . $this->call . '" title="' . $this->title . '"><i class="far ' . $icon . '"></i></a>';
     }
 
-    // button function to keep the image call on one place
-    function add(string $ui_msg_id = '', string $explain = ''): string
+    private function set_ui_msg(string $ui_msg_id = '', string $explain = ''): void
     {
         if ($ui_msg_id != '') {
             $ui_msg = new msg();
@@ -119,45 +112,42 @@ class button
         if ($explain != '') {
             $this->title .= $explain;
         }
+    }
+
+    // button function to keep the image call on one place
+    function add(string $ui_msg_id = '', string $explain = ''): string
+    {
+        $this->set_ui_msg($ui_msg_id, $explain);
         return $this->html_fa(self::IMG_ADD_FA);
     } // an add button to create a new entry
 
     function edit(string $ui_msg_id = '', string $explain = ''): string
     {
-        if ($ui_msg_id != '') {
-            $ui_msg = new msg();
-            $this->title = $ui_msg->txt($ui_msg_id);
-        }
-        if ($explain != '') {
-            $this->title .= $explain;
-        }
+        $this->set_ui_msg($ui_msg_id, $explain);
         return $this->html_fa(self::IMG_EDIT_FA);
     } // an edit button to adjust an entry
 
     function del(string $ui_msg_id = '', string $explain = ''): string
     {
-        if ($ui_msg_id != '') {
-            $ui_msg = new msg();
-            $this->title = $ui_msg->txt($ui_msg_id);
-        }
-        if ($explain != '') {
-            $this->title .= $explain;
-        }
+        $this->set_ui_msg($ui_msg_id, $explain);
         return $this->html_fa(self::IMG_DEL_FA);
     } // an delete button to remove an entry
 
-    function undo(): string
+    function undo(string $ui_msg_id = '', string $explain = ''): string
     {
+        $this->set_ui_msg($ui_msg_id, $explain);
         return $this->html(self::IMG_UNDO);
     } // an undo button to undo a change (not only the last)
 
-    function find(): string
+    function find(string $ui_msg_id = '', string $explain = ''): string
     {
+        $this->set_ui_msg($ui_msg_id, $explain);
         return $this->html(self::IMG_FIND);
     } // a find button to search for a word
 
-    function unfilter(): string
+    function unfilter(string $ui_msg_id = '', string $explain = ''): string
     {
+        $this->set_ui_msg($ui_msg_id, $explain);
         return $this->html(self::IMG_UN_FILTER);
     } // button to remove a filter
 
@@ -366,58 +356,58 @@ class button
 
 // only to shorten the code the basic buttons as a function without object
 // this way only one code line is needed 
-function btn_add($t, $c): string
+function btn_add(string $text, string $url): string
 {
-    $b = new button($t, $c);
-    return $b->add();
+    $b = new button($url);
+    return $b->add('', $text);
 }      // an add button to create a new entry
-function btn_edit($t, $c): string
+function btn_edit(string $text, string $url): string
 {
-    $b = new button($t, $c);
-    return $b->edit();
+    $b = new button($url);
+    return $b->edit('', $text);
 }     // an edit button to adjust an entry
-function btn_del($t, $c): string
+function btn_del(string $text, string $url): string
 {
-    $b = new button($t, $c);
-    return $b->del();
+    $b = new button($url);
+    return $b->del('', $text);
 }      // an delete button to remove an entry
-function btn_undo($t, $c): string
+function btn_undo(string $text, string $url): string
 {
-    $b = new button($t, $c);
-    return $b->undo();
+    $b = new button($url);
+    return $b->undo('', $text);
 }     // an undo button to undo a change (not only the last)
-function btn_find($t, $c): string
+function btn_find(string $text, string $url): string
 {
-    $b = new button($t, $c);
-    return $b->find();
+    $b = new button($url);
+    return $b->find('', $text);
 }     // a find button to search for a word
-function btn_unfilter($t, $c): string
+function btn_unfilter(string $text, string $url): string
 {
-    $b = new button($t, $c);
-    return $b->unfilter();
+    $b = new button($url);
+    return $b->unfilter('', $text);
 } // button to remove a filter
-function btn_yesno($t, $c): string
+function btn_yesno(string $text, string $url): string
 {
-    $b = new button($t, $c);
-    return $b->yesno();
+    $b = new button($url);
+    return $b->yesno('', $text);
 }    // button to get the user confirmation
-function btn_back($bl): string
+function btn_back($back_link): string
 {
-    $b = new button();
-    return $b->back($bl);
+    $b = new button($back_link);
+    return $b->back($back_link);
 } // button to remove a filter
 
 
 // button to add a new value related to some phrases
 function btn_add_value($phr_lst, $type_ids, $back): string
 {
-    $b = new button;
+    $b = new button();
     return $b->add_value($phr_lst, $type_ids, $back);
 }
 
 // similar to btn_add_value, but uses a simple modal box
 function btn_add_value_fast($modal_nbr, $phr_lst, $phr_main, $common_lst, $back): string
 {
-    $b = new button;
+    $b = new button();
     return $b->add_value_fast($modal_nbr, $phr_lst, $phr_main, $common_lst, $back);
 }

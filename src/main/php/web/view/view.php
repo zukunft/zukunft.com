@@ -42,6 +42,7 @@ use html\api;
 use html\button;
 use html\component_dsp_old;
 use html\html_base;
+use html\msg;
 use html\system\back_trace;
 use html\view\component_list as component_list_dsp;
 use html\sandbox_typed_dsp;
@@ -252,10 +253,10 @@ class view extends sandbox_typed_dsp
             $class = $lib->class_to_name(view::class);
             //$url_edit = $html->url($class . api::UPDATE, $this->id, $back, '', word::class . '=' . $back);
             $url_edit = $html->url($class . api::UPDATE, $this->id, '', '');
-            $result .= (new button('adjust the view ' . $url_edit))->edit();
+            $result .= (new button($url_edit))->edit(msg::VIEW_EDIT);
             //$url_add = $html->url($class . api::CREATE, 0, $back, '', word::class . '=' . $back);
             $url_add = $html->url($class . api::CREATE, 0, '', '');
-            $result .= (new button('create a new view', $url_add))->add();
+            $result .= (new button($url_add))->add(msg::VIEW_ADD);
             $result .= '      </li>';
         }
         $result .= '    </ul>';
@@ -313,13 +314,17 @@ class view extends sandbox_typed_dsp
         $result = $this->html_navbar_start();
         $result .= '<td class="right_ref">';
         if ($this->is_system() and !$this->user()->is_admin()) {
-            $result .= (new button('find a word or formula', $html->url(api::SEARCH)))->find() . ' - ';
+            $url = $html->url(api::SEARCH);
+            $result .= (new button($url, $back))->find(msg::SEARCH_MAIN) . ' - ';
             $result .= $this->name . ' ';
         } else {
-            $result .= (new button('find a word or formula', '/http/find.php?word=' . $back))->find() . ' - ';
+            $url = '/http/find.php?word=' . $back;
+            $result .= (new button($url, $back))->find(msg::SEARCH_MAIN) . ' - ';
             $result .= $this->dsp_view_name($back);
-            $result .= (new button('adjust the view ' . $this->name, '/http/view_edit.php?id=' . $this->id . '&word=' . $back . '&back=' . $back))->edit() . ' ';
-            $result .= (new button('create a new view', '/http/view_add.php?word=' . $back . '&back=' . $back))->add();
+            $url = $html->url(controller::DSP_VIEW_EDIT, $this->id());
+            $result .= (new button($url, $back))->edit(msg::VIEW_EDIT, $this->name) . ' ';
+            $url = $html->url(controller::DSP_VIEW_ADD);
+            $result .= (new button($url, $back))->add(msg::VIEW_ADD);
         }
         $result .= ' - ';
         log_debug($this->dsp_id() . ' (' . $this->id . ')');
