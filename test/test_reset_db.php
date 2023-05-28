@@ -58,7 +58,7 @@ use model\formula_element_type_list;
 use model\formula_link_type_list;
 use model\sql_db;
 use model\user;
-
+use test\test_unit_read_db;
 
 // open database and display header
 $db_con = prg_start("test_reset_db");
@@ -75,6 +75,7 @@ if ($usr->id() > 0) {
         include_once '../src/test/php/utils/test_base.php';
 
         // use the system user for the database updates
+        global $usr;
         $usr = new user;
         $usr->load_by_id(SYSTEM_USER_ID);
         $sys_usr = $usr;
@@ -104,6 +105,19 @@ if ($usr->id() > 0) {
         $job_id = $job->add(job_type_list::BASE_IMPORT);
 
         import_base_config($sys_usr);
+
+        // use the system user again to create the database test datasets
+        global $usr;
+        $usr = new user;
+        $usr->load_by_id(SYSTEM_USER_ID);
+        $sys_usr = $usr;
+
+        $t = new test_unit_read_db();
+        $t->create_test_db_entries($t, $sys_usr);
+
+        // reload the session user parameters
+        $usr = new user;
+        $result = $usr->get();
 
         /*
          * For testing the system setup

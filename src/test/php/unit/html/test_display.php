@@ -32,8 +32,10 @@
 
 use api\view_api;
 use api\word_api;
+use controller\controller;
 use html\button;
 use html\html_base;
+use html\msg;
 use model\db_cl;
 use model\view;
 use model\component_dsp_old;
@@ -75,39 +77,48 @@ function run_display_test(test_cleanup $t): void
 
     $t->header('Test the display button class (src/main/php/web/html/button.php )');
 
-    $target = '<a href="/http/view.php" title="Add test"><img src="/src/main/resources/images/button_add.svg" alt="Add test"></a>';
-    $target = '<a href="/http/view.php" title="Add test">';
-    $result = (new button('Add test', '/http/view.php'))->add();
+    $url = $html->url(controller::DSP_WORD_ADD);
+    $back = '1';
+    $target = '<a href="/http/word_add.php" title="Add test"><img src="/src/main/resources/images/button_add.svg" alt="Add test"></a>';
+    $target = '<a href="/http/word_add.php" title="add new word">';
+    $result = (new button($url, $back))->add(msg::WORD_ADD);
     $t->dsp_contains(", btn_add", $target, $result);
 
+    $url = $html->url(controller::DSP_WORD_EDIT);
     $target = '<a href="/http/view.php" title="Edit test"><img src="/src/main/resources/images/button_edit.svg" alt="Edit test"></a>';
-    $target = '<a href="/http/view.php" title="Edit test">';
-    $result = (new button('Edit test', '/http/view.php'))->edit();
+    $target = '<a href="/http/view.php" title="rename word">';
+    $result = (new button($url, $back))->edit(msg::WORD_EDIT);
     $t->dsp_contains(", btn_edit", $target, $result);
 
+    $url = $html->url(controller::DSP_WORD_DEL);
     $target = '<a href="/http/view.php" title="Del test"><img src="/src/main/resources/images/button_del.svg" alt="Del test"></a>';
     $target = '<a href="/http/view.php" title="Del test">';
-    $result = (new button('Del test', '/http/view.php'))->del();
+    $result = (new button($url, $back))->del(msg::WORD_DEL);
     $t->dsp_contains(", btn_del", $target, $result);
 
+    $url = $html->url(controller::DSP_WORD);
     $target = '<a href="/http/view.php" title="Undo test"><img src="/src/main/resources/images/button_undo.svg" alt="Undo test"></a>';
-    $result = (new button('Undo test', '/http/view.php'))->undo();
+    $result = (new button($url, $back))->undo(msg::UNDO);
     $t->display(", btn_undo", $target, $result);
 
+    $url = $html->url(controller::DSP_WORD_ADD);
     $target = '<a href="/http/view.php" title="Find test"><img src="/src/main/resources/images/button_find.svg" alt="Find test"></a>';
-    $result = (new button('Find test', '/http/view.php'))->find();
+    $result = (new button($url, $back))->find();
     $t->display(", btn_find", $target, $result);
 
+    $url = $html->url(controller::DSP_WORD_ADD);
     $target = '<a href="/http/view.php" title="Show all test"><img src="/src/main/resources/images/button_filter_off.svg" alt="Show all test"></a>';
-    $result = (new button('Show all test', '/http/view.php'))->unfilter();
+    $result = (new button($url, $back))->unfilter();
     $t->display(", btn_unfilter", $target, $result);
 
+    $url = $html->url(controller::DSP_WORD_ADD);
     $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
-    $result = (new button('YesNo test', '/http/view.php'))->yesno();
+    $result = (new button($url, $back))->yesno();
     $t->display(", btn_yesno", $target, $result);
 
+    $url = $html->url(controller::DSP_WORD_ADD);
     $target = '<a href="/http/view.php?words=1" title="back"><img src="/src/main/resources/images/button_back.svg" alt="back"></a>';
-    $result = (new button(''))->back();
+    $result = (new button($url, $back))->back();
     $t->display(", btn_back", $target, $result);
 
 

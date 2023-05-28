@@ -215,16 +215,7 @@ if ($start_usr->id() > 0) {
             //$t->test_api_write_no_rest_all();
             //$t->test_api_write_all();
 
-            create_test_words($t);
-            test\create_test_phrases($t);
-            create_test_sources($t);
-            test\create_base_times($t);
-            create_test_formulas($t);
-            create_test_formula_links($t);
-            create_test_views($t);
-            create_test_components($t);
-            create_test_component_links($t);
-            create_test_values($t);
+            $t->create_test_db_entries($t);
 
             run_db_link_test($t);
             run_sandbox_test($t);

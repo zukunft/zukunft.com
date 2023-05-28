@@ -33,6 +33,7 @@
 namespace test;
 
 use api\phrase_api;
+use api\triple_api;
 use api\word_api;
 use model\library;
 use model\phrase;
@@ -60,6 +61,8 @@ function create_test_phrases(test_cleanup $t): void
     $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON, phrase_api::TN_ZH_CANTON);
     $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CITY, phrase_api::TN_ZH_CITY, phrase_api::TN_ZH_CITY);
     $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_COMPANY, phrase_api::TN_ZH_COMPANY, phrase_api::TN_ZH_COMPANY);
+    $t->test_triple(phrase_api::TN_ZH_CANTON, verb::IS_PART_OF, word_api::TN_CH);
+    $t->test_triple(phrase_api::TN_ZH_CITY, verb::IS_PART_OF, phrase_api::TN_ZH_CANTON);
 
     $t->test_triple(TW_ABB, verb::IS_A, TEST_WORD, TP_ABB);
     $t->test_triple(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
@@ -116,7 +119,7 @@ function run_phrase_test(test_cleanup $t): void
     $result = $lib->trim_all_spaces($result);
     $target = $lib->trim_all_spaces($target);
     // to overwrite any special char
-    $diff = $lib->str_diff($result, $target);
+    $diff = $lib->str_diff($target, $result);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);
         $target = $result;
@@ -138,7 +141,7 @@ function run_phrase_test(test_cleanup $t): void
     $result = $lib->trim_all_spaces($result);
     $target = $lib->trim_all_spaces($target);
     // to overwrite any special char
-    $diff = $lib->str_diff($result, $target);
+    $diff = $lib->str_diff($target, $result);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);
         $target = $result;

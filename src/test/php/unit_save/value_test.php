@@ -233,7 +233,7 @@ function run_value_test(test_cleanup $t): void
     $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
     $result = $fig_dsp->display_linked('1');
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1" title="1.55">1.55</a>';
-    $diff = $lib->str_diff($result, $target);
+    $diff = $lib->str_diff($target, $result);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);
         $target = $result;
@@ -249,7 +249,7 @@ function run_value_test(test_cleanup $t): void
     $result = $mio_val->display_linked('1');
     //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1"  >1.55</a>';
-    $diff = $lib->str_diff($result, $target);
+    $diff = $lib->str_diff($target, $result);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);
         $target = $result;
@@ -261,7 +261,7 @@ function run_value_test(test_cleanup $t): void
     $result = $mio_val->display_linked('1');
     //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1"  >123\'456</a>';
-    $diff = $lib->str_diff($result, $target);
+    $diff = $lib->str_diff($target, $result);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);
         $target = $result;

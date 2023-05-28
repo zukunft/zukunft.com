@@ -1933,7 +1933,8 @@ class sandbox extends db_object
                         if (get_class($this) == get_class($similar)) {
                             $this->id = $similar->id;
                         } else {
-                            if (get_class($this) != word::class or get_class($similar) != formula::class) {
+                            if (!((get_class($this) == word::class and get_class($similar) == formula::class)
+                                or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
                                 log_err('Unexpected similar prevention class ' . get_class($this));
                             }
                         }

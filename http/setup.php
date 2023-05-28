@@ -57,8 +57,8 @@ if ($usr->id() > 0) {
         sql_code_link(controller::DSP_VALUE_EDIT, "Value Edit", $db_con);
         sql_code_link(controller::DSP_FORMULA_ADD, "Add new formula", $db_con);
         sql_code_link(controller::DSP_FORMULA_EDIT, "Formula Edit", $db_con);
-        sql_code_link(controller::DSP_ADD, "Add new view", $db_con);
-        sql_code_link(controller::DSP_EDIT, "view Edit", $db_con);
+        sql_code_link(controller::DSP_VIEW_ADD, "Add new view", $db_con);
+        sql_code_link(controller::DSP_VIEW_EDIT, "view Edit", $db_con);
         sql_code_link(controller::DSP_IMPORT, "Import", $db_con);
 
         sql_code_link(phrase_type::TIME, "Time Word", $db_con);

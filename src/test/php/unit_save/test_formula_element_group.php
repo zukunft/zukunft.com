@@ -151,7 +151,7 @@ function run_formula_element_group_test(test_cleanup $t): void
         $fig_lst = $elm_grp->figures();
         $target = '8.51  ('.$fig_lst->get_first_id().')';
         // to overwrite any special char
-        $diff = $lib->str_diff($result, $target);
+        $diff = $lib->str_diff($target, $result);
         if ($diff != '') {
             log_err('Unexpected diff ' . $diff);
             $target = $result;

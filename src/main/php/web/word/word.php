@@ -425,19 +425,19 @@ class word extends sandbox_typed_dsp
      * @returns string the html code to display a bottom to exclude the word for the current user
      *                 or if no one uses the word delete the complete word
      */
-    function btn_del(): string
+    function btn_del(string $back = ''): string
     {
         $url = (new html_base())->url(api::WORD . api::REMOVE, $this->id, $this->id);
-        return (new button((new msg())->txt(msg::WORD_DEL), $url))->del();
+        return (new button($url, $back))->del(msg::WORD_DEL);
     }
 
     /**
      * @returns string the html code to display a bottom to edit the word link in a table cell
      */
-    function btn_unlink(int $link_id): string
+    function btn_unlink(int $link_id, string $back = ''): string
     {
         $url = (new html_base())->url(api::LINK . api::REMOVE, $link_id, $this->id);
-        return (new button((new msg())->txt(msg::WORD_UNLINK), $url))->del();
+        return (new button($url, $back))->del(msg::WORD_UNLINK);
     }
 
     /*

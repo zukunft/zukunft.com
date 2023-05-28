@@ -61,7 +61,7 @@ if ($usr->id() > 0) {
 
     // prepare the display to edit the view
     $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_ADD);
+    $dsp->load_by_code_id(controller::DSP_VIEW_ADD);
     $back = $_GET['back'];
 
     // create the view object that the user can change

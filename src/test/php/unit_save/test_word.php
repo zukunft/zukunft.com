@@ -36,6 +36,7 @@ use model\change_log_field;
 use model\change_log_named;
 use model\change_log_table;
 use model\sandbox_named;
+use model\user;
 use model\verb;
 use model\word;
 use test\test_cleanup;

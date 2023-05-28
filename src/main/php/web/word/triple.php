@@ -38,6 +38,7 @@ use cfg\phrase_type;
 use html\api;
 use html\button;
 use html\html_base;
+use html\msg;
 use html\word\word as word_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\sandbox_typed_dsp;
@@ -254,12 +255,12 @@ class triple extends sandbox_typed_dsp
     /**
      * @returns string the html code to display a bottom to edit the word link in a table cell
      */
-    function btn_edit(phrase_dsp $trp): string
+    function btn_edit(phrase_dsp $trp, string $back = ''): string
     {
 
         $html = new html_base();
         $url = $html->url(api::PATH_FIXED . 'link' . api::UPDATE . api::EXT, $this->id, $trp->id());
-        $btn = (new button("edit word link", $url))->edit();
+        $btn = (new button($url. $back))->edit(msg::TRIPLE_EDIT);
 
         return $html->td($btn);
     }

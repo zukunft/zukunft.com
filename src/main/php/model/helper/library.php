@@ -35,10 +35,46 @@ namespace model;
 use api\combine_object_api;
 use controller\controller;
 use DateTime;
+use DOMDocument;
 use Exception;
 
 class library
 {
+
+    const DIFF_NUM_PRECISION = 7;
+
+    // to separate two string for the human-readable format
+    const SEPARATOR = ',';
+
+    /*
+     * internal const
+     */
+
+    const STR_TYPE_AUTO = -1; // try to detect the type
+    const STR_TYPE_CODE = 0; // the string should be checked byte by byte
+    const STR_TYPE_PROSA = 1; // words are the critical parts
+    const STR_TYPE_JSON = 2; // check for json elements
+    const STR_TYPE_HTML = 3;
+
+    private const STR_DIFF_VAL = 'values';
+    private const STR_DIFF_TYP = 'type';
+    private const STR_DIFF_UNCHANGED = 0;
+    private const STR_DIFF_ADD = 1;
+    private const STR_DIFF_DEL = -1;
+    private const STR_DIFF_ADD_START = '//+';
+    private const STR_DIFF_ADD_END = '//';
+    private const STR_DIFF_DEL_START = '//-';
+    private const STR_DIFF_DEL_END = '//';
+    private const STR_DIFF_MSG_LEN = 100; // the max target length of the difference message to keep it human-readable
+    private const STR_DIFF_MAX_MSG_WORD = 5; // the max number of word difference to report to keep it human-readable
+    private const STR_DIFF_MAX_MSG_CHAR = 30; // the max number of char difference to report to keep it human-readable
+
+    // the expected minimal length of 80% of the words
+    private const STR_WORD_MIN_LEN = 2;
+    // the expected maximal length of 80% of the words
+    private const STR_WORD_MAX_LEN = 20;
+    private const STR_WORD_MIN_LEN_NORMAL_IN_PCT = 0.9; // if 90% of the words have a "normal" length the text is supposed to be a text for humans
+
 
     /*
      * convert
@@ -257,12 +293,12 @@ class library
      * some small string related functions to shorten code and make the code clearer
      */
 
-    function str_left(string $text, string $pos): string
+    function str_left(string $text, int $pos): string
     {
         return substr($text, 0, $pos);
     }
 
-    function str_right(string $text, string $pos): string
+    function str_right(string $text, int $pos): string
     {
         return substr($text, $pos * -1);
     }
@@ -422,6 +458,167 @@ class library
 
 
     /*
+     * diff
+     */
+
+    /**
+     * explains the difference between two strings or arrays
+     * in a useful human-readable format
+     *
+     * @param string|array $result the actual value that should be checked
+     * @param string|array $target the expected value to compare
+     * @param bool $ignore_order true if the array can be resorted to find the matches
+     * @return string an empty string if the actual value matches the expected
+     */
+    function diff_msg(
+        string|array $result,
+        string|array $target,
+        bool         $ignore_order = true): string
+    {
+        if (is_string($target) and is_string($result)) {
+            $msg = $this->str_diff_msg($result, $target);
+        } elseif (is_array($target) and is_array($result)) {
+            $msg = $this->array_explain_missing($result, $target);
+            $msg .= $this->array_explain_missing($target, $result);
+            if ($msg == '') {
+                $msg = $this->array_diff_msg($result, $target, $ignore_order);
+            }
+        } else {
+            $msg = 'The type combination of ' . gettype($target) . ' and ' . gettype($target) . ' are not expected.';
+        }
+        return $msg;
+    }
+
+    /**
+     * explains the difference between two strings
+     * in a useful human-readable format
+     *
+     * @param string $result the actual value that should be checked
+     * @param string $target the expected value to compare
+     * @return string an empty string if the actual value matches the expected
+     */
+    private function str_diff_msg(string $result, string $target): string
+    {
+        $msg = '';
+        if ($result != $target) {
+            if (is_numeric($result) && is_numeric($target)) {
+                $result = round($result, self::DIFF_NUM_PRECISION);
+                $target = round($target, self::DIFF_NUM_PRECISION);
+                if ($result != $target) {
+                    $msg .= 'number ' . $result . ' != ' . $target;
+                    // TODO add this message on level info
+                    // } else {
+                    //    $msg = 'number ' . $result . ' ≈ ' . $target;
+                }
+            } else {
+                if ($target == '') {
+                    $msg .= 'Target is not expected to be empty ' . $result;
+                } else {
+                    $diff = $this->str_diff($target, $result);
+                    if ($diff != '') {
+                        $msg .= $diff;
+                    }
+                }
+            }
+        }
+        return $msg;
+    }
+
+    /**
+     * explains the difference between two arrays
+     * in a useful human-readable format
+     *
+     * @param array $result the actual value that should be checked
+     * @param array $target the expected value to compare
+     * @return string an empty string if the actual value matches the expected
+     */
+    private function array_diff_msg(
+        array $result,
+        array $target,
+        bool  $ignore_order = true): string
+    {
+        $msg = '';
+        if ($ignore_order) {
+            // sort only if needed
+            $do_sort = false;
+            $pos = 0;
+            $result_keys = array_flip(array_keys($result));
+            foreach ($target as $key => $value) {
+                // sort is only needed
+                // if the key on the same position does not match matches
+                if ($result_keys[$pos] != $key) {
+                    $do_sort = true;
+                }
+                // or the value does not match
+                if ($result[$pos] != $value) {
+                    $do_sort = true;
+                }
+                $pos++;
+            }
+            if ($do_sort) {
+                sort($target);
+                sort($result);
+            }
+        }
+        // in an array each value needs to be the same
+        foreach ($target as $key => $value) {
+            if (array_key_exists($key, $result)) {
+                if ($value != $result[$key]) {
+                    $msg .= $this->str_sep($msg);
+                    $msg .= 'pos  ' . $key . ': ' . $this->diff_msg($result[$key], $value);
+                }
+            }
+        }
+        return $msg;
+    }
+
+    /**
+     * explains which parts of the target are missing
+     * in the result in a useful human-readable format
+     *
+     * @param string|array $result the actual result that can contain more than the target
+     * @param string|array $target the part that must at least be part of the result
+     * @return string an empty string if all target entries are part of the result
+     */
+    function explain_missing(string|array $result, string|array $target): string
+    {
+        if (is_array($target) and is_array($result)) {
+            if ($result !== $target) {
+                $msg = $this->array_explain_missing($result, $target);
+            } else {
+                $msg = '';
+            }
+        } elseif (is_string($target) and is_string($result)) {
+            $msg = $this->str_diff_msg($result, $target);
+        } else {
+            $msg = 'The type combination of ' . gettype($target) . ' and ' . gettype($target) . ' are not expected.';
+        }
+        return $msg;
+    }
+
+    /**
+     * explains which array parts of the target are missing
+     * in the result in a useful human-readable format
+     *
+     * @param array $result the actual result that can contain more than the target
+     * @param array $target the part that must at least be part of the result
+     * @return string an empty string if all target entries are part of the result
+     */
+    private function array_explain_missing(array $result, array $target): string
+    {
+        $msg = '';
+        // in an array each value needs to be the same
+        foreach ($target as $key => $value) {
+            if (!array_key_exists($key, $result)) {
+                $msg .= $this->str_sep($msg);
+                $msg .= 'key ' . $key . ' missing in ' . $this->dsp_array($result, true);
+            }
+        }
+        return $msg;
+    }
+
+
+    /*
      * display
      * to format objects as a string
      */
@@ -482,15 +679,30 @@ class library
             $keys = array_keys($in_array);
             if ($debug > 10 or count($keys) < 7) {
                 if (count($keys) > 0) {
-                    $result = implode(',', $keys);
+                    $result = implode(self::SEPARATOR, $keys);
                 }
             } else {
                 $left = array_slice($keys, 0, 3);
-                $result = implode(',', $lib->array_flat($left));
+                $result = implode(self::SEPARATOR, $lib->array_flat($left));
                 $result .= ',...,' . end($keys);
             }
         }
         return $result;
+    }
+
+    /**
+     * if useful add a comma as a separator to make a contacted text  easier to read for humans
+     * @param string $msg the text as use until now
+     * @return string the text with a comma if this helps to make the text easier to read
+     */
+    private function str_sep(string $msg): string
+    {
+        if ($msg != '') {
+            return self::SEPARATOR . ' ';
+        } else {
+            return '';
+        }
+
     }
 
 
@@ -671,7 +883,7 @@ class library
      * @param string|null $to the text to compare
      * @return string the first char that differs or an empty string
      */
-    function str_diff(?string $from, ?string $to): string
+    function str_diff_old(?string $from, ?string $to): string
     {
         $result = '';
 
@@ -682,15 +894,16 @@ class library
 
                 // add message if just one string is shorter
                 if (count($f) < count($t)) {
-                    $result = 'pos ' . count($t) . ' less: ' . substr($to, count($f), count($t) - count($f));
+                    $result = '@' . count($t) . ' less: ' . substr($to, count($f), count($t) - count($f));
                 } elseif (count($t) < count($f)) {
-                    $result = 'pos ' . count($f) . ' additional: ' . substr($from, count($t), count($f) - count($t));
+                    $result = '@' . count($t) . ' additional: ' . substr($from, count($t), count($f) - count($t));
                 }
 
+                // find the first diff
                 $i = 0;
                 while ($i < count($f) and $i < count($t) and $result == '') {
                     if ($f[$i] != $t[$i]) {
-                        $result = 'pos ' . $i . ': ' . $f[$i] . ' (' . ord($f[$i]) . ') != ' . $t[$i] . ' (' . ord($t[$i]) . ')';
+                        $result = '@' . $i . ': ' . $f[$i] . ' (' . ord($f[$i]) . ') != ' . $t[$i] . ' (' . ord($t[$i]) . ')';
                         $result .= ', near ' . substr($from, $i - 10, 20);
                     }
                     $i++;
@@ -704,6 +917,439 @@ class library
 
 
         return $result;
+    }
+
+    /**
+     * highlight the first differences between two string
+     * @param string|null $from the text to compare
+     * @param string|null $to the expected text
+     * @return string the first char that differs or an empty string
+     */
+    function str_diff(?string $from, ?string $to): string
+    {
+        $str_type = $this->str_type($to);
+        $from_array = $this->str_split_for_humans($from, $str_type, false);
+        $from_sep = $this->str_split_for_humans($from, $str_type);
+        $to_array = $this->str_split_for_humans($to, $str_type, false);
+        $to_sep = $this->str_split_for_humans($to, $str_type);
+        $diff = $this->str_diff_list($from_array, $to_array, $from_sep, $to_sep);
+        $diff_val = $diff[self::STR_DIFF_VAL];
+        $diff_typ = $diff[self::STR_DIFF_TYP];
+
+        // if the result is expected to be long only show the differences
+        $long_text = false;
+        if (strlen($from) > self::STR_DIFF_MSG_LEN
+            or strlen($to) > self::STR_DIFF_MSG_LEN) {
+            $long_text = true;
+        }
+
+        // create the user message
+        $prev_type = 0;
+        $msg = '';
+        $pos = 1;
+        $prev_pos = 1;
+        $i = 0;
+        while (($i < count($diff_val) AND strlen($msg) < self::STR_DIFF_MSG_LEN)) {
+            $type = $diff_typ[$i];
+            if ($type != $prev_type) {
+                switch ($prev_type) {
+                    case self::STR_DIFF_DEL:
+                        $msg .= self::STR_DIFF_DEL_END;
+                        break;
+                    case self::STR_DIFF_ADD:
+                        $msg .= self::STR_DIFF_ADD_END;
+                        break;
+                }
+                switch ($type) {
+                    case self::STR_DIFF_DEL:
+                        if ($long_text and $pos != $prev_pos) {
+                            $msg .= $pos;
+                            $prev_pos = $pos;
+                        }
+                        $msg .= self::STR_DIFF_DEL_START;
+                        break;
+                    case self::STR_DIFF_ADD:
+                        if ($long_text and $pos != $prev_pos) {
+                            $msg .= $pos;
+                            $prev_pos = $pos;
+                        }
+                        $msg .= self::STR_DIFF_ADD_START;
+                        break;
+                }
+            }
+            if ($long_text) {
+                if ($type != self::STR_DIFF_UNCHANGED) {
+                    $msg .= $diff_val[$i];
+                }
+                if ($type != self::STR_DIFF_DEL) {
+                    $pos = $pos + strlen($diff_val[$i]);
+                }
+            } else {
+                $msg .= $diff_val[$i];
+            }
+
+            $prev_type = $type;
+            $i++;
+        }
+        switch ($prev_type) {
+            case self::STR_DIFF_DEL:
+                $msg .= self::STR_DIFF_DEL_END;
+                break;
+            case self::STR_DIFF_ADD:
+                $msg .= self::STR_DIFF_ADD_END;
+                break;
+        }
+
+        if ($i < count($diff_val)) {
+            $additional_diff = count($diff_val) - $i;
+            $msg .= ' and ' . $additional_diff . ' more';
+        }
+
+        return $msg;
+    }
+
+    /**
+     * array with the differences of two strings converted into arrays with "useful" parts
+     *
+     * @param array $from the target string converted to an array
+     * @param array $to the result string converted to an array
+     * @return array of array of
+     *         values: a list of elements as they appear in the diff
+     *           type: contains numbers. 0: unchanged, -1: removed, 1: added
+     */
+    private function str_diff_list(array $from, array $to, ?array $from_sep = null, ?array $to_sep = null): array
+    {
+        if ($from_sep == null or count($from_sep) != count($from)) {
+            $from_sep = $from;
+        }
+        if ($to_sep == null or count($to_sep) != count($to)) {
+            $to_sep = $to;
+        }
+
+        $diff_part = array(); // list with the differences
+        $diff_type = array(); // list with the difference type: same, add or del
+
+        $from_pos = 0;
+        $to_pos = 0;
+
+        // check if the from parts are also part of to
+        while ($from_pos < count($from)) {
+            if ($from[$from_pos] == $to[$to_pos]) {
+                $diff_part[] = $to_sep[$to_pos];
+                $diff_type[] = self::STR_DIFF_UNCHANGED;
+                $to_pos++;
+                $from_pos++;
+            } else {
+                $match_pos = $this->str_diff_list_next_match($from[$from_pos], $to, $to_pos);
+                if ($match_pos > $to_pos) {
+                    for ($add_pos = $to_pos; $add_pos < $match_pos; $add_pos++) {
+                        $diff_part[] = $to_sep[$add_pos];
+                        $diff_type[] = self::STR_DIFF_ADD;
+                    }
+                    $to_pos = $add_pos;
+                } elseif ($match_pos == -1) {
+                    $diff_part[] = $from_sep[$from_pos];
+                    $diff_type[] = self::STR_DIFF_DEL;
+                    $from_pos++;
+                }
+            }
+        }
+
+        // add the parts extra in to at the end
+        while ($to_pos < count($to)) {
+            $diff_part[] = $to_sep[$to_pos];
+            $diff_type[] = self::STR_DIFF_ADD;
+            $to_pos++;
+        }
+
+
+        return array(
+            self::STR_DIFF_VAL => $diff_part,
+            self::STR_DIFF_TYP => $diff_type);
+    }
+
+    /**
+     * @param string $from the part of the target string that should be found in the $to string array
+     * @param array $to the result string converted to an array
+     * @param int $start_pos the staring position in the to string array
+     * @return int the position of the next match in the to array or -1 if nothing found
+     */
+    private function str_diff_list_next_match(string $from, array $to, int $start_pos): int
+    {
+        $check_pos = $start_pos;
+        $found_pos = -1;
+        while ($check_pos < count($to) and $found_pos == -1) {
+            if ($from == $to[$check_pos]) {
+                $found_pos = $check_pos;
+            }
+            $check_pos++;
+        }
+        return $found_pos;
+    }
+
+    /**
+     * array with the differences of two strings converted into arrays with "useful" parts
+     *
+     * @param array $from the target string converted to an array
+     * @param array $to the result string converted to an array
+     * @return array of array of
+     *         values: a list of elements as they appear in the diff
+     *           type: contains numbers. 0: unchanged, -1: removed, 1: added
+     */
+    private function str_diff_list_lcs(array $from, array $to): array
+    {
+        $diff_part = array(); // list with the differences
+        $diff_type = array(); //
+
+        $diffs = array();
+        $len_f = count($from);
+        $len_t = count($to);
+        $len_min = min($len_f, $len_t);
+
+        // Extract unchanged head and remove unchanged elements from both arrays.
+        $head_part = array();
+        $head_type = array();
+        $first_changed = $len_min;
+        for ($i = 0; $i < $len_min; $i++) {
+            if ($from[$i] != $to[$i]) {
+                $first_changed = $i;
+                break;
+            }
+            $head_part[] = $from[$i];
+            $head_type[] = 0;
+        }
+        $from = array_slice($from, $first_changed);
+        $to = array_slice($to, $first_changed);
+        $len_f -= $first_changed;
+        $len_t -= $first_changed;
+        $len_min -= $first_changed;
+
+        // Extract unchanged tail and remove unchanged elements from both arrays.
+        $tail_part = array();
+        $tail_type = array();
+        $first_changed = $len_min;
+        for ($i = 1; $i <= $len_min; $i++) {
+            if ($from[$len_f - $i] != $to[$len_t - $i]) {
+                $first_changed = $i - 1;
+                break;
+            }
+            $tail_part[] = $from[$len_f - $i];
+            $tail_type[] = 0;
+        }
+        $tail_part = array_reverse($tail_part);
+
+        $from = array_slice($from, 0, $len_f - $first_changed);
+        $to = array_slice($to, 0, $len_t - $first_changed);
+        $len_f -= $first_changed;
+        $len_t -= $first_changed;
+        $len_min -= $first_changed;
+
+        // fill the LCS matrix with the no change default
+        // create the column
+        for ($pos_t = -1; $pos_t < $len_t; $pos_t++) $diffs[-1][$pos_t] = 0;
+        // create the row
+        for ($pos_f = -1; $pos_f < $len_f; $pos_f++) $diffs[$pos_f][-1] = 0;
+        ksort($diffs[-1]);
+        ksort($diffs);
+        for ($pos_f = 0; $pos_f < $len_f; $pos_f++) {
+            for ($pos_t = 0; $pos_t < $len_t; $pos_t++) {
+                if ($from[$pos_f] == $to[$pos_t]) {
+                    $ad = $diffs[$pos_f - 1][$pos_t - 1];
+                    $diffs[$pos_f][$pos_t] = $ad + 1;
+                } else {
+                    $a1 = $diffs[$pos_f - 1][$pos_t];
+                    $a2 = $diffs[$pos_f][$pos_t - 1];
+                    $diffs[$pos_f][$pos_t] = max($a1, $a2);
+                }
+            }
+        }
+
+        // Traverse the diff matrix.
+        $pos_f = $len_f - 1;
+        $pos_t = $len_t - 1;
+        while (($pos_f > -1) || ($pos_t > -1)) {
+            if ($pos_t > -1) {
+                if ($diffs[$pos_f][$pos_t - 1] == $diffs[$pos_f][$pos_t]) {
+                    $diff_part[] = $to[$pos_t];
+                    $diff_type[] = self::STR_DIFF_ADD;
+                    $pos_t--;
+                    continue;
+                }
+            }
+            if ($pos_f > -1) {
+                if ($diffs[$pos_f - 1][$pos_t] == $diffs[$pos_f][$pos_t]) {
+                    $diff_part[] = $from[$pos_f];
+                    $diff_type[] = self::STR_DIFF_DEL;
+                    $pos_f--;
+                    continue;
+                }
+            }
+            {
+                $diff_part[] = $from[$pos_f];
+                $diff_type[] = self::STR_DIFF_UNCHANGED;
+                $pos_f--;
+                $pos_t--;
+            }
+        }
+
+        $diff_part = array_reverse($diff_part);
+        $diff_type = array_reverse($diff_type);
+
+        $diff_part = array_merge($head_part, $diff_part, $tail_part);
+        $diff_type = array_merge($head_type, $diff_type, $tail_type);
+
+        return array(
+            self::STR_DIFF_VAL => $diff_part,
+            self::STR_DIFF_TYP => $diff_type);
+    }
+
+    /**
+     * split a text string into best human-readable parts
+     * works only for English at the moment
+     *
+     * @param string $text any string that could be a human-readable text or a technical list of chars
+     * @param int $type to force to use a predefined split type
+     * @param bool $with_sep false if the separators should not be included and ignored in the compare
+     * @return array with the "useful" parts of the string
+     */
+    function str_split_for_humans(string $text, int $type = self::STR_TYPE_AUTO, bool $with_sep = true): array
+    {
+        if ($type == self::STR_TYPE_AUTO) {
+            $type = $this->str_type($text);
+        }
+        if ($type == self::STR_TYPE_CODE) {
+            $result = str_split($text);
+        } elseif ($type == self::STR_TYPE_PROSA) {
+            $result = preg_split("/[\s,]+/", $text);
+            $result = $this->str_split_add_sep($text, $result, $with_sep);
+        } elseif ($type == self::STR_TYPE_JSON) {
+            $result = json_decode($text, true);
+        } elseif ($type == self::STR_TYPE_HTML) {
+            $result = preg_split("/[\s,<>]+/", $text);
+            $result = $this->str_split_add_sep($text, $result, $with_sep);
+            /*
+            $dom = new DOMDocument;
+            $dom->loadHTML($text);
+            $result = array();
+            ...
+            */
+        } else {
+            $result = str_split($text);
+        }
+        return $result;
+    }
+
+    /**
+     * if requested add the separators to a split string as array
+     *
+     * @param string $text any string that could be a human-readable text or a technical list of chars
+     * @param bool $with_sep false if the separators should not be included and ignored in the compare
+     * @return array with the "useful" parts of the string
+     */
+    private function str_split_add_sep(string $text, array $result, bool $with_sep = true): array
+    {
+        $pos = 0;
+        foreach ($result as $key => $word) {
+            $start = $pos;
+            $end = strpos($text, $word, $pos);
+            if ($start > 0 and $end > $start) {
+                if ($with_sep) {
+                    $sep = substr($text, $start, $end - $start);
+                } else {
+                    $sep = '';
+                }
+                $result[$key] = $sep . $word;
+            }
+            $pos = $end + strlen($word);
+        }
+        return $result;
+    }
+
+    /**
+     * classify the string text
+     *
+     * @param string $text any text
+     * @return int the enum type of text
+     */
+    function str_type(string $text): int
+    {
+        $type = self::STR_TYPE_CODE;
+        if ($this->str_is_json($text)) {
+            $type = self::STR_TYPE_JSON;
+        } elseif ($this->str_is_html($text)) {
+            $type = self::STR_TYPE_HTML;
+        } else {
+            $result = preg_split("/[\s,]+/", $text);
+            $normal_len_in_pct = $this->str_word_len_normal(
+                $result,
+                self::STR_WORD_MIN_LEN,
+                self::STR_WORD_MAX_LEN);
+            if ($normal_len_in_pct > self::STR_WORD_MIN_LEN_NORMAL_IN_PCT) {
+                $type = self::STR_TYPE_PROSA;
+            }
+        }
+        return $type;
+    }
+
+
+    /**
+     * @param string $text any text that is potential a json string
+     * @return bool true if the string is a valid json
+     */
+    function str_is_json(string $text): bool
+    {
+        json_decode($text);
+        return json_last_error() === JSON_ERROR_NONE;
+    }
+
+    /**
+     * @param string $text any text that is potential a html string
+     * @return bool true if the string is a valid html
+     */
+    function str_is_html(string $text): bool
+    {
+        /*
+        $dom = new DOMDocument;
+        $dom->loadHTML($text);
+        if ($dom->validate()) {
+            return true;
+        } else {
+            return false;
+        }
+        */
+        $start_maker = '<!DOCTYPE html>';
+        if ($this->str_left($text, strlen($start_maker)) == $start_maker) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * return the percentage of words that are within a expected length range
+     *
+     * @param array $word_list list of words (or any text)
+     * @param int $min_len the expect minimal length of a "word"
+     * @param int $max_len the expect maximal length of a "word"
+     * @return float the percentage of "words" within the expected length
+     */
+    private function str_word_len_normal(
+        array $word_list,
+        int   $min_len,
+        int   $max_len
+    ): float
+    {
+        $short_words = 0;
+        $long_words = 0;
+        foreach ($word_list as $word) {
+            if (strlen($word) < $min_len) {
+                $short_words++;
+            }
+            if (strlen($word) > $max_len) {
+                $long_words++;
+            }
+        }
+        return 1 - (($short_words + $long_words) / count($word_list));
     }
 
 

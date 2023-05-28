@@ -302,6 +302,71 @@ class string_unit_tests
         $debug = $mem_debug;
 
 
+        $t->subheader('diff');
+
+        // test the diff supporting functions:
+        // ... useful text split
+        $test_text = 'this text is expected to be split into words';
+        $result = $lib->str_split_for_humans($test_text);
+        $target = ['this', ' text', ' is', ' expected', ' to', ' be', ' split', ' into', ' words'];
+        $t->assert("str_split_for_humans, words", $result, $target);
+        $test_text = 'SplitToCharBecauseNoWordIsExpectedSoLong';
+        $result = $lib->str_split_for_humans($test_text);
+        $target = ['S', 'p', 'l', 'i', 't', 'T', 'o', 'C', 'h', 'a', 'r', 'B', 'e', 'c', 'a', 'u', 's', 'e', 'N', 'o', 'W', 'o', 'r', 'd', 'I', 's', 'E', 'x', 'p', 'e', 'c', 't', 'e', 'd', 'S', 'o', 'L', 'o', 'n', 'g'];
+        $t->assert("str_split_for_humans, chars", $result, $target);
+        $test_text = '{ "json_tag": "text" }';
+        $result = $lib->str_split_for_humans($test_text);
+        $target = ['json_tag' => 'text'];
+        $t->assert("str_split_for_humans, json", $result, $target);
+        /* TODO activate
+        $test_text = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Title</title></head><body></body></html>';
+        $result = $lib->str_split_for_humans($test_text);
+        $target = ['json_tag' => 'text'];
+        $t->assert("str_split_for_humans, json", $result, $target);
+        */
+
+        // test all expected diff cases:
+        // ... identical string
+        $test_result = 'Text';
+        $test_target = 'Text';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '';
+        $t->assert("diff_msg, no diff", $result, $target);
+        // ... code text with other beginning
+        $test_result = 'codeStartingWithMoreCharsText';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '//+codeStartingWithMoreChars//Text';
+        $t->assert("diff_msg, add chars before", $result, $target);
+        // ... string with more at the end
+        $test_result = 'Text with more';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = 'Text//+ with more//';
+        $t->assert("diff_msg, with more at end", $result, $target);
+        // ... string with other beginning
+        $test_result = 'more begin Text';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '//+more begin// Text';
+        $t->assert("diff_msg, add words before", $result, $target);
+        // ... string with different middle part
+        $test_result = 'text add end';
+        $test_target = 'text less end';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = 'text//- less////+ add// end';
+        $t->assert("diff_msg, replaced part", $result, $target);
+        // ... identical array
+        $test_result = [1, 2, 3];
+        $test_target = [1, 2, 3];
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '';
+        $t->assert("diff_msg, no diff in array", $result, $target);
+        // ... html files
+        $test_result = $t->file('/web/system/result.html');
+        $test_target = $t->file('/web/system/target.html');
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '433//- href="Test" title=""////+ href="/http/word_add.php" title="add new word"//';
+        $t->assert("diff_msg, with position in long string", $result, $target);
+
+
         $t->subheader('json');
 
         // test json_clean

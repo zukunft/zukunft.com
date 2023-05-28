@@ -373,6 +373,7 @@ class test_base
     // the url which should be used for testing (maybe later https://test.zukunft.com/)
     const URL = 'https://zukunft.com/';
 
+    const TEST_TYPE_CONTAINS = 'contains';
     const FILE_EXT = '.sql';
     const FILE_MYSQL = '_mysql';
 
@@ -426,7 +427,6 @@ class test_base
 
 
 
-
     /*
      * Display functions
      */
@@ -463,7 +463,7 @@ class test_base
      * check if the test result is as expected and display the test result to an admin user
      * TODO replace all dsp calls with this but the
      *
-     * @param string $msg (unique) description of the test
+     * @param string $test_name (unique) description of the test
      * @param string|array|null $result the actual result
      * @param string|array $target the expected result
      * @param float $exe_max_time the expected max time to create the result
@@ -472,19 +472,46 @@ class test_base
      * @return bool true is the result is fine
      */
     function assert(
-        string            $msg,
+        string            $test_name,
         string|array|null $result,
         string|array      $target,
         float             $exe_max_time = TIMEOUT_LIMIT,
         string            $comment = '',
         string            $test_type = ''): bool
     {
-        // the result should never be null, but if, check it here not on each call
-        if ($result == null) {
+        // init the test result vars
+        $lib = new library();
+        $comment = '';
+
+        // the result should never be null, but if, check it here not on each test
+        if ($result === null) {
             $result = '';
-            log_warning('result of test ' . $msg . ' has been null');
+            $comment .= 'result of test ' . $test_name . ' has been null';
         }
-        return $this->display(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
+
+        // do the compare depending on the type
+        if ($test_type == self::TEST_TYPE_CONTAINS) {
+            $msg = $lib->explain_missing($result, $target);
+        } else {
+            $msg = $lib->diff_msg($result, $target);
+        }
+
+        // remove html colors to avoid misleading check display colors
+        $msg = $this->test_remove_color($msg);
+
+        // check if the test has been fine
+        if ($msg == '') {
+            $test_result = true;
+        } else {
+            $test_result = false;
+        }
+
+        // add info level comments to the result after the
+        if ($comment <> '') {
+            $test_name .= ' (' . $comment . ')';
+        }
+
+        return $this->assert_dsp($test_name, $test_result, $target, $result, $msg, $exe_max_time);
     }
 
     /**
@@ -1214,7 +1241,7 @@ class test_base
     /**
      * display the result of one test e.g. if adding a value has been successful
      *
-     * @param string $msg the message show to the admin / developer to identify the test
+     * @param string $test_name the message show to the admin / developer to identify the test
      * @param string|array $target the expected result
      * @param string|array $result the actual result
      * @param float $exe_max_time the expected time to create the result to identify unexpected slow functions
@@ -1223,7 +1250,7 @@ class test_base
      * @return bool true if the test result is fine
      */
     function display(
-        string       $msg,
+        string       $test_name,
         string|array $target,
         string|array $result,
         float        $exe_max_time = TIMEOUT_LIMIT,
@@ -1232,109 +1259,80 @@ class test_base
     {
 
         // init the test result vars
-        $test_result = false;
-        $txt = '';
-        $test_diff = '';
         $lib = new library();
+        $msg = '';
 
         // do the compare depending on the type
-        if (is_array($target) and is_array($result)) {
-            sort($target);
-            sort($result);
-            // in an array each value needs to be the same
-            $test_result = true;
-            foreach ($target as $key => $value) {
-                if (array_key_exists($key, $result)) {
-                    if ($value != $result[$key]) {
-                        $test_result = false;
-                    }
-                } else {
-                    $lib = new library();
-                    log_err('Key ' . $key . ' missing in ' . $lib->dsp_array($result, true));
-                }
-            }
-        } elseif (is_numeric($result) && is_numeric($target)) {
-            $result = round($result, 7);
-            $target = round($target, 7);
-            if ($result == $target) {
-                $test_result = true;
-            }
+        if (is_string($result)) {
+            $result = $this->test_remove_color($result);
+        }
+        if ($test_type == self::TEST_TYPE_CONTAINS) {
+            $msg = $lib->explain_missing($result, $target);
         } else {
-            if ($result != null) {
-                $result = $this->test_remove_color($result);
-            }
-            if ($result == $target) {
-                $test_result = true;
-            } else {
-                if ($target == '') {
-                    log_err('Target is not expected to be empty ' . $result);
-                } else {
-                    $diff = $lib->str_diff($result, $target);
-                    if ($diff == '') {
-                        log_err('Unexpected diff ' . $diff);
-                        $target = $result;
-                    }
-                }
-            }
+            $msg = $lib->diff_msg($result, $target);
         }
 
         // explain the check
-        if (is_array($target)) {
-            if ($test_type == 'contains') {
-                $msg .= " should contain \"" . $lib->dsp_array($target) . "\"";
-            } else {
-                $msg .= " should be \"" . $lib->dsp_array($target) . "\"";
-            }
-        } else {
-            if ($test_type == 'contains') {
-                $msg .= " should contain \"" . $target . "\"";
-            } else {
-                $msg .= " should be \"" . $target . "\"";
-            }
-        }
-        if ($result == $target) {
-            if ($test_type == 'contains') {
-                $msg .= " and it contains ";
-            } else {
-                $txt .= " and it is ";
-            }
-        } else {
-            if ($test_type == 'contains') {
-                $msg .= ", but ";
-            } else {
-                $msg .= ", but it is ";
-            }
-        }
-        if (is_array($result)) {
-            if ($result != null) {
-                if (is_array($result[0])) {
-                    $msg .= "\"";
-                    foreach ($result[0] as $result_item) {
-                        if ($result_item <> $result[0]) {
-                            $msg .= ",";
-                        }
-                        $msg .= implode(":", $lib->array_flat($result_item));
-                    }
-                    $msg .= "\"";
+        if ($msg != '') {
+            if (is_array($target)) {
+                if ($test_type == self::TEST_TYPE_CONTAINS) {
+                    $msg .= " should contain \"" . $lib->dsp_array($target) . "\"";
                 } else {
-                    $msg .= "\"" . $lib->dsp_array($result) . "\"";
+                    $msg .= " should be \"" . $lib->dsp_array($target) . "\"";
+                }
+            } else {
+                if ($test_type == self::TEST_TYPE_CONTAINS) {
+                    $msg .= " should contain \"" . $target . "\"";
+                } else {
+                    $msg .= " should be \"" . $target . "\"";
                 }
             }
-        } else {
-            $msg .= "\"" . $result . "\"";
-            if ($test_diff != '') {
-                $msg .= ' ' . $test_diff;
+            if ($result == $target) {
+                if ($test_type == self::TEST_TYPE_CONTAINS) {
+                    $msg .= " and it contains ";
+                } else {
+                    $msg .= " and it is ";
+                }
+            } else {
+                if ($test_type == self::TEST_TYPE_CONTAINS) {
+                    $msg .= ", but ";
+                } else {
+                    $test_name .= ", but it is ";
+                }
+            }
+            if (is_array($result)) {
+                if ($result != null) {
+                    if (is_array($result[0])) {
+                        $msg .= "\"";
+                        foreach ($result[0] as $result_item) {
+                            if ($result_item <> $result[0]) {
+                                $msg .= ",";
+                            }
+                            $msg .= implode(":", $lib->array_flat($result_item));
+                        }
+                        $msg .= "\"";
+                    } else {
+                        $msg .= "\"" . $lib->dsp_array($result) . "\"";
+                    }
+                }
+            }
+            if ($comment <> '') {
+                $msg .= ' (' . $comment . ')';
             }
         }
-        if ($comment <> '') {
-            $msg .= ' (' . $comment . ')';
+        if ($msg == '') {
+            $test_result = true;
+        } else {
+            $test_result = false;
         }
 
-        return $this->assert_dsp($msg, $test_result, $target, $result, $exe_max_time);
+        return $this->assert_dsp($test_name, $test_result, $target, $result, $msg, $exe_max_time);
     }
 
     /**
-     * @param string $msg the message that describes the test for the developer
+     * create the html code to display a unit test result
+     *
+     * @param string $test_name the message that describes the test for the developer
      * @param bool $test_result true if the test is fine
      * @param string|array $target the expected result (added here just for fast debugging)
      * @param string|array $result the actual result (added here just for fast debugging)
@@ -1342,11 +1340,12 @@ class test_base
      * @return bool true if the test result is fine
      */
     private function assert_dsp(
-        string $msg,
-        bool $test_result,
+        string       $test_name,
+        bool         $test_result,
         string|array $target = '',
         string|array $result = '',
-        float $exe_max_time = TIMEOUT_LIMIT): bool
+        string       $diff_msg = '',
+        float        $exe_max_time = TIMEOUT_LIMIT): bool
     {
         // calculate the execution time
         $final_msg = '';
@@ -1357,12 +1356,13 @@ class test_base
         if ($test_result) {
             // check if executed in a reasonable time and if the result is fine
             if ($since_start > $exe_max_time) {
-                $final_msg .= '<p style="color:orange">TIMEOUT' . $msg;
+                $final_msg .= '<p style="color:orange">TIMEOUT</p>';
                 $this->timeout_counter++;
             } else {
-                $final_msg .= '<p style="color:green">OK' . $msg;
+                $final_msg .= '<p style="color:green">OK</p>';
                 $test_result = true;
             }
+            $final_msg .= '<p>' . $test_name;
         } else {
             if (is_array($result)) {
                 $lib = new library();
@@ -1372,9 +1372,13 @@ class test_base
                 $lib = new library();
                 $target = $lib->dsp_array($target);
             }
-            $final_msg .= '<p style="color:red">Error' . $msg . '</p>'
-                . '<p>actual: ' . $result . '</p>'
-                . '<p>expected: ' . $target . '</p>';
+            $final_msg .= '<p style="color:red">Error</p>';
+            $final_msg .= '<p>' . $test_name . ': ';
+            if ($diff_msg != '') {
+                $final_msg .= 'diff: ' . $diff_msg . ', ';
+            }
+            $final_msg .= 'actual: ' . $result . ', ';
+            $final_msg .= 'expected: ' . $target;
             $this->error_counter++;
             // TODO: create a ticket after version 0.1 where hopefully more than one developer is working on the project
         }

@@ -42,9 +42,11 @@ use api\value_api;
 use api\component_api;
 use api\word_api;
 use cfg\verb_list;
+use controller\controller;
 use html\button;
 use html\html_base;
 use html\html_selector;
+use html\msg;
 use model\library;
 use model\verb;
 use model\view;
@@ -96,7 +98,8 @@ class html_unit_tests
         //$t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));
 
         // button add
-        $t->html_test((new button('Test', 'http'))->add(), 'button_add', $t);
+        $url = $html->url(controller::DSP_WORD_ADD);
+        $t->html_test((new button($url))->add(msg::WORD_ADD), 'button_add', $t);
 
 
         $t->subheader('HTML list tests');

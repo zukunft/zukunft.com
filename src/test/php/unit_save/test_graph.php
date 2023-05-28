@@ -114,7 +114,7 @@ function run_graph_test(test_cleanup $t): void
     //$target = zut_html_list_related($ZH->id, $graph->direction, $usr->id());
     $result = $graph->display($back);
     /*
-    $diff = str_diff($result, $target);
+    $diff = str_diff($target, $result);
     if ($diff != null) {
         if (in_array('view', $diff)) {
             if (in_array(0, $diff['view'])) {

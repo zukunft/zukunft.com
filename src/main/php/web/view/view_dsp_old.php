@@ -32,12 +32,14 @@
 namespace html\view;
 
 use cfg\view_type;
+use controller\controller;
 use dsp_list;
 use html\api;
 use html\button;
 use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
+use html\msg;
 use model\view;
 use model\word;
 
@@ -251,13 +253,17 @@ class view_dsp_old extends view
         $result = $this->html_navbar_start();
         $result .= '<td class="right_ref">';
         if ($this->is_system() and !$this->user()->is_admin()) {
-            $result .= (new button('find a word or formula', $html->url(api::SEARCH)))->find() . ' - ';
-            $result .= '' . $this->name . ' ';
+            $url = $html->url(api::SEARCH);
+            $result .= (new button($url, $back))->find(msg::SEARCH_MAIN) . ' - ';
+            $result .= $this->name . ' ';
         } else {
-            $result .= (new button('find a word or formula', '/http/find.php?word=' . $back))->find() . ' - ';
+            $url = '/http/find.php?word=' . $back;
+            $result .= (new button($url, $back))->find(msg::SEARCH_MAIN) . ' - ';
             $result .= $this->dsp_view_name($back);
-            $result .= (new button('adjust the view ' . $this->name, '/http/view_edit.php?id=' . $this->id . '&word=' . $back . '&back=' . $back))->edit() . ' ';
-            $result .= (new button('create a new view', '/http/view_add.php?word=' . $back . '&back=' . $back))->add();
+            $url = $html->url(controller::DSP_VIEW_EDIT, $this->id());
+            $result .= (new button($url, $back))->edit(msg::VIEW_EDIT, $this->name) . ' ';
+            $url = $html->url(controller::DSP_VIEW_ADD);
+            $result .= (new button($url, $back))->add(msg::VIEW_ADD);
         }
         $result .= ' - ';
         log_debug($this->dsp_id() . ' (' . $this->id . ')');
@@ -312,9 +318,9 @@ class view_dsp_old extends view
             $result .= '      <li class="active">';
             $result .= $this->dsp_view_name($back);
             $url_edit = $html->url(view::class . api::UPDATE, $this->id, $back, '', word::class . '=' . $back);
-            $result .= (new button('adjust the view ' . $url_edit))->edit();
+            $result .= (new button($url_edit, $back))->edit(msg::VIEW_EDIT);
             $url_add = $html->url(view::class . api::CREATE, 0, $back, '', word::class . '=' . $back);
-            $result .= (new button('create a new view', $url_add))->add();
+            $result .= (new button($url_add, $back))->add(msg::VIEW_ADD);
             $result .= '      </li>';
         }
         $result .= '    </ul>';
@@ -525,8 +531,8 @@ class view_dsp_old extends view
             // check if the add button has been pressed and ask the user what to add
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
-                $url = $html->url(view::class . api::UPDATE, $this->id, $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
-                $result .= (new button("add view component", $url))->add();
+                $url = $html->url(controller::DSP_VIEW_ADD, $this->id, $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
+                $result .= (new button($url, $back))->add(msg::COMPONENT_ADD);
                 $sel = new html_selector;
                 $sel->form = 'view_edit';
                 $sel->dummy_text = 'Select a view component ...';
@@ -548,7 +554,8 @@ class view_dsp_old extends view
                 $result .= $sel->display_old();
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
-                $result .= (new button("add view component", "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&add_entry=1&back=" . $back))->add();
+                $url = $html->url(controller::DSP_COMPONENT_LINK, $this->id, $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');
+                $result .= (new button($url, $back))->add(msg::COMPONENT_ADD);
             }
         }
         if (UI_USE_BOOTSTRAP) {

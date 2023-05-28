@@ -896,6 +896,9 @@ class create_test_objects extends test_base
             $wrd->set_name($wrd_name);
             $wrd->save();
         }
+        if ($wrd->id() <= 0) {
+            log_err('Cannot create word ' . $wrd_name);
+        }
         if ($wrd_type_code_id != null) {
             $wrd->type_id = $phrase_types->id($wrd_type_code_id);
             $wrd->save();
@@ -998,28 +1001,28 @@ class create_test_objects extends test_base
                          string $to_name,
                          string $target = '',
                          string $phrase_name = '',
-                         bool   $autocreate = true): triple
+                         bool   $auto_create = true): triple
     {
         global $usr;
         global $verbs;
 
-        $result = '';
+        $result = new triple($usr);
 
         // create the words if needed
-        $wrd_from = $this->load_word($from_name);
-        if ($wrd_from->id() <= 0 and $autocreate) {
-            $wrd_from->set_name($from_name);
-            $wrd_from->save();
-            $wrd_from->load_by_name($from_name);
+        $from = $this->load_phrase($from_name);
+        if ($from->id() == 0 and $auto_create) {
+            $from = $this->add_word($from_name)->phrase();
         }
-        $wrd_to = $this->load_word($to_name);
-        if ($wrd_to->id() <= 0 and $autocreate) {
-            $wrd_to->set_name($to_name);
-            $wrd_to->save();
-            $wrd_to->load_by_name($to_name);
+        if ($from->id() == 0) {
+            log_err('Cannot get phrase ' . $from_name);
         }
-        $from = $wrd_from->phrase();
-        $to = $wrd_to->phrase();
+        $to = $this->load_phrase($to_name);
+        if ($to->id() == 0 and $auto_create) {
+            $to = $this->add_word($to_name)->phrase();
+        }
+        if ($to->id() == 0) {
+            log_err('Cannot get phrase ' . $to_name);
+        }
 
         $vrb = $verbs->get_verb($verb_code_id);
 
@@ -1046,7 +1049,7 @@ class create_test_objects extends test_base
                 $lnk_test->load_by_link($to->id(), $vrb->id(), $from->id());
                 $result = $lnk_test;
                 // create the link if requested
-                if ($lnk_test->id() <= 0 and $autocreate) {
+                if ($lnk_test->id() <= 0 and $auto_create) {
                     $lnk_test->from = $from;
                     $lnk_test->verb = $vrb;
                     $lnk_test->to = $to;
@@ -1652,5 +1655,22 @@ class create_test_objects extends test_base
         return $result;
     }
 
+    /**
+     * create all database entries used for the read db unit tests
+     * @return void
+     */
+    function create_test_db_entries(test_unit_read_db $t): void
+    {
+        create_test_words($t);
+        create_test_phrases($t);
+        create_test_sources($t);
+        create_base_times($t);
+        create_test_formulas($t);
+        create_test_formula_links($t);
+        create_test_views($t);
+        create_test_components($t);
+        create_test_component_links($t);
+        create_test_values($t);
+    }
 
 }

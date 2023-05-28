@@ -164,6 +164,12 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO reduce the size of the api messages to improve speed
     TODO add a slider for admin to set the balance between speed and memory usage in the backend (with a default balanced setting and a auto optimize function)
     TODO add a slider for the user to set the balance between speed and memory usage in the frontend and display the effect in a chart with speed increase vs memory usage
+    TODO add example how a tax at least in the height of the micro market share at the customer would prevent monopoly
+    TODO add example why democracy sometimes do wrong decisions e.g. because the feedback loop is too long or to rare
+    TODO explain why the target build up user needs to be intelligent, but without targeting power
+    TODO add example why nobody shouö own more than the community is spending to save one persons life
+    TODO add example how the car insurance uses the value of one person life to calculate the premium and the health insurance for the starting age for gastro check
+    TODO make sure that "sudo apt-get install php-dom" is part of the install process
 
 
     TODO add data optimizers for read time, write time and space usage
@@ -1072,113 +1078,6 @@ function zu_trim($text): string
     return trim(preg_replace('!\s+!', ' ', $text));
 }
 
-
-/*
-string functions (to be dismissed)
-*/
-
-
-function zu_str_compute_diff($from, $to): array
-{
-    $diffValues = array();
-    $diffMask = array();
-
-    $dm = array();
-    $n1 = count($from);
-    $n2 = count($to);
-
-    for ($j = -1; $j < $n2; $j++) $dm[-1][$j] = 0;
-    for ($i = -1; $i < $n1; $i++) $dm[$i][-1] = 0;
-    for ($i = 0; $i < $n1; $i++) {
-        for ($j = 0; $j < $n2; $j++) {
-            if ($from[$i] == $to[$j]) {
-                $ad = $dm[$i - 1][$j - 1];
-                $dm[$i][$j] = $ad + 1;
-            } else {
-                $a1 = $dm[$i - 1][$j];
-                $a2 = $dm[$i][$j - 1];
-                $dm[$i][$j] = max($a1, $a2);
-            }
-        }
-    }
-
-    $i = $n1 - 1;
-    $j = $n2 - 1;
-    while (($i > -1) || ($j > -1)) {
-        if ($j > -1) {
-            if ($dm[$i][$j - 1] == $dm[$i][$j]) {
-                $diffValues[] = $to[$j];
-                $diffMask[] = 1;
-                $j--;
-                continue;
-            }
-        }
-        if ($i > -1) {
-            if ($dm[$i - 1][$j] == $dm[$i][$j]) {
-                $diffValues[] = $from[$i];
-                $diffMask[] = -1;
-                $i--;
-                continue;
-            }
-        }
-        {
-            $diffValues[] = $from[$i];
-            $diffMask[] = 0;
-            $i--;
-            $j--;
-        }
-    }
-
-    $diffValues = array_reverse($diffValues);
-    $diffMask = array_reverse($diffMask);
-
-    return array('values' => $diffValues, 'mask' => $diffMask);
-}
-
-function zu_str_diff($original_text, $compare_text): string
-{
-    $diff = zu_str_compute_diff(str_split($original_text), str_split($compare_text));
-    $diffval = $diff['values'];
-    $diffmask = $diff['mask'];
-
-    $n = count($diffval);
-    $pmc = 0;
-    $result = '';
-    for ($i = 0; $i < $n; $i++) {
-        $mc = $diffmask[$i];
-        if ($mc != $pmc) {
-            switch ($pmc) {
-                case -1:
-                    $result .= '</del>';
-                    break;
-                case 1:
-                    $result .= '</ins>';
-                    break;
-            }
-            switch ($mc) {
-                case -1:
-                    $result .= '<del>';
-                    break;
-                case 1:
-                    $result .= '<ins>';
-                    break;
-            }
-        }
-        $result .= $diffval[$i];
-
-        $pmc = $mc;
-    }
-    switch ($pmc) {
-        case -1:
-            $result .= '</del>';
-            break;
-        case 1:
-            $result .= '</ins>';
-            break;
-    }
-
-    return $result;
-}
 
 /*
   name shortcuts - rename some often used functions to make to code look nicer and not draw the focus away from the important part
