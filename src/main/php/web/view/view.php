@@ -428,7 +428,7 @@ class view extends sandbox_typed_dsp
         $vars = parent::api_array();
         $vars[controller::API_FLD_CODE_ID] = $this->code_id;
         $vars[controller::API_FLD_COMPONENTS] = $this->cmp_lst->api_array();
-        return array_filter($vars, fn($value) => !is_null($value));
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 

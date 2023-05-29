@@ -696,7 +696,7 @@ class test_base
      * @param string $json_file_name the resource path name to the json sample file
      * @return bool true if the json has no relevant differences
      */
-    function assert_json(object $usr_obj, string $json_file_name): bool
+    function assert_json_file(object $usr_obj, string $json_file_name): bool
     {
         global $user_profiles;
         $lib = new library();
@@ -714,6 +714,24 @@ class test_base
         $json_in_txt = json_encode($json_in);
         $json_ex_txt = json_encode($json_ex);
         return $this->assert($this->name . 'import check name', $result, true);
+    }
+
+    /**
+     * check if an object json file can be recreated by importing the object and recreating the json with the export function
+     *
+     * @param string $test_name (unique) description of the test
+     * @param array $result the actual json as array
+     * @param array $target the expected json as array
+     * @return bool true if the json has no relevant differences
+     */
+    function assert_json(string $test_name, array $result, array $target): bool
+    {
+        $lib = new library();
+        $diff = '';
+        if (!$lib->json_is_similar($result, $target)) {
+            $diff = $lib->diff_msg($result, $target);
+        }
+        return $this->assert($test_name, $diff, '');
     }
 
     /**

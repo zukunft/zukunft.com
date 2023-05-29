@@ -163,7 +163,7 @@ class word extends sandbox_typed_dsp
         if ($this->has_parent()) {
             $vars[self::FLD_PARENT] = $this->parent()->api_array();
         }
-        return array_filter($vars, fn($value) => !is_null($value));
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 

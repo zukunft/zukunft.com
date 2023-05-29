@@ -101,7 +101,7 @@ class formula_unit_tests
 
         $t->subheader('Im- and Export tests');
 
-        $t->assert_json(new formula($usr), $json_file);
+        $t->assert_json_file(new formula($usr), $json_file);
 
 
         $t->subheader('API and HTML frontend unit tests');

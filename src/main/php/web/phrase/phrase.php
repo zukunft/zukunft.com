@@ -152,7 +152,7 @@ class phrase extends combine_named_dsp
         $vars[controller::API_FLD_NAME] = $this->name();
         $vars[controller::API_FLD_DESCRIPTION] = $this->description();
         $vars[controller::API_FLD_TYPE_ID] = $this->type_id();
-        return $vars;
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 

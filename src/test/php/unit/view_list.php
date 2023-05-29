@@ -63,7 +63,7 @@ class view_list_unit_tests
 
         $t->subheader('Im- and Export tests');
 
-        $t->assert_json(new view_list($usr), $json_file);
+        $t->assert_json_file(new view_list($usr), $json_file);
 
     }
 

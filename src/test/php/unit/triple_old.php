@@ -92,7 +92,7 @@ class triple_unit_tests_old
 
         $t->subheader('Im- and Export tests');
 
-        $t->assert_json(new triple($usr), $json_file);
+        $t->assert_json_file(new triple($usr), $json_file);
     }
 
 }

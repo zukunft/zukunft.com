@@ -1,0 +1,1619 @@
+{
+  "pod": "zukunft.com",
+  "type": "type_lists",
+  "user_id": 2,
+  "user": "zukunft.com system test",
+  "version": "0.0.3",
+  "type_lists": {
+    "user_profiles": [
+      {
+        "id": 1,
+        "code_id": "normal",
+        "name": "normal user",
+        "comment": ""
+      },
+      {
+        "id": 2,
+        "code_id": "admin",
+        "name": "admin",
+        "comment": "Administrator that can add and change verbs and sees the code_id"
+      },
+      {
+        "id": 3,
+        "code_id": "dev",
+        "name": "developer",
+        "comment": "Can see all errors and change the status of the errors, but cannot access the production system"
+      },
+      {
+        "id": 4,
+        "code_id": "test",
+        "name": "system test",
+        "comment": "for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests"
+      },
+      {
+        "id": 5,
+        "code_id": "system",
+        "name": "system",
+        "comment": "User to log internal tasks not directly initiated by an user like system testing and cleanup"
+      }
+    ],
+    "phrase_types": [
+      {
+        "id": 1,
+        "code_id": "default",
+        "name": "standard",
+        "comment": "for words that have need no special behaviour"
+      },
+      {
+        "id": 2,
+        "code_id": "time",
+        "name": "time",
+        "comment": "A time word defines the time period for which a value is valid and values with a time can be used to display time series."
+      },
+      {
+        "id": 3,
+        "code_id": "measure",
+        "name": "measure type",
+        "comment": "a measure word such as meter, kilogram, ..."
+      },
+      {
+        "id": 4,
+        "code_id": "time_jump",
+        "name": "time jump",
+        "comment": "these terms describes a change of a timestamp term"
+      },
+      {
+        "id": 5,
+        "code_id": "",
+        "name": "calc",
+        "comment": "a calculated word in R; e.g. this year returns always a different term"
+      },
+      {
+        "id": 6,
+        "code_id": "percent",
+        "name": "format percent",
+        "comment": "terms that forces the result to be formatted in percent"
+      },
+      {
+        "id": 7,
+        "code_id": "scaling",
+        "name": "scaling",
+        "comment": "a scaling word such as millions, one, ..."
+      },
+      {
+        "id": 8,
+        "code_id": "scaling_hidden",
+        "name": "hidden scaling",
+        "comment": "\"one\" is needed as a scaling word for correct calculations, but it is not useful to display it"
+      },
+      {
+        "id": 9,
+        "code_id": "view",
+        "name": "view \/ layer",
+        "comment": "word to separate the number layers and to change the view.\\r\\nE.g. -as reported- are exactly the numbers as they come from the external source\\r\\n-detailed- are the most granular splitting of the -as reported- numbers\\r\\n-projection- show the changes and includes the estimates to make a forecast\\r\\n"
+      },
+      {
+        "id": 10,
+        "code_id": "formula_link",
+        "name": "formula link",
+        "comment": "A term with the same name as a formula, because some values can be calculated and can nevertheless be overwritten"
+      },
+      {
+        "id": 11,
+        "code_id": "type_other",
+        "name": "differentiator filler",
+        "comment": "these terms are used to fill up a differentiator list, so most likely the term linked will be named \"other\""
+      },
+      {
+        "id": 12,
+        "code_id": "this",
+        "name": "this",
+        "comment": "not sure, why this is needed"
+      },
+      {
+        "id": 13,
+        "code_id": "next",
+        "name": "next",
+        "comment": "not sure, why this is needed"
+      },
+      {
+        "id": 14,
+        "code_id": "previous",
+        "name": "prior",
+        "comment": "not sure, why this is needed"
+      },
+      {
+        "id": 15,
+        "code_id": "scaling_percent",
+        "name": "scaling word percent",
+        "comment": "all words that represent percent"
+      },
+      {
+        "id": 16,
+        "code_id": "scaled_measure",
+        "name": "scaled measure",
+        "comment": "a combination of scaling and measure e.g. 100ml"
+      },
+      {
+        "id": 17,
+        "code_id": "constant",
+        "name": "math constant",
+        "comment": "A mathematical constant is a key number whose value is fixed by an unambiguous definition"
+      },
+      {
+        "id": 18,
+        "code_id": "measure_divisor",
+        "name": "measure divisor",
+        "comment": "a measure divisor like per year, per kg, ..."
+      },
+      {
+        "id": 19,
+        "code_id": "latest",
+        "name": "latest",
+        "comment": "to select the latest value by a time jump type e.g. latest year"
+      },
+      {
+        "id": 20,
+        "code_id": "key",
+        "name": "key",
+        "comment": "force faster search and if two keys are connected with the verb is all child values are expected to be equal"
+      },
+      {
+        "id": 21,
+        "code_id": "information",
+        "name": "information",
+        "comment": "this phrase is used mainly for information purpose and for the selection the program tries to another search without this phrase"
+      }
+    ],
+    "formula_types": [
+      {
+        "id": 1,
+        "code_id": "default",
+        "name": "calc",
+        "comment": "a normal calculation formula"
+      },
+      {
+        "id": 2,
+        "code_id": "time_next",
+        "name": "next",
+        "comment": "time jump forward: replaces a time term with the next time term based on the verb follower. E.g. \"2017\" \"next\" would lead to use \"2018\""
+      },
+      {
+        "id": 3,
+        "code_id": "time_prior",
+        "name": "prior",
+        "comment": "time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. \"2017\" \"next\" would lead to use \"2016\""
+      },
+      {
+        "id": 4,
+        "code_id": "time_this",
+        "name": "this",
+        "comment": "selects the assumed time term"
+      },
+      {
+        "id": 5,
+        "code_id": "reversible",
+        "name": "reversible",
+        "comment": "a formula that can ba included also in the reversed version e.g. \"minute = second \/ 60\" and \"second = minute * 60\""
+      }
+    ],
+    "formula_link_types": [
+      {
+        "id": 1,
+        "code_id": "default",
+        "name": "default",
+        "comment": "default"
+      },
+      {
+        "id": 2,
+        "code_id": "time_period_based",
+        "name": "time period based",
+        "comment": "increase needs to know for which time period the increase should be calculated"
+      }
+    ],
+    "formula_element_types": [
+      {
+        "id": 1,
+        "code_id": "word",
+        "name": "word",
+        "comment": "a reference to a word used to select values using \"and\""
+      },
+      {
+        "id": 2,
+        "code_id": "verb",
+        "name": "verb",
+        "comment": "a reference to a predicate"
+      },
+      {
+        "id": 3,
+        "code_id": "formula",
+        "name": "formula",
+        "comment": "to select the results of another formula using the given context"
+      },
+      {
+        "id": 4,
+        "code_id": "triple",
+        "name": "triple",
+        "comment": "a reference to two predicate linked words used to select values using \"and\""
+      }
+    ],
+    "view_types": [
+      {
+        "id": 1,
+        "code_id": "default",
+        "name": "standard",
+        "comment": "the base display mask without additional functionalities"
+      },
+      {
+        "id": 2,
+        "code_id": "entry",
+        "name": "entry view",
+        "comment": "these masks are used for the zukunft.com entry page. If a totally new user opens zukunft.com the first time, he will see a random mask of this type."
+      },
+      {
+        "id": 3,
+        "code_id": "mask_default",
+        "name": "edit",
+        "comment": "a edit mask that is used to change data"
+      },
+      {
+        "id": 4,
+        "code_id": "presentation",
+        "name": "presentation",
+        "comment": "with auto forward"
+      },
+      {
+        "id": 5,
+        "code_id": "word_default",
+        "name": "word default",
+        "comment": "a default mask for new words"
+      },
+      {
+        "id": 6,
+        "code_id": "detail_view",
+        "name": "details",
+        "comment": "to show the more details than the standard view"
+      }
+    ],
+    "component_types": [
+      {
+        "id": 1,
+        "code_id": "word_select",
+        "name": "word selector",
+        "comment": ""
+      },
+      {
+        "id": 2,
+        "code_id": "view_select",
+        "name": "view selector",
+        "comment": "to select an existing mask e.g. to set the default view"
+      },
+      {
+        "id": 3,
+        "code_id": "text",
+        "name": "text",
+        "comment": "simply to display a variable text"
+      },
+      {
+        "id": 4,
+        "code_id": "fixed",
+        "name": "fixed word",
+        "comment": "just display a word as a text"
+      },
+      {
+        "id": 5,
+        "code_id": "link",
+        "name": "linked word",
+        "comment": "display a word and offer a link"
+      },
+      {
+        "id": 6,
+        "code_id": "formula_results",
+        "name": "formula results",
+        "comment": "show the results of a formula"
+      },
+      {
+        "id": 7,
+        "code_id": "word_list_up",
+        "name": "word list up",
+        "comment": "Show a list of words related with a specified word link type; e.g. For company list all ABB and others, because they are linked with is a"
+      },
+      {
+        "id": 8,
+        "code_id": "word_name",
+        "name": "word name",
+        "comment": "show the word name and give the user the possibility to change the word name"
+      },
+      {
+        "id": 9,
+        "code_id": "word_list_down",
+        "name": "word list down",
+        "comment": "Show a list of words related with a specified word link type; e.g. For company list all ABB and others, because they are linked with is a"
+      },
+      {
+        "id": 10,
+        "code_id": "values_all",
+        "name": "all relations",
+        "comment": "show the complete list of all relations"
+      },
+      {
+        "id": 11,
+        "code_id": "values_related",
+        "name": "values related to",
+        "comment": "display all values that are related to a defined term"
+      },
+      {
+        "id": 12,
+        "code_id": "formula_list",
+        "name": "formulas",
+        "comment": "show all related formulas"
+      },
+      {
+        "id": 13,
+        "code_id": "word_value_list",
+        "name": "word value list",
+        "comment": "A list of words with some key values e.g. a company list with the PE ratio"
+      },
+      {
+        "id": 14,
+        "code_id": "xml_export",
+        "name": "XML export",
+        "comment": "offer to configure and start the XML export of a phrase and all related words, numbers and formulas"
+      },
+      {
+        "id": 15,
+        "code_id": "csv_export",
+        "name": "CSV export",
+        "comment": "to define the main phrase, the column and row for the CSV export"
+      },
+      {
+        "id": 16,
+        "code_id": "json_export",
+        "name": "JSON Export",
+        "comment": "To start or configure the JSON export"
+      },
+      {
+        "id": 17,
+        "code_id": "system_form_title",
+        "name": "system form title",
+        "comment": "a form title only allowed for system views where the user can only change the order"
+      },
+      {
+        "id": 18,
+        "code_id": "system_form_back_stack",
+        "name": "system form hidden back stack",
+        "comment": "the hidden form field with the back stack only allowed for system views where the user can only change the order"
+      },
+      {
+        "id": 19,
+        "code_id": "system_form_confirm_status",
+        "name": "system form confirm status",
+        "comment": "the hidden form field for the user confirm status only allowed for system views where the user can only change the order"
+      },
+      {
+        "id": 20,
+        "code_id": "field_name",
+        "name": "form field name",
+        "comment": "the form field for the name of a word or formula"
+      },
+      {
+        "id": 21,
+        "code_id": "field_description",
+        "name": "form field description",
+        "comment": "the form field for the description of a word or formula"
+      },
+      {
+        "id": 22,
+        "code_id": "system_button_cancel",
+        "name": "button cancel",
+        "comment": "a button of a form to cancel the form action"
+      },
+      {
+        "id": 23,
+        "code_id": "system_button_save",
+        "name": "button save",
+        "comment": "a button of a form to save the changes to the database"
+      },
+      {
+        "id": 24,
+        "code_id": "form_end",
+        "name": "form end",
+        "comment": "just to indicate that a form ends"
+      }
+    ],
+    "component_position_types": [
+      {
+        "id": 1,
+        "code_id": "below",
+        "name": "below",
+        "comment": "below the previous entry"
+      },
+      {
+        "id": 2,
+        "code_id": "side",
+        "name": "side",
+        "comment": "is right of the previous entry (or left for right to left languages)"
+      }
+    ],
+    "ref_types": [
+      {
+        "id": 1,
+        "code_id": "wikipedia",
+        "name": "wikipedia",
+        "comment": "wikipedia"
+      },
+      {
+        "id": 2,
+        "code_id": "wikidata",
+        "name": "wikidata",
+        "comment": "wikidata"
+      },
+      {
+        "id": 3,
+        "code_id": "conceptnet",
+        "name": "conceptnet",
+        "comment": "conceptnet"
+      }
+    ],
+    "source_types": [
+      {
+        "id": 1,
+        "code_id": "xml",
+        "name": "XML",
+        "comment": ""
+      },
+      {
+        "id": 2,
+        "code_id": "xbrl",
+        "name": "XBRL",
+        "comment": ""
+      },
+      {
+        "id": 3,
+        "code_id": "csv",
+        "name": "CSV",
+        "comment": ""
+      },
+      {
+        "id": 4,
+        "code_id": "pdf",
+        "name": "PDF",
+        "comment": ""
+      },
+      {
+        "id": 5,
+        "code_id": "api",
+        "name": "API",
+        "comment": ""
+      }
+    ],
+    "share_types": [
+      {
+        "id": 1,
+        "code_id": "public",
+        "name": "public",
+        "comment": "value can be seen and used by everyone (default)"
+      },
+      {
+        "id": 2,
+        "code_id": "personal",
+        "name": "personal",
+        "comment": "value can be seen by everyone, but is linked to the user"
+      },
+      {
+        "id": 3,
+        "code_id": "group",
+        "name": "group",
+        "comment": "only a closed group of users can seen and use the values"
+      },
+      {
+        "id": 4,
+        "code_id": "private",
+        "name": "private",
+        "comment": "only the user itself can see und use the value"
+      }
+    ],
+    "protection_types": [
+      {
+        "id": 1,
+        "code_id": "no_protection",
+        "name": "no protection",
+        "comment": "anyone can take the ownership"
+      },
+      {
+        "id": 2,
+        "code_id": "user_protection",
+        "name": "user",
+        "comment": "only users with a login and a confirmed email can take over the ownership"
+      },
+      {
+        "id": 3,
+        "code_id": "admin_protection",
+        "name": "admin",
+        "comment": "only user with admin permission can take the ownership"
+      },
+      {
+        "id": 4,
+        "code_id": "no_change",
+        "name": "no change",
+        "comment": "no change of the ownership is allowed"
+      }
+    ],
+    "languages": [
+      {
+        "id": 1,
+        "code_id": "en",
+        "name": "English",
+        "comment": "the system language, so each word must be unique for all users in this language"
+      },
+      {
+        "id": 2,
+        "code_id": "en_uk",
+        "name": "UK English",
+        "comment": "the users can use this (and the other) languages to create its own namespace. So one user may use \"Zurich\" in UK English for \"Kanton Zurich\" and another user may use \"Zurich\" in UK English for \"Zurich AG\"."
+      },
+      {
+        "id": 3,
+        "code_id": "de",
+        "name": "German",
+        "comment": "a normal translation to German"
+      }
+    ],
+    "language_forms": [
+      {
+        "id": 1,
+        "code_id": "plural",
+        "name": "plural",
+        "comment": ""
+      }
+    ],
+    "sys_log_stati": [
+      {
+        "id": 1,
+        "code_id": "new",
+        "name": "new",
+        "comment": "the error has just being logged and no one has yet looked at it"
+      },
+      {
+        "id": 2,
+        "code_id": "assigned",
+        "name": "assigned",
+        "comment": "A developer is looking at the error."
+      },
+      {
+        "id": 3,
+        "code_id": "resolved",
+        "name": "resolved",
+        "comment": "the error is supposed to be corrected"
+      },
+      {
+        "id": 4,
+        "code_id": "closed",
+        "name": "closed",
+        "comment": "a second person (other than the developer) has confirmed that the problem is solved."
+      }
+    ],
+    "job_types": [
+      {
+        "id": 1,
+        "code_id": "value_update",
+        "name": "update value",
+        "comment": "if a value is updated all the depending results should be calculated again"
+      },
+      {
+        "id": 2,
+        "code_id": "value_add",
+        "name": "add value",
+        "comment": "1. check if used in formulas and if yes, create new formula results\\r\\n2. calculate the new formula results"
+      },
+      {
+        "id": 3,
+        "code_id": "value_del",
+        "name": "exclude a value",
+        "comment": "check if used for a formula result and if yes either remove the formula result or update it"
+      },
+      {
+        "id": 4,
+        "code_id": "formula_update",
+        "name": "update formula",
+        "comment": ""
+      },
+      {
+        "id": 5,
+        "code_id": "formula_add",
+        "name": "add formula",
+        "comment": ""
+      },
+      {
+        "id": 6,
+        "code_id": "formula_del",
+        "name": "exclude formula",
+        "comment": ""
+      },
+      {
+        "id": 7,
+        "code_id": "formula_link",
+        "name": "link formula",
+        "comment": ""
+      },
+      {
+        "id": 8,
+        "code_id": "formula_unlink",
+        "name": "unlink a formula",
+        "comment": ""
+      },
+      {
+        "id": 9,
+        "code_id": "triple",
+        "name": "link a word",
+        "comment": ""
+      },
+      {
+        "id": 10,
+        "code_id": "word_unlink",
+        "name": "unlink word",
+        "comment": ""
+      },
+      {
+        "id": 11,
+        "code_id": "base_import",
+        "name": "initial import",
+        "comment": "import the base configuration by a system user on initial setup"
+      }
+    ],
+    "change_log_actions": [
+      {
+        "id": 1,
+        "code_id": "add",
+        "name": "add",
+        "comment": ""
+      },
+      {
+        "id": 2,
+        "code_id": "del",
+        "name": "del",
+        "comment": ""
+      },
+      {
+        "id": 3,
+        "code_id": "update",
+        "name": "update",
+        "comment": ""
+      }
+    ],
+    "change_log_tables": [
+      {
+        "id": 1,
+        "code_id": "users",
+        "name": "users",
+        "comment": ""
+      },
+      {
+        "id": 2,
+        "code_id": "values",
+        "name": "values",
+        "comment": ""
+      },
+      {
+        "id": 3,
+        "code_id": "user_values",
+        "name": "user_values",
+        "comment": ""
+      },
+      {
+        "id": 4,
+        "code_id": "value_links",
+        "name": "value_links",
+        "comment": ""
+      },
+      {
+        "id": 5,
+        "code_id": "words",
+        "name": "words",
+        "comment": ""
+      },
+      {
+        "id": 6,
+        "code_id": "user_words",
+        "name": "user_words",
+        "comment": ""
+      },
+      {
+        "id": 7,
+        "code_id": "triples",
+        "name": "triples",
+        "comment": ""
+      },
+      {
+        "id": 8,
+        "code_id": "user_triples",
+        "name": "user_triples",
+        "comment": ""
+      },
+      {
+        "id": 9,
+        "code_id": "verbs",
+        "name": "verbs",
+        "comment": ""
+      },
+      {
+        "id": 10,
+        "code_id": "formulas",
+        "name": "formulas",
+        "comment": ""
+      },
+      {
+        "id": 11,
+        "code_id": "user_formulas",
+        "name": "user_formulas",
+        "comment": ""
+      },
+      {
+        "id": 12,
+        "code_id": "formula_links",
+        "name": "formula_links",
+        "comment": ""
+      },
+      {
+        "id": 13,
+        "code_id": "user_formula_links",
+        "name": "user_formula_links",
+        "comment": ""
+      },
+      {
+        "id": 14,
+        "code_id": "views",
+        "name": "views",
+        "comment": ""
+      },
+      {
+        "id": 15,
+        "code_id": "user_views",
+        "name": "user_views",
+        "comment": ""
+      },
+      {
+        "id": 16,
+        "code_id": "component_links",
+        "name": "component_links",
+        "comment": ""
+      },
+      {
+        "id": 17,
+        "code_id": "user_component_links",
+        "name": "user_component_links",
+        "comment": ""
+      },
+      {
+        "id": 18,
+        "code_id": "components",
+        "name": "components",
+        "comment": ""
+      },
+      {
+        "id": 19,
+        "code_id": "user_components",
+        "name": "user_components",
+        "comment": ""
+      },
+      {
+        "id": 20,
+        "code_id": "sources",
+        "name": "sources",
+        "comment": ""
+      },
+      {
+        "id": 21,
+        "code_id": "user_sources",
+        "name": "user_sources",
+        "comment": ""
+      },
+      {
+        "id": 22,
+        "code_id": "refs",
+        "name": "refs",
+        "comment": ""
+      }
+    ],
+    "change_log_fields": [
+      {
+        "id": 1,
+        "code_id": "2word_value",
+        "name": "2word_value",
+        "comment": ""
+      },
+      {
+        "id": 2,
+        "code_id": "2source_id",
+        "name": "2source_id",
+        "comment": ""
+      },
+      {
+        "id": 3,
+        "code_id": "2share_type_id",
+        "name": "2share_type_id",
+        "comment": ""
+      },
+      {
+        "id": 4,
+        "code_id": "2protect_id",
+        "name": "2protect_id",
+        "comment": ""
+      },
+      {
+        "id": 5,
+        "code_id": "2excluded",
+        "name": "2excluded",
+        "comment": ""
+      },
+      {
+        "id": 6,
+        "code_id": "3word_value",
+        "name": "3word_value",
+        "comment": ""
+      },
+      {
+        "id": 7,
+        "code_id": "3protect_id",
+        "name": "3protect_id",
+        "comment": ""
+      },
+      {
+        "id": 8,
+        "code_id": "3share_type_id",
+        "name": "3share_type_id",
+        "comment": ""
+      },
+      {
+        "id": 9,
+        "code_id": "5word_name",
+        "name": "5word_name",
+        "comment": ""
+      },
+      {
+        "id": 10,
+        "code_id": "5description",
+        "name": "5description",
+        "comment": ""
+      },
+      {
+        "id": 11,
+        "code_id": "5word_type_id",
+        "name": "5word_type_id",
+        "comment": ""
+      },
+      {
+        "id": 12,
+        "code_id": "5plural",
+        "name": "5plural",
+        "comment": ""
+      },
+      {
+        "id": 13,
+        "code_id": "5excluded",
+        "name": "5excluded",
+        "comment": ""
+      },
+      {
+        "id": 14,
+        "code_id": "6word_type_id",
+        "name": "6word_type_id",
+        "comment": ""
+      },
+      {
+        "id": 15,
+        "code_id": "6plural",
+        "name": "6plural",
+        "comment": ""
+      },
+      {
+        "id": 16,
+        "code_id": "6description",
+        "name": "6description",
+        "comment": ""
+      },
+      {
+        "id": 17,
+        "code_id": "7triple_name",
+        "name": "7triple_name",
+        "comment": ""
+      },
+      {
+        "id": 18,
+        "code_id": "7name_given",
+        "name": "7name_given",
+        "comment": ""
+      },
+      {
+        "id": 19,
+        "code_id": "7name_generated",
+        "name": "7name_generated",
+        "comment": ""
+      },
+      {
+        "id": 20,
+        "code_id": "7excluded",
+        "name": "7excluded",
+        "comment": ""
+      },
+      {
+        "id": 21,
+        "code_id": "8triple_name",
+        "name": "8triple_name",
+        "comment": ""
+      },
+      {
+        "id": 22,
+        "code_id": "9verb_name",
+        "name": "9verb_name",
+        "comment": ""
+      },
+      {
+        "id": 23,
+        "code_id": "9code_id",
+        "name": "9code_id",
+        "comment": ""
+      },
+      {
+        "id": 24,
+        "code_id": "9description",
+        "name": "9description",
+        "comment": ""
+      },
+      {
+        "id": 25,
+        "code_id": "9name_plural",
+        "name": "9name_plural",
+        "comment": ""
+      },
+      {
+        "id": 26,
+        "code_id": "9name_reverse",
+        "name": "9name_reverse",
+        "comment": ""
+      },
+      {
+        "id": 27,
+        "code_id": "9name_plural_reverse",
+        "name": "9name_plural_reverse",
+        "comment": ""
+      },
+      {
+        "id": 28,
+        "code_id": "9formula_name",
+        "name": "9formula_name",
+        "comment": ""
+      },
+      {
+        "id": 29,
+        "code_id": "10formula_name",
+        "name": "10formula_name",
+        "comment": ""
+      },
+      {
+        "id": 30,
+        "code_id": "10formula_type_id",
+        "name": "10formula_type_id",
+        "comment": ""
+      },
+      {
+        "id": 31,
+        "code_id": "10resolved_text",
+        "name": "10resolved_text",
+        "comment": ""
+      },
+      {
+        "id": 32,
+        "code_id": "10formula_text",
+        "name": "10formula_text",
+        "comment": ""
+      },
+      {
+        "id": 33,
+        "code_id": "10description",
+        "name": "10description",
+        "comment": ""
+      },
+      {
+        "id": 34,
+        "code_id": "10all_values_needed",
+        "name": "10all_values_needed",
+        "comment": ""
+      },
+      {
+        "id": 35,
+        "code_id": "11description",
+        "name": "11description",
+        "comment": ""
+      },
+      {
+        "id": 36,
+        "code_id": "11formula_type_id",
+        "name": "11formula_type_id",
+        "comment": ""
+      },
+      {
+        "id": 37,
+        "code_id": "11resolved_text",
+        "name": "11resolved_text",
+        "comment": ""
+      },
+      {
+        "id": 38,
+        "code_id": "11formula_text",
+        "name": "11formula_text",
+        "comment": ""
+      },
+      {
+        "id": 39,
+        "code_id": "11all_values_needed",
+        "name": "11all_values_needed",
+        "comment": ""
+      },
+      {
+        "id": 40,
+        "code_id": "12excluded",
+        "name": "12excluded",
+        "comment": ""
+      },
+      {
+        "id": 41,
+        "code_id": "14view_name",
+        "name": "14view_name",
+        "comment": ""
+      },
+      {
+        "id": 42,
+        "code_id": "14description",
+        "name": "14description",
+        "comment": ""
+      },
+      {
+        "id": 43,
+        "code_id": "14code_id",
+        "name": "14code_id",
+        "comment": ""
+      },
+      {
+        "id": 44,
+        "code_id": "14view_type_id",
+        "name": "14view_type_id",
+        "comment": ""
+      },
+      {
+        "id": 45,
+        "code_id": "15description",
+        "name": "15description",
+        "comment": ""
+      },
+      {
+        "id": 46,
+        "code_id": "15view_type_id",
+        "name": "15view_type_id",
+        "comment": ""
+      },
+      {
+        "id": 47,
+        "code_id": "16order_nbr",
+        "name": "16order_nbr",
+        "comment": ""
+      },
+      {
+        "id": 48,
+        "code_id": "16excluded",
+        "name": "16excluded",
+        "comment": ""
+      },
+      {
+        "id": 49,
+        "code_id": "17order_nbr",
+        "name": "17order_nbr",
+        "comment": ""
+      },
+      {
+        "id": 50,
+        "code_id": "18component_name",
+        "name": "18component_name",
+        "comment": ""
+      },
+      {
+        "id": 51,
+        "code_id": "18description",
+        "name": "18description",
+        "comment": ""
+      },
+      {
+        "id": 52,
+        "code_id": "18component_type_id",
+        "name": "18component_type_id",
+        "comment": ""
+      },
+      {
+        "id": 53,
+        "code_id": "19description",
+        "name": "19description",
+        "comment": ""
+      },
+      {
+        "id": 54,
+        "code_id": "19component_type_id",
+        "name": "19component_type_id",
+        "comment": ""
+      },
+      {
+        "id": 55,
+        "code_id": "20source_name",
+        "name": "20source_name",
+        "comment": ""
+      },
+      {
+        "id": 56,
+        "code_id": "20description",
+        "name": "20description",
+        "comment": ""
+      },
+      {
+        "id": 57,
+        "code_id": "20source_type_id",
+        "name": "20source_type_id",
+        "comment": ""
+      },
+      {
+        "id": 58,
+        "code_id": "20url",
+        "name": "20url",
+        "comment": ""
+      },
+      {
+        "id": 59,
+        "code_id": "21description",
+        "name": "21description",
+        "comment": ""
+      },
+      {
+        "id": 60,
+        "code_id": "21url",
+        "name": "21url",
+        "comment": ""
+      },
+      {
+        "id": 61,
+        "code_id": "22description",
+        "name": "22description",
+        "comment": ""
+      },
+      {
+        "id": 62,
+        "code_id": "22url",
+        "name": "22url",
+        "comment": ""
+      },
+      {
+        "id": 63,
+        "code_id": "22source_id",
+        "name": "22source_id",
+        "comment": ""
+      },
+      {
+        "id": 64,
+        "code_id": "7word_type_id",
+        "name": "7word_type_id",
+        "comment": ""
+      },
+      {
+        "id": 65,
+        "code_id": "18excluded",
+        "name": "18excluded",
+        "comment": ""
+      },
+      {
+        "id": 66,
+        "code_id": "14excluded",
+        "name": "14excluded",
+        "comment": ""
+      },
+      {
+        "id": 67,
+        "code_id": "10excluded",
+        "name": "10excluded",
+        "comment": ""
+      }
+    ],
+    "verbs": [
+      {
+        "id": 1,
+        "code_id": "not_set",
+        "name": "not set",
+        "comment": "placeholder verb to enable foreign key checks in the database and for the selection"
+      },
+      {
+        "id": 2,
+        "code_id": "is",
+        "name": "is a",
+        "comment": "the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ..."
+      },
+      {
+        "id": 3,
+        "code_id": "contains",
+        "name": "is part of",
+        "comment": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or Sectors and Regions are different splittings"
+      },
+      {
+        "id": 4,
+        "code_id": "",
+        "name": "with",
+        "comment": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load"
+      },
+      {
+        "id": 5,
+        "code_id": "",
+        "name": "has a",
+        "comment": ""
+      },
+      {
+        "id": 6,
+        "code_id": "",
+        "name": "is time jump for",
+        "comment": "is the default time jump for"
+      },
+      {
+        "id": 7,
+        "code_id": "",
+        "name": "is term jump for",
+        "comment": "is the default term jump for"
+      },
+      {
+        "id": 8,
+        "code_id": "",
+        "name": "term type needed",
+        "comment": "the formula needs the linked term type"
+      },
+      {
+        "id": 9,
+        "code_id": "follow",
+        "name": "is follower of",
+        "comment": "is follower of"
+      },
+      {
+        "id": 10,
+        "code_id": "",
+        "name": "uses",
+        "comment": ""
+      },
+      {
+        "id": 11,
+        "code_id": "",
+        "name": "issue",
+        "comment": ""
+      },
+      {
+        "id": 12,
+        "code_id": "",
+        "name": "is measure type for",
+        "comment": "is the default measure type for"
+      },
+      {
+        "id": 13,
+        "code_id": "",
+        "name": "is an acronym for",
+        "comment": "is an acronym for"
+      },
+      {
+        "id": 14,
+        "code_id": "can_contain",
+        "name": "can be used as a differentiator for",
+        "comment": "similar to contains, but in a table view the row will not be shown if there is no corresponding value"
+      },
+      {
+        "id": 15,
+        "code_id": "",
+        "name": "influences",
+        "comment": ""
+      },
+      {
+        "id": 16,
+        "code_id": "",
+        "name": "is alias of",
+        "comment": ""
+      },
+      {
+        "id": 17,
+        "code_id": "can_be",
+        "name": "can be",
+        "comment": ""
+      },
+      {
+        "id": 18,
+        "code_id": "can_use",
+        "name": "can use",
+        "comment": "use indicates that a new result is created e.g. a turbine can use water or wind or any type of liquid or gas to convert energy"
+      },
+      {
+        "id": 19,
+        "code_id": "scaled",
+        "name": "scaled by",
+        "comment": "to define the usual scaling e.g. for watt hours usually the scaling kilo (kWh) is used"
+      },
+      {
+        "id": 20,
+        "code_id": "",
+        "name": "per",
+        "comment": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty"
+      }
+    ],
+    "system_views": [
+      {
+        "id": 1,
+        "name": "Word",
+        "description": "the default view for words",
+        "code_id": "word",
+        "components": []
+      },
+      {
+        "id": 2,
+        "name": "Start view",
+        "description": "A dynamic start mask that shows a interesting fact",
+        "type_id": 2,
+        "code_id": "entry_view",
+        "components": [
+          {
+            "id": 1,
+            "name": "Name",
+            "type_id": 8
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Add New Word",
+        "code_id": "word_add",
+        "components": [
+          {
+            "id": 2,
+            "name": "form title"
+          },
+          {
+            "id": 3,
+            "name": "hidden back stack"
+          },
+          {
+            "id": 4,
+            "name": "hidden confirm status"
+          },
+          {
+            "id": 5,
+            "name": "name form field"
+          },
+          {
+            "id": 6,
+            "name": "description form field"
+          },
+          {
+            "id": 7,
+            "name": "cancel button"
+          },
+          {
+            "id": 8,
+            "name": "save button"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Change Word",
+        "code_id": "word_edit",
+        "components": []
+      },
+      {
+        "id": 5,
+        "name": "Delete Word",
+        "description": "Exclude or delete a word",
+        "code_id": "word_del",
+        "components": []
+      },
+      {
+        "id": 6,
+        "name": "Search",
+        "description": "The search page for all words and formulas",
+        "code_id": "word_find",
+        "components": []
+      },
+      {
+        "id": 7,
+        "name": "Display Number",
+        "code_id": "value",
+        "components": []
+      },
+      {
+        "id": 8,
+        "name": "Add New Number",
+        "code_id": "value_add",
+        "components": []
+      },
+      {
+        "id": 9,
+        "name": "Change Number",
+        "code_id": "value_edit",
+        "components": []
+      },
+      {
+        "id": 10,
+        "name": "Delete Number",
+        "code_id": "value_del",
+        "components": []
+      },
+      {
+        "id": 11,
+        "name": "Add New Formula",
+        "code_id": "formula_add",
+        "components": []
+      },
+      {
+        "id": 12,
+        "name": "Change Formula",
+        "code_id": "formula_edit",
+        "components": []
+      },
+      {
+        "id": 13,
+        "name": "Delete Formula",
+        "description": "To confirm the exclusion or deleting of a formula",
+        "code_id": "formula_del",
+        "components": []
+      },
+      {
+        "id": 14,
+        "name": "Explain Formula Result",
+        "description": "Explain the formula result",
+        "code_id": "formula_explain",
+        "components": []
+      },
+      {
+        "id": 15,
+        "name": "Formula test",
+        "description": "To debug the formula",
+        "code_id": "formula_test",
+        "components": []
+      },
+      {
+        "id": 16,
+        "name": "Add New Source",
+        "code_id": "source_add",
+        "components": []
+      },
+      {
+        "id": 17,
+        "name": "Change Source",
+        "code_id": "source_edit",
+        "components": []
+      },
+      {
+        "id": 18,
+        "name": "Delete Source",
+        "description": "Delete an external data source",
+        "code_id": "source_del",
+        "components": []
+      },
+      {
+        "id": 19,
+        "name": "Verb List",
+        "description": "List all available ways how to link two words",
+        "code_id": "verbs",
+        "components": []
+      },
+      {
+        "id": 20,
+        "name": "Add New Verb",
+        "code_id": "verb_add",
+        "components": []
+      },
+      {
+        "id": 21,
+        "name": "Change Verb",
+        "description": "Rename a tern link type",
+        "code_id": "verb_edit",
+        "components": []
+      },
+      {
+        "id": 22,
+        "name": "Delete verb",
+        "description": "Exclude or delete a verb",
+        "code_id": "verb_del",
+        "components": []
+      },
+      {
+        "id": 23,
+        "name": "Add New Triple",
+        "code_id": "triple_add",
+        "components": []
+      },
+      {
+        "id": 24,
+        "name": "Change Triple",
+        "description": "Rename a triple",
+        "code_id": "triple_edit",
+        "components": []
+      },
+      {
+        "id": 25,
+        "name": "Delete triple",
+        "description": "Exclude or delete a triple",
+        "code_id": "triple_del",
+        "components": []
+      },
+      {
+        "id": 26,
+        "name": "User Settings",
+        "description": "to change the user settings",
+        "code_id": "user",
+        "components": []
+      },
+      {
+        "id": 27,
+        "name": "Error Log",
+        "description": "simple confirm page for a new error that has been logged in the database",
+        "code_id": "error_log",
+        "components": []
+      },
+      {
+        "id": 28,
+        "name": "System Error List",
+        "description": "List the system errors and allow the user to change the status",
+        "code_id": "error_update",
+        "components": []
+      },
+      {
+        "id": 29,
+        "name": "Import",
+        "description": "Select a file to import data",
+        "code_id": "import",
+        "components": []
+      },
+      {
+        "id": 30,
+        "name": "Add View",
+        "code_id": "view_add",
+        "components": []
+      },
+      {
+        "id": 31,
+        "name": "Change View",
+        "description": "Rename a view",
+        "code_id": "view_edit",
+        "components": []
+      },
+      {
+        "id": 32,
+        "name": "Delete View",
+        "description": "Exclude or delete a view",
+        "code_id": "view_del",
+        "components": []
+      },
+      {
+        "id": 33,
+        "name": "Add View Component",
+        "code_id": "component_add",
+        "components": [
+          {
+            "id": 9,
+            "name": "System view component field"
+          }
+        ]
+      },
+      {
+        "id": 34,
+        "name": "Change View Component",
+        "description": "Adjust a view component",
+        "code_id": "component_edit",
+        "components": []
+      },
+      {
+        "id": 35,
+        "name": "Delete View Component",
+        "description": "Exclude or delete a view component",
+        "code_id": "component_del",
+        "components": []
+      }
+    ]
+  }
+}

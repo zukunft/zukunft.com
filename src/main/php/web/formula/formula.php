@@ -110,7 +110,7 @@ class formula extends sandbox_typed_dsp
         $vars = parent::api_array();
 
         $vars[controller::API_FLD_USER_TEXT] = $this->usr_text();
-        return array_filter($vars, fn($value) => !is_null($value));
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 

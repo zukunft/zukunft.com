@@ -74,7 +74,7 @@ class user_unit_tests
 
         $t->subheader('Im- and Export tests');
 
-        $t->assert_json(new user(), $json_file);
+        $t->assert_json_file(new user(), $json_file);
 
     }
 

@@ -91,7 +91,7 @@ class component_unit_tests
 
         $t->subheader('Im- and Export tests');
 
-        $t->assert_json(new component($usr), $json_file);
+        $t->assert_json_file(new component($usr), $json_file);
 
     }
 

@@ -5,6 +5,9 @@
     /web/ref/ref.php - the extension of the reference API objects to create ref base html code
     ----------------
 
+    extends db_object_dsp because this is the only display object that does not have a explicit name but has a type
+
+
     This file is part of the frontend of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -31,15 +34,15 @@
 
 namespace html\ref;
 
+use api\sandbox_named_api;
+use html\sandbox\db_object as db_object_dsp;
 use controller\controller;
-use html\db_object;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use html\ref\source as source_dsp;
-use html\sandbox_typed_dsp;
 use html\word\word;
 
-class ref extends sandbox_typed_dsp
+class ref extends db_object_dsp
 {
 
     /*
@@ -50,6 +53,9 @@ class ref extends sandbox_typed_dsp
     private ?source $source;
     private ?string $external_key; // maybe use field name instead
     private ?string $url;
+    private ?int $type_id;
+    // the mouse over tooltip for the named object e.g. word, triple, formula, verb, view or component
+    public ?string $description = null;
 
 
     /*
@@ -107,6 +113,16 @@ class ref extends sandbox_typed_dsp
         } else {
             $this->set_url(null);
         }
+        if (array_key_exists(controller::API_FLD_TYPE_ID, $json_array)) {
+            $this->set_type_id($json_array[controller::API_FLD_TYPE_ID]);
+        } else {
+            $this->set_type_id();
+        }
+        if (array_key_exists(sandbox_named_api::FLD_DESCRIPTION, $json_array)) {
+            $this->set_description($json_array[sandbox_named_api::FLD_DESCRIPTION]);
+        } else {
+            $this->set_description(null);
+        }
     }
 
     function set_phrase(phrase_dsp $phr = null): void
@@ -158,6 +174,33 @@ class ref extends sandbox_typed_dsp
         return $this->url;
     }
 
+    function set_type_id(?int $type_id = null): void
+    {
+        $this->type_id = $type_id;
+    }
+
+    function type_id(): ?int
+    {
+        return $this->type_id;
+    }
+
+    function set_description(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string the display value of the tooltip where null is an empty string
+     */
+    function description(): string
+    {
+        if ($this->description == null) {
+            return '';
+        } else {
+            return $this->description;
+        }
+    }
+
 
     /*
      * display
@@ -194,7 +237,9 @@ class ref extends sandbox_typed_dsp
         $vars[controller::API_FLD_EXTERNAL_KEY] = $this->external_key();
         $vars[controller::API_FLD_PHRASE] = $this->phr->id();
         $vars[controller::API_FLD_SOURCE] = $this->source->id();
-        return $vars;
+        $vars[controller::API_FLD_TYPE_ID] = $this->type_id();
+        $vars[controller::API_FLD_DESCRIPTION] = $this->description();
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 }

@@ -172,7 +172,7 @@ class term extends combine_named_dsp
         if ($this->is_formula()) {
             $vars[controller::API_FLD_USER_TEXT] = $this->obj()->usr_text();
         }
-        return $vars;
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 

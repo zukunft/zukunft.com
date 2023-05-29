@@ -364,7 +364,13 @@ class string_unit_tests
         $test_target = $t->file('/web/system/target.html');
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '433//- href="Test" title=""////+ href="/http/word_add.php" title="add new word"//';
-        $t->assert("diff_msg, with position in long string", $result, $target);
+        $t->assert("diff_msg, with position in long html string", $result, $target);
+        // ... json files
+        $test_result = json_decode($t->file('/web/system/result.json'), true);
+        $test_target = json_decode($t->file('/web/system/target.json'), true);
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '64//+{"id":65,"code_id":"18excluded","name":"18excluded","comment":""}//, 65//+{"id":66,"code_id":"14excluded","name":"14excluded","comment":""}// ... and 1 more';
+        $t->assert("diff_msg, json in long string", $result, $target);
 
 
         $t->subheader('json');

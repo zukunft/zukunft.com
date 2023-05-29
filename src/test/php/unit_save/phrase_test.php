@@ -58,7 +58,7 @@ function create_test_phrases(test_cleanup $t): void
 {
     $t->header('Check if all base phrases are correct');
 
-    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON, phrase_api::TN_ZH_CANTON);
+    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON, phrase_api::TN_ZH_CANTON, phrase_api::TN_ZH_CANTON);
     $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CITY, phrase_api::TN_ZH_CITY, phrase_api::TN_ZH_CITY);
     $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_COMPANY, phrase_api::TN_ZH_COMPANY, phrase_api::TN_ZH_COMPANY);
     $t->test_triple(phrase_api::TN_ZH_CANTON, verb::IS_PART_OF, word_api::TN_CH);

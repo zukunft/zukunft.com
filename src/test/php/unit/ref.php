@@ -66,9 +66,9 @@ class ref_unit_tests
         $t->assert_load_sql_all($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);
 
         $t->subheader('Im- and Export tests');
-        $t->assert_json(new ref($usr), $json_file);
+        $t->assert_json_file(new ref($usr), $json_file);
 
-        $t->subheader('API and frontend cast unit tests');
+        $t->subheader('API and frontend cast unit tests for references');
         $ref = $t->dummy_reference();
         $t->assert_api($ref);
         $t->assert_api_to_dsp($ref, new ref_dsp());
@@ -105,9 +105,9 @@ class ref_unit_tests
         $t->assert_load_sql_all($db_con, $source_type_list, sql_db::TBL_SOURCE_TYPE);
 
         $t->subheader('Im- and Export tests');
-        $t->assert_json(new source($usr), $json_file);
+        $t->assert_json_file(new source($usr), $json_file);
 
-        $t->subheader('API and frontend cast unit tests');
+        $t->subheader('API and frontend cast unit tests for sources');
         $src = $t->dummy_source();
         $t->assert_api_msg($db_con, $src);
         $t->assert_api_to_dsp($src, new source_dsp());

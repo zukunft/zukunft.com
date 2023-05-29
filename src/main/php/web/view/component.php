@@ -354,7 +354,7 @@ class component extends sandbox_typed_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        return array_filter($vars, fn($value) => !is_null($value));
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 

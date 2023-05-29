@@ -993,14 +993,19 @@ class create_test_objects extends test_base
     }
 
     /**
-     * check if a word link exists and if not and requested create it
-     * $phrase_name should be set if the standard name for the link should not be used
+     * check if a triple exists and if not create it if requested
+     * @param string $from_name a phrase name
+     * @param string $to_name a phrase name
+     * @param string $target the expected name of the triple
+     * @param string $name_given the name that the triple should be set to
+     * @param bool $auto_create if true the related words should be created if the phrase does not exist
+     * @return triple the loaded or created triple
      */
     function test_triple(string $from_name,
                          string $verb_code_id,
                          string $to_name,
                          string $target = '',
-                         string $phrase_name = '',
+                         string $name_given = '',
                          bool   $auto_create = true): triple
     {
         global $usr;
@@ -1008,7 +1013,7 @@ class create_test_objects extends test_base
 
         $result = new triple($usr);
 
-        // create the words if needed
+        // load the phrases to link and create words if needed
         $from = $this->load_phrase($from_name);
         if ($from->id() == 0 and $auto_create) {
             $from = $this->add_word($from_name)->phrase();
@@ -1024,52 +1029,56 @@ class create_test_objects extends test_base
             log_err('Cannot get phrase ' . $to_name);
         }
 
+        // load the verb
         $vrb = $verbs->get_verb($verb_code_id);
 
-        $lnk_test = new triple($usr);
+        // check if the triple exists or create a new if needed
+        $trp = new triple($usr);
         if ($from->id() == 0 or $to->id() == 0) {
-            log_err("Words " . $from_name . " and " . $to_name . " cannot be created");
+            log_err("Phrases " . $from_name . " and " . $to_name . " cannot be created");
         } else {
             // check if the forward link exists
-            $lnk_test->load_by_link($from->id(), $vrb->id(), $to->id());
-            if ($lnk_test->id() > 0) {
+            $trp->load_by_link($from->id(), $vrb->id(), $to->id());
+            if ($trp->id() > 0) {
                 // refresh the given name if needed
-                if ($phrase_name <> '' and $lnk_test->name_given() <> $phrase_name) {
-                    $lnk_test->set_name_given($phrase_name);
-                    $lnk_test->save();
-                    $lnk_test->load_by_id($lnk_test->id());
+                if ($name_given <> '' and $trp->name(true) <> $name_given) {
+                    $trp->set_name_given($name_given);
+                    $trp->save();
+                    $trp->load_by_id($trp->id());
                 }
-                $result = $lnk_test;
+                $result = $trp;
             } else {
                 // check if the backward link exists
-                $lnk_test->from = $to;
-                $lnk_test->verb = $vrb;
-                $lnk_test->to = $from;
-                $lnk_test->set_user($usr);
-                $lnk_test->load_by_link($to->id(), $vrb->id(), $from->id());
-                $result = $lnk_test;
+                $trp->from = $to;
+                $trp->verb = $vrb;
+                $trp->to = $from;
+                $trp->set_user($usr);
+                $trp->load_by_link($to->id(), $vrb->id(), $from->id());
+                $result = $trp;
                 // create the link if requested
-                if ($lnk_test->id() <= 0 and $auto_create) {
-                    $lnk_test->from = $from;
-                    $lnk_test->verb = $vrb;
-                    $lnk_test->to = $to;
-                    if ($lnk_test->name_given() <> $phrase_name) {
-                        $lnk_test->set_name_given($phrase_name);
+                if ($trp->id() <= 0 and $auto_create) {
+                    $trp->from = $from;
+                    $trp->verb = $vrb;
+                    $trp->to = $to;
+                    if ($trp->name(true) <> $name_given) {
+                        $trp->set_name_given($name_given);
                     }
-                    $lnk_test->save();
-                    $lnk_test->load_by_id($lnk_test->id());
+                    $trp->save();
+                    $trp->load_by_id($trp->id());
                 }
             }
         }
-        // fallback setting of target f
+
+        // assume the target name if not given
         $result_text = '';
-        if ($lnk_test->id() > 0) {
-            $result_text = $lnk_test->name();
+        if ($trp->id() > 0) {
+            $result_text = $trp->name(true);
             if ($target == '') {
-                $target = $lnk_test->name();
+                $target = $trp->name(true);
             }
         }
-        $this->display('word link', $target, $result_text, TIMEOUT_LIMIT_DB);
+
+        $this->display('test_triple', $target, $result_text, TIMEOUT_LIMIT_DB);
         return $result;
     }
 
@@ -1208,7 +1217,7 @@ class create_test_objects extends test_base
     function test_phrase(string $phr_name): phrase
     {
         $phr = $this->load_phrase($phr_name);
-        $this->display('phrase', $phr_name, $phr->name());
+        $this->display('phrase', $phr_name, $phr->name(true));
         return $phr;
     }
 

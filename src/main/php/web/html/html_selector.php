@@ -61,7 +61,7 @@ class html_selector
             $result .= '<option value="0" selected>' . $this->dummy_text . '</option>';
         }
 
-        if (count($this->lst) > 0) {
+        if ($this->count() > 0) {
             foreach ($this->lst as $key => $value) {
                 $row_option = '';
                 if ($key == $this->selected and $this->selected <> 0) {
@@ -104,7 +104,7 @@ class html_selector
                 $this->lst[$db_entry['id']] = $db_entry['name'];
             }
         }
-        if (count($this->lst) > 0) {
+        if ($this->count() > 0) {
             foreach ($this->lst as $key => $value) {
                 $row_option = '';
                 if ($key == $this->selected and $this->selected <> 0) {
@@ -147,6 +147,15 @@ class html_selector
             $result .= $this->label . ' <select name="' . $this->name . '" form="' . $this->form . '">';
         }
         return $result;
+    }
+
+    private function count(): int
+    {
+        if ($this->lst != null) {
+            return count($this->lst);
+        } else {
+            return 0;
+        }
     }
 
     /**

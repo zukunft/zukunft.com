@@ -296,12 +296,12 @@ class phrase extends combine_named
     /**
      * @return string the name of the phrase
      */
-    function name(): string
+    function name(bool $ignore_excluded = false): string
     {
         if ($this->obj == null) {
             return '';
         } else {
-            return $this->obj->name();
+            return $this->obj->name($ignore_excluded);
         }
     }
 

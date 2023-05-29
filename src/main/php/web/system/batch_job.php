@@ -268,7 +268,7 @@ class batch_job extends db_object_dsp
         $vars[controller::API_FLD_TYPE] = $this->type();
         $vars[controller::API_FLD_STATUS] = $this->status();
         $vars[controller::API_FLD_PRIORITY] = $this->priority();
-        return $vars;
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 }

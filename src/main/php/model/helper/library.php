@@ -66,8 +66,6 @@ class library
     private const STR_DIFF_DEL_START = '//-';
     private const STR_DIFF_DEL_END = '//';
     private const STR_DIFF_MSG_LEN = 100; // the max target length of the difference message to keep it human-readable
-    private const STR_DIFF_MAX_MSG_WORD = 5; // the max number of word difference to report to keep it human-readable
-    private const STR_DIFF_MAX_MSG_CHAR = 30; // the max number of char difference to report to keep it human-readable
 
     // the expected minimal length of 80% of the words
     private const STR_WORD_MIN_LEN = 2;
@@ -479,7 +477,7 @@ class library
             $msg = $this->str_diff_msg($result, $target);
         } elseif (is_array($target) and is_array($result)) {
             $msg = $this->array_explain_missing($result, $target);
-            $msg .= $this->array_explain_missing($target, $result);
+            $msg .= $this->array_explain_missing($target, $result, self::STR_DIFF_DEL_START, self::STR_DIFF_DEL_END);
             if ($msg == '') {
                 $msg = $this->array_diff_msg($result, $target, $ignore_order);
             }
@@ -542,7 +540,7 @@ class library
             // sort only if needed
             $do_sort = false;
             $pos = 0;
-            $result_keys = array_flip(array_keys($result));
+            $result_keys = array_keys($result);
             foreach ($target as $key => $value) {
                 // sort is only needed
                 // if the key on the same position does not match matches
@@ -602,17 +600,41 @@ class library
      *
      * @param array $result the actual result that can contain more than the target
      * @param array $target the part that must at least be part of the result
+     * @param string $start_maker to mark the start of the missing part
+     * @param string $end_maker to mark the end of the missing part
      * @return string an empty string if all target entries are part of the result
      */
-    private function array_explain_missing(array $result, array $target): string
+    private function array_explain_missing(
+        array $result,
+        array $target,
+        string $start_maker = self::STR_DIFF_ADD_START,
+        string $end_maker = self::STR_DIFF_ADD_END): string
     {
         $msg = '';
+        $more = 0;
         // in an array each value needs to be the same
         foreach ($target as $key => $value) {
             if (!array_key_exists($key, $result)) {
-                $msg .= $this->str_sep($msg);
-                $msg .= 'key ' . $key . ' missing in ' . $this->dsp_array($result, true);
+                if (strlen($msg) < self::STR_DIFF_MSG_LEN) {
+                    $msg .= $this->str_sep($msg);
+                    $msg .= $key . $start_maker;
+                    if (is_array($value)) {
+                        $msg .= json_encode($value);
+                    } else {
+                        $msg .= $value;
+                    }
+                    $msg .= $end_maker;
+                } else {
+                    $more++;
+                }
+            } else {
+                if (is_array($value)) {
+                    $msg .= $this->array_explain_missing($result[$key], $value);
+                }
             }
+        }
+        if ($more > 0) {
+            $msg .= ' ... and ' . $more . ' more';
         }
         return $msg;
     }
@@ -695,7 +717,8 @@ class library
      * @param string $msg the text as use until now
      * @return string the text with a comma if this helps to make the text easier to read
      */
-    private function str_sep(string $msg): string
+    private
+    function str_sep(string $msg): string
     {
         if ($msg != '') {
             return self::SEPARATOR . ' ';
@@ -725,17 +748,20 @@ class library
 
     }
 
-    private static function sort_array_by_class($a, $b): int
+    private
+    static function sort_array_by_class($a, $b): int
     {
         return strcmp($a[combine_object_api::FLD_CLASS], $b[combine_object_api::FLD_CLASS]);
     }
 
-    private static function sort_array_by_id($a, $b): int
+    private
+    static function sort_array_by_id($a, $b): int
     {
         return $a[controller::API_FLD_ID] - $b[controller::API_FLD_ID];
     }
 
-    private static function sort_by_class_and_id(?array $a): ?array
+    private
+    static function sort_by_class_and_id(?array $a): ?array
     {
         if ($a != null) {
             if (count($a) > 0) {
@@ -949,7 +975,7 @@ class library
         $pos = 1;
         $prev_pos = 1;
         $i = 0;
-        while (($i < count($diff_val) AND strlen($msg) < self::STR_DIFF_MSG_LEN)) {
+        while (($i < count($diff_val) and strlen($msg) < self::STR_DIFF_MSG_LEN)) {
             $type = $diff_typ[$i];
             if ($type != $prev_type) {
                 switch ($prev_type) {
@@ -1017,7 +1043,8 @@ class library
      *         values: a list of elements as they appear in the diff
      *           type: contains numbers. 0: unchanged, -1: removed, 1: added
      */
-    private function str_diff_list(array $from, array $to, ?array $from_sep = null, ?array $to_sep = null): array
+    private
+    function str_diff_list(array $from, array $to, ?array $from_sep = null, ?array $to_sep = null): array
     {
         if ($from_sep == null or count($from_sep) != count($from)) {
             $from_sep = $from;
@@ -1074,7 +1101,8 @@ class library
      * @param int $start_pos the staring position in the to string array
      * @return int the position of the next match in the to array or -1 if nothing found
      */
-    private function str_diff_list_next_match(string $from, array $to, int $start_pos): int
+    private
+    function str_diff_list_next_match(string $from, array $to, int $start_pos): int
     {
         $check_pos = $start_pos;
         $found_pos = -1;
@@ -1096,7 +1124,8 @@ class library
      *         values: a list of elements as they appear in the diff
      *           type: contains numbers. 0: unchanged, -1: removed, 1: added
      */
-    private function str_diff_list_lcs(array $from, array $to): array
+    private
+    function str_diff_list_lcs(array $from, array $to): array
     {
         $diff_part = array(); // list with the differences
         $diff_type = array(); //
@@ -1246,7 +1275,8 @@ class library
      * @param bool $with_sep false if the separators should not be included and ignored in the compare
      * @return array with the "useful" parts of the string
      */
-    private function str_split_add_sep(string $text, array $result, bool $with_sep = true): array
+    private
+    function str_split_add_sep(string $text, array $result, bool $with_sep = true): array
     {
         $pos = 0;
         foreach ($result as $key => $word) {
@@ -1333,7 +1363,8 @@ class library
      * @param int $max_len the expect maximal length of a "word"
      * @return float the percentage of "words" within the expected length
      */
-    private function str_word_len_normal(
+    private
+    function str_word_len_normal(
         array $word_list,
         int   $min_len,
         int   $max_len

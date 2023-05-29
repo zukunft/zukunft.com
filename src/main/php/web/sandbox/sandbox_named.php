@@ -117,7 +117,7 @@ class sandbox_named_dsp extends db_object_dsp
 
         $vars[controller::API_FLD_NAME] = $this->name();
         $vars[controller::API_FLD_DESCRIPTION] = $this->description();
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+        return $vars;
     }
 
 

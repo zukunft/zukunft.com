@@ -98,7 +98,7 @@ class value extends sandbox_value_dsp
         $vars = parent::api_array();
         $vars[controller::API_FLD_PHRASES] = $this->grp()->phr_lst()->api_array();
         $vars[controller::API_FLD_NUMBER] = $this->number();
-        return $vars;
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 

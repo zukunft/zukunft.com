@@ -748,7 +748,7 @@ class test_api extends create_test_objects
         if ($contains) {
             return $this->assert($class . ' API GET', $lib->json_contains($expected, $actual), true);
         } else {
-            return $this->assert($class . ' API GET', $lib->json_is_similar($expected, $actual), true);
+            return $this->assert_json($class . ' API GET', $expected, $actual);
         }
     }
 

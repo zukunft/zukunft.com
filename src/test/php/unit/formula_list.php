@@ -117,7 +117,7 @@ class formula_list_unit_tests
 
         $t->subheader('Im- and Export tests');
 
-        $t->assert_json(new formula_list($usr), $json_file);
+        $t->assert_json_file(new formula_list($usr), $json_file);
 
 
         $t->subheader('HTML frontend unit tests');

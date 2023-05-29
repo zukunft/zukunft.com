@@ -99,10 +99,10 @@ class view_unit_tests
 
         $t->subheader('Im- and Export tests');
 
-        $t->assert_json(new view($usr), $json_file);
+        $t->assert_json_file(new view($usr), $json_file);
 
 
-        $t->subheader('API and frontend cast unit tests');
+        $t->subheader('API and frontend cast unit tests for views');
 
         $dsp = $t->dummy_view();
         $t->assert_api($dsp);

@@ -1315,11 +1315,11 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
      * or the generic name e.g. Australia is a Country
      * or for the verb is 'is' the category in brackets e.g. Zurich (Canton) or Zurich (City)
      */
-    function name(): string
+    function name(bool $ignore_excluded = false): string
     {
         $result = '';
 
-        if (!$this->is_excluded()) {
+        if (!$this->is_excluded() or $ignore_excluded) {
             if ($this->name <> '') {
                 // use the object
                 $result = $this->name;

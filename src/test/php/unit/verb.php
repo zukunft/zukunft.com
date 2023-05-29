@@ -71,7 +71,7 @@ class verb_unit_tests
         $vrb = new verb();
         // set the admin user if this is needed for the import e.g. for verbs
         $vrb->set_user($usr_sys);
-        $t->assert_json($vrb, $json_file);
+        $t->assert_json_file($vrb, $json_file);
 
 
         $t->subheader('HTML frontend unit tests');

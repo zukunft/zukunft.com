@@ -205,6 +205,7 @@ if ($start_usr->id() > 0) {
             // --------------------------------------
 
             load_usr_data();
+            $t->create_test_db_entries($t);
             $t->run_unit_db_tests($t);
 
             run_system_test($t);
@@ -214,8 +215,6 @@ if ($start_usr->id() > 0) {
             // TODO activate
             //$t->test_api_write_no_rest_all();
             //$t->test_api_write_all();
-
-            $t->create_test_db_entries($t);
 
             run_db_link_test($t);
             run_sandbox_test($t);
