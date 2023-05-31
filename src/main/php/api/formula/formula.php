@@ -74,6 +74,7 @@ class formula_api extends sandbox_typed_api
     // persevered formula names for unit and integration tests
     const TN_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula
     const TN_RENAMED = 'System Test Formula Renamed';
+    const TN_EXCLUDED = 'System Test Formula Excluded';
     const TN_THIS = 'System Test Formula This'; // to test if another formula of the functional type "this" can be created
     const TF_THIS = '= "System Test Formula This"';
     const TN_RATIO = 'System Test Formula PE Ratio'; // to test a simple ration calculation like how many times Switzerland is bigger than the canton zurich or the price to earning ration for equity
@@ -94,6 +95,7 @@ class formula_api extends sandbox_typed_api
     const RESERVED_FORMULAS = array(
         self::TN_ADD,
         self::TN_RENAMED,
+        self::TN_EXCLUDED,
         self::TN_THIS,
         self::TN_RATIO,
         self::TN_SECTOR,

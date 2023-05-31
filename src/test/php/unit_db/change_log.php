@@ -91,10 +91,16 @@ class change_log_unit_db_tests
         $t->assert('first verb change is adding', $first_change->old_value, '');
         $t->assert('... the verb name', $first_change->new_value, verb_api::TN_READ);
 
-        // check loading of given name changes of triples
+        // check loading of triple name changes of triples
         $lst = new change_log_list();
         $result = $lst->load_by_fld_of_trp($trp, change_log_field::FLD_TRIPLE_NAME);
         $t->assert('triple name change', $result, true);
+
+        // check loading of given name changes of triples
+        // TODO replace with triple name ?
+        $lst = new change_log_list();
+        $result = $lst->load_by_fld_of_trp($trp, change_log_field::FLD_GIVEN_NAME);
+        $t->assert('given name change', $result, true);
 
         // ... and if the first entry is the setting the given name of a triple
         $first_change = $lst->lst()[0];

@@ -1,5 +1,6 @@
 PREPARE triple_by_usr_cfg (int, int) AS
     SELECT triple_id,
+           triple_name,
            name_given,
            name_generated,
            description,

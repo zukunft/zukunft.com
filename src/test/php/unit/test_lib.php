@@ -353,6 +353,12 @@ class string_unit_tests
         $result = $lib->diff_msg($test_result, $test_target);
         $target = 'text//- less////+ add// end';
         $t->assert("diff_msg, replaced part", $result, $target);
+        // ... string with almost empty result
+        $test_result = '""';
+        $test_target = '"System Test Word Share"';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '//-"System Test Word Share"////+""//';
+        $t->assert("diff_msg, replaced part", $result, $target);
         // ... identical array
         $test_result = [1, 2, 3];
         $test_target = [1, 2, 3];

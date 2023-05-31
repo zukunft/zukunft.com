@@ -49,7 +49,15 @@ function create_test_components(test_cleanup $t): void
     $t->test_component(component_api::TN_TITLE, view_cmp_type::PHRASE_NAME);
     $t->test_component(component_api::TN_VALUES, view_cmp_type::VALUES_ALL);
     $t->test_component(component_api::TN_RESULTS, view_cmp_type::FORMULA_RESULTS);
+    $t->test_component(component_api::TN_EXCLUDED, view_cmp_type::PHRASE_NAME);
     $t->test_component(component_api::TN_TABLE, view_cmp_type::WORD_VALUE);
+
+    // modify the special test cases
+    global $usr;
+    $cmp = new component($usr);
+    $cmp->load_by_name(component_api::TN_EXCLUDED);
+    $cmp->set_excluded(true);
+    $cmp->save();
 
 }
 

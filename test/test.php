@@ -205,8 +205,8 @@ if ($start_usr->id() > 0) {
             // --------------------------------------
 
             load_usr_data();
-            $t->create_test_db_entries($t);
             $t->run_unit_db_tests($t);
+            $t->create_test_db_entries($t);
 
             run_system_test($t);
             run_user_test($t);

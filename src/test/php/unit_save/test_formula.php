@@ -55,10 +55,18 @@ function create_test_formulas(test_cleanup $t): void
     $t->test_formula(formula_api::TN_SECTOR, formula_api::TF_SECTOR);
     //$t->test_formula(formula_api::TN_THIS, formula_api::TF_THIS);
     $t->test_formula(formula_api::TN_ADD, formula_api::TF_INCREASE);
+    $t->test_formula(formula_api::TN_EXCLUDED, formula_api::TF_INCREASE);
     $t->test_formula(formula_api::TN_SCALE_K, formula_api::TF_SCALE_K);
     $t->test_formula(formula_api::TN_SCALE_TO_K, formula_api::TF_SCALE_TO_K);
     $t->test_formula(formula_api::TN_SCALE_MIO, formula_api::TF_SCALE_MIO);
     $t->test_formula(formula_api::TN_SCALE_BIL, formula_api::TF_SCALE_BIL);
+
+    // modify the special test cases
+    global $usr;
+    $frm = new formula($usr);
+    $frm->load_by_name(formula_api::TN_EXCLUDED);
+    $frm->set_excluded(true);
+    $frm->save();
 }
 
 function run_formula_test(test_cleanup $t): void

@@ -51,6 +51,7 @@ class view_api extends sandbox_typed_api
     const TN_ADD = 'System Test View';
     const TN_RENAMED = 'System Test View Renamed';
     const TN_COMPLETE = 'System Test View Complete';
+    const TN_EXCLUDED = 'System Test View Excluded';
     const TN_TABLE = 'System Test View Table';
 
     // to test a system view (add word) as unit test without database
@@ -66,12 +67,14 @@ class view_api extends sandbox_typed_api
         self::TN_ADD,
         self::TN_RENAMED,
         self::TN_COMPLETE,
+        self::TN_EXCLUDED,
         self::TN_TABLE
     );
 
     // array of test view names create before the test
     const TEST_VIEWS = array(
         self::TN_COMPLETE,
+        self::TN_EXCLUDED,
         self::TN_TABLE
     );
 

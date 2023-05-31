@@ -196,7 +196,7 @@ class button
     /**
      * the old zuh_btn_confirm without description, replace with zuh_btn_confirm
      */
-    function yesno(string $ui_msg_id = '', string $explain): string
+    function yesno(string $ui_msg_id = '', string $explain = ''): string
     {
         $html = new html_base();
         //zu_debug("button->yesno ".$this->title.".", 10);

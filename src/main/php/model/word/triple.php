@@ -1732,7 +1732,8 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         if ($db_rec->name() <> $this->name()) {
             $log = $this->log_upd_field();
             $log->old_value = $db_rec->name();
-            $log->new_value = $this->name();
+            // ignore excluded to not overwrite an existing name
+            $log->new_value = $this->name(true);
             $log->std_value = $std_rec->name();
             $log->row_id = $this->id;
             $log->set_field(self::FLD_NAME);

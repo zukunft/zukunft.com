@@ -506,7 +506,7 @@ class phrase extends combine_named
             $trp = new triple($this->user());
             $result = $trp->load_by_id($this->obj_id(), triple::class);
             $this->obj = $trp;
-            $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj->name
+            // TODO check: $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj->name
             log_debug('triple ' . $this->dsp_id());
         } elseif ($this->is_word()) {
             $wrd = new word($this->user());

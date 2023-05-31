@@ -14,6 +14,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO replace db field 'triple_name' with a virtual field based on name_generated and name_given
     TODO add api unit test (assert_api_to_dsp) to all objects
     TODO align the namespace with PSR-0 as much as possible
     TODO remove the old frontend objects based on the api object
@@ -111,6 +112,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO create the unit tests for the core elements such as word, value, formula, view
     TODO review types again and capsule (move const to to base object e.g. the word type time to the word object)
     TODO for import offer to use all time phrases e.g. "year of fixation": 1975 for "speed of light"
+    TODO create an automatic database split based on a phrase and auto sync overlapping values
     TODO split the database from the memory object to save memory
     TODO add an im- and export code_id that is only unique for each type
     TODO move init data to one class that creates the initial records for all databases and create the documentation for the wiki

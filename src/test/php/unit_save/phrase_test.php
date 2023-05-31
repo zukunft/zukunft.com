@@ -54,7 +54,7 @@ use const test\TW_CF;
 use const test\TW_TAX;
 use const test\TW_VESTAS;
 
-function create_test_phrases(test_cleanup $t): void
+function create_test_triples(test_cleanup $t): void
 {
     $t->header('Check if all base phrases are correct');
 
@@ -72,6 +72,13 @@ function create_test_phrases(test_cleanup $t): void
 
     $t->header('Check if all base phrases are correct');
     $t->test_phrase(phrase_api::TN_ZH_COMPANY);
+
+    // exclude some to test the handling of exclude objects
+    global $usr;
+    $trp = new triple($usr);
+    $trp->load_by_name(phrase_api::TN_ZH_COMPANY);
+    $trp->set_excluded(true);
+    $trp->save();
 }
 
 function create_base_times(test_cleanup $t): void

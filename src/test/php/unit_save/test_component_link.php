@@ -48,6 +48,8 @@ function create_test_component_links(test_cleanup $t): void
     $t->test_view_cmp_lnk(view_api::TN_COMPLETE, component_api::TN_VALUES, 2);
     $t->test_view_cmp_lnk(view_api::TN_COMPLETE, component_api::TN_RESULTS, 3);
 
+    $t->test_view_cmp_lnk(view_api::TN_EXCLUDED, component_api::TN_EXCLUDED, 1);
+
     $t->test_view_cmp_lnk(view_api::TN_TABLE, component_api::TN_TITLE, 1);
     $t->test_view_cmp_lnk(view_api::TN_TABLE, component_api::TN_TABLE, 2);
 }

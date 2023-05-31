@@ -111,6 +111,7 @@ class test_cleanup extends test_api
         $result .= $this->test_view_cmp_unlink(view_api::TN_COMPLETE, component_api::TN_TITLE);
         $result .= $this->test_view_cmp_unlink(view_api::TN_COMPLETE, component_api::TN_VALUES);
         $result .= $this->test_view_cmp_unlink(view_api::TN_COMPLETE, component_api::TN_RESULTS);
+        $result .= $this->test_view_cmp_unlink(view_api::TN_EXCLUDED, component_api::TN_EXCLUDED);
         $result .= $this->test_view_cmp_unlink(view_api::TN_TABLE, component_api::TN_TITLE);
         $result .= $this->test_view_cmp_unlink(view_api::TN_TABLE, component_api::TN_TABLE);
 

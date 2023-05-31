@@ -1043,6 +1043,7 @@ class create_test_objects extends test_base
                 // refresh the given name if needed
                 if ($name_given <> '' and $trp->name(true) <> $name_given) {
                     $trp->set_name_given($name_given);
+                    $trp->set_name($name_given);
                     $trp->save();
                     $trp->load_by_id($trp->id());
                 }
@@ -1062,6 +1063,7 @@ class create_test_objects extends test_base
                     $trp->to = $to;
                     if ($trp->name(true) <> $name_given) {
                         $trp->set_name_given($name_given);
+                        $trp->set_name($name_given);
                     }
                     $trp->save();
                     $trp->load_by_id($trp->id());
@@ -1671,7 +1673,7 @@ class create_test_objects extends test_base
     function create_test_db_entries(test_unit_read_db $t): void
     {
         create_test_words($t);
-        create_test_phrases($t);
+        create_test_triples($t);
         create_test_sources($t);
         create_base_times($t);
         create_test_formulas($t);

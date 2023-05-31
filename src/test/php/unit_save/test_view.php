@@ -52,6 +52,12 @@ function create_test_views(test_cleanup $t): void
         $t->test_view($view_name);
     }
 
+    // modify the special test cases
+    global $usr;
+    $dsp = new view($usr);
+    $dsp->load_by_name(view_api::TN_EXCLUDED);
+    $dsp->set_excluded(true);
+    $dsp->save();
 }
 
 function run_view_test(test_cleanup $t): void

@@ -1534,7 +1534,11 @@ FROM words AS w
 UNION
 SELECT (l.triple_id * -(1))                                                    AS phrase_id,
        l.user_id,
-       CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS phrase_name,
+       CASE WHEN (l.triple_name IS NULL) THEN
+                CASE WHEN (l.name_given IS NULL)
+                     THEN l.name_generated
+                     ELSE l.name_given END
+            ELSE l.triple_name END AS phrase_name,
        l.description,
        l.values,
        l.word_type_id,
@@ -1560,7 +1564,11 @@ SELECT w.word_id   AS phrase_id,
 UNION
 SELECT (l.triple_id * -(1))                                                    AS phrase_id,
        l.user_id,
-       CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS phrase_name,
+       CASE WHEN (l.triple_name IS NULL) THEN
+                CASE WHEN (l.name_given IS NULL)
+                     THEN l.name_generated
+                     ELSE l.name_given END
+            ELSE l.triple_name END AS phrase_name,
        l.description,
        l.values,
        l.excluded,
@@ -1589,7 +1597,11 @@ WHERE w.word_type_id <> 10 OR w.word_type_id IS NULL
 UNION
 SELECT ((l.triple_id * -2) + 1)                                                  AS term_id,
        l.user_id,
-       CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS term_name,
+       CASE WHEN (l.triple_name IS NULL) THEN
+                CASE WHEN (l.name_given IS NULL)
+                     THEN l.name_generated
+                     ELSE l.name_given END
+            ELSE l.triple_name END AS phrase_name,
        l.description,
        l.values                                                                     AS usage,
        l.word_type_id,
@@ -1647,9 +1659,11 @@ WHERE w.word_type_id <> 10
 UNION
 SELECT ((l.triple_id * -2) + 1)  AS term_id,
        l.user_id,
-       CASE WHEN (l.name_given IS NULL)
-                THEN l.name_generated
-            ELSE l.name_given END AS term_name,
+       CASE WHEN (l.triple_name IS NULL) THEN
+                CASE WHEN (l.name_given IS NULL)
+                     THEN l.name_generated
+                     ELSE l.name_given END
+            ELSE l.triple_name END AS phrase_name,
        l.description,
        l.values                  AS usage,
        l.excluded,

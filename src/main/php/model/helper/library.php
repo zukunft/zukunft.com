@@ -1328,8 +1328,14 @@ class library
      */
     function str_is_json(string $text): bool
     {
-        json_decode($text);
-        return json_last_error() === JSON_ERROR_NONE;
+        $json = json_decode($text);
+        $result = json_last_error() === JSON_ERROR_NONE;
+        if ($result) {
+            if ($json == '') {
+                $result = false;
+            }
+        }
+        return $result;
     }
 
     /**

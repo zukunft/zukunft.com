@@ -60,6 +60,7 @@ class component_api extends sandbox_typed_api
     const TN_TITLE = 'System Test View Component Title';
     const TN_VALUES = 'System Test View Component Values';
     const TN_RESULTS = 'System Test View Component Results';
+    const TN_EXCLUDED = 'System Test View Component Excluded';
     const TN_TABLE = 'System Test View Component Table';
 
     // to test a system view
@@ -96,6 +97,7 @@ class component_api extends sandbox_typed_api
         self::TN_TITLE,
         self::TN_VALUES,
         self::TN_RESULTS,
+        self::TN_EXCLUDED,
         self::TN_TABLE
     );
 
@@ -104,6 +106,7 @@ class component_api extends sandbox_typed_api
         self::TN_TITLE,
         self::TN_VALUES,
         self::TN_RESULTS,
+        self::TN_EXCLUDED,
         self::TN_TABLE
     );
 
