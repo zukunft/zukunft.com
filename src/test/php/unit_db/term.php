@@ -48,7 +48,6 @@ class term_unit_db_tests
     {
 
         global $db_con;
-        global $usr;
 
         // init
         $t->name = 'term->';
@@ -56,38 +55,38 @@ class term_unit_db_tests
         $t->header('Test the term class (src/main/php/model/term.php)');
 
         // test load by term by a word db row
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $qp = $wrd->load_sql_by_id($db_con,1, word::class);
         $db_row = $db_con->get1($qp);
-        $trm = new term($usr);
+        $trm = new term($t->usr1);
         $trm->set_obj_from_class(word::class);
         $trm->row_mapper_obj($db_row, word::class, word::FLD_ID, word::FLD_NAME, word::FLD_TYPE);
         $t->assert($t->name . ' word row mapper', $trm->name(), word_api::TN_READ);
-        $trm_by_obj_id = new term($usr);
+        $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), word::class);
         $t->assert($t->name . ' word by object id', $trm_by_obj_id->name(), word_api::TN_READ);
 
         // test load by term by a triple db row
-        $trp = new triple($usr);
+        $trp = new triple($t->usr1);
         $qp = $trp->load_sql_by_id($db_con,1, triple::class);
         $db_row = $db_con->get1($qp);
-        $trm = new term($usr);
+        $trm = new term($t->usr1);
         $trm->set_obj_from_class(triple::class);
         $trm->row_mapper_obj($db_row, triple::class, triple::FLD_ID, triple::FLD_NAME, triple::FLD_TYPE);
         $t->assert($t->name . ' triple row mapper', $trm->name(), triple_api::TN_READ_NAME);
-        $trm_by_obj_id = new term($usr);
+        $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), triple::class);
         $t->assert($t->name . ' triple by object id', $trm_by_obj_id->name(), triple_api::TN_READ_NAME);
 
         // test load by term by a formula db row
-        $frm = new formula($usr);
+        $frm = new formula($t->usr1);
         $qp = $frm->load_sql_by_id($db_con,1, formula::class);
         $db_row = $db_con->get1($qp);
-        $trm = new term($usr);
+        $trm = new term($t->usr1);
         $trm->set_obj_from_class(formula::class);
         $trm->row_mapper_obj($db_row, formula::class, formula::FLD_ID, formula::FLD_NAME, formula::FLD_TYPE);
         $t->assert($t->name . ' formula row mapper', $trm->name(), formula_api::TN_READ);
-        $trm_by_obj_id = new term($usr);
+        $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), formula::class);
         $t->assert($t->name . ' formula by object id', $trm_by_obj_id->name(), formula_api::TN_READ);
 
@@ -95,16 +94,16 @@ class term_unit_db_tests
         $vrb = new verb();
         $qp = $vrb->load_sql_by_id($db_con,1);
         $db_row = $db_con->get1($qp);
-        $trm = new term($usr);
+        $trm = new term($t->usr1);
         $trm->set_obj_from_class(verb::class);
         $trm->row_mapper_obj($db_row, verb::class, verb::FLD_ID, verb::FLD_NAME);
         $t->assert($t->name . ' verb row mapper', $trm->name(), verb_api::TN_READ);
-        $trm_by_obj_id = new term($usr);
+        $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), verb::class);
         $t->assert($t->name . ' verb by object id', $trm_by_obj_id->name(), verb_api::TN_READ);
 
         // test loading by term by id and name
-        $trm = new term($usr);
+        $trm = new term($t->usr1);
         $trm->set_obj_from_class(word::class);
         $t->assert_load_combine($trm, word_api::TN_READ);
 

@@ -41,15 +41,13 @@ class formula_list_unit_db_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
         $t->name = 'formula list read db->';
 
         $t->header('Test the formula list class (classes/formula_list.php)');
 
         // test load by formula list by ids
-        $frm_lst = new formula_list($usr);
+        $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_ids([1, 2]);
         $result = $frm_lst->name();
         $target = formula_api::TN_READ . ',' . formula_api::TN_READ_ANOTHER; // order adjusted based on the number of usage

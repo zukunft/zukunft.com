@@ -52,7 +52,7 @@ $result = $usr->get();
 if ($usr->id() > 0) {
     $xml = '';
 
-    load_usr_data();
+    $usr->load_usr_data();
     $lib = new library();
 
     // get the words that are supposed to be exported, sample "Nestlé 2 country weight"

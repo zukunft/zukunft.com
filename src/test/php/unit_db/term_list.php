@@ -46,8 +46,6 @@ class term_list_unit_db_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
         // init
         $lib = new library();
         $t->name = 'term list read db->';
@@ -55,7 +53,7 @@ class term_list_unit_db_tests
         $t->header('Test the term list class (classes/term_list.php)');
 
         // test load by term list by ids
-        $trm_lst = new term_list($usr);
+        $trm_lst = new term_list($t->usr1);
         $trm_lst->load_by_ids((new trm_ids([1, -1, 2, -2])));
         $result = $trm_lst->name();
         $target = '"' . word_api::TN_READ . '","' .

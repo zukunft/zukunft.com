@@ -53,13 +53,14 @@ $src_id = $_GET[controller::URL_VAR_ID] ?? 0;
 $src_name = $_GET[controller::URL_VAR_NAME] ?? '';
 $src_code_id = $_GET[controller::URL_VAR_CODE_ID] ?? '';
 
-$msg = '';
-$ctrl = new controller();
-$result = new api_message($db_con, source::class); // create the message header
-
 // load the session user parameters
+$msg = '';
 $usr = new user;
 $msg .= $usr->get();
+
+$ctrl = new controller();
+$result = new api_message($db_con, source::class, $usr); // create the message header
+
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {

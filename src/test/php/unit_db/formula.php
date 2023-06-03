@@ -44,7 +44,6 @@ class formula_unit_db_tests
     {
 
         global $db_con;
-        global $usr;
         global $formula_types;
 
         // init
@@ -58,7 +57,7 @@ class formula_unit_db_tests
         // ... check if the link is shown correctly also for the second user
         // ... the second user has excluded the word at this point, so even if the word is linked the word link is nevertheless false
         // TODO check what that the word is linked if the second user activates the word
-        $phr = new phrase($usr);
+        $phr = new phrase($t->usr1);
         $phr->load_by_name(word_api::TN_READ);
         $frm = new formula($t->usr2);
         $frm->load_by_name(formula_api::TN_RENAMED, formula::class);
@@ -82,7 +81,7 @@ class formula_unit_db_tests
         $t->assert('check ' . formula_type::CALC, $result, 1);
 
         // check the estimates for the calculation blocks
-        $calc_blocks = (new formula_list($usr))->calc_blocks($db_con);
+        $calc_blocks = (new formula_list($t->usr1))->calc_blocks($db_con);
         $t->assert_greater_zero('calc_blocks', $calc_blocks);
 
         $t->subheader('Frontend API tests');

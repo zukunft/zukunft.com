@@ -103,7 +103,7 @@ class change_log_list extends base_list
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_wrd(word $wrd, string $field_name = ''): bool
+    function load_by_fld_of_wrd(word $wrd, user $usr, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -111,7 +111,8 @@ class change_log_list extends base_list
             change_log_table::WORD,
             $field_name,
             $field_name . '_of_wrd',
-            $wrd->id());
+            $wrd->id(),
+            $usr);
         return $this->load($qp);
     }
 
@@ -122,7 +123,7 @@ class change_log_list extends base_list
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_vrb(verb $trp, string $field_name = ''): bool
+    function load_by_fld_of_vrb(verb $trp, user $usr, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -130,7 +131,8 @@ class change_log_list extends base_list
             change_log_table::VERB,
             $field_name,
             $field_name . '_of_vrb',
-            $trp->id());
+            $trp->id(),
+            $usr);
         return $this->load($qp);
     }
 
@@ -141,7 +143,7 @@ class change_log_list extends base_list
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_trp(triple $trp, string $field_name = ''): bool
+    function load_by_fld_of_trp(triple $trp, user $usr, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -149,7 +151,8 @@ class change_log_list extends base_list
             change_log_table::TRIPLE,
             $field_name,
             $field_name . '_of_trp',
-            $trp->id());
+            $trp->id(),
+            $usr);
         return $this->load($qp);
     }
 
@@ -160,7 +163,7 @@ class change_log_list extends base_list
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_val(value $val, string $field_name = ''): bool
+    function load_by_fld_of_val(value $val, user $usr, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -168,7 +171,8 @@ class change_log_list extends base_list
             change_log_table::VALUE,
             $field_name,
             $field_name . '_of_val',
-            $val->id());
+            $val->id(),
+            $usr);
         return $this->load($qp);
     }
 
@@ -179,7 +183,7 @@ class change_log_list extends base_list
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_frm(formula $trp, string $field_name = ''): bool
+    function load_by_fld_of_frm(formula $trp, user $usr, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -187,7 +191,8 @@ class change_log_list extends base_list
             change_log_table::FORMULA,
             $field_name,
             $field_name . '_of_frm',
-            $trp->id());
+            $trp->id(),
+            $usr);
         return $this->load($qp);
     }
 
@@ -198,7 +203,7 @@ class change_log_list extends base_list
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_src(source $src, string $field_name = ''): bool
+    function load_by_fld_of_src(source $src, user $usr, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -206,7 +211,8 @@ class change_log_list extends base_list
             change_log_table::SOURCE,
             $field_name,
             $field_name . '_of_src',
-            $src->id());
+            $src->id(),
+            $usr);
         return $this->load($qp);
     }
 
@@ -217,7 +223,7 @@ class change_log_list extends base_list
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_dsp(view $dsp, string $field_name = ''): bool
+    function load_by_fld_of_dsp(view $dsp, user $usr, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -225,7 +231,8 @@ class change_log_list extends base_list
             change_log_table::VIEW,
             $field_name,
             $field_name . '_of_dsp',
-            $dsp->id());
+            $dsp->id(),
+            $usr);
         return $this->load($qp);
     }
 
@@ -236,7 +243,7 @@ class change_log_list extends base_list
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_cmp(component $cmp, string $field_name = ''): bool
+    function load_by_fld_of_cmp(component $cmp, user $usr, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -244,7 +251,8 @@ class change_log_list extends base_list
             change_log_table::VIEW_COMPONENT,
             $field_name,
             $field_name . '_of_cmp',
-            $cmp->id());
+            $cmp->id(),
+            $usr);
         return $this->load($qp);
     }
 
@@ -270,9 +278,9 @@ class change_log_list extends base_list
         string $table_name,
         string $field_name,
         string $query_ext,
-        int    $id): sql_par
+        int    $id,
+        user   $usr): sql_par
     {
-        global $usr;
         global $change_log_tables;
         global $change_log_fields;
 

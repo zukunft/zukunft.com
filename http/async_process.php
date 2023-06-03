@@ -60,7 +60,7 @@ if ($usr->id() > 0) {
 
     $html = new html_base();
 
-    load_usr_data();
+    $usr->load_usr_data();
 
     // prepare the display
     $dsp = new view_dsp_old($usr);

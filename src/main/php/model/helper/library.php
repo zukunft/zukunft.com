@@ -541,6 +541,7 @@ class library
             $do_sort = false;
             $pos = 0;
             $result_keys = array_keys($result);
+            $result_value = array_values($result);
             foreach ($target as $key => $value) {
                 // sort is only needed
                 // if the key on the same position does not match matches
@@ -548,7 +549,7 @@ class library
                     $do_sort = true;
                 }
                 // or the value does not match
-                if ($result[$pos] != $value) {
+                if ($result_value[$pos] != $value) {
                     $do_sort = true;
                 }
                 $pos++;

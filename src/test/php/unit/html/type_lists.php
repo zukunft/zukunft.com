@@ -56,7 +56,7 @@ class type_list
         $frm_lst->load_dummy();
 
         // load the types from the api message
-        $api_msg = $t->dummy_type_lists_api()->get_json();
+        $api_msg = $t->dummy_type_lists_api($t->usr1)->get_json();
         new type_list_dsp($api_msg);
 
         // test the type list display functions

@@ -60,9 +60,9 @@ class word_unit_db_tests
         $t->subheader('Word db read tests');
 
         $test_name = 'load word ' . word_api::TN_READ . ' by name and id';
-        $wrd = new word($usr);
+        $wrd = new word($t->usr1);
         $wrd->load_by_name(word_api::TN_READ, word::class);
-        $wrd_by_id = new word($usr);
+        $wrd_by_id = new word($t->usr1);
         $wrd_by_id->load_by_id($wrd->id(), word::class);
         $t->assert($test_name, $wrd_by_id->name(), word_api::TN_READ);
         $t->assert($test_name, $wrd_by_id->description, word_api::TD_READ);
@@ -84,7 +84,7 @@ class word_unit_db_tests
 
         $t->subheader('Word API object creation tests');
 
-        $wrd = $t->load_word(word_api::TN_READ);
+        $wrd = $t->load_word(word_api::TN_READ, $t->usr1);
         $t->assert_api_obj($wrd);
 
 
@@ -95,57 +95,57 @@ class word_unit_db_tests
         $t->subheader('Word list load and modification tests');
 
         // create word objects for testing
-        $wrd = new word($usr);
+        $wrd = new word ($t->usr1);
         $wrd->load_by_name(word_api::TN_READ, word::class);
-        $wrd_scale = new word($usr);
+        $wrd_scale = new word ($t->usr1);
         $wrd_scale->load_by_name(word_api::TN_MIO, word::class);
-        $phr = new phrase($usr);
+        $phr = new phrase ($t->usr1);
         $phr->load_by_name(triple_api::TN_READ_NAME);
         $phr_grp = $t->load_phrase_group(array(triple_api::TN_READ));
 
         // load a word list by the word id
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_ids(array($wrd->id()));
         $t->assert('load_by_id', $wrd_lst->name(), '"' . word_api::TN_READ . '"');
 
         // load a word list by the word ids
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_ids(array($wrd->id(), $wrd_scale->id()));
         $t->assert('load_by_ids', $wrd_lst->name(), '"' . word_api::TN_READ . '","' . word_api::TN_MIO . '"');
 
         // load a word list by the word name
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_names(array(word_api::TN_READ));
         $t->assert('load_by_name', $wrd_lst->name(), '"' . word_api::TN_READ . '"');
 
         // load a word list by the word ids
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_names(array(word_api::TN_READ, word_api::TN_MIO));
         $t->assert('load_by_names', $wrd_lst->name(), '"' . word_api::TN_READ . '","' . word_api::TN_MIO . '"');
 
         // load a word list by the phrase group
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_grp_id($phr_grp->id());
         $t->assert('load_by_group', $wrd_lst->name(), '"' . triple_api::TN_READ . '"');
 
         // load a word list by type
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_type($phrase_types->id(phrase_type::PERCENT));
         $t->assert('load_by_type', $wrd_lst->name(), '"' . word_api::TN_PCT . '"');
 
         // load a word list by name pattern
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_pattern('S');
         $t->assert_contains('load_by_pattern', $wrd_lst->names(), array("S", "September", "Share", "Share Price", "SI base unit", "Sv"));
 
         // add a word to a list by the word id
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_ids(array($wrd->id()));
         $wrd_lst->add_id($wrd_scale->id());
         $t->assert('add_id', $wrd_lst->name(), '"' . word_api::TN_READ . '","' . word_api::TN_MIO . '"');
 
         // add a word to a list by the word name
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_ids(array($wrd->id()));
         $wrd_lst->add_name(word_api::TN_MIO);
         $t->assert('add_id', $wrd_lst->name(), '"' . word_api::TN_READ . '","' . word_api::TN_MIO . '"');

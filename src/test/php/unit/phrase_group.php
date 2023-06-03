@@ -47,6 +47,7 @@ use model\phrase_group_triple_link;
 use model\phrase_group_word_link;
 use model\phrase_list;
 use model\sql_db;
+use model\triple;
 use model\verb;
 use model\word;
 use model\word_list;
@@ -134,7 +135,7 @@ class phrase_group_unit_tests
 
         // sql to load all phrase groups linked to a word
         $db_con->db_type = sql_db::POSTGRES;
-        $wrd = $t->load_word(word_api::TN_CITY);
+        $wrd = $t->create_word(word_api::TN_CITY);
         $wrd->set_id(1); // dummy number just to test the SQL creation
         $phr_grp_lst = new phrase_group_list($usr);
         $phr_grp_lst->phr = $wrd->phrase();
@@ -143,7 +144,7 @@ class phrase_group_unit_tests
         $t->assert('phrase_group_list->load_all_triples', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // sql to load all phrase groups linked to a triple
-        $lnk = $t->load_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CITY);
+        $lnk = $t->create_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CITY);
         $lnk->set_id(2); // dummy number just to test the SQL creation
         $phr_grp_lst = new phrase_group_list($usr);
         $phr_grp_lst->phr = $lnk->phrase();

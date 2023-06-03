@@ -48,7 +48,6 @@ class verb_unit_db_tests
     {
 
         global $db_con;
-        global $usr;
         global $verbs;
 
         // init
@@ -66,9 +65,9 @@ class verb_unit_db_tests
         $t->assert('load' . verb::IS_A, $vrb->name(), $vrb_id->name());
 
         // prepare the words for testing
-        $country = new word($usr);
+        $country = new word($t->usr1);
         $country->load_by_name(word_api::TN_COUNTRY);
-        $switzerland = new word($usr);
+        $switzerland = new word($t->usr1);
         $switzerland->load_by_name(word_api::TN_CH);
 
         // 'is a' - test the selection of the members via 'is a' verb
@@ -108,7 +107,7 @@ class verb_unit_db_tests
         $t->name = 'verb list read db->';
 
         // load the verb types
-        $lst = new verb_list($usr);
+        $lst = new verb_list($t->usr1);
         $result = $lst->load($db_con);
         $t->assert('load', $result, true);
 

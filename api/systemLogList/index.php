@@ -66,7 +66,7 @@ if ($usr->id() > 0) {
     $lst->page = 0;
     $lst->size = 20;
     $lst->load_all();
-    $result = $lst->api_obj();
+    $result = $lst->api_obj($usr);
 }
 
 $ctrl = new controller();

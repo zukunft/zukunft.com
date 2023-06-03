@@ -110,10 +110,8 @@ class view_sys_list extends type_list
      */
     function load_sql_list(sql_db $db_con): sql_par
     {
-        // TODO check the user
-        global $usr;
         $this->lst = [];
-        $dsp_lst = new view_list($usr);
+        $dsp_lst = new view_list($this->usr);
         $qp = $dsp_lst->load_sql($db_con, self::class);
         $qp->name .= 'sys_views';
         $db_con->set_name($qp->name);

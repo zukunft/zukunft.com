@@ -78,7 +78,7 @@ $dsp_usr_old = $usr->dsp_user();
 if ($usr->id() > 0) {
     log_debug($usr->id());
 
-    load_usr_data();
+    $usr->load_usr_data();
 
     // prepare the display
     $dsp = new view_dsp_old($usr);

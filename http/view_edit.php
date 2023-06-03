@@ -57,7 +57,7 @@ $result .= $usr->get();
 if ($usr->id() > 0) {
     $upd_result = '';
 
-    load_usr_data();
+    $usr->load_usr_data();
 
     // prepare the display to edit the view
     $dsp = new view_dsp_old($usr);

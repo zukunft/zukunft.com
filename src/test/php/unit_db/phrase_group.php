@@ -42,19 +42,16 @@ class phrase_group_unit_db_tests
     function run(test_cleanup $t): void
     {
 
-        global $db_con;
-        global $usr;
-
         // init
         $t->name = 'phrase_group->';
 
         $t->header('Test the phrase group class (src/main/php/model/phrase_group.php)');
 
         // test if the phrase group links are correctly recreated when a group is updated
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS));
         $grp = $phr_lst->get_grp();
-        $grp_check = new phrase_group($usr);
+        $grp_check = new phrase_group($t->usr1);
         $grp_check->set_id($grp->id());
         $grp_check->load();
         $result = $grp_check->load_link_ids_for_testing();
@@ -62,10 +59,10 @@ class phrase_group_unit_db_tests
         $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
         // second test if the phrase group links are correctly recreated when a group is updated
-        $phr_lst = new phrase_list($usr);
+        $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
         $grp = $phr_lst->get_grp();
-        $grp_check = new phrase_group($usr);
+        $grp_check = new phrase_group($t->usr1);
         $grp_check->set_id($grp->id());
         $grp_check->load();
         $result = $grp_check->load_link_ids_for_testing();

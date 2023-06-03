@@ -68,7 +68,7 @@ class ref_unit_db_tests
 
         $t->subheader('API unit db tests');
 
-        $ref = new ref($usr);
+        $ref = new ref($t->usr1);
         $ref->load_by_id(3);
         $t->assert_api($ref);
 

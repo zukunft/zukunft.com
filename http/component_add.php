@@ -59,7 +59,7 @@ $result .= $usr->get();
 if ($usr->id() > 0) {
     $upd_result = '';
 
-    load_usr_data();
+    $usr->load_usr_data();
 
     // init the display object to show the standard elements such as the header
     $dsp = new view_dsp_old($usr);

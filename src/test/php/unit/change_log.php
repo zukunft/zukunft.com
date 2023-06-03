@@ -128,7 +128,8 @@ class change_log_unit_tests
             change_log_table::WORD,
             change_log_field::FLD_WORD_VIEW,
             'dsp_of_wrd',
-            $wrd->id());
+            $wrd->id(),
+            $t->usr1);
         $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
@@ -138,7 +139,8 @@ class change_log_unit_tests
             change_log_table::WORD,
             change_log_field::FLD_WORD_VIEW,
             'dsp_of_wrd',
-            $wrd->id());
+            $wrd->id(),
+            $t->usr1);
         $t->assert_qp($qp, $db_con->db_type);
 
         // sql to load a list of log entry by phrase
@@ -150,7 +152,8 @@ class change_log_unit_tests
             change_log_table::TRIPLE,
             change_log_field::FLD_TRIPLE_VIEW,
             'dsp_of_trp',
-            $trp->id());
+            $trp->id(),
+            $t->usr1);
         $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
@@ -160,7 +163,8 @@ class change_log_unit_tests
             change_log_table::TRIPLE,
             change_log_field::FLD_TRIPLE_VIEW,
             'dsp_of_trp',
-            $trp->id());
+            $trp->id(),
+            $t->usr1);
         $t->assert_qp($qp, $db_con->db_type);
 
 

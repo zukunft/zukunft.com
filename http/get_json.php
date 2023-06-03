@@ -49,7 +49,7 @@ $result = $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    load_usr_data();
+    $usr->load_usr_data();
 
     // get the words that are supposed to be exported, sample "Nestlé 2 country weight"
     $phrases = $_GET[controller::URL_VAR_WORD];

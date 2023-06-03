@@ -115,7 +115,7 @@ class msg
             self::PLEASE_SELECT => 'please select ...',
             self::IP_BLOCK_PRE_ADDR => 'Your IP ',
             self::IP_BLOCK_POST_ADDR => ' is blocked at the moment because ',
-            self::IP_BLOCK_SOLUTION => '. If you think, this should not be the , ' .
+            self::IP_BLOCK_SOLUTION => '. If you think, this should not be the case, ' .
                 'please request the unblocking with an email to admin@zukunft.com.',
             self::FORM_WORD_ADD_TITLE => 'Add a new word',
             self::FORM_WORD_FLD_NAME => 'Word name',

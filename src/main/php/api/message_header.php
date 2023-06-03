@@ -70,10 +70,8 @@ class api_message
      * @param sql_db $db_con the active database link to get the configuration from the database
      * @param string $class
      */
-    function __construct(sql_db $db_con, string $class)
+    function __construct(sql_db $db_con, string $class, user $usr)
     {
-        global $usr;
-
         $lib = new library();
         $cfg = new config();
         if ($db_con->connected()) {

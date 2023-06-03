@@ -66,7 +66,7 @@ $result = $session_usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($session_usr->id() > 0) {
 
-    load_usr_data();
+    $session_usr->load_usr_data();
     $lib = new library();
 
     // show the header even if all parameters are wrong

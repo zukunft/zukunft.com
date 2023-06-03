@@ -673,10 +673,8 @@ class test_base
      * @param string $dsp_code_id the code id of the view that should be tested
      * @return bool true if the generated view matches the expected
      */
-    function assert_view(string $dsp_code_id): bool
+    function assert_view(string $dsp_code_id, user $usr): bool
     {
-        global $usr;
-
         $filename = 'views/' . $dsp_code_id;
 
         $dsp = new view($usr);

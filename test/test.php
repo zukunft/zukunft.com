@@ -164,9 +164,7 @@ if ($start_usr->id() > 0) {
     if ($start_usr->is_admin()) {
 
         // prepare testing
-        $usr = $start_usr;
         $t = new test_unit_read_db();
-        $t->init_unit_db_tests();
 
         // run the unit tests without database connection
         $t->run_unit();
@@ -175,11 +173,32 @@ if ($start_usr->id() > 0) {
         $db_con->close();
         $db_con = prg_restart("reload cache after unit testing");
 
+        // load the user for the database read unit tests
+        $usr = new user;
+        $result = $usr->get();
+
+        // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+        if ($usr->id() > 0) {
+            if ($usr->is_admin()) {
+
+                // create the testing users
+                $t->set_users();
+
+                // run the unit database tests
+                $t->init_unit_db_tests();
+                $usr->load_usr_data();
+                $t->run_unit_db_tests($t);
+
+                // cleanup also before testing to remove any leftovers
+                $t->cleanup_check();
+            }
+        }
+
         // switch to the test user
+        // create the system user before the local user and admin to get the desired database id
         $usr = new user;
         $usr->load_by_profile_code(user::SYSTEM_TEST_PROFILE_CODE_ID, $db_con);
         if ($usr->id() <= 0) {
-            // create the system user before the local user and admin to get the desired database id
 
             // but only from localhost
             $ip_addr = '';
@@ -192,20 +211,13 @@ if ($start_usr->id() > 0) {
 
             $usr->load_by_profile_code(user::SYSTEM_TEST_PROFILE_CODE_ID, $db_con);
         }
+
         if ($usr->id() > 0) {
-
-            // create the testing users
-            $t->set_users();
-
-            // cleanup also before testing to remove any leftovers
-            $t->cleanup_check();
 
             // --------------------------------------
             // start testing the system functionality
             // --------------------------------------
 
-            load_usr_data();
-            $t->run_unit_db_tests($t);
             $t->create_test_db_entries($t);
 
             run_system_test($t);

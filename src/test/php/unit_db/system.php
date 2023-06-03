@@ -46,7 +46,6 @@ class system_unit_db_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
         global $db_con;
         global $sys_log_stati;
 
@@ -97,7 +96,7 @@ class system_unit_db_tests
 
         $t->subheader('API unit db tests of preloaded types');
         $sys_typ_lst = new type_lists();
-        $sys_typ_lst->load($db_con, $usr);
+        $sys_typ_lst->load($db_con, $t->usr1);
         $t->assert_api($sys_typ_lst);
 
     }

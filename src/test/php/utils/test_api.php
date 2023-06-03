@@ -342,7 +342,7 @@ class test_api extends create_test_objects
     {
         $class = $usr_obj::class;
         $class = $this->class_to_api($class);
-        $api_obj = $usr_obj->api_obj();
+        $api_obj = $usr_obj->api_obj($this->usr1);
         $actual = json_decode($api_obj->get_json(), true);
         return $this->assert_api_compare($class, $actual, null, $filename, $contains);
     }
@@ -590,7 +590,7 @@ class test_api extends create_test_objects
         $class = $usr_obj::class;
         $class = $this->class_to_api($class);
         $api_obj = $usr_obj->api_obj();
-        $api_msg = new api_message($db_con, $class);
+        $api_msg = new api_message($db_con, $class, $this->usr1);
         $api_msg->add_body($api_obj);
         $actual = json_decode(json_encode($api_msg), true);
         return $this->assert_api_compare($class, $actual, null, $filename, $contains);
@@ -670,8 +670,7 @@ class test_api extends create_test_objects
         $actual = json_decode($this->api_call("GET", $url, $data), true);
 
         // TODO remove
-        global $usr;
-        $lst = new term_list($usr);
+        $lst = new term_list($this->usr1);
         $lst->load_by_ids((new trm_ids($ids)));
         $result = $lst->api_obj();
 

@@ -60,12 +60,12 @@ $timeout_counter = 0;
 $total_tests = 0;
 
 // load the session user parameters
-$usr = new user;
-$result = $usr->get();
+$start_usr = new user;
+$result = $start_usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
-    if ($usr->is_admin()) {
+if ($start_usr->id() > 0) {
+    if ($start_usr->is_admin()) {
 
         // --------------------------------------------------
         // start unit testing without writing to the database
@@ -73,15 +73,25 @@ if ($usr->id() > 0) {
 
         // prepare testing
         $t = new test_unit_read_db();
+
+        // set the testing users
+        $t->set_users();
+
+        // add the database test entries to complete the testing setup
+        // TODO remove ??
         $t->init_unit_db_tests();
 
-        load_usr_data();
+        // load the predefined objects like the verbs and system views
+        $t->usr1->load_usr_data();
 
         $t->run_unit_db_tests();
 
         // display the test results
         $t->dsp_result_html();
         $t->dsp_result();
+
+        // remove the database entries only used for testing
+        $t->clean_up_unit_db_tests();
 
     }
 }

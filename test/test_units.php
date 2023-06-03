@@ -57,6 +57,7 @@ $t = new test_unit();
 // start unit testing
 // ------------------
 
+// TODO deactivate this for the production deployment
 $t->run_unit();
 
 // display the test results

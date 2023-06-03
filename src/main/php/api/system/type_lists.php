@@ -37,6 +37,7 @@ use api_message;
 use controller\controller;
 use model\sql_db;
 use JsonSerializable;
+use model\user;
 
 class type_lists_api extends api_message implements JsonSerializable
 {
@@ -44,9 +45,9 @@ class type_lists_api extends api_message implements JsonSerializable
     // parent object for all preloaded types
     public ?array $type_lists = null;      // a list of system error objects
 
-    function __construct(sql_db $db_con)
+    function __construct(sql_db $db_con, user $usr)
     {
-        parent::__construct($db_con, 'type_lists');
+        parent::__construct($db_con, 'type_lists', $usr);
         $this->type = controller::API_TYPE_LISTS;
     }
 

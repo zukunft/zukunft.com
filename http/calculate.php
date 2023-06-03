@@ -33,7 +33,10 @@
 */
 
 use model\formula_list;
+use model\library;
 use model\result_list;
+use model\sql_db;
+use model\user;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
@@ -49,7 +52,7 @@ $usr_id = $_GET['user']; // to force another user view for testing the formula c
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    load_usr_data();
+    $usr->load_usr_data();
     $lib = new library();
 
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished

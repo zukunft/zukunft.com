@@ -49,7 +49,7 @@ class word_list_unit_db_tests
         $t->header('Test the word list class (classes/word_list.php)');
 
         // test load by word list by ids
-        $wrd_lst = new word_list($usr);
+        $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_by_ids(array(1,2));
         $result = $wrd_lst->name();
         $target = '"' . word_api::TN_READ . '","' . word_api::TN_CONST . '"'; // order adjusted based on the number of usage

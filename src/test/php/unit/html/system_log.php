@@ -46,7 +46,7 @@ class system_log
 
         // test the system log html display functions
         $test_page = $html->text_h2('system log display test');
-        $log_lst = new system_log_list_dsp($t->dummy_system_log_list()->api_json());
+        $log_lst = new system_log_list_dsp($t->dummy_system_log_list()->api_json($t->usr1));
         $test_page .= 'user view of a table with system log entries<br>';
         $test_page .= $log_lst->display() . '<br>';
         $test_page .= 'admin view of a table with system log entries<br>';

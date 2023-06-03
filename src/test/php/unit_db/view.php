@@ -51,7 +51,6 @@ class view_unit_db_tests
     {
 
         global $db_con;
-        global $usr;
         global $view_types;
         global $system_views;
         global $component_types;
@@ -64,9 +63,9 @@ class view_unit_db_tests
         $t->subheader('View db read tests');
 
         $test_name = 'load view ' . view_api::TN_READ . ' by name and id';
-        $dsp = new view($usr);
+        $dsp = new view($t->usr1);
         $dsp->load_by_name(view_api::TN_READ, view::class);
-        $dsp_by_id = new view($usr);
+        $dsp_by_id = new view($t->usr1);
         $dsp_by_id->load_by_id($dsp->id(), view::class);
         $t->assert($test_name, $dsp_by_id->name(), view_api::TN_READ);
 
@@ -85,7 +84,7 @@ class view_unit_db_tests
 
         $t->subheader('View API object creation tests');
 
-        $cmp = $t->load_word(view_api::TN_READ);
+        $cmp = $t->load_word(view_api::TN_READ, $t->usr1);
         $t->assert_api_obj($cmp);
 
 
@@ -93,8 +92,8 @@ class view_unit_db_tests
         $t->name = 'view list read db->';
 
         // load the views used by the system e.g. change word
-        $lst = new view_sys_list($usr);
-        $lst->usr = $usr;
+        $lst = new view_sys_list($t->usr1);
+        $lst->usr = $t->usr1;
         $result = $lst->load($db_con);
         $t->assert('load', $result, true);
 
@@ -107,18 +106,18 @@ class view_unit_db_tests
         $t->assert('check' . controller::DSP_WORD, $result, $target);
 
         // check all system views
-        $t->assert_view(controller::DSP_COMPONENT_ADD);
-        $t->assert_view(controller::DSP_COMPONENT_EDIT);
-        $t->assert_view(controller::DSP_COMPONENT_DEL);
+        $t->assert_view(controller::DSP_COMPONENT_ADD, $t->usr1);
+        $t->assert_view(controller::DSP_COMPONENT_EDIT, $t->usr1);
+        $t->assert_view(controller::DSP_COMPONENT_DEL, $t->usr1);
 
 
 
         $t->subheader('View component db read tests');
 
         $test_name = 'load view component ' . component_api::TN_READ . ' by name and id';
-        $cmp = new component($usr);
+        $cmp = new component($t->usr1);
         $cmp->load_by_name(component_api::TN_READ, component::class);
-        $cmp_by_id = new component($usr);
+        $cmp_by_id = new component($t->usr1);
         $cmp_by_id->load_by_id($cmp->id(), component::class);
         $t->assert($test_name, $cmp_by_id->name(), component_api::TN_READ);
         $t->assert($test_name, $cmp_by_id->description, component_api::TD_READ);

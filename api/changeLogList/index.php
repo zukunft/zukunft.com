@@ -70,7 +70,7 @@ if ($usr->id() > 0) {
         $wrd = new word($usr);
         $wrd->load_by_id($wrd_id);
         $lst = new change_log_list();
-        $lst->load_by_fld_of_wrd($wrd, $wrd_fld);
+        $lst->load_by_fld_of_wrd($wrd, $usr, $wrd_fld);
         $result = $lst->api_obj();
     } else {
         $msg = 'word id missing';

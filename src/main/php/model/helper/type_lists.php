@@ -82,7 +82,7 @@ class type_lists
      * cast
      */
 
-    function api_obj(): type_lists_api
+    function api_obj(user $usr): type_lists_api
     {
         global $db_con;
         global $user_profiles;
@@ -109,7 +109,7 @@ class type_lists
         global $change_log_fields;
 
         log_debug();
-        $lst = new type_lists_api($db_con);
+        $lst = new type_lists_api($db_con, $usr);
         $lst->add($user_profiles->api_obj(), controller::API_LIST_USER_PROFILES);
         $lst->add($phrase_types->api_obj(), controller::API_LIST_PHRASE_TYPES);
         $lst->add($formula_types->api_obj(), controller::API_LIST_FORMULA_TYPES);

@@ -46,7 +46,7 @@ class system_log_list_api extends api_message
 
     function __construct(sql_db $db_con, ?user $usr = null)
     {
-        parent::__construct($db_con, controller::API_BODY_SYS_LOG);
+        parent::__construct($db_con, controller::API_BODY_SYS_LOG, $usr);
         $this->type = api_message::SYS_LOG;
         $this->system_log = null;
         if ($usr != null) {

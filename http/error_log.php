@@ -103,7 +103,7 @@ if ($usr->id() > 0) {
     if ($err_id > 0) {
         log_debug("error_log (" . $err_id . ")");
 
-        load_usr_data();
+        $usr->load_usr_data();
 
         // prepare the display to edit the view
         $dsp = new view_dsp_old($usr);

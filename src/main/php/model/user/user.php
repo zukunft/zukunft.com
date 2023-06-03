@@ -56,6 +56,8 @@ include_once SERVICE_EXPORT_PATH . 'user_exp.php';
 use api\user_api;
 use cfg\export\user_exp;
 use cfg\export\exp_obj;
+use cfg\verb_list;
+use cfg\view_sys_list;
 use html\user\user as user_dsp;
 use html\word\word as word_dsp;
 use user_dsp_old;
@@ -569,6 +571,24 @@ class user extends db_object
         global $user_profiles;
         return $this->load_by_profile($user_profiles->id($profile_code_id));
     }
+
+    /**
+     * load the user specific data that is not supposed to be changed very rarely user
+     * so if changed all data is reloaded once
+     */
+    function load_usr_data(): void
+{
+    global $db_con;
+    global $verbs;
+    global $system_views;
+
+    $verbs = new verb_list($this);
+    $verbs->load($db_con);
+
+    $system_views = new view_sys_list($this);
+    $system_views->load($db_con);
+
+}
 
     function has_any_user_this_profile(string $profile_code_id): bool
     {

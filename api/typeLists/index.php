@@ -61,7 +61,7 @@ $msg .= $usr->get();
 if ($usr->id() > 0) {
     $sys_typ_lst = new type_lists();
     $sys_typ_lst->load($db_con, $usr);
-    $result = $sys_typ_lst->api_obj();
+    $result = $sys_typ_lst->api_obj($usr);
 }
 
 $ctrl = new controller();

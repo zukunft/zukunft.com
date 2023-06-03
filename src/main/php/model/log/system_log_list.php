@@ -94,10 +94,10 @@ class system_log_list extends base_list
     /**
      * @return system_log_list_api a filled frontend api object
      */
-    function api_obj(): system_log_list_api
+    function api_obj(user $usr): system_log_list_api
     {
         global $db_con;
-        $api_obj = new system_log_list_api($db_con, $this->usr);
+        $api_obj = new system_log_list_api($db_con, $usr);
         foreach ($this->lst as $log) {
             //$api_obj->add($log->api_obj());
             $api_obj->system_log[] = $log->get_api_obj();
@@ -108,9 +108,9 @@ class system_log_list extends base_list
     /**
      * @returns string the api json message for the object as a string
      */
-    function api_json(): string
+    function api_json(user $usr): string
     {
-        return $this->api_obj()->get_json();
+        return $this->api_obj($usr)->get_json();
     }
 
     /**
@@ -118,8 +118,9 @@ class system_log_list extends base_list
      */
     function dsp_obj(): system_log_list_dsp_old
     {
+        global $usr;
         global $db_con;
-        $dsp_obj = new system_log_list_dsp_old($db_con, $this->usr);
+        $dsp_obj = new system_log_list_dsp_old($db_con, $usr);
         foreach ($this->lst as $log) {
             //$dsp_obj->add($log->dsp_obj());
             $dsp_obj->system_log[] = $log->get_api_obj();

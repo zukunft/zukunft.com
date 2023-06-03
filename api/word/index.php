@@ -52,13 +52,13 @@ $db_con = prg_start("api/word", "", false);
 $wrd_id = $_GET[controller::URL_VAR_ID] ?? 0;
 $wrd_name = $_GET[controller::URL_VAR_NAME] ?? '';
 
-$msg = '';
-$ctrl = new controller();
-$result = new api_message($db_con, word::class); // create the message header
-
 // load the session user parameters
+$msg = '';
 $usr = new user;
 $msg .= $usr->get();
+
+$ctrl = new controller();
+$result = new api_message($db_con, word::class, $usr); // create the message header
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {

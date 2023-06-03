@@ -100,7 +100,7 @@ if ($start_usr->id() > 0) {
             // start testing the selected system functionality
             // -----------------------------------------------
 
-            load_usr_data();
+            $t->usr1->load_usr_data();
             $t->run_unit_db_tests($t);
 
             run_system_test($t);

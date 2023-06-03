@@ -38,6 +38,8 @@ use api\phrase_group_api;
 use api\triple_api;
 use api\value_api;
 use api\word_api;
+use html\word\triple as triple_dsp;
+use model\triple;
 use model\verb;
 
 class test_unit_read_db extends test_unit
@@ -78,7 +80,7 @@ class test_unit_read_db extends test_unit
     function init_unit_db_tests(): void
     {
 
-        // add the database rows for read testing
+        // add functional test rows to the database for read testing e.g. exclude sandbox entries
         $this->test_triple(
             triple_api::TN_READ, verb::IS_A, word_api::TN_READ,
             triple_api::TN_READ_NAME, triple_api::TN_READ_NAME
@@ -86,6 +88,19 @@ class test_unit_read_db extends test_unit
         $phr_grp = $this->add_phrase_group(array(triple_api::TN_READ_NAME), phrase_group_api::TN_READ);
         $this->test_value_by_phr_grp($phr_grp, value_api::TV_READ);
 
+    }
+
+    /**
+     * remove the database test rows created by init_unit_db_tests
+     * to have a clean database without test rows
+     * @return void
+     */
+    function clean_up_unit_db_tests(): void
+    {
+        $this->del_triple_by_name(triple_api::TN_READ_NAME);
+        $phr_grp = $this->load_phrase_group_by_name(phrase_group_api::TN_READ);
+        //$this->del_value_by_phr_grp($phr_grp);
+        $this->del_phrase_group(phrase_group_api::TN_READ);
     }
 
 }

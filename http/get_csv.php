@@ -31,6 +31,9 @@
 */
 
 use controller\controller;
+use model\formula_list;
+use model\user;
+use model\word_list;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
@@ -46,7 +49,7 @@ $result = $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    load_usr_data();
+    $usr->load_usr_data();
 
     // sample "Nestlé 2 country weight"
     $words = $_GET[controller::URL_VAR_WORD];

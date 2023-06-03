@@ -64,7 +64,7 @@ if ($db_con == null) {
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id() > 0) {
 
-        load_usr_data();
+        $usr->load_usr_data();
 
         // show view header
         $dsp = new view_dsp_old($usr);

@@ -886,25 +886,6 @@ function prg_start_api($code_name): sql_db
 }
 
 /**
- * load the user specific data that is not supposed to be changed very rarely user
- * so if changed all data is reloaded once
- */
-function load_usr_data(): void
-{
-    global $db_con;
-    global $usr;
-    global $verbs;
-    global $system_views;
-
-    $verbs = new verb_list($usr);
-    $verbs->load($db_con);
-
-    $system_views = new view_sys_list($usr);
-    $system_views->load($db_con);
-
-}
-
-/**
  * write the execution time to the database if it is long
  */
 function prg_end_write_time($db_con): void
