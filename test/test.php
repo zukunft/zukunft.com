@@ -173,26 +173,16 @@ if ($start_usr->id() > 0) {
         $db_con->close();
         $db_con = prg_restart("reload cache after unit testing");
 
-        // load the user for the database read unit tests
-        $usr = new user;
-        $result = $usr->get();
+        // create the testing users
+        $t->set_users();
 
-        // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-        if ($usr->id() > 0) {
-            if ($usr->is_admin()) {
+        // run the unit database tests
+        $t->init_unit_db_tests();
+        $t->usr1->load_usr_data();
+        $t->run_unit_db_tests($t);
 
-                // create the testing users
-                $t->set_users();
-
-                // run the unit database tests
-                $t->init_unit_db_tests();
-                $usr->load_usr_data();
-                $t->run_unit_db_tests($t);
-
-                // cleanup also before testing to remove any leftovers
-                $t->cleanup_check();
-            }
-        }
+        // cleanup also before testing to remove any leftovers
+        $t->clean_up_unit_db_tests();
 
         // switch to the test user
         // create the system user before the local user and admin to get the desired database id

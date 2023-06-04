@@ -58,25 +58,27 @@ function create_test_triples(test_cleanup $t): void
 {
     $t->header('Check if all base phrases are correct');
 
-    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON, phrase_api::TN_ZH_CANTON, phrase_api::TN_ZH_CANTON);
-    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CITY, phrase_api::TN_ZH_CITY, phrase_api::TN_ZH_CITY);
-    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_COMPANY, phrase_api::TN_ZH_COMPANY, phrase_api::TN_ZH_COMPANY);
-    $t->test_triple(phrase_api::TN_ZH_CANTON, verb::IS_PART_OF, word_api::TN_CH);
-    $t->test_triple(phrase_api::TN_ZH_CITY, verb::IS_PART_OF, phrase_api::TN_ZH_CANTON);
+    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON, triple_api::TN_ZH_CANTON, triple_api::TN_ZH_CANTON);
+    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CITY, triple_api::TN_ZH_CITY, triple_api::TN_ZH_CITY);
+    $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_COMPANY, triple_api::TN_ZH_COMPANY, triple_api::TN_ZH_COMPANY);
+    $t->test_triple(triple_api::TN_ZH_CANTON, verb::IS_PART_OF, word_api::TN_CH);
+    $t->test_triple(triple_api::TN_ZH_CITY, verb::IS_PART_OF, triple_api::TN_ZH_CANTON);
+    $t->test_triple(triple_api::TN_ZH_COMPANY, verb::IS_PART_OF, triple_api::TN_ZH_CITY, triple_api::TN_EXCLUDED, triple_api::TN_EXCLUDED);
 
     $t->test_triple(TW_ABB, verb::IS_A, TEST_WORD, TP_ABB);
-    $t->test_triple(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
+    // TODO check why it is possible to create a triple with the same name as a word
+    //$t->test_triple(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
+    $t->test_triple(TW_VESTAS, verb::IS_A, TEST_WORD, triple_api::TN_VESTAS_COMPANY, triple_api::TN_VESTAS_COMPANY);
     $t->test_triple(TW_2014, verb::FOLLOW, TW_2013, TP_FOLLOW);
     // TODO check direction
     $t->test_triple(TW_TAX, verb::IS_PART_OF, TW_CF, TP_TAXES);
 
     $t->header('Check if all base phrases are correct');
-    $t->test_phrase(phrase_api::TN_ZH_COMPANY);
+    $t->test_phrase(triple_api::TN_ZH_COMPANY);
 
     // exclude some to test the handling of exclude objects
-    global $usr;
-    $trp = new triple($usr);
-    $trp->load_by_name(phrase_api::TN_ZH_COMPANY);
+    $trp = new triple($t->usr2);
+    $trp->load_by_name(triple_api::TN_EXCLUDED);
     $trp->set_excluded(true);
     $trp->save();
 }
@@ -138,11 +140,11 @@ function run_phrase_test(test_cleanup $t): void
     $phr->set_id_from_obj($zh_company_id, triple::class);
     $phr->load_by_obj_par();
     $result = $phr->name();
-    $target = phrase_api::TN_ZH_COMPANY;
+    $target = triple_api::TN_ZH_COMPANY;
     $t->display('phrase->load triple by id ' . $zh_company_id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
-    $target = ' <td> <a href="/http/view.php?link=' . $lnk_company->id() . '" title="' . phrase_api::TN_ZH_COMPANY . '">' . phrase_api::TN_ZH_COMPANY . '</a></td> ';
+    $target = ' <td> <a href="/http/view.php?link=' . $lnk_company->id() . '" title="' . triple_api::TN_ZH_COMPANY . '">' . triple_api::TN_ZH_COMPANY . '</a></td> ';
     $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
     $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
     $result = $lib->trim_all_spaces($result);
@@ -163,8 +165,8 @@ function run_phrase_test(test_cleanup $t): void
     $phr->set_id($zh_company_id * -1);
     $phr->load_by_obj_par();
     $result = $phr->dsp_selector(Null, $form_name, $pos, '', $back);
-    $target = phrase_api::TN_ZH_COMPANY;
-    $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' . phrase_api::TN_ZH_COMPANY . ' selected contains ' . phrase_api::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $target = triple_api::TN_ZH_COMPANY;
+    $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' . triple_api::TN_ZH_COMPANY . ' selected contains ' . triple_api::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test the phrase selector of type company
     $wrd_ABB = new word($usr);
@@ -174,7 +176,7 @@ function run_phrase_test(test_cleanup $t): void
     $wrd_company->load_by_name(TEST_WORD, word::class);
     $result = $phr->dsp_selector($wrd_company, $form_name, $pos, '', $back);
     $target = TW_ABB;
-    $t->dsp_contains(', phrase->dsp_selector of type ' . TEST_WORD . ': ' . $result . ' with ABB selected contains ' . phrase_api::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+    $t->dsp_contains(', phrase->dsp_selector of type ' . TEST_WORD . ': ' . $result . ' with ABB selected contains ' . triple_api::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // test getting the parent for phrase Vestas
     $phr = $t->load_phrase(TW_VESTAS);

@@ -31,7 +31,7 @@
 */
 
 use api\formula_api;
-use api\phrase_api;
+use api\triple_api;
 use api\word_api;
 use model\term;
 use model\verb;
@@ -56,8 +56,8 @@ function run_term_test(test_cleanup $t): void
 
     // ... check also for a triple
     $term = new term($usr);
-    $term->load_by_obj_name(phrase_api::TN_ZH_CITY);
-    $target = 'A triple with the name "' . phrase_api::TN_ZH_CITY . '" already exists. Please use another name.';
+    $term->load_by_obj_name(triple_api::TN_ZH_CITY);
+    $target = 'A triple with the name "' . triple_api::TN_ZH_CITY . '" already exists. Please use another name.';
     $result = $term->id_used_msg();
     $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 

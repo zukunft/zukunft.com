@@ -45,12 +45,17 @@ class triple_api extends sandbox_typed_api
 
     // triple names for stand-alone unit tests that are added with the system initial data load
     // TN_* is the name of the triple used for testing
+    // TD_* is the tooltip/description of the triple
     const TN_READ = 'Pi';
     const TN_READ_NAME = 'Pi (math)';
+    const TN_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
 
-    const TN_ZH_CANTON = 'Zurich (Canton)';
     const TN_ZH_CITY = 'Zurich (City)';
-
+    const TN_ZH_CITY_NAME = 'City of Zurich';
+    const TN_ZH_CANTON = 'Zurich (Canton)';
+    const TN_ZH_CANTON_NAME = 'Canton Zurich';
+    const TN_ZH_COMPANY = "Zurich Insurance";
+    const TN_VESTAS_COMPANY = "Vestas SA";
 
 
     /*

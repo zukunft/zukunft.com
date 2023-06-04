@@ -749,7 +749,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
             $this->load_objects();
             $new_name = $this->name_generated();
             log_debug('triple->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
-            if ($new_name <> $this->name) {
+            if ($new_name <> $this->name_generated) {
                 $db_con->set_type(sql_db::TBL_TRIPLE);
                 $db_con->update($this->id(), self::FLD_NAME_AUTO, $new_name);
                 $this->set_name_generated($new_name);

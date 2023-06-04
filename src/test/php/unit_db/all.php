@@ -97,10 +97,10 @@ class test_unit_read_db extends test_unit
      */
     function clean_up_unit_db_tests(): void
     {
-        $this->del_triple_by_name(triple_api::TN_READ_NAME);
-        $phr_grp = $this->load_phrase_group_by_name(phrase_group_api::TN_READ);
+        //$this->del_triple_by_name(triple_api::TN_READ_NAME);
+        //$phr_grp = $this->load_phrase_group_by_name(phrase_group_api::TN_READ);
         //$this->del_value_by_phr_grp($phr_grp);
-        $this->del_phrase_group(phrase_group_api::TN_READ);
+        //$this->del_phrase_group(phrase_group_api::TN_READ);
     }
 
 }

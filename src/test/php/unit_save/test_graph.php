@@ -93,11 +93,10 @@ function run_graph_test(test_cleanup $t): void
     $lnk_lst->load_old();
     $result = $lnk_lst->name();
     // TODO to be reviewed
-    $target = 'System Test Phrase: Zurich Insurance,Zurich (Canton),Zurich (City)';
+    $target = 'Zurich Insurance,Zurich (City),Zurich (Canton)';
     if ($result != $target) {
-        $target = 'System Test Phrase: Zurich Insurance,Zurich (City),Zurich (Canton)';
+        $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
     }
-    $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
 
     // the other side

@@ -31,6 +31,7 @@
 */
 
 use api\phrase_api;
+use api\triple_api;
 use api\value_api;
 use api\word_api;
 use test\test_cleanup;
@@ -56,14 +57,14 @@ function create_test_values(test_cleanup $t): void
     // using the triple zurich (city) instead of two single words
     // used to test if requesting the value with the separate words returns the value
     $t->test_value(array(
-        phrase_api::TN_ZH_CITY,
+        triple_api::TN_ZH_CITY,
         word_api::TN_INHABITANTS
     ),
         value_api::TV_CITY_ZH_INHABITANTS_2019);
 
     // ... same with the concrete year
     $t->test_value(array(
-        phrase_api::TN_ZH_CITY,
+        triple_api::TN_ZH_CITY,
         word_api::TN_INHABITANTS,
         word_api::TN_2019
     ),

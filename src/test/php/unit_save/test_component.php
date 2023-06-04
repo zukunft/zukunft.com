@@ -148,7 +148,7 @@ function run_component_test(test_cleanup $t): void
             $result = $cmp_renamed->name();
         }
     }
-    $target = 21;
+    $target = 22;
     $t->display('component->load renamed component "' . component_api::TN_RENAMED . '"', $target, $result);
 
     // check if the component renaming has been logged

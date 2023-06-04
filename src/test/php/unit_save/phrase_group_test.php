@@ -31,6 +31,7 @@
 */
 
 use api\phrase_api;
+use api\triple_api;
 use api\word_api;
 use model\phrase_group;
 use model\phrase_list;
@@ -82,12 +83,12 @@ function run_phrase_group_test(test_cleanup $t): void
             $wrd_lst_reloaded->names()
         );
     }
-    $target = array(word_api::TN_CH) ;
+    $target = array(4 => word_api::TN_CH) ;
     $t->display('phrase_group->load for id ' . $phr_grp->id(), $target, $result);
 
     // test getting the phrase group id based on word and word link ids
     $phr_lst = new phrase_list($usr);
-    $phr_lst->load_by_names(array(phrase_api::TN_ZH_CITY, word_api::TN_INHABITANTS));
+    $phr_lst->load_by_names(array(triple_api::TN_ZH_CITY, word_api::TN_INHABITANTS));
     $zh_city_grp = $phr_lst->get_grp();
     $result = $zh_city_grp->get_id();
     if ($result > 0) {
@@ -97,7 +98,7 @@ function run_phrase_group_test(test_cleanup $t): void
 
     // test names
     $result = implode(",", $zh_city_grp->names());
-    $target = phrase_api::TN_ZH_CITY . ',' . word_api::TN_INHABITANTS;
+    $target = triple_api::TN_ZH_CITY . ',' . word_api::TN_INHABITANTS;
     $t->display('phrase_group->names', $target, $result);
 
     // test if the phrase group links are correctly recreated when a group is updated

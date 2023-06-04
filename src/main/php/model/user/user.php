@@ -58,6 +58,7 @@ use cfg\export\user_exp;
 use cfg\export\exp_obj;
 use cfg\verb_list;
 use cfg\view_sys_list;
+use Exception;
 use html\user\user as user_dsp;
 use html\word\word as word_dsp;
 use user_dsp_old;

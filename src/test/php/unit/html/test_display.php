@@ -86,33 +86,37 @@ function run_display_test(test_cleanup $t): void
 
     $url = $html->url(controller::DSP_WORD_EDIT);
     $target = '<a href="/http/view.php" title="Edit test"><img src="/src/main/resources/images/button_edit.svg" alt="Edit test"></a>';
-    $target = '<a href="/http/view.php" title="rename word">';
+    $target = '<a href="/http/word_edit.php" title="rename word"><i class="far fa-edit"></i></a>';
     $result = (new button($url, $back))->edit(msg::WORD_EDIT);
     $t->dsp_contains(", btn_edit", $target, $result);
 
     $url = $html->url(controller::DSP_WORD_DEL);
     $target = '<a href="/http/view.php" title="Del test"><img src="/src/main/resources/images/button_del.svg" alt="Del test"></a>';
-    $target = '<a href="/http/view.php" title="Del test">';
+    $target = '<a href="/http/word_del.php" title="Delete word"><i class="far fa-times-circle"></i></a>';
     $result = (new button($url, $back))->del(msg::WORD_DEL);
     $t->dsp_contains(", btn_del", $target, $result);
 
     $url = $html->url(controller::DSP_WORD);
     $target = '<a href="/http/view.php" title="Undo test"><img src="/src/main/resources/images/button_undo.svg" alt="Undo test"></a>';
+    $target = '<a href="/http/word.php" title="undo"><img src="/src/main/resources/images/button_undo.svg" alt="undo"></a>';
     $result = (new button($url, $back))->undo(msg::UNDO);
     $t->display(", btn_undo", $target, $result);
 
     $url = $html->url(controller::DSP_WORD_ADD);
     $target = '<a href="/http/view.php" title="Find test"><img src="/src/main/resources/images/button_find.svg" alt="Find test"></a>';
+    $target = '<a href="/http/word_add.php" title=""><img src="/src/main/resources/images/button_find.svg" alt=""></a>';
     $result = (new button($url, $back))->find();
     $t->display(", btn_find", $target, $result);
 
     $url = $html->url(controller::DSP_WORD_ADD);
     $target = '<a href="/http/view.php" title="Show all test"><img src="/src/main/resources/images/button_filter_off.svg" alt="Show all test"></a>';
+    $target = '<a href="/http/word_add.php" title=""><img src="/src/main/resources/images/button_filter_off.svg" alt=""></a>';
     $result = (new button($url, $back))->unfilter();
     $t->display(", btn_unfilter", $target, $result);
 
     $url = $html->url(controller::DSP_WORD_ADD);
     $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
+    $target = '<h6></h6><a href="/http/word_add.php&confirm=1" title="Yes">Yes</a>/<a href="/http/word_add.php&confirm=-1" title="No">No</a>';
     $result = (new button($url, $back))->yesno();
     $t->display(", btn_yesno", $target, $result);
 

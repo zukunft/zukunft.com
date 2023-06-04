@@ -253,49 +253,49 @@ class create_test_objects extends test_base
 
     function dummy_word_mio(): word
     {
-                 $wrd = new word($this->usr1);
+        $wrd = new word($this->usr1);
         $wrd->set(155, word_api::TN_MIO_SHORT);
         return $wrd;
     }
 
     function dummy_word_ch(): word
     {
-                 $wrd = new word($this->usr1);
+        $wrd = new word($this->usr1);
         $wrd->set(181, word_api::TN_CH);
         return $wrd;
     }
 
     function dummy_word_canton(): word
     {
-                 $wrd = new word($this->usr1);
+        $wrd = new word($this->usr1);
         $wrd->set(182, word_api::TN_CANTON);
         return $wrd;
     }
 
     function dummy_word_city(): word
     {
-                 $wrd = new word($this->usr1);
+        $wrd = new word($this->usr1);
         $wrd->set(183, word_api::TN_CITY);
         return $wrd;
     }
 
     function dummy_word_zh(): word
     {
-                 $wrd = new word($this->usr1);
+        $wrd = new word($this->usr1);
         $wrd->set(184, word_api::TN_ZH);
         return $wrd;
     }
 
     function dummy_word_inhabitant(): word
     {
-                 $wrd = new word($this->usr1);
+        $wrd = new word($this->usr1);
         $wrd->set(186, word_api::TN_INHABITANT);
         return $wrd;
     }
 
     function dummy_word_list(): word_list
     {
-                 $lst = new word_list($this->usr1);
+        $lst = new word_list($this->usr1);
         $lst->add($this->dummy_word());
         return $lst;
     }
@@ -305,7 +305,7 @@ class create_test_objects extends test_base
      */
     function dummy_verb(): verb
     {
-                 $vrb = new verb(1, verb_api::TN_READ, verb_api::TC_READ);
+        $vrb = new verb(1, verb_api::TN_READ, verb_api::TC_READ);
         $vrb->set_user($this->usr1);
         return $vrb;
     }
@@ -320,7 +320,7 @@ class create_test_objects extends test_base
 
     function dummy_triple(): triple
     {
-                 // create first the words used for the triple
+        // create first the words used for the triple
         $wrd_math = $this->dummy_word();
         $vrb = $this->dummy_verb_is();
         $wrd_pi = new word($this->usr1);
@@ -338,7 +338,7 @@ class create_test_objects extends test_base
 
     function dummy_triple_list(): triple_list
     {
-                 $lst = new triple_list($this->usr1);
+        $lst = new triple_list($this->usr1);
         $lst->add($this->dummy_triple());
         return $lst;
     }
@@ -355,7 +355,7 @@ class create_test_objects extends test_base
 
     function dummy_phrase_list(): phrase_list
     {
-                 $lst = new phrase_list($this->usr1);
+        $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_phrase());
         $lst->add($this->dummy_phrase_triple());
         return $lst;
@@ -363,7 +363,7 @@ class create_test_objects extends test_base
 
     function dummy_phrase_group(): phrase_group
     {
-                 $lst = $this->dummy_phrase_list();
+        $lst = $this->dummy_phrase_list();
         $grp = $lst->get_grp();
         $grp->grp_name = phrase_group_api::TN_READ;
         return $grp;
@@ -391,7 +391,7 @@ class create_test_objects extends test_base
 
     function dummy_term_list(): term_list
     {
-                 $lst = new term_list($this->usr1);
+        $lst = new term_list($this->usr1);
         $lst->add($this->dummy_term());
         $lst->add($this->dummy_term_triple());
         $lst->add($this->dummy_term_formula());
@@ -401,20 +401,20 @@ class create_test_objects extends test_base
 
     function dummy_value(): value
     {
-                 $grp = new phrase_group($this->usr1, 1, array(phrase_group_api::TN_READ));
+        $grp = new phrase_group($this->usr1, 1, array(phrase_group_api::TN_READ));
         return new value($this->usr1, 1, round(value_api::TV_READ, 13), $grp);
     }
 
     function dummy_value_list(): value_list
     {
-                 $lst = new value_list($this->usr1);
+        $lst = new value_list($this->usr1);
         $lst->add($this->dummy_value());
         return $lst;
     }
 
     function dummy_formula(): formula
     {
-                 $frm = new formula($this->usr1);
+        $frm = new formula($this->usr1);
         $frm->set(1, formula_api::TN_READ);
         $frm->set_user_text(formula_api::TF_READ);
         $frm->set_type(formula_type::CALC);
@@ -423,14 +423,14 @@ class create_test_objects extends test_base
 
     function dummy_formula_list(): formula_list
     {
-                 $lst = new formula_list($this->usr1);
+        $lst = new formula_list($this->usr1);
         $lst->add($this->dummy_formula());
         return $lst;
     }
 
     function dummy_result(): result
     {
-                 $res = new result($this->usr1);
+        $res = new result($this->usr1);
         $wrd = $this->dummy_word();
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd->phrase());
@@ -442,7 +442,7 @@ class create_test_objects extends test_base
 
     function dummy_result_pct(): result
     {
-                 $res = new result($this->usr1);
+        $res = new result($this->usr1);
         $wrd_pct = $this->new_word(word_api::TN_PCT, 2, phrase_type::PERCENT);
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd_pct->phrase());
@@ -453,7 +453,7 @@ class create_test_objects extends test_base
 
     function dummy_result_list(): result_list
     {
-                 $lst = new result_list($this->usr1);
+        $lst = new result_list($this->usr1);
         $lst->add($this->dummy_result());
         $lst->add($this->dummy_result_pct());
         return $lst;
@@ -479,7 +479,7 @@ class create_test_objects extends test_base
 
     function dummy_figure_list(): figure_list
     {
-                 $lst = new figure_list($this->usr1);
+        $lst = new figure_list($this->usr1);
         $lst->add($this->dummy_figure_value());
         $lst->add($this->dummy_figure_result());
         return $lst;
@@ -487,7 +487,7 @@ class create_test_objects extends test_base
 
     function dummy_source(): source
     {
-                 $src = new source($this->usr1);
+        $src = new source($this->usr1);
         $src->set(2, source_api::TN_READ_API, source_type::PDF);
         $src->description = source_api::TD_READ_API;
         $src->url = source_api::TU_READ_API;
@@ -496,7 +496,7 @@ class create_test_objects extends test_base
 
     function dummy_source1(): source
     {
-                 $src = new source($this->usr1);
+        $src = new source($this->usr1);
         $src->set(1, source_api::TN_READ_API, source_type::PDF);
         $src->description = source_api::TD_READ_API;
         $src->url = source_api::TU_READ_API;
@@ -505,7 +505,7 @@ class create_test_objects extends test_base
 
     function dummy_reference(): ref
     {
-                 $ref = new ref($this->usr1);
+        $ref = new ref($this->usr1);
         $ref->set(3);
         $ref->phr = $this->dummy_word_pi()->phrase();
         $ref->source = $this->dummy_source1();
@@ -517,7 +517,7 @@ class create_test_objects extends test_base
 
     function dummy_view(): view
     {
-                 $dsp = new view($this->usr1);
+        $dsp = new view($this->usr1);
         $dsp->set(1, view_api::TN_READ);
         $dsp->description = view_api::TD_READ;
         $dsp->code_id = view_api::TI_READ;
@@ -533,7 +533,7 @@ class create_test_objects extends test_base
 
     function dummy_view_word_add(): view
     {
-                 $dsp = new view($this->usr1);
+        $dsp = new view($this->usr1);
         $dsp->set(2, view_api::TN_FORM);
         $dsp->description = view_api::TD_FORM;
         $dsp->code_id = view_api::TI_FORM;
@@ -543,7 +543,7 @@ class create_test_objects extends test_base
 
     function dummy_view_list(): view_list
     {
-                 $lst = new view_list($this->usr1);
+        $lst = new view_list($this->usr1);
         $lst->add($this->dummy_view_with_components());
         $lst->add($this->dummy_view_word_add());
         return $lst;
@@ -551,7 +551,7 @@ class create_test_objects extends test_base
 
     function dummy_component(): component
     {
-                 $cmp = new component($this->usr1);
+        $cmp = new component($this->usr1);
         $cmp->set(1, component_api::TN_READ, view_cmp_type::PHRASE_NAME);
         $cmp->description = component_api::TD_READ;
         return $cmp;
@@ -559,7 +559,7 @@ class create_test_objects extends test_base
 
     function dummy_component_word_add_title(): component
     {
-                 $cmp = new component($this->usr1);
+        $cmp = new component($this->usr1);
         $cmp->set(1, component_api::TN_FORM_TITLE, view_cmp_type::FORM_TITLE);
         $cmp->description = component_api::TD_FORM_TITLE;
         $cmp->code_id = component_api::TI_FORM_TITLE;
@@ -568,7 +568,7 @@ class create_test_objects extends test_base
 
     function dummy_component_word_add_back_stack(): component
     {
-                 $cmp = new component($this->usr1);
+        $cmp = new component($this->usr1);
         $cmp->set(2, component_api::TN_FORM_BACK, view_cmp_type::FORM_BACK);
         $cmp->description = component_api::TD_FORM_BACK;
         $cmp->code_id = component_api::TI_FORM_BACK;
@@ -577,7 +577,7 @@ class create_test_objects extends test_base
 
     function dummy_component_word_add_button_confirm(): component
     {
-                 $cmp = new component($this->usr1);
+        $cmp = new component($this->usr1);
         $cmp->set(3, component_api::TN_FORM_CONFIRM, view_cmp_type::FORM_CONFIRM);
         $cmp->description = component_api::TD_FORM_CONFIRM;
         $cmp->code_id = component_api::TI_FORM_CONFIRM;
@@ -586,7 +586,7 @@ class create_test_objects extends test_base
 
     function dummy_component_word_add_name(): component
     {
-                 $cmp = new component($this->usr1);
+        $cmp = new component($this->usr1);
         $cmp->set(4, component_api::TN_FORM_NAME, view_cmp_type::FORM_NAME);
         $cmp->description = component_api::TD_FORM_NAME;
         $cmp->code_id = component_api::TI_FORM_NAME;
@@ -595,7 +595,7 @@ class create_test_objects extends test_base
 
     function dummy_component_word_add_description(): component
     {
-                 $cmp = new component($this->usr1);
+        $cmp = new component($this->usr1);
         $cmp->set(5, component_api::TN_FORM_DESCRIPTION, view_cmp_type::FORM_DESCRIPTION);
         $cmp->description = component_api::TD_FORM_DESCRIPTION;
         $cmp->code_id = component_api::TI_FORM_DESCRIPTION;
@@ -604,7 +604,7 @@ class create_test_objects extends test_base
 
     function dummy_component_word_add_cancel(): component
     {
-                 $cmp = new component($this->usr1);
+        $cmp = new component($this->usr1);
         $cmp->set(6, component_api::TN_FORM_CANCEL, view_cmp_type::FORM_CANCEL);
         $cmp->description = component_api::TD_FORM_CANCEL;
         $cmp->code_id = component_api::TI_FORM_CANCEL;
@@ -613,7 +613,7 @@ class create_test_objects extends test_base
 
     function dummy_component_word_add_save(): component
     {
-                 $cmp = new component($this->usr1);
+        $cmp = new component($this->usr1);
         $cmp->set(7, component_api::TN_FORM_SAVE, view_cmp_type::FORM_SAVE);
         $cmp->description = component_api::TD_FORM_SAVE;
         $cmp->code_id = component_api::TI_FORM_SAVE;
@@ -622,7 +622,7 @@ class create_test_objects extends test_base
 
     function dummy_component_word_add_form_end(): component
     {
-                 $cmp = new component($this->usr1);
+        $cmp = new component($this->usr1);
         $cmp->set(8, component_api::TN_FORM_END, view_cmp_type::FORM_END);
         $cmp->description = component_api::TD_FORM_END;
         $cmp->code_id = component_api::TI_FORM_END;
@@ -631,7 +631,7 @@ class create_test_objects extends test_base
 
     function dummy_component_list(): component_list
     {
-                 $lst = new component_list($this->usr1);
+        $lst = new component_list($this->usr1);
         $lst->add($this->dummy_component());
         return $lst;
     }
@@ -801,13 +801,11 @@ class create_test_objects extends test_base
      */
     function new_word(string $wrd_name, int $id = 0, ?string $wrd_type_code_id = null, ?user $test_usr = null): word
     {
-        global $usr;
-
         if ($id == null) {
             $id = $this->next_seq_nbr();
         }
         if ($test_usr == null) {
-            $test_usr = $usr;
+            $test_usr = $this->usr1;
         }
 
         $wrd = new word($test_usr);
@@ -829,9 +827,8 @@ class create_test_objects extends test_base
      */
     function load_word(string $wrd_name, ?user $test_usr = null): word
     {
-        global $usr;
         if ($test_usr == null) {
-            $test_usr = $usr;
+            $test_usr = $this->usr1;
         }
         $wrd = new word($test_usr);
         $wrd->load_by_name($wrd_name);
@@ -847,9 +844,8 @@ class create_test_objects extends test_base
      */
     function create_word(string $wrd_name, ?user $test_usr = null): word
     {
-        global $usr;
         if ($test_usr == null) {
-            $test_usr = $usr;
+            $test_usr = $this->usr1;
         }
         $wrd = new word($test_usr);
         $wrd->set_name($wrd_name);
@@ -922,7 +918,6 @@ class create_test_objects extends test_base
                         ?string $wrd_type_code_id = null,
                         ?user   $test_usr = null): triple
     {
-        global $usr;
         global $verbs;
         global $phrase_types;
 
@@ -930,7 +925,7 @@ class create_test_objects extends test_base
             $id = $this->next_seq_nbr();
         }
         if ($test_usr == null) {
-            $test_usr = $usr;
+            $test_usr = $this->usr1;
         }
 
         $trp = new triple($test_usr);
@@ -971,13 +966,12 @@ class create_test_objects extends test_base
         string $from_name,
         string $verb_code_id,
         string $to_name,
-        ?user $test_usr = null): triple
+        ?user  $test_usr = null): triple
     {
         global $verbs;
-        global $usr;
 
         if ($test_usr == null) {
-            $test_usr = $usr;
+            $test_usr = $this->usr1;
         }
 
         $wrd_from = $this->create_word($from_name);
@@ -1126,14 +1120,13 @@ class create_test_objects extends test_base
      */
     function new_formula(string $frm_name, int $id = 0, ?string $frm_type_code_id = null, ?user $test_usr = null): formula
     {
-        global $usr;
         global $formula_types;
 
         if ($id == null) {
             $id = $this->next_seq_nbr();
         }
         if ($test_usr == null) {
-            $test_usr = $usr;
+            $test_usr = $this->usr1;
         }
 
         $frm = new formula($test_usr);
@@ -1148,7 +1141,6 @@ class create_test_objects extends test_base
 
     function load_formula(string $frm_name): formula
     {
-        global $usr;
         $frm = new formula_dsp_old($this->usr1);
         $frm->load_by_name($frm_name, formula::class);
         return $frm;
@@ -1239,7 +1231,7 @@ class create_test_objects extends test_base
      */
     function load_word_list(array $array_of_word_str): word_list
     {
-                 $wrd_lst = new word_list($this->usr1);
+        $wrd_lst = new word_list($this->usr1);
         $wrd_lst->load_by_names($array_of_word_str);
         return $wrd_lst;
     }
@@ -1352,7 +1344,7 @@ class create_test_objects extends test_base
 
     function add_value(array $array_of_word_str, float $target): value
     {
-                 $val = $this->load_value($array_of_word_str);
+        $val = $this->load_value($array_of_word_str);
         if ($val->id() == 0) {
             $phr_lst = $this->load_phrase_list($array_of_word_str);
             $phr_grp = $phr_lst->get_grp();
@@ -1384,7 +1376,6 @@ class create_test_objects extends test_base
 
     function load_value_by_phr_grp(phrase_group $phr_grp): value
     {
-
         $val = new value($this->usr1);
         $val->load_by_grp($phr_grp);
         return $val;
@@ -1429,7 +1420,7 @@ class create_test_objects extends test_base
      */
     function new_verb(string $vrb_name, int $id = 0): verb
     {
-                 if ($id == null) {
+        if ($id == null) {
             $id = $this->next_seq_nbr();
         }
 
@@ -1448,7 +1439,7 @@ class create_test_objects extends test_base
 
     function load_source(string $src_name): source
     {
-                 $src = new source($this->usr1);
+        $src = new source($this->usr1);
         $src->load_by_name($src_name);
         return $src;
     }
@@ -1558,10 +1549,8 @@ class create_test_objects extends test_base
      */
     function load_view(string $dsp_name, ?user $test_usr = null): view
     {
-        global $usr;
-
         if ($test_usr == null) {
-            $test_usr = $usr;
+            $test_usr = $this->usr1;
         }
 
         $dsp = new view_dsp_old($test_usr);
@@ -1569,14 +1558,8 @@ class create_test_objects extends test_base
         return $dsp;
     }
 
-    function add_view(string $dsp_name, ?user $test_usr = null): view
+    function add_view(string $dsp_name, user $test_usr): view
     {
-        global $usr;
-
-        if ($test_usr == null) {
-            $test_usr = $usr;
-        }
-
         $dsp = $this->load_view($dsp_name, $test_usr);
         if ($dsp->id() == 0) {
             $dsp->set_user($test_usr);
@@ -1588,6 +1571,10 @@ class create_test_objects extends test_base
 
     function test_view(string $dsp_name, ?user $test_usr = null): view
     {
+        if ($test_usr == null) {
+            $test_usr = $this->usr1;
+        }
+
         $dsp = $this->add_view($dsp_name, $test_usr);
         $this->display('view', $dsp_name, $dsp->name());
         return $dsp;
@@ -1600,10 +1587,8 @@ class create_test_objects extends test_base
 
     function load_component(string $cmp_name, ?user $test_usr = null): component
     {
-        global $usr;
-
         if ($test_usr == null) {
-            $test_usr = $usr;
+            $test_usr = $this->usr1;
         }
 
         $cmp = new component($test_usr);
@@ -1611,14 +1596,9 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function add_component(string $cmp_name, string $type_code_id = '', ?user $test_usr = null): component
+    function add_component(string $cmp_name, user $test_usr, string $type_code_id = ''): component
     {
-        global $usr;
         global $component_types;
-
-        if ($test_usr == null) {
-            $test_usr = $usr;
-        }
 
         $cmp = $this->load_component($cmp_name, $test_usr);
         if ($cmp->id() == 0 or $cmp->id() == Null) {
@@ -1634,7 +1614,11 @@ class create_test_objects extends test_base
 
     function test_component(string $cmp_name, string $type_code_id = '', ?user $test_usr = null): component
     {
-        $cmp = $this->add_component($cmp_name, $type_code_id, $test_usr);
+        if ($test_usr == null) {
+            $test_usr = $this->usr1;
+        }
+
+        $cmp = $this->add_component($cmp_name, $test_usr, $type_code_id);
         $this->display('view component', $cmp_name, $cmp->name());
         return $cmp;
     }

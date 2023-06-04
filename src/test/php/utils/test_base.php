@@ -596,7 +596,7 @@ class test_base
     {
         $lib = new library();
         $original_json = json_decode(json_encode($usr_obj->export_obj(false)), true);
-        $recreated_json = '';
+        $recreated_json = json_decode ("{}", true);
         $api_obj = $usr_obj->api_obj();
         if ($api_obj->id() == $usr_obj->id()) {
             $db_obj = $api_obj->db_obj($usr_obj->user(), get_class($api_obj));

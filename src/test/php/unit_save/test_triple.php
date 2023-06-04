@@ -37,6 +37,7 @@
 // --------------------------------------
 
 use api\phrase_api;
+use api\triple_api;
 use api\word_api;
 use model\change_log_link;
 use model\change_log_table;
@@ -81,14 +82,14 @@ function run_triple_test(test_cleanup $t): void
     // ... now test the Insurance Zurich
     $lnk_company = new triple($t->usr1);
     $lnk_company->load_by_link($wrd_zh->id(), $is_id, $wrd_company->id());
-    $target = phrase_api::TN_ZH_COMPANY;
+    $target = triple_api::TN_ZH_COMPANY;
     $result = $lnk_company->name();
-    $t->display('triple->load for ' . phrase_api::TN_ZH_COMPANY, $target, $result);
+    $t->display('triple->load for ' . triple_api::TN_ZH_COMPANY, $target, $result);
 
     // ... now test the Insurance Zurich using the name function
-    $target = phrase_api::TN_ZH_COMPANY;
+    $target = triple_api::TN_ZH_COMPANY;
     $result = $lnk_company->name();
-    $t->display('triple->load for ' . phrase_api::TN_ZH_COMPANY . ' using the function', $target, $result);
+    $t->display('triple->load for ' . triple_api::TN_ZH_COMPANY . ' using the function', $target, $result);
 
     // link the added word to the test word
     $wrd_added = $t->load_word(word_api::TN_RENAMED);

@@ -35,6 +35,7 @@ namespace test;
 // TODO combine with triple_unit_test
 
 use api\phrase_api;
+use api\triple_api;
 use model\sql_db;
 use model\triple;
 use model\verb;
@@ -67,7 +68,7 @@ class triple_unit_tests_old
 
         // sql to load a triple by name
         $trp = new triple($usr);
-        $trp->set_name(phrase_api::TN_ZH_COMPANY);
+        $trp->set_name(triple_api::TN_ZH_COMPANY);
         $t->assert_load_sql_obj_vars($db_con, $trp);
         $t->assert_load_standard_sql($db_con, $trp);
 

@@ -52,23 +52,14 @@ class phrase_api extends combine_named_api implements JsonSerializable
     const CLASS_WORD = 'word';
     const CLASS_TRIPLE = 'triple';
 
-    // phrase names for stand-alone unit tests that are added with the system initial data load
-    // TN_* is the name of the phrase used for testing
-    // TD_* is the tooltip/description of the phrase
-    const TN_ZH_CITY_NAME = 'City of Zurich';
-    const TN_ZH_CITY = 'Zurich (City)';
-    const TN_ZH_CANTON_NAME = 'Canton Zurich';
-    const TN_ZH_CANTON = 'Zurich (Canton)';
-    const TN_ZH_COMPANY = "System Test Phrase: Zurich Insurance";
-
     const RESERVED_PHRASES = array(
-        self::TN_ZH_CANTON,
-        self::TN_ZH_CITY,
-        self::TN_ZH_COMPANY
+        triple_api::TN_ZH_CANTON,
+        triple_api::TN_ZH_CITY,
+        triple_api::TN_ZH_COMPANY
     );
     const TEST_TRIPLE_STANDARD = array(
-        self::TN_ZH_CANTON,
-        self::TN_ZH_CITY
+        triple_api::TN_ZH_CANTON,
+        triple_api::TN_ZH_CITY
     );
 
 
