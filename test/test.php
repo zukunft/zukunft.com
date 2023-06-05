@@ -175,6 +175,11 @@ if ($start_usr->id() > 0) {
 
         // create the testing users
         $t->set_users();
+        global $usr;
+        $usr = $t->usr1;
+
+        // check that the main database test entries are still active
+        $t->create_test_db_entries($t);
 
         // run the unit database tests
         $t->init_unit_db_tests();
@@ -207,8 +212,6 @@ if ($start_usr->id() > 0) {
             // --------------------------------------
             // start testing the system functionality
             // --------------------------------------
-
-            $t->create_test_db_entries($t);
 
             run_system_test($t);
             run_user_test($t);

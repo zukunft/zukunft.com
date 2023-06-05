@@ -114,7 +114,7 @@ if ($usr->id() > 0) {
 
         $t = new test_unit_read_db();
         $t->set_users();
-        $t->create_test_db_entries($t, $sys_usr);
+        $t->create_test_db_entries($t);
 
         // reload the session user parameters
         $usr = new user;

@@ -211,13 +211,15 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             if (array_key_exists(self::FLD_FROM, $db_row)) {
-                if ($db_row[self::FLD_FROM] != null) {
-                    $this->from->set_id($db_row[self::FLD_FROM]);
+                $phr_id = $db_row[self::FLD_FROM];
+                if ($phr_id != null) {
+                    $this->from->set_obj_from_id($phr_id);
                 }
             }
             if (array_key_exists(self::FLD_TO, $db_row)) {
-                if ($db_row[self::FLD_TO] != null) {
-                    $this->to->set_id($db_row[self::FLD_TO]);
+                $phr_id = $db_row[self::FLD_TO];
+                if ($phr_id != null) {
+                    $this->to->set_obj_from_id($phr_id);
                 }
             }
             if (array_key_exists(verb::FLD_ID, $db_row)) {

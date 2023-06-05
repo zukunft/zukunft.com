@@ -193,6 +193,21 @@ class phrase extends combine_named
         $this->set_obj_id(abs($id));
     }
 
+    function set_obj_from_id(int $id): void
+    {
+        if ($id > 0) {
+            $wrd = new word($this->user());
+            $wrd->set_id($id);
+            $this->obj = $wrd;
+        } elseif ($id < 0) {
+            $trp = new triple($this->user());
+            $trp->set_id($id * -1);
+            $this->obj = $trp;
+        } else {
+            log_warning('Id of phrase is not expected to be zero');
+        }
+    }
+
     /**
      * set the phrase id based id the word or triple id
      * must have the same logic as the database view and the frontend

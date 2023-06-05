@@ -58,6 +58,14 @@ function create_test_triples(test_cleanup $t): void
 {
     $t->header('Check if all base phrases are correct');
 
+    // activate the excluded objects to check the setup
+    $trp = new triple($t->usr2);
+    $trp->load_by_name(triple_api::TN_EXCLUDED);
+    if ($trp->id() != 0) {
+        $trp->set_excluded(false);
+        $trp->save();
+    }
+
     $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON, triple_api::TN_ZH_CANTON, triple_api::TN_ZH_CANTON);
     $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CITY, triple_api::TN_ZH_CITY, triple_api::TN_ZH_CITY);
     $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_COMPANY, triple_api::TN_ZH_COMPANY, triple_api::TN_ZH_COMPANY);
