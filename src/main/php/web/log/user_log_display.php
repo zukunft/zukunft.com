@@ -310,7 +310,7 @@ class user_log_display
         $sql_row = '';
         $sql_user = '';
         if ($class == 'user') {
-            $sql_where = " ( c.change_table_id = " . $change_log_tables->id(change_log_table::USR) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $change_log_tables->id(change_log_table::USER) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = '';

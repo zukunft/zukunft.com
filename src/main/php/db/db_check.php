@@ -32,6 +32,7 @@
 
 use cfg\config;
 use cfg\user_profile_list;
+use model\change_log;
 use model\formula_list;
 use model\library;
 use model\sandbox;
@@ -46,8 +47,10 @@ use model\value;
 /**
  * read the version number from the database and compare it with the backend version
  * if the database has a lower version than the backend program start the upgrade process
+ * @param sql_db $db_con the database connection object to the database that should be tested
+ * @return string the message that should be shown to the user immediately if not empty
  */
-function db_check($db_con): string
+function db_check(sql_db $db_con): string
 {
 
     $result = ''; // the message that should be shown to the user immediately

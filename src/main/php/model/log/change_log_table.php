@@ -44,28 +44,63 @@ global $change_log_tables;
 class change_log_table extends type_list
 {
     // list of the log table with linked functionalities
-    const USR = 'users';
+    // unlike the table const in sql_db this contains also table names of previous versions
+    // and an assignment of the deprecated tables names to the table names of this version
+    // this list contains only tables where a direct change by the user is possible
+    // so the phrase, term and figure tables are not included here, but in the sql_db list
+    const USER = 'users';
+    const WORD = 'words';
+    const WORD_USR = 'user_words';
+    const VERB = 'verbs';
+    const TRIPLE = 'triples';
+    const TRIPLE_USR = 'user_triples';
     const VALUE = 'values';
     const VALUE_USR = 'user_values';
     const VALUE_LINK = 'value_links';
     const VALUE_PHRASE_LINK = 'value_phrase_links';
-    const WORD = 'words';
-    const WORD_USR = 'user_words';
-    const TRIPLE = 'triples';
-    const TRIPLE_USR = 'user_triples';
-    const VERB = 'verbs';
     const FORMULA = 'formulas';
     const FORMULA_USR = 'user_formulas';
     const FORMULA_LINK = 'formula_links';
     const FORMULA_LINK_USR = 'user_formula_links';
     const VIEW = 'views';
     const VIEW_USR = 'user_views';
-    const VIEW_LINK = 'component_links';
-    const VIEW_LINK_USR = 'user_component_links';
+    const VIEW_TERM_LINK = 'view_term_links';
+    //const VIEW_TERM_LINK_USR = 'user_view_term_links';
     const VIEW_COMPONENT = 'components';
     const VIEW_COMPONENT_USR = 'user_components';
+    const VIEW_LINK = 'component_links';
+    const VIEW_LINK_USR = 'user_component_links';
     const REF = 'refs';
+    const REF_USR = 'user_refs';
     const SOURCE = 'sources';
+    const SOURCE_USR = 'user_sources';
+
+    // list of all log tables allowed in this program version
+    const TABLE_LIST = array(
+        self::USER,
+        self::WORD,
+        self::WORD_USR,
+        self::VERB,
+        self::TRIPLE,
+        self::TRIPLE_USR,
+        self::VALUE,
+        self::VALUE_USR,
+        self::VALUE_LINK,
+        self::FORMULA,
+        self::FORMULA_USR,
+        self::FORMULA_LINK,
+        self::FORMULA_LINK_USR,
+        self::VIEW,
+        self::VIEW_USR,
+        self::VIEW_LINK,
+        self::VIEW_LINK_USR,
+        self::VIEW_COMPONENT,
+        self::VIEW_COMPONENT_USR,
+        self::REF,
+        self::REF_USR,
+        self::SOURCE,
+        self::SOURCE_USR,
+    );
 
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled
@@ -85,7 +120,7 @@ class change_log_table extends type_list
         parent::load_dummy();
         $type = new type_object(change_log_table::VALUE, change_log_table::VALUE, '', 2);
         $this->add($type);
-        $type = new type_object(change_log_table::USR, change_log_table::USR, '', 3);
+        $type = new type_object(change_log_table::USER, change_log_table::USER, '', 3);
         $this->add($type);
         $type = new type_object(change_log_table::WORD, change_log_table::WORD, '', 5);
         $this->add($type);

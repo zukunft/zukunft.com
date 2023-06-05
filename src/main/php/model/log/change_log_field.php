@@ -76,6 +76,7 @@ class change_log_field extends type_list
     const FLD_VIEW_CMP_TYPE = 'component_type_id';
     const FLD_TABLE_FIELD = 'table_field_name';
 
+
     /**
      * overwrite the general user type list load function to keep the link to the field type capsuled
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing

@@ -268,6 +268,7 @@ use cfg\verb_list;
 use cfg\view_sys_list;
 use html\html_base;
 use html\view\view_dsp_old;
+use model\change_log;
 use model\library;
 use model\sql_db;
 use model\sys_log_level;
@@ -638,15 +639,22 @@ function log_msg(string $msg_text,
                  string $function_name,
                  string $function_trace,
                  int    $user_id,
-                 bool   $force_log = false): string
+                 bool   $force_log = false,
+                 ?sql_db $given_db_con = null): string
 {
 
     global $sys_log_msg_lst;
     global $db_con;
 
+    $used_db_con = $db_con;
+    if ($given_db_con != null) {
+        $used_db_con = $given_db_con;
+    }
+
+
     $result = '';
 
-    if ($db_con == null) {
+    if ($used_db_con == null) {
         echo 'FATAL ERROR! ' . $msg_text;
     } else {
 
@@ -672,22 +680,22 @@ function log_msg(string $msg_text,
         // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
         $msg_type_text = $user_id . substr($msg_text, 0, 200);
         if (!in_array($msg_type_text, $sys_log_msg_lst)) {
-            $db_con->usr_id = $user_id;
+            $used_db_con->usr_id = $user_id;
             $sys_log_id = 0;
 
             $sys_log_msg_lst[] = $msg_type_text;
             if ($msg_log_level > LOG_LEVEL or $force_log) {
-                $db_con->set_type(sql_db::TBL_SYS_LOG_FUNCTION);
-                $function_id = $db_con->get_id($function_name);
+                $used_db_con->set_type(sql_db::TBL_SYS_LOG_FUNCTION);
+                $function_id = $used_db_con->get_id($function_name);
                 if ($function_id <= 0) {
-                    $function_id = $db_con->add_id($function_name);
+                    $function_id = $used_db_con->add_id($function_name);
                 }
                 $msg_text = str_replace("'", "", $msg_text);
                 $msg_description = str_replace("'", "", $msg_description);
                 $function_trace = str_replace("'", "", $function_trace);
-                $msg_text = $db_con->sf($msg_text);
-                $msg_description = $db_con->sf($msg_description);
-                $function_trace = $db_con->sf($function_trace);
+                $msg_text = $used_db_con->sf($msg_text);
+                $msg_description = $used_db_con->sf($msg_description);
+                $function_trace = $used_db_con->sf($function_trace);
                 $fields = array();
                 $values = array();
                 $fields[] = "sys_log_type_id";
@@ -704,9 +712,9 @@ function log_msg(string $msg_text,
                     $fields[] = "user_id";
                     $values[] = $user_id;
                 }
-                $db_con->set_type(sql_db::TBL_SYS_LOG);
+                $used_db_con->set_type(sql_db::TBL_SYS_LOG);
 
-                $sys_log_id = $db_con->insert($fields, $values, false);
+                $sys_log_id = $used_db_con->insert($fields, $values, false);
                 //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
                 //$sys_log_id = mysqli_insert_id();
             }
@@ -762,14 +770,18 @@ function log_warning(string $msg_text,
                      string $function_name = '',
                      string $msg_description = '',
                      string $function_trace = '',
-                     ?user  $calling_usr = null): string
+                     ?user  $calling_usr = null, 
+                     ?sql_db $given_db_con = null): string
 {
     return log_msg($msg_text,
         $msg_description,
         sys_log_level::WARNING,
         $function_name,
         $function_trace,
-        get_user_id($calling_usr));
+        get_user_id($calling_usr),
+        false,
+        $given_db_con
+    );
 }
 
 function log_err(string $msg_text,
@@ -860,6 +872,15 @@ function prg_restart(string $code_name): sql_db
         // preload all types from the database
         $sys_typ_lst = new type_lists();
         $sys_typ_lst->load($db_con, null);
+
+        $log = new change_log();
+        $db_changed = $log->create_log_references($db_con);
+
+        // reload the type list if needed and trigger an update in the frontend
+        // even tough the update of the preloaded list should already be done by the single adds
+        if ($db_changed) {
+            $sys_typ_lst->load($db_con, null);
+        }
 
     }
     return $db_con;

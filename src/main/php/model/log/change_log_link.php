@@ -225,12 +225,8 @@ class change_log_link extends change_log
     }
 
     // identical to the functions in user_log (maybe move to a common object??)
-    protected function add_table(string $table_name = ''): int
+    protected function add_table(sql_db $db_con, string $table_name = ''): int
     {
-        log_debug('user_log_link->set_table "' . $this->table() . '" for ' . $this->usr->dsp_id());
-
-        global $db_con;
-
         // check parameter
         if ($table_name == "") {
             log_err("missing table name", "user_log_link->set_table");
@@ -240,10 +236,8 @@ class change_log_link extends change_log
         }
 
         // if e.g. a "value" is changed $table_name is "values" and the reference 1 is saved in the log to save space
-        //$db_con = new mysql;
         $db_type = $db_con->get_type();
         $db_con->set_type(sql_db::TBL_CHANGE_TABLE);
-        $db_con->usr_id = $this->usr->id;
         $table_id = $db_con->get_id($table_name);
 
         // add new table name if needed
@@ -260,12 +254,8 @@ class change_log_link extends change_log
         return $table_id;
     }
 
-    protected function add_action(): void
+    protected function add_action(sql_db $db_con): void
     {
-        log_debug('user_log_link->set_action "' . $this->action . '" for ' . $this->usr->dsp_id());
-
-        global $db_con;
-
         // check parameter
         if ($this->action == "") {
             log_err("missing action name", "user_log_link->set_action");
@@ -275,10 +265,8 @@ class change_log_link extends change_log
         }
 
         // if e.g. the action is "add" the reference 1 is saved in the log table to save space
-        //$db_con = new mysql;
         $db_type = $db_con->get_type();
         $db_con->set_type(sql_db::TBL_CHANGE_ACTION);
-        $db_con->usr_id = $this->usr->id;
         $action_id = $db_con->get_id($this->action);
 
         // add new action name if needed
@@ -295,7 +283,7 @@ class change_log_link extends change_log
     }
 
     // functions used utils each call is done with the object instead of the id
-    private function set_usr()
+    private function set_usr(): void
     {
         log_debug('user_log_link->set_usr for ' . $this->usr->dsp_id());
         if (!isset($this->usr)) {
@@ -341,14 +329,15 @@ class change_log_link extends change_log
     // this should be dismissed, instead use add, which also save the text reference for fast and reliable displaying
     function add_link()
     {
+        global $db_con;
         log_debug("user_log_link->add_link (u" . $this->usr->id . " " . $this->action . " " . $this->table() .
             ",of" . $this->old_from . ",ol" . $this->old_link . ",ot" . $this->old_to .
             ",nf" . $this->new_from . ",nl" . $this->new_link . ",nt" . $this->new_to . ",r" . $this->row_id . ")");
 
         global $db_con;
 
-        $this->add_table();
-        $this->add_action();
+        $this->add_table($db_con);
+        $this->add_action($db_con);
 
         $sql_fields = array();
         $sql_values = array();
@@ -445,7 +434,7 @@ class change_log_link extends change_log
         global $db_con;
 
         //$this->add_table();
-        $this->add_action();
+        $this->add_action($db_con);
 
         // set the table specific references
         log_debug('set fields');

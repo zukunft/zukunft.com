@@ -558,7 +558,8 @@ class test_base
         string $comment = '',
         string $test_type = ''): bool
     {
-        $result = array_intersect($result, $target);
+        // the array keys are not relevant if only a few elements should be checked
+        $result = array_values(array_intersect($result, $target));
         return $this->display(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
     }
 

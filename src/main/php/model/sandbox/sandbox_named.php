@@ -375,7 +375,7 @@ class sandbox_named extends sandbox
         $log = new change_log_named;
         // TODO add the table exceptions from sql_db
         $log->action = change_log_action::ADD;
-        $log->set_table($this->obj_name . 's');
+        $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->set_field($this->obj_name . '_name');
         $log->usr = $this->user();
         $log->old_value = '';
@@ -397,7 +397,7 @@ class sandbox_named extends sandbox
         $log = new change_log_named;
         $log->usr = $this->user();
         $log->action = change_log_action::DELETE;
-        $log->set_table($this->obj_name . 's');
+        $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->set_field($this->obj_name . '_name');
         $log->old_value = $this->name();
         $log->new_value = '';

@@ -1263,7 +1263,7 @@ class sandbox extends db_object
         $log->usr = $this->usr;
         $log->action = change_log_action::ADD;
         // TODO add the table exceptions from sql_db
-        $log->set_table($this->obj_name . 's');
+        $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->row_id = 0;
         $log->add();
 
@@ -1289,9 +1289,9 @@ class sandbox extends db_object
         $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
-            $log->set_table($this->obj_name . 's');
+            $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         } else {
-            $log->set_table(sql_db::TBL_USER_PREFIX . $this->obj_name . 's');
+            $log->set_table(sql_db::TBL_USER_PREFIX . $this->obj_name . sql_db::TABLE_EXTENSION);
         }
 
         return $log;

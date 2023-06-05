@@ -365,7 +365,7 @@ class change_log_named extends change_log
 
         //parent::add_table();
         //parent::add_field();
-        parent::add_action();
+        parent::add_action($db_con);
 
         $sql_fields = array();
         $sql_values = array();

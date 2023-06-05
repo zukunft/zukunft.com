@@ -44,6 +44,14 @@ class change_log_action extends type_list
     const UPDATE = 'update';
     const DELETE = 'del';
 
+    // list of all log actions allowed in this program version
+    const ACTION_LIST = array(
+        self::ADD,
+        self::UPDATE,
+        self::DELETE
+    );
+
+
 
     /*
      * load

@@ -121,6 +121,9 @@ class sql_db
     const VT_PHRASE_GROUP_LINK = 'phrase_group_phrase_link';
     const VT_TABLE_FIELD = 'change_table_field';
 
+    // difference between the object name and the table name
+    const TABLE_EXTENSION = 's';
+
     // the parameter types for prepared queries independent of the SQL dialect
     const PAR_INT = 'int';
     const PAR_INT_OR = 'int_or';

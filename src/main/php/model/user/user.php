@@ -975,7 +975,7 @@ class user extends db_object
         $log = new change_log_named;
         $log->usr = $this;
         $log->action = change_log_action::UPDATE;
-        $log->set_table(change_log_table::USR);
+        $log->set_table(change_log_table::USER);
 
         return $log;
     }
