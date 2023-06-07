@@ -66,6 +66,7 @@ class library
     private const STR_DIFF_DEL_START = '//-';
     private const STR_DIFF_DEL_END = '//';
     private const STR_DIFF_MSG_LEN = 100; // the max target length of the difference message to keep it human-readable
+    private const STR_DIFF_MATCH_LEN = 8; // the min length of a matching pattern to keep the diff human-readable
 
     // the expected minimal length of 80% of the words
     private const STR_WORD_MIN_LEN = 2;
@@ -606,8 +607,8 @@ class library
      * @return string an empty string if all target entries are part of the result
      */
     private function array_explain_missing(
-        array $result,
-        array $target,
+        array  $result,
+        array  $target,
         string $start_maker = self::STR_DIFF_ADD_START,
         string $end_maker = self::STR_DIFF_ADD_END): string
     {
@@ -959,7 +960,7 @@ class library
         $from_sep = $this->str_split_for_humans($from, $str_type);
         $to_array = $this->str_split_for_humans($to, $str_type, false);
         $to_sep = $this->str_split_for_humans($to, $str_type);
-        $diff = $this->str_diff_list($from_array, $to_array, $from_sep, $to_sep);
+        $diff = $this->str_diff_list($from_array, $to_array, $from_sep, $to_sep, $str_type);
         $diff_val = $diff[self::STR_DIFF_VAL];
         $diff_typ = $diff[self::STR_DIFF_TYP];
 
@@ -1045,13 +1046,22 @@ class library
      *           type: contains numbers. 0: unchanged, -1: removed, 1: added
      */
     private
-    function str_diff_list(array $from, array $to, ?array $from_sep = null, ?array $to_sep = null): array
+    function str_diff_list(
+        array  $from,
+        array  $to,
+        ?array $from_sep = null,
+        ?array $to_sep = null,
+        int    $str_type): array
     {
-        if ($from_sep == null or count($from_sep) != count($from)) {
-            $from_sep = $from;
+        if ($from_sep == null
+            or count($from_sep) != count($from)
+            or array_keys($from_sep) != array_keys($from)) {
+            $from_sep = array_values($from);
         }
-        if ($to_sep == null or count($to_sep) != count($to)) {
-            $to_sep = $to;
+        if ($to_sep == null
+            or count($to_sep) != count($to)
+            or array_keys($to_sep) != array_keys($to)) {
+            $to_sep = array_values($to);
         }
 
         $diff_part = array(); // list with the differences
@@ -1065,10 +1075,18 @@ class library
             if ($from[$from_pos] == $to[$to_pos]) {
                 $diff_part[] = $to_sep[$to_pos];
                 $diff_type[] = self::STR_DIFF_UNCHANGED;
-                $to_pos++;
+                if ($to_pos < count($to)) {
+                    $to_pos++;
+                }
                 $from_pos++;
             } else {
-                $match_pos = $this->str_diff_list_next_match($from[$from_pos], $to, $to_pos);
+                if ($str_type == self::STR_TYPE_CODE) {
+                    $from_len = min(self::STR_DIFF_MATCH_LEN, count($from) - $from_pos);
+                    $search = array_slice($from, $from_pos, $from_len);
+                    $match_pos = $this->str_diff_list_next_array_match($search, $to, $to_pos);
+                } else {
+                    $match_pos = $this->str_diff_list_next_match($from[$from_pos], $to, $to_pos);
+                }
                 if ($match_pos > $to_pos) {
                     for ($add_pos = $to_pos; $add_pos < $match_pos; $add_pos++) {
                         $diff_part[] = $to_sep[$add_pos];
@@ -1094,6 +1112,40 @@ class library
         return array(
             self::STR_DIFF_VAL => $diff_part,
             self::STR_DIFF_TYP => $diff_type);
+    }
+
+    /**
+     * @param string $from the part of the target string that should be found in the $to string array
+     * @param array $to the result string converted to an array
+     * @param int $start_pos the staring position in the to string array
+     * @return int the position of the next match in the to array or -1 if nothing found
+     */
+    private
+    function str_diff_list_next_array_match(array $from, array $to, int $start_pos): int
+    {
+        $check_pos = $start_pos;
+        $found_pos = -1;
+        while ($check_pos < count($to) and $found_pos == -1) {
+            $compare_pos = 0;
+            $found = true;
+            while ($compare_pos < count($from) and $found) {
+                if ($check_pos + $compare_pos > count($to)) {
+                    $found = false;
+                } else {
+                    $from_char = $from[$compare_pos];
+                    $to_char = $to[$check_pos + $compare_pos];
+                    if ($from[$compare_pos] != $to[$check_pos + $compare_pos]) {
+                        $found = false;
+                    }
+                }
+                $compare_pos++;
+            }
+            if ($found) {
+                $found_pos = $check_pos;
+            }
+            $check_pos++;
+        }
+        return $found_pos;
     }
 
     /**
