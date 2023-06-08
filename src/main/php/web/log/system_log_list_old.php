@@ -56,7 +56,7 @@ class system_log_list_dsp_old extends system_log_list_api
         $rows = '';   // the html code of the rows
 
         if (count($this->system_log) > 0) {
-            // prepare to show the word link
+            // prepare to show a system log entry
             $log_dsp = $this->system_log[0];
             if ($log_dsp->time <> '') {
                 $row_nbr = 0;

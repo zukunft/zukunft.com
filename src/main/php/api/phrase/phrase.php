@@ -52,14 +52,14 @@ class phrase_api extends combine_named_api implements JsonSerializable
     const CLASS_WORD = 'word';
     const CLASS_TRIPLE = 'triple';
 
+    // phrase names used for system testing
     const RESERVED_PHRASES = array(
-        triple_api::TN_ZH_CANTON,
-        triple_api::TN_ZH_CITY,
-        triple_api::TN_ZH_COMPANY
+        triple_api::TN_ADD,
+        triple_api::TN_EXCLUDED
     );
     const TEST_TRIPLE_STANDARD = array(
-        triple_api::TN_ZH_CANTON,
-        triple_api::TN_ZH_CITY
+        triple_api::TN_ADD,
+        triple_api::TN_EXCLUDED
     );
 
 

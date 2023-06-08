@@ -92,6 +92,24 @@ class change_log extends db_object
 
 
     /*
+     * construct and map
+     */
+
+    /**
+     * always set the user because a change log list is always user specific
+     * @param user|null $usr the user who requested to see the log entries
+     */
+    function __construct(?user $usr)
+    {
+        parent::__construct();
+        if ($usr != null) {
+            $this->set_user($usr);
+        }
+    }
+
+
+
+    /*
      * cast
      */
 

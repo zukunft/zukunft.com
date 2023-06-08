@@ -96,18 +96,18 @@ if ($usr->id() > 0) {
 
         // do the direct changes initiated by other buttons than the save button
         // to link the formula to another word
-        if ($_GET['link_phrase'] > 0) {
+        $link_phr_id = $_GET[controller::URL_VAR_LINK_PHRASE] ?? 0;
+        if ($link_phr_id != 0) {
             $phr = new phrase($usr);
-            $phr->set_id($_GET['link_phrase']);
-            $phr->load_by_obj_par();
+            $phr->load_by_id($link_phr_id);
             $upd_result = $frm->link_phr($phr);
         }
 
         // to unlink a word from the formula
-        if ($_GET['unlink_phrase'] > 0) {
+        $unlink_phr_id = $_GET[controller::URL_VAR_UNLINK_PHRASE] ?? 0;
+        if ($unlink_phr_id > 0) {
             $phr = new phrase($usr);
-            $phr->set_id($_GET['unlink_phrase']);
-            $phr->load_by_obj_par();
+            $phr->load_by_id($unlink_phr_id);
             $upd_result = $frm->unlink_phr($phr);
         }
 

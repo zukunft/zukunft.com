@@ -108,13 +108,17 @@ class system_log extends db_object
      */
 
     /**
-     * @return bool true if a row is found
+     * map the database fields to one system log entry to this log object
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if a system log row is found
      */
-    function row_mapper(array $db_row): bool
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
         $lib = new library();
-        if ($db_row[self::FLD_ID] > 0) {
-            $this->set_id($db_row[self::FLD_ID]);
+        $result = parent::row_mapper($db_row, self::FLD_ID);
+        if ($result) {
             $this->usr_id = $db_row[sandbox::FLD_USER];
             $this->usr_name = $db_row[sandbox::FLD_USER_NAME];
             $this->solver_id = $db_row[self::FLD_SOLVER];
@@ -127,10 +131,8 @@ class system_log extends db_object
             $this->log_trace = $db_row[self::FLD_TRACE];
             $this->status_id = $db_row[self::FLD_STATUS];
             $this->status_name = $db_row[type_object::FLD_NAME];
-            return true;
-        } else {
-            return false;
         }
+        return $result;
     }
 
 
@@ -247,8 +249,7 @@ class system_log extends db_object
     private function log_upd(): change_log_named
     {
         log_debug();
-        $log = new change_log_named;
-        $log->usr = $this->user();
+        $log = new change_log_named($this->user());
         $log->action = change_log_action::UPDATE;
         $log->set_table(sql_db::TBL_SYS_LOG);
 

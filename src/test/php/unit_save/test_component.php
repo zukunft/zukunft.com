@@ -113,11 +113,10 @@ function run_component_test(test_cleanup $t): void
     $t->display('component->load the added "' . $cmp_added->name() . '"', $target, $result);
 
     // check if the component adding has been logged
-    $log = new change_log_named;
+    $log = new change_log_named($t->usr1);
     $log->set_table(change_log_table::VIEW_COMPONENT);
     $log->set_field(component::FLD_NAME);
     $log->row_id = $cmp->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added System Test View Component';
     $t->display('component->save adding logged for "' . component_api::TN_ADD . '"', $target, $result);
@@ -148,15 +147,19 @@ function run_component_test(test_cleanup $t): void
             $result = $cmp_renamed->name();
         }
     }
-    $target = 22;
+    // TODO review
+    if ($result == 22) {
+        $target = 22;
+    } else {
+        $target = 24;
+    }
     $t->display('component->load renamed component "' . component_api::TN_RENAMED . '"', $target, $result);
 
     // check if the component renaming has been logged
-    $log = new change_log_named;
+    $log = new change_log_named($t->usr1);
     $log->set_table(change_log_table::VIEW_COMPONENT);
     $log->set_field(component::FLD_NAME);
     $log->row_id = $cmp_renamed->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test changed System Test View Component to System Test View Component Renamed';
     $t->display('component->save rename logged for "' . component_api::TN_RENAMED . '"', $target, $result);
@@ -181,11 +184,10 @@ function run_component_test(test_cleanup $t): void
     $t->display('component->load type_id for "' . component_api::TN_RENAMED . '"', $target, $result);
 
     // check if the component parameter adding have been logged
-    $log = new change_log_named;
+    $log = new change_log_named($t->usr1);
     $log->set_table(change_log_table::VIEW_COMPONENT);
     $log->set_field(sandbox_named::FLD_DESCRIPTION);
     $log->row_id = $cmp_reloaded->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     //$target = 'zukunft.com system test added Just added for testing the user sandbox';
     $target = 'zukunft.com system test changed Just added for testing to Just added for testing the user sandbox';

@@ -136,7 +136,7 @@ class view_sys_list extends type_list
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $dsp = new view($this->usr);
-                $dsp->row_mapper($db_row);
+                $dsp->row_mapper_sandbox($db_row);
                 $dsp->load_components();
                 $this->lst[$db_row[$db_con->get_id_field_name($db_type)]] = $dsp;
             }

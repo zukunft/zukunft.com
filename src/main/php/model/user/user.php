@@ -198,33 +198,33 @@ class user extends db_object
 
     }
 
-    function row_mapper(array $db_usr): bool
+    /**
+     * map the database fields to the user db row to the object fields
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if the user sandbox object is loaded and valid
+     */
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
         global $debug;
 
-        $result = false;
-        if (!$db_usr) {
-            $this->id = 0;
-        } else {
-            if ($db_usr[user::FLD_ID] <= 0) {
-                $this->id = 0;
-            } else {
-                $this->id = $db_usr[self::FLD_ID];
-                $this->code_id = $db_usr[sql_db::FLD_CODE_ID];
-                $this->name = $db_usr[self::FLD_NAME];
-                $this->ip_addr = $db_usr[self::FLD_IP_ADDRESS];
-                $this->email = $db_usr[self::FLD_EMAIL];
-                $this->first_name = $db_usr[self::FLD_FIRST_NAME];
-                $this->last_name = $db_usr[self::FLD_LAST_NAME];
-                $this->wrd_id = $db_usr[self::FLD_LAST_WORD];
-                $this->source_id = $db_usr[self::FLD_SOURCE];
-                $this->profile_id = $db_usr[self::FLD_USER_PROFILE];
-                $this->dec_point = DEFAULT_DEC_POINT;
-                $this->thousand_sep = DEFAULT_THOUSAND_SEP;
-                $this->percent_decimals = DEFAULT_PERCENT_DECIMALS;
-                $result = true;
-                log_debug($this->name, $debug - 25);
-            }
+        $result = parent::row_mapper($db_row, self::FLD_ID);
+        if ($result) {
+            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            $this->name = $db_row[self::FLD_NAME];
+            $this->ip_addr = $db_row[self::FLD_IP_ADDRESS];
+            $this->email = $db_row[self::FLD_EMAIL];
+            $this->first_name = $db_row[self::FLD_FIRST_NAME];
+            $this->last_name = $db_row[self::FLD_LAST_NAME];
+            $this->wrd_id = $db_row[self::FLD_LAST_WORD];
+            $this->source_id = $db_row[self::FLD_SOURCE];
+            $this->profile_id = $db_row[self::FLD_USER_PROFILE];
+            $this->dec_point = DEFAULT_DEC_POINT;
+            $this->thousand_sep = DEFAULT_THOUSAND_SEP;
+            $this->percent_decimals = DEFAULT_PERCENT_DECIMALS;
+            $result = true;
+            log_debug($this->name, $debug - 25);
         }
         return $result;
     }
@@ -461,7 +461,7 @@ class user extends db_object
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
-    private function load(sql_par $qp): int
+    protected function load(sql_par $qp): int
     {
         global $db_con;
 
@@ -578,18 +578,18 @@ class user extends db_object
      * so if changed all data is reloaded once
      */
     function load_usr_data(): void
-{
-    global $db_con;
-    global $verbs;
-    global $system_views;
+    {
+        global $db_con;
+        global $verbs;
+        global $system_views;
 
-    $verbs = new verb_list($this);
-    $verbs->load($db_con);
+        $verbs = new verb_list($this);
+        $verbs->load($db_con);
 
-    $system_views = new view_sys_list($this);
-    $system_views->load($db_con);
+        $system_views = new view_sys_list($this);
+        $system_views->load($db_con);
 
-}
+    }
 
     function has_any_user_this_profile(string $profile_code_id): bool
     {
@@ -972,8 +972,7 @@ class user extends db_object
     private function log_upd(): change_log_named
     {
         log_debug(' user ' . $this->name);
-        $log = new change_log_named;
-        $log->usr = $this;
+        $log = new change_log_named($this);
         $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::USER);
 

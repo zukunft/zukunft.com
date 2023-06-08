@@ -42,7 +42,6 @@ use model\library;
 use model\verb;
 use model\word;
 use test\test_cleanup;
-use const test\TEST_WORD;
 use const test\TIMEOUT_LIMIT_PAGE;
 
 function run_word_display_test(test_cleanup $t): void
@@ -60,7 +59,7 @@ function run_word_display_test(test_cleanup $t): void
     $wrd_ZH = new word($usr);
     $wrd_ZH->load_by_name(word_api::TN_ZH, word::class);
     $direction = 'up';
-    $target = TEST_WORD;
+    $target = word_api::TN_COMPANY;
     // get the link types related to the word
     $link_types = $wrd_ZH->link_types($direction);
     $result = $wrd_ZH->dsp_graph($direction, $link_types, 0);

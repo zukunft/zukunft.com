@@ -190,7 +190,7 @@ class value_list extends sandbox_list
                 foreach ($db_val_lst as $db_val) {
                     if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
                         $val = new value($this->user());
-                        $val->row_mapper($db_val);
+                        $val->row_mapper_sandbox($db_val);
                         $this->lst[] = $val;
                         $result = true;
                     }
@@ -253,7 +253,7 @@ class value_list extends sandbox_list
         foreach ($db_val_lst as $db_val) {
             if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
                 $val = new value($this->user());
-                $val->row_mapper($db_val);
+                $val->row_mapper_sandbox($db_val);
                 $this->lst[] = $val;
                 log_debug($lib->dsp_count($this->lst));
                 $result = true;
@@ -304,7 +304,7 @@ class value_list extends sandbox_list
                     foreach ($db_val_lst as $db_val) {
                         if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
                             $val = new value($this->user());
-                            $val->row_mapper($db_val);
+                            $val->row_mapper_sandbox($db_val);
                             $this->lst[] = $val;
                         }
                     }
@@ -1182,8 +1182,7 @@ class value_list extends sandbox_list
                 if ($val->time_phr != null) {
                     if ($val->time_phr->id > 0) {
                         $time_phr = new phrase($val->user());
-                        $time_phr->set_id($val->time_phr->id);
-                        $time_phr->load_by_obj_par();
+                        $time_phr->load_by_id($val->time_phr->id());
                         $val->time_phr = $time_phr;
                         $dsp_phr_lst->add($time_phr);
                         log_debug('add time word ' . $val->time_phr->name());

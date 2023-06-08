@@ -50,6 +50,7 @@ function run_value_test(test_cleanup $t): void
 {
 
     global $test_val_lst;
+    $lib = new library();
 
     $t->header('Test the value class (classes/value.php)');
 
@@ -161,7 +162,6 @@ function run_value_test(test_cleanup $t): void
         $t->display(', value->load words', $target, $result);
 
         // ... and check the word reloading by group
-        $lib = new library();
         $chk_val->phr_lst()->set_lst(array());
         $chk_val->load_phrases();
         if (!$chk_val->phr_lst()->is_empty()) {
@@ -232,13 +232,8 @@ function run_value_test(test_cleanup $t): void
     $fig = $mio_val->figure();
     $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
     $result = $fig_dsp->display_linked('1');
-    $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1" title="1.55">1.55</a>';
-    $diff = $lib->str_diff($target, $result);
-    if ($diff != '') {
-        log_err('Unexpected diff ' . $diff);
-        $target = $result;
-    }
-    $t->display(', value->figure->display_linked for word list ' . $phr_lst->dsp_id() . '', $target, $result);
+    $target = '<a href="/http/result_edit.php?id=' . $mio_val->id() . '&back=1" title="1.55">1.55</a>';
+    $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
 
     // test the HTML code creation
     $result = $mio_val->display();
@@ -249,24 +244,14 @@ function run_value_test(test_cleanup $t): void
     $result = $mio_val->display_linked('1');
     //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1"  >1.55</a>';
-    $diff = $lib->str_diff($target, $result);
-    if ($diff != '') {
-        log_err('Unexpected diff ' . $diff);
-        $target = $result;
-    }
-    $t->display(', value->display_linked', $target, $result);
+    $t->assert(', value->display_linked', $result, $target);
 
     // change the number to force using the thousand separator
     $mio_val->set_number(value_api::TV_INT);
     $result = $mio_val->display_linked('1');
     //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1"  >123\'456</a>';
-    $diff = $lib->str_diff($target, $result);
-    if ($diff != '') {
-        log_err('Unexpected diff ' . $diff);
-        $target = $result;
-    }
-    $t->display(', value->display_linked', $target, $result);
+    $t->assert(', value->display_linked', $result, $target);
 
     // convert the user input for the database
     $mio_val->usr_value = value_api::TV_USER_HIGH_QUOTE;
@@ -295,11 +280,10 @@ function run_value_test(test_cleanup $t): void
 
     // ... check if the value adding has been logged
     if ($add_val->id() > 0) {
-        $log = new change_log_named;
+        $log = new change_log_named($t->usr1);
         $log->set_table(change_log_table::VALUE);
         $log->set_field(change_log_field::FLD_VALUE_NUMBER);
         $log->row_id = $add_val->id();
-        $log->usr = $t->usr1;
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system test added 123456789';
@@ -338,11 +322,10 @@ function run_value_test(test_cleanup $t): void
 
     // ... check if the value adding has been logged
     if ($add_val->id() > 0) {
-        $log = new change_log_named;
+        $log = new change_log_named($t->usr1);
         $log->set_table(change_log_table::VALUE);
         $log->set_field(change_log_field::FLD_VALUE_NUMBER);
         $log->row_id = $add_val2->id();
-        $log->usr = $t->usr1;
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system test added 234567890';
@@ -367,11 +350,10 @@ function run_value_test(test_cleanup $t): void
 
     // ... check if the value change has been logged
     if ($added_val->id() > 0) {
-        $log = new change_log_named;
+        $log = new change_log_named($t->usr1);
         $log->set_table(change_log_table::VALUE);
         $log->set_field(change_log_field::FLD_VALUE_NUMBER);
         $log->row_id = $added_val->id();
-        $log->usr = $t->usr1;
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system test changed 123456789 to 987654321';
@@ -406,11 +388,10 @@ function run_value_test(test_cleanup $t): void
     $val_usr2 = new value($t->usr2);
     $val_usr2->load_by_id($added_val_id);
     if ($val_usr2->id() > 0) {
-        $log = new change_log_named;
+        $log = new change_log_named($t->usr2);
         $log->set_table(change_log_table::VALUE_USR);
         $log->set_field(change_log_field::FLD_VALUE_NUMBER);
         $log->row_id = $val_usr2->id();
-        $log->usr = $t->usr2;
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system test partner changed 987654321 to 23456';
@@ -442,11 +423,10 @@ function run_value_test(test_cleanup $t): void
     $val_usr2 = new value($t->usr2);
     $val_usr2->load_by_grp($phr_grp);
     if ($val_usr2->id() > 0) {
-        $log = new change_log_named;
+        $log = new change_log_named($t->usr2);
         $log->set_table(change_log_table::VALUE_USR);
         $log->set_field(change_log_field::FLD_VALUE_NUMBER);
         $log->row_id = $val_usr2->id();
-        $log->usr = $t->usr2;
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system test partner changed 23456 to 987654321';

@@ -191,13 +191,13 @@ class formula extends sandbox_typed
     /**
      * map the database fields to the object fields
      *
-     * @param array $db_row with the data directly from the database
+     * @param array|null $db_row with the data directly from the database
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the formula is loaded and valid
      */
-    function row_mapper(
+    function row_mapper_sandbox(
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
@@ -207,7 +207,7 @@ class formula extends sandbox_typed
     {
         global $formula_types;
         $lib = new library();
-        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_name($db_row[$name_fld]);
             if (array_key_exists(self::FLD_FORMULA_TEXT, $db_row)) {
@@ -524,7 +524,7 @@ class formula extends sandbox_typed
 
             if ($db_con->get_where() <> '') {
                 $db_frm = $db_con->get1($qp);
-                $this->row_mapper($db_frm);
+                $this->row_mapper_sandbox($db_frm);
                 if ($this->id() > 0) {
                     // TODO check the exclusion handling
                     log_debug('->load ' . $this->dsp_id() . ' not excluded');

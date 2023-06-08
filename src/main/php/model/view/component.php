@@ -208,19 +208,19 @@ class component extends sandbox_typed
     /**
      * map the database fields to the object fields
      *
-     * @param array $db_row with the data directly from the database
+     * @param array|null $db_row with the data directly from the database
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the view component is loaded and valid
      */
-    function row_mapper(
+    function row_mapper_sandbox(
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = self::FLD_ID): bool
     {
-        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
             $this->description = $db_row[self::FLD_DESCRIPTION];
@@ -402,7 +402,7 @@ class component extends sandbox_typed
             $qp = $this->load_sql_obj_vars($db_con);
             $db_cmp = $db_con->get1($qp);
 
-            $this->row_mapper($db_cmp);
+            $this->row_mapper_sandbox($db_cmp);
             if ($this->id > 0) {
                 $this->load_phrases();
                 log_debug('component->load of ' . $this->dsp_id() . ' done');
@@ -707,8 +707,7 @@ class component extends sandbox_typed
     function log_link($dsp): bool
     {
         log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id());
-        $log = new change_log_link;
-        $log->usr = $this->user();
+        $log = new change_log_link($this->user());
         $log->action = change_log_action::ADD;
         $log->set_table(change_log_table::VIEW_LINK);
         $log->new_from = clone $this;
@@ -724,8 +723,7 @@ class component extends sandbox_typed
     function log_unlink($dsp): bool
     {
         log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id());
-        $log = new change_log_link;
-        $log->usr = $this->user();
+        $log = new change_log_link($this->user());
         $log->action = change_log_action::DELETE;
         $log->set_table(change_log_table::VIEW_LINK);
         $log->old_from = clone $this;

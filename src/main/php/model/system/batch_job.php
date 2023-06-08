@@ -158,13 +158,17 @@ class batch_job extends db_object
     }
 
     /**
+     * map the database fields to one change log entry to this log object
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if a job is found
      */
-    function row_mapper(array $db_row): bool
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
         global $job_types;
-        if ($db_row[self::FLD_ID] > 0) {
-            $this->id = $db_row[self::FLD_ID];
+        $result = parent::row_mapper($db_row, self::FLD_ID);
+        if ($result) {
             //$this->request_time = $db_row[self::FLD_TIME_REQUEST];
             //$this->start_time = $db_row[self::FLD_TIME_START];
             //$this->end_time = $db_row[self::FLD_TIME_END];
@@ -172,10 +176,8 @@ class batch_job extends db_object
             //$this->status = $db_row[self::FLD_ID];
             //$this->priority = $db_row[self::FLD_ID];
             log_debug('Batch job ' . $this->id() . ' loaded');
-            return true;
-        } else {
-            return false;
         }
+        return $result;
     }
 
 

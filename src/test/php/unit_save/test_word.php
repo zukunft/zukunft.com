@@ -83,7 +83,7 @@ function run_word_tests(test_cleanup $t): void
     $t->header('Test the word class (classes/word.php)');
 
     // load the main test words
-    $wrd_read = $t->add_word(word_api::TN_READ);
+    $wrd_read = $t->load_word(word_api::TN_READ);
 
     // check if loading a word by name and id works
     $wrd_by_name = $t->add_word(word_api::TN_READ, null, $t->usr1);
@@ -311,11 +311,10 @@ function run_word_tests(test_cleanup $t): void
 
     // ... check if the word creation has been logged
     if ($wrd_add->id() > 0) {
-        $log = new change_log_named;
+        $log = new change_log_named($t->usr1);
         $log->set_table(change_log_table::WORD);
         $log->set_field(change_log_field::FLD_WORD_NAME);
         $log->row_id = $wrd_add->id();
-        $log->usr = $t->usr1;
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system test added ' . word_api::TN_ADD;
@@ -347,11 +346,10 @@ function run_word_tests(test_cleanup $t): void
     $t->display('word->load renamed word "' . word_api::TN_RENAMED . '"', $target, $result);
 
     // check if the word renaming has been logged
-    $log = new change_log_named;
+    $log = new change_log_named($t->usr1);
     $log->set_table(change_log_table::WORD);
     $log->set_field(change_log_field::FLD_WORD_NAME);
     $log->row_id = $wrd_renamed->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test changed ' . word_api::TN_ADD . ' to ' . word_api::TN_RENAMED;
     $t->display('word->save rename logged for "' . word_api::TN_RENAMED . '"', $target, $result);
@@ -377,11 +375,10 @@ function run_word_tests(test_cleanup $t): void
     $t->display('word->load type_id for "' . word_api::TN_RENAMED . '"', $target, $result);
 
     // check if the word parameter adding have been logged
-    $log = new change_log_named;
+    $log = new change_log_named($t->usr1);
     $log->set_table(change_log_table::WORD);
     $log->set_field(change_log_field::FLD_WORD_PLURAL);
     $log->row_id = $wrd_reloaded->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added ' . word_api::TN_RENAMED . 's';
     $t->display('word->load plural for "' . word_api::TN_RENAMED . '" logged', $target, $result);

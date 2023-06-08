@@ -40,7 +40,6 @@ use model\triple;
 use model\verb;
 use model\word_list;
 use test\test_cleanup;
-use const test\TEST_WORD;
 use const test\TW_2017;
 use const test\TW_ABB;
 use const test\TW_CHF;
@@ -79,7 +78,7 @@ function run_phrase_list_test(test_cleanup $t)
 
     // ... the complete word list, which means split the triples into single words
     $wrd_lst_all = $phr_lst->wrd_lst_all();
-    $target = '"' . TW_ABB . '","' . TW_VESTAS . '","' . word_api::TN_ZH . '","' . TEST_WORD . '"';
+    $target = '"' . TW_ABB . '","' . TW_VESTAS . '","' . word_api::TN_ZH . '","' . word_api::TN_COMPANY . '"';
     $result = $wrd_lst_all->name();
     $t->display('phrase->wrd_lst_all of list above', $target, $result);
 
@@ -91,14 +90,13 @@ function run_phrase_list_test(test_cleanup $t)
     $phr_lst = $wrd_lst->phrase_lst();
     $lst_parents = $phr_lst->foaf_parents($verbs->id(verb::IS_A));
     $result = $lib->dsp_array($lst_parents->names());
-    $target = TEST_WORD; // order adjusted based on the number of usage
+    $target = word_api::TN_COMPANY; // order adjusted based on the number of usage
     $t->display('phrase_list->foaf_parents for ' . $phr_lst->dsp_name() . ' up', $target, $result);
 
     // ... same using is
     $phr_lst = $wrd_lst->phrase_lst();
     $lst_is = $phr_lst->is();
     $result = $lib->dsp_array($lst_is->names());
-    $target = TEST_WORD; // order adjusted based on the number of usage
     $t->display('phrase_list->is for ' . $phr_lst->dsp_name() . ' up', $target, $result);
 
     // ... same with Vestas
@@ -107,7 +105,6 @@ function run_phrase_list_test(test_cleanup $t)
     $phr_lst = $wrd_lst->phrase_lst();
     $lst_is = $phr_lst->is();
     $result = $lib->dsp_array($lst_is->names());
-    $target = TEST_WORD; // order adjusted based on the number of usage
     $t->display('phrase_list->is for ' . $phr_lst->dsp_name() . ' up', $target, $result);
 
     // test the excluding function

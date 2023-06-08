@@ -250,7 +250,7 @@ class triple_list extends sandbox_list
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $trp = new triple($this->user());
-                    $trp->row_mapper($db_row);
+                    $trp->row_mapper_sandbox($db_row);
                     // the simple object row mapper allows mapping excluded objects to remove the exclusion
                     // but an object list should not have excluded objects
                     if (!$trp->is_excluded()) {
@@ -544,13 +544,13 @@ class triple_list extends sandbox_list
                 foreach ($db_lst as $db_lnk) {
                     if (is_null($db_lnk[sandbox::FLD_EXCLUDED]) or $db_lnk[sandbox::FLD_EXCLUDED] == 0) {
                         $new_link = new triple($this->user());
-                        $new_link->row_mapper($db_lnk);
+                        $new_link->row_mapper_sandbox($db_lnk);
                         if ($new_link->id() > 0) {
                             // fill the verb
                             if ($new_link->verb->id() > 0) {
                                 $new_verb = new verb;
                                 $new_verb->set_user($this->user());
-                                $new_verb->row_mapper($db_lnk);
+                                $new_verb->row_mapper_verb($db_lnk);
                                 $new_link->verb = $new_verb;
                             }
                             // fill the "from" word

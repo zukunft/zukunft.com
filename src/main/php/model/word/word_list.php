@@ -326,7 +326,7 @@ class word_list extends sandbox_list
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $wrd = new word($this->user());
-                    $wrd->row_mapper($db_row);
+                    $wrd->row_mapper_sandbox($db_row);
                     $this->lst[] = $wrd;
                     $result = true;
                 }
@@ -428,7 +428,7 @@ class word_list extends sandbox_list
                     if (is_null($db_wrd[sandbox::FLD_EXCLUDED]) or $db_wrd[sandbox::FLD_EXCLUDED] == 0) {
                         if ($db_wrd[word::FLD_ID] > 0 and !in_array($db_wrd[word::FLD_ID], $this->ids())) {
                             $new_word = new word($this->user());
-                            $new_word->row_mapper($db_wrd);
+                            $new_word->row_mapper_sandbox($db_wrd);
                             $additional_added->add($new_word);
                             log_debug('added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd[verb::FLD_ID] . ')');
                         }

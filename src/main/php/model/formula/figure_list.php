@@ -53,11 +53,11 @@ class figure_list extends sandbox_list
     /**
      * @return figure_list_api the word list object with the display interface functions
      */
-    function api_obj(): figure_list_api
+    function api_obj(bool $do_save = true): figure_list_api
     {
         $api_obj = new figure_list_api();
         foreach ($this->lst as $phr) {
-            $api_obj->add($phr->api_obj());
+            $api_obj->add($phr->api_obj($do_save));
         }
         return $api_obj;
     }
@@ -65,9 +65,9 @@ class figure_list extends sandbox_list
     /**
      * @returns string the api json message for the object as a string
      */
-    function api_json(): string
+    function api_json(bool $do_save = true): string
     {
-        return $this->api_obj()->get_json();
+        return $this->api_obj($do_save)->get_json();
     }
 
 

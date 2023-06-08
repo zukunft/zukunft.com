@@ -719,7 +719,7 @@ function log_msg(string $msg_text,
                 //$sys_log_id = mysqli_insert_id();
             }
             if ($msg_log_level >= MSG_LEVEL) {
-                echo "Zukunft.com has detected an critical internal error: <br><br>" . $msg_text . " by " . $function_name . ".<br><br>";
+                echo "Zukunft.com has detected a critical internal error: <br><br>" . $msg_text . " by " . $function_name . ".<br><br>";
                 if ($sys_log_id > 0) {
                     echo 'You can track the solving of the error with this link: <a href="/http/error_log.php?id=' . $sys_log_id . '">www.zukunft.com/http/error_log.php?id=' . $sys_log_id . '</a><br>';
                 }
@@ -873,7 +873,7 @@ function prg_restart(string $code_name): sql_db
         $sys_typ_lst = new type_lists();
         $sys_typ_lst->load($db_con, null);
 
-        $log = new change_log();
+        $log = new change_log(null);
         $db_changed = $log->create_log_references($db_con);
 
         // reload the type list if needed and trigger an update in the frontend

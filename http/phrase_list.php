@@ -79,7 +79,7 @@ if ($usr->id() > 0) {
         $wrd->type_id = $_GET['type'];
     }      // the type that adds special behavior to the word
 
-    // all words should be linked to an existing word, so collect the parameters for the word link now
+    // all words should be linked to an existing word, so collect the parameters for the triple now
     $phr_id = $_GET['add'];  // id of an existing word that should be linked
     $vrb_id = $_GET['verb']; // id of the link between the words e.g. clicking add at Nestle is a company should lead to a question ... is (also) a company
     $phr_to = $_GET['word']; // a selected word where the new word should be linked to; e.g. company in the example above
@@ -94,7 +94,7 @@ if ($usr->id() > 0) {
         /*
         For easy adding of new words it is no longer needed to link a word to an existing word. Instead, a special page with the unlinked words should be added.
         if ($vrb_id == 0) {
-          $msg .= 'Link missing; Please press back and select a word link, because all new words must be linked in a defined way to an existing word. ';
+          $msg .= 'Link missing; Please press back and select a triple, because all new words must be linked in a defined way to an existing word. ';
         }
         if ($wrd_to <= 0) {
           $msg .= 'Word missing; Please press back and select a related word, because all new words must be linked to an existing word. ';

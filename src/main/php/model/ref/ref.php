@@ -162,13 +162,13 @@ class ref extends sandbox_link_with_type
     /**
      * set the class vars based on a database record
      *
-     * @param array $db_row is an array with the database values
+     * @param array|null $db_row is an array with the database values
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the reference is loaded and valid
      */
-    function row_mapper(
+    function row_mapper_sandbox(
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = false,
@@ -176,7 +176,7 @@ class ref extends sandbox_link_with_type
     ): bool
     {
         $lst = new ref_type_list();
-        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->phr->set_id($db_row[phrase::FLD_ID]);
             $this->external_key = $db_row[self::FLD_EX_KEY];
@@ -416,7 +416,7 @@ class ref extends sandbox_link_with_type
 
             if ($db_con->get_where() <> '') {
                 $db_ref = $db_con->get1($qp);
-                $result = $this->row_mapper($db_ref);
+                $result = $this->row_mapper_sandbox($db_ref);
             }
         }
         return $result;
@@ -432,7 +432,7 @@ class ref extends sandbox_link_with_type
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper($db_row);
+        $this->row_mapper_sandbox($db_row);
         return $this->id();
     }
 
@@ -690,8 +690,7 @@ class ref extends sandbox_link_with_type
             log_err('The reference type object must be set to log adding an external reference.', 'ref->log_add');
         }
 
-        $log = new change_log_link;
-        $log->usr = $this->user();
+        $log = new change_log_link($this->user());
         $log->action = change_log_action::ADD;
         $log->set_table(change_log_table::REF);
         // TODO review in log_link
@@ -711,8 +710,7 @@ class ref extends sandbox_link_with_type
     function log_link_upd($db_rec): change_log_link
     {
         log_debug('ref->log_upd ' . $this->dsp_id());
-        $log = new change_log_link;
-        $log->usr = $this->user();
+        $log = new change_log_link($this->user());
         $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::REF);
         $log->old_from = $db_rec->phr;
@@ -742,8 +740,7 @@ class ref extends sandbox_link_with_type
             log_err('The reference type object must be set to log deletion of an external reference.', 'ref->log_del');
         }
 
-        $log = new change_log_link;
-        $log->usr = $this->user();
+        $log = new change_log_link($this->user());
         $log->action = change_log_action::DELETE;
         $log->set_table(change_log_table::REF);
         $log->old_from = $this->phr;

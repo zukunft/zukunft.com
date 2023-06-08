@@ -258,7 +258,7 @@ class sandbox_named extends sandbox
             log_err('The ' . $class . ' id or name must be set to load ' . $class, $class . '->load_standard');
         } else {
             $db_row = $db_con->get1($qp);
-            $result = $this->row_mapper($db_row, true);
+            $result = $this->row_mapper_sandbox($db_row, true);
         }
         return $result;
     }
@@ -372,7 +372,7 @@ class sandbox_named extends sandbox
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_named;
+        $log = new change_log_named($this->user());
         // TODO add the table exceptions from sql_db
         $log->action = change_log_action::ADD;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
@@ -394,8 +394,7 @@ class sandbox_named extends sandbox
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_named;
-        $log->usr = $this->user();
+        $log = new change_log_named($this->user());
         $log->action = change_log_action::DELETE;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->set_field($this->obj_name . '_name');

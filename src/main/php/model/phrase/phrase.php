@@ -466,54 +466,6 @@ class phrase extends combine_named
         return $qp;
     }
 
-    /**
-     * load either a word or triple
-     * @return true if loading has been successful
-     */
-    function load_by_obj_par(): bool
-    {
-        log_debug($this->dsp_id());
-        $result = false;
-
-        // direct load if the type is known
-        if ($this->is_triple()) {
-            $trp = new triple($this->user());
-            // TODO use load_by_phrase_id to move the id logic into the triple class
-            $result = $trp->load_by_id($this->obj_id(), triple::class);
-            $this->obj = $trp;
-            $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj->name
-            log_debug('triple ' . $this->dsp_id());
-        } elseif ($this->is_word()) {
-            $wrd = new word($this->user());
-            $result = $wrd->load_by_id($this->obj_id(), word::class);
-            $this->obj = $wrd;
-            $this->set_name($wrd->name());
-            log_debug('word ' . $this->dsp_id());
-        } elseif ($this->name() <> '') {
-            // load via phrase if the type is not yet known
-            $trm = new term($this->user());
-            $result = $trm->load_by_name($this->name());
-            if ($trm->type() == word::class) {
-                $this->obj = $trm->obj;
-                log_debug('word ' . $this->dsp_id() . ' by name');
-            } elseif ($trm->type() == triple::class) {
-                $this->obj = $trm->obj;
-                log_debug('triple ' . $this->dsp_id() . ' by name');
-            } elseif ($trm->type() == formula::class) {
-                // for the phrase load the related word instead of the formula
-                // TODO integrate this into the phrase loading by load both object a once
-                $wrd = new word($this->user());
-                $result = $wrd->load_by_name($this->name(), word::class);
-                $this->set_obj($wrd);
-                log_debug('formula word ' . $this->dsp_id());
-            } else {
-                log_err('"' . $this->name() . '" has unknown type which is not expected for a phrase.', "phrase->load");
-            }
-        }
-        log_debug('done ' . $this->dsp_id());
-        return $result;
-    }
-
     function load_obj(): bool
     {
         $result = 0;
@@ -555,6 +507,7 @@ class phrase extends combine_named
     /**
      * load the main phrase parameters by id from the database phrase view
      * @param int $id the id of the phrase as defined in the database phrase view
+     *                must be a negative id for triples
      * @return int the id of the object found and zero if nothing is found
      */
     function load_by_id(int $id, string $class = self::class): int
@@ -592,8 +545,11 @@ class phrase extends combine_named
         log_debug($this->dsp_id());
         $result = null;
 
-        if ($this->id() == 0 or $this->name() == '') {
-            $this->load_by_obj_par();
+        if ($this->id() != 0 and $this->name() == '') {
+            $this->load_by_id($this->id());
+        }
+        if ($this->id() == 0 and $this->name() != '') {
+            $this->load_by_name($this->name());
         }
         if ($this->id() < 0) {
             $lnk = $this->obj;
@@ -868,7 +824,6 @@ class phrase extends combine_named
     {
         $result = '';
         if ($this != null) {
-            $this->load_by_obj_par();
             if ($this->obj != null) {
                 // the function dsp_tbl should exist for words and triples
                 if (get_class($this->obj) == word::class) {

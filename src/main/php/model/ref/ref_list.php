@@ -101,7 +101,7 @@ class ref_list extends type_list
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $vrb = new ref($usr);
-                $vrb->row_mapper($db_row);
+                $vrb->row_mapper_sandbox($db_row);
                 $this->lst[$db_row[$db_con->get_id_field_name($db_type)]] = $vrb;
             }
         }

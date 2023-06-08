@@ -364,7 +364,7 @@ class create_test_objects extends test_base
     function dummy_phrase_group(): phrase_group
     {
         $lst = $this->dummy_phrase_list();
-        $grp = $lst->get_grp();
+        $grp = $lst->get_grp(false);
         $grp->grp_name = phrase_group_api::TN_READ;
         return $grp;
     }
@@ -662,14 +662,13 @@ class create_test_objects extends test_base
     {
         global $usr_sys;
 
-        $chg = new change_log_named();
+        $chg = new change_log_named($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
         $chg->set_action(change_log_action::ADD);
         $chg->set_table(change_log_table::WORD);
         $chg->set_field(change_log_field::FLD_WORD_NAME);
         $chg->new_value = word_api::TN_READ;
         $chg->row_id = 1;
-        $chg->usr = $usr_sys;
         return $chg;
     }
 
@@ -779,9 +778,9 @@ class create_test_objects extends test_base
      * set the all values of the frontend object based on a backend object using the api object
      * @param object $model_obj the frontend object with the values of the backend object
      */
-    function dsp_obj(object $model_obj, object $dsp_obj): object
+    function dsp_obj(object $model_obj, object $dsp_obj, bool $do_save = true): object
     {
-        $dsp_obj->set_from_json($model_obj->api_obj()->get_json());
+        $dsp_obj->set_from_json($model_obj->api_obj($do_save)->get_json());
         return $dsp_obj;
     }
 
@@ -941,6 +940,13 @@ class create_test_objects extends test_base
         return $trp;
     }
 
+    /**
+     * load a triple by the linked phrase ids without creating it
+     * @param string $from_name the name of child phrase
+     * @param string $verb_code_id the code id of the predicate
+     * @param string $to_name the name of parent phrase
+     * @return triple
+     */
     function load_triple(string $from_name,
                          string $verb_code_id,
                          string $to_name): triple
@@ -1285,7 +1291,7 @@ class create_test_objects extends test_base
     {
         $phr_grp = new phrase_group($this->usr1);
         $phr_grp->grp_name = $phrase_group_name;
-        $phr_grp->load();
+        $phr_grp->load_by_obj_vars();
         return $phr_grp;
     }
 

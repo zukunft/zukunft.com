@@ -124,22 +124,24 @@ class phrase_group extends db_object
         $this->id_order = array();
     }
 
-    function row_mapper(array $db_row): bool
+    /**
+     * map the database fields to one db row to this phrase group object
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if one phrase group is found
+     */
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        $result = false;
-        $this->id = 0;
-        if ($db_row != null) {
-            if ($db_row[self::FLD_ID] > 0) {
-                $this->id = $db_row[self::FLD_ID];
-                $this->grp_name = $db_row[self::FLD_NAME];
-                $this->auto_name = $db_row[self::FLD_DESCRIPTION];
-                $this->phr_lst->add_by_ids(
-                    $db_row[self::FLD_WORD_IDS],
-                    $db_row[self::FLD_TRIPLE_IDS]
-                );
-                $this->load_lst();
-                $result = true;
-            }
+        $result = parent::row_mapper($db_row, self::FLD_ID);
+        if ($result) {
+            $this->grp_name = $db_row[self::FLD_NAME];
+            $this->auto_name = $db_row[self::FLD_DESCRIPTION];
+            $this->phr_lst->add_by_ids(
+                $db_row[self::FLD_WORD_IDS],
+                $db_row[self::FLD_TRIPLE_IDS]
+            );
+            $this->load_lst();
         }
         return $result;
     }
@@ -237,11 +239,18 @@ class phrase_group extends db_object
         return $this->load_sql_select_qp($db_con, $qp);
     }
 
+    // TODO review
+    function load_by_id(int $id, string $class = self::class): int
+    {
+        $this->set_id($id);
+        return $this->load_by_obj_vars();
+    }
+
     /**
      * load the object parameters for all users
      * @return bool true if the phrase group object has been loaded
      */
-    function load(): bool
+    function load_by_obj_vars(): bool
     {
         global $db_con;
         $result = false;
@@ -282,13 +291,13 @@ class phrase_group extends db_object
         // TODO review
         // $phr_lst->ex_time();
         $this->phr_lst = $phr_lst;
-        return $this->load();
+        return $this->load_by_obj_vars();
     }
 
     /**
      * load the word and triple objects based on the ids load from the database if needed
      */
-    private function load_lst():void
+    private function load_lst(): void
     {
         if (!$this->phr_lst->loaded()) {
             $ids = $this->phr_lst->phrase_ids();
@@ -369,7 +378,7 @@ class phrase_group extends db_object
         // get the id based on the given parameters
         $test_load = clone $this;
         if ($do_save) {
-            $result .= $test_load->load();
+            $result .= $test_load->load_by_obj_vars();
             log_debug('loaded ' . $this->dsp_id());
         } else {
             // TODO use a unit test seq builder
@@ -381,7 +390,7 @@ class phrase_group extends db_object
             $this->id = $test_load->id;
         } else {
             log_debug('save ' . $this->dsp_id());
-            $this->load();
+            $this->load_by_obj_vars();
             $result .= $this->save_id();
         }
 
@@ -684,9 +693,9 @@ class phrase_group extends db_object
                  WHERE phrase_group_id = " . $this->id . "
                    AND (user_id = 0 OR user_id IS NULL);";
                 $result = $db_con->get1_old($sql);
-                log_debug( $result['num']);
+                log_debug($result['num']);
             } else {
-                log_debug( $result['num']);
+                log_debug($result['num']);
             }
         } else {
             log_debug($result['num'] . " for " . $this->user()->id());
@@ -916,7 +925,7 @@ class phrase_group extends db_object
             log_debug('del ' . implode(",", $del_ids));
             $sql = 'DELETE FROM ' . $table_name . ' 
                WHERE phrase_group_id = ' . $this->id . '
-                ' . $lib->sql_array($del_ids,' AND ' . $field_name . ' IN (', ')') . ';';
+                ' . $lib->sql_array($del_ids, ' AND ' . $field_name . ' IN (', ')') . ';';
             //$sql_result = $db_con->exe($sql, "phrase_group->delete_phr_links", array());
             $result = $db_con->exe_try('Removing of group links "' . $lib->dsp_array($del_ids) . '" from ' . $this->id,
                 $sql);

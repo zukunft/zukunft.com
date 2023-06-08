@@ -87,7 +87,7 @@ class figure extends combine_object
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the triple is loaded and valid
      */
-    function row_mapper(?array $db_row, string $id_fld = self::FLD_ID, string $fld_ext = ''): bool
+    function row_mapper(?array $db_row, string $id_fld = self::FLD_ID): bool
     {
         $result = false;
         $this->set_id(0);
@@ -96,7 +96,7 @@ class figure extends combine_object
                 $this->set_obj_id($db_row[$id_fld]);
                 // map a user value
                 $val = new value($this->user());
-                $val->row_mapper($db_row);
+                $val->row_mapper_sandbox($db_row);
                 $this->set_obj($val);
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
@@ -233,9 +233,9 @@ class figure extends combine_object
     /**
      * @returns figure_api the cast object for the api
      */
-    function api_obj(): figure_api
+    function api_obj(bool $do_save = true): figure_api
     {
-        return new figure_api($this->obj->api_obj());
+        return new figure_api($this->obj->api_obj($do_save));
     }
 
     /**

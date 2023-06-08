@@ -53,14 +53,19 @@ class phrase_group_triple_link extends phrase_group_link
         $this->trp_id = 0;
     }
 
-    function row_mapper(array $db_row): bool
+    /**
+     * map the database fields to one db row to this phrase group triple link object
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if one phrase group triple link is found
+     */
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        $result = false;
-        if ($db_row != null) {
-            $this->id = $db_row[self::FLD_ID];
+        $result = parent::row_mapper($db_row, self::FLD_ID);
+        if ($result) {
             $this->grp_id = $db_row[phrase_group::FLD_ID];
             $this->trp_id = $db_row[triple::FLD_ID];
-            $result = true;
         }
         return $result;
     }
@@ -124,7 +129,7 @@ class phrase_group_triple_link extends phrase_group_link
     /**
      * load the triple to phrase group link from the database
      */
-    function load(): bool
+    function load_by_obj_vars(): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_vars($db_con);

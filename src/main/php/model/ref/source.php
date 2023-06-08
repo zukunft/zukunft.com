@@ -123,20 +123,20 @@ class source extends sandbox_typed
     /**
      * map the database object to this source class fields
      *
-     * @param array $db_row with the data directly from the database
+     * @param array|null $db_row with the data directly from the database
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the source is loaded and valid
      */
-    function row_mapper(
+    function row_mapper_sandbox(
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = false,
         string $id_fld = ''
     ): bool
     {
-        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_name($db_row[self::FLD_NAME]);
             $this->url = $db_row[self::FLD_URL];

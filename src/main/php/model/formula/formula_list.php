@@ -71,7 +71,7 @@ class formula_list extends sandbox_list
                 if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0) {
                     if ($db_row[formula::FLD_ID] > 0) {
                         $frm = new formula($this->user());
-                        $frm->row_mapper($db_row);
+                        $frm->row_mapper_sandbox($db_row);
                         // TODO check if this is really needed
                         if ($frm->name() <> '') {
                             $name_wrd = new word($this->user());

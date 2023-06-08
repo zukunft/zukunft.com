@@ -70,11 +70,10 @@ function run_component_link_test(test_cleanup $t): void
     $t->display('view component_link->link "' . $dsp->name() . '" to "' . $cmp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check the correct logging
-    $log = new change_log_link;
+    $log = new change_log_link($t->usr1);
     $log->set_table(change_log_table::VIEW_LINK);
     $log->new_from_id = $dsp->id();
     $log->new_to_id = $cmp->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test linked System Test View Renamed to System Test View Component';
     $t->display('view component_link->link_dsp logged for "' . $dsp->name() . '" to "' . $cmp->name() . '"', $target, $result);
@@ -104,11 +103,10 @@ function run_component_link_test(test_cleanup $t): void
     $t->display('view component_link->unlink "' . $dsp->name() . '" from "' . $cmp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the removal of the link for the second user has been logged
-    $log = new change_log_link;
+    $log = new change_log_link($t->usr2);
     $log->set_table(change_log_table::VIEW_LINK);
     $log->old_from_id = $dsp->id();
     $log->old_to_id = $cmp->id();
-    $log->usr = $t->usr2;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test partner unlinked System Test View Renamed from System Test View Component';
     $t->display('view component_link->unlink_dsp logged for "' . $dsp->name() . '" to "' . $cmp->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
@@ -139,11 +137,10 @@ function run_component_link_test(test_cleanup $t): void
     $t->display('view component_link->unlink "' . $dsp->name() . '" from "' . $cmp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check the correct logging
-    $log = new change_log_link;
+    $log = new change_log_link($t->usr1);
     $log->set_table(change_log_table::VIEW_LINK);
     $log->old_from_id = $dsp->id();
     $log->old_to_id = $cmp->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test unlinked System Test View Renamed from System Test View Component';
     $t->display('view component_link->unlink_dsp logged of "' . $dsp->name() . '" from "' . $cmp->name() . '"', $target, $result);

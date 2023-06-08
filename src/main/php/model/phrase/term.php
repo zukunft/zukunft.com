@@ -155,13 +155,13 @@ class term extends combine_named
     {
         $result = false;
         if ($class == word::class) {
-            $result = $this->get_word()->row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+            $result = $this->get_word()->row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         } elseif ($class == triple::class) {
-            $result = $this->get_triple()->row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+            $result = $this->get_triple()->row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         } elseif ($class == formula::class) {
-            $result = $this->get_formula()->row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+            $result = $this->get_formula()->row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         } elseif ($class == verb::class) {
-            $result = $this->get_verb()->row_mapper($db_row, $id_fld, $name_fld);
+            $result = $this->get_verb()->row_mapper_verb($db_row, $id_fld, $name_fld);
         } else {
             log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
         }

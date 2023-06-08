@@ -314,9 +314,9 @@ class test_api extends create_test_objects
     function assert_api_to_dsp(object $usr_obj, object $dsp_obj): bool
     {
         $class = $this->class_to_api($usr_obj::class);
-        $api_obj = $usr_obj->api_obj();
+        $api_obj = $usr_obj->api_obj(false);
         $api_json_msg = json_decode($api_obj->get_json(), true);
-        $dsp_obj = $this->dsp_obj($usr_obj, $dsp_obj);
+        $dsp_obj = $this->dsp_obj($usr_obj, $dsp_obj, false);
         $msg_to_backend = $dsp_obj->api_array();
         // remove the empty fields to compare the "api save" message with the "api show" message
         // the "api show" message ($api_json_msg) should not contain empty fields
@@ -342,7 +342,12 @@ class test_api extends create_test_objects
     {
         $class = $usr_obj::class;
         $class = $this->class_to_api($class);
-        $api_obj = $usr_obj->api_obj($this->usr1);
+        if ($usr_obj::class == system_log_list::class
+            or $usr_obj::class == type_lists::class) {
+            $api_obj = $usr_obj->api_obj($this->usr1, false);
+        } else {
+            $api_obj = $usr_obj->api_obj(false);
+        }
         $actual = json_decode($api_obj->get_json(), true);
         return $this->assert_api_compare($class, $actual, null, $filename, $contains);
     }

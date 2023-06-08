@@ -158,8 +158,7 @@ class sandbox_value extends sandbox
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_named;
-        $log->usr = $this->user();
+        $log = new change_log_named($this->user());
         $log->action = change_log_action::ADD;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->set_field(change_log_field::FLD_VALUE_NUMBER);
@@ -180,8 +179,7 @@ class sandbox_value extends sandbox
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_named;
-        $log->usr = $this->user();
+        $log = new change_log_named($this->user());
         $log->action = change_log_action::DELETE;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->set_field(change_log_field::FLD_VALUE_NUMBER);

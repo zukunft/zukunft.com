@@ -179,7 +179,7 @@ class verb_list extends type_list
                     foreach ($db_vrb_lst as $db_vrb) {
                         if (!in_array($db_vrb[verb::FLD_ID], $vrb_id_lst)) {
                             $vrb = new verb;
-                            $vrb->row_mapper($db_vrb);
+                            $vrb->row_mapper_verb($db_vrb);
                             $vrb->set_user($this->usr);
                             $vrb_lst[] = $vrb;
                             $vrb_id_lst[] = $vrb->id() ;
@@ -258,7 +258,7 @@ class verb_list extends type_list
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $vrb = new verb();
-                $vrb->row_mapper($db_row);
+                $vrb->row_mapper_verb($db_row);
                 $this->lst[$db_row[$db_con->get_id_field_name($db_type)]] = $vrb;
             }
         }

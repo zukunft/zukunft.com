@@ -55,7 +55,7 @@ class phrase_group_word_link extends phrase_group_link
         $this->wrd_id = 0;
     }
 
-    function row_mapper(array $db_row): bool
+    function row_mapper_sandbox(array $db_row): bool
     {
         $result = false;
         if ($db_row != null) {
@@ -125,11 +125,11 @@ class phrase_group_word_link extends phrase_group_link
     /**
      * load the word to phrase group link from the database
      */
-    function load(): bool
+    function load_by_obj_vars(): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_vars($db_con);
-        return $this->row_mapper($db_con->get1($qp));
+        return $this->row_mapper_sandbox($db_con->get1($qp));
     }
 
 }

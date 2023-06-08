@@ -158,48 +158,42 @@ class verb extends db_object
     /**
      * set the class vars based on a database record
      *
-     * @param array $db_row is an array with the database values
+     * @param array|null $db_row is an array with the database values
+     * @param string $id_fld the name of the id field
+     * @param string $name_fld the name of the name field
      * @return bool true if the verb is loaded and valid
      */
-    function row_mapper(
-        array  $db_row,
+    function row_mapper_verb(
+        ?array $db_row,
         string $id_fld = self::FLD_ID,
         string $name_fld = self::FLD_NAME): bool
     {
-        $result = false;
-        if ($db_row != null) {
-            if ($db_row[$id_fld] != 0) {
-                $this->set_id($db_row[$id_fld]);
-                if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
-                    $this->code_id = $db_row[sql_db::FLD_CODE_ID];
-                }
-                $this->set_name($db_row[$name_fld]);
-                if (array_key_exists(self::FLD_PLURAL, $db_row)) {
-                    $this->plural = $db_row[self::FLD_PLURAL];
-                }
-                if (array_key_exists(self::FLD_REVERSE, $db_row)) {
-                    $this->reverse = $db_row[self::FLD_REVERSE];
-                }
-                if (array_key_exists(self::FLD_PLURAL_REVERSE, $db_row)) {
-                    $this->rev_plural = $db_row[self::FLD_PLURAL_REVERSE];
-                }
-                if (array_key_exists(self::FLD_FORMULA, $db_row)) {
-                    $this->frm_name = $db_row[self::FLD_FORMULA];
-                }
-                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
-                if (array_key_exists(self::FLD_WORDS, $db_row)) {
-                    if ($db_row[self::FLD_WORDS] == null) {
-                        $this->usage = 0;
-                    } else {
-                        $this->usage = $db_row[self::FLD_WORDS];
-                    }
-                }
-                $result = true;
-            } else {
-                $this->id = 0;
+        $result = parent::row_mapper($db_row, $id_fld);
+        if ($result) {
+            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
+                $this->code_id = $db_row[sql_db::FLD_CODE_ID];
             }
-        } else {
-            $this->id = 0;
+            $this->set_name($db_row[$name_fld]);
+            if (array_key_exists(self::FLD_PLURAL, $db_row)) {
+                $this->plural = $db_row[self::FLD_PLURAL];
+            }
+            if (array_key_exists(self::FLD_REVERSE, $db_row)) {
+                $this->reverse = $db_row[self::FLD_REVERSE];
+            }
+            if (array_key_exists(self::FLD_PLURAL_REVERSE, $db_row)) {
+                $this->rev_plural = $db_row[self::FLD_PLURAL_REVERSE];
+            }
+            if (array_key_exists(self::FLD_FORMULA, $db_row)) {
+                $this->frm_name = $db_row[self::FLD_FORMULA];
+            }
+            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            if (array_key_exists(self::FLD_WORDS, $db_row)) {
+                if ($db_row[self::FLD_WORDS] == null) {
+                    $this->usage = 0;
+                } else {
+                    $this->usage = $db_row[self::FLD_WORDS];
+                }
+            }
         }
         return $result;
     }
@@ -428,7 +422,7 @@ class verb extends db_object
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper($db_row);
+        $this->row_mapper_verb($db_row);
         return $this->id();
     }
 
@@ -819,8 +813,7 @@ class verb extends db_object
     private function log_add(): change_log_named
     {
         log_debug('verb->log_add ' . $this->dsp_id());
-        $log = new change_log_named();
-        $log->usr = $this->usr;
+        $log = new change_log_named($this->usr);
         $log->action = change_log_action::ADD;
         $log->set_table(change_log_table::VERB);
         $log->set_field(self::FLD_NAME);
@@ -836,8 +829,7 @@ class verb extends db_object
     private function log_upd(): change_log_named
     {
         log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->user()->name);
-        $log = new change_log_named;
-        $log->usr = $this->usr;
+        $log = new change_log_named($this->usr);
         $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::VERB);
 
@@ -848,8 +840,7 @@ class verb extends db_object
     private function log_del(): change_log_named
     {
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
-        $log = new change_log_named;
-        $log->usr = $this->usr;
+        $log = new change_log_named($this->usr);
         $log->action = change_log_action::DELETE;
         $log->set_table(change_log_table::VERB);
         $log->set_field(self::FLD_NAME);

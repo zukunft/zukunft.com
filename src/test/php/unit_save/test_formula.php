@@ -325,11 +325,10 @@ function run_formula_test(test_cleanup $t): void
     $t->display('formula->load the added "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); // time limit???
 
     // ... check the correct logging
-    $log = new change_log_named;
+    $log = new change_log_named($t->usr1);
     $log->set_table(change_log_table::FORMULA);
     $log->set_field(change_log_field::FLD_FORMULA_NAME);
     $log->row_id = $frm->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added System Test Formula';
     $t->display('formula->save adding logged for "' . formula_api::TN_ADD . '"', $target, $result);
@@ -361,11 +360,10 @@ function run_formula_test(test_cleanup $t): void
     $t->display('formula->load renamed formula "' . formula_api::TN_RENAMED . '"', $target, $result);
 
     // ... and if the formula renaming has been logged
-    $log = new change_log_named;
+    $log = new change_log_named($t->usr1);
     $log->set_table(change_log_table::FORMULA);
     $log->set_field(change_log_field::FLD_FORMULA_NAME);
     $log->row_id = $frm_renamed->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test changed System Test Formula to System Test Formula Renamed';
     $t->display('formula->save rename logged for "' . formula_api::TN_RENAMED . '"', $target, $result);
@@ -398,11 +396,10 @@ function run_formula_test(test_cleanup $t): void
     $t->display('formula->load need_all_val for "' . formula_api::TN_RENAMED . '"', $target, $result);
 
     // ... and if the formula parameter adding have been logged
-    $log = new change_log_named;
+    $log = new change_log_named($t->usr1);
     $log->set_table(change_log_table::FORMULA);
     $log->set_field(change_log_field::FLD_FORMULA_USR_TEXT);
     $log->row_id = $frm_reloaded->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     // use the next line if system config is non-standard
     $target = 'zukunft.com system test changed "percent" = ( "this" - "prior" ) / "prior" to = "this"';

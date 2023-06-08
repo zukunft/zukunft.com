@@ -85,23 +85,22 @@ class ip_range extends db_object
         $this->set_user(null);
     }
 
-    function row_mapper(array $db_row): bool
+    /**
+     * map the database fields to this ip range object
+     * to be extended by the child functions
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if the user sandbox object is loaded and valid
+     */
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        $result = true;
-        if ($db_row != null) {
-            if ($db_row[self::FLD_ID] > 0) {
-                $this->id = $db_row[self::FLD_ID];
-                $this->from = $db_row[self::FLD_FROM];
-                $this->to = $db_row[self::FLD_TO];
-                $this->reason = $db_row[self::FLD_REASON];
-                $this->active = $db_row[self::FLD_ACTIVE];
-            } else {
-                $result = false;
-                $this->id = 0;
-            }
-        } else {
-            $result = false;
-            $this->id = 0;
+        $result = parent::row_mapper($db_row, self::FLD_ID);
+        if ($result) {
+            $this->from = $db_row[self::FLD_FROM];
+            $this->to = $db_row[self::FLD_TO];
+            $this->reason = $db_row[self::FLD_REASON];
+            $this->active = $db_row[self::FLD_ACTIVE];
         }
         return $result;
     }
@@ -187,26 +186,6 @@ class ip_range extends db_object
     }
 
     /**
-     * load an existing ip range to update the reason or switch it off
-     *
-     * @return bool true if an ip range has been found and loaded
-     */
-    function load(): bool
-    {
-        global $db_con;
-        $result = false;
-
-        $qp = $this->load_sql($db_con);
-
-        if ($qp->sql <> '') {
-            $db_row = $db_con->get1($qp);
-            $result = $this->row_mapper($db_row);
-        }
-
-        return $result;
-    }
-
-    /**
      * load an ip range from the database selected by id
      * @param int $id the id of an ip range
      * @param string $class the name of this ip range class
@@ -214,13 +193,12 @@ class ip_range extends db_object
      */
     function load_by_id(int $id, string $class = self::class): int
     {
+        global $db_con;
+
         $this->reset();
         $this->id = $id;
-        if ($this->load()) {
-            return $this->id();
-        } else {
-            return 0;
-        }
+        $qp = $this->load_sql($db_con);
+        return $this->load($qp);
     }
 
 
@@ -408,8 +386,7 @@ class ip_range extends db_object
     {
         log_debug('->log_add ' . $this->dsp_id());
 
-        $log = new change_log_named;
-        $log->usr = $this->user();
+        $log = new change_log_named($this->user());
         $log->action = change_log_action::ADD;
         $log->set_table(sql_db::TBL_IP);
         $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
@@ -426,8 +403,7 @@ class ip_range extends db_object
     private function log_upd(): change_log_named
     {
         log_debug('->log_upd ' . $this->dsp_id());
-        $log = new change_log_named;
-        $log->usr = $this->user();
+        $log = new change_log_named($this->user());
         $log->action = change_log_action::UPDATE;
         $log->set_table(sql_db::TBL_IP);
 
@@ -489,6 +465,7 @@ class ip_range extends db_object
      */
     function get_similar(): ?ip_range
     {
+        global $db_con;
         $result = null;
 
         $db_chk = clone $this;
@@ -497,7 +474,8 @@ class ip_range extends db_object
         $db_chk->from = $this->from;
         $db_chk->to = $this->to;
         $db_chk->set_user($this->user());
-        $db_chk->load();
+        $qp = $this->load_sql($db_con);
+        $db_chk->load($qp);
         if ($db_chk->id > 0) {
             log_debug('->get_similar an ' . $this->dsp_id() . ' already exists');
             $result = $db_chk;
@@ -545,7 +523,8 @@ class ip_range extends db_object
             $db_rec->reset();
             $db_rec->id = $this->id;
             $db_rec->set_user($this->user());
-            if ($db_rec->load()) {
+            $qp = $this->load_sql($db_con);
+            if ($db_rec->load($qp) > 0) {
                 $result .= $this->save_fields($db_con, $db_rec);
             }
         }

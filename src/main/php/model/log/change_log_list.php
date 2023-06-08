@@ -288,8 +288,7 @@ class change_log_list extends base_list
         $table_id = $change_log_tables->id($table_name);
         $table_field_name = $table_id . $field_name;
         $field_id = $change_log_fields->id($table_field_name);
-        $log_named = new change_log_named();
-        $log_named->usr = $usr;
+        $log_named = new change_log_named($usr);
         $qp = $log_named->load_sql($db_con, $query_ext);
         $db_con->set_page($this->limit, $this->offset());
         $db_con->add_par(sql_db::PAR_INT, $field_id);
@@ -309,6 +308,7 @@ class change_log_list extends base_list
     private function load(sql_par $qp): bool
     {
         global $db_con;
+        global $usr;
         $result = false;
 
         if ($qp->name == '') {
@@ -317,7 +317,7 @@ class change_log_list extends base_list
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $chg = new change_log_named();
+                    $chg = new change_log_named($usr);
                     $chg->row_mapper($db_row);
                     $this->lst[] = $chg;
                     $result = true;

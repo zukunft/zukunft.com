@@ -144,29 +144,25 @@ class result extends db_object
     /**
      * map the database fields to the object fields
      *
-     * @param array $db_row with the data directly from the database
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if a result has been loaded and is valid
      */
-    function row_mapper(array $db_row): bool
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
         $lib = new library();
-        $this->id = 0;
-        $result = false;
-        if ($db_row != null) {
-            if ($db_row[self::FLD_ID] > 0) {
-                $this->id = $db_row[self::FLD_ID];
-                $this->frm->set_id($db_row[formula::FLD_ID]);
-                $this->owner_id = $db_row[sandbox::FLD_USER];
-                $this->src_phr_grp_id = $db_row[self::FLD_SOURCE_GRP];
-                $this->src_time_id = $db_row[self::FLD_SOURCE_TIME];
-                $this->phr_grp_id = $db_row[self::FLD_GRP];
-                $this->value = $db_row[self::FLD_VALUE];
-                $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
-                $this->last_val_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
-                $this->dirty = $db_row[self::FLD_DIRTY];
-                $this->load_phrases(true);
-                $result = true;
-            }
+        $result = parent::row_mapper($db_row, self::FLD_ID);
+        if ($result) {
+            $this->frm->set_id($db_row[formula::FLD_ID]);
+            $this->owner_id = $db_row[sandbox::FLD_USER];
+            $this->src_phr_grp_id = $db_row[self::FLD_SOURCE_GRP];
+            $this->src_time_id = $db_row[self::FLD_SOURCE_TIME];
+            $this->phr_grp_id = $db_row[self::FLD_GRP];
+            $this->value = $db_row[self::FLD_VALUE];
+            $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
+            $this->last_val_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
+            $this->dirty = $db_row[self::FLD_DIRTY];
+            $this->load_phrases(true);
         }
 
         return $result;
@@ -182,7 +178,7 @@ class result extends db_object
         $this->grp = $grp;
     }
 
-    function grp(phrase_group $grp): phrase_group
+    function grp(): phrase_group
     {
         return $this->grp;
     }
@@ -231,6 +227,26 @@ class result extends db_object
         return $this->last_update;
     }
 
+    /*
+     * reduce code line length
+     */
+
+    /**
+     * @return phrase_list the phrase list of this value from the phrase group
+     */
+    function phr_lst(): phrase_list
+    {
+        return $this->grp->phr_lst;
+    }
+
+    /**
+     * @return array with the phrase names of this value from the phrase group
+     */
+    function phr_names(): array
+    {
+        return $this->grp->phr_lst->names();
+    }
+
 
     /*
      * cast
@@ -239,11 +255,11 @@ class result extends db_object
     /**
      * @return result_api the formula result frontend api object
      */
-    function api_obj(): object
+    function api_obj(bool $do_save = true): object
     {
         $api_obj = new result_api($this->id);
         $api_obj->set_number($this->value);
-        $grp = $this->phr_lst->get_grp();
+        $grp = $this->phr_lst->get_grp($do_save);
         $api_obj->set_grp($grp->api_obj());
         return $api_obj;
     }
@@ -251,9 +267,9 @@ class result extends db_object
     /**
      * @returns string the api json message for the object as a string
      */
-    function api_json(): string
+    function api_json(bool $do_save = true): string
     {
-        return $this->api_obj()->get_json();
+        return $this->api_obj($do_save)->get_json();
     }
 
 
@@ -752,8 +768,7 @@ class result extends db_object
             if ($this->src_phr_lst == null or $force_reload) {
                 log_debug('for source group "' . $this->src_phr_grp_id . '"');
                 $phr_grp = new phrase_group($this->user());
-                $phr_grp->set_id($this->src_phr_grp_id);
-                $phr_grp->load();
+                $phr_grp->load_by_id($this->src_phr_grp_id);
                 if (!$phr_grp->phr_lst->empty()) {
                     $this->src_phr_lst = $phr_grp->phr_lst;
                     log_debug('source phrases ' . $this->src_phr_lst->dsp_name() . ' loaded');
@@ -777,8 +792,7 @@ class result extends db_object
             if ($this->phr_lst == null or $force_reload) {
                 log_debug('for group "' . $this->phr_grp_id . '"');
                 $phr_grp = new phrase_group($this->user());
-                $phr_grp->set_id($this->phr_grp_id);
-                $phr_grp->load();
+                $phr_grp->load_by_id($this->phr_grp_id);
                 if (!$phr_grp->phr_lst->empty()) {
                     $this->phr_lst = $phr_grp->phr_lst;
                     log_debug('phrases ' . $this->phr_lst->dsp_name() . ' loaded');
@@ -802,8 +816,7 @@ class result extends db_object
             if ($this->src_time_phr == null or $force_reload) {
                 log_debug('result->load_time_wrd_src for source time "' . $this->src_time_id . '"');
                 $time_phr = new phrase($this->user());
-                $time_phr->set_id($this->src_time_id);
-                $time_phr->load_by_obj_par();
+                $time_phr->load_by_id($this->src_time_id);
                 if ($time_phr->isset()) {
                     $this->src_time_phr = $time_phr;
                     if ($this->src_phr_lst != null) {
@@ -825,8 +838,7 @@ class result extends db_object
             if ($this->time_phr == null or $force_reload) {
                 log_debug('result->load_phr_lst for time "' . $this->time_id . '"');
                 $time_phr = new phrase($this->user());
-                $time_phr->set_id($this->time_id);
-                $time_phr->load_by_obj_par();
+                $time_phr->load_by_id($this->time_id);
                 if ($time_phr->isset()) {
                     $this->time_phr = $time_phr;
                     if ($this->phr_lst != null) {
@@ -883,13 +895,19 @@ class result extends db_object
         log_debug();
         $result = parent::import_db_obj($this, $test_obj);
 
+        if ($test_obj) {
+            $do_save = false;
+        } else {
+            $do_save = true;
+        }
+
         foreach ($json_obj as $key => $res) {
 
             if ($key == export::WORDS) {
                 $phr_lst = new phrase_list($this->user());
                 $result->add($phr_lst->import_lst($res, $test_obj));
                 if ($result->is_ok()) {
-                    $phr_grp = $phr_lst->get_grp();
+                    $phr_grp = $phr_lst->get_grp($do_save);
                     log_debug('got word group ' . $phr_grp->dsp_id());
                     $this->set_grp($phr_grp);
                     log_debug('set grp id to ' . $this->grp->id());

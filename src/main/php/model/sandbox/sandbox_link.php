@@ -205,11 +205,10 @@ class sandbox_link extends sandbox
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_link;
+        $log = new change_log_link($this->user());
         $log->new_from = $this->fob;
         $log->new_to = $this->tob;
 
-        $log->usr = $this->user();
         $log->action = change_log_action::ADD;
         // TODO add the table exceptions from sql_db
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
@@ -227,8 +226,7 @@ class sandbox_link extends sandbox
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_link;
-        $log->usr = $this->user();
+        $log = new change_log_link($this->user());
         $log->action = change_log_action::DELETE;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->old_from = $this->fob;

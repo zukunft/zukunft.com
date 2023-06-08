@@ -99,20 +99,20 @@ class formula_link extends sandbox_link_with_type
     /**
      * map the database fields to the object fields
      *
-     * @param array $db_row with the data directly from the database
+     * @param array|null $db_row with the data directly from the database
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the formula link is loaded and valid
      */
-    function row_mapper(
+    function row_mapper_sandbox(
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = self::FLD_ID
     ): bool
     {
-        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->fob->set_id($db_row[formula::FLD_ID]);
             $this->tob->set_id($db_row[phrase::FLD_ID]);
@@ -292,7 +292,7 @@ class formula_link extends sandbox_link_with_type
 
             if ($db_con->get_where() <> '') {
                 $db_frm = $db_con->get1($qp);
-                $this->row_mapper($db_frm, true, false);
+                $this->row_mapper_sandbox($db_frm, true, false);
                 $result = $this->load_owner();
             }
         }
@@ -345,7 +345,7 @@ class formula_link extends sandbox_link_with_type
 
                 if ($qp->has_par()) {
                     $db_row = $db_con->get1($qp);
-                    $this->row_mapper($db_row);
+                    $this->row_mapper_sandbox($db_row);
                     if ($this->id > 0) {
                         log_debug('formula_link->load (' . $this->id . ')');
                         $result = true;
@@ -565,8 +565,7 @@ class formula_link extends sandbox_link_with_type
      */
     function log_upd_field(): change_log_named
     {
-        $log = new change_log_named;
-        $log->usr = $this->user();
+        $log = new change_log_named($this->user());
         $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::FORMULA_LINK);

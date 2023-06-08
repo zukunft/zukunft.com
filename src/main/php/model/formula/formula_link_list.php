@@ -49,7 +49,7 @@ class formula_link_list extends sandbox_list
             foreach ($db_rows as $db_row) {
                 if ($db_row[formula_link::FLD_ID] > 0) {
                     $frm_lnk = new formula_link($this->user());
-                    $frm_lnk->row_mapper($db_row);
+                    $frm_lnk->row_mapper_sandbox($db_row);
                     $this->lst[] = $frm_lnk;
                     $result = true;
                 }

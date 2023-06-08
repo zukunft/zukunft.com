@@ -85,14 +85,18 @@ class change_log_named extends change_log
      */
 
     /**
-     * @return bool true if a row is found
+     * map the database fields to one change log entry to this log object
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if a change log entry is found
      */
-    function row_mapper(array $db_row): bool
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
         global $debug;
         global $change_log_fields;
-        if ($db_row[self::FLD_ID] > 0) {
-            $this->set_id($db_row[self::FLD_ID]);
+        $result = parent::row_mapper($db_row, self::FLD_ID);
+        if ($result) {
             $this->action_id = $db_row[self::FLD_ACTION];
             $this->field_id = $db_row[self::FLD_FIELD_ID];
             $this->row_id = $db_row[self::FLD_ROW_ID];
@@ -110,10 +114,8 @@ class change_log_named extends change_log
             $usr->name = $db_row[user::FLD_NAME];
             $this->usr = $usr;
             log_debug('Change ' . $this->id() . ' loaded', $debug - 8);
-            return true;
-        } else {
-            return false;
         }
+        return $result;
     }
 
 
@@ -179,6 +181,23 @@ class change_log_named extends change_log
         $db_con->set_join_fields(array(change_log_field::FLD_TABLE), sql_db::TBL_CHANGE_FIELD);
         $db_con->set_order(self::FLD_CHANGE_TIME, sql_db::ORDER_DESC);
 
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a change long entry by the changing user
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param user $usr the id of the user sandbox object
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_user(sql_db $db_con, user $usr): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'user_last');
+
+        $db_con->add_par_int($usr->id);
+        $qp->sql = $db_con->select_by_field(user::FLD_ID);
+        $qp->par = $db_con->get_par();
         return $qp;
     }
 

@@ -190,7 +190,7 @@ class word extends sandbox_typed
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the word is loaded and valid
      */
-    function row_mapper(
+    function row_mapper_sandbox(
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
@@ -198,7 +198,7 @@ class word extends sandbox_typed
         string $name_fld = self::FLD_NAME,
         string $type_fld = self::FLD_TYPE): bool
     {
-        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->name = $db_row[$name_fld];
             if (array_key_exists(self::FLD_PLURAL, $db_row)) {
@@ -527,7 +527,7 @@ class word extends sandbox_typed
      * return the main word object based on an id text e.g. used in view.php to get the word to display
      * TODO: check if needed and review
      */
-    function main_wrd_from_txt($id_txt)
+    function main_wrd_from_txt($id_txt): void
     {
         if ($id_txt <> '') {
             log_debug('from "' . $id_txt . '"');
@@ -1872,8 +1872,7 @@ class word extends sandbox_typed
         $dsp_new = new view_dsp_old($this->user());
         $dsp_new->load_by_id($view_id);
 
-        $log = new change_log_named;
-        $log->usr = $this->user();
+        $log = new change_log_named($this->user());
         $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::WORD);
         $log->set_field(self::FLD_VIEW);

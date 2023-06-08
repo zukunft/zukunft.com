@@ -67,7 +67,7 @@ class value_list
         $phr_lst_city->add($phr_city);
         $phr_lst_city->add($phr_inhabitant);
         $phr_lst_city->add($phr_2019);
-        $phr_grp_city = $phr_lst_city->get_grp();
+        $phr_grp_city = $phr_lst_city->get_grp(false);
         $phr_grp_city->set_id($grp_id);
         $grp_id++;
         $phr_lst_canton = new phrase_list($usr);
@@ -76,7 +76,7 @@ class value_list
         $phr_lst_canton->add($phr_inhabitant);
         $phr_lst_canton->add($phr_mio);
         $phr_lst_canton->add($phr_2019);
-        $phr_grp_canton = $phr_lst_canton->get_grp();
+        $phr_grp_canton = $phr_lst_canton->get_grp(false);
         $phr_grp_canton->set_id($grp_id);
         $grp_id++;
         $phr_lst_ch = new phrase_list($usr);
@@ -84,7 +84,7 @@ class value_list
         $phr_lst_ch->add($phr_mio);
         $phr_lst_ch->add($phr_inhabitant);
         $phr_lst_ch->add($phr_2019);
-        $phr_grp_ch = $phr_lst_ch->get_grp();
+        $phr_grp_ch = $phr_lst_ch->get_grp(false);
         $phr_grp_ch->set_id($grp_id);
         $phr_lst_context = new phrase_list($usr);
         $phr_lst_context->add($phr_inhabitant);

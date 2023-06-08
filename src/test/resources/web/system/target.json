@@ -316,7 +316,7 @@
         "id": 7,
         "code_id": "word_list_up",
         "name": "word list up",
-        "comment": "Show a list of words related with a specified word link type; e.g. For company list all ABB and others, because they are linked with is a"
+        "comment": "Show a list of words related with a specified verb e.g. for the triple <Canton of Zurich> show the word <canton>, because they are linked with verb <is a>"
       },
       {
         "id": 8,
@@ -328,7 +328,7 @@
         "id": 9,
         "code_id": "word_list_down",
         "name": "word list down",
-        "comment": "Show a list of words related with a specified word link type; e.g. For company list all ABB and others, because they are linked with is a"
+        "comment": "Show a list of words related with a specified verb e.g. for word <canton> list <Canton of Zurich> and others, because they are linked with verb <is a>"
       },
       {
         "id": 10,

@@ -55,6 +55,30 @@ class db_object
         $this->set_id(0);
     }
 
+    /**
+     * map the database fields to the object fields
+     * to be extended by the child functions
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if the user sandbox object is loaded and valid
+     */
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    {
+        $result = false;
+        $this->id = 0;
+        if ($db_row != null) {
+            if (array_key_exists($id_fld, $db_row)) {
+                if ($db_row[$id_fld] != 0) {
+                    $this->set_id($db_row[$id_fld]);
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+
     /*
      * set and get
      */
@@ -76,6 +100,26 @@ class db_object
     {
         return $this->id;
     }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load one database row e.g. word, triple, value, formula, result, view, component or log entry from the database
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper($db_row);
+        return $this->id();
+    }
+
 
 
     /*

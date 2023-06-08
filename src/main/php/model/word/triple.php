@@ -182,7 +182,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         string $from = '',
         string $verb = '',
         string $to = ''
-    )
+    ): void
     {
         $this->from = new phrase($this->user());
         $this->from->set_name($from);
@@ -194,13 +194,13 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
     /**
      * map the database fields to the object fields
      *
-     * @param array $db_row with the data directly from the database
+     * @param array|null $db_row with the data directly from the database
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the triple is loaded and valid
      */
-    function row_mapper(
+    function row_mapper_sandbox(
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
@@ -208,7 +208,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         string $name_fld = self::FLD_NAME,
         string $type_fld = self::FLD_TYPE): bool
     {
-        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, $id_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             if (array_key_exists(self::FLD_FROM, $db_row)) {
                 $phr_id = $db_row[self::FLD_FROM];
@@ -637,7 +637,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         $qp = $this->load_standard_sql($db_con);
 
         $db_lnk = $db_con->get1($qp);
-        $result = $this->row_mapper($db_lnk, true);
+        $result = $this->row_mapper_sandbox($db_lnk, true);
         if ($result) {
             $result = $this->load_owner();
 
@@ -769,7 +769,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper($db_row);
+        $this->row_mapper_sandbox($db_row);
         $this->reload_generated_name();
         return $this->id();
     }
@@ -1653,8 +1653,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
     function log_link_add(): change_log_link
     {
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
-        $log = new change_log_link;
-        $log->usr = $this->user();
+        $log = new change_log_link($this->user());
         $log->action = change_log_action::ADD;
         $log->set_table(change_log_table::TRIPLE);
         $log->new_from = $this->from;
@@ -1671,8 +1670,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
      */
     function log_upd(): change_log_link
     {
-        $log = new change_log_link;
-        $log->usr = $this->user();
+        $log = new change_log_link($this->user());
         $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::TRIPLE);
@@ -1690,8 +1688,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
     function log_del_link(): change_log_link
     {
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
-        $log = new change_log_link;
-        $log->usr = $this->user();
+        $log = new change_log_link($this->user());
         $log->action = change_log_action::DELETE;
         $log->set_table(change_log_table::TRIPLE);
         $log->old_from = $this->from;
@@ -1708,8 +1705,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
      */
     function log_upd_field(): change_log_named
     {
-        $log = new change_log_named;
-        $log->usr = $this->user();
+        $log = new change_log_named($this->user());
         $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::TRIPLE);

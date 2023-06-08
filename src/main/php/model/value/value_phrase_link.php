@@ -230,8 +230,7 @@ class value_phrase_link
     private function log_add(): change_log_link
     {
         log_debug('val_lnk->log_add for "' . $this->phr->id() . ' to ' . $this->val->id());
-        $log = new change_log_link;
-        $log->usr = $this->usr;
+        $log = new change_log_link($this->usr);
         $log->action = change_log_action::ADD;
         $log->set_table(change_log_table::VALUE_PHRASE_LINK);
         $log->new_from = $this->val;
@@ -247,8 +246,7 @@ class value_phrase_link
     private function log_upd($db_rec): change_log_link
     {
         log_debug('val_lnk->log_upd for "' . $this->phr->id() . ' to ' . $this->val->id());
-        $log = new change_log_link;
-        $log->usr = $this->usr;
+        $log = new change_log_link($this->usr);
         $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::VALUE_PHRASE_LINK); // no user sandbox for links, only the values itself can differ from user to user
         //$log->set_field(phrase::FLD_ID);

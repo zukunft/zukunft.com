@@ -48,6 +48,7 @@ class triple_api extends sandbox_typed_api
     // TD_* is the tooltip/description of the triple
     const TN_READ = 'Pi';
     const TN_READ_NAME = 'Pi (math)';
+    const TN_ADD = 'System Test Triple';
     const TN_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
 
     const TN_ZH_CITY = 'Zurich (City)';

@@ -74,11 +74,10 @@ function run_source_test(test_cleanup $t): void
 
     // ... check if the source creation has been logged
     if ($src_add->id() > 0) {
-        $log = new change_log_named;
+        $log = new change_log_named($t->usr1);
         $log->set_table(change_log_table::SOURCE);
         $log->set_field(change_log_field::FLD_SOURCE_NAME);
         $log->row_id = $src_add->id();
-        $log->usr = $t->usr1;
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system test added ' . source_api::TN_ADD;
@@ -110,11 +109,10 @@ function run_source_test(test_cleanup $t): void
     $t->display('source->load renamed source "' . source_api::TN_RENAMED . '"', $target, $result);
 
     // check if the source renaming has been logged
-    $log = new change_log_named;
+    $log = new change_log_named($t->usr1);
     $log->set_table(change_log_table::SOURCE);
     $log->set_field(change_log_field::FLD_SOURCE_NAME);
     $log->row_id = $src_renamed->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test changed ' . source_api::TN_ADD . ' to ' . source_api::TN_RENAMED;
     $t->display('source->save rename logged for "' . source_api::TN_RENAMED . '"', $target, $result);
@@ -136,11 +134,10 @@ function run_source_test(test_cleanup $t): void
     $t->display('source->load description for "' . source_api::TN_RENAMED . '"', $target, $result);
 
     // check if the source parameter adding have been logged
-    $log = new change_log_named;
+    $log = new change_log_named($t->usr1);
     $log->set_table(change_log_table::SOURCE);
     $log->set_field(change_log_field::FLD_SOURCE_URL);
     $log->row_id = $src_reloaded->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added ' . source_api::TU_ADD;
     //$target = 'zukunft.com system test partner changed ' . source_api::TEST_URL_CHANGED . ' to ' . source_api::TEST_URL;

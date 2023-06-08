@@ -73,11 +73,10 @@ function run_formula_link_test(test_cleanup $t): void
     $t->display('formula_link->link_phr "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check the correct logging
-    $log = new change_log_link;
+    $log = new change_log_link($t->usr1);
     $log->set_table(change_log_table::FORMULA_LINK);
     $log->new_from_id = $frm->id();
     $log->new_to_id = $phr->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test linked System Test Formula Renamed to ' . word_api::TN_RENAMED;
     $t->display('formula_link->link_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result);
@@ -136,11 +135,10 @@ function run_formula_link_test(test_cleanup $t): void
     $t->display('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the removal of the link for the second user has been logged
-    $log = new change_log_link;
+    $log = new change_log_link($t->usr2);
     $log->set_table(change_log_table::FORMULA_LINK);
     $log->old_from_id = $frm->id();
     $log->old_to_id = $phr->id();
-    $log->usr = $t->usr2;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test partner unlinked System Test Formula Renamed from ' . word_api::TN_RENAMED . '';
     $t->display('formula_link->unlink_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
@@ -172,11 +170,10 @@ function run_formula_link_test(test_cleanup $t): void
     $t->display('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check the correct logging
-    $log = new change_log_link;
+    $log = new change_log_link($t->usr1);
     $log->set_table(change_log_table::FORMULA_LINK);
     $log->old_from_id = $frm->id();
     $log->old_to_id = $phr->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test unlinked System Test Formula Renamed from ' . word_api::TN_RENAMED . '';
     $t->display('formula_link->unlink_phr logged of "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result);

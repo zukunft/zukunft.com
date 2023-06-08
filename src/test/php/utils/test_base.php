@@ -59,11 +59,16 @@ use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
 use model\combine_object;
+use model\component;
+use model\component_list;
 use model\db_object;
 use model\formula;
+use model\formula_list;
 use model\library;
 use model\phrase_list;
 use model\ref;
+use model\result;
+use model\result_list;
 use model\sandbox;
 use model\source;
 use model\sql_db;
@@ -77,6 +82,7 @@ use model\value;
 use model\value_list;
 use model\verb;
 use model\view;
+use model\view_list;
 use model\word;
 use model\word_list;
 use user_dsp_old;
@@ -270,11 +276,8 @@ Setting that should be moved to the system config table
 // switch for the email testing
 const TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
 
-// TODO move the test names to the single objects and check for reserved names to avoid conflicts
-// the basic test record for doing the pre check
-// the word "Company" is assumed to have the ID 1
-const TEST_WORD = "Company";
 
+// TODO move the test names to the single objects and check for reserved names to avoid conflicts
 // some test words used for testing
 const TW_ABB = "ABB";
 const TW_VESTAS = "Vestas";
@@ -474,7 +477,7 @@ class test_base
     function assert(
         string            $test_name,
         string|array|null $result,
-        string|array      $target,
+        string|array      $target = '',
         float             $exe_max_time = TIMEOUT_LIMIT,
         string            $comment = '',
         string            $test_type = ''): bool
@@ -597,7 +600,7 @@ class test_base
     {
         $lib = new library();
         $original_json = json_decode(json_encode($usr_obj->export_obj(false)), true);
-        $recreated_json = json_decode ("{}", true);
+        $recreated_json = json_decode("{}", true);
         $api_obj = $usr_obj->api_obj();
         if ($api_obj->id() == $usr_obj->id()) {
             $db_obj = $api_obj->db_obj($usr_obj->user(), get_class($api_obj));
@@ -920,6 +923,30 @@ class test_base
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_link($db_con, 1, 0, 3, $usr_obj::class);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * similar to assert_load_sql but for an user
+     * check the object load by id list SQL statements for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_load_sql_user(sql_db $db_con, object $usr_obj): bool
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_user($db_con, $this->usr1);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_user($db_con, $this->usr1);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;
@@ -1526,56 +1553,58 @@ class test_base
     private function set_id_for_unit_tests(object $usr_obj): void
     {
         // set the id for simple db objects without related objects
-        if ($usr_obj::class == word::class
+        if ($usr_obj::class == user::class) {
+            if ($usr_obj->id() == 0) {
+                $usr_obj->set_id($this->next_seq_nbr());
+            }
+        } elseif ($usr_obj::class == word::class
             or $usr_obj::class == triple::class
+            or $usr_obj::class == verb::class
+            or $usr_obj::class == view::class
+            or $usr_obj::class == component::class
             or $usr_obj::class == source::class
             or $usr_obj::class == ref::class) {
             if ($usr_obj->id() == 0) {
                 $usr_obj->set_id($this->next_seq_nbr());
             }
-        } elseif ($usr_obj::class == value::class) {
+        } elseif ($usr_obj::class == value::class
+            or $usr_obj::class == result::class) {
             $this->set_val_id_for_unit_tests($usr_obj);
         } elseif ($usr_obj::class == formula::class) {
             $this->set_frm_id_for_unit_tests($usr_obj);
-        } elseif ($usr_obj::class == word_list::class) {
+        } elseif ($usr_obj::class == word_list::class
+            or $usr_obj::class == triple_list::class
+            or $usr_obj::class == phrase_list::class
+            or $usr_obj::class == view_list::class
+            or $usr_obj::class == component_list::class
+            or $usr_obj::class == formula_list::class) {
             foreach ($usr_obj->lst() as $wrd) {
                 if ($wrd->id() == 0) {
                     $wrd->set_id($this->next_seq_nbr());
                 }
             }
-        } elseif ($usr_obj::class == triple_list::class) {
-            foreach ($usr_obj->lst() as $trp) {
-                if ($trp->id() == 0) {
-                    $trp->set_id($this->next_seq_nbr());
-                }
-            }
-        } elseif ($usr_obj::class == phrase_list::class) {
-            foreach ($usr_obj->lst() as $phr) {
-                if ($phr->id() == 0) {
-                    $phr->set_id($this->next_seq_nbr());
-                }
-            }
-        } elseif ($usr_obj::class == value_list::class) {
+        } elseif ($usr_obj::class == value_list::class
+            or $usr_obj::class == result_list::class) {
             foreach ($usr_obj->lst() as $val) {
                 $this->set_val_id_for_unit_tests($val);
             }
         } else {
-            log_err('set id for unit tests not yet coded for ' . $usr_obj::class . ' object');
+            log_fatal('set id for unit tests not yet coded for ' . $usr_obj::class . ' object', 'set_id_for_unit_tests');
         }
     }
 
     /**
      * only for unit testing: set the id of a value model object
-     * @param value $val the value object that
+     * @param value|result $val the value or result object that
      * @return void nothing because the value object a modified
      */
-    private function set_val_id_for_unit_tests(value $val): void
+    private function set_val_id_for_unit_tests(value|result $val): void
     {
         if ($val->id() == 0) {
             $val->set_id($this->next_seq_nbr());
         }
-        if ($val->grp->id() == 0) {
-            $val->grp->set_id($this->next_seq_nbr());
+        if ($val->grp()->id() == 0) {
+            $val->grp()->set_id($this->next_seq_nbr());
         }
         foreach ($val->phr_lst()->lst() as $phr) {
             if ($phr->id() == 0) {

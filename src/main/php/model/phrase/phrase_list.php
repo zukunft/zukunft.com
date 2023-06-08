@@ -304,7 +304,7 @@ class phrase_list extends sandbox_list_named
                 $db_wrd_lst = $db_con->get($qp);
                 foreach ($db_wrd_lst as $db_wrd) {
                     $wrd = new word($this->user());
-                    $wrd->row_mapper($db_wrd);
+                    $wrd->row_mapper_sandbox($db_wrd);
                     if (!$wrd->is_excluded()) {
                         $this->lst[] = $wrd->phrase();
                         $result = true;
@@ -329,7 +329,7 @@ class phrase_list extends sandbox_list_named
                 foreach ($db_trp_lst as $db_trp) {
                     if (is_null($db_trp[sandbox::FLD_EXCLUDED]) or $db_trp[sandbox::FLD_EXCLUDED] == 0) {
                         $trp = new triple($this->user());
-                        $trp->row_mapper($db_trp);
+                        $trp->row_mapper_sandbox($db_trp);
                         $this->lst[] = $trp->phrase();
                         $result = true;
                     }
@@ -472,7 +472,7 @@ class phrase_list extends sandbox_list_named
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[sandbox::FLD_EXCLUDED]) or $db_wrd[sandbox::FLD_EXCLUDED] == 0) {
                         $wrd = new word($this->user());
-                        $wrd->row_mapper($db_wrd);
+                        $wrd->row_mapper_sandbox($db_wrd);
                         $phr_lst_loaded->add($wrd->phrase());
                         $result = true;
                     } else {
@@ -499,7 +499,7 @@ class phrase_list extends sandbox_list_named
                 foreach ($db_trp_lst as $db_trp) {
                     if (is_null($db_trp[sandbox::FLD_EXCLUDED]) or $db_trp[sandbox::FLD_EXCLUDED] == 0) {
                         $trp = new triple($this->user());
-                        $trp->row_mapper($db_trp);
+                        $trp->row_mapper_sandbox($db_trp);
                         $phr_lst_loaded->add($trp->phrase());
                         $result = true;
                     } else {

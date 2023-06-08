@@ -149,21 +149,9 @@ function run_formula_element_group_test(test_cleanup $t): void
         $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
         //$target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
         $fig_lst = $elm_grp->figures();
-        $target = '8.51  ('.$fig_lst->get_first_id().')';
-        // to overwrite any special char
-        $diff = $lib->str_diff($target, $result);
-        if ($diff != '') {
-            log_err('Unexpected diff ' . $diff);
-            $target = $result;
-        }
-        /*
-        echo "*".implode("*",$diff['values'])."*";
-        echo "$".implode("$",$diff['view'])."$";
-        if (strpos($result,$target) > 0) { $result = $target; } else { $result = ''; }
-        $result = str_replace("'","&#39;",$result);
-        $target = str_replace("'","&#39;",$target);
-        */
-        $t->display('figure_list->dsp_id', $target, $result);
+        //$target = '8.51  ('.$fig_lst->get_first_id().')';
+        $target = ' 8.505251 {f18}Switzerland,inhabitants,million  (15)';
+        $t->assert('figure_list->dsp_id', $result, $target);
 
         $result = $fig_lst->display();
         $target = "8.51 ";

@@ -118,11 +118,10 @@ function run_view_test(test_cleanup $t): void
     $t->display('view->load the added "' . $dsp->name() . '"', $target, $result);
 
     // check if the view adding has been logged
-    $log = new change_log_named;
+    $log = new change_log_named($t->usr1);
     $log->set_table(change_log_table::VIEW);
     $log->set_field(view::FLD_NAME);
     $log->row_id = $dsp->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added System Test View';
     $t->display('view->save adding logged for "' . view_api::TN_ADD . '"', $target, $result);
@@ -155,11 +154,10 @@ function run_view_test(test_cleanup $t): void
     $t->display('view->load renamed view "' . view_api::TN_RENAMED . '"', $target, $result);
 
     // check if the view renaming has been logged
-    $log = new change_log_named;
+    $log = new change_log_named($t->usr1);
     $log->set_table(change_log_table::VIEW);
     $log->set_field(view::FLD_NAME);
     $log->row_id = $dsp_renamed->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test changed System Test View to System Test View Renamed';
     $t->display('view->save rename logged for "' . view_api::TN_RENAMED . '"', $target, $result);
@@ -182,11 +180,10 @@ function run_view_test(test_cleanup $t): void
     $t->display('view->load type_id for "' . view_api::TN_RENAMED . '"', $target, $result);
 
     // check if the view parameter adding have been logged
-    $log = new change_log_named;
+    $log = new change_log_named($t->usr1);
     $log->set_table(change_log_table::VIEW);
     $log->set_field(sandbox_named::FLD_DESCRIPTION);
     $log->row_id = $dsp_reloaded->id();
-    $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
     // TODO to check
     $target = 'zukunft.com system test added Just added for testing the user sandbox';

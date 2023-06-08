@@ -311,13 +311,13 @@ class sandbox extends db_object
      * map the database fields to the object fields
      * to be extended by the child functions
      *
-     * @param array $db_row with the data directly from the database
+     * @param array|null $db_row with the data directly from the database
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if the user sandbox object is loaded and valid
      */
-    function row_mapper(
+    function row_mapper_sandbox(
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
@@ -327,24 +327,17 @@ class sandbox extends db_object
         if ($id_fld == '') {
             $id_fld = $this->id_field();
         }
-        $this->id = 0;
-        $result = false;
-        if ($db_row != null) {
-            if (array_key_exists($id_fld, $db_row)) {
-                if ($db_row[$id_fld] != 0) {
-                    $this->set_id($db_row[$id_fld]);
-                    $this->owner_id = $db_row[self::FLD_USER];
-                    $this->set_excluded($db_row[self::FLD_EXCLUDED]);
-                    if (!$load_std) {
-                        $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
-                    }
-                    if ($allow_usr_protect) {
-                        $this->row_mapper_usr($db_row, $id_fld);
-                    } else {
-                        $this->row_mapper_std();
-                    }
-                    $result = true;
-                }
+        $result = parent::row_mapper($db_row, $id_fld);
+        if ($result) {
+            $this->owner_id = $db_row[self::FLD_USER];
+            $this->set_excluded($db_row[self::FLD_EXCLUDED]);
+            if (!$load_std) {
+                $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
+            }
+            if ($allow_usr_protect) {
+                $this->row_mapper_usr($db_row, $id_fld);
+            } else {
+                $this->row_mapper_std();
             }
         }
         return $result;
@@ -415,7 +408,7 @@ class sandbox extends db_object
             log_err('The ' . $class . ' id must be set to load ' . $class, $class . '->load_standard');
         } else {
             $db_row = $db_con->get1($qp);
-            $result = $this->row_mapper($db_row, true, false);
+            $result = $this->row_mapper_sandbox($db_row, true, false);
         }
         return $result;
     }
@@ -539,7 +532,7 @@ class sandbox extends db_object
     }
 
     /**
-     * load a user sandbox object e.g. word, triple, value, formula, result or view from the database
+     * load one database row e.g. word, triple, value, formula, result, view or component from the database
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
@@ -548,7 +541,7 @@ class sandbox extends db_object
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper($db_row);
+        $this->row_mapper_sandbox($db_row);
         return $this->id();
     }
 
@@ -1258,9 +1251,8 @@ class sandbox extends db_object
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_named;
+        $log = new change_log_named($this->usr);
 
-        $log->usr = $this->usr;
         $log->action = change_log_action::ADD;
         // TODO add the table exceptions from sql_db
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
@@ -1276,7 +1268,7 @@ class sandbox extends db_object
     function log_link_add(): change_log_link
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new change_log_link();
+        return new change_log_link($this->usr);
     }
 
     /**
@@ -1303,7 +1295,7 @@ class sandbox extends db_object
     function log_upd_field(): change_log_named
     {
         log_debug($this->dsp_id());
-        $log = new change_log_named;
+        $log = new change_log_named($this->usr);
         return $this->log_upd_common($log);
     }
 
@@ -1313,7 +1305,7 @@ class sandbox extends db_object
     function log_upd_link(): change_log_link
     {
         log_debug($this->dsp_id());
-        $log = new change_log_link;
+        $log = new change_log_link($this->usr);
         return $this->log_upd_common($log);
     }
 
@@ -1339,7 +1331,7 @@ class sandbox extends db_object
     function log_del_link(): change_log_link
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new change_log_link();
+        return new change_log_link($this->usr);
     }
 
     /**
@@ -1349,7 +1341,7 @@ class sandbox extends db_object
     function log_del(): change_log_named
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new change_log_named();
+        return new change_log_named($this->usr);
     }
 
     /**
@@ -1442,7 +1434,7 @@ class sandbox extends db_object
      */
     function save_field_excluded_log(sandbox $db_rec): change_log
     {
-        $log = new change_log();
+        $log = new change_log($this->usr);
         if ($db_rec->is_excluded() <> $this->is_excluded()) {
             if ($this->is_excluded()) {
                 if ($this->obj_type == self::TYPE_LINK) {
@@ -1968,7 +1960,7 @@ class sandbox extends db_object
                     $db_rec = clone $this;
                     $db_rec->reset();
                     $db_rec->usr = $this->usr;
-                    if (!$db_rec->load_by_id($this->id, $db_rec::class)) {
+                    if ($db_rec->load_by_id($this->id, $db_rec::class) != $this->id()) {
                         $result .= 'Reloading of user ' . $this->obj_name . ' failed';
                     } else {
                         log_debug('reloaded from db');

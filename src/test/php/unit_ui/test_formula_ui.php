@@ -31,8 +31,8 @@
 */
 
 use api\formula_api;
+use api\word_api;
 use test\test_cleanup;
-use const test\TEST_WORD;
 use const test\TIMEOUT_LIMIT_PAGE;
 use const test\TIMEOUT_LIMIT_PAGE_LONG;
 use const test\TIMEOUT_LIMIT_PAGE_SEMI;
@@ -43,15 +43,15 @@ function run_formula_ui_test(test_cleanup $t)
     $t->header('Test the formula frontend scripts (e.g. /formula_add.php)');
 
     // load the main test word
-    $wrd_company = $t->test_word(TEST_WORD);
+    $wrd_company = $t->test_word(word_api::TN_COMPANY);
 
     // call the add formula page and check if at least some keywords are returned
     $frm = $t->load_formula(formula_api::TN_ADD);
     $result = file_get_contents('https://zukunft.com/http/formula_add.php?word=' . $wrd_company->id() . '&back=' . $wrd_company->id() . '');
     $target = 'Add new formula for';
     $t->dsp_contains(', frontend formula_add.php ' . $result . ' contains at least the headline', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
-    $target = TEST_WORD;
-    $t->dsp_contains(', frontend formula_add.php ' . $result . ' contains at least the linked word ' . TEST_WORD, $target, $result, TIMEOUT_LIMIT_PAGE);
+    $target = word_api::TN_COMPANY;
+    $t->dsp_contains(', frontend formula_add.php ' . $result . ' contains at least the linked word ' . word_api::TN_COMPANY, $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test the edit formula frontend
     $result = file_get_contents('https://zukunft.com/http/formula_edit.php?id=' . $frm->id() . '&back=' . $wrd_company->id());

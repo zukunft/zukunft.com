@@ -76,11 +76,11 @@ class base_list
     /**
      * @return array with the API object of the values
      */
-    function api_lst(): array
+    function api_lst(bool $do_save = true): array
     {
         $api_lst = array();
         foreach ($this->lst as $val) {
-            $api_lst[] = $val->api_obj();
+            $api_lst[] = $val->api_obj($do_save);
         }
 
         return $api_lst;

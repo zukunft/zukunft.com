@@ -56,16 +56,22 @@ class change_log_unit_tests
 
         global $usr;
 
-        $t->header('Unit tests of the user log display class (src/main/php/log/change_log_*.php)');
-
-        $t->subheader('SQL statement tests');
-
         // init
         $lib = new library();
         $db_con = new sql_db();
         $t->name = 'change_log->';
         $t->resource_path = 'db/log/';
         $usr->set_id(1);
+
+        $t->header('Unit tests of the user log display class (src/main/php/log/change_log_*.php)');
+
+        $t->subheader('SQL statement tests');
+
+        $log = new change_log_named($usr);
+        $t->assert_load_sql_user($db_con, $log);
+
+        $log = new change_log_link($usr);
+        $t->assert_load_sql_user($db_con, $log);
 
         // sql to load the word by id
         $log_dsp = new user_log_display($usr);
@@ -81,8 +87,7 @@ class change_log_unit_tests
 
         // sql to load a log entry by field and row id
         // TODO check that user specific changes are included in the list of changes
-        $log = new change_log_named();
-        $log->usr = $usr;
+        $log = new change_log_named($usr);
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $log->load_sql_by_field_row($db_con, 1, 2);
         $t->assert_qp($qp, $db_con->db_type);
@@ -93,8 +98,7 @@ class change_log_unit_tests
         $t->assert_qp($qp, $db_con->db_type);
 
         // sql to load a log entry by field and row id
-        $log = new change_log_link();
-        $log->usr = $usr;
+        $log = new change_log_link($usr);
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $log->load_sql($db_con, 1);
         $t->assert_qp($qp, $db_con->db_type);
@@ -105,8 +109,7 @@ class change_log_unit_tests
         $t->assert_qp($qp, $db_con->db_type);
 
         // compare the new and the old query creation
-        $log = new change_log_named();
-        $log->usr = $usr;
+        $log = new change_log_named($usr);
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $log->load_sql_by_field_row($db_con, 1, 2);
         $sql_expected = 'PREPARE change_log_named_by_field_row (int,int) AS ' . $log->load_sql_old(word::class)->sql;

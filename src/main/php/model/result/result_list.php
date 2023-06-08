@@ -51,19 +51,19 @@ class result_list extends sandbox_list
     /**
      * @return result_list_api frontend API object filled with the relevant data of this object
      */
-    function api_obj(): result_list_api
+    function api_obj(bool $do_save = true): result_list_api
     {
         $api_obj = new result_list_api();
-        $api_obj->set_lst($this->api_lst());
+        $api_obj->set_lst($this->api_lst($do_save));
         return $api_obj;
     }
 
     /**
      * @returns string the api json message for the object as a string
      */
-    function api_json(): string
+    function api_json(bool $do_save = true): string
     {
-        return $this->api_obj()->get_json();
+        return $this->api_obj($do_save)->get_json();
     }
 
 

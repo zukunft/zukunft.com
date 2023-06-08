@@ -219,8 +219,7 @@ class phrase_group_list
 
         $grp = new phrase_group($this->usr);
         if ($grp_id > 0) {
-            $grp->set_id($grp_id);
-            $grp->load();
+            $grp->load_by_id($grp_id);
             log_debug('found ' . $grp->name());
         }
         $time = new word($this->usr);
@@ -457,8 +456,7 @@ class phrase_group_list
                 // log_debug('add time id ' . $val_row[value::FLD_TIME_WORD]);
                 // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and
                 $val_grp = new phrase_group($this->usr);
-                $val_grp->set_id($val_row[phrase_group::FLD_ID]);
-                $val_grp->load();
+                $val_grp->load_by_id($val_row[phrase_group::FLD_ID]);
                 $used_phr_lst = clone $val_grp->phr_lst;
                 log_debug('used_phr_lst ' . $used_phr_lst->dsp_id());
                 // exclude the formula name
@@ -541,7 +539,7 @@ class phrase_group_list
         $result = new phrase_list($this->usr);
         $pos = 0;
         foreach ($this->lst as $grp) {
-            $grp->load();
+            $grp->load_by_obj_vars();
             if ($pos == 0) {
                 if (isset($grp->phr_lst)) {
                     $result = clone $grp->phr_lst;

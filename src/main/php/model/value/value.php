@@ -190,7 +190,7 @@ class value extends sandbox_value
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the value is loaded and valid
      */
-    function row_mapper(
+    function row_mapper_sandbox(
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
@@ -198,7 +198,7 @@ class value extends sandbox_value
     ): bool
     {
         $lib = new library();
-        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->number = $db_row[self::FLD_VALUE];
             // TODO check if phrase_group_id and time_word_id are user specific or time series specific
@@ -258,6 +258,16 @@ class value extends sandbox_value
     function symbol(): string
     {
         return $this->symbol;
+    }
+
+    function set_grp(phrase_group $grp): void
+    {
+        $this->grp = $grp;
+    }
+
+    function grp(): phrase_group
+    {
+        return $this->grp;
     }
 
     /**
@@ -327,11 +337,6 @@ class value extends sandbox_value
         }
 
         return $msg;
-    }
-
-    function set_grp(phrase_group $grp): void
-    {
-        $this->grp = $grp;
     }
 
     function wrd_lst(): word_list
@@ -581,7 +586,7 @@ class value extends sandbox_value
 
             $qp = $this->load_sql_obj_vars($db_con);
             $db_val = $db_con->get1($qp);
-            $result = $this->row_mapper($db_val);
+            $result = $this->row_mapper_sandbox($db_val);
 
             // if not direct value is found try to get a more specific value
             // similar to result
@@ -732,7 +737,7 @@ class value extends sandbox_value
             $grp = new phrase_group($this->user()); // in case the word names and word links can be user specific maybe the owner should be used here
             $grp->set_id($this->grp->id());
             $grp->get();
-            $grp->load(); // to make sure that the word and triple object lists are loaded
+            $grp->load_by_obj_vars(); // to make sure that the word and triple object lists are loaded
             if ($grp->id() > 0) {
                 $this->grp = $grp;
             }
@@ -1440,8 +1445,7 @@ class value extends sandbox_value
     function log_upd(): change_log_named
     {
         log_debug('value->log_upd "' . $this->number . '" for user ' . $this->user()->id());
-        $log = new change_log_named;
-        $log->usr = $this->user();
+        $log = new change_log_named($this->user());
         $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::VALUE);
@@ -1486,7 +1490,7 @@ class value extends sandbox_value
 
         // get the list of phrases assigned to this value based on the phrase group
         // this list is the master
-        $this->grp->load();
+        $this->grp->load_by_obj_vars();
         $phr_lst = $this->grp->phr_lst;
         if ($phr_lst == null) {
             log_err('Cannot load phrases for value "' . $this->dsp_id() . '" and group "' . $this->grp->dsp_id() . '".', "value->upd_phr_links");

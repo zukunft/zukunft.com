@@ -137,19 +137,19 @@ class component_link extends sandbox_link_with_type
     /**
      * map the database fields to the object fields
      *
-     * @param array $db_row with the data directly from the database
+     * @param array|null $db_row with the data directly from the database
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the view component link is loaded and valid
      */
-    function row_mapper(
+    function row_mapper_sandbox(
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = self::FLD_ID): bool
     {
-        $result = parent::row_mapper($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->dsp->id = $db_row[view::FLD_ID];
             $this->cmp->id = $db_row[component::FLD_ID];
@@ -220,7 +220,7 @@ class component_link extends sandbox_link_with_type
 
         if ($qp->has_par()) {
             $db_dsl = $db_con->get1($qp);
-            $result = $this->row_mapper($db_dsl, true);
+            $result = $this->row_mapper_sandbox($db_dsl, true);
             if ($result) {
                 $result = $this->load_owner();
             }
@@ -314,7 +314,7 @@ class component_link extends sandbox_link_with_type
 
             if ($db_con->get_where() <> '') {
                 $db_dsl = $db_con->get1($qp);
-                $this->row_mapper($db_dsl);
+                $this->row_mapper_sandbox($db_dsl);
                 if ($this->id > 0) {
                     //if (is_null($db_item[self::FLD_EXCLUDED]) OR $db_item[self::FLD_EXCLUDED] == 0) {
                     //}

@@ -95,20 +95,17 @@ class formula_element extends db_object
     /**
      * map the formula element database fields for later load of the object
      *
-     * @param array $db_row with the data directly from the database
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if the triple is loaded and valid
      */
-    function row_mapper(array $db_row): bool
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
         $this->id = 0;
-        $result = false;
-        if ($db_row != null) {
-            if ($db_row[self::FLD_ID] > 0) {
-                $this->id = $db_row[self::FLD_ID];
-                $this->type = $db_row[self::FLD_TYPE];
-                $this->load_by_id($db_row[self::FLD_REF_ID]);
-                $result = true;
-            }
+        $result = parent::row_mapper($db_row, self::FLD_ID);
+        if ($result) {
+            $this->type = $db_row[self::FLD_TYPE];
+            $this->load_by_id($db_row[self::FLD_REF_ID]);
         }
         return $result;
     }

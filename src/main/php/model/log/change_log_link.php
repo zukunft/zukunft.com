@@ -117,12 +117,16 @@ class change_log_link extends change_log
     public ?string $link_text = null;      // is used for fixed links such as the source for values
 
     /**
-     * @return bool true if a row is found
+     * map the database fields to one change log entry to this log object
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if a change log entry is found
      */
-    function row_mapper(array $db_row): bool
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        if ($db_row[self::FLD_ID] > 0) {
-            $this->set_id($db_row[self::FLD_ID]);
+        $result = parent::row_mapper($db_row, self::FLD_ID);
+        if ($result) {
             $this->table_id = $db_row[self::FLD_TABLE_ID];
             $this->set_time_str($db_row[self::FLD_CHANGE_TIME]);
             $this->old_text_from = $db_row[self::FLD_OLD_FROM_TEXT];
@@ -142,10 +146,33 @@ class change_log_link extends change_log
             $usr->set_id($db_row[user::FLD_ID]);
             $usr->name = $db_row[user::FLD_NAME];
             $this->usr = $usr;
-            return true;
-        } else {
-            return false;
         }
+        return $result;
+    }
+
+    /**
+     * create an SQL statement to retrieve a change long entry for links by the changing user
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param user $usr the id of the user sandbox object
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_user(sql_db $db_con, user $usr): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $qp->name .= 'user_last';
+        $db_con->set_type(sql_db::TBL_CHANGE_LINK);
+
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($usr->id);
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
+
+        $db_con->add_par_int($usr->id);
+        $db_con->set_order(self::FLD_ID, sql_db::ORDER_DESC);
+        $qp->sql = $db_con->select_by_field(user::FLD_ID);
+        $qp->par = $db_con->get_par();
+        return $qp;
     }
 
     function load_sql(sql_db $db_con, int $table_id): sql_par
@@ -183,7 +210,7 @@ class change_log_link extends change_log
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_join_fields(array(user::FLD_NAME),sql_db::TBL_USER);
+        $db_con->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
 
         $db_con->set_where_text($db_con->where_par($fields, $values));
         $db_con->set_order(self::FLD_ID, sql_db::ORDER_DESC);
@@ -191,6 +218,19 @@ class change_log_link extends change_log
         $qp->par = $db_con->get_par();
 
         return $qp;
+    }
+
+    /**
+     * get the last link changed by a user
+     * TODO check the permission of the view user
+     * @param user $usr the user
+     * @return int
+     */
+    function load_last_by_user(user $usr): int
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_user($db_con, $usr);
+        return $this->load($qp);
     }
 
     private function dsp_id(): string
@@ -391,8 +431,10 @@ class change_log_link extends change_log
         return $result;
     }
 
-    // display the last change related to one object (word, formula, value, verb, ...)
-    // mainly used for testing
+    /**
+     * display the last change related to one object (word, formula, value, verb, ...)
+     * mainly used for testing
+     */
     function dsp_last($ex_time): string
     {
 

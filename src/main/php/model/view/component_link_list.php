@@ -48,7 +48,7 @@ class component_link_list extends sandbox_list
         foreach ($db_rows as $db_row) {
             if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0) {
                 $dsp_cmp_lnk = new component_link($this->user());
-                $dsp_cmp_lnk->row_mapper($db_row);
+                $dsp_cmp_lnk->row_mapper_sandbox($db_row);
                 $this->lst[] = $dsp_cmp_lnk;
                 $result = true;
             }
