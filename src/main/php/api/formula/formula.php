@@ -93,6 +93,19 @@ class formula_api extends sandbox_typed_api
     // formula names that are reserved for creating the test formulas, that are removed after the test
     // so these formula names cannot be used for user formulas
     const RESERVED_FORMULAS = array(
+        self::TN_READ,
+        self::TN_ADD,
+        self::TN_RENAMED,
+        self::TN_EXCLUDED,
+        self::TN_THIS,
+        self::TN_RATIO,
+        self::TN_SECTOR,
+        self::TN_SCALE_K,
+        self::TN_SCALE_TO_K,
+        self::TN_SCALE_MIO,
+        self::TN_SCALE_BIL
+    );
+    const TEST_FORMULAS = array(
         self::TN_ADD,
         self::TN_RENAMED,
         self::TN_EXCLUDED,

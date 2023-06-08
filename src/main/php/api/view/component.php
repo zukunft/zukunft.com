@@ -90,7 +90,8 @@ class component_api extends sandbox_typed_api
     const TD_FORM_END = 'just to indicate the end of the form';
 
     // array of view names that used for testing and remove them after the test
-    const RESERVED_VIEW_COMPONENTS = array(
+    const RESERVED_COMPONENTS = array(
+        self::TN_READ,
         self::TN_ADD,
         self::TN_RENAMED,
         self::TN_ADD2,
@@ -101,8 +102,11 @@ class component_api extends sandbox_typed_api
         self::TN_TABLE
     );
 
-    // array of test view names create before the test
-    const TEST_VIEW_COMPONENTS = array(
+    // array of test component names used for testing and removed after the testing is completed
+    const TEST_COMPONENTS = array(
+        self::TN_ADD,
+        self::TN_RENAMED,
+        self::TN_ADD2,
         self::TN_TITLE,
         self::TN_VALUES,
         self::TN_RESULTS,

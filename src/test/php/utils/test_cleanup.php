@@ -177,7 +177,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test views
-        foreach (component_api::RESERVED_VIEW_COMPONENTS as $cmp_name) {
+        foreach (component_api::TEST_COMPONENTS as $cmp_name) {
             $cmp = $this->load_component($cmp_name);
             if ($cmp->id() > 0) {
                 $msg = $cmp->del();
@@ -188,7 +188,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test views
-        foreach (view_api::RESERVED_VIEWS as $dsp_name) {
+        foreach (view_api::TEST_VIEWS as $dsp_name) {
             $dsp = $this->load_view($dsp_name);
             if ($dsp->id() > 0) {
                 $msg = $dsp->del();
@@ -274,7 +274,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test views
-        foreach (view_api::RESERVED_VIEWS as $dsp_name) {
+        foreach (view_api::TEST_VIEWS as $dsp_name) {
             $dsp = $this->load_view($dsp_name);
             if ($dsp->id() > 0) {
                 $msg = $dsp->del();
@@ -294,7 +294,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test sources
-        foreach (source_api::RESERVED_SOURCES as $src_name) {
+        foreach (source_api::TEST_SOURCES as $src_name) {
             if ($src_name != source_api::TN_READ) {
                 $src = $this->load_source($src_name);
                 if ($src->id() > 0) {
@@ -316,7 +316,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test formulas
-        foreach (formula_api::RESERVED_FORMULAS as $frm_name) {
+        foreach (formula_api::TEST_FORMULAS as $frm_name) {
             $dsp = $this->load_formula($frm_name);
             if ($dsp->id() > 0) {
                 $msg = $dsp->del();
@@ -327,7 +327,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test phrases
-        foreach (phrase_api::RESERVED_PHRASES as $phr_name) {
+        foreach (phrase_api::TEST_TRIPLE_STANDARD as $phr_name) {
             $phr = $this->load_phrase($phr_name);
             if ($phr->id() <> 0) {
                 $msg = $phr->del();
@@ -372,7 +372,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test words
-        foreach (word_api::RESERVED_WORDS as $wrd_name) {
+        foreach (word_api::TEST_WORDS_STANDARD as $wrd_name) {
             // ... but keep the read only test word
             if ($wrd_name != word_api::TN_READ) {
                 $wrd = $this->load_word($wrd_name);

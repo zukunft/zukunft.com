@@ -64,6 +64,7 @@ class view_api extends sandbox_typed_api
 
     // array of view names that used for testing and remove them after the test
     const RESERVED_VIEWS = array(
+        self::TN_READ,
         self::TN_ADD,
         self::TN_RENAMED,
         self::TN_COMPLETE,
@@ -73,6 +74,14 @@ class view_api extends sandbox_typed_api
 
     // array of test view names create before the test
     const TEST_VIEWS = array(
+        self::TN_ADD,
+        self::TN_RENAMED,
+        self::TN_COMPLETE,
+        self::TN_EXCLUDED,
+        self::TN_TABLE
+    );
+
+    const TEST_VIEWS_AUTO_CREATE = array(
         self::TN_COMPLETE,
         self::TN_EXCLUDED,
         self::TN_TABLE

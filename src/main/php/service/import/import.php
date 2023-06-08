@@ -59,6 +59,7 @@ use model\formula_list;
 use model\ip_range;
 use model\library;
 use model\ref;
+use model\result;
 use model\result_list;
 use model\source;
 use model\triple;

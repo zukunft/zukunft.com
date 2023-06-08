@@ -172,6 +172,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add example why nobody shouö own more than the community is spending to save one persons life
     TODO add example how the car insurance uses the value of one person life to calculate the premium and the health insurance for the starting age for gastro check
     TODO make sure that "sudo apt-get install php-dom" is part of the install process
+    TODO before deleting a word make sure that there are not depending triples
+    TODO Include in the message the user@pot or usergroup@pot that can read, write and export the data and who is owner
+    TODO Export of restricted data is always pgp secured and the header includes the access rights,
 
 
     TODO add data optimizers for read time, write time and space usage

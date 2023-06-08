@@ -153,11 +153,6 @@ class word_api extends sandbox_typed_api
     );
     const TEST_WORDS_STANDARD = array(
         self::TN_PARENT,
-        self::TN_CH,
-        self::TN_COUNTRY,
-        self::TN_CANTON,
-        self::TN_CITY,
-        self::TN_COMPANY,
         self::TN_CASH_FLOW,
         self::TN_TAX_REPORT,
         self::TN_INHABITANTS,

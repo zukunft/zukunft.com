@@ -432,15 +432,21 @@ class sandbox_named extends sandbox
                     }
                 } elseif ($this->obj_name == sql_db::TBL_FORMULA) {
                     if (in_array($this->name, formula_api::RESERVED_FORMULAS)) {
-                        $result = '"' . $this->name() . '" is a reserved formula name for system testing. Please use another name';
+                        if ($usr->is_admin() and $this->name() != formula_api::TN_READ) {
+                            $result = '"' . $this->name() . '" is a reserved formula name for system testing. Please use another name';
+                        }
                     }
                 } elseif ($this->obj_name == sql_db::TBL_VIEW) {
                     if (in_array($this->name, view_api::RESERVED_VIEWS)) {
-                        $result = '"' . $this->name() . '" is a reserved view name for system testing. Please use another name';
+                        if ($usr->is_admin() and $this->name() != view_api::TN_READ) {
+                            $result = '"' . $this->name() . '" is a reserved view name for system testing. Please use another name';
+                        }
                     }
                 } elseif ($this->obj_name == sql_db::TBL_COMPONENT) {
-                    if (in_array($this->name, component_api::RESERVED_VIEW_COMPONENTS)) {
-                        $result = '"' . $this->name() . '" is a reserved view component name for system testing. Please use another name';
+                    if (in_array($this->name, component_api::RESERVED_COMPONENTS)) {
+                        if ($usr->is_admin() and $this->name() != component_api::TN_READ) {
+                            $result = '"' . $this->name() . '" is a reserved view component name for system testing. Please use another name';
+                        }
                     }
                 } elseif ($this->obj_name == sql_db::TBL_SOURCE) {
                     if (in_array($this->name, source_api::RESERVED_SOURCES)) {

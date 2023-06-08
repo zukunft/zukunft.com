@@ -237,6 +237,7 @@ class base_list
     }
 
     /**
+     * TODO add a unit test
      * @returns array with all unique ids of this list
      */
     protected function id_pos_lst(): array
@@ -245,7 +246,7 @@ class base_list
         $result = array();
         if ($this->lst_dirty) {
             foreach ($this->lst as $obj) {
-                if (!in_array($obj->id(), $result)) {
+                if (!array_key_exists($obj->id(), $result)) {
                     $result[$obj->id()] = $pos;
                     $pos++;
                 }

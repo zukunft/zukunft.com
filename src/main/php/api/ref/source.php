@@ -69,6 +69,11 @@ class source_api extends sandbox_typed_api
         self::TN_ADD_API,
         self::TN_RENAMED
     );
+    const TEST_SOURCES = array(
+        self::TN_ADD,
+        self::TN_ADD_API,
+        self::TN_RENAMED
+    );
 
 
     /*

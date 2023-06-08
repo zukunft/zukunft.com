@@ -48,7 +48,7 @@ function create_test_views(test_cleanup $t): void
 {
     $t->header('Check if all base views are existing');
 
-    foreach (view_api::TEST_VIEWS as $view_name) {
+    foreach (view_api::TEST_VIEWS_AUTO_CREATE as $view_name) {
         $t->test_view($view_name);
     }
 
