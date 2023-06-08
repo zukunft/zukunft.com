@@ -71,12 +71,12 @@ class word_api extends sandbox_typed_api
     const TN_2020 = '2020';
     const TN_YEAR = 'Year';
     const TN_PCT = 'percent';
+    const TN_COMPANY = 'Company';
 
     // persevered word names for unit and integration tests based on the database
     const TN_ADD = 'System Test Word';
     const TN_RENAMED = 'System Test Word Renamed';
     const TN_PARENT = 'System Test Word Parent';
-    const TN_COMPANY = 'System Test Word Group e.g. Company';
     const TN_FIN_REPORT = 'System Test Word with many relations e.g. Financial Report';
     const TN_CASH_FLOW = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
     const TN_TAX_REPORT = 'System Test Word Child without Inheritance e.g. Income Taxes';

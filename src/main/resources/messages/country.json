@@ -49,6 +49,7 @@
     },
     {"from": "Zurich (Canton)", "verb": "is part of", "to": "Switzerland"},
     {"from": "Zurich (City)", "verb": "is part of", "to": "Zurich (Canton)"},
+    {"from": "ZU", "verb": "is an acronym for", "to": "Zurich"},
     {"from": "2015", "verb": "is a", "to": "Year"},
     {"from": "2016", "verb": "is a", "to": "Year"},
     {"from": "2017", "verb": "is a", "to": "Year"},

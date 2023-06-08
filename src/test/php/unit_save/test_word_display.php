@@ -70,10 +70,10 @@ function run_word_display_test(test_cleanup $t): void
     $wrd_ZH = new word($usr);
     $wrd_ZH->load_by_name(word_api::TN_ZH, word::class);
     $direction = 'down';
-    $target = 'Nothing linked to "Zurich" until now. Click here to link it.';
+    $target = 'ZU';
     $link_types = $wrd_ZH->link_types($direction);
     $result = $wrd_ZH->dsp_graph($direction, $link_types, 0);
-    $t->display('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_ZH->name(), $target, $result);
+    $t->assert_text_contains('word_dsp->dsp_graph check if acronym ZU is found for Zurich', $target, $result);
 
     // ... and the graph display for 2019
     $wrd_2020 = new word($usr);
