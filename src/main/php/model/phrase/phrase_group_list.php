@@ -144,7 +144,7 @@ class phrase_group_list
         $result = false;
 
         // check the all minimal input parameters
-        if (!$this->user()->is_set()) {
+        if ($this->user() == null) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql($db_con);

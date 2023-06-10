@@ -739,6 +739,9 @@ class word extends sandbox_typed
         if (!$test_obj) {
             if ($result->is_ok()) {
                 // TODO should save not return the error reason that should be shown to the user if it fails?
+                if ($this->name() == "Vestas (Company)") {
+                    log_warning('Vestas (Company) should be a triple');
+                }
                 $result->add_message($this->save());
             }
         }

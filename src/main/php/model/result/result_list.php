@@ -314,7 +314,7 @@ class result_list extends sandbox_list
             }
         }
         /*
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
           $result .= ' for user '.$this->user()->name;
         }
         */

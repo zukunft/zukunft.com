@@ -601,7 +601,7 @@ class phrase_group extends db_object
                 $result .= ' for phrases ' . $this->phr_lst->dsp_id();
             }
         }
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
             $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
 

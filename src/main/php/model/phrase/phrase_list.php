@@ -981,7 +981,7 @@ class phrase_list extends sandbox_list_named
         $wrd_lst = new word_list($this->user());
 
         // check the basic settings
-        if (!$this->user()->is_set()) {
+        if ($this->user() == null) {
             log_err('User for phrase list ' . $this->dsp_id() . ' missing', 'phrase_list->wrd_lst_all');
         }
 

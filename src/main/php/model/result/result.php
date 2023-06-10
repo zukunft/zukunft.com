@@ -669,7 +669,7 @@ class result extends db_object
         $result = false;
 
         // check the all minimal input parameters
-        if (!$this->user()->is_set()) {
+        if ($this->user() == null) {
             log_err("The user id must be set to load a result.", "result->load");
         } else {
 
@@ -1116,7 +1116,7 @@ class result extends db_object
         } else {
             $result .= $this->id();
         }
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
             $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;
@@ -1530,7 +1530,7 @@ class result extends db_object
             log_err("No words for the result.", "result->save");
         } elseif (empty($this->src_phr_lst)) {
             log_err("No words for the calculation.", "result->save");
-        } elseif (!$this->user()->is_set()) {
+        } elseif ($this->user() == null) {
             log_err("User missing.", "result->save");
         } else {
             if ($debug > 0) {

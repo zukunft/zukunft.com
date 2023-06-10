@@ -189,7 +189,7 @@ class sandbox_link extends sandbox
             $result .= $this->name . ' (' . $this->id . ') of type ';
         }
         $result .= $this->obj_name . ' ' . $this->obj_type;
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
             $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;
@@ -402,10 +402,10 @@ class sandbox_link extends sandbox
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @returns string|null a filled object that links the same objects
-     *                            or null if nothing similar has been found
+     * @returns string a filled object that links the same objects
+     *                 or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar(): ?sandbox
+    function get_similar(): sandbox
     {
         $result = new sandbox($this->user());
 
@@ -419,7 +419,7 @@ class sandbox_link extends sandbox
             $db_chk->fob = $this->fob;
             $db_chk->tob = $this->tob;
             if ($db_chk->load_standard()) {
-                if ($db_chk->id > 0) {
+                if ($db_chk->id() > 0) {
                     log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard linkspace');
                     $result = $db_chk;
                 }
@@ -427,7 +427,7 @@ class sandbox_link extends sandbox
             // check with the user linkspace
             $db_chk->set_user($this->user());
             if ($db_chk->load_obj_vars()) {
-                if ($db_chk->id > 0) {
+                if ($db_chk->id() > 0) {
                     log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user linkspace');
                     $result = $db_chk;
                 }

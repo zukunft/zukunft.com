@@ -153,7 +153,8 @@ function run_word_display_test(test_cleanup $t): void
     $sel = new html_selector;
     $sel->form = 'test_form';
     $sel->name = 'select_company';
-    $sel->sql = $phr_corp->sql_list($phr_corp);
+    $phr_lst = $phr_corp->phrases('down');
+    $sel->lst = $phr_lst->lst_key();
     $sel->selected = $phr_ZH_INS->id();
     $sel->dummy_text = '... please select';
     $result .= $sel->display_old();

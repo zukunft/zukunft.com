@@ -1306,7 +1306,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
         if ($this->id() > 0) {
             $result .= ' -> ' . $this->id() . ')';
         }
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
             $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;

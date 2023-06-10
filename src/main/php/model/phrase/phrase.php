@@ -802,7 +802,7 @@ class phrase extends combine_named
         } else {
             $result .= $this->id();
         }
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
             $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;
@@ -848,7 +848,13 @@ class phrase extends combine_named
         return $result;
     }
 
-    function dsp_graph(string $direction, ?verb_list $link_types = null, string $back = ''): string
+    /**
+     * get the related phrases
+     * @param string $direction up to select the parent phrases and dow for the children
+     * @param verb_list|null $link_types to filter predicates on database level
+     * @return phrase_list with the related phrases
+     */
+    function phrases(string $direction, ?verb_list $link_types = null): phrase_list
     {
         $phr_lst = new phrase_list($this->user());
         if ($link_types == null) {
@@ -861,6 +867,12 @@ class phrase extends combine_named
                 $phr_lst->merge($add_lst);
             }
         }
+        return $phr_lst;
+    }
+
+    function dsp_graph(string $direction, ?verb_list $link_types = null, string $back = ''): string
+    {
+        $phr_lst = $this->phrases($direction, $link_types);
         $phr_lst_dsp = $phr_lst->dsp_obj();
         return $phr_lst_dsp->dsp_graph($this, $back);
     }
@@ -943,7 +955,8 @@ class phrase extends combine_named
         return $result;
     }
 
-// SQL to list the user phrases (related to a type if needed)
+    // TODO deprecate and replace by phase list functions
+    // SQL to list the user phrases (related to a type if needed)
     function sql_list($type): string
     {
         log_debug();
@@ -1071,7 +1084,7 @@ class phrase extends combine_named
 // create a selector that contains the words and triples
 // if one form contains more than one selector, $pos is used for identification
 // $type is a word to preselect the list to only those phrases matching this type
-    function dsp_selector($type, $form_name, $pos, $class, $back): string
+    function dsp_selector($type, $form_name, $pos, string $class, $back): string
     {
         if ($type != null) {
             log_debug('type "' . $type->dsp_id() . ' selected for form ' . $form_name . $pos);

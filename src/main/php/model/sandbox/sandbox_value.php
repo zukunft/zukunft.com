@@ -143,7 +143,7 @@ class sandbox_value extends sandbox
         if (isset($this->grp)) {
             $result .= $this->grp->dsp_id();
         }
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
             $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;

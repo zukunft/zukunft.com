@@ -210,7 +210,7 @@ class value_time_series extends sandbox_value
         $result = true;
 
         // check the all minimal input parameters
-        if (!$this->user()->is_set()) {
+        if ($this->user() == null) {
             log_err('The user must be set to load a time series for a user', self::class . '->load');
         } else {
             log_debug();

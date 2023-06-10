@@ -591,7 +591,7 @@ class sandbox extends db_object
     function dsp_id(): string
     {
         $result = '';
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
             $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;
@@ -1822,10 +1822,10 @@ class sandbox extends db_object
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @returns sandbox|null a filled object that has the same name or links the same objects
-     *                            or null if nothing similar has been found
+     * @returns sandbox a filled object that has the same name or links the same objects
+     *                  or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar(): ?sandbox
+    function get_similar(): sandbox
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
         return new sandbox($this->user());
@@ -1913,12 +1913,11 @@ class sandbox extends db_object
             if ($this->id == 0) {
                 log_debug('check possible duplicates before adding ' . $this->dsp_id());
                 $similar = $this->get_similar();
-                if ($similar != null) {
+                if ($similar->id() <> 0) {
                     // check that the get_similar function has really found a similar object and report potential program errors
                     if (!$this->is_similar($similar)) {
                         $result .= $this->dsp_id() . ' seems to be not similar to ' . $similar->dsp_id();
-                    }
-                    if ($similar->id <> 0) {
+                    } else {
                         // if similar is found set the id to trigger the updating instead of adding
                         $similar->load_by_id($similar->id, $similar::class); // e.g. to get the type_id
                         // prevent that the id of a formula is used for the word with the type formula link
@@ -1930,13 +1929,16 @@ class sandbox extends db_object
                                 log_err('Unexpected similar prevention class ' . get_class($this));
                             }
                         }
-                    } else {
-                        $similar = null;
                     }
+                } else {
+                    $similar = null;
                 }
-            }
 
-            // create a new object if nothing similar has been found
+            }
+        }
+
+        // create a new object if nothing similar has been found
+        if ($result == '') {
             if ($this->id == 0) {
                 log_debug('add');
                 $result = $this->add()->get_last_message();
@@ -2012,10 +2014,9 @@ class sandbox extends db_object
                     }
                 }
             }
-        }
-
-        if ($result != '') {
-            log_err($result, 'user_sandbox_' . $this->obj_name . '->save');
+            if ($result != '') {
+                log_err($result, 'user_sandbox_' . $this->obj_name . '->save');
+            }
         }
 
         return $result;

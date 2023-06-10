@@ -146,7 +146,7 @@ class sandbox_list extends base_list
                 $result .= ' ... total ' . $lib->dsp_count($this->lst);
             }
             if ($debug > DEBUG_SHOW_USER) {
-                if ($this->user()->is_set()) {
+                if ($this->user() != null) {
                     $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
                 }
             }

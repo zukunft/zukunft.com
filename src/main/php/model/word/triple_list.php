@@ -531,7 +531,7 @@ class triple_list extends sandbox_list
         global $db_con;
 
         // check the all minimal input parameters
-        if (!$this->user()->is_set()) {
+        if ($this->user() == null) {
             log_err("The user id must be set to load a graph.", "triple_list->load");
         } else {
             $db_con->set_usr($this->user()->id());
@@ -726,7 +726,7 @@ class triple_list extends sandbox_list
         $result = '';
 
         // check the all minimal input parameters
-        if (!$this->user()->is_set()) {
+        if ($this->user() == null) {
             log_err("The user id must be set to load a graph.", "triple_list->load");
         } else {
             if (isset($this->wrd)) {

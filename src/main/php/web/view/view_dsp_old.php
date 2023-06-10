@@ -381,7 +381,7 @@ class view_dsp_old extends view
         $result = '';
 
         // check the all minimal input parameters are set
-        if (!$this->user()->is_set()) {
+        if ($this->user() == null) {
             log_err("The user id must be set to display a view.", "view_dsp->dsp_navbar");
         } elseif ($this->id <= 0) {
             log_err("The display ID (" . $this->id . ") must be set to display a view.", "view_dsp->dsp_navbar");
@@ -408,7 +408,7 @@ class view_dsp_old extends view
         $result = '';
 
         // check the all minimal input parameters are set
-        if (!$this->user()->is_set()) {
+        if ($this->user() == null) {
             log_err("The user id must be set to display a view.", "view_dsp->dsp_navbar");
         } else {
             if (UI_USE_BOOTSTRAP) {
@@ -486,7 +486,7 @@ class view_dsp_old extends view
       $result = '';
 
       // check the all minimal input parameters are set
-      if (!$this->user()->is_set()) {
+      if ($this->user() == null) {
         zu_err("The user id must be set to display a view.", "view_dsp->dsp_navbar");
       } else {
         $result  = $this->dsp_user($wrd);

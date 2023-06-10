@@ -461,9 +461,9 @@ class ip_range extends db_object
     /**
      * get a similar or overlapping ip range
      *
-     * @return ip_range|null the ip range that matches e.g. to update the reason
+     * @return ip_range the ip range that matches e.g. to update the reason
      */
-    function get_similar(): ?ip_range
+    function get_similar(): ip_range
     {
         global $db_con;
         $result = null;

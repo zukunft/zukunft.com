@@ -393,7 +393,7 @@ class component extends sandbox_typed
         $result = false;
 
         // check the minimal input parameters
-        if (!$this->user()->is_set()) {
+        if ($this->user() == null) {
             log_err("The user id must be set to load a view component.", "component->load");
         } elseif ($this->id <= 0 and $this->name == '') {
             log_err("Either the database ID (" . $this->id . ") or the display item name (" . $this->name . ") and the user (" . $this->user()->id() . ") must be set to find a display item.", "component->load");
@@ -542,7 +542,7 @@ class component extends sandbox_typed
     {
         $result = array();
 
-        if ($this->id > 0 and $this->user()->is_set()) {
+        if ($this->id > 0 and $this->user() != null) {
             $lst = new component_link_list($this->user());
             $lst->load_by_component($this);
             $result = $lst->view_ids();
@@ -755,7 +755,7 @@ class component extends sandbox_typed
     {
         $result = '';
 
-        if (isset($dsp) and $this->user()->is_set()) {
+        if (isset($dsp) and $this->user() != null) {
             log_debug($this->dsp_id() . ' from "' . $dsp->name . '" (' . $dsp->id . ')');
             $dsp_lnk = new component_link($this->user());
             $dsp_lnk->fob = $dsp;

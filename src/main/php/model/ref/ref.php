@@ -893,9 +893,9 @@ class ref extends sandbox_link_with_type
     /**
      * get a similar reference
      */
-    function get_similar(): ?ref
+    function get_similar(): ref
     {
-        $result = null;
+        $result = new ref($this->user());
         log_debug('ref->get_similar ' . $this->dsp_id());
 
         $db_chk = clone $this;
@@ -923,7 +923,7 @@ class ref extends sandbox_link_with_type
         $result = '';
 
         // build the database object because the is anyway needed
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
             $db_con->set_usr($this->user()->id());
         }
         $db_con->set_type(sql_db::TBL_REF);

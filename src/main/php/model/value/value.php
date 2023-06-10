@@ -579,7 +579,7 @@ class value extends sandbox_value
         $result = true;
 
         // check the all minimal input parameters
-        if (!$this->user()->is_set()) {
+        if ($this->user() == null) {
             log_err('The user id must be set to load a result.', 'value->load');
         } else {
             log_debug($this->dsp_id(), $debug - 9);
@@ -1949,7 +1949,7 @@ class value extends sandbox_value
             //$db_chk->time_stamp = $this->time_stamp;
             $db_chk->load_by_grp($this->grp);
             if ($db_chk->id() > 0) {
-                if ($this->grp->id() != 0 and !$this->user()->is_set()) {
+                if ($this->grp->id() != 0 and $this->user() == null) {
                     log_debug('value for "' . $this->grp->name() . '" and user ' . $this->user()->name . ' is already in the database and will be updated');
                 } else {
                     log_debug('value is empty');

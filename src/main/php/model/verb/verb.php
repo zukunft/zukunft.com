@@ -589,7 +589,7 @@ class verb extends db_object
         } else {
             $result .= $this->id;
         }
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
             $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;
@@ -631,7 +631,7 @@ class verb extends db_object
         $result .= $sel->display_old();
 
         log_debug('admin id ' . $this->id);
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
             if ($this->user()->is_admin()) {
                 // admin users should always have the possibility to create a new verb / link type
                 $result .= \html\btn_add('add new verb', '/http/verb_add.php?back=' . $back);
@@ -1094,10 +1094,14 @@ class verb extends db_object
         return $result;
     }
 
-    // add or update a verb in the database (or create a user verb if the program settings allow this)
+    /**
+     * TODO return a user message object, so that messages to the user like "use another name" does not case a error log entry
+     * add or update a verb in the database (or create a user verb if the program settings allow this)
+     *
+     */
     function save(): string
     {
-        log_debug('verb->save ' . $this->dsp_id() . ' for user ' . $this->user()->name);
+        log_debug($this->dsp_id());
 
         global $db_con;
         $result = '';
@@ -1106,9 +1110,9 @@ class verb extends db_object
         $db_con->set_usr($this->user()->id());
         $db_con->set_type(sql_db::TBL_VERB);
 
-        // check if a new word is supposed to be added
+        // check if a new verb is supposed to be added
         if ($this->id <= 0) {
-            // check if a word, formula or verb with the same name is already in the database
+            // check if a word, triple or formula with the same name is already in the database
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
                 $result .= $trm->id_used_msg();
@@ -1119,46 +1123,49 @@ class verb extends db_object
         }
 
         // create a new verb or update an existing
-        if ($this->id <= 0) {
-            $result .= $this->add($db_con);
-        } else {
-            log_debug('update "' . $this->id . '"');
-            // read the database values to be able to check if something has been changed; done first,
-            // because it needs to be done for user and general formulas
-            $db_rec = new verb;
-            $db_rec->usr = $this->usr;
-            $db_rec->load_by_id($this->id);
-            log_debug("database verb loaded (" . $db_rec->name . ")");
+        if ($result == '') {
+            if ($this->id <= 0) {
+                $result .= $this->add($db_con);
+            } else {
+                log_debug('update "' . $this->id . '"');
+                // read the database values to be able to check if something has been changed; done first,
+                // because it needs to be done for user and general formulas
+                $db_rec = new verb;
+                $db_rec->usr = $this->usr;
+                $db_rec->load_by_id($this->id);
+                log_debug("database verb loaded (" . $db_rec->name . ")");
 
-            // if the name has changed, check if verb, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
-            if ($db_rec->name <> $this->name) {
-                // check if a verb, formula or verb with the same name is already in the database
-                $trm = $this->get_term();
-                if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
-                    $result .= $trm->id_used_msg();
-                } else {
-                    if ($this->can_change()) {
-                        $result .= $this->save_field_name($db_con, $db_rec);
+                // if the name has changed, check if verb, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
+                if ($db_rec->name <> $this->name) {
+                    // check if a verb, formula or verb with the same name is already in the database
+                    $trm = $this->get_term();
+                    if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
+                        $result .= $trm->id_used_msg();
                     } else {
-                        // TODO: create a new verb and request to delete the old
-                        log_err('Creating a new verb is not yet possible');
+                        if ($this->can_change()) {
+                            $result .= $this->save_field_name($db_con, $db_rec);
+                        } else {
+                            // TODO: create a new verb and request to delete the old
+                            log_err('Creating a new verb is not yet possible');
+                        }
                     }
                 }
-            }
 
-            if ($db_rec->code_id <> $this->code_id) {
-                $result .= $this->save_field_code_id($db_con, $db_rec);
-            }
+                if ($db_rec->code_id <> $this->code_id) {
+                    $result .= $this->save_field_code_id($db_con, $db_rec);
+                }
 
-            // if a problem has appeared up to here, don't try to save the values
-            // the problem is shown to the user by the calling interactive script
-            if ($result == '') {
-                $result = $this->save_fields($db_con, $db_rec);
+                // if a problem has appeared up to here, don't try to save the values
+                // the problem is shown to the user by the calling interactive script
+                if ($result == '') {
+                    $result = $this->save_fields($db_con, $db_rec);
+                }
             }
         }
 
+        // TODO log internal errors as errors but user warnings as info
         if ($result != '') {
-            log_err($result);
+            log_info($result);
         }
 
         return $result;

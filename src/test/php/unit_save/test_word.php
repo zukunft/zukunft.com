@@ -308,7 +308,16 @@ function run_word_tests(test_cleanup $t): void
     $target = '';
     $t->display('word->save for "' . word_api::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
 
-    echo "... and also testing the user log class (classes/user_log.php)<br>";
+    // check that the word name cannot be used for a verb, triple or formula anymore
+    $vrb = new verb();
+    $vrb->set_user($t->usr1);
+    $vrb->set_name(word_api::TN_ADD);
+    $result = $vrb->save();
+    $target = '<font class="text-danger">A word with the name "System Test Word" already exists. Please use another name.</font>';
+    $t->assert('verb cannot have a word name', $result, $target);
+
+
+    $t->subheader('... and also testing the user log class (classes/user_log.php)');
 
     // ... check if the word creation has been logged
     if ($wrd_add->id() > 0) {
@@ -427,6 +436,8 @@ function run_word_tests(test_cleanup $t): void
     $result = $wrd_reloaded->type_id;
     $target = $phrase_types->id(phrase_type::OTHER);
     $t->display('word->load type_id for "' . word_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
+
+    // TODO check that the changed word name cannot be used for a verb, triple or formula anymore
 
     // check if undo all specific changes removes the user word
     $wrd_usr2 = new word($t->usr2);

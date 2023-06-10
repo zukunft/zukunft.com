@@ -514,7 +514,7 @@ class formula extends sandbox_typed
         $result = false;
 
         // check the all minimal input parameters
-        if (!$this->user()->is_set()) {
+        if ($this->user() == null) {
             log_err("The user id must be set to load a formula.", "formula->load");
         } elseif ($this->id() <= 0 and $this->name() == '') {
             log_err("Either the database ID (" . $this->id() . ") or the formula name (" . $this->name() . ") and the user (" . $this->user()->id() . ") must be set to load a formula.", "formula->load");
@@ -819,7 +819,7 @@ class formula extends sandbox_typed
         $phr_lst = null;
         $lib = new library();
 
-        if ($this->id() > 0 and $this->user()->is_set()) {
+        if ($this->id() > 0 and $this->user() != null) {
             log_debug('for formula ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
             $frm_lnk_lst = new formula_link_list($this->user());
             $frm_lnk_lst->load_by_frm_id($this->id);
@@ -862,7 +862,7 @@ class formula extends sandbox_typed
         $phr_lst = new phrase_list($this->user());
         $lib = new library();
 
-        if ($this->id() > 0 and $this->user()->is_set()) {
+        if ($this->id() > 0 and $this->user() != null) {
             $direct_phr_lst = $this->assign_phr_glst_direct($sbx);
             if ($direct_phr_lst != null) {
                 if (!$direct_phr_lst->is_empty()) {
@@ -1766,7 +1766,7 @@ class formula extends sandbox_typed
     function link_phr(phrase $phr): string
     {
         $result = '';
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
             log_debug($this->dsp_id() . ' to ' . $phr->dsp_id());
             $frm_lnk = new formula_link($this->user());
             $frm_lnk->fob = $this;
@@ -1782,7 +1782,7 @@ class formula extends sandbox_typed
     function unlink_phr($phr): string
     {
         $result = '';
-        if (isset($phr) and $this->user()->is_set()) {
+        if (isset($phr) and $this->user() != null) {
             log_debug($this->dsp_id() . ' from "' . $phr->name() . '" for user "' . $this->user()->name . '"');
             $frm_lnk = new formula_link($this->user());
             $frm_lnk->fob = $this;

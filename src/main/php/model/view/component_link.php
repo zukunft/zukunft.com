@@ -296,7 +296,7 @@ class component_link extends sandbox_link_with_type
         $result = false;
 
         // check the all minimal input parameters are set
-        if (!$this->user()->is_set()) {
+        if ($this->user() == null) {
             log_err("The user id must be set to load a view component link.", "component_link->load");
         } else {
 
@@ -407,7 +407,7 @@ class component_link extends sandbox_link_with_type
         } else {
             $result .= ', but no link id)';
         }
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
             $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;

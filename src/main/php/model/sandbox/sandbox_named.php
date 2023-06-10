@@ -353,7 +353,7 @@ class sandbox_named extends sandbox
         } else {
             $result .= $this->id;
         }
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
             $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
         return $result;
@@ -667,10 +667,10 @@ class sandbox_named extends sandbox
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @return sandbox|null a filled object that has the same name
-     *                            or null if nothing similar has been found
+     * @return sandbox a filled object that has the same name
+     *                 or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar(): ?sandbox
+    function get_similar(): sandbox
     {
         $result = new sandbox_named($this->user());
 
@@ -726,11 +726,7 @@ class sandbox_named extends sandbox
             }
         }
 
-        if ($result->id() != 0) {
-            return $result;
-        } else {
-            return null;
-        }
+        return $result;
     }
 
 }

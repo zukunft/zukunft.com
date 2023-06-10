@@ -163,7 +163,7 @@ class verb_list extends type_list
 
         $result = false;
         // check the all minimal input parameters
-        if (!$this->user()->is_set()) {
+        if ($this->user() == null) {
             log_err("The user id must be set to load a list of verbs.", "verb_list->load");
             /*
             } elseif (!isset($this->wrd) OR $this->direction == '')  {

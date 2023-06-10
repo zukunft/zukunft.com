@@ -85,7 +85,7 @@ class value_dsp_old extends value
         if (!is_null($this->number)) {
             $num_text = $this->val_formatted();
             $link_format = '';
-            if ($this->user()->is_set()) {
+            if ($this->user() != null) {
                 if (!$this->is_std()) {
                     $link_format = ' class="user_specific"';
                 }

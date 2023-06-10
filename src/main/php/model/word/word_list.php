@@ -1193,7 +1193,7 @@ class word_list extends sandbox_list
         } else {
             $result = $id;
         }
-        if ($this->user()->is_set()) {
+        if ($this->user() != null) {
             $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
         }
 
