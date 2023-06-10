@@ -422,7 +422,7 @@ class sandbox_named extends sandbox
                 if ($this->obj_name == sql_db::TBL_WORD) {
                     if (in_array($this->name, word_api::RESERVED_WORDS)) {
                         // the admin user needs to add the read test word during initial load
-                        if ($usr->is_admin() and $this->name() != word_api::TN_READ) {
+                        if (!$usr->is_admin()) {
                             $result = '"' . $this->name() . '" is a reserved name for system testing. Please use another name';
                         }
                     }

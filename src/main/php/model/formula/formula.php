@@ -1417,10 +1417,10 @@ class formula extends sandbox_typed
                     if ($key == self::FLD_ASSIGN) {
                         if (is_array($value)) {
                             foreach ($value as $lnk_phr_name) {
-                                $result->add_message($this->assign_phrase($lnk_phr_name, $test_obj));
+                                $result->add_message($this->assign_name($lnk_phr_name, $test_obj));
                             }
                         } else {
-                            $result->add_message($this->assign_phrase($value, $test_obj));
+                            $result->add_message($this->assign_name($value, $test_obj));
                         }
                     }
                 }
@@ -1430,21 +1430,29 @@ class formula extends sandbox_typed
         return $result;
     }
 
-    private function assign_phrase(string $phr_name, object $test_obj = null): string
+    private function assign_name(string $phr_name, object $test_obj = null): string
     {
         $result = '';
         $phr = new phrase($this->user());
         if (!$test_obj) {
             $phr->load_by_name($phr_name);
-            if ($this->id() > 0 and $phr->id() <> 0) {
-                $frm_lnk = new formula_link($this->user());
-                $frm_lnk->fob = $this;
-                $frm_lnk->tob = $phr;
-                $result .= $frm_lnk->save();
-            }
+            $result .= $this->assign_phrase($phr);
         }
         return $result;
     }
+
+    function assign_phrase(phrase $phr): string
+    {
+        $result = '';
+        if ($this->id() > 0 and $phr->id() <> 0) {
+            $frm_lnk = new formula_link($this->user());
+            $frm_lnk->fob = $this;
+            $frm_lnk->tob = $phr;
+            $result .= $frm_lnk->save();
+        }
+        return $result;
+    }
+
 
     /**
      * create an object for the export

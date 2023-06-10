@@ -74,7 +74,7 @@ class verb_unit_db_tests
         $countries = $country->children();
         $t->assert_contains('is a based on ' . word_api::TN_COUNTRY,
             $countries->names(),
-            array(word_api::TN_CH, word_api::TN_READ_GERMANY)
+            array(word_api::TN_CH, word_api::TN_DE)
         );
 
         // 'is part of' - test the direct selection of the members via 'is part of' verb

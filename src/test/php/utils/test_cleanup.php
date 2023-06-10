@@ -372,7 +372,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test words
-        foreach (word_api::TEST_WORDS_STANDARD as $wrd_name) {
+        foreach (word_api::TEST_WORDS as $wrd_name) {
             // ... but keep the read only test word
             if ($wrd_name != word_api::TN_READ) {
                 $wrd = $this->load_word($wrd_name);

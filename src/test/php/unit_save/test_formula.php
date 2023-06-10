@@ -51,11 +51,19 @@ function create_test_formulas(test_cleanup $t): void
 {
     $t->header('Check if all base formulas are correct');
 
+    $t->test_word(word_api::TN_EARNING);
+    $t->test_word(word_api::TN_PRICE);
+    $t->test_word(word_api::TN_PE);
     $t->test_formula(formula_api::TN_RATIO, formula_api::TF_RATIO);
+    $t->test_word(word_api::TN_TOTAL);
     $t->test_formula(formula_api::TN_SECTOR, formula_api::TF_SECTOR);
     //$t->test_formula(formula_api::TN_THIS, formula_api::TF_THIS);
+    $t->test_word(word_api::TN_THIS);
+    $t->test_word(word_api::TN_PRIOR);
     $t->test_formula(formula_api::TN_ADD, formula_api::TF_INCREASE);
     $t->test_formula(formula_api::TN_EXCLUDED, formula_api::TF_INCREASE);
+    $t->test_word(word_api::TN_IN_K);
+    $t->test_word(word_api::TN_BIL);
     $t->test_formula(formula_api::TN_SCALE_K, formula_api::TF_SCALE_K);
     $t->test_formula(formula_api::TN_SCALE_TO_K, formula_api::TF_SCALE_TO_K);
     $t->test_formula(formula_api::TN_SCALE_MIO, formula_api::TF_SCALE_MIO);
@@ -153,6 +161,11 @@ function run_formula_test(test_cleanup $t): void
 
     // loading another formula (Price Earning ratio ) to have more test cases
     $frm_pe = $t->load_formula(formula_api::TN_RATIO);
+
+    $wrd_share = $t->test_word(word_api::TN_SHARE);
+    $wrd_chf = $t->test_word(word_api::TN_CHF);
+
+    $frm_pe->assign_phrase($wrd_share->phrase());
 
     $phr_lst = new phrase_list($t->usr1);
     $phr_lst->load_by_names(array(word_api::TN_SHARE, word_api::TN_CHF));

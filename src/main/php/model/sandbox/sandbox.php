@@ -1972,6 +1972,12 @@ class sandbox extends db_object
                             $db_con->set_type($this->obj_name);
                             $db_con->set_usr($this->user()->id);
                         }
+                        // relevant is if there is a user config in the database
+                        // so use this information to prevent
+                        // the need to forward the db_rec to all functions
+                        if ($db_rec->has_usr_cfg() and !$this->has_usr_cfg()) {
+                            $this->usr_cfg_id = $db_rec->usr_cfg_id;
+                        }
                     }
 
                     // load the common object

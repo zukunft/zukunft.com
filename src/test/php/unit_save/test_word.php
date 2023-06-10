@@ -49,9 +49,10 @@ function create_test_words(test_cleanup $t): void
 
     $t->header('Check if all base words are correct');
 
-    foreach (word_api::TEST_WORDS_STANDARD as $word_name) {
+    /*
+    foreach (word_api::TEST_WORDS as $word_name) {
         $t->test_word($word_name);
-    }
+    } */
     foreach (word_api::TEST_WORDS_MEASURE as $word_name) {
         $t->test_word($word_name, phrase_type::MEASURE);
     }

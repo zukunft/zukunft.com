@@ -147,6 +147,7 @@ function run_word_display_test(test_cleanup $t): void
     $t->header('Test the display selector class (web/html/selector.php)');
 
     // for testing the selector display a company selector and select ABB
+    // TODO fix second run
     $phr_corp = $t->load_phrase(word_api::TN_COMPANY);
     $phr_ZH_INS = $t->load_phrase(triple_api::TN_ZH_COMPANY);
     $sel = new html_selector;

@@ -90,8 +90,10 @@ class formula_api extends sandbox_typed_api
     const TN_SCALE_BIL = 'System Test Formula scale billions to one';
     const TF_SCALE_BIL = '"one" = "System Test Scaling Word e.g. billions" * 1000000000';
 
-    // formula names that are reserved for creating the test formulas, that are removed after the test
+    // formula names that are reserved either
+    // for creating the test formulas, that are removed after the test
     // so these formula names cannot be used for user formulas
+    // or for fixed of the default data set that are used for unit tests
     const RESERVED_FORMULAS = array(
         self::TN_READ,
         self::TN_ADD,
@@ -105,6 +107,10 @@ class formula_api extends sandbox_typed_api
         self::TN_SCALE_MIO,
         self::TN_SCALE_BIL
     );
+
+    // formula names used for integration tests
+    // that are removed after each test
+    // and therefore cannot be used by users
     const TEST_FORMULAS = array(
         self::TN_ADD,
         self::TN_RENAMED,

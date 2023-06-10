@@ -14,6 +14,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO split Mathematical constant in Math and  constant
+    TODO per km in 'one' 'per' 'km'
+    TODO split acronym in 'one to one' and 'one to many'
     TODO replace db field 'triple_name' with a virtual field based on name_generated and name_given
     TODO add api unit test (assert_api_to_dsp) to all objects
     TODO align the namespace with PSR-0 as much as possible

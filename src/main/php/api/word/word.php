@@ -52,24 +52,24 @@ class word_api extends sandbox_typed_api
     const TD_READ = 'A mathematical constant that never changes e.g. Pi';
     const TN_CONST = 'Pi';
     const TD_CONST = 'Pi';
-    const TN_COUNTRY = 'Country';
-    const TN_CANTON = 'Canton';
-    const TN_CITY = 'City';
-    const TN_CH = 'Switzerland';
-    const TN_READ_GERMANY = 'Germany';
-    const TN_ZH = 'Zurich';
-    const TN_INHABITANTS = 'inhabitants';
-    const TN_INHABITANT = 'inhabitant';
     const TN_ONE = 'one';
     const TN_MIO = 'million';
     const TN_MIO_SHORT = 'mio';
+    const TN_COUNTRY = 'Country';
+    const TN_CH = 'Switzerland';
+    const TN_DE = 'Germany';
+    const TN_CANTON = 'Canton';
+    const TN_CITY = 'City';
+    const TN_ZH = 'Zurich';
+    const TN_INHABITANT = 'inhabitant';
+    const TN_INHABITANTS = 'inhabitants';
+    const TN_YEAR = 'Year';
     const TN_2015 = '2015';
     const TN_2016 = '2016';
     const TN_2017 = '2017';
     const TN_2018 = '2018';
     const TN_2019 = '2019';
     const TN_2020 = '2020';
-    const TN_YEAR = 'Year';
     const TN_PCT = 'percent';
     const TN_COMPANY = 'Company';
 
@@ -116,10 +116,29 @@ class word_api extends sandbox_typed_api
     const RESERVED_WORDS = array(
         word::DB_SETTINGS,
         self::TN_READ,
+        self::TN_CONST,
+        self::TN_ONE,
+        self::TN_MIO,
+        self::TN_MIO_SHORT,
+        self::TN_COUNTRY,
+        self::TN_CH,
+        self::TN_DE,
+        self::TN_CANTON,
+        self::TN_CITY,
+        self::TN_ZH,
+        self::TN_INHABITANT,
+        self::TN_YEAR,
+        self::TN_2015,
+        self::TN_2016,
+        self::TN_2017,
+        self::TN_2018,
+        self::TN_2019,
+        self::TN_2020,
+        self::TN_PCT,
+        self::TN_COMPANY,
         self::TN_ADD,
         self::TN_RENAMED,
         self::TN_PARENT,
-        self::TN_COMPANY,
         self::TN_FIN_REPORT,
         self::TN_CASH_FLOW,
         self::TN_TAX_REPORT,
@@ -151,20 +170,40 @@ class word_api extends sandbox_typed_api
         self::TN_ADD_API,
         self::TN_UPD_API
     );
-    const TEST_WORDS_STANDARD = array(
+    const TEST_WORDS = array(
+        self::TN_ADD,
+        self::TN_RENAMED,
         self::TN_PARENT,
+        self::TN_FIN_REPORT,
         self::TN_CASH_FLOW,
         self::TN_TAX_REPORT,
-        self::TN_INHABITANTS,
-        self::TN_MIO,
-        self::TN_INCREASE,
-        self::TN_YEAR,
-        self::TN_2020,
+        self::TN_ASSETS,
+        self::TN_ASSETS_CURRENT,
+        self::TN_SECTOR,
+        self::TN_ENERGY,
+        self::TN_WIND_ENERGY,
+        self::TN_CASH,
+        self::TN_2021,
+        self::TN_2022,
+        self::TN_CHF,
         self::TN_SHARE,
         self::TN_PRICE,
         self::TN_EARNING,
         self::TN_PE,
-        self::TN_TOTAL
+        self::TN_IN_K,
+        self::TN_BIL,
+        self::TN_TOTAL,
+        self::TN_INCREASE,
+        self::TN_THIS,
+        self::TN_PRIOR,
+        self::TN_TIME_JUMP,
+        self::TN_LATEST,
+        self::TN_SCALING_PCT,
+        self::TN_SCALING_MEASURE,
+        self::TN_CALC,
+        self::TN_LAYER,
+        self::TN_ADD_API,
+        self::TN_UPD_API
     );
     const TEST_WORDS_MEASURE = array(self::TN_CHF);
     const TEST_WORDS_SCALING_HIDDEN = array(self::TN_ONE);
@@ -176,8 +215,6 @@ class word_api extends sandbox_typed_api
         self::TN_2016,
         self::TN_2017,
         self::TN_2018,
-        self::TN_2019,
-        self::TN_2020,
         self::TN_2021,
         self::TN_2022
     );
