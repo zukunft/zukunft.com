@@ -2272,7 +2272,7 @@ class formula extends sandbox_typed
             // check if a verb or word with the same name is already in the database
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and !$this->is_term_the_same($trm)) {
-                $result .= $trm->id_used_msg();
+                $result .= $trm->id_used_msg($this);
                 log_debug('->save_id_if_updated name "' . $trm->name() . '" used already as "' . $trm->type() . '"');
             } else {
 
@@ -2416,10 +2416,10 @@ class formula extends sandbox_typed
                             if ($trm->obj()->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
                                 log_debug('adding formula name ' . $this->dsp_id() . ' has just a matching formula word');
                             } else {
-                                $result .= $trm->id_used_msg();
+                                $result .= $trm->id_used_msg($this);
                             }
                         } else {
-                            $result .= $trm->id_used_msg();
+                            $result .= $trm->id_used_msg($this);
                         }
                     } else {
                         $this->set_id($trm->id_obj());
@@ -2477,7 +2477,7 @@ class formula extends sandbox_typed
         }
 
         if ($result != '') {
-            log_err($result);
+            log_info($result);
         }
 
         return $result;

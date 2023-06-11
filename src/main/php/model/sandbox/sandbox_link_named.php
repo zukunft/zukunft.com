@@ -83,7 +83,7 @@ class sandbox_link_named extends sandbox_link
      */
 
     /**
-     * import the name and dscription of a sandbox link object
+     * import the name and description of a sandbox link object
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id

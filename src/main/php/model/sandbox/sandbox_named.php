@@ -659,6 +659,7 @@ class sandbox_named extends sandbox
     }
 
     /**
+     * TODO call this check also if a named sandbox object is renamed
      * check if an object with the unique key already exists
      * returns null if no similar object is found
      * or returns the object with the same unique key that is not the actual object
@@ -678,6 +679,7 @@ class sandbox_named extends sandbox
         // for words and formulas it needs to be checked if a term (word, verb or formula) with the same name already exist
         // for verbs the check is inside the verbs class because verbs are not part of the user sandbox
         if ($this->obj_name == sql_db::TBL_WORD
+            or $this->obj_name == sql_db::TBL_VERB
             or $this->obj_name == sql_db::TBL_TRIPLE
             or $this->obj_name == sql_db::TBL_FORMULA) {
             $similar_trm = $this->get_term();
@@ -685,6 +687,14 @@ class sandbox_named extends sandbox
                 $result = $similar_trm->obj();
                 if (!$this->is_similar_named($result)) {
                     log_err($this->dsp_id() . ' is supposed to be similar to ' . $result->dsp_id() . ', but it seems not');
+                }
+            } else {
+                $similar_trp = new triple($this->user());
+                $similar_trp->load_by_name_generated($this->name());
+                if ($similar_trp->id() > 0) {
+                    $similar_trp->load_objects();
+                    log_debug($this->dsp_id() . ' has the same name is the standard name of the triple "' . $similar_trp->dsp_id() . '"');
+                    $result = $similar_trp;
                 }
             }
         } else {
@@ -695,7 +705,7 @@ class sandbox_named extends sandbox
             $db_chk->name = $this->name();
             // check with the standard namespace
             if ($db_chk->load_standard()) {
-                if ($db_chk->id > 0) {
+                if ($db_chk->id() > 0) {
                     log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
                     $result = $db_chk;
                 }
@@ -718,7 +728,7 @@ class sandbox_named extends sandbox
             } else {
                 // for all other objects still use the deprecated load_obj_vars method
                 if ($db_chk->load_obj_vars()) {
-                    if ($db_chk->id > 0) {
+                    if ($db_chk->id() > 0) {
                         log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
                         $result = $db_chk;
                     }

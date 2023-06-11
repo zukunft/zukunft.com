@@ -110,6 +110,7 @@ class sandbox extends db_object
      */
 
     // fields to define the object; should be set in the constructor of the child object
+    // TODO use object class instead
     public ?string $obj_name = null;       // the object type to create the correct database fields e.g. for the type "word" the database field for the id is "word_id"
     public ?string $obj_type = null;       // either a "named" object or a "link" object
     public bool $rename_can_switch = True; // true if renaming an object can switch to another object with the new name
@@ -602,7 +603,8 @@ class sandbox extends db_object
      */
     function id_used_msg(sandbox $obj_to_add): string
     {
-        return 'a ' . $this->obj_name . ' with the name ' . $obj_to_add->dsp_id() . ' already exists, so no ' . $obj_to_add->obj_name . ' with the same name can be added';
+        return 'A ' . $this->obj_name . ' with the name ' . $obj_to_add->dsp_id() . ' already exists. '
+            . 'Please use another ' . $obj_to_add->obj_name . ' name.';
     }
 
 
@@ -1753,7 +1755,7 @@ class sandbox extends db_object
         */
         if ($this->obj_name == sql_db::TBL_WORD and $obj_to_check->obj_name == sql_db::TBL_WORD) {
             // special case a word should not be combined with a word that is representing a formulas
-            if ($this->name == $obj_to_check->name) {
+            if ($this->name() == $obj_to_check->name()) {
                 if (isset($this->type_id) and isset($obj_to_check->type_id)) {
                     if ($this->type_id == $obj_to_check->type_id) {
                         $result = true;
@@ -1797,12 +1799,16 @@ class sandbox extends db_object
     {
         $result = false;
         if ($obj_to_check != null) {
+            //
             if ($this->obj_name == $obj_to_check->obj_name) {
                 $result = $this->is_same_std($obj_to_check);
             } else {
                 // create a synthetic unique index over words, phrase, verbs and formulas
-                if ($this->obj_name == sql_db::TBL_WORD or $this->obj_name == sql_db::TBL_PHRASE or $this->obj_name == sql_db::TBL_FORMULA or $this->obj_name == sql_db::TBL_VERB) {
-                    if ($this->name == $obj_to_check->name) {
+                if ($this->obj_name == sql_db::TBL_WORD
+                    or $this->obj_name == sql_db::TBL_TRIPLE
+                    or $this->obj_name == sql_db::TBL_FORMULA
+                    or $this->obj_name == sql_db::TBL_VERB) {
+                    if ($this->name() == $obj_to_check->name()) {
                         $result = true;
                     }
                 }
@@ -1883,6 +1889,8 @@ class sandbox extends db_object
      * 7. a word   is supposed to be saved with    id and a changed name -> the word   is supposed to be renamed -> check if the new name is already used -> (7a.) if yes for a word, ask to merge, change the name or cancel the update -> (7b.) if the new name does not exist, ask the user to confirm the changes
      *                                                                                                                                                         -> (7c.) if yes for a verb, ask to        change the name or cancel the update
      * TODO add wizards to handle the update chains
+     * TODO check also that a word does not match any generated triple name
+     * TODO check also that a word does not match any user name (or find a solution for each user namespace)
      *
      */
 
@@ -1910,7 +1918,7 @@ class sandbox extends db_object
             $similar = null;
 
             // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
-            if ($this->id == 0) {
+            if ($this->id() == 0) {
                 log_debug('check possible duplicates before adding ' . $this->dsp_id());
                 $similar = $this->get_similar();
                 if ($similar->id() <> 0) {
@@ -1926,7 +1934,7 @@ class sandbox extends db_object
                         } else {
                             if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                                 or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                                log_err('Unexpected similar prevention class ' . get_class($this));
+                                $result = $similar->id_used_msg($this);
                             }
                         }
                     }

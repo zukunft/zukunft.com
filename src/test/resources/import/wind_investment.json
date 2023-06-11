@@ -114,7 +114,7 @@
       "name": "Power density"
     },
     {
-      "name": "Vestas (Company)"
+      "name": "Vestas"
     },
     {
       "name": "Company"
@@ -227,50 +227,44 @@
       "to": "year"
     },
     {
-      "name": "product",
-      "from": "energy ",
+      "name": "energy (product)",
+      "from": "energy",
       "verb": "is a",
       "to": "product"
     },
     {
-      "name": "production",
+      "name": "production per time",
       "from": "product",
       "verb": "per",
       "to": "time variable"
     },
     {
-      "name": "production",
+      "name": "production per time constant",
       "from": "product",
       "verb": "per",
       "to": "time constant"
     },
     {
-      "name": "lifetime",
+      "name": "lifetime per time",
       "from": "lifetime",
       "verb": "is a",
       "to": "time variable"
     },
     {
-      "name": "time variable",
+      "name": "time variable scaled by time",
       "from": "time variable",
       "verb": "scaled by",
       "to": "time constant"
     },
     {
-      "name": "savings",
+      "name": "savings (production)",
       "from": "savings",
       "verb": "scaled by",
       "to": "production"
     },
     {
-      "name": "savings",
-      "from": "savings ",
-      "verb": "scaled by",
-      "to": "production"
-    },
-    {
-      "name": "second",
-      "from": "second ",
+      "name": "second (time constant)",
+      "from": "second",
       "verb": "is a",
       "to": "time constant"
     }
@@ -483,7 +477,7 @@
     },
     {
       "words": [
-        "Vestas (Company)",
+        "Vestas",
         "Equity ",
         "Price",
         "DKK"
@@ -492,7 +486,7 @@
     },
     {
       "words": [
-        "Vestas (Company)",
+        "Vestas",
         "Outstanding ",
         "Share"
       ],
@@ -506,7 +500,7 @@
     },
     {
       "words": [
-        "Vestas (Company)",
+        "Vestas",
         "Production per year",
         "MW",
         "Power rating"

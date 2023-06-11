@@ -114,7 +114,7 @@ if ($usr->id() > 0) {
         log_debug('word');
         $trm = $frm->get_term();
         if ($trm->id_obj() > 0) {
-            $msg .= $trm->id_used_msg();
+            $msg .= $trm->id_used_msg($this);
         }
         log_debug('checked');
 

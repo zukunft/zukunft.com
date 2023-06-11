@@ -169,6 +169,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'protect_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_TRIPLE, 'protect_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_TRIPLE, 'word_type_id', 'bigint');
+    $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'word_type_id', 'bigint');
     $result .= $db_con->add_column(sql_db::TBL_FORMULA, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_FORMULA, 'protect_id', 'smallint');
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA, 'protect_id', 'smallint');

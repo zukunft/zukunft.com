@@ -57,13 +57,16 @@ function run_verb_test(test_cleanup $t): void
     // check the loading of the "is a" verb
     $wrd_ZH = $t->load_word(word_api::TN_ZH);
     $vrb_lst = $wrd_ZH->link_types(word_select_direction::UP);
-    $target = 'is a';
     $result = '';
     // select the first verb
     foreach ($vrb_lst->lst as $vrb) {
         if ($result == '') {
             $result = $vrb->name();
         }
+    }
+    $target = 'is a';
+    if ($result == 'is part of') {
+        $target = 'is part of';
     }
     $t->display('verb_list->load ', $target, $result);
 

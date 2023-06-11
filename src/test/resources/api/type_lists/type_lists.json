@@ -1304,506 +1304,512 @@
       },
       {
         "id": 81,
+        "code_id": "7word_type_id",
+        "name": "7word_type_id",
+        "comment": ""
+      },
+      {
+        "id": 82,
         "code_id": "7values",
         "name": "7values",
         "comment": ""
       },
       {
-        "id": 82,
+        "id": 83,
         "code_id": "7share_type_id",
         "name": "7share_type_id",
         "comment": ""
       },
       {
-        "id": 83,
+        "id": 84,
         "code_id": "7protect_id",
         "name": "7protect_id",
         "comment": ""
       },
       {
-        "id": 84,
+        "id": 85,
         "code_id": "8name_given",
         "name": "8name_given",
         "comment": ""
       },
       {
-        "id": 85,
+        "id": 86,
         "code_id": "8name_generated",
         "name": "8name_generated",
         "comment": ""
       },
       {
-        "id": 86,
+        "id": 87,
         "code_id": "8description",
         "name": "8description",
         "comment": ""
       },
       {
-        "id": 87,
+        "id": 88,
+        "code_id": "8word_type_id",
+        "name": "8word_type_id",
+        "comment": ""
+      },
+      {
+        "id": 89,
         "code_id": "8values",
         "name": "8values",
         "comment": ""
       },
       {
-        "id": 88,
+        "id": 90,
         "code_id": "8excluded",
         "name": "8excluded",
         "comment": ""
       },
       {
-        "id": 89,
+        "id": 91,
         "code_id": "8share_type_id",
         "name": "8share_type_id",
         "comment": ""
       },
       {
-        "id": 90,
+        "id": 92,
         "code_id": "8protect_id",
         "name": "8protect_id",
         "comment": ""
       },
       {
-        "id": 91,
+        "id": 93,
         "code_id": "2last_update",
         "name": "2last_update",
         "comment": ""
       },
       {
-        "id": 92,
+        "id": 94,
         "code_id": "3source_id",
         "name": "3source_id",
         "comment": ""
       },
       {
-        "id": 93,
+        "id": 95,
         "code_id": "3last_update",
         "name": "3last_update",
         "comment": ""
       },
       {
-        "id": 94,
+        "id": 96,
         "code_id": "3excluded",
         "name": "3excluded",
         "comment": ""
       },
       {
-        "id": 95,
+        "id": 97,
         "code_id": "4user_id",
         "name": "4user_id",
         "comment": ""
       },
       {
-        "id": 96,
+        "id": 98,
         "code_id": "4value_id",
         "name": "4value_id",
         "comment": ""
       },
       {
-        "id": 97,
+        "id": 99,
         "code_id": "4phrase_id",
         "name": "4phrase_id",
         "comment": ""
       },
       {
-        "id": 98,
+        "id": 100,
         "code_id": "4weight",
         "name": "4weight",
         "comment": ""
       },
       {
-        "id": 99,
+        "id": 101,
         "code_id": "4link_type_id",
         "name": "4link_type_id",
         "comment": ""
       },
       {
-        "id": 100,
+        "id": 102,
         "code_id": "4condition_formula_id",
         "name": "4condition_formula_id",
         "comment": ""
       },
       {
-        "id": 101,
+        "id": 103,
         "code_id": "10last_update",
         "name": "10last_update",
         "comment": ""
       },
       {
-        "id": 102,
+        "id": 104,
         "code_id": "10excluded",
         "name": "10excluded",
         "comment": ""
       },
       {
-        "id": 103,
+        "id": 105,
         "code_id": "10share_type_id",
         "name": "10share_type_id",
         "comment": ""
       },
       {
-        "id": 104,
+        "id": 106,
         "code_id": "10protect_id",
         "name": "10protect_id",
         "comment": ""
       },
       {
-        "id": 105,
+        "id": 107,
         "code_id": "11formula_name",
         "name": "11formula_name",
         "comment": ""
       },
       {
-        "id": 106,
+        "id": 108,
         "code_id": "11last_update",
         "name": "11last_update",
         "comment": ""
       },
       {
-        "id": 107,
+        "id": 109,
         "code_id": "11excluded",
         "name": "11excluded",
         "comment": ""
       },
       {
-        "id": 108,
+        "id": 110,
         "code_id": "11share_type_id",
         "name": "11share_type_id",
         "comment": ""
       },
       {
-        "id": 109,
+        "id": 111,
         "code_id": "11protect_id",
         "name": "11protect_id",
         "comment": ""
       },
       {
-        "id": 110,
+        "id": 112,
         "code_id": "12link_type_id",
         "name": "12link_type_id",
         "comment": ""
       },
       {
-        "id": 111,
+        "id": 113,
         "code_id": "12share_type_id",
         "name": "12share_type_id",
         "comment": ""
       },
       {
-        "id": 112,
+        "id": 114,
         "code_id": "12protect_id",
         "name": "12protect_id",
         "comment": ""
       },
       {
-        "id": 113,
+        "id": 115,
         "code_id": "13link_type_id",
         "name": "13link_type_id",
         "comment": ""
       },
       {
-        "id": 114,
+        "id": 116,
         "code_id": "13excluded",
         "name": "13excluded",
         "comment": ""
       },
       {
-        "id": 115,
+        "id": 117,
         "code_id": "13share_type_id",
         "name": "13share_type_id",
         "comment": ""
       },
       {
-        "id": 116,
+        "id": 118,
         "code_id": "13protect_id",
         "name": "13protect_id",
         "comment": ""
       },
       {
-        "id": 117,
+        "id": 119,
         "code_id": "14excluded",
         "name": "14excluded",
         "comment": ""
       },
       {
-        "id": 118,
+        "id": 120,
         "code_id": "14share_type_id",
         "name": "14share_type_id",
         "comment": ""
       },
       {
-        "id": 119,
+        "id": 121,
         "code_id": "14protect_id",
         "name": "14protect_id",
         "comment": ""
       },
       {
-        "id": 120,
+        "id": 122,
         "code_id": "15excluded",
         "name": "15excluded",
         "comment": ""
       },
       {
-        "id": 121,
+        "id": 123,
         "code_id": "15share_type_id",
         "name": "15share_type_id",
         "comment": ""
       },
       {
-        "id": 122,
+        "id": 124,
         "code_id": "15protect_id",
         "name": "15protect_id",
         "comment": ""
       },
       {
-        "id": 123,
+        "id": 125,
         "code_id": "16position_type",
         "name": "16position_type",
         "comment": ""
       },
       {
-        "id": 124,
+        "id": 126,
         "code_id": "16share_type_id",
         "name": "16share_type_id",
         "comment": ""
       },
       {
-        "id": 125,
+        "id": 127,
         "code_id": "16protect_id",
         "name": "16protect_id",
         "comment": ""
       },
       {
-        "id": 126,
+        "id": 128,
         "code_id": "17position_type",
         "name": "17position_type",
         "comment": ""
       },
       {
-        "id": 127,
+        "id": 129,
         "code_id": "17excluded",
         "name": "17excluded",
         "comment": ""
       },
       {
-        "id": 128,
+        "id": 130,
         "code_id": "17share_type_id",
         "name": "17share_type_id",
         "comment": ""
       },
       {
-        "id": 129,
+        "id": 131,
         "code_id": "17protect_id",
         "name": "17protect_id",
         "comment": ""
       },
       {
-        "id": 130,
+        "id": 132,
         "code_id": "18word_id_row",
         "name": "18word_id_row",
         "comment": ""
       },
       {
-        "id": 131,
+        "id": 133,
         "code_id": "18link_type_id",
         "name": "18link_type_id",
         "comment": ""
       },
       {
-        "id": 132,
+        "id": 134,
         "code_id": "18formula_id",
         "name": "18formula_id",
         "comment": ""
       },
       {
-        "id": 133,
+        "id": 135,
         "code_id": "18word_id_col",
         "name": "18word_id_col",
         "comment": ""
       },
       {
-        "id": 134,
+        "id": 136,
         "code_id": "18word_id_col2",
         "name": "18word_id_col2",
         "comment": ""
       },
       {
-        "id": 135,
+        "id": 137,
         "code_id": "18excluded",
         "name": "18excluded",
         "comment": ""
       },
       {
-        "id": 136,
+        "id": 138,
         "code_id": "18share_type_id",
         "name": "18share_type_id",
         "comment": ""
       },
       {
-        "id": 137,
+        "id": 139,
         "code_id": "18protect_id",
         "name": "18protect_id",
         "comment": ""
       },
       {
-        "id": 138,
+        "id": 140,
         "code_id": "19component_name",
         "name": "19component_name",
         "comment": ""
       },
       {
-        "id": 139,
+        "id": 141,
         "code_id": "19word_id_row",
         "name": "19word_id_row",
         "comment": ""
       },
       {
-        "id": 140,
+        "id": 142,
         "code_id": "19link_type_id",
         "name": "19link_type_id",
         "comment": ""
       },
       {
-        "id": 141,
+        "id": 143,
         "code_id": "19formula_id",
         "name": "19formula_id",
         "comment": ""
       },
       {
-        "id": 142,
+        "id": 144,
         "code_id": "19word_id_col",
         "name": "19word_id_col",
         "comment": ""
       },
       {
-        "id": 143,
+        "id": 145,
         "code_id": "19word_id_col2",
         "name": "19word_id_col2",
         "comment": ""
       },
       {
-        "id": 144,
+        "id": 146,
         "code_id": "19excluded",
         "name": "19excluded",
         "comment": ""
       },
       {
-        "id": 145,
+        "id": 147,
         "code_id": "19share_type_id",
         "name": "19share_type_id",
         "comment": ""
       },
       {
-        "id": 146,
+        "id": 148,
         "code_id": "19protect_id",
         "name": "19protect_id",
         "comment": ""
       },
       {
-        "id": 147,
+        "id": 149,
         "code_id": "22phrase_id",
         "name": "22phrase_id",
         "comment": ""
       },
       {
-        "id": 148,
+        "id": 150,
         "code_id": "22external_key",
         "name": "22external_key",
         "comment": ""
       },
       {
-        "id": 149,
+        "id": 151,
         "code_id": "22ref_type_id",
         "name": "22ref_type_id",
         "comment": ""
       },
       {
-        "id": 150,
+        "id": 152,
         "code_id": "22url",
         "name": "22url",
         "comment": ""
       },
       {
-        "id": 151,
+        "id": 153,
         "code_id": "22description",
         "name": "22description",
         "comment": ""
       },
       {
-        "id": 152,
+        "id": 154,
         "code_id": "22excluded",
         "name": "22excluded",
         "comment": ""
       },
       {
-        "id": 153,
+        "id": 155,
         "code_id": "23phrase_id",
         "name": "23phrase_id",
         "comment": ""
       },
       {
-        "id": 154,
+        "id": 156,
         "code_id": "23external_key",
         "name": "23external_key",
         "comment": ""
       },
       {
-        "id": 155,
+        "id": 157,
         "code_id": "23ref_type_id",
         "name": "23ref_type_id",
         "comment": ""
       },
       {
-        "id": 156,
+        "id": 158,
         "code_id": "23url",
         "name": "23url",
         "comment": ""
       },
       {
-        "id": 157,
+        "id": 159,
         "code_id": "23description",
         "name": "23description",
         "comment": ""
       },
       {
-        "id": 158,
+        "id": 160,
         "code_id": "23excluded",
         "name": "23excluded",
         "comment": ""
       },
       {
-        "id": 159,
+        "id": 161,
         "code_id": "20excluded",
         "name": "20excluded",
         "comment": ""
       },
       {
-        "id": 160,
+        "id": 162,
         "code_id": "21source_name",
         "name": "21source_name",
         "comment": ""
       },
       {
-        "id": 161,
+        "id": 163,
         "code_id": "21source_type_id",
         "name": "21source_type_id",
         "comment": ""
       },
       {
-        "id": 162,
+        "id": 164,
         "code_id": "21excluded",
         "name": "21excluded",
         "comment": ""
       },
       {
-        "id": 163,
+        "id": 165,
         "code_id": "22source_id",
         "name": "22source_id",
-        "comment": ""
-      },
-      {
-        "id": 164,
-        "code_id": "7word_type_id",
-        "name": "7word_type_id",
         "comment": ""
       }
     ],

@@ -51,6 +51,17 @@ class verb_api extends sandbox_named_api
     const TC_READ = "not_set";
     const TN_IS_A = "is a";
     const TC_IS_A = "is";
+    const TN_ADD = "System Test Verb";
+
+    // word groups for creating the test words and remove them after the test
+    const RESERVED_WORDS = array(
+        self::TN_READ,
+        self::TN_IS_A,
+        self::TN_ADD,
+    );
+    const TEST_WORDS = array(
+        self::TN_ADD
+    );
 
 
     /*

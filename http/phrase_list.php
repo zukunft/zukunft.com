@@ -119,7 +119,7 @@ if ($usr->id() > 0) {
                   zu_debug('word_add -> changed type to ('.$wrd->type_id.')');
                 } else {
                 */
-                $msg .= $trm->id_used_msg();
+                $msg .= $trm->id_used_msg($this);
                 log_debug();
                 //}
             }

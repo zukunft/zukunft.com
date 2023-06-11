@@ -30,12 +30,17 @@
 
 */
 
+use api\formula_api;
+use api\triple_api;
 use api\word_api;
 use cfg\phrase_type;
 use model\change_log_field;
 use model\change_log_named;
 use model\change_log_table;
+use model\formula;
+use model\library;
 use model\sandbox_named;
+use model\triple;
 use model\user;
 use model\verb;
 use model\word;
@@ -80,6 +85,7 @@ function create_test_words(test_cleanup $t): void
 function run_word_tests(test_cleanup $t): void
 {
     global $phrase_types;
+    $lib = new library();
 
     $t->header('Test the word class (classes/word.php)');
 
@@ -92,51 +98,43 @@ function run_word_tests(test_cleanup $t): void
     $wrd_by_id->load_by_id($wrd_by_name->id());
     $target = word_api::TN_READ;
     $result = $wrd_by_id->name();
-    $t->display('word->load of ' . $wrd_read->id() . ' by id ' . $wrd_by_name->id(), $target, $result);
+    $t->assert('word->load of ' . $wrd_read->id() . ' by id ' . $wrd_by_name->id(), $result, $target);
 
     // word type
     $wrd_time = $t->test_word(word_api::TN_2021, phrase_type::TIME);
-    $target = True;
     $result = $wrd_time->is_type(phrase_type::TIME);
-    $t->display('word->is_type for ' . word_api::TN_2021 . ' and "' . phrase_type::TIME . '"', $target, $result);
+    $t->assert('word->is_type for ' . word_api::TN_2021 . ' and "' . phrase_type::TIME . '"', $result, true);
 
     // is time
-    $target = True;
     $result = $wrd_time->is_time();
-    $t->display('word->is_time for ' . word_api::TN_2021, $target, $result);
+    $t->assert('word->is_time for ' . word_api::TN_2021, $result, true);
 
     // is not measure
-    $target = False;
     $result = $wrd_time->is_measure();
-    $t->display('word->is_measure for ' . word_api::TN_2021, $target, $result);
+    $t->assert('word->is_measure for ' . word_api::TN_2021, $result, false);
 
     // is measure
     $wrd_measure = $t->test_word(word_api::TN_CHF, phrase_type::MEASURE);
-    $target = True;
     $result = $wrd_measure->is_measure();
-    $t->display('word->is_measure for ' . word_api::TN_CHF, $target, $result);
+    $t->assert('word->is_measure for ' . word_api::TN_CHF, $result, true);
 
     // is not scaling
-    $target = False;
     $result = $wrd_measure->is_scaling();
-    $t->display('word->is_scaling for ' . word_api::TN_CHF, $target, $result);
+    $t->assert('word->is_scaling for ' . word_api::TN_CHF, $result, false);
 
     // is scaling
     $wrd_scaling = $t->test_word(word_api::TN_MIO, phrase_type::SCALING);
-    $target = True;
     $result = $wrd_scaling->is_scaling();
-    $t->display('word->is_scaling for ' . word_api::TN_MIO, $target, $result);
+    $t->assert('word->is_scaling for ' . word_api::TN_MIO, $result, true);
 
     // is not percent
-    $target = False;
     $result = $wrd_scaling->is_percent();
-    $t->display('word->is_percent for ' . word_api::TN_MIO, $target, $result);
+    $t->assert('word->is_percent for ' . word_api::TN_MIO, $result, false);
 
     // is percent
     $wrd_pct = $t->test_word(word_api::TN_PCT, phrase_type::PERCENT);
-    $target = True;
     $result = $wrd_pct->is_percent();
-    $t->display('word->is_percent for ' . word_api::TN_PCT, $target, $result);
+    $t->assert('word->is_percent for ' . word_api::TN_PCT, $result, true);
 
     // next word
     $wrd_time_next = $t->test_word(word_api::TN_2022, phrase_type::TIME);
@@ -144,12 +142,12 @@ function run_word_tests(test_cleanup $t): void
     $target = $wrd_time_next->name();
     $wrd_next = $wrd_time->next();
     $result = $wrd_next->name();
-    $t->display('word->next for ' . word_api::TN_2021, $target, $result);
+    $t->assert('word->next for ' . word_api::TN_2021, $result, $target);
 
     $target = $wrd_time->name();
     $wrd_prior = $wrd_time_next->prior();
     $result = $wrd_prior->name();
-    $t->display('word->prior for ' . word_api::TN_2022, $target, $result);
+    $t->assert('word->prior for ' . word_api::TN_2022, $result, $target);
 
     // create a parent test word
     $wrd_parent = $t->test_word(word_api::TN_PARENT);
@@ -164,7 +162,8 @@ function run_word_tests(test_cleanup $t): void
     } else {
         $result = '';
     }
-    $t->display('word->children for "' . word_api::TN_PARENT . '"', $target, $result, TIMEOUT_LIMIT_DB, 'out of ' . $phr_lst->dsp_id());
+    $t->assert('word->children for "' . word_api::TN_PARENT . '"', $result, $target,
+        TIMEOUT_LIMIT_DB, 'out of ' . $phr_lst->dsp_id());
 
     // ... word children excluding the start word, so the list of children should not include the parent
     // e.g. the list of Cantons does not include the word Canton itself
@@ -174,7 +173,8 @@ function run_word_tests(test_cleanup $t): void
     } else {
         $result = '';
     }
-    $t->display('word->children for "' . word_api::TN_PARENT . '" excluding the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+    $t->assert('word->children for "' . word_api::TN_PARENT . '" excluding the start word', $result, $target,
+        TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
     // word are, which includes all words related to the parent
     // e.g. which is for parent Canton the phrase "Zurich (Canton)", but not, as tested later, the phrase "Zurich (City)"
@@ -313,8 +313,27 @@ function run_word_tests(test_cleanup $t): void
     $vrb->set_user($t->usr1);
     $vrb->set_name(word_api::TN_ADD);
     $result = $vrb->save();
-    $target = '<font class="text-danger">A word with the name "System Test Word" already exists. Please use another name.</font>';
-    $t->assert('verb cannot have a word name', $result, $target);
+    $target = '<font class="text-danger">A word with the name "System Test Word" already exists. '
+        . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.</font>';
+    $t->assert('verb cannot have an already used word name', $result, $target);
+
+    // ... triple
+    $trp = new triple($t->usr1);
+    $trp->load_by_name(triple_api::TN_READ_NAME);
+    $trp->set_name(word_api::TN_ADD);
+    $result = $trp->save();
+    $target = '<font class="text-danger">A word with the name "System Test Word" already exists. '
+        . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.</font>';
+    $t->assert('triple cannot by renamed to an already used word name', $result, $target);
+
+    // ... or formula anymore
+    $frm = new formula($t->usr1);
+    $frm->load_by_name(formula_api::TN_READ);
+    $frm->set_name(word_api::TN_ADD);
+    $result = $frm->save();
+    $target = '<font class="text-danger">A word with the name "System Test Word" already exists. '
+        . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.</font>';
+    $t->assert('formula cannot by renamed to an already used word name', $result, $target);
 
 
     $t->subheader('... and also testing the user log class (classes/user_log.php)');

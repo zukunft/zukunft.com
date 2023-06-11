@@ -584,11 +584,6 @@
       ]
     },
     {
-      "name": "m/s",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
       "name": "acceleration",
       "type": "measure",
       "protection": "admin_protection",
@@ -1125,6 +1120,14 @@
       "from": "l",
       "verb": "is alias of",
       "to": "litre"
+    },
+    {
+      "name": "m/s",
+      "from": "meter",
+      "verb": "per",
+      "to": "second",
+      "type": "measure",
+      "protection": "admin_protection"
     },
     {
       "name": "1967 (Year)",

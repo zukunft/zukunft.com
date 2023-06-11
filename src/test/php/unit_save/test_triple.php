@@ -41,8 +41,11 @@ use api\triple_api;
 use api\word_api;
 use model\change_log_link;
 use model\change_log_table;
+use model\formula;
+use model\library;
 use model\triple;
 use model\verb;
+use model\word;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
@@ -52,6 +55,7 @@ function run_triple_test(test_cleanup $t): void
 {
 
     global $verbs;
+    $lib = new library();
 
     $t->header('Test the word link class (classes/triple.php)');
 
@@ -217,6 +221,32 @@ function run_triple_test(test_cleanup $t): void
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT;
     $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS_A . ' "' . $wrd->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
+
+    // check that even after renaming the triple no word with the standard name of the triple can be added
+    $wrd = new word($t->usr1);
+    $wrd->set_name(triple_api::TN_ADD_AUTO);
+    $result = $wrd->save();
+    $target = 'A triple with the name "System Test Triple" for user 2 (zukunft.com system test) already exists. ' .
+        'Please use another word name.';
+    $t->assert('word cannot have a standard triple name', $result, $target);
+
+    // ... and no verb either
+    $vrb = new verb();
+    $vrb->set_user($t->usr1);
+    $vrb->set_name(triple_api::TN_ADD_AUTO);
+    $result = $vrb->save();
+    $target = '<font class="text-danger">A triple with the name "System Test Triple" already exists. '
+        . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.</font>';
+    $t->assert('verb cannot have a standard triple name', $result, $target);
+
+    // ... and no formula either
+    $frm = new formula($t->usr1);
+    $frm->set_name(triple_api::TN_ADD_AUTO);
+    $result = $frm->save();
+    $target = '<font class="text-danger">A triple with the name "System Test Triple" already exists. '
+        . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.</font>';
+    $t->assert('word cannot have a standard triple name', $result, $target);
+
 
 
     // ... and the values have been updated

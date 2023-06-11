@@ -1045,6 +1045,7 @@ CREATE TABLE IF NOT EXISTS `user_triples`
     `name_given`     varchar(200) DEFAULT NULL COMMENT 'the unique name manually set by the user, which can be empty',
     `name_generated` varchar(200) DEFAULT NULL COMMENT 'the generic unique name based on the phrases and verb, which can be overwritten by the given name',
     `description`    text,
+    `word_type_id`   int(11)      DEFAULT NULL,
     `values`         int(11)      DEFAULT NULL,
     `excluded`       tinyint(4)   DEFAULT NULL,
     `share_type_id`  smallint     DEFAULT NULL,

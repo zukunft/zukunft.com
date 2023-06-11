@@ -1051,6 +1051,7 @@ CREATE TABLE IF NOT EXISTS user_triples
     name_given     varchar(200)      DEFAULT NULL,
     name_generated varchar(200)      DEFAULT NULL,
     description    text,
+    word_type_id   bigint            DEFAULT NULL,
     values         bigint            DEFAULT NULL,
     excluded       smallint          DEFAULT NULL,
     share_type_id  smallint          DEFAULT NULL,

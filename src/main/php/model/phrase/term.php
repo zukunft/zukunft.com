@@ -905,15 +905,17 @@ class term extends combine_named
     /**
      * create a message text that the name is already used
      */
-    function id_used_msg(): string
+    function id_used_msg(db_object $obj_to_add): string
     {
         $lib = new library();
         $html = new html_base();
         $result = "";
 
-        if ($this->id() > 0) {
+        if ($this->id() != 0) {
             $class = $lib->class_to_name($this->type());
-            $result = $html->dsp_err('A ' . $class . ' with the name "' . $this->name() . '" already exists. Please use another name.');
+            $result = $html->dsp_err(
+                'A ' . $class . ' with the name "' . $this->name() . '" already exists. '
+                . 'Please use another ' . $lib->class_to_name($obj_to_add::class) . ' name.');
         }
 
         return $result;

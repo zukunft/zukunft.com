@@ -710,8 +710,7 @@ class verb extends db_object
     private function get_term(): term
     {
         $trm = new term($this->usr);
-        $trm->set_name($this->name, self::class);
-        $trm->load_by_obj_name($this->name, false);
+        $trm->load_by_name($this->name);
         return $trm;
     }
 
@@ -1095,6 +1094,27 @@ class verb extends db_object
     }
 
     /**
+     * check if this object uses any preserved names and if return a message to the user
+     *
+     * @return string
+     */
+    protected function check_preserved(): string
+    {
+        global $usr;
+
+        $result = '';
+        if (!$usr->is_system()) {
+            if (in_array($this->name, verb_api::RESERVED_WORDS)) {
+                // the admin user needs to add the read test word during initial load
+                if (!$usr->is_admin()) {
+                    $result = '"' . $this->name() . '" is a reserved name for system testing. Please use another name';
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * TODO return a user message object, so that messages to the user like "use another name" does not case a error log entry
      * add or update a verb in the database (or create a user verb if the program settings allow this)
      *
@@ -1106,6 +1126,9 @@ class verb extends db_object
         global $db_con;
         $result = '';
 
+        // check the preserved names
+        $result = $this->check_preserved();
+
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id());
         $db_con->set_type(sql_db::TBL_VERB);
@@ -1115,7 +1138,7 @@ class verb extends db_object
             // check if a word, triple or formula with the same name is already in the database
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
-                $result .= $trm->id_used_msg();
+                $result .= $trm->id_used_msg($this);
             } else {
                 $this->id = $trm->id_obj();
                 log_debug('verb->save adding verb name ' . $this->dsp_id() . ' is OK');
@@ -1140,7 +1163,7 @@ class verb extends db_object
                     // check if a verb, formula or verb with the same name is already in the database
                     $trm = $this->get_term();
                     if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
-                        $result .= $trm->id_used_msg();
+                        $result .= $trm->id_used_msg($this);
                     } else {
                         if ($this->can_change()) {
                             $result .= $this->save_field_name($db_con, $db_rec);

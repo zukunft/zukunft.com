@@ -33,7 +33,7 @@
       "name": "Nestlé"
     },
     {
-      "name": "Vestas (Company)"
+      "name": "Vestas"
     },
     {
       "name": "Zurich"
@@ -211,7 +211,7 @@
       "to": "Company"
     },
     {
-      "name": "Vestas (Company)",
+      "name": "Vestas SA",
       "from": "Vestas",
       "verb": "is a",
       "to": "Company"

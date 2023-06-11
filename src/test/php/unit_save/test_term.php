@@ -30,17 +30,22 @@
 
 */
 
-use api\formula_api;
-use api\triple_api;
-use api\word_api;
-use model\term;
+use model\library;
+use model\word;
+use model\triple;
 use model\verb;
+use model\formula;
+use model\term;
+use api\word_api;
+use api\triple_api;
+use api\formula_api;
 use test\test_cleanup;
 
 function run_term_test(test_cleanup $t): void
 {
 
     global $usr;
+    $lib = new library();
 
     $t->header('est the term class (classes/term.php)');
 
@@ -50,30 +55,34 @@ function run_term_test(test_cleanup $t): void
     // check that adding the predefined word "Company" creates an error message
     $term = new term($usr);
     $term->load_by_obj_name(word_api::TN_ZH);
-    $target = 'A word with the name "' . word_api::TN_ZH . '" already exists. Please use another name.';
-    $result = $term->id_used_msg();
+    $target = 'A word with the name "' . word_api::TN_ZH . '" already exists. '
+        . 'Please use another ' . $lib->class_to_name(word::class) . ' name.';
+    $result = $term->id_used_msg($wrd_zh);
     $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
     // ... check also for a triple
     $term = new term($usr);
     $term->load_by_obj_name(triple_api::TN_ZH_CITY);
-    $target = 'A triple with the name "' . triple_api::TN_ZH_CITY . '" already exists. Please use another name.';
-    $result = $term->id_used_msg();
+    $target = '<font class="text-danger">A triple with the name "' . triple_api::TN_ZH_CITY . '" already exists. '
+        . 'Please use another ' . $lib->class_to_name(word::class) . ' name.</font>';
+    $result = $term->id_used_msg($wrd_zh);
     $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
     // ... check also for a verb
     $term = new term($usr);
     $term->load_by_obj_name(verb::IS_A);
-    $target = 'A verb with the name "is a" already exists. Please use another name.';
-    $result = $term->id_used_msg();
+    $target = '<font class="text-danger">A word with the name "" already exists. '
+        . 'Please use another ' . $lib->class_to_name(word::class) . ' name.</font>';
+    $result = $term->id_used_msg($wrd_zh);
     $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
     // ... check also for a formula
     $term = new term($usr);
     $term->load_by_obj_name(formula_api::TN_ADD);
     // each formula name has also a word
-    $target = 'A formula with the name "' . formula_api::TN_ADD . '" already exists. Please use another name.';
-    $result = $term->id_used_msg();
+    $target = 'A formula with the name "' . formula_api::TN_ADD . '" already exists. '
+        . 'Please use another ' . $lib->class_to_name(word::class) . ' name.';
+    $result = $term->id_used_msg($wrd_zh);
     $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
 }

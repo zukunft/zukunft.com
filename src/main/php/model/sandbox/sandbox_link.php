@@ -389,6 +389,19 @@ class sandbox_link extends sandbox
                 $this->tob->id == $obj_to_check->tob->id) {
                 $result = true;
             }
+        } elseif ($obj_to_check::class == triple::class) {
+            if (isset($this->from)
+                and isset($this->verb)
+                and isset($this->to)
+                and isset($obj_to_check->from)
+                and isset($obj_to_check->verb)
+                and isset($obj_to_check->to)) {
+                if ($this->from->id() == $obj_to_check->from->id()
+                    and $this->verb->id() == $obj_to_check->verb->id()
+                    and $this->to->id() == $obj_to_check->to->id()) {
+                    $result = true;
+                }
+            }
         }
         return $result;
     }
