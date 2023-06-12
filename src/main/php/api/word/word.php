@@ -207,7 +207,7 @@ class word_api extends sandbox_typed_api
     );
     const TEST_WORDS_MEASURE = array(self::TN_CHF);
     const TEST_WORDS_SCALING_HIDDEN = array(self::TN_ONE);
-    const TEST_WORDS_SCALING = array(self::TN_IN_K, self::TN_MIO, self::TN_BIL);
+    const TEST_WORDS_SCALING = array(self::TN_IN_K, self::TN_MIO, self::TN_MIO_SHORT, self::TN_BIL);
     const TEST_WORDS_PERCENT = array(self::TN_PCT);
     // the time words must be in correct order because the following is set during creation
     const TEST_WORDS_TIME_YEAR = array(

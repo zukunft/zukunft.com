@@ -68,8 +68,8 @@ function err_dsp($err_id, $user_id): string
     $result .= '<br>';
     $result .= 'Program trace:<br>';
     $result .= '' . $db_err['sys_log_trace'] . ' ';
-    //echo "<font color=green>OK</font>" .$test_text;
-    //echo "<font color=red>Error</font>".$test_text;
+    //echo "<style color=green>OK</style>" .$test_text;
+    //echo "<style color=red>Error</style>".$test_text;
 
     return $result;
 }

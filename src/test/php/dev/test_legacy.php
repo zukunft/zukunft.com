@@ -176,9 +176,9 @@ function run_legacy_test(test_cleanup $t): void
     function test_show_db_id($test_text, $result)
     {
         if ($result > 0) {
-            echo "<font color=green>OK</font> " . $test_text . " has id \"" . $result . "\"<br>";
+            echo "<style color=green>OK</style> " . $test_text . " has id \"" . $result . "\"<br>";
         } else {
-            echo "<font color=red>Error</font> " . $test_text . " is missing<br>";
+            echo "<style color=red>Error</style> " . $test_text . " is missing<br>";
         }
     }
 

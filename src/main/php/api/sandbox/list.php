@@ -86,11 +86,11 @@ class list_api implements JsonSerializable
     /**
      * @returns array with the names on the db keys
      */
-    function lst_key(): array
+    function db_id_list(): array
     {
         $result = array();
-        foreach ($this->lst as $val) {
-            $result[$val->id()] = $val->name();
+        foreach ($this->lst as $obj) {
+            $result[$obj->id()] = $obj->name();
         }
         return $result;
     }

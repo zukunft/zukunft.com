@@ -135,6 +135,30 @@ use model\user;
 use test\string_unit_tests;
 use test\term_list_unit_db_tests;
 use test\test_unit_read_db;
+use test\verb_test;
+use test\write\batch_job_test;
+use test\write\component_link_test;
+use test\write\component_test;
+use test\write\expression_test;
+use test\write\formula_element_group_test;
+use test\write\formula_element_test;
+use test\write\formula_link_test;
+use test\write\formula_test;
+use test\write\formula_trigger_test;
+use test\write\graph_test;
+use test\write\phrase_group_list_test;
+use test\write\phrase_group_test;
+use test\write\phrase_list_test;
+use test\write\phrase_test;
+use test\write\ref_test;
+use test\write\result_test;
+use test\write\source_test;
+use test\write\term_test;
+use test\write\triple_test;
+use test\write\value_test;
+use test\write\view_test;
+use test\write\word_list_test;
+use test\write\word_test;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
@@ -224,47 +248,52 @@ if ($start_usr->id() > 0) {
             run_db_link_test($t);
             run_sandbox_test($t);
             (new string_unit_tests)->run($t); // test functions not yet split into single unit tests
+            (new word_test)->run($t);
+            (new word_list_test)->run($t);
+            (new verb_test)->run($t);
+            (new triple_test)->run($t);
+            (new phrase_test)->run($t);
+            (new phrase_list_test)->run($t);
+            (new phrase_group_test)->run($t);
+            (new phrase_group_list_test)->run($t);
+            (new graph_test)->run($t);
+            (new term_test)->run($t);
+            (new term_list_unit_db_tests)->run($t);
+            (new value_test)->run($t);
+            (new source_test)->run($t);
+            (new ref_test)->run($t);
+            (new expression_test)->run($t);
+            (new formula_test)->run($t);
+            (new formula_test)->run_list($t);
+            (new formula_link_test)->run($t);
+            (new formula_link_test)->run_list($t);
+            (new formula_trigger_test)->run($t);
+            (new result_test)->run($t);
+            (new result_test)->run_list($t);
+            (new formula_element_test)->run($t);
+            (new formula_element_test)->run_list($t);
+            (new formula_element_group_test)->run($t);
+            (new batch_job_test)->run($t);
+            (new batch_job_test)->run_list($t);
+            (new view_test)->run($t);
+            (new component_test)->run($t);
+            (new component_link_test)->run($t);
+            run_display_test($t);
+            run_export_test($t);
+            //run_permission_test ($t);
+
+            // TODO add a test the checks if import returns the expected error messages e.g. if a triple has the name of a word
+
+            run_legacy_test($t);
             run_math_test($t);
-            run_word_tests($t);
+            //run_value_ui_test($t);
+            //run_formula_ui_test($t);
+
             // TODO activate
             //$t->run_api_test();
             //run_word_ui_test($t);
             // TODO add a test to merge a separate opened phrase Kanton Zürich with Zurich (Canton)
             run_word_display_test($t);
-            run_word_list_test($t);
-            run_triple_test($t);
-            run_ref_test($t);
-            test\run_phrase_test($t);
-            run_phrase_group_test($t);
-            run_phrase_group_list_test($t);
-            run_graph_test($t);
-            run_verb_test($t);
-            run_term_test($t);
-            (new term_list_unit_db_tests)->run($t);
-            run_value_test($t);
-            //run_value_ui_test($t);
-            run_source_test($t);
-            run_expression_test($t);
-            run_formula_test($t);
-            run_formula_list_test($t);
-            //run_formula_ui_test($t);
-            run_formula_link_test($t);
-            run_formula_link_list_test($t);
-            run_formula_trigger_test($t);
-            run_result_test($t);
-            run_result_list_test($t);
-            run_formula_element_test($t);
-            run_formula_element_list_test($t);
-            run_formula_element_group_test($t);
-            run_batch_job_test($t);
-            run_batch_job_list_test($t);
-            run_view_test($t);
-            run_component_test($t);
-            run_component_link_test($t);
-            run_display_test($t);
-            run_export_test($t);
-            //run_permission_test ($t);
-            run_legacy_test($t);
 
             import_base_config($usr);
 

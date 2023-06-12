@@ -545,7 +545,7 @@ class change_log extends db_object
      * mainly used for testing
      * TODO if changes on table values are requested include also the table "user_values"
      */
-    function dsp_last(bool $ex_time): string
+    function dsp_last(bool $ex_time = false): string
     {
         return 'Error: either the named or link user log function should be used';
     }

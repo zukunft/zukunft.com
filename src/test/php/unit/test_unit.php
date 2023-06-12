@@ -201,12 +201,15 @@ class test_unit extends test_cleanup
         $this->init_log_tables();
         $this->init_log_fields();
 
-        // do the unit tests
+        // do the general unit tests
         (new string_unit_tests)->run($this); // test functions not yet split into single unit tests
+        (new math_tests)->run($this);
         (new system_unit_tests)->run($this);
         (new test_api)->run_openapi_test($this);
         (new user_unit_tests)->run($this);
         (new sandbox_unit_tests)->run($this);
+
+        // do the user object unit tests
         (new word_unit_tests)->run($this);
         (new word_list_unit_tests)->run($this);
         (new verb_unit_tests)->run($this);

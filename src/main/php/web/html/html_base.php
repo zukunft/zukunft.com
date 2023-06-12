@@ -780,9 +780,9 @@ class html_base
     {
         $result = '';
         if (UI_USE_BOOTSTRAP) {
-            $result .= '<font class="text-danger">' . $err_text . '</font>';
+            $result .= '<style class="text-danger">' . $err_text . '</style>';
         } else {
-            $result .= '<font color="red">' . $err_text . '</font>';
+            $result .= '<style color="red">' . $err_text . '</style>';
         }
         return $result;
     }

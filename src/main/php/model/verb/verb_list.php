@@ -323,11 +323,24 @@ class verb_list extends type_list
     }
 
     /*
-      extract functions
-      -----------------
-    */
+     * extract
+     */
 
-    // return the list of the verb ids
+    /**
+     * @returns array with the names on the db keys
+     */
+    function db_id_list(): array
+    {
+        $result = array();
+        foreach ($this->lst as $obj) {
+            $result[$obj->id()] = $obj->name();
+        }
+        return $result;
+    }
+
+    /**
+     * @return array the list of the verb ids
+     */
     function ids(): array
     {
         $result = array();

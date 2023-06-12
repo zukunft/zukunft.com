@@ -188,12 +188,16 @@ class change_log_named extends change_log
      * create an SQL statement to retrieve a change long entry by the changing user
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param user $usr the id of the user sandbox object
+     * @param user|null $usr the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_user(sql_db $db_con, user $usr): sql_par
+    function load_sql_by_user(sql_db $db_con, ?user $usr = null): sql_par
     {
         $qp = $this->load_sql($db_con, 'user_last');
+
+        if ($usr == null) {
+            $usr = $this->user();
+        }
 
         $db_con->add_par_int($usr->id);
         $qp->sql = $db_con->select_by_field(user::FLD_ID);
@@ -205,22 +209,25 @@ class change_log_named extends change_log
      * create the SQL statement to retrieve the parameters of the change log by field and row id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param int $field_id the database id of the database field (and table) of the changes that the user wants to see
-     * @param int $row_id the database id of the database row of the changes that the user wants to see
+     * @param int|null $field_id the database id of the database field (and table) of the changes that the user wants to see
+     * @param int|null $row_id the database id of the database row of the changes that the user wants to see
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_field_row(sql_db $db_con, int $field_id, int $row_id): sql_par
+    function load_sql_by_field_row(sql_db $db_con, ?int $field_id = null, ?int $row_id = null): sql_par
     {
         $qp = $this->load_sql($db_con, 'field_row');
         $db_con->set_page();
-        $db_con->add_par(sql_db::PAR_INT, $field_id);
+        $fields = [];
+        if ($field_id != null) {
+            $db_con->add_par(sql_db::PAR_INT, $field_id);
+            $fields[] = change_log_named::FLD_FIELD_ID;
+        }
+        if ($field_id != null) {
         $db_con->add_par(sql_db::PAR_INT, $row_id);
-        $qp->sql = $db_con->select_by_field_list(
-            array(
-                change_log_named::FLD_FIELD_ID,
-                change_log_named::FLD_ROW_ID,
-                sandbox::FLD_USER
-            ));
+            $fields[] = change_log_named::FLD_ROW_ID;
+        }
+        $fields[] = sandbox::FLD_USER;
+        $qp->sql = $db_con->select_by_field_list($fields);
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -324,25 +331,57 @@ class change_log_named extends change_log
     }
 
     /**
+     * @return string the last change of given user
+     *                optional without time for automatic testing
+     */
+    function dsp_last_user(bool $ex_time = false, ?user $usr = null): string
+    {
+
+        global $db_con;
+
+        $db_type = $db_con->get_type();
+        $qp = $this->load_sql_by_user($db_con, $usr);
+        $db_row = $db_con->get1($qp);
+
+        $this->row_mapper($db_row);
+        $result = $this->dsp($db_row, $ex_time);
+
+        // restore the type before saving the log
+        $db_con->set_type($db_type);
+        return $result;
+    }
+
+    /**
      * display the last change related to one object (word, formula, value, verb, ...)
      * mainly used for testing
      * TODO if changes on table values are requested include also the table "user_values"
      */
-    function dsp_last(bool $ex_time): string
+    function dsp_last(bool $ex_time = false): string
     {
 
         global $db_con;
-        $result = '';
-
-        //parent::add_table();
-        //parent::add_field();
-
-        $usr_cfg = new user_config();
 
         $db_type = $db_con->get_type();
         $qp = $this->load_sql_by_field_row($db_con, $this->field_id, $this->row_id);
         $db_row = $db_con->get1($qp);
+
         $this->row_mapper($db_row);
+        $result = $this->dsp($db_row, $ex_time);
+
+        // restore the type before saving the log
+        $db_con->set_type($db_type);
+        return $result;
+    }
+
+    /**
+     * @return string the current change as a human-readable text
+     *                optional without time for automatic testing
+     */
+    private function dsp(array $db_row, bool $ex_time = false): string
+    {
+        $result = '';
+        $usr_cfg = new user_config();
+
         if ($db_row) {
             if (!$ex_time) {
                 $result .= date_format($this->time(), $usr_cfg->date_time_format()) . ' ';
@@ -362,8 +401,6 @@ class change_log_named extends change_log
                 $result .= 'added ' . $this->new_value;
             }
         }
-        // restore the type before saving the log
-        $db_con->set_type($db_type);
         return $result;
     }
 

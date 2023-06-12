@@ -58,6 +58,7 @@ use cfg\config;
 use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
+use model\change_log_named;
 use model\combine_object;
 use model\component;
 use model\component_list;
@@ -102,11 +103,11 @@ if ($root_path == '') {
 $path_test = $root_path . 'src/test/php/';     // the test base path
 $path_utils = $path_test . 'utils/';           // for the general tests and test setup
 $path_unit = $path_test . 'unit/';             // for unit tests
-$path_unit_db = $path_test . 'unit_db/';       // for the unit tests with database real only
+$path_unit_read = $path_test . 'unit_read/';   // for the unit tests with database read only
 $path_unit_dsp = $path_unit . 'html/';         // for the unit tests that create HTML code
 $path_unit_dsp_old = $path_test . 'unit_display/'; // for the unit tests that create HTML code
 $path_unit_ui = $path_test . 'unit_ui/';       // for the unit tests that create JSON messages for the frontend
-$path_unit_save = $path_test . 'unit_save/';   // for the unit tests that save to database (and cleanup the test data after completion)
+$path_unit_write = $path_test . 'unit_write/'; // for the unit tests that save to database (and cleanup the test data after completion)
 $path_it = $path_test . 'integration/';        // for integration tests
 $path_dev = $path_test . 'dev/';               // for test still in development
 
@@ -124,6 +125,7 @@ include_once $path_utils . 'test_cleanup.php';
 // load the unit testing modules
 include_once $path_unit . 'test_unit.php';
 include_once $path_unit . 'test_lib.php';
+include_once $path_unit . 'math.php';
 include_once $path_unit . 'system.php';
 include_once $path_unit . 'user.php';
 include_once $path_unit . 'sandbox.php';
@@ -195,29 +197,29 @@ include_once $path_unit_dsp . 'system_views.php';
 
 
 // load the unit testing modules with database read only
-include_once $path_unit_db . 'all.php';
-include_once $path_unit_db . 'system.php';
-include_once $path_unit_db . 'sql_db.php';
-include_once $path_unit_db . 'user.php';
-include_once $path_unit_db . 'batch_job.php';
-include_once $path_unit_db . 'change_log.php';
-include_once $path_unit_db . 'system_log.php';
-include_once $path_unit_db . 'word.php';
-include_once $path_unit_db . 'word_list.php';
-include_once $path_unit_db . 'verb.php';
-include_once $path_unit_db . 'phrase.php';
-include_once $path_unit_db . 'phrase_group.php';
-include_once $path_unit_db . 'term.php';
-include_once $path_unit_db . 'term_list.php';
-include_once $path_unit_db . 'value.php';
-include_once $path_unit_db . 'formula.php';
-include_once $path_unit_db . 'formula_list.php';
-include_once $path_unit_db . 'expression.php';
-include_once $path_unit_db . 'view.php';
-include_once $path_unit_db . 'ref.php';
-include_once $path_unit_db . 'share.php';
-include_once $path_unit_db . 'protection.php';
-include_once $path_unit_db . 'language.php';
+include_once $path_unit_read . 'all.php';
+include_once $path_unit_read . 'system.php';
+include_once $path_unit_read . 'sql_db.php';
+include_once $path_unit_read . 'user.php';
+include_once $path_unit_read . 'batch_job.php';
+include_once $path_unit_read . 'change_log.php';
+include_once $path_unit_read . 'system_log.php';
+include_once $path_unit_read . 'word.php';
+include_once $path_unit_read . 'word_list.php';
+include_once $path_unit_read . 'verb.php';
+include_once $path_unit_read . 'phrase.php';
+include_once $path_unit_read . 'phrase_group.php';
+include_once $path_unit_read . 'term.php';
+include_once $path_unit_read . 'term_list.php';
+include_once $path_unit_read . 'value.php';
+include_once $path_unit_read . 'formula.php';
+include_once $path_unit_read . 'formula_list.php';
+include_once $path_unit_read . 'expression.php';
+include_once $path_unit_read . 'view.php';
+include_once $path_unit_read . 'ref.php';
+include_once $path_unit_read . 'share.php';
+include_once $path_unit_read . 'protection.php';
+include_once $path_unit_read . 'language.php';
 
 
 // load the testing functions for creating JSON messages for the frontend code
@@ -226,33 +228,32 @@ include_once $path_unit_ui . 'test_word_ui.php';
 include_once $path_unit_ui . 'value_test_ui.php';
 
 // load the testing functions that save data to the database
-include_once $path_unit_save . 'test_math.php';
-include_once $path_unit_save . 'test_word.php';
-include_once $path_unit_save . 'test_word_display.php';
-include_once $path_unit_save . 'test_word_list.php';
-include_once $path_unit_save . 'test_triple.php';
-include_once $path_unit_save . 'phrase_test.php';
-include_once $path_unit_save . 'phrase_list_test.php';
-include_once $path_unit_save . 'phrase_group_test.php';
-include_once $path_unit_save . 'phrase_group_list_test.php';
-include_once $path_unit_save . 'ref_test.php';
-include_once $path_unit_save . 'test_graph.php';
-include_once $path_unit_save . 'test_verb.php';
-include_once $path_unit_save . 'test_term.php';
-include_once $path_unit_save . 'value_test.php';
-include_once $path_unit_save . 'test_source.php';
-include_once $path_unit_save . 'test_expression.php';
-include_once $path_unit_save . 'test_formula.php';
-include_once $path_unit_save . 'test_formula_link.php';
-include_once $path_unit_save . 'test_formula_trigger.php';
-include_once $path_unit_save . 'test_result.php';
-include_once $path_unit_save . 'test_formula_element.php';
-include_once $path_unit_save . 'test_formula_element_group.php';
-include_once $path_unit_save . 'test_batch.php';
-include_once $path_unit_save . 'test_view.php';
-include_once $path_unit_save . 'test_component.php';
-include_once $path_unit_save . 'test_component_link.php';
-include_once $path_unit_save . 'test_value.php';
+include_once $path_unit_write . 'word.php';
+include_once $path_unit_write . 'word_list.php';
+include_once $path_unit_write . 'verb.php';
+include_once $path_unit_write . 'triple.php';
+include_once $path_unit_write . 'phrase.php';
+include_once $path_unit_write . 'phrase_list.php';
+include_once $path_unit_write . 'phrase_group.php';
+include_once $path_unit_write . 'phrase_group_list.php';
+include_once $path_unit_write . 'graph.php';
+include_once $path_unit_write . 'term.php';
+include_once $path_unit_write . 'value.php';
+include_once $path_unit_write . 'source.php';
+include_once $path_unit_write . 'ref.php';
+include_once $path_unit_write . 'expression.php';
+include_once $path_unit_write . 'formula.php';
+include_once $path_unit_write . 'formula_link.php';
+include_once $path_unit_write . 'formula_trigger.php';
+include_once $path_unit_write . 'result.php';
+include_once $path_unit_write . 'formula_element.php';
+include_once $path_unit_write . 'formula_element_group.php';
+include_once $path_unit_write . 'batch_job.php';
+include_once $path_unit_write . 'view.php';
+include_once $path_unit_write . 'component.php';
+include_once $path_unit_write . 'component_link.php';
+include_once $path_unit_write . 'test_word_display.php';
+include_once $path_unit_write . 'test_math.php';
 
 // load the integration test functions
 include_once $path_it . 'test_import.php';
@@ -1681,6 +1682,19 @@ class test_base
     {
         $lib = new library();
         return $lib->str_right_of_or_all($class_name_with_namespace, "\\");
+    }
+
+    /**
+     * @param user|null $usr the user for whom the log entries should be selected
+     * @return string the last log entry that the given user has done on a named object
+     */
+    function log_last_named(?user $usr = null): string
+    {
+        if ($usr == null) {
+            $usr = $this->usr1;
+        }
+        $log = new change_log_named($this->usr1);
+        return $log->dsp_last_user(true, $usr);
     }
 
 }

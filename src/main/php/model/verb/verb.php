@@ -54,7 +54,8 @@ class verb extends db_object
      * code links
      */
 
-    // predefined word link types or verbs
+    // the unique id of predicates or verbs
+    // to link a db row to predefined program code
     const IS_A = "is";
     const IS_PART_OF = "contains";
     const IS_WITH = "with";

@@ -353,6 +353,7 @@ class type_list
         return $result;
     }
 
+
     /*
      * display functions
      */

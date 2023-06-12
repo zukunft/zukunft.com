@@ -127,6 +127,15 @@ use model\component_link;
 use model\view_list;
 use model\word;
 use model\word_list;
+use test\write\component_link_test;
+use test\write\component_test;
+use test\write\formula_link_test;
+use test\write\formula_test;
+use test\write\source_test;
+use test\write\triple_test;
+use test\write\value_test;
+use test\write\view_test;
+use test\write\word_test;
 
 class create_test_objects extends test_base
 {
@@ -315,7 +324,7 @@ class create_test_objects extends test_base
      */
     function dummy_verb_is(): verb
     {
-        return new verb(2, verb_api::TN_IS_A, verb_api::TC_IS_A);
+        return new verb(2, verb_api::TN_IS, verb::IS_A);
     }
 
     function dummy_triple(): triple
@@ -1686,16 +1695,16 @@ class create_test_objects extends test_base
      */
     function create_test_db_entries(test_unit_read_db $t): void
     {
-        create_test_words($t);
-        create_test_triples($t);
-        create_test_sources($t);
-        create_base_times($t);
-        create_test_formulas($t);
-        create_test_formula_links($t);
-        create_test_views($t);
-        create_test_components($t);
-        create_test_component_links($t);
-        create_test_values($t);
+        (new word_test())->create_test_words($t);
+        (new triple_test())->create_test_triples($t);
+        (new triple_test())->create_base_times($t);
+        (new source_test())->create_test_sources($t);
+        (new formula_test())->create_test_formulas($t);
+        (new formula_link_test())->create_test_formula_links($t);
+        (new view_test())->create_test_views($t);
+        (new component_test())->create_test_components($t);
+        (new component_link_test())->create_test_component_links($t);
+        (new value_test())->create_test_values($t);
     }
 
 }

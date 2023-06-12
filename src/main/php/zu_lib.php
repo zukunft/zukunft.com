@@ -14,12 +14,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
-    TODO split Mathematical constant in Math and  constant
-    TODO per km in 'one' 'per' 'km'
-    TODO split acronym in 'one to one' and 'one to many'
-    TODO replace db field 'triple_name' with a virtual field based on name_generated and name_given
-    TODO add api unit test (assert_api_to_dsp) to all objects
-    TODO align the namespace with PSR-0 as much as possible
     TODO remove the old frontend objects based on the api object
     TODO remove the dsp_obj() function and base the frontend objects only on the json api message
     TODO add at least one HTML test for each class
@@ -50,6 +44,12 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO fix error in upgrade process for MySQL
     TODO fix syntax suggestions in existing code
     TODO add the view result at least as simple text to the JSON export
+    TODO split Mathematical constant in Math and constant
+    TODO per km in 'one' 'per' 'km'
+    TODO split acronym in 'one to one' and 'one to many'
+    TODO replace db field 'triple_name' with a virtual field based on name_generated and name_given
+    TODO add api unit test (assert_api_to_dsp) to all objects
+    TODO align the namespace with PSR-0 as much as possible
 
     after that this should be done while keeping step 1. to 4. for each commit:
     TODO use the json api message header for all api messages
@@ -172,13 +172,15 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add example how a tax at least in the height of the micro market share at the customer would prevent monopoly
     TODO add example why democracy sometimes do wrong decisions e.g. because the feedback loop is too long or to rare
     TODO explain why the target build up user needs to be intelligent, but without targeting power
-    TODO add example why nobody shouö own more than the community is spending to save one persons life
+    TODO add example why nobody should own more than the community is spending to save one persons life
     TODO add example how the car insurance uses the value of one person life to calculate the premium and the health insurance for the starting age for gastro check
     TODO make sure that "sudo apt-get install php-dom" is part of the install process
     TODO before deleting a word make sure that there are not depending triples
     TODO Include in the message the user@pot or usergroup@pot that can read, write and export the data and who is owner
     TODO Export of restricted data is always pgp secured and the header includes the access rights,
-
+    TODO rename phrase_group to group
+    TODO rename formula_element to element
+    TODO create a undo und redo function for a change_log entry
 
     TODO add data optimizers for read time, write time and space usage
          e.g. select the queries most often used with the longest exe time by data transferred

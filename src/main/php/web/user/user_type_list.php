@@ -61,7 +61,7 @@ class user_type_list extends type_list_api
         $sel = new html_selector();
         $sel->name = $name;
         $sel->form = $form;
-        $sel->lst = $this->lst_key();
+        $sel->lst = $this->db_id_list();
         $sel->selected = $selected;
         return $sel->display();
     }

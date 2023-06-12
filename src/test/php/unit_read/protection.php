@@ -2,8 +2,8 @@
 
 /*
 
-    api/verb/verb.php - the verb object for the frontend API
-    -----------------
+    test/php/unit_read/protection.php - database unit testing of the protection handling
+    ---------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,46 +30,37 @@
 
 */
 
-namespace api;
+namespace test;
 
-include_once API_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once WEB_PHRASE_PATH . 'term.php';
+use cfg\protection_type;
+use cfg\protection_type_list;
+use model\db_cl;
 
-use model\verb;
-use html\phrase\term as term_dsp;
-
-class verb_api extends sandbox_named_api
+class protection_unit_db_tests
 {
 
-    /*
-     * const for system testing
-     */
-
-    // already coded verb names or persevered verbs names for unit and integration tests
-    const TN_READ = "not set";
-    const TC_READ = "not_set";
-    const TN_IS = "is a";
-    const TN_ADD = "System Test Verb";
-
-    // word groups for creating the test words and remove them after the test
-    const RESERVED_WORDS = array(
-        self::TN_READ,
-        self::TN_IS,
-        self::TN_ADD,
-    );
-    const TEST_WORDS = array(
-        self::TN_ADD
-    );
-
-
-    /*
-     * cast
-     */
-
-    function term(): term_api
+    function run(test_cleanup $t): void
     {
-        return new term_api($this);
+
+        global $db_con;
+        global $protection_types;
+
+        // init
+        $t->name = 'protection read db->';
+
+        $t->header('Unit database tests of the protection handling');
+
+        $t->subheader('Protection types tests');
+
+        // load the protection types
+        $lst = new protection_type_list();
+        $result = $lst->load($db_con);
+        $t->assert('load types', $result, true);
+
+        // ... and check if at least the most critical is loaded
+        $result = $protection_types->id(protection_type::NO_PROTECT);
+        $t->assert('check ' . protection_type::NO_PROTECT, $result, 1);
     }
 
 }
+

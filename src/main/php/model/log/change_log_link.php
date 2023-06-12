@@ -435,7 +435,7 @@ class change_log_link extends change_log
      * display the last change related to one object (word, formula, value, verb, ...)
      * mainly used for testing
      */
-    function dsp_last($ex_time): string
+    function dsp_last($ex_time = false): string
     {
 
         global $db_con;
