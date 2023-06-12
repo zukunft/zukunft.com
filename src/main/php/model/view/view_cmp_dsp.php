@@ -414,8 +414,9 @@ class component_dsp_old extends component
         $sel->form = $script;
         $sel->dummy_text = 'not set';
         $sel->name = 'word_row';
-        if (isset($this->wrd_row)) {
-            $sel->label = "Rows taken from " . $this->wrd_row->dsp_obj()->display_linked() . ":";
+        if ($this->wrd_row != null) {
+            $phr_dsp = new word_dsp($this->wrd_row->api_json());
+            $sel->label = "Rows taken from " . $phr_dsp->display_linked() . ":";
         } else {
             $sel->label = "Take rows from:";
         }
@@ -435,7 +436,8 @@ class component_dsp_old extends component
         $sel->dummy_text = 'not set';
         $sel->name = 'word_col';
         if (isset($this->wrd_col)) {
-            $sel->label = "Columns taken from " . $this->wrd_col->dsp_obj()->display_linked() . ":";
+            $phr_dsp = new word_dsp($this->wrd_col->api_json());
+            $sel->label = "Columns taken from " . $phr_dsp->display_linked() . ":";
         } else {
             $sel->label = "Take columns from:";
         }

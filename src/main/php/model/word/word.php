@@ -887,7 +887,8 @@ class word extends sandbox_typed
         $lib = new library();
         $html = new html_base();
         $is_part_of_dsp = $is_part_of->get_dsp_obj();
-        $result = $this->dsp_obj()->header($is_part_of_dsp);
+        $wrd_dsp = new word_dsp($this->api_json());
+        $result = $wrd_dsp->header($is_part_of_dsp);
 
         //$result .= $this->name."<br>";
         //$result .= $col_wrd->name."<br>";

@@ -893,9 +893,9 @@ class user extends db_object
     }
 
     /**
-     * load the last word used by the user
+     * @return word load the last word used by the user
      */
-    function last_wrd(): word_dsp
+    function last_wrd(): word
     {
         if ($this->wrd_id <= 0) {
             $this->wrd_id = DEFAULT_WORD_ID;
@@ -903,7 +903,7 @@ class user extends db_object
         $wrd = new word($this);
         $wrd->load_by_id($this->wrd_id, word::class);
         $this->wrd = $wrd;
-        return $wrd->dsp_obj();
+        return $wrd;
     }
 
     /**
