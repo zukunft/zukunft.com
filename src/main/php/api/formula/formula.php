@@ -162,16 +162,6 @@ class formula_api extends sandbox_typed_api
      * cast
      */
 
-    /**
-     * @returns formula_dsp the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): formula_dsp
-    {
-        $dsp_obj = new formula_dsp($this->id, $this->name);
-        $dsp_obj->set_usr_text($this->usr_text());
-        return $dsp_obj;
-    }
-
     function term(): term_api
     {
         return new term_api($this);

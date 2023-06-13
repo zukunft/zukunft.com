@@ -36,6 +36,9 @@ use api\phrase_api;
 use api\triple_api;
 use api\word_api;
 use html\html_base;
+use html\word\word as word_dsp;
+use \html\word\triple as triple_dsp;
+use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use model\verb;
 use test\test_cleanup;
@@ -56,9 +59,9 @@ class phrase_list
         $phr_canton = $this->phrase_api_triple(2,  triple_api::TN_ZH_CANTON_NAME,
             word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON);
         $phr_ch = $this->phrase_api_word(1, word_api::TN_CH);
-        $lst->add_phrase($phr_city->dsp_obj());
-        $lst->add_phrase($phr_canton->dsp_obj());
-        $lst->add_phrase($phr_ch->dsp_obj());
+        $lst->add_phrase($phr_city);
+        $lst->add_phrase($phr_canton);
+        $lst->add_phrase($phr_ch);
 
         // test the phrase list display functions
         $test_page = $html->text_h2('phrase list display test');
@@ -77,9 +80,10 @@ class phrase_list
     function phrase_api_word(
         int $id,
         string $name
-    ): phrase_api {
+    ): phrase_dsp {
         $wrd = new word_api($id, $name);
-        return new phrase_api($wrd);
+        $wrd_dsp = new word_dsp($wrd->get_json());
+        return $wrd_dsp->phrase();
     }
 
     function phrase_api_triple(
@@ -88,9 +92,10 @@ class phrase_list
         string $from = '',
         string $verb = '',
         string $to = ''
-    ): phrase_api {
+    ): phrase_dsp {
         $trp = new triple_api($id, $name, $from, $verb, $to);
-        return new phrase_api($trp);
+        $trp_dsp = new triple_dsp($trp->get_json());
+        return $trp_dsp->phrase();
     }
 
 }

@@ -334,18 +334,4 @@ class word_api extends sandbox_typed_api
         return new term_api($this);
     }
 
-    /**
-     * @returns word_dsp the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): word_dsp
-    {
-        $wrd_dsp = new word_dsp($this->id, $this->name, $this->description);
-        $wrd_dsp->set_plural($this->plural);
-        $wrd_dsp->set_type_id($this->type_id);
-        if ($this->parent != null) {
-            $wrd_dsp->set_parent($this->parent->dsp_obj());
-        }
-        return $wrd_dsp;
-    }
-
 }
