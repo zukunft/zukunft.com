@@ -122,9 +122,10 @@ function run_word_display_test(test_cleanup $t): void
     */
     $target = word_api::TN_2020;
     $target = word_api::TN_ZH;
-    $result = $wrd_ZH->dsp_val_list($wrd_year, $wrd_year->is_mainly(), 0);
+    // TODO add a sample
+    //$result = $wrd_ZH->dsp_val_list($wrd_year, $wrd_year->is_mainly(), 0);
     //$t->display('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
-    $t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    //$t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // the value table for Company
     /*

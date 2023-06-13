@@ -315,23 +315,6 @@ class word extends sandbox_typed
     }
 
     /**
-     * @return word_dsp the word object with the display interface functions
-     */
-    function dsp_obj(): word_dsp
-    {
-        $dsp_obj = new word_dsp();
-
-        if (!$this->is_excluded()) {
-            parent::fill_dsp_obj($dsp_obj);
-
-            $dsp_obj->set_plural($this->plural);
-            $dsp_obj->set_type_id($this->type_id);
-        }
-
-        return $dsp_obj;
-    }
-
-    /**
      * map a word api json to this model word object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the word values that should be mapped
@@ -874,112 +857,9 @@ class word extends sandbox_typed
     }
 
     /*
-     * TODO display functions to review
+     * display
+     * TODO move to frontend
      */
-
-    /**
-     * list of related words and values filtered by a link type
-     */
-    function dsp_val_list(word $col_wrd, phrase $is_part_of, string $back): string
-    {
-        log_debug('for ' . $this->dsp_id() . ' with "' . $col_wrd->name . '"');
-
-        $lib = new library();
-        $html = new html_base();
-        $is_part_of_dsp = $is_part_of->get_dsp_obj();
-        $wrd_dsp = new word_dsp($this->api_json());
-        $result = $wrd_dsp->header($is_part_of_dsp);
-
-        //$result .= $this->name."<br>";
-        //$result .= $col_wrd->name."<br>";
-
-        $row_lst = $this->children();    // not $this->are(), because e.g. for "Company" the word "Company" itself should not be included in the list
-        $col_lst = $col_wrd->children();
-        log_debug('columns ' . $col_lst->dsp_id());
-
-        $row_lst->name_sort();
-        $col_lst->name_sort();
-
-        // TODO use this for fast loading
-        $val_matrix = $row_lst->val_matrix($col_lst);
-        $row_lst_dsp = $row_lst->dsp_obj();
-        $result .= $row_lst_dsp->dsp_val_matrix($val_matrix);
-
-        log_debug();
-
-        // display the words
-        $row_nbr = 0;
-        $result .= $html->dsp_tbl_start();
-        foreach ($row_lst->lst() as $row_phr) {
-            // display the column headers
-            // not needed any more if wrd lst is created based on word_display elements
-            // to review
-            $row_phr_dsp = new word($this->user());
-            $row_phr_dsp->load_by_id($row_phr->id, word::class);
-            if ($row_nbr == 0) {
-                $result .= '  <tr>' . "\n";
-                $result .= '    <th>' . "\n";
-                $result .= '    </th>' . "\n";
-                foreach ($col_lst->lst() as $col_lst_wrd) {
-                    log_debug('column ' . $col_lst_wrd->name);
-                    $result .= $col_lst_wrd->dsp_obj()->dsp_th($back, api::STYLE_RIGHT);
-                }
-                $result .= '  </tr>' . "\n";
-            }
-
-            // display the rows
-            log_debug('row');
-            $result .= '  <tr>' . "\n";
-            $result .= '      ' . $row_phr_dsp->dsp_obj()->td($back);
-            foreach ($col_lst->lst() as $col_lst_wrd) {
-                $result .= '    <td>' . "\n";
-                $val_wrd_ids = array();
-                $val_wrd_ids[] = $row_phr->id;
-                $val_wrd_ids[] = $col_lst_wrd->id;
-                asort($val_wrd_ids);
-                $val_wrd_lst = new word_list($this->user());
-                $val_wrd_lst->load_by_ids($val_wrd_ids);
-                log_debug('get group ' . $lib->dsp_array($val_wrd_ids));
-                $wrd_grp = $val_wrd_lst->get_grp();
-                if ($wrd_grp->id > 0) {
-                    log_debug('got group ' . $wrd_grp->id);
-                    $in_value = $wrd_grp->result(0);
-                    $res_text = '';
-                    // temp solution to be reviewed
-                    if ($in_value['id'] > 0) {
-                        $res = new result($this->user());
-                        $res->load_by_id($in_value['id']);
-                        if ($res->value <> 0) {
-                            $res_text = $res->val_formatted();
-                        } else {
-                            $res_text = '';
-                        }
-                    }
-                    if ($res_text <> '') {
-                        //$back = $row_phr->id;
-                        if (!isset($back)) {
-                            $back = $this->id;
-                        }
-                        if ($in_value['usr'] > 0) {
-                            $result .= '      <p class="right_ref"><a href="/http/formula_result.php?id=' . $in_value['id'] . '&phrase=' . $row_phr->id . '&group=' . $wrd_grp->id . '&back=' . $back . '" class="user_specific">' . $res_text . '</a></p>' . "\n";
-                        } else {
-                            $result .= '      <p class="right_ref"><a href="/http/formula_result.php?id=' . $in_value['id'] . '&phrase=' . $row_phr->id . '&group=' . $wrd_grp->id . '&back=' . $back . '">' . $res_text . '</a></p>' . "\n";
-                        }
-                    }
-                }
-                $result .= '    </td>' . "\n";
-            }
-            $result .= '  </tr>' . "\n";
-            $row_nbr++;
-        }
-
-        // display an add button to offer the user to add one row
-        $result .= '<tr><td>' . $this->btn_add($back) . '</td></tr>';
-
-        $result .= $html->dsp_tbl_end();
-
-        return $result;
-    }
 
     /**
      * returns the html code to select a word link type
@@ -1173,7 +1053,7 @@ class word extends sandbox_typed
         $phr_lst_down_dsp = $phr_lst_down->dsp_obj();
         $dsp_graph = $phr_lst_up_dsp->dsp_graph($this->phrase(), $back);
         $dsp_graph .= $phr_lst_down_dsp->dsp_graph($this->phrase(), $back);
-        $wrd_dsp = $this->dsp_obj();
+        $wrd_dsp = new word_dsp($this->api_json());
         // collect the display code for the user changes
         $dsp_log = '';
         $changes = $this->dsp_hist(1, SQL_ROW_LIMIT, '', $back);

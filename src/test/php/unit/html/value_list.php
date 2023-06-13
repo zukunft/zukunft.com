@@ -113,10 +113,15 @@ class value_list
         // TODO optional "(in mio)" formatting for scale words
         // TODO move time words to column headline
         // TODO use language based plural for inhabitant
+        // TODO if the row phrases have parent child relations by default display sub rows e.g. countries and cantons
+        // TODO if the col phrases have parent child relations by default display sub col e.g. year and quarter by using a phrase tree object?
+        // TODO add buttons to or empty cells for easy adding new related values
         $val_lst = new value_list_api();
         $val_lst->add($val_city);
         $val_lst->add($val_canton);
         $val_lst->add($val_ch);
+
+        // TODO add a sample to show a list of words and some values related to the words e.g. all companies with the main ratios
 
         $test_page = $html->text_h2('Value list display test');
         $lst_dsp = new value_list_dsp($val_lst->get_json());

@@ -122,34 +122,6 @@ class component_dsp_old extends component
         return $result;
     }
 
-    /**
-     * show a list of words and some values related to the words e.g. all companies with the main ratios
-     */
-    function num_list($wrd, $back): string
-    {
-        global $component_types;
-        $result = '';
-
-        if ($this->type_id == $component_types->id(view_cmp_type::WORD_VALUE)) {
-            log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
-
-            // check the parameters
-            if (get_class($wrd) <> word_dsp::class) {
-                $result .= log_warning('The word parameter has type ' . get_class($wrd) . ', but should be word_dsp.', "component_dsp->num_list");
-                $wrd_dsp = new word_dsp($wrd->id, $wrd->name);
-                $wrd = $wrd_dsp;
-            }
-
-            $this->load_phrases(); // to make sure that the column word object is loaded
-            if (isset($this->wrd_col)) {
-                $result .= $wrd->dsp_val_list($this->wrd_col, $this->wrd_col->is_mainly(), $back);
-            } else {
-                $result .= log_err('Column definition is missing for ' . $this->dsp_id() . '.', "component_dsp->num_list");
-            }
-        }
-        return $result;
-    }
-
     private function formula_list($wrd): formula_list
     {
         $frm_lst = new formula_list($this->user());

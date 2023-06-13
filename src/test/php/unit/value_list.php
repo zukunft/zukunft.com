@@ -101,6 +101,8 @@ class value_list_unit_tests
         $expected_sql = $t->file('db/value/value_list_by_triple_id_list_mysql.sql');
         $t->assert('value_list->load_by_phr_lst_sql by group and time for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 
+        // TODO add a test to select a list of values that contains any phrase of the phrase list
+        // TODO add a test to select a list of values that contains all phrase of the phrase list
 
         // sql to load a list of value by the phrase id
         $phr = new phrase($usr);

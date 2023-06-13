@@ -35,6 +35,7 @@ namespace test\write;
 use api\formula_api;
 use api\triple_api;
 use api\word_api;
+use html\word\word as word_dsp;
 use cfg\phrase_type;
 use model\change_log_field;
 use model\change_log_named;
@@ -458,7 +459,8 @@ class word_test
         // display
         $back = 1;
         $target = '<a href="/http/view.php?words=' . $wrd_read->id() . '&back=1" title="' . word_api::TD_READ . '">' . word_api::TN_READ . '</a>';
-        $result = $wrd_read->dsp_obj()->display_linked($back);
+        $wrd_read_dsp = new word_dsp($wrd_read->api_json());
+        $result = $wrd_read_dsp->display_linked($back);
         $t->display('word->display "' . word_api::TN_READ . '"', $target, $result);
 
         // check if user 2 can exclude a word without influencing user 1

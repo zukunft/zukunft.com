@@ -363,7 +363,13 @@ class phrase extends combine_named
      */
     function dsp_obj(): phrase_dsp
     {
-        return $this->obj()->dsp_obj()->phrase();
+        if ($this->obj()::class == word::class) {
+            $wrd_dsp = new word_dsp($this->obj()->api_json());
+            $dsp_obj = $wrd_dsp->phrase();
+        } else {
+            $dsp_obj = $this->obj()->dsp_obj()->phrase();
+        }
+        return $dsp_obj;
     }
 
     function term(): term
@@ -705,7 +711,7 @@ class phrase extends combine_named
         if (get_class($this->obj) == word_dsp::class) {
             $wrd_dsp = $this->obj;
         } elseif (get_class($this->obj) == word::class) {
-            $wrd_dsp = $this->obj()->dsp_obj();
+            $wrd_dsp = new word_dsp($this->obj()->api_json());
         }
         return $wrd_dsp;
     }
@@ -827,7 +833,8 @@ class phrase extends combine_named
             if ($this->obj != null) {
                 // the function dsp_tbl should exist for words and triples
                 if (get_class($this->obj) == word::class) {
-                    $result = $this->obj->dsp_obj()->td('', '', $intent);
+                    $dsp_obj = new word_dsp($this->obj->api_json());
+                    $result = $dsp_obj->td('', '', $intent);
                 } else {
                     $result = $this->obj->dsp_tbl($intent);
                 }

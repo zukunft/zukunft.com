@@ -87,7 +87,8 @@ class word_list extends sandbox_list
     {
         $dsp_obj = new word_list_dsp();
         foreach ($this->lst as $wrd) {
-            $dsp_obj->add($wrd->dsp_obj());
+            $wrd_dsp = new word_dsp($wrd->api_json());
+            $dsp_obj->add($wrd_dsp);
         }
         return $dsp_obj;
     }
@@ -1447,7 +1448,7 @@ class word_list extends sandbox_list
         log_debug();
 
         foreach ($this->lst as $wrd) {
-            $wrd_dsp = $wrd->dsp_obj();
+            // $wrd_dsp = $wrd->dsp_obj();
             // TODO review $view = $wrd_dsp->view();
             $view = $wrd->view();
             if (isset($view)) {

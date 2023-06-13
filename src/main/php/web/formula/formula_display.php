@@ -38,6 +38,7 @@ use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
 use html\msg;
+use html\word\word as word_dsp;
 use model\formula;
 use model\phrase;
 use model\result;
@@ -251,7 +252,8 @@ class formula_dsp_old extends formula
         $sample_val = $res_lst->display($back);
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {
-                $result .= $html->dsp_text_h3("Results for " . $this->name_wrd->dsp_obj()->display_linked($back), "change_hist");
+                $name_wrd_dsp = new word_dsp($this->name_wrd->api_json());
+                $result .= $html->dsp_text_h3("Results for " . $name_wrd_dsp->dsp_obj()->display_linked($back), "change_hist");
             }
             $result .= $sample_val;
         }
