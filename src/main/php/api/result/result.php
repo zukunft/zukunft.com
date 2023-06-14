@@ -77,6 +77,7 @@ class result_api extends sandbox_value_api implements JsonSerializable
 
     /**
      * @returns result_dsp the cast object with the HTML code generating functions
+     * should only be used for unit tests
      */
     function dsp_obj(): result_dsp
     {

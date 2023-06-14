@@ -47,6 +47,8 @@ use html\button;
 use html\html_base;
 use html\html_selector;
 use html\msg;
+use html\value\value as value_dsp;
+use html\result\result as result_dsp;
 use model\library;
 use model\verb;
 use model\view;
@@ -190,8 +192,8 @@ class html_unit_tests
 
         // create the formula result list and the table to display the results
         $res_lst = new result_list_dsp();
-        $res_lst->add($res_city->dsp_obj());
-        $res_lst->add($res_canton->dsp_obj());
+        $res_lst->add(new result_dsp($res_city->get_json()));
+        $res_lst->add(new result_dsp($res_canton->get_json()));
         $t->html_test($res_lst->table(), 'table_result', $t);
 
         // create the same table as above, but within a context

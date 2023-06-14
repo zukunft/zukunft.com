@@ -36,6 +36,7 @@
 namespace model;
 
 use html\word\word as word_dsp;
+use html\formula\formula as formula_dsp;
 
 class formula_element extends db_object
 {
@@ -239,7 +240,8 @@ class formula_element extends db_object
                     $result = $this->name();
                 }
                 if ($this->type == formula::class) {
-                    $result = $this->obj->dsp_obj()->edit_link($back);
+                    $frm_dsp = new formula_dsp($this->obj->api_json());
+                    $result = $frm_dsp->edit_link($back);
                 }
             }
         }

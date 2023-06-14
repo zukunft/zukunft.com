@@ -384,20 +384,6 @@ class formula extends sandbox_typed
         return $dsp_obj;
     }
 
-    /**
-     * @return formula_dsp the formula object with the display interface functions
-     */
-    function dsp_obj(): object
-    {
-        $dsp_obj = new formula_dsp();
-
-        parent::fill_dsp_obj($dsp_obj);
-
-        $dsp_obj->set_usr_text($this->usr_text);
-
-        return $dsp_obj;
-    }
-
 
     /*
      * loading

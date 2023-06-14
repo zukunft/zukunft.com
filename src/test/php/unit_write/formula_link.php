@@ -34,6 +34,7 @@ namespace test\write;
 
 use api\formula_api;
 use api\word_api;
+use html\formula\formula as formula_dsp;
 use model\change_log_link;
 use model\change_log_table;
 use model\formula;
@@ -84,7 +85,12 @@ class formula_link_test
 
         // ... if form name is correct the chain of load via object, reload via id and load of the objects has worked
         if ($frm_lnk2->fob != null) {
-            $result = $frm_lnk2->fob->dsp_obj()->name();
+            if ($frm_lnk2->fob::class == formula::class) {
+                $fop_dsp = new formula_dsp($frm_lnk2->fob->api_json());
+                $result = $fop_dsp->name();
+            } else {
+                log_err('unexpected class in formula link test');
+            }
         }
         $target = $frm->dsp_obj_old()->name();
         $t->display('formula_link->load by formula id and link id "' . $frm->dsp_obj_old()->name(), $target, $result);

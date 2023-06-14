@@ -15,7 +15,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
     but first this needs to be fixed:
     TODO remove the old frontend objects based on the api object
-    TODO remove the dsp_obj() function and base the frontend objects only on the json api message
+    TODO remove the dsp_obj() functions (without api objects where it can be used for unit tests) and base the frontend objects only on the json api message
     TODO add at least one HTML test for each class
     TODO remove all dsp_obj functions from the model classes
     TODO make sure that im-and export and api check all objects fields
@@ -181,6 +181,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO rename phrase_group to group
     TODO rename formula_element to element
     TODO create a undo und redo function for a change_log entry
+    TODO for behavior that should apply to several types create a property/behavior table with an n:m reration to phrase types e.g. "show preferred as column" for time phrases
+    TODO create a user view for contradicting behaviour e.g. if time should be shown in column, but days in rows
 
     TODO add data optimizers for read time, write time and space usage
          e.g. select the queries most often used with the longest exe time by data transferred
