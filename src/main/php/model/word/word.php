@@ -130,7 +130,6 @@ class word extends sandbox_typed
 
     // database fields additional to the user sandbox fields
     public ?string $plural;    // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
-    public ?int $view_id;      // defines the default view for this word
     public ?int $values;       // the total number of values linked to this word as an indication how common the word is and to sort the words
 
     // in memory only fields
@@ -166,7 +165,6 @@ class word extends sandbox_typed
     {
         parent::reset();
         $this->plural = null;
-        $this->view_id = null;
         $this->values = null;
 
         $this->link_type_id = null;
@@ -207,7 +205,9 @@ class word extends sandbox_typed
             $this->description = $db_row[self::FLD_DESCRIPTION];
             $this->type_id = $db_row[$type_fld];
             if (array_key_exists(self::FLD_PLURAL, $db_row)) {
-                $this->view_id = $db_row[self::FLD_VIEW];
+                if ($db_row[self::FLD_VIEW] != null) {
+                    $this->set_view_id($db_row[self::FLD_VIEW]);
+                }
             }
         }
         return $result;
@@ -262,6 +262,34 @@ class word extends sandbox_typed
     function usage(): ?int
     {
         return $this->values;
+    }
+
+    /**
+     * @return int the id of the default view for this word or null if no view is preferred
+     */
+    function view_id(): int
+    {
+        if ($this->view == null) {
+            return 0;
+        } else {
+            return $this->view->id();
+        }
+    }
+
+    function set_view(view $dsp): void
+    {
+        $this->view = $dsp;
+    }
+
+    /**
+     * @param int $id the id of the default view the should be remembered
+     */
+    function set_view_id(int $id): void
+    {
+        if ($this->view == null) {
+            $this->view = new view($this->user());
+        }
+        $this->view->set_id($id);
     }
 
 
@@ -555,10 +583,9 @@ class word extends sandbox_typed
         if ($this->view != null) {
             $result = $this->view;
         } else {
-            if ($this->view_id > 0) {
-                log_debug('got id ' . $this->view_id);
+            if ($this->view_id() > 0) {
                 $result = new view($this->user());
-                if ($result->load_by_id($this->view_id)) {
+                if ($result->load_by_id($this->view_id())) {
                     $this->view = $result;
                     log_debug('for ' . $this->dsp_id() . ' is ' . $result->dsp_id());
                 }
@@ -568,8 +595,13 @@ class word extends sandbox_typed
         return $result;
     }
 
-    // TODO review, because is it needed? get the view used by most users for this word
-
+    /**
+     * calculate the suggested default view for this word
+     * TODO review, because is it needed? get the view used by most users for this word
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
     function view_sql(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_WORD);
@@ -589,7 +621,7 @@ class word extends sandbox_typed
      * get the suggested view
      * @return int the view of the most often used view
      */
-    function view_id(): int
+    function calc_view_id(): int
     {
         log_debug('for ' . $this->dsp_id());
 
@@ -705,7 +737,7 @@ class word extends sandbox_typed
                     if ($wrd_view->id == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     } else {
-                        $this->view_id = $wrd_view->id;
+                        $this->set_view_id($wrd_view->id());
                     }
                 } else {
                     $wrd_view->set_name($value);
@@ -788,7 +820,7 @@ class word extends sandbox_typed
             $result->protection = $this->protection_type_code_id();
         }
 
-        if ($this->view_id > 0) {
+        if ($this->view_id() > 0) {
             if ($do_load) {
                 $this->view = $this->load_view();
             }
@@ -1627,10 +1659,8 @@ class word extends sandbox_typed
                 $has_cfg = true;
             }
         }
-        if (isset($this->view_id)) {
-            if ($this->view_id > 0) {
-                $has_cfg = true;
-            }
+        if ($this->view_id() > 0) {
+            $has_cfg = true;
         }
         return $has_cfg;
     }
@@ -1756,9 +1786,9 @@ class word extends sandbox_typed
         $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::WORD);
         $log->set_field(self::FLD_VIEW);
-        if ($this->view_id > 0) {
+        if ($this->view_id() > 0) {
             $dsp_old = new view_dsp_old($this->user());
-            $dsp_old->load_by_id($this->view_id);
+            $dsp_old->load_by_id($this->view_id());
             $log->old_value = $dsp_old->name();
             $log->old_id = $dsp_old->id;
         } else {
@@ -1777,13 +1807,13 @@ class word extends sandbox_typed
      * remember the word view, which means to save the view id for this word
      * each user can define set the view individually, so this is user specific
      */
-    function save_view($view_id): string
+    function save_view(int $view_id): string
     {
 
         global $db_con;
         $result = '';
 
-        if ($this->id > 0 and $view_id > 0 and $view_id <> $this->view_id) {
+        if ($this->id > 0 and $view_id > 0 and $view_id <> $this->view_id()) {
             log_debug($view_id . ' for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
             if ($this->log_upd_view($view_id) > 0) {
                 //$db_con = new mysql;
@@ -1834,12 +1864,15 @@ class word extends sandbox_typed
 
     /**
      * set the update parameters for the word view_id
+     * @param word|sandbox $db_rec the database record before the saving
+     * @return string an error message that should be shown to the user if something fails
+     * TODO replace string by usr_msg to include more infos e.g. suggested solutions
      */
-    private function save_field_view($db_rec): string
+    private function save_field_view(word|sandbox $db_rec): string
     {
         $result = '';
-        if ($db_rec->view_id <> $this->view_id) {
-            $result = $this->save_view($this->view_id);
+        if ($db_rec->view_id() <> $this->view_id()) {
+            $result = $this->save_view($this->view_id());
         }
         return $result;
     }

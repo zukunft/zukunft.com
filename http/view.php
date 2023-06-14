@@ -85,10 +85,10 @@ if ($usr->id() > 0) {
                 $view_id = $_GET['view'];
             } else {
                 // if the user has set a view for this word, use it
-                $view_id = $wrd->view_id;
+                $view_id = $wrd->view_id();
                 if ($view_id <= 0) {
                     // if any user has set a view for this word, use the common view
-                    $view_id = $wrd->view_id();
+                    $view_id = $wrd->calc_view_id();
                     if ($view_id <= 0) {
                         // if no one has set a view for this word, use the fallback view
                         $view_id = $system_views->id(controller::DSP_WORD);

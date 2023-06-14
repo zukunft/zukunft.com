@@ -14,6 +14,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO cleanup the object vars and use objects instead repeating ids
     TODO remove the old frontend objects based on the api object
     TODO remove the dsp_obj() functions (without api objects where it can be used for unit tests) and base the frontend objects only on the json api message
     TODO add at least one HTML test for each class
