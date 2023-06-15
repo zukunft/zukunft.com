@@ -143,6 +143,7 @@ class controller
     const API_LIST_CHANGE_LOG_FIELDS = 'change_log_fields';
     const API_LIST_VERBS = 'verbs';
     const API_LIST_SYSTEM_VIEWS = 'system_views';
+    const API_BACK = 'back'; // to include the url that should be call after an action has been finished into the url
 
     // path parameters
     const PATH_API_REDIRECT = '/../../'; // get from the __DIR__ to the php root path

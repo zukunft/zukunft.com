@@ -60,8 +60,8 @@ class triple_unit_tests
         $t->assert($t->name . 'api->id', $api_trp->id(), $trp->id());
         $t->assert($t->name . 'api->name', $api_trp->name(), $trp->name());
         $t->assert($t->name . 'api->description', $api_trp->description, $trp->description);
-        $t->assert($t->name . 'api->from', $api_trp->from()->name(), $trp->from->obj()->name_dsp());
-        $t->assert($t->name . 'api->to', $api_trp->to()->name(), $trp->to->obj()->name_dsp());
+        $t->assert($t->name . 'api->from', $api_trp->from()->name(), $trp->fob->obj()->name_dsp());
+        $t->assert($t->name . 'api->to', $api_trp->to()->name(), $trp->tob->obj()->name_dsp());
 
 
         $t->subheader('Im- and Export tests');

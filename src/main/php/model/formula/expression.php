@@ -14,45 +14,6 @@
     formula with name "increase"
     and expression "percent" = ("this" - "prior") / "prior
 "
-
-
-    This file is part of zukunft.com - calc with words
-
-    zukunft.com is free software: you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
-    zukunft.com is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-
-    To contact the authors write to:
-    Timon Zielonka <timon@zukunft.com>
-
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
-    Heang Lor <heang@zukunft.com>
-
-    http://zukunft.com
-
-*/
-
-namespace model;
-
-include_once MODEL_FORMULA_PATH . 'formula_element_group.php';
-include_once MODEL_FORMULA_PATH . 'formula_element_group_list.php';
-
-use cfg\formula_type;
-use Exception;
-
-class expression
-{
-
-    /* sample
-
     original request: formula: increase, words: "Nestlé", "turnover"
     formula "increase": (next[] - last[]) / last[]
     formula "next": needs time jump value[is time jump for
@@ -134,8 +95,41 @@ class expression
 
     Do automatic caching of the results if needed
 
-    */
 
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
+*/
+
+namespace model;
+
+include_once MODEL_FORMULA_PATH . 'formula_element_group.php';
+include_once MODEL_FORMULA_PATH . 'formula_element_group_list.php';
+
+use cfg\formula_type;
+use Exception;
+
+class expression
+{
 
     /*
      * code links
@@ -284,6 +278,7 @@ class expression
             return '';
         }
     }
+
 
     /*
      * interface

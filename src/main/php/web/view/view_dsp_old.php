@@ -190,7 +190,7 @@ class view_dsp_old extends view
                 $parsed = parse_url($url);
                 $query = $parsed['query'];
                 parse_str($query, $params);
-                unset($params['back']);
+                unset($params[controller::API_BACK]);
                 $back = $back_path . '?' . http_build_query($params);
                 //$back = htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
                 $result .= '<a href="/http/login.php?back=' . $back . '">log in</a> or <a href="/http/signup.php">Create account</a>';

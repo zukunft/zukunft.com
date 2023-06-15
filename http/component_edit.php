@@ -77,7 +77,7 @@ if ($usr->id() > 0) {
         }
 
         // the calling stack to move back to page where the user has come from after editing the view component is done
-        $back = $_GET['back'];
+        $back = $_GET[controller::API_BACK];
 
         // save the direct changes
         // link or unlink a view

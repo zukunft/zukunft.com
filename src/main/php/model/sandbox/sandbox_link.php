@@ -390,15 +390,15 @@ class sandbox_link extends sandbox
                 $result = true;
             }
         } elseif ($obj_to_check::class == triple::class) {
-            if (isset($this->from)
+            if (isset($this->fob)
                 and isset($this->verb)
-                and isset($this->to)
-                and isset($obj_to_check->from)
+                and isset($this->tob)
+                and isset($obj_to_check->fob)
                 and isset($obj_to_check->verb)
-                and isset($obj_to_check->to)) {
-                if ($this->from->id() == $obj_to_check->from->id()
+                and isset($obj_to_check->tob)) {
+                if ($this->fob->id() == $obj_to_check->fob->id()
                     and $this->verb->id() == $obj_to_check->verb->id()
-                    and $this->to->id() == $obj_to_check->to->id()) {
+                    and $this->tob->id() == $obj_to_check->tob->id()) {
                     $result = true;
                 }
             }

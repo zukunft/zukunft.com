@@ -65,7 +65,7 @@ if ($usr->id() > 0) {
     $dsp = new view_dsp_old($usr);
     $dsp->load_by_id($system_views->id(controller::DSP_COMPONENT_ADD));
     // the calling stack to move back to page where the user has come from after adding the view component is done
-    $back = $_GET['back'];
+    $back = $_GET[controller::API_BACK];
 
     // create the view component object to apply the user changes to it
     $cmp = new component_dsp_old($usr);

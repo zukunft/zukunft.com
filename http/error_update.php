@@ -54,7 +54,7 @@ $result = ''; // reset the html code var
 // get the parameters
 $log_id = $_GET['id'];
 $status_id = $_GET['status'];
-$back = $_GET['back'];
+$back = $_GET[controller::API_BACK];
 
 // load the session user parameters
 $usr = new user;

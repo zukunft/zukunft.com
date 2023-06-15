@@ -60,7 +60,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->load_by_id($system_views->id(controller::DSP_FORMULA_DEL));
-    $back = $_GET['back'];
+    $back = $_GET[controller::API_BACK];
 
     // get the parameters
     $formula_id = $_GET['id'];           // id of the formula that can be changed

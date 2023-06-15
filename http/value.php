@@ -60,7 +60,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->load_by_code_id(controller::DSP_VALUE_DISPLAY);
-    $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
+    $back = $_GET[controller::API_BACK]; // the page (or phrase id) from which formula testing has been called
 
     $result .= $dsp->dsp_navbar($back);
 

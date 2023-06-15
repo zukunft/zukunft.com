@@ -62,7 +62,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->load_by_id($system_views->id(controller::DSP_SOURCE_DEL));
-    $back = $_GET['back']; // the original calling page that should be shown after the change if finished
+    $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
 
     // get the parameters
     $src_id = $_GET['id'];

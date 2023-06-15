@@ -57,7 +57,7 @@ $result = ''; // reset the html code var
 
 // get the parameters
 $id = $_GET['id'];
-$back = $_GET['back'];
+$back = $_GET[controller::API_BACK];
 $undo_val = $_GET['undo_value'];
 $undo_wrd = $_GET['undo_word'];
 $undo_lnk = $_GET['undo_triple'];

@@ -60,7 +60,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->load_by_code_id(controller::DSP_WORD_EDIT);
-    $back = $_GET['back']; // the word id from which this value change has been called (maybe later any page)
+    $back = $_GET[controller::API_BACK]; // the word id from which this value change has been called (maybe later any page)
 
     // create the word object to have a place to update the parameters
     $wrd = new word($usr);

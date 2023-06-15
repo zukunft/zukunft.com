@@ -1106,8 +1106,8 @@ class sandbox extends db_object
             if ($this->obj_type == self::TYPE_NAMED) {
                 log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
             } elseif ($this->obj_type == self::TYPE_LINK) {
-                if (isset($this->from) and isset($this->to)) {
-                    log_debug('for "' . $this->from->name . '"/"' . $this->to->name . '" by user "' . $this->user()->name . '"');
+                if (isset($this->fob) and isset($this->tob)) {
+                    log_debug('for "' . $this->fob->name . '"/"' . $this->tob->name . '" by user "' . $this->user()->name . '"');
                 } else {
                     log_debug('for "' . $this->id . '" and user "' . $this->user()->name . '"');
                 }

@@ -65,31 +65,31 @@ if ($usr->id() > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->load_by_code_id(controller::DSP_TRIPLE_ADD);
-    $back = $_GET['back'];      // the calling word which should be displayed after saving
+    $back = $_GET[controller::API_BACK]; // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
-    $lnk = new triple($usr);
+    $trp = new triple($usr);
 
     // load the parameters to the triple object to display it again in case of an error
     if (isset($_GET['from'])) {
-        $lnk->from->set_id($_GET['from']);
+        $trp->fob->set_id($_GET['from']);
     }   // the word or triple to be linked
     if (isset($_GET['verb'])) {
-        $lnk->verb->set_id($_GET['verb']);
+        $trp->verb->set_id($_GET['verb']);
     }   // the link type (verb)
     if (isset($_GET['phrase'])) {
-        $lnk->to->set_id($_GET['phrase']);
+        $trp->tob->set_id($_GET['phrase']);
     }
 
     // if the user has pressed save at least once
     if ($_GET['confirm'] == 1) {
 
         // check essential parameters
-        if ($lnk->from->id() == 0 or $lnk->verb->id() == 0 or $lnk->to->id() == 0) {
+        if ($trp->fob->id() == 0 or $trp->verb->id() == 0 or $trp->tob->id() == 0) {
             $msg .= 'Please select two words and a verb.';
         } else {
 
-            $add_result = $lnk->save();
+            $add_result = $trp->save();
 
             // if adding was successful ...
             if (str_replace('1', '', $add_result) == '') {
@@ -109,7 +109,7 @@ if ($usr->id() > 0) {
         $result .= $html->dsp_err($msg);
 
         // display the form to create a new triple
-        $result .= $lnk->dsp_add($back);
+        $result .= $trp->dsp_add($back);
     }
 }
 

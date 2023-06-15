@@ -64,7 +64,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->load_by_code_id(controller::DSP_VALUE_DEL);
-    $back = $_GET['back'];  // the page from which the value deletion has been called
+    $back = $_GET[controller::API_BACK];  // the page from which the value deletion has been called
 
     // get the parameters
     $val_id = $_GET['id'];

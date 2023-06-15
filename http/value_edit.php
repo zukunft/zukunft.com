@@ -60,7 +60,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->load_by_code_id(controller::DSP_VALUE_EDIT);
-    $back = $_GET['back'];     // the word id from which this value change has been called (maybe later any page)
+    $back = $_GET[controller::API_BACK];     // the word id from which this value change has been called (maybe later any page)
 
     // create the value object to store the parameters so that if the edit form is shown again it is already filled
     $val = new value($usr);

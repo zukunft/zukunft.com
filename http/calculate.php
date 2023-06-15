@@ -55,7 +55,7 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
     $lib = new library();
 
-    $back = $_GET['back']; // the original calling page that should be shown after the change if finished
+    $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
 
     // start displaying while calculating
     $calc_pos = 0;

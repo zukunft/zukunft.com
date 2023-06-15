@@ -938,9 +938,9 @@ class create_test_objects extends test_base
 
         $trp = new triple($test_usr);
         $trp->set_id($id);
-        $trp->from = $this->new_word($from_name)->phrase();
+        $trp->fob = $this->new_word($from_name)->phrase();
         $trp->verb = $verbs->get_verb($verb_code_id);
-        $trp->to = $this->new_word($to_name)->phrase();
+        $trp->tob = $this->new_word($to_name)->phrase();
         $trp->set_name($wrd_name);
 
         if ($wrd_type_code_id != null) {
@@ -1060,17 +1060,17 @@ class create_test_objects extends test_base
                 $result = $trp;
             } else {
                 // check if the backward link exists
-                $trp->from = $to;
+                $trp->fob = $to;
                 $trp->verb = $vrb;
-                $trp->to = $from;
+                $trp->tob = $from;
                 $trp->set_user($this->usr1);
                 $trp->load_by_link($to->id(), $vrb->id(), $from->id());
                 $result = $trp;
                 // create the link if requested
                 if ($trp->id() <= 0 and $auto_create) {
-                    $trp->from = $from;
+                    $trp->fob = $from;
                     $trp->verb = $vrb;
-                    $trp->to = $to;
+                    $trp->tob = $to;
                     if ($trp->name(true) <> $name_given) {
                         $trp->set_name_given($name_given);
                         $trp->set_name($name_given);

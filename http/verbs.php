@@ -45,7 +45,7 @@ include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 $db_con = prg_start("verbs");
 
 $result = ''; // reset the html code var
-$back = $_GET['back']; // the word id from which this value change has been called (maybe later any page)
+$back = $_GET[controller::API_BACK]; // the word id from which this value change has been called (maybe later any page)
 
 // load the session user parameters
 $usr = new user;

@@ -62,7 +62,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->load_by_code_id(controller::DSP_FORMULA_EDIT);
-    $back = $_GET['back'];
+    $back = $_GET[controller::API_BACK];
 
     // create the formula object to have a place to update the parameters
     $frm = new formula($usr);

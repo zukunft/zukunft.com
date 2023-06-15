@@ -5,6 +5,8 @@
     model/word/word_type_list.php - to link coded functionality to a word or a triple, which means to every phrase
     -----------------------------
 
+    TODO rename to phrase type
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -40,6 +42,7 @@ use model\sql_db;
 class word_type_list extends type_list
 {
 
+    // the phrase types used for unit testing
     // TODO sync this list with the csv list and write a update process for the prod database
     const TYPES = array(
         phrase_type::NORMAL,
@@ -64,6 +67,7 @@ class word_type_list extends type_list
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param string $db_type used only in the parent function to define the which type list should be loaded
      * @return bool true if load was successful
      */
     function load(sql_db $db_con, string $db_type = sql_db::TBL_WORD_TYPE): bool
@@ -87,7 +91,7 @@ class word_type_list extends type_list
     }
 
     /**
-     * return the database id of the default word type
+     * @return int the database id of the default word type
      */
     function default_id(): int
     {

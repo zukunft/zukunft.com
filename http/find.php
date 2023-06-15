@@ -55,7 +55,7 @@ $html = new html_base();
 if ($db_con == null) {
     $result = log_fatal("Cannot connect to " . SQL_DB_TYPE . " database with user " . SQL_DB_USER_MYSQL, "find.php");
 } else {
-    $back = $_GET['back'];
+    $back = $_GET[controller::API_BACK];
 
     // load the session user parameters
     $usr = new user;

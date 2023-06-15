@@ -543,7 +543,10 @@ class sandbox_named extends sandbox
     }
 
     /**
-     * set the update parameters for the word description
+     * set the update parameters for the named object description
+     * similar to the function with the same name in sandbox_link_named,
+     * but because php 8.1 does not yet allow extends parent_class_a, parent_class_b needs to be repeated
+     *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param sandbox_named $db_rec the database record before the saving
      * @param sandbox_named $std_rec the database record defined as standard because it is used by most users

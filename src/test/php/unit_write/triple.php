@@ -107,9 +107,9 @@ class triple_test
         $wrd_from = $t->test_word(word_api::TN_RENAMED);
         $wrd = $t->test_word(word_api::TN_PARENT);
         $trp = new triple($t->usr1);
-        $trp->from->set_id($wrd_from->id());
+        $trp->fob->set_id($wrd_from->id());
         $trp->verb->set_id($is_id);
-        $trp->to->set_id($wrd->id());
+        $trp->tob->set_id($wrd->id());
         if ($wrd_from->id() <> 0 and $is_id and $wrd->id() <> 0) {
             $result = $trp->save();
         } else {

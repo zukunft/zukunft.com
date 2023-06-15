@@ -66,7 +66,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $dsp = new view_dsp_old($usr);
     $dsp->load_by_code_id(controller::DSP_WORD_ADD);
-    $back = $_GET['back']; // the calling page which should be displayed after saving
+    $back = $_GET[controller::API_BACK]; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
     $wrd = new word($usr);
@@ -156,9 +156,9 @@ if ($usr->id() > 0) {
                 // ... and link it to an existing word
                 log_debug('word ' . $wrd->id() . ' linked via ' . $vrb_id . ' to ' . $phr_to . ': ' . $add_result);
                 $lnk = new triple($usr);
-                $lnk->from->set_id($wrd->id());
+                $lnk->fob->set_id($wrd->id());
                 $lnk->verb->set_id($vrb_id);
-                $lnk->to->set_id($phr_to);
+                $lnk->tob->set_id($phr_to);
                 $add_result .= $lnk->save();
             }
 

@@ -259,11 +259,11 @@ class triple_list extends sandbox_list
                         // fill verb
                         $trp->verb = $verbs->get_verb_by_id($db_row[verb::FLD_ID]);
                         // fill from
-                        $trp->from = new phrase($this->user());
-                        $trp->from->row_mapper($db_row, triple::FLD_FROM, '1');
+                        $trp->fob = new phrase($this->user());
+                        $trp->fob->row_mapper($db_row, triple::FLD_FROM, '1');
                         // fill to
-                        $trp->to = new phrase($this->user());
-                        $trp->to->row_mapper($db_row, triple::FLD_TO, '2');
+                        $trp->tob = new phrase($this->user());
+                        $trp->tob->row_mapper($db_row, triple::FLD_TO, '2');
                     }
                 }
             }
@@ -558,7 +558,7 @@ class triple_list extends sandbox_list
                             if (isset($this->wrd)) {
                                 log_debug('triple_list->load ... use "' . $this->wrd->name() . '" as from');
                                 if ($this->wrd != null) {
-                                    $new_link->from = $this->wrd->phrase();
+                                    $new_link->fob = $this->wrd->phrase();
                                     $new_link->from_name = $this->wrd->name();
                                 }
                             } else {
@@ -572,12 +572,12 @@ class triple_list extends sandbox_list
                                     $new_word->type_id = $db_lnk['word_type_id1'];
                                     //$new_word->row_mapper($db_lnk);
                                     $new_word->link_type_id = $db_lnk[verb::FLD_ID];
-                                    $new_link->from = $new_word->phrase();
+                                    $new_link->fob = $new_word->phrase();
                                     $new_link->from_name = $new_word->name();
                                 } elseif ($db_lnk['word_id1'] < 0) {
                                     $new_word = new triple($this->user());
                                     $new_word->set_id($db_lnk['word_id1'] * -1); // TODO check if not word_id is correct
-                                    $new_link->from = $new_word->phrase();
+                                    $new_link->fob = $new_word->phrase();
                                     $new_link->from_name = $new_word->name();
                                 } else {
                                     log_warning('triple_list->load word missing');
@@ -595,12 +595,12 @@ class triple_list extends sandbox_list
                                 $new_word->link_type_id = $db_lnk[verb::FLD_ID];
                                 //$added_wrd2_lst->add($new_word);
                                 log_debug('added word "' . $new_word->name() . '" for verb (' . $db_lnk[verb::FLD_ID] . ')');
-                                $new_link->to = $new_word->phrase();
+                                $new_link->tob = $new_word->phrase();
                                 $new_link->to_name = $new_word->name();
                             } elseif ($db_lnk['word_id2'] < 0) {
                                 $new_word = new triple($this->user());
                                 $new_word->set_id($db_lnk['word_id2'] * -1);
-                                $new_link->to = $new_word->phrase();
+                                $new_link->tob = $new_word->phrase();
                                 $new_link->to_name = $new_word->name();
                             }
                             $this->lst[] = $new_link;
@@ -716,8 +716,11 @@ class triple_list extends sandbox_list
         return $result;
     }
 
-    // shows all words the link to the given word
-    // returns the html code to select a word that can be edited
+    /**
+     * TODO move to the frontend
+     * shows all words the link to the given word
+     * returns the html code to select a word that can be edited
+     */
     function display(string $back = ''): string
     {
         global $verbs;
@@ -783,18 +786,18 @@ class triple_list extends sandbox_list
                     $prev_verb_id = $lnk->verb->id();
 
                     // display the word
-                    if ($lnk->from == null) {
+                    if ($lnk->fob == null) {
                         log_warning('graph->display from is missing');
                     } else {
-                        log_debug('word->dsp_graph display word ' . $lnk->from->name());
+                        log_debug('word->dsp_graph display word ' . $lnk->fob->name());
                         $result .= '  <tr>' . "\n";
-                        if ($lnk->to != null) {
-                            $dsp_obj = $lnk->to->get_dsp_obj();
+                        if ($lnk->tob != null) {
+                            $dsp_obj = $lnk->tob->get_dsp_obj();
                             $result .= $dsp_obj->dsp_tbl_cell(0);
                         }
-                        $result .= $lnk->dsp_obj()->btn_edit($lnk->from->dsp_obj());
-                        if ($lnk->from != null) {
-                            $dsp_obj = $lnk->from->get_dsp_obj();
+                        $result .= $lnk->dsp_obj()->btn_edit($lnk->fob->dsp_obj());
+                        if ($lnk->fob != null) {
+                            $dsp_obj = $lnk->fob->get_dsp_obj();
                             $result .= $dsp_obj->dsp_unlink($lnk->id());
                         }
                         $result .= '  </tr>' . "\n";
@@ -803,7 +806,7 @@ class triple_list extends sandbox_list
                     // use the last word as a sample for the new word type
                     $last_linked_word_id = 0;
                     if ($lnk->verb->id() == $verbs->id(verb::FOLLOW)) {
-                        $last_linked_word_id = $lnk->to->id;
+                        $last_linked_word_id = $lnk->tob->id;
                     }
 
                     // in case of the verb "following" continue the series after the last element
@@ -815,23 +818,23 @@ class triple_list extends sandbox_list
                           $directional_link_type_id = $directional_link_type_id * -1;
                         } */
                     } else {
-                        if ($lnk->from == null) {
+                        if ($lnk->fob == null) {
                             log_warning('graph->display from is missing');
                         } else {
-                            $start_id = $lnk->from->id(); // to select a similar word for the verb following
+                            $start_id = $lnk->fob->id(); // to select a similar word for the verb following
                         }
                     }
 
                     if ($lnk->verb->id() <> $next_lnk->verb->id()) {
-                        if ($lnk->from == null) {
+                        if ($lnk->fob == null) {
                             log_warning('graph->display from is missing');
                         } else {
-                            $start_id = $lnk->from->id();
+                            $start_id = $lnk->fob->id();
                         }
                         // give the user the possibility to add a similar word
                         $result .= '  <tr>';
                         $result .= '    <td>';
-                        $result .= '      ' . \html\btn_add("Add similar word", '/http/word_add.php?verb=' . $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->to->type_id . '&back=' . $start_id);
+                        $result .= '      ' . \html\btn_add("Add similar word", '/http/word_add.php?verb=' . $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->tob->type_id . '&back=' . $start_id);
                         $result .= '    </td>';
                         $result .= '  </tr>';
 

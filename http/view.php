@@ -52,7 +52,7 @@ global $system_views;
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
-$back = $_GET['back']; // the word id from which this value change has been called (maybe later any page)
+$back = $_GET[controller::API_BACK]; // the word id from which this value change has been called (maybe later any page)
 
 // load the session user parameters
 $usr = new user;

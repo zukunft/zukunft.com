@@ -1331,9 +1331,9 @@ class word extends sandbox_typed
         $wrd_lst = $this->children();
         if (!$wrd_lst->does_contain($child)) {
             $wrd_lnk = new triple($this->user());
-            $wrd_lnk->from = $child->phrase();
+            $wrd_lnk->fob = $child->phrase();
             $wrd_lnk->verb = $verbs->get_verb(verb::IS_A);
-            $wrd_lnk->to = $this->phrase();
+            $wrd_lnk->tob = $this->phrase();
             if ($wrd_lnk->save() == '') {
                 $result = true;
             }

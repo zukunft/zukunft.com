@@ -86,7 +86,7 @@ global $system_views;
 $result = ''; // reset the html code var
 
 $err_id = $_GET['id'];
-$back = $_GET['back'];
+$back = $_GET[controller::API_BACK];
 
 // load the session user parameters
 $usr = new user;

@@ -80,9 +80,9 @@ class triple_unit_tests_old
         $vrb->set_id(3);
         $wrd_to = new word($usr);
         $wrd_to->set_id(4);
-        $trp->from = $wrd_from->phrase();
+        $trp->fob = $wrd_from->phrase();
         $trp->verb = $vrb;
-        $trp->to = $wrd_to->phrase();
+        $trp->tob = $wrd_to->phrase();
         $t->assert_load_sql_obj_vars($db_con, $trp);
         $t->assert_load_standard_sql($db_con, $trp);
         $trp->set_id(5);

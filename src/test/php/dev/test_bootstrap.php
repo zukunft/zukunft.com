@@ -225,7 +225,7 @@ $db_con = prg_start("start test.php");
     $dsp->id = cl(SQL_VIEW_LINK_EDIT);
     $dsp->usr = $usr;
     $dsp->load();
-    $back = $_GET['back']; // the original calling page that should be shown after the change if finished
+    $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
 
     $result .= $dsp->dsp_navbar($back);
 
