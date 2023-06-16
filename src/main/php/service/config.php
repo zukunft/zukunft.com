@@ -56,6 +56,7 @@ class config
     const LAST_CONSISTENCY_CHECK = 'last_consistency_check'; // datetime of the last database consistency check
     const AVG_CALC_TIME = 'average_calculation_time';        // the average time to calculate and update all results of one formula in milliseconds
     const TEST_YEARS = 'test_years';                         // the number of years around the current year created automatically
+    const MIN_PCT_OF_PHRASES_TO_PRESELECT = 0.3;             // if 30% or more of the phrases of a list are the same to probability is high that the next phrase is the same
 
     function get_sql(sql_db $db_con, string $code_id): sql_par
     {

@@ -38,9 +38,11 @@ include_once WEB_PHRASE_PATH . 'phrase_list.php';
 
 use api\combine_object_api;
 use api\term_api;
+use cfg\config;
 use html\html_base;
 use html\html_selector;
 use html\list_dsp;
+use html\word\triple;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
@@ -79,6 +81,24 @@ class phrase_list extends list_dsp
             log_err('json key ' . combine_object_api::FLD_CLASS . ' is missing in ' . $lib->dsp_array($json_array));
         }
         return $trm;
+    }
+
+    /**
+     * get a phrase from the list selected by the id
+     * @param int $id the id of the phrase that should be selected
+     * @return phrase|null the phrase with the given id or null if nothing is found
+     */
+    function get_by_id(int $id): ?phrase_dsp
+    {
+        $phr = null;
+        foreach ($this->lst() as $trp) {
+            if ($phr == null) {
+                if ($trp->from->id() == $id) {
+                    $phr = $trp->from;
+                }
+            }
+        }
+        return $phr;
     }
 
 
@@ -212,6 +232,27 @@ class phrase_list extends list_dsp
     }
 
     /**
+     * @return phrase_dsp|null the dominate phrase of the list
+     * used to guess which related phrase a human user might use next
+     * if no phrase is dominant, the phrase is selected by the parent phrase
+     */
+    function mainly(): ?phrase_dsp
+    {
+        global $db_con;
+        $phr = null;
+        if ($this->count() > 1) {
+            $cfg = new config();
+            $is_dominant_pct = $cfg->get(config::MIN_PCT_OF_PHRASES_TO_PRESELECT, $db_con);
+            $count_lst = array_count_values($this->id_lst());
+            sort($count_lst);
+            if (($count_lst[0] / $this->count()) > $is_dominant_pct) {
+                $phr = $this->get_by_id(array_key_first($count_lst));
+            }
+        }
+        return $phr;
+    }
+
+    /**
      * add a phrase to the list
      * @returns bool true if the phrase has been added
      */
@@ -219,6 +260,20 @@ class phrase_list extends list_dsp
     {
         return parent::add_obj($phr);
     }
+
+    /**
+     * add a phrase or ... to the list also if it is already part of the list
+     */
+    function add(phrase_dsp $phr): void
+    {
+        parent::add_always($phr);
+    }
+
+    /**
+     * remove all phrases of the given list from this list
+     * @param phrase_list $del_lst of phrases that should be deleted
+     * @return phrase_list_dsp with the remaining phrases
+     */
     function remove(phrase_list_dsp $del_lst): phrase_list_dsp
     {
         if (!$del_lst->is_empty()) {
@@ -286,7 +341,7 @@ class phrase_list extends list_dsp
     }
 
     /**
-     * @return array all phrases that are part of each phrase group of the list
+     * @return array all phrases that are part of given list and this list
      */
     function common(array $filter_lst): array
     {

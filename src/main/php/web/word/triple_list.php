@@ -32,6 +32,7 @@
 namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
+
 //include_once CFG_PATH . 'phrase_type.php';
 
 use cfg\phrase_type;
@@ -41,8 +42,14 @@ use html\html_selector;
 use html\list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
+use html\phrase\phrase as phrase_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
+use model\phrase_list_dsp_old;
 use model\term_list;
 use model\user;
+use model\verb;
+use model\word_select_direction;
+use test\html\phrase_list;
 
 class triple_list extends list_dsp
 {
@@ -110,17 +117,25 @@ class triple_list extends list_dsp
     /**
      * show all triples of the list as table row (ex display)
      * @param string $back the back trace url for the undo functionality
+     * @param bool $add_btn set to true for eas allow of similar triples
      * @return string the html code with all triples of the list
      */
-    function tbl(string $back = ''): string
+    function tbl(string $back = '', bool $add_btn = false): string
     {
         $html = new html_base();
         $cols = '';
+        $last_trp = null;
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
-        foreach ($this->lst as $wrd) {
-            $lnk = $wrd->display_linked($back);
+        foreach ($this->lst as $trp) {
+            $lnk = $trp->display_linked($back);
             $cols .= $html->td($lnk);
+            $last_trp = $trp;
+        }
+        if ($add_btn) {
+            $add_trp = $this->suggested();
+            $add_url = $add_trp->btn_add($back);
+            $cols .= $html->td($add_url);
         }
         return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);
     }
@@ -215,7 +230,7 @@ class triple_list extends list_dsp
      * merge as a function, because the array_merge does not create an object
      * @param triple_list_dsp $new_wrd_lst with the triples that should be added
      */
-    function merge(triple_list_dsp $new_wrd_lst)
+    function merge(triple_list_dsp $new_wrd_lst): void
     {
         foreach ($new_wrd_lst->lst as $new_wrd) {
             $this->add($new_wrd);
@@ -333,6 +348,47 @@ class triple_list extends list_dsp
     function ex_percent(): void
     {
         $this->diff($this->percent_lst());
+    }
+
+    /**
+     * @return phrase_list_dsp with all from phrases
+     */
+    function from_phrase_list(): phrase_list_dsp
+    {
+        $lst = new phrase_list_dsp();
+        foreach ($this->lst() as $trp) {
+            $lst->add($trp->from);
+        }
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_dsp with all from phrases
+     */
+    function to_phrase_list(): phrase_list_dsp
+    {
+        $lst = new phrase_list_dsp();
+        foreach ($this->lst() as $trp) {
+            $lst->add($trp->to);
+        }
+        return $lst;
+    }
+
+    function suggested(): triple_dsp
+    {
+        $trp = new triple_dsp();
+        $from_lst = $this->from_phrase_list();
+        $from_phr = $from_lst->mainly();
+        if ($from_phr != null) {
+            $trp->set_from($from_phr);
+        }
+        // TODO preset verb
+        $to_lst = $this->to_phrase_list();
+        $to_phr = $to_lst->mainly();
+        if ($to_phr != null) {
+            $trp->set_to($to_phr);
+        }
+        return $trp;
     }
 
 }

@@ -253,7 +253,20 @@ class triple extends sandbox_typed_dsp
      */
 
     /**
-     * @returns string the html code to display a bottom to edit the word link in a table cell
+     * @returns string the html code to display a bottom to edit this triple in a table cell
+     */
+    function btn_add(string $back = ''): string
+    {
+
+        $html = new html_base();
+        $url = $html->url(api::PATH_FIXED . 'link' . api::CREATE . api::EXT, $this->id, $this->id);
+        $btn = (new button($url. $back))->edit(msg::TRIPLE_ADD);
+
+        return $html->td($btn);
+    }
+
+    /**
+     * @returns string the html code to display a bottom to edit this triple in a table cell
      */
     function btn_edit(phrase_dsp $trp, string $back = ''): string
     {

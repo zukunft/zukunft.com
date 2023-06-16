@@ -186,7 +186,7 @@ class list_dsp
      */
 
     /**
-     * add a phrase or ... to the list
+     * add a phrase or ... to the list but only if it does not exist
      * @returns bool true if the object has been added
      */
     protected function add_obj(object $obj): bool
@@ -198,6 +198,15 @@ class list_dsp
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * add a phrase or ... to the list also if it is already part of the list
+     */
+    protected function add_always(object $obj): void
+    {
+        $this->lst[] = $obj;
+        $this->lst_dirty = true;
     }
 
     /**
