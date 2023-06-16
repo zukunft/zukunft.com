@@ -43,7 +43,8 @@
           "name": "Q167",
           "source": "wikidata",
           "type": "wikidata",
-          "url": "https:\/\/www.wikidata.org\/wiki\/"
+          "url": "https:\/\/www.wikidata.org\/wiki\/",
+          "description": "ratio of the circumference of a circle to its diameter"
         }
       ]
     },
@@ -1112,6 +1113,7 @@
     },
     {
       "name": "Pi (math)",
+      "description": "ratio of the circumference of a circle to its diameter",
       "from": "Pi",
       "verb": "is a",
       "to": "Mathematical constant",

@@ -47,21 +47,26 @@ class word_type_list extends type_list
     const TYPES = array(
         phrase_type::NORMAL,
         phrase_type::TIME,
-        phrase_type::TIME_JUMP,
-        phrase_type::LATEST,
         phrase_type::MEASURE,
+        phrase_type::TIME_JUMP,
+        phrase_type::CALC,
         phrase_type::PERCENT,
         phrase_type::SCALING,
         phrase_type::SCALING_HIDDEN,
+        phrase_type::LAYER,
+        phrase_type::FORMULA_LINK,
+        phrase_type::OTHER,
+        phrase_type::THIS,
+        phrase_type::NEXT,
+        phrase_type::PRIOR,
         phrase_type::SCALING_PCT,
         phrase_type::SCALED_MEASURE,
-        phrase_type::FORMULA_LINK,
-        phrase_type::CALC,
-        phrase_type::LAYER,
-        phrase_type::OTHER,
+        phrase_type::MATH_CONST,
+        phrase_type::MEASURE_DIVISOR,
+        phrase_type::LATEST,
         phrase_type::KEY,
         phrase_type::INFO,
-        phrase_type::MATH_CONST
+        phrase_type::TRIPLE_HIDDEN
     );
 
     /**

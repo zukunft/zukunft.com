@@ -241,6 +241,7 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(1, word_api::TN_READ);
         $wrd->description = word_api::TD_READ;
+        $wrd->set_type(phrase_type::NORMAL);
         return $wrd;
     }
 
@@ -383,6 +384,7 @@ class create_test_objects extends test_base
     {
         $trp = new triple($this->usr1);
         $trp->set(1, triple_api::TN_READ);
+        $trp->description = triple_api::TD_READ;
         $trp->set_from($this->dummy_word_const()->phrase());
         $trp->set_verb($this->dummy_verb_part());
         $trp->set_to($this->dummy_word()->phrase());
@@ -397,9 +399,11 @@ class create_test_objects extends test_base
     {
         $trp = new triple($this->usr1);
         $trp->set(2, triple_api::TN_PI_NAME);
+        $trp->description = triple_api::TD_PI;
         $trp->set_from($this->dummy_word_pi()->phrase());
         $trp->set_verb($this->dummy_verb_is());
         $trp->set_to($this->dummy_triple()->phrase());
+        $trp->set_type(phrase_type::TRIPLE_HIDDEN);
         return $trp;
     }
 
@@ -441,7 +445,7 @@ class create_test_objects extends test_base
 
     function dummy_term_triple(): term
     {
-        return $this->dummy_triple_pi()->term();
+        return $this->dummy_triple()->term();
     }
 
     function dummy_term_formula(): term
@@ -571,7 +575,7 @@ class create_test_objects extends test_base
     function dummy_reference(): ref
     {
         $ref = new ref($this->usr1);
-        $ref->set(3);
+        $ref->set(4);
         $ref->phr = $this->dummy_word_pi()->phrase();
         $ref->source = $this->dummy_source1();
         $ref->external_key = ref_api::TK_READ;

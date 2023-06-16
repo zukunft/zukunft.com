@@ -1,10 +1,8 @@
 {
-  "name": "Mathematical constant",
-  "share": "",
-  "protection": "",
+  "name": "Mathematics",
   "plural": "",
-  "description": "A mathematical constant that never changes e.g. Pi",
-  "type": "constant",
+  "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+  "type": "",
   "view": "",
   "refs": []
 }

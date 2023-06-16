@@ -4,8 +4,9 @@
   "number": 3.1415926535898,
   "phrases": [
     {
-      "id": 2,
+      "id": 3,
       "name": "Pi",
+      "description": "ratio of the circumference of a circle to its diameter",
       "type_id": 17,
       "class": "word"
     }

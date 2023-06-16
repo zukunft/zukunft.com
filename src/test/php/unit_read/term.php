@@ -73,10 +73,10 @@ class term_unit_db_tests
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(triple::class);
         $trm->row_mapper_obj($db_row, triple::class, triple::FLD_ID, triple::FLD_NAME, triple::FLD_TYPE);
-        $t->assert($t->name . ' triple row mapper', $trm->name(), triple_api::TN_PI_NAME);
+        $t->assert($t->name . ' triple row mapper', $trm->name(), triple_api::TN_READ);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), triple::class);
-        $t->assert($t->name . ' triple by object id', $trm_by_obj_id->name(), triple_api::TN_PI_NAME);
+        $t->assert($t->name . ' triple by object id', $trm_by_obj_id->name(), triple_api::TN_READ);
 
         // test load by term by a formula db row
         $frm = new formula($t->usr1);

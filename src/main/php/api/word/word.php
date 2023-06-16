@@ -53,7 +53,7 @@ class word_api extends sandbox_typed_api
     const TN_CONST = 'constant';
     const TD_CONST = 'fixed and well-defined number';
     const TN_PI = 'Pi';
-    const TD_PI = '';
+    const TD_PI = 'ratio of the circumference of a circle to its diameter';
     const TN_E = "Euler's constant";
     const TN_ONE = 'one';
     const TN_MIO = 'million';

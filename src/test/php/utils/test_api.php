@@ -137,14 +137,14 @@ class test_api extends create_test_objects
         $this->assert_api_get_by_text(component::class, component_api::TN_READ);
         $this->assert_api_get(source::class, 2);
         $this->assert_api_get_by_text(source::class, source_api::TN_READ_API);
-        $this->assert_api_get(ref::class, 3);
+        $this->assert_api_get(ref::class, 4);
         $this->assert_api_get(batch_job::class);
         $this->assert_api_get(phrase_type::class);
         $this->assert_api_get(language::class);
         $this->assert_api_get(language_form::class);
 
         $this->assert_api_get_list(type_lists::class);
-        $this->assert_api_get_list(phrase_list::class, [1, -1]);
+        $this->assert_api_get_list(phrase_list::class, [1, 2, 3, -1, -2]);
         $this->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $this->assert_api_get_list(formula_list::class, [1]);
         $this->assert_api_chg_list(

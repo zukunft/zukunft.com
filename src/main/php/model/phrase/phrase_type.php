@@ -48,6 +48,7 @@ class phrase_type extends type_object
     const LATEST = "latest"; // TODO add usage sample
     const PERCENT = "percent";
     const MEASURE = "measure";
+    const MEASURE_DIVISOR = "measure_divisor";
     const SCALING = "scaling";
     const SCALING_HIDDEN = "scaling_hidden";
     const SCALING_PCT = "scaling_percent"; // TODO used to define the scaling formula word to scale percentage values ?
@@ -58,6 +59,10 @@ class phrase_type extends type_object
     const OTHER = "type_other";
     const KEY = "key";
     const INFO = "information";
+    const TRIPLE_HIDDEN = "hidden_triple";
+    const THIS = "this";
+    const NEXT = "next";
+    const PRIOR = "previous";
 
 
     /*

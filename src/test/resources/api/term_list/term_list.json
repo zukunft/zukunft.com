@@ -3,11 +3,14 @@
     "id": 1,
     "name": "Mathematics",
     "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+    "type_id": 1,
     "class": "word"
   },
   {
-    "id": 2,
-    "name": "Pi (math)",
+    "id": 1,
+    "name": "Mathematical constant",
+    "description": "A mathematical constant that never changes e.g. Pi",
+    "type_id": 17,
     "class": "triple"
   },
   {
