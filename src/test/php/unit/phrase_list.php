@@ -127,6 +127,12 @@ class phrase_list_unit_tests
         $phr_lst = $t->dummy_phrase_list();
         $t->assert_api_to_dsp($phr_lst, new phrase_list_dsp());
 
+        // math is dominant in a phrase list use math phrases as a suggestion for a new phrase
+        $phr_lst_dsp = $t->dummy_phrase_list_dsp();
+        $phr = $phr_lst_dsp->mainly();
+        $t->assert_text_contains('Main word is "math"', $phr->name(), word_api::TN_READ);
+
+
 
         $t->subheader('Combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');
 

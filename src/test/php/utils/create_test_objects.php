@@ -63,6 +63,7 @@ use api\view_api;
 use api\word_api;
 use api_message;
 use html\word\word as word_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
 use cfg\formula_type;
 use cfg\formula_type_list;
 use cfg\job_type_list;
@@ -229,6 +230,9 @@ class create_test_objects extends test_base
         return $usr;
     }
 
+    /**
+     * @return word "math constant" as the main word for unit testing
+     */
     function dummy_word(): word
     {
         $wrd = new word($this->usr1);
@@ -327,6 +331,9 @@ class create_test_objects extends test_base
         return new verb(2, verb_api::TN_IS, verb::IS_A);
     }
 
+    /**
+     * @return triple "pi (math)" used for unit testing
+     */
     function dummy_triple(): triple
     {
         // create first the words used for the triple
@@ -368,6 +375,11 @@ class create_test_objects extends test_base
         $lst->add($this->dummy_phrase());
         $lst->add($this->dummy_phrase_triple());
         return $lst;
+    }
+
+    function dummy_phrase_list_dsp(): phrase_list_dsp
+    {
+        return new phrase_list_dsp($this->dummy_phrase_list()->api_json());
     }
 
     function dummy_phrase_group(): phrase_group

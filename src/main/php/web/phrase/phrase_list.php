@@ -90,15 +90,15 @@ class phrase_list extends list_dsp
      */
     function get_by_id(int $id): ?phrase_dsp
     {
-        $phr = null;
-        foreach ($this->lst() as $trp) {
-            if ($phr == null) {
-                if ($trp->from->id() == $id) {
-                    $phr = $trp->from;
+        $result = null;
+        foreach ($this->lst() as $phr) {
+            if ($result == null) {
+                if ($phr->id() == $id) {
+                    $result = $phr;
                 }
             }
         }
-        return $phr;
+        return $result;
     }
 
 
@@ -242,11 +242,14 @@ class phrase_list extends list_dsp
         $phr = null;
         if ($this->count() > 1) {
             $cfg = new config();
-            $is_dominant_pct = $cfg->get(config::MIN_PCT_OF_PHRASES_TO_PRESELECT, $db_con);
+            // TODO get from frontend config
+            // $is_dominant_pct = $cfg->get(config::MIN_PCT_OF_PHRASES_TO_PRESELECT, $db_con);
+            $is_dominant_pct = 0.3;
             $count_lst = array_count_values($this->id_lst());
             sort($count_lst);
             if (($count_lst[0] / $this->count()) > $is_dominant_pct) {
-                $phr = $this->get_by_id(array_key_first($count_lst));
+                $id = $count_lst[0];
+                $phr = $this->get_by_id($id);
             }
         }
         return $phr;
