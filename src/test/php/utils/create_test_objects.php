@@ -223,6 +223,9 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    /**
+     * @return user the user used for unit testing
+     */
     function dummy_user(): user
     {
         $usr = new user();
@@ -231,24 +234,29 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return word "math constant" as the main word for unit testing
+     * @return word "Mathematics" as the main word for unit testing
      */
     function dummy_word(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(1, word_api::TN_READ);
         $wrd->description = word_api::TD_READ;
-        $wrd->set_type(phrase_type::MATH_CONST);
         return $wrd;
     }
 
+    /**
+     * @return word_dsp the word "Mathematics" for frontend unit testing
+     */
     function dummy_word_dsp(): word_dsp
     {
         $wrd = $this->dummy_word();
         return new word_dsp($wrd->api_json());
     }
 
-    function dummy_word_pi(): word
+    /**
+     * @return word "constant" to create the main triple for unit testing
+     */
+    function dummy_word_const(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(2, word_api::TN_CONST);
@@ -257,59 +265,88 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
+    /**
+     * @return word "Pi" to test the const behavior
+     */
+    function dummy_word_pi(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(3, word_api::TN_PI);
+        $wrd->description = word_api::TD_PI;
+        $wrd->set_type(phrase_type::MATH_CONST);
+        return $wrd;
+    }
+
+    /**
+     * @return word "Euler's constant" to test the handling of >'<
+     */
+    function dummy_word_e(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(4, word_api::TN_E);
+        $wrd->set_type(phrase_type::MATH_CONST);
+        return $wrd;
+    }
+
     function dummy_word_2019(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(9, word_api::TN_2019);
+        $wrd->set(16, word_api::TN_2019);
         return $wrd;
     }
 
     function dummy_word_mio(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(155, word_api::TN_MIO_SHORT);
+        $wrd->set(162, word_api::TN_MIO_SHORT);
         return $wrd;
     }
 
     function dummy_word_ch(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(181, word_api::TN_CH);
+        $wrd->set(188, word_api::TN_CH);
         return $wrd;
     }
 
     function dummy_word_canton(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(182, word_api::TN_CANTON);
+        $wrd->set(189, word_api::TN_CANTON);
         return $wrd;
     }
 
     function dummy_word_city(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(183, word_api::TN_CITY);
+        $wrd->set(190, word_api::TN_CITY);
         return $wrd;
     }
 
     function dummy_word_zh(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(184, word_api::TN_ZH);
+        $wrd->set(191, word_api::TN_ZH);
         return $wrd;
     }
 
     function dummy_word_inhabitant(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(186, word_api::TN_INHABITANT);
+        $wrd->set(193, word_api::TN_INHABITANT);
         return $wrd;
     }
 
+    /**
+     * @return word_list with some basic words for unit testing
+     */
     function dummy_word_list(): word_list
     {
         $lst = new word_list($this->usr1);
         $lst->add($this->dummy_word());
+        $lst->add($this->dummy_word_const());
+        $lst->add($this->dummy_word_pi());
+        $lst->add($this->dummy_word_e());
         return $lst;
     }
 
@@ -332,48 +369,55 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return triple "pi (math)" used for unit testing
+     * @return verb a standard verb with user null
+     */
+    function dummy_verb_part(): verb
+    {
+        return new verb(3, verb_api::TN_IS, verb::IS_A);
+    }
+
+    /**
+     * @return triple "Mathematical constant" used for unit testing
      */
     function dummy_triple(): triple
     {
-        // create first the words used for the triple
-        $wrd_math = $this->dummy_word();
-        $vrb = $this->dummy_verb_is();
-        $wrd_pi = new word($this->usr1);
-        $wrd_pi->set(2, word_api::TN_READ);
-
-        // create the triple itself
         $trp = new triple($this->usr1);
-        $trp->set(1, triple_api::TN_READ_NAME);
-        $trp->set_from($wrd_pi->phrase());
-        $trp->set_verb($vrb);
-        $trp->set_to($wrd_math->phrase());
+        $trp->set(1, triple_api::TN_READ);
+        $trp->set_from($this->dummy_word_const()->phrase());
+        $trp->set_verb($this->dummy_verb_part());
+        $trp->set_to($this->dummy_word()->phrase());
         $trp->set_type(phrase_type::MATH_CONST);
+        return $trp;
+    }
+
+    /**
+     * @return triple "pi (math)" used for unit testing
+     */
+    function dummy_triple_pi(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(2, triple_api::TN_PI_NAME);
+        $trp->set_from($this->dummy_word_pi()->phrase());
+        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_to($this->dummy_triple()->phrase());
         return $trp;
     }
 
     function dummy_triple_list(): triple_list
     {
         $lst = new triple_list($this->usr1);
-        $lst->add($this->dummy_triple());
+        $lst->add($this->dummy_triple_pi());
         return $lst;
-    }
-
-    function dummy_phrase(): phrase
-    {
-        return $this->dummy_word()->phrase();
-    }
-
-    function dummy_phrase_triple(): phrase
-    {
-        return $this->dummy_triple()->phrase();
     }
 
     function dummy_phrase_list(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->dummy_phrase());
-        $lst->add($this->dummy_phrase_triple());
+        $lst->add($this->dummy_word()->phrase());
+        $lst->add($this->dummy_word_const()->phrase());
+        $lst->add($this->dummy_word_pi()->phrase());
+        $lst->add($this->dummy_triple()->phrase());
+        $lst->add($this->dummy_triple_pi()->phrase());
         return $lst;
     }
 
@@ -397,7 +441,7 @@ class create_test_objects extends test_base
 
     function dummy_term_triple(): term
     {
-        return $this->dummy_triple()->term();
+        return $this->dummy_triple_pi()->term();
     }
 
     function dummy_term_formula(): term

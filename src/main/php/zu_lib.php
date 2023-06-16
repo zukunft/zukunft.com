@@ -93,7 +93,12 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO if an internal failure is expected not to be fixable without user interaction, the user should ge a failure link for the follow up actions
     TODO review the handling of excluded: suggestion for single object allow the loading of excluded, but for lists do not include it in the list
     TODO capsule in classes
-    TODO create unit tests
+    TODO create unit tests for all relevant functions
+    TODO allow the triple name to be the same as the word name e.g. to define tha Pi and π are math const e.g implement the phrase type hidden_triple
+    TODO order the phrase types by behaviors
+    TODO create a least only test case for each phrase type
+    TODO create a behavior table to assign several behaviors to one type
+    TODO complete rename word_type to phrase_type
     TODO cleanup object by removing duplicates
     TODO call include only if needed
     TODO allow to link views, components and formulas to define a successor

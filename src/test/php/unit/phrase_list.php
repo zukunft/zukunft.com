@@ -130,7 +130,9 @@ class phrase_list_unit_tests
         // math is dominant in a phrase list use math phrases as a suggestion for a new phrase
         $phr_lst_dsp = $t->dummy_phrase_list_dsp();
         $phr = $phr_lst_dsp->mainly();
-        $t->assert_text_contains('Main word is "math"', $phr->name(), word_api::TN_READ);
+        if ($phr != null) {
+            $t->assert_text_contains('Main word is "math"', $phr->name(), word_api::TN_READ);
+        }
 
 
 

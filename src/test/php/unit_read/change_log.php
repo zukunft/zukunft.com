@@ -63,7 +63,7 @@ class change_log_unit_db_tests
         // TODO use these test functions for all dummy object creations
         $wrd = $t->dummy_word();
         $vrb = $t->dummy_verb();
-        $trp = $t->dummy_triple();
+        $trp = $t->dummy_triple_pi();
         $val = $t->dummy_value();
         $frm = $t->dummy_formula();
         $src = $t->dummy_source();
@@ -107,7 +107,7 @@ class change_log_unit_db_tests
         // TODO check again
         //$t->assert('first triple change is setting', $first_change->old_value, '');
         //$t->assert('... the given name', $first_change->new_value, triple_api::TN_READ_NAME);
-        $t->assert('last triple change is remove of', $first_change->old_value, triple_api::TN_READ_NAME);
+        $t->assert('last triple change is remove of', $first_change->old_value, triple_api::TN_PI_NAME);
         $t->assert('... the not needed given name', $first_change->new_value, '');
 
         // check loading of user value changes

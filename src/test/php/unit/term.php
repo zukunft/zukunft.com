@@ -74,7 +74,7 @@ class term_unit_tests
         $t->assert($t->name . 'word id', $trm->id_obj(), $wrd->id());
         $t->assert($t->name . 'word name', $trm->name(), $wrd->name_dsp());
 
-        $trp = $t->dummy_triple();
+        $trp = $t->dummy_triple_pi();
         $trm = $trp->term();
         $t->assert($t->name . 'triple id', $trm->id_obj(), $trp->id());
         $t->assert($t->name . 'triple name', $trm->name(), $trp->name());
@@ -102,14 +102,14 @@ class term_unit_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $fig = $t->dummy_term();
-        $t->assert_api_to_dsp($fig, new term_dsp());
-        $fig = $t->dummy_term_triple();
-        $t->assert_api_to_dsp($fig, new term_dsp());
-        $fig = $t->dummy_term_formula();
-        $t->assert_api_to_dsp($fig, new term_dsp());
-        $fig = $t->dummy_term_verb();
-        $t->assert_api_to_dsp($fig, new term_dsp());
+        $trm = $t->dummy_term();
+        $t->assert_api_to_dsp($trm, new term_dsp());
+        $trm = $t->dummy_term_triple();
+        $t->assert_api_to_dsp($trm, new term_dsp());
+        $trm = $t->dummy_term_formula();
+        $t->assert_api_to_dsp($trm, new term_dsp());
+        $trm = $t->dummy_term_verb();
+        $t->assert_api_to_dsp($trm, new term_dsp());
 
     }
 

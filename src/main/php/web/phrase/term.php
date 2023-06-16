@@ -74,17 +74,18 @@ class term extends combine_named_dsp
             $trp = new triple_dsp();
             $trp->set_from_json_array($json_array);
             $this->set_obj($trp);
-            $this->set_id($trp->id());
+            // TODO check if needed
+            //$this->set_id($trp->id());
         } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_VERB) {
             $vrb = new verb_dsp();
             $vrb->set_from_json_array($json_array);
             $this->set_obj($vrb);
-            $this->set_id($vrb->id());
+            //$this->set_id($vrb->id());
         } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_FORMULA) {
             $frm = new formula_dsp();
             $frm->set_from_json_array($json_array);
             $this->set_obj($frm);
-            $this->set_id($frm->id());
+            //$this->set_id($frm->id());
         } else {
             log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a term');
         }

@@ -84,9 +84,9 @@ class phrase_unit_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $phr = $t->dummy_phrase();
+        $phr = $t->dummy_word()->phrase();
         $t->assert_api_to_dsp($phr, new phrase_dsp());
-        $phr = $t->dummy_phrase_triple();
+        $phr = $t->dummy_triple_pi()->phrase();
         $t->assert_api_to_dsp($phr, new phrase_dsp());
 
 

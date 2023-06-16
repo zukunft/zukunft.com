@@ -50,9 +50,9 @@ class word_list_unit_db_tests
 
         // test load by word list by ids
         $wrd_lst = new word_list($t->usr1);
-        $wrd_lst->load_by_ids(array(1,2));
+        $wrd_lst->load_by_ids(array(1,3));
         $result = $wrd_lst->name();
-        $target = '"' . word_api::TN_READ . '","' . word_api::TN_CONST . '"'; // order adjusted based on the number of usage
+        $target = '"' . word_api::TN_READ . '","' . word_api::TN_PI . '"'; // order adjusted based on the number of usage
         $t->assert('load by ids for ' . $wrd_lst->dsp_id(), $result, $target);
     }
 

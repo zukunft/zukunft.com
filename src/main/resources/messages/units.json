@@ -7,19 +7,31 @@
   ],
   "words": [
     {
-      "name": "Mathematical constant",
-      "description": "A mathematical constant that never changes e.g. Pi",
+      "name": "Mathematics",
+      "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Mathematics",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "constant",
+      "description": "fixed and well-defined number",
       "type": "constant",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Mathematical_constant",
+          "name": "Constant",
           "type": "wikipedia"
         }
       ]
     },
     {
       "name": "Pi",
+      "description": "ratio of the circumference of a circle to its diameter",
       "type": "constant",
       "protection": "admin_protection",
       "refs": [
@@ -31,8 +43,67 @@
           "name": "Q167",
           "source": "wikidata",
           "type": "wikidata",
-          "description": "ratio of the circumference of a circle to its diameter",
           "url": "https:\/\/www.wikidata.org\/wiki\/"
+        }
+      ]
+    },
+    {
+      "name": "Euler's constant",
+      "type": "constant",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Euler's_constant",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q82435",
+          "source": "wikidata",
+          "type": "wikidata",
+          "description": "limit of (1 + 1/n)^n as n approaches infinity"
+        }
+      ]
+    },
+    {
+      "name": "π",
+      "type": "constant",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "\uD835\uDC52",
+      "type": "constant",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Physics",
+      "description": "Physics is the natural science of matter",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Physics",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Science",
+      "description": "Science organizes knowledge in the form of testable explanations and predictions about the universe",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Science",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Natural science",
+      "description": "Natural science is understanding and prediction of natural phenomena, based on empirical evidence",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Natural_science",
+          "type": "wikipedia"
         }
       ]
     },
@@ -1025,11 +1096,73 @@
   ],
   "triples": [
     {
+      "name": "Mathematical constant",
+      "description": "A mathematical constant that never changes e.g. Pi",
+      "from": "constant",
+      "verb": "is part of",
+      "to": "Mathematics",
+      "type": "constant",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Mathematical_constant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
       "name": "Pi (math)",
       "from": "Pi",
       "verb": "is a",
       "to": "Mathematical constant",
-      "type": "constant"
+      "type": "hidden_triple"
+    },
+    {
+      "name": "π (unit symbol)",
+      "from": "π",
+      "verb": "is alias of",
+      "to": "Pi",
+      "type": "hidden_triple"
+    },
+    {
+      "name": "\uD835\uDC52 (unit symbol)",
+      "from": "\uD835\uDC52",
+      "verb": "is alias of",
+      "to": "Euler's constant",
+      "type": "hidden_triple"
+    },
+    {
+      "name": "Natural science (branch)",
+      "from": "Natural science",
+      "verb": "is part of",
+      "to": "Science",
+      "type": "hidden_triple"
+    },
+    {
+      "from": "Physics",
+      "verb": "is a",
+      "to": "Natural science"
+    },
+    {
+      "name": "Physical constant",
+      "description": "A physical constant is a physical quantity that is generally believed to be both universal in nature and have constant value in time",
+      "from": "constant",
+      "verb": "is part of",
+      "to": "Physics",
+      "type": "constant",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Physical_constant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "SI base unit",
+      "verb": "is a",
+      "to": "Physical constant",
+      "protection": "admin_protection"
     },
     {
       "name": "second (unit)",

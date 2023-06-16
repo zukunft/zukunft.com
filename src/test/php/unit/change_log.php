@@ -120,7 +120,7 @@ class change_log_unit_tests
         // prepare the objects for the tests
         $wrd = $t->dummy_word();
         $trp = new triple($usr);
-        $trp->set(1, triple_api::TN_READ);
+        $trp->set(1, triple_api::TN_PI);
 
         // sql to load a list of log entry by word
         $db_con->set_usr($usr->id());

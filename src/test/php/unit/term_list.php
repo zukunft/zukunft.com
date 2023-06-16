@@ -97,8 +97,8 @@ class term_list_unit_tests
         $lst = new term_list($usr);
         $lst->add($this->t->new_word(word_api::TN_READ)->term());
         $lst->add($this->t->new_triple(
-            triple_api::TN_READ_NAME,
-            triple_api::TN_READ, verb::IS_A, word_api::TN_READ)->term());
+            triple_api::TN_PI_NAME,
+            triple_api::TN_PI, verb::IS_A, word_api::TN_READ)->term());
         $lst->add($this->t->new_formula(formula_api::TN_INCREASE)->term());
         $lst->add($this->t->new_verb(verb::IS_A)->term());
         return $lst;
@@ -112,7 +112,7 @@ class term_list_unit_tests
     {
         global $usr;
         $trm_lst = new term_list($usr);
-        $trm_lst->add($t->dummy_triple()->term());
+        $trm_lst->add($t->dummy_triple_pi()->term());
         $trm_lst->add($t->dummy_word()->term());
         return $trm_lst;
     }

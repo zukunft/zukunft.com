@@ -163,6 +163,12 @@
         "code_id": "information",
         "name": "information",
         "comment": "this phrase is used mainly for information purpose and for the selection the program tries to another search without this phrase"
+      },
+      {
+        "id": 22,
+        "code_id": "hidden_triple",
+        "name": "hidden triple",
+        "comment": "this triple should not be included in selection list because the triple is identical with the from word and is only added to assign behavior to the word"
       }
     ],
     "formula_types": [

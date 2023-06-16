@@ -439,7 +439,7 @@ class test_cleanup extends test_api
         $pos = 1;
         foreach ($names as $name) {
             $class = match ($name) {
-                triple_api::TN_READ_NAME => triple::class,
+                triple_api::TN_PI_NAME => triple::class,
                 default => word::class,
             };
             $phr = new phrase($usr, $pos, $name);
@@ -468,7 +468,7 @@ class test_cleanup extends test_api
         $pos = 1;
         foreach ($names as $name) {
             $class = match ($name) {
-                triple_api::TN_READ => triple::class,
+                triple_api::TN_PI => triple::class,
                 formula_api::TN_READ, formula_api::TN_READ_THIS, formula_api::TN_READ_PRIOR => formula::class,
                 verb_api::TN_READ, verb::CAN_CONTAIN_NAME, verb::CAN_CONTAIN_NAME_REVERSE => verb::class,
                 default => word::class,

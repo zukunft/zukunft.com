@@ -57,7 +57,7 @@ class term_list_unit_db_tests
         $trm_lst->load_by_ids((new trm_ids([1, -1, 2, -2])));
         $result = $trm_lst->name();
         $target = '"' . word_api::TN_READ . '","' .
-            triple_api::TN_READ_NAME . '","' .
+            triple_api::TN_PI_NAME . '","' .
             verb_api::TN_READ . '","' .
             formula_api::TN_READ . '"'; // order adjusted based on the number of usage
         $t->assert('load by ids for ' . $trm_lst->dsp_id(), $result, $target);

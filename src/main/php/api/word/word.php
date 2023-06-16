@@ -48,10 +48,13 @@ class word_api extends sandbox_typed_api
     // word names for stand-alone unit tests that are added with the system initial data load
     // TN_* is the name of the word used for testing
     // TD_* is the tooltip/description of the word
-    const TN_READ = 'Mathematical constant';
-    const TD_READ = 'A mathematical constant that never changes e.g. Pi';
-    const TN_CONST = 'Pi';
-    const TD_CONST = 'Pi';
+    const TN_READ = 'Mathematics';
+    const TD_READ = 'Mathematics is an area of knowledge that includes the topics of numbers and formulas';
+    const TN_CONST = 'constant';
+    const TD_CONST = 'fixed and well-defined number';
+    const TN_PI = 'Pi';
+    const TD_PI = '';
+    const TN_E = "Euler's constant";
     const TN_ONE = 'one';
     const TN_MIO = 'million';
     const TN_MIO_SHORT = 'mio';
@@ -117,6 +120,7 @@ class word_api extends sandbox_typed_api
         word::DB_SETTINGS,
         self::TN_READ,
         self::TN_CONST,
+        self::TN_PI,
         self::TN_ONE,
         self::TN_MIO,
         self::TN_MIO_SHORT,

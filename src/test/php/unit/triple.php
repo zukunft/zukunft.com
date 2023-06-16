@@ -47,14 +47,14 @@ class triple_unit_tests
 
         // sql to load the triple by name
         $trp = new triple($usr);
-        $trp->set_name(triple_api::TN_READ);
+        $trp->set_name(triple_api::TN_PI);
         $t->assert_load_standard_sql($db_con, $trp);
 
 
         $t->subheader('API unit tests');
 
         $trp = new triple($usr);
-        $trp->set(1, triple_api::TN_READ_NAME, triple_api::TN_READ, verb::IS_A, word_api::TN_READ);
+        $trp->set(1, triple_api::TN_PI_NAME, triple_api::TN_PI, verb::IS_A, word_api::TN_READ);
         $trp->description = 'The mathematical constant Pi';
         $api_trp = $trp->api_obj();
         $t->assert($t->name . 'api->id', $api_trp->id(), $trp->id());
@@ -71,7 +71,7 @@ class triple_unit_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $trp = $t->dummy_triple();
+        $trp = $t->dummy_triple_pi();
         $t->assert_api_to_dsp($trp, new triple_dsp());
     }
 

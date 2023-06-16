@@ -53,7 +53,7 @@ class word_list
         $lst = new word_list_dsp();
         $lst_long = new word_list_dsp();
         $wrd = new word_dsp('{"id":1,"name":"' . word_api::TN_READ . '"}');
-        $wrd_pi = new word_dsp('{"id":2,"name":"' . word_api::TN_CONST . '"}');
+        $wrd_pi = new word_dsp('{"id":2,"name":"' . word_api::TN_PI . '"}');
         $wrd_time = new word_dsp('{"id":3,"name":"' . word_api::TN_2019 . '"}');
         $wrd_one = new word_dsp('{"id":4,"name":"' . word_api::TN_ONE . '"}');
         $wrd_mio = new word_dsp('{"id":5,"name":"' . word_api::TN_MIO_SHORT . '"}');

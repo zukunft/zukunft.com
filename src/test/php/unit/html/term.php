@@ -46,7 +46,7 @@ class term
         $t->subheader('term tests');
 
         $wrd = new term_dsp($t->dummy_word()->term()->api_json());
-        $trp = new term_dsp($t->dummy_triple()->term()->api_json());
+        $trp = new term_dsp($t->dummy_triple_pi()->term()->api_json());
         $vrb = new term_dsp($t->dummy_verb()->term()->api_json());
         $frm = new term_dsp($t->dummy_formula()->term()->api_json());
         $test_page = $html->text_h2('term display test');

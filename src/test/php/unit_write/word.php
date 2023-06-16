@@ -293,7 +293,7 @@ class word_test
 
         // ... triple
         $trp = new triple($t->usr1);
-        $trp->load_by_name(triple_api::TN_READ_NAME);
+        $trp->load_by_name(triple_api::TN_PI_NAME);
         $trp->set_name(word_api::TN_ADD);
         $result = $trp->save();
         $target = '<style class="text-danger">A word with the name "System Test Word" already exists. '
