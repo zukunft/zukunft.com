@@ -31,10 +31,12 @@
 
 namespace model;
 
+include_once MODEL_FORMULA_PATH . 'fig_ids.php';
 include_once API_FORMULA_PATH . 'figure_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
 use api\figure_list_api;
+use cfg\fig_ids;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
 use test\test_api;
@@ -124,13 +126,13 @@ class figure_list extends sandbox_list
      * create an SQL statement to retrieve a list of phrase objects by the id from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param array $ids phrase ids that should be loaded
+     * @param fig_ids $ids figure ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_db $db_con, array $ids): sql_par
+    function load_sql_by_ids(sql_db $db_con, fig_ids $ids): sql_par
     {
-        $qp = $this->load_sql($db_con, count($ids) . 'ids');
-        $db_con->set_where_id_in(figure::FLD_ID, $ids);
+        $qp = $this->load_sql($db_con, $ids->count() . 'ids');
+        $db_con->set_where_id_in(figure::FLD_ID, $ids->lst);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
@@ -171,10 +173,10 @@ class figure_list extends sandbox_list
     /**
      * load the figures including the related value or result object by the given id list from the database
      *
-     * @param array $ids figure ids that should be loaded
+     * @param fig_ids $ids figure ids that should be loaded
      * @return bool true if at least one phrase has been loaded
      */
-    function load_by_ids(array $ids): bool
+    function load_by_ids(fig_ids $ids): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_ids($db_con, $ids);

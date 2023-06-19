@@ -2,7 +2,7 @@
 
 /*
 
-    model/phrase/phr_ids.php - helper class for phrase id lists
+    model/phrase/trm_ids.php - helper class for term id lists
     ------------------------
 
 
@@ -34,8 +34,11 @@ namespace model;
 
 /**
  * helper class to make sure that
- * a triple id list is never mixed with a phrase id list
- * a phrase id list is never mixed with a term id list
+ * a word    id list is never mixed with a term id list
+ * a verb    id list is never mixed with a term id list
+ * a triple  id list is never mixed with a term id list
+ * a formula id list is never mixed with a term id list
+ * a term    id list is never mixed with a phrase id list
  */
 class trm_ids
 {

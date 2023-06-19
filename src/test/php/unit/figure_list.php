@@ -34,6 +34,7 @@ namespace test;
 
 include_once WEB_FIGURE_PATH . 'figure_list.php';
 
+use cfg\fig_ids;
 use model\figure;
 use model\figure_list;
 use model\sql_db;
@@ -61,7 +62,7 @@ class figure_list_unit_tests
 
         // load by figure ids
         $fig_lst = new figure_list($usr);
-        $this->assert_sql_by_ids($t, $db_con, $fig_lst, array(1, -1));
+        $this->assert_sql_by_ids($t, $db_con, $fig_lst, new fig_ids([1, -1]));
 
 
         $t->subheader('API unit tests');
@@ -84,10 +85,15 @@ class figure_list_unit_tests
      * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param figure_list $lst the empty figure list object
-     * @param array $ids filled with a list of word ids to be used for the query creation
+     * @param fig_ids $ids filled with a list of word ids to be used for the query creation
      * @return void true if all tests are fine
      */
-    private function assert_sql_by_ids(test_cleanup $t, sql_db $db_con, figure_list $lst, array $ids): void
+    private function assert_sql_by_ids(
+        test_cleanup $t,
+        sql_db $db_con,
+        figure_list $lst,
+        fig_ids $ids
+    ): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

@@ -2,7 +2,7 @@
 
 /*
 
-    model/phrase/phr_ids.php - helper class for phrase id lists
+    model/phrase/fig_ids.php - helper class for figure id lists
     ------------------------
 
 
@@ -30,21 +30,29 @@
   
 */
 
-namespace model;
+namespace cfg;
 
 /**
  * helper class to make sure that
- * a word id   list is never mixed with a phrase id list
- * a triple id list is never mixed with a phrase id list
- * a phrase id list is never mixed with a term id list
+ * a value  id list is never mixed with a figure id list
+ * a result id list is never mixed with a figure id list
  */
-class phr_ids
+class fig_ids
 {
     public ?array $lst = null;
 
-    function __construct(array $ids)
+    function __construct(array|string $ids)
     {
-        $this->lst = $ids;
+        if (is_string($ids)) {
+            $this->set_by_txt($ids);
+        } else {
+            $this->lst = $ids;
+        }
+    }
+
+    function set_by_txt(string $cst): void
+    {
+        $this->lst = explode(",", $cst);
     }
 
     function count(): int

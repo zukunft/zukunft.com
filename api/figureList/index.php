@@ -32,6 +32,7 @@
   
 */
 
+use cfg\fig_ids;
 use controller\controller;
 use model\user;
 use model\figure_list;
@@ -68,7 +69,7 @@ if ($usr->id() > 0) {
 
     if ($frm_ids != '') {
         $lst = new figure_list($usr);
-        $lst->load_by_ids(explode(',',$frm_ids));
+        $lst->load_by_ids(new fig_ids($frm_ids));
         $result = $lst->api_obj();
     } else {
         $msg = 'formula id is missing';
