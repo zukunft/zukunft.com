@@ -100,12 +100,12 @@ class change_log_unit_tests
         // sql to load a log entry by field and row id
         $log = new change_log_link($usr);
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $log->load_sql($db_con, 1);
+        $qp = $log->load_sql_by_vars($db_con, 1);
         $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $log->load_sql($db_con, 1);
+        $qp = $log->load_sql_by_vars($db_con, 1);
         $t->assert_qp($qp, $db_con->db_type);
 
         // compare the new and the old query creation

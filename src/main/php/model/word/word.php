@@ -460,20 +460,6 @@ class word extends sandbox_typed
     }
 
     /**
-     * create an SQL statement to retrieve a word by id from the database
-     * added to word just to assign the class for the user sandbox object
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param int $id the id of the user sandbox object
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
-    {
-        return parent::load_sql_by_id($db_con, $id, $class);
-    }
-
-    /**
      * create the common part of an SQL statement to retrieve the parameters of a word from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
@@ -493,6 +479,20 @@ class word extends sandbox_typed
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a word by id from the database
+     * added to word just to assign the class for the user sandbox object
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $id the id of the user sandbox object
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    {
+        return parent::load_sql_by_id($db_con, $id, $class);
     }
 
     /**

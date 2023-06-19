@@ -66,7 +66,7 @@ class phrase_group_unit_tests
         $t->resource_path = 'db/phrase/';
         $usr->set_id(1);
 
-        $t->header('Unit tests of the phrase group class (src/main/php/model/phrase/word.php)');
+        $t->header('Unit tests of the phrase group class (src/main/php/model/phrase/phrase_group.php)');
 
         $t->subheader('SQL statement tests');
 

@@ -415,48 +415,6 @@ class sandbox extends db_object
     }
 
     /**
-     * dummy function to create the common part of an SQL statement
-     * which is overwritten by the child objects
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param string $query_name the name of the selection fields to make the query name unique
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class): sql_par
-    {
-        log_warning('The parent load_sql function related to ' . $db_con->get_type() . ' should have never been called for ' . $query_name);
-        return new sql_par($class);
-    }
-
-    /**
-     * create an SQL statement to retrieve a user sandbox object by id from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param int $id the id of the user sandbox object
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
-    {
-        $qp = $this->load_sql($db_con, 'id', $class);
-        $db_con->add_par_int($id);
-        $qp->sql = $db_con->select_by_field($this->id_field());
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * function that can be overwritten by the child object
-     * @return string the field name of the prime database index of the object
-     */
-    protected function id_field(): string
-    {
-        return $this->obj_name . sql_db::FLD_EXT_ID;
-    }
-
-    /**
      * function that must be overwritten by the child object
      * @return array with all field names of the user sandbox object excluding the prime id field
      */
@@ -544,21 +502,6 @@ class sandbox extends db_object
         $db_row = $db_con->get1($qp);
         $this->row_mapper_sandbox($db_row);
         return $this->id();
-    }
-
-    /**
-     * load a named user sandbox object by database id
-     * @param int $id the id of the word, triple, formula, verb, view or view component
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id, string $class = self::class): int
-    {
-        global $db_con;
-
-        log_debug($id);
-        $qp = $this->load_sql_by_id($db_con, $id, $class);
-        return $this->load($qp);
     }
 
     /**

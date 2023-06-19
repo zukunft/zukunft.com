@@ -177,7 +177,7 @@ class change_log_link extends change_log
         return $qp;
     }
 
-    function load_sql(sql_db $db_con, int $table_id): sql_par
+    function load_sql_by_vars(sql_db $db_con, int $table_id): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'table';
@@ -446,7 +446,7 @@ class change_log_link extends change_log
         //$this->add_table();
 
         $db_type = $db_con->get_type();
-        $qp = $this->load_sql($db_con, $this->table_id);
+        $qp = $this->load_sql_by_vars($db_con, $this->table_id);
         $db_row = $db_con->get1($qp);
         $this->row_mapper($db_row);
         if ($db_row != null) {

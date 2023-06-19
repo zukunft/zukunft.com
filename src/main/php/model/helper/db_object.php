@@ -43,6 +43,7 @@ class db_object
     // the database id is the unique prime key
     protected int $id;
 
+
     /*
      * construct and map
      */
@@ -66,7 +67,7 @@ class db_object
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
         $result = false;
-        $this->id = 0;
+        $this->set_id(0);
         if ($db_row != null) {
             if (array_key_exists($id_fld, $db_row)) {
                 if ($db_row[$id_fld] != 0) {
@@ -107,6 +108,39 @@ class db_object
      */
 
     /**
+     * dummy function to create the common part of an SQL statement
+     * which is overwritten by the child objects
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $query_name the name of the selection fields to make the query name unique
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class): sql_par
+    {
+        log_warning('The parent load_sql function related to ' . $db_con->get_type() . ' should have never been called for ' . $query_name);
+        return new sql_par($class);
+    }
+
+    /**
+     * create an SQL statement to retrieve a user sandbox object by id from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $id the id of the user sandbox object
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'id', $class);
+        $db_con->add_par_int($id);
+        $qp->sql = $db_con->select_by_field($this->id_field());
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
      * load one database row e.g. word, triple, value, formula, result, view, component or log entry from the database
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
@@ -119,7 +153,6 @@ class db_object
         $this->row_mapper($db_row);
         return $this->id();
     }
-
 
 
     /*
@@ -163,6 +196,17 @@ class db_object
         }
     }
 
+    /**
+     * function that can be overwritten by the child object
+     * @return string the field name of the prime database index of the object
+     */
+    protected function id_field(): string
+    {
+        $lib = new library();
+        return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
+    }
+
+
     /*
      * dummy functions that should always be overwritten by the child
      */
@@ -185,7 +229,11 @@ class db_object
      */
     function load_by_id(int $id, string $class = self::class): int
     {
-        return 0;
+        global $db_con;
+
+        log_debug($id);
+        $qp = $this->load_sql_by_id($db_con, $id, $class);
+        return $this->load($qp);
     }
 
     /**

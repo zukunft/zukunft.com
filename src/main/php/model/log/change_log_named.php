@@ -169,11 +169,11 @@ class change_log_named extends change_log
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $name): sql_par
+    function load_sql(sql_db $db_con, string $query_name, string $class): sql_par
     {
         $qp = new sql_par(self::class);
         $db_con->set_type(sql_db::TBL_CHANGE);
-        $qp->name .= $name;
+        $qp->name .= $query_name;
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
@@ -193,7 +193,7 @@ class change_log_named extends change_log
      */
     function load_sql_by_user(sql_db $db_con, ?user $usr = null): sql_par
     {
-        $qp = $this->load_sql($db_con, 'user_last');
+        $qp = $this->load_sql($db_con, 'user_last', self::class);
 
         if ($usr == null) {
             $usr = $this->user();
@@ -215,7 +215,7 @@ class change_log_named extends change_log
      */
     function load_sql_by_field_row(sql_db $db_con, ?int $field_id = null, ?int $row_id = null): sql_par
     {
-        $qp = $this->load_sql($db_con, 'field_row');
+        $qp = $this->load_sql($db_con, 'field_row', self::class);
         $db_con->set_page();
         $fields = [];
         if ($field_id != null) {

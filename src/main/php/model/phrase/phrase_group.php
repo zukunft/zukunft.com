@@ -219,6 +219,31 @@ class phrase_group extends db_object
 
 
     /*
+     * load
+     */
+
+    /**
+     * create the common part of an SQL statement to retrieve the complete phrase group from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $query_name the name of the query use to prepare and call the query
+     * @param string $class the name of this class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
+
+        $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
+        $db_con->set_name($qp->name);
+        $db_con->set_fields(self::FLD_NAMES);
+
+        return $qp;
+    }
+
+
+    /*
      * load functions - the set functions are used to define the loading selection criteria
      */
 

@@ -148,7 +148,7 @@ class ip_range extends db_object
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con): sql_par
+    function load_sql_by_vars(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_IP);
         $lib = new library();
@@ -197,7 +197,7 @@ class ip_range extends db_object
 
         $this->reset();
         $this->id = $id;
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql_by_vars($db_con);
         return $this->load($qp);
     }
 
@@ -474,7 +474,7 @@ class ip_range extends db_object
         $db_chk->from = $this->from;
         $db_chk->to = $this->to;
         $db_chk->set_user($this->user());
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql_by_vars($db_con);
         $db_chk->load($qp);
         if ($db_chk->id > 0) {
             log_debug('->get_similar an ' . $this->dsp_id() . ' already exists');
@@ -523,7 +523,7 @@ class ip_range extends db_object
             $db_rec->reset();
             $db_rec->id = $this->id;
             $db_rec->set_user($this->user());
-            $qp = $this->load_sql($db_con);
+            $qp = $this->load_sql_by_vars($db_con);
             if ($db_rec->load($qp) > 0) {
                 $result .= $this->save_fields($db_con, $db_rec);
             }

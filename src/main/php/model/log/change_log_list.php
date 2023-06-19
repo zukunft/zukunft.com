@@ -289,7 +289,7 @@ class change_log_list extends base_list
         $table_field_name = $table_id . $field_name;
         $field_id = $change_log_fields->id($table_field_name);
         $log_named = new change_log_named($usr);
-        $qp = $log_named->load_sql($db_con, $query_ext);
+        $qp = $log_named->load_sql($db_con, $query_ext, self::class);
         $db_con->set_page($this->limit, $this->offset());
         $db_con->add_par(sql_db::PAR_INT, $field_id);
         $db_con->add_par(sql_db::PAR_INT, $id);

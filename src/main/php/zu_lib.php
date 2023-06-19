@@ -253,7 +253,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
        10. capsule object vars
         done:
 
-    the target model object structure ist:
+    the target model object structure is:
 
     db_object - all database objects that have a unique id
         verb - named object not part of the user sandbox because each verb / predicate is expected to have it own behavior; user can only request new verbs
@@ -262,35 +262,83 @@ use html\phrase\phrase_group as phrase_group_dsp;
             phrase_group_word_link - phrase_group_link for a word
             phrase_group_triple_link - phrase_group_link for a triple
         formula_element - the parts of a formula expression for fast finding of dependencies (not the db normal form to speed up)
+        result - one calculated numeric result (TODO move to sandbox?)
+        change_log - to log a change done by a user
+            change_log_named - log of user changes in named objects e.g. word, triple, ...
+            change_log_link - log of the link changes by a user
+        system_log - log entries by the system to improve the setup and code
+        batch_job - to handle processes that takes longer than the user is expected to wait
+        ip_range - to filter requests from the internet
         sandbox - a user sandbox object
             sandbox_named - user sandbox objects that have a given name
                 sandbox_typed - named sandbox object that have a type and a predefined behavior
                     word - the base object to find values
                     formulas - a calculation rule
+                    view - to show an object to the user
+                    component - an formatting element for the user view e.g. to show a word or number
+                    view_term_link - link a view to a term (TODO move to sandbox_link_typed?)
+                    source - a non automatic source for a value
             sandbox_Link - user sandbox objects that link two objects
                 sandbox_link_named - user sandbox objects that link two objects
                     sandbox_link_typed - objects that have additional a type and a predefined behavior
                         triple - link two words with a predicate / verb
+                    sandbox_link_with_type - TODO combine with sandbox_link_typed?
+                        formula_link - link a formula to a phrase
+                        component_link - to assign a component to a view
+                        ref - to link a value to an external source
             sandbox_value - to save a user specific numbers
                 value - a single number added by the user
                 value_time_series - a list of very similar numbers added by the user e.g. that only have a different timestamp  (TODO rename to series)
     base_list - a list with pages
+        change_log_list - to forward changes to the UI
+        system_log_list - to forward the system log entries to the UI
+        batch_job_list - to forward the batch jobs to the UI
+        ip_range_list - list of the ip ranges
         sandbox_list - a user specific paged list
             word_list - a list of words (TODO move to sandbox_list_named?)
             triple_list - a list of triples (TODO move to sandbox_list_named?)
             value_list - a list of values
             value_phrase_link_list - list of value_phrase_link
+            formula_list - a list of formulas
+            formula_element_list - a list of formula elements
+            formula_element_group_list - a list of formula element groups
+            formula_link_list - a list of formula links
+            result_list - a list of results
             figure_list - a list of figures
-            formula_element_group_list - a list of formula elements
+            view_list - a list of views
+            component_list - a list of components
+            component_link_list - a list of component_links
             sandbox_list_named - a paged list of named objects
                 phrase_list - a list of phrases
                 term_list - a list of terms
     type_object - to assign program code to a single object
         word_type - to assign predefined behaviour to a single word (and its children) (TODO combine with phrase type?)
         phrase_type - to assign predefined behaviour to a single word (and its children)
+        formula_type - to assign predefined behaviour to formulas
+        ref_type - to assign predefined behaviour to reference
+        source_type - to assign predefined behaviour to source
+        language - to define how the UI should look like
+        language_form - to differentiate the word and triple name forms e.g. plural
     type_list - list of type_objects that is only load once a startup in the frontend
+        view_sys_list - list of all view used by the system itself
         word_type_list - list of all word types
         verb_list - list of all verbs
+        formula_type_list - a list of all formula types
+        formula_element_type_list - list of all formula element types
+        formula_link_type_list - list of all formula link types
+        view_type_list - list of all view types
+        view_cmp_type_list - list of all component types
+        view_cmp_link_type_list - list of all link types how to assign a component to a view
+        view_cmp_pos_type_list - list of all view_cmp_pos_type
+        ref_list - list of all refs (TODO use a sandbox_link list?)
+        ref_type_list - list of all ref types
+        source_type_list - list of all source types
+        language_list - list of all UI languages
+        language_form_list - list of all language forms
+        change_log_action - list of all change types
+        change_log_table - list of all db tables that can be changed by the user (including table of past versions)
+        change_log_field - list of all fields in table that a user can change (including fields of past versions)
+        job_type_list - list of all batch job types
     combine_object - a object that combines two objects
         combine_named - a combine object with a unique name
             phrase - a word or triple
@@ -303,12 +351,15 @@ use html\phrase\phrase_group as phrase_group_dsp;
         fig_ids - just to avoid mixing a result with a figure id
         expression - to convert the user format of a formula to the internal reference format and backward
 
-
     model objects to be reviewed
         word_change_list
         phrase_group_list - a list of phrase group that is supposed to be a sandbox_list
         value_phrase_link - db index to find a valur by the phrase (not the db normal form to speed up)
         formula_element_group - to combine several formula elements that are depending on each other
+        view_cmp_type - TODO rename to component_type and move to type_object?
+        view_cmp_pos_type - TODO use a simple enum?
+        ref_link_wikidata - the link to wikidata
+
 
 
     rules for this projects (target, but not yet done)

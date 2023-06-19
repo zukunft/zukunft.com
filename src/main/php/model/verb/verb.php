@@ -338,7 +338,7 @@ class verb extends db_object
     }
 
     /*
-     * loading
+     * load
      */
 
     /**
@@ -346,9 +346,10 @@ class verb extends db_object
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $query_name the name of the query use to prepare and call the query
+     * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name): sql_par
+    protected function load_sql(sql_db $db_con, string $query_name, string $class): sql_par
     {
         $qp = new sql_par(verb::class);
         $qp->name .= $query_name;
@@ -365,11 +366,12 @@ class verb extends db_object
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param int $id the id of the user sandbox object
+     * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id): sql_par
+    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'id');
+        $qp = $this->load_sql($db_con, 'id', $class);
         $qp->sql = $db_con->select_by_id($id);
         $qp->par = $db_con->get_par();
 
@@ -385,7 +387,7 @@ class verb extends db_object
      */
     function load_sql_by_name(sql_db $db_con, string $name): sql_par
     {
-        $qp = $this->load_sql($db_con, 'name');
+        $qp = $this->load_sql($db_con, 'name', self::class);
         $db_con->add_par(sql_db::PAR_TEXT, $name);
         $sql_where = '( ' . self::FLD_NAME . ' = ' . $db_con->par_name();
         $db_con->add_par(sql_db::PAR_TEXT, $name);
@@ -406,7 +408,7 @@ class verb extends db_object
      */
     function load_sql_by_code_id(sql_db $db_con, string $code_id): sql_par
     {
-        $qp = $this->load_sql($db_con, 'code_id');
+        $qp = $this->load_sql($db_con, 'code_id', self::class);
         $db_con->add_par(sql_db::PAR_TEXT, $code_id);
         $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();
