@@ -58,8 +58,8 @@ class user_unit_tests
         $t->subheader('SQL statement tests');
 
         $test_usr = new user();
-        $t->assert_load_sql_id($db_con, $test_usr);
-        $t->assert_load_sql_name($db_con, $test_usr);
+        $t->assert_sql_by_id($db_con, $test_usr);
+        $t->assert_sql_by_name($db_con, $test_usr);
         $this->assert_load_sql_email($t, $db_con, $test_usr);
         $this->assert_load_sql_name_or_email($t, $db_con, $test_usr);
         $this->assert_load_sql_ip($t, $db_con, $test_usr);

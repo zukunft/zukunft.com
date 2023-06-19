@@ -35,8 +35,8 @@ class triple_unit_tests
         $t->subheader('SQL statement tests');
 
         $trp = new triple($usr);
-        $t->assert_load_sql_id($db_con, $trp);
-        $t->assert_load_sql_name($db_con, $trp);
+        $t->assert_sql_by_id($db_con, $trp);
+        $t->assert_sql_by_name($db_con, $trp);
         $t->assert_load_sql_link($db_con, $trp);
         $this->assert_load_sql_name_generated($db_con, $trp, $t);
 

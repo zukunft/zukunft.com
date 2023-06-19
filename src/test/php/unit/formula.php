@@ -67,8 +67,8 @@ class formula_unit_tests
         $t->subheader('SQL user sandbox statement tests');
 
         $frm = new formula($usr);
-        $t->assert_load_sql_id($db_con, $frm);
-        $t->assert_load_sql_name($db_con, $frm);
+        $t->assert_sql_by_id($db_con, $frm);
+        $t->assert_sql_by_name($db_con, $frm);
 
 
         $t->subheader('SQL statement tests');

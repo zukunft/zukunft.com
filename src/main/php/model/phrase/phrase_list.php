@@ -142,6 +142,8 @@ class phrase_list extends sandbox_list_named
 
     /**
      * set the SQL query parameters to load a list of phrase names
+     * without the related phrase to save time and memory
+     *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
@@ -162,10 +164,12 @@ class phrase_list extends sandbox_list_named
 
     /**
      * set the SQL query parameters to load a list of phrase objects
+     * with all parameters and the related phrase
+     *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_object_sql(sql_db $db_con, string $query_name): sql_par
+    function load_sql(sql_db $db_con, string $query_name): sql_par
     {
         $db_con->set_type(sql_db::TBL_PHRASE);
         $qp = new sql_par(self::class);
@@ -182,6 +186,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * create an SQL statement to retrieve a list of phrase names by the id from the database
+     * compared to load_sql_by_ids this reads only the phrase names and not the related phrase to save time and memory
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param phr_ids $ids phrase ids that should be loaded
@@ -204,9 +209,9 @@ class phrase_list extends sandbox_list_named
      * @param phr_ids $ids phrase ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_object_sql_by_ids(sql_db $db_con, phr_ids $ids): sql_par
+    function load_sql_by_ids(sql_db $db_con, phr_ids $ids): sql_par
     {
-        $qp = $this->load_object_sql($db_con, $ids->count() . 'ids');
+        $qp = $this->load_sql($db_con, $ids->count() . 'ids');
         $db_con->set_where_id_in(phrase::FLD_ID, $ids->lst);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -410,7 +415,7 @@ class phrase_list extends sandbox_list_named
         } else {
             $ids_to_load = $ids;
         }
-        $qp = $this->load_object_sql_by_ids($db_con, $ids_to_load);
+        $qp = $this->load_sql_by_ids($db_con, $ids_to_load);
         $result = $this->load($qp);
         if ($phr_lst != null) {
             $phr_lst_to_add = $phr_lst->filter_by_ids($ids);

@@ -56,7 +56,7 @@ class system_log_unit_tests
 
         // sql to load one error by id
         $err = new system_log();
-        $t->assert_load_sql_id($db_con, $err);
+        $t->assert_sql_by_id($db_con, $err);
 
 
         $t->subheader('API unit tests');

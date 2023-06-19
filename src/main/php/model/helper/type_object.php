@@ -2,7 +2,7 @@
 
 /*
 
-    /model/phrase/type_object.php - the superclass for word, formula and view types
+    /model/helper/type_object.php - the superclass for word, formula and view types
     -----------------------------
 
     a base type object that can be used to link program code to single objects

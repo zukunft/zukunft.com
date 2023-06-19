@@ -60,7 +60,7 @@ class component_link_unit_tests
 
         // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
         $vcl = new component_link($usr);
-        $t->assert_load_sql_id($db_con, $vcl);
+        $t->assert_sql_by_id($db_con, $vcl);
         $t->assert_load_sql_link($db_con, $vcl);
 
 

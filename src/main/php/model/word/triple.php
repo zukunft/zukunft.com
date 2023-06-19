@@ -34,7 +34,7 @@
 
 namespace model;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named_with_type.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_typed.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 
 use cfg\export\exp_obj;
@@ -49,7 +49,7 @@ use JsonSerializable;
 
 global $phrase_types;
 
-class triple extends sandbox_link_named_with_type implements JsonSerializable
+class triple extends sandbox_link_typed implements JsonSerializable
 {
 
     /*

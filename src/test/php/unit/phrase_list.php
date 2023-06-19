@@ -88,7 +88,8 @@ class phrase_list_unit_tests
         // load by phrase ids
         $phr_lst = new phrase_list($usr);
         $phr_ids = new phr_ids(array(3, -2, 4, -7));
-        $this->assert_sql_by_ids($t, $db_con, $phr_lst, $phr_ids);
+        //$this->assert_by_ids_sql($phr_ids->lst);
+        $this->assert_names_sql_by_ids($t, $db_con, $phr_lst, $phr_ids);
 
         $this->test = $t;
 
@@ -250,7 +251,11 @@ class phrase_list_unit_tests
      * @param phr_ids $ids filled with a list of word ids to be used for the query creation
      * @return bool true if all tests are fine
      */
-    private function assert_sql_by_ids(test_cleanup $t, sql_db $db_con, phrase_list $lst, phr_ids $ids): bool
+    private function assert_names_sql_by_ids(
+        test_cleanup $t,
+        sql_db $db_con,
+        phrase_list $lst,
+        phr_ids $ids): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

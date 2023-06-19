@@ -59,8 +59,8 @@ class view_unit_tests
         $t->subheader('SQL user sandbox statement tests');
 
         $dsp = new view($usr);
-        $t->assert_load_sql_id($db_con, $dsp);
-        $t->assert_load_sql_name($db_con, $dsp);
+        $t->assert_sql_by_id($db_con, $dsp);
+        $t->assert_sql_by_name($db_con, $dsp);
         $t->assert_load_sql_code_id($db_con, $dsp);
 
 

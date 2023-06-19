@@ -61,8 +61,8 @@ class component_unit_tests
         $t->subheader('SQL user sandbox statement tests');
 
         $cmp = new component($usr);
-        $t->assert_load_sql_id($db_con, $cmp);
-        $t->assert_load_sql_name($db_con, $cmp);
+        $t->assert_sql_by_id($db_con, $cmp);
+        $t->assert_sql_by_name($db_con, $cmp);
 
 
         $t->subheader('SQL statement tests');

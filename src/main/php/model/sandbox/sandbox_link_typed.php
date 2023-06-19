@@ -2,7 +2,7 @@
 
 /*
 
-    model/sandbox/sandbox_link_named_with_type.php - adding the type field to the user sandbox link named superclass
+    model/sandbox/sandbox_link_typed.php - adding the type field to the user sandbox link named superclass
     ----------------------------------------------
 
     This file is part of zukunft.com - calc with words
@@ -33,7 +33,7 @@ namespace model;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 
-class sandbox_link_named_with_type extends sandbox_link_named
+class sandbox_link_typed extends sandbox_link_named
 {
 
     // database id of the type used for named link user sandbox objects with predefined functionality

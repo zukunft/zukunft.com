@@ -59,7 +59,7 @@ class ref_unit_tests
 
         $t->subheader('SQL statement tests');
         $ref = new ref($usr);
-        $t->assert_load_sql_id($db_con, $ref);
+        $t->assert_sql_by_id($db_con, $ref);
 
         // sql to load the ref types
         $ref_type_list = new ref_type_list();
@@ -83,8 +83,8 @@ class ref_unit_tests
 
         $t->subheader('SQL statement tests');
         $src = new source($usr);
-        $t->assert_load_sql_id($db_con, $src);
-        $t->assert_load_sql_name($db_con, $src);
+        $t->assert_sql_by_id($db_con, $src);
+        $t->assert_sql_by_name($db_con, $src);
         $t->assert_load_sql_code_id($db_con, $src);
 
         // sql to load a source by id

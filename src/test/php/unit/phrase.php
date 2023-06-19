@@ -64,8 +64,8 @@ class phrase_unit_tests
         $t->subheader('SQL statement tests');
 
         $phr = new phrase($usr);
-        $t->assert_load_sql_id($db_con, $phr);
-        $t->assert_load_sql_name($db_con, $phr);
+        $t->assert_sql_by_id($db_con, $phr);
+        $t->assert_sql_by_name($db_con, $phr);
 
         // sql to load the phrase by id
         $phr = new phrase($usr);

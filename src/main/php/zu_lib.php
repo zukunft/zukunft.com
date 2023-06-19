@@ -193,6 +193,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO create a undo und redo function for a change_log entry
     TODO for behavior that should apply to several types create a property/behavior table with an n:m reration to phrase types e.g. "show preferred as column" for time phrases
     TODO create a user view for contradicting behaviour e.g. if time should be shown in column, but days in rows
+    TODO add a text table for string and prosa that never should be used for selection
+    TODO add a date table to save dates in an efficient way
+    TODO allow to assign users to an admin and offer each admin to use different settings for "his" users so that different behavior due to setting changes can be tested to the same pod
+
 
     TODO add data optimizers for read time, write time and space usage
          e.g. select the queries most often used with the longest exe time by data transferred
@@ -248,6 +252,63 @@ use html\phrase\phrase_group as phrase_group_dsp;
         9. remove class and function from debug
        10. capsule object vars
         done:
+
+    the target model object structure ist:
+
+    db_object - all database objects that have a unique id
+        verb - named object not part of the user sandbox because each verb / predicate is expected to have it own behavior; user can only request new verbs
+        phrase_group - a sorted list of phrases
+        phrase_group_link - db index to find a phrase group by the phrase (not the db normal form to speed up)
+            phrase_group_word_link - phrase_group_link for a word
+            phrase_group_triple_link - phrase_group_link for a triple
+        formula_element - the parts of a formula expression for fast finding of dependencies (not the db normal form to speed up)
+        sandbox - a user sandbox object
+            sandbox_named - user sandbox objects that have a given name
+                sandbox_typed - named sandbox object that have a type and a predefined behavior
+                    word - the base object to find values
+                    formulas - a calculation rule
+            sandbox_Link - user sandbox objects that link two objects
+                sandbox_link_named - user sandbox objects that link two objects
+                    sandbox_link_typed - objects that have additional a type and a predefined behavior
+                        triple - link two words with a predicate / verb
+            sandbox_value - to save a user specific numbers
+                value - a single number added by the user
+                value_time_series - a list of very similar numbers added by the user e.g. that only have a different timestamp  (TODO rename to series)
+    base_list - a list with pages
+        sandbox_list - a user specific paged list
+            word_list - a list of words (TODO move to sandbox_list_named?)
+            triple_list - a list of triples (TODO move to sandbox_list_named?)
+            value_list - a list of values
+            value_phrase_link_list - list of value_phrase_link
+            figure_list - a list of figures
+            formula_element_group_list - a list of formula elements
+            sandbox_list_named - a paged list of named objects
+                phrase_list - a list of phrases
+                term_list - a list of terms
+    type_object - to assign program code to a single object
+        word_type - to assign predefined behaviour to a single word (and its children) (TODO combine with phrase type?)
+        phrase_type - to assign predefined behaviour to a single word (and its children)
+    type_list - list of type_objects that is only load once a startup in the frontend
+        word_type_list - list of all word types
+        verb_list - list of all verbs
+    combine_object - a object that combines two objects
+        combine_named - a combine object with a unique name
+            phrase - a word or triple
+            term - a word, triple, verb or formula
+        figure - a value or result
+
+    helpers
+        phr_ids - just to avoid mixing a phrase with a triple id
+        trm_ids - just to avoid mixing a term with a triple, verb or formula id
+        fig_ids - just to avoid mixing a result with a figure id
+        expression - to convert the user format of a formula to the internal reference format and backward
+
+
+    model objects to be reviewed
+        word_change_list
+        phrase_group_list - a list of phrase group that is supposed to be a sandbox_list
+        value_phrase_link - db index to find a valur by the phrase (not the db normal form to speed up)
+        formula_element_group - to combine several formula elements that are depending on each other
 
 
     rules for this projects (target, but not yet done)

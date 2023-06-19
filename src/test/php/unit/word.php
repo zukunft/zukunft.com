@@ -64,8 +64,8 @@ class word_unit_tests
         $t->subheader('SQL user sandbox statement tests');
 
         $wrd = new word($usr);
-        $t->assert_load_sql_id($db_con, $wrd);
-        $t->assert_load_sql_name($db_con, $wrd);
+        $t->assert_sql_by_id($db_con, $wrd);
+        $t->assert_sql_by_name($db_con, $wrd);
 
 
         $t->subheader('SQL statement tests');

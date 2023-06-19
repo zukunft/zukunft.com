@@ -61,8 +61,8 @@ class verb_unit_tests
         $t->subheader('SQL statement tests');
 
         $vrb = new verb();
-        $t->assert_load_sql_id($db_con, $vrb);
-        $t->assert_load_sql_name($db_con, $vrb);
+        $t->assert_sql_by_id($db_con, $vrb);
+        $t->assert_sql_by_name($db_con, $vrb);
         $t->assert_load_sql_code_id($db_con, $vrb);
 
 
