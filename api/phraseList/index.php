@@ -45,6 +45,7 @@ include_once PHP_PATH . 'zu_lib.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'message_header.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
 

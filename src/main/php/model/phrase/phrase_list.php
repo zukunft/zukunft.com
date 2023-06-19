@@ -45,6 +45,7 @@
 namespace model;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
+include_once MODEL_PHRASE_PATH . 'trm_ids.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
 
 use api\phrase_list_api;
@@ -2526,42 +2527,4 @@ class phrase_list extends sandbox_list_named
     }
 }
 
-/**
- * helper class to make sure that
- * a triple id list is never mixed with a phrase id list
- * a phrase id list is never mixed with a term id list
- */
-class phr_ids
-{
-    public ?array $lst = null;
 
-    function __construct(array $ids)
-    {
-        $this->lst = $ids;
-    }
-
-    function count(): int
-    {
-        return (count($this->lst));
-    }
-}
-
-/**
- * helper class to make sure that
- * a triple id list is never mixed with a term id list
- * a phrase id list is never mixed with a term id list
- */
-class trm_ids
-{
-    public ?array $lst = null;
-
-    function __construct(array $ids)
-    {
-        $this->lst = $ids;
-    }
-
-    function count(): int
-    {
-        return (count($this->lst));
-    }
-}

@@ -31,6 +31,7 @@
 
 namespace model;
 
+include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 
 use model\phrase_list;
