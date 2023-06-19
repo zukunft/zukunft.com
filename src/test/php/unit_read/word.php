@@ -156,7 +156,7 @@ class word_unit_db_tests
 
         $t->subheader('Frontend API tests');
 
-        $trp = $t->load_triple(triple_api::TN_PI, verb::IS_A, word_api::TN_READ);
+        $trp = $t->load_triple(triple_api::TN_PI, verb::IS, word_api::TN_READ);
         $t->assert_api_obj($trp);
     }
 

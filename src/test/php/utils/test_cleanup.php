@@ -338,14 +338,14 @@ class test_cleanup extends test_api
         }
 
         // request to delete some triples not yet covered by the other cleanup jobs
-        $this->del_triple(word_api::TN_2019, verb::IS_A, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2020, verb::IS_A, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2021, verb::IS_A, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2022, verb::IS_A, word_api::TN_YEAR);
+        $this->del_triple(word_api::TN_2019, verb::IS, word_api::TN_YEAR);
+        $this->del_triple(word_api::TN_2020, verb::IS, word_api::TN_YEAR);
+        $this->del_triple(word_api::TN_2021, verb::IS, word_api::TN_YEAR);
+        $this->del_triple(word_api::TN_2022, verb::IS, word_api::TN_YEAR);
         $this->del_triple(word_api::TN_2020, verb::FOLLOW, word_api::TN_2019);
         $this->del_triple(word_api::TN_2021, verb::FOLLOW, word_api::TN_2020);
         $this->del_triple(word_api::TN_2022, verb::FOLLOW, word_api::TN_2021);
-        $this->del_triple(word_api::TN_CASH_FLOW, verb::IS_A, word_api::TN_FIN_REPORT);
+        $this->del_triple(word_api::TN_CASH_FLOW, verb::IS, word_api::TN_FIN_REPORT);
         $this->del_triple(word_api::TN_TAX_REPORT, verb::IS_PART_OF, word_api::TN_CASH_FLOW);
         $this->del_triple(word_api::TN_CASH, verb::IS_PART_OF, word_api::TN_ASSETS_CURRENT);
         $this->del_triple(word_api::TN_ASSETS_CURRENT, verb::IS_PART_OF, word_api::TN_ASSETS);

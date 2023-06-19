@@ -165,7 +165,7 @@ class term_list extends sandbox_list_named
      * @param sql_par $qp the query parameters created by the calling function
      * @return bool true if at least one term has been loaded
      */
-    private function load(sql_par $qp): bool
+    protected function load(sql_par $qp): bool
     {
         global $db_con;
         $result = false;

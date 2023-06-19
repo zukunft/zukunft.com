@@ -42,7 +42,7 @@ class component_link_list extends sandbox_list
      * @param array $db_rows with the data directly from the database
      * @return bool true if the view component link is loaded and valid
      */
-    function row_mapper(array $db_rows): bool
+    protected function rows_mapper(array $db_rows): bool
     {
         $result = false;
         foreach ($db_rows as $db_row) {
@@ -112,34 +112,6 @@ class component_link_list extends sandbox_list
     }
 
     /**
-     * load all view component links of given view or view component
-     *
-     * @param view|null $dsp if set to get all links for this view
-     * @param component|null $cmp if set to get all links for this view component
-     * @return bool true if value or phrases are found
-     */
-    private function load(?view $dsp = null, ?component $cmp = null): bool
-    {
-        global $db_con;
-        $result = false;
-
-        // check the all minimal input parameters
-        if ($this->user()->id() <= 0) {
-            log_err('The user must be set to load ' . self::class, self::class . '->load');
-        } else {
-            $qp = $this->load_sql($db_con, $dsp, $cmp);
-            if ($qp->name != '') {
-                $db_rows = $db_con->get($qp);
-                if ($db_rows != null) {
-                    $result = $this->row_mapper($db_rows);
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * interface function to load all phrases linked to a given value
      *
      * @param view $dsp if set to get all links for this view
@@ -147,7 +119,9 @@ class component_link_list extends sandbox_list
      */
     function load_by_view(view $dsp): bool
     {
-        return $this->load($dsp);
+        global $db_con;
+        $qp = $this->load_sql($db_con, $dsp, null);
+        return $this->load($qp);
     }
 
     /**
@@ -158,7 +132,9 @@ class component_link_list extends sandbox_list
      */
     function load_by_component(component $cmp): bool
     {
-        return $this->load(null, $cmp);
+        global $db_con;
+        $qp = $this->load_sql($db_con, null, $cmp);
+        return $this->load($qp);
     }
 
     /**

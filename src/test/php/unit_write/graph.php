@@ -107,7 +107,7 @@ class graph_test
         $ZH->load_by_name(word_api::TN_ZH, word::class);
         $is = new verb;
         $is->set_user($usr);
-        $is->load_by_code_id(verb::IS_A);
+        $is->load_by_code_id(verb::IS);
         $graph = new triple_list($usr);
         $graph->wrd = $ZH;
         $graph->vrb = $is;

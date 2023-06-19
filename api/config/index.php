@@ -2,8 +2,8 @@
 
 /*
 
-    api/type_lists/index.php - the API controller to send all preloaded types to the frontend
-    ------------------------
+    api/config/index.php - the API controller to send the system and user configuration to the frontend
+    --------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,6 +29,7 @@
   
 */
 
+use cfg\config_numbers;
 use controller\controller;
 use model\user;
 use cfg\type_lists;
@@ -43,10 +44,10 @@ include_once PHP_PATH . 'zu_lib.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'message_header.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_HELPER_PATH . 'type_lists.php';
+include_once MODEL_HELPER_PATH . 'config_numbers.php';
 
 // open database
-$db_con = prg_start("api/typeLists", "", false);
+$db_con = prg_start("api/config", "", false);
 
 // no parameters needed
 
@@ -59,13 +60,13 @@ $msg .= $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
-    $sys_typ_lst = new type_lists();
-    $sys_typ_lst->load($db_con, $usr);
-    $result = $sys_typ_lst->api_obj($usr);
+    $cfg_lst = new config_numbers($usr);
+    $cfg_lst->load_usr_cgf($db_con, $usr);
+    $result = $cfg_lst->api_obj();
 }
 
 $ctrl = new controller();
 
-$ctrl->get_types($result, $msg);
+$ctrl->get_list($result, $msg);
 
 prg_end_api($db_con);

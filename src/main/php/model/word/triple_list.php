@@ -236,7 +236,7 @@ class triple_list extends sandbox_list
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @return bool true if at least one word found
      */
-    private function load(sql_par $qp): bool
+    protected function load(sql_par $qp): bool
     {
         global $db_con;
         global $verbs;

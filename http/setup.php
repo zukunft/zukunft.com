@@ -67,6 +67,9 @@ if ($usr->id() > 0) {
         // create test records
         // these records are used for the test cases
 
+        // TODO check why loading seems to be not needed here
+        // import_config($usr);
+
 
         log_debug("setup ... done.");
     }}

@@ -366,7 +366,7 @@ class create_test_objects extends test_base
      */
     function dummy_verb_is(): verb
     {
-        return new verb(2, verb_api::TN_IS, verb::IS_A);
+        return new verb(2, verb_api::TN_IS, verb::IS);
     }
 
     /**
@@ -374,7 +374,7 @@ class create_test_objects extends test_base
      */
     function dummy_verb_part(): verb
     {
-        return new verb(3, verb_api::TN_IS, verb::IS_A);
+        return new verb(3, verb_api::TN_IS, verb::IS);
     }
 
     /**
@@ -414,7 +414,7 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    function dummy_phrase_list(): phrase_list
+    public function dummy_phrase_list(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_word()->phrase());
@@ -557,7 +557,7 @@ class create_test_objects extends test_base
     function dummy_source(): source
     {
         $src = new source($this->usr1);
-        $src->set(2, source_api::TN_READ_API, source_type::PDF);
+        $src->set(3, source_api::TN_READ_API, source_type::PDF);
         $src->description = source_api::TD_READ_API;
         $src->url = source_api::TU_READ_API;
         return $src;
@@ -999,7 +999,7 @@ class create_test_objects extends test_base
         $trp = new triple($test_usr);
         $trp->set_id($id);
         $trp->fob = $this->new_word($from_name)->phrase();
-        $trp->verb = $verbs->get_verb($verb_code_id);
+        $trp->verb = $verbs->get($verb_code_id);
         $trp->tob = $this->new_word($to_name)->phrase();
         $trp->set_name($wrd_name);
 
@@ -1027,7 +1027,7 @@ class create_test_objects extends test_base
         $from = $wrd_from->phrase();
         $to = $wrd_to->phrase();
 
-        $vrb = $verbs->get_verb($verb_code_id);
+        $vrb = $verbs->get($verb_code_id);
 
         $lnk_test = new triple($this->usr1);
         if ($from->id() > 0 and $to->id() > 0) {
@@ -1054,7 +1054,7 @@ class create_test_objects extends test_base
         $from = $wrd_from->phrase();
         $to = $wrd_to->phrase();
 
-        $vrb = $verbs->get_verb($verb_code_id);
+        $vrb = $verbs->get($verb_code_id);
 
         $lnk_test = new triple($test_usr);
         $lnk_test->set_from($from);
@@ -1100,7 +1100,7 @@ class create_test_objects extends test_base
         }
 
         // load the verb
-        $vrb = $verbs->get_verb($verb_code_id);
+        $vrb = $verbs->get($verb_code_id);
 
         // check if the triple exists or create a new if needed
         $trp = new triple($this->usr1);

@@ -35,10 +35,12 @@ namespace test;
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once WEB_WORD_PATH . 'word_list.php';
 
+use api\verb_api;
 use api\word_api;
 use cfg\phrase_type;
 use model\library;
 use model\sql_db;
+use model\verb;
 use model\word;
 use model\word_list;
 use model\word_select_direction;
@@ -51,6 +53,7 @@ class word_list_unit_tests
 
         global $usr;
         global $phrase_types;
+        global $verbs;
 
         // init
         $db_con = new sql_db();
@@ -93,34 +96,34 @@ class word_list_unit_tests
         $wrd = new word($usr);
         $wrd->set_id(6);
         $wrd_lst->add($wrd);
-        $verb_id = 0;
+        $vrb = null;
         $direction = word_select_direction::UP;
-        $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $verb_id, $direction);
+        $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         // the parent words filtered by verb
         $wrd_lst = new word_list($usr);
         $wrd = new word($usr);
         $wrd->set_id(7);
         $wrd_lst->add($wrd);
-        $verb_id = 1;
-        $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $verb_id, $direction);
+        $vrb = $verbs->get(verb::IS);
+        $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         // the child words
         $wrd_lst = new word_list($usr);
         $wrd = new word($usr);
         $wrd->set_id(8);
         $wrd_lst->add($wrd);
-        $verb_id = 0;
+        $vrb = null;
         $direction = word_select_direction::DOWN;
-        $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $verb_id, $direction);
+        $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         // the child words filtered by verb
         $wrd_lst = new word_list($usr);
         $wrd = new word($usr);
         $wrd->set_id(9);
         $wrd_lst->add($wrd);
-        $verb_id = 1;
-        $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $verb_id, $direction);
+        $vrb = $verbs->get(verb::IS);
+        $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         $t->subheader('Modify and filter word lists');
 
@@ -408,20 +411,20 @@ class word_list_unit_tests
      * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
      * @param word_list $lst the empty word list object
-     * @param int $verb_id to select only words linked with this verb
+     * @param verb|null $vrb to select only words linked with this verb
      * @param string $direction to define the link direction
      * @return void
      */
-    private function assert_sql_by_linked_words(test_cleanup $t, sql_db $db_con, word_list $lst, int $verb_id, string $direction): void
+    private function assert_sql_by_linked_words(test_cleanup $t, sql_db $db_con, word_list $lst, ?verb $vrb, string $direction): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_linked_words($db_con, $verb_id, $direction);
+        $qp = $lst->load_sql_linked_words($db_con, $vrb, $direction);
         $t->assert_qp($qp, sql_db::POSTGRES);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_linked_words($db_con, $verb_id, $direction);
+        $qp = $lst->load_sql_linked_words($db_con, $vrb, $direction);
         $t->assert_qp($qp, sql_db::MYSQL);
     }
 

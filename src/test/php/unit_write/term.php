@@ -75,7 +75,7 @@ class term_test
 
         // ... check also for a verb
         $term = new term($usr);
-        $term->load_by_obj_name(verb::IS_A);
+        $term->load_by_obj_name(verb::IS);
         $target = '<style class="text-danger">A word with the name "" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.</style>';
         $result = $term->id_used_msg($wrd_zh);

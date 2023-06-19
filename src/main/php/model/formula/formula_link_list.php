@@ -42,7 +42,7 @@ class formula_link_list extends sandbox_list
      * @param array $db_rows is an array of an array with the database values
      * @return bool true if at least one word found
      */
-    private function rows_mapper(array $db_rows): bool
+    protected function rows_mapper(array $db_rows): bool
     {
         $result = false;
         if ($db_rows != null) {
@@ -117,27 +117,6 @@ class formula_link_list extends sandbox_list
         }
         $qp->par = $db_con->get_par();
         return $qp;
-    }
-
-    /**
-     * load a list of formula links with the direct linked phrases
-     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
-     * @return bool true if at least one formula link has been loaded
-     */
-    private function load(sql_par $qp): bool
-    {
-
-        global $db_con;
-        $result = false;
-
-        // check the all minimal input parameters are set
-        if ($qp->name == '') {
-            log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
-        } else {
-            $db_lst = $db_con->get($qp);
-            $result = $this->rows_mapper($db_lst);
-        }
-        return $result;
     }
 
     /**

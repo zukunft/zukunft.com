@@ -98,7 +98,7 @@ function run_word_display_test(test_cleanup $t): void
     $direction = 'up';
     $wrd_2019 = $t->load_word(word_api::TN_2019);
     $wrd_year = $t->load_word(word_api::TN_YEAR);
-    $lnk_20_is_year = $t->load_triple(word_api::TN_2020, verb::IS_A, word_api::TN_YEAR);
+    $lnk_20_is_year = $t->load_triple(word_api::TN_2020, verb::IS, word_api::TN_YEAR);
     $lnk_19_to_20 = $t->load_triple(word_api::TN_2020, verb::FOLLOW, word_api::TN_2019);
     $link_types = $wrd_2020->link_types($direction);
     $result = $wrd_2020->dsp_graph($direction, $link_types, 0);

@@ -98,9 +98,9 @@ class term_list_unit_tests
         $lst->add($this->t->new_word(word_api::TN_READ)->term());
         $lst->add($this->t->new_triple(
             triple_api::TN_PI_NAME,
-            triple_api::TN_PI, verb::IS_A, word_api::TN_READ)->term());
+            triple_api::TN_PI, verb::IS, word_api::TN_READ)->term());
         $lst->add($this->t->new_formula(formula_api::TN_INCREASE)->term());
-        $lst->add($this->t->new_verb(verb::IS_A)->term());
+        $lst->add($this->t->new_verb(verb::IS)->term());
         return $lst;
     }
 

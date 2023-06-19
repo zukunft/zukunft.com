@@ -117,7 +117,7 @@ class phrase extends combine_named
      * always set the user because a phrase is always user specific
      * @param user|word|triple|null $obj the word or triple that should be covered by the phrase
      */
-    function __construct(user|word|triple|null $obj = null)
+    function __construct(user|word|triple|null $obj = null, int|string|null $id_or_name = null)
     {
         if ($obj::class == user::class or $obj::class == user_dsp_old::class) {
             // create a dummy word object to remember the user
@@ -125,6 +125,14 @@ class phrase extends combine_named
         } else {
             parent::__construct($obj);
         }
+        if ($id_or_name != null) {
+            if (is_int($id_or_name)) {
+                $this->load_by_id($id_or_name);
+            } else {
+                $this->load_by_name($id_or_name);
+            }
+        }
+
     }
 
     /**
@@ -696,6 +704,7 @@ class phrase extends combine_named
         return $result;
     }
 
+
     /*
      * conversion
      */
@@ -752,7 +761,7 @@ class phrase extends combine_named
 
 
     /*
-     * data retrieval functions
+     * data retrieval
      */
 
     /**
@@ -765,7 +774,7 @@ class phrase extends combine_named
         $val_lst = new value_list($this->user());
         $val_lst->phr = $this;
         $val_lst->limit = SQL_ROW_MAX;
-        $val_lst->load();
+        $val_lst->load_old();
         log_debug('got ' . $lib->dsp_count($val_lst->lst()));
         return $val_lst;
     }
@@ -787,6 +796,16 @@ class phrase extends combine_named
         $vrb_lst->load_by_linked_phrases($db_con, $this, $direction);
         log_debug('got ' . $lib->dsp_count($vrb_lst->lst));
         return $vrb_lst;
+    }
+
+    /**
+     * @return phrase_list with all phrases "below" this phrase
+     */
+    function all_children(): phrase_list
+    {
+        $phr_lst = new phrase_list($this->user());
+        $phr_lst->add($this);
+        return $phr_lst->foaf_children();
     }
 
     /*
@@ -906,14 +925,26 @@ class phrase extends combine_named
         return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '" class="' . $style . '">' . $this->name() . '</a>';
     }
 
-// helper function that returns a word list object just with the word object
+    /**
+     * helper function that returns a phrase list object just with this phrase object
+     * @return phrase_list
+     */
     function lst(): phrase_list
     {
         $phr_lst = new phrase_list($this->user());
         $phr_lst->add($this);
-        log_debug($phr_lst->dsp_name());
         return $phr_lst;
     }
+
+    /**
+     * helper function that returns the direct children of this phrase without this phrase
+     * @return phrase_list
+     */
+    function direct_children(): phrase_list
+    {
+        return $this->lst()->direct_children();
+    }
+
 
 // returns a list of phrase that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
     function is(): phrase_list
@@ -1003,7 +1034,7 @@ class phrase extends combine_named
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id = ' . $type->id() . ' 
-                                           AND l.verb_id = ' . $verbs->id(verb::IS_A) . ' ) AS a 
+                                           AND l.verb_id = ' . $verbs->id(verb::IS) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
 
                 // ... out of all those get the phrase ids that have also other types e.g. Zurich (Canton)
@@ -1015,7 +1046,7 @@ class phrase extends combine_named
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id <> ' . $type->id() . ' 
-                                           AND l.verb_id = ' . $verbs->id(verb::IS_A) . '
+                                           AND l.verb_id = ' . $verbs->id(verb::IS) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
                                          WHERE ' . $sql_where_exclude . ' ';
 
@@ -1042,7 +1073,7 @@ class phrase extends combine_named
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                 AND u.user_id = ' . $this->user()->id() . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
-                           AND l.verb_id = ' . $verbs->id(verb::IS_A) . '
+                           AND l.verb_id = ' . $verbs->id(verb::IS) . '
                            AND l.to_phrase_id = ' . $type->id() . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*

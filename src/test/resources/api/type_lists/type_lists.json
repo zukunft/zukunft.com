@@ -169,6 +169,18 @@
         "code_id": "hidden_triple",
         "name": "hidden triple",
         "comment": "this triple should not be included in selection list because the triple is identical with the from word and is only added to assign behavior to the word"
+      },
+      {
+        "id": 23,
+        "code_id": "hidden_system",
+        "name": "hidden system",
+        "comment": "these words and triple are used e.g. for the system configuration and should not be included in standard selection list because the values are only internal and are shown in separate predefined views"
+      },
+      {
+        "id": 24,
+        "code_id": "group",
+        "name": "group and select",
+        "comment": "words used to group and select other words to shorten the selection"
       }
     ],
     "formula_types": [
@@ -1939,6 +1951,12 @@
         "code_id": "",
         "name": "per",
         "comment": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty"
+      },
+      {
+        "id": 21,
+        "code_id": "selector",
+        "name": "selector for",
+        "comment": "words used to group and select other words to shorten the selection"
       }
     ],
     "system_views": [

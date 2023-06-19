@@ -58,6 +58,18 @@ class sandbox_list extends base_list
         $this->set_user($usr);
     }
 
+    /**
+     * dummy function to be overwritten by the child class
+     * @param array $db_rows is an array of an array with the database values
+     * @return bool true if at least one object has been loaded
+     */
+    protected function rows_mapper(array $db_rows): bool
+    {
+        log_err('Unexpected call of the parent rows_mapper function');
+        return false;
+    }
+
+
 
     /*
      * set and get
@@ -80,6 +92,34 @@ class sandbox_list extends base_list
     function user(): user
     {
         return $this->usr;
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load a list of sandbox objects (e.g. phrases or values) based on the given query parameters
+     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @return bool true if at least one object has been loaded
+     */
+    protected function load(sql_par $qp): bool
+    {
+
+        global $db_con;
+        $result = false;
+
+        // check the all minimal input parameters are set
+        if ($this->user()->id() <= 0) {
+            log_err('The user must be set to load ' . self::class, self::class . '->load');
+        } elseif ($qp->name == '') {
+            log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
+        } else {
+            $db_lst = $db_con->get($qp);
+            $result = $this->rows_mapper($db_lst);
+        }
+        return $result;
     }
 
 
@@ -133,6 +173,9 @@ class sandbox_list extends base_list
                 if ($min_names > $pos) {
                     if ($result <> '') $result .= ' / ';
                     $name = $sbx_obj->name();
+                    if ($sbx_obj::class == value::class) {
+                        $name .= $sbx_obj->number();
+                    }
                     if ($name <> '""') {
                         $name = $name . ' (' . $sbx_obj->id() . ')';
                     } else {

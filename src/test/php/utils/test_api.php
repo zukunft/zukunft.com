@@ -80,6 +80,7 @@ use model\component;
 use model\formula;
 use model\formula_list;
 use model\library;
+use model\phrase;
 use model\phrase_list;
 use model\ref;
 use model\source;
@@ -135,7 +136,7 @@ class test_api extends create_test_objects
         $this->assert_api_get_by_text(view::class, view_api::TN_READ);
         $this->assert_api_get(component::class);
         $this->assert_api_get_by_text(component::class, component_api::TN_READ);
-        $this->assert_api_get(source::class, 2);
+        $this->assert_api_get(source::class, 3);
         $this->assert_api_get_by_text(source::class, source_api::TN_READ_API);
         $this->assert_api_get(ref::class, 4);
         $this->assert_api_get(batch_job::class);

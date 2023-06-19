@@ -40,6 +40,7 @@ use model\phrase;
 use model\phrase_list;
 use model\sql_db;
 use model\sql_par;
+use model\verb;
 use model\word;
 use model\word_select_direction;
 
@@ -63,6 +64,7 @@ class phrase_list_unit_tests
     {
 
         global $usr;
+        global $verbs;
 
         // init
         $db_con = new sql_db();
@@ -99,8 +101,9 @@ class phrase_list_unit_tests
         $wrd = new word($usr);
         $wrd->set(1, word_api::TN_CH);
         $phr_lst->add($wrd->phrase());
+        $vrb = $verbs->get(verb::IS_PART_OF);
         $this->assert_load_sql_linked_phrases(
-            $db_con, $t, $phr_lst, 3, word_select_direction::UP
+            $db_con, $t, $phr_lst, $vrb, word_select_direction::UP
         );
 
 
@@ -277,18 +280,18 @@ class phrase_list_unit_tests
         sql_db       $db_con,
         test_cleanup $t,
         object       $usr_obj,
-        int          $verb_id,
+        ?verb        $vrb,
         string       $direction): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_linked_phrases($db_con, $verb_id, $direction);
+        $qp = $usr_obj->load_sql_linked_phrases($db_con, $vrb, $direction);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_linked_phrases($db_con, $verb_id, $direction);
+            $qp = $usr_obj->load_sql_linked_phrases($db_con, $vrb, $direction);
             $result = $t->assert_qp($qp, $db_con->db_type);
         }
         return $result;

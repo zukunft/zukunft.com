@@ -43,6 +43,7 @@ class source_api extends sandbox_typed_api
 
     // persevered source names for unit and integration tests (TN means TEST NAME)
     const TN_READ = 'wikidata';
+    const TN_MATH = 'Mathematical constant';
     const TN_READ_API = 'The International System of Units';
     const TD_READ_API = 'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards';
     const TU_READ_API = 'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf';

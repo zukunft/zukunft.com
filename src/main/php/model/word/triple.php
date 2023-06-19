@@ -1376,7 +1376,7 @@ class triple extends sandbox_link_named_with_type implements JsonSerializable
     function generate_name(): string
     {
         global $verbs;
-        if ($this->verb->id() == $verbs->id(verb::IS_A) and $this->fob->name() != '' and $this->tob->name() != '') {
+        if ($this->verb->id() == $verbs->id(verb::IS) and $this->fob->name() != '' and $this->tob->name() != '') {
             // use the user defined description
             return $this->fob->name() . ' (' . $this->tob->name() . ')';
         } elseif ($this->fob->name() != '' and $this->verb->name() != '' and $this->tob->name() != '') {

@@ -370,7 +370,7 @@ class type_list
                 if ($names != '') {
                     $names .= ', ';
                 }
-                $names .= '"' . $type->name . '"';
+                $names .= '"' . $type->name() . '"';
 
                 if ($ids != '') {
                     $ids .= ', ';

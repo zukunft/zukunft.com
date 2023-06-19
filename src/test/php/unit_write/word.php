@@ -198,8 +198,8 @@ class word_test
         $wrd_canton = $t->test_word(word_api::TN_CANTON);
         $wrd_city = $t->test_word(word_api::TN_CITY);
         $wrd_ZH = $t->test_word(word_api::TN_ZH);
-        $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON);
-        $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CITY);
+        $t->test_triple(word_api::TN_ZH, verb::IS, word_api::TN_CANTON);
+        $t->test_triple(word_api::TN_ZH, verb::IS, word_api::TN_CITY);
 
         // word is e.g. Zurich as a Canton ...
         $target = $wrd_canton->name();
@@ -239,7 +239,7 @@ class word_test
         // create the test words and relations many mixed relations
         // e.g. a financial report
         $t->test_word(word_api::TN_FIN_REPORT);
-        $t->test_triple(word_api::TN_CASH_FLOW, verb::IS_A, word_api::TN_FIN_REPORT);
+        $t->test_triple(word_api::TN_CASH_FLOW, verb::IS, word_api::TN_FIN_REPORT);
 
         // create the test words and relations for multi level contains
         // e.g. assets contain current assets which contains cash
@@ -533,7 +533,7 @@ class word_test
         }
         $prev_word_name = null;
         foreach (word_api::TEST_WORDS_TIME_YEAR as $word_name) {
-            $t->test_triple($word_name, verb::IS_A, word_api::TN_YEAR);
+            $t->test_triple($word_name, verb::IS, word_api::TN_YEAR);
             $t->test_word($word_name, phrase_type::TIME);
             if ($prev_word_name != null) {
                 $t->test_triple($word_name, verb::FOLLOW, $prev_word_name);

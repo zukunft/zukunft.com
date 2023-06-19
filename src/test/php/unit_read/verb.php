@@ -60,10 +60,10 @@ class verb_unit_db_tests
 
         // test if loading by code id and id result in the same name
         $vrb = new verb();
-        $vrb->load_by_code_id(verb::IS_A);
+        $vrb->load_by_code_id(verb::IS);
         $vrb_id = new verb();
         $vrb_id->load_by_id($vrb->id());
-        $t->assert('load' . verb::IS_A, $vrb->name(), $vrb_id->name());
+        $t->assert('load' . verb::IS, $vrb->name(), $vrb_id->name());
 
         // prepare the words for testing
         $country = new word($t->usr1);
@@ -113,13 +113,13 @@ class verb_unit_db_tests
         $t->assert('load', $result, true);
 
         // ... and check if at least the most critical verb is loaded
-        $result = $verbs->id(verb::IS_A);
+        $result = $verbs->id(verb::IS);
         // just check if the verb is around, because the position may vary depending on the historic creation of the database
         $target = 0;
         if ($result > 0) {
             $target = $result;
         }
-        $t->assert('check ' . verb::IS_A, $result, $target);
+        $t->assert('check ' . verb::IS, $result, $target);
 
         $select_list = $lst->selector_list();
         $top_verb = $select_list[0]; // the most often verb should be on the top
@@ -136,7 +136,7 @@ class verb_unit_db_tests
         } else {
             $target = 'not set';
         }
-        $t->assert('selector list ' . verb::IS_A, $result, $target);
+        $t->assert('selector list ' . verb::IS, $result, $target);
     }
 
 }

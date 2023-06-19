@@ -69,7 +69,7 @@ class triple_test
         $t->header('Test the word link class (classes/triple.php)');
 
         // load the main test word and verb
-        $is_id = $verbs->id(verb::IS_A);
+        $is_id = $verbs->id(verb::IS);
 
         // create the group test word
         $wrd_company = $t->test_word(word_api::TN_COMPANY);
@@ -116,7 +116,7 @@ class triple_test
             $result = 'id missing';
         }
         $target = '';
-        $t->display('triple->save "' . $wrd_from->name() . '" ' . verb::IS_A . ' "' . $wrd->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('triple->save "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
         $t->subheader("... and also testing the user log link class (classes/user_log_link.php)");
 
@@ -128,7 +128,7 @@ class triple_test
         $log->new_to_id = $wrd->id();
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test linked ' . word_api::TN_RENAMED . ' to ' . word_api::TN_PARENT;
-        $t->display('triple->save logged for "' . $wrd_from->name() . '" ' . verb::IS_A . ' "' . $wrd->name() . '"', $target, $result);
+        $t->display('triple->save logged for "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '"', $target, $result);
 
         // ... check if the link is shown correctly
 
@@ -152,7 +152,7 @@ class triple_test
         $msg = $trp->del();
         $result = $msg->get_last_message();
         $target = '';
-        $t->display('triple->del "' . $wrd_from->name() . '" ' . verb::IS_A . ' "' . $wrd->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('triple->del "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_log_link($t->usr2);
@@ -162,7 +162,7 @@ class triple_test
         $log->old_to_id = $wrd->id();
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test partner unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT . '';
-        $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS_A . ' "' . $wrd->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
+        $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
 
 
         // ... check if the link is really not used any more for the second user
@@ -170,7 +170,7 @@ class triple_test
         $lnk2->load_by_link($wrd_from->id(), $is_id, $wrd->id());
         $result = $lnk2->name();
         $target = '';
-        $t->display('triple->load "' . $wrd_from->name() . '" ' . verb::IS_A . ' "' . $wrd->name() . '" for user "' . $t->usr2->name . '" not any more', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+        $t->display('triple->load "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" for user "' . $t->usr2->name . '" not any more', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
         // ... check if the value update for the second user has been triggered
 
@@ -181,7 +181,7 @@ class triple_test
         $trp->load_by_link($wrd_from->id(), $is_id, $wrd->id());
         $result = $trp->name();
         $target = '' . word_api::TN_RENAMED . ' (' . word_api::TN_PARENT . ')';
-        $t->display('triple->load of "' . $wrd_from->name() . '" ' . verb::IS_A . ' "' . $wrd->name() . '" is still used for user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+        $t->display('triple->load of "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" is still used for user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
         // ... check if the values for the first user are still the same
 
@@ -191,7 +191,7 @@ class triple_test
         $msg = $trp->del();
         $result = $msg->get_last_message();
         $target = '';
-        $t->display('triple->del "' . $wrd_from->name() . '" ' . verb::IS_A . ' "' . $wrd->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('triple->del "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
         // check the correct logging
         $log = new change_log_link($t->usr1);
@@ -201,17 +201,17 @@ class triple_test
         $log->old_to_id = $wrd->id();
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT;
-        $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS_A . ' "' . $wrd->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
+        $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
 
         // check if the formula is not used any more for both users
         $trp = new triple($t->usr1);
         $trp->load_by_link($wrd_from->id(), $is_id, $wrd->id());
         $result = $trp->name();
         $target = '';
-        $t->display('triple->load of "' . $wrd_from->name() . '" ' . verb::IS_A . ' "' . $wrd->name() . '" for user "' . $t->usr1->name . '" not used any more', $target, $result);
+        $t->display('triple->load of "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" for user "' . $t->usr1->name . '" not used any more', $target, $result);
 
         // check if the name of a triple can be changed
-        $trp = $t->test_triple(word_api::TN_RENAMED, verb::IS_A, word_api::TN_PARENT);
+        $trp = $t->test_triple(word_api::TN_RENAMED, verb::IS, word_api::TN_PARENT);
         $trp->set_name(triple_api::TN_ADD);
         $result = $trp->save();
         $t->assert('triple->save name to ' . triple_api::TN_ADD, $result);
@@ -229,7 +229,7 @@ class triple_test
         $log->old_to_id = $wrd->id();
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT;
-        $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS_A . ' "' . $wrd->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
+        $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
 
         // check that even after renaming the triple no word with the standard name of the triple can be added
         $wrd = new word($t->usr1);
@@ -294,17 +294,17 @@ class triple_test
         }
 
         // check if the standard samples for triples still exist and if not, create the samples
-        $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON, triple_api::TN_ZH_CANTON, triple_api::TN_ZH_CANTON);
-        $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_CITY, triple_api::TN_ZH_CITY, triple_api::TN_ZH_CITY);
-        $t->test_triple(word_api::TN_ZH, verb::IS_A, word_api::TN_COMPANY, triple_api::TN_ZH_COMPANY, triple_api::TN_ZH_COMPANY);
+        $t->test_triple(word_api::TN_ZH, verb::IS, word_api::TN_CANTON, triple_api::TN_ZH_CANTON, triple_api::TN_ZH_CANTON);
+        $t->test_triple(word_api::TN_ZH, verb::IS, word_api::TN_CITY, triple_api::TN_ZH_CITY, triple_api::TN_ZH_CITY);
+        $t->test_triple(word_api::TN_ZH, verb::IS, word_api::TN_COMPANY, triple_api::TN_ZH_COMPANY, triple_api::TN_ZH_COMPANY);
         $t->test_triple(triple_api::TN_ZH_CANTON, verb::IS_PART_OF, word_api::TN_CH);
         $t->test_triple(triple_api::TN_ZH_CITY, verb::IS_PART_OF, triple_api::TN_ZH_CANTON);
         $t->test_triple(triple_api::TN_ZH_COMPANY, verb::IS_PART_OF, triple_api::TN_ZH_CITY, triple_api::TN_EXCLUDED, triple_api::TN_EXCLUDED);
 
-        $t->test_triple(TW_ABB, verb::IS_A, word_api::TN_COMPANY, TP_ABB);
+        $t->test_triple(TW_ABB, verb::IS, word_api::TN_COMPANY, TP_ABB);
         // TODO check why it is possible to create a triple with the same name as a word
         //$t->test_triple(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
-        $t->test_triple(TW_VESTAS, verb::IS_A, word_api::TN_COMPANY, triple_api::TN_VESTAS_COMPANY, triple_api::TN_VESTAS_COMPANY);
+        $t->test_triple(TW_VESTAS, verb::IS, word_api::TN_COMPANY, triple_api::TN_VESTAS_COMPANY, triple_api::TN_VESTAS_COMPANY);
         $t->test_triple(TW_2014, verb::FOLLOW, TW_2013, TP_FOLLOW);
         // TODO check direction
         $t->test_triple(TW_TAX, verb::IS_PART_OF, TW_CF, TP_TAXES);

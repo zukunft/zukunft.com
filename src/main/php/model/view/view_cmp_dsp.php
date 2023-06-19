@@ -274,14 +274,14 @@ class component_dsp_old extends component
                 $result .= $phrases_down . $phrases_up;
             } else {
                 $result .= "The type of " . $phr->name() . " is not jet defined. Please define what it is: ";
-                $type_is = $verbs->id(verb::IS_A);
+                $type_is = $verbs->id(verb::IS);
                 $result .= \html\btn_add("Please link " . $phr->name() . " to an existing word to include it in the lists", '/http/link_add.php?from=' . $phr->id . '&verb=' . $type_is . '&back=' . $phr->id);
             }
             $result .= '<br><br>values<br>';
             $val_lst = new value_list($this->user());;
             $val_lst->phr = $phr;
             log_debug('load values for word "' . $phr->name() . '" and user "' . $this->user()->name . '"');
-            $val_lst->load();
+            $val_lst->load_old();
             $val_lst_dsp = $val_lst->api_obj()->dsp_obj();
             $result .= $val_lst_dsp->table(null, $back);
         }

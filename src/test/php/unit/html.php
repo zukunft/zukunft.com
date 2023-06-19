@@ -111,7 +111,7 @@ class html_unit_tests
         //      create and set the dsp object based on the api json
 
         $lst = new verb_list($usr);
-        $lst->add_verb(new verb(1, verb::IS_A));
+        $lst->add_verb(new verb(1, verb::IS));
         $lst->add_verb(new verb(2, verb::IS_PART_OF));
         $t->html_test($lst->dsp_obj()->list(verb::class, 'Verbs'), 'list_verbs', $t);
 

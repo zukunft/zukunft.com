@@ -59,10 +59,12 @@ class test_unit_read_db extends test_unit
         (new word_list_unit_db_tests)->run($this);
         (new verb_unit_db_tests)->run($this);
         (new phrase_unit_db_tests)->run($this);
+        (new phrase_list_unit_db_tests)->run($this);
         (new phrase_group_unit_db_tests)->run($this);
         (new term_unit_db_tests)->run($this);
         (new term_list_unit_db_tests)->run($this);
         (new value_unit_db_tests)->run($this);
+        (new value_list_unit_db_tests)->run($this);
         (new formula_unit_db_tests)->run($this);
         (new formula_list_unit_db_tests)->run($this);
         (new expression_unit_db_tests)->run($this);
@@ -82,7 +84,7 @@ class test_unit_read_db extends test_unit
 
         // add functional test rows to the database for read testing e.g. exclude sandbox entries
         $this->test_triple(
-            triple_api::TN_PI, verb::IS_A, word_api::TN_READ,
+            triple_api::TN_PI, verb::IS, word_api::TN_READ,
             triple_api::TN_PI_NAME, triple_api::TN_PI_NAME
         );
         $phr_grp = $this->add_phrase_group(array(triple_api::TN_PI_NAME), phrase_group_api::TN_READ);

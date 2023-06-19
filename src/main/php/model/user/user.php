@@ -707,6 +707,7 @@ class user extends db_object
 
                         // reload the base configuration
                         import_base_config($sys_usr);
+                        import_config($sys_usr);
 
                     } else {
                         $upd_result = $this->save($db_con);

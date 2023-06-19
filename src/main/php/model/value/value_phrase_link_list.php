@@ -62,7 +62,7 @@ class value_phrase_link_list extends sandbox_list
         }
         if ($sql_by == '') {
             log_err('Either the value id or phrase id and the user must be set ' .
-                      'to load a ' . self::class, self::class . '->load_sql');
+                'to load a ' . self::class, self::class . '->load_sql');
             $qp->name = '';
         } else {
             $qp->name .= $sql_by;
@@ -94,41 +94,26 @@ class value_phrase_link_list extends sandbox_list
     /**
      * load all phrases linked to a given value
      *
-     * @param user $usr the user for whom the links should be loaded
-     * @param ?phrase $phr the phrase to which values should be loaded
-     * @param ?value $val the value which phrases should be loaded
+     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @return bool true if value or phrases are found
      */
-    private function load(user $usr, ?phrase $phr = null, ?value $val = null): bool
+    protected function load(sql_par $qp): bool
     {
         global $db_con;
         $result = false;
 
-        // check the all minimal input parameters
-        if ($usr->id() <= 0) {
-            log_err('The user must be set to load ' . self::class, self::class . '->load');
+        if ($qp->name == '') {
+            log_err('A value or phrase must be set to load ' . self::class, self::class . '->load');
         } else {
-            $this->set_user($usr);
-            $qp = $this->load_sql($db_con, $phr, $val);
-            if ($qp->name == '') {
-                log_err('A value or phrase must be set to load ' . self::class, self::class . '->load');
-            } else {
-
-                if ($val != null) {
-                    $id = $val->id();
-                } else {
-                    $id = $phr->id();
-                }
-
-                // if $sql is an empty string, the prepared statement should be used
-                $db_rows = $db_con->get_old($qp->sql, $qp->name, array($id));
-                if ($db_rows != null) {
-                    foreach ($db_rows as $db_row) {
-                        $val_phr_lnk = new value_phrase_link($usr);
-                        $val_phr_lnk->row_mapper($db_row);
-                        $this->lst[] = $val_phr_lnk;
-                        $result = true;
-                    }
+            // if $sql is an empty string, the prepared statement should be used
+            $db_rows = $db_con->get($qp);
+            //$db_rows = $db_con->get_old($qp->sql, $qp->name, array($id));
+            if ($db_rows != null) {
+                foreach ($db_rows as $db_row) {
+                    $val_phr_lnk = new value_phrase_link($this->user());
+                    $val_phr_lnk->row_mapper($db_row);
+                    $this->lst[] = $val_phr_lnk;
+                    $result = true;
                 }
             }
         }
@@ -145,7 +130,10 @@ class value_phrase_link_list extends sandbox_list
      */
     function load_by_value(user $usr, value $val): bool
     {
-        return $this->load($usr, null, $val);
+        global $db_con;
+        $this->set_user($usr);
+        $qp = $this->load_sql($db_con, null, $val);
+        return $this->load($qp);
     }
 
     /**
@@ -157,7 +145,10 @@ class value_phrase_link_list extends sandbox_list
      */
     function load_by_phrase(user $usr, phrase $phr): bool
     {
-        return $this->load($usr, $phr);
+        global $db_con;
+        $this->set_user($usr);
+        $qp = $this->load_sql($db_con, $phr, null);
+        return $this->load($qp);
     }
 
     /**
@@ -212,4 +203,4 @@ class value_phrase_link_list extends sandbox_list
         return $result;
     }
 
- }
+}

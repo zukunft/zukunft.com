@@ -231,11 +231,11 @@ class word_list extends sandbox_list
      * the relation can be narrowed with a verb id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param int $verb_id to select only words linked with this verb
+     * @param verb|null $vrb if set to select only words linked with this verb
      * @param string $direction to define the link direction
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_linked_words(sql_db $db_con, int $verb_id, string $direction): sql_par
+    function load_sql_linked_words(sql_db $db_con, ?verb $vrb, string $direction): sql_par
     {
         $qp = $this->load_sql($db_con);
         $sql_where = '';
@@ -263,14 +263,14 @@ class word_list extends sandbox_list
                 log_err('Unknown direction ' . $direction);
             }
             // verbs can have a negative id for the reverse selection
-            if ($verb_id <> 0) {
+            if ($vrb != null) {
                 $db_con->set_join_fields(
                     array(verb::FLD_ID),
                     sql_db::TBL_TRIPLE,
                     word::FLD_ID,
                     $join_field,
                     verb::FLD_ID,
-                    $verb_id);
+                    $vrb->id());
                 $qp->name .= '_verb_select';
             } else {
                 $db_con->set_join_fields(
@@ -406,18 +406,18 @@ class word_list extends sandbox_list
      * add the direct linked words to the list
      * and remember which words have be added
      *
-     * @param int $verb_id to select only words linked with this verb
+     * @param verb|null $vrb if set to select only words linked with this verb
      * @param string $direction to define the link direction
      * @return word_list with only the new added words
      */
-    function load_linked_words(int $verb_id, string $direction): word_list
+    function load_linked_words(?verb $vrb, string $direction): word_list
     {
 
         global $db_con;
         $lib = new library();
         $additional_added = new word_list($this->user()); // list of the added words with this call
 
-        $qp = $this->load_sql_linked_words($db_con, $verb_id, $direction);
+        $qp = $this->load_sql_linked_words($db_con, $vrb, $direction);
         if ($qp->name == '') {
             log_warning('The word list is empty, so nothing could be found', self::class . '->load_linked_words');
         } else {
@@ -485,14 +485,24 @@ class word_list extends sandbox_list
      * build one level of a word tree
      * @param int $level 1 if the parents of the original words are added
      * @param word_list $added_wrd_lst list of the added word during the foaf selection process
-     * @param int $verb_id id of the verb that is used to select the parents
+     * @param verb|null $vrb id of the verb that is used to select the parents
      * @param string $direction to select if the parents or children should be selected - "up" to select the parents
      * @param int $max_level the max $level that should be used for the selection
      * @return word_list the accumulated list of added words
      */
-    private function foaf_level(int $level, word_list $added_wrd_lst, int $verb_id, string $direction, int $max_level): word_list
+    private function foaf_level(
+        int $level,
+        word_list $added_wrd_lst,
+        ?verb $vrb,
+        string $direction,
+        int $max_level = 0): word_list
     {
-        log_debug('->foaf_level (type id ' . $verb_id . ' level ' . $level . ' ' . $direction . ' added ' . $added_wrd_lst->name() . ')');
+        $log_msg = 'foaf_level ';
+        if ($vrb != null) {
+            log_debug('verb ' . $vrb->dsp_id() . ' ');
+        }
+        $log_msg .= 'level ' . $level . ' ' . $direction . ' added ' . $added_wrd_lst->name();
+        log_debug($log_msg);
         if ($max_level > 0) {
             $max_loops = $max_level;
         } else {
@@ -503,14 +513,14 @@ class word_list extends sandbox_list
         do {
             $loops = $loops + 1;
             // load all linked words
-            $additional_added = $additional_added->load_linked_words($verb_id, $direction);
+            $additional_added = $additional_added->load_linked_words($vrb, $direction);
             // get the words not added before
             $additional_added->diff($added_wrd_lst);
             // remember the added words
             $added_wrd_lst->merge($additional_added);
 
             if ($loops >= MAX_RECURSIVE) {
-                log_fatal("max number (" . $loops . ") of loops for word " . $verb_id . " reached.", "word_list->tree_up_level");
+                log_fatal("max number (" . $loops . ") of loops reached.", "word_list->foaf_level");
             }
         } while (!empty($additional_added->lst) and $loops < $max_loops);
         log_debug('->foaf_level done');
@@ -520,68 +530,65 @@ class word_list extends sandbox_list
     /**
      * returns a list of words, that characterises the given word e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is"
      *
-     * @param int $verb_id id of the verb that is used to select the parents
+     * @param verb|null $vrb id of the verb that is used to select the parents
      * @returns word_list the accumulated list of added words
      */
-    function foaf_parents(int $verb_id): word_list
+    function foaf_parents(?verb $vrb): word_list
     {
-        log_debug('type id ' . $verb_id);
         $level = 0;
         $added_wrd_lst = new word_list($this->user()); // list of the added word ids
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, word_select_direction::UP, 0);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $vrb, word_select_direction::UP, 0);
 
-        log_debug($added_wrd_lst->name());
+        log_debug($added_wrd_lst->dsp_id());
         return $added_wrd_lst;
     }
 
     /**
      * similar to foaf_parents, but for only one level
      * ex foaf_parent_step
+     * @param verb|null $vrb if set to filter the children by the relation type
      * @param int $level is the number of levels that should be looked into
-     * @param int $verb_id id of the verb that is used to select the parents
      * @returns word_list the accumulated list of added words
      */
-    function parents(int $verb_id, int $level): word_list
+    function parents(?verb $vrb, int $level): word_list
     {
-        log_debug($verb_id);
         $added_wrd_lst = new word_list($this->user()); // list of the added word ids
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, word_select_direction::UP, $level);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $vrb, word_select_direction::UP, $level);
 
         log_debug($added_wrd_lst->name());
         return $added_wrd_lst;
     }
 
     /**
-     * similar to foaf_parent, but the other way round e.g. for "Companies" it will return "ABB Ltd." and others if the link type is "are"
-     * ex foaf_child
-     * @param int $verb_id id of the verb that is used to select the parents
+     * get all children
+     * up to a level if defined
+     * e.g. for country it will return Switzerland and also Zurich because Zurich is part of Switzerland
+     * similar to parent, but the other way round
+     * @param verb|null $vrb if set to filter the children by the relation type
+     * @param int $level is the number of levels that should be looked into
      * @returns word_list the accumulated list of added words
      */
-    function foaf_children(int $verb_id): word_list
+    function children(?verb $vrb, int $level = 0): word_list
     {
-        log_debug($verb_id);
-        $level = 0;
         $added_wrd_lst = new word_list($this->user()); // list of the added word ids
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, word_select_direction::DOWN, 0);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $vrb, word_select_direction::DOWN, $level);
 
-        log_debug($added_wrd_lst->name());
+        log_debug($added_wrd_lst->dsp_id());
         return $added_wrd_lst;
     }
 
     /**
      * similar to foaf_child, but for only one level
      * ex foaf_child_step
-     * @param int $verb_id id of the verb that is used to select the parents
-     * @param int $level is the number of levels that should be looked into
+     * @param verb|null $vrb if set to filter the children by the relation type
      * @returns word_list the accumulated list of added words
      */
-    function children(int $verb_id, int $level): word_list
+    function direct_children(?verb $vrb): word_list
     {
-        log_debug($verb_id);
         $added_wrd_lst = new word_list($this->user()); // list of the added word ids
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, word_select_direction::DOWN, $level);
+        $added_wrd_lst = $this->foaf_level(1, $added_wrd_lst, $vrb, word_select_direction::DOWN, 1);
 
-        log_debug($added_wrd_lst->name());
+        log_debug($added_wrd_lst->dsp_id());
         return $added_wrd_lst;
     }
 
@@ -593,7 +600,7 @@ class word_list extends sandbox_list
     function is(): word_list
     {
         global $verbs;
-        $wrd_lst = $this->foaf_parents($verbs->id(verb::IS_A));
+        $wrd_lst = $this->foaf_parents($verbs->get(verb::IS));
         log_debug($this->dsp_id() . ' is ' . $wrd_lst->name());
         return $wrd_lst;
     }
@@ -608,7 +615,7 @@ class word_list extends sandbox_list
     {
         global $verbs;
         log_debug('for ' . $this->dsp_id());
-        $wrd_lst = $this->foaf_children($verbs->id(verb::IS_A));
+        $wrd_lst = $this->children($verbs->get(verb::IS));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' are ' . $wrd_lst->name());
         return $wrd_lst;
@@ -621,7 +628,7 @@ class word_list extends sandbox_list
     function contains(): word_list
     {
         global $verbs;
-        $wrd_lst = $this->foaf_children($verbs->id(verb::IS_PART_OF));
+        $wrd_lst = $this->children($verbs->get(verb::IS_PART_OF));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $wrd_lst->name());
         return $wrd_lst;
@@ -674,7 +681,7 @@ class word_list extends sandbox_list
     function differentiators(): word_list
     {
         global $verbs;
-        $wrd_lst = $this->foaf_parents($verbs->id(verb::CAN_CONTAIN));
+        $wrd_lst = $this->foaf_parents($verbs->get(verb::CAN_CONTAIN));
         $wrd_lst->merge($this);
         return $wrd_lst;
     }
@@ -689,7 +696,7 @@ class word_list extends sandbox_list
         global $verbs;
         // this first time get all related items
         // parents and not children because the verb is "can contain", but here the question is for "can be split by"
-        $wrd_lst = $this->foaf_parents($verbs->id(verb::CAN_CONTAIN));
+        $wrd_lst = $this->foaf_parents($verbs->get(verb::CAN_CONTAIN));
         return $wrd_lst->are_and_contains();
     }
 

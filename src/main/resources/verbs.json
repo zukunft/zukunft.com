@@ -155,6 +155,14 @@
       "name_plural": "per",
       "name_plural_reverse": "",
       "name_reverse": ""
+    },
+    {
+      "name": "selector for",
+      "code_id": "selector",
+      "description": "words used to group and select other words to shorten the selection",
+      "name_plural": "selectors",
+      "name_plural_reverse": "",
+      "name_reverse": ""
     }
   ]
 }

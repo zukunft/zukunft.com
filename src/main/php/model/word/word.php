@@ -121,7 +121,7 @@ class word extends sandbox_typed
      * included in the preserved word names
      */
 
-    const DB_SETTINGS = 'System database settings';
+    const SYSTEM_CONFIG = 'system configuration';
 
 
     /*
@@ -567,7 +567,7 @@ class word extends sandbox_typed
     function value_list(int $page = 1, int $size = SQL_ROW_LIMIT): value_list
     {
         $val_lst = new value_list($this->user());
-        $val_lst->load($page, $size);
+        $val_lst->load_old($page, $size);
         return $val_lst;
     }
 
@@ -659,7 +659,7 @@ class word extends sandbox_typed
         $val_lst = new value_list($this->user());
         $val_lst->phr = $this->phrase();
         $val_lst->limit = SQL_ROW_MAX;
-        $val_lst->load();
+        $val_lst->load_old();
         log_debug('got ' . $lib->dsp_count($val_lst->lst()));
         return $val_lst;
     }
@@ -1143,7 +1143,7 @@ class word extends sandbox_typed
         global $verbs;
         global $phrase_types;
         $html = new html_base();
-        $vrb_is = $verbs->id(verb::IS_A);
+        $vrb_is = $verbs->id(verb::IS);
         $wrd_type = $phrase_types->default_id(); // maybe base it on the other linked words
         $wrd_add_title = "add a new " . $this->name();
         $url = $html->url(controller::DSP_WORD_ADD, 0, $back,
@@ -1284,7 +1284,7 @@ class word extends sandbox_typed
         global $verbs;
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $parent_phr_lst = $phr_lst->foaf_parents($verbs->id(verb::IS_A));
+        $parent_phr_lst = $phr_lst->foaf_parents($verbs->get(verb::IS));
         log_debug('are ' . $parent_phr_lst->dsp_name() . ' for ' . $this->dsp_id());
         return $parent_phr_lst;
     }
@@ -1332,7 +1332,7 @@ class word extends sandbox_typed
         if (!$wrd_lst->does_contain($child)) {
             $wrd_lnk = new triple($this->user());
             $wrd_lnk->fob = $child->phrase();
-            $wrd_lnk->verb = $verbs->get_verb(verb::IS_A);
+            $wrd_lnk->verb = $verbs->get(verb::IS);
             $wrd_lnk->tob = $this->phrase();
             if ($wrd_lnk->save() == '') {
                 $result = true;
@@ -1350,7 +1350,7 @@ class word extends sandbox_typed
         global $verbs;
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $child_phr_lst = $phr_lst->foaf_all_children($verbs->id(verb::IS_A));
+        $child_phr_lst = $phr_lst->all_children($verbs->get(verb::IS));
         log_debug('are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
         return $child_phr_lst;
     }
@@ -1375,7 +1375,7 @@ class word extends sandbox_typed
     {
         global $verbs;
         $phr_lst = $this->lst();
-        return $phr_lst->foaf_children($verbs->id(verb::IS_PART_OF));
+        return $phr_lst->foaf_children($verbs->get(verb::IS_PART_OF));
     }
 
     /**
@@ -1386,7 +1386,7 @@ class word extends sandbox_typed
     {
         global $verbs;
         $phr_lst = $this->lst();
-        return $phr_lst->foaf_children($verbs->id(verb::IS_PART_OF), 1);
+        return $phr_lst->foaf_children($verbs->get(verb::IS_PART_OF), 1);
     }
 
     /**
@@ -1501,7 +1501,7 @@ class word extends sandbox_typed
         global $verbs;
         log_debug($this->dsp_id() . ', user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $is_phr_lst = $phr_lst->foaf_parents($verbs->id(verb::IS_PART_OF));
+        $is_phr_lst = $phr_lst->foaf_parents($verbs->get(verb::IS_PART_OF));
 
         log_debug($this->dsp_id() . ' is a ' . $is_phr_lst->dsp_name());
         return $is_phr_lst;
@@ -1553,7 +1553,7 @@ class word extends sandbox_typed
     private function phrase_list_down(): phrase_list
     {
         $phr_lst = new phrase_list($this->user());
-        return $phr_lst->children();
+        return $phr_lst->direct_children();
     }
 
     /*
@@ -1928,7 +1928,7 @@ class word extends sandbox_typed
         // collect all values related to word triple
         $val_lst = new value_list($this->user());
         $val_lst->phr = $this->phrase();
-        $val_lst->load();
+        $val_lst->load_old();
 
         // if there are still values, ask if they really should be deleted
         if ($val_lst->has_values()) {

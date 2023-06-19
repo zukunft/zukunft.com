@@ -291,16 +291,34 @@ class verb_list extends type_list
     {
         $type = new verb();
         $type->set_id(1);
-        $type->set_name(verb::IS_A);
-        $type->code_id = verb::IS_A;
+        $type->set_name(verb::NOT_SET);
+        $type->code_id = verb::NOT_SET;
         $this->lst[1] = $type;
-        $this->hash[verb::IS_A] = 1;
+        $this->hash[verb::NOT_SET] = 1;
         $type = new verb();
         $type->set_id(2);
+        $type->set_name(verb::IS);
+        $type->code_id = verb::IS;
+        $this->lst[2] = $type;
+        $this->hash[verb::IS] = 2;
+        $type = new verb();
+        $type->set_id(3);
+        $type->set_name(verb::IS_PART_OF);
+        $type->code_id = verb::IS_PART_OF;
+        $this->lst[3] = $type;
+        $this->hash[verb::IS_PART_OF] = 3;
+        $type = new verb();
+        $type->set_id(4);
+        $type->set_name(verb::IS_WITH);
+        $type->code_id = verb::IS_WITH;
+        $this->lst[4] = $type;
+        $this->hash[verb::IS_WITH] = 4;
+        $type = new verb();
+        $type->set_id(9);
         $type->set_name(verb::FOLLOW);
         $type->code_id = verb::FOLLOW;
-        $this->lst[2] = $type;
-        $this->hash[verb::FOLLOW] = 2;
+        $this->lst[9] = $type;
+        $this->hash[verb::FOLLOW] = 9;
     }
 
     /**
@@ -361,13 +379,13 @@ class verb_list extends type_list
     }
 
     /**
-     * get a single verb from this list
+     * get a single verb from this list selected by the code id
      * a kind of replacement for the user_type_list->get() function but for the verb object
      *
      * @param string $code_id
      * @return verb the verb object or null if no match is found
      */
-    function get_verb(string $code_id): verb
+    function get(string $code_id): verb
     {
         $result = null;
         if ($code_id != '' and $code_id != null) {

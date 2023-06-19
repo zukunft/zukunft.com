@@ -56,7 +56,8 @@ class verb extends db_object
 
     // the unique id of predicates or verbs
     // to link a db row to predefined program code
-    const IS_A = "is";
+    const NOT_SET = "not_set";
+    const IS = "is";
     const IS_PART_OF = "contains";
     const IS_WITH = "with";
     const FOLLOW = "follow";

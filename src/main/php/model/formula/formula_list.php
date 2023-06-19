@@ -63,7 +63,7 @@ class formula_list extends sandbox_list
      * @param array $db_rows is an array of an array with the database values
      * @return bool true if at least one formula has been loaded
      */
-    private function rows_mapper(array $db_rows): bool
+    protected function rows_mapper(array $db_rows): bool
     {
         $result = false;
         if ($db_rows != null) {
@@ -272,27 +272,6 @@ class formula_list extends sandbox_list
     }
 
     /**
-     * load a list of formulas
-     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
-     * @return bool true if at least one formula has been loaded
-     */
-    private function load_int(sql_par $qp): bool
-    {
-
-        global $db_con;
-        $result = false;
-
-        // check the all minimal input parameters are set
-        if ($qp->name == '') {
-            log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
-        } else {
-            $db_lst = $db_con->get($qp);
-            $result = $this->rows_mapper($db_lst);
-        }
-        return $result;
-    }
-
-    /**
      * load a list of formulas by the given formula id
      * @param array $frm_ids an array of formula ids which should be loaded
      * @return bool true if at least one word found
@@ -301,7 +280,7 @@ class formula_list extends sandbox_list
     {
         global $db_con;
         $qp = $this->load_sql_by_ids($db_con, $frm_ids);
-        return $this->load_int($qp);
+        return $this->load($qp);
     }
 
     /**
@@ -313,7 +292,7 @@ class formula_list extends sandbox_list
     {
         global $db_con;
         $qp = $this->load_sql_by_names($db_con, $names);
-        return $this->load_int($qp);
+        return $this->load($qp);
     }
 
     /**
@@ -325,7 +304,7 @@ class formula_list extends sandbox_list
     {
         global $db_con;
         $qp = $this->load_sql_by_phr($db_con, $phr);
-        return $this->load_int($qp);
+        return $this->load($qp);
     }
 
     /**
@@ -337,7 +316,7 @@ class formula_list extends sandbox_list
     {
         global $db_con;
         $qp = $this->load_sql_by_phr_lst($db_con, $phr_lst);
-        return $this->load_int($qp);
+        return $this->load($qp);
     }
 
     /**
@@ -350,7 +329,7 @@ class formula_list extends sandbox_list
     {
         global $db_con;
         $qp = $this->load_sql_all($db_con, $limit, $page);
-        return $this->load_int($qp);
+        return $this->load($qp);
     }
 
 

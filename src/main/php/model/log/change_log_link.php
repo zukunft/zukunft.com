@@ -151,6 +151,8 @@ class change_log_link extends change_log
     }
 
     /**
+     * TODO make sure that always a order is defined to allow page views
+     * TODO use always limit queries to avoid long runners
      * create an SQL statement to retrieve a change long entry for links by the changing user
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing

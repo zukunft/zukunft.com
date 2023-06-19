@@ -135,6 +135,32 @@ function import_verbs(user $usr): bool
 }
 
 /**
+ * import the initial system configuration
+ * @param user $usr who has triggered the function
+ * @return bool true if the configuration has imported
+ */
+function import_config(user $usr): bool
+{
+    global $db_con;
+    global $verbs;
+
+    $result = false;
+
+    if ($usr->is_admin() or $usr->is_system()) {
+        $import_result = import_json_file(SYSTEM_CONFIG_FILE, $usr);
+        if (str_starts_with($import_result, ' done ')) {
+            $result = true;
+        }
+    }
+
+    // TODO load the config
+    // $verbs = new verb_list($usr);
+    // $verbs->load($db_con);
+
+    return $result;
+}
+
+/**
  * import all zukunft.com base configuration json files
  * for an import it can be assumed that this base configuration is loaded
  * even if a user has overwritten some of these definitions the technical import should be possible

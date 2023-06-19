@@ -38,6 +38,7 @@ include_once MODEL_VALUE_PATH . 'value_list.php';
 use html\value\value_list as value_list_dsp;
 use model\library;
 use model\phrase;
+use model\phrase_list;
 use model\sql_db;
 use model\sql_par;
 use model\value_list;
@@ -73,6 +74,11 @@ class value_list_unit_tests
          * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
          */
 
+        // sql to load a list of value by ids
+        $val_lst = new value_list($usr);
+        $t->assert_load_sql_ids($db_con, $val_lst);
+        $this->assert_load_by_phr_lst_sql($t, $db_con, $val_lst);
+
         $db_con->db_type = sql_db::POSTGRES;
         $this->test = $t;
 
@@ -81,23 +87,23 @@ class value_list_unit_tests
         $wrd->set_id(1);
         $val_lst = new value_list($usr);
         $val_lst->phr = $wrd->phrase();
-        $created_sql = $val_lst->load_sql($db_con)->sql;
+        $created_sql = $val_lst->load_old_sql($db_con)->sql;
         $expected_sql = $t->file('db/value/value_list_by_word_id.sql');
         $t->assert('value_list->load_sql by phrase id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // sql to load a list of value by the phrase ids
         $val_lst = new value_list($usr);
         $val_lst->phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
-        $created_sql = $val_lst->load_by_phr_lst_sql($db_con);
+        $created_sql = $val_lst->load_by_phr_lst_sql_old($db_con);
         $expected_sql = $t->file('db/value/value_list_by_triple_id_list.sql');
         $t->assert('value_list->load_by_phr_lst_sql by group and time', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($val_lst->load_by_phr_lst_sql($db_con, true));
+        $t->assert_sql_name_unique($val_lst->load_by_phr_lst_sql_old($db_con, true));
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $val_lst->load_by_phr_lst_sql($db_con);
+        $created_sql = $val_lst->load_by_phr_lst_sql_old($db_con);
         $expected_sql = $t->file('db/value/value_list_by_triple_id_list_mysql.sql');
         $t->assert('value_list->load_by_phr_lst_sql by group and time for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 
@@ -122,6 +128,37 @@ class value_list_unit_tests
         $trp_lst = $t->dummy_value_list();
         $t->assert_api_to_dsp($trp_lst, new value_list_dsp());
 
+    }
+
+    /**
+     * test the SQL statement creation for a value list
+     * similar to assert_load_sql but for an phrase list
+     *
+     * @param test_cleanup $t the forwarded testing object
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_load_by_phr_lst_sql(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
+    {
+        // TODO check why t->dummy_phrase_list() cannot be access here
+        //$phr_lst = new $t->dummy_phrase_list();
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add($t->dummy_word_pi()->phrase());
+        $phr_lst->add($t->dummy_triple()->phrase());
+
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_phr_lst($db_con, $phr_lst);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_phr_lst($db_con, $phr_lst);
+            $result = $t->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
     }
 
     /**

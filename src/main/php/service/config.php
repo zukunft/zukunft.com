@@ -50,6 +50,12 @@ use model\formula;
 class config
 {
 
+    // reserved word and triple names used for the system configuration
+    // *_DSP id the name to be shown to the user if the context makes it unique
+    const SYSTEM_CONFIG = 'system configuration';
+    const YEARS_AUTO_CREATE = 'system config automatic created years';
+    const YEARS_AUTO_CREATE_DSP = 'automatic created years';
+
     // program configuration names
     const SITE_NAME = 'site_name';                           // the name of the pod
     const VERSION_DB = 'version_database';                   // the version of the database at the moment to trigger an update script if needed

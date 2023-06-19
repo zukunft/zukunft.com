@@ -1397,6 +1397,10 @@
   ],
   "sources": [
     {
+      "name": "Mathematical constant",
+      "description": "A mathematical constant is a key number whose value is fixed by an unambiguous definition to facilitate using it across multiple mathematical problems."
+    },
+    {
       "name": "The International System of Units",
       "description": "Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards",
       "url": "https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf",
@@ -1414,7 +1418,15 @@
       ],
       "number": "3.14159265358979323846264338327950288419716939937510",
       "share": "public",
-      "source": "The International System of Units"
+      "source": "Mathematical constant"
+    },
+    {
+      "words": [
+        "Euler's constant"
+      ],
+      "number": "0.5772156649015328606065120900824024310421",
+      "share": "public",
+      "source": "Mathematical constant"
     },
     {
       "words": [

@@ -50,7 +50,7 @@ class verb_test
         // check the loading of the "is a" verb
         $vrb = new verb;
         $vrb->set_user($t->usr1);
-        $vrb->load_by_id($verbs->id(verb::IS_A));
+        $vrb->load_by_id($verbs->id(verb::IS));
         $t->assert('verb->load ', $vrb->name(), verb_api::TN_IS);
 
         // test the creation of a new verb

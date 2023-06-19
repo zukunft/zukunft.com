@@ -21,3 +21,5 @@ word_type_id, type_name, description, code_id, scaling_factor, word_symbol
 20, 'key', 'force faster search and if two keys are connected with the verb is all child values are expected to be equal', 'key', NULL, ''
 21, 'information', 'this phrase is used mainly for information purpose and for the selection the program tries to another search without this phrase', 'information', NULL, ''
 22, 'hidden triple', 'this triple should not be included in selection list because the triple is identical with the from word and is only added to assign behavior to the word', 'hidden_triple', NULL, ''
+23, 'hidden system', 'these words and triple are used e.g. for the system configuration and should not be included in standard selection list because the values are only internal and are shown in separate predefined views', 'hidden_system', NULL, ''
+24, 'group and select', 'words used to group and select other words to shorten the selection', 'group', NULL, ''

@@ -64,7 +64,7 @@ class phrase_test
         // load or create a word that can be parts of a group e.g. Zurich
         $wrd = $t->test_word(word_api::TN_ZH);
         $zh_id = $wrd->id();
-        $is_id = $verbs->id(verb::IS_A);
+        $is_id = $verbs->id(verb::IS);
         // load a triple that is parts of a group e.g. Zurich Insurance
         $trp = new triple($usr);
         $trp->load_by_link($zh_id, $is_id, $company_id);

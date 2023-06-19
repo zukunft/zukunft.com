@@ -105,6 +105,7 @@ if ($usr->id() > 0) {
         $job_id = $job->add(job_type_list::BASE_IMPORT);
 
         import_base_config($sys_usr);
+        import_config($usr);
 
         // use the system user again to create the database test datasets
         global $usr;

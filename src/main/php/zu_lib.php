@@ -14,6 +14,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO add system and user config parameter that are e.g. 100 views a view is automatically freezed for the user
+    TODO add a trigger to the message header to force the frontend update of types, verbs und user configuration if needed
     TODO use words and values also for the system and user config
     TODO create a config get function for the frontend
     TODO cleanup the object vars and use objects instead repeating ids
@@ -547,6 +549,7 @@ define("BASE_CODE_LINK_FILES", serialize(array(
 const BASE_CODE_LINK_FILE_TYPE = '.csv';
 const SYSTEM_USER_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'users.json';
 const SYSTEM_VERB_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'verbs.json';
+const SYSTEM_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'config.json';
 const PATH_BASE_CONFIG_MESSAGE_FILES = PATH_BASE_CONFIG_FILES . 'messages/';
 define("BASE_CONFIG_FILES", serialize(array(
     'system_views.json',

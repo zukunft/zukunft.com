@@ -2142,16 +2142,28 @@ class sql_db
      *
      * @param string $field of the field name to use for the IN statement
      * @param array $values of the values just to detect the type
+     * @param bool $is_join_query to force using the table name prefix
+     * @param bool $is_join_field to force using the link table prefix for the field name
      * @return string the SQL WHERE statement
      */
-    function where_in_par(string $field, array $values): string
+    function where_in_par(
+        string $field,
+        array $values,
+        bool $is_join_query = false,
+        bool $is_join_field = false
+    ): string
     {
         $result = '';
         if ($this->usr_query
             or $this->join <> ''
             or $this->join_type <> ''
-            or $this->join2_type <> '') {
-            $result .= sql_db::STD_TBL . '.';
+            or $this->join2_type <> ''
+            or $is_join_query) {
+            if ($is_join_field) {
+                $result .= sql_db::LNK_TBL . '.';
+            } else {
+                $result .= sql_db::STD_TBL . '.';
+            }
         }
         $result .= $field . ' IN (';
         $i = 1;
@@ -2173,9 +2185,15 @@ class sql_db
      * @param array $fields of the field names as string
      * @param array $values of the values just to detect the type
      * @param bool $is_join_query to force using the table name prefix
+     * @param bool $is_join_field to force using the link table prefix for the field name
      * @return string the SQL WHERE statement
      */
-    function where_par(array $fields, array $values, bool $is_join_query = false): string
+    function where_par(
+        array $fields,
+        array $values,
+        bool $is_join_query = false,
+        bool $is_join_field = false
+    ): string
     {
         $result = '';
         if ($this->usr_query
@@ -2183,7 +2201,11 @@ class sql_db
             or $this->join_type <> ''
             or $this->join2_type <> ''
             or $is_join_query) {
-            $result .= sql_db::STD_TBL . '.';
+            if ($is_join_field) {
+                $result .= sql_db::LNK_TBL . '.';
+            } else {
+                $result .= sql_db::STD_TBL . '.';
+            }
         }
         if ($fields == null) {
             log_err('At least one field must be set to create an SQL WHERE statement');
@@ -2215,6 +2237,18 @@ class sql_db
     function set_where_id_in(string $id_field_name, array $ids): string
     {
         $this->where = ' WHERE ' . $this->where_in_par($id_field_name, $ids);
+        return $this->where;
+    }
+
+    /**
+     * set the where statement for a list of ids of a joined field
+     * @param string $id_field_name the field name without the table prefix
+     * @param array $ids the list of ids that should be used for the selection
+     * @return string the where statement that should be used for the final query
+     */
+    function set_where_id_in_join(string $id_field_name, array $ids): string
+    {
+        $this->where = ' WHERE ' . $this->where_in_par($id_field_name, $ids, true, true);
         return $this->where;
     }
 

@@ -74,6 +74,28 @@ class value_list extends sandbox_list
         parent::__construct($usr);
     }
 
+    /**
+     * fill the value list based on a database records
+     * @param array $db_rows is an array of an array with the database values
+     * @return bool true if at least one value has been loaded
+     */
+    protected function rows_mapper(array $db_rows): bool
+    {
+        $result = false;
+        if ($db_rows != null) {
+            foreach ($db_rows as $db_row) {
+                if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0) {
+                    if ($db_row[value::FLD_ID] > 0) {
+                        $val = new value($this->user());
+                        $val->row_mapper_sandbox($db_row);
+                        $this->lst[] = $val;
+                        $result = true;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
 
     /*
      * cast
@@ -99,11 +121,95 @@ class value_list extends sandbox_list
 
 
     /*
-     * db loading
+     * load
      */
 
+    /**
+     * set the SQL query parameters to load a list of values
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con, string $query_name): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
+
+        $db_con->set_type(sql_db::TBL_VALUE);
+        $db_con->set_name($qp->name);
+
+        $db_con->set_usr($this->user()->id());
+        $db_con->set_fields(value::FLD_NAMES);
+        $db_con->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+        $db_con->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
+        //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word::FLD_VALUES) . ' DESC, ' . word::FLD_NAME);
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of value by the id from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param array $ids value ids that should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_ids(sql_db $db_con, array $ids): sql_par
+    {
+        $qp = $this->load_sql($db_con, count($ids) . 'ids');
+        $db_con->set_where_id_in(value::FLD_ID, $ids);
+        $db_con->set_order(value::FLD_ID);
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of value by the id from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr_lst(sql_db $db_con, phrase_list $phr_lst): sql_par
+    {
+        $qp = $this->load_sql($db_con, 'phr_lst');
+        $db_con->set_where_id_in_join(phrase::FLD_ID, $phr_lst->ids());
+        $db_con->set_join_fields(
+            array(value::FLD_ID), sql_db::TBL_VALUE_PHRASE_LINK,
+            value::FLD_ID, value::FLD_ID);
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load a list of values by the given value ids
+     * @param array $val_ids an array of value ids which should be loaded
+     * @return bool true if at least one value found
+     */
+    function load_by_ids(array $val_ids): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con, $val_ids);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of values by the given value ids
+     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @return bool true if at least one value found
+     */
+    function load_by_phr_lst(phrase_list $phr_lst): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_phr_lst($db_con, $phr_lst);
+        return $this->load($qp);
+    }
+
     // TODO review the VAR and LIMIT definitions
-    function load_sql(sql_db $db_con): sql_par
+    function load_old_sql(sql_db $db_con): sql_par
     {
         $lib = new library();
         $class = $lib->class_to_name(self::class);
@@ -169,7 +275,7 @@ class value_list extends sandbox_list
      * @param int $size
      * @return bool
      */
-    function load(int $page = 1, int $size = SQL_ROW_LIMIT): bool
+    function load_old(int $page = 1, int $size = SQL_ROW_LIMIT): bool
     {
 
         global $db_con;
@@ -180,7 +286,7 @@ class value_list extends sandbox_list
         if ($this->user() == null) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
-            $qp = $this->load_sql($db_con);
+            $qp = $this->load_old_sql($db_con);
 
             if ($db_con->get_where() == '') {
                 log_err('The phrase must be set to load ' . self::class, self::class . '->load');
@@ -323,7 +429,7 @@ class value_list extends sandbox_list
      * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
      * @return string the SQL statement base on the parameters set in $this
      */
-    function load_by_phr_lst_sql(sql_db $db_con, bool $get_name = false): string
+    function load_by_phr_lst_sql_old(sql_db $db_con, bool $get_name = false): string
     {
 
         $sql_name = 'phr_lst_by_';
@@ -387,7 +493,7 @@ class value_list extends sandbox_list
 
         // the word list and the user must be set
         if (count($this->phr_lst->id_lst()) > 0 and !is_null($this->user()->id())) {
-            $sql = $this->load_by_phr_lst_sql($db_con);
+            $sql = $this->load_by_phr_lst_sql_old($db_con);
 
             if ($sql <> '') {
                 $db_con->usr_id = $this->user()->id();
@@ -571,7 +677,7 @@ class value_list extends sandbox_list
         // reload the value parameters
         if ($do_load) {
             log_debug();
-            $this->load();
+            $this->load_old();
         }
 
         if (count($this->lst) > 1) {
@@ -733,6 +839,18 @@ class value_list extends sandbox_list
         }
 
         log_debug('done');
+        return $result;
+    }
+
+    /**
+     * @return array a list of all numbers of this value list
+     */
+    function numbers(): array
+    {
+        $result = array();
+        foreach ($this->lst as $val) {
+            $result[] = $val->number();
+        }
         return $result;
     }
 

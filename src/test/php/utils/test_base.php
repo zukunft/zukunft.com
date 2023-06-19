@@ -208,10 +208,12 @@ include_once $path_unit_read . 'word.php';
 include_once $path_unit_read . 'word_list.php';
 include_once $path_unit_read . 'verb.php';
 include_once $path_unit_read . 'phrase.php';
+include_once $path_unit_read . 'phrase_list.php';
 include_once $path_unit_read . 'phrase_group.php';
 include_once $path_unit_read . 'term.php';
 include_once $path_unit_read . 'term_list.php';
 include_once $path_unit_read . 'value.php';
+include_once $path_unit_read . 'value_list.php';
 include_once $path_unit_read . 'formula.php';
 include_once $path_unit_read . 'formula_list.php';
 include_once $path_unit_read . 'expression.php';
@@ -545,10 +547,11 @@ class test_base
 
     /**
      * check if the test results contains at least all expected results
+     * or in other words if all needles can be found in the haystack
      *
      * @param string $msg (unique) description of the test
-     * @param array $result the actual result
-     * @param array $target the expected result
+     * @param array $haystack the actual result
+     * @param array $needles the expected minimal result
      * @param float $exe_max_time the expected max time to create the result
      * @param string $comment
      * @param string $test_type
@@ -556,15 +559,15 @@ class test_base
      */
     function assert_contains(
         string $msg,
-        array  $result,
-        array  $target,
+        array  $haystack,
+        array  $needles,
         float  $exe_max_time = TIMEOUT_LIMIT,
         string $comment = '',
         string $test_type = ''): bool
     {
         // the array keys are not relevant if only a few elements should be checked
-        $result = array_values(array_intersect($result, $target));
-        return $this->display(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
+        $haystack = array_values(array_intersect($haystack, $needles));
+        return $this->display(', ' . $msg, $needles, $haystack, $exe_max_time, $comment, $test_type);
     }
 
     /**
@@ -757,6 +760,8 @@ class test_base
     /**
      * similar to assert_load_sql but for the load_sql_obj_vars that
      * TODO should be replaced by assert_load_sql_id, assert_load_sql_name, assert_load_sql_all, ...
+     * TODO check that all assert_load_sql_ use by more that one test are here
+     * TODO in the assert_load_sql_ functions used for one test object only use the forwarded $t and $db_con vars
      *
      * check the object load SQL statements for all allowed SQL database dialects
      *
@@ -1721,7 +1726,7 @@ function zu_test_time_setup(test_cleanup $t): string
         for ($year = $start_year; $year <= $end_year; $year++) {
             $this_year = $year;
             $t->test_word(strval($this_year));
-            $wrd_lnk = $t->test_triple(TW_YEAR, verb::IS_A, $this_year);
+            $wrd_lnk = $t->test_triple(TW_YEAR, verb::IS, $this_year);
             $result = $wrd_lnk->name();
             if ($prev_year <> '') {
                 $t->test_triple($prev_year, verb::FOLLOW, $this_year);

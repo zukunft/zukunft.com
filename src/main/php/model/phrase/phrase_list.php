@@ -631,7 +631,7 @@ class phrase_list extends sandbox_list_named
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id = ' . $type->id . ' 
-                                           AND l.verb_id = ' . $verbs->id(verb::IS_A) . ' ) AS a 
+                                           AND l.verb_id = ' . $verbs->id(verb::IS) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
 
                 // ... out of all those get the phrase ids that have also other types e.g. Zurich (Canton)
@@ -643,7 +643,7 @@ class phrase_list extends sandbox_list_named
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id <> ' . $type->id . ' 
-                                           AND l.verb_id = ' . $verbs->id(verb::IS_A) . '
+                                           AND l.verb_id = ' . $verbs->id(verb::IS) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
                                          WHERE ' . $sql_where_exclude . ' ';
 
@@ -670,7 +670,7 @@ class phrase_list extends sandbox_list_named
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                 AND u.user_id = ' . $this->user()->id() . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
-                           AND l.verb_id = ' . $verbs->id(verb::IS_A) . '
+                           AND l.verb_id = ' . $verbs->id(verb::IS) . '
                            AND l.to_phrase_id = ' . $type->id . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*
@@ -787,7 +787,7 @@ class phrase_list extends sandbox_list_named
         $this->lst = array();
 
         $wrd_lst = new word_list($this->user());
-        $wrd_lst->load_linked_words($vrb->id(), $direction);
+        $wrd_lst->load_linked_words($vrb, $direction);
         $wrd_added = $this->add_wrd_lst($wrd_lst);
 
         $trp_lst = new triple_list($this->user());
@@ -869,11 +869,11 @@ class phrase_list extends sandbox_list_named
      * the relation can be narrowed with a verb id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param int $verb_id to select only words linked with this verb
+     * @param verb|null $vrb if set to select only phrases linked with this verb
      * @param string $direction to define the link direction
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_linked_phrases(sql_db $db_con, int $verb_id, string $direction): sql_par
+    function load_sql_linked_phrases(sql_db $db_con, ?verb $vrb, string $direction): sql_par
     {
         $qp = $this->load_names_sql($db_con, '');
         $sql_where = '';
@@ -901,14 +901,14 @@ class phrase_list extends sandbox_list_named
                 log_err('Unknown direction ' . $direction);
             }
             // verbs can have a negative id for the reverse selection
-            if ($verb_id <> 0) {
+            if ($vrb != null) {
                 $db_con->set_join_fields(
                     array(verb::FLD_ID),
                     sql_db::TBL_TRIPLE,
                     phrase::FLD_ID,
                     $join_field,
                     verb::FLD_ID,
-                    $verb_id);
+                    $vrb->id());
                 $qp->name .= '_verb_select';
             } else {
                 $db_con->set_join_fields(
@@ -1122,16 +1122,15 @@ class phrase_list extends sandbox_list_named
      * build one level of a phrase tree
      * @param int $level 1 if the parents of the original phrases are added
      * @param phrase_list $added_phr_lst list of the added phrase during the foaf selection process
-     * @param int $verb_id id of the verb that is used to select the parents
+     * @param verb|null $vrb if set to filter the related phrases by the relation type
      * @param string $direction to select if the parents or children should be selected - "up" to select the parents
      * @param int $max_level the max level that should be used for the selection; if 0 the technical max level ist used
      * @return phrase_list the accumulated list of added phrases
      */
     private function foaf_level(
-        int $level, phrase_list $added_phr_lst, int $verb_id, string $direction, int $max_level
+        int $level, phrase_list $added_phr_lst, ?verb $vrb, string $direction, int $max_level
     ): phrase_list
     {
-        log_debug('->foaf_level (type id ' . $verb_id . ' level ' . $level . ' ' . $direction . ' added ' . $added_phr_lst->name() . ')');
         if ($max_level > 0) {
             $max_loops = $max_level;
         } else {
@@ -1142,14 +1141,14 @@ class phrase_list extends sandbox_list_named
         do {
             $loops = $loops + 1;
             // load all linked phrases
-            $additional_added = $additional_added->load_linked_phrases($verb_id, $direction);
+            $additional_added = $additional_added->load_linked_phrases($vrb, $direction);
             // get the phrases not added before
             $additional_added->diff($added_phr_lst);
             // remember the added phrases
             $added_phr_lst->merge($additional_added);
 
             if ($loops >= MAX_RECURSIVE) {
-                log_fatal("max number (" . $loops . ") of loops for phrase " . $verb_id . " reached.", "phrase_list->tree_up_level");
+                log_fatal("max number (" . $loops . ") of loops for phrase reached.", "phrase_list->tree_up_level");
             }
         } while (!empty($additional_added->lst) and $loops < $max_loops);
         log_debug('->foaf_level done');
@@ -1160,18 +1159,18 @@ class phrase_list extends sandbox_list_named
      * add the direct linked phrases to the list
      * and remember which phrases have be added
      *
-     * @param int $verb_id to select only phrases linked with this verb
+     * @param verb|null $vrb if set to filter the children by the relation type
      * @param string $direction to define the link direction
      * @return phrase_list with only the new added phrases
      */
-    function load_linked_phrases(int $verb_id, string $direction): phrase_list
+    function load_linked_phrases(?verb $vrb, string $direction): phrase_list
     {
 
         global $db_con;
         $lib = new library();
         $additional_added = new phrase_list($this->user()); // list of the added phrases with this call
 
-        $qp = $this->load_sql_linked_phrases($db_con, $verb_id, $direction);
+        $qp = $this->load_sql_linked_phrases($db_con, $vrb, $direction);
         if ($qp->name == '') {
             log_warning('The phrase list is empty, so nothing could be found', self::class . '->load_linked_phrases');
         } else {
@@ -1197,18 +1196,18 @@ class phrase_list extends sandbox_list_named
 
 
     /**
+     * @param verb|null $vrb if not null the verbs to filter the parents
      * @returns array a list of phrases, that characterises the given phrase
      * e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is a"
      * ex foaf_parent
      */
-    function foaf_parents($verb_id): phrase_list
+    function foaf_parents(?verb $vrb = null): phrase_list
     {
-        log_debug('phrase_list->foaf_parents (type id ' . $verb_id . ')');
         $wrd_lst = $this->wrd_lst_all();
-        $added_wrd_lst = $wrd_lst->foaf_parents($verb_id);
+        $added_wrd_lst = $wrd_lst->foaf_parents($vrb);
         $added_phr_lst = $added_wrd_lst->phrase_lst();
 
-        log_debug($added_phr_lst->dsp_name());
+        log_debug($added_phr_lst->dsp_id());
         return $added_phr_lst;
     }
 
@@ -1222,7 +1221,7 @@ class phrase_list extends sandbox_list_named
     {
         log_debug($vrb->dsp_id());
         $wrd_lst = $this->wrd_lst_all();
-        $added_wrd_lst = $wrd_lst->parents($vrb->id(), $level);
+        $added_wrd_lst = $wrd_lst->parents($vrb, $level);
         $added_phr_lst = $added_wrd_lst->phrase_lst();
 
         log_debug($added_phr_lst->name());
@@ -1230,24 +1229,19 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * similar to foaf_parent, but the other way round
-     * e.g. for "Companies" it will return "ABB Ltd."
-     * and others if the link type is "are"
-     * ex foaf_child
-     * @param int $verb_id the id of the verb that should be used to filter the children
+     * get all children
+     * e.g. for country it will return Switzerland and also Zurich because Zurich is part of Switzerland
+     * similar to all_parents, but the other way round
+     * @param verb|null $vrb if set to filter the children by the relation type
+     * @returns phrase_list the accumulated list of added words
      */
-    function foaf_all_children(int $verb_id): phrase_list
+    function all_children(?verb $vrb): phrase_list
     {
-        log_debug('phrase_list->foaf_children type ' . $verb_id);
-        $added_phr_lst = null;
+        $wrd_lst = $this->wrd_lst_all();
+        $added_wrd_lst = $wrd_lst->children($vrb);
+        $added_phr_lst = $added_wrd_lst->phrase_lst();
 
-        if ($verb_id > 0) {
-            $wrd_lst = $this->wrd_lst_all();
-            $added_wrd_lst = $wrd_lst->foaf_children($verb_id);
-            $added_phr_lst = $added_wrd_lst->phrase_lst();
-
-            log_debug($added_phr_lst->name());
-        }
+        log_debug($added_phr_lst->name());
         return $added_phr_lst;
     }
 
@@ -1257,15 +1251,17 @@ class phrase_list extends sandbox_list_named
      * e.g. for "Companies" it will return "ABB Ltd."
      * and others if the link type is "are"
      * ex foaf_child
-     * @param int $verb_id the id of the verb that should be used to filter the children
+     * @param verb|null $vrb if set to filter the children by the relation type
+     *                       if not set the children are not filtered by the verb
+     * @param int $max_level to limit the search depth
+     * @return phrase_list with all phrases "below" the original list
      */
-    function foaf_children(int $verb_id, int $max_level = 0): phrase_list
+    function foaf_children(?verb $vrb = null, int $max_level = 0): phrase_list
     {
-        log_debug('phrase_list->foaf_children type ' . $verb_id);
         $level = 0;
         $added_phr_lst = new phrase_list($this->user()); // list of the added phrases
         $added_phr_lst = $this->foaf_level(
-            $level, $added_phr_lst, $verb_id, word_select_direction::DOWN, $max_level
+            $level, $added_phr_lst, $vrb, word_select_direction::DOWN, $max_level
         );
 
         log_debug($added_phr_lst->name());
@@ -1273,18 +1269,19 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * similar to foaf_children, but for only one level
-     * $level is the number of levels that should be looked into
-     * ex foaf_child_step
+     * get the direct children
+     * e.g. for country it will return Switzerland, but not Zurich
+     * similar to foaf_children, but for only one level so ex the foaf_child_step
+     * @param verb|null $vrb if set to filter the children by the relation type
+     * @return phrase_list the phrase list of the direct children without th original list
      */
-    function children(?verb $vrb = null, int $level = 0): phrase_list
+    function direct_children(?verb $vrb = null): phrase_list
     {
-        log_debug('phrase_list->children type ' . $vrb->id());
         $wrd_lst = $this->wrd_lst_all();
-        $added_wrd_lst = $wrd_lst->children($vrb->id(), $level);
+        $added_wrd_lst = $wrd_lst->direct_children($vrb);
         $added_phr_lst = $added_wrd_lst->phrase_lst();
 
-        log_debug($added_phr_lst->name());
+        log_debug($added_phr_lst->dsp_id());
         return $added_phr_lst;
     }
 
@@ -1292,7 +1289,7 @@ class phrase_list extends sandbox_list_named
     function is(): phrase_list
     {
         global $verbs;
-        $phr_lst = $this->foaf_parents($verbs->id(verb::IS_A));
+        $phr_lst = $this->foaf_parents($verbs->get(verb::IS));
         log_debug($this->dsp_id() . ' is ' . $phr_lst->dsp_name());
         return $phr_lst;
     }
@@ -1303,7 +1300,7 @@ class phrase_list extends sandbox_list_named
     {
         global $verbs;
         log_debug($this->dsp_id());
-        $phr_lst = $this->foaf_all_children($verbs->id(verb::IS_A));
+        $phr_lst = $this->all_children($verbs->get(verb::IS));
         log_debug($this->dsp_id() . ' are ' . $phr_lst->dsp_id());
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' merged into ' . $phr_lst->dsp_id());
@@ -1316,7 +1313,7 @@ class phrase_list extends sandbox_list_named
     function contains(): phrase_list
     {
         global $verbs;
-        $phr_lst = $this->foaf_all_children($verbs->id(verb::IS_PART_OF));
+        $phr_lst = $this->all_children($verbs->get(verb::IS_PART_OF));
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $phr_lst->name());
         return $phr_lst;
@@ -1389,7 +1386,7 @@ class phrase_list extends sandbox_list_named
     {
         global $verbs;
         log_debug('for ' . $this->dsp_id());
-        $phr_lst = $this->foaf_all_children($verbs->id(verb::CAN_CONTAIN));
+        $phr_lst = $this->all_children($verbs->get(verb::CAN_CONTAIN));
         log_debug('merge ' . $this->dsp_id());
         $this->merge($phr_lst);
         log_debug($phr_lst->dsp_id() . ' for ' . $this->dsp_id());
@@ -1402,7 +1399,7 @@ class phrase_list extends sandbox_list_named
         global $verbs;
         log_debug('for ' . $this->dsp_id());
         // this first time get all related items
-        $phr_lst = $this->foaf_all_children($verbs->id(verb::CAN_CONTAIN));
+        $phr_lst = $this->all_children($verbs->get(verb::CAN_CONTAIN));
         $phr_lst = $phr_lst->are();
         $added_lst = $phr_lst->contains();
         $added_lst->diff($this);
@@ -1411,7 +1408,7 @@ class phrase_list extends sandbox_list_named
             $loops = 0;
             log_debug('added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
             do {
-                $next_lst = $added_lst->foaf_all_children($verbs->id(verb::CAN_CONTAIN));
+                $next_lst = $added_lst->all_children($verbs->get(verb::CAN_CONTAIN));
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
                 $added_lst->diff($phr_lst);

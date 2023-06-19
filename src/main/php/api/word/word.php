@@ -117,7 +117,7 @@ class word_api extends sandbox_typed_api
 
     // word groups for creating the test words and remove them after the test
     const RESERVED_WORDS = array(
-        word::DB_SETTINGS,
+        word::SYSTEM_CONFIG,
         self::TN_READ,
         self::TN_CONST,
         self::TN_PI,

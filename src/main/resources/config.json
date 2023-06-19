@@ -1,0 +1,114 @@
+{
+  "version": "0.0.3",
+  "time": "2023-06-17 10:45:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "system configuration"
+  ],
+  "words": [
+    {
+      "name": "system configuration",
+      "description": "keyword to separate the internal system configuration",
+      "type": "hidden_system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "time",
+      "description": "to group the time related words",
+      "type": "time",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "system time settings",
+      "description": "to group the time related system settings",
+      "type": "hidden_system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "automatic created years",
+      "description": "the number of years around the current year created automatically",
+      "type": "hidden_system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "select",
+      "description": "to group the system settings used for suggestions",
+      "type": "hidden_system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "selections system settings",
+      "description": "to group the system settings that change the selections",
+      "type": "hidden_system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "min. % of words in list to suggest the word for the next",
+      "description": "minimal percentage of the same word in a list to assume the word for the next",
+      "type": "hidden_system",
+      "protection": "admin_protection"
+    }
+  ],
+  "triples": [
+    {
+      "from": "system time settings",
+      "verb": "is part of",
+      "to": "system configuration",
+      "description": "the time related settings for this zukunft.com pod",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "time",
+      "verb": "is selector for",
+      "to": "system time settings",
+      "description": "the word time should be used as a selector for the system time settings",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "automatic created years",
+      "verb": "is part of",
+      "to": "system time settings",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "selections system settings",
+      "verb": "is part of",
+      "to": "system configuration",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "select",
+      "verb": "is selector for",
+      "to": "selections system settings",
+      "description": "the word select should be used as a selector for the suggestion settings",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "min. % of words in list to suggest the word for the next",
+      "verb": "is part of",
+      "to": "selections system settings",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "automatic created years"
+      ],
+      "number": 10
+    },
+    {
+      "words": [
+        "min. % of words in list to suggest the word for the next"
+      ],
+      "number": 0.3
+    }
+  ]
+}
+
