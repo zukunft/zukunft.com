@@ -193,9 +193,8 @@ class system_log extends db_object
      */
     function load_sql(sql_db $db_con, string $query_name = 'id', string $class = self::class): sql_par
     {
+        $qp = parent::load_sql($db_con, $query_name, $class);
         $db_con->set_type(sql_db::TBL_SYS_LOG);
-        $qp = new sql_par($class);
-        $qp->name .= $query_name;
 
         $db_con->set_name($qp->name);
         $db_con->set_fields(self::FLD_NAMES);

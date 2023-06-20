@@ -349,10 +349,9 @@ class verb extends db_object
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class): sql_par
+    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
     {
-        $qp = new sql_par(verb::class);
-        $qp->name .= $query_name;
+        $qp = parent::load_sql($db_con, $query_name, $class);
 
         $db_con->set_type(sql_db::TBL_VERB);
         $db_con->set_name($qp->name);

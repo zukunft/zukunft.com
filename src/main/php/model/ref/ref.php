@@ -353,8 +353,7 @@ class ref extends sandbox_link_with_type
      */
     protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
     {
-        $qp = new sql_par($class);
-        $qp->name .= $query_name;
+        $qp = parent::load_sql($db_con, $query_name, $class);
 
         $db_con->set_type(sql_db::TBL_REF);
         $db_con->set_name($qp->name);

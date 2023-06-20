@@ -171,6 +171,19 @@ class phrase_group extends db_object
         return $this->usr;
     }
 
+    function set_name(string $name = ''): void
+    {
+        if ($name != '') {
+            $this->grp_name = $name;
+        } else {
+            if ($this->phr_lst->count() > 0) {
+                $this->grp_name = implode(',', $this->phr_lst->names());
+            } else {
+                log_warning('name of phrase group ' . $this->dsp_id() . ' missing');
+            }
+        }
+    }
+
 
     /*
      * cast
@@ -201,24 +214,6 @@ class phrase_group extends db_object
 
 
     /*
-     * set and get function
-     */
-
-    function set_name(string $name = ''): void
-    {
-        if ($name != '') {
-            $this->grp_name = $name;
-        } else {
-            if ($this->phr_lst->count() > 0) {
-                $this->grp_name = implode(',', $this->phr_lst->names());
-            } else {
-                log_warning('name of phrase group ' . $this->dsp_id() . ' missing');
-            }
-        }
-    }
-
-
-    /*
      * load
      */
 
@@ -230,10 +225,9 @@ class phrase_group extends db_object
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class): sql_par
+    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
     {
-        $qp = new sql_par(self::class);
-        $qp->name .= $query_name;
+        $qp = parent::load_sql($db_con, $query_name, $class);
 
         $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
         $db_con->set_name($qp->name);

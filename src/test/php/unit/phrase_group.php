@@ -69,11 +69,8 @@ class phrase_group_unit_tests
         $t->header('Unit tests of the phrase group class (src/main/php/model/phrase/phrase_group.php)');
 
         $t->subheader('SQL statement tests');
-
-        // sql to load the phrase group by id
         $phr_grp = new phrase_group($usr);
-        $phr_grp->set_id(1);
-        $t->assert_load_sql_obj_vars($db_con, $phr_grp);
+        $t->assert_sql_by_id($db_con, $phr_grp);
 
         // sql to load the phrase group by word ids
         $phr_grp = new phrase_group($usr);
@@ -123,16 +120,6 @@ class phrase_group_unit_tests
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($phr_grp->get_by_wrd_lst_sql(true));
 
-        // sql to load the phrase group word link by id
-        $grp_wrd_lnk = new phrase_group_word_link();
-        $grp_wrd_lnk->set_id(11);
-        $t->assert_load_sql_obj_vars($db_con, $grp_wrd_lnk);
-
-        // sql to load the phrase group triple link by id
-        $grp_trp_lnk = new phrase_group_triple_link();
-        $grp_trp_lnk->set_id(12);
-        $t->assert_load_sql_obj_vars($db_con, $grp_trp_lnk);
-
         // sql to load all phrase groups linked to a word
         $db_con->db_type = sql_db::POSTGRES;
         $wrd = $t->create_word(word_api::TN_CITY);
@@ -159,12 +146,16 @@ class phrase_group_unit_tests
 
         // sql to load the phrase group word links related to a group
         $grp_wrd_lnk = new phrase_group_word_link();
+        $t->assert_sql_by_id($db_con, $grp_wrd_lnk);
+
         $phr_grp = new phrase_group($usr);
         $phr_grp->set_id(13);
         $this->assert_load_by_group_id_sql($t, $db_con, $grp_wrd_lnk, $phr_grp);
 
         // sql to load the phrase group triple links related to a group
         $grp_trp_lnk = new phrase_group_triple_link();
+        $t->assert_sql_by_id($db_con, $grp_trp_lnk);
+
         $phr_grp->set_id(14);
         $this->assert_load_by_group_id_sql($t, $db_con, $grp_trp_lnk, $phr_grp);
 

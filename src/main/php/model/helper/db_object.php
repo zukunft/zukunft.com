@@ -108,8 +108,8 @@ class db_object
      */
 
     /**
-     * dummy function to create the common part of an SQL statement
-     * which is overwritten by the child objects
+     * parent function to create the common part of an SQL statement
+     * child object sets the table and fields in the db sql builder
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $query_name the name of the selection fields to make the query name unique
@@ -118,8 +118,9 @@ class db_object
      */
     protected function load_sql(sql_db $db_con, string $query_name, string $class): sql_par
     {
-        log_warning('The parent load_sql function related to ' . $db_con->get_type() . ' should have never been called for ' . $query_name);
-        return new sql_par($class);
+        $qp = new sql_par($class);
+        $qp->name .= $query_name;
+        return $qp;
     }
 
     /**

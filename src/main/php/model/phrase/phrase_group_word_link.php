@@ -67,6 +67,30 @@ class phrase_group_word_link extends phrase_group_link
         return $result;
     }
 
+
+    /*
+     * load
+     */
+
+    /**
+     * create the common part of an SQL statement to get the phrase group triple link from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $query_name the name of the query use to prepare and call the query
+     * @param string $class the name of this class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = parent::load_sql($db_con, $query_name, $class);
+
+        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
+        $db_con->set_name($qp->name);
+        $db_con->set_fields(self::FLD_NAMES);
+
+        return $qp;
+    }
+
     /**
      * create an SQL statement to retrieve the phrase group word links related to a group id
      *

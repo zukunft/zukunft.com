@@ -34,6 +34,7 @@ namespace test;
 
 include_once MODEL_FORMULA_PATH . 'formula_element_list.php';
 
+use model\formula_element;
 use model\formula_element_list;
 use model\sql_db;
 
@@ -51,6 +52,12 @@ class formula_element_unit_tests
         $usr->set_id(1);
 
         $t->header('Unit tests of the formula element class (src/main/php/model/formula/formula_element.php)');
+
+        $t->subheader('SQLy creation tests');
+
+        $elm = new formula_element($usr);
+        $t->assert_sql_by_id($db_con, $elm);
+
 
         $t->subheader('Database query list creation tests');
 
