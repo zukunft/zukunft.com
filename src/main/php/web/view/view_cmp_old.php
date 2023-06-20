@@ -105,7 +105,7 @@ class component_dsp_old extends component_api
     function num_list(): string
     {
         global $component_types;
-        if ($component_types->code_id($this->type_id) == view_cmp_type::WORD_VALUE) {
+        if ($component_types->code_id($this->type_id) == view_cmp_type::NUMERIC_VALUE) {
             return $this->name();
         } else {
             return '';

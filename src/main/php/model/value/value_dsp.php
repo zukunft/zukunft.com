@@ -260,7 +260,7 @@ class value_dsp_old extends value
 
         // get value changes by the user that are not standard
         $sql = "SELECT v.value_id,
-                    " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                    t.word_id,
                    t.word_name
               FROM value_phrase_links l,
@@ -308,7 +308,7 @@ class value_dsp_old extends value
                     $row_nbr++;
                 }
                 // prepare a new value display
-                $row_value = $db_row["word_value"];
+                $row_value = $db_row["numeric_value"];
                 $word_names = $wrd->dsp_obj()->display_linked(api::STYLE_GREY);
                 $value_id = $new_value_id;
             } else {

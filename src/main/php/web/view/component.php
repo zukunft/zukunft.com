@@ -77,7 +77,7 @@ class component extends sandbox_typed_dsp
             view_cmp_type::WORD => $this->display_name(),
             view_cmp_type::PHRASE_NAME => $this->word_name($dbo->phrase()),
             view_cmp_type::VALUES_RELATED => $this->table($dbo),
-            view_cmp_type::WORD_VALUE => $this->num_list($dbo, $back),
+            view_cmp_type::NUMERIC_VALUE => $this->num_list($dbo, $back),
             view_cmp_type::FORMULAS => $this->formulas($dbo),
             view_cmp_type::FORMULA_RESULTS => $this->results($dbo),
             view_cmp_type::WORDS_DOWN => $this->word_children($dbo),

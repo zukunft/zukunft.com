@@ -925,7 +925,7 @@ CREATE TABLE IF NOT EXISTS user_values
 (
     value_id      bigint    NOT NULL,
     user_id       bigint    NOT NULL,
-    word_value    double precision DEFAULT NULL,
+    numeric_value double precision DEFAULT NULL,
     source_id     bigint           DEFAULT NULL,
     excluded      smallint         DEFAULT NULL,
     share_type_id bigint           DEFAULT NULL,
@@ -1071,7 +1071,7 @@ CREATE TABLE IF NOT EXISTS values
 (
     value_id        BIGSERIAL PRIMARY KEY,
     user_id         bigint                    DEFAULT NULL,
-    word_value      double precision NOT NULL,
+    numeric_value   double precision NOT NULL,
     source_id       bigint                    DEFAULT NULL,
     phrase_group_id bigint                    DEFAULT NULL,
     last_update     timestamp        NULL     DEFAULT NULL,

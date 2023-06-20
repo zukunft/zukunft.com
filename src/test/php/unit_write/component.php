@@ -244,7 +244,7 @@ class component_test
         $t->test_component(component_api::TN_VALUES, view_cmp_type::VALUES_ALL);
         $t->test_component(component_api::TN_RESULTS, view_cmp_type::FORMULA_RESULTS);
         $t->test_component(component_api::TN_EXCLUDED, view_cmp_type::PHRASE_NAME);
-        $t->test_component(component_api::TN_TABLE, view_cmp_type::WORD_VALUE);
+        $t->test_component(component_api::TN_TABLE, view_cmp_type::NUMERIC_VALUE);
 
         // modify the special test cases
         global $usr;

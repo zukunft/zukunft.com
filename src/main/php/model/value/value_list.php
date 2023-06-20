@@ -1160,7 +1160,7 @@ class value_list extends sandbox_list
         if ($phr_id > 0 and !empty($phr_ids) and !empty($val_ids)) {
             $phr_ids[] = $phr_id; // add the main word to the exclude words
             $sql = "SELECT l.value_id,
-                    " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     l.phrase_id, 
                     v.excluded, 
                     u.excluded AS user_excluded 
@@ -1187,7 +1187,7 @@ class value_list extends sandbox_list
                     }
                     // remember the values for a new result row
                     $value_id = $db_val[value::FLD_ID];
-                    $val_num = $db_val['word_value'];
+                    $val_num = $db_val[value::FLD_VALUE];
                     $row_result = array();
                     $row_result[] = $val_num;
                     $phr_result = array();

@@ -1,8 +1,8 @@
 SELECT DISTINCT v.value_id,
-                IF(u.word_value IS NULL, v.word_value, u.word_value)    AS word_value,
-                IF(u.excluded IS NULL, v.excluded, u.excluded)    AS excluded,
-                IF(u.last_update IS NULL, v.last_update, u.last_update)    AS last_update,
-                IF(u.source_id IS NULL, v.source_id, u.source_id)    AS source_id,
+                IF(u.numeric_value IS NULL, v.numeric_value, u.numeric_value) AS numeric_value,
+                IF(u.excluded      IS NULL, v.excluded,      u.excluded)      AS excluded,
+                IF(u.last_update   IS NULL, v.last_update,   u.last_update)   AS last_update,
+                IF(u.source_id     IS NULL, v.source_id,     u.source_id)     AS source_id,
                 v.user_id,
                 v.phrase_group_id
 FROM `values` v

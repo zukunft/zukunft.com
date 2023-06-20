@@ -50,11 +50,11 @@ class sql_db_unit_db_tests
         $result = $db_con->has_column('user_values', 'user_value');
         $t->assert('change_column_name', $result, false);
 
-        $result = $db_con->has_column('user_values', 'word_value');
+        $result = $db_con->has_column('user_values', 'numeric_value');
         $t->assert('change_column_name', $result, true);
 
         $result = $db_con->change_column_name(
-            'user_values', 'user_value', 'word_value'
+            'user_values', 'user_value', 'numeric_value'
         );
         $t->assert('change_column_name', $result, '');
 

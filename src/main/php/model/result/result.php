@@ -53,7 +53,7 @@ use html\html_base;
 use html\formula\formula as formula_dsp;
 use im_export\export;
 
-class result extends db_object
+class result extends sandbox_value
 {
 
     /*
@@ -127,18 +127,17 @@ class result extends db_object
 
     function __construct(user $usr)
     {
-        parent::__construct();
+        parent::__construct($usr);
         $this->last_update = new DateTime();
         $this->last_val_update = new DateTime();
-        $this->reset($usr);
+        $this->reset();
     }
 
-    function reset(user $usr): void
+    function reset(): void
     {
         $this->set_id(0);
-        $this->set_user($usr);
-        $this->frm = new formula($usr);
-        $this->grp = new phrase_group($usr);
+        $this->frm = new formula($this->user());
+        $this->grp = new phrase_group($this->user());
     }
 
     /**
@@ -391,13 +390,17 @@ class result extends db_object
 
         if ($id > 0) {
             // if the id is given load the result from the database
-            $this->reset($this->user());
+            $res_usr = $this->user();
+            $this->reset();
+            $this->set_user($res_usr);
             $this->id = $id;
         } else {
             // if the id is not given, refresh the object based pn the database
             if ($this->id > 0) {
                 $id = $this->id;
-                $this->reset($this->user());
+                $res_usr = $this->user();
+                $this->reset();
+                $this->set_user($res_usr);
                 $this->id = $id;
             } else {
                 log_err('The result id and the user must be set ' .
@@ -428,7 +431,9 @@ class result extends db_object
             log_err('The result phrase group id and the user must be set ' .
                 'to load a ' . self::class, self::class . '->load_by_grp');
         } else {
-            $this->reset($this->user());
+            $res_usr = $this->user();
+            $this->reset();
+            $this->set_user($res_usr);
             $this->phr_grp_id = $grp_id;
             if ($time_phr_id != null) {
                 $this->time_id = $time_phr_id;
@@ -456,7 +461,9 @@ class result extends db_object
         $result = false;
 
         if ($phr_lst->is_valid()) {
-            $this->reset($this->user());
+            $res_usr = $this->user();
+            $this->reset();
+            $this->set_user($res_usr);
             $grp = $phr_lst->get_grp();
             $result = $this->load_by_grp($grp->id(), $time_phr_id);
         } else {
@@ -1492,7 +1499,8 @@ class result extends db_object
                     }
 
                     // save the result
-                    $res_id = $this->save();
+                    $this->save();
+                    $res_id = $this->id();
 
                     if ($debug > 0) {
                         $debug_txt = 'result = ' . $this->value . ' saved for ' . $this->phr_lst->name_linked();
@@ -1513,14 +1521,14 @@ class result extends db_object
     /**
      * save the formula result to the database
      * for the word selection the id list is the lead, not the object list and not the group
-     * @return int the id of the saved record
+     * @return string the message that should be shown to the user in case something went wrong
      */
-    function save(): int
+    function save(): string
     {
 
         global $db_con;
         global $debug;
-        $result = 0;
+        $result = '';
 
         // check the parameters e.g. a result must always be linked to a formula
         if ($this->frm->id() <= 0) {

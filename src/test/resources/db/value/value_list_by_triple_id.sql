@@ -1,11 +1,11 @@
 PREPARE value_list_by_triple_id (int, int, int) AS
     SELECT v.value_id,
-           u.value_id                                                                  AS user_value_id,
+           u.value_id                                                                        AS user_value_id,
            v.user_id,
-           CASE WHEN (u.word_value IS NULL) THEN v.word_value ELSE u.word_value END    AS word_value,
-           CASE WHEN (u.excluded IS NULL) THEN v.excluded ELSE u.excluded END          AS excluded,
-           CASE WHEN (u.last_update IS NULL) THEN v.last_update ELSE u.last_update END AS last_update,
-           CASE WHEN (u.source_id IS NULL) THEN v.source_id ELSE u.source_id END       AS source_id,
+           CASE WHEN (u.numeric_value IS NULL) THEN v.numeric_value ELSE u.numeric_value END AS numeric_value,
+           CASE WHEN (u.excluded      IS NULL) THEN v.excluded      ELSE u.excluded      END AS excluded,
+           CASE WHEN (u.last_update   IS NULL) THEN v.last_update   ELSE u.last_update   END AS last_update,
+           CASE WHEN (u.source_id     IS NULL) THEN v.source_id     ELSE u.source_id     END AS source_id,
            v.phrase_group_id,
            g.word_ids,
            g.triple_ids

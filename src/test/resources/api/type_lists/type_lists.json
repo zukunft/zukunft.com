@@ -842,8 +842,8 @@
     "change_log_fields": [
       {
         "id": 1,
-        "code_id": "2word_value",
-        "name": "2word_value",
+        "code_id": "2numeric_value",
+        "name": "2numeric_value",
         "comment": ""
       },
       {
@@ -872,8 +872,8 @@
       },
       {
         "id": 6,
-        "code_id": "3word_value",
-        "name": "3word_value",
+        "code_id": "3numeric_value",
+        "name": "3numeric_value",
         "comment": ""
       },
       {

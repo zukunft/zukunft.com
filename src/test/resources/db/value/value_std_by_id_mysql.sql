@@ -2,7 +2,7 @@ PREPARE value_std_by_id FROM
     'SELECT
             value_id,
             phrase_group_id,
-            word_value,
+            numeric_value,
             source_id,
             last_update,
             excluded,

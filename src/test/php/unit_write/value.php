@@ -288,7 +288,7 @@ class value_test
         if ($add_val->id() > 0) {
             $log = new change_log_named($t->usr1);
             $log->set_table(change_log_table::VALUE);
-            $log->set_field(change_log_field::FLD_VALUE_NUMBER);
+            $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $add_val->id();
             $result = $log->dsp_last(true);
         }
@@ -330,7 +330,7 @@ class value_test
         if ($add_val->id() > 0) {
             $log = new change_log_named($t->usr1);
             $log->set_table(change_log_table::VALUE);
-            $log->set_field(change_log_field::FLD_VALUE_NUMBER);
+            $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $add_val2->id();
             $result = $log->dsp_last(true);
         }
@@ -358,7 +358,7 @@ class value_test
         if ($added_val->id() > 0) {
             $log = new change_log_named($t->usr1);
             $log->set_table(change_log_table::VALUE);
-            $log->set_field(change_log_field::FLD_VALUE_NUMBER);
+            $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $added_val->id();
             $result = $log->dsp_last(true);
         }
@@ -396,7 +396,7 @@ class value_test
         if ($val_usr2->id() > 0) {
             $log = new change_log_named($t->usr2);
             $log->set_table(change_log_table::VALUE_USR);
-            $log->set_field(change_log_field::FLD_VALUE_NUMBER);
+            $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $val_usr2->id();
             $result = $log->dsp_last(true);
         }
@@ -431,7 +431,7 @@ class value_test
         if ($val_usr2->id() > 0) {
             $log = new change_log_named($t->usr2);
             $log->set_table(change_log_table::VALUE_USR);
-            $log->set_field(change_log_field::FLD_VALUE_NUMBER);
+            $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $val_usr2->id();
             $result = $log->dsp_last(true);
         }

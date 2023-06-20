@@ -112,7 +112,7 @@ class change_log_unit_db_tests
 
         // check loading of user value changes
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_val($val, $t->usr1, change_log_field::FLD_VALUE_NUMBER);
+        $result = $lst->load_by_fld_of_val($val, $t->usr1, change_log_field::FLD_NUMERIC_VALUE);
         $t->assert('value change', $result, true);
 
         // ... and if the first entry is the update Pi probably because not all decimals can be saved in the database

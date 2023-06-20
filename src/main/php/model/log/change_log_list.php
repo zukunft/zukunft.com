@@ -159,7 +159,7 @@ class change_log_list extends base_list
     /**
      * load a list of the view changes of a value
      * @param value $val the value to which the view changes should be loaded
-     * @param string $field_name the field that has been change e.g. 'word_value'
+     * @param string $field_name the field that has been change e.g. 'numeric_value'
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */

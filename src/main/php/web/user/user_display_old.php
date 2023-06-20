@@ -541,8 +541,8 @@ class user_dsp_old extends user
             $sql = "SELECT 
                     u.value_id                                                                         AS id, 
                     v.user_id                                                                          AS owner_id, 
-                    CASE WHEN (u.user_value <> '' IS NOT TRUE) THEN v.word_value ELSE u.user_value END AS usr_value, 
-                    v.word_value                                                                       AS std_value, 
+                    CASE WHEN (u.user_value <> '' IS NOT TRUE) THEN v.numeric_value ELSE u.user_value END AS usr_value, 
+                    v.numeric_value                                                                       AS std_value, 
                     CASE WHEN (u.source_id  <> '' IS NOT TRUE) THEN v.source_id  ELSE u.source_id  END AS usr_source, 
                     v.source_id                                                                        AS std_source, 
                     CASE WHEN (u.excluded   <> '' IS NOT TRUE) THEN v.excluded   ELSE u.excluded   END AS usr_excluded,
@@ -556,8 +556,8 @@ class user_dsp_old extends user
             $sql = "SELECT 
                     u.value_id                                           AS id, 
                     v.user_id                                            AS owner_id, 
-                    IF(u.user_value IS NULL, v.word_value, u.user_value) AS usr_value, 
-                    v.word_value                                         AS std_value, 
+                    IF(u.numeric_value IS NULL, v.numeric_value, u.numeric_value) AS usr_value, 
+                    v.numeric_value                                         AS std_value, 
                     IF(u.source_id  IS NULL, v.source_id,  u.source_id)  AS usr_source, 
                     v.source_id                                          AS std_source, 
                     IF(u.excluded   IS NULL, v.excluded,   u.excluded)   AS usr_excluded,

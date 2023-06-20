@@ -46,7 +46,7 @@ class view_cmp_type
     // show the word name and give the user the possibility to change the word name
     const PHRASE_NAME = "word_name";
     // a word list with some key numbers e.g. all companies with the PE ratio
-    const WORD_VALUE = "word_value_list";
+    const NUMERIC_VALUE = "word_value_list";
     // shows all: all words that link to the given word and all values related to the given word
     const VALUES_ALL = "values_all";
     // display a table (e.g. ABB as first word, Cash Flow Statement as second word)

@@ -83,7 +83,7 @@ class value extends sandbox_value
 
     // object specific database and JSON object field names
     const FLD_ID = 'value_id';
-    const FLD_VALUE = 'word_value';
+    const FLD_VALUE = 'numeric_value';
     const FLD_LAST_UPDATE = 'last_update';
 
     // all database field names excluding the id and excluding the user specific fields
@@ -1463,7 +1463,7 @@ class value extends sandbox_value
     $log->usr       = $this->user();
     $log->action    = user_log::ACTION_DELETE;
     $log->table     = $db_type;
-    $log->field     = 'word_value';
+    $log->field     = 'numeric_value';
     $log->old_value = $this->number;
     $log->new_value = '';
     $log->row_id    = $this->id();

@@ -278,6 +278,8 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'end_time');
     $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'row_id');
     $result .= $db_con->column_force_not_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, 'user_id');
+    $result .= $db_con->change_column_name(sql_db::TBL_VALUE, 'word_value', value::FLD_VALUE);
+    $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'word_value', value::FLD_VALUE);
     // TODO set default profile_id in users to 1
     if ($db_con->db_type == sql_db::MYSQL) {
         $sql = 'UPDATE' . ' `users` SET `user_profile_id` = 1 WHERE `user_profile_id`= NULL';

@@ -73,7 +73,8 @@ class result_unit_tests
         $t->assert_qp($qp, sql_db::MYSQL);
 
         // check the sql to load a result by the phrase group
-        $res->reset($usr);
+        $res->reset();
+        $res->set_user($usr);
         $res->phr_grp_id = 1;
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $res->load_by_grp_sql($db_con);

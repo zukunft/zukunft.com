@@ -920,7 +920,7 @@ CREATE TABLE IF NOT EXISTS `user_values`
 (
     `value_id`      int(11)   NOT NULL,
     `user_id`       int(11)   NOT NULL,
-    `word_value`    double         DEFAULT NULL,
+    `numeric_value` double         DEFAULT NULL,
     `source_id`     int(11)        DEFAULT NULL,
     `excluded`      tinyint(4)     DEFAULT NULL,
     `share_type_id` int(11)        DEFAULT NULL,
@@ -1063,7 +1063,7 @@ CREATE TABLE IF NOT EXISTS `values`
 (
     `value_id`        int(11)   NOT NULL,
     `user_id`         int(11)            DEFAULT NULL COMMENT 'the owner / creator of the value',
-    `word_value`      double    NOT NULL,
+    `numeric_value`   double    NOT NULL,
     `source_id`       int(11)            DEFAULT NULL,
     `phrase_group_id` int(11)            DEFAULT NULL COMMENT 'temp field to increase speed created by the value term links',
     `last_update`     timestamp NULL     DEFAULT NULL COMMENT 'for fast recalculation',

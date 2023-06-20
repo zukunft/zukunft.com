@@ -1,6 +1,6 @@
 PREPARE value_by_usr_cfg (int, int) AS
     SELECT value_id,
-           word_value,
+           numeric_value,
            source_id,
            last_update,
            excluded,

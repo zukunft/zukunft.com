@@ -62,7 +62,7 @@ class change_log_field extends type_list
     const FLD_TRIPLE_NAME = 'triple_name';
     const FLD_GIVEN_NAME = 'name_given';
     const FLD_TRIPLE_VIEW = 'view_id';
-    const FLD_VALUE_NUMBER = 'word_value';
+    const FLD_NUMERIC_VALUE = 'numeric_value';
     const FLD_VALUE_GROUP = 'phrase_group_id';
     const FLD_FORMULA_NAME = 'formula_name';
     const FLD_FORMULA_USR_TEXT = 'resolved_text';

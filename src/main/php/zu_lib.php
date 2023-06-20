@@ -262,7 +262,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
             phrase_group_word_link - phrase_group_link for a word
             phrase_group_triple_link - phrase_group_link for a triple
         formula_element - the parts of a formula expression for fast finding of dependencies (not the db normal form to speed up)
-        result - one calculated numeric result (TODO move to sandbox?)
         change_log - to log a change done by a user
             change_log_named - log of user changes in named objects e.g. word, triple, ...
             change_log_link - log of the link changes by a user
@@ -288,6 +287,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
                         ref - to link a value to an external source
             sandbox_value - to save a user specific numbers
                 value - a single number added by the user
+                result - one calculated numeric result
                 value_time_series - a list of very similar numbers added by the user e.g. that only have a different timestamp  (TODO rename to series)
     base_list - a list with pages
         change_log_list - to forward changes to the UI

@@ -1,10 +1,10 @@
 change_field_id,change_field_name,table_id,description,code_id
-1,word_value,2,,
+1,numeric_value,2,,
 2,source_id,2,,
 3,share_type_id,2,,
 4,protect_id,2,,
 5,excluded,2,,
-6,word_value,3,,
+6,numeric_value,3,,
 7,protect_id,3,,
 8,share_type_id,3,,
 9,word_name,5,,

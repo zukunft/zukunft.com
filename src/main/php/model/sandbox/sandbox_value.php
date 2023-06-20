@@ -161,7 +161,7 @@ class sandbox_value extends sandbox
         $log = new change_log_named($this->user());
         $log->action = change_log_action::ADD;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
-        $log->set_field(change_log_field::FLD_VALUE_NUMBER);
+        $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
         $log->old_value = '';
         $log->new_value = $this->number;
 
@@ -182,7 +182,7 @@ class sandbox_value extends sandbox
         $log = new change_log_named($this->user());
         $log->action = change_log_action::DELETE;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
-        $log->set_field(change_log_field::FLD_VALUE_NUMBER);
+        $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
         $log->old_value = $this->number;
         $log->new_value = '';
 
