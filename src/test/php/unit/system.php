@@ -78,29 +78,7 @@ class system_unit_tests
          */
 
         $ip_range = new ip_range();
-
-        // sql to load by id
-        $db_con->db_type = sql_db::POSTGRES;
-        $ip_range->set_id(1);
-        $ip_range->set_user($usr);
-        $created_sql = $ip_range->load_sql_by_vars($db_con)->sql;
-        $expected_sql = $t->file('db/system/ip_blocked.sql');
-        $t->assert('ip_range->load_sql by id', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $ip_range->load_sql_by_vars($db_con)->name;
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $t->assert('ip_range->load_sql by id', $result, true);
-
-        // ... and the same for MySQL by replication the SQL builder statements
-        $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $ip_range->load_sql_by_vars($db_con)->sql;
-        $expected_sql = $t->file('db/system/ip_blocked_mysql.sql');
-        $t->assert('ip_range->load_sql by id for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
+        $t->assert_sql_by_id($db_con, $ip_range);
 
         // sql to load by ip range
         $db_con->db_type = sql_db::POSTGRES;

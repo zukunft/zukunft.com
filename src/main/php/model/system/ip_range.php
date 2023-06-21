@@ -143,6 +143,25 @@ class ip_range extends db_object
      */
 
     /**
+     * create the common part of an SQL statement to retrieve an ip range from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $query_name the name of the selection fields to make the query name unique
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = parent::load_sql($db_con, $query_name, $class);
+        $db_con->set_type(sql_db::TBL_IP);
+
+        $db_con->set_name($qp->name);
+        $db_con->set_fields(self::FLD_NAMES);
+
+        return $qp;
+    }
+
+    /**
      * create an SQL statement to retrieve the ip range from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
@@ -529,6 +548,15 @@ class ip_range extends db_object
             }
         }
         return $result;
+    }
+
+    /**
+     * helper because the db id field differs from the class name
+     * @return string the field name of the prime database index of the object
+     */
+    protected function id_field(): string
+    {
+        return self::FLD_ID;
     }
 
 }
