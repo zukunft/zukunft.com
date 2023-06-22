@@ -33,6 +33,7 @@
 namespace test;
 
 use api\view_api;
+use cfg\view_term_link;
 use html\view\view as view_dsp;
 use model\library;
 use model\sql_db;
@@ -133,6 +134,13 @@ class view_unit_tests
         $t->display('view->display', $target, $result);
         */
 
+
+        $t->header('Unit tests of the view term link class (src/main/php/model/view/view_term_link.php)');
+
+        $t->subheader('SQL user sandbox statement tests');
+
+        $dsp = new view_term_link($usr);
+        $t->assert_sql_by_id($db_con, $dsp);
     }
 
 }

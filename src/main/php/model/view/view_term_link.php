@@ -44,6 +44,7 @@ use model\formula;
 use model\library;
 use model\phrase;
 use model\sandbox;
+use model\sandbox_link_typed;
 use model\sandbox_typed;
 use model\sql_db;
 use model\sql_par;
@@ -52,7 +53,7 @@ use model\user;
 use model\user_message;
 use model\view;
 
-class view_term_link extends sandbox_typed
+class view_term_link extends sandbox_link_typed
 {
 
     /*
@@ -71,5 +72,31 @@ class view_term_link extends sandbox_typed
         self::FLD_LINK_TYPE,
         view::FLD_ID
     );
+
+
+    /*
+     * load
+     */
+
+    /**
+     * create the common part of an SQL statement to retrieve a view term link from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp->name .= $query_name;
+
+        $db_con->set_type(sql_db::TBL_VIEW_TERM_LINK);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->user()->id());
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+
+        return $qp;
+    }
 
 }

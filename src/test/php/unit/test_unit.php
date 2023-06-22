@@ -52,6 +52,7 @@ include_once MODEL_VIEW_PATH . 'view_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_cmp_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_cmp_link_types.php';
 include_once MODEL_VIEW_PATH . 'view_cmp_pos_type_list.php';
+include_once MODEL_VIEW_PATH . 'view_term_link.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
 include_once MODEL_REF_PATH . 'source_type_list.php';
 include_once MODEL_SANDBOX_PATH . 'share_type_list.php';

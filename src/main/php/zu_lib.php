@@ -275,12 +275,12 @@ use html\phrase\phrase_group as phrase_group_dsp;
                     formulas - a calculation rule
                     view - to show an object to the user
                     component - an formatting element for the user view e.g. to show a word or number
-                    view_term_link - link a view to a term (TODO move to sandbox_link_typed?)
                     source - a non automatic source for a value
             sandbox_Link - user sandbox objects that link two objects
                 sandbox_link_named - user sandbox objects that link two objects
                     sandbox_link_typed - objects that have additional a type and a predefined behavior
                         triple - link two words with a predicate / verb
+                        view_term_link - link a view to a term
                     sandbox_link_with_type - TODO combine with sandbox_link_typed?
                         formula_link - link a formula to a phrase
                         component_link - to assign a component to a view

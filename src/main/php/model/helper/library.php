@@ -1072,6 +1072,9 @@ class library
 
         // check if the from parts are also part of to
         while ($from_pos < count($from)) {
+            if (array_key_exists($to_pos, $to)) {
+                log_err('To pos ' . $to_pos . ' not found in ' . implode(",",$to) . ' when comparing to ' . implode(",",$from));
+            }
             if ($from[$from_pos] == $to[$to_pos]) {
                 $diff_part[] = $to_sep[$to_pos];
                 $diff_type[] = self::STR_DIFF_UNCHANGED;

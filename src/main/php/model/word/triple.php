@@ -659,7 +659,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     }
 
     /**
-     * create the common part of an SQL statement to retrieve the parameters of a word from the database
+     * create the common part of an SQL statement to retrieve the parameters of a triple from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $class the name of the child class from where the call has been triggered
@@ -894,7 +894,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     }
 
     /**
-     * load the word link without the linked objects, because in many cases the object are already loaded by the caller
+     * load the triple without the linked objects, because in many cases the object are already loaded by the caller
      * similar to term->load, but with a different use of verbs
      */
     function load_objects(): bool
@@ -1396,7 +1396,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     }
 
     /**
-     * get the database id of the word link type
+     * get the database id of the phrase type
      * @return int|null the id of the word type
      */
     function type_id(): ?int
@@ -1418,7 +1418,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         // get the link from the database
         $this->load_objects();
 
-        // prepare to show the word link
+        // prepare to show the triple
         $result .= $this->fob->name() . ' '; // e.g. Australia
         $result .= $this->verb->name() . ' '; // e.g. is a
         $result .= $this->tob->name();       // e.g. Country
@@ -1439,7 +1439,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         // get the link from the database
         $this->load_objects();
 
-        // prepare to show the word link
+        // prepare to show the triple
         $result .= $this->tob->name() . ' ';   // e.g. Countries
         $result .= $this->verb->name() . ' '; // e.g. are
         $result .= $this->fob->name();     // e.g. Australia (and others)
@@ -1734,7 +1734,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     }
 
     /**
-     * set the main log entry parameters for updating one display word link field
+     * set the main log entry parameters for updating one display triple field
      */
     function log_upd_field(): change_log_named
     {
@@ -2152,7 +2152,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 }
                 log_debug('standard triple settings for "' . $std_rec->name() . '" (' . $std_rec->id() . ') loaded');
 
-                // for a correct user word link detection (function can_change) set the owner even if the word link has not been loaded before the save
+                // for a correct user triple detection (function can_change) set the owner even if the triple has not been loaded before the save
                 if ($this->owner_id <= 0) {
                     $this->owner_id = $std_rec->owner_id;
                 }
