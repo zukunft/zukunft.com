@@ -72,6 +72,10 @@ class view_term_link extends sandbox_link_typed
         self::FLD_LINK_TYPE,
         view::FLD_ID
     );
+    //
+    const FLD_NAMES_USR = array(
+        sql_db::FLD_DESCRIPTION
+    );
 
 
     /*
@@ -94,6 +98,7 @@ class view_term_link extends sandbox_link_typed
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;

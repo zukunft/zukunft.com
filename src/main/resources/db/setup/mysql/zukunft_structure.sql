@@ -1354,7 +1354,12 @@ CREATE TABLE IF NOT EXISTS `view_term_links`
     `term_id`           int(11) NOT NULL,
     `type_id`           int(11) NOT NULL DEFAULT '1' COMMENT '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups',
     `link_type_id`      int(11)          DEFAULT NULL,
-    `view_id`           int(11)          DEFAULT NULL
+    `view_id`           int(11)          DEFAULT NULL,
+    `user_id`           int(11) NOT NULL,
+    `description`       text             DEFAULT NULL,
+    `excluded`          tinyint(4)       DEFAULT NULL,
+    `share_type_id`     smallint         DEFAULT NULL,
+    `protect_id`        smallint         DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='used to define the default mask for a term or a term group';
 

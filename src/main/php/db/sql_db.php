@@ -160,6 +160,7 @@ class sql_db
         sql_db::TBL_VALUE_PHRASE_LINK,
         sql_db::TBL_PHRASE_GROUP_WORD_LINK,
         sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
+        sql_db::TBL_VIEW_TERM_LINK,
         sql_db::TBL_REF,
         sql_db::TBL_IP,
         sql_db::TBL_CHANGE,

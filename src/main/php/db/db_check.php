@@ -253,6 +253,11 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     }
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'values', 'bigint');
     $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'values', 'bigint');
+    $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, 'user_id', 'bigint');
+    $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, 'description', 'text');
+    $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, 'excluded', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, 'protect_id', 'smallint');
     $result .= $db_con->remove_prefix(sql_db::TBL_USER_PROFILE, 'code_id', 'usr_role_');
     $result .= $db_con->remove_prefix(sql_db::TBL_SYS_LOG_STATUS, 'code_id', 'log_status_');
     $result .= $db_con->remove_prefix(sql_db::TBL_TASK_TYPE, 'code_id', 'job_');

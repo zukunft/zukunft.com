@@ -7,10 +7,10 @@ PREPARE view_term_link_by_id (int,int) AS
         s.type_id,
         s.link_type_id,
         s.view_id,
-        CASE WHEN (u.view_term_link_name <> '' IS NOT TRUE) THEN s.view_term_link_name ELSE u.view_term_link_name END AS view_term_link_name,
-        CASE WHEN (u.excluded                  IS     NULL) THEN s.excluded            ELSE u.excluded            END AS excluded,
-        CASE WHEN (u.share_type_id             IS     NULL) THEN s.share_type_id       ELSE u.share_type_id       END AS share_type_id,
-        CASE WHEN (u.protect_id                IS     NULL) THEN s.protect_id          ELSE u.protect_id          END AS protect_id
+        CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description   ELSE u.description   END AS description,
+        CASE WHEN (u.excluded          IS     NULL) THEN s.excluded      ELSE u.excluded      END AS excluded,
+        CASE WHEN (u.share_type_id     IS     NULL) THEN s.share_type_id ELSE u.share_type_id END AS share_type_id,
+        CASE WHEN (u.protect_id        IS     NULL) THEN s.protect_id    ELSE u.protect_id    END AS protect_id
     FROM
         view_term_links s
             LEFT JOIN user_view_term_links u

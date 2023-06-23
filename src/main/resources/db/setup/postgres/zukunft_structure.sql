@@ -1379,9 +1379,14 @@ CREATE TABLE IF NOT EXISTS view_term_links
 (
     view_term_link_id BIGSERIAL PRIMARY KEY,
     term_id           bigint NOT NULL,
-    type_id           bigint NOT NULL DEFAULT '1',
-    link_type_id      bigint          DEFAULT NULL,
-    view_id           bigint          DEFAULT NULL
+    type_id           bigint NOT NULL   DEFAULT '1',
+    link_type_id      bigint            DEFAULT NULL,
+    view_id           bigint            DEFAULT NULL,
+    user_id           bigint NOT NULL,
+    description       text   NOT NULL,
+    excluded          smallint          DEFAULT NULL,
+    share_type_id     smallint          DEFAULT NULL,
+    protect_id        smallint NOT NULL DEFAULT NULL
 );
 
 COMMENT ON TABLE view_term_links is 'used to define the default mask for a term or a term group';
