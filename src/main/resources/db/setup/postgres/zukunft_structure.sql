@@ -1395,6 +1395,24 @@ COMMENT ON COLUMN view_term_links.type_id is '1 = from_term_id is link the terms
 -- --------------------------------------------------------
 
 --
+-- Table structure for table user_view_term_links
+--
+
+CREATE TABLE IF NOT EXISTS user_view_term_links
+(
+    view_term_link_id BIGSERIAL PRIMARY KEY,
+    type_id           bigint NOT NULL   DEFAULT '1',
+    link_type_id      bigint            DEFAULT NULL,
+    user_id           bigint NOT NULL,
+    description       text   NOT NULL,
+    excluded          smallint          DEFAULT NULL,
+    share_type_id     smallint          DEFAULT NULL,
+    protect_id        smallint NOT NULL DEFAULT NULL
+);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table words
 --
 

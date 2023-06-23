@@ -261,7 +261,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
         phrase_group_link - db index to find a phrase group by the phrase (not the db normal form to speed up)
             phrase_group_word_link - phrase_group_link for a word
             phrase_group_triple_link - phrase_group_link for a triple
-        formula_element - the parts of a formula expression for fast finding of dependencies (not the db normal form to speed up)
+        formula_element - the parameters / parts of a formula expression for fast finding of dependencies (not the db normal form to speed up)
         change_log - to log a change done by a user
             change_log_named - log of user changes in named objects e.g. word, triple, ...
             change_log_link - log of the link changes by a user
