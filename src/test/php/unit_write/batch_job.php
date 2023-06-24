@@ -35,12 +35,11 @@ namespace test\write;
 use api\formula_api;
 use api\value_api;
 use api\word_api;
-use cfg\job_type_list;
-use model\batch_job;
-use model\batch_job_list;
-use model\db_cl;
-use model\phrase_list;
-use model\value;
+use cfg\batch_job;
+use cfg\batch_job_list;
+use cfg\batch_job_type_list;
+use cfg\phrase_list;
+use cfg\value;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 
@@ -78,7 +77,7 @@ class batch_job_test
         // test adding a batch job
         $job = new batch_job($usr);
         $job->obj = $val;
-        $job->type = $job_types->id(job_type_list::VALUE_UPDATE);
+        $job->type = $job_types->id(batch_job_type_list::VALUE_UPDATE);
         $result = $job->add();
         if ($result > 0) {
             $target = $result;

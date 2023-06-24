@@ -33,9 +33,9 @@ namespace html\phrase;
 
 use html\phrase\phrase_group as phrase_group_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
-use model\library;
-use model\phrase;
-use model\user;
+use cfg\library;
+use cfg\phrase;
+use cfg\user;
 
 class phrase_group_list
 {

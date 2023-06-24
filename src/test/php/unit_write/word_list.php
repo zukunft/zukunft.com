@@ -34,12 +34,12 @@ namespace test\write;
 
 use api\value_api;
 use api\word_api;
-use model\library;
-use model\phr_ids;
-use model\phrase_group;
-use model\verb;
-use model\word_list;
-use model\word_select_direction;
+use cfg\library;
+use cfg\phr_ids;
+use cfg\phrase_group;
+use cfg\verb;
+use cfg\word_list;
+use cfg\word_select_direction;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB;
 

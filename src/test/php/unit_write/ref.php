@@ -35,7 +35,7 @@ namespace test\write;
 use api\word_api;
 use cfg\ref_type;
 use cfg\ref_type_list;
-use model\ref;
+use cfg\ref;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE_LONG;
 

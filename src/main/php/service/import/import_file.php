@@ -30,9 +30,9 @@ include_once SERVICE_IMPORT_PATH . 'import.php';
 
 use cfg\verb_list;
 use html\html_base;
-use model\sql_db;
-use model\user;
-use model\user_profile;
+use cfg\sql_db;
+use cfg\user;
+use cfg\user_profile;
 
 /**
  * import a single json file

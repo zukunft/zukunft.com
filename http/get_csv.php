@@ -31,9 +31,9 @@
 */
 
 use controller\controller;
-use model\formula_list;
-use model\user;
-use model\word_list;
+use cfg\formula_list;
+use cfg\user;
+use cfg\word_list;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

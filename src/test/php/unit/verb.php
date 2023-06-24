@@ -34,11 +34,11 @@ namespace test;
 
 use cfg\verb_list;
 use html\verb\verb as verb_dsp;
-use model\phrase;
-use model\sql_db;
-use model\verb;
-use model\word;
-use model\word_select_direction;
+use cfg\phrase;
+use cfg\sql_db;
+use cfg\verb;
+use cfg\word;
+use cfg\word_select_direction;
 
 class verb_unit_tests
 {

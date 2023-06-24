@@ -37,9 +37,9 @@ include_once API_RESULT_PATH . 'result.php';
 use api\result_api;
 use api\word_api;
 use html\result\result as result_dsp;
-use model\phrase_list;
-use model\result;
-use model\sql_db;
+use cfg\phrase_list;
+use cfg\result;
+use cfg\sql_db;
 
 class result_unit_tests
 {

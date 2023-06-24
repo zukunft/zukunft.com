@@ -37,8 +37,8 @@ use api\triple_api;
 use api\phrase_api;
 use cfg\config;
 use cfg\phrase_type;
-use model\phrase;
-use model\word;
+use cfg\phrase;
+use cfg\word;
 
 class phrase_list_unit_db_tests
 {

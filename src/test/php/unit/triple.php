@@ -11,9 +11,9 @@ include_once API_WORD_PATH . 'triple.php';
 use api\triple_api;
 use api\word_api;
 use html\word\triple as triple_dsp;
-use model\sql_db;
-use model\triple;
-use model\verb;
+use cfg\sql_db;
+use cfg\triple;
+use cfg\verb;
 
 class triple_unit_tests
 {

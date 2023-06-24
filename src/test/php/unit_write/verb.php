@@ -34,8 +34,8 @@ namespace test;
 
 use api\verb_api;
 use api\word_api;
-use model\verb;
-use model\word_select_direction;
+use cfg\verb;
+use cfg\word_select_direction;
 
 class verb_test
 {

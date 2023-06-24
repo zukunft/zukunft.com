@@ -35,8 +35,8 @@ namespace test;
 use api\word_api;
 use cfg\phrase_type;
 use cfg\view_sys_list;
-use model\sql_db;
-use model\view_list;
+use cfg\sql_db;
+use cfg\view_list;
 
 class view_list_unit_tests
 {

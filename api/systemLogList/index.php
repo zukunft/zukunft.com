@@ -31,8 +31,8 @@
 
 use controller\controller;
 use controller\log\system_log_list_api;
-use model\system_log_list;
-use model\user;
+use cfg\system_log_list;
+use cfg\user;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

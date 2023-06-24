@@ -40,9 +40,9 @@ use api\source_api;
 use api\formula_api;
 use api\view_api;
 use api\component_api;
-use model\change_log_field;
-use model\change_log_list;
-use model\word;
+use cfg\change_log_field;
+use cfg\change_log_list;
+use cfg\word;
 
 class change_log_unit_db_tests
 {

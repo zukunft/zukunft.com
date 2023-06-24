@@ -30,8 +30,8 @@
 
 */
 
-use model\triple;
-use model\user;
+use cfg\triple;
+use cfg\user;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

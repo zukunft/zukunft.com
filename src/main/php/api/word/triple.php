@@ -34,7 +34,7 @@ namespace api;
 
 use cfg\phrase_type;
 use html\phrase\term as term_dsp;
-use model\triple;
+use cfg\triple;
 
 class triple_api extends sandbox_typed_api
 {

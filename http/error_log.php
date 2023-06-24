@@ -41,9 +41,9 @@
 use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
-use model\user;
-use model\view;
-use model\word;
+use cfg\user;
+use cfg\view;
+use cfg\word;
 
 function err_dsp($err_id, $user_id): string
 {

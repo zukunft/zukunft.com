@@ -33,11 +33,11 @@
 use api\value_api;
 use api\word_api;
 use html\value\value_list_dsp_old;
-use model\phrase_list;
-use model\value;
-use model\value_list;
-use model\word;
-use model\word_list;
+use cfg\phrase_list;
+use cfg\value;
+use cfg\value_list;
+use cfg\word;
+use cfg\word_list;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB;
 use const test\TIMEOUT_LIMIT_PAGE;

@@ -36,9 +36,9 @@ use api\word_api;
 use api\triple_api;
 use api\formula_api;
 use api\verb_api;
-use model\library;
-use model\term_list;
-use model\trm_ids;
+use cfg\library;
+use cfg\term_list;
+use cfg\trm_ids;
 
 class term_list_unit_db_tests
 {

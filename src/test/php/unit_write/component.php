@@ -33,13 +33,12 @@
 namespace test\write;
 
 use api\component_api;
-use model\change_log_field;
-use model\change_log_named;
-use model\change_log_table;
-use model\db_cl;
-use model\sandbox_named;
-use model\component;
-use model\view_cmp_type;
+use cfg\change_log_field;
+use cfg\change_log_named;
+use cfg\change_log_table;
+use cfg\sandbox_named;
+use cfg\component;
+use cfg\view_cmp_type;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 use const test\TIMEOUT_LIMIT_LONG;

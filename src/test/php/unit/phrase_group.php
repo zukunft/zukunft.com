@@ -39,18 +39,18 @@ include_once MODEL_PHRASE_PATH . 'phrase_group_list.php';
 
 use api\phrase_group_api;
 use api\word_api;
-use model\library;
-use model\phrase_group;
-use model\phrase_group_link;
-use model\phrase_group_list;
-use model\phrase_group_triple_link;
-use model\phrase_group_word_link;
-use model\phrase_list;
-use model\sql_db;
-use model\triple;
-use model\verb;
-use model\word;
-use model\word_list;
+use cfg\library;
+use cfg\phrase_group;
+use cfg\phrase_group_link;
+use cfg\phrase_group_list;
+use cfg\phrase_group_triple_link;
+use cfg\phrase_group_word_link;
+use cfg\phrase_list;
+use cfg\sql_db;
+use cfg\triple;
+use cfg\verb;
+use cfg\word;
+use cfg\word_list;
 
 class phrase_group_unit_tests
 {

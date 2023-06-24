@@ -32,11 +32,11 @@
 
 */
 
-use model\formula_list;
-use model\library;
-use model\result_list;
-use model\sql_db;
-use model\user;
+use cfg\formula_list;
+use cfg\library;
+use cfg\result_list;
+use cfg\sql_db;
+use cfg\user;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

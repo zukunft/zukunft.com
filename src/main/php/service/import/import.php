@@ -54,23 +54,23 @@ include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 
 use im_export\export;
-use model\formula;
-use model\formula_list;
-use model\ip_range;
-use model\library;
-use model\ref;
-use model\result;
-use model\result_list;
-use model\source;
-use model\triple;
-use model\user;
-use model\user_message;
-use model\value;
-use model\value_list;
-use model\verb;
-use model\view;
-use model\view_list;
-use model\word;
+use cfg\formula;
+use cfg\formula_list;
+use cfg\ip_range;
+use cfg\library;
+use cfg\ref;
+use cfg\result;
+use cfg\result_list;
+use cfg\source;
+use cfg\triple;
+use cfg\user;
+use cfg\user_message;
+use cfg\value;
+use cfg\value_list;
+use cfg\verb;
+use cfg\view;
+use cfg\view_list;
+use cfg\word;
 
 class file_import
 {

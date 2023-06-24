@@ -40,7 +40,7 @@ use html\list_dsp;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
 use html\result\result as result_dsp;
-use model\library;
+use cfg\library;
 
 class figure_list extends list_dsp
 {

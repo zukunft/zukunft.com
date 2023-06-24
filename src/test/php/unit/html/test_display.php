@@ -36,10 +36,9 @@ use controller\controller;
 use html\button;
 use html\html_base;
 use html\msg;
-use model\db_cl;
-use model\view;
-use model\component_dsp_old;
-use model\view_cmp_type;
+use cfg\view;
+use cfg\component_dsp_old;
+use cfg\view_cmp_type;
 use test\test_cleanup;
 use const test\TW_ABB;
 

@@ -30,7 +30,7 @@
 */
 
 
-use cfg\export\sandbox_exp_named;
+use model\export\sandbox_exp_named;
 
 class verb_exp extends sandbox_exp_named
 {

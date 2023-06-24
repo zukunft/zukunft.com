@@ -38,8 +38,8 @@ include_once API_WORD_PATH . 'triple.php';
 use api\verb_api;
 use api\word_api;
 use api\triple_api;
-use model\word;
-use model\verb;
+use cfg\word;
+use cfg\verb;
 use cfg\verb_list;
 
 class verb_unit_db_tests

@@ -30,8 +30,8 @@
 */
 
 use controller\controller;
-use model\user;
-use model\formula;
+use cfg\user;
+use cfg\formula;
 use api\formula_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading

@@ -32,9 +32,9 @@
 
 namespace test;
 
-use cfg\job_type_list;
-use model\batch_job_list;
-use model\user;
+use cfg\batch_job_list;
+use cfg\batch_job_type_list;
+use cfg\user;
 
 class batch_job_unit_db_tests
 {
@@ -57,7 +57,7 @@ class batch_job_unit_db_tests
 
         // check if loading of the first entry is the adding of the word name
         $job_lst = new batch_job_list($sys_usr);
-        $job_lst->load_by_type(job_type_list::BASE_IMPORT);
+        $job_lst->load_by_type(batch_job_type_list::BASE_IMPORT);
         $first_job = $job_lst->lst()[0];
         $t->assert('first batch job change is adding', $first_job->type, '11');
 

@@ -33,9 +33,9 @@ use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
 use html\word\triple as triple_dsp;
-use model\triple;
-use model\user;
-use model\view;
+use cfg\triple;
+use cfg\user;
+use cfg\view;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

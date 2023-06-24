@@ -32,11 +32,11 @@
 namespace test\write;
 
 use api\word_api;
-use model\phrase_list;
-use model\triple_list;
-use model\value_list;
-use model\verb;
-use model\word;
+use cfg\phrase_list;
+use cfg\triple_list;
+use cfg\value_list;
+use cfg\verb;
+use cfg\word;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE;
 

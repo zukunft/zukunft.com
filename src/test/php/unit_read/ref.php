@@ -36,8 +36,7 @@ use cfg\phrase_type;
 use cfg\ref_type_list;
 use cfg\source_type;
 use cfg\source_type_list;
-use model\db_cl;
-use model\ref;
+use cfg\ref;
 
 class ref_unit_db_tests
 {

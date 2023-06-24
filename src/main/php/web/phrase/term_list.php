@@ -43,11 +43,11 @@ use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\formula\formula as formula_dsp;
 use html\verb\verb as verb_dsp;
-use model\formula;
-use model\library;
-use model\triple;
-use model\verb;
-use model\word;
+use cfg\formula;
+use cfg\library;
+use cfg\triple;
+use cfg\verb;
+use cfg\word;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
 

@@ -34,7 +34,7 @@ namespace html;
 include_once API_VIEW_PATH . 'component.php';
 
 use api\component_api;
-use model\view_cmp_type;
+use cfg\view_cmp_type;
 
 use html\phrase\phrase as phrase_dsp;
 

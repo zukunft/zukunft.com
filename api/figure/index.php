@@ -31,9 +31,9 @@
 
 use api\figure_api;
 use controller\controller;
-use model\result;
-use model\user;
-use model\value;
+use cfg\result;
+use cfg\user;
+use cfg\value;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

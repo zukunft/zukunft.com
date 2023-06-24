@@ -36,10 +36,10 @@ namespace test;
 
 use api\phrase_api;
 use api\triple_api;
-use model\sql_db;
-use model\triple;
-use model\verb;
-use model\word;
+use cfg\sql_db;
+use cfg\triple;
+use cfg\verb;
+use cfg\word;
 
 class triple_unit_tests_old
 {

@@ -42,7 +42,7 @@ use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
 use html\result\result as result_dsp;
 use html\api;
-use model\value_dsp_old;
+use cfg\value_dsp_old;
 
 class figure_unit_tests
 {

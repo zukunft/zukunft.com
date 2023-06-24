@@ -34,7 +34,6 @@ namespace test;
 
 use cfg\protection_type;
 use cfg\protection_type_list;
-use model\db_cl;
 
 class protection_unit_db_tests
 {

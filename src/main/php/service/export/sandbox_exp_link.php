@@ -30,7 +30,7 @@
 
 */
 
-namespace cfg\export;
+namespace model\export;
 
 class sandbox_exp_link extends exp_obj
 {

@@ -35,15 +35,15 @@ use api\triple_api;
 use api\word_api;
 use cfg\phrase_type;
 use html\phrase\phrase_list as phrase_list_dsp;
-use model\library;
-use model\phr_ids;
-use model\phrase;
-use model\phrase_list;
-use model\sql_db;
-use model\sql_par;
-use model\verb;
-use model\word;
-use model\word_select_direction;
+use cfg\library;
+use cfg\phr_ids;
+use cfg\phrase;
+use cfg\phrase_list;
+use cfg\sql_db;
+use cfg\sql_par;
+use cfg\verb;
+use cfg\word;
+use cfg\word_select_direction;
 
 class phrase_list_unit_tests
 {

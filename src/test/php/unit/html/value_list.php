@@ -37,7 +37,7 @@ use api\phrase_list_api;
 use api\value_api;
 use api\value_list_api;
 use html\html_base;
-use model\phrase_list;
+use cfg\phrase_list;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\value\value_list as value_list_dsp;
 use test\test_cleanup;

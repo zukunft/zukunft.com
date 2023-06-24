@@ -44,11 +44,11 @@ use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
-use model\phrase_list_dsp_old;
-use model\term_list;
-use model\user;
-use model\verb;
-use model\word_select_direction;
+use cfg\phrase_list_dsp_old;
+use cfg\term_list;
+use cfg\user;
+use cfg\verb;
+use cfg\word_select_direction;
 use test\html\phrase_list;
 
 class triple_list extends list_dsp

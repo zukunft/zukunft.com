@@ -36,12 +36,12 @@ namespace api;
 
 use controller\controller;
 use JsonSerializable;
-use model\formula;
-use model\sandbox;
-use model\triple;
-use model\user;
-use model\value;
-use model\word;
+use cfg\formula;
+use cfg\sandbox;
+use cfg\triple;
+use cfg\user;
+use cfg\value;
+use cfg\word;
 use function log_err;
 
 class sandbox_api implements JsonSerializable

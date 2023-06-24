@@ -46,9 +46,9 @@ namespace im_export;
 include_once MODEL_HELPER_PATH . 'library.php';
 
 use cfg\config;
-use model\library;
-use model\phrase_list;
-use model\user;
+use cfg\library;
+use cfg\phrase_list;
+use cfg\user;
 
 class export
 {

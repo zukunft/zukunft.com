@@ -31,7 +31,7 @@
 
 namespace html\view;
 
-use cfg\view_type;
+use cfg\word;
 use controller\controller;
 use dsp_list;
 use html\api;
@@ -40,8 +40,6 @@ use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
 use html\msg;
-use model\view;
-use model\word;
 
 class view_dsp_old extends view
 {
@@ -85,7 +83,7 @@ class view_dsp_old extends view
      */
     private function dsp_entries($wrd, $back): string
     {
-        log_debug('"' . $wrd->name() . '" with the view ' . $this->dsp_id() . ' for user "' . $this->user()->name . '"');
+        log_debug( $this->dsp_id());
 
         $result = '';
         $this->load_components();
@@ -95,7 +93,7 @@ class view_dsp_old extends view
             // list of all possible view components
             $cmp_dsp = $cmp->dsp_obj();
             $result .= $cmp_dsp->text();        // just to display a simple text
-            $result .= $cmp_dsp->word_name($wrd->phrase()->dsp_obj()); // show the word name and give the user the possibility to change the word name
+            $result .= $cmp_dsp->word_name($wrd->phrase()); // show the word name and give the user the possibility to change the word name
             $result .= $cmp_dsp->table($wrd); // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
             $result .= $cmp_dsp->num_list($wrd, $back); // a word list with some key numbers e.g. all companies with the PE ratio
             $result .= $cmp_dsp->formulas($wrd); // display all formulas related to the given word
@@ -118,9 +116,9 @@ class view_dsp_old extends view
      * view_type_id is used to .... remove???
      * word_id - id of the starting word to display; can be a single word, a comma separated list of word ids, a word group or a word triple
      */
-    function display($wrd, $back): string
+    function display_old($wrd, $back): string
     {
-        log_debug('"' . $wrd->name() . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id . ')  for user "' . $this->user()->name . '"');
+        log_debug('"' . $wrd->name() . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id() . ')');
         $result = '';
 
         // check and correct the parameters
@@ -152,7 +150,7 @@ class view_dsp_old extends view
     private function is_system(): bool
     {
         $result = false;
-        if ($this->code_id <> "") {
+        if ($this->code_id() <> "") {
             $result = true;
         }
         return $result;
@@ -675,6 +673,10 @@ class view_dsp_old extends view
         $result .= '<br><br>'; // this a usually a small for, so the footer can be moved away
 
         return $result;
+    }
+
+    private function load_components()
+    {
     }
 
 }

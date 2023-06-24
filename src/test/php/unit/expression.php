@@ -34,8 +34,8 @@ namespace test;
 
 use api\formula_api;
 use api\word_api;
-use model\expression;
-use model\library;
+use cfg\expression;
+use cfg\library;
 
 class expression_unit_tests
 {

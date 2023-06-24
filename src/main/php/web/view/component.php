@@ -43,8 +43,8 @@ use html\phrase\phrase as phrase_dsp;
 use html\phrase\term as term_dsp;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox_typed_dsp;
-use model\library;
-use model\view_cmp_type;
+use cfg\library;
+use cfg\view_cmp_type;
 
 class component extends sandbox_typed_dsp
 {

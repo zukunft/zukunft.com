@@ -33,7 +33,7 @@
 
 namespace html;
 
-use model\library;
+use cfg\library;
 
 class list_dsp
 {

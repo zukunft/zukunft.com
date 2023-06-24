@@ -37,9 +37,9 @@ include_once WEB_HTML_PATH . 'api_const.php';
 
 use html\api;
 use html\html_base;
-use model\db_object;
-use model\sys_log_status;
-use model\user;
+use cfg\db_object;
+use cfg\sys_log_status;
+use cfg\user;
 
 class system_log_api extends db_object
 {

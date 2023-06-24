@@ -48,9 +48,9 @@ use api\combine_object_api;
 use api\list_api;
 use api\type_lists_api;
 use api\sandbox_api;
-use model\sandbox;
-use model\source;
-use model\word;
+use cfg\sandbox;
+use cfg\source;
+use cfg\word;
 
 class controller
 {

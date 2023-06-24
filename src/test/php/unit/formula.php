@@ -37,13 +37,12 @@ include_once MODEL_FORMULA_PATH . 'expression.php';
 use api\formula_api;
 use api\value_api;
 use api\word_api;
-use cfg\formula_type;
-use model\expression;
-use model\formula;
-use model\phrase_list;
-use model\sql_db;
-use model\term_list;
-use model\word;
+use cfg\expression;
+use cfg\formula;
+use cfg\phrase_list;
+use cfg\sql_db;
+use cfg\term_list;
+use cfg\word;
 use html\formula\formula as formula_dsp;
 
 class formula_unit_tests

@@ -39,10 +39,9 @@ use cfg\view_sys_list;
 use cfg\view_type;
 use cfg\view_type_list;
 use controller\controller;
-use model\db_cl;
-use model\view;
-use model\component;
-use model\view_cmp_type;
+use cfg\view;
+use cfg\component;
+use cfg\view_cmp_type;
 
 class view_unit_db_tests
 {

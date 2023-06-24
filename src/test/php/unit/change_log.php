@@ -38,16 +38,16 @@ include_once MODEL_LOG_PATH . 'change_log_link.php';
 
 use api\triple_api;
 use html\log\user_log_display;
-use model\change_log_field;
-use model\change_log_link;
-use model\change_log_list;
-use model\change_log_named;
-use model\change_log_table;
-use model\library;
-use model\sql_db;
-use model\triple;
-use model\user;
-use model\word;
+use cfg\change_log_field;
+use cfg\change_log_link;
+use cfg\change_log_list;
+use cfg\change_log_named;
+use cfg\change_log_table;
+use cfg\library;
+use cfg\sql_db;
+use cfg\triple;
+use cfg\user;
+use cfg\word;
 
 class change_log_unit_tests
 {

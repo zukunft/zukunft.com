@@ -30,8 +30,8 @@
 */
 
 use controller\controller;
-use model\user;
-use model\source;
+use cfg\user;
+use cfg\source;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

@@ -32,9 +32,9 @@
 // standard zukunft header for callable php files to allow debugging and lib loading
 use controller\controller;
 use html\view\view_dsp_old;
-use model\source;
-use model\user;
-use model\view;
+use cfg\source;
+use cfg\user;
+use cfg\view;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

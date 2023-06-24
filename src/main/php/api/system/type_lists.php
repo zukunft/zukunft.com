@@ -35,9 +35,9 @@ include_once API_PATH . 'message_header.php';
 
 use api_message;
 use controller\controller;
-use model\sql_db;
+use cfg\sql_db;
 use JsonSerializable;
-use model\user;
+use cfg\user;
 
 class type_lists_api extends api_message implements JsonSerializable
 {

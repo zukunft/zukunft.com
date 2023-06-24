@@ -41,13 +41,13 @@
 use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
-use model\formula_list;
-use model\library;
-use model\phr_ids;
-use model\phrase_list;
-use model\result_list;
-use model\user;
-use model\view;
+use cfg\formula_list;
+use cfg\library;
+use cfg\phr_ids;
+use cfg\phrase_list;
+use cfg\result_list;
+use cfg\user;
+use cfg\view;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

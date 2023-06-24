@@ -35,10 +35,11 @@ namespace test;
 include_once MODEL_SYSTEM_PATH . 'batch_job_list.php';
 
 use api\triple_api;
+use cfg\batch_job_type_list;
 use cfg\job_type_list;
-use model\batch_job;
-use model\batch_job_list;
-use model\sql_db;
+use cfg\batch_job;
+use cfg\batch_job_list;
+use cfg\sql_db;
 
 class batch_job_unit_tests
 {
@@ -63,7 +64,7 @@ class batch_job_unit_tests
         // sql to load a list of open batch jobs
         $sys_usr = $t->system_user();
         $job_lst = new batch_job_list($sys_usr);
-        $t->assert_load_list_sql_type($db_con, $job_lst, job_type_list::BASE_IMPORT);
+        $t->assert_load_list_sql_type($db_con, $job_lst, batch_job_type_list::BASE_IMPORT);
 
 
         $t->subheader('API unit tests');

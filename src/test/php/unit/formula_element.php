@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit/formula_element.php - TESTing of the FORMULA ELEMENT and formula element list functions
-  -----------------------------
+    test/unit/formula_element.php - TESTing of the FORMULA ELEMENT and formula element list functions
+    -----------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -34,9 +34,9 @@ namespace test;
 
 include_once MODEL_FORMULA_PATH . 'formula_element_list.php';
 
-use model\formula_element;
-use model\formula_element_list;
-use model\sql_db;
+use cfg\formula_element;
+use cfg\formula_element_list;
+use cfg\sql_db;
 
 class formula_element_unit_tests
 {

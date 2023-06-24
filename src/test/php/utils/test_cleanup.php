@@ -44,18 +44,18 @@ use cfg\formula_type;
 use cfg\phrase_type;
 use cfg\ref_type;
 use html\html_base;
-use model\formula;
-use model\library;
-use model\phrase;
-use model\phrase_list;
-use model\sql_db;
-use model\sql_par;
-use model\term;
-use model\term_list;
-use model\triple;
-use model\value;
-use model\verb;
-use model\word;
+use cfg\formula;
+use cfg\library;
+use cfg\phrase;
+use cfg\phrase_list;
+use cfg\sql_db;
+use cfg\sql_par;
+use cfg\term;
+use cfg\term_list;
+use cfg\triple;
+use cfg\value;
+use cfg\verb;
+use cfg\word;
 
 class test_cleanup extends test_api
 {

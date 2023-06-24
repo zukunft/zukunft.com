@@ -395,16 +395,17 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
 */
 
+use cfg\db_check;
 use cfg\type_lists;
 use cfg\verb_list;
 use cfg\view_sys_list;
 use html\html_base;
 use html\view\view_dsp_old;
-use model\change_log;
-use model\library;
-use model\sql_db;
-use model\sys_log_level;
-use model\user;
+use cfg\change_log;
+use cfg\library;
+use cfg\sql_db;
+use cfg\sys_log_level;
+use cfg\user;
 use test\test_cleanup;
 
 // the fixed system user
@@ -416,13 +417,13 @@ const LIST_MIN_NAMES = 4; // number of object names that should al least be show
 const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
 
 const DB_LINK_PATH = ROOT_PATH . 'db_link' . DIRECTORY_SEPARATOR;
-const DB_PATH = PHP_PATH . 'db' . DIRECTORY_SEPARATOR;
+const DB_PATH = PHP_PATH . 'cfg/db' . DIRECTORY_SEPARATOR;
 const UTIL_PATH = PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
 const SERVICE_PATH = PHP_PATH . 'service' . DIRECTORY_SEPARATOR;
 const SERVICE_IMPORT_PATH = SERVICE_PATH . 'import' . DIRECTORY_SEPARATOR;
 const SERVICE_EXPORT_PATH = SERVICE_PATH . 'export' . DIRECTORY_SEPARATOR;
 const SERVICE_MATH_PATH = SERVICE_PATH . 'math' . DIRECTORY_SEPARATOR;
-const MODEL_PATH = PHP_PATH . 'model' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
+const MODEL_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
 const MODEL_HELPER_PATH = MODEL_PATH . 'helper' . DIRECTORY_SEPARATOR;
 const MODEL_SYSTEM_PATH = MODEL_PATH . 'system' . DIRECTORY_SEPARATOR;
 const MODEL_LOG_PATH = MODEL_PATH . 'log' . DIRECTORY_SEPARATOR;
@@ -512,7 +513,9 @@ include_once SERVICE_PATH . 'config.php';
 // preloaded lists
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_lists.php';
-include_once MODEL_SYSTEM_PATH . 'system_error_log_status_list.php';
+include_once MODEL_SYSTEM_PATH . 'BasicEnum.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
 include_once MODEL_WORD_PATH . 'word_type_list.php';
@@ -535,9 +538,6 @@ include_once MODEL_LOG_PATH . 'change_log_field.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 
-
-// imports actually needed
-include_once MODEL_SYSTEM_PATH . 'system_utils.php';
 
 // used at the moment, but to be replaced with R-Project call
 include_once SERVICE_MATH_PATH . 'calc_internal.php';
@@ -994,7 +994,8 @@ function prg_restart(string $code_name): sql_db
         log_debug($code_name . ': db open');
 
         // check the system setup
-        $result = db_check($db_con);
+        $db_chk = new db_check();
+        $result = $db_chk->db_check($db_con);
         if ($result != '') {
             echo '\n';
             echo $result;

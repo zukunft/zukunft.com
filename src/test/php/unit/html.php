@@ -49,11 +49,11 @@ use html\html_selector;
 use html\msg;
 use html\value\value as value_dsp;
 use html\result\result as result_dsp;
-use model\library;
-use model\verb;
-use model\view;
-use model\component;
-use model\view_cmp_type;
+use cfg\library;
+use cfg\verb;
+use cfg\view;
+use cfg\component;
+use cfg\view_cmp_type;
 use html\result\result_list as result_list_dsp;
 
 class html_unit_tests

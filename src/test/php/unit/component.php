@@ -34,9 +34,9 @@ namespace test;
 
 include_once WEB_VIEW_PATH . 'component.php';
 
-use model\sql_db;
-use model\component;
-use model\view_cmp_type;
+use cfg\sql_db;
+use cfg\component;
+use cfg\view_cmp_type;
 use html\view\component as component_dsp;
 use api\view_api;
 use api\component_api;

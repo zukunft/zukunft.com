@@ -33,7 +33,7 @@
 */
 
 use controller\controller;
-use model\user;
+use cfg\user;
 use cfg\phrase_type;
 use api\phrase_list_api;
 

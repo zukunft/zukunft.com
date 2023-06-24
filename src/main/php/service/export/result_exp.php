@@ -29,7 +29,7 @@
   
 */
 
-namespace cfg\export;
+namespace model\export;
 
 class result_exp extends exp_obj
 {

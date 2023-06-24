@@ -34,7 +34,7 @@ include_once SERVICE_EXPORT_PATH . 'xml.php';
 
 use api\word_api;
 use im_export\json_io;
-use model\phrase_list;
+use cfg\phrase_list;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE;
 

@@ -31,6 +31,9 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use cfg\db_check;
+use cfg\user;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
@@ -65,7 +68,8 @@ if ($usr->id() > 0) {
         // prepare testing
         $t = new testing();
 
-        db_upgrade_0_0_3($db_con);
+        $db_chk = new db_check();
+        $db_chk->db_upgrade_0_0_3($db_con);
 
         // display the test results
         $t->dsp_result_html();

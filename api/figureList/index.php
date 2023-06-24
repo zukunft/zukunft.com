@@ -34,8 +34,8 @@
 
 use cfg\fig_ids;
 use controller\controller;
-use model\user;
-use model\figure_list;
+use cfg\user;
+use cfg\figure_list;
 use api\figure_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading

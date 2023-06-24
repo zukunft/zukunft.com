@@ -37,6 +37,8 @@ const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTO
 include_once PHP_PATH . 'zu_lib.php';
 include_once SERVICE_IMPORT_PATH . 'import_file.php';
 
+use cfg\batch_job_type_list;
+use cfg\db_check;
 use cfg\formula_type_list;
 use cfg\job_type_list;
 use cfg\language_form_list;
@@ -50,14 +52,14 @@ use cfg\view_cmp_type_list;
 use cfg\view_type_list;
 use cfg\word_type_list;
 use html\html_base;
-use model\batch_job;
-use model\change_log_action;
-use model\change_log_field;
-use model\change_log_table;
-use model\formula_element_type_list;
-use model\formula_link_type_list;
-use model\sql_db;
-use model\user;
+use cfg\batch_job;
+use cfg\change_log_action;
+use cfg\change_log_field;
+use cfg\change_log_table;
+use cfg\formula_element_type_list;
+use cfg\formula_link_type_list;
+use cfg\sql_db;
+use cfg\user;
 use test\test_unit_read_db;
 
 // open database and display header
@@ -85,7 +87,8 @@ if ($usr->id() > 0) {
         run_db_seq_reset();
 
         // recreate the code link database rows
-        db_fill_code_links($db_con);
+        $db_chk = new db_check();
+        $db_chk->db_fill_code_links($db_con);
         import_verbs($usr);
 
         // reopen the database to reload the list cache
@@ -102,7 +105,7 @@ if ($usr->id() > 0) {
 
         // reload the base configuration
         $job = new batch_job($sys_usr);
-        $job_id = $job->add(job_type_list::BASE_IMPORT);
+        $job_id = $job->add(batch_job_type_list::BASE_IMPORT);
 
         import_base_config($sys_usr);
         import_config($usr);
@@ -253,7 +256,7 @@ function run_preloaded_truncate(): void
     $protection_types = new protection_type_list();
     $languages = new language_list();
     $language_forms = new language_form_list();
-    $job_types = new job_type_list();
+    $job_types = new batch_job_type_list();
     $change_log_actions = new change_log_action();
     $change_log_tables = new change_log_table();
     $change_log_fields = new change_log_field();

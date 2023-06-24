@@ -43,7 +43,7 @@ use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
 use JsonSerializable;
-use model\word;
+use cfg\word;
 
 class phrase_api extends combine_named_api implements JsonSerializable
 {

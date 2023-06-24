@@ -37,9 +37,9 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'word.php';
 
-use model\sql_db;
+use cfg\sql_db;
 use cfg\phrase_type;
-use model\word;
+use cfg\word;
 use api\word_api;
 use html\word\word as word_dsp;
 

@@ -64,8 +64,8 @@
 
 */
 
-use model\expression;
-use model\library;
+use cfg\expression;
+use cfg\library;
 
 class math
 {

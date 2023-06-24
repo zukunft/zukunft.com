@@ -36,7 +36,7 @@ use api\term_api;
 use api\word_api;
 use html\html_base;
 use html\phrase\term_list as term_list_dsp;
-use model\verb;
+use cfg\verb;
 use test\test_cleanup;
 
 class term_list

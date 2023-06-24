@@ -36,11 +36,11 @@ use api\formula_api;
 use api\triple_api;
 use api\verb_api;
 use api\word_api;
-use model\formula;
-use model\term;
-use model\triple;
-use model\verb;
-use model\word;
+use cfg\formula;
+use cfg\term;
+use cfg\triple;
+use cfg\verb;
+use cfg\word;
 
 class term_unit_db_tests
 {

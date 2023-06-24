@@ -30,7 +30,7 @@
 */
 
 use controller\controller;
-use model\user;
+use cfg\user;
 use cfg\type_lists;
 
 // standard zukunft header for callable php files to allow debugging and lib loading

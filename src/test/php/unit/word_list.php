@@ -38,12 +38,12 @@ include_once WEB_WORD_PATH . 'word_list.php';
 use api\verb_api;
 use api\word_api;
 use cfg\phrase_type;
-use model\library;
-use model\sql_db;
-use model\verb;
-use model\word;
-use model\word_list;
-use model\word_select_direction;
+use cfg\library;
+use cfg\sql_db;
+use cfg\verb;
+use cfg\word;
+use cfg\word_list;
+use cfg\word_select_direction;
 use html\word\word_list as word_list_dsp;
 
 class word_list_unit_tests

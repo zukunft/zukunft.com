@@ -34,10 +34,10 @@ namespace test;
 
 include_once MODEL_FORMULA_PATH . 'formula_link_list.php';
 
-use model\formula_link;
-use model\formula_link_list;
-use model\library;
-use model\sql_db;
+use cfg\formula_link;
+use cfg\formula_link_list;
+use cfg\library;
+use cfg\sql_db;
 
 class formula_link_unit_tests
 {

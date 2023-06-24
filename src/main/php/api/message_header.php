@@ -31,9 +31,9 @@
 
 use cfg\config;
 use html\html_base;
-use model\library;
-use model\sql_db;
-use model\user;
+use cfg\library;
+use cfg\sql_db;
+use cfg\user;
 
 class api_message
 {

@@ -36,7 +36,7 @@ use cfg\phrase_type;
 use html\phrase\term as term_dsp;
 use html\word\word as word_dsp;
 use JsonSerializable;
-use model\word;
+use cfg\word;
 
 class word_api extends sandbox_typed_api
 {

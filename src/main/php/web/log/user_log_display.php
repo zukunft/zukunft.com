@@ -32,19 +32,19 @@
 
 namespace html\log;
 
+use cfg\change_log_table;
+use cfg\component;
+use cfg\formula;
+use cfg\library;
+use cfg\sql_db;
+use cfg\user;
+use cfg\value;
+use cfg\view;
+use cfg\word;
 use html\api;
 use html\button;
 use html\html_base;
 use html\msg;
-use model\change_log_table;
-use model\formula;
-use model\library;
-use model\sql_db;
-use model\user;
-use model\value;
-use model\view;
-use model\component;
-use model\word;
 
 class user_log_display
 {

@@ -35,7 +35,7 @@
 namespace test;
 
 use math;
-use model\library;
+use cfg\library;
 
 global $db_con;
 

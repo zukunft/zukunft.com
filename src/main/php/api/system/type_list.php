@@ -39,8 +39,8 @@ include_once WEB_SANDBOX_PATH . 'list.php';
 
 use JsonSerializable;
 use html\user\user_type_list as type_list_dsp;
-use model\verb;
-use model\view;
+use cfg\verb;
+use cfg\view;
 
 class type_list_api extends list_api implements JsonSerializable
 {

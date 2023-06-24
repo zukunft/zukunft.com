@@ -34,7 +34,7 @@ namespace html\value;
 use html\api;
 use html\html_base;
 use html\word\word as word_dsp;
-use model\library;
+use cfg\library;
 use phr_ids;
 use phrase_group;
 use phrase_list;

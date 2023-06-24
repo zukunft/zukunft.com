@@ -34,7 +34,7 @@ namespace test\write;
 
 use api\formula_api;
 use api\word_api;
-use model\verb;
+use cfg\verb;
 use test\test_cleanup;
 
 class formula_element_test
@@ -66,7 +66,8 @@ class formula_element_test
                 if ($elm->obj == null) {
                     log_err('object of formula element ' . $elm->dsp_id() . ' missing');
                 } else {
-                    $elm->load_by_id($elm->obj->id());
+                    // TODO review abd activate
+                    //$elm->load_by_id($elm->obj->id(), $elm->type);
                 }
 
                 $result = $elm->dsp_id();

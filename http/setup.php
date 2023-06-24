@@ -11,7 +11,7 @@
 // standard start for all php code that can be called
 use cfg\phrase_type;
 use controller\controller;
-use model\user;
+use cfg\user;
 
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 const ROOT_PATH = __DIR__ . '/../';

@@ -46,6 +46,7 @@
     formula_element_group.php
     formula_list.php
     formula_link_list.php
+    parameter_type.php
     figure.php
     figure_list.php
     selector.php
@@ -131,7 +132,7 @@
 
 */
 
-use model\user;
+use cfg\user;
 use test\string_unit_tests;
 use test\term_list_unit_db_tests;
 use test\test_unit_read_db;

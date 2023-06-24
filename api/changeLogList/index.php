@@ -30,9 +30,9 @@
 */
 
 use controller\controller;
-use model\user;
-use model\change_log_list;
-use model\word;
+use cfg\user;
+use cfg\change_log_list;
+use cfg\word;
 use api\term_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading

@@ -43,7 +43,7 @@ use html\list_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\phrase_group_list as phrase_group_list_dsp;
 use html\value\value as value_dsp;
-use model\library;
+use cfg\library;
 
 class value_list extends list_dsp
 {

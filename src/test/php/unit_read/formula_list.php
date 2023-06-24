@@ -33,7 +33,7 @@
 namespace test;
 
 use api\formula_api;
-use model\formula_list;
+use cfg\formula_list;
 
 class formula_list_unit_db_tests
 {

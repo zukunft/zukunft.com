@@ -31,8 +31,8 @@
 */
 
 use api\word_api;
-use model\user;
-use model\user_list;
+use cfg\user;
+use cfg\user_list;
 use test\test_cleanup;
 use const test\TEST_EMAIL;
 use const test\TEST_USER_DESCRIPTION;

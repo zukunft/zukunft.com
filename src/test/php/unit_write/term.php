@@ -32,12 +32,12 @@
 
 namespace test\write;
 
-use model\library;
-use model\word;
-use model\triple;
-use model\verb;
-use model\formula;
-use model\term;
+use cfg\library;
+use cfg\word;
+use cfg\triple;
+use cfg\verb;
+use cfg\formula;
+use cfg\term;
 use api\word_api;
 use api\triple_api;
 use api\formula_api;

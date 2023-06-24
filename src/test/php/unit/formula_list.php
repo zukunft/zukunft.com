@@ -34,9 +34,9 @@ include_once WEB_FORMULA_PATH . 'formula_list.php';
 use api\formula_api;
 use api\word_api;
 use html\formula\formula_list as formula_list_dsp;
-use model\formula_list;
-use model\sql_db;
-use model\word;
+use cfg\formula_list;
+use cfg\sql_db;
+use cfg\word;
 
 class formula_list_unit_tests
 {

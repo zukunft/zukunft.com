@@ -34,7 +34,6 @@ namespace test;
 
 use cfg\share_type;
 use cfg\share_type_list;
-use model\db_cl;
 
 class share_unit_db_tests
 {

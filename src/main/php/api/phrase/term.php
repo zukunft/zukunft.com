@@ -50,10 +50,10 @@ use html\formula\formula as formula_dsp;
 use html\verb\verb as verb_dsp;
 use html\phrase\term as term_dsp;
 use cfg\phrase_type;
-use model\word;
-use model\triple;
-use model\formula;
-use model\verb;
+use cfg\word;
+use cfg\triple;
+use cfg\formula;
+use cfg\verb;
 use JsonSerializable;
 
 class term_api extends combine_named_api implements JsonSerializable

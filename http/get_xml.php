@@ -31,9 +31,9 @@
 */
 
 use controller\controller;
-use model\library;
-use model\phrase_list;
-use model\user;
+use cfg\library;
+use cfg\phrase_list;
+use cfg\user;
 
 Header('Content-type: text/xml');
 

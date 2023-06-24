@@ -30,9 +30,9 @@
 */
 
 use controller\controller;
-use model\user;
-use model\phr_ids;
-use model\phrase_list;
+use cfg\user;
+use cfg\phr_ids;
+use cfg\phrase_list;
 use api\phrase_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading

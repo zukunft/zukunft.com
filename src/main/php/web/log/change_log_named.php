@@ -40,9 +40,9 @@ use html\button;
 use html\html_base;
 use html\msg;
 use html\system\back_trace;
-use model\change_log_action;
-use model\change_log_table;
-use model\formula;
+use cfg\change_log_action;
+use cfg\change_log_table;
+use cfg\formula;
 
 class change_log_named extends change_log_named_api
 {

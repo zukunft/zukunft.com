@@ -33,11 +33,11 @@
 namespace test\write;
 
 use api\source_api;
-use model\change_log_field;
-use model\change_log_named;
-use model\change_log_table;
-use model\sandbox_named;
-use model\source;
+use cfg\change_log_field;
+use cfg\change_log_named;
+use cfg\change_log_table;
+use cfg\sandbox_named;
+use cfg\source;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB;
 use const test\TIMEOUT_LIMIT_DB_MULTI;

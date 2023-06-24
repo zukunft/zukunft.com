@@ -33,13 +33,13 @@ use api\triple_api;
 use api\word_api;
 use html\html_base;
 use html\phrase\term_list as term_list_dsp;
-use model\formula;
-use model\sql_db;
-use model\term;
-use model\term_list;
-use model\triple;
-use model\verb;
-use model\word;
+use cfg\formula;
+use cfg\sql_db;
+use cfg\term;
+use cfg\term_list;
+use cfg\triple;
+use cfg\verb;
+use cfg\word;
 
 class term_list_unit_tests
 {

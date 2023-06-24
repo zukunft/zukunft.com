@@ -45,9 +45,9 @@ include_once API_SANDBOX_PATH . 'type_object.php';
 
 use api\type_object_api;
 use cfg\type_list;
-use model\db_cl;
-use model\sql_db;
-use model\sql_par;
+use cfg\db_cl;
+use cfg\sql_db;
+use cfg\sql_par;
 
 class type_object
 {

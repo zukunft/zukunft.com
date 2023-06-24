@@ -36,7 +36,7 @@ include_once API_LOG_PATH . 'system_log_list.php';
 
 use controller\log\system_log_list_api;
 use html\html_base;
-use model\user;
+use cfg\user;
 
 class system_log_list_dsp_old extends system_log_list_api
 {

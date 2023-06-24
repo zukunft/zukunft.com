@@ -46,11 +46,11 @@ use html\phrase\term as term_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\verb\verb as verb_dsp;
-use model\formula;
-use model\sql_db;
-use model\term;
-use model\triple;
-use model\verb;
+use cfg\formula;
+use cfg\sql_db;
+use cfg\term;
+use cfg\triple;
+use cfg\verb;
 
 class term_unit_tests
 {

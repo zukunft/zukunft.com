@@ -34,10 +34,10 @@ namespace test;
 
 use api\word_api;
 use cfg\config;
-use model\phrase;
-use model\value;
-use model\value_list;
-use model\word;
+use cfg\phrase;
+use cfg\value;
+use cfg\value_list;
+use cfg\word;
 
 class value_list_unit_db_tests
 {

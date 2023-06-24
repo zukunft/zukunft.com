@@ -33,7 +33,7 @@ namespace html\hist;
 
 use html\html_base;
 use html\word\word as word_dsp;
-use model\word;
+use cfg\word;
 
 class hist_log_dsp
 {

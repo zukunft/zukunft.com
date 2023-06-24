@@ -34,8 +34,8 @@ namespace test;
 
 use api\user_api;
 use cfg\phrase_type;
-use model\sql_db;
-use model\user;
+use cfg\sql_db;
+use cfg\user;
 
 class user_unit_tests
 {

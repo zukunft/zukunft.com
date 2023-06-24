@@ -37,9 +37,9 @@ use cfg\ref_type_list;
 use cfg\source_type_list;
 use html\ref\ref as ref_dsp;
 use html\ref\source as source_dsp;
-use model\ref;
-use model\source;
-use model\sql_db;
+use cfg\ref;
+use cfg\source;
+use cfg\sql_db;
 
 class ref_unit_tests
 {

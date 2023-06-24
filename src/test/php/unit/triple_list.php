@@ -37,13 +37,13 @@ include_once WEB_WORD_PATH . 'triple_list.php';
 
 use cfg\verb_list;
 use html\word\triple_list as triple_list_dsp;
-use model\library;
-use model\phrase;
-use model\sql_db;
-use model\triple_list;
-use model\verb;
-use model\word;
-use model\word_list;
+use cfg\library;
+use cfg\phrase;
+use cfg\sql_db;
+use cfg\triple_list;
+use cfg\verb;
+use cfg\word;
+use cfg\word_list;
 
 class triple_list_unit_tests
 {

@@ -38,9 +38,9 @@ use api\phrase_api;
 use api\triple_api;
 use api\word_api;
 use html\html_selector;
-use model\library;
-use model\verb;
-use model\word;
+use cfg\library;
+use cfg\verb;
+use cfg\word;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE;
 

@@ -34,9 +34,9 @@
 
 namespace html;
 
-use model\library;
-use model\phrase_list;
-use model\phrase_list_dsp_old;
+use cfg\library;
+use cfg\phrase_list;
+use cfg\phrase_list_dsp_old;
 
 class button
 {

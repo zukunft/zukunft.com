@@ -32,8 +32,8 @@
 
 namespace test;
 
-use model\system_log_list;
-use model\user;
+use cfg\system_log_list;
+use cfg\user;
 
 class system_log_unit_db_tests
 {

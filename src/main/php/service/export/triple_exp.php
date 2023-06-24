@@ -29,7 +29,7 @@
   
 */
 
-namespace cfg\export;
+namespace model\export;
 
 use JsonSerializable;
 

@@ -34,7 +34,7 @@ namespace test\write;
 
 use api\formula_api;
 use api\word_api;
-use model\expression;
+use cfg\expression;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_LONG;
 use const test\TIMEOUT_LIMIT_PAGE_LONG;

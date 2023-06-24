@@ -39,8 +39,8 @@ use api\triple_api;
 use api\value_api;
 use api\word_api;
 use html\word\triple as triple_dsp;
-use model\triple;
-use model\verb;
+use cfg\triple;
+use cfg\verb;
 
 class test_unit_read_db extends test_unit
 {

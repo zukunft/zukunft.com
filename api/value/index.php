@@ -30,8 +30,8 @@
 */
 
 use controller\controller;
-use model\user;
-use model\value;
+use cfg\user;
+use cfg\value;
 use api\value_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading

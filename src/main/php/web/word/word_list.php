@@ -41,8 +41,8 @@ use html\formula\formula as formula_dsp;
 use html\html_base;
 use html\html_selector;
 use html\list_dsp;
-use model\term_list;
-use model\user;
+use cfg\term_list;
+use cfg\user;
 
 class word_list extends list_dsp
 {

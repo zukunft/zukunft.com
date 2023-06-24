@@ -48,7 +48,7 @@ use html\view\component_list as component_list_dsp;
 use html\sandbox_typed_dsp;
 use html\word\word;
 use html\sandbox\db_object as db_object_dsp;
-use model\library;
+use cfg\library;
 
 class view extends sandbox_typed_dsp
 {
@@ -58,8 +58,8 @@ class view extends sandbox_typed_dsp
      */
 
     // used for system views
-    private string $code_id;
-    private component_list_dsp $cmp_lst;
+    private ?string $code_id;
+    protected component_list_dsp $cmp_lst;
 
 
     /*
@@ -409,7 +409,7 @@ class view extends sandbox_typed_dsp
      * TODO fill
      * @return string
      */
-    private function user(): string
+    protected function user(): string
     {
         return '';
     }

@@ -35,9 +35,9 @@ namespace test\write;
 
 use api\triple_api;
 use api\word_api;
-use model\phrase_group;
-use model\phrase_list;
-use model\word_list;
+use cfg\phrase_group;
+use cfg\phrase_list;
+use cfg\word_list;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE;
 

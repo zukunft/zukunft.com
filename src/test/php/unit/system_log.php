@@ -32,9 +32,9 @@
 
 namespace test;
 
-use model\library;
-use model\sql_db;
-use model\system_log;
+use cfg\library;
+use cfg\sql_db;
+use cfg\system_log;
 
 class system_log_unit_tests
 {

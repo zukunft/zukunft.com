@@ -30,7 +30,7 @@
 */
 
 
-namespace cfg\export;
+namespace model\export;
 
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
 

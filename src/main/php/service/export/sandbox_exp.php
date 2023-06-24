@@ -33,7 +33,7 @@
 
 */
 
-namespace cfg\export;
+namespace model\export;
 
 class exp_obj
 {

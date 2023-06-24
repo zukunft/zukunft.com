@@ -33,7 +33,7 @@
 */
 
 use controller\controller;
-use model\user;
+use cfg\user;
 use cfg\language;
 
 // standard zukunft header for callable php files to allow debugging and lib loading

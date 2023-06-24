@@ -31,8 +31,8 @@
 */
 
 use cfg\phrase_type;
-use model\source;
-use model\word;
+use cfg\source;
+use cfg\word;
 use test\test_cleanup;
 use const test\TS_IPCC_AR6_SYNTHESIS;
 use const test\TS_IPCC_AR6_SYNTHESIS_URL;

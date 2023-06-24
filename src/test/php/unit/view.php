@@ -35,9 +35,9 @@ namespace test;
 use api\view_api;
 use cfg\view_term_link;
 use html\view\view as view_dsp;
-use model\library;
-use model\sql_db;
-use model\view;
+use cfg\library;
+use cfg\sql_db;
+use cfg\view;
 
 class view_unit_tests
 {

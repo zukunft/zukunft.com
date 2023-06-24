@@ -35,8 +35,8 @@ include_once API_PATH . 'message_header.php';
 
 use api_message;
 use controller\controller;
-use model\sql_db;
-use model\user;
+use cfg\sql_db;
+use cfg\user;
 
 class system_log_list_api extends api_message
 {

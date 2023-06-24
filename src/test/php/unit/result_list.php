@@ -32,12 +32,12 @@
 
 namespace test;
 
-use model\formula;
-use model\phrase_group;
-use model\result_list;
-use model\sql_db;
-use model\triple;
-use model\word;
+use cfg\formula;
+use cfg\phrase_group;
+use cfg\result_list;
+use cfg\sql_db;
+use cfg\triple;
+use cfg\word;
 use html\result\result_list as result_list_dsp;
 
 class result_list_unit_tests

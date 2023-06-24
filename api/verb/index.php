@@ -30,8 +30,8 @@
 */
 
 use controller\controller;
-use model\user;
-use model\verb;
+use cfg\user;
+use cfg\verb;
 use api\verb_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading

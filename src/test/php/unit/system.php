@@ -39,13 +39,13 @@ include_once API_LOG_PATH . 'system_log.php';
 use cfg\config;
 use controller\log\system_log_api;
 use DateTime;
-use model\ip_range;
-use model\ip_range_list;
-use model\library;
-use model\sql_db;
-use model\sys_log_status;
-use model\system_log;
-use model\system_log_list;
+use cfg\ip_range;
+use cfg\ip_range_list;
+use cfg\library;
+use cfg\sql_db;
+use cfg\sys_log_status;
+use cfg\system_log;
+use cfg\system_log_list;
 
 class system_unit_tests
 {

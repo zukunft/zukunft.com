@@ -33,16 +33,16 @@
 use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
-use model\formula;
-use model\formula_link;
-use model\triple;
-use model\user;
-use model\user_profile;
-use model\value;
-use model\view;
-use model\component;
-use model\component_link;
-use model\word;
+use cfg\formula;
+use cfg\formula_link;
+use cfg\triple;
+use cfg\user;
+use cfg\user_profile;
+use cfg\value;
+use cfg\view;
+use cfg\component;
+use cfg\component_link;
+use cfg\word;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

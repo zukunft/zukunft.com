@@ -49,7 +49,7 @@ use html\html_base;
 use html\phrase\phrase_group as phrase_group_dsp;
 use html\result\result as result_dsp;
 use html\value\value as value_dsp;
-use model\result;
+use cfg\result;
 
 class figure extends combine_named_dsp
 {

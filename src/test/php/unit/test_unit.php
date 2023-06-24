@@ -40,7 +40,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
 include_once MODEL_SYSTEM_PATH . 'batch_job_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'system_error_log_status_list.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once MODEL_WORD_PATH . 'word_type_list.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
@@ -66,14 +66,24 @@ include_once MODEL_LOG_PATH . 'system_log.php';
 include_once MODEL_LOG_PATH . 'system_log_list.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 
+use cfg\batch_job_type_list;
+use cfg\change_log_action;
+use cfg\change_log_field;
+use cfg\change_log_table;
+use cfg\formula_element_type_list;
+use cfg\formula_link_type_list;
 use cfg\formula_type_list;
-use cfg\job_type_list;
 use cfg\language_form_list;
 use cfg\language_list;
 use cfg\protection_type_list;
 use cfg\ref_type_list;
 use cfg\share_type_list;
 use cfg\source_type_list;
+use cfg\sql_db;
+use cfg\sys_log_status;
+use cfg\user;
+use cfg\user_list;
+use cfg\user_profile;
 use cfg\verb_list;
 use cfg\view_cmp_link_type_list;
 use cfg\view_cmp_pos_type_list;
@@ -81,16 +91,6 @@ use cfg\view_cmp_type_list;
 use cfg\view_sys_list;
 use cfg\view_type_list;
 use cfg\word_type_list;
-use model\change_log_action;
-use model\change_log_field;
-use model\change_log_table;
-use model\formula_element_type_list;
-use model\formula_link_type_list;
-use model\sql_db;
-use model\sys_log_status;
-use model\user;
-use model\user_list;
-use model\user_profile;
 use test\html\type_list as type_list_html_tests;
 use test\html\system_views as system_views_html_tests;
 
@@ -313,7 +313,7 @@ class test_unit extends test_cleanup
     {
         global $user_profiles;
 
-        $user_profiles = new job_type_list();
+        $user_profiles = new batch_job_type_list();
         $user_profiles->load_dummy();
 
     }
@@ -517,7 +517,7 @@ class test_unit extends test_cleanup
     {
         global $job_types;
 
-        $job_types = new job_type_list();
+        $job_types = new batch_job_type_list();
         $job_types->load_dummy();
 
     }

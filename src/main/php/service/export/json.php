@@ -41,8 +41,8 @@ namespace im_export;
 
 include_once SERVICE_EXPORT_PATH . 'json.php';
 
-use model\phrase_list;
-use model\user;
+use cfg\phrase_list;
+use cfg\user;
 
 class json_io
 {

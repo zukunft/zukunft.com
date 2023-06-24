@@ -30,8 +30,8 @@
 */
 
 use controller\controller;
-use model\user;
-use model\triple;
+use cfg\user;
+use cfg\triple;
 use api\triple_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading

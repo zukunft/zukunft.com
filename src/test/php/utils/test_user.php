@@ -34,7 +34,7 @@
 // start testing the user permission functionality
 // -----------------------------------------------
 
-use model\user;
+use cfg\user;
 use test\test_cleanup;
 
 function run_user_test(test_cleanup $t): void
