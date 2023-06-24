@@ -1595,7 +1595,7 @@ class formula extends sandbox_typed
      * part of element_refresh for one element type and one user
      * TODO move this to the formula element list object
      */
-    function element_refresh_type($frm_text, $element_type, $frm_usr_id, $db_usr_id): bool
+    function element_refresh_type(string $frm_text, $element_type, $frm_usr_id, $db_usr_id): bool
     {
         log_debug('->element_refresh_type (f' . $this->id() . $frm_text . ',' . $element_type . ',u' . $frm_usr_id . ')');
 
@@ -1689,7 +1689,11 @@ class formula extends sandbox_typed
     }
 
     /**
-     * extracts an array with the word ids from a given formula text
+     * update the database references to the formula elements
+     * to be able to use the sql statements to find all formulas depending on a word. triple, verb or formula
+     * TODO create one SQL statement for the update that is executed with one commit statement
+     * @param string $frm_text the reference text that should be used for the update
+     * @return bool true if the update has been fine
      */
     function element_refresh(string $frm_text): bool
     {
@@ -1700,6 +1704,16 @@ class formula extends sandbox_typed
 
         // refresh the links for the standard formula used if the user has not changed the formula
         $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, 0, $this->user()->id);
+
+        // update verb links of the standard formula
+        if ($result) {
+            $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, 0, $this->user()->id);
+        }
+
+        // update verb links of the standard formula
+        if ($result) {
+            $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, 0, $this->user()->id);
+        }
 
         // update formula links of the standard formula
         if ($result) {
@@ -1714,6 +1728,14 @@ class formula extends sandbox_typed
                 // update word links of the user formula
                 if ($result) {
                     $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, $db_row[self::FLD_USER], $this->user()->id);
+                }
+                // update triple links of the user formula
+                if ($result) {
+                    $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, $db_row[self::FLD_USER], $this->user()->id);
+                }
+                // update verb links of the user formula
+                if ($result) {
+                    $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, $db_row[self::FLD_USER], $this->user()->id);
                 }
                 // update formula links of the standard formula
                 if ($result) {

@@ -177,13 +177,17 @@ class formula_element extends db_object
                 $wrd->load_by_id($id, word::class);
                 $this->symbol = expression::WORD_START . $wrd->id() . expression::WORD_END;
                 $this->obj = $wrd;
-            }
-            if ($this->type == self::TYPE_VERB) {
-                $lnk = new verb;
-                $lnk->set_user($this->usr);
-                $lnk->load_by_id($id);
-                $this->symbol = expression::TRIPLE_START . $lnk->id . expression::TRIPLE_END;
-                $this->obj = $lnk;
+            } elseif ($this->type == self::TYPE_TRIPLE) {
+                $trp = new triple($this->usr);
+                $trp->load_by_id($id);
+                $this->symbol = expression::TRIPLE_START . $trp->id() . expression::TRIPLE_END;
+                $this->obj = $trp;
+            } elseif ($this->type == self::TYPE_VERB) {
+                $vrb = new verb;
+                $vrb->set_user($this->usr);
+                $vrb->load_by_id($id);
+                $this->symbol = expression::TRIPLE_START . $vrb->id . expression::TRIPLE_END;
+                $this->obj = $vrb;
             }
             if ($this->type == self::TYPE_FORMULA) {
                 $frm = new formula($this->usr);

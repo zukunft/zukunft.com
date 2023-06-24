@@ -66,8 +66,7 @@ class formula_element_test
                 if ($elm->obj == null) {
                     log_err('object of formula element ' . $elm->dsp_id() . ' missing');
                 } else {
-                    // TODO review abd activate
-                    //$elm->load_by_id($elm->obj->id(), $elm->type);
+                    $elm->load_obj_by_id($elm->obj->id(), $elm->type);
                 }
 
                 $result = $elm->dsp_id();
