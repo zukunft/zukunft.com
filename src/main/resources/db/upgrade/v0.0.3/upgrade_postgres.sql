@@ -35,6 +35,24 @@ ALTER TABLE user_refs
 -- --------------------------------------------------------
 
 --
+-- Table structure for table user_view_term_links
+--
+
+CREATE TABLE IF NOT EXISTS user_view_term_links
+(
+    view_term_link_id BIGSERIAL PRIMARY KEY,
+    type_id           bigint NOT NULL   DEFAULT '1',
+    link_type_id      bigint            DEFAULT NULL,
+    user_id           bigint NOT NULL,
+    description       text   NOT NULL,
+    excluded          smallint          DEFAULT NULL,
+    share_type_id     smallint          DEFAULT NULL,
+    protect_id        smallint NOT NULL DEFAULT NULL
+);
+
+-- --------------------------------------------------------
+
+--
 -- Structure for the phrases view
 --
 
