@@ -584,8 +584,13 @@ class sql_db
      * @param string $par_type the SQL parameter type used e.g. for Postgres as int or text
      * @param string $value the int, float value or text value that is used for the concrete execution of the query
      * @param bool $named true if the parameter name is already used
+     * @param bool $use_link true if the parameter should be applied on the linked table
      */
-    function add_par(string $par_type, string $value, bool $named = false, bool $use_link = false): void
+    function add_par(
+        string $par_type,
+        string $value,
+        bool $named = false,
+        bool $use_link = false): void
     {
         $this->par_types[] = $par_type;
         $this->par_values[] = $value;
@@ -615,7 +620,7 @@ class sql_db
     }
 
     /**
-     * interface function to add a text parameter for a prepared query
+     * interface function to add a integer parameter for a prepared query
      * @param int $id the integer value for the WHERE IN SQL statement part
      */
     function add_par_int(int $id): void
@@ -624,8 +629,19 @@ class sql_db
     }
 
     /**
+     * interface function to add a integer parameter on the joined table for a prepared query
+     * @param int $id the integer value for the WHERE IN SQL statement part
+     */
+    function add_par_join_int(int $id): void
+    {
+        $this->add_par(sql_db::PAR_INT, $id, false, true);
+    }
+
+    /**
      * interface function to add a "IN" parameter for a prepared query
      * @param array $ids with the int id values for the WHERE IN SQL statement part
+     * @param bool $named true if the parameter name is already used
+     * @param bool $use_link true if the parameter should be applied on the linked table
      */
     function add_par_in_int(array $ids, bool $named = false, bool $use_link = false): void
     {
@@ -2709,7 +2725,7 @@ class sql_db
     /**
      * create the "FROM" SQL statement based on the type
      */
-    private function set_from()
+    private function set_from(): void
     {
         if ($this->join_type <> '') {
             $join_table_name = $this->name_sql_esc($this->get_table_name($this->join_type));
@@ -2920,8 +2936,7 @@ class sql_db
     /**
      * create the "FROM" SQL statement based on the type for the user sandbox values
      */
-    private
-    function set_from_user()
+    private function set_from_user(): void
     {
         $this->from = ' FROM ' . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table);
     }
@@ -3166,7 +3181,7 @@ class sql_db
      * @return void
      */
     private
-    function par_types_to_postgres()
+    function par_types_to_postgres(): void
     {
         $in_types = $this->par_types;
         $this->par_types = array();

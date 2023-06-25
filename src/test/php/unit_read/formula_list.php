@@ -33,6 +33,7 @@
 namespace test;
 
 use api\formula_api;
+use cfg\formula;
 use cfg\formula_list;
 
 class formula_list_unit_db_tests
@@ -54,7 +55,18 @@ class formula_list_unit_db_tests
         if ($result != $target) {
             $target = formula_api::TN_READ_ANOTHER . ',' . formula_api::TN_READ; // try another order
         }
-        $t->assert('load by ids for ' . $frm_lst->dsp_id(), $result, $target);
+        $t->assert(
+            'load by ids for ' . $frm_lst->dsp_id(),
+            $result, $target);
+
+        // test loading the formulas that use the results of a given formula
+        $frm_this = new formula($t->usr1);
+        $frm_this->load_by_name(formula_api::TN_READ_THIS);
+        $frm_lst = new formula_list($t->usr1);
+        $frm_lst->load_by_formula_ref($frm_this);
+        $t->assert_contains(
+            'formulas that use this are at least "increase"',
+            $frm_lst->names(), [formula_api::TN_INCREASE]);
     }
 
 }

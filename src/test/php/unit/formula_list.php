@@ -33,6 +33,7 @@ include_once WEB_FORMULA_PATH . 'formula_list.php';
 
 use api\formula_api;
 use api\word_api;
+use cfg\formula;
 use html\formula\formula_list as formula_list_dsp;
 use cfg\formula_list;
 use cfg\sql_db;
@@ -62,6 +63,7 @@ class formula_list_unit_tests
         // sql to load a list of formulas by the id
         $frm_lst = new formula_list($usr);
         $t->assert_load_sql_ids($db_con, $frm_lst);
+        $this->assert_load_sql_by_formula_ref($t, $db_con, $frm_lst);
 
         // check the Postgres query syntax to load a list of formulas by the names
         $db_con->db_type = sql_db::POSTGRES;
@@ -125,6 +127,35 @@ class formula_list_unit_tests
         $trp_lst = $t->dummy_formula_list();
         $t->assert_api_to_dsp($trp_lst, new formula_list_dsp());
 
+    }
+
+    /**
+     * check the load SQL statements creation to get the formulas that use a given formula
+     * similar to assert_load_sql of the test_base class
+     *
+     * @param test_cleanup $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param formula_list $frm_lst the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_load_sql_by_formula_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
+    {
+        // prepare
+        $frm = new formula($t->usr1);
+        $frm->set_id(1);
+
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $frm_lst->load_sql_by_formula_ref($db_con, $frm);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $frm_lst->load_sql_by_formula_ref($db_con, $frm);
+            $result = $t->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
     }
 
 }

@@ -68,7 +68,8 @@ class formula_list extends sandbox_list
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0) {
-                    if ($db_row[formula::FLD_ID] > 0) {
+                    $frm_id = $db_row[formula::FLD_ID];
+                    if ($frm_id > 0 and !in_array($frm_id, $this->ids())) {
                         $frm = new formula($this->user());
                         $frm->row_mapper_sandbox($db_row);
                         // TODO check if this is really needed
@@ -241,6 +242,35 @@ class formula_list extends sandbox_list
     }
 
     /**
+     * set the SQL query parameters to load a list of formulas that use the results of the given formula
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param formula $frm the formula
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_formula_ref(sql_db $db_con, formula $frm): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        if ($frm->id() > 0) {
+            $qp->name .= 'frm_ref';
+            $db_con->set_name($qp->name);
+            $db_con->set_join_fields(
+                array(formula::FLD_ID),
+                sql_db::TBL_FORMULA_ELEMENT,
+                formula::FLD_ID,
+                formula::FLD_ID
+            );
+            $db_con->add_par_join_int($frm->id());
+            $db_con->add_par_join_int(parameter_type::FORMULA_ID);
+            $qp->sql = $db_con->select_by_field_list(
+                array(formula_element::FLD_REF_ID,formula_element::FLD_TYPE));
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
      * set the SQL query parameters to load a set of all formulas
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param int $limit the number of formulas that should be loaded
@@ -315,6 +345,18 @@ class formula_list extends sandbox_list
     {
         global $db_con;
         $qp = $this->load_sql_by_phr_lst($db_con, $phr_lst);
+        return $this->load($qp);
+    }
+
+    /**
+     * load all formulas that use the given formula
+     * @param formula $frm the formula that
+     * @return bool
+     */
+    function load_by_formula_ref(formula $frm): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_formula_ref($db_con, $frm);
         return $this->load($qp);
     }
 
