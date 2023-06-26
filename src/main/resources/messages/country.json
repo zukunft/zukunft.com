@@ -109,6 +109,11 @@
       "name": "increase",
       "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
       "assigned_word": "\"inhabitants\""
+    },
+    {
+      "name": "population in the city of Zurich in percent of Switzerland",
+      "expression": "\"percent\" = \"inhabitants\" \"Zurich (City)\" / \"inhabitants\" \"Switzerland\"",
+      "assigned_word": "\"Switzerland\""
     }
   ],
   "sources": [

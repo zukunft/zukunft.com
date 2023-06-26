@@ -57,6 +57,8 @@ class formula_api extends sandbox_typed_api
     const TF_INCREASE = '"percent" = ( "this" - "prior" ) / "prior"';
     const TF_INCREASE_ALTERNATIVE = '"percent" = 1 - ( "this" / "prior" )';
     const TR_INCREASE = '{w1}=({f18}-{f20})/{f20}';
+    const TN_LITRE_TO_M3 = 'scale litre to m3';
+    const TN_BIGGEST_CITY = 'population in the city of Zurich in percent of Switzerland';
     const TN_READ_THIS = 'this';
     const TN_READ_PRIOR = 'prior';
     const TN_CIRCUMFERENCE = 'circumference';

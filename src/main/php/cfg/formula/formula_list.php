@@ -242,16 +242,23 @@ class formula_list extends sandbox_list
     }
 
     /**
-     * set the SQL query parameters to load a list of formulas that use the results of the given formula
+     * set the SQL query parameters to load a list of formulas that
+     * use the results of the given word, triple, verb or formula
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param formula $frm the formula
+     * @param int $ref_id the id of the used object
+     * @param int $par_type_id the id of the parameter type
+     * @param string $type_query_name the short name of the parameter type to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_formula_ref(sql_db $db_con, formula $frm): sql_par
+    function load_sql_by_ref(
+        sql_db $db_con,
+        int $ref_id,
+        int $par_type_id,
+        string $type_query_name): sql_par
     {
         $qp = $this->load_sql($db_con);
-        if ($frm->id() > 0) {
-            $qp->name .= 'frm_ref';
+        if ($ref_id > 0) {
+            $qp->name .= $type_query_name . '_ref';
             $db_con->set_name($qp->name);
             $db_con->set_join_fields(
                 array(formula::FLD_ID),
@@ -259,8 +266,8 @@ class formula_list extends sandbox_list
                 formula::FLD_ID,
                 formula::FLD_ID
             );
-            $db_con->add_par_join_int($frm->id());
-            $db_con->add_par_join_int(parameter_type::FORMULA_ID);
+            $db_con->add_par_join_int($ref_id);
+            $db_con->add_par_join_int($par_type_id);
             $qp->sql = $db_con->select_by_field_list(
                 array(formula_element::FLD_REF_ID,formula_element::FLD_TYPE));
         } else {
@@ -268,6 +275,70 @@ class formula_list extends sandbox_list
         }
         $qp->par = $db_con->get_par();
         return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of formulas that
+     * use the results of the given word
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param word $wrd the word to which the depending formulas should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_word_ref(sql_db $db_con, word $wrd): sql_par
+    {
+        return $this->load_sql_by_ref(
+            $db_con,
+            $wrd->id(),
+            parameter_type::WORD_ID,
+            'wrd');
+    }
+
+    /**
+     * set the SQL query parameters to load a list of formulas that
+     * use the results of the given triple
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param triple $trp the triple to which the depending formulas should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_triple_ref(sql_db $db_con, triple $trp): sql_par
+    {
+        return $this->load_sql_by_ref(
+            $db_con,
+            $trp->id(),
+            parameter_type::TRIPLE_ID,
+            'trp');
+    }
+
+    /**
+     * set the SQL query parameters to load a list of formulas that
+     * use the results of the given verb
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param verb $vrb the verb to which the depending formulas should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_verb_ref(sql_db $db_con, verb $vrb): sql_par
+    {
+        return $this->load_sql_by_ref(
+            $db_con,
+            $vrb->id(),
+            parameter_type::VERB_ID,
+            'vrb');
+    }
+
+    /**
+     * set the SQL query parameters to load a list of formulas that
+     * use the results of the given formula
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param formula $frm the formula
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_formula_ref(sql_db $db_con, formula $frm): sql_par
+    {
+        return $this->load_sql_by_ref(
+            $db_con,
+            $frm->id(),
+            parameter_type::FORMULA_ID,
+            'frm');
     }
 
     /**
@@ -349,9 +420,45 @@ class formula_list extends sandbox_list
     }
 
     /**
+     * load all formulas that use the given word
+     * @param word $wrd the word that
+     * @return bool true if at least one formula has bee loaded
+     */
+    function load_by_word_ref(word $wrd): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_word_ref($db_con, $wrd);
+        return $this->load($qp);
+    }
+
+    /**
+     * load all formulas that use the given triple
+     * @param triple $trp the triple that
+     * @return bool true if at least one formula has bee loaded
+     */
+    function load_by_triple_ref(triple $trp): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_triple_ref($db_con, $trp);
+        return $this->load($qp);
+    }
+
+    /**
+     * load all formulas that use the given verb
+     * @param verb $vrb the verb that
+     * @return bool true if at least one formula has bee loaded
+     */
+    function load_by_verb_ref(verb $vrb): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_verb_ref($db_con, $vrb);
+        return $this->load($qp);
+    }
+
+    /**
      * load all formulas that use the given formula
      * @param formula $frm the formula that
-     * @return bool
+     * @return bool true if at least one formula has bee loaded
      */
     function load_by_formula_ref(formula $frm): bool
     {

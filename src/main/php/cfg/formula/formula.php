@@ -1494,72 +1494,50 @@ class formula extends sandbox_typed
      */
 
     /**
-     * @return int a positive word id if the formula string in the database format contains a word link
+     * @param string $formula the formula expression in the reference format
+     * @param string $start_maker
+     * @param string $end_maker
+     * @return int a positive term object (e.g. word, triple, verb or formula) id
+     *             if the formula string in the database format contains a link
      */
-    function get_word_id(string $formula): int
+    private function get_term_id(string $formula, string $start_maker, string $end_maker): int
     {
         $lib = new library();
 
-        log_debug($formula);
         $result = 0;
-
-        $pos_start = strpos($formula, expression::WORD_START);
-        if ($pos_start === false) {
-            $result = 0;
-        } else {
-            $r_part = $lib->str_right_of($formula, expression::WORD_START);
-            $l_part = $lib->str_left_of($r_part, expression::WORD_END);
+        $pos_start = strpos($formula, $start_maker);
+        if ($pos_start !== false) {
+            $r_part = $lib->str_right_of($formula, $start_maker);
+            $l_part = $lib->str_left_of($r_part, $end_maker);
             if (is_numeric($l_part)) {
                 $result = $l_part;
                 log_debug($result);
             }
         }
 
-        log_debug($result);
-        return $result;
-    }
-
-    function get_formula_id(string $formula): int
-    {
-        log_debug("formula->get_formula (" . $formula . ")");
-        $result = 0;
-
-        $lib = new library();
-
-        $pos_start = strpos($formula, expression::FORMULA_START);
-        if ($pos_start === false) {
-            $result = 0;
-        } else {
-            $r_part = $lib->str_right_of($formula, expression::FORMULA_START);
-            $l_part = $lib->str_left_of($r_part, expression::FORMULA_END);
-            if (is_numeric($l_part)) {
-                $result = $l_part;
-                log_debug($result);
-            }
-        }
-
-        log_debug($result);
         return $result;
     }
 
     /**
-     * extracts an array with the word ids from a given formula text
+     * @param string $frm_text the formula expression in the reference format
+     * @param string $start_maker
+     * @param string $end_maker
+     * @return array with one type of term ids from a given formula text
      */
-    function wrd_ids($frm_text, $user_id): array
+    private function trm_ids(string $frm_text, string $start_maker, string $end_maker): array
     {
-        log_debug($frm_text . ',u' . $user_id);
         $result = array();
 
         $lib = new library();
 
-        // add words to selection
-        $new_wrd_id = $this->get_word_id($frm_text);
-        while ($new_wrd_id > 0) {
-            if (!in_array($new_wrd_id, $result)) {
-                $result[] = $new_wrd_id;
+        // add term id to selection
+        $new_trm_id = $this->get_term_id($frm_text, $start_maker, $end_maker);
+        while ($new_trm_id > 0) {
+            if (!in_array($new_trm_id, $result)) {
+                $result[] = $new_trm_id;
             }
-            $frm_text = $lib->str_right_of($frm_text, expression::WORD_START . $new_wrd_id . expression::WORD_END);
-            $new_wrd_id = $this->get_word_id($frm_text);
+            $frm_text = $lib->str_right_of($frm_text, $start_maker . $new_trm_id . $end_maker);
+            $new_trm_id = $this->get_term_id($frm_text, $start_maker, $end_maker);
         }
 
         log_debug($lib->dsp_array($result));
@@ -1567,27 +1545,39 @@ class formula extends sandbox_typed
     }
 
     /**
-     * extracts an array with the formula ids from a given formula text
+     * @param string $frm_text the formula expression in the reference format
+     * @return array with the word ids from a given formula text
      */
-    function frm_ids($frm_text, $user_id): array
+    function wrd_ids(string $frm_text): array
     {
-        log_debug('->ids (' . $frm_text . ',u' . $user_id . ')');
-        $result = array();
+        return $this->trm_ids($frm_text, expression::WORD_START, expression::WORD_END);
+    }
 
-        $lib = new library();
+    /**
+     * @param string $frm_text the formula expression in the reference format
+     * @return array with the word ids from a given formula text
+     */
+    function trp_ids(string $frm_text): array
+    {
+        return $this->trm_ids($frm_text, expression::TRIPLE_START, expression::TRIPLE_END);
+    }
 
-        // add words to selection
-        $new_frm_id = $this->get_formula_id($frm_text);
-        while ($new_frm_id > 0) {
-            if (!in_array($new_frm_id, $result)) {
-                $result[] = $new_frm_id;
-            }
-            $frm_text = $lib->str_right_of($frm_text, expression::FORMULA_START . $new_frm_id . expression::FORMULA_END);
-            $new_frm_id = $this->get_formula_id($frm_text);
-        }
+    /**
+     * @param string $frm_text the formula expression in the reference format
+     * @return array with the word ids from a given formula text
+     */
+    function vrb_ids(string $frm_text): array
+    {
+        return $this->trm_ids($frm_text, expression::VERB_START, expression::VERB_END);
+    }
 
-        log_debug($lib->dsp_array($result));
-        return $result;
+    /**
+     * @param string $frm_text the formula expression in the reference format
+     * @return array with the formula ids from a given formula text
+     */
+    function frm_ids(string $frm_text): array
+    {
+        return $this->trm_ids($frm_text, expression::FORMULA_START, expression::FORMULA_END);
     }
 
     /**
@@ -1605,11 +1595,17 @@ class formula extends sandbox_typed
         // read the elements from the formula text
         $elm_type_id = $element_type;
         switch ($element_type) {
+            case parameter_type::TRIPLE_ID:
+                $elm_ids = $this->trp_ids($frm_text);
+                break;
+            case parameter_type::VERB_ID:
+                $elm_ids = $this->vrb_ids($frm_text);
+                break;
             case parameter_type::FORMULA_ID:
-                $elm_ids = $this->frm_ids($frm_text, $frm_usr_id);
+                $elm_ids = $this->frm_ids($frm_text);
                 break;
             default:
-                $elm_ids = $this->wrd_ids($frm_text, $frm_usr_id);
+                $elm_ids = $this->wrd_ids($frm_text);
                 break;
         }
         $lib = new library();
@@ -1705,7 +1701,7 @@ class formula extends sandbox_typed
         // refresh the links for the standard formula used if the user has not changed the formula
         $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, 0, $this->user()->id);
 
-        // update verb links of the standard formula
+        // update triple links of the standard formula
         if ($result) {
             $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, 0, $this->user()->id);
         }

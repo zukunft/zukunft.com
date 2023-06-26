@@ -49,6 +49,7 @@ class triple_api extends sandbox_typed_api
     const TN_READ = 'Mathematical constant';
     const TD_READ = 'A mathematical constant that never changes e.g. Pi';
     const TN_PI = 'Pi';
+    const TN_CUBIC_METER = 'm3';
     const TN_PI_NAME = 'Pi (math)';
     const TD_PI = 'ratio of the circumference of a circle to its diameter';
     const TN_ADD = 'System Test Triple';

@@ -58,6 +58,7 @@ class word_api extends sandbox_typed_api
     const TN_ONE = 'one';
     const TN_MIO = 'million';
     const TN_MIO_SHORT = 'mio';
+    const TN_SECOND = 'second';
     const TN_COUNTRY = 'Country';
     const TN_CH = 'Switzerland';
     const TN_DE = 'Germany';
