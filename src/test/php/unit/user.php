@@ -60,10 +60,10 @@ class user_unit_tests
         $test_usr = new user();
         $t->assert_sql_by_id($db_con, $test_usr);
         $t->assert_sql_by_name($db_con, $test_usr);
-        $this->assert_load_sql_email($t, $db_con, $test_usr);
-        $this->assert_load_sql_name_or_email($t, $db_con, $test_usr);
-        $this->assert_load_sql_ip($t, $db_con, $test_usr);
-        $this->assert_load_sql_profile($t, $db_con, $test_usr);
+        $this->assert_sql_by_email($t, $db_con, $test_usr);
+        $this->assert_sql_by_name_or_email($t, $db_con, $test_usr);
+        $this->assert_sql_by_ip($t, $db_con, $test_usr);
+        $this->assert_sql_by_profile($t, $db_con, $test_usr);
 
 
         $t->subheader('API unit tests');
@@ -91,7 +91,7 @@ class user_unit_tests
      * @param object $usr_obj the user sandbox object e.g. a verb
      * @return bool true if all tests are fine
      */
-    function assert_load_sql_email(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
+    function assert_sql_by_email(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -116,7 +116,7 @@ class user_unit_tests
      * @param object $usr_obj the user sandbox object e.g. a verb
      * @return bool true if all tests are fine
      */
-    function assert_load_sql_name_or_email(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
+    function assert_sql_by_name_or_email(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -141,7 +141,7 @@ class user_unit_tests
      * @param object $usr_obj the user sandbox object e.g. a verb
      * @return bool true if all tests are fine
      */
-    function assert_load_sql_ip(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
+    function assert_sql_by_ip(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -166,7 +166,7 @@ class user_unit_tests
      * @param object $usr_obj the user sandbox object e.g. a verb
      * @return bool true if all tests are fine
      */
-    function assert_load_sql_profile(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
+    function assert_sql_by_profile(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

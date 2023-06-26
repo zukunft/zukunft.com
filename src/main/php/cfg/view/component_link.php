@@ -621,10 +621,10 @@ class component_link extends sandbox_link_with_type
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_user_changes(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
-        return parent::usr_cfg_sql($db_con, $class);
+        return parent::load_sql_user_changes($db_con, $class);
     }
 
     /**

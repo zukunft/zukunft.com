@@ -89,7 +89,7 @@ class phrase_list_unit_tests
         $phr_lst = new phrase_list($usr);
         $phr_ids = new phr_ids(array(3, -2, 4, -7));
         //$this->assert_by_ids_sql($phr_ids->lst);
-        $this->assert_names_sql_by_ids($t, $db_con, $phr_lst, $phr_ids);
+        $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
 
         $this->test = $t;
 
@@ -104,7 +104,7 @@ class phrase_list_unit_tests
         $wrd->set(1, word_api::TN_CH);
         $phr_lst->add($wrd->phrase());
         $vrb = $verbs->get(verb::IS_PART_OF);
-        $this->assert_load_sql_linked_phrases(
+        $this->assert_sql_linked_phrases(
             $db_con, $t, $phr_lst, $vrb, word_select_direction::UP
         );
 
@@ -251,7 +251,7 @@ class phrase_list_unit_tests
      * @param phr_ids $ids filled with a list of word ids to be used for the query creation
      * @return bool true if all tests are fine
      */
-    private function assert_names_sql_by_ids(
+    private function assert_sql_names_by_ids(
         test_cleanup $t,
         sql_db $db_con,
         phrase_list $lst,
@@ -278,11 +278,11 @@ class phrase_list_unit_tests
      * @param sql_db $db_con does not need to be connected to a real database
      * @param test_cleanup $t the testing object with the error counting of this test run
      * @param object $usr_obj the user sandbox object e.g. a word
-     * @param int $verb_id to select only words linked with this verb
+     * @param verb|null $vrb to select only words linked with this verb
      * @param string $direction to define the link direction
      * @return bool true if all tests are fine
      */
-    function assert_load_sql_linked_phrases(
+    function assert_sql_linked_phrases(
         sql_db       $db_con,
         test_cleanup $t,
         object       $usr_obj,

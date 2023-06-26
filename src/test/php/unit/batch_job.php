@@ -64,7 +64,7 @@ class batch_job_unit_tests
         // sql to load a list of open batch jobs
         $sys_usr = $t->system_user();
         $job_lst = new batch_job_list($sys_usr);
-        $t->assert_load_list_sql_type($db_con, $job_lst, batch_job_type_list::BASE_IMPORT);
+        $t->assert_sql_list_by_type($db_con, $job_lst, batch_job_type_list::BASE_IMPORT);
 
 
         $t->subheader('API unit tests');

@@ -63,14 +63,7 @@ class result_unit_tests
 
         // check the sql to load a result by the id
         $res = new result($usr);
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $res->load_sql_by_id($db_con, 1);
-        $t->assert_qp($qp, sql_db::POSTGRES);
-
-        // ... and the same for MySQL databases instead of Postgres
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $res->load_sql_by_id($db_con, 1);
-        $t->assert_qp($qp, sql_db::MYSQL);
+        $t->assert_sql_by_id($db_con, $res);
 
         // check the sql to load a result by the phrase group
         $res->reset();

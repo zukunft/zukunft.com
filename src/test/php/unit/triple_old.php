@@ -64,13 +64,13 @@ class triple_unit_tests_old
         $trp = new triple($usr);
         $trp->set_id(1);
         $t->assert_load_sql_obj_vars($db_con, $trp);
-        $t->assert_load_standard_sql($db_con, $trp);
+        $t->assert_sql_standard($db_con, $trp);
 
         // sql to load a triple by name
         $trp = new triple($usr);
         $trp->set_name(triple_api::TN_ZH_COMPANY);
         $t->assert_load_sql_obj_vars($db_con, $trp);
-        $t->assert_load_standard_sql($db_con, $trp);
+        $t->assert_sql_standard($db_con, $trp);
 
         // sql to load a triple by link ids
         $trp = new triple($usr);
@@ -84,10 +84,10 @@ class triple_unit_tests_old
         $trp->verb = $vrb;
         $trp->tob = $wrd_to->phrase();
         $t->assert_load_sql_obj_vars($db_con, $trp);
-        $t->assert_load_standard_sql($db_con, $trp);
+        $t->assert_sql_standard($db_con, $trp);
         $trp->set_id(5);
         $t->assert_not_changed_sql($db_con, $trp);
-        $t->assert_user_config_sql($db_con, $trp);
+        $t->assert_sql_user_changes($db_con, $trp);
 
         // sql to check the usage of a triple
 

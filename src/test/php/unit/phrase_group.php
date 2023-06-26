@@ -162,7 +162,7 @@ class phrase_group_unit_tests
     }
 
     /**
-     * similar to $t->assert_load_sql but calling load_by_group_id_sql instead of load_sql
+     * similar to $t->assert_sql_all but calling load_by_group_id_sql instead of load_sql
      *
      * @param test_cleanup $t the forwarded testing object
      * @param sql_db $db_con does not need to be connected to a real database

@@ -37,18 +37,18 @@ class triple_unit_tests
         $trp = new triple($usr);
         $t->assert_sql_by_id($db_con, $trp);
         $t->assert_sql_by_name($db_con, $trp);
-        $t->assert_load_sql_link($db_con, $trp);
-        $this->assert_load_sql_name_generated($db_con, $trp, $t);
+        $t->assert_sql_by_link($db_con, $trp);
+        $this->assert_sql_by_name_generated($db_con, $trp, $t);
 
         // sql to load the triple by id
         $trp = new triple($usr);
         $trp->set_id(2);
-        $t->assert_load_standard_sql($db_con, $trp);
+        $t->assert_sql_standard($db_con, $trp);
 
         // sql to load the triple by name
         $trp = new triple($usr);
         $trp->set_name(triple_api::TN_PI);
-        $t->assert_load_standard_sql($db_con, $trp);
+        $t->assert_sql_standard($db_con, $trp);
 
 
         $t->subheader('API unit tests');
@@ -83,7 +83,7 @@ class triple_unit_tests
      * @param triple $trp the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_load_sql_name_generated(sql_db $db_con, triple $trp, test_cleanup $t): bool
+    function assert_sql_by_name_generated(sql_db $db_con, triple $trp, test_cleanup $t): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

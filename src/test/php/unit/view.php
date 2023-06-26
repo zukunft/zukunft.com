@@ -62,7 +62,7 @@ class view_unit_tests
         $dsp = new view($usr);
         $t->assert_sql_by_id($db_con, $dsp);
         $t->assert_sql_by_name($db_con, $dsp);
-        $t->assert_load_sql_code_id($db_con, $dsp);
+        $t->assert_sql_by_code_id($db_con, $dsp);
 
 
         $t->subheader('SQL statement tests');
@@ -71,14 +71,14 @@ class view_unit_tests
         $dsp = new view($usr);
         $dsp->set_id(2);
         //$t->assert_load_sql($db_con, $dsp);
-        $t->assert_load_standard_sql($db_con, $dsp);
-        $t->assert_user_config_sql($db_con, $dsp);
+        $t->assert_sql_standard($db_con, $dsp);
+        $t->assert_sql_user_changes($db_con, $dsp);
 
         // sql to load the view by name
         $dsp = new view($usr);
         $dsp->set_name(view_api::TN_ADD);
         //$t->assert_load_sql($db_con, $dsp);
-        $t->assert_load_standard_sql($db_con, $dsp);
+        $t->assert_sql_standard($db_con, $dsp);
 
         // sql to load the view components
         $dsp = new view($usr);

@@ -68,10 +68,10 @@ class change_log_unit_tests
         $t->subheader('SQL statement tests');
 
         $log = new change_log_named($usr);
-        $t->assert_load_sql_user($db_con, $log);
+        $t->assert_sql_by_user($db_con, $log);
 
         $log = new change_log_link($usr);
-        $t->assert_load_sql_user($db_con, $log);
+        $t->assert_sql_by_user($db_con, $log);
 
         // sql to load the word by id
         $log_dsp = new user_log_display($usr);
@@ -88,25 +88,11 @@ class change_log_unit_tests
         // sql to load a log entry by field and row id
         // TODO check that user specific changes are included in the list of changes
         $log = new change_log_named($usr);
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $log->load_sql_by_field_row($db_con, 1, 2);
-        $t->assert_qp($qp, $db_con->db_type);
-
-        // ... and check the MySQL query syntax
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $log->load_sql_by_field_row($db_con, 1, 2);
-        $t->assert_qp($qp, $db_con->db_type);
+        $this->assert_sql_named_by_field_row($t, $db_con, $log);
 
         // sql to load a log entry by field and row id
         $log = new change_log_link($usr);
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $log->load_sql_by_vars($db_con, 1);
-        $t->assert_qp($qp, $db_con->db_type);
-
-        // ... and check the MySQL query syntax
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $log->load_sql_by_vars($db_con, 1);
-        $t->assert_qp($qp, $db_con->db_type);
+        $this->assert_sql_link_by_table($t, $db_con, $log);
 
         // compare the new and the old query creation
         $log = new change_log_named($usr);
@@ -125,50 +111,10 @@ class change_log_unit_tests
         // sql to load a list of log entry by word
         $db_con->set_usr($usr->id());
         $log_lst = new change_log_list();
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $log_lst->load_sql_obj_fld(
-            $db_con,
-            change_log_table::WORD,
-            change_log_field::FLD_WORD_VIEW,
-            'dsp_of_wrd',
-            $wrd->id(),
-            $t->usr1);
-        $t->assert_qp($qp, $db_con->db_type);
-
-        // ... and check the MySQL query syntax
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $log_lst->load_sql_obj_fld(
-            $db_con,
-            change_log_table::WORD,
-            change_log_field::FLD_WORD_VIEW,
-            'dsp_of_wrd',
-            $wrd->id(),
-            $t->usr1);
-        $t->assert_qp($qp, $db_con->db_type);
-
-        // sql to load a list of log entry by phrase
-        $db_con->set_usr($usr->id());
-        $log_lst = new change_log_list();
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $log_lst->load_sql_obj_fld(
-            $db_con,
-            change_log_table::TRIPLE,
-            change_log_field::FLD_TRIPLE_VIEW,
-            'dsp_of_trp',
-            $trp->id(),
-            $t->usr1);
-        $t->assert_qp($qp, $db_con->db_type);
-
-        // ... and check the MySQL query syntax
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $log_lst->load_sql_obj_fld(
-            $db_con,
-            change_log_table::TRIPLE,
-            change_log_field::FLD_TRIPLE_VIEW,
-            'dsp_of_trp',
-            $trp->id(),
-            $t->usr1);
-        $t->assert_qp($qp, $db_con->db_type);
+        $this->assert_sql_list_by_obj_field($t, $db_con, $log_lst,
+            change_log_table::WORD, change_log_field::FLD_WORD_VIEW);
+        $this->assert_sql_list_by_obj_field($t, $db_con, $log_lst,
+            change_log_table::TRIPLE, change_log_field::FLD_TRIPLE_VIEW);
 
 
         $t->subheader('API unit tests');
@@ -176,6 +122,90 @@ class change_log_unit_tests
         $log_lst = $t->dummy_change_log_list_named();
         $t->assert_api($log_lst);
 
+    }
+
+    /**
+     * check the load SQL statements to get a named log entry by field row
+     * for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param change_log_named $log the user sandbox object e.g. a word
+     */
+    private function assert_sql_named_by_field_row(test_cleanup $t, sql_db $db_con, change_log_named $log): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $log->load_sql_by_field_row($db_con, 1, 2);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $log->load_sql_by_field_row($db_con, 1, 2);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * check the load SQL statements to get a link log entry by table
+     * for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param change_log_link $log the user sandbox object e.g. a word
+     */
+    private function assert_sql_link_by_table(test_cleanup $t, sql_db $db_con, change_log_link $log): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $log->load_sql_by_vars($db_con, 1);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $log->load_sql_by_vars($db_con, 1);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * check the load SQL statements to get a list of log entries by object field
+     * for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param change_log_list $log_lst the user sandbox object e.g. a word
+     */
+    private function assert_sql_list_by_obj_field(
+        test_cleanup $t,
+        sql_db $db_con,
+        change_log_list $log_lst,
+        string $table_name,
+        string $field_name): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $log_lst->load_sql_obj_fld(
+            $db_con,
+            $table_name,
+            $field_name,
+            1,
+            $t->usr1);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $log_lst->load_sql_obj_fld(
+                $db_con,
+                $table_name,
+                $field_name,
+                1,
+                $t->usr1);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
     }
 
 }

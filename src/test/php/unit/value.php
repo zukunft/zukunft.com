@@ -64,10 +64,10 @@ class value_unit_tests
 
         $val = new value($usr);
         $t->assert_sql_by_id($db_con, $val);
-        $this->assert_load_sql_grp($t, $db_con, $val);
+        $this->assert_sql_by_grp($t, $db_con, $val);
 
         // ... and the related default value
-        $t->assert_load_standard_sql($db_con, $val);
+        $t->assert_sql_standard($db_con, $val);
 
         $t->subheader('Database query creation tests');
 
@@ -80,7 +80,7 @@ class value_unit_tests
         // ... and to check if any user has uses another than the default value
         $val->set_id(1);
         $t->assert_not_changed_sql($db_con, $val);
-        $t->assert_user_config_sql($db_con, $val);
+        $t->assert_sql_user_changes($db_con, $val);
 
 
         $t->subheader('Im- and Export tests');
@@ -119,7 +119,7 @@ class value_unit_tests
         $t->assert_load_sql_obj_vars($db_con, $vts);
 
         // ... and the related default time series
-        $t->assert_load_standard_sql($db_con, $vts);
+        $t->assert_sql_standard($db_con, $vts);
 
         // sql to load a user specific time series by phrase group id
         $vts->reset($usr);
@@ -136,7 +136,7 @@ class value_unit_tests
      * @param object $usr_obj the user sandbox object e.g. a verb
      * @return bool true if all tests are fine
      */
-    function assert_load_sql_grp(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
+    function assert_sql_by_grp(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
     {
         global $usr;
 

@@ -64,56 +64,15 @@ class formula_list_unit_tests
 
         // sql to load a list of formulas by the id
         $frm_lst = new formula_list($usr);
-        $t->assert_load_sql_ids($db_con, $frm_lst);
-        $this->assert_load_sql_by_word_ref($t, $db_con, $frm_lst);
-        $this->assert_load_sql_by_triple_ref($t, $db_con, $frm_lst);
-        $this->assert_load_sql_by_verb_ref($t, $db_con, $frm_lst);
-        $this->assert_load_sql_by_formula_ref($t, $db_con, $frm_lst);
-
-        // check the Postgres query syntax to load a list of formulas by the names
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $frm_lst->load_sql_by_names($db_con, array(formula_api::TN_INCREASE, formula_api::TN_ADD));
-        $t->assert_qp($qp, sql_db::POSTGRES);
-
-        // ... same for MySQL
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $frm_lst->load_sql_by_names($db_con, array(formula_api::TN_INCREASE, formula_api::TN_ADD));
-        $t->assert_qp($qp, sql_db::MYSQL);
-
-        // check the Postgres query syntax to load a list of formulas by phrase
-        $wrd = new word($usr);
-        $wrd->set(1,word_api::TN_ADD);
-        $phr = $wrd->phrase();
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $frm_lst->load_sql_by_phr($db_con, $phr);
-        $t->assert_qp($qp, sql_db::POSTGRES);
-
-        // ... same for MySQL
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $frm_lst->load_sql_by_phr($db_con, $phr);
-        $t->assert_qp($qp, sql_db::MYSQL);
-
-        // check the Postgres query syntax to load a list of formulas by phrase list
-        $phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $frm_lst->load_sql_by_phr_lst($db_con, $phr_lst);
-        $t->assert_qp($qp, sql_db::POSTGRES);
-
-        // ... same for MySQL
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $frm_lst->load_sql_by_phr_lst($db_con, $phr_lst);
-        $t->assert_qp($qp, sql_db::MYSQL);
-
-        // check the Postgres query syntax to load a page of all formulas
-        $frm_lst = new formula_list($usr);
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $frm_lst->load_sql_all($db_con, 10, 2);
-        $t->assert_qp($qp, sql_db::POSTGRES);
-
-        // ... same for MySQL
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $frm_lst->load_sql_all($db_con, 10, 2);
-        $t->assert_qp($qp, sql_db::MYSQL);
+        $t->assert_sql_by_ids($db_con, $frm_lst);
+        $t->assert_sql_by_names($db_con, $frm_lst, array(formula_api::TN_INCREASE, formula_api::TN_ADD));
+        $t->assert_sql_all_paged($db_con, $frm_lst);
+        $this->assert_sql_by_word_ref($t, $db_con, $frm_lst);
+        $this->assert_sql_by_triple_ref($t, $db_con, $frm_lst);
+        $this->assert_sql_by_verb_ref($t, $db_con, $frm_lst);
+        $this->assert_sql_by_formula_ref($t, $db_con, $frm_lst);
+        $this->assert_sql_by_phr($t, $db_con, $frm_lst);
+        $this->assert_sql_by_phr_lst($t, $db_con, $frm_lst);
 
 
         $t->subheader('API unit tests');
@@ -137,14 +96,14 @@ class formula_list_unit_tests
     /**
      * check the load SQL statements creation to get the formulas that
      * use a given word
-     * similar to assert_load_sql of the test_base class
+     * similar to assert_sql_all of the test_base class
      *
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param formula_list $frm_lst the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_load_sql_by_word_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
+    function assert_sql_by_word_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
     {
         // prepare
         $wrd = new word($t->usr1);
@@ -167,14 +126,14 @@ class formula_list_unit_tests
     /**
      * check the load SQL statements creation to get the formulas that
      * use a given triple
-     * similar to assert_load_sql of the test_base class
+     * similar to assert_sql_all of the test_base class
      *
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param formula_list $frm_lst the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_load_sql_by_triple_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
+    function assert_sql_by_triple_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
     {
         // prepare
         $trp = new triple($t->usr1);
@@ -197,14 +156,14 @@ class formula_list_unit_tests
     /**
      * check the load SQL statements creation to get the formulas that
      * use a given verb
-     * similar to assert_load_sql of the test_base class
+     * similar to assert_sql_all of the test_base class
      *
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param formula_list $frm_lst the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_load_sql_by_verb_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
+    function assert_sql_by_verb_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
     {
         // prepare
         $vrb = new verb();
@@ -227,14 +186,14 @@ class formula_list_unit_tests
     /**
      * check the load SQL statements creation to get the formulas that
      * use a given formula
-     * similar to assert_load_sql of the test_base class
+     * similar to assert_sql_all of the test_base class
      *
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param formula_list $frm_lst the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_load_sql_by_formula_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
+    function assert_sql_by_formula_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
     {
         // prepare
         $frm = new formula($t->usr1);
@@ -249,6 +208,66 @@ class formula_list_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $frm_lst->load_sql_by_formula_ref($db_con, $frm);
+            $result = $t->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the load SQL statements creation to get the formulas that
+     * use value related to the given phrase
+     * similar to assert_sql_all of the test_base class
+     *
+     * @param test_cleanup $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param formula_list $frm_lst the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_by_phr(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
+    {
+        // prepare
+        $wrd = new word($t->usr1);
+        $wrd->set(1,word_api::TN_ADD);
+        $phr = $wrd->phrase();
+
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $frm_lst->load_sql_by_phr($db_con, $phr);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $frm_lst->load_sql_by_phr($db_con, $phr);
+            $result = $t->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the load SQL statements creation to get the formulas that
+     * use value related to the given phrase list
+     * similar to assert_sql_all of the test_base class
+     *
+     * @param test_cleanup $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param formula_list $frm_lst the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_by_phr_lst(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
+    {
+        // prepare
+        $phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
+
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $frm_lst->load_sql_by_phr_lst($db_con, $phr_lst);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $frm_lst->load_sql_by_phr_lst($db_con, $phr_lst);
             $result = $t->assert_qp($qp, $db_con->db_type);
         }
         return $result;

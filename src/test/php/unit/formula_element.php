@@ -40,7 +40,7 @@ use cfg\sql_db;
 
 class formula_element_unit_tests
 {
-    function run(test_cleanup $t)
+    function run(test_cleanup $t): void
     {
 
         global $usr;
@@ -94,7 +94,7 @@ class formula_element_unit_tests
      * @param int $frm_id id of the formula to be used for the query creation
      * @return void
      */
-    private function assert_sql_by_frm_id(test_cleanup $t, sql_db $db_con, formula_element_list $lst, int $frm_id)
+    private function assert_sql_by_frm_id(test_cleanup $t, sql_db $db_con, formula_element_list $lst, int $frm_id): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -115,13 +115,14 @@ class formula_element_unit_tests
      * @param sql_db $db_con the test database connection
      * @param formula_element_list $lst the empty formula element list object
      * @param int $frm_id id of the formula to be used for the query creation
+     * @param int $elm_type_id
      * @return void
      */
     private function assert_sql_by_frm_and_type_id(test_cleanup         $t,
                                                    sql_db               $db_con,
                                                    formula_element_list $lst,
                                                    int                  $frm_id,
-                                                   int                  $elm_type_id)
+                                                   int                  $elm_type_id): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

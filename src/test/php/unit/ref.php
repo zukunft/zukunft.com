@@ -63,7 +63,7 @@ class ref_unit_tests
 
         // sql to load the ref types
         $ref_type_list = new ref_type_list();
-        $t->assert_load_sql_all($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);
+        $t->assert_sql_all($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);
 
         $t->subheader('Im- and Export tests');
         $t->assert_json_file(new ref($usr), $json_file);
@@ -85,24 +85,24 @@ class ref_unit_tests
         $src = new source($usr);
         $t->assert_sql_by_id($db_con, $src);
         $t->assert_sql_by_name($db_con, $src);
-        $t->assert_load_sql_code_id($db_con, $src);
+        $t->assert_sql_by_code_id($db_con, $src);
 
         // sql to load a source by id
         $src = new source($usr);
         $src->set_id(4);
-        $t->assert_load_standard_sql($db_con, $src);
+        $t->assert_sql_standard($db_con, $src);
 
         // sql to load a source by name
         $src = new source($usr);
         $src->set_name(source_api::TN_READ);
-        $t->assert_load_standard_sql($db_con, $src);
+        $t->assert_sql_standard($db_con, $src);
         $src->set_id(5);
         $t->assert_not_changed_sql($db_con, $src);
-        $t->assert_user_config_sql($db_con, $src);
+        $t->assert_sql_user_changes($db_con, $src);
 
         // sql to load the source types
         $source_type_list = new source_type_list();
-        $t->assert_load_sql_all($db_con, $source_type_list, sql_db::TBL_SOURCE_TYPE);
+        $t->assert_sql_all($db_con, $source_type_list, sql_db::TBL_SOURCE_TYPE);
 
         $t->subheader('Im- and Export tests');
         $t->assert_json_file(new source($usr), $json_file);

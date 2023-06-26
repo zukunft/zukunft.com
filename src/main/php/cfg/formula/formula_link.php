@@ -132,7 +132,7 @@ class formula_link extends sandbox_link_with_type
      * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
      * @return sql_par the SQL statement base on the parameters set in $this
      */
-    function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_user_changes(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_FORMULA_LINK, true);
         $qp = new sql_par($class);
@@ -541,7 +541,7 @@ class formula_link extends sandbox_link_with_type
 
         if (!$this->has_usr_cfg()) {
             // check again if there ist not yet a record
-            $qp = $this->usr_cfg_sql($db_con);
+            $qp = $this->load_sql_user_changes($db_con);
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[formula_link::FLD_ID];

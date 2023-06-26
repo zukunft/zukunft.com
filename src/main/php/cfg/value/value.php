@@ -1401,7 +1401,7 @@ class value extends sandbox_value
             log_debug('value->add_usr_cfg for "' . $this->id() . ' und user ' . $this->user()->name);
 
             // check again if there ist not yet a record
-            $qp = $this->usr_cfg_sql($db_con);
+            $qp = $this->load_sql_user_changes($db_con);
             $db_con->usr_id = $this->user()->id();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
@@ -1429,10 +1429,10 @@ class value extends sandbox_value
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_user_changes(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_VALUE);
-        return parent::usr_cfg_sql($db_con, $class);
+        return parent::load_sql_user_changes($db_con, $class);
     }
 
     /**

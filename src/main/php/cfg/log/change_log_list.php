@@ -109,7 +109,6 @@ class change_log_list extends base_list
             $db_con,
             change_log_table::WORD,
             $field_name,
-            $field_name . '_of_wrd',
             $wrd->id(),
             $usr);
         return $this->load($qp);
@@ -129,7 +128,6 @@ class change_log_list extends base_list
             $db_con,
             change_log_table::VERB,
             $field_name,
-            $field_name . '_of_vrb',
             $trp->id(),
             $usr);
         return $this->load($qp);
@@ -149,7 +147,6 @@ class change_log_list extends base_list
             $db_con,
             change_log_table::TRIPLE,
             $field_name,
-            $field_name . '_of_trp',
             $trp->id(),
             $usr);
         return $this->load($qp);
@@ -169,7 +166,6 @@ class change_log_list extends base_list
             $db_con,
             change_log_table::VALUE,
             $field_name,
-            $field_name . '_of_val',
             $val->id(),
             $usr);
         return $this->load($qp);
@@ -189,7 +185,6 @@ class change_log_list extends base_list
             $db_con,
             change_log_table::FORMULA,
             $field_name,
-            $field_name . '_of_frm',
             $trp->id(),
             $usr);
         return $this->load($qp);
@@ -209,7 +204,6 @@ class change_log_list extends base_list
             $db_con,
             change_log_table::SOURCE,
             $field_name,
-            $field_name . '_of_src',
             $src->id(),
             $usr);
         return $this->load($qp);
@@ -229,7 +223,6 @@ class change_log_list extends base_list
             $db_con,
             change_log_table::VIEW,
             $field_name,
-            $field_name . '_of_dsp',
             $dsp->id(),
             $usr);
         return $this->load($qp);
@@ -249,7 +242,6 @@ class change_log_list extends base_list
             $db_con,
             change_log_table::VIEW_COMPONENT,
             $field_name,
-            $field_name . '_of_cmp',
             $cmp->id(),
             $usr);
         return $this->load($qp);
@@ -260,6 +252,47 @@ class change_log_list extends base_list
      * load internals
      */
 
+    private function table_field_to_query_name(string $table_name, string $field_name): string
+    {
+        $result = '';
+        if ($table_name == change_log_table::WORD) {
+            if ($field_name == change_log_field::FLD_WORD_VIEW) {
+                $result = 'dsp_of_wrd';
+            } else {
+                $result = $field_name . '_of_wrd';
+                log_info('field name ' . $field_name . ' not expected for table ' . $table_name);
+            }
+        } elseif ($table_name == change_log_table::TRIPLE) {
+            if ($field_name == change_log_field::FLD_TRIPLE_VIEW) {
+                $result = 'dsp_of_trp';
+            } else {
+                $result = $field_name . '_of_trp';
+                log_info('field name ' . $field_name . ' not expected for table ' . $table_name);
+            }
+        } elseif ($table_name == change_log_table::VERB) {
+            $result = $field_name . '_of_vrb';
+            log_info('field name ' . $field_name . ' not expected for table ' . $table_name);
+        } elseif ($table_name == change_log_table::VALUE) {
+            $result = $field_name . '_of_val';
+            log_info('field name ' . $field_name . ' not expected for table ' . $table_name);
+        } elseif ($table_name == change_log_table::FORMULA) {
+            $result = $field_name . '_of_frm';
+            log_info('field name ' . $field_name . ' not expected for table ' . $table_name);
+        } elseif ($table_name == change_log_table::SOURCE) {
+            $result = $field_name . '_of_src';
+            log_info('field name ' . $field_name . ' not expected for table ' . $table_name);
+        } elseif ($table_name == change_log_table::VIEW) {
+            $result = $field_name . '_of_dsp';
+            log_info('field name ' . $field_name . ' not expected for table ' . $table_name);
+        } elseif ($table_name == change_log_table::VIEW_COMPONENT) {
+            $result = $field_name . '_of_cmp';
+            log_info('field name ' . $field_name . ' not expected for table ' . $table_name);
+        } else {
+            log_err('table name ' . $table_name . ' not expected');
+        }
+        return $result;
+    }
+
     /**
      * prepare sql to get the changes of one field of one user sandbox object
      * e.g. the when and how a user has changed the way a word should be shown in the user interface
@@ -268,15 +301,14 @@ class change_log_list extends base_list
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $table_name the table name of the user sandbox object e.g. 'word'
      * @param string $field_name the field that has been change e.g. 'view'
-     * @param string $query_ext the name extension to make the query name unique
      * @param int $id the database id of the user sandbox object that has been changed
+     * @param user $usr
      * @return sql_par
      */
     function load_sql_obj_fld(
         sql_db $db_con,
         string $table_name,
         string $field_name,
-        string $query_ext,
         int    $id,
         user   $usr): sql_par
     {
@@ -288,6 +320,7 @@ class change_log_list extends base_list
         $table_field_name = $table_id . $field_name;
         $field_id = $change_log_fields->id($table_field_name);
         $log_named = new change_log_named($usr);
+        $query_ext = $this->table_field_to_query_name($table_name, $field_name);
         $qp = $log_named->load_sql($db_con, $query_ext, self::class);
         $db_con->set_page($this->limit, $this->offset());
         $db_con->add_par(sql_db::PAR_INT, $field_id);

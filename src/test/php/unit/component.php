@@ -70,15 +70,15 @@ class component_unit_tests
         // sql to load the view components by id
         $cmp = new component($usr);
         $cmp->set_id(2);
-        //$t->assert_load_sql($db_con, $cmp);
-        $t->assert_load_standard_sql($db_con, $cmp);
-        $t->assert_user_config_sql($db_con, $cmp);
+        //$t->assert_sql_all($db_con, $cmp);
+        $t->assert_sql_standard($db_con, $cmp);
+        $t->assert_sql_user_changes($db_con, $cmp);
 
         // sql to load the view components by name
         $cmp = new component($usr);
         $cmp->set_name(view_api::TN_ADD);
-        //$t->assert_load_sql($db_con, $cmp);
-        $t->assert_load_standard_sql($db_con, $cmp);
+        //$t->assert_sql_all($db_con, $cmp);
+        $t->assert_sql_standard($db_con, $cmp);
 
 
         $t->subheader('Convert tests');

@@ -53,7 +53,7 @@ class formula_link_unit_tests
         $t->resource_path = 'db/formula/';
         $usr->set_id(1);
 
-        // TODO use assert_load_sql idf possible
+        // TODO use assert_sql_all if possible
 
         $t->header('Unit tests of the formula link class (src/main/php/model/formula/formula_link.php)');
 
@@ -63,7 +63,7 @@ class formula_link_unit_tests
         // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
         $flk = new formula_link($usr);
         $t->assert_sql_by_id($db_con, $flk);
-        $t->assert_load_sql_link($db_con, $flk);
+        $t->assert_sql_by_link($db_con, $flk);
 
 
         $t->subheader('SQL statement tests');
@@ -87,7 +87,7 @@ class formula_link_unit_tests
 
         // sql to load the user formula link by id
         $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $lnk->usr_cfg_sql($db_con)->sql;
+        $created_sql = $lnk->load_sql_user_changes($db_con)->sql;
         $expected_sql = $t->file('db/formula/formula_link_by_id_e_user.sql');
         $t->assert('formula_link->load_user_sql by formula link id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
@@ -125,15 +125,31 @@ class formula_link_unit_tests
 
         // sql to load the formula link list by formula id
         $frm_lnk_lst = new formula_link_list($usr);
+        $this->assert_sql_by_frm_id($t, $db_con, $frm_lnk_lst);
+
+    }
+
+    /**
+     * check the load SQL statements to get a named log entry by field row
+     * for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param formula_link_list $frm_lnk
+     */
+    private function assert_sql_by_frm_id(test_cleanup $t, sql_db $db_con, formula_link_list $frm_lnk): void
+    {
+        // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $frm_lnk_lst->load_sql_by_frm_id($db_con, 7);
-        $t->assert_qp($qp, sql_db::POSTGRES);
+        $qp = $frm_lnk->load_sql_by_frm_id($db_con, 7);
+        $result = $t->assert_qp($qp, $db_con->db_type);
 
-        // ... and for MySQL
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $frm_lnk_lst->load_sql_by_frm_id($db_con, 7);
-        $t->assert_qp($qp, sql_db::MYSQL);
-
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $frm_lnk->load_sql_by_frm_id($db_con, 7);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
     }
 
 }

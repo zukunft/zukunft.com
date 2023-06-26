@@ -530,29 +530,6 @@ class formula extends sandbox_typed
     }
 
     /**
-     * create an SQL statement to retrieve all user specific changes of this formula
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_user_sql(sql_db $db_con): sql_par
-    {
-        $lib = new library();
-        $class = $lib->class_to_name(self::class);
-        $db_con->set_type(sql_db::TBL_FORMULA, true);
-        $qp = new sql_par($class);
-        $qp->name = $class . '_user_sandbox';
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
-        $db_con->set_fields(array_merge(array(sandbox::FLD_USER), self::FLD_NAMES_USR, self::FLD_NAMES_NUM_USR));
-        $db_con->add_par(sql_db::PAR_INT, strval($this->id));
-        $qp->sql = $db_con->select_by_field(self::FLD_ID);
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
-    /**
      * load the corresponding name word for the formula name
      * @param bool $with_automatic_error_fixing to add any missing words automatically
      * @return bool true if the word has been loaded
@@ -1717,7 +1694,7 @@ class formula extends sandbox_typed
         }
 
         // refresh the links for the user specific formula
-        $qp = $this->load_user_sql($db_con);
+        $qp = $this->load_sql_user_changes_frm($db_con);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
@@ -1961,20 +1938,45 @@ class formula extends sandbox_typed
     }
 
     /**
+     * create an SQL statement to retrieve all user specific changes of this formula
+     * TODO combine with load_sql_user_changes ?
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_user_changes_frm(sql_db $db_con, string $class = self::class): sql_par
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($class);
+        $db_con->set_type(sql_db::TBL_FORMULA, true);
+        $qp = new sql_par($class);
+        $qp->name = $class . '_user_sandbox';
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->user()->id);
+        $db_con->set_fields(array_merge(array(sandbox::FLD_USER), self::FLD_NAMES_USR, self::FLD_NAMES_NUM_USR));
+        $db_con->add_par(sql_db::PAR_INT, strval($this->id));
+        $qp->sql = $db_con->select_by_field(self::FLD_ID);
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
      * create an SQL statement to retrieve the user changes of the current formula
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function usr_cfg_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_user_changes(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_FORMULA);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
         ));
-        return parent::usr_cfg_sql($db_con, $class);
+        return parent::load_sql_user_changes($db_con, $class);
     }
 
     /**

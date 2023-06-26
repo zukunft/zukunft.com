@@ -70,8 +70,8 @@ class term_list_unit_tests
         $t->subheader('term list sql tests');
 
         $lst = $this->new_list();
-        $t->assert_load_sql_trm_ids($db_con, $lst);
-        $t->assert_load_sql_like($db_con, $lst);
+        $t->assert_sql_trm_ids($db_con, $lst);
+        $t->assert_sql_like($db_con, $lst);
 
 
         $t->subheader('API unit tests');

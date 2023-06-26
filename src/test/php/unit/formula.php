@@ -75,27 +75,17 @@ class formula_unit_tests
         // sql to load the formula by id
         $frm = new formula($usr);
         $frm->set_id(2);
-        //$t->assert_load_sql($db_con, $frm);
-        $t->assert_load_standard_sql($db_con, $frm);
+        //$t->assert_sql_all($db_con, $frm);
+        $t->assert_sql_standard($db_con, $frm);
         $t->assert_not_changed_sql($db_con, $frm);
-        $t->assert_user_config_sql($db_con, $frm);
+        $t->assert_sql_user_changes($db_con, $frm);
+        $this->assert_sql_user_changes_frm($t, $db_con, $frm);
 
         // sql to load the formula by name
         $frm = new formula($usr);
         $frm->set_name(formula_api::TF_READ_SCALE_MIO);
-        //$t->assert_load_sql($db_con, $frm);
-        $t->assert_load_standard_sql($db_con, $frm);
-
-
-        // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $frm->load_user_sql($db_con);
-        $t->assert_qp($qp, sql_db::POSTGRES);
-
-        // check the MySQL query syntax
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $frm->load_user_sql($db_con);
-        $t->assert_qp($qp, sql_db::MYSQL);
+        //$t->assert_sql_all($db_con, $frm);
+        $t->assert_sql_standard($db_con, $frm);
 
 
         $t->subheader('Im- and Export tests');
@@ -164,6 +154,28 @@ class formula_unit_tests
             value_api::TV_CH_INHABITANTS_2019_IN_MIO;
         //$t->assert('get numbers for formula ' . $frm->dsp_id() . ' based on term list ' . $trm_lst->dsp_id(), $result, $target);
 
+    }
+
+    /**
+     * TODO check the diff to assert_sql_user_changes
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param formula $frm the user sandbox object e.g. a word
+     */
+    private function assert_sql_user_changes_frm(test_cleanup $t, sql_db $db_con, formula $frm): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $frm->load_sql_user_changes_frm($db_con);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $frm->load_sql_user_changes_frm($db_con);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
     }
 
 }
