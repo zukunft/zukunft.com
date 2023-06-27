@@ -101,9 +101,8 @@ class formula_list_unit_tests
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param formula_list $frm_lst the user sandbox object e.g. a word
-     * @return bool true if all tests are fine
      */
-    function assert_sql_by_word_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
+    private function assert_sql_by_word_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): void
     {
         // prepare
         $wrd = new word($t->usr1);
@@ -118,9 +117,8 @@ class formula_list_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $frm_lst->load_sql_by_word_ref($db_con, $wrd);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
     /**
@@ -131,9 +129,8 @@ class formula_list_unit_tests
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param formula_list $frm_lst the user sandbox object e.g. a word
-     * @return bool true if all tests are fine
      */
-    function assert_sql_by_triple_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
+    private function assert_sql_by_triple_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): void
     {
         // prepare
         $trp = new triple($t->usr1);
@@ -148,9 +145,8 @@ class formula_list_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $frm_lst->load_sql_by_triple_ref($db_con, $trp);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
     /**
@@ -161,9 +157,8 @@ class formula_list_unit_tests
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param formula_list $frm_lst the user sandbox object e.g. a word
-     * @return bool true if all tests are fine
      */
-    function assert_sql_by_verb_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
+    private function assert_sql_by_verb_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): void
     {
         // prepare
         $vrb = new verb();
@@ -178,9 +173,8 @@ class formula_list_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $frm_lst->load_sql_by_verb_ref($db_con, $vrb);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
     /**
@@ -191,9 +185,8 @@ class formula_list_unit_tests
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param formula_list $frm_lst the user sandbox object e.g. a word
-     * @return bool true if all tests are fine
      */
-    function assert_sql_by_formula_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
+    private function assert_sql_by_formula_ref(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): void
     {
         // prepare
         $frm = new formula($t->usr1);
@@ -208,9 +201,8 @@ class formula_list_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $frm_lst->load_sql_by_formula_ref($db_con, $frm);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
     /**
@@ -221,9 +213,8 @@ class formula_list_unit_tests
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param formula_list $frm_lst the user sandbox object e.g. a word
-     * @return bool true if all tests are fine
      */
-    function assert_sql_by_phr(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
+    private function assert_sql_by_phr(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): void
     {
         // prepare
         $wrd = new word($t->usr1);
@@ -239,9 +230,8 @@ class formula_list_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $frm_lst->load_sql_by_phr($db_con, $phr);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
     /**
@@ -252,9 +242,8 @@ class formula_list_unit_tests
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param formula_list $frm_lst the user sandbox object e.g. a word
-     * @return bool true if all tests are fine
      */
-    function assert_sql_by_phr_lst(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): bool
+    private function assert_sql_by_phr_lst(test_cleanup $t, sql_db $db_con, formula_list $frm_lst): void
     {
         // prepare
         $phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
@@ -268,9 +257,8 @@ class formula_list_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $frm_lst->load_sql_by_phr_lst($db_con, $phr_lst);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
 }

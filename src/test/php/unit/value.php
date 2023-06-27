@@ -134,9 +134,8 @@ class value_unit_tests
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a verb
-     * @return bool true if all tests are fine
      */
-    function assert_sql_by_grp(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
+    private function assert_sql_by_grp(test_cleanup $t, sql_db $db_con, object $usr_obj): void
     {
         global $usr;
 
@@ -152,9 +151,8 @@ class value_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_grp($db_con, $phr_grp, $usr_obj::class);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
 }

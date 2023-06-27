@@ -249,13 +249,12 @@ class phrase_list_unit_tests
      * @param sql_db $db_con the test database connection
      * @param phrase_list $lst the empty phrase list object
      * @param phr_ids $ids filled with a list of word ids to be used for the query creation
-     * @return bool true if all tests are fine
      */
     private function assert_sql_names_by_ids(
         test_cleanup $t,
         sql_db $db_con,
         phrase_list $lst,
-        phr_ids $ids): bool
+        phr_ids $ids): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -266,9 +265,8 @@ class phrase_list_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $lst->load_names_sql_by_ids($db_con, $ids);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
     /**
@@ -280,14 +278,13 @@ class phrase_list_unit_tests
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param verb|null $vrb to select only words linked with this verb
      * @param string $direction to define the link direction
-     * @return bool true if all tests are fine
      */
-    function assert_sql_linked_phrases(
+    private function assert_sql_linked_phrases(
         sql_db       $db_con,
         test_cleanup $t,
         object       $usr_obj,
         ?verb        $vrb,
-        string       $direction): bool
+        string       $direction): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -298,9 +295,8 @@ class phrase_list_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_linked_phrases($db_con, $vrb, $direction);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
 }

@@ -92,10 +92,10 @@ class verb_unit_tests
         $vrb_lst = new verb_list($usr);
         $phr = new phrase($usr);
         $phr->set_id(5);
-        $this->assert_load_by_linked_phrases_sql($t, $db_con, $vrb_lst, $phr, word_select_direction::UP);
+        $this->assert_sql_by_linked_phrases($t, $db_con, $vrb_lst, $phr, word_select_direction::UP);
 
         // ... same for direction down
-        $this->assert_load_by_linked_phrases_sql($t, $db_con, $vrb_lst, $phr, word_select_direction::DOWN);
+        $this->assert_sql_by_linked_phrases($t, $db_con, $vrb_lst, $phr, word_select_direction::DOWN);
 
     }
 
@@ -108,7 +108,7 @@ class verb_unit_tests
      * @param phrase $phr the phrase used for testing
      * @param string $direction
      */
-    private function assert_load_by_linked_phrases_sql(
+    private function assert_sql_by_linked_phrases(
         test_cleanup $t, sql_db $db_con, verb_list $vrb_lst, phrase $phr, string $direction
     ): void
     {

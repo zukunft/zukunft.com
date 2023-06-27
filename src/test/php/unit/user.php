@@ -89,9 +89,8 @@ class user_unit_tests
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a verb
-     * @return bool true if all tests are fine
      */
-    function assert_sql_by_email(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
+    private function assert_sql_by_email(test_cleanup $t, sql_db $db_con, object $usr_obj): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -102,9 +101,8 @@ class user_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_email($db_con, 'System test', $usr_obj::class);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
     /**
@@ -114,9 +112,8 @@ class user_unit_tests
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a verb
-     * @return bool true if all tests are fine
      */
-    function assert_sql_by_name_or_email(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
+    private function assert_sql_by_name_or_email(test_cleanup $t, sql_db $db_con, object $usr_obj): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -127,9 +124,8 @@ class user_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_name_or_email($db_con, 'System test name', 'System test email', $usr_obj::class);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
     /**
@@ -139,9 +135,8 @@ class user_unit_tests
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a verb
-     * @return bool true if all tests are fine
      */
-    function assert_sql_by_ip(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
+    private function assert_sql_by_ip(test_cleanup $t, sql_db $db_con, object $usr_obj): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -152,9 +147,8 @@ class user_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_ip($db_con, 'System test', $usr_obj::class);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
     /**
@@ -164,9 +158,8 @@ class user_unit_tests
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a verb
-     * @return bool true if all tests are fine
      */
-    function assert_sql_by_profile(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
+    private function assert_sql_by_profile(test_cleanup $t, sql_db $db_con, object $usr_obj): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -177,9 +170,8 @@ class user_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_profile($db_con, 1, $usr_obj::class);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
 }

@@ -79,13 +79,13 @@ class value_phrase_link_unit_tests
         $val_phr_lnk_lst = new value_phrase_link_list($usr);
         $phr = new phrase($usr);
         $phr->set_id(2);
-        $this->assert_lst_sql_all($t, $db_con, $val_phr_lnk_lst, $phr);
+        $this->assert_sql_lst_all($t, $db_con, $val_phr_lnk_lst, $phr);
 
         // sql to load a value phrase link list by phrase id
         $val_phr_lnk_lst = new value_phrase_link_list($usr);
         $val = new value($usr);
         $val->set_id(3);
-        $this->assert_lst_sql_all($t, $db_con, $val_phr_lnk_lst, null, $val);
+        $this->assert_sql_lst_all($t, $db_con, $val_phr_lnk_lst, null, $val);
 
     }
 
@@ -100,7 +100,7 @@ class value_phrase_link_unit_tests
      * @param value|null $val the value used for selection
      * @return void
      */
-    private function assert_lst_sql_all(test_cleanup $t, sql_db $db_con, value_phrase_link_list $lst, ?phrase $phr = null, ?value $val = null)
+    private function assert_sql_lst_all(test_cleanup $t, sql_db $db_con, value_phrase_link_list $lst, ?phrase $phr = null, ?value $val = null): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

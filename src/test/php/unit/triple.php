@@ -81,9 +81,8 @@ class triple_unit_tests
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param triple $trp the user sandbox object e.g. a word
-     * @return bool true if all tests are fine
      */
-    function assert_sql_by_name_generated(sql_db $db_con, triple $trp, test_cleanup $t): bool
+    private function assert_sql_by_name_generated(sql_db $db_con, triple $trp, test_cleanup $t): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -94,9 +93,8 @@ class triple_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $trp->load_sql_by_name_generated($db_con, 'System test', $trp::class);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
 }

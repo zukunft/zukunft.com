@@ -77,7 +77,7 @@ class value_list_unit_tests
         // sql to load a list of value by ids
         $val_lst = new value_list($usr);
         $t->assert_sql_by_ids($db_con, $val_lst);
-        $this->assert_load_by_phr_lst_sql($t, $db_con, $val_lst);
+        $this->assert_sql_by_phr_lst($t, $db_con, $val_lst);
 
         $db_con->db_type = sql_db::POSTGRES;
         $this->test = $t;
@@ -113,8 +113,8 @@ class value_list_unit_tests
         // sql to load a list of value by the phrase id
         $phr = new phrase($usr);
         $phr->set_id(1);
-        $qp = $this->assert_by_phr_sql($phr, sql_db::POSTGRES);
-        $this->assert_by_phr_sql($phr, sql_db::MYSQL);
+        $qp = $this->assert_sql_by_phr($phr, sql_db::POSTGRES);
+        $this->assert_sql_by_phr($phr, sql_db::MYSQL);
         $this->test->assert_sql_name_unique($qp->name);
 
 
@@ -139,7 +139,7 @@ class value_list_unit_tests
      * @param object $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_load_by_phr_lst_sql(test_cleanup $t, sql_db $db_con, object $usr_obj): bool
+    private function assert_sql_by_phr_lst(test_cleanup $t, sql_db $db_con, object $usr_obj): void
     {
         // TODO check why t->dummy_phrase_list() cannot be access here
         //$phr_lst = new $t->dummy_phrase_list();
@@ -156,9 +156,8 @@ class value_list_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_phr_lst($db_con, $phr_lst);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        return $result;
     }
 
     /**
@@ -168,7 +167,7 @@ class value_list_unit_tests
      * @param string $dialect if not Postgres the name of the SQL dialect
      * @return void
      */
-    private function assert_by_phr_sql(phrase $phr, string $dialect = ''): sql_par
+    private function assert_sql_by_phr(phrase $phr, string $dialect = ''): sql_par
     {
         global $usr;
 

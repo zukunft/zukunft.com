@@ -106,7 +106,12 @@ class component_link_unit_tests
      * @param component|null $cmp the component used for selection
      * @return void
      */
-    private function assert_sql_lst_all(test_cleanup $t, sql_db $db_con, component_link_list $lst, ?view $dsp = null, ?component $cmp = null): void
+    private function assert_sql_lst_all(
+        test_cleanup $t,
+        sql_db $db_con,
+        component_link_list $lst,
+        ?view $dsp = null,
+        ?component $cmp = null): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

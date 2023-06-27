@@ -104,7 +104,7 @@ class figure_list_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $lst->load_sql_by_ids($db_con, $ids);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
     }
 }

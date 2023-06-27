@@ -150,14 +150,14 @@ class phrase_group_unit_tests
 
         $phr_grp = new phrase_group($usr);
         $phr_grp->set_id(13);
-        $this->assert_load_by_group_id_sql($t, $db_con, $grp_wrd_lnk, $phr_grp);
+        $this->assert_sql_load_by_group_id($t, $db_con, $grp_wrd_lnk, $phr_grp);
 
         // sql to load the phrase group triple links related to a group
         $grp_trp_lnk = new phrase_group_triple_link();
         $t->assert_sql_by_id($db_con, $grp_trp_lnk);
 
         $phr_grp->set_id(14);
-        $this->assert_load_by_group_id_sql($t, $db_con, $grp_trp_lnk, $phr_grp);
+        $this->assert_sql_load_by_group_id($t, $db_con, $grp_trp_lnk, $phr_grp);
 
     }
 
@@ -169,7 +169,7 @@ class phrase_group_unit_tests
      * @param phrase_group_link $phr_grp_lnk the phrase group triple or word link object used for testing
      * @param phrase_group $grp the phrase group object to select the links
      */
-    private function assert_load_by_group_id_sql(
+    private function assert_sql_load_by_group_id(
         test_cleanup $t,
         sql_db $db_con,
         phrase_group_link $phr_grp_lnk,
