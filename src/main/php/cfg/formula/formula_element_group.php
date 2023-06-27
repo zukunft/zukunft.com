@@ -346,7 +346,7 @@ class formula_element_group
                 } else {
                     $time_id = $val_time_phr->id();
                 }
-                $grp_res->load_by_grp($val_phr_grp->id(), $time_id);
+                $grp_res->load_by_grp($val_phr_grp, $time_id);
 
                 // save the value to the result
                 if ($grp_res->id() > 0) {

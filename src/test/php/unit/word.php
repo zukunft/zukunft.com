@@ -75,15 +75,7 @@ class word_unit_tests
         $wrd->set_id(2);
         $t->assert_sql_standard($db_con, $wrd);
         $t->assert_not_changed_sql($db_con, $wrd);
-
-        // get the most often used view
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $wrd->view_sql($db_con);
-        $t->assert_qp($qp, $db_con->db_type);
-
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $wrd->view_sql($db_con);
-        $t->assert_qp($qp, $db_con->db_type);
+        $this->assert_sql_view($t, $db_con, $wrd);
 
 
         $t->subheader('API unit tests');
@@ -107,6 +99,29 @@ class word_unit_tests
         $wrd = $t->dummy_word();
         $t->assert_api_to_dsp($wrd, new word_dsp());
 
+    }
+
+    /**
+     * check the load SQL statements creation to get the formulas that
+     *
+     * @param test_cleanup $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param word $wrd the user sandbox object e.g. a word
+     * @return void true if all tests are fine
+     */
+    private function assert_sql_view(test_cleanup $t, sql_db $db_con, word $wrd): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $wrd->view_sql($db_con);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $wrd->view_sql($db_con);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
     }
 
 }

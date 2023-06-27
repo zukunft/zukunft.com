@@ -65,7 +65,7 @@ class result_test
         $ch_up_grp = $phr_lst->get_grp();
         if ($ch_up_grp->id() > 0) {
             $ch_increase = new result($usr);
-            $ch_increase->load_by_grp($ch_up_grp->id());
+            $ch_increase->load_by_grp($ch_up_grp);
             $result = $ch_increase->value;
             if ($result == null) {
                 $result = '';
@@ -84,7 +84,7 @@ class result_test
         $ch_up_grp = $phr_lst->get_grp();
         if ($ch_up_grp->id() > 0) {
             $ch_increase = new result($usr);
-            $ch_increase->load_by_grp($ch_up_grp->id(), $time_phr->id());
+            $ch_increase->load_by_grp($ch_up_grp, $time_phr->id());
             $result = $ch_increase->value;
             if ($result == null) {
                 $result = '';
@@ -119,7 +119,7 @@ class result_test
         */
         $k_val = new result($usr);
         //$result = $mio_val->check();
-        $k_val->load_by_grp($ch_k_grp->id());
+        $k_val->load_by_grp($ch_k_grp);
         $result = $k_val->value;
         if ($result == null) {
             $result = '';

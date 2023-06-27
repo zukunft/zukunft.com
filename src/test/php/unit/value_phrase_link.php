@@ -105,12 +105,12 @@ class value_phrase_link_unit_tests
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst->load_sql($db_con, $phr, $val);
-        $t->assert_qp($qp, sql_db::POSTGRES);
+        $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
         $qp = $lst->load_sql($db_con, $phr, $val);
-        $t->assert_qp($qp, sql_db::MYSQL);
+        $t->assert_qp($qp, $db_con->db_type);
     }
 
 }

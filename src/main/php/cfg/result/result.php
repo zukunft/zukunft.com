@@ -318,14 +318,15 @@ class result extends sandbox_value
      * prepare the query parameter to load a results by phrase group id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase_group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_by_grp_sql_prepare(sql_db $db_con): sql_par
+    private function load_sql_by_grp_prepare(sql_db $db_con, phrase_group $grp): sql_par
     {
         $qp = $this->load_sql($db_con, 'grp');
         $db_con->set_name($qp->name);
         // select the result based on the phrase group e.g. a more complex word list
-        $db_con->add_par(sql_db::PAR_INT, $this->phr_grp_id);
+        $db_con->add_par(sql_db::PAR_INT, $grp->id());
 
         return $qp;
     }
@@ -338,7 +339,7 @@ class result extends sandbox_value
      * @param array $fld_lst the list of selection fields as previous defined
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_by_grp_sql_select(sql_db $db_con, sql_par $qp, array $fld_lst): sql_par
+    private function load_sql_by_grp_select(sql_db $db_con, sql_par $qp, array $fld_lst): sql_par
     {
         // and include the result words in the search, because one source word list can result to two result word
         // e.g. one time specific and one general
@@ -352,30 +353,32 @@ class result extends sandbox_value
      * create the SQL to load a results by phrase group id and time phrase
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase_group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_grp_time_sql(sql_db $db_con): sql_par
+    function load_sql_by_grp_time(sql_db $db_con, phrase_group $grp): sql_par
     {
-        $qp = $this->load_by_grp_sql_prepare($db_con);
+        $qp = $this->load_sql_by_grp_prepare($db_con, $grp);
         $fld_lst = [];
         $fld_lst[] = self::FLD_GRP;
         $qp->name .= '_time';
         $db_con->set_name($qp->name);
-        return $this->load_by_grp_sql_select($db_con, $qp, $fld_lst);
+        return $this->load_sql_by_grp_select($db_con, $qp, $fld_lst);
     }
 
     /**
      * create the SQL to load a results by phrase group id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase_group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_grp_sql(sql_db $db_con): sql_par
+    function load_sql_by_grp(sql_db $db_con, phrase_group $grp): sql_par
     {
-        $qp = $this->load_by_grp_sql_prepare($db_con);
+        $qp = $this->load_sql_by_grp_prepare($db_con, $grp);
         $fld_lst = [];
         $fld_lst[] = self::FLD_GRP;
-        return $this->load_by_grp_sql_select($db_con, $qp, $fld_lst);
+        return $this->load_sql_by_grp_select($db_con, $qp, $fld_lst);
     }
 
     /**
@@ -420,26 +423,26 @@ class result extends sandbox_value
     /**
      * load all a result by the phrase group id and time phrase
      *
+     * @param phrase_group $grp to select the result
      * @return bool true if result has been loaded
      */
-    function load_by_grp(int $grp_id, ?int $time_phr_id = null): bool
+    function load_by_grp(phrase_group $grp, ?int $time_phr_id = null): bool
     {
         global $db_con;
         $result = false;
 
-        if ($grp_id <= 0) {
+        if ($grp->id() <= 0) {
             log_err('The result phrase group id and the user must be set ' .
                 'to load a ' . self::class, self::class . '->load_by_grp');
         } else {
             $res_usr = $this->user();
             $this->reset();
             $this->set_user($res_usr);
-            $this->phr_grp_id = $grp_id;
             if ($time_phr_id != null) {
                 $this->time_id = $time_phr_id;
-                $qp = $this->load_by_grp_time_sql($db_con);
+                $qp = $this->load_sql_by_grp_time($db_con, $grp);
             } else {
-                $qp = $this->load_by_grp_sql($db_con);
+                $qp = $this->load_sql_by_grp($db_con, $grp);
             }
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
@@ -465,7 +468,7 @@ class result extends sandbox_value
             $this->reset();
             $this->set_user($res_usr);
             $grp = $phr_lst->get_grp();
-            $result = $this->load_by_grp($grp->id(), $time_phr_id);
+            $result = $this->load_by_grp($grp, $time_phr_id);
         } else {
             log_err('The result phrase list and the user must be set ' .
                 'to load a ' . self::class, self::class . '->load_by_phr_lst');

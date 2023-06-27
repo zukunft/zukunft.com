@@ -260,13 +260,13 @@ class phrase_list_unit_tests
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst->load_names_sql_by_ids($db_con, $ids);
-        $result = $t->assert_qp($qp, sql_db::POSTGRES);
+        $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $lst->load_names_sql_by_ids($db_con, $ids);
-            $result = $t->assert_qp($qp, sql_db::MYSQL);
+            $result = $t->assert_qp($qp, $db_con->db_type);
         }
         return $result;
     }

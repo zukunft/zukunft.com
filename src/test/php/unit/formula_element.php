@@ -99,12 +99,12 @@ class formula_element_unit_tests
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst->load_sql_by_frm_id($db_con, $frm_id);
-        $t->assert_qp($qp, sql_db::POSTGRES);
+        $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
         $qp = $lst->load_sql_by_frm_id($db_con, $frm_id);
-        $t->assert_qp($qp, sql_db::MYSQL);
+        $t->assert_qp($qp, $db_con->db_type);
     }
 
     /**
@@ -127,12 +127,12 @@ class formula_element_unit_tests
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst->load_sql_by_frm_and_type_id($db_con, $frm_id, $elm_type_id);
-        $t->assert_qp($qp, sql_db::POSTGRES);
+        $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
         $qp = $lst->load_sql_by_frm_and_type_id($db_con, $frm_id, $elm_type_id);
-        $t->assert_qp($qp, sql_db::MYSQL);
+        $t->assert_qp($qp, $db_con->db_type);
     }
 
 }
