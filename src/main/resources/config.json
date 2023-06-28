@@ -14,7 +14,7 @@
     },
     {
       "name": "time",
-      "description": "to group the time related words",
+      "description": "Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future",
       "type": "time",
       "protection": "admin_protection"
     },
@@ -47,6 +47,23 @@
       "description": "minimal percentage of the same word in a list to assume the word for the next",
       "type": "hidden_system",
       "protection": "admin_protection"
+    },
+    {
+      "name": "view",
+      "description": "to group phrases",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "system view settings",
+      "description": "to group the page display related system settings",
+      "type": "hidden_system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "number of view to force freezing a view",
+      "description": "system setting that defines the number of view by one user to automatically freeze the view for the user",
+      "type": "hidden_system",
+      "protection": "admin_protection"
     }
   ],
   "triples": [
@@ -62,7 +79,7 @@
       "from": "time",
       "verb": "is selector for",
       "to": "system time settings",
-      "description": "the word time should be used as a selector for the system time settings",
+      "description": "to group the time related the system settings and as a selector",
       "type": "hidden_triple",
       "protection": "admin_protection"
     },
@@ -94,6 +111,28 @@
       "to": "selections system settings",
       "type": "hidden_triple",
       "protection": "admin_protection"
+    },
+    {
+      "from": "system view settings",
+      "verb": "is part of",
+      "to": "system configuration",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "view",
+      "verb": "is selector for",
+      "to": "system view settings",
+      "description": "to group the view related the system settings and as a selector",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "number of view to force freezing a view",
+      "verb": "is part of",
+      "to": "system view setting",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
     }
   ],
   "values": [
@@ -108,6 +147,12 @@
         "min. % of words in list to suggest the word for the next"
       ],
       "number": 0.3
+    },
+    {
+      "words": [
+        "number of view to force freezing a view"
+      ],
+      "number": 20
     }
   ]
 }

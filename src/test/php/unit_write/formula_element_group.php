@@ -155,7 +155,7 @@ class formula_element_group_test
             //$target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
             $fig_lst = $elm_grp->figures();
             //$target = '8.51  ('.$fig_lst->get_first_id().')';
-            $target = ' 8.505251 {f18}Switzerland,inhabitants,million  (18)';
+            $target = ' 8.505251 {f18}Switzerland,inhabitants,million  (19)';
             $t->assert('figure_list->dsp_id', $result, $target);
 
             $result = $fig_lst->display();
