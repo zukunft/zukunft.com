@@ -45,11 +45,6 @@ class formula_list extends sandbox_list
     // array $lst are the loaded formula objects
     // if user $usr->id() is 0 (not NULL) for standard formulas, otherwise for a user specific formulas
 
-    // TODO deprecate: fields to select the formulas
-    public ?word $wrd = null;            // show the formulas related to this word
-    public ?phrase_list $phr_lst = null; // show the formulas related to this phrase list
-    public ?array $ids = array();        // a list of formula ids to load all formulas at once
-
     // TODO move to display object: in memory only fields
     public ?string $back = null;         // the calling stack
 

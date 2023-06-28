@@ -77,9 +77,6 @@ class formula_element extends db_object
     public ?word $wrd_obj = null;    // in case of a formula the corresponding word object
     public ?string $frm_type = null; // in case of a special formula the predefined formula type
 
-    // TODO move to the display object
-    public ?string $back = null;     // link to what should be display after this action is finished
-
 
     /*
      * construct and map

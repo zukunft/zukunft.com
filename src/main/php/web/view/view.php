@@ -203,7 +203,7 @@ class view extends sandbox_typed_dsp
      * without javascript this is the top right corner
      * with    javascript this is a bar on the top
      */
-    private function dsp_navbar(string $back = ''): string
+    public function dsp_navbar(string $back = ''): string
     {
         log_debug();
         $result = '';

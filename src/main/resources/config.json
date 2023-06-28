@@ -64,6 +64,23 @@
       "description": "system setting that defines the number of view by one user to automatically freeze the view for the user",
       "type": "hidden_system",
       "protection": "admin_protection"
+    },
+    {
+      "name": "database",
+      "description": "An organized collection of data stored and accessed electronically",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "system database settings",
+      "description": "to group the database related system settings",
+      "type": "hidden_system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "database update block size",
+      "description": "the number of formulas that should be updated with one commit if no dependency calculations are expected",
+      "type": "hidden_system",
+      "protection": "admin_protection"
     }
   ],
   "triples": [
@@ -133,6 +150,28 @@
       "to": "system view setting",
       "type": "hidden_triple",
       "protection": "admin_protection"
+    },
+    {
+      "from": "system database settings",
+      "verb": "is part of",
+      "to": "system configuration",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "database",
+      "verb": "is selector for",
+      "to": "system database settings",
+      "description": "to group the database related the system settings and as a selector",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "database update block size",
+      "verb": "is part of",
+      "to": "system database setting",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
     }
   ],
   "values": [
@@ -153,6 +192,12 @@
         "number of view to force freezing a view"
       ],
       "number": 20
+    },
+    {
+      "words": [
+        "database update block size"
+      ],
+      "number": 100
     }
   ]
 }

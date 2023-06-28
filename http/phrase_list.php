@@ -34,7 +34,7 @@
 
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\phrase_list_dsp_old;
 use cfg\term;
 use cfg\triple;
@@ -64,8 +64,9 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_WORD_ADD);
+    $dsp_db = new view($usr);
+    $dsp_db->load_by_code_id(controller::DSP_WORD_ADD);
+    $dsp = new view_dsp($dsp_db->api_json());
     $back = $_GET[controller::API_BACK]; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
