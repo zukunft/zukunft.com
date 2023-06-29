@@ -67,13 +67,15 @@ class type_object
      * construct and map
      */
 
-    function __construct(int $id, ?string $code_id, string $name = '', string $comment = '')
+    function __construct(int $id, ?string $code_id, string $name = '', ?string $comment = '')
     {
         $this->set_id($id);
         $this->set_name($name);
         $this->set_code_id($code_id);
-        if ($comment != '') {
-            $this->set_comment($comment);
+        if ($comment != null) {
+            if ($comment != '') {
+                $this->set_comment($comment);
+            }
         }
     }
 

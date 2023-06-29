@@ -162,6 +162,16 @@ class test_api extends create_test_objects
     }
 
     /**
+     * get the api message and forward it to the ui
+     * @return void
+     */
+    function run_ui_test(): void
+    {
+        $this->assert_view(controller::DSP_WORD, $this->usr1);
+        $this->assert_view(controller::DSP_WORD, $this->usr1, new word($this->usr1), 1);
+    }
+
+    /**
      * test the database update function via simulated api calls of all standard user sandbox objects
      * @return void
      */

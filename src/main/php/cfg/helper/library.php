@@ -900,6 +900,36 @@ class library
 
     }
 
+    /**
+     * add a json at a defined node to a given json
+     * @param array $target_json the json array that should be extended
+     * @param array $json_to_merge the json that should be added to the target
+     * @param string $node_name the name of the node where the json should be added
+     * @return array the json array that contains both json
+     */
+    function json_merge(array $target_json, array $json_to_merge, string $node_name): array
+    {
+        $result = $target_json;
+        $result[$node_name] = $json_to_merge;
+        return $result;
+    }
+
+    /**
+     * same as json_merge, but for json strings
+     * @param string $target_json the json text that should be extended
+     * @param string $json_to_merge the json that should be added to the target
+     * @param string $node_name the name of the node where the json should be added
+     * @return string the json text that contains both json
+     */
+    function json_merge_str(string $target_json, string $json_to_merge, string $node_name): string
+    {
+        return json_encode($this->json_merge(
+            json_decode($target_json, true),
+            json_decode($json_to_merge, true),
+            $node_name
+        ));
+    }
+
 
     /*
      * testing support

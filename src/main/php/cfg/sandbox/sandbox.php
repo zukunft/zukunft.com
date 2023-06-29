@@ -271,7 +271,6 @@ class sandbox extends db_object
     }
 
     /**
-     * TODO deprecate
      * @return object frontend API object filled with the database id
      */
     function fill_min_obj(object $min_obj): object
@@ -281,6 +280,7 @@ class sandbox extends db_object
     }
 
     /**
+     * TODO deprecate
      * fill a similar object that is extended with display interface functions
      *
      * @param object $dsp_obj the object that should be filled with all user sandbox values

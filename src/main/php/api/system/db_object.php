@@ -38,81 +38,67 @@
 
 */
 
-namespace api;
+namespace api\system;
 
-include_once API_SYSTEM_PATH . 'db_object.php';
+use JsonSerializable;
 
-use api\system\db_object;
-
-class type_api extends db_object
+class db_object implements JsonSerializable
 {
 
-    /*
-     * const for the api
-     */
-
-    const API_NAME = 'type_object';
-
-
     // the standard fields of a type
-    public string $code_id;        // this id text is unique for all code links and is used for system im- and export
-    public string $name;           // simply the type name as shown to the user
-    public ?string $comment = '';  // to explain the type to the user as a tooltip
+    public int $id;  // the database id that is added in th api object
 
     /*
      * construct and map
      */
 
-    function __construct(int $id, string $code_id, string $name, string $comment = '')
+    function __construct(int $id)
     {
-        parent::__construct($id);
-        $this->set_code_id($code_id);
-        $this->set_name($name);
-        if ($comment != '') {
-            $this->set_comment($comment);
-        }
+        $this->set_id($id);
     }
 
     function reset(): void
     {
-        parent::reset();
-        $this->code_id = '';
-        $this->name = '';
-        $this->comment = null;
+        $this->id = 0;
     }
 
     /*
      * set and get
      */
 
-    function set_code_id(string $code_id): void
+    function set_id(int $id): void
     {
-        $this->code_id = $code_id;
+        $this->id = $id;
     }
 
-    function code_id(): string
+    function id(): int
     {
-        return $this->code_id;
+        return $this->id;
     }
 
-    function set_name(string $name): void
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return string the json api message as a text string
+     */
+    function get_json(): string
     {
-        $this->name = $name;
+        return json_encode($this->jsonSerialize());
     }
 
-    function name(): string
+    /**
+     * @return array with the sandbox vars without empty values that are not needed
+     * the message from the backend to the frontend does not need to include empty fields
+     * the message from the frontend to the backend on the other side must include empty fields
+     * to be able to unset fields in the backend
+     */
+    function jsonSerialize(): array
     {
-        return $this->name;
-    }
-
-    function set_comment(string $comment): void
-    {
-        $this->comment = $comment;
-    }
-
-    function comment(): string
-    {
-        return $this->comment;
+        $vars = get_object_vars($this);
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 }

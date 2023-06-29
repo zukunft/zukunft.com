@@ -679,20 +679,52 @@ class test_base
      * test a system view with a sample user object
      *
      * @param string $dsp_code_id the code id of the view that should be tested
+     * @param user $usr to define for which user the view should be created
+     * @param db_object|null $dbo the database object that should be shown
+     * @param int $id the id of the database object that should be loaded and send to the frontend
      * @return bool true if the generated view matches the expected
      */
-    function assert_view(string $dsp_code_id, user $usr): bool
+    function assert_view(
+        string $dsp_code_id,
+        user $usr,
+        ?db_object $dbo = null,
+        int $id = 0): bool
     {
-        $filename = 'views/' . $dsp_code_id;
+        $lib = new library();
 
+        // create the filename of the expected result
+        $folder = '';
+        $dbo_name = '';
+        if ($dbo != null) {
+            $class = $lib->class_to_name($dbo::class);
+            $folder = $class . '/';
+            $dbo_name = '_' . $class . '_' . $id;
+        }
+        $filename = 'views/' . $folder . $dsp_code_id . $dbo_name;
+
+        // load the view from the database
         $dsp = new view($usr);
         $dsp->load_by_code_id($dsp_code_id);
+
+        // create the api message that send to the frontend
+        $api_msg = $dsp->api_json();
+        if ($dbo != null) {
+            // add the database object json to the api message
+            // to send only one message to the frontend
+            $dbo->load_by_id($id);
+            $dbo_api_msg = $dbo->api_json();
+            $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
+        }
+
+        // create the view for the user
         $dsp_html = new view_dsp;
-        $dsp_html->set_from_json($dsp->api_json());
-
-
+        $dsp_html->set_from_json($api_msg);
         $actual = $dsp_html->dsp_system_view();
-        return $this->assert_html($this->name . ' view ' . $dsp_code_id, $actual, $filename);
+
+        // check if the created view matches the expected view
+        return $this->assert_html(
+            $this->name . ' view ' . $dsp_code_id,
+            $actual, $filename);
     }
 
     /**

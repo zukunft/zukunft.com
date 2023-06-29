@@ -32,6 +32,8 @@
 
 namespace cfg;
 
+use api\system\db_object as db_object_api;
+
 class db_object
 {
 
@@ -100,6 +102,27 @@ class db_object
     function id(): int
     {
         return $this->id;
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @return db_object_api the source frontend api object
+     */
+    function api_db_obj(): db_object_api
+    {
+        return new db_object_api($this->id());
+    }
+
+    /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_db_obj()->get_json();
     }
 
 
