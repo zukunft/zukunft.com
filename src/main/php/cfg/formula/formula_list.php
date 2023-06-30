@@ -48,6 +48,7 @@ class formula_list extends sandbox_list
     // TODO move to display object: in memory only fields
     public ?string $back = null;         // the calling stack
 
+
     /*
      * construct and map
      */

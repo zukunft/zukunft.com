@@ -120,6 +120,11 @@ class controller
     const API_FLD_OWNER = 'owner';
     const API_BODY = 'body';
     const API_BODY_SYS_LOG = 'system_log';
+
+    // to include the objects that should be displayed in one api message
+    const API_WORD = 'word';
+
+    //
     const API_TYPE_LISTS = 'type_lists';
     const API_LIST_USER_PROFILES = 'user_profiles';
     const API_LIST_PHRASE_TYPES = 'phrase_types';

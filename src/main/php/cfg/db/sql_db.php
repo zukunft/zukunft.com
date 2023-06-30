@@ -446,7 +446,7 @@ class sql_db
         $this->postgres_link = pg_connect('host=' . $db_server . ' user=' . $db_admin_user . ' password=' . $db_admin_password);
         // create zukunft user
         $sql_name = 'db_setup_create_role';
-        $sql = resource_file( 'db/setup/postgres/db_create_user.sql');
+        $sql = resource_file('db/setup/postgres/db_create_user.sql');
         try {
             $sql_result = $this->exe($sql);
             if (!$sql_result) {
@@ -589,8 +589,8 @@ class sql_db
     function add_par(
         string $par_type,
         string $value,
-        bool $named = false,
-        bool $use_link = false): void
+        bool   $named = false,
+        bool   $use_link = false): void
     {
         $this->par_types[] = $par_type;
         $this->par_values[] = $value;
@@ -1619,7 +1619,7 @@ class sql_db
                     if (str_starts_with($sql, 'PREPARE')) {
                         $result = pg_query($this->postgres_link, $sql);
                     } else {
-                         $result = pg_prepare($this->postgres_link, $sql_name, $sql);
+                        $result = pg_prepare($this->postgres_link, $sql_name, $sql);
                     }
                     if ($result === false) {
                         throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql);
@@ -2165,9 +2165,9 @@ class sql_db
      */
     function where_in_par(
         string $field,
-        array $values,
-        bool $is_join_query = false,
-        bool $is_join_field = false
+        array  $values,
+        bool   $is_join_query = false,
+        bool   $is_join_field = false
     ): string
     {
         $result = '';
@@ -2208,8 +2208,8 @@ class sql_db
     function where_par(
         array $fields,
         array $values,
-        bool $is_join_query = false,
-        bool $is_join_field = false
+        bool  $is_join_query = false,
+        bool  $is_join_field = false
     ): string
     {
         $result = '';
@@ -2613,18 +2613,24 @@ class sql_db
 
     /**
      * set the order SQL statement based on the given field name
+     * @param string $order_field the name of the order field
+     * @param string $direction the SQL direction name (ASC or DESC)
+     * @param string $table_prefix
      */
-    function set_order(string $order_field, string $direction = ''): void
+    function set_order(string $order_field, string $direction = '', string $table_prefix = ''): void
     {
         if ($direction <> self::ORDER_DESC) {
             $direction = '';
         }
-        $table_prefix = '';
-        if ($this->usr_query
-            or $this->join <> ''
-            or $this->join_type <> ''
-            or $this->join2_type <> '') {
-            $table_prefix .= self::STD_TBL . '.';
+        if ($table_prefix == '') {
+            if ($this->usr_query
+                or $this->join <> ''
+                or $this->join_type <> ''
+                or $this->join2_type <> '') {
+                $table_prefix .= self::STD_TBL . '.';
+            }
+        } else {
+            $table_prefix .= '.';
         }
 
         $this->set_order_text(trim($table_prefix . $order_field . ' ' . $direction));
@@ -3054,6 +3060,20 @@ class sql_db
 
     /**
      * create a SQL select statement for the connected database and force to use the ids of the linked objects instead of the id
+     * and select by a given field
+     * @param string $field_name the field name of the database index field that should be used for the selection
+     * @param int $id the database id of the row that should be selected
+     * @return string the created SQL statement in the previous set dialect
+     */
+    function select_by_join_field(string $field_name, int $id): string
+    {
+        $this->join_select_field = $field_name;
+        $this->join_select_id = $id;
+        return $this->select_by();
+    }
+
+    /**
+     * create a SQL select statement for the connected database and force to use the ids of the linked objects instead of the id
      * and select by a list of given fields
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @return string the created SQL statement in the previous set dialect
@@ -3253,7 +3273,7 @@ class sql_db
      * @return string the created SQL statement in the previous set dialect
      */
     private
-    function select_by(array $id_fields, bool $has_id = true): string
+    function select_by(array $id_fields = [], bool $has_id = true): string
     {
         $sql = '';
         $sql_end = ';';
@@ -3664,7 +3684,7 @@ class sql_db
             foreach (array_keys($id_fields) as $i) {
                 $del_val = $id_values[$i];
                 if (is_array($del_val)) {
-                    $del_val_txt = $lib->sql_array($del_val,' IN (', ') ', true);
+                    $del_val_txt = $lib->sql_array($del_val, ' IN (', ') ', true);
                 } else {
                     $del_val_txt = ' = ' . $this->sf($del_val) . ' ';
                 }

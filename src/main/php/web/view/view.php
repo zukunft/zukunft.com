@@ -35,6 +35,7 @@
 namespace html\view;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once WEB_WORD_PATH . 'word.php';
 
 use api\component_api;
 use controller\controller;
@@ -46,7 +47,7 @@ use html\msg;
 use html\system\back_trace;
 use html\view\component_list as component_list_dsp;
 use html\sandbox_typed_dsp;
-use html\word\word;
+use html\word\word as word_dsp;
 use html\sandbox\db_object as db_object_dsp;
 use cfg\library;
 
@@ -60,6 +61,10 @@ class view extends sandbox_typed_dsp
     // used for system views
     private ?string $code_id;
     protected component_list_dsp $cmp_lst;
+
+    // objects that should be displayed (only one is supposed to be not null)
+    // the word, triple or formula object that should be shown to the user
+    protected ?db_object_dsp $dbo = null;
 
 
     /*
@@ -85,15 +90,22 @@ class view extends sandbox_typed_dsp
      */
     function set_from_json_array(array $json_array): void
     {
+        // the root view object
         parent::set_from_json_array($json_array);
         if (array_key_exists(controller::API_FLD_CODE_ID, $json_array)) {
             $this->code_id = $json_array[controller::API_FLD_CODE_ID];
         } else {
             $this->code_id = null;
         }
+        // set the components
         $cmp_lst = new component_list_dsp();
         if (array_key_exists(controller::API_FLD_COMPONENTS, $json_array)) {
             $cmp_lst->set_from_json_array($json_array[controller::API_FLD_COMPONENTS]);
+        }
+        // set the objects (e.g. word)
+        if (array_key_exists(controller::API_WORD, $json_array)) {
+            $this->dbo = new word_dsp();
+            $this->dbo->set_from_json_array($json_array[controller::API_WORD]);
         }
         $this->cmp_lst = $cmp_lst;
     }
@@ -133,31 +145,41 @@ class view extends sandbox_typed_dsp
 
     /**
      * create the html code to view a sandbox object
-     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
+     * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
      * @param string $back the history of the user actions to allow rollbacks
      * @return string the html code for a view: this is the main function of this lib
      * TODO use backtrace or use a global backtrace var
      */
-    function show(db_object_dsp $dbo, string $back): string
+    function show(db_object_dsp $dbo = null, string $back = ''): string
     {
-        log_debug($dbo->dsp_id() . ' with the view ' . $this->dsp_id());
         $result = '';
 
-        // check and correct the parameters
-        if ($back == '') {
-            $back = $dbo->id();
+        // if the object is not given use the object from the api message
+        if ($dbo == null) {
+            $dbo = $this->dbo;
         }
 
-        if ($this->id() <= 0) {
-            log_err("The view id must be loaded to display it.", "view->display");
+        if ($dbo == null) {
+            log_err('Nothing to show with view ' . $this->dsp_id());
         } else {
-            // display always the view name in the top right corner and allow the user to edit the view
-            $result .= $this->dsp_type_open();
-            $result .= $this->dsp_navbar($back);
-            $result .= $this->dsp_entries($dbo, $back);
-            $result .= $this->dsp_type_close();
+            log_debug($dbo->dsp_id() . ' with the view ' . $this->dsp_id());
+
+            // check and correct the parameters
+            if ($back == '') {
+                $back = $dbo->id();
+            }
+
+            if ($this->id() <= 0) {
+                log_err("The view id must be loaded to display it.", "view->display");
+            } else {
+                // display always the view name in the top right corner and allow the user to edit the view
+                $result .= $this->dsp_type_open();
+                $result .= $this->dsp_navbar($back);
+                $result .= $this->dsp_entries($dbo, $back);
+                $result .= $this->dsp_type_close();
+            }
+            log_debug('done');
         }
-        log_debug('done');
 
         return $result;
     }
@@ -433,7 +455,7 @@ class view extends sandbox_typed_dsp
 
 
     /*
-     * to review
+     * to review / deprecate
      */
 
     function dsp_system_view(): string

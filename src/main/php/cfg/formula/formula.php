@@ -430,6 +430,7 @@ class formula extends sandbox_typed
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $query_name the name of the selection fields to make the query name unique
+     * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par

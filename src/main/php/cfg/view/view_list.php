@@ -100,6 +100,7 @@ class view_list extends sandbox_list
     /**
      * set the SQL query parameters to load a list of views
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql(sql_db $db_con, string $class = self::class): sql_par

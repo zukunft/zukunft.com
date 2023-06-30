@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/view_list.php - TESTing of the VIEW LIST functions
-    -----------------------
+    test/unit/component_list.php - TESTing of the COMPONENT LIST functions
+    ----------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -30,15 +30,13 @@
 
 */
 
-namespace test;
+namespace unit;
 
-use api\word_api;
-use cfg\phrase_type;
-use cfg\view_sys_list;
+use cfg\component_list;
 use cfg\sql_db;
-use cfg\view_list;
+use test\test_cleanup;
 
-class view_list_unit_tests
+class component_list_unit_tests
 {
     function run(test_cleanup $t): void
     {
@@ -47,45 +45,40 @@ class view_list_unit_tests
 
         // init
         $db_con = new sql_db();
-        $t->name = 'view_list->';
-        $t->resource_path = 'db/view/';
-        $json_file = 'unit/view/view_list.json';
+        $t->name = 'component_list->';
+        $t->resource_path = 'db/component/';
+        $json_file = 'unit/component/component_list.json';
         $usr->set_id(1);
 
-        $t->header('Unit tests of the view list class (src/main/php/model/view/view_list.php)');
+        $t->header('Unit tests of the component list class (src/main/php/model/component/component_list.php)');
+
 
         $t->subheader('Database query creation tests');
 
-        // load the system views
-        $sys_dsp_lst = new view_sys_list($usr);
-        $this->assert_sql_sys_views($t, $db_con, $sys_dsp_lst);
-
-
-        $t->subheader('Im- and Export tests');
-
-        $t->assert_json_file(new view_list($usr), $json_file);
+        $cmp_lst = new component_list($usr);
+        $this->assert_sql_by_view_id($t, $db_con, $cmp_lst);
 
     }
 
     /**
-     * test the SQL statement creation for the system view list in all SQL dialect
+     * test the SQL statement creation for a view list in all SQL dialect
      * and check if the statement name is unique
      *
      * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
-     * @param view_sys_list $lst
+     * @param component_list $lst
      * @return void
      */
-    private function assert_sql_sys_views(test_cleanup $t, sql_db $db_con, view_sys_list $lst): void
+    private function assert_sql_by_view_id(test_cleanup $t, sql_db $db_con, component_list $lst): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_list($db_con);
+        $qp = $lst->load_sql_by_view_id($db_con, 1);
         $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_list($db_con);
+        $qp = $lst->load_sql_by_view_id($db_con, 1);
         $t->assert_qp($qp, $db_con->db_type);
     }
 

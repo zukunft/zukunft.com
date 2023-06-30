@@ -167,7 +167,6 @@ class test_api extends create_test_objects
      */
     function run_ui_test(): void
     {
-        $this->assert_view(controller::DSP_WORD, $this->usr1);
         $this->assert_view(controller::DSP_WORD, $this->usr1, new word($this->usr1), 1);
     }
 

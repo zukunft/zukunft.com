@@ -93,9 +93,6 @@ use cfg\view_type_list;
 use cfg\word_type_list;
 use test\html\type_list as type_list_html_tests;
 use test\html\system_views as system_views_html_tests;
-
-;
-
 use test\html\user as user_html_tests;
 use test\html\word as word_html_tests;
 use test\html\word_list as word_list_html_tests;
@@ -103,9 +100,6 @@ use test\html\verb as verb_html_tests;
 use test\html\triple as triple_html_tests;
 use test\html\phrase as phrase_html_tests;
 use test\html\phrase_list as phrase_list_html_tests;
-
-;
-
 use test\html\phrase_group as phrase_group_html_tests;
 use test\html\term as term_html_tests;
 use test\html\term_list as term_list_html_tests;
@@ -125,11 +119,9 @@ use test\html\source as source_html_tests;
 use test\html\reference as reference_html_tests;
 use test\html\language as language_html_tests;
 use test\html\change_log as change_log_html_tests;
-
-;
-
 use test\html\system_log as system_log_html_tests;
 use test\html\batch_job as batch_job_html_tests;
+use unit\component_list_unit_tests;
 
 class test_unit extends test_cleanup
 {
@@ -236,6 +228,7 @@ class test_unit extends test_cleanup
         (new view_unit_tests)->run($this);
         (new view_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new component_unit_tests())->run($this);
+        (new component_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new component_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new ref_unit_tests)->run($this);
         (new language_unit_tests)->run($this); // TODO add assert_api_to_dsp

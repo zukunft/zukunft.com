@@ -1,7 +1,9 @@
-PREPARE component_by_id (int, int) AS
+PREPARE component_list_by_view_id (int, int) AS
     SELECT     s.component_id,
                u.component_id AS user_component_id,
                s.user_id,
+               l.view_id,
+               l.component_id,
                CASE WHEN (u.component_name <> '' IS NOT TRUE) THEN s.component_name    ELSE u.component_name    END AS component_name,
                CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description       ELSE u.description       END AS description,
                CASE WHEN (u.component_type_id    IS     NULL) THEN s.component_type_id ELSE u.component_type_id END AS component_type_id,
@@ -14,5 +16,7 @@ PREPARE component_by_id (int, int) AS
                CASE WHEN (u.share_type_id        IS     NULL) THEN s.share_type_id     ELSE u.share_type_id     END AS share_type_id,
                CASE WHEN (u.protect_id           IS     NULL) THEN s.protect_id        ELSE u.protect_id        END AS protect_id
           FROM components s
-     LEFT JOIN user_components u  ON s.component_id = u.component_id AND u.user_id = $1
-         WHERE s.component_id = $2;
+     LEFT JOIN user_components u ON s.component_id = u.component_id AND u.user_id = $1
+     LEFT JOIN component_links l ON s.component_id = l.component_id
+         WHERE l.view_id = $2
+      ORDER BY l.order_nbr;

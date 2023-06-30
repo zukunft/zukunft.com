@@ -70,7 +70,6 @@ class sandbox_list extends base_list
     }
 
 
-
     /*
      * set and get
      */
@@ -204,10 +203,17 @@ class sandbox_list extends base_list
      */
     function name(): string
     {
-        $result = '';
+        return implode(", ", $this->names());
+    }
+
+    /**
+     * @return array with all names of the list
+     */
+    function names(): array
+    {
+        $result = [];
         foreach ($this->lst as $sbx_obj) {
-            if ($result <> '') $result .= ', ';
-            $result .= $sbx_obj->name();
+            $result[] = $sbx_obj->name();
         }
         return $result;
     }

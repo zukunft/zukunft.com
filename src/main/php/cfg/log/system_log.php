@@ -186,6 +186,7 @@ class system_log extends db_object
     /**
      * create the SQL statement to load one system log entry
      * @param sql_db $db_con the database link as parameter to be able to simulate the different SQL database in the unit tests
+     * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the database depending on sql statement to load a system error from the log table
      *                 and the unique name for the query
      */

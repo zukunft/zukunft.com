@@ -40,6 +40,35 @@ class component_list extends sandbox_list
 {
 
     /*
+     * construct and map
+     */
+
+    /**
+     * fill the component list based on a database records
+     * @param array $db_rows is an array of an array with the database values
+     * @return bool true if at least one component has been loaded
+     */
+    protected function rows_mapper(array $db_rows): bool
+    {
+        $result = false;
+        if ($db_rows != null) {
+            foreach ($db_rows as $db_row) {
+                if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0) {
+                    $cmp_id = $db_row[component::FLD_ID];
+                    if ($cmp_id > 0 and !in_array($cmp_id, $this->ids())) {
+                        $cmp = new component($this->user());
+                        $cmp->row_mapper_sandbox($db_row);
+                        $this->lst[] = $cmp;
+                        $result = true;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+
+    /*
      * cast
      */
 
@@ -69,8 +98,9 @@ class component_list extends sandbox_list
      */
 
     /**
-     * set the SQL query parameters to load a list of components
+     * set the common SQL query parameters to load a list of components
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql(sql_db $db_con, string $class = self::class): sql_par
@@ -83,6 +113,43 @@ class component_list extends sandbox_list
         $db_con->set_usr_fields(component::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(component::FLD_NAMES_NUM_USR);
         return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of components by the view id
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $id the id of the view to which the components should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_view_id(sql_db $db_con, int $id): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        $qp->name .= 'view_id';
+        $db_con->set_name($qp->name);
+        $db_con->set_join_fields(
+            component_link::FLD_NAMES,
+            sql_db::TBL_COMPONENT_LINK,
+            component::FLD_ID,
+            component::FLD_ID);
+        $db_con->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
+        $qp->sql = $db_con->select_by_join_field(view::FLD_ID, $id);
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load the components of a view from the database selected by id
+     * @param int $id the id of the word, triple, formula, verb, view or view component
+     * @return bool true if at least one component has been loaded
+     */
+    function load_by_view_id(int $id): bool
+    {
+        global $db_con;
+
+        log_debug($id);
+        $qp = $this->load_sql_by_view_id($db_con, $id);
+        return parent::load($qp);
     }
 
     /**
@@ -128,6 +195,7 @@ class component_list extends sandbox_list
 
     /**
      * create a list of components for the export
+     * @param bool $do_load
      * @return array with the reduced results that can be used to create a JSON message
      */
     function export_obj(bool $do_load = true): array

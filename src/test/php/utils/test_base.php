@@ -154,6 +154,7 @@ include_once $path_unit . 'view.php';
 include_once $path_unit . 'view_list.php';
 include_once $path_unit . 'component.php';
 include_once $path_unit . 'component_link.php';
+include_once $path_unit . 'component_list.php';
 include_once $path_unit . 'verb.php';
 include_once $path_unit . 'ref.php';
 include_once $path_unit . 'language.php';
@@ -705,6 +706,7 @@ class test_base
         // load the view from the database
         $dsp = new view($usr);
         $dsp->load_by_code_id($dsp_code_id);
+        $dsp->load_components();
 
         // create the api message that send to the frontend
         $api_msg = $dsp->api_json();
@@ -719,7 +721,7 @@ class test_base
         // create the view for the user
         $dsp_html = new view_dsp;
         $dsp_html->set_from_json($api_msg);
-        $actual = $dsp_html->dsp_system_view();
+        $actual = $dsp_html->show();
 
         // check if the created view matches the expected view
         return $this->assert_html(

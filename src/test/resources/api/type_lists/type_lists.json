@@ -1965,7 +1965,13 @@
         "name": "Word",
         "description": "the default view for words",
         "code_id": "word",
-        "components": []
+        "components": [
+          {
+            "id": 1,
+            "name": "Name",
+            "type_id": 8
+          }
+        ]
       },
       {
         "id": 2,

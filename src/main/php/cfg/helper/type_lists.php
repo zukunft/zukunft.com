@@ -184,7 +184,7 @@ class type_lists
         $view_types->load($db_con);
         $component_types = new view_cmp_type_list();
         $component_types->load($db_con);
-        // not yet needed?
+        // TODO review: not yet needed?
         //$component_link_types = new component_link_type_list();
         //$component_link_types->load($db_con);
         $component_position_types = new view_cmp_pos_type_list();

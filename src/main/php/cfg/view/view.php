@@ -204,6 +204,14 @@ class view extends sandbox_typed
         }
     }
 
+    /**
+     * @return component_list the list of components of this view
+     */
+    function cmp_lst(): component_list
+    {
+        return $this->cmp_lst;
+    }
+
 
     /*
      * get preloaded information
@@ -456,7 +464,7 @@ class view extends sandbox_typed
      * load all parts of this view for this user
      * @return bool false if a technical error on loading has occurred; an empty list if fine and returns true
      */
-    function load_components(): bool
+    function load_components_old(): bool
     {
         log_debug($this->dsp_id());
 
@@ -490,6 +498,21 @@ class view extends sandbox_typed
                 }
             }
         }
+        log_debug($this->cmp_lst->count() . ' loaded for ' . $this->dsp_id());
+
+        return $result;
+    }
+
+    /**
+     * load all parts of this view for this user
+     * @return bool false if a technical error on loading has occurred; an empty list if fine and returns true
+     */
+    function load_components(): bool
+    {
+        log_debug($this->dsp_id());
+
+        $this->cmp_lst = new component_list($this->user());
+        $result = $this->cmp_lst->load_by_view_id($this->id());
         log_debug($this->cmp_lst->count() . ' loaded for ' . $this->dsp_id());
 
         return $result;

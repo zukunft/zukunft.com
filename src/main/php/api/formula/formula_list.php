@@ -132,7 +132,7 @@ class formula_list_api extends list_api implements JsonSerializable
      * merge as a function, because the array_merge does not create an object
      * @param formula_list_api $new_wrd_lst with the formulas that should be added
      */
-    function merge(formula_list_api $new_wrd_lst)
+    function merge(formula_list_api $new_wrd_lst): void
     {
         foreach ($new_wrd_lst->lst as $new_wrd) {
             $this->add($new_wrd);
