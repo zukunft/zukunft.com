@@ -1,6 +1,8 @@
-PREPARE component_std_by_id (int) AS
+PREPARE component_std_by_name (text) AS
     SELECT component_id,
            component_name,
+           code_id,
+           ui_msg_code_id,
            description,
            component_type_id,
            word_id_row,
@@ -13,4 +15,4 @@ PREPARE component_std_by_id (int) AS
            protect_id,
            user_id
       FROM components
-     WHERE component_id = $1;
+     WHERE component_name = $1;

@@ -200,6 +200,13 @@ class controller
     const DSP_COMPONENT_LINK = "component_link";
     const DSP_COMPONENT_UNLINK = "component_unlink";
 
+    // list of add system views which don't need a object
+    const DSP_SYS_ADD = array(
+        self::DSP_WORD_ADD,
+        self::DSP_VALUE_ADD,
+        self::DSP_COMPONENT_ADD
+    );
+
 
     /*
      * functions

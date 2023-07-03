@@ -85,7 +85,7 @@ class view_unit_tests
         $dsp->set_id(2);
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $dsp->load_components_sql($db_con)->sql;
-        $expected_sql = $t->file('db/view/components_by_view_id.sql');
+        $expected_sql = $t->file('db/component/components_by_view_id.sql');
         $t->display('view->load_components_sql by view id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
@@ -94,7 +94,7 @@ class view_unit_tests
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $dsp->load_components_sql($db_con)->sql;
-        $expected_sql = $t->file('db/view/components_by_view_id_mysql.sql');
+        $expected_sql = $t->file('db/component/components_by_view_id_mysql.sql');
         $t->display('view->load_components_sql for MySQL', $lib->trim($expected_sql), $lib->trim($created_sql));
 
 

@@ -68,6 +68,7 @@ class msg
     const IP_BLOCK_POST_ADDR = 'ip_block_post_addr';
     const IP_BLOCK_SOLUTION = 'ip_block_solution';
     const FORM_WORD_ADD_TITLE = 'form_word_add_title';
+    const FORM_COMPONENT_ADD_TITLE = 'form_component_add_title';
     const FORM_WORD_FLD_NAME = 'form_word_fld_name';
     const UNDO = 'undo';
     const UNDO_ADD = 'undo_add';
@@ -118,6 +119,7 @@ class msg
             self::IP_BLOCK_SOLUTION => '. If you think, this should not be the case, ' .
                 'please request the unblocking with an email to admin@zukunft.com.',
             self::FORM_WORD_ADD_TITLE => 'Add a new word',
+            self::FORM_COMPONENT_ADD_TITLE => 'Add a view element',
             self::FORM_WORD_FLD_NAME => 'Word name',
             self::UNDO => 'undo',
             self::UNDO_ADD => 'delete added',

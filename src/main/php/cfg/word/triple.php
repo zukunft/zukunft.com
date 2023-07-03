@@ -94,7 +94,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_FLD_NAMES = array(
+    const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_NAME,
         self::FLD_NAME_GIVEN,
         self::FLD_NAME_AUTO,
@@ -862,9 +862,9 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return self::FLD_NAME;
     }
 
-    function all_fields(): array
+    function all_sandbox_fields(): array
     {
-        return self::ALL_FLD_NAMES;
+        return self::ALL_SANDBOX_FLD_NAMES;
     }
 
     /**
@@ -1813,7 +1813,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 $log->std_value = $std_rec->name();
                 $log->row_id = $this->id;
                 $log->set_field(self::FLD_NAME);
-                $result .= $this->save_field_do($db_con, $log);
+                $result .= $this->save_field_user($db_con, $log);
             }
         }
         return $result;
@@ -1838,7 +1838,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 $log->std_value = $std_rec->name_given();
                 $log->row_id = $this->id;
                 $log->set_field(self::FLD_NAME_GIVEN);
-                $result .= $this->save_field_do($db_con, $log);
+                $result .= $this->save_field_user($db_con, $log);
             }
         }
         return $result;
@@ -1861,7 +1861,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 $log->std_value = $std_rec->name_generated;
                 $log->row_id = $this->id;
                 $log->set_field(self::FLD_NAME_AUTO);
-                $result .= $this->save_field_do($db_con, $log);
+                $result .= $this->save_field_user($db_con, $log);
             }
         }
         return $result;
@@ -1880,7 +1880,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             $log->std_value = $std_rec->description;
             $log->row_id = $this->id;
             $log->set_field(sql_db::FLD_DESCRIPTION);
-            $result .= $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_user($db_con, $log);
         }
         return $result;
     }

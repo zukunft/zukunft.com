@@ -96,7 +96,7 @@ class word extends sandbox_typed
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_FLD_NAMES = array(
+    const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_NAME,
         self::FLD_VALUES,
         self::FLD_PLURAL,
@@ -524,9 +524,9 @@ class word extends sandbox_typed
         return self::FLD_NAME;
     }
 
-    function all_fields(): array
+    function all_sandbox_fields(): array
     {
-        return self::ALL_FLD_NAMES;
+        return self::ALL_SANDBOX_FLD_NAMES;
     }
 
     /**
@@ -1851,7 +1851,7 @@ class word extends sandbox_typed
                 $log->std_value = $std_rec->plural;
                 $log->row_id = $this->id;
                 $log->set_field(self::FLD_PLURAL);
-                $result = $this->save_field_do($db_con, $log);
+                $result = $this->save_field_user($db_con, $log);
             }
         }
         return $result;

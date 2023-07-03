@@ -14,8 +14,8 @@
         {
           "pos": "1",
           "name": "Name",
-          "code_id": "word_name",
-          "description": "simply show the word name"
+          "description": "simply show the word name",
+          "type": "word_name"
         }
       ]
     },
@@ -28,74 +28,129 @@
         {
           "pos": "1",
           "name": "Name",
-          "code_id": "word_name",
-          "description": "simply show the word name"
+          "description": "simply show the word name",
+          "type": "word_name"
         }
       ]
     },
     {
       "name": "Add New Word",
       "code_id": "word_add",
+      "type": "system",
       "components": [
         {
           "pos": "1",
           "name": "form title",
-          "code_id": "form_title",
           "description": "show the language specific title of a add, change or delete form",
           "type": "system_form_title",
+          "code_id": "form_title",
           "ui_msg_code_id": "form_word_add_title"
         },
         {
           "pos": "2",
           "name": "hidden back stack",
-          "code_id": "form_back_stack",
           "description": "field that contains the stack for the undo actions",
-          "type": "system_form_back_stack"
+          "type": "system_form_back_stack",
+          "code_id": "form_back_stack"
         },
         {
           "pos": "3",
           "name": "hidden confirm status",
-          "code_id": "form_confirm_status",
           "description": "switch on that the form saving needs an extra confirm by the user",
-          "type": "system_form_confirm_status"
+          "type": "system_form_confirm_status",
+          "code_id": "form_confirm_status"
         },
         {
           "pos": "4",
           "name": "name form field",
-          "code_id": "form_field_name",
           "description": "the name field in a form",
-          "type": "field_name"
+          "type": "field_name",
+          "code_id": "form_field_name"
         },
         {
           "pos": "5",
           "name": "description form field",
-          "code_id": "form_field_description",
           "description": "the description field in a form",
-          "type": "field_description"
+          "type": "field_description",
+          "code_id": "form_field_description"
         },
         {
           "pos": "6",
           "name": "cancel button",
-          "code_id": "form_cancel_button",
           "description": "button to cancel the form action and go back to the previous view",
-          "type": "system_button_cancel"
+          "type": "system_button_cancel",
+          "code_id": "form_cancel_button"
         },
         {
           "pos": "7",
           "name": "save button",
-          "code_id": "form_button_save",
           "description": "button to save the form field into the database",
-          "type": "system_button_save"
+          "type": "system_button_save",
+          "code_id": "form_button_save"
         }
       ]
     },
     {
       "name": "Change Word",
-      "code_id": "word_edit"
+      "code_id": "word_edit",
+      "type": "system",
+      "components": [
+        {
+          "pos": "1",
+          "name": "form title",
+          "description": "show the language specific title of a add, change or delete form",
+          "type": "system_form_title",
+          "code_id": "form_title",
+          "ui_msg_code_id": "form_word_add_title"
+        },
+        {
+          "pos": "2",
+          "name": "hidden back stack",
+          "description": "field that contains the stack for the undo actions",
+          "type": "system_form_back_stack",
+          "code_id": "form_back_stack"
+        },
+        {
+          "pos": "3",
+          "name": "hidden confirm status",
+          "description": "switch on that the form saving needs an extra confirm by the user",
+          "type": "system_form_confirm_status",
+          "code_id": "form_confirm_status"
+        },
+        {
+          "pos": "4",
+          "name": "name form field",
+          "description": "the name field in a form",
+          "type": "field_name",
+          "code_id": "form_field_name"
+        },
+        {
+          "pos": "5",
+          "name": "description form field",
+          "description": "the description field in a form",
+          "type": "field_description",
+          "code_id": "form_field_description"
+        },
+        {
+          "pos": "6",
+          "name": "cancel button",
+          "description": "button to cancel the form action and go back to the previous view",
+          "type": "system_button_cancel",
+          "code_id": "form_cancel_button"
+        },
+        {
+          "pos": "7",
+          "name": "save button",
+          "description": "button to save the form field into the database",
+          "type": "system_button_save",
+          "code_id": "form_button_save"
+        }
+      ]
     },
     {
       "name": "Delete Word",
       "description": "Exclude or delete a word",
+      "type": "system",
       "code_id": "word_del"
     },
     {
@@ -228,9 +283,53 @@
       "components": [
         {
           "pos": "1",
-          "name": "System view component field",
-          "code_id": "system_component",
-          "description": "display a user sandbox object field and allow the user to change it"
+          "name": "form title",
+          "description": "show the language specific title of a add, change or delete form",
+          "type": "system_form_title",
+          "code_id": "form_title",
+          "ui_msg_code_id": "form_component_add_title"
+        },
+        {
+          "pos": "2",
+          "name": "hidden back stack",
+          "description": "field that contains the stack for the undo actions",
+          "type": "system_form_back_stack",
+          "code_id": "form_back_stack"
+        },
+        {
+          "pos": "3",
+          "name": "hidden confirm status",
+          "description": "switch on that the form saving needs an extra confirm by the user",
+          "type": "system_form_confirm_status",
+          "code_id": "form_confirm_status"
+        },
+        {
+          "pos": "4",
+          "name": "name form field",
+          "description": "the name field in a form",
+          "type": "field_name",
+          "code_id": "form_field_name"
+        },
+        {
+          "pos": "5",
+          "name": "description form field",
+          "description": "the description field in a form",
+          "type": "field_description",
+          "code_id": "form_field_description"
+        },
+        {
+          "pos": "6",
+          "name": "cancel button",
+          "description": "button to cancel the form action and go back to the previous view",
+          "type": "system_button_cancel",
+          "code_id": "form_cancel_button"
+        },
+        {
+          "pos": "7",
+          "name": "save button",
+          "description": "button to save the form field into the database",
+          "type": "system_button_save",
+          "code_id": "form_button_save"
         }
       ]
     },
@@ -251,7 +350,7 @@
         {
           "pos": "1",
           "name": "Name",
-          "code_id": "word_name"
+          "type": "word_name"
         },
         {
           "pos": "2",

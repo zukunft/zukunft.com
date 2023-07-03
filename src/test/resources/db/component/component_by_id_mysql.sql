@@ -1,11 +1,9 @@
-PREPARE component_list_by_view_id FROM
+PREPARE component_by_id FROM
     'SELECT s.component_id,
             u.component_id AS user_component_id,
             s.user_id,
             s.code_id,
             s.ui_msg_code_id,
-            l.view_id,
-            l.component_id,
             IF(u.component_name    IS NULL, s.component_name,    u.component_name)    AS component_name,
             IF(u.description       IS NULL, s.description,       u.description)       AS description,
             IF(u.component_type_id IS NULL, s.component_type_id, u.component_type_id) AS component_type_id,
@@ -19,6 +17,4 @@ PREPARE component_list_by_view_id FROM
             IF(u.protect_id        IS NULL, s.protect_id,        u.protect_id)        AS protect_id
        FROM components s
   LEFT JOIN user_components u  ON s.component_id = u.component_id AND u.user_id = ?
-  LEFT JOIN component_links l ON s.component_id = l.component_id
-      WHERE l.view_id = ?
-      ORDER BY l.order_nbr';
+      WHERE s.component_id = ?';

@@ -52,7 +52,7 @@ class formula_link extends sandbox_link_with_type
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_FLD_NAMES = array(
+    const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_TYPE,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,

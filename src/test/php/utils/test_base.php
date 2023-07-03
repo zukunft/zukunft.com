@@ -57,6 +57,7 @@ include_once MODEL_USER_PATH . 'user.php';
 use cfg\config;
 use controller\controller;
 use html\html_base;
+use html\word\word as word_dsp;
 use html\view\view as view_dsp;
 use cfg\change_log_named;
 use cfg\combine_object;
@@ -686,20 +687,24 @@ class test_base
      * @return bool true if the generated view matches the expected
      */
     function assert_view(
-        string $dsp_code_id,
-        user $usr,
+        string     $dsp_code_id,
+        user       $usr,
         ?db_object $dbo = null,
-        int $id = 0): bool
+        int        $id = 0): bool
     {
         $lib = new library();
 
         // create the filename of the expected result
         $folder = '';
         $dbo_name = '';
+        $class = '';
         if ($dbo != null) {
             $class = $lib->class_to_name($dbo::class);
             $folder = $class . '/';
-            $dbo_name = '_' . $class . '_' . $id;
+            if ($id > 0) {
+                $dbo_name = '_' . $class;
+                $dbo_name .= '_' . $id;
+            }
         }
         $filename = 'views/' . $folder . $dsp_code_id . $dbo_name;
 
@@ -711,9 +716,11 @@ class test_base
         // create the api message that send to the frontend
         $api_msg = $dsp->api_json();
         if ($dbo != null) {
-            // add the database object json to the api message
-            // to send only one message to the frontend
-            $dbo->load_by_id($id);
+            if ($id != 0) {
+                // add the database object json to the api message
+                // to send only one message to the frontend
+                $dbo->load_by_id($id);
+            }
             $dbo_api_msg = $dbo->api_json();
             $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
         }

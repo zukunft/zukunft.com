@@ -1,6 +1,8 @@
 PREPARE component_std_by_id FROM
     'SELECT component_id,
             component_name,
+            code_id,
+            ui_msg_code_id,
             description,
             component_type_id,
             word_id_row,

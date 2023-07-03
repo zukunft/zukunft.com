@@ -1226,23 +1226,25 @@ CREATE TABLE IF NOT EXISTS `views`
 CREATE TABLE IF NOT EXISTS `components`
 (
     `component_id`           int(11)      NOT NULL,
-    `user_id`                     int(11)      NOT NULL,
-    `component_name`         varchar(100) NOT NULL COMMENT 'just for easy selection',
-    `description`                 text,
-    `component_type_id`      int(11)    DEFAULT NULL,
-    `word_id_row`                 int(11)    DEFAULT NULL COMMENT 'for a tree the related value the start node',
-    `formula_id`                  int(11)    DEFAULT NULL COMMENT 'used for type 6',
-    `word_id_col`                 int(11)    DEFAULT NULL COMMENT 'to define the type for the table columns',
-    `word_id_col2`                int(11)    DEFAULT NULL COMMENT 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart',
-    `excluded`                    tinyint(4) DEFAULT NULL,
-    `share_type_id`               smallint   DEFAULT NULL,
-    `protect_id`                  smallint   DEFAULT NULL,
-    `linked_component_id`    int(11)    DEFAULT NULL COMMENT 'to link this mask entry to another mask entry',
-    `component_link_type_id` int(11)    DEFAULT NULL COMMENT 'to define how this entry links to the other entry',
-    `link_type_id`                int(11)    DEFAULT NULL COMMENT 'e.g. for type 4 to select possible terms'
+    `user_id`                int(11)      NOT NULL,
+    `component_name`         varchar(100) NOT NULL     COMMENT 'the unique name used to select a component by the user',
+    `description`            text,
+    `component_type_id`      int(11)      DEFAULT NULL COMMENT 'to select the predefined functionality',
+    `code_id`                varchar(100)              COMMENT 'used for system components to select the component by the program code',
+    `ui_msg_code_id`         varchar(100)              COMMENT 'used for system components the id to select the language specific user interface message e.g. "add word"',
+    `word_id_row`            int(11)      DEFAULT NULL COMMENT 'for a tree the related value the start node',
+    `formula_id`             int(11)      DEFAULT NULL COMMENT 'used for type 6',
+    `word_id_col`            int(11)      DEFAULT NULL COMMENT 'to define the type for the table columns',
+    `word_id_col2`           int(11)      DEFAULT NULL COMMENT 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart',
+    `excluded`               tinyint(4)   DEFAULT NULL,
+    `share_type_id`          smallint     DEFAULT NULL,
+    `protect_id`             smallint     DEFAULT NULL,
+    `linked_component_id`    int(11)      DEFAULT NULL COMMENT 'to link this component to another component',
+    `component_link_type_id` int(11)      DEFAULT NULL COMMENT 'to define how this entry links to the other entry',
+    `link_type_id`           int(11)      DEFAULT NULL COMMENT 'e.g. for type 4 to select possible terms'
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 11
-  DEFAULT CHARSET = utf8 COMMENT ='the single components of a mask';
+  DEFAULT CHARSET = utf8 COMMENT ='the single components of a view';
 
 -- --------------------------------------------------------
 

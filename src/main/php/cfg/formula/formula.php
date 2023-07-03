@@ -109,7 +109,7 @@ class formula extends sandbox_typed
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_FLD_NAMES = array(
+    const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_NAME,
         self::FLD_FORMULA_TEXT,
         self::FLD_FORMULA_USER_TEXT,
@@ -603,9 +603,9 @@ class formula extends sandbox_typed
         return self::FLD_NAME;
     }
 
-    function all_fields(): array
+    function all_sandbox_fields(): array
     {
-        return self::ALL_FLD_NAMES;
+        return self::ALL_SANDBOX_FLD_NAMES;
     }
 
     /**
@@ -2084,7 +2084,7 @@ class formula extends sandbox_typed
             $log->std_value = $std_rec->usr_text;
             $log->row_id = $this->id;
             $log->set_field(self::FLD_FORMULA_USER_TEXT);
-            $result = $this->save_field_do($db_con, $log);
+            $result = $this->save_field_user($db_con, $log);
         }
         return $result;
     }
@@ -2103,7 +2103,7 @@ class formula extends sandbox_typed
             $log->std_value = $std_rec->ref_text;
             $log->row_id = $this->id;
             $log->set_field(self::FLD_FORMULA_TEXT);
-            $result = $this->save_field_do($db_con, $log);
+            $result = $this->save_field_user($db_con, $log);
             // updating the reference expression is probably relevant for calculation, so force to update the timestamp
             if ($result == '') {
                 $result = $this->save_field_trigger_update($db_con);
@@ -2138,7 +2138,7 @@ class formula extends sandbox_typed
             }
             $log->row_id = $this->id;
             $log->set_field(self::FLD_ALL_NEEDED);
-            $result = $this->save_field_do($db_con, $log);
+            $result = $this->save_field_user($db_con, $log);
             // if it is switch on that all fields are needed for the calculation, probably some formula results can be removed
             if ($result == '') {
                 $result = $this->save_field_trigger_update($db_con);
@@ -2184,7 +2184,7 @@ class formula extends sandbox_typed
                 $log->std_value = $std_rec->name();
                 $log->row_id = $this->id;
                 $log->set_field(self::FLD_NAME);
-                $result .= $this->save_field_do($db_con, $log);
+                $result .= $this->save_field_user($db_con, $log);
                 // in case a word link exist, change also the name of the word
                 $wrd = new word($this->user());
                 $wrd->load_by_name($db_rec->name(), word::class);

@@ -564,7 +564,7 @@ class sandbox_named extends sandbox
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id;
                 $log->set_field(self::FLD_DESCRIPTION);
-                $result = $this->save_field_do($db_con, $log);
+                $result = $this->save_field_user($db_con, $log);
             }
         }
         return $result;

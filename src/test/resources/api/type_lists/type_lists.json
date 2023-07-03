@@ -9,8 +9,7 @@
       {
         "id": 1,
         "code_id": "normal",
-        "name": "normal user",
-        "comment": ""
+        "name": "normal user"
       },
       {
         "id": 2,
@@ -64,7 +63,6 @@
       },
       {
         "id": 5,
-        "code_id": "",
         "name": "calc",
         "comment": "a calculated word in R; e.g. this year returns always a different term"
       },
@@ -291,14 +289,19 @@
         "code_id": "detail_view",
         "name": "details",
         "comment": "to show the more details than the standard view"
+      },
+      {
+        "id": 7,
+        "code_id": "system",
+        "name": "system",
+        "comment": "views used by the system that should only be adjusted by an admin"
       }
     ],
     "component_types": [
       {
         "id": 1,
         "code_id": "word_select",
-        "name": "word selector",
-        "comment": ""
+        "name": "word selector"
       },
       {
         "id": 2,
@@ -477,32 +480,27 @@
       {
         "id": 1,
         "code_id": "xml",
-        "name": "XML",
-        "comment": ""
+        "name": "XML"
       },
       {
         "id": 2,
         "code_id": "xbrl",
-        "name": "XBRL",
-        "comment": ""
+        "name": "XBRL"
       },
       {
         "id": 3,
         "code_id": "csv",
-        "name": "CSV",
-        "comment": ""
+        "name": "CSV"
       },
       {
         "id": 4,
         "code_id": "pdf",
-        "name": "PDF",
-        "comment": ""
+        "name": "PDF"
       },
       {
         "id": 5,
         "code_id": "api",
-        "name": "API",
-        "comment": ""
+        "name": "API"
       }
     ],
     "share_types": [
@@ -581,8 +579,7 @@
       {
         "id": 1,
         "code_id": "plural",
-        "name": "plural",
-        "comment": ""
+        "name": "plural"
       }
     ],
     "sys_log_stati": [
@@ -633,44 +630,37 @@
       {
         "id": 4,
         "code_id": "formula_update",
-        "name": "update formula",
-        "comment": ""
+        "name": "update formula"
       },
       {
         "id": 5,
         "code_id": "formula_add",
-        "name": "add formula",
-        "comment": ""
+        "name": "add formula"
       },
       {
         "id": 6,
         "code_id": "formula_del",
-        "name": "exclude formula",
-        "comment": ""
+        "name": "exclude formula"
       },
       {
         "id": 7,
         "code_id": "formula_link",
-        "name": "link formula",
-        "comment": ""
+        "name": "link formula"
       },
       {
         "id": 8,
         "code_id": "formula_unlink",
-        "name": "unlink a formula",
-        "comment": ""
+        "name": "unlink a formula"
       },
       {
         "id": 9,
         "code_id": "triple",
-        "name": "link a word",
-        "comment": ""
+        "name": "link a word"
       },
       {
         "id": 10,
         "code_id": "word_unlink",
-        "name": "unlink word",
-        "comment": ""
+        "name": "unlink word"
       },
       {
         "id": 11,
@@ -683,1152 +673,971 @@
       {
         "id": 1,
         "code_id": "add",
-        "name": "add",
-        "comment": ""
+        "name": "add"
       },
       {
         "id": 2,
         "code_id": "del",
-        "name": "del",
-        "comment": ""
+        "name": "del"
       },
       {
         "id": 3,
         "code_id": "update",
-        "name": "update",
-        "comment": ""
+        "name": "update"
       }
     ],
     "change_log_tables": [
       {
         "id": 1,
         "code_id": "users",
-        "name": "users",
-        "comment": ""
+        "name": "users"
       },
       {
         "id": 2,
         "code_id": "values",
-        "name": "values",
-        "comment": ""
+        "name": "values"
       },
       {
         "id": 3,
         "code_id": "user_values",
-        "name": "user_values",
-        "comment": ""
+        "name": "user_values"
       },
       {
         "id": 4,
         "code_id": "value_links",
-        "name": "value_links",
-        "comment": ""
+        "name": "value_links"
       },
       {
         "id": 5,
         "code_id": "words",
-        "name": "words",
-        "comment": ""
+        "name": "words"
       },
       {
         "id": 6,
         "code_id": "user_words",
-        "name": "user_words",
-        "comment": ""
+        "name": "user_words"
       },
       {
         "id": 7,
         "code_id": "triples",
-        "name": "triples",
-        "comment": ""
+        "name": "triples"
       },
       {
         "id": 8,
         "code_id": "user_triples",
-        "name": "user_triples",
-        "comment": ""
+        "name": "user_triples"
       },
       {
         "id": 9,
         "code_id": "verbs",
-        "name": "verbs",
-        "comment": ""
+        "name": "verbs"
       },
       {
         "id": 10,
         "code_id": "formulas",
-        "name": "formulas",
-        "comment": ""
+        "name": "formulas"
       },
       {
         "id": 11,
         "code_id": "user_formulas",
-        "name": "user_formulas",
-        "comment": ""
+        "name": "user_formulas"
       },
       {
         "id": 12,
         "code_id": "formula_links",
-        "name": "formula_links",
-        "comment": ""
+        "name": "formula_links"
       },
       {
         "id": 13,
         "code_id": "user_formula_links",
-        "name": "user_formula_links",
-        "comment": ""
+        "name": "user_formula_links"
       },
       {
         "id": 14,
         "code_id": "views",
-        "name": "views",
-        "comment": ""
+        "name": "views"
       },
       {
         "id": 15,
         "code_id": "user_views",
-        "name": "user_views",
-        "comment": ""
+        "name": "user_views"
       },
       {
         "id": 16,
         "code_id": "component_links",
-        "name": "component_links",
-        "comment": ""
+        "name": "component_links"
       },
       {
         "id": 17,
         "code_id": "user_component_links",
-        "name": "user_component_links",
-        "comment": ""
+        "name": "user_component_links"
       },
       {
         "id": 18,
         "code_id": "components",
-        "name": "components",
-        "comment": ""
+        "name": "components"
       },
       {
         "id": 19,
         "code_id": "user_components",
-        "name": "user_components",
-        "comment": ""
+        "name": "user_components"
       },
       {
         "id": 20,
         "code_id": "sources",
-        "name": "sources",
-        "comment": ""
+        "name": "sources"
       },
       {
         "id": 21,
         "code_id": "user_sources",
-        "name": "user_sources",
-        "comment": ""
+        "name": "user_sources"
       },
       {
         "id": 22,
         "code_id": "refs",
-        "name": "refs",
-        "comment": ""
+        "name": "refs"
       },
       {
         "id": 23,
         "code_id": "user_refs",
-        "name": "user_refs",
-        "comment": ""
+        "name": "user_refs"
       }
     ],
     "change_log_fields": [
       {
         "id": 1,
         "code_id": "2numeric_value",
-        "name": "2numeric_value",
-        "comment": ""
+        "name": "2numeric_value"
       },
       {
         "id": 2,
         "code_id": "2source_id",
-        "name": "2source_id",
-        "comment": ""
+        "name": "2source_id"
       },
       {
         "id": 3,
         "code_id": "2share_type_id",
-        "name": "2share_type_id",
-        "comment": ""
+        "name": "2share_type_id"
       },
       {
         "id": 4,
         "code_id": "2protect_id",
-        "name": "2protect_id",
-        "comment": ""
+        "name": "2protect_id"
       },
       {
         "id": 5,
         "code_id": "2excluded",
-        "name": "2excluded",
-        "comment": ""
+        "name": "2excluded"
       },
       {
         "id": 6,
         "code_id": "3numeric_value",
-        "name": "3numeric_value",
-        "comment": ""
+        "name": "3numeric_value"
       },
       {
         "id": 7,
         "code_id": "3protect_id",
-        "name": "3protect_id",
-        "comment": ""
+        "name": "3protect_id"
       },
       {
         "id": 8,
         "code_id": "3share_type_id",
-        "name": "3share_type_id",
-        "comment": ""
+        "name": "3share_type_id"
       },
       {
         "id": 9,
         "code_id": "5word_name",
-        "name": "5word_name",
-        "comment": ""
+        "name": "5word_name"
       },
       {
         "id": 10,
         "code_id": "5description",
-        "name": "5description",
-        "comment": ""
+        "name": "5description"
       },
       {
         "id": 11,
         "code_id": "5word_type_id",
-        "name": "5word_type_id",
-        "comment": ""
+        "name": "5word_type_id"
       },
       {
         "id": 12,
         "code_id": "5plural",
-        "name": "5plural",
-        "comment": ""
+        "name": "5plural"
       },
       {
         "id": 13,
         "code_id": "5excluded",
-        "name": "5excluded",
-        "comment": ""
+        "name": "5excluded"
       },
       {
         "id": 14,
         "code_id": "6word_type_id",
-        "name": "6word_type_id",
-        "comment": ""
+        "name": "6word_type_id"
       },
       {
         "id": 15,
         "code_id": "6plural",
-        "name": "6plural",
-        "comment": ""
+        "name": "6plural"
       },
       {
         "id": 16,
         "code_id": "6description",
-        "name": "6description",
-        "comment": ""
+        "name": "6description"
       },
       {
         "id": 17,
         "code_id": "7triple_name",
-        "name": "7triple_name",
-        "comment": ""
+        "name": "7triple_name"
       },
       {
         "id": 18,
         "code_id": "7name_given",
-        "name": "7name_given",
-        "comment": ""
+        "name": "7name_given"
       },
       {
         "id": 19,
         "code_id": "7name_generated",
-        "name": "7name_generated",
-        "comment": ""
+        "name": "7name_generated"
       },
       {
         "id": 20,
         "code_id": "7excluded",
-        "name": "7excluded",
-        "comment": ""
+        "name": "7excluded"
       },
       {
         "id": 21,
         "code_id": "8triple_name",
-        "name": "8triple_name",
-        "comment": ""
+        "name": "8triple_name"
       },
       {
         "id": 22,
         "code_id": "9verb_name",
-        "name": "9verb_name",
-        "comment": ""
+        "name": "9verb_name"
       },
       {
         "id": 23,
         "code_id": "9code_id",
-        "name": "9code_id",
-        "comment": ""
+        "name": "9code_id"
       },
       {
         "id": 24,
         "code_id": "9description",
-        "name": "9description",
-        "comment": ""
+        "name": "9description"
       },
       {
         "id": 25,
         "code_id": "9name_plural",
-        "name": "9name_plural",
-        "comment": ""
+        "name": "9name_plural"
       },
       {
         "id": 26,
         "code_id": "9name_reverse",
-        "name": "9name_reverse",
-        "comment": ""
+        "name": "9name_reverse"
       },
       {
         "id": 27,
         "code_id": "9name_plural_reverse",
-        "name": "9name_plural_reverse",
-        "comment": ""
+        "name": "9name_plural_reverse"
       },
       {
         "id": 28,
         "code_id": "9formula_name",
-        "name": "9formula_name",
-        "comment": ""
+        "name": "9formula_name"
       },
       {
         "id": 29,
         "code_id": "10formula_name",
-        "name": "10formula_name",
-        "comment": ""
+        "name": "10formula_name"
       },
       {
         "id": 30,
         "code_id": "10formula_type_id",
-        "name": "10formula_type_id",
-        "comment": ""
+        "name": "10formula_type_id"
       },
       {
         "id": 31,
         "code_id": "10resolved_text",
-        "name": "10resolved_text",
-        "comment": ""
+        "name": "10resolved_text"
       },
       {
         "id": 32,
         "code_id": "10formula_text",
-        "name": "10formula_text",
-        "comment": ""
+        "name": "10formula_text"
       },
       {
         "id": 33,
         "code_id": "10description",
-        "name": "10description",
-        "comment": ""
+        "name": "10description"
       },
       {
         "id": 34,
         "code_id": "10all_values_needed",
-        "name": "10all_values_needed",
-        "comment": ""
+        "name": "10all_values_needed"
       },
       {
         "id": 35,
         "code_id": "11description",
-        "name": "11description",
-        "comment": ""
+        "name": "11description"
       },
       {
         "id": 36,
         "code_id": "11formula_type_id",
-        "name": "11formula_type_id",
-        "comment": ""
+        "name": "11formula_type_id"
       },
       {
         "id": 37,
         "code_id": "11resolved_text",
-        "name": "11resolved_text",
-        "comment": ""
+        "name": "11resolved_text"
       },
       {
         "id": 38,
         "code_id": "11formula_text",
-        "name": "11formula_text",
-        "comment": ""
+        "name": "11formula_text"
       },
       {
         "id": 39,
         "code_id": "11all_values_needed",
-        "name": "11all_values_needed",
-        "comment": ""
+        "name": "11all_values_needed"
       },
       {
         "id": 40,
         "code_id": "12excluded",
-        "name": "12excluded",
-        "comment": ""
+        "name": "12excluded"
       },
       {
         "id": 41,
         "code_id": "14view_name",
-        "name": "14view_name",
-        "comment": ""
+        "name": "14view_name"
       },
       {
         "id": 42,
         "code_id": "14description",
-        "name": "14description",
-        "comment": ""
+        "name": "14description"
       },
       {
         "id": 43,
         "code_id": "14code_id",
-        "name": "14code_id",
-        "comment": ""
+        "name": "14code_id"
       },
       {
         "id": 44,
         "code_id": "14view_type_id",
-        "name": "14view_type_id",
-        "comment": ""
+        "name": "14view_type_id"
       },
       {
         "id": 45,
         "code_id": "15description",
-        "name": "15description",
-        "comment": ""
+        "name": "15description"
       },
       {
         "id": 46,
         "code_id": "15view_type_id",
-        "name": "15view_type_id",
-        "comment": ""
+        "name": "15view_type_id"
       },
       {
         "id": 47,
         "code_id": "16order_nbr",
-        "name": "16order_nbr",
-        "comment": ""
+        "name": "16order_nbr"
       },
       {
         "id": 48,
         "code_id": "16excluded",
-        "name": "16excluded",
-        "comment": ""
+        "name": "16excluded"
       },
       {
         "id": 49,
         "code_id": "17order_nbr",
-        "name": "17order_nbr",
-        "comment": ""
+        "name": "17order_nbr"
       },
       {
         "id": 50,
         "code_id": "18component_name",
-        "name": "18component_name",
-        "comment": ""
+        "name": "18component_name"
       },
       {
         "id": 51,
         "code_id": "18description",
-        "name": "18description",
-        "comment": ""
+        "name": "18description"
       },
       {
         "id": 52,
         "code_id": "18component_type_id",
-        "name": "18component_type_id",
-        "comment": ""
+        "name": "18component_type_id"
       },
       {
         "id": 53,
         "code_id": "19description",
-        "name": "19description",
-        "comment": ""
+        "name": "19description"
       },
       {
         "id": 54,
         "code_id": "19component_type_id",
-        "name": "19component_type_id",
-        "comment": ""
+        "name": "19component_type_id"
       },
       {
         "id": 55,
         "code_id": "20source_name",
-        "name": "20source_name",
-        "comment": ""
+        "name": "20source_name"
       },
       {
         "id": 56,
         "code_id": "20description",
-        "name": "20description",
-        "comment": ""
+        "name": "20description"
       },
       {
         "id": 57,
         "code_id": "20source_type_id",
-        "name": "20source_type_id",
-        "comment": ""
+        "name": "20source_type_id"
       },
       {
         "id": 58,
         "code_id": "20url",
-        "name": "20url",
-        "comment": ""
+        "name": "20url"
       },
       {
         "id": 59,
         "code_id": "21description",
-        "name": "21description",
-        "comment": ""
+        "name": "21description"
       },
       {
         "id": 60,
         "code_id": "21url",
-        "name": "21url",
-        "comment": ""
+        "name": "21url"
       },
       {
         "id": 61,
         "code_id": "1code_id",
-        "name": "1code_id",
-        "comment": ""
+        "name": "1code_id"
       },
       {
         "id": 62,
         "code_id": "1ip_address",
-        "name": "1ip_address",
-        "comment": ""
+        "name": "1ip_address"
       },
       {
         "id": 63,
         "code_id": "1email",
-        "name": "1email",
-        "comment": ""
+        "name": "1email"
       },
       {
         "id": 64,
         "code_id": "1first_name",
-        "name": "1first_name",
-        "comment": ""
+        "name": "1first_name"
       },
       {
         "id": 65,
         "code_id": "1last_name",
-        "name": "1last_name",
-        "comment": ""
+        "name": "1last_name"
       },
       {
         "id": 66,
         "code_id": "1last_word_id",
-        "name": "1last_word_id",
-        "comment": ""
+        "name": "1last_word_id"
       },
       {
         "id": 67,
         "code_id": "1source_id",
-        "name": "1source_id",
-        "comment": ""
+        "name": "1source_id"
       },
       {
         "id": 68,
         "code_id": "1user_profile_id",
-        "name": "1user_profile_id",
-        "comment": ""
+        "name": "1user_profile_id"
       },
       {
         "id": 69,
         "code_id": "5values",
-        "name": "5values",
-        "comment": ""
+        "name": "5values"
       },
       {
         "id": 70,
         "code_id": "5view_id",
-        "name": "5view_id",
-        "comment": ""
+        "name": "5view_id"
       },
       {
         "id": 71,
         "code_id": "5share_type_id",
-        "name": "5share_type_id",
-        "comment": ""
+        "name": "5share_type_id"
       },
       {
         "id": 72,
         "code_id": "5protect_id",
-        "name": "5protect_id",
-        "comment": ""
+        "name": "5protect_id"
       },
       {
         "id": 73,
         "code_id": "6word_name",
-        "name": "6word_name",
-        "comment": ""
+        "name": "6word_name"
       },
       {
         "id": 74,
         "code_id": "6values",
-        "name": "6values",
-        "comment": ""
+        "name": "6values"
       },
       {
         "id": 75,
         "code_id": "6view_id",
-        "name": "6view_id",
-        "comment": ""
+        "name": "6view_id"
       },
       {
         "id": 76,
         "code_id": "6excluded",
-        "name": "6excluded",
-        "comment": ""
+        "name": "6excluded"
       },
       {
         "id": 77,
         "code_id": "6share_type_id",
-        "name": "6share_type_id",
-        "comment": ""
+        "name": "6share_type_id"
       },
       {
         "id": 78,
         "code_id": "6protect_id",
-        "name": "6protect_id",
-        "comment": ""
+        "name": "6protect_id"
       },
       {
         "id": 79,
         "code_id": "9words",
-        "name": "9words",
-        "comment": ""
+        "name": "9words"
       },
       {
         "id": 80,
         "code_id": "7description",
-        "name": "7description",
-        "comment": ""
+        "name": "7description"
       },
       {
         "id": 81,
         "code_id": "7word_type_id",
-        "name": "7word_type_id",
-        "comment": ""
+        "name": "7word_type_id"
       },
       {
         "id": 82,
         "code_id": "7values",
-        "name": "7values",
-        "comment": ""
+        "name": "7values"
       },
       {
         "id": 83,
         "code_id": "7share_type_id",
-        "name": "7share_type_id",
-        "comment": ""
+        "name": "7share_type_id"
       },
       {
         "id": 84,
         "code_id": "7protect_id",
-        "name": "7protect_id",
-        "comment": ""
+        "name": "7protect_id"
       },
       {
         "id": 85,
         "code_id": "8name_given",
-        "name": "8name_given",
-        "comment": ""
+        "name": "8name_given"
       },
       {
         "id": 86,
         "code_id": "8name_generated",
-        "name": "8name_generated",
-        "comment": ""
+        "name": "8name_generated"
       },
       {
         "id": 87,
         "code_id": "8description",
-        "name": "8description",
-        "comment": ""
+        "name": "8description"
       },
       {
         "id": 88,
         "code_id": "8word_type_id",
-        "name": "8word_type_id",
-        "comment": ""
+        "name": "8word_type_id"
       },
       {
         "id": 89,
         "code_id": "8values",
-        "name": "8values",
-        "comment": ""
+        "name": "8values"
       },
       {
         "id": 90,
         "code_id": "8excluded",
-        "name": "8excluded",
-        "comment": ""
+        "name": "8excluded"
       },
       {
         "id": 91,
         "code_id": "8share_type_id",
-        "name": "8share_type_id",
-        "comment": ""
+        "name": "8share_type_id"
       },
       {
         "id": 92,
         "code_id": "8protect_id",
-        "name": "8protect_id",
-        "comment": ""
+        "name": "8protect_id"
       },
       {
         "id": 93,
         "code_id": "2last_update",
-        "name": "2last_update",
-        "comment": ""
+        "name": "2last_update"
       },
       {
         "id": 94,
         "code_id": "3source_id",
-        "name": "3source_id",
-        "comment": ""
+        "name": "3source_id"
       },
       {
         "id": 95,
         "code_id": "3last_update",
-        "name": "3last_update",
-        "comment": ""
+        "name": "3last_update"
       },
       {
         "id": 96,
         "code_id": "3excluded",
-        "name": "3excluded",
-        "comment": ""
+        "name": "3excluded"
       },
       {
         "id": 97,
         "code_id": "4user_id",
-        "name": "4user_id",
-        "comment": ""
+        "name": "4user_id"
       },
       {
         "id": 98,
         "code_id": "4value_id",
-        "name": "4value_id",
-        "comment": ""
+        "name": "4value_id"
       },
       {
         "id": 99,
         "code_id": "4phrase_id",
-        "name": "4phrase_id",
-        "comment": ""
+        "name": "4phrase_id"
       },
       {
         "id": 100,
         "code_id": "4weight",
-        "name": "4weight",
-        "comment": ""
+        "name": "4weight"
       },
       {
         "id": 101,
         "code_id": "4link_type_id",
-        "name": "4link_type_id",
-        "comment": ""
+        "name": "4link_type_id"
       },
       {
         "id": 102,
         "code_id": "4condition_formula_id",
-        "name": "4condition_formula_id",
-        "comment": ""
+        "name": "4condition_formula_id"
       },
       {
         "id": 103,
         "code_id": "10last_update",
-        "name": "10last_update",
-        "comment": ""
+        "name": "10last_update"
       },
       {
         "id": 104,
         "code_id": "10excluded",
-        "name": "10excluded",
-        "comment": ""
+        "name": "10excluded"
       },
       {
         "id": 105,
         "code_id": "10share_type_id",
-        "name": "10share_type_id",
-        "comment": ""
+        "name": "10share_type_id"
       },
       {
         "id": 106,
         "code_id": "10protect_id",
-        "name": "10protect_id",
-        "comment": ""
+        "name": "10protect_id"
       },
       {
         "id": 107,
         "code_id": "11formula_name",
-        "name": "11formula_name",
-        "comment": ""
+        "name": "11formula_name"
       },
       {
         "id": 108,
         "code_id": "11last_update",
-        "name": "11last_update",
-        "comment": ""
+        "name": "11last_update"
       },
       {
         "id": 109,
         "code_id": "11excluded",
-        "name": "11excluded",
-        "comment": ""
+        "name": "11excluded"
       },
       {
         "id": 110,
         "code_id": "11share_type_id",
-        "name": "11share_type_id",
-        "comment": ""
+        "name": "11share_type_id"
       },
       {
         "id": 111,
         "code_id": "11protect_id",
-        "name": "11protect_id",
-        "comment": ""
+        "name": "11protect_id"
       },
       {
         "id": 112,
         "code_id": "12link_type_id",
-        "name": "12link_type_id",
-        "comment": ""
+        "name": "12link_type_id"
       },
       {
         "id": 113,
         "code_id": "12share_type_id",
-        "name": "12share_type_id",
-        "comment": ""
+        "name": "12share_type_id"
       },
       {
         "id": 114,
         "code_id": "12protect_id",
-        "name": "12protect_id",
-        "comment": ""
+        "name": "12protect_id"
       },
       {
         "id": 115,
         "code_id": "13link_type_id",
-        "name": "13link_type_id",
-        "comment": ""
+        "name": "13link_type_id"
       },
       {
         "id": 116,
         "code_id": "13excluded",
-        "name": "13excluded",
-        "comment": ""
+        "name": "13excluded"
       },
       {
         "id": 117,
         "code_id": "13share_type_id",
-        "name": "13share_type_id",
-        "comment": ""
+        "name": "13share_type_id"
       },
       {
         "id": 118,
         "code_id": "13protect_id",
-        "name": "13protect_id",
-        "comment": ""
+        "name": "13protect_id"
       },
       {
         "id": 119,
         "code_id": "14excluded",
-        "name": "14excluded",
-        "comment": ""
+        "name": "14excluded"
       },
       {
         "id": 120,
         "code_id": "14share_type_id",
-        "name": "14share_type_id",
-        "comment": ""
+        "name": "14share_type_id"
       },
       {
         "id": 121,
         "code_id": "14protect_id",
-        "name": "14protect_id",
-        "comment": ""
+        "name": "14protect_id"
       },
       {
         "id": 122,
         "code_id": "15excluded",
-        "name": "15excluded",
-        "comment": ""
+        "name": "15excluded"
       },
       {
         "id": 123,
         "code_id": "15share_type_id",
-        "name": "15share_type_id",
-        "comment": ""
+        "name": "15share_type_id"
       },
       {
         "id": 124,
         "code_id": "15protect_id",
-        "name": "15protect_id",
-        "comment": ""
+        "name": "15protect_id"
       },
       {
         "id": 125,
         "code_id": "16position_type",
-        "name": "16position_type",
-        "comment": ""
+        "name": "16position_type"
       },
       {
         "id": 126,
         "code_id": "16share_type_id",
-        "name": "16share_type_id",
-        "comment": ""
+        "name": "16share_type_id"
       },
       {
         "id": 127,
         "code_id": "16protect_id",
-        "name": "16protect_id",
-        "comment": ""
+        "name": "16protect_id"
       },
       {
         "id": 128,
         "code_id": "17position_type",
-        "name": "17position_type",
-        "comment": ""
+        "name": "17position_type"
       },
       {
         "id": 129,
         "code_id": "17excluded",
-        "name": "17excluded",
-        "comment": ""
+        "name": "17excluded"
       },
       {
         "id": 130,
         "code_id": "17share_type_id",
-        "name": "17share_type_id",
-        "comment": ""
+        "name": "17share_type_id"
       },
       {
         "id": 131,
         "code_id": "17protect_id",
-        "name": "17protect_id",
-        "comment": ""
+        "name": "17protect_id"
       },
       {
         "id": 132,
         "code_id": "18word_id_row",
-        "name": "18word_id_row",
-        "comment": ""
+        "name": "18word_id_row"
       },
       {
         "id": 133,
         "code_id": "18link_type_id",
-        "name": "18link_type_id",
-        "comment": ""
+        "name": "18link_type_id"
       },
       {
         "id": 134,
         "code_id": "18formula_id",
-        "name": "18formula_id",
-        "comment": ""
+        "name": "18formula_id"
       },
       {
         "id": 135,
         "code_id": "18word_id_col",
-        "name": "18word_id_col",
-        "comment": ""
+        "name": "18word_id_col"
       },
       {
         "id": 136,
         "code_id": "18word_id_col2",
-        "name": "18word_id_col2",
-        "comment": ""
+        "name": "18word_id_col2"
       },
       {
         "id": 137,
         "code_id": "18excluded",
-        "name": "18excluded",
-        "comment": ""
+        "name": "18excluded"
       },
       {
         "id": 138,
         "code_id": "18share_type_id",
-        "name": "18share_type_id",
-        "comment": ""
+        "name": "18share_type_id"
       },
       {
         "id": 139,
         "code_id": "18protect_id",
-        "name": "18protect_id",
-        "comment": ""
+        "name": "18protect_id"
       },
       {
         "id": 140,
         "code_id": "19component_name",
-        "name": "19component_name",
-        "comment": ""
+        "name": "19component_name"
       },
       {
         "id": 141,
         "code_id": "19word_id_row",
-        "name": "19word_id_row",
-        "comment": ""
+        "name": "19word_id_row"
       },
       {
         "id": 142,
         "code_id": "19link_type_id",
-        "name": "19link_type_id",
-        "comment": ""
+        "name": "19link_type_id"
       },
       {
         "id": 143,
         "code_id": "19formula_id",
-        "name": "19formula_id",
-        "comment": ""
+        "name": "19formula_id"
       },
       {
         "id": 144,
         "code_id": "19word_id_col",
-        "name": "19word_id_col",
-        "comment": ""
+        "name": "19word_id_col"
       },
       {
         "id": 145,
         "code_id": "19word_id_col2",
-        "name": "19word_id_col2",
-        "comment": ""
+        "name": "19word_id_col2"
       },
       {
         "id": 146,
         "code_id": "19excluded",
-        "name": "19excluded",
-        "comment": ""
+        "name": "19excluded"
       },
       {
         "id": 147,
         "code_id": "19share_type_id",
-        "name": "19share_type_id",
-        "comment": ""
+        "name": "19share_type_id"
       },
       {
         "id": 148,
         "code_id": "19protect_id",
-        "name": "19protect_id",
-        "comment": ""
+        "name": "19protect_id"
       },
       {
         "id": 149,
         "code_id": "22phrase_id",
-        "name": "22phrase_id",
-        "comment": ""
+        "name": "22phrase_id"
       },
       {
         "id": 150,
         "code_id": "22external_key",
-        "name": "22external_key",
-        "comment": ""
+        "name": "22external_key"
       },
       {
         "id": 151,
         "code_id": "22ref_type_id",
-        "name": "22ref_type_id",
-        "comment": ""
+        "name": "22ref_type_id"
       },
       {
         "id": 152,
         "code_id": "22url",
-        "name": "22url",
-        "comment": ""
+        "name": "22url"
       },
       {
         "id": 153,
         "code_id": "22description",
-        "name": "22description",
-        "comment": ""
+        "name": "22description"
       },
       {
         "id": 154,
         "code_id": "22excluded",
-        "name": "22excluded",
-        "comment": ""
+        "name": "22excluded"
       },
       {
         "id": 155,
         "code_id": "23phrase_id",
-        "name": "23phrase_id",
-        "comment": ""
+        "name": "23phrase_id"
       },
       {
         "id": 156,
         "code_id": "23external_key",
-        "name": "23external_key",
-        "comment": ""
+        "name": "23external_key"
       },
       {
         "id": 157,
         "code_id": "23ref_type_id",
-        "name": "23ref_type_id",
-        "comment": ""
+        "name": "23ref_type_id"
       },
       {
         "id": 158,
         "code_id": "23url",
-        "name": "23url",
-        "comment": ""
+        "name": "23url"
       },
       {
         "id": 159,
         "code_id": "23description",
-        "name": "23description",
-        "comment": ""
+        "name": "23description"
       },
       {
         "id": 160,
         "code_id": "23excluded",
-        "name": "23excluded",
-        "comment": ""
+        "name": "23excluded"
       },
       {
         "id": 161,
         "code_id": "20excluded",
-        "name": "20excluded",
-        "comment": ""
+        "name": "20excluded"
       },
       {
         "id": 162,
         "code_id": "21source_name",
-        "name": "21source_name",
-        "comment": ""
+        "name": "21source_name"
       },
       {
         "id": 163,
         "code_id": "21source_type_id",
-        "name": "21source_type_id",
-        "comment": ""
+        "name": "21source_type_id"
       },
       {
         "id": 164,
         "code_id": "21excluded",
-        "name": "21excluded",
-        "comment": ""
+        "name": "21excluded"
       },
       {
         "id": 165,
+        "code_id": "18code_id",
+        "name": "18code_id"
+      },
+      {
+        "id": 166,
+        "code_id": "18ui_msg_code_id",
+        "name": "18ui_msg_code_id"
+      },
+      {
+        "id": 167,
         "code_id": "22source_id",
-        "name": "22source_id",
-        "comment": ""
+        "name": "22source_id"
       }
     ],
     "verbs": [
@@ -1852,31 +1661,25 @@
       },
       {
         "id": 4,
-        "code_id": "",
         "name": "with",
         "comment": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load"
       },
       {
         "id": 5,
-        "code_id": "",
-        "name": "has a",
-        "comment": ""
+        "name": "has a"
       },
       {
         "id": 6,
-        "code_id": "",
         "name": "is time jump for",
         "comment": "is the default time jump for"
       },
       {
         "id": 7,
-        "code_id": "",
         "name": "is term jump for",
         "comment": "is the default term jump for"
       },
       {
         "id": 8,
-        "code_id": "",
         "name": "term type needed",
         "comment": "the formula needs the linked term type"
       },
@@ -1888,25 +1691,19 @@
       },
       {
         "id": 10,
-        "code_id": "",
-        "name": "uses",
-        "comment": ""
+        "name": "uses"
       },
       {
         "id": 11,
-        "code_id": "",
-        "name": "issue",
-        "comment": ""
+        "name": "issue"
       },
       {
         "id": 12,
-        "code_id": "",
         "name": "is measure type for",
         "comment": "is the default measure type for"
       },
       {
         "id": 13,
-        "code_id": "",
         "name": "is an acronym for",
         "comment": "is an acronym for"
       },
@@ -1918,21 +1715,16 @@
       },
       {
         "id": 15,
-        "code_id": "",
-        "name": "influences",
-        "comment": ""
+        "name": "influences"
       },
       {
         "id": 16,
-        "code_id": "",
-        "name": "is alias of",
-        "comment": ""
+        "name": "is alias of"
       },
       {
         "id": 17,
         "code_id": "can_be",
-        "name": "can be",
-        "comment": ""
+        "name": "can be"
       },
       {
         "id": 18,
@@ -1948,7 +1740,6 @@
       },
       {
         "id": 20,
-        "code_id": "",
         "name": "per",
         "comment": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty"
       },
@@ -1969,6 +1760,7 @@
           {
             "id": 1,
             "name": "Name",
+            "description": "simply show the word name",
             "type_id": 8
           }
         ]
@@ -1983,6 +1775,7 @@
           {
             "id": 1,
             "name": "Name",
+            "description": "simply show the word name",
             "type_id": 8
           }
         ]
@@ -1990,48 +1783,108 @@
       {
         "id": 3,
         "name": "Add New Word",
+        "type_id": 7,
         "code_id": "word_add",
         "components": [
           {
             "id": 2,
-            "name": "form title"
+            "name": "form title",
+            "description": "show the language specific title of a add, change or delete form",
+            "type_id": 17
           },
           {
             "id": 3,
-            "name": "hidden back stack"
+            "name": "hidden back stack",
+            "description": "field that contains the stack for the undo actions",
+            "type_id": 18
           },
           {
             "id": 4,
-            "name": "hidden confirm status"
+            "name": "hidden confirm status",
+            "description": "switch on that the form saving needs an extra confirm by the user",
+            "type_id": 19
           },
           {
             "id": 5,
-            "name": "name form field"
+            "name": "name form field",
+            "description": "the name field in a form",
+            "type_id": 20
           },
           {
             "id": 6,
-            "name": "description form field"
+            "name": "description form field",
+            "description": "the description field in a form",
+            "type_id": 21
           },
           {
             "id": 7,
-            "name": "cancel button"
+            "name": "cancel button",
+            "description": "button to cancel the form action and go back to the previous view",
+            "type_id": 22
           },
           {
             "id": 8,
-            "name": "save button"
+            "name": "save button",
+            "description": "button to save the form field into the database",
+            "type_id": 23
           }
         ]
       },
       {
         "id": 4,
         "name": "Change Word",
+        "type_id": 7,
         "code_id": "word_edit",
-        "components": []
+        "components": [
+          {
+            "id": 2,
+            "name": "form title",
+            "description": "show the language specific title of a add, change or delete form",
+            "type_id": 17
+          },
+          {
+            "id": 3,
+            "name": "hidden back stack",
+            "description": "field that contains the stack for the undo actions",
+            "type_id": 18
+          },
+          {
+            "id": 4,
+            "name": "hidden confirm status",
+            "description": "switch on that the form saving needs an extra confirm by the user",
+            "type_id": 19
+          },
+          {
+            "id": 5,
+            "name": "name form field",
+            "description": "the name field in a form",
+            "type_id": 20
+          },
+          {
+            "id": 6,
+            "name": "description form field",
+            "description": "the description field in a form",
+            "type_id": 21
+          },
+          {
+            "id": 7,
+            "name": "cancel button",
+            "description": "button to cancel the form action and go back to the previous view",
+            "type_id": 22
+          },
+          {
+            "id": 8,
+            "name": "save button",
+            "description": "button to save the form field into the database",
+            "type_id": 23
+          }
+        ]
       },
       {
         "id": 5,
         "name": "Delete Word",
         "description": "Exclude or delete a word",
+        "type_id": 7,
         "code_id": "word_del",
         "components": []
       },
@@ -2219,8 +2072,46 @@
         "code_id": "component_add",
         "components": [
           {
-            "id": 9,
-            "name": "System view component field"
+            "id": 2,
+            "name": "form title",
+            "description": "show the language specific title of a add, change or delete form",
+            "type_id": 17
+          },
+          {
+            "id": 3,
+            "name": "hidden back stack",
+            "description": "field that contains the stack for the undo actions",
+            "type_id": 18
+          },
+          {
+            "id": 4,
+            "name": "hidden confirm status",
+            "description": "switch on that the form saving needs an extra confirm by the user",
+            "type_id": 19
+          },
+          {
+            "id": 5,
+            "name": "name form field",
+            "description": "the name field in a form",
+            "type_id": 20
+          },
+          {
+            "id": 6,
+            "name": "description form field",
+            "description": "the description field in a form",
+            "type_id": 21
+          },
+          {
+            "id": 7,
+            "name": "cancel button",
+            "description": "button to cancel the form action and go back to the previous view",
+            "type_id": 22
+          },
+          {
+            "id": 8,
+            "name": "save button",
+            "description": "button to save the form field into the database",
+            "type_id": 23
           }
         ]
       },

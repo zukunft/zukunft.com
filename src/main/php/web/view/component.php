@@ -61,12 +61,16 @@ class component extends sandbox_typed_dsp
      */
 
     /**
-     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
+     * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
      * @return string the html code of all view components
      */
-    function dsp_entries(db_object_dsp $dbo, string $back): string
+    function dsp_entries(?db_object_dsp $dbo, string $back): string
     {
-        log_debug('"' . $dbo->dsp_id() . '" with the view ' . $this->dsp_id() . '"');
+        if ($dbo == null) {
+            log_debug($this->dsp_id());
+        } else {
+            log_debug($dbo->dsp_id() . ' with the view ' . $this->dsp_id());
+        }
 
         $result = '';
 
@@ -75,7 +79,7 @@ class component extends sandbox_typed_dsp
         $result .= match ($type_code_id) {
             view_cmp_type::TEXT => $this->text(),
             view_cmp_type::WORD => $this->display_name(),
-            view_cmp_type::PHRASE_NAME => $this->word_name($dbo->phrase()),
+            view_cmp_type::PHRASE_NAME => $this->phrase_name($dbo),
             view_cmp_type::VALUES_RELATED => $this->table($dbo),
             view_cmp_type::NUMERIC_VALUE => $this->num_list($dbo, $back),
             view_cmp_type::FORMULAS => $this->formulas($dbo),
@@ -129,7 +133,7 @@ class component extends sandbox_typed_dsp
     /**
      * @return string the name of a phrase and give the user the possibility to change the phrase name
      */
-    function word_name(phrase_dsp $phr): string
+    function phrase_name(db_object_dsp $phr): string
     {
         return $phr->name();
     }
@@ -225,6 +229,7 @@ class component extends sandbox_typed_dsp
     }
 
     /**
+     * @param db_object_dsp $dbo
      * @return string the html code to start a new form and display the tile
      * TODO replace _add with a parameter value
      */
@@ -307,7 +312,12 @@ class component extends sandbox_typed_dsp
     private function type_code_id(): string
     {
         global $component_types;
-        return $component_types->code_id($this->type_id());
+        if ($this->type_id() == null) {
+            log_err('Code id for ' . $this->dsp_id() . ' missing');
+            return '';
+        } else {
+            return $component_types->code_id($this->type_id());
+        }
     }
 
 

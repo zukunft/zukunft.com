@@ -96,6 +96,7 @@ use cfg\value;
 use cfg\verb;
 use cfg\view;
 use cfg\word;
+use html\word\word as word_dsp;
 
 class test_api extends create_test_objects
 {
@@ -168,6 +169,11 @@ class test_api extends create_test_objects
     function run_ui_test(): void
     {
         $this->assert_view(controller::DSP_WORD, $this->usr1, new word($this->usr1), 1);
+        $this->assert_view(controller::DSP_WORD_ADD, $this->usr1, new word($this->usr1));
+        $this->assert_view(controller::DSP_WORD_EDIT, $this->usr1, new word($this->usr1), 1);
+        $this->assert_view(controller::DSP_WORD_DEL, $this->usr1, new word($this->usr1), 1);
+        //$this->assert_view(controller::DSP_COMPONENT_ADD, $this->usr1, new component($this->usr1), 1);
+        // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
     }
 
     /**

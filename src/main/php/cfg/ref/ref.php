@@ -94,7 +94,7 @@ class ref extends sandbox_link_with_type
         self::FLD_EXCLUDED
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_FLD_NAMES = array(
+    const ALL_SANDBOX_FLD_NAMES = array(
         phrase::FLD_ID,
         self::FLD_EX_KEY,
         self::FLD_TYPE,
@@ -457,9 +457,9 @@ class ref extends sandbox_link_with_type
         return parent::load_by_name($name, $class);
     }
 
-    function all_fields(): array
+    function all_sandbox_fields(): array
     {
-        return self::ALL_FLD_NAMES;
+        return self::ALL_SANDBOX_FLD_NAMES;
     }
 
     /**
@@ -768,7 +768,7 @@ class ref extends sandbox_link_with_type
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id;
                 $log->set_field(sandbox_named::FLD_DESCRIPTION);
-                $result = $this->save_field_do($db_con, $log);
+                $result = $this->save_field_user($db_con, $log);
             }
         }
         return $result;
@@ -793,7 +793,7 @@ class ref extends sandbox_link_with_type
                 $log->std_value = $std_rec->url;
                 $log->row_id = $this->id;
                 $log->set_field(self::FLD_URL);
-                $result = $this->save_field_do($db_con, $log);
+                $result = $this->save_field_user($db_con, $log);
             }
         }
         return $result;
@@ -819,7 +819,7 @@ class ref extends sandbox_link_with_type
             $log->std_id = $std_rec->source_id();
             $log->row_id = $this->id();
             $log->set_field(self::FLD_SOURCE);
-            $result = $this->save_field_do($db_con, $log);
+            $result = $this->save_field_user($db_con, $log);
         }
         return $result;
     }

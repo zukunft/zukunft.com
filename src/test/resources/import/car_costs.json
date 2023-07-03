@@ -567,7 +567,7 @@
         {
           "pos": "1",
           "name": "Name",
-          "code_id": "word_name"
+          "type": "word_name"
         }
       ]
     }

@@ -5,3 +5,4 @@ view_type_id, type_name, description, code_id
 4, 'presentation', 'with auto forward', 'presentation'
 5, 'word default', 'a default mask for new words', 'word_default'
 6, 'details', 'to show the more details than the standard view', 'detail_view'
+7, 'system', 'views used by the system that should only be adjusted by an admin', 'system'

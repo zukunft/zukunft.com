@@ -249,6 +249,8 @@ class db_check
         $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, 'excluded', 'smallint');
         $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, 'share_type_id', 'smallint');
         $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, 'protect_id', 'smallint');
+        $result .= $db_con->add_column(sql_db::TBL_COMPONENT, 'code_id', 'varchar(100)');
+        $result .= $db_con->add_column(sql_db::TBL_COMPONENT, 'ui_msg_code_id', 'varchar(100)');
         $result .= $db_con->remove_prefix(sql_db::TBL_USER_PROFILE, 'code_id', 'usr_role_');
         $result .= $db_con->remove_prefix(sql_db::TBL_SYS_LOG_STATUS, 'code_id', 'log_status_');
         $result .= $db_con->remove_prefix(sql_db::TBL_TASK_TYPE, 'code_id', 'job_');

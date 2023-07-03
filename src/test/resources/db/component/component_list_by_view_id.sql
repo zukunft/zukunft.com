@@ -2,6 +2,8 @@ PREPARE component_list_by_view_id (int, int) AS
     SELECT     s.component_id,
                u.component_id AS user_component_id,
                s.user_id,
+               s.code_id,
+               s.ui_msg_code_id,
                l.view_id,
                l.component_id,
                CASE WHEN (u.component_name <> '' IS NOT TRUE) THEN s.component_name    ELSE u.component_name    END AS component_name,

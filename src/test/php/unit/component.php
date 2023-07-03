@@ -51,7 +51,7 @@ class component_unit_tests
         // init
         $db_con = new sql_db();
         $t->name = 'component->';
-        $t->resource_path = 'db/view/';
+        $t->resource_path = 'db/component/';
         $json_file = 'unit/view/component_import.json';
         $usr->set_id(1);
 

@@ -1,7 +1,9 @@
-PREPARE component_by_id FROM
+PREPARE component_by_name FROM
     'SELECT s.component_id,
             u.component_id AS user_component_id,
             s.user_id,
+            s.code_id,
+            s.ui_msg_code_id,
             IF(u.component_name    IS NULL, s.component_name,    u.component_name)    AS component_name,
             IF(u.description       IS NULL, s.description,       u.description)       AS description,
             IF(u.component_type_id IS NULL, s.component_type_id, u.component_type_id) AS component_type_id,
@@ -15,4 +17,5 @@ PREPARE component_by_id FROM
             IF(u.protect_id        IS NULL, s.protect_id,        u.protect_id)        AS protect_id
        FROM components s
   LEFT JOIN user_components u  ON s.component_id = u.component_id AND u.user_id = ?
-      WHERE s.component_id = ?';
+      WHERE (u.component_name = ?
+         OR (s.component_name = ? AND u.component_name IS NULL))';

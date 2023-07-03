@@ -96,7 +96,7 @@ class value extends sandbox_value
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_FLD_NAMES = array(
+    const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_VALUE,
         source::FLD_ID,
         self::FLD_LAST_UPDATE,
@@ -662,9 +662,9 @@ class value extends sandbox_value
         return self::FLD_ID;
     }
 
-    function all_fields(): array
+    function all_sandbox_fields(): array
     {
-        return self::ALL_FLD_NAMES;
+        return self::ALL_SANDBOX_FLD_NAMES;
     }
 
 
@@ -1705,7 +1705,7 @@ class value extends sandbox_value
             $log->std_value = $std_rec->number();
             $log->row_id = $this->id();
             $log->set_field(self::FLD_VALUE);
-            $result .= $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_user($db_con, $log);
             // updating the number is definitely relevant for calculation, so force to update the timestamp
             log_debug('trigger update');
             $result .= $this->save_field_trigger_update($db_con);
@@ -1730,7 +1730,7 @@ class value extends sandbox_value
             $log->std_id = $std_rec->get_source_id();
             $log->row_id = $this->id();
             $log->set_field(source::FLD_ID);
-            $result = $this->save_field_do($db_con, $log);
+            $result = $this->save_field_user($db_con, $log);
         }
         return $result;
     }

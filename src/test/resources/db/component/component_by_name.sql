@@ -2,6 +2,8 @@ PREPARE component_by_name (int, text) AS
     SELECT     s.component_id,
                u.component_id AS user_component_id,
                s.user_id,
+               s.code_id,
+               s.ui_msg_code_id,
                CASE WHEN (u.component_name <> '' IS NOT TRUE) THEN s.component_name    ELSE u.component_name    END AS component_name,
                CASE WHEN (u.description         <> '' IS NOT TRUE) THEN s.description            ELSE u.description            END AS description,
                CASE WHEN (u.component_type_id    IS     NULL) THEN s.component_type_id ELSE u.component_type_id END AS component_type_id,

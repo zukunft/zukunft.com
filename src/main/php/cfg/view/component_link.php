@@ -63,7 +63,7 @@ class component_link extends sandbox_link_with_type
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_FLD_NAMES = array(
+    const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
         self::FLD_EXCLUDED,
@@ -368,9 +368,9 @@ class component_link extends sandbox_link_with_type
         return component::FLD_ID;
     }
 
-    function all_fields(): array
+    function all_sandbox_fields(): array
     {
-        return self::ALL_FLD_NAMES;
+        return self::ALL_SANDBOX_FLD_NAMES;
     }
 
 
@@ -646,7 +646,7 @@ class component_link extends sandbox_link_with_type
             $log->std_value = $std_rec->order_nbr;
             $log->row_id = $this->id;
             $log->set_field(self::FLD_ORDER_NBR);
-            $result .= $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_user($db_con, $log);
         }
         return $result;
     }

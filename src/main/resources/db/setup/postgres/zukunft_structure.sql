@@ -1251,6 +1251,8 @@ CREATE TABLE IF NOT EXISTS components
     component_name              varchar(100) NOT NULL,
     description                 text,
     component_type_id           bigint                DEFAULT NULL,
+    code_id                     varchar(100)          DEFAULT NULL,
+    ui_msg_code_id              varchar(100)          DEFAULT NULL,
     word_id_row                 bigint                DEFAULT NULL,
     formula_id                  bigint                DEFAULT NULL,
     word_id_col                 bigint                DEFAULT NULL,
@@ -1263,13 +1265,16 @@ CREATE TABLE IF NOT EXISTS components
     link_type_id                bigint                DEFAULT NULL
 );
 
-COMMENT ON TABLE components is 'the single components of a mask';
-COMMENT ON COLUMN components.component_name is 'just for easy selection';
+COMMENT ON TABLE components is 'the single components of a view';
+COMMENT ON COLUMN components.component_name is 'the unique name used to select a component by the user';
+COMMENT ON COLUMN components.component_type_id is 'to select the predefined functionality';
+COMMENT ON COLUMN components.code_id is 'used for system components to select the component by the program code';
+COMMENT ON COLUMN components.ui_msg_code_id is 'used for system components the id to select the language specific user interface message e.g. "add word"';
 COMMENT ON COLUMN components.word_id_row is 'for a tree the related value the start node';
 COMMENT ON COLUMN components.formula_id is 'used for type 6';
 COMMENT ON COLUMN components.word_id_col is 'to define the type for the table columns';
 COMMENT ON COLUMN components.word_id_col2 is 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart';
-COMMENT ON COLUMN components.linked_component_id is 'to link this mask entry to another mask entry';
+COMMENT ON COLUMN components.linked_component_id is 'to link this component to another component';
 COMMENT ON COLUMN components.component_link_type_id is 'to define how this entry links to the other entry';
 COMMENT ON COLUMN components.link_type_id is 'e.g. for type 4 to select possible terms';
 

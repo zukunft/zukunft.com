@@ -74,7 +74,7 @@ class view extends sandbox_typed
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_FLD_NAMES = array(
+    const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_EXCLUDED,
@@ -443,9 +443,6 @@ class view extends sandbox_typed
         $db_con->set_name($qp->name);
         $db_con->set_fields(component_link::FLD_NAMES);
         $db_con->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
-        $db_con->set_join_fields(
-            component::FLD_NAMES,
-            sql_db::TBL_COMPONENT);
         $db_con->set_join_usr_fields(
             array_merge(component::FLD_NAMES_USR, array(component::FLD_NAME)),
             sql_db::TBL_COMPONENT);
@@ -552,9 +549,9 @@ class view extends sandbox_typed
         return self::FLD_NAME;
     }
 
-    function all_fields(): array
+    function all_sandbox_fields(): array
     {
-        return self::ALL_FLD_NAMES;
+        return self::ALL_SANDBOX_FLD_NAMES;
     }
 
 
@@ -887,7 +884,7 @@ class view extends sandbox_typed
                 $log->std_value = $std_rec->code_id;
                 $log->row_id = $this->id;
                 $log->set_field(sql_db::FLD_CODE_ID);
-                $result = $this->save_field_do($db_con, $log);
+                $result = $this->save_field_user($db_con, $log);
             }
         }
         return $result;

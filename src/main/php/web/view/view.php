@@ -105,7 +105,14 @@ class view extends sandbox_typed_dsp
         // set the objects (e.g. word)
         if (array_key_exists(controller::API_WORD, $json_array)) {
             $this->dbo = new word_dsp();
-            $this->dbo->set_from_json_array($json_array[controller::API_WORD]);
+            $dbo_json = $json_array[controller::API_WORD];
+            $id = 0;
+            if (array_key_exists(controller::API_FLD_ID, $json_array)) {
+                $id = $dbo_json[controller::API_FLD_ID];
+            }
+            if ($id != 0) {
+                $this->dbo->set_from_json_array($dbo_json);
+            }
         }
         $this->cmp_lst = $cmp_lst;
     }
@@ -160,7 +167,11 @@ class view extends sandbox_typed_dsp
         }
 
         if ($dbo == null) {
-            log_err('Nothing to show with view ' . $this->dsp_id());
+            if (in_array($this->code_id(), controller::DSP_SYS_ADD)) {
+                log_info('Nothing to show with add view ' . $this->dsp_id());
+            } else {
+                log_err('Nothing to show with view ' . $this->dsp_id());
+            }
         } else {
             log_debug($dbo->dsp_id() . ' with the view ' . $this->dsp_id());
 
@@ -168,18 +179,18 @@ class view extends sandbox_typed_dsp
             if ($back == '') {
                 $back = $dbo->id();
             }
-
-            if ($this->id() <= 0) {
-                log_err("The view id must be loaded to display it.", "view->display");
-            } else {
-                // display always the view name in the top right corner and allow the user to edit the view
-                $result .= $this->dsp_type_open();
-                $result .= $this->dsp_navbar($back);
-                $result .= $this->dsp_entries($dbo, $back);
-                $result .= $this->dsp_type_close();
-            }
-            log_debug('done');
         }
+
+        if ($this->id() <= 0) {
+            log_err("The view id must be loaded to display it.", "view->display");
+        } else {
+            // display always the view name in the top right corner and allow the user to edit the view
+            $result .= $this->dsp_type_open();
+            $result .= $this->dsp_navbar($back);
+            $result .= $this->dsp_entries($dbo, $back);
+            $result .= $this->dsp_type_close();
+        }
+        log_debug('done');
 
         return $result;
     }
@@ -187,10 +198,10 @@ class view extends sandbox_typed_dsp
     /**
      * create the html code for all components of this view
      *
-     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
+     * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
      * @return string the html code of all view components
      */
-    private function dsp_entries(db_object_dsp $dbo, string $back): string
+    private function dsp_entries(?db_object_dsp $dbo, string $back): string
     {
         log_debug($this->dsp_id());
         $result = '';

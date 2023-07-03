@@ -415,7 +415,7 @@ class sandbox extends db_object
      * function that must be overwritten by the child object
      * @return array with all field names of the user sandbox object excluding the prime id field
      */
-    protected function all_fields(): array
+    protected function all_sandbox_fields(): array
     {
         return array();
     }
@@ -1099,7 +1099,7 @@ class sandbox extends db_object
         $qp->name .= 'usr_cfg';
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
-        $db_con->set_fields($this->all_fields());
+        $db_con->set_fields($this->all_sandbox_fields());
         $qp->sql = $db_con->select_by_id_and_user($this->id, $this->user()->id);
         $qp->par = $db_con->get_par();
         return $qp;
@@ -1126,7 +1126,7 @@ class sandbox extends db_object
         if ($usr_cfg_row) {
             log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
             if ($usr_cfg_row[$this->id_field()] > 0) {
-                if ($this->no_usr_fld_used($this->all_fields(), $usr_cfg_row)) {
+                if ($this->no_usr_fld_used($this->all_sandbox_fields(), $usr_cfg_row)) {
                     $result = $this->del_usr_cfg_exe($db_con);
                 }
             }
@@ -1172,7 +1172,7 @@ class sandbox extends db_object
         $usr_lst = $this->usr_lst();
         foreach ($usr_lst as $usr) {
             // remove the usr cfg if not needed any more
-            $this->del_usr_cfg_if_not_needed($this->id_field(), $this->all_fields());
+            $this->del_usr_cfg_if_not_needed($this->id_field(), $this->all_sandbox_fields());
         }
 
         log_debug('for ' . $this->dsp_id() . ': ' . $result);
@@ -1313,8 +1313,11 @@ class sandbox extends db_object
     /**
      * actually update a field in the main database record or the user sandbox
      * the usr id is taken into account in sql_db->update (maybe move outside)
+     * @param sql_db $db_con the active database connection that should be used
+     * @param change_log_named|change_log_link $log the log object to track the change and allow a rollback
+     * @return string an empty string if everything is fine or the message that should be shown to the user
      */
-    function save_field_do(sql_db $db_con, $log): string
+    function save_field_user(sql_db $db_con, change_log_named|change_log_link $log): string
     {
         $result = '';
 
@@ -1371,6 +1374,33 @@ class sandbox extends db_object
     }
 
     /**
+     * actually update a field in the main database record
+     * without user the user sandbox
+     * the usr id is taken into account in sql_db->update (maybe move outside)
+     * @param sql_db $db_con the active database connection that should be used
+     * @param change_log_named|change_log_link $log the log object to track the change and allow a rollback
+     * @return string an empty string if everything is fine or the message that should be shown to the user
+     */
+    function save_field(sql_db $db_con, change_log_named|change_log_link $log): string
+    {
+        $result = '';
+
+        if ($log->new_id > 0) {
+            $new_value = $log->new_id;
+        } else {
+            $new_value = $log->new_value;
+        }
+        if ($log->add()) {
+            $db_con->set_type($this->obj_name);
+            $db_con->set_usr($this->user()->id);
+            if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                $result = 'update of value for ' . $log->field() . ' to ' . $new_value . ' failed';
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param sandbox $db_rec the object as saved in the database before the change
      * @return change_log the log object predefined for excluding
      */
@@ -1398,6 +1428,9 @@ class sandbox extends db_object
 
     /**
      * set the update parameters for the value excluded
+     * @param sql_db $db_con the active database connection that should be used
+     * @param sandbox $db_rec the object as saved in the database before this field is updated
+     * @param sandbox $std_rec the default object without user specific changes
      * returns false if something has gone wrong
      */
     function save_field_excluded(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
@@ -1445,6 +1478,10 @@ class sandbox extends db_object
 
     /**
      * save the share level in the database if allowed
+     * @param sql_db $db_con the active database connection that should be used
+     * @param sandbox $db_rec the object as saved in the database before this field is updated
+     * @param sandbox $std_rec the default object without user specific changes
+     * @return string the message that should be shown to the user
      */
     function save_field_share(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
@@ -1510,7 +1547,7 @@ class sandbox extends db_object
             $log->std_id = $std_rec->protection_id;
             $log->row_id = $this->id;
             $log->set_field(self::FLD_PROTECT);
-            $result .= $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_user($db_con, $log);
         }
 
         log_debug($this->dsp_id());
@@ -2254,7 +2291,7 @@ class sandbox extends db_object
             } else {
                 $log->set_field($this->obj_name . sql_db::FLD_EXT_TYPE_ID);
             }
-            $result .= $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_user($db_con, $log);
             log_debug('changed type to "' . $log->new_value . '" (from ' . $log->new_id . ')');
         }
         return $result;

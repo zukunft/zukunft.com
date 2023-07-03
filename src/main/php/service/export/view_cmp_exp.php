@@ -37,6 +37,8 @@ class view_cmp_exp extends sandbox_exp_named
     // field names used for JSON creation
     public ?int $position = 0;
     public ?string $type = '';
+    public ?string $code_id = '';
+    public ?string $ui_msg_code_id = '';
     public ?string $row = '';
     public ?string $column = '';
     public ?string $column2 = '';
@@ -48,6 +50,8 @@ class view_cmp_exp extends sandbox_exp_named
 
         $this->position = 0;
         $this->type = '';
+        $this->code_id = '';
+        $this->ui_msg_code_id = '';
         $this->row = '';
         $this->column = '';
         $this->column2 = '';
