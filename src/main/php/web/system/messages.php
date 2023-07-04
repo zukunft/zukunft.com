@@ -67,7 +67,8 @@ class msg
     const IP_BLOCK_PRE_ADDR = 'ip_block_pre_addr';
     const IP_BLOCK_POST_ADDR = 'ip_block_post_addr';
     const IP_BLOCK_SOLUTION = 'ip_block_solution';
-    const FORM_WORD_ADD_TITLE = 'form_word_add_title';
+    const FORM_WORD_ADD_TITLE = 'form_title_word_add';
+    const FORM_WORD_EDIT_TITLE = 'form_title_word_edit';
     const FORM_COMPONENT_ADD_TITLE = 'form_component_add_title';
     const FORM_WORD_FLD_NAME = 'form_word_fld_name';
     const UNDO = 'undo';

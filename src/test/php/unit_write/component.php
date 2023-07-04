@@ -133,10 +133,10 @@ class component_test
             }
         }
         // TODO review
-        if ($result == 21) {
-            $target = 21;
-        } else {
+        if ($result == 23) {
             $target = 23;
+        } else {
+            $target = 25;
         }
         $t->display('component->load renamed component "' . component_api::TN_RENAMED . '"', $target, $result);
 

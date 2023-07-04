@@ -40,11 +40,11 @@
       "components": [
         {
           "pos": "1",
-          "name": "form title",
+          "name": "form title word add",
           "description": "show the language specific title of a add, change or delete form",
           "type": "system_form_title",
-          "code_id": "form_title",
-          "ui_msg_code_id": "form_word_add_title"
+          "code_id": "form_title_word_add",
+          "ui_msg_code_id": "form_title_word_add"
         },
         {
           "pos": "2",
@@ -97,11 +97,11 @@
       "components": [
         {
           "pos": "1",
-          "name": "form title",
+          "name": "form title word edit",
           "description": "show the language specific title of a add, change or delete form",
           "type": "system_form_title",
-          "code_id": "form_title",
-          "ui_msg_code_id": "form_word_add_title"
+          "code_id": "form_title_word_edit",
+          "ui_msg_code_id": "form_title_word_edit"
         },
         {
           "pos": "2",

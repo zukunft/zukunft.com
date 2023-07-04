@@ -1788,7 +1788,7 @@
         "components": [
           {
             "id": 2,
-            "name": "form title",
+            "name": "form title word add",
             "description": "show the language specific title of a add, change or delete form",
             "type_id": 17
           },
@@ -1837,8 +1837,8 @@
         "code_id": "word_edit",
         "components": [
           {
-            "id": 2,
-            "name": "form title",
+            "id": 9,
+            "name": "form title word edit",
             "description": "show the language specific title of a add, change or delete form",
             "type_id": 17
           },
@@ -2072,7 +2072,7 @@
         "code_id": "component_add",
         "components": [
           {
-            "id": 2,
+            "id": 10,
             "name": "form title",
             "description": "show the language specific title of a add, change or delete form",
             "type_id": 17
