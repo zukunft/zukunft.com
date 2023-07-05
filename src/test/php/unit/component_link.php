@@ -74,8 +74,8 @@ class component_link_unit_tests
 
         // sql to load a list of value by the phrase ids
         $lnk = new component_link($usr);
-        $lnk->dsp->set_id(1);
-        $lnk->cmp->set_id(2);
+        $lnk->fob->set_id(1);
+        $lnk->tob->set_id(2);
         $t->assert_load_sql_obj_vars($db_con, $lnk);
 
 

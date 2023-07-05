@@ -103,6 +103,7 @@ class component extends sandbox_typed
      */
 
     // database fields additional to the user sandbox fields for the view component
+    public ?int $order_nbr = null;          // the position in the linked view
     public ?int $word_id_row = null;        // if the view component uses a related word tree this is the start node
     //                                         e.g. for "company" the start node could be "cash flow statement" to show the cash flow for any company
     public ?int $link_type_id = null;       // the word link type used to build the word tree started with the $start_word_id
@@ -111,9 +112,15 @@ class component extends sandbox_typed
     public ?int $word_id_col2 = null;       // for a table to defined second columns layer or the second axis in case of a chart
     //                                         e.g. for a "company cash flow statement" the "col word" could be "Year"
     //                                              "col2 word" could be "Quarter" to show the Quarters between the year upon request
+    public ?string $code_id = null;         // to select a specific system component by the program code
+    //                                         the code id cannot be changed by the user
+    //                                         so this field is not part of the table user_components
+    public ?string $ui_msg_code_id = null;  // to select a user interface language specific message
+    //                                         e.g. "add word" or "Wort zufügen"
+    //                                         the code id cannot be changed by the user
+    //                                         so this field is not part of the table user_components
 
     // database fields repeated from the component link for a easy to use in memory view object
-    public ?int $order_nbr = null;          // the position in the linked view
     public ?int $pos_type = null;           // the position in the linked view
 
     // linked fields
@@ -122,15 +129,6 @@ class component extends sandbox_typed
     public ?word $wrd_col = null;           // the word object for $word_id_col
     public ?word $wrd_col2 = null;          // the word object for $word_id_col2
     public ?formula $frm = null;            // the formula object for $formula_id
-    public ?string $link_type_name = null;  //
-    public ?string $code_id = null;         // to select a specific system component by the program code
-    //                                         the code id cannot be changed by the user
-    //                                         so this field is not part of the table user_components
-    public ?string $ui_msg_code_id = null;  // to select a user interface language specific message
-    //                                         e.g. "add word" or "Wort zufügen"
-    //                                         the code id cannot be changed by the user
-    //                                         so this field is not part of the table user_components
-    public ?string $back = null;            // the calling stack
 
     /*
      * construct and map
@@ -167,10 +165,8 @@ class component extends sandbox_typed
         $this->wrd_col = null;
         $this->wrd_col2 = null;
         $this->frm = null;
-        $this->link_type_name = '';
         $this->code_id = '';
         $this->ui_msg_code_id = '';
-        $this->back = null;
     }
 
     /*

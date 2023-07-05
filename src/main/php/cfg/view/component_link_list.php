@@ -164,10 +164,10 @@ class component_link_list extends sandbox_list
     {
         $result = array();
         foreach ($this->lst as $lnk) {
-            if ($lnk->dsp != null) {
-                if ($lnk->dsp->id() <> 0) {
-                    if (!in_array($lnk->dsp->id(), $result)) {
-                        $result[] = $lnk->dsp->id();
+            if ($lnk->fob != null) {
+                if ($lnk->fob->id() <> 0) {
+                    if (!in_array($lnk->fob->id(), $result)) {
+                        $result[] = $lnk->fob->id();
                     }
                 }
             }
@@ -182,9 +182,9 @@ class component_link_list extends sandbox_list
     {
         $result = array();
         foreach ($this->lst as $lnk) {
-            if ($lnk->cmp->id() <> 0) {
-                if (in_array($lnk->cmp->id(), $result)) {
-                    $result[] = $lnk->cmp->id();
+            if ($lnk->tob->id() <> 0) {
+                if (in_array($lnk->tob->id(), $result)) {
+                    $result[] = $lnk->tob->id();
                 }
             }
         }

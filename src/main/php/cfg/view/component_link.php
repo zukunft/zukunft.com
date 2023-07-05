@@ -82,14 +82,12 @@ class component_link extends sandbox_link_with_type
      * object vars
      */
 
-    public view $dsp;
-    public component $cmp;
-
     public ?int $order_nbr = null;          // to sort the display item
 
     // to deprecate
     public ?int $pos_type_id = null;        // defines the position of the view component relative to the previous item (1 = below, 2= side, )
     public ?string $pos_code = null;        // side or below or ....
+
 
     /*
      * construct and map
@@ -123,15 +121,12 @@ class component_link extends sandbox_link_with_type
      * reset the in memory fields used e.g. if some ids are updated
      * @param user $usr the user for whom this link is valid
      */
-    private function reset_objects(user $usr)
+    private function reset_objects(user $usr): void
     {
-        $this->dsp = new view($usr);     // the display (view) object (used to save the correct name in the log)
-        $this->cmp = new component($usr); // the display component (view entry) object (used to save the correct name in the log)
-
         // assign the object specific objects to the standard link object
         // to enable the usage of the standard user sandbox link function for this view component link object
-        $this->fob = $this->dsp;
-        $this->tob = $this->cmp;
+        $this->fob = new view($usr); // the display (view) object (used to save the correct name in the log)
+        $this->tob = new component($usr); // the display component (view entry) object (used to save the correct name in the log)
     }
 
     /**
@@ -151,8 +146,8 @@ class component_link extends sandbox_link_with_type
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            $this->dsp->id = $db_row[view::FLD_ID];
-            $this->cmp->id = $db_row[component::FLD_ID];
+            $this->fob->set_id($db_row[view::FLD_ID]);
+            $this->tob->set_id($db_row[component::FLD_ID]);
             $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
             $this->pos_type_id = $db_row[self::FLD_POS_TYPE];
         }
@@ -174,12 +169,6 @@ class component_link extends sandbox_link_with_type
     {
         // try to get the search values from the objects
         if ($this->id <= 0) {
-            if (isset($this->fob) and $this->dsp->id <= 0) {
-                $this->dsp->id = $this->fob->id;
-            }
-            if (isset($this->tob) and $this->cmp->id <= 0) {
-                $this->cmp->id = $this->tob->id;
-            }
             $this->id = 0;
         }
 
@@ -197,7 +186,7 @@ class component_link extends sandbox_link_with_type
         $db_con->set_fields(array_merge(
             self::FLD_NAMES_NUM_USR,
             array(sql_db::FLD_USER_ID)));
-        $db_con->set_where_link_no_fld($this->id, $this->dsp->id, $this->cmp->id);
+        $db_con->set_where_link_no_fld($this->id, $this->fob->id(), $this->tob->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
@@ -261,7 +250,7 @@ class component_link extends sandbox_link_with_type
         $qp = parent::load_sql_obj_vars($db_con, $class);
         if ($this->id > 0) {
             $qp->name .= 'id';
-        } elseif ($this->dsp->id > 0 and $this->cmp->id > 0) {
+        } elseif ($this->fob->id() > 0 and $this->tob->id() > 0) {
             $qp->name .= 'view_and_cmp_id';
         } else {
             log_err('Either the view component link id or view id and a component id (and the user= must be set ' .
@@ -276,9 +265,9 @@ class component_link extends sandbox_link_with_type
         if ($this->id > 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
             $qp->sql = $db_con->select_by_field_list(array(component_link::FLD_ID));
-        } elseif ($this->dsp->id > 0 and $this->cmp->id > 0) {
-            $db_con->add_par(sql_db::PAR_INT, $this->dsp->id);
-            $db_con->add_par(sql_db::PAR_INT, $this->cmp->id);
+        } elseif ($this->fob->id() > 0 and $this->tob->id() > 0) {
+            $db_con->add_par(sql_db::PAR_INT, $this->fob->id());
+            $db_con->add_par(sql_db::PAR_INT, $this->tob->id());
             $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID, component::FLD_ID));
         }
         $qp->par = $db_con->get_par();
@@ -301,15 +290,6 @@ class component_link extends sandbox_link_with_type
         } else {
 
             // try to get the search values from the objects
-            if ($this->id <= 0 and ($this->dsp->id <= 0 or $this->cmp->id <= 0)) {
-                if (isset($this->fob) and $this->dsp->id <= 0) {
-                    $this->dsp->id = $this->fob->id;
-                }
-                if (isset($this->tob) and $this->cmp->id <= 0) {
-                    $this->cmp->id = $this->tob->id;
-                }
-            }
-
             $qp = $this->load_sql_obj_vars($db_con);
 
             if ($db_con->get_where() <> '') {
@@ -334,17 +314,17 @@ class component_link extends sandbox_link_with_type
     function load_objects(): bool
     {
         $result = true;
-        if (!isset($this->fob) and $this->dsp->id > 0) {
+        if (!isset($this->fob) and $this->fob->id() > 0) {
             $dsp = new view_dsp_old($this->user());
-            if ($dsp->load_by_id($this->dsp->id)) {
+            if ($dsp->load_by_id($this->fob->id())) {
                 $this->fob = $dsp;
             } else {
                 $result = false;
             }
         }
-        if (!isset($this->tob) and $this->cmp->id > 0) {
+        if (!isset($this->tob) and $this->tob->id() > 0) {
             $cmp = new view_dsp_old($this->user());
-            if ($cmp->load_by_id($this->cmp->id)) {
+            if ($cmp->load_by_id($this->tob->id())) {
                 $this->tob = $cmp;
             } else {
                 $result = false;
@@ -437,7 +417,7 @@ class component_link extends sandbox_link_with_type
         $result = false;
 
         // load any missing parameters
-        if (!isset($this->id) or !isset($this->dsp->id)) {
+        if (!isset($this->id) or $this->fob->id() == 0) {
             $this->load_obj_vars();
         }
         $this->load_objects();
@@ -445,7 +425,7 @@ class component_link extends sandbox_link_with_type
         // check the all minimal input parameters
         if ($this->id <= 0) {
             log_err("Cannot load the view component link.", "component_link->move");
-        } elseif ($this->dsp->id <= 0 or $this->cmp->id <= 0) {
+        } elseif ($this->fob->id() <= 0 or $this->tob->id() <= 0) {
             log_err("The view component id and the view component id must be given to move it.", "component_link->move");
         } else {
             log_debug('component_link->move ' . $direction . ' ' . $this->dsp_id());
@@ -524,7 +504,7 @@ class component_link extends sandbox_link_with_type
                             $result = true;
                             $prev_entry_down = false;
                         }
-                        if ($entry->id == $this->cmp->id) {
+                        if ($entry->id == $this->tob->id()) {
                             if ($direction == 'up') {
                                 if ($cmp_lnk->order_nbr > 0) {
                                     log_debug('component_link->move order number of the view component ' . $cmp_lnk->tob->dsp_id() . ' changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in ' . $this->fob->dsp_id());

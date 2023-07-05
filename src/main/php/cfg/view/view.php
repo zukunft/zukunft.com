@@ -92,6 +92,7 @@ class view extends sandbox_typed
 
     // in memory only fields
     public ?component_list $cmp_lst;  // array of the view component objects in correct order
+    public ?component_link_list $cmp_lnk_lst;  // all links to the component objects in correct order
 
 
     /*
@@ -109,6 +110,7 @@ class view extends sandbox_typed
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_NAME;
         $this->cmp_lst = null;
+        $this->cmp_lnk_lst = null;
     }
 
     function reset(): void
@@ -120,6 +122,7 @@ class view extends sandbox_typed
         $this->code_id = '';
 
         $this->cmp_lst = null;
+        $this->cmp_lnk_lst = null;
     }
 
     // TODO check if there is any case where the user fields should not be set
@@ -210,6 +213,14 @@ class view extends sandbox_typed
     function cmp_lst(): component_list
     {
         return $this->cmp_lst;
+    }
+
+    /**
+     * @return int the number of components of this view
+     */
+    public function components(): int
+    {
+        return $this->cmp_lst()->count();
     }
 
 
@@ -598,25 +609,25 @@ class view extends sandbox_typed
     function add_cmp(component $cmp, ?int $pos = null, object $test_obj = null): string
     {
         $result = '';
-        $lib = new library();
+
+        // if no position is requested add the component at the end
+        if ($pos == null) {
+            $pos = $this->components() + 1;
+        }
         if ($pos != null) {
             if ($this->cmp_lst == null) {
                 $this->cmp_lst = new component_list($this->user());
             }
             $this->cmp_lst->add($cmp);
-            if ($this->cmp_lst->count() != $cmp->order_nbr) {
-                $result .= 'view component "' . $cmp->name . '" has been expected to be at position ' . $cmp->order_nbr . ' in ' . $this->name . ', but it is at position ' . $this->cmp_lst->count();
-            } else {
-                if (!$test_obj) {
-                    $cmp->save();
-                    $cmp_lnk = new component_link($this->user());
-                    $cmp_lnk->dsp->id = $this->id;
-                    $cmp_lnk->cmp->id = $cmp->id;
-                    $cmp_lnk->order_nbr = $cmp->order_nbr;
-                    $cmp_lnk->pos_type_id = 0;
-                    $cmp_lnk->pos_code = '';
-                    $cmp_lnk->save();
-                }
+            if (!$test_obj) {
+                $cmp->save();
+                $cmp_lnk = new component_link($this->user());
+                $cmp_lnk->fob->set_id($this->id());
+                $cmp_lnk->tob->set_id($cmp->id());
+                $cmp_lnk->order_nbr = $pos;
+                $cmp_lnk->pos_type_id = 0;
+                $cmp_lnk->pos_code = '';
+                $cmp_lnk->save();
             }
         }
         // compare with the database links and save the differences
