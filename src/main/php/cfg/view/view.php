@@ -117,7 +117,6 @@ class view extends sandbox_typed
     {
         parent::reset();
 
-        $this->description = '';
         $this->type_id = null;
         $this->code_id = '';
 
@@ -151,6 +150,7 @@ class view extends sandbox_typed
         }
         return $result;
     }
+
 
     /*
      * set and get

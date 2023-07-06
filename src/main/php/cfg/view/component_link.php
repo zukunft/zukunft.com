@@ -35,6 +35,7 @@
 
 namespace cfg;
 
+use api\component_api;
 use html\view\view_dsp_old;
 
 class component_link extends sandbox_link_with_type
@@ -276,6 +277,36 @@ class component_link extends sandbox_link_with_type
     }
 
     /**
+     * create an SQL statement to load the component_link by the link id
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $dsp_id the view id
+     * @param int $type_id the link type id
+     * @param int $cmp_id the component id
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_link_and_type(sql_db $db_con, int $dsp_id, int $type_id, int $cmp_id, string $class): sql_par
+    {
+        return parent::load_sql_by_link($db_con, $dsp_id, $type_id, $cmp_id, self::class);
+    }
+
+    /**
+     * load the component_link by the link id
+     *
+     * @param int $from_id the subject object id
+     * @param int $type_id the predicate object id
+     * @param int $to_id the object (grammar) object id
+     * @return bool true if at least one link has been loaded
+     */
+    function load_by_link_and_type(int $from_id, int $type_id, int $to_id): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_link_and_type($db_con,$from_id, $type_id, $to_id, self::class );
+        return $this->load($qp);
+    }
+
+
+    /**
      * load the missing view component parameters from the database for the requesting user
      * @returns bool true if a link has been loaded
      */
@@ -346,6 +377,11 @@ class component_link extends sandbox_link_with_type
     function to_field(): string
     {
         return component::FLD_ID;
+    }
+
+    function type_field(): string
+    {
+        return component_link::FLD_POS_TYPE;
     }
 
     function all_sandbox_fields(): array

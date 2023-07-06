@@ -133,11 +133,7 @@ class ref extends sandbox_link_with_type
         parent::__construct($usr);
         $this->obj_type = sandbox::TYPE_LINK;
         $this->obj_name = sql_db::TBL_REF;
-        $this->create_objects($usr);
-        $this->external_key = null;
-        $this->source = null;
-        $this->url = null;
-        $this->description = null;
+        $this->reset();
     }
 
     function reset(): void

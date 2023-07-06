@@ -49,8 +49,8 @@ class component_link_unit_tests
 
         // init
         $db_con = new sql_db();
-        $t->name = 'view->';
-        $t->resource_path = 'db/view/';
+        $t->name = 'component_link->';
+        $t->resource_path = 'db/component/';
         $usr->set_id(1);
 
         $t->header('Unit tests of the view component link class (src/main/php/model/view/component_link.php)');

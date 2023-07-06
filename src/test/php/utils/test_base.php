@@ -220,6 +220,7 @@ include_once $path_unit_read . 'formula.php';
 include_once $path_unit_read . 'formula_list.php';
 include_once $path_unit_read . 'expression.php';
 include_once $path_unit_read . 'view.php';
+include_once $path_unit_read . 'component.php';
 include_once $path_unit_read . 'ref.php';
 include_once $path_unit_read . 'share.php';
 include_once $path_unit_read . 'protection.php';
