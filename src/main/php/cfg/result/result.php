@@ -307,7 +307,7 @@ class result extends sandbox_value
      */
     function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'id', $class);
+        $qp = $this->load_sql($db_con, sql_db::FLD_ID, $class);
         $db_con->add_par_int($id);
         $qp->sql = $db_con->select_by_field($this->id_field());
         $qp->par = $db_con->get_par();

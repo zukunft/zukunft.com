@@ -74,8 +74,8 @@ if ($usr->id() > 0) {
         $vrb->set_user($usr);
 
         // load the parameters to the verb object to display it again in case of an error
-        if (isset($_GET['name'])) {
-            $vrb->set_name($_GET['name']);
+        if (isset($_GET[controller::URL_VAR_NAME])) {
+            $vrb->set_name($_GET[controller::URL_VAR_NAME]);
         }
         if (isset($_GET['plural'])) {
             $vrb->plural = $_GET['plural'];

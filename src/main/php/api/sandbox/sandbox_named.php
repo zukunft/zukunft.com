@@ -37,10 +37,6 @@ include_once API_SANDBOX_PATH . 'sandbox.php';
 class sandbox_named_api extends sandbox_api
 {
 
-    // the json field names in the api json message which is supposed to be the same as the var $id
-    const FLD_NAME = 'name';
-    const FLD_DESCRIPTION = 'description';
-
     // the unique name of the object that is shown to the user
     // the name must always be set
     public string $name;

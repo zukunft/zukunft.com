@@ -175,7 +175,7 @@ class value_time_series extends sandbox_value
 
 
         if ($this->id > 0) {
-            $qp->name .= 'id';
+            $qp->name .= sql_db::FLD_ID;
             $sql_where = $db_con->where_id(self::FLD_ID, $this->id, true);
         } elseif ($this->grp->id > 0) {
             $qp->name .= 'phrase_group_id';

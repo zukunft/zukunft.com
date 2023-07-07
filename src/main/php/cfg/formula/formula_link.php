@@ -242,7 +242,7 @@ class formula_link extends sandbox_link_with_type
     {
         $result = '';
         if ($this->id != 0) {
-            $result .= 'id';
+            $result .= sql_db::FLD_ID;
         } elseif ($this->is_unique()) {
             $result .= 'link_ids';
         } else {

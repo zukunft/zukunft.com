@@ -68,11 +68,11 @@ if ($usr->id() > 0) {
     $dsp_add = new view_dsp_old($usr);
 
     // load the parameters to the view object to display the user input again in case of an error
-    if (isset($_GET['name'])) {
-        $dsp_add->set_name($_GET['name']);
+    if (isset($_GET[controller::URL_VAR_NAME])) {
+        $dsp_add->set_name($_GET[controller::URL_VAR_NAME]);
     }    // name of the new view to add
-    if (isset($_GET['comment'])) {
-        $dsp_add->description = $_GET['comment'];
+    if (isset($_GET[controller::URL_VAR_COMMENT])) {
+        $dsp_add->description = $_GET[controller::URL_VAR_COMMENT];
     }
     if (isset($_GET['type'])) {
         $dsp_add->type_id = $_GET['type'];
@@ -81,7 +81,7 @@ if ($usr->id() > 0) {
     if ($_GET['confirm'] > 0) {
 
         // check essential parameters
-        if ($_GET['name'] == "") {
+        if ($_GET[controller::URL_VAR_NAME] == "") {
             $msg .= 'Name missing; Please press back and enter a name for the new view.';
         } else {
 

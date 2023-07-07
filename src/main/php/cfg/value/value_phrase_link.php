@@ -150,7 +150,7 @@ class value_phrase_link
 
 
         if ($this->id > 0) {
-            $qp->name .= 'id';
+            $qp->name .= sql_db::FLD_ID;
             $sql_where .= $db_con->where_par(
                 array(self::FLD_ID),
                 array($this->id)

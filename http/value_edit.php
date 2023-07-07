@@ -64,7 +64,7 @@ if ($usr->id() > 0) {
 
     // create the value object to store the parameters so that if the edit form is shown again it is already filled
     $val = new value($usr);
-    $val->load_by_id($_GET['id']); // to load any missing parameters of the edit view like the group and phrases from the database
+    $val->load_by_id($_GET[controller::URL_VAR_ID]); // to load any missing parameters of the edit view like the group and phrases from the database
 
     if ($val->id() <= 0) {
         $result .= log_err("Value id missing for value_edit called from " . $back, "value_edit.php");

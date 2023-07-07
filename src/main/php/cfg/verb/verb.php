@@ -370,7 +370,7 @@ class verb extends db_object
      */
     function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'id', $class);
+        $qp = $this->load_sql($db_con, sql_db::FLD_ID, $class);
         $qp->sql = $db_con->select_by_id($id);
         $qp->par = $db_con->get_par();
 
@@ -386,7 +386,7 @@ class verb extends db_object
      */
     function load_sql_by_name(sql_db $db_con, string $name): sql_par
     {
-        $qp = $this->load_sql($db_con, 'name', self::class);
+        $qp = $this->load_sql($db_con, sql_db::FLD_NAME, self::class);
         $db_con->add_par(sql_db::PAR_TEXT, $name);
         $sql_where = '( ' . self::FLD_NAME . ' = ' . $db_con->par_name();
         $db_con->add_par(sql_db::PAR_TEXT, $name);

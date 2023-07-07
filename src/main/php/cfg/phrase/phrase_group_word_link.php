@@ -131,7 +131,7 @@ class phrase_group_word_link extends phrase_group_link
         $qp = new sql_par(self::class);
 
         if ($this->id > 0) {
-            $qp->name .= 'id';
+            $qp->name .= sql_db::FLD_ID;
             $db_con->add_par(sql_db::PAR_INT, $this->id);
         } else {
             log_err('The phrase group word id must be set ' .

@@ -34,6 +34,7 @@
 
 namespace html\ref;
 
+use api\api;
 use api\sandbox_named_api;
 use html\sandbox\db_object as db_object_dsp;
 use controller\controller;
@@ -87,18 +88,18 @@ class ref extends db_object_dsp
     function set_from_json_array(array $json_array): void
     {
         parent::set_from_json_array($json_array);
-        if (array_key_exists(controller::API_FLD_PHRASE, $json_array)) {
+        if (array_key_exists(api::FLD_PHRASE, $json_array)) {
             $phr = new phrase_dsp();
             $wrd = new word_dsp();
             $phr->set_obj($wrd);
-            $phr->set_id($json_array[controller::API_FLD_PHRASE]);
+            $phr->set_id($json_array[api::FLD_PHRASE]);
             $this->phr = $phr;
         } else {
             $this->phr = null;
         }
-        if (array_key_exists(controller::API_FLD_SOURCE, $json_array)) {
+        if (array_key_exists(api::FLD_SOURCE, $json_array)) {
             $src = new source_dsp();
-            $src->set_id($json_array[controller::API_FLD_SOURCE]);
+            $src->set_id($json_array[api::FLD_SOURCE]);
             $this->source = $src;
         } else {
             $this->source = null;
@@ -113,13 +114,13 @@ class ref extends db_object_dsp
         } else {
             $this->set_url(null);
         }
-        if (array_key_exists(controller::API_FLD_TYPE_ID, $json_array)) {
-            $this->set_type_id($json_array[controller::API_FLD_TYPE_ID]);
+        if (array_key_exists(api::FLD_TYPE, $json_array)) {
+            $this->set_type_id($json_array[api::FLD_TYPE]);
         } else {
             $this->set_type_id();
         }
-        if (array_key_exists(sandbox_named_api::FLD_DESCRIPTION, $json_array)) {
-            $this->set_description($json_array[sandbox_named_api::FLD_DESCRIPTION]);
+        if (array_key_exists(api::FLD_DESCRIPTION, $json_array)) {
+            $this->set_description($json_array[api::FLD_DESCRIPTION]);
         } else {
             $this->set_description(null);
         }
@@ -235,10 +236,10 @@ class ref extends db_object_dsp
         $vars = parent::api_array();
         $vars[controller::API_FLD_URL] = $this->url();
         $vars[controller::API_FLD_EXTERNAL_KEY] = $this->external_key();
-        $vars[controller::API_FLD_PHRASE] = $this->phr->id();
-        $vars[controller::API_FLD_SOURCE] = $this->source->id();
-        $vars[controller::API_FLD_TYPE_ID] = $this->type_id();
-        $vars[controller::API_FLD_DESCRIPTION] = $this->description();
+        $vars[api::FLD_PHRASE] = $this->phr->id();
+        $vars[api::FLD_SOURCE] = $this->source->id();
+        $vars[api::FLD_TYPE] = $this->type_id();
+        $vars[api::FLD_DESCRIPTION] = $this->description();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

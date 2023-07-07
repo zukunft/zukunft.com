@@ -126,7 +126,7 @@ class batch_job extends db_object
     public ?DateTime $start_time = null;    // start time of the job execution
     public ?DateTime $end_time = null;      // end time of the job execution
     public ?user $usr = null;               // the user who has done the request and whose data needs to be updated
-    public ?string $type = null;            // "update value", "add formula" or ... reference to the type table
+    private ?int $type_id;                  // id of the batch type e.g. "update value", "add formula", ... because getting the type is fast from the preloaded type list
     public ?int $row_id = null;             // the id of the related object e.g. if a value has been updated the value_id
     public string $status;
     public string $priority;
@@ -154,6 +154,7 @@ class batch_job extends db_object
         $this->usr = $usr;
         $this->status = self::STATUS_NEW;
         $this->priority = self::PRIO_LOWEST;
+        $this->type_id = 0;
     }
 
     /**
@@ -171,7 +172,7 @@ class batch_job extends db_object
             //$this->request_time = $db_row[self::FLD_TIME_REQUEST];
             //$this->start_time = $db_row[self::FLD_TIME_START];
             //$this->end_time = $db_row[self::FLD_TIME_END];
-            $this->type = $db_row[self::FLD_TYPE];
+            $this->type_id = $db_row[self::FLD_TYPE];
             //$this->status = $db_row[self::FLD_ID];
             //$this->priority = $db_row[self::FLD_ID];
             log_debug('Batch job ' . $this->id() . ' loaded');
@@ -184,18 +185,28 @@ class batch_job extends db_object
      * set and get
      */
 
+    function set_type_id(?int $type_id = null): void
+    {
+        $this->type_id = $type_id;
+    }
+
+    function type_id(): ?int
+    {
+        return $this->type_id;
+    }
+
     function set_type(string $code_id): void
     {
         global $job_types;
-        $this->type = $job_types->id($code_id);
+        $this->set_type_id($job_types->id($code_id));
     }
 
     function type_code_id(): string
     {
         global $job_types;
         $result = '';
-        if ($this->type != null) {
-            $type = $job_types->get_by_id($this->type);
+        if ($this->type_id != 0) {
+            $type = $job_types->get_by_id($this->type_id);
             if ($type != null) {
                 $result = $type->code_id();
             }
@@ -222,7 +233,7 @@ class batch_job extends db_object
         if ($this->end_time != null) {
             $api_obj->end_time = $this->end_time->format(DateTimeInterface::ATOM);
         }
-        $api_obj->type = $this->type;
+        $api_obj->type_id = $this->type_id();
         $api_obj->status = $this->status;
         $api_obj->priority = $this->priority;
         return $api_obj;
@@ -271,7 +282,7 @@ class batch_job extends db_object
      */
     function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'id', $class);
+        $qp = $this->load_sql($db_con, sql_db::FLD_ID, $class);
         $db_con->add_par_int($id);
         $qp->sql = $db_con->select_by_field($this->id_field());
         $qp->par = $db_con->get_par();
@@ -335,7 +346,7 @@ class batch_job extends db_object
         log_debug();
 
         // create first the database entry to make sure the update is done
-        if ($this->type <= 0) {
+        if ($this->type_id() <= 0) {
             if ($code_id == '') {
                 log_debug('invalid batch job type');
             } else {
@@ -343,7 +354,7 @@ class batch_job extends db_object
             }
         }
 
-        if ($this->type > 0) {
+        if ($this->type_id() > 0) {
             log_debug('ok');
             if ($this->row_id <= 0) {
                 if (isset($this->obj)) {
@@ -367,7 +378,7 @@ class batch_job extends db_object
                     $db_con->set_type(sql_db::TBL_TASK);
                     $db_con->set_usr($this->usr->id);
                     $job_id = $db_con->insert(array(user::FLD_ID, self::FLD_TIME_REQUEST, self::FLD_TYPE, self::FLD_ROW),
-                        array($this->usr->id, 'Now()', $this->type, $this->row_id));
+                        array($this->usr->id, 'Now()', $this->type_id(), $this->row_id));
                     $this->request_time = new DateTime();
 
                     // execute the job if possible
@@ -421,21 +432,20 @@ class batch_job extends db_object
     /**
      * execute all open requests
      */
-    function exe()
+    function exe(): void
     {
         global $db_con;
-        global $job_types;
         //$db_con = New mysql;
         $db_type = $db_con->get_type();
         $db_con->usr_id = $this->usr->id;
         $db_con->set_type(sql_db::TBL_TASK);
         $result = $db_con->update($this->id, 'start_time', 'Now()');
 
-        log_debug($this->type . ' with ' . $result);
-        if ($this->type == $job_types->id(batch_job_type_list::VALUE_UPDATE)) {
+        log_debug($this->type_code_id() . ' with ' . $result);
+        if ($this->type_code_id() == batch_job_type_list::VALUE_UPDATE) {
             $this->exe_val_upd();
         } else {
-            log_err('Job type "' . $this->type . '" not defined.', 'batch_job->exe');
+            log_err('Job type "' . $this->type_code_id() . '" not defined.', 'batch_job->exe');
         }
         $db_con->set_type($db_type);
     }
@@ -454,7 +464,7 @@ class batch_job extends db_object
      */
     function dsp_id(): string
     {
-        $result = $this->type;
+        $result = $this->type_code_id();
 
         if ($this->row_id > 0) {
             $result .= ' for id ' . $this->row_id;
@@ -484,7 +494,7 @@ class batch_job extends db_object
 
     function name(): string
     {
-        $result = $this->type;
+        $result = $this->type_code_id();
 
         if (isset($this->frm)) {
             if (get_class($this->frm) == formula::class) {

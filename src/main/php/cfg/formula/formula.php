@@ -449,6 +449,7 @@ class formula extends sandbox_typed
     }
 
     /**
+     * TODO easy deprecate
      * create an SQL statement to retrieve the parameters of a formula from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
@@ -460,9 +461,9 @@ class formula extends sandbox_typed
 
         $qp = parent::load_sql_obj_vars($db_con, $class);
         if ($this->id() != 0) {
-            $qp->name .= 'id';
+            $qp->name .= sql_db::FLD_ID;
         } elseif ($this->name != '') {
-            $qp->name .= 'name';
+            $qp->name .= sql_db::FLD_NAME;
         } else {
             log_err('Either the database ID (' . $this->id() . ') or the ' .
                 $class . ' name (' . $this->name() . ') and the user (' . $this->user()->id() . ') must be set to load a ' .

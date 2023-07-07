@@ -504,7 +504,7 @@ class term extends combine_named
      */
     function load_sql_by_id(sql_db $db_con, int $id): sql_par
     {
-        $qp = $this->load_sql($db_con, 'id');
+        $qp = $this->load_sql($db_con, sql_db::FLD_ID);
         $db_con->add_par_int($id);
         $qp->sql = $db_con->select_by_field(term::FLD_ID);
         $qp->par = $db_con->get_par();
@@ -521,7 +521,7 @@ class term extends combine_named
      */
     function load_sql_by_name(sql_db $db_con, string $name): sql_par
     {
-        $qp = $this->load_sql($db_con, 'name');
+        $qp = $this->load_sql($db_con, sql_db::FLD_NAME);
         $db_con->add_par_txt($name);
         $qp->sql = $db_con->select_by_field(term::FLD_NAME);
         $qp->par = $db_con->get_par();

@@ -64,6 +64,8 @@ class controller
     const URL_VAR_ID = 'id'; // the internal database id that should never be shown to the user
     const URL_VAR_ID_LST = 'ids'; // a comma seperated list of internal database ids
     const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
+    const URL_VAR_COMMENT = 'comment';
+    const URL_VAR_DESCRIPTION = 'description';
     const URL_VAR_DEBUG = 'debug'; // to force the output of debug messages
     const URL_VAR_CODE_ID = 'code_id';
     const URL_VAR_WORD = 'words';
@@ -83,21 +85,9 @@ class controller
      */
 
     // json field names of the api json messages
-    // which is supposed to be the same as the corresponding var of the api object
-    const API_FLD_NAME = 'name'; // the unique name of the object which is also a database index
-    const API_FLD_DESCRIPTION = 'description';
-    const API_FLD_COMMENT = 'comment';
-    // the json field name in the api json message which is supposed to contain the code id of an object type
-    // e.g. for the word api message it contains the id of the phrase type
-    const API_FLD_TYPE = 'type';
-    // the json field name in the api json message which is supposed to contain the database id of an object type
-    // e.g. for the word api message it contains the id of the phrase type
-    const API_FLD_TYPE_ID = 'type_id';
-    const API_FLD_CODE_ID = 'code_id';
-    const API_FLD_PHRASE = 'phrase_id';
     const API_FLD_PHRASES = 'phrases';
     const API_FLD_COMPONENTS = 'components';
-    const API_FLD_SOURCE = 'source_id';
+
     // a float number used for values and results
     const API_FLD_NUMBER = 'number';
     // the formula expression in a human-readable format

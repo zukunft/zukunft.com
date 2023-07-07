@@ -35,6 +35,7 @@ namespace html;
 include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
+use api\api;
 use api\sandbox_named_api;
 use controller\controller;
 use html\sandbox\db_object as db_object_dsp;
@@ -62,14 +63,14 @@ class sandbox_named_dsp extends db_object_dsp
     function set_from_json_array(array $json_array): void
     {
         parent::set_from_json_array($json_array);
-        if (array_key_exists(sandbox_named_api::FLD_NAME, $json_array)) {
-            $this->set_name($json_array[sandbox_named_api::FLD_NAME]);
+        if (array_key_exists(api::FLD_NAME, $json_array)) {
+            $this->set_name($json_array[api::FLD_NAME]);
         } else {
             $this->set_name('');
             log_err('Mandatory field name missing in API JSON ' . json_encode($json_array));
         }
-        if (array_key_exists(sandbox_named_api::FLD_DESCRIPTION, $json_array)) {
-            $this->set_description($json_array[sandbox_named_api::FLD_DESCRIPTION]);
+        if (array_key_exists(api::FLD_DESCRIPTION, $json_array)) {
+            $this->set_description($json_array[api::FLD_DESCRIPTION]);
         } else {
             $this->set_description(null);
         }
@@ -115,8 +116,8 @@ class sandbox_named_dsp extends db_object_dsp
     {
         $vars = parent::api_array();
 
-        $vars[controller::API_FLD_NAME] = $this->name();
-        $vars[controller::API_FLD_DESCRIPTION] = $this->description();
+        $vars[api::FLD_NAME] = $this->name();
+        $vars[api::FLD_DESCRIPTION] = $this->description();
         return $vars;
     }
 

@@ -453,7 +453,7 @@ class phrase extends combine_named
      */
     function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'id');
+        $qp = $this->load_sql($db_con, sql_db::FLD_ID);
         $db_con->add_par_int($id);
         $qp->sql = $db_con->select_by_field(phrase::FLD_ID);
         $qp->par = $db_con->get_par();
@@ -471,7 +471,7 @@ class phrase extends combine_named
      */
     function load_sql_by_name(sql_db $db_con, string $name, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'name');
+        $qp = $this->load_sql($db_con, sql_db::FLD_NAME);
         $db_con->add_par_txt($name);
         $qp->sql = $db_con->select_by_field(phrase::FLD_NAME);
         $qp->par = $db_con->get_par();

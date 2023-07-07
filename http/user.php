@@ -56,7 +56,7 @@ global $user_profiles;
 $result = ''; // reset the html code var
 
 // get the parameters
-$id = $_GET['id'];
+$id = $_GET[controller::URL_VAR_ID];
 $back = $_GET[controller::API_BACK];
 $undo_val = $_GET['undo_value'];
 $undo_wrd = $_GET['undo_word'];

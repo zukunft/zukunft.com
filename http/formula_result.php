@@ -62,7 +62,7 @@ if ($session_usr->id() > 0) {
     $result .= $dsp->dsp_navbar($back);
 
     // get the parameters
-    $frm_val_id = $_GET['id'];      // id of the formula result if known already
+    $frm_val_id = $_GET[controller::URL_VAR_ID];      // id of the formula result if known already
     $frm_id = $_GET['formula']; // id of the formula which values should be explained
     $phr_id = $_GET['word'];    // id of the leading word used to order the result explaining
     //$wrd_group_id = $_GET['group'];   // id of the word group (excluding and time word)

@@ -59,7 +59,7 @@ class batch_job_unit_db_tests
         $job_lst = new batch_job_list($sys_usr);
         $job_lst->load_by_type(batch_job_type_list::BASE_IMPORT);
         $first_job = $job_lst->lst()[0];
-        $t->assert('first batch job change is adding', $first_job->type, '11');
+        $t->assert('first batch job change is adding', $first_job->type_id(), '11');
 
 
         $t->subheader('API unit db tests');

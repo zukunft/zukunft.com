@@ -352,7 +352,7 @@ class user extends db_object
      */
     function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'id', $class);
+        $qp = $this->load_sql($db_con, sql_db::FLD_ID, $class);
         $db_con->add_par_int($id);
         $qp->sql = $db_con->select_by_field(self::FLD_ID);
         $qp->par = $db_con->get_par();
@@ -370,7 +370,7 @@ class user extends db_object
      */
     function load_sql_by_name(sql_db $db_con, string $name, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'name', $class);
+        $qp = $this->load_sql($db_con, sql_db::FLD_NAME, $class);
         $db_con->add_par_txt($name);
         $qp->sql = $db_con->select_by_field(self::FLD_NAME);
         $qp->par = $db_con->get_par();

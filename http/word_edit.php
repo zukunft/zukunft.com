@@ -64,15 +64,15 @@ if ($usr->id() > 0) {
 
     // create the word object to have a place to update the parameters
     $wrd = new word($usr);
-    $wrd->load_by_id($_GET['id']);
+    $wrd->load_by_id($_GET[controller::URL_VAR_ID]);
 
     if ($wrd->id() <= 0) {
         $result .= log_info("The word id must be set to display a word.", "word_edit.php", '', (new Exception)->getTraceAsString(), $usr);
     } else {
 
         // get all parameters (but if not set, use the database value)
-        if (isset($_GET['name'])) {
-            $wrd->set_name($_GET['name']);
+        if (isset($_GET[controller::URL_VAR_NAME])) {
+            $wrd->set_name($_GET[controller::URL_VAR_NAME]);
         } //
         if (isset($_GET['plural'])) {
             $wrd->plural = $_GET['plural'];

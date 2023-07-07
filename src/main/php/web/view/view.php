@@ -93,8 +93,8 @@ class view extends sandbox_typed_dsp
     {
         // the root view object
         parent::set_from_json_array($json_array);
-        if (array_key_exists(controller::API_FLD_CODE_ID, $json_array)) {
-            $this->code_id = $json_array[controller::API_FLD_CODE_ID];
+        if (array_key_exists(api::FLD_CODE_ID, $json_array)) {
+            $this->code_id = $json_array[api::FLD_CODE_ID];
         } else {
             $this->code_id = null;
         }
@@ -460,7 +460,7 @@ class view extends sandbox_typed_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[controller::API_FLD_CODE_ID] = $this->code_id;
+        $vars[api::FLD_CODE_ID] = $this->code_id;
         $vars[controller::API_FLD_COMPONENTS] = $this->cmp_lst->api_array();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

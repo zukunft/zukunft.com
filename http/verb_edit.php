@@ -65,18 +65,18 @@ if ($usr->id() > 0) {
     // create the verb object to have an place to update the parameters
     $vrb = new verb;
     $vrb->set_user($usr);
-    $vrb->load_by_id($_GET['id']);
+    $vrb->load_by_id($_GET[controller::URL_VAR_ID]);
 
     if ($vrb->id() <= 0) {
         $result .= log_err("No verb found to change because the id is missing.", "verb_edit.php");
     } else {
 
         // if the save button has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
-        if ($_GET['name'] <> '') {
+        if ($_GET[controller::URL_VAR_NAME] <> '') {
 
             // get the parameters (but if not set, use the database value)
-            if (isset($_GET['name'])) {
-                $vrb->set_name($_GET['name']);
+            if (isset($_GET[controller::URL_VAR_NAME])) {
+                $vrb->set_name($_GET[controller::URL_VAR_NAME]);
             }
             if (isset($_GET['plural'])) {
                 $vrb->plural = $_GET['plural'];

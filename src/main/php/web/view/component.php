@@ -37,7 +37,7 @@ namespace html\view;
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
 use controller\controller;
-use html\api;
+use api\api;
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\term as term_dsp;
@@ -334,8 +334,8 @@ class component extends sandbox_typed_dsp
     function set_from_json_array(array $json_array): void
     {
         parent::set_from_json_array($json_array);
-        if (array_key_exists(controller::API_FLD_CODE_ID, $json_array)) {
-            $this->code_id = $json_array[controller::API_FLD_CODE_ID];
+        if (array_key_exists(api::FLD_CODE_ID, $json_array)) {
+            $this->code_id = $json_array[api::FLD_CODE_ID];
         } else {
             $this->code_id = null;
         }

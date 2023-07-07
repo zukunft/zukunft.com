@@ -66,8 +66,8 @@ if ($usr->id() > 0) {
     $word_id = $back;
 
     // get the view id used utils now and the word id
-    if (isset($_GET['id'])) {
-        $view_id = $_GET['id'];
+    if (isset($_GET[controller::URL_VAR_ID])) {
+        $view_id = $_GET[controller::URL_VAR_ID];
     }
     if (isset($_GET['word'])) {
         $word_id = $_GET['word'];

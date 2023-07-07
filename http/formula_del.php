@@ -63,7 +63,7 @@ if ($usr->id() > 0) {
     $back = $_GET[controller::API_BACK];
 
     // get the parameters
-    $formula_id = $_GET['id'];           // id of the formula that can be changed
+    $formula_id = $_GET[controller::URL_VAR_ID];           // id of the formula that can be changed
     $confirm = $_GET['confirm'];
 
     // delete the link or ask for confirmation

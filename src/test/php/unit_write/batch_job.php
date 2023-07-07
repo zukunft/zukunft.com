@@ -77,7 +77,7 @@ class batch_job_test
         // test adding a batch job
         $job = new batch_job($usr);
         $job->obj = $val;
-        $job->type = $job_types->id(batch_job_type_list::VALUE_UPDATE);
+        $job->set_type(batch_job_type_list::VALUE_UPDATE);
         $result = $job->add();
         if ($result > 0) {
             $target = $result;

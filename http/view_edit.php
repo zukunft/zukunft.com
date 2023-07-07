@@ -66,7 +66,7 @@ if ($usr->id() > 0) {
 
     // create the view object that the user can change
     $dsp_edit = new view_dsp_old($usr);
-    $result .= $dsp_edit->load_by_id($_GET['id']);
+    $result .= $dsp_edit->load_by_id($_GET[controller::URL_VAR_ID]);
 
     // get the view id to adjust
     if ($dsp_edit->id() <= 0) {
@@ -131,16 +131,16 @@ if ($usr->id() > 0) {
         }
 
         // if the save button has been pressed (an empty view name should never be saved; instead the view should be deleted)
-        $dsp_name = $_GET['name'];
+        $dsp_name = $_GET[controller::URL_VAR_NAME];
         if ($dsp_name <> '') {
 
 
             // get other field parameters that should be saved
-            if (isset($_GET['name'])) {
-                $dsp_edit->set_name($_GET['name']);
+            if (isset($_GET[controller::URL_VAR_NAME])) {
+                $dsp_edit->set_name($_GET[controller::URL_VAR_NAME]);
             }
-            if (isset($_GET['comment'])) {
-                $dsp_edit->description = $_GET['comment'];
+            if (isset($_GET[controller::URL_VAR_COMMENT])) {
+                $dsp_edit->description = $_GET[controller::URL_VAR_COMMENT];
             }
             if (isset($_GET['type'])) {
                 $dsp_edit->type_id = $_GET['type'];

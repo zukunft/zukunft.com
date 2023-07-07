@@ -36,6 +36,8 @@ use api\word_api;
 use api\triple_api;
 use api\phrase_api;
 use cfg\config;
+use cfg\phr_ids;
+use cfg\phrase_list;
 use cfg\phrase_type;
 use cfg\phrase;
 use cfg\word;
@@ -53,7 +55,18 @@ class phrase_list_unit_db_tests
         $t->name = 'phrase list_read db->';
         $t->resource_path = 'db/phrase/';
 
-        $t->subheader('Get related');
+        $t->subheader('Load phrases');
+        $test_name = 'api message of phrases list';
+        $lst = new phrase_list($t->usr1);
+        $id_lst = [1, 2, 3, -1, -2];
+        $lst->load_names_by_ids((new phr_ids($id_lst)));
+        $result = $lst->api_obj();
+        $t->assert_contains($test_name, array_keys($result->db_id_list()), $id_lst);
+        $result = json_encode($result);
+        $t->assert_text_contains($test_name, $result, '1');
+
+
+        $t->subheader('Get related phrases');
 
         // direct children
         $country = new phrase($t->usr1, word_api::TN_COUNTRY);

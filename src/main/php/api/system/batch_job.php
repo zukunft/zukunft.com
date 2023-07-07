@@ -54,7 +54,7 @@ class batch_job_api extends db_object
     public string $start_time;
     public string $end_time;
     public string $user;
-    public string $type;
+    public int $type_id;
     public string $status;
     public int $priority;
 
@@ -66,7 +66,7 @@ class batch_job_api extends db_object
         $this->request_time = '';
         $this->start_time = '';
         $this->end_time = '';
-        $this->type = '';
+        $this->type_id = 0;
         $this->status = '';
         $this->priority = 0;
     }

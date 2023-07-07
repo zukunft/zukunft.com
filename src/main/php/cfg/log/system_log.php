@@ -190,7 +190,7 @@ class system_log extends db_object
      * @return sql_par the database depending on sql statement to load a system error from the log table
      *                 and the unique name for the query
      */
-    function load_sql(sql_db $db_con, string $query_name = 'id', string $class = self::class): sql_par
+    function load_sql(sql_db $db_con, string $query_name = sql_db::FLD_ID, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($db_con, $query_name, $class);
         $db_con->set_type(sql_db::TBL_SYS_LOG);
@@ -216,7 +216,7 @@ class system_log extends db_object
     function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
     {
 
-        $qp = $this->load_sql($db_con, 'id', $class);
+        $qp = $this->load_sql($db_con, sql_db::FLD_ID, $class);
         $db_con->add_par_int($id);
         $qp->sql = $db_con->select_by_field($this->id_field());
         $qp->par = $db_con->get_par();

@@ -223,9 +223,9 @@ class sandbox_named extends sandbox
     {
         $qp = new sql_par($class, true);
         if ($this->id != 0) {
-            $qp->name .= 'id';
+            $qp->name .= sql_db::FLD_ID;
         } elseif ($this->name() != '') {
-            $qp->name .= 'name';
+            $qp->name .= sql_db::FLD_NAME;
         } else {
             log_err('Either the id or name must be set to get a named user sandbox object');
         }
@@ -274,7 +274,7 @@ class sandbox_named extends sandbox
      */
     function load_sql_by_name(sql_db $db_con, string $name, string $class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'name', $class);
+        $qp = $this->load_sql($db_con, sql_db::FLD_NAME, $class);
         $db_con->set_where_name($name, $this->name_field());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();

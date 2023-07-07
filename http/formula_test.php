@@ -76,7 +76,7 @@ if ($session_usr->id() > 0) {
     echo $dsp->dsp_navbar($back);
 
     // get all parameters
-    $frm_id = $_GET['id'];
+    $frm_id = $_GET[controller::URL_VAR_ID];
     $phr_ids_txt = $_GET['phrases'];
     $usr_id = $_GET['user'];    // to force another user view for testing the formula calculation
     $refresh = $_GET['refresh']; // delete all results for this formula and calculate the results again

@@ -206,7 +206,7 @@ class type_object
     function load_sql_by_id(sql_db $db_con, int $id, string $db_type = ''): sql_par
     {
         $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($db_con, $db_type, 'id');
+        $qp = $typ_lst->load_sql($db_con, $db_type, sql_db::FLD_ID);
         $db_con->add_par_int($id);
         $qp->sql = $db_con->select_by_field($this->id_field($db_type));
         $qp->par = $db_con->get_par();
@@ -225,7 +225,7 @@ class type_object
     function load_sql_by_name(sql_db $db_con, string $name, string $db_type = ''): sql_par
     {
         $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($db_con, $db_type, 'name');
+        $qp = $typ_lst->load_sql($db_con, $db_type, sql_db::FLD_NAME);
         $db_con->add_par(sql_db::PAR_TEXT, $name);
         $qp->sql = $db_con->select_by_field($this->name_field($db_type));
         $qp->par = $db_con->get_par();

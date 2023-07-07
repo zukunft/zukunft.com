@@ -112,10 +112,10 @@ class batch_job extends db_object_dsp
         } else {
             $this->set_user_id(0);
         }
-        if (array_key_exists(controller::API_FLD_TYPE, $json_array)) {
-            $this->set_type($json_array[controller::API_FLD_TYPE]);
+        if (array_key_exists(api::FLD_TYPE, $json_array)) {
+            $this->set_type($json_array[api::FLD_TYPE]);
         } else {
-            $this->set_type('');
+            $this->set_type(0);
         }
         if (array_key_exists(controller::API_FLD_STATUS, $json_array)) {
             $this->set_status($json_array[controller::API_FLD_STATUS]);
@@ -266,7 +266,7 @@ class batch_job extends db_object_dsp
         $vars[controller::API_FLD_TIME_START] = $this->start_time()->format(DateTimeInterface::ATOM);
         $vars[controller::API_FLD_TIME_END] = $this->end_time()->format(DateTimeInterface::ATOM);
         $vars[api::FLD_USER_ID] = $this->user_id();
-        $vars[controller::API_FLD_TYPE] = $this->type();
+        $vars[api::FLD_TYPE] = $this->type();
         $vars[controller::API_FLD_STATUS] = $this->status();
         $vars[controller::API_FLD_PRIORITY] = $this->priority();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');

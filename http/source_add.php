@@ -72,14 +72,14 @@ if ($usr->id() > 0) {
     $src = new source($usr);
 
     // load the parameters to the view object to display the user input again in case of an error
-    if (isset($_GET['name'])) {
-        $src->set_name($_GET['name']);
+    if (isset($_GET[controller::URL_VAR_NAME])) {
+        $src->set_name($_GET[controller::URL_VAR_NAME]);
     }    // name of the new source to add
     if (isset($_GET['url'])) {
         $src->url = $_GET['url'];
     }     // url of the new source to add
-    if (isset($_GET['comment'])) {
-        $src->description = $_GET['comment'];
+    if (isset($_GET[controller::URL_VAR_COMMENT])) {
+        $src->description = $_GET[controller::URL_VAR_COMMENT];
     }
 
     // if the user has pressed save at least once

@@ -52,7 +52,7 @@ global $user_profiles;
 $result = ''; // reset the html code var
 
 // get the parameters
-$log_id = $_GET['id'];
+$log_id = $_GET[controller::URL_VAR_ID];
 $status_id = $_GET['status'];
 $back = $_GET[controller::API_BACK];
 

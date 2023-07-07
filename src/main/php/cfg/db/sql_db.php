@@ -178,7 +178,9 @@ class sql_db
 
     const NULL_VALUE = 'NULL';
 
-    const FLD_ID = 'id';
+    // open used name extension for the prepared sql statements
+    const FLD_ID = 'id';                          // used also to name the sql statements
+    const FLD_NAME = 'name';                      // used      to name the sql statements
     const FLD_EXT_ID = '_id';
     const FLD_EXT_NAME = '_name';
     const FLD_EXT_TYPE_ID = '_type_id';
@@ -1557,7 +1559,7 @@ class sql_db
     {
         global $debug;
         $lib = new library();
-        log_debug('"' . $sql . '" with ' . $lib->dsp_array($sql_array) . ' named "' . $sql_name . '" for  user ' . $this->usr_id, $debug - 15);
+        log_debug('"' . $sql . '" with "' . $lib->dsp_array($sql_array) . '" named "' . $sql_name . '" for  user ' . $this->usr_id, $debug - 15);
 
         // Postgres part
         if ($this->db_type == sql_db::POSTGRES) {

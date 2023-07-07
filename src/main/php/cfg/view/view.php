@@ -444,7 +444,7 @@ class view extends sandbox_typed
         if ($this->id != 0) {
             $qp->name .= 'view_id';
         } elseif ($this->name != '') {
-            $qp->name .= 'name';
+            $qp->name .= sql_db::FLD_NAME;
         } else {
             log_err("Either the database ID (" . $this->id . "), the view name (" . $this->name . ") or the code_id (" . $this->code_id . ")  must be set to load the components of a view.", "view->load_components_sql");
         }

@@ -67,7 +67,7 @@ if ($usr->id() > 0) {
     $back = $_GET[controller::API_BACK];  // the page from which the value deletion has been called
 
     // get the parameters
-    $val_id = $_GET['id'];
+    $val_id = $_GET[controller::URL_VAR_ID];
     $confirm = $_GET['confirm'];
 
     if ($val_id > 0) {

@@ -458,7 +458,7 @@ class value extends sandbox_value
 
         $db_con->set_type(sql_db::TBL_VALUE);
         if ($this->id() > 0) {
-            $qp->name .= 'id';
+            $qp->name .= sql_db::FLD_ID;
         } elseif ($this->grp->id() > 0) {
             $qp->name .= 'phrase_group_id';
         } elseif ($this->grp->phr_lst != null) {
@@ -1683,7 +1683,7 @@ class value extends sandbox_value
         log_debug('value->save_field_trigger_update group id "' . $this->grp->id() . '" for user ' . $this->user()->name . '');
         if ($this->id() > 0) {
             $job = new batch_job($this->user());
-            $job->type = $job_types->id(batch_job_type_list::VALUE_UPDATE);
+            $job->set_type(batch_job_type_list::VALUE_UPDATE);
             $job->obj = $this;
             $job->add();
         } else {

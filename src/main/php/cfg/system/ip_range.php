@@ -176,7 +176,7 @@ class ip_range extends db_object
         $qp->name = $class . '_by_';
         $sql_where = '';
         if ($this->id != 0) {
-            $qp->name .= 'id';
+            $qp->name .= sql_db::FLD_ID;
             $db_con->add_par(sql_db::PAR_INT, $this->id);
             $sql_where .= self::FLD_ID . ' = ' . $db_con->par_name();
         } elseif ($this->from != '' and $this->to != '') {

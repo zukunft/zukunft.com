@@ -536,15 +536,15 @@ class triple extends sandbox_link_typed implements JsonSerializable
             if ($key == api::FLD_ID) {
                 $this->set_id($value);
             }
-            if ($key == controller::API_FLD_NAME) {
+            if ($key == api::FLD_NAME) {
                 $this->set_name($value);
             }
-            if ($key == controller::API_FLD_DESCRIPTION) {
+            if ($key == api::FLD_DESCRIPTION) {
                 if ($value <> '') {
                     $this->description = $value;
                 }
             }
-            if ($key == controller::API_FLD_TYPE) {
+            if ($key == api::FLD_TYPE) {
                 $this->type_id = $phrase_types->id($value);
             }
 
@@ -690,7 +690,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      */
     function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'id', $class);
+        $qp = $this->load_sql($db_con, sql_db::FLD_ID, $class);
         $db_con->add_par_int($id);
         $qp->sql = $db_con->select_by_field($this->id_field());
         $qp->par = $db_con->get_par();
@@ -708,7 +708,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      */
     function load_sql_by_name(sql_db $db_con, string $name, string $class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'name', $class);
+        $qp = $this->load_sql($db_con, sql_db::FLD_NAME, $class);
         $db_con->set_where_name($name, $this->name_field());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -998,9 +998,9 @@ class triple extends sandbox_link_typed implements JsonSerializable
     private function load_sql_name_ext(): string
     {
         if ($this->id() != 0) {
-            return 'id';
+            return sql_db::FLD_ID;
         } elseif ($this->name != '') {
-            return 'name';
+            return sql_db::FLD_NAME;
         } elseif ($this->has_objects()) {
             return 'link_ids';
         } else {

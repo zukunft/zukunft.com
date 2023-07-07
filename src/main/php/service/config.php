@@ -78,9 +78,8 @@ class config
      * get a config value from the database table
      * including $db_con because this is call also from the start, where the global $db_con is not yet set
      * @param string $code_id the identification of the config item that is used in the code that should never be changed
-     * @param user $usr the user which has requested the config item for the first time
      * @param sql_db $db_con the open database connection that should be used
-     * @return string the configuration value that is valid at the moment
+     * @return string|null the configuration value that is valid at the moment
      */
     function get(string $code_id, sql_db $db_con): ?string
     {
@@ -123,8 +122,8 @@ class config
         global $debug;
 
         // init
-        log_debug('"' . $code_id . '" to ' . $value, $debug - 1);
         $result = false;
+        log_debug('"' . $code_id . '" to ' . $value, $debug - 1);
 
         $qp = $this->get_sql($db_con, $code_id);
         $db_row = $db_con->get1($qp);
@@ -140,6 +139,24 @@ class config
     }
 
     /**
+     * test if the config value is set to the expected value and if not set it
+     * @param string $code_id the identification of the config item that is used in the code that should never be changed
+     * @param string $target_value the value that should be saved in the configuration table
+     * @param string $description text that explains the config value to the user or admin
+     * @param sql_db $db_con the open database connection that should be used
+     */
+    function check(string $code_id, string $target_value, sql_db $db_con, string $description = ''): bool
+    {
+        $result = false;
+
+        $cfg_value = $this->get($code_id, $db_con);
+        if ($cfg_value != $target_value) {
+            $result = $this->set(config::SITE_NAME, POD_NAME, $db_con, $description);
+        }
+        return $result;
+    }
+
+    /**
      * create configuration entry in the database for a new config item
      * @param string $code_id the identification of the config item that is used in the code that should never be changed
      * @param sql_db $db_con the open database connection that should be used
@@ -148,6 +165,8 @@ class config
     private function create(string $code_id, sql_db $db_con): bool
     {
         $result = false;
+        log_debug('create "' . $code_id . '"');
+
         $db_value = $this->default_value($code_id);
         $db_description = $this->default_description($code_id);
         $db_id = $db_con->insert(

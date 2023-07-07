@@ -66,24 +66,24 @@ if ($usr->id() > 0) {
 
     // create the source object to have an place to update the parameters
     $src = new source($usr);
-    $src->load_by_id($_GET['id']);
+    $src->load_by_id($_GET[controller::URL_VAR_ID]);
 
     if ($src->id() <= 0) {
         $result .= log_err("No source found to change because the id is missing.", "source_edit.php");
     } else {
 
         // if the save button has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
-        if ($_GET['name'] <> '') {
+        if ($_GET[controller::URL_VAR_NAME] <> '') {
 
             // get the parameters (but if not set, use the database value)
-            if (isset($_GET['name'])) {
-                $src->set_name($_GET['name']);
+            if (isset($_GET[controller::URL_VAR_NAME])) {
+                $src->set_name($_GET[controller::URL_VAR_NAME]);
             }
             if (isset($_GET['url'])) {
                 $src->url = $_GET['url'];
             }
-            if (isset($_GET['comment'])) {
-                $src->description = $_GET['comment'];
+            if (isset($_GET[controller::URL_VAR_COMMENT])) {
+                $src->description = $_GET[controller::URL_VAR_COMMENT];
             }
 
             // save the changes

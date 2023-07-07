@@ -250,7 +250,7 @@ class component_link extends sandbox_link_with_type
     {
         $qp = parent::load_sql_obj_vars($db_con, $class);
         if ($this->id > 0) {
-            $qp->name .= 'id';
+            $qp->name .= sql_db::FLD_ID;
         } elseif ($this->fob->id() > 0 and $this->tob->id() > 0) {
             $qp->name .= 'view_and_cmp_id';
         } else {

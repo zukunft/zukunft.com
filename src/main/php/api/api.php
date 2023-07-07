@@ -43,6 +43,22 @@ class api
     // which is supposed to be the same as the corresponding var of the api object
     // so that no additional mapping is needed
     const FLD_ID = 'id'; // the unique database id used to save the changes
+    const FLD_NAME = 'name'; // the unique name of the object which is also a database index
+    const FLD_DESCRIPTION = 'description';
+
+    // the json field name in the api json message which is supposed to contain
+    // the database id (or in some cases still the code id) of an object type
+    // e.g. for the word api message it contains the id of the phrase type
+    const FLD_TYPE = 'type_id';
+
+    // the json field name for code id to select a single object
+    // e.g. to select a system view
+    const FLD_CODE_ID = 'code_id';
+
+    // reference fields e.g. to link a phrase to an external reference
+    const FLD_PHRASE = 'phrase_id';
+    const FLD_SOURCE = 'source_id';
+
     const FLD_USER_ID = 'user_id';
 
 }

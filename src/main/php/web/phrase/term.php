@@ -166,10 +166,10 @@ class term extends combine_named_dsp
             log_err('cannot create api message for term ' . $this->dsp_id() . ' because class is unknown');
         }
         $vars[api::FLD_ID] = $this->obj_id();
-        $vars[controller::API_FLD_NAME] = $this->name();
-        $vars[controller::API_FLD_DESCRIPTION] = $this->description();
+        $vars[api::FLD_NAME] = $this->name();
+        $vars[api::FLD_DESCRIPTION] = $this->description();
         if (!$this->is_verb()) {
-            $vars[controller::API_FLD_TYPE_ID] = $this->type_id();
+            $vars[api::FLD_TYPE] = $this->type_id();
         }
         if ($this->is_formula()) {
             $vars[controller::API_FLD_USER_TEXT] = $this->obj()->usr_text();

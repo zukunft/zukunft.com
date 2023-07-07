@@ -331,7 +331,7 @@ class phrase_group extends db_object
     private function load_sql_name_ext(): string
     {
         if ($this->id != 0) {
-            return 'id';
+            return sql_db::FLD_ID;
         } elseif (count($this->phr_lst->wrd_ids()) > 0 and count($this->phr_lst->trp_ids()) > 0) {
             return 'wrd_and_trp_ids';
         } elseif (count($this->phr_lst->trp_ids()) > 0) {
@@ -339,7 +339,7 @@ class phrase_group extends db_object
         } elseif (count($this->phr_lst->wrd_ids()) > 0) {
             return 'wrd_ids';
         } elseif ($this->grp_name != '') {
-            return 'name';
+            return sql_db::FLD_NAME;
         } else {
             log_err('Either the database ID (' . $this->id . ') or the ' .
                 self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->user()->id() . ') must be set to load a ' .
@@ -446,7 +446,7 @@ class phrase_group extends db_object
 
         $sql_name = 'phrase_group_by_';
         if ($this->id != 0) {
-            $sql_name .= 'id';
+            $sql_name .= sql_db::FLD_ID;
         } elseif (!$wrd_lst->is_empty()) {
             $sql_name .= count($wrd_lst->lst()) . 'word_id';
         } else {

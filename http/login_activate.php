@@ -50,7 +50,7 @@ $_SESSION['logged'] = FALSE;
 if (isset($_POST['submit'])) {
     $html = new html_base();
 
-    $usr_id = $_POST['id'];
+    $usr_id = $_POST[controller::URL_VAR_ID];
     $debug = $_POST['debug'];
     log_debug("login_activate (user: " . $usr_id . ")");
 
@@ -138,10 +138,10 @@ if (isset($_POST['submit'])) {
 }
 
 if (!$_SESSION['logged']) {
-    $usr_id = $_GET['id'];
+    $usr_id = $_GET[controller::URL_VAR_ID];
     if ($usr_id <= 0) {
         if (isset($_POST['submit'])) {
-            $usr_id = $_POST['id'];
+            $usr_id = $_POST[controller::URL_VAR_ID];
         }
     }
     if ($usr_id > 0) {

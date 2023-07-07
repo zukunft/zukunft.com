@@ -136,9 +136,9 @@ class combine_named_dsp extends combine_object_dsp
     {
         $vars = array();
         $vars[api::FLD_ID] = $this->obj()?->id();
-        $vars[controller::API_FLD_NAME] = $this->name();
-        $vars[controller::API_FLD_DESCRIPTION] = $this->description();
-        $vars[controller::API_FLD_TYPE_ID] = $this->type_id();
+        $vars[api::FLD_NAME] = $this->name();
+        $vars[api::FLD_DESCRIPTION] = $this->description();
+        $vars[api::FLD_TYPE] = $this->type_id();
         return $vars;
     }
 

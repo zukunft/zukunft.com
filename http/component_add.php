@@ -69,7 +69,7 @@ if ($usr->id() > 0) {
 
     // create the view component object to apply the user changes to it
     $cmp = new component_dsp_old($usr);
-    $cmp->set_id($_GET['id']);
+    $cmp->set_id($_GET[controller::URL_VAR_ID]);
     $result .= $cmp->load_obj_vars();
 
     // get the word used as a sample the illustrate the changes
@@ -98,18 +98,18 @@ if ($usr->id() > 0) {
     }
 
     // if the save button has been pressed (an empty view component name should never be saved; instead the view should be deleted)
-    $cmp_name = $_GET['name'];
+    $cmp_name = $_GET[controller::URL_VAR_NAME];
     if ($cmp_name <> '') {
 
         // save the user changes in the database
         $upd_result = '';
 
         // get other field parameters
-        if (isset($_GET['name'])) {
-            $cmp->set_name($_GET['name']);
+        if (isset($_GET[controller::URL_VAR_NAME])) {
+            $cmp->set_name($_GET[controller::URL_VAR_NAME]);
         }
-        if (isset($_GET['comment'])) {
-            $cmp->description = $_GET['comment'];
+        if (isset($_GET[controller::URL_VAR_COMMENT])) {
+            $cmp->description = $_GET[controller::URL_VAR_COMMENT];
         }
         if (isset($_GET['type'])) {
             $cmp->type_id = $_GET['type'];

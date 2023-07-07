@@ -367,9 +367,9 @@ class component extends sandbox_typed
     {
         $qp = parent::load_sql_obj_vars($db_con, $class);
         if ($this->id != 0) {
-            $qp->name .= 'id';
+            $qp->name .= sql_db::FLD_ID;
         } elseif ($this->name != '') {
-            $qp->name .= 'name';
+            $qp->name .= sql_db::FLD_NAME;
         } else {
             log_err('Either the id, code_id or name must be set to get a view');
         }

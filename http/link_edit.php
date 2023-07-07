@@ -64,7 +64,7 @@ if ($usr->id() > 0) {
 
     // create the link object to have a place to update the parameters
     $trp = new triple($usr);
-    $trp->load_by_id($_GET['id']);
+    $trp->load_by_id($_GET[controller::URL_VAR_ID]);
 
     // edit the link or ask for confirmation
     if ($trp->id() <= 0) {

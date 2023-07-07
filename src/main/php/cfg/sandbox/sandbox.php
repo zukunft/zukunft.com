@@ -379,7 +379,7 @@ class sandbox extends db_object
     function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $qp = new sql_par($class, true);
-        $qp->name .= 'id';
+        $qp->name .= sql_db::FLD_ID;
 
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);

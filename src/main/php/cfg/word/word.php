@@ -359,15 +359,15 @@ class word extends sandbox_typed
             if ($key == api::FLD_ID) {
                 $this->set_id($value);
             }
-            if ($key == controller::API_FLD_NAME) {
+            if ($key == api::FLD_NAME) {
                 $this->set_name($value);
             }
-            if ($key == controller::API_FLD_DESCRIPTION) {
+            if ($key == api::FLD_DESCRIPTION) {
                 if ($value <> '') {
                     $this->description = $value;
                 }
             }
-            if ($key == controller::API_FLD_TYPE) {
+            if ($key == api::FLD_TYPE) {
                 $this->type_id = $phrase_types->id($value);
             }
 

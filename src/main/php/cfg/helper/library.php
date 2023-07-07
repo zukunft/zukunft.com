@@ -818,7 +818,7 @@ class library
      * @param string $key_name the key name to find the matching item in the haystack
      * @return array an empty array if all item and sub items from the needle are in the haystack
      */
-    function array_recursive_diff(array $needle, array $haystack, string $key_name = 'id'): array
+    function array_recursive_diff(array $needle, array $haystack, string $key_name = sql_db::FLD_ID): array
     {
         $result = array();
 

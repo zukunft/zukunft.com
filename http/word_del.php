@@ -63,7 +63,7 @@ if ($usr->id() > 0) {
     $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
 
     // get the parameters
-    $wrd_id = $_GET['id'];
+    $wrd_id = $_GET[controller::URL_VAR_ID];
     $confirm = $_GET['confirm'];
 
     if ($wrd_id > 0) {

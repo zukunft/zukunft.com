@@ -150,9 +150,9 @@ class phrase extends combine_named_dsp
             $vars[combine_object_api::FLD_CLASS] = phrase_api::CLASS_TRIPLE;
         }
         $vars[api::FLD_ID] = $this->obj_id();
-        $vars[controller::API_FLD_NAME] = $this->name();
-        $vars[controller::API_FLD_DESCRIPTION] = $this->description();
-        $vars[controller::API_FLD_TYPE_ID] = $this->type_id();
+        $vars[api::FLD_NAME] = $this->name();
+        $vars[api::FLD_DESCRIPTION] = $this->description();
+        $vars[api::FLD_TYPE] = $this->type_id();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

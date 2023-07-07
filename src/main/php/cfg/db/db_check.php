@@ -48,7 +48,7 @@ class db_check
         $do_consistency_check = false;
         $cfg = new config();
 
-        $cfg->set(config::SITE_NAME, POD_NAME, $db_con);
+        $cfg->check(config::SITE_NAME, POD_NAME, $db_con);
 
         // get the db version and start the upgrade process if needed
         $db_version = $cfg->get(config::VERSION_DB, $db_con);
@@ -61,14 +61,21 @@ class db_check
             } else {
                 $result = match ($db_version) {
                     NEXT_VERSION => $this->db_upgrade_0_0_4($db_con),
-                    default => $this->db_upgrade_0_0_3($db_con),
+                    FIRST_VERSION => $this->db_upgrade_0_0_3($db_con),
                 };
             }
         } else {
             $last_consistency_check = $cfg->get(config::LAST_CONSISTENCY_CHECK, $db_con);
             // run a database consistency check once every 24h if the database is the least busy
-            if (strtotime($last_consistency_check) < strtotime("now") - 1) {
+            $last_check = strtotime($last_consistency_check);
+            $check_limit = strtotime("now -1 day");
+            if ($last_check < $check_limit) {
+                log_info('Last database consistency check has been at ' . date('Y-m-d H:i:s', $last_check)
+                    . ' which is more than one day ago at ' . date('Y-m-d H:i:s', $check_limit) . ' so start the database consistency check');
                 $do_consistency_check = true;
+            } else {
+                log_debug('Last database consistency check has been at ' . date('Y-m-d H:i:s', $last_check)
+                    . ' which is less than one day ago at ' . date('Y-m-d H:i:s', $check_limit));
             }
         }
 
@@ -219,10 +226,10 @@ class db_check
         $result .= $db_con->change_column_name(sql_db::TBL_PROTECTION, 'protection_type_name', 'type_name');
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PROFILE, 'user_profile_name', 'type_name');
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PROFILE, 'commen', sandbox_named::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name(sql_db::TBL_SYS_LOG_STATUS, 'comment', 'description');
+        $result .= $db_con->change_column_name(sql_db::TBL_SYS_LOG_STATUS, 'comment', sandbox_named::FLD_DESCRIPTION);
         $result .= $db_con->change_column_name(sql_db::TBL_SYS_LOG_STATUS, 'sys_log_status_name', 'type_name');
         $result .= $db_con->change_column_name(sql_db::TBL_TASK_TYPE, 'calc_and_cleanup_task_type_name', 'type_name');
-        $result .= $db_con->change_column_name(sql_db::TBL_USER_PROFILE, 'comment', 'description');
+        $result .= $db_con->change_column_name(sql_db::TBL_USER_PROFILE, 'comment', sandbox_named::FLD_DESCRIPTION);
         $result .= $db_con->change_column_name(sql_db::TBL_FORMULA, 'protection_type_id', 'protect_id');
         $result .= $db_con->change_column_name(sql_db::TBL_VALUE, 'protection_type_id', 'protect_id');
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'protection_type_id', 'protect_id');
@@ -262,7 +269,7 @@ class db_check
         $result .= $db_con->column_allow_null(sql_db::TBL_WORD_TYPE, 'word_symbol');
         $result .= $db_con->column_allow_null(sql_db::TBL_CHANGE_TABLE, 'description');
         $result .= $db_con->column_allow_null(sql_db::TBL_CHANGE_FIELD, 'code_id');
-        $result .= $db_con->column_allow_null(sql_db::TBL_VIEW, 'comment');
+        $result .= $db_con->column_allow_null(sql_db::TBL_VIEW, sandbox_named::FLD_DESCRIPTION);
         $result .= $db_con->column_allow_null(sql_db::TBL_COMPONENT_TYPE, 'description');
         $result .= $db_con->column_allow_null(sql_db::TBL_VALUE, sandbox::FLD_EXCLUDED);
         $result .= $db_con->column_allow_null(sql_db::TBL_VALUE, 'protect_id');
@@ -399,9 +406,9 @@ class db_check
         global $debug;
         $lib = new library();
 
-        // first of all set the database version if not jet done
+        // first of all set the database version if not yet done
         $cfg = new config();
-        $cfg->set(config::VERSION_DB, PRG_VERSION, $db_con);
+        $cfg->check(config::VERSION_DB, PRG_VERSION, $db_con);
 
         // get the list of CSV and loop
         $csv_file_list = unserialize(BASE_CODE_LINK_FILES);
@@ -433,7 +440,7 @@ class db_check
                             }
                             // check if the first column name is the id col
                             $id_col_name = $data[0];
-                            if (!str_ends_with($id_col_name, 'id')) {
+                            if (!str_ends_with($id_col_name, sql_db::FLD_ID)) {
                                 $continue = false;
                             }
                         } else {

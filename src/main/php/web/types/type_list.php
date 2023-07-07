@@ -365,18 +365,18 @@ class type_list
     function set_obj_from_json_array(array $json_array): void
     {
         foreach ($json_array as $value) {
-            if (array_key_exists(controller::API_FLD_COMMENT, $value)) {
+            if (array_key_exists(api::FLD_DESCRIPTION, $value)) {
                 $typ = new type_object_dsp(
                     $value[api::FLD_ID],
-                    $value[controller::API_FLD_CODE_ID],
-                    $value[controller::API_FLD_NAME],
-                    $value[controller::API_FLD_COMMENT]
+                    $value[api::FLD_CODE_ID],
+                    $value[api::FLD_NAME],
+                    $value[api::FLD_DESCRIPTION]
                 );
             } else {
                 $typ = new type_object_dsp(
                     $value[api::FLD_ID],
-                    $value[controller::API_FLD_CODE_ID],
-                    $value[controller::API_FLD_NAME]
+                    $value[api::FLD_CODE_ID],
+                    $value[api::FLD_NAME]
                 );
             }
             $this->add_obj($typ);
