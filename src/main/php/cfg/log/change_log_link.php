@@ -571,7 +571,7 @@ class change_log_link extends change_log
 
         $sql_fields = array();
         $sql_values = array();
-        $sql_fields[] = 'user_id';
+        $sql_fields[] = user::FLD_ID;
         $sql_values[] = $this->usr->id;
         $sql_fields[] = 'change_action_id';
         $sql_values[] = $this->action_id;

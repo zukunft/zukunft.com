@@ -69,7 +69,6 @@ class sandbox extends db_object
     // database and JSON object field names used in many user sandbox objects
     // the id field is not included here because it is used for the database relations and should be object specific e.g. always "word_id" instead of simply "id"
     const FLD_EXCLUDED = 'excluded';
-    const FLD_USER = 'user_id';
     const FLD_USER_NAME = 'user_name';
     const FLD_SHARE = "share_type_id";    // field name for the share permission
     const FLD_PROTECT = "protect_id";     // field name for the protection level
@@ -327,7 +326,7 @@ class sandbox extends db_object
         }
         $result = parent::row_mapper($db_row, $id_fld);
         if ($result) {
-            $this->owner_id = $db_row[self::FLD_USER];
+            $this->owner_id = $db_row[user::FLD_ID];
             $this->set_excluded($db_row[self::FLD_EXCLUDED]);
             if (!$load_std) {
                 $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
@@ -479,7 +478,7 @@ class sandbox extends db_object
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
                 $db_con->set_type($this->obj_name);
                 $db_con->set_usr($this->user()->id);
-                if ($db_con->update($this->id, self::FLD_USER, $this->user()->id)) {
+                if ($db_con->update($this->id, user::FLD_ID, $this->user()->id)) {
                     $result = true;
                 }
             }
@@ -711,7 +710,7 @@ class sandbox extends db_object
         $db_con->set_type($this->obj_name, true);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
-        $db_con->set_fields(array(sql_db::FLD_USER_ID));
+        $db_con->set_fields(array(user::FLD_ID));
         $qp->sql = $db_con->select_by_id_not_owner($this->id);
 
         $qp->par = $db_con->get_par();
@@ -732,8 +731,8 @@ class sandbox extends db_object
 
         $qp = $this->median_user_sql($db_con);
         $db_row = $db_con->get1($qp);
-        if ($db_row[self::FLD_USER] > 0) {
-            $result = $db_row[self::FLD_USER];
+        if ($db_row[user::FLD_ID] > 0) {
+            $result = $db_row[user::FLD_ID];
         } else {
             if ($this->owner_id > 0) {
                 $result = $this->owner_id;
@@ -794,7 +793,7 @@ class sandbox extends db_object
 
             $db_con->set_type($this->obj_name);
             $db_con->set_usr($this->user()->id);
-            if (!$db_con->update($this->id, self::FLD_USER, $new_owner_id)) {
+            if (!$db_con->update($this->id, user::FLD_ID, $new_owner_id)) {
                 $result = false;
             }
 
@@ -855,7 +854,7 @@ class sandbox extends db_object
         $db_con->set_type($this->obj_name, true);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
-        $db_con->set_fields(array(sql_db::FLD_USER_ID));
+        $db_con->set_fields(array(user::FLD_ID));
         $qp->sql = $db_con->select_by_id_not_owner($this->id, $this->owner_id);
 
         $qp->par = $db_con->get_par();
@@ -880,7 +879,7 @@ class sandbox extends db_object
         $qp = $this->changer_sql($db_con);
         $db_row = $db_con->get1($qp);
         if ($db_row) {
-            $user_id = $db_row[self::FLD_USER];
+            $user_id = $db_row[user::FLD_ID];
         }
 
         log_debug('is ' . $user_id);
@@ -907,7 +906,7 @@ class sandbox extends db_object
                 AND (excluded <> 1 OR excluded is NULL)';
         $db_usr_lst = $db_con->get_old($sql);
         foreach ($db_usr_lst as $db_usr) {
-            $result->add_by_id($db_usr[self::FLD_USER]);
+            $result->add_by_id($db_usr[user::FLD_ID]);
         }
         $result->load_by_id();
 
@@ -993,7 +992,7 @@ class sandbox extends db_object
         $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
         try {
             $msg = $db_con->delete(
-                array($this->id_field(), self::FLD_USER),
+                array($this->id_field(), user::FLD_ID),
                 array($this->id, $this->user()->id));
             if ($msg == '') {
                 $this->usr_cfg_id = null;
@@ -1074,7 +1073,7 @@ class sandbox extends db_object
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
                 $db_con->set_usr($this->user()->id);
-                $log_id = $db_con->insert(array($this->id_field(), sql_db::FLD_USER_ID), array($this->id, $this->user()->id));
+                $log_id = $db_con->insert(array($this->id_field(), user::FLD_ID), array($this->id, $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $this->obj_name . ' failed.');
                     $result = false;

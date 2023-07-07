@@ -60,6 +60,7 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 
+use api\api;
 use api\phrase_api;
 use controller\controller;
 use formula\formula_dsp_old;
@@ -155,7 +156,7 @@ class phrase extends combine_named
                 $wrd->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
                 $wrd->share_id = $db_row[sandbox::FLD_SHARE . $fld_ext];
                 $wrd->protection_id = $db_row[sandbox::FLD_PROTECT . $fld_ext];
-                //$wrd->owner_id = $db_row[_sandbox::FLD_USER . $fld_ext];
+                //$wrd->owner_id = $db_row[_user::FLD_ID . $fld_ext];
                 $this->obj = $wrd;
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
@@ -170,7 +171,7 @@ class phrase extends combine_named
                 $trp->protection_id = $db_row[sandbox::FLD_PROTECT . $fld_ext];
                 // not yet loaded with initial load
                 // $trp->name = $db_row[triple::FLD_NAME_GIVEN . $fld_ext];
-                // $trp->owner_id = $db_row[_sandbox::FLD_USER . $fld_ext];
+                // $trp->owner_id = $db_row[_user::FLD_ID . $fld_ext];
                 // $trp->from->set_id($db_row[triple::FLD_FROM]);
                 // $trp->to->set_id($db_row[triple::FLD_TO]);
                 // $trp->verb->set_id($db_row[verb::FLD_ID]);
@@ -396,7 +397,7 @@ class phrase extends combine_named
     {
         $msg = new user_message();
 
-        if ($api_json[controller::API_FLD_ID] > 0) {
+        if ($api_json[api::FLD_ID] > 0) {
             $wrd = new word($this->user());
             $msg->add($wrd->set_by_api_json($api_json));
             if ($msg->is_ok()) {
@@ -404,7 +405,7 @@ class phrase extends combine_named
             }
         } else {
             $trp = new triple($this->user());
-            $api_json[controller::API_FLD_ID] = $api_json[controller::API_FLD_ID] * -1;
+            $api_json[api::FLD_ID] = $api_json[api::FLD_ID] * -1;
             $msg->add($trp->set_by_api_json($api_json));
             if ($msg->is_ok()) {
                 $this->obj = $trp;

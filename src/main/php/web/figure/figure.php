@@ -35,6 +35,7 @@ namespace html\figure;
 include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_FORMULA_PATH . 'figure.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
+include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once WEB_VALUE_PATH . 'value.php';
 
@@ -43,7 +44,8 @@ use api\figure_api;
 use api\phrase_list_api;
 use api\sandbox_value_api;
 use controller\controller;
-use html\api;
+use api\api;
+use html\api as api_dsp;
 use html\combine_named_dsp;
 use html\html_base;
 use html\phrase\phrase_group as phrase_group_dsp;
@@ -140,7 +142,7 @@ class figure extends combine_named_dsp
         } else {
             $vars[combine_object_api::FLD_CLASS] = figure_api::CLASS_VALUE;
         }
-        $vars[controller::API_FLD_ID] = $this->obj_id();
+        $vars[api::FLD_ID] = $this->obj_id();
         $vars[sandbox_value_api::FLD_NUMBER] = $this->number();
         $vars[controller::API_FLD_PHRASES] = $this->obj->grp()->api_array();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
@@ -205,9 +207,9 @@ class figure extends combine_named_dsp
         // TODO check if $result .= $this->obj->display_linked($back) can be used
         $html = new html_base();
         if ($this->is_result()) {
-            $url = $html->url(api::VALUE_EDIT, $this->obj_id(), $back);
+            $url = $html->url(api_dsp::VALUE_EDIT, $this->obj_id(), $back);
         } else {
-            $url = $html->url(api::RESULT_EDIT, $this->obj_id(), $back);
+            $url = $html->url(api_dsp::RESULT_EDIT, $this->obj_id(), $back);
         }
         return $html->ref($url, $this->val_formatted());
     }

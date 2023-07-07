@@ -515,7 +515,7 @@
       "type": "detail_view",
       "components": [
         {
-          "pos": "1",
+          "position": "1",
           "name": "Name",
           "type": "word_name"
         }

@@ -238,7 +238,7 @@ class source extends sandbox_typed
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR,
-            array(sql_db::FLD_USER_ID)
+            array(user::FLD_ID)
         ));
 
         return parent::load_standard_sql($db_con, $class);
@@ -487,7 +487,7 @@ class source extends sandbox_typed
     function not_changed_sql(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_SOURCE);
-        return $db_con->not_changed_sql($this->id, $this->owner_id);
+        return $db_con->load_sql_not_changed($this->id, $this->owner_id);
     }
 
     /**
@@ -505,7 +505,7 @@ class source extends sandbox_typed
         } else {
             $qp = $this->not_changed_sql($db_con);
             $db_row = $db_con->get1($qp);
-            $change_user_id = $db_row[self::FLD_USER];
+            $change_user_id = $db_row[user::FLD_ID];
             if ($change_user_id > 0) {
                 $result = false;
             }

@@ -69,7 +69,7 @@ class system_log extends db_object
     // all database field names excluding the id
     // the extra user field is needed because it is common to check the log entries of others users e.g. for admin users
     const FLD_NAMES = array(
-        sandbox::FLD_USER,
+        user::FLD_ID,
         self::FLD_SOLVER,
         self::FLD_TIME,
         self::FLD_TYPE,
@@ -117,7 +117,7 @@ class system_log extends db_object
         $lib = new library();
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
-            $this->usr_id = $db_row[sandbox::FLD_USER];
+            $this->usr_id = $db_row[user::FLD_ID];
             $this->usr_name = $db_row[sandbox::FLD_USER_NAME];
             $this->solver_id = $db_row[self::FLD_SOLVER];
             $this->solver_name = $db_row[self::FLD_SOLVER_NAME];

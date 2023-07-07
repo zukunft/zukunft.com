@@ -79,7 +79,7 @@ class value_unit_tests
 
         // ... and to check if any user has uses another than the default value
         $val->set_id(1);
-        $t->assert_not_changed_sql($db_con, $val);
+        $t->assert_sql_not_changed($db_con, $val);
         $t->assert_sql_user_changes($db_con, $val);
 
 

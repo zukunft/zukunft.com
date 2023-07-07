@@ -35,6 +35,7 @@ namespace html\types;
 include_once WEB_TYPES_PATH . 'type_object.php';
 include_once WEB_TYPES_PATH . 'protection.php';
 
+use api\api;
 use controller\controller;
 use html\types\type_object as type_object_dsp;
 use html\view\view_list as view_list_dsp;
@@ -366,14 +367,14 @@ class type_list
         foreach ($json_array as $value) {
             if (array_key_exists(controller::API_FLD_COMMENT, $value)) {
                 $typ = new type_object_dsp(
-                    $value[controller::API_FLD_ID],
+                    $value[api::FLD_ID],
                     $value[controller::API_FLD_CODE_ID],
                     $value[controller::API_FLD_NAME],
                     $value[controller::API_FLD_COMMENT]
                 );
             } else {
                 $typ = new type_object_dsp(
-                    $value[controller::API_FLD_ID],
+                    $value[api::FLD_ID],
                     $value[controller::API_FLD_CODE_ID],
                     $value[controller::API_FLD_NAME]
                 );

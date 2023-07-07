@@ -1085,7 +1085,7 @@ class user_dsp_old extends user
                 $dsp_usr = new component_link($this);
                 $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->fob->set_id($sbx_row[view::FLD_ID]);
-                $dsp_usr->tob->set_id($sbx_row['component_id']);
+                $dsp_usr->tob->set_id($sbx_row[component::FLD_ID]);
                 $dsp_usr->order_nbr = $sbx_row['usr_order'];
                 $dsp_usr->position_type = $sbx_row['usr_type'];
                 $dsp_usr->set_excluded($sbx_row['usr_excluded']);

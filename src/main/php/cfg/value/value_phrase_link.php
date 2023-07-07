@@ -49,7 +49,7 @@ class value_phrase_link
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        sandbox::FLD_USER,
+        user::FLD_ID,
         value::FLD_ID,
         phrase::FLD_ID,
         self::FLD_WEIGHT,
@@ -90,8 +90,8 @@ class value_phrase_link
     {
         $result = false;
         if ($db_row != null) {
-            if ($db_row[sandbox::FLD_USER] != $this->user()->id() AND $db_row[sandbox::FLD_USER] > 0) {
-                log_err('Value user (' .  $this->user()->dsp_id() . ') and phrase link user (' .  $db_row[sandbox::FLD_USER] . ') does not match for link ' . $db_row[self::FLD_ID]);
+            if ($db_row[user::FLD_ID] != $this->user()->id() AND $db_row[user::FLD_ID] > 0) {
+                log_err('Value user (' .  $this->user()->dsp_id() . ') and phrase link user (' .  $db_row[user::FLD_ID] . ') does not match for link ' . $db_row[self::FLD_ID]);
                 $this->id = 0;
             } else {
                 $this->id = $db_row[self::FLD_ID];
@@ -158,7 +158,7 @@ class value_phrase_link
         } elseif ($this->val->id() > 0 and $this->phr->id() > 0 and $this->user()->id() > 0) {
             $qp->name .= 'val_phr_usr_id';
             $sql_where .= $db_con->where_par(
-                array(value::FLD_ID, phrase::FLD_ID, sandbox::FLD_USER),
+                array(value::FLD_ID, phrase::FLD_ID, user::FLD_ID),
                 array($this->val->id(), $this->phr->id(), $this->user()->id())
             );
         } else {

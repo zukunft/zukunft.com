@@ -40,6 +40,7 @@ include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_VERB_PATH . 'verb.php';
 
+use api\api;
 use api\combine_object_api;
 use api\term_api;
 use controller\controller;
@@ -164,7 +165,7 @@ class term extends combine_named_dsp
         } else {
             log_err('cannot create api message for term ' . $this->dsp_id() . ' because class is unknown');
         }
-        $vars[controller::API_FLD_ID] = $this->obj_id();
+        $vars[api::FLD_ID] = $this->obj_id();
         $vars[controller::API_FLD_NAME] = $this->name();
         $vars[controller::API_FLD_DESCRIPTION] = $this->description();
         if (!$this->is_verb()) {

@@ -32,8 +32,10 @@
 namespace html\log;
 
 include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 
+use api\api;
 use DateTimeInterface;
 use html\sandbox\db_object as db_object_dsp;
 use controller\controller;
@@ -79,8 +81,8 @@ class log extends db_object_dsp
             log_err('Mandatory time missing in API JSON ' . json_encode($json_array));
         }
         $this->set_time($sys_log_timestamp);
-        if (array_key_exists(controller::API_FLD_USER_ID, $json_array)) {
-            $this->set_user_id($json_array[controller::API_FLD_USER_ID]);
+        if (array_key_exists(api::FLD_USER_ID, $json_array)) {
+            $this->set_user_id($json_array[api::FLD_USER_ID]);
         } else {
             $this->set_user_id(0);
         }
@@ -149,7 +151,7 @@ class log extends db_object_dsp
     {
         $vars = parent::api_array();
         $vars[controller::API_FLD_TIME] = $this->time()->format(DateTimeInterface::ATOM);
-        $vars[controller::API_FLD_USER_ID] = $this->user_id();
+        $vars[api::FLD_USER_ID] = $this->user_id();
         $vars[controller::API_FLD_TEXT] = $this->text();
         $vars[controller::API_FLD_STATUS] = $this->status();
         return $vars;

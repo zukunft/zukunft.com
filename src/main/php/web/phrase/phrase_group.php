@@ -36,6 +36,7 @@ namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 
+use api\api;
 use controller\controller;
 use html\sandbox_named_dsp;
 use html\word\word as word_dsp;
@@ -86,7 +87,7 @@ class phrase_group extends sandbox_named_dsp
      */
     function set_from_json_array(array $json_array): void
     {
-        if (array_key_exists(controller::API_FLD_ID, $json_array)) {
+        if (array_key_exists(api::FLD_ID, $json_array)) {
             parent::set_from_json_array($json_array);
             if (array_key_exists(controller::API_FLD_PHRASES, $json_array)) {
                 $phr_lst = $json_array[controller::API_FLD_PHRASES];
@@ -293,7 +294,7 @@ class phrase_group extends sandbox_named_dsp
     {
         //$vars = array();
         $phr_lst_vars = array();
-        //$vars[controller::API_FLD_ID] = $this->id();
+        //$vars[api::FLD_ID] = $this->id();
         foreach ($this->lst as $phr) {
             $phr_lst_vars[] = $phr->api_array();
         }

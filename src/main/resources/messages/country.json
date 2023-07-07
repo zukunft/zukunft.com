@@ -128,7 +128,7 @@
       "comment": "List all countries with the main ratios",
       "components": [
         {
-          "pos": "1",
+          "position": "1",
           "name": "Name",
           "type": "word_name"
         }

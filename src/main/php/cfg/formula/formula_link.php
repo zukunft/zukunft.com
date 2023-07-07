@@ -266,7 +266,7 @@ class formula_link extends sandbox_link_with_type
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_fields(array(sql_db::FLD_USER_ID, formula_link::FLD_TYPE, self::FLD_EXCLUDED));
+        $db_con->set_fields(array(user::FLD_ID, formula_link::FLD_TYPE, self::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld($this->id, $this->formula_id(), $this->phrase_id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -494,7 +494,7 @@ class formula_link extends sandbox_link_with_type
     function not_changed_sql(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_FORMULA_LINK);
-        return $db_con->not_changed_sql($this->id, $this->owner_id);
+        return $db_con->load_sql_not_changed($this->id, $this->owner_id);
     }
 
     /**
@@ -510,7 +510,7 @@ class formula_link extends sandbox_link_with_type
         $db_con->usr_id = $this->user()->id();
         $db_row = $db_con->get1($qp);
         if ($db_row != null) {
-            if ($db_row[self::FLD_USER] > 0) {
+            if ($db_row[user::FLD_ID] > 0) {
                 $result = false;
             }
         }
@@ -548,7 +548,7 @@ class formula_link extends sandbox_link_with_type
             }
             // create an entry in the user sandbox
             $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK);
-            $log_id = $db_con->insert(array(formula_link::FLD_ID, sandbox::FLD_USER), array($this->id, $this->user()->id()));
+            $log_id = $db_con->insert(array(formula_link::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
             if ($log_id <= 0) {
                 log_err('Insert of user_formula_link failed.');
                 $result = false;

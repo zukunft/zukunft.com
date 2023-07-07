@@ -32,12 +32,12 @@
       "comment": "The income statement, balance sheet or cash flow sheet of a big company",
       "components": [
         {
-          "pos": "1",
+          "position": "1",
           "name": "Name",
           "type": "word_name"
         },
         {
-          "pos": "2",
+          "position": "2",
           "name": "Cash Flow Statement"
         }
       ]
@@ -47,7 +47,7 @@
       "comment": "list the most interesting companies with the main ratios",
       "components": [
         {
-          "pos": "1",
+          "position": "1",
           "name": "Company with ratios"
         }
       ]

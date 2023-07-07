@@ -110,7 +110,7 @@ if (isset($_POST['submit'])) {
         $db_con->set_where_std(null,$usr_name);
         $sql = $db_con->select_by_set_id();
         $db_row = $db_con->get1_old($sql);
-        $usr_id = $db_row[sandbox::FLD_USER];
+        $usr_id = $db_row[user::FLD_ID];
         if ($usr_id > 0) {
             // auto login
             session_start();

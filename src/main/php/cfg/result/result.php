@@ -154,7 +154,7 @@ class result extends sandbox_value
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->frm->set_id($db_row[formula::FLD_ID]);
-            $this->owner_id = $db_row[sandbox::FLD_USER];
+            $this->owner_id = $db_row[user::FLD_ID];
             $this->src_phr_grp_id = $db_row[self::FLD_SOURCE_GRP];
             $this->src_time_id = $db_row[self::FLD_SOURCE_TIME];
             $this->grp->set_id($db_row[self::FLD_GRP]);
@@ -1598,7 +1598,7 @@ class result extends sandbox_value
                 $field_names[] = result::FLD_SOURCE_TIME;
                 $field_values[] = $this->src_time_id;
                 if (!$this->is_std) {
-                    $field_names[] = sandbox::FLD_USER;
+                    $field_names[] = user::FLD_ID;
                     $field_values[] = $this->user()->id();
                 }
                 $field_names[] = result::FLD_LAST_UPDATE;

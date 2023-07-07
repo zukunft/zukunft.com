@@ -501,7 +501,7 @@ class value_list extends sandbox_list
                             $val = new value($this->user());
                             //$val->row_mapper($db_val);
                             $val->set_id($db_val[value::FLD_ID]);
-                            $val->owner_id = $db_val[sandbox::FLD_USER];
+                            $val->owner_id = $db_val[user::FLD_ID];
                             $val->set_number($db_val[value::FLD_VALUE]);
                             $val->set_source_id($db_val[source::FLD_ID]);
                             $val->last_update = $lib->get_datetime($db_val[value::FLD_LAST_UPDATE]);

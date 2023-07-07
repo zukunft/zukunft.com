@@ -314,7 +314,7 @@ class ref extends sandbox_link_with_type
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR,
-            array(sql_db::FLD_USER_ID)
+            array(user::FLD_ID)
         ));
 
         return parent::load_standard_sql($db_con, $class);

@@ -91,7 +91,7 @@ class sandbox_api implements JsonSerializable
     function api_array(): array
     {
         $vars = array();
-        $vars[controller::API_FLD_ID] = $this->id();
+        $vars[api::FLD_ID] = $this->id();
         return $vars;
     }
 

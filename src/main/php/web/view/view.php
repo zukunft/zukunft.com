@@ -37,9 +37,10 @@ namespace html\view;
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once WEB_WORD_PATH . 'word.php';
 
+use api\api;
 use api\component_api;
 use controller\controller;
-use html\api;
+use html\api as api_dsp;
 use html\button;
 use html\component_dsp_old;
 use html\html_base;
@@ -107,8 +108,8 @@ class view extends sandbox_typed_dsp
             $this->dbo = new word_dsp();
             $dbo_json = $json_array[controller::API_WORD];
             $id = 0;
-            if (array_key_exists(controller::API_FLD_ID, $json_array)) {
-                $id = $dbo_json[controller::API_FLD_ID];
+            if (array_key_exists(api::FLD_ID, $json_array)) {
+                $id = $dbo_json[api::FLD_ID];
             }
             if ($id != 0) {
                 $this->dbo->set_from_json_array($dbo_json);
@@ -284,11 +285,11 @@ class view extends sandbox_typed_dsp
             $result .= '      <li class="active">';
             $result .= $this->dsp_view_name($back);
             $class = $lib->class_to_name(view::class);
-            //$url_edit = $html->url($class . api::UPDATE, $this->id, $back, '', word::class . '=' . $back);
-            $url_edit = $html->url($class . api::UPDATE, $this->id, '', '');
+            //$url_edit = $html->url($class . api_dsp::UPDATE, $this->id, $back, '', word::class . '=' . $back);
+            $url_edit = $html->url($class . api_dsp::UPDATE, $this->id, '', '');
             $result .= (new button($url_edit))->edit(msg::VIEW_EDIT);
-            //$url_add = $html->url($class . api::CREATE, 0, $back, '', word::class . '=' . $back);
-            $url_add = $html->url($class . api::CREATE, 0, '', '');
+            //$url_add = $html->url($class . api_dsp::CREATE, 0, $back, '', word::class . '=' . $back);
+            $url_add = $html->url($class . api_dsp::CREATE, 0, '', '');
             $result .= (new button($url_add))->add(msg::VIEW_ADD);
             $result .= '      </li>';
         }
@@ -347,7 +348,7 @@ class view extends sandbox_typed_dsp
         $result = $this->html_navbar_start();
         $result .= '<td class="right_ref">';
         if ($this->is_system() and !$this->user()->is_admin()) {
-            $url = $html->url(api::SEARCH);
+            $url = $html->url(api_dsp::SEARCH);
             $result .= (new button($url, $back))->find(msg::SEARCH_MAIN) . ' - ';
             $result .= $this->name . ' ';
         } else {

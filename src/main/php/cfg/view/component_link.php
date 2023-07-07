@@ -182,11 +182,11 @@ class component_link extends sandbox_link_with_type
         }
         $db_con->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id()); is needed
-        $db_con->set_fields(array(sql_db::FLD_USER_ID));
+        $db_con->set_fields(array(user::FLD_ID));
         $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES_NUM_USR,
-            array(sql_db::FLD_USER_ID)));
+            array(user::FLD_ID)));
         $db_con->set_where_link_no_fld($this->id, $this->fob->id(), $this->tob->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -616,7 +616,7 @@ class component_link extends sandbox_link_with_type
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK);
-                $log_id = $db_con->insert(array(self::FLD_ID, sandbox::FLD_USER), array($this->id, $this->user()->id()));
+                $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_component_link failed.');
                     $result = false;

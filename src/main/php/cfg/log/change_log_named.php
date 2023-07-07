@@ -226,7 +226,7 @@ class change_log_named extends change_log
         $db_con->add_par(sql_db::PAR_INT, $row_id);
             $fields[] = change_log_named::FLD_ROW_ID;
         }
-        $fields[] = sandbox::FLD_USER;
+        $fields[] = user::FLD_ID;
         $qp->sql = $db_con->select_by_field_list($fields);
         $qp->par = $db_con->get_par();
 

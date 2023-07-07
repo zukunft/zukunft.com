@@ -77,6 +77,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add a text export format to the display objects and use it for JSON import validation e.g. for the travel list
     TODO add simple value list import example
     TODO add environment variables e.g. for the database connection
+    TODO check the add foreign database keys are defined
+    TODO check that all fields used in the frontend API are referenced from a controller::FLD const
+    TODO check that all fields used for the export are referenced from a export::FLD const
     TODO add a key store for secure saving of the passwords
     TODO add a trust store for the base url certificates to avoid man in the middle attacks
     TODO add simple value list table with the hashed phrase list as key and the value

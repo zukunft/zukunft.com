@@ -33,6 +33,7 @@
 namespace api;
 
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
+include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once WEB_RESULT_PATH . 'result.php';
 

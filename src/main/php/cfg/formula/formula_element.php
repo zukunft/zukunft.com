@@ -57,7 +57,7 @@ class formula_element extends db_object
     // all database field names excluding the id, standard name and user specific fields
     const FLD_NAMES = array(
         formula::FLD_ID,
-        sandbox::FLD_USER,
+        user::FLD_ID,
         self::FLD_ORDER,
         self::FLD_TYPE,
         self::FLD_REF_ID

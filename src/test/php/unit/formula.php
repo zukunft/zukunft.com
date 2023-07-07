@@ -77,7 +77,7 @@ class formula_unit_tests
         $frm->set_id(2);
         //$t->assert_sql_all($db_con, $frm);
         $t->assert_sql_standard($db_con, $frm);
-        $t->assert_not_changed_sql($db_con, $frm);
+        $t->assert_sql_not_changed($db_con, $frm);
         $t->assert_sql_user_changes($db_con, $frm);
         $this->assert_sql_user_changes_frm($t, $db_con, $frm);
 

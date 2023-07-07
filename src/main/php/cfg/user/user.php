@@ -68,7 +68,7 @@ class user extends db_object
      */
 
     // database fields only used for user
-    const FLD_ID = 'user_id';
+    const FLD_ID = 'user_id'; // also the field name for foreign keys
     const FLD_NAME = 'user_name';
     const FLD_IP_ADDRESS = 'ip_address';
     const FLD_EMAIL = 'email';

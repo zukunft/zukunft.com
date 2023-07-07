@@ -197,7 +197,6 @@ class sql_db
     const ULK4_TBL = 'ul4';                       // prefix used for the fourth user table which should be joined in the result
 
     const FLD_CODE_ID = 'code_id';                // field name for the code link
-    const FLD_USER_ID = 'user_id';                // field name for the user table foreign key field
     const FLD_VALUE = 'value';                    // field name e.g. for the configuration value
     const FLD_DESCRIPTION = 'description';        // field name for any description
     const FLD_TYPE_NAME = 'type_name';            // field name for the user specific name of a type; types are used to assign code to a db row
@@ -1084,7 +1083,7 @@ class sql_db
                     $usr_field_lst[] = $this->name_field;
                 }
                 if (!$this->all_query) {
-                    $field_lst[] = sql_db::FLD_USER_ID;
+                    $field_lst[] = user::FLD_ID;
                 }
             } else {
                 if (!in_array($this->type, sql_db::DB_TYPES_NOT_NAMED)) {
@@ -1132,7 +1131,7 @@ class sql_db
                         if ($this->fields != '') {
                             $this->fields .= ', ';
                         }
-                        $this->fields .= ' ' . sql_db::USR_TBL . '.' . sql_db::FLD_USER_ID;
+                        $this->fields .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID;
                     } else {
                         if ($this->usr_query) {
                             if ($this->fields != '') {
@@ -1152,7 +1151,7 @@ class sql_db
             if ($this->fields != '') {
                 $this->fields .= ', ';
             }
-            $this->fields .= ' ' . sql_db::STD_TBL . '.' . sql_db::FLD_USER_ID . ' AS owner_id';
+            $this->fields .= ' ' . sql_db::STD_TBL . '.' . user::FLD_ID . ' AS owner_id';
         }
 
         // add join fields
@@ -2328,7 +2327,7 @@ class sql_db
         if ($this->usr_only_query) {
             if (!$this->all_query) {
                 $this->add_par(sql_db::PAR_INT, $this->usr_view_id);
-                $result .= ' AND ' . sql_db::FLD_USER_ID . ' = ' . $this->par_name();
+                $result .= ' AND ' . user::FLD_ID . ' = ' . $this->par_name();
             }
         }
 
@@ -2488,7 +2487,7 @@ class sql_db
         if ($this->usr_only_query) {
             if (!$this->all_query) {
                 $this->add_par(sql_db::PAR_INT, $this->usr_view_id);
-                $result .= ' AND ' . sql_db::FLD_USER_ID . ' = ' . $this->par_name();
+                $result .= ' AND ' . user::FLD_ID . ' = ' . $this->par_name();
             }
         }
 
@@ -2635,7 +2634,7 @@ class sql_db
 
         $this->set_order_text(trim($table_prefix . $order_field . ' ' . $direction));
         if ($this->all_query) {
-            $this->order .= ', ' . $table_prefix . sql_db::FLD_USER_ID;
+            $this->order .= ', ' . $table_prefix . user::FLD_ID;
         }
     }
 
@@ -2714,7 +2713,7 @@ class sql_db
                 $this->join .= ' LEFT JOIN ' . $usr_table_name . ' ' . sql_db::USR_TBL;
                 $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
                 if (!$this->all_query) {
-                    $this->join .= ' AND ' . sql_db::USR_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                    $this->join .= ' AND ' . sql_db::USR_TBL . '.' . user::FLD_ID . ' = ';
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -2791,7 +2790,7 @@ class sql_db
                     $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join_table_name . ' ' . sql_db::ULK_TBL;
                     $this->join .= ' ON ' . sql_db::LNK_TBL . '.' . $join_id_field . ' = ' . sql_db::ULK_TBL . '.' . $join_id_field;
                     if (!$this->all_query) {
-                        $this->join .= ' AND ' . sql_db::ULK_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                        $this->join .= ' AND ' . sql_db::ULK_TBL . '.' . user::FLD_ID . ' = ';
                         if ($this->query_name == '') {
                             $this->join .= $this->usr_view_id;
                         } else {
@@ -2831,7 +2830,7 @@ class sql_db
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join2_table_name . ' ' . sql_db::ULK2_TBL;
                 $this->join .= ' ON ' . sql_db::LNK2_TBL . '.' . $join2_id_field . ' = ' . sql_db::ULK2_TBL . '.' . $join2_id_field;
                 if (!$this->all_query) {
-                    $this->join .= ' AND ' . sql_db::ULK2_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                    $this->join .= ' AND ' . sql_db::ULK2_TBL . '.' . user::FLD_ID . ' = ';
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -2870,7 +2869,7 @@ class sql_db
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join3_table_name . ' ' . sql_db::ULK3_TBL;
                 $this->join .= ' ON ' . sql_db::LNK3_TBL . '.' . $join3_id_field . ' = ' . sql_db::ULK3_TBL . '.' . $join3_id_field;
                 if (!$this->all_query) {
-                    $this->join .= ' AND ' . sql_db::ULK3_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                    $this->join .= ' AND ' . sql_db::ULK3_TBL . '.' . user::FLD_ID . ' = ';
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -2909,7 +2908,7 @@ class sql_db
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join4_table_name . ' ' . sql_db::ULK4_TBL;
                 $this->join .= ' ON ' . sql_db::LNK4_TBL . '.' . $join4_id_field . ' = ' . sql_db::ULK4_TBL . '.' . $join4_id_field;
                 if (!$this->all_query) {
-                    $this->join .= ' AND ' . sql_db::ULK4_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                    $this->join .= ' AND ' . sql_db::ULK4_TBL . '.' . user::FLD_ID . ' = ';
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -3093,7 +3092,7 @@ class sql_db
 
         $this->set_field_statement(true);
         $this->set_from_user();
-        $this->set_where(array($this->id_field, self::FLD_USER_ID));
+        $this->set_where(array($this->id_field, user::FLD_ID));
 
         // create a prepare SQL statement if possible
         $sql = $this->prepare_sql();
@@ -3117,7 +3116,7 @@ class sql_db
         $this->set_field_statement(true);
         $this->set_from();
         if ($owner_id > 0) {
-            $this->set_where(array($this->id_field, self::FLD_USER_ID));
+            $this->set_where(array($this->id_field, user::FLD_ID));
         } else {
             $this->set_where(array($this->id_field));
         }
@@ -3298,12 +3297,12 @@ class sql_db
     /**
      * create a SQL select statement for the connected database
      * to detect if someone else has used the object
-     * @param int|null $id the unique database id if the object to check
+     * @param int $id the unique database id if the object to check
      * @param int $owner_id the user id of the owner of the object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 in the previous set dialect
      */
-    function not_changed_sql(int $id, int $owner_id = 0): sql_par
+    function load_sql_not_changed(int $id, int $owner_id = 0): sql_par
     {
         $qp = new sql_par($this->type);
         $qp->name .= 'not_changed';
@@ -3314,18 +3313,18 @@ class sql_db
         $this->set_usr($this->usr_id);
         $this->set_table();
         $this->set_id_field();
-        $this->set_fields(array(sql_db::FLD_USER_ID));
-        if ($id == 0 or $id == null) {
+        $this->set_fields(array(user::FLD_ID));
+        if ($id == 0) {
             log_err('The id must be set to detect if the link has been changed');
         } else {
             $this->add_par(sql_db::PAR_INT, $id);
-            $sql_mid = " user_id 
-                FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) . " 
-               WHERE " . $this->id_field . " = " . $this->par_name() . "
+            $sql_mid = " " . user::FLD_ID .
+              " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) .
+             " WHERE " . $this->id_field . " = " . $this->par_name() . "
                  AND (excluded <> 1 OR excluded is NULL)";
             if ($owner_id > 0) {
                 $this->add_par(sql_db::PAR_INT, $owner_id);
-                $sql_mid .= " AND user_id <> " . $this->par_name();
+                $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name();
             }
             $qp->sql = $this->prepare_sql() . $sql_mid;
             $qp->sql = $this->end_sql($qp->sql);

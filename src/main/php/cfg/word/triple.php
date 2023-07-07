@@ -37,6 +37,7 @@ namespace cfg;
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_typed.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 
+use api\api;
 use model\export\exp_obj;
 use model\export\triple_exp;
 use controller\controller;
@@ -532,7 +533,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == controller::API_FLD_ID) {
+            if ($key == api::FLD_ID) {
                 $this->set_id($value);
             }
             if ($key == controller::API_FLD_NAME) {
@@ -612,7 +613,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR,
-            array(sql_db::FLD_USER_ID)
+            array(user::FLD_ID)
         ));
 
         return $this->load_sql_select_qp($db_con, $qp);
@@ -1579,7 +1580,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     function not_changed_sql(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_TRIPLE);
-        return $db_con->not_changed_sql($this->id(), $this->owner_id);
+        return $db_con->load_sql_not_changed($this->id(), $this->owner_id);
     }
 
     /**
@@ -1597,7 +1598,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         } else {
             $qp = $this->not_changed_sql($db_con);
             $db_row = $db_con->get1($qp);
-            if ($db_row[self::FLD_USER] > 0) {
+            if ($db_row[user::FLD_ID] > 0) {
                 $result = false;
             }
         }
@@ -1648,7 +1649,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE);
-                $log_id = $db_con->insert(array(self::FLD_ID, sandbox::FLD_USER), array($this->id(), $this->user()->id()));
+                $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_triple failed.');
                     $result = false;

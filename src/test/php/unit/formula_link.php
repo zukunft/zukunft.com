@@ -41,7 +41,7 @@ use cfg\sql_db;
 
 class formula_link_unit_tests
 {
-    function run(test_cleanup $t)
+    function run(test_cleanup $t): void
     {
 
         global $usr;
@@ -66,44 +66,19 @@ class formula_link_unit_tests
         $t->assert_sql_by_link($db_con, $flk);
 
 
-        $t->subheader('SQL statement tests');
+        $t->subheader('SQL load default statement tests');
 
         // sql to load the standard formula link by id
         $lnk = new formula_link($usr);
         $lnk->set_id(1);
-        $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $lnk->load_standard_sql($db_con)->sql;
-        $expected_sql = $t->file('db/formula/formula_link_std_by_id.sql');
-        $t->assert('formula_link->load_standard_sql by formula link id', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($lnk->load_standard_sql($db_con, formula_link::class)->name);
-
-        // ... and for MySQL
-        $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $lnk->load_standard_sql($db_con)->sql;
-        $expected_sql = $t->file('db/formula/formula_link_std_by_id_mysql.sql');
-        $t->assert('formula_link->load_standard_sql for MySQL by formula link id', $lib->trim($created_sql), $lib->trim($expected_sql));
+        $t->assert_sql_standard($db_con, $lnk);
+        $t->assert_sql_not_changed($db_con, $lnk);
 
         // sql to load the user formula link by id
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $lnk->load_sql_user_changes($db_con)->sql;
         $expected_sql = $t->file('db/formula/formula_link_by_id_e_user.sql');
         $t->assert('formula_link->load_user_sql by formula link id', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // sql to check if no one else has changed the formula link
-        $lnk = new formula_link($usr);
-        $lnk->set_id(2);
-        $lnk->owner_id = 3;
-        $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $lnk->not_changed_sql($db_con)->sql;
-        $expected_sql = $t->file('db/formula/formula_link_by_id_other_user.sql');
-        $t->assert('formula_link->not_changed_sql by owner id', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($lnk->not_changed_sql($db_con)->name);
-
-        // MySQL check not needed, because it is the same as for Postgres
 
         /*
         $t->subheader('Im- and Export tests');

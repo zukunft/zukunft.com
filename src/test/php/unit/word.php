@@ -68,13 +68,13 @@ class word_unit_tests
         $t->assert_sql_by_name($db_con, $wrd);
 
 
-        $t->subheader('SQL statement tests');
+        $t->subheader('SQL load default statement tests');
 
         // sql to load the word by id
         $wrd = new word($usr);
         $wrd->set_id(2);
         $t->assert_sql_standard($db_con, $wrd);
-        $t->assert_not_changed_sql($db_con, $wrd);
+        $t->assert_sql_not_changed($db_con, $wrd);
         $this->assert_sql_view($t, $db_con, $wrd);
 
 

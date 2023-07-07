@@ -143,7 +143,7 @@ class value_time_series extends sandbox_value
     function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
-        $db_con->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(sql_db::FLD_USER_ID)));
+        $db_con->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(user::FLD_ID)));
 
         return parent::load_standard_sql($db_con, $class);
     }
@@ -242,7 +242,7 @@ class value_time_series extends sandbox_value
         if ($log->id() > 0) {
             $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
             $this->id = $db_con->insert(
-                array(phrase_group::FLD_ID, self::FLD_USER, self::FLD_LAST_UPDATE),
+                array(phrase_group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
                 array($this->grp->id, $this->user()->id, "Now()"));
             if ($this->id > 0) {
                 // update the reference in the log

@@ -41,6 +41,7 @@ include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_USER_PATH . 'user.php';
 
+use api\api;
 use api\figure_api;
 use controller\controller;
 use DateTime;
@@ -254,7 +255,7 @@ class figure extends combine_object
     {
         $msg = new user_message();
 
-        if ($api_json[controller::API_FLD_ID] > 0) {
+        if ($api_json[api::FLD_ID] > 0) {
             $val = new value($this->user());
             $msg->add($val->set_by_api_json($api_json));
             if ($msg->is_ok()) {
@@ -262,7 +263,7 @@ class figure extends combine_object
             }
         } else {
             $res = new result($this->user());
-            $api_json[controller::API_FLD_ID] = $api_json[controller::API_FLD_ID] * -1;
+            $api_json[api::FLD_ID] = $api_json[api::FLD_ID] * -1;
             $msg->add($res->set_by_api_json($api_json));
             if ($msg->is_ok()) {
                 $this->obj = $res;

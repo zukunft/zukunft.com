@@ -86,7 +86,7 @@ class triple_unit_tests_old
         $t->assert_load_sql_obj_vars($db_con, $trp);
         $t->assert_sql_standard($db_con, $trp);
         $trp->set_id(5);
-        $t->assert_not_changed_sql($db_con, $trp);
+        $t->assert_sql_not_changed($db_con, $trp);
         $t->assert_sql_user_changes($db_con, $trp);
 
         // sql to check the usage of a triple

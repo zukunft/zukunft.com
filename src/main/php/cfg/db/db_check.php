@@ -132,20 +132,20 @@ class db_check
         $result .= $db_con->change_column_name(sql_db::TBL_RESULT, 'formula_value_id', 'result_id');
         $result .= $db_con->change_column_name(sql_db::TBL_RESULT, 'formula_value', 'result');
         $result .= $db_con->change_table_name('view_component', sql_db::TBL_COMPONENT);
-        $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT, 'view_component_id', 'component_id');
+        $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT, 'view_component_id', component::FLD_ID);
         $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT, 'view_component_name', 'component_name');
         $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT, 'linked_view_component_id', 'linked_component_id');
         $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT, 'view_component_link_type_id', 'component_link_type_id');
         $result .= $db_con->change_table_name(sql_db::TBL_USER_PREFIX . 'view_components', sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT);
-        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT, 'view_component_id', 'component_id');
+        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT, 'view_component_id', component::FLD_ID);
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT, 'view_component_name', 'component_name');
         $result .= $db_con->change_table_name('view_component_link', sql_db::TBL_COMPONENT_LINK);
-        $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_LINK, 'view_component_id', 'component_id');
+        $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_LINK, 'view_component_id', component::FLD_ID);
         $result .= $db_con->change_table_name(sql_db::TBL_USER_PREFIX . 'view_component_links', sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK);
-        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK, 'view_component_id', 'component_id');
+        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK, 'view_component_id', component::FLD_ID);
         $result .= $db_con->change_table_name('view_component_link_type', sql_db::TBL_COMPONENT_LINK_TYPE);
         $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_LINK_TYPE, 'view_component_link_id', 'component_link_id');
-        $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_LINK_TYPE, 'view_component_id', 'component_id');
+        $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_LINK_TYPE, 'view_component_id', component::FLD_ID);
         $result .= $db_con->change_table_name('view_component_position_type', sql_db::TBL_COMPONENT_POS_TYPE);
         $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_POS_TYPE, 'view_component_position_type_id', 'component_position_type_id');
         //
@@ -189,7 +189,7 @@ class db_check
         $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE_TIME_SERIES, 'protect_id', 'smallint');
         $result .= $db_con->add_column(sql_db::TBL_COMPONENT_POS_TYPE, 'code_id', 'varchar(50)');
         $result .= $db_con->add_column(sql_db::TBL_SOURCE_TYPE, 'description', 'text');
-        $result .= $db_con->add_column(sql_db::TBL_REF, 'user_id', 'bigint');
+        $result .= $db_con->add_column(sql_db::TBL_REF, user::FLD_ID, 'bigint');
         $result .= $db_con->add_column(sql_db::TBL_REF, 'source_id', 'bigint');
         $result .= $db_con->add_column(sql_db::TBL_REF, 'url', 'text');
         $result .= $db_con->add_column(sql_db::TBL_REF, 'description', 'text');
@@ -244,7 +244,7 @@ class db_check
         }
         $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'values', 'bigint');
         $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'values', 'bigint');
-        $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, 'user_id', 'bigint');
+        $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, user::FLD_ID, 'bigint');
         $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, 'description', 'text');
         $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, 'excluded', 'smallint');
         $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, 'share_type_id', 'smallint');
@@ -275,7 +275,7 @@ class db_check
         $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'start_time');
         $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'end_time');
         $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'row_id');
-        $result .= $db_con->column_force_not_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, 'user_id');
+        $result .= $db_con->column_force_not_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, user::FLD_ID);
         $result .= $db_con->change_column_name(sql_db::TBL_VALUE, 'word_value', value::FLD_VALUE);
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'word_value', value::FLD_VALUE);
         // TODO set default profile_id in users to 1

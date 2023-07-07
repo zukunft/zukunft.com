@@ -151,13 +151,13 @@ class system_log_list extends base_list
         } elseif ($this->dsp_type == self::DSP_OTHER) {
             $db_con->add_par(sql_db::PAR_INT, $this->user()->id());
             $sql_where = $sql_status .
-                ' AND (' . sql_db::STD_TBL . '.' . sandbox::FLD_USER . ' <> ' . $db_con->par_name() .
+                ' AND (' . sql_db::STD_TBL . '.' . user::FLD_ID . ' <> ' . $db_con->par_name() .
                 ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
             $qp->name .= self::DSP_OTHER;
         } elseif ($this->dsp_type == self::DSP_MY) {
             $db_con->add_par(sql_db::PAR_INT, $this->user()->id());
             $sql_where = $sql_status .
-                ' AND (' . sql_db::STD_TBL . '.' . sandbox::FLD_USER . ' = ' . $db_con->par_name() .
+                ' AND (' . sql_db::STD_TBL . '.' . user::FLD_ID . ' = ' . $db_con->par_name() .
                 ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
             $qp->name .= self::DSP_MY;
         } else {

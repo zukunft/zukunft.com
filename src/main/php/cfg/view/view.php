@@ -309,7 +309,7 @@ class view extends sandbox_typed
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR,
-            array(sql_db::FLD_USER_ID)
+            array(user::FLD_ID)
         ));
 
         return parent::load_standard_sql($db_con, $class);
@@ -490,7 +490,7 @@ class view extends sandbox_typed
                     and (is_null($db_entry[self::FLD_EXCLUDED . '2']) or $db_entry[self::FLD_EXCLUDED . '2'] == 0)) {
                     $new_entry = new component_dsp_old($this->user());
                     $new_entry->id = $db_entry[component::FLD_ID];
-                    $new_entry->owner_id = $db_entry[sandbox::FLD_USER];
+                    $new_entry->owner_id = $db_entry[user::FLD_ID];
                     $new_entry->order_nbr = $db_entry[component_link::FLD_ORDER_NBR];
                     $new_entry->name = $db_entry[component::FLD_NAME];
                     $new_entry->word_id_row = $db_entry[component::FLD_ROW_PHRASE . '2'];

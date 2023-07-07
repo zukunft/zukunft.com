@@ -78,24 +78,24 @@
       "type": "detail_view",
       "components": [
         {
-          "pos": "1",
+          "position": "1",
           "name": "Name",
           "type": "word_name"
         },
         {
-          "pos": "2",
+          "position": "2",
           "name": "ingredient list",
           "code_id": "values_related",
           "row": "ingredients",
           "column": "food ingredient units"
         },
         {
-          "pos": "3",
+          "position": "3",
           "name": "formulas",
           "type": "formula_list"
         },
         {
-          "pos": "4",
+          "position": "4",
           "name": "JSON Export",
           "type": "json_export"
         }

@@ -36,6 +36,7 @@ include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_PHRASE_PATH . 'phrase_group.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 
+use cfg\component;
 use cfg\config;
 use cfg\formula;
 use cfg\formula_link;
@@ -47,6 +48,7 @@ use cfg\sandbox_named;
 use cfg\source;
 use cfg\sql_db;
 use cfg\triple;
+use cfg\user;
 use cfg\value;
 use cfg\verb;
 use cfg\view;
@@ -64,6 +66,8 @@ class sandbox_unit_tests
 
         $lib = new library();
 
+        $t->header('Sandbox Unit test');
+
         $t->subheader('Test user sandbox functions that does not need a database connection');
 
         // test if two sources are supposed to be the same
@@ -71,14 +75,12 @@ class sandbox_unit_tests
         $src1->set(1, TS_IPCC_AR6_SYNTHESIS);
         $src2 = new source($usr);
         $src2->set(2, TS_IPCC_AR6_SYNTHESIS);
-        $target = true;
         $result = $src1->is_same($src2);
-        $t->display("are two sources supposed to be the same", $target, $result);
+        $t->assert("are two sources supposed to be the same", $result, true);
 
         // ... and they are of course also similar
-        $target = true;
         $result = $src1->is_similar($src2);
-        $t->display("... and similar", $target, $result);
+        $t->assert("... and similar", $result, true);
 
         // a source can have the same name as a word
         $wrd1 = new word($usr);
@@ -87,23 +89,20 @@ class sandbox_unit_tests
         $src2 = new source($usr);
         $src2->set_id( 2);
         $src2->set_name(TS_IPCC_AR6_SYNTHESIS);
-        $target = false;
         $result = $wrd1->is_same($src2);
-        $t->display("a source is not the same as a word even if they have the same name", $target, $result);
+        $t->assert("a source is not the same as a word even if they have the same name", $result, false);
 
         // but a formula should not have the same name as a word
         $wrd = new word($usr);
         $wrd->set_name(TW_MIO);
         $frm = new formula($usr);
         $frm->set_name(TW_MIO);
-        $target = true;
         $result = $wrd->is_similar($frm);
-        $t->display("a formula should not have the same name as a word", $target, $result);
+        $t->assert("a formula should not have the same name as a word", $result, true);
 
         // ... but they are not the same
-        $target = false;
         $result = $wrd->is_same($frm);
-        $t->display("... but they are not the same", $target, $result);
+        $t->assert("... but they are not the same", $result, false);
 
         // a word with the name 'millions' is similar to a formulas named 'millions', but not the same, so
 
@@ -117,69 +116,67 @@ class sandbox_unit_tests
         $text = "'4'";
         $target = "'''4'''";
         $result = $db_con->sf($text);
-        $t->display(", sf: " . $text . "", $target, $result);
+        $t->assert(", sf: " . $text, $result, $target);
 
-        $text = "'4'";
         $target = "4";
         $result = $db_con->sf($text, sql_db::FLD_FORMAT_VAL);
-        $t->display(", sf: " . $text . "", $target, $result);
+        $t->assert(", sf: " . $text, $result, $target);
 
         $text = "2021";
         $target = "'2021'";
         $result = $db_con->sf($text, sql_db::FLD_FORMAT_TEXT);
-        $t->display(", sf: " . $text . "", $target, $result);
+        $t->assert(", sf: " . $text, $result, $target);
 
         $text = "four";
         $target = "'four'";
         $result = $db_con->sf($text);
-        $t->display(", sf: " . $text . "", $target, $result);
+        $t->assert(", sf: " . $text, $result, $target);
 
         $text = "'four'";
         $target = "'''four'''";
         $result = $db_con->sf($text);
-        $t->display(", sf: " . $text . "", $target, $result);
+        $t->assert(", sf: " . $text, $result, $target);
 
         $text = " ";
         $target = "NULL";
         $result = $db_con->sf($text);
-        $t->display(", sf: " . $text . "", $target, $result);
+        $t->assert(", sf: " . $text, $result, $target);
 
         // ... MySQL version
         $db_con->db_type = sql_db::MYSQL;
         $text = "'4'";
         $target = "'\'4\''";
         $result = $db_con->sf($text);
-        $t->display(", sf: " . $text . "", $target, $result);
+        $t->assert(", sf: " . $text, $result, $target);
 
-        $text = "'4'";
         $target = "4";
         $result = $db_con->sf($text, sql_db::FLD_FORMAT_VAL);
-        $t->display(", sf: " . $text . "", $target, $result);
+        $t->assert(", sf: " . $text, $result, $target);
 
         $text = "2021";
         $target = "'2021'";
         $result = $db_con->sf($text, sql_db::FLD_FORMAT_TEXT);
-        $t->display(", sf: " . $text . "", $target, $result);
+        $t->assert(", sf: " . $text, $result, $target);
 
         $text = "four";
         $target = "'four'";
         $result = $db_con->sf($text);
-        $t->display(", sf: " . $text . "", $target, $result);
+        $t->assert(", sf: " . $text, $result, $target);
 
         $text = "'four'";
         $target = "'\'four\''";
         $result = $db_con->sf($text);
-        $t->display(", sf: " . $text . "", $target, $result);
+        $t->assert(", sf: " . $text, $result, $target);
 
         $text = " ";
         $target = "NULL";
         $result = $db_con->sf($text);
-        $t->display(", sf: " . $text . "", $target, $result);
-
+        $t->assert(", sf: " . $text, $result, $target);
 
         $t->subheader('Test the version control');
 
         prg_version_is_newer_test($t);
+
 
         $t->header('Unit tests of the database connector');
 
@@ -473,7 +470,7 @@ class sandbox_unit_tests
         // ... similar with joined fields
         $db_con->set_type(sql_db::TBL_FORMULA);
         $db_con->set_fields(array(
-            sql_db::FLD_USER_ID,
+            user::FLD_ID,
             formula::FLD_FORMULA_TEXT,
             formula::FLD_FORMULA_USER_TEXT,
             sql_db::FLD_DESCRIPTION,
@@ -611,7 +608,7 @@ class sandbox_unit_tests
 
         // test the component_link load_standard SQL creation
         $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
-        $db_con->set_link_fields(view::FLD_ID, 'component_id');
+        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
         $db_con->set_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1, 2, 3);
         $created_sql = $db_con->select_by_set_id();
@@ -627,7 +624,7 @@ class sandbox_unit_tests
 
         // ... same but select by the link ids
         $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
-        $db_con->set_link_fields(view::FLD_ID, 'component_id');
+        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
         $db_con->set_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(0, 2, 3);
         $created_sql = $db_con->select_by_set_id();
@@ -643,7 +640,7 @@ class sandbox_unit_tests
 
         // test the component_link load SQL creation
         $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
-        $db_con->set_link_fields(view::FLD_ID, 'component_id');
+        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
         $db_con->set_usr_num_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1, 2, 3);
         $created_sql = $db_con->select_by_set_id();
@@ -909,7 +906,7 @@ class sandbox_unit_tests
         // ... similar with joined fields
         $db_con->set_type(sql_db::TBL_FORMULA);
         $db_con->set_fields(array(
-            sql_db::FLD_USER_ID,
+            user::FLD_ID,
             formula::FLD_FORMULA_TEXT,
             formula::FLD_FORMULA_USER_TEXT,
             sql_db::FLD_DESCRIPTION,
@@ -1023,7 +1020,7 @@ class sandbox_unit_tests
 
         // test the component_link load_standard SQL creation
         $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
-        $db_con->set_link_fields(view::FLD_ID, 'component_id');
+        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
         $db_con->set_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1);
         $created_sql = $db_con->select_by_set_id();
@@ -1040,7 +1037,7 @@ class sandbox_unit_tests
 
         // test the component_link load SQL creation
         $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
-        $db_con->set_link_fields(view::FLD_ID, 'component_id');
+        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
         $db_con->set_usr_num_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1, 2, 3);
         $created_sql = $db_con->select_by_set_id();
@@ -1338,7 +1335,7 @@ class sandbox_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
         //$db_con->set_join_fields(array('position_type'), 'position_type');
-        $db_con->set_fields(array(view::FLD_ID, 'component_id'));
+        $db_con->set_fields(array(view::FLD_ID, component::FLD_ID));
         $db_con->set_usr_num_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('s.component_id = 1');
         $created_sql = $db_con->select_by_set_id();

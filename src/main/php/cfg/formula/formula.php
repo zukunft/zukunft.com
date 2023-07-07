@@ -401,7 +401,7 @@ class formula extends sandbox_typed
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR,
-            array(sql_db::FLD_USER_ID)
+            array(user::FLD_ID)
         ));
 
         return parent::load_standard_sql($db_con, $class);
@@ -1613,7 +1613,7 @@ class formula extends sandbox_typed
             $field_values = array();
             $field_names[] = $this->fld_id();
             $field_values[] = $this->id;
-            $field_names[] = self::FLD_USER;
+            $field_names[] = user::FLD_ID;
             if ($frm_usr_id > 0) {
                 $field_values[] = $frm_usr_id;
             } else {
@@ -1644,7 +1644,7 @@ class formula extends sandbox_typed
             $field_names[] = $this->fld_id();
             $field_values[] = $this->id;
             if ($frm_usr_id > 0) {
-                $field_names[] = self::FLD_USER;
+                $field_names[] = user::FLD_ID;
                 $field_values[] = $frm_usr_id;
             }
             $field_names[] = 'formula_element_type_id';
@@ -1701,19 +1701,19 @@ class formula extends sandbox_typed
             foreach ($db_lst as $db_row) {
                 // update word links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, $db_row[self::FLD_USER], $this->user()->id);
+                    $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, $db_row[user::FLD_ID], $this->user()->id);
                 }
                 // update triple links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, $db_row[self::FLD_USER], $this->user()->id);
+                    $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, $db_row[user::FLD_ID], $this->user()->id);
                 }
                 // update verb links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, $db_row[self::FLD_USER], $this->user()->id);
+                    $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, $db_row[user::FLD_ID], $this->user()->id);
                 }
                 // update formula links of the standard formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, $db_row[self::FLD_USER], $this->user()->id);
+                    $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, $db_row[user::FLD_ID], $this->user()->id);
                 }
             }
         }
@@ -1857,7 +1857,7 @@ class formula extends sandbox_typed
     function not_changed_sql(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_FORMULA);
-        return $db_con->not_changed_sql($this->id(), $this->owner_id);
+        return $db_con->load_sql_not_changed($this->id(), $this->owner_id);
     }
 
     /**
@@ -1877,7 +1877,7 @@ class formula extends sandbox_typed
             $qp = $this->not_changed_sql($db_con);
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
-                if ($db_row[self::FLD_USER] > 0) {
+                if ($db_row[user::FLD_ID] > 0) {
                     $result = false;
                 }
             }
@@ -1926,7 +1926,7 @@ class formula extends sandbox_typed
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
-                $log_id = $db_con->insert(array($this->fld_id(), self::FLD_USER), array($this->id(), $this->user()->id));
+                $log_id = $db_con->insert(array($this->fld_id(), user::FLD_ID), array($this->id(), $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_formula failed.');
                     $result = false;
@@ -1955,7 +1955,7 @@ class formula extends sandbox_typed
         $qp->name = $class . '_user_sandbox';
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
-        $db_con->set_fields(array_merge(array(sandbox::FLD_USER), self::FLD_NAMES_USR, self::FLD_NAMES_NUM_USR));
+        $db_con->set_fields(array_merge(array(user::FLD_ID), self::FLD_NAMES_USR, self::FLD_NAMES_NUM_USR));
         $db_con->add_par(sql_db::PAR_INT, strval($this->id));
         $qp->sql = $db_con->select_by_field(self::FLD_ID);
         $qp->par = $db_con->get_par();
@@ -2000,7 +2000,7 @@ class formula extends sandbox_typed
         $db_con->set_type(sql_db::TBL_FORMULA_ELEMENT);
         try {
             $msg = $db_con->delete(
-                array($this->fld_id(), self::FLD_USER),
+                array($this->fld_id(), user::FLD_ID),
                 array($this->id(), $this->user()->id));
         } catch (Exception $e) {
             log_err($action . ' elements ' . $msg_failed . ' because ' . $e);
@@ -2011,7 +2011,7 @@ class formula extends sandbox_typed
             $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
             try {
                 $msg = $db_con->delete(
-                    array($this->fld_id(), self::FLD_USER),
+                    array($this->fld_id(), user::FLD_ID),
                     array($this->id(), $this->user()->id));
                 if ($msg == '') {
                     $this->usr_cfg_id = null;
@@ -2357,7 +2357,7 @@ class formula extends sandbox_typed
             $db_con->set_type(sql_db::TBL_FORMULA);
             // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
             $this->set_id($db_con->insert(
-                array(self::FLD_NAME, self::FLD_USER, self::FLD_LAST_UPDATE, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT),
+                array(self::FLD_NAME, user::FLD_ID, self::FLD_LAST_UPDATE, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT),
                 array($this->name(), $this->user()->id, "Now()", $this->ref_text, $this->usr_text)));
             if ($this->id() > 0) {
                 log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id);

@@ -548,19 +548,19 @@
       "type": "detail_view",
       "components": [
         {
-          "pos": "1",
+          "position": "1",
           "name": "Cash Flow Statement",
           "type": "values_related",
           "row": "cash flow statement",
           "column": "Year"
         },
         {
-          "pos": "2",
+          "position": "2",
           "name": "formulas",
           "type": "formula_list"
         },
         {
-          "pos": "3",
+          "position": "3",
           "name": "JSON Export",
           "type": "json_export"
         }
@@ -572,22 +572,22 @@
       "type": "word_default",
       "components": [
         {
-          "pos": "1",
+          "position": "1",
           "name": "Name",
           "type": "word_name"
         },
         {
-          "pos": "2",
+          "position": "2",
           "name": "formulas",
           "type": "formula_list"
         },
         {
-          "pos": "3",
+          "position": "3",
           "name": "JSON Export",
           "type": "json_export"
         },
         {
-          "pos": "4",
+          "position": "4",
           "name": "XML Export",
           "type": "xml_export"
         }
@@ -599,7 +599,7 @@
       "type": "detail_view",
       "components": [
         {
-          "pos": "1",
+          "position": "1",
           "name": "Company with ratios",
           "type": "word_value_list",
           "row": "Company",

@@ -50,16 +50,14 @@ class component extends sandbox_typed
     // the database and JSON object field names used only for view components links
     const FLD_ID = 'component_id';
     const FLD_NAME = 'component_name';
-    const FLD_UI_MSG_ID = 'ui_msg_code_id';
+    const FLD_DESCRIPTION = 'description';
     const FLD_TYPE = 'component_type_id';
+    const FLD_POSITION = 'position';
+    const FLD_UI_MSG_ID = 'ui_msg_code_id';
     const FLD_ROW_PHRASE = 'word_id_row';
     const FLD_COL_PHRASE = 'word_id_col';
     const FLD_COL2_PHRASE = 'word_id_col2';
     const FLD_LINK_TYPE = 'link_type_id';
-    const FLD_DESCRIPTION = 'description';
-    // the JSON object field names
-    const FLD_POSITION = 'position';
-    const FLD_POSITION_OLD = 'pos';
 
     // all database field names excluding the id
     const FLD_NAMES = array(
@@ -308,7 +306,7 @@ class component extends sandbox_typed
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR,
-            array(sql_db::FLD_USER_ID)
+            array(user::FLD_ID)
         ));
 
         return parent::load_standard_sql($db_con, $class);
@@ -593,7 +591,7 @@ class component extends sandbox_typed
 
         foreach ($in_ex_json as $key => $value) {
 
-            if ($key == self::FLD_POSITION or $key == self::FLD_POSITION_OLD) {
+            if ($key == self::FLD_POSITION) {
                 $this->order_nbr = $value;
             }
             if ($key == exp_obj::FLD_TYPE) {
@@ -814,18 +812,18 @@ class component extends sandbox_typed
             $qp->name = 'view_cmp_del_usr_cfg_if';
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
-            $db_con->set_fields(array('component_id'));
+            $db_con->set_fields(array(component::FLD_ID));
             $db_con->set_where_std($this->id);
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
-                $this->usr_cfg_id = $db_row['component_id'];
+                $this->usr_cfg_id = $db_row[component::FLD_ID];
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT);
-                $log_id = $db_con->insert(array('component_id', sandbox::FLD_USER), array($this->id, $this->user()->id()));
+                $log_id = $db_con->insert(array(component::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_component failed.');
                     $result = false;

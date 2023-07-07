@@ -163,7 +163,7 @@ class phrase_api extends combine_named_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = parent::jsonSerialize();
-        $vars[controller::API_FLD_ID] = $this->obj_id();
+        $vars[api::FLD_ID] = $this->obj_id();
         if ($this->is_word()) {
             $vars[combine_object_api::FLD_CLASS] = self::CLASS_WORD;
         } else {

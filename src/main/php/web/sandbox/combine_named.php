@@ -35,6 +35,7 @@
 namespace html;
 
 use controller\controller;
+use api\api;
 use html\word\word;
 
 include_once WEB_SANDBOX_PATH . 'combine_object.php';
@@ -134,7 +135,7 @@ class combine_named_dsp extends combine_object_dsp
     function api_array(): array
     {
         $vars = array();
-        $vars[controller::API_FLD_ID] = $this->obj()?->id();
+        $vars[api::FLD_ID] = $this->obj()?->id();
         $vars[controller::API_FLD_NAME] = $this->name();
         $vars[controller::API_FLD_DESCRIPTION] = $this->description();
         $vars[controller::API_FLD_TYPE_ID] = $this->type_id();

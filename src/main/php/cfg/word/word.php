@@ -48,6 +48,7 @@ include_once API_WORD_PATH . 'word.php';
 include_once MODEL_REF_PATH . 'ref.php';
 include_once SERVICE_EXPORT_PATH . 'word_exp.php';
 
+use api\api;
 use api\word_api;
 use model\export\exp_obj;
 use model\export\sandbox_exp_named;
@@ -355,7 +356,7 @@ class word extends sandbox_typed
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == controller::API_FLD_ID) {
+            if ($key == api::FLD_ID) {
                 $this->set_id($value);
             }
             if ($key == controller::API_FLD_NAME) {
@@ -430,7 +431,7 @@ class word extends sandbox_typed
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR,
-            array(sql_db::FLD_USER_ID)
+            array(user::FLD_ID)
         ));
 
         return parent::load_standard_sql($db_con, $class);
@@ -602,7 +603,7 @@ class word extends sandbox_typed
         $db_con->set_type(sql_db::TBL_WORD);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(array(self::FLD_VIEW));
-        $db_con->set_join_usr_count_fields(array(sql_db::FLD_USER_ID), sql_db::TBL_WORD);
+        $db_con->set_join_usr_count_fields(array(user::FLD_ID), sql_db::TBL_WORD);
         $qp = new sql_par(self::class);
         $qp->name = 'word_view_most_used';
         $db_con->set_name($qp->name);
@@ -1696,7 +1697,7 @@ class word extends sandbox_typed
     function not_changed_sql(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_WORD);
-        return $db_con->not_changed_sql($this->id, $this->owner_id);
+        return $db_con->load_sql_not_changed($this->id, $this->owner_id);
     }
 
     /**
@@ -1715,7 +1716,7 @@ class word extends sandbox_typed
         } else {
             $qp = $this->not_changed_sql($db_con);
             $db_row = $db_con->get1($qp);
-            if ($db_row[self::FLD_USER] > 0) {
+            if ($db_row[user::FLD_ID] > 0) {
                 $result = false;
             }
         }

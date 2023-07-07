@@ -1361,13 +1361,14 @@ class test_base
     }
 
     /**
-     * check the not changed SQL statements of a user sandbox object e.g. word, triple, value or formulas
+     * check the not changed SQL statements of a user sandbox object
+     * e.g. word, triple, value or formulas
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param sandbox $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_not_changed_sql(sql_db $db_con, sandbox $usr_obj): bool
+    function assert_sql_not_changed(sql_db $db_con, sandbox $usr_obj): bool
     {
         // check the Postgres query syntax
         $usr_obj->owner_id = 0;

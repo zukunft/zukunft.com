@@ -516,7 +516,7 @@ class view_dsp_old extends view
             log_debug('loaded');
             $dsp_list = new dsp_list;
             $dsp_list->lst = $this->cmp_lst;
-            $dsp_list->id_field = "component_id";
+            $dsp_list->id_field = component::FLD_ID;
             $dsp_list->script_name = "view_edit.php";
             $dsp_list->class_edit = view::class;
             $dsp_list->script_parameter = $this->id . "&back=" . $back . "&word=" . $wrd->id;

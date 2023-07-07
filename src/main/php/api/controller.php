@@ -84,8 +84,6 @@ class controller
 
     // json field names of the api json messages
     // which is supposed to be the same as the corresponding var of the api object
-    // so that the
-    const API_FLD_ID = 'id';     // the unique database id used to save the changes
     const API_FLD_NAME = 'name'; // the unique name of the object which is also a database index
     const API_FLD_DESCRIPTION = 'description';
     const API_FLD_COMMENT = 'comment';
@@ -111,7 +109,6 @@ class controller
     const API_FLD_TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested
     const API_FLD_TIME_START = 'start_time'; // e.g. the timestamp of a log entry
     const API_FLD_TIME_END = 'end_time'; // e.g. the timestamp of a log entry
-    const API_FLD_USER_ID = 'user_id';
     const API_FLD_TEXT = 'text';
     const API_FLD_STATUS = 'status';
     const API_FLD_PRIORITY = 'priority';

@@ -32,13 +32,14 @@
 namespace html\system;
 
 include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 
 use controller\controller;
 use DateTime;
 use DateTimeInterface;
 use Exception;
-use html\api;
+use api\api;
 use html\sandbox\db_object as db_object_dsp;
 use html\html_base;
 
@@ -106,8 +107,8 @@ class batch_job extends db_object_dsp
             }
         }
         $this->set_end_time($end_time);
-        if (array_key_exists(controller::API_FLD_USER_ID, $json_array)) {
-            $this->set_user_id($json_array[controller::API_FLD_USER_ID]);
+        if (array_key_exists(api::FLD_USER_ID, $json_array)) {
+            $this->set_user_id($json_array[api::FLD_USER_ID]);
         } else {
             $this->set_user_id(0);
         }
@@ -264,7 +265,7 @@ class batch_job extends db_object_dsp
         $vars[controller::API_FLD_TIME_REQUEST] = $this->request_time()->format(DateTimeInterface::ATOM);
         $vars[controller::API_FLD_TIME_START] = $this->start_time()->format(DateTimeInterface::ATOM);
         $vars[controller::API_FLD_TIME_END] = $this->end_time()->format(DateTimeInterface::ATOM);
-        $vars[controller::API_FLD_USER_ID] = $this->user_id();
+        $vars[api::FLD_USER_ID] = $this->user_id();
         $vars[controller::API_FLD_TYPE] = $this->type();
         $vars[controller::API_FLD_STATUS] = $this->status();
         $vars[controller::API_FLD_PRIORITY] = $this->priority();

@@ -60,6 +60,7 @@ include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once SERVICE_EXPORT_PATH . 'value_exp.php';
 include_once SERVICE_EXPORT_PATH . 'json.php';
 
+use api\api;
 use api\value_api;
 use model\export\exp_obj;
 use model\export\source_exp;
@@ -286,7 +287,7 @@ class value extends sandbox_value
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == controller::API_FLD_ID) {
+            if ($key == api::FLD_ID) {
                 $this->set_id($value);
             }
 
@@ -366,7 +367,7 @@ class value extends sandbox_value
     function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $db_con->set_type(sql_db::TBL_VALUE);
-        $db_con->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(sql_db::FLD_USER_ID)));
+        $db_con->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(user::FLD_ID)));
 
         return parent::load_standard_sql($db_con, $class);
     }
@@ -1319,7 +1320,7 @@ class value extends sandbox_value
     function not_changed_sql(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_VALUE);
-        return $db_con->not_changed_sql($this->id, $this->owner_id);
+        return $db_con->load_sql_not_changed($this->id, $this->owner_id);
     }
 
     /**
@@ -1337,7 +1338,7 @@ class value extends sandbox_value
         } else {
             $qp = $this->not_changed_sql($db_con);
             $db_row = $db_con->get1($qp);
-            if ($db_row[self::FLD_USER] > 0) {
+            if ($db_row[user::FLD_ID] > 0) {
                 $result = false;
             }
         }
@@ -1410,7 +1411,7 @@ class value extends sandbox_value
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE);
-                $log_id = $db_con->insert(array(self::FLD_ID, sandbox::FLD_USER), array($this->id, $this->user()->id()));
+                $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_value failed.');
                     $result = false;

@@ -41,7 +41,8 @@ include_once WEB_WORD_PATH . 'triple.php';
 use api\combine_object_api;
 use api\phrase_api;
 use api\word_api;
-use html\api;
+use api\api;
+use html\api as api_dsp;
 use html\button;
 use html\combine_named_dsp;
 use html\html_base;
@@ -148,7 +149,7 @@ class phrase extends combine_named_dsp
         } else {
             $vars[combine_object_api::FLD_CLASS] = phrase_api::CLASS_TRIPLE;
         }
-        $vars[controller::API_FLD_ID] = $this->obj_id();
+        $vars[api::FLD_ID] = $this->obj_id();
         $vars[controller::API_FLD_NAME] = $this->name();
         $vars[controller::API_FLD_DESCRIPTION] = $this->description();
         $vars[controller::API_FLD_TYPE_ID] = $this->type_id();
@@ -246,13 +247,13 @@ class phrase extends combine_named_dsp
     function btn_del(): string
     {
         if ($this->is_word()) {
-            $obj_name = api::WORD;
+            $obj_name = api_dsp::WORD;
             $ui_msg_id = msg::WORD_DEL;
         } else {
-            $obj_name = api::TRIPLE;
+            $obj_name = api_dsp::TRIPLE;
             $ui_msg_id = msg::TRIPLE_DEL;
         }
-        $url = (new html_base())->url($obj_name . api::REMOVE, $this->id(), $this->id());
+        $url = (new html_base())->url($obj_name . api_dsp::REMOVE, $this->id(), $this->id());
         return (new button($url))->del($ui_msg_id);
     }
 
