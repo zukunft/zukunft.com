@@ -144,7 +144,7 @@ class figure extends combine_named_dsp
         }
         $vars[api::FLD_ID] = $this->obj_id();
         $vars[sandbox_value_api::FLD_NUMBER] = $this->number();
-        $vars[controller::API_FLD_PHRASES] = $this->obj->grp()->api_array();
+        $vars[api::FLD_PHRASES] = $this->obj->grp()->api_array();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

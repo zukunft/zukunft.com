@@ -103,15 +103,15 @@ class result_api extends sandbox_value_api implements JsonSerializable
 
         // remove vars from the json that have the default value
         if ($this->is_std) {
-            if (array_key_exists(controller::API_FLD_IS_STD, $vars)) {
-                unset($vars[controller::API_FLD_IS_STD]);
+            if (array_key_exists(api::FLD_IS_STD, $vars)) {
+                unset($vars[api::FLD_IS_STD]);
             }
         }
 
         // add the phrase list to the api object because this is always needed to display the value
         // the phrase group is not used in the api because this is always created dynamically based on the phrase
         // and only used to speed up the database and reduce the size
-        $vars[controller::API_FLD_PHRASES] = json_decode(json_encode($this->phr_lst()));
+        $vars[api::FLD_PHRASES] = json_decode(json_encode($this->phr_lst()));
 
         return $vars;
     }

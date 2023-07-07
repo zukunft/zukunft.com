@@ -59,6 +59,33 @@ class api
     const FLD_PHRASE = 'phrase_id';
     const FLD_SOURCE = 'source_id';
 
+    // object list
+    const FLD_PHRASES = 'phrases';
+    const FLD_COMPONENTS = 'components';
+
+    // object fields
+    const FLD_NUMBER = 'number'; // a float number used for values and results
+    const FLD_IS_STD = 'is_std'; // flag if a value or result is user specific or the default value for all users
+    const FLD_USER_TEXT = 'user_text'; // the formula expression in a human-readable format
+    const FLD_URL = 'url'; // the external link of a source or a reference
+    const FLD_EXTERNAL_KEY = 'external_key'; // the unique key of the reference
+
+    // batch job fields
+    const FLD_TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested
+    const FLD_PRIORITY = 'priority'; // of the batch job
+    const FLD_TIME_START = 'start_time'; // e.g. the timestamp of a log entry
+    const FLD_TIME_END = 'end_time'; // e.g. the timestamp of a log entry
+    const FLD_STATUS = 'status'; // of the job and also used for the sys log
+
+    // change log fields
+    const FLD_TIME = 'time'; // e.g. the timestamp of a log entry
+    const FLD_TEXT = 'text'; // the description of the change as a fixed text
+
+    // system log fields
+    const FLD_TRACE = 'trace'; // what has lead to the issue
+    const FLD_PRG_PART = 'prg_part'; // which part has caused the issue
+    const FLD_OWNER = 'owner'; // the developer which wants to fix the problem
+
     const FLD_USER_ID = 'user_id';
 
 }

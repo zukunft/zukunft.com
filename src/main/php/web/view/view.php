@@ -100,8 +100,8 @@ class view extends sandbox_typed_dsp
         }
         // set the components
         $cmp_lst = new component_list_dsp();
-        if (array_key_exists(controller::API_FLD_COMPONENTS, $json_array)) {
-            $cmp_lst->set_from_json_array($json_array[controller::API_FLD_COMPONENTS]);
+        if (array_key_exists(api::FLD_COMPONENTS, $json_array)) {
+            $cmp_lst->set_from_json_array($json_array[api::FLD_COMPONENTS]);
         }
         // set the objects (e.g. word)
         if (array_key_exists(controller::API_WORD, $json_array)) {
@@ -461,7 +461,7 @@ class view extends sandbox_typed_dsp
     {
         $vars = parent::api_array();
         $vars[api::FLD_CODE_ID] = $this->code_id;
-        $vars[controller::API_FLD_COMPONENTS] = $this->cmp_lst->api_array();
+        $vars[api::FLD_COMPONENTS] = $this->cmp_lst->api_array();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

@@ -73,12 +73,12 @@ class batch_job extends db_object_dsp
         parent::set_from_json_array($json_array);
         // TODO use empty date instead?
         $request_timestamp = new DateTime();
-        if (array_key_exists(controller::API_FLD_TIME_REQUEST, $json_array)) {
+        if (array_key_exists(api::FLD_TIME_REQUEST, $json_array)) {
             try {
-                $request_timestamp = new DateTime($json_array[controller::API_FLD_TIME_REQUEST]);
+                $request_timestamp = new DateTime($json_array[api::FLD_TIME_REQUEST]);
             } catch (Exception $e) {
                 // TODO avoid loops if date writing in log_err fails ?
-                log_err('Error converting system log timestamp ' . $json_array[controller::API_FLD_TIME_REQUEST]
+                log_err('Error converting system log timestamp ' . $json_array[api::FLD_TIME_REQUEST]
                     . ' because ' . $e->getMessage());
             }
         } else {
@@ -86,23 +86,23 @@ class batch_job extends db_object_dsp
         }
         $this->set_request_time($request_timestamp);
         $start_time = null;
-        if (array_key_exists(controller::API_FLD_TIME_START, $json_array)) {
+        if (array_key_exists(api::FLD_TIME_START, $json_array)) {
             try {
-                $request_timestamp = new DateTime($json_array[controller::API_FLD_TIME_START]);
+                $request_timestamp = new DateTime($json_array[api::FLD_TIME_START]);
             } catch (Exception $e) {
                 // TODO avoid loops if date writing in log_err fails ?
-                log_err('Error converting system log timestamp ' . $json_array[controller::API_FLD_TIME_START]
+                log_err('Error converting system log timestamp ' . $json_array[api::FLD_TIME_START]
                     . ' because ' . $e->getMessage());
             }
         }
         $this->set_start_time($start_time);
         $end_time = null;
-        if (array_key_exists(controller::API_FLD_TIME_END, $json_array)) {
+        if (array_key_exists(api::FLD_TIME_END, $json_array)) {
             try {
-                $request_timestamp = new DateTime($json_array[controller::API_FLD_TIME_END]);
+                $request_timestamp = new DateTime($json_array[api::FLD_TIME_END]);
             } catch (Exception $e) {
                 // TODO avoid loops if date writing in log_err fails ?
-                log_err('Error converting system log timestamp ' . $json_array[controller::API_FLD_TIME_END]
+                log_err('Error converting system log timestamp ' . $json_array[api::FLD_TIME_END]
                     . ' because ' . $e->getMessage());
             }
         }
@@ -117,13 +117,13 @@ class batch_job extends db_object_dsp
         } else {
             $this->set_type(0);
         }
-        if (array_key_exists(controller::API_FLD_STATUS, $json_array)) {
-            $this->set_status($json_array[controller::API_FLD_STATUS]);
+        if (array_key_exists(api::FLD_STATUS, $json_array)) {
+            $this->set_status($json_array[api::FLD_STATUS]);
         } else {
             $this->set_status('');
         }
-        if (array_key_exists(controller::API_FLD_PRIORITY, $json_array)) {
-            $this->set_priority($json_array[controller::API_FLD_PRIORITY]);
+        if (array_key_exists(api::FLD_PRIORITY, $json_array)) {
+            $this->set_priority($json_array[api::FLD_PRIORITY]);
         } else {
             $this->set_priority(0);
         }
@@ -262,13 +262,13 @@ class batch_job extends db_object_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[controller::API_FLD_TIME_REQUEST] = $this->request_time()->format(DateTimeInterface::ATOM);
-        $vars[controller::API_FLD_TIME_START] = $this->start_time()->format(DateTimeInterface::ATOM);
-        $vars[controller::API_FLD_TIME_END] = $this->end_time()->format(DateTimeInterface::ATOM);
+        $vars[api::FLD_TIME_REQUEST] = $this->request_time()->format(DateTimeInterface::ATOM);
+        $vars[api::FLD_TIME_START] = $this->start_time()->format(DateTimeInterface::ATOM);
+        $vars[api::FLD_TIME_END] = $this->end_time()->format(DateTimeInterface::ATOM);
         $vars[api::FLD_USER_ID] = $this->user_id();
         $vars[api::FLD_TYPE] = $this->type();
-        $vars[controller::API_FLD_STATUS] = $this->status();
-        $vars[controller::API_FLD_PRIORITY] = $this->priority();
+        $vars[api::FLD_STATUS] = $this->status();
+        $vars[api::FLD_PRIORITY] = $this->priority();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

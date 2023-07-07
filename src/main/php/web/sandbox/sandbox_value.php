@@ -133,13 +133,13 @@ class sandbox_value_dsp extends db_object_dsp
         } else {
             $this->set_number(null);
         }
-        if (array_key_exists(controller::API_FLD_IS_STD, $json_array)) {
-            $this->set_is_std($json_array[controller::API_FLD_IS_STD]);
+        if (array_key_exists(api::FLD_IS_STD, $json_array)) {
+            $this->set_is_std($json_array[api::FLD_IS_STD]);
         } else {
             $this->set_is_std();
         }
-        if (array_key_exists(controller::API_FLD_PHRASES, $json_array)) {
-            $this->grp()->set_from_json_array($json_array[controller::API_FLD_PHRASES]);
+        if (array_key_exists(api::FLD_PHRASES, $json_array)) {
+            $this->grp()->set_from_json_array($json_array[api::FLD_PHRASES]);
         } else {
             $this->set_grp(new phrase_group_dsp());
             log_err('Mandatory field phrase group missing in API JSON ' . json_encode($json_array));

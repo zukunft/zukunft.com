@@ -69,12 +69,12 @@ class log extends db_object_dsp
         parent::set_from_json_array($json_array);
         // TODO use empty date instead?
         $sys_log_timestamp = new DateTime();
-        if (array_key_exists(controller::API_FLD_TIME, $json_array)) {
+        if (array_key_exists(api::FLD_TIME, $json_array)) {
             try {
-                $sys_log_timestamp = new DateTime($json_array[controller::API_FLD_TIME]);
+                $sys_log_timestamp = new DateTime($json_array[api::FLD_TIME]);
             } catch (Exception $e) {
                 // TODO avoid loops if date writing in log_err fails ?
-                log_err('Error converting system log timestamp ' . $json_array[controller::API_FLD_TIME]
+                log_err('Error converting system log timestamp ' . $json_array[api::FLD_TIME]
                     . ' because ' . $e->getMessage());
             }
         } else {
@@ -86,13 +86,13 @@ class log extends db_object_dsp
         } else {
             $this->set_user_id(0);
         }
-        if (array_key_exists(controller::API_FLD_TEXT, $json_array)) {
-            $this->set_text($json_array[controller::API_FLD_TEXT]);
+        if (array_key_exists(api::FLD_TEXT, $json_array)) {
+            $this->set_text($json_array[api::FLD_TEXT]);
         } else {
             $this->set_text('');
         }
-        if (array_key_exists(controller::API_FLD_STATUS, $json_array)) {
-            $this->set_status($json_array[controller::API_FLD_STATUS]);
+        if (array_key_exists(api::FLD_STATUS, $json_array)) {
+            $this->set_status($json_array[api::FLD_STATUS]);
         } else {
             $this->set_status('');
         }
@@ -150,10 +150,10 @@ class log extends db_object_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[controller::API_FLD_TIME] = $this->time()->format(DateTimeInterface::ATOM);
+        $vars[api::FLD_TIME] = $this->time()->format(DateTimeInterface::ATOM);
         $vars[api::FLD_USER_ID] = $this->user_id();
-        $vars[controller::API_FLD_TEXT] = $this->text();
-        $vars[controller::API_FLD_STATUS] = $this->status();
+        $vars[api::FLD_TEXT] = $this->text();
+        $vars[api::FLD_STATUS] = $this->status();
         return $vars;
     }
 

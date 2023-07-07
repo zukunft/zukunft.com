@@ -41,7 +41,8 @@ include_once API_SANDBOX_PATH . 'sandbox_value.php';
 use api\sandbox_api;
 use api\sandbox_value_api;
 use controller\controller;
-use html\api;
+use api\api;
+use html\api as api_dsp;
 use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\figure\figure as figure_dsp;
@@ -66,7 +67,7 @@ class value extends sandbox_value_dsp
     function ref_edit(string $back): string
     {
         $html = new html_base();
-        return $html->ref($html->url(api::VALUE_EDIT, $this->id, $back), $this->val_formatted());
+        return $html->ref($html->url(api_dsp::VALUE_EDIT, $this->id, $back), $this->val_formatted());
     }
 
 
@@ -96,8 +97,8 @@ class value extends sandbox_value_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[controller::API_FLD_PHRASES] = $this->grp()->phr_lst()->api_array();
-        $vars[controller::API_FLD_NUMBER] = $this->number();
+        $vars[api::FLD_PHRASES] = $this->grp()->phr_lst()->api_array();
+        $vars[api::FLD_NUMBER] = $this->number();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

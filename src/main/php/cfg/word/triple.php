@@ -575,7 +575,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 $this->view = $wrd_view;
             }
 
-            if ($key == controller::API_FLD_PHRASES) {
+            if ($key == api::FLD_PHRASES) {
                 $phr_lst = new phrase_list($this->user());
                 $msg->add($phr_lst->db_obj($value));
                 if ($msg->is_ok()) {

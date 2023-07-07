@@ -291,7 +291,7 @@ class value extends sandbox_value
                 $this->set_id($value);
             }
 
-            if ($key == controller::API_FLD_PHRASES) {
+            if ($key == api::FLD_PHRASES) {
                 $phr_lst = new phrase_list($this->user());
                 $msg->add($phr_lst->set_by_api_json($value));
                 if ($msg->is_ok()) {

@@ -32,7 +32,8 @@
 namespace html\system;
 
 use controller\controller;
-use html\api;
+use api\api;
+use html\api as api_dsp;
 use html\html_base;
 use html\sandbox_typed_dsp;
 
@@ -53,8 +54,8 @@ class language extends sandbox_typed_dsp
     function set_from_json_array(array $json_array): void
     {
         parent::set_from_json_array($json_array);
-        if (array_key_exists(controller::API_FLD_URL, $json_array)) {
-            $this->set_url($json_array[controller::API_FLD_URL]);
+        if (array_key_exists(api::FLD_URL, $json_array)) {
+            $this->set_url($json_array[api::FLD_URL]);
         } else {
             $this->set_url(null);
         }
@@ -82,7 +83,7 @@ class language extends sandbox_typed_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[controller::API_FLD_URL] = $this->url();
+        $vars[api::FLD_URL] = $this->url();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -108,7 +109,7 @@ class language extends sandbox_typed_dsp
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(api::LANGUAGE, $this->id, $back, api::PAR_VIEW_LANGUAGES);
+        $url = $html->url(api_dsp::LANGUAGE, $this->id, $back, api_dsp::PAR_VIEW_LANGUAGES);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 

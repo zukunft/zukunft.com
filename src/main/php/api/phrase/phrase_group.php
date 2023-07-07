@@ -223,7 +223,7 @@ class phrase_group_api extends sandbox_named_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = parent::jsonSerialize();
-        $vars[controller::API_FLD_PHRASES] = json_decode(json_encode($this->phr_lst()));
+        $vars[api::FLD_PHRASES] = json_decode(json_encode($this->phr_lst()));
         return $vars;
     }
 

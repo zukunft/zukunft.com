@@ -33,6 +33,7 @@ namespace html\log;
 
 include_once WEB_LOG_PATH . 'log.php';
 
+use api\api;
 use controller\controller;
 use DateTimeInterface;
 use html\log\log as log_dsp;
@@ -64,19 +65,19 @@ class system_log extends log_dsp
     function set_from_json_array(array $json_array): void
     {
         parent::set_from_json_array($json_array);
-        if (array_key_exists(controller::API_FLD_TRACE, $json_array)) {
-            $this->set_trace($json_array[controller::API_FLD_TRACE]);
+        if (array_key_exists(api::FLD_TRACE, $json_array)) {
+            $this->set_trace($json_array[api::FLD_TRACE]);
         } else {
             $this->set_trace('');
         }
-        if (array_key_exists(controller::API_FLD_PRG_PART, $json_array)) {
-            $this->set_prg_part($json_array[controller::API_FLD_PRG_PART]);
+        if (array_key_exists(api::FLD_PRG_PART, $json_array)) {
+            $this->set_prg_part($json_array[api::FLD_PRG_PART]);
         } else {
             $this->set_prg_part('');
         }
-        if (array_key_exists(controller::API_FLD_OWNER, $json_array)) {
-            if (is_numeric($json_array[controller::API_FLD_OWNER])) {
-                $this->set_owner_id($json_array[controller::API_FLD_OWNER]);
+        if (array_key_exists(api::FLD_OWNER, $json_array)) {
+            if (is_numeric($json_array[api::FLD_OWNER])) {
+                $this->set_owner_id($json_array[api::FLD_OWNER]);
             } else {
                 $this->set_owner_id(0);
             }
@@ -208,9 +209,9 @@ class system_log extends log_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[controller::API_FLD_TRACE] = $this->trace();
-        $vars[controller::API_FLD_PRG_PART] = $this->prg_part();
-        $vars[controller::API_FLD_OWNER] = $this->owner_id();
+        $vars[api::FLD_TRACE] = $this->trace();
+        $vars[api::FLD_PRG_PART] = $this->prg_part();
+        $vars[api::FLD_OWNER] = $this->owner_id();
         return $vars;
     }
 

@@ -85,26 +85,8 @@ class controller
      */
 
     // json field names of the api json messages
-    const API_FLD_PHRASES = 'phrases';
-    const API_FLD_COMPONENTS = 'components';
 
-    // a float number used for values and results
-    const API_FLD_NUMBER = 'number';
-    // the formula expression in a human-readable format
-    const API_FLD_USER_TEXT = 'user_text';
-    const API_FLD_URL = 'url';
-    const API_FLD_EXTERNAL_KEY = 'external_key';
-    const API_FLD_IS_STD = 'is_std';
-    const API_FLD_TIME = 'time'; // e.g. the timestamp of a log entry
-    const API_FLD_TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested
-    const API_FLD_TIME_START = 'start_time'; // e.g. the timestamp of a log entry
-    const API_FLD_TIME_END = 'end_time'; // e.g. the timestamp of a log entry
-    const API_FLD_TEXT = 'text';
-    const API_FLD_STATUS = 'status';
-    const API_FLD_PRIORITY = 'priority';
-    const API_FLD_TRACE = 'trace';
-    const API_FLD_PRG_PART = 'prg_part';
-    const API_FLD_OWNER = 'owner';
+
     const API_BODY = 'body';
     const API_BODY_SYS_LOG = 'system_log';
 

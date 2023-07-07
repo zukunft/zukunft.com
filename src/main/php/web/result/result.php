@@ -34,6 +34,7 @@
 
 namespace html\result;
 
+use api\api;
 use controller\controller;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox_value_dsp;
@@ -69,8 +70,8 @@ class result extends sandbox_value_dsp
     {
         parent::set_from_json_array($json_array);
         /* TODO add all result fields that are not part of the sandbox value object
-        if (array_key_exists(controller::API_FLD_USER_TEXT, $json_array)) {
-            $this->set_usr_text($json_array[controller::API_FLD_USER_TEXT]);
+        if (array_key_exists(api::FLD_USER_TEXT, $json_array)) {
+            $this->set_usr_text($json_array[api::FLD_USER_TEXT]);
         } else {
             $this->set_usr_text(null);
         }
@@ -128,8 +129,8 @@ class result extends sandbox_value_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[controller::API_FLD_PHRASES] = $this->grp()->phr_lst()->api_array();
-        $vars[controller::API_FLD_NUMBER] = $this->number();
+        $vars[api::FLD_PHRASES] = $this->grp()->phr_lst()->api_array();
+        $vars[api::FLD_NUMBER] = $this->number();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

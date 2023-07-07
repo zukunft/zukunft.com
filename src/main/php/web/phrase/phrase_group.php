@@ -89,8 +89,8 @@ class phrase_group extends sandbox_named_dsp
     {
         if (array_key_exists(api::FLD_ID, $json_array)) {
             parent::set_from_json_array($json_array);
-            if (array_key_exists(controller::API_FLD_PHRASES, $json_array)) {
-                $phr_lst = $json_array[controller::API_FLD_PHRASES];
+            if (array_key_exists(api::FLD_PHRASES, $json_array)) {
+                $phr_lst = $json_array[api::FLD_PHRASES];
                 foreach ($phr_lst as $phr_json) {
                     $wrd = new word_dsp();
                     $wrd->set_from_json_array($phr_json);
@@ -298,7 +298,7 @@ class phrase_group extends sandbox_named_dsp
         foreach ($this->lst as $phr) {
             $phr_lst_vars[] = $phr->api_array();
         }
-        //$vars[controller::API_FLD_PHRASES] = $phr_lst_vars;
+        //$vars[api::FLD_PHRASES] = $phr_lst_vars;
         return $phr_lst_vars;
     }
 

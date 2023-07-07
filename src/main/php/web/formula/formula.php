@@ -37,7 +37,8 @@ namespace html\formula;
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
 use controller\controller;
-use html\api;
+use api\api;
+use html\api as api_dsp;
 use html\button;
 use html\html_base;
 use html\msg;
@@ -79,8 +80,8 @@ class formula extends sandbox_typed_dsp
     function set_from_json_array(array $json_array): void
     {
         parent::set_from_json_array($json_array);
-        if (array_key_exists(controller::API_FLD_USER_TEXT, $json_array)) {
-            $this->set_usr_text($json_array[controller::API_FLD_USER_TEXT]);
+        if (array_key_exists(api::FLD_USER_TEXT, $json_array)) {
+            $this->set_usr_text($json_array[api::FLD_USER_TEXT]);
         } else {
             $this->set_usr_text(null);
         }
@@ -109,7 +110,7 @@ class formula extends sandbox_typed_dsp
     {
         $vars = parent::api_array();
 
-        $vars[controller::API_FLD_USER_TEXT] = $this->usr_text();
+        $vars[api::FLD_USER_TEXT] = $this->usr_text();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -148,7 +149,7 @@ class formula extends sandbox_typed_dsp
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(api::FORMULA, $this->id, $back, api::PAR_VIEW_FORMULAS);
+        $url = $html->url(api_dsp::FORMULA, $this->id, $back, api_dsp::PAR_VIEW_FORMULAS);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 

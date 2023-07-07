@@ -104,13 +104,13 @@ class ref extends db_object_dsp
         } else {
             $this->source = null;
         }
-        if (array_key_exists(controller::API_FLD_EXTERNAL_KEY, $json_array)) {
-            $this->set_external_key($json_array[controller::API_FLD_EXTERNAL_KEY]);
+        if (array_key_exists(api::FLD_EXTERNAL_KEY, $json_array)) {
+            $this->set_external_key($json_array[api::FLD_EXTERNAL_KEY]);
         } else {
             $this->set_external_key(null);
         }
-        if (array_key_exists(controller::API_FLD_URL, $json_array)) {
-            $this->set_url($json_array[controller::API_FLD_URL]);
+        if (array_key_exists(api::FLD_URL, $json_array)) {
+            $this->set_url($json_array[api::FLD_URL]);
         } else {
             $this->set_url(null);
         }
@@ -234,8 +234,8 @@ class ref extends db_object_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[controller::API_FLD_URL] = $this->url();
-        $vars[controller::API_FLD_EXTERNAL_KEY] = $this->external_key();
+        $vars[api::FLD_URL] = $this->url();
+        $vars[api::FLD_EXTERNAL_KEY] = $this->external_key();
         $vars[api::FLD_PHRASE] = $this->phr->id();
         $vars[api::FLD_SOURCE] = $this->source->id();
         $vars[api::FLD_TYPE] = $this->type_id();
