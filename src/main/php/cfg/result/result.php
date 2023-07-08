@@ -759,10 +759,6 @@ class result extends sandbox_value
         return $result;
     }
 
-    function id_field(): string
-    {
-        return self::FLD_ID;
-    }
 
     /*
      * phrase loading methods

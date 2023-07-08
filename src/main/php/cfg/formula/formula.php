@@ -594,7 +594,10 @@ class formula extends sandbox_typed
         return parent::load_by_name($name, $class);
     }
 
-    function id_field(): string
+    /**
+     * @return string with the id field name of the formula (not the formula word)
+     */
+    protected function id_field(): string
     {
         return self::FLD_ID;
     }
@@ -890,7 +893,7 @@ class formula extends sandbox_typed
 
         $db_con->set_type(sql_db::TBL_RESULT);
         $db_con->set_usr($this->user()->id);
-        return $db_con->delete($this->fld_id(), $this->id);
+        return $db_con->delete(self::FLD_ID, $this->id);
     }
 
     /**
@@ -1612,7 +1615,7 @@ class formula extends sandbox_typed
         foreach ($elm_add_ids as $elm_add_id) {
             $field_names = array();
             $field_values = array();
-            $field_names[] = $this->fld_id();
+            $field_names[] = self::FLD_ID;
             $field_values[] = $this->id;
             $field_names[] = user::FLD_ID;
             if ($frm_usr_id > 0) {
@@ -1642,7 +1645,7 @@ class formula extends sandbox_typed
         foreach ($elm_del_ids as $elm_del_id) {
             $field_names = array();
             $field_values = array();
-            $field_names[] = $this->fld_id();
+            $field_names[] = self::FLD_ID;
             $field_values[] = $this->id;
             if ($frm_usr_id > 0) {
                 $field_names[] = user::FLD_ID;
@@ -1922,12 +1925,12 @@ class formula extends sandbox_typed
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
-                $this->usr_cfg_id = $db_row[$this->fld_id()];
+                $this->usr_cfg_id = $db_row[self::FLD_ID];
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
-                $log_id = $db_con->insert(array($this->fld_id(), user::FLD_ID), array($this->id(), $this->user()->id));
+                $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_formula failed.');
                     $result = false;
@@ -2001,7 +2004,7 @@ class formula extends sandbox_typed
         $db_con->set_type(sql_db::TBL_FORMULA_ELEMENT);
         try {
             $msg = $db_con->delete(
-                array($this->fld_id(), user::FLD_ID),
+                array(self::FLD_ID, user::FLD_ID),
                 array($this->id(), $this->user()->id));
         } catch (Exception $e) {
             log_err($action . ' elements ' . $msg_failed . ' because ' . $e);
@@ -2012,7 +2015,7 @@ class formula extends sandbox_typed
             $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
             try {
                 $msg = $db_con->delete(
-                    array($this->fld_id(), user::FLD_ID),
+                    array(self::FLD_ID, user::FLD_ID),
                     array($this->id(), $this->user()->id));
                 if ($msg == '') {
                     $this->usr_cfg_id = null;

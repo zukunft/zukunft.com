@@ -515,7 +515,10 @@ class word extends sandbox_typed
         return parent::load_by_name($name, $class);
     }
 
-    function id_field(): string
+    /**
+     * @return string with the id field name of the word (not the related formula)
+     */
+    protected function id_field(): string
     {
         return self::FLD_ID;
     }

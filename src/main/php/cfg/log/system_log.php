@@ -255,8 +255,7 @@ class system_log extends db_object
     }
 
     /**
-     * function that can be overwritten by the child object
-     * @return string the field name of the prime database index of the object
+     * @return string sys_log_id instead of system_log_id
      */
     protected function id_field(): string
     {

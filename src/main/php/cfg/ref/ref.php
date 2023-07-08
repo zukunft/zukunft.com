@@ -495,11 +495,6 @@ class ref extends sandbox_link_with_type
         return $result;
     }
 
-    function id_field(): string
-    {
-        return self::FLD_ID;
-    }
-
 
     /*
      * Interface

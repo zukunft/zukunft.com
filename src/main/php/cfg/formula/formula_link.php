@@ -387,11 +387,6 @@ class formula_link extends sandbox_link_with_type
         return $result;
     }
 
-    function id_field(): string
-    {
-        return self::FLD_ID;
-    }
-
     function from_field(): string
     {
         return formula::FLD_ID;

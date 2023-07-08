@@ -320,8 +320,8 @@ class batch_job extends db_object
     }
 
     /**
-     * function that can be overwritten by the child object
-     * @return string the field name of the prime database index of the object
+     * TODO align the field name with the object
+     * @return string calc_and_cleanup_task_id instead of batch_job
      */
     protected function id_field(): string
     {

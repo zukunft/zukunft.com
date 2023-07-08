@@ -519,11 +519,6 @@ class component extends sandbox_typed
         return parent::load_by_name($name, $class);
     }
 
-    function id_field(): string
-    {
-        return self::FLD_ID;
-    }
-
     function name_field(): string
     {
         return self::FLD_NAME;

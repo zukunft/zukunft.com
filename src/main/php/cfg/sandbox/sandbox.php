@@ -242,12 +242,14 @@ class sandbox extends db_object
      */
 
     /**
-     * simply return the id database field name of the object
+     * TODO deprecate because using the object const is actually faster in execution
+     * return the expected database id field name of the object
      * should actually be static, but seems to be not yet possible
      * TODO check if it can be combined with id_field()
      */
-    function fld_id(): string
+    function fld_id(string $class = self::class): string
     {
+        $lib = new library();
         return $this->obj_name . sql_db::FLD_EXT_ID;
     }
 

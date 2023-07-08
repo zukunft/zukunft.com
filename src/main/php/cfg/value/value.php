@@ -658,11 +658,6 @@ class value extends sandbox_value
         log_debug('got ' . $this->number . ' for ' . $this->dsp_id());
     }
 
-    function id_field(): string
-    {
-        return self::FLD_ID;
-    }
-
     function all_sandbox_fields(): array
     {
         return self::ALL_SANDBOX_FLD_NAMES;

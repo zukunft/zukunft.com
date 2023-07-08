@@ -853,11 +853,6 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return $this->load($qp);
     }
 
-    function id_field(): string
-    {
-        return self::FLD_ID;
-    }
-
     function name_field(): string
     {
         return self::FLD_NAME;
