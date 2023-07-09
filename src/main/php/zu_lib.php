@@ -14,7 +14,13 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
-    TODO add system and user config parameter that are e.g. 100 views a view is automatically freezed for the user
+    TODO clean up the phrase_list (and triple_list and word_list) cfg/class and add unit and db read tests for all
+    TODO add a useful and self speaking verb unit test for all verbs
+    TODO for some verbs such as "is part of" the triple itself should by de fault not be included in the foaf list
+    TODO use phrase get_or_add in test
+    TODO add a unit and db test
+    TODO add a simple value format where the json key is used as the phrase name e.g "useful number of selection entries": 7
+    TODO add system and user config parameter that are e.g. 100 views a view is automatically frozen for the user
     TODO add a trigger to the message header to force the frontend update of types, verbs und user configuration if needed
     TODO use words and values also for the system and user config
     TODO create a config get function for the frontend

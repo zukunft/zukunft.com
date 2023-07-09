@@ -1691,7 +1691,8 @@
       },
       {
         "id": 10,
-        "name": "uses"
+        "name": "uses",
+        "comment": "real use e.g. wind energy is used by a wind turbine"
       },
       {
         "id": 11,
@@ -1746,8 +1747,8 @@
       {
         "id": 21,
         "code_id": "selector",
-        "name": "selector for",
-        "comment": "words used to group and select other words to shorten the selection"
+        "name": "is selector for",
+        "comment": "used to group a selection list to make it shorter"
       }
     ],
     "system_views": [

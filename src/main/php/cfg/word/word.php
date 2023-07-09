@@ -1066,7 +1066,7 @@ class word extends sandbox_typed
         return $result;
     }
 
-    function dsp_graph(string $direction, verb_list $link_types, string $back = ''): string
+    function dsp_graph(foaf_direction $direction, verb_list $link_types, string $back = ''): string
     {
         return $this->phrase()->dsp_graph($direction, $link_types, $back);
     }
@@ -1514,7 +1514,7 @@ class word extends sandbox_typed
     /**
      * returns a list of the link types related to this word e.g. for "Company" the link "are" will be returned, because "ABB" "is a" "Company"
      */
-    function link_types(string $direction): verb_list
+    function link_types(foaf_direction $direction): verb_list
     {
         log_debug($this->dsp_id() . ' and user ' . $this->user()->id());
 
@@ -1532,7 +1532,7 @@ class word extends sandbox_typed
      */
     private function verb_list_up(): verb_list
     {
-        return $this->link_types(word_select_direction::UP);
+        return $this->link_types(foaf_direction::UP);
     }
 
     /**
@@ -1540,7 +1540,7 @@ class word extends sandbox_typed
      */
     private function verb_list_down(): verb_list
     {
-        return $this->link_types(word_select_direction::DOWN);
+        return $this->link_types(foaf_direction::DOWN);
     }
 
     private function phrase_list_up(): phrase_list

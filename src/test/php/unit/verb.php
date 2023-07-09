@@ -32,6 +32,7 @@
 
 namespace test;
 
+use cfg\foaf_direction;
 use cfg\verb_list;
 use html\verb\verb as verb_dsp;
 use cfg\phrase;
@@ -92,10 +93,10 @@ class verb_unit_tests
         $vrb_lst = new verb_list($usr);
         $phr = new phrase($usr);
         $phr->set_id(5);
-        $this->assert_sql_by_linked_phrases($t, $db_con, $vrb_lst, $phr, word_select_direction::UP);
+        $this->assert_sql_by_linked_phrases($t, $db_con, $vrb_lst, $phr, foaf_direction::UP);
 
         // ... same for direction down
-        $this->assert_sql_by_linked_phrases($t, $db_con, $vrb_lst, $phr, word_select_direction::DOWN);
+        $this->assert_sql_by_linked_phrases($t, $db_con, $vrb_lst, $phr, foaf_direction::DOWN);
 
     }
 
@@ -106,10 +107,10 @@ class verb_unit_tests
      * @param sql_db $db_con does not need to be connected to a real database
      * @param verb_list $vrb_lst the verb list object used for testing
      * @param phrase $phr the phrase used for testing
-     * @param string $direction
+     * @param foaf_direction $direction
      */
     private function assert_sql_by_linked_phrases(
-        test_cleanup $t, sql_db $db_con, verb_list $vrb_lst, phrase $phr, string $direction
+        test_cleanup $t, sql_db $db_con, verb_list $vrb_lst, phrase $phr, foaf_direction $direction
     ): void
     {
         // check the Postgres query syntax

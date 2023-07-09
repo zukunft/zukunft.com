@@ -1010,6 +1010,49 @@ class value extends sandbox_value
     }
 
     /**
+     * import a simple value with just one related phrase
+     *
+     * @param string $phr_name the phrase name of the number value to add
+     * @param float $value the numeric value that should be linked to the phrase
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_phrase_value(string $phr_name, float $value, object $test_obj = null): user_message
+    {
+        $msg = new user_message();
+        log_debug();
+
+        if ($test_obj) {
+            $do_save = false;
+        } else {
+            $do_save = true;
+        }
+
+        $get_ownership = false;
+        $phr_lst = new phrase_list($this->user());
+        $phr = new phrase($this->user());
+        if ($do_save) {
+            $msg = $phr->get_or_add($phr_name);
+        } else {
+            $phr->set_name($phr_name);
+        }
+
+        if ($msg->is_ok()) {
+            $phr_lst->add($phr);
+            $phr_grp = $phr_lst->get_grp($do_save);
+            $this->grp = $phr_grp;
+            $this->number = $value;
+
+            // save the value in the database
+            if ($do_save) {
+                $msg->add_message($this->save());
+            }
+        }
+
+        return $msg;
+    }
+
+    /**
      * create an object for the export
      */
     function export_obj(bool $do_load = true): exp_obj

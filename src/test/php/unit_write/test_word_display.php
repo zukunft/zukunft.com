@@ -37,6 +37,7 @@
 use api\phrase_api;
 use api\triple_api;
 use api\word_api;
+use cfg\foaf_direction;
 use html\html_selector;
 use cfg\library;
 use cfg\verb;
@@ -58,17 +59,17 @@ function run_word_display_test(test_cleanup $t): void
     // correct test would be using a "fixed HTML text contains"
     $wrd_ZH = new word($usr);
     $wrd_ZH->load_by_name(word_api::TN_ZH, word::class);
-    $direction = 'up';
+    $direction = foaf_direction::UP;
     $target = word_api::TN_COMPANY;
     // get the link types related to the word
     $link_types = $wrd_ZH->link_types($direction);
     $result = $wrd_ZH->dsp_graph($direction, $link_types, 0);
-    $t->dsp_contains('word_dsp->dsp_graph ' . $direction . ' for ' . $wrd_ZH->name(), $target, $result);
+    $t->dsp_contains('word_dsp->dsp_graph ' . $direction->value . ' for ' . $wrd_ZH->name(), $target, $result);
 
     // ... and the other side
     $wrd_ZH = new word($usr);
     $wrd_ZH->load_by_name(word_api::TN_ZH, word::class);
-    $direction = 'down';
+    $direction = foaf_direction::DOWN;
     $target = 'ZU';
     $link_types = $wrd_ZH->link_types($direction);
     $result = $wrd_ZH->dsp_graph($direction, $link_types, 0);
@@ -77,7 +78,7 @@ function run_word_display_test(test_cleanup $t): void
     // ... and the graph display for 2019
     $wrd_2020 = new word($usr);
     $wrd_2020->load_by_name(word_api::TN_2020, word::class);
-    $direction = 'down';
+    $direction = foaf_direction::DOWN;
     $wrd_2021 = new word($usr);
     $wrd_2021->load_by_name(word_api::TN_2021, word::class);
     $lnk_20_to_21 = $t->load_triple(word_api::TN_2021, verb::FOLLOW, word_api::TN_2020);
@@ -95,7 +96,7 @@ function run_word_display_test(test_cleanup $t): void
     $t->assert_text_contains($t->name . ' has 2020 to 2021 link', $result, $lnk_20_to_21->id());
 
     // ... and the other side
-    $direction = 'up';
+    $direction = foaf_direction::UP;
     $wrd_2019 = $t->load_word(word_api::TN_2019);
     $wrd_year = $t->load_word(word_api::TN_YEAR);
     $lnk_20_is_year = $t->load_triple(word_api::TN_2020, verb::IS, word_api::TN_YEAR);
@@ -154,7 +155,7 @@ function run_word_display_test(test_cleanup $t): void
     $sel = new html_selector;
     $sel->form = 'test_form';
     $sel->name = 'select_company';
-    $phr_lst = $phr_corp->phrases('down');
+    $phr_lst = $phr_corp->phrases(foaf_direction::DOWN);
     $sel->lst = $phr_lst->lst_key();
     $sel->selected = $phr_ZH_INS->id();
     $sel->dummy_text = '... please select';

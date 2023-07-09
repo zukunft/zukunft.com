@@ -82,7 +82,7 @@ class phrase_list_unit_db_tests
 
         // all children
         $sys_cfg_root_phr = new phrase($t->usr1, word::SYSTEM_CONFIG);
-        $sys_cfg_phr_lst = $sys_cfg_root_phr->all_children();
+        $sys_cfg_phr_lst = $sys_cfg_root_phr->all_related();
         $auto_years = new phrase($t->usr1, config::YEARS_AUTO_CREATE_DSP);
         $test_name = 'The default number of forecast years is a system configuration parameter';
         $t->assert_contains($test_name, $sys_cfg_phr_lst->names(), array($auto_years->name()));

@@ -37,6 +37,7 @@ include_once WEB_WORD_PATH . 'word_list.php';
 
 use api\verb_api;
 use api\word_api;
+use cfg\foaf_direction;
 use cfg\phrase_type;
 use cfg\library;
 use cfg\sql_db;
@@ -97,7 +98,7 @@ class word_list_unit_tests
         $wrd->set_id(6);
         $wrd_lst->add($wrd);
         $vrb = null;
-        $direction = word_select_direction::UP;
+        $direction = foaf_direction::UP;
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         // the parent words filtered by verb
@@ -114,7 +115,7 @@ class word_list_unit_tests
         $wrd->set_id(8);
         $wrd_lst->add($wrd);
         $vrb = null;
-        $direction = word_select_direction::DOWN;
+        $direction = foaf_direction::DOWN;
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         // the child words filtered by verb
@@ -412,10 +413,11 @@ class word_list_unit_tests
      * @param sql_db $db_con the test database connection
      * @param word_list $lst the empty word list object
      * @param verb|null $vrb to select only words linked with this verb
-     * @param string $direction to define the link direction
+     * @param foaf_direction $direction to define the link direction
      * @return void
      */
-    private function assert_sql_by_linked_words(test_cleanup $t, sql_db $db_con, word_list $lst, ?verb $vrb, string $direction): void
+    private function assert_sql_by_linked_words(
+        test_cleanup $t, sql_db $db_con, word_list $lst, ?verb $vrb, foaf_direction $direction): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

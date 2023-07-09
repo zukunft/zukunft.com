@@ -40,6 +40,7 @@
 
 namespace cfg;
 
+include_once MODEL_HELPER_PATH . 'foaf_direction.php';
 include_once API_WORD_PATH . 'word_list.php';
 
 use api\word_list_api;
@@ -231,10 +232,10 @@ class word_list extends sandbox_list
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param verb|null $vrb if set to select only words linked with this verb
-     * @param string $direction to define the link direction
+     * @param foaf_direction $direction to define the link direction
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_linked_words(sql_db $db_con, ?verb $vrb, string $direction): sql_par
+    function load_sql_linked_words(sql_db $db_con, ?verb $vrb, foaf_direction $direction): sql_par
     {
         $qp = $this->load_sql($db_con);
         $sql_where = '';
@@ -248,18 +249,18 @@ class word_list extends sandbox_list
             } else {
                 $sql_in = ' IN (';
             }
-            if ($direction == word_select_direction::UP) {
+            if ($direction == foaf_direction::UP) {
                 $qp->name .= 'parents';
                 $db_con->add_par_in_int($this->ids());
                 $sql_where = sql_db::LNK_TBL . '.' . triple::FLD_FROM . $sql_in . $db_con->par_name() . ')';
                 $join_field = triple::FLD_TO;
-            } elseif ($direction == word_select_direction::DOWN) {
+            } elseif ($direction == foaf_direction::DOWN) {
                 $qp->name .= 'children';
                 $db_con->add_par_in_int($this->ids());
                 $sql_where = sql_db::LNK_TBL . '.' . triple::FLD_TO . $sql_in . $db_con->par_name() . ')';
                 $join_field = triple::FLD_FROM;
             } else {
-                log_err('Unknown direction ' . $direction);
+                log_err('Unknown direction ' . $direction->value);
             }
             // verbs can have a negative id for the reverse selection
             if ($vrb != null) {
@@ -406,10 +407,10 @@ class word_list extends sandbox_list
      * and remember which words have be added
      *
      * @param verb|null $vrb if set to select only words linked with this verb
-     * @param string $direction to define the link direction
+     * @param foaf_direction $direction to define the link direction
      * @return word_list with only the new added words
      */
-    function load_linked_words(?verb $vrb, string $direction): word_list
+    function load_linked_words(?verb $vrb, foaf_direction $direction): word_list
     {
 
         global $db_con;
@@ -485,7 +486,7 @@ class word_list extends sandbox_list
      * @param int $level 1 if the parents of the original words are added
      * @param word_list $added_wrd_lst list of the added word during the foaf selection process
      * @param verb|null $vrb id of the verb that is used to select the parents
-     * @param string $direction to select if the parents or children should be selected - "up" to select the parents
+     * @param foaf_direction $direction to select if the parents or children should be selected - "up" to select the parents
      * @param int $max_level the max $level that should be used for the selection
      * @return word_list the accumulated list of added words
      */
@@ -493,14 +494,14 @@ class word_list extends sandbox_list
         int $level,
         word_list $added_wrd_lst,
         ?verb $vrb,
-        string $direction,
+        foaf_direction $direction,
         int $max_level = 0): word_list
     {
         $log_msg = 'foaf_level ';
         if ($vrb != null) {
             log_debug('verb ' . $vrb->dsp_id() . ' ');
         }
-        $log_msg .= 'level ' . $level . ' ' . $direction . ' added ' . $added_wrd_lst->name();
+        $log_msg .= 'level ' . $level . ' ' . $direction->value . ' added ' . $added_wrd_lst->name();
         log_debug($log_msg);
         if ($max_level > 0) {
             $max_loops = $max_level;
@@ -536,7 +537,7 @@ class word_list extends sandbox_list
     {
         $level = 0;
         $added_wrd_lst = new word_list($this->user()); // list of the added word ids
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $vrb, word_select_direction::UP, 0);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $vrb, foaf_direction::UP, 0);
 
         log_debug($added_wrd_lst->dsp_id());
         return $added_wrd_lst;
@@ -552,7 +553,7 @@ class word_list extends sandbox_list
     function parents(?verb $vrb, int $level): word_list
     {
         $added_wrd_lst = new word_list($this->user()); // list of the added word ids
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $vrb, word_select_direction::UP, $level);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $vrb, foaf_direction::UP, $level);
 
         log_debug($added_wrd_lst->name());
         return $added_wrd_lst;
@@ -570,7 +571,7 @@ class word_list extends sandbox_list
     function children(?verb $vrb, int $level = 0): word_list
     {
         $added_wrd_lst = new word_list($this->user()); // list of the added word ids
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $vrb, word_select_direction::DOWN, $level);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $vrb, foaf_direction::DOWN, $level);
 
         log_debug($added_wrd_lst->dsp_id());
         return $added_wrd_lst;
@@ -585,7 +586,7 @@ class word_list extends sandbox_list
     function direct_children(?verb $vrb): word_list
     {
         $added_wrd_lst = new word_list($this->user()); // list of the added word ids
-        $added_wrd_lst = $this->foaf_level(1, $added_wrd_lst, $vrb, word_select_direction::DOWN, 1);
+        $added_wrd_lst = $this->foaf_level(1, $added_wrd_lst, $vrb, foaf_direction::DOWN, 1);
 
         log_debug($added_wrd_lst->dsp_id());
         return $added_wrd_lst;
@@ -1618,13 +1619,4 @@ class word_list extends sandbox_list
         return $result;
     }
 
-}
-
-/**
- * helper class
- */
-class word_select_direction
-{
-    const UP = 'up';     // to select the parents
-    const DOWN = 'down'; // to select the children
 }

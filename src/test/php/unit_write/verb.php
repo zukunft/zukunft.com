@@ -34,6 +34,7 @@ namespace test;
 
 use api\verb_api;
 use api\word_api;
+use cfg\foaf_direction;
 use cfg\verb;
 use cfg\word_select_direction;
 
@@ -82,7 +83,7 @@ class verb_test
 
         // check the loading of the "is a" verb
         $wrd_ZH = $t->load_word(word_api::TN_ZH);
-        $vrb_lst = $wrd_ZH->link_types(word_select_direction::UP);
+        $vrb_lst = $wrd_ZH->link_types(foaf_direction::UP);
         $t->assert_contains('verb_list->link_types ', $vrb_lst->db_id_list(), [verb_api::TN_IS]);
     }
 

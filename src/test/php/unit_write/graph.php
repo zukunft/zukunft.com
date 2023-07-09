@@ -32,6 +32,7 @@
 namespace test\write;
 
 use api\word_api;
+use cfg\foaf_direction;
 use cfg\phrase_list;
 use cfg\triple_list;
 use cfg\value_list;
@@ -76,7 +77,7 @@ class graph_test
         //         these are the word links that are needed for a complete export
         $lnk_lst = new triple_list($usr);
         $lnk_lst->wrd_lst = $phr_lst_used->wrd_lst();
-        $lnk_lst->direction = 'up';
+        $lnk_lst->direction = foaf_direction::UP;
         $lnk_lst->load_old();
         $result = $lnk_lst->name();
         // check if at least the basic relations are in the database
@@ -94,7 +95,7 @@ class graph_test
         $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO));
         $lnk_lst = new triple_list($usr);
         $lnk_lst->wrd_lst = $phr_lst->wrd_lst_all();
-        $lnk_lst->direction = 'up';
+        $lnk_lst->direction = foaf_direction::UP;
         $lnk_lst->load_old();
         $result = $lnk_lst->name();
         // TODO to be reviewed
@@ -111,7 +112,7 @@ class graph_test
         $graph = new triple_list($usr);
         $graph->wrd = $ZH;
         $graph->vrb = $is;
-        $graph->direction = 'up';
+        $graph->direction = foaf_direction::UP;
         $graph->load_old();
         //$target = zut_html_list_related($ZH->id, $graph->direction, $usr->id());
         $result = $graph->display($back);

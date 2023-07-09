@@ -74,6 +74,7 @@
     {
       "name": "uses",
       "code_id": "",
+      "description": "real use e.g. wind energy is used by a wind turbine",
       "name_plural_reverse": "are used by",
       "name_plural": "uses",
       "name_reverse": "is used by"
@@ -157,12 +158,12 @@
       "name_reverse": ""
     },
     {
-      "name": "selector for",
+      "name": "is selector for",
       "code_id": "selector",
-      "description": "words used to group and select other words to shorten the selection",
-      "name_plural": "selectors",
-      "name_plural_reverse": "",
-      "name_reverse": ""
+      "description": "used to group a selection list to make it shorter",
+      "name_plural": "are selectors for",
+      "name_plural_reverse": "are grouped by",
+      "name_reverse": "is grouped by"
     }
   ]
 }

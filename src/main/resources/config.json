@@ -19,12 +19,6 @@
       "protection": "admin_protection"
     },
     {
-      "name": "system time settings",
-      "description": "to group the time related system settings",
-      "type": "hidden_system",
-      "protection": "admin_protection"
-    },
-    {
       "name": "automatic created years",
       "description": "the number of years around the current year created automatically",
       "type": "hidden_system",
@@ -37,8 +31,8 @@
       "protection": "admin_protection"
     },
     {
-      "name": "selections system settings",
-      "description": "to group the system settings that change the selections",
+      "name": "useful number of selection entries",
+      "description": "the max number of selection entries shown to the user at once; if there a more, the less important are shown if the user has pressed on 'more'",
       "type": "hidden_system",
       "protection": "admin_protection"
     },
@@ -54,13 +48,7 @@
       "protection": "admin_protection"
     },
     {
-      "name": "system view settings",
-      "description": "to group the page display related system settings",
-      "type": "hidden_system",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "number of view to force freezing a view",
+      "name": "number of user views to force freezing a zukunft.com view",
       "description": "system setting that defines the number of view by one user to automatically freeze the view for the user",
       "type": "hidden_system",
       "protection": "admin_protection"
@@ -68,12 +56,6 @@
     {
       "name": "database",
       "description": "An organized collection of data stored and accessed electronically",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "system database settings",
-      "description": "to group the database related system settings",
-      "type": "hidden_system",
       "protection": "admin_protection"
     },
     {
@@ -85,120 +67,83 @@
   ],
   "triples": [
     {
-      "from": "system time settings",
-      "verb": "is part of",
-      "to": "system configuration",
-      "description": "the time related settings for this zukunft.com pod",
-      "type": "hidden_triple",
-      "protection": "admin_protection"
-    },
-    {
+      "name": "system time settings",
       "from": "time",
       "verb": "is selector for",
-      "to": "system time settings",
-      "description": "to group the time related the system settings and as a selector",
+      "to": "system configuration",
+      "description": "to group the time related settings for this zukunft.com pod",
       "type": "hidden_triple",
       "protection": "admin_protection"
     },
     {
       "from": "automatic created years",
-      "verb": "is part of",
+      "verb": "is a",
       "to": "system time settings",
       "type": "hidden_triple",
       "protection": "admin_protection"
     },
     {
-      "from": "selections system settings",
-      "verb": "is part of",
+      "name": "system selection settings",
+      "from": "select",
+      "verb": "is selector for",
       "to": "system configuration",
+      "description": "the word select is used to group the selection related settings for this zukunft.com pod",
       "type": "hidden_triple",
       "protection": "admin_protection"
     },
     {
-      "from": "select",
-      "verb": "is selector for",
-      "to": "selections system settings",
-      "description": "the word select should be used as a selector for the suggestion settings",
+      "from": "useful number of selection entries",
+      "verb": "is a",
+      "to": "system selection settings",
       "type": "hidden_triple",
       "protection": "admin_protection"
     },
     {
       "from": "min. % of words in list to suggest the word for the next",
-      "verb": "is part of",
-      "to": "selections system settings",
+      "verb": "is a",
+      "to": "system selection settings",
       "type": "hidden_triple",
       "protection": "admin_protection"
     },
     {
-      "from": "system view settings",
-      "verb": "is part of",
-      "to": "system configuration",
-      "type": "hidden_triple",
-      "protection": "admin_protection"
-    },
-    {
+      "name": "system display settings",
       "from": "view",
       "verb": "is selector for",
-      "to": "system view settings",
-      "description": "to group the view related the system settings and as a selector",
-      "type": "hidden_triple",
-      "protection": "admin_protection"
-    },
-    {
-      "from": "number of view to force freezing a view",
-      "verb": "is part of",
-      "to": "system view setting",
-      "type": "hidden_triple",
-      "protection": "admin_protection"
-    },
-    {
-      "from": "system database settings",
-      "verb": "is part of",
       "to": "system configuration",
+      "description": "to group the view related settings for this zukunft.com pod",
       "type": "hidden_triple",
       "protection": "admin_protection"
     },
     {
+      "from": "number of user views to force freezing a zukunft.com view",
+      "verb": "is a",
+      "to": "system display settings",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "system database settings",
       "from": "database",
       "verb": "is selector for",
-      "to": "system database settings",
-      "description": "to group the database related the system settings and as a selector",
+      "to": "system configuration",
+      "description": "to group the database related system settings",
       "type": "hidden_triple",
       "protection": "admin_protection"
     },
     {
       "from": "database update block size",
-      "verb": "is part of",
+      "verb": "is a",
       "to": "system database setting",
       "type": "hidden_triple",
       "protection": "admin_protection"
     }
   ],
-  "values": [
-    {
-      "words": [
-        "automatic created years"
-      ],
-      "number": 10
-    },
-    {
-      "words": [
-        "min. % of words in list to suggest the word for the next"
-      ],
-      "number": 0.3
-    },
-    {
-      "words": [
-        "number of view to force freezing a view"
-      ],
-      "number": 20
-    },
-    {
-      "words": [
-        "database update block size"
-      ],
-      "number": 100
-    }
-  ]
+  "phrase-values": {
+    "automatic created years": 10,
+    "useful number of selection entries": 7,
+    "min. % of words in list to suggest the word for the next": 0.3,
+    "number of user views to force freezing a zukunft.com view": 20,
+    "database update block size": 100
+  }
 }
 

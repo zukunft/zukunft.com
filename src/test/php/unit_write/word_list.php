@@ -34,6 +34,7 @@ namespace test\write;
 
 use api\value_api;
 use api\word_api;
+use cfg\foaf_direction;
 use cfg\library;
 use cfg\phr_ids;
 use cfg\phrase_group;
@@ -75,7 +76,7 @@ class word_list_test
         // test add by verb e.g. "Zurich" "is a" "Canton", "City" or "Company"
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_ZH));
-        $wrd_lst_linked = $wrd_lst->load_linked_words($verbs->get(verb::IS), word_select_direction::UP);
+        $wrd_lst_linked = $wrd_lst->load_linked_words($verbs->get(verb::IS), foaf_direction::UP);
         $result = $lib->dsp_array($wrd_lst_linked->names());
         $target = word_api::TN_CANTON . "," . word_api::TN_CITY . "," . word_api::TN_COMPANY; // order adjusted based on the number of usage
         $t->assert('word_list->load_linked_words for "' . word_api::TN_ZH . '" "' . verb::IS . '" up', $result, $target);

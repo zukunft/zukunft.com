@@ -191,7 +191,7 @@ class component_dsp_old extends component
         } else {
             if ($this->type_id == $component_types->id(view_cmp_type::WORDS_DOWN)) {
                 log_debug('in view ' . $this->dsp_id() . ' for word ' . $dbo->name() . ' and user ' . $this->user()->name);
-                $result .= $dbo->dsp_graph(word_select_direction::DOWN);
+                $result .= $dbo->dsp_graph(foaf_direction::DOWN);
             }
         }
 
@@ -205,7 +205,7 @@ class component_dsp_old extends component
         $result = '';
         if ($this->type_id == $component_types->id(view_cmp_type::WORDS_DOWN)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
-            $result .= $wrd->dsp_graph(word_select_direction::UP);
+            $result .= $wrd->dsp_graph(foaf_direction::UP);
         }
         return $result;
     }
@@ -268,8 +268,8 @@ class component_dsp_old extends component
         if ($this->type_id == $component_types->id(view_cmp_type::VALUES_ALL)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $phr->name() . ' and user ' . $this->user()->name);
             $result .= '<br>';
-            $phrases_down = $phr->dsp_graph(word_select_direction::DOWN);
-            $phrases_up = $phr->dsp_graph(word_select_direction::UP,);
+            $phrases_down = $phr->dsp_graph(foaf_direction::DOWN);
+            $phrases_up = $phr->dsp_graph(foaf_direction::UP,);
             if ($phrases_down <> '' or $phrases_up <> '') {
                 $result .= $phrases_down . $phrases_up;
             } else {

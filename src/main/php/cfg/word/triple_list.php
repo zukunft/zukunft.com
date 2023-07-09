@@ -49,9 +49,6 @@ use html\word\triple_list as triple_list_dsp;
 
 class triple_list extends sandbox_list
 {
-    const DIRECTION_UP = 'up';
-    const DIRECTION_DOWN = 'down';
-    const DIRECTION_BOTH = 'both';
 
     public array $lst; // the list of triples
     private user $usr; // the user object of the person for whom the triple list is loaded, so to say the viewer
@@ -62,7 +59,7 @@ class triple_list extends sandbox_list
     public ?word_list $wrd_lst = null; // show the graph elements related to these words
     public ?verb $vrb = null;     // show the graph elements related to this verb
     public ?verb_list $vrb_lst = null; // show the graph elements related to these verbs
-    public string $direction = self::DIRECTION_DOWN;  // either up, down or both
+    public foaf_direction $direction = foaf_direction::DOWN;  // either up, down or both
 
 
     /*
@@ -94,7 +91,7 @@ class triple_list extends sandbox_list
      */
     function dsp_obj(): triple_list
     {
-        $dsp_obj = new triple_list();
+        $dsp_obj = new triple_list($this->usr);
         foreach ($this->lst as $wrd) {
             $dsp_obj->add($wrd->dsp_obj());
         }
@@ -190,21 +187,22 @@ class triple_list extends sandbox_list
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param phrase $phr the phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection
-     * @param string $direction to select either the parents, children or all related words ana triples
+     * @param foaf_direction $direction to select either the parents, children or all related words ana triples
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr(sql_db $db_con, phrase $phr, ?verb $vrb = null, string $direction = self::DIRECTION_BOTH): sql_par
+    function load_sql_by_phr(
+        sql_db $db_con, phrase $phr, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): sql_par
     {
         $qp = $this->load_sql_new($db_con);
         if ($phr->id() <> 0) {
             $fields = array();
             $qp->name .= 'phr';
             $db_con->add_par(sql_db::PAR_INT, $phr->id());
-            if ($direction == self::DIRECTION_UP) {
+            if ($direction == foaf_direction::UP) {
                 $fields[] = triple::FLD_FROM;
-            } elseif ($direction == self::DIRECTION_DOWN) {
+            } elseif ($direction == foaf_direction::DOWN) {
                 $fields[] = triple::FLD_TO;
-            } elseif ($direction == self::DIRECTION_BOTH) {
+            } elseif ($direction == foaf_direction::BOTH) {
                 $fields[] = triple::FLD_FROM;
                 $fields[] = triple::FLD_TO;
             }
@@ -215,9 +213,55 @@ class triple_list extends sandbox_list
                     $qp->name .= '_and_vrb';
                 }
             }
-            if ($direction == self::DIRECTION_UP) {
+            if ($direction == foaf_direction::UP) {
                 $qp->name .= '_up';
-            } elseif ($direction == self::DIRECTION_DOWN) {
+            } elseif ($direction == foaf_direction::DOWN) {
+                $qp->name .= '_down';
+            }
+            $db_con->set_name($qp->name);
+            $qp->sql = $db_con->select_by_field_list($fields);
+        } else {
+            $qp->name = '';
+            log_err('At least the phrase must be set to load a triple list by phrase');
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of triples by a phrase, verb and direction
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase_list $phr_lst a list of phrase which should be used for selecting the words or triples
+     * @param verb|null $vrb if set to filter the selection
+     * @param foaf_direction $direction to select either the parents, children or all related words ana triples
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr_lst(
+        sql_db $db_con, phrase_list $phr_lst, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): sql_par
+    {
+        $qp = $this->load_sql_new($db_con);
+        if (!$phr_lst->empty()) {
+            $fields = array();
+            $qp->name .= 'phr_lst';
+            $db_con->add_par_in_int($phr_lst->ids());
+            if ($direction == foaf_direction::UP) {
+                $fields[] = triple::FLD_FROM;
+            } elseif ($direction == foaf_direction::DOWN) {
+                $fields[] = triple::FLD_TO;
+            } elseif ($direction == foaf_direction::BOTH) {
+                $fields[] = triple::FLD_FROM;
+                $fields[] = triple::FLD_TO;
+            }
+            if ($vrb != null) {
+                if ($vrb->id() > 0) {
+                    $db_con->add_par(sql_db::PAR_INT, $vrb->id());
+                    $fields[] = verb::FLD_ID;
+                    $qp->name .= '_and_vrb';
+                }
+            }
+            if ($direction == foaf_direction::UP) {
+                $qp->name .= '_up';
+            } elseif ($direction == foaf_direction::DOWN) {
                 $qp->name .= '_down';
             }
             $db_con->set_name($qp->name);
@@ -287,13 +331,29 @@ class triple_list extends sandbox_list
      * load a list of triples by a phrase, verb and direction
      * @param phrase $phr the phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection
-     * @param string $direction to select either the parents, children or all related words ana triples
+     * @param foaf_direction $direction to select either the parents, children or all related words ana triples
      * @return bool true if at least one triple found
      */
-    function load_by_phr(phrase $phr, ?verb $vrb = null, string $direction = self::DIRECTION_BOTH): bool
+    function load_by_phr(
+        phrase $phr, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_phr($db_con, $phr, $vrb, $direction);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of triples by a list of phrases, verb and direction
+     * @param phrase_list $phr_lst the phrase which should be used for selecting the words or triples
+     * @param verb|null $vrb if set to filter the selection
+     * @param foaf_direction $direction to select either the parents, children or all related words ana triples
+     * @return bool true if at least one triple found
+     */
+    function load_by_phr_lst(
+        phrase_list $phr_lst, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_phr_lst($db_con, $phr_lst, $vrb, $direction);
         return $this->load($qp);
     }
 
@@ -333,30 +393,30 @@ class triple_list extends sandbox_list
         }
         if ($sql_name == '') {
             if (isset($this->wrd)) {
-                if ($this->direction == self::DIRECTION_DOWN) {
+                if ($this->direction == foaf_direction::DOWN) {
                     $sql_name = 'triple_list_word_down';
-                } else if ($this->direction == self::DIRECTION_UP) {
+                } else if ($this->direction == foaf_direction::UP) {
                     $sql_name = 'triple_list_word_up';
-                } else if ($this->direction == self::DIRECTION_BOTH) {
+                } else if ($this->direction == foaf_direction::BOTH) {
                     $sql_name = 'triple_list_word_both';
-                    log_warning('Word link search direction ' . $this->direction . ' not yet expected');
+                    log_warning('Word link search direction ' . $this->direction->name . ' not yet expected');
                 } else {
-                    log_err('Word link search direction ' . $this->direction . ' not expected');
+                    log_err('Word link search direction ' . $this->direction->name . ' not expected');
                 }
             }
         }
         if ($sql_name == '') {
             if (isset($this->wrd_lst)) {
                 if ($this->wrd_lst->ids_txt() != '') {
-                    if ($this->direction == self::DIRECTION_DOWN) {
+                    if ($this->direction == foaf_direction::DOWN) {
                         $sql_name = 'triple_list_word_list_down';
-                    } else if ($this->direction == self::DIRECTION_UP) {
+                    } else if ($this->direction == foaf_direction::UP) {
                         $sql_name = 'triple_list_word_list_up';
-                    } else if ($this->direction == self::DIRECTION_BOTH) {
+                    } else if ($this->direction == foaf_direction::BOTH) {
                         $sql_name = 'triple_list_word_list_both';
-                        log_warning('Word link search direction ' . $this->direction . ' not yet expected');
+                        log_warning('Word link search direction ' . $this->direction->name . ' not yet expected');
                     } else {
-                        log_err('Word link search direction ' . $this->direction . ' not expected');
+                        log_err('Word link search direction ' . $this->direction->name . ' not expected');
                     }
                 }
             }
@@ -417,7 +477,7 @@ class triple_list extends sandbox_list
             if (isset($this->wrd)) {
                 $sql_wrd2_fields = $this->load_wrd_fields($db_con, '2');
                 $sql_wrd2_from = $this->load_wrd_from('2');
-                if ($this->direction == self::DIRECTION_UP) {
+                if ($this->direction == foaf_direction::UP) {
                     $sql_where = 'l.from_phrase_id = ' . $this->wrd->id();
                     $sql_wrd2 = 'l.to_phrase_id = t2.word_id';
                 } else {
@@ -440,7 +500,7 @@ class triple_list extends sandbox_list
                     $sql_wrd2_fields = $this->load_wrd_fields($db_con, '2');
                     $sql_wrd2_from = $this->load_wrd_from('2');
                     log_debug('triple_list->load based on word list loaded');
-                    if ($this->direction == self::DIRECTION_UP) {
+                    if ($this->direction == foaf_direction::UP) {
                         $sql_where = 'l.from_phrase_id IN (' . $this->wrd_lst->ids_txt() . ')';
                         $sql_wrd1 = 'AND l.from_phrase_id = t1.word_id';
                         $sql_wrd2 = 'l.to_phrase_id   = t2.word_id';
@@ -732,7 +792,7 @@ class triple_list extends sandbox_list
             log_err("The user id must be set to load a graph.", "triple_list->load");
         } else {
             if (isset($this->wrd)) {
-                log_debug('graph->display for ' . $this->wrd->name() . ' ' . $this->direction . ' and user ' . $this->user()->name . ' called from ' . $back);
+                log_debug('graph->display for ' . $this->wrd->name() . ' ' . $this->direction->value . ' and user ' . $this->user()->name . ' called from ' . $back);
             }
             $prev_verb_id = 0;
 
@@ -758,7 +818,7 @@ class triple_list extends sandbox_list
                         log_debug('graph->display type "' . $lnk->verb->name() . '"');
 
                         // select the same side of the verb
-                        if ($this->direction == word_select_direction::DOWN) {
+                        if ($this->direction == foaf_direction::DOWN) {
                             $directional_link_type_id = $lnk->verb->id();
                         } else {
                             $directional_link_type_id = $lnk->verb->id() * -1;
@@ -767,14 +827,14 @@ class triple_list extends sandbox_list
                         // display the link type
                         if ($lnk->verb->id() == $next_lnk->verb->id()) {
                             $result .= $this->wrd->plural;
-                            if ($this->direction == word_select_direction::DOWN) {
+                            if ($this->direction == foaf_direction::DOWN) {
                                 $result .= " " . $lnk->verb->rev_plural;
                             } else {
                                 $result .= " " . $lnk->verb->plural;
                             }
                         } else {
                             $result .= $this->wrd->name();
-                            if ($this->direction == word_select_direction::DOWN) {
+                            if ($this->direction == foaf_direction::DOWN) {
                                 $result .= " " . $lnk->verb->reverse;
                             } else {
                                 $result .= " " . $lnk->verb->name;

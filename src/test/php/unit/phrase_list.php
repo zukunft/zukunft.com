@@ -33,6 +33,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 
 use api\triple_api;
 use api\word_api;
+use cfg\foaf_direction;
 use cfg\phrase_type;
 use html\phrase\phrase_list as phrase_list_dsp;
 use cfg\library;
@@ -105,7 +106,7 @@ class phrase_list_unit_tests
         $phr_lst->add($wrd->phrase());
         $vrb = $verbs->get(verb::IS_PART_OF);
         $this->assert_sql_linked_phrases(
-            $db_con, $t, $phr_lst, $vrb, word_select_direction::UP
+            $db_con, $t, $phr_lst, $vrb, foaf_direction::UP
         );
 
 
@@ -277,14 +278,14 @@ class phrase_list_unit_tests
      * @param test_cleanup $t the testing object with the error counting of this test run
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param verb|null $vrb to select only words linked with this verb
-     * @param string $direction to define the link direction
+     * @param foaf_direction $direction to define the link direction
      */
     private function assert_sql_linked_phrases(
-        sql_db       $db_con,
-        test_cleanup $t,
-        object       $usr_obj,
-        ?verb        $vrb,
-        string       $direction): void
+        sql_db         $db_con,
+        test_cleanup   $t,
+        object         $usr_obj,
+        ?verb          $vrb,
+        foaf_direction $direction): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

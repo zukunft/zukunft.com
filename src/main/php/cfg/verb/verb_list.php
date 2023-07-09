@@ -101,15 +101,15 @@ class verb_list extends type_list
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param phrase $phr the phrase used as a base for selecting the verb list e.g. Zurich
-     * @param string $direction the direction towards the verbs should be selected e.g. for Zurich and UP the verb "is" should be in the list
+     * @param foaf_direction $direction the direction towards the verbs should be selected e.g. for Zurich and UP the verb "is" should be in the list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_linked_phrases_sql(sql_db $db_con, phrase $phr, string $direction): sql_par
+    function load_by_linked_phrases_sql(sql_db $db_con, phrase $phr, foaf_direction $direction): sql_par
     {
         $qp = new sql_par(self::class);
         if ($phr->id() != 0) {
             $qp->name .= 'phr_id';
-            if ($direction == word_select_direction::UP) {
+            if ($direction == foaf_direction::UP) {
                 $qp->name .= '_up';
             } else {
                 $qp->name .= '_down';
@@ -129,7 +129,7 @@ class verb_list extends type_list
             // set the where clause depending on the values given
             // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
             $db_con->add_par(sql_db::PAR_INT, $phr->id());
-            if ($direction == word_select_direction::UP) {
+            if ($direction == foaf_direction::UP) {
                 $qp->sql = $db_con->select_by_field(triple::FLD_FROM);
             } else {
                 $qp->sql = $db_con->select_by_field(triple::FLD_TO);
@@ -145,10 +145,10 @@ class verb_list extends type_list
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param phrase $phr the phrase used as a base for selecting the verb list e.g. Zurich
-     * @param string $direction the direction towards the verbs should be selected e.g. for Zurich and UP the verb "is" should be in the list
+     * @param foaf_direction $direction the direction towards the verbs should be selected e.g. for Zurich and UP the verb "is" should be in the list
      * @return bool true if at least one verb is found
      */
-    function load_by_linked_phrases(sql_db $db_con, phrase $phr, string $direction): bool
+    function load_by_linked_phrases(sql_db $db_con, phrase $phr, foaf_direction $direction): bool
     {
 
         $result = false;
@@ -156,7 +156,7 @@ class verb_list extends type_list
         if ($this->user() == null) {
             log_err("The user id must be set to load a list of verbs.", "verb_list->load");
             /*
-            } elseif (!isset($this->wrd) OR $this->direction == '')  {
+            } elseif (!isset($this->wrd) OR $this->direction->value == '')  {
               zu_err("The word id, the direction and the user (".$this->user()->name.") must be set to load a list of verbs.", "verb_list->load");
             */
         } else {

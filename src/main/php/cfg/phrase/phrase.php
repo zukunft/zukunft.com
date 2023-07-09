@@ -782,10 +782,10 @@ class phrase extends combine_named
      * get a list of verbs either pointing to or from this phrase
      * e.g. for Zurich and direction up the list contains at least the verb "is", because Zurich is a Canton is default triple
      *
-     * @param string $direction UP or DOWN to select the direction
+     * @param foaf_direction $direction UP or DOWN to select the direction
      * @returns verb_list with all used verbs in the given direction
      */
-    function vrb_lst(string $direction): verb_list
+    function vrb_lst(foaf_direction $direction): verb_list
     {
         global $db_con;
         $lib = new library();
@@ -798,6 +798,16 @@ class phrase extends combine_named
     }
 
     /**
+     * @return phrase_list with all phrases where this phrase is used
+     */
+    function all_parents(): phrase_list
+    {
+        $phr_lst = new phrase_list($this->user());
+        $phr_lst->add($this);
+        return $phr_lst->foaf_parents();
+    }
+
+    /**
      * @return phrase_list with all phrases "below" this phrase
      */
     function all_children(): phrase_list
@@ -806,6 +816,17 @@ class phrase extends combine_named
         $phr_lst->add($this);
         return $phr_lst->foaf_children();
     }
+
+    /**
+     * @return phrase_list with all related phrases of this phrase
+     */
+    function all_related(): phrase_list
+    {
+        $parents = $this->all_parents();
+        $children = $this->all_children();
+        return $parents->merge($children);
+    }
+
 
     /*
      * display functions
@@ -875,11 +896,11 @@ class phrase extends combine_named
 
     /**
      * get the related phrases
-     * @param string $direction up to select the parent phrases and dow for the children
+     * @param foaf_direction $direction up to select the parent phrases and dow for the children
      * @param verb_list|null $link_types to filter predicates on database level
      * @return phrase_list with the related phrases
      */
-    function phrases(string $direction, ?verb_list $link_types = null): phrase_list
+    function phrases(foaf_direction $direction, ?verb_list $link_types = null): phrase_list
     {
         $phr_lst = new phrase_list($this->user());
         if ($link_types == null) {
@@ -895,7 +916,7 @@ class phrase extends combine_named
         return $phr_lst;
     }
 
-    function dsp_graph(string $direction, ?verb_list $link_types = null, string $back = ''): string
+    function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string
     {
         $phr_lst = $this->phrases($direction, $link_types);
         $phr_lst_dsp = $phr_lst->dsp_obj();
@@ -1363,6 +1384,26 @@ class phrase extends combine_named
             log_err('Unknown object type of ' . $this->dsp_id());
         }
         return $result;
+    }
+
+    /**
+     * @param string $name the name of the phrase
+     * @return user_message if something fails the explanation for the user what has happened
+     *                      and the possible solutions with a suggestion
+     */
+    function get_or_add(string $name): user_message
+    {
+        // init the result
+        $msg = new user_message();
+        // load the word or triple if it exists
+        $this->load_by_name($name);
+        if ($this->id() == 0) {
+            // add a simple word if it does not yet exist
+            $wrd = new word($this->user());
+            $wrd->set_name($name);
+            $msg->add_message($wrd->save());
+        }
+        return $msg;
     }
 
 }

@@ -44,6 +44,7 @@
 
 namespace cfg;
 
+include_once MODEL_HELPER_PATH . 'foaf_direction.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once MODEL_PHRASE_PATH . 'trm_ids.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
@@ -781,10 +782,10 @@ class phrase_list extends sandbox_list_named
      *
      * @param phrase $phr the phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection
-     * @param string $direction to select either the parents, children or all related words ana triples
+     * @param foaf_direction $direction to select either the parents, children or all related words ana triples
      * @return bool true if at least one triple found
      */
-    function load_by_phr(phrase $phr, ?verb $vrb = null, string $direction = triple_list::DIRECTION_BOTH): bool
+    function load_by_phr(phrase $phr, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): bool
     {
         $this->lst = array();
 
@@ -803,7 +804,8 @@ class phrase_list extends sandbox_list_named
         }
     }
 
-    function load_by_phr_and_vrb_lst(phrase_list $phr_lst, verb_list $vrb_lst, string $direction = triple_list::DIRECTION_UP): bool
+    function load_by_phr_and_vrb_lst(
+        phrase_list $phr_lst, verb_list $vrb_lst, foaf_direction $direction = foaf_direction::UP): bool
     {
         return false;
     }
@@ -821,7 +823,7 @@ class phrase_list extends sandbox_list_named
         phrase         $phr,
         ?verb          $vrb = null,
         word_type_list $wrd_types,
-        string         $direction = triple_list::DIRECTION_BOTH): phrase_list
+        foaf_direction $direction = foaf_direction::BOTH): phrase_list
     {
         $result = new phrase_list($this->user());
         /*
@@ -872,16 +874,16 @@ class phrase_list extends sandbox_list_named
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param verb|null $vrb if set to select only phrases linked with this verb
-     * @param string $direction to define the link direction
+     * @param foaf_direction $direction to define the link direction
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_linked_phrases(sql_db $db_con, ?verb $vrb, string $direction): sql_par
+    function load_sql_linked_phrases(sql_db $db_con, ?verb $vrb, foaf_direction $direction): sql_par
     {
         $qp = $this->load_names_sql($db_con, '');
         $sql_where = '';
         $join_field = '';
         if (count($this->lst) <= 0) {
-            log_warning('The word list is empty, so nothing could be found', self::class . "->load_sql_by_linked_type");
+            log_warning('The phrase list is empty, so nothing could be found', self::class . "->load_sql_by_linked_type");
             $qp->name = '';
         } else {
             if ($db_con->db_type == sql_db::POSTGRES) {
@@ -889,18 +891,18 @@ class phrase_list extends sandbox_list_named
             } else {
                 $sql_in = ' IN (';
             }
-            if ($direction == word_select_direction::UP) {
+            if ($direction == foaf_direction::UP) {
                 $qp->name .= 'parents';
                 $db_con->add_par_in_int($this->ids());
                 $sql_where = sql_db::LNK_TBL . '.' . triple::FLD_FROM . $sql_in . $db_con->par_name() . ')';
                 $join_field = triple::FLD_TO;
-            } elseif ($direction == word_select_direction::DOWN) {
+            } elseif ($direction == foaf_direction::DOWN) {
                 $qp->name .= 'children';
                 $db_con->add_par_in_int($this->ids());
                 $sql_where = sql_db::LNK_TBL . '.' . triple::FLD_TO . $sql_in . $db_con->par_name() . ')';
                 $join_field = triple::FLD_FROM;
             } else {
-                log_err('Unknown direction ' . $direction);
+                log_err('Unknown direction ' . $direction->value);
             }
             // verbs can have a negative id for the reverse selection
             if ($vrb != null) {
@@ -1125,34 +1127,59 @@ class phrase_list extends sandbox_list_named
      * @param int $level 1 if the parents of the original phrases are added
      * @param phrase_list $added_phr_lst list of the added phrase during the foaf selection process
      * @param verb|null $vrb if set to filter the related phrases by the relation type
-     * @param string $direction to select if the parents or children should be selected - "up" to select the parents
+     * @param foaf_direction $direction to select if the parents or children should be selected - "up" to select the parents
      * @param int $max_level the max level that should be used for the selection; if 0 the technical max level ist used
      * @return phrase_list the accumulated list of added phrases
      */
     private function foaf_level(
-        int $level, phrase_list $added_phr_lst, ?verb $vrb, string $direction, int $max_level
+        int $level, phrase_list $added_phr_lst, ?verb $vrb, foaf_direction $direction, int $max_level
     ): phrase_list
     {
+        // use the default max search level if nothing is given
         if ($max_level > 0) {
             $max_loops = $max_level;
         } else {
             $max_loops = MAX_RECURSIVE;
         }
-        $loops = 0;
-        $additional_added = clone $this;
+        $loops = $level;
+
+        // set the list if phrases used to get the related phrases
+        $accumulated_list = clone $this;
+
         do {
             $loops = $loops + 1;
-            // load all linked phrases
-            $additional_added = $additional_added->load_linked_phrases($vrb, $direction);
-            // get the phrases not added before
-            $additional_added->diff($added_phr_lst);
-            // remember the added phrases
-            $added_phr_lst->merge($additional_added);
+
+            if (!$accumulated_list->is_empty()) {
+
+                // TODO review this temp fix
+                // to not include the direct linked "parents" because they are not real parents
+                if ($direction == foaf_direction::DOWN) {
+                    // load the linking triples but only if the verb suggest it
+                    $additional_added_triples = $accumulated_list->load_linking_triples($vrb, $direction);
+                    // get the phrases not added before
+                    $additional_added_triples->diff($added_phr_lst);
+                    // remember the added phrases
+                    $added_phr_lst->merge($additional_added_triples);
+                }
+
+                // load all linked phrases
+                $additional_added_phrases = $accumulated_list->load_linked_phrases($vrb, $direction);
+                // get the phrases not added before
+                $additional_added_phrases->diff($added_phr_lst);
+                // remember the added phrases
+                $added_phr_lst->merge($additional_added_phrases);
+            }
+
+            // accumulate the list used as a base for the search
+            $accumulated_list->merge($added_phr_lst);
 
             if ($loops >= MAX_RECURSIVE) {
                 log_fatal("max number (" . $loops . ") of loops for phrase reached.", "phrase_list->tree_up_level");
             }
-        } while (!empty($additional_added->lst) and $loops < $max_loops);
+        } while ((
+            !empty($additional_added_triples->lst) or
+            !empty($additional_added_phrases->lst)
+        ) and $loops < $max_loops);
         log_debug('->foaf_level done');
         return $added_phr_lst;
     }
@@ -1162,10 +1189,10 @@ class phrase_list extends sandbox_list_named
      * and remember which phrases have be added
      *
      * @param verb|null $vrb if set to filter the children by the relation type
-     * @param string $direction to define the link direction
+     * @param foaf_direction $direction to define the link direction
      * @return phrase_list with only the new added phrases
      */
-    function load_linked_phrases(?verb $vrb, string $direction): phrase_list
+    function load_linked_phrases(?verb $vrb, foaf_direction $direction): phrase_list
     {
 
         global $db_con;
@@ -1182,6 +1209,7 @@ class phrase_list extends sandbox_list_named
                 log_debug('got ' . $lib->dsp_count($db_phr_lst));
                 foreach ($db_phr_lst as $db_phr) {
                     if (is_null($db_phr[sandbox::FLD_EXCLUDED]) or $db_phr[sandbox::FLD_EXCLUDED] == 0) {
+                        // add the phrase linked by the triple
                         if ($db_phr[phrase::FLD_ID] != 0 and !in_array($db_phr[phrase::FLD_ID], $this->ids())) {
                             $new_phrase = new phrase($this->user());
                             $new_phrase->row_mapper($db_phr);
@@ -1196,22 +1224,21 @@ class phrase_list extends sandbox_list_named
         return $additional_added;
     }
 
-
     /**
-     * @param verb|null $vrb if not null the verbs to filter the parents
-     * @returns array a list of phrases, that characterises the given phrase
-     * e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is a"
-     * ex foaf_parent
+     * add the direct linking triples to the list
+     * and remember which phrases have be added
+     *
+     * @param verb|null $vrb if set to filter the children by the relation type
+     * @param foaf_direction $direction to define the link direction
+     * @return phrase_list with only the new added phrases
      */
-    function foaf_parents(?verb $vrb = null): phrase_list
+    function load_linking_triples(?verb $vrb, foaf_direction $direction): phrase_list
     {
-        $wrd_lst = $this->wrd_lst_all();
-        $added_wrd_lst = $wrd_lst->foaf_parents($vrb);
-        $added_phr_lst = $added_wrd_lst->phrase_lst();
-
-        log_debug($added_phr_lst->dsp_id());
-        return $added_phr_lst;
+        $trp_lst = new triple_list($this->user());
+        $trp_lst->load_by_phr_lst($this, $vrb, $direction);
+        return $trp_lst->phrase_lst();
     }
+
 
     /**
      * similar to foaf_parents, but for only one level
@@ -1248,6 +1275,29 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * get the related words and triples
+     * if requested filtered by the verb and number of levels
+     * e.g. for "Switzerland" and "DOWN" it will return "Canton of Zurich"
+     *
+     * @param foaf_direction $direction to select either the parents, children or all related words ana triples
+     * @param verb|null $vrb if set to filter the children by the relation type
+     *                       if not set the children are not filtered by the verb
+     * @param int $max_level to limit the search depth
+     * @return phrase_list with all phrases "below" the original list
+     */
+    private function foaf(foaf_direction $direction, ?verb $vrb = null, int $max_level = 0): phrase_list
+    {
+        $level = 0;
+        $added_phr_lst = new phrase_list($this->user()); // list of the added phrases
+        $added_phr_lst = $this->foaf_level(
+            $level, $added_phr_lst, $vrb, $direction, $max_level
+        );
+
+        log_debug($added_phr_lst->name());
+        return $added_phr_lst;
+    }
+
+    /**
      * similar to foaf_all_children, but using the triple
      * not the phrases of the triple to select the phrases of the next level
      * e.g. for "Companies" it will return "ABB Ltd."
@@ -1260,14 +1310,18 @@ class phrase_list extends sandbox_list_named
      */
     function foaf_children(?verb $vrb = null, int $max_level = 0): phrase_list
     {
-        $level = 0;
-        $added_phr_lst = new phrase_list($this->user()); // list of the added phrases
-        $added_phr_lst = $this->foaf_level(
-            $level, $added_phr_lst, $vrb, word_select_direction::DOWN, $max_level
-        );
+        return $this->foaf(foaf_direction::DOWN, $vrb, $max_level);
+    }
 
-        log_debug($added_phr_lst->name());
-        return $added_phr_lst;
+    /**
+     * @param verb|null $vrb if not null the verbs to filter the parents
+     * @returns array a list of phrases, that characterises the given phrase
+     * e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is a"
+     * ex foaf_parent
+     */
+    function foaf_parents(?verb $vrb = null, int $max_level = 0): phrase_list
+    {
+        return $this->foaf(foaf_direction::UP, $vrb, $max_level);
     }
 
     /**

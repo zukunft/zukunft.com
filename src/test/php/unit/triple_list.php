@@ -35,6 +35,8 @@ namespace test;
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once WEB_WORD_PATH . 'triple_list.php';
 
+use cfg\foaf_direction;
+use cfg\phrase_list;
 use cfg\verb_list;
 use html\word\triple_list as triple_list_dsp;
 use cfg\library;
@@ -69,11 +71,29 @@ class triple_list_unit_tests
         $trp_ids = array(3,2,4);
         $this->assert_sql_by_ids($t, $db_con, $trp_lst, $trp_ids);
 
-        // load by triple phr
+        // load by phr
         $trp_lst = new triple_list($usr);
         $phr = new phrase($usr);
         $phr->set_id(5);
         $this->assert_sql_by_phr($t, $db_con, $trp_lst, $phr);
+        $vrb = new verb(1);
+        $this->assert_sql_by_phr($t, $db_con, $trp_lst, $phr, $vrb, foaf_direction::UP);
+        $this->assert_sql_by_phr($t, $db_con, $trp_lst, $phr, $vrb, foaf_direction::DOWN);
+
+        // load by phrase list
+        $trp_lst = new triple_list($usr);
+        $phr = new phrase($usr);
+        $phr->set_id(6);
+        $phr2 = new phrase($usr);
+        $phr2->set_id(7);
+        $phr_lst = new phrase_list($usr);
+        $phr_lst->add($phr);
+        $phr_lst->add($phr2);
+        $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst);
+        $vrb = new verb(1);
+        $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb, foaf_direction::UP);
+        $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb, foaf_direction::DOWN);
+
 
         /*
          * SQL creation tests (mainly to use the IDE check for the generated SQL statements
@@ -97,7 +117,7 @@ class triple_list_unit_tests
         $wrd->set_id(1);
         $trp_lst = new triple_list($usr);
         $trp_lst->wrd = $wrd;
-        $trp_lst->direction = triple_list::DIRECTION_UP;
+        $trp_lst->direction = foaf_direction::UP;
         $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_up.sql');
         $t->display('triple_list->load_sql by word and up', $lib->trim($expected_sql), $lib->trim($created_sql));
@@ -110,7 +130,7 @@ class triple_list_unit_tests
         $wrd->set_id(2);
         $trp_lst = new triple_list($usr);
         $trp_lst->wrd = $wrd;
-        $trp_lst->direction = triple_list::DIRECTION_DOWN;
+        $trp_lst->direction = foaf_direction::DOWN;
         $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_down.sql');
         $t->display('triple_list->load_sql by word and down', $lib->trim($expected_sql), $lib->trim($created_sql));
@@ -128,7 +148,7 @@ class triple_list_unit_tests
         $wrd_lst->add($wrd);
         $trp_lst = new triple_list($usr);
         $trp_lst->wrd_lst = $wrd_lst;
-        $trp_lst->direction = triple_list::DIRECTION_UP;
+        $trp_lst->direction = foaf_direction::UP;
         $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_up.sql');
         $t->display('triple_list->load_sql by word list and up', $lib->trim($expected_sql), $lib->trim($created_sql));
@@ -146,7 +166,7 @@ class triple_list_unit_tests
         $wrd_lst->add($wrd);
         $trp_lst = new triple_list($usr);
         $trp_lst->wrd_lst = $wrd_lst;
-        $trp_lst->direction = triple_list::DIRECTION_DOWN;
+        $trp_lst->direction = foaf_direction::DOWN;
         $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_down.sql');
         $t->display('triple_list->load_sql by word list and down', $lib->trim($expected_sql), $lib->trim($created_sql));
@@ -167,7 +187,7 @@ class triple_list_unit_tests
         $trp_lst = new triple_list($usr);
         $trp_lst->wrd_lst = $wrd_lst;
         $trp_lst->vrb = $vrb;
-        $trp_lst->direction = triple_list::DIRECTION_DOWN;
+        $trp_lst->direction = foaf_direction::DOWN;
         $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_up_verb.sql');
         $t->display('triple_list->load_sql by word list and down filtered by a verb', $lib->trim($expected_sql), $lib->trim($created_sql));
@@ -188,7 +208,7 @@ class triple_list_unit_tests
         $trp_lst = new triple_list($usr);
         $trp_lst->wrd_lst = $wrd_lst;
         $trp_lst->vrb_lst = $vrb_lst;
-        $trp_lst->direction = triple_list::DIRECTION_DOWN;
+        $trp_lst->direction = foaf_direction::DOWN;
         $created_sql = $trp_lst->load_sql($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_down_verb.sql');
         $t->display('triple_list->load_sql by word list and down filtered by a verb list', $lib->trim($expected_sql), $lib->trim($created_sql));
@@ -241,16 +261,16 @@ class triple_list_unit_tests
      * @param triple_list $lst the empty triple list object
      * @param phrase $phr the phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection
-     * @param string $direction to select either the parents, children or all related words ana triples
+     * @param foaf_direction $direction to select either the parents, children or all related words ana triples
      * @return void
      */
     private function assert_sql_by_phr(
-        test_cleanup $t,
-        sql_db       $db_con,
-        triple_list  $lst,
-        phrase       $phr,
-        ?verb        $vrb = null,
-        string       $direction = triple_list::DIRECTION_BOTH): void
+        test_cleanup   $t,
+        sql_db         $db_con,
+        triple_list    $lst,
+        phrase         $phr,
+        ?verb          $vrb = null,
+        foaf_direction $direction = foaf_direction::BOTH): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -260,6 +280,37 @@ class triple_list_unit_tests
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
         $qp = $lst->load_sql_by_phr($db_con, $phr, $vrb, $direction);
+        $t->assert_qp($qp, $db_con->db_type);
+    }
+
+    /**
+     * test the SQL statement creation for a triple list in all SQL dialect
+     * and check if the statement name is unique
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param triple_list $lst the empty triple list object
+     * @param phrase_list $phr_lst a list of phrases which should be used for selecting the words or triples
+     * @param verb|null $vrb if set to filter the selection
+     * @param foaf_direction $direction to select either the parents, children or all related words ana triples
+     * @return void
+     */
+    private function assert_sql_by_phr_lst(
+        test_cleanup   $t,
+        sql_db         $db_con,
+        triple_list    $lst,
+        phrase_list    $phr_lst,
+        ?verb          $vrb = null,
+        foaf_direction $direction = foaf_direction::BOTH): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_phr_lst($db_con, $phr_lst, $vrb, $direction);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql_by_phr_lst($db_con, $phr_lst, $vrb, $direction);
         $t->assert_qp($qp, $db_con->db_type);
     }
 

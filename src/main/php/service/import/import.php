@@ -249,6 +249,17 @@ class file_import
                         }
                         $result->add($import_result);
                     }
+                } elseif ($key == export::PHRASE_VALUES) {
+                    foreach ($json_obj as $key => $number) {
+                        $val = new value($this->usr);
+                        $import_result = $val->import_phrase_value($key, $number);
+                        if ($import_result->is_ok()) {
+                            $this->values_done++;
+                        } else {
+                            $this->values_failed++;
+                        }
+                        $result->add($import_result);
+                    }
                 } elseif ($key == export::VALUES) {
                     foreach ($json_obj as $value) {
                         $val = new value($this->usr);
