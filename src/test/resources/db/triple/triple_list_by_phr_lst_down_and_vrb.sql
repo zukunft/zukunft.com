@@ -1,4 +1,4 @@
-PREPARE triple_list_by_phr_lst (int, int[], int[]) AS
+PREPARE triple_list_by_phr_lst_down_and_vrb (int, int[], int) AS
     SELECT s.triple_id,
            u.triple_id AS user_triple_id,
            s.user_id,
@@ -31,10 +31,11 @@ PREPARE triple_list_by_phr_lst (int, int[], int[]) AS
            CASE WHEN (ul2.share_type_id      IS     NULL) THEN l2.share_type_id ELSE ul2.share_type_id END AS share_type_id2,
            CASE WHEN (ul2.protect_id         IS     NULL) THEN l2.protect_id    ELSE ul2.protect_id    END AS protect_id2
       FROM triples s
- LEFT JOIN user_triples u ON  s.triple_id   =   u.triple_id AND   u.user_id = $1
- LEFT JOIN phrases l         ON  s.from_phrase_id =   l.phrase_id
- LEFT JOIN user_phrases ul   ON  l.phrase_id      =  ul.phrase_id    AND  ul.user_id = $1
- LEFT JOIN phrases l2        ON  s.to_phrase_id   =  l2.phrase_id
- LEFT JOIN user_phrases ul2  ON l2.phrase_id      = ul2.phrase_id    AND ul2.user_id = $1
-     WHERE (s.from_phrase_id = ANY ($2) OR s.to_phrase_id = ANY ($3))
+ LEFT JOIN user_triples u   ON  s.triple_id      =   u.triple_id AND   u.user_id = $1
+ LEFT JOIN phrases l        ON  s.from_phrase_id =   l.phrase_id
+ LEFT JOIN user_phrases ul  ON  l.phrase_id      =  ul.phrase_id AND  ul.user_id = $1
+ LEFT JOIN phrases l2       ON  s.to_phrase_id   =  l2.phrase_id
+ LEFT JOIN user_phrases ul2 ON l2.phrase_id      = ul2.phrase_id AND ul2.user_id = $1
+     WHERE s.to_phrase_id = ANY ($2)
+       AND s.verb_id = $3
   ORDER BY s.verb_id, name_given;

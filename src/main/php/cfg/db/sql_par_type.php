@@ -2,8 +2,8 @@
 
 /*
 
-    /model/helper/foaf_direction.php - enum of the triple search directions to get the friends of a friend (foaf)
-    --------------------------------
+    /model/dp/sql_par_type.php - enum of the sql where parameter types
+    ---------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,11 +29,11 @@
 
 */
 
-namespace cfg;
+namespace cfg\db;
 
-enum foaf_direction: string
+enum sql_par_type: string
 {
-    case UP = 'up';
-    case DOWN = 'down';
-    case BOTH = 'both';
+    case INT = 'int';
+    case INT_LIST = 'int_list';
+    case INT_LIST_OR = 'int_list_or';
 }

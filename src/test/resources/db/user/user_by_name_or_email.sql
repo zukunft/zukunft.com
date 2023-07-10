@@ -11,5 +11,5 @@ PREPARE user_by_name_or_email (text, text) AS
          source_id,
          user_profile_id
     FROM users
-   WHERE user_name = $1
-      OR email = $2;
+   WHERE (user_name = $1
+      OR email = $2);

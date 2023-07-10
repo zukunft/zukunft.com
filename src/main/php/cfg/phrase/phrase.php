@@ -822,9 +822,9 @@ class phrase extends combine_named
      */
     function all_related(): phrase_list
     {
-        $parents = $this->all_parents();
-        $children = $this->all_children();
-        return $parents->merge($children);
+        $phr_lst = new phrase_list($this->user());
+        $phr_lst->add($this);
+        return $phr_lst->foaf_related();
     }
 
 

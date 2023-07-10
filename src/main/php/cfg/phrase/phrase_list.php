@@ -44,12 +44,15 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_creator.php';
 include_once MODEL_HELPER_PATH . 'foaf_direction.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once MODEL_PHRASE_PATH . 'trm_ids.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
 
 use api\phrase_list_api;
+use cfg\db\sql_creator;
+use cfg\db\sql_par_type;
 use html\word\word as word_dsp;
 
 class phrase_list extends sandbox_list_named
@@ -141,10 +144,114 @@ class phrase_list extends sandbox_list_named
      * set the SQL query parameters to load a list of phrase names
      * without the related phrase to save time and memory
      *
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_names_sql(sql_creator $sc, string $query_name): sql_par
+    {
+        $sc->set_type(sql_db::TBL_PHRASE);
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
+
+        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(phrase::FLD_NAMES);
+        $sc->set_usr_fields(phrase::FLD_NAMES_USR_NO_NAME);
+        $sc->set_usr_num_fields(phrase::FLD_NAMES_NUM_USR);
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(phrase::FLD_VALUES) . ' DESC, ' . phrase::FLD_NAME);
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of phrase names by the id from the database
+     * compared to load_sql_by_ids this reads only the phrase names and not the related phrase to save time and memory
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param phr_ids $ids phrase ids that should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_names_sql_by_ids(sql_creator $sc, phr_ids $ids): sql_par
+    {
+        $qp = $this->load_names_sql($sc, $ids->count() . 'ids');
+        $sc->add_where(phrase::FLD_ID, $ids->lst, sql_par_type::INT_LIST);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of phrase objects
+     * with all parameters and the related phrase
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_creator $sc, string $query_name): sql_par
+    {
+        $sc->set_type(sql_db::TBL_PHRASE);
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
+
+        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(phrase::FLD_NAMES);
+        $sc->set_usr_fields(phrase::FLD_NAMES_USR_NO_NAME);
+        $sc->set_usr_num_fields(phrase::FLD_NAMES_NUM_USR);
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(phrase::FLD_VALUES) . ' DESC, ' . phrase::FLD_NAME);
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of phrase by a phrase list, verb and direction
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param verb|null $vrb if set to filter the selection
+     * @param foaf_direction $direction to select either the parents, children or all related words ana triples
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr_lst(
+        sql_creator $sc, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): sql_par
+    {
+        $qp = $this->load_sql($sc, 'sc_phr_lst');
+        if (!$this->empty()) {
+            if ($direction == foaf_direction::UP) {
+                $sc->add_where(triple::FLD_FROM, $this->ids());
+                $qp->name .= '_' . $direction->value;
+            } elseif ($direction == foaf_direction::DOWN) {
+                $sc->add_where(triple::FLD_TO, $this->ids());
+                $qp->name .= '_' . $direction->value;;
+            } elseif ($direction == foaf_direction::BOTH) {
+                $sc->add_where(triple::FLD_FROM, $this->ids(), sql_par_type::INT_LIST_OR);
+                $sc->add_where(triple::FLD_TO, $this->ids(), sql_par_type::INT_LIST_OR);
+            }
+            if ($vrb != null) {
+                if ($vrb->id() > 0) {
+                    $sc->add_where(verb::FLD_ID, $vrb->id());
+                    $qp->name .= '_and_vrb';
+                }
+            }
+            $sc->set_name($qp->name);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+            log_err('At least the phrase must be set to load a triple list by phrase');
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /*
+     * to be moved to the sql creator
+     */
+
+    /**
+     * set the SQL query parameters to load a list of phrase names
+     * without the related phrase to save time and memory
+     *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_names_sql(sql_db $db_con, string $query_name): sql_par
+    function load_names_sql_db(sql_db $db_con, string $query_name): sql_par
     {
         $db_con->set_type(sql_db::TBL_PHRASE);
         $qp = new sql_par(self::class);
@@ -162,11 +269,12 @@ class phrase_list extends sandbox_list_named
     /**
      * set the SQL query parameters to load a list of phrase objects
      * with all parameters and the related phrase
+     * TODO deprecate because still based on the sql_db object instead of the separate sql_creator
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $query_name): sql_par
+    function load_sql_db(sql_db $db_con, string $query_name): sql_par
     {
         $db_con->set_type(sql_db::TBL_PHRASE);
         $qp = new sql_par(self::class);
@@ -189,9 +297,9 @@ class phrase_list extends sandbox_list_named
      * @param phr_ids $ids phrase ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_names_sql_by_ids(sql_db $db_con, phr_ids $ids): sql_par
+    function load_names_sql_db_by_ids(sql_db $db_con, phr_ids $ids): sql_par
     {
-        $qp = $this->load_names_sql($db_con, $ids->count() . 'ids');
+        $qp = $this->load_names_sql_db($db_con, 'db_' . $ids->count() . 'ids');
         $db_con->set_where_id_in(phrase::FLD_ID, $ids->lst);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -208,7 +316,7 @@ class phrase_list extends sandbox_list_named
      */
     function load_sql_by_ids(sql_db $db_con, phr_ids $ids): sql_par
     {
-        $qp = $this->load_sql($db_con, $ids->count() . 'ids');
+        $qp = $this->load_sql_db($db_con, $ids->count() . 'ids');
         $db_con->set_where_id_in(phrase::FLD_ID, $ids->lst);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -385,7 +493,7 @@ class phrase_list extends sandbox_list_named
         } else {
             $ids_to_load = $ids;
         }
-        $qp = $this->load_names_sql_by_ids($db_con, $ids_to_load);
+        $qp = $this->load_names_sql_db_by_ids($db_con, $ids_to_load);
         $result = $this->load($qp);
         if ($phr_lst != null) {
             $phr_lst_to_add = $phr_lst->filter_by_ids($ids);
@@ -587,165 +695,6 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * create an SQL statement to retrieve a list of "related" phrases from the database
-     * see load_related for a more detailed description
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param phrase $phr the base phrase which should be used for the selection
-     * @param phrase|null $grp_phr to define the preferred phrase for the selection
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_related_sql(sql_db $db_con, phrase $phr, ?phrase $grp_phr = null): sql_par
-    {
-        global $verbs;
-        $qp = new sql_par(self::class);
-        $qp->name .= 'related';
-        if ($grp_phr != null) {
-            $qp->name .= '_and_group';
-        }
-
-        // if no phrase type is define, list all words and triples
-        // TODO: but if word has several types don't offer to the user to select the simple word
-        $usr_par = $db_con->get_par();
-        $sql_words = 'SELECT DISTINCT w.' . word::FLD_ID . ' AS id, 
-                             ' . $db_con->get_usr_field(word::FLD_NAME, "w", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
-                             ' . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, "w", "u", sql_db::FLD_FORMAT_BOOL) . '
-                        FROM ' . $db_con->get_table_name(sql_db::TBL_WORD) . ' w   
-                   LEFT JOIN user_' . $db_con->get_table_name(sql_db::TBL_WORD) . ' u ON u.' . word::FLD_ID . ' = w.' . word::FLD_ID . ' 
-                                         AND u.user_id = ' . $this->user()->id() . ' ';
-        $sql_triples = 'SELECT DISTINCT l.triple_id * -1 AS id, 
-                               ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
-                               ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
-                          FROM triples l
-                     LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                AND u.user_id = ' . $this->user()->id() . ' ';
-
-        if (isset($type)) {
-            if ($type->id > 0) {
-
-                // select all phrase ids of the given type e.g. ABB, DANONE, Zurich
-                $sql_where_exclude = 'excluded = 0';
-                $sql_field_names = 'id, name, excluded';
-                $sql_wrd_all = 'SELECT from_phrase_id AS id FROM (
-                                        SELECT DISTINCT
-                                               l.from_phrase_id,    
-                                               ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
-                                          FROM triples l
-                                     LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                                AND u.user_id = ' . $this->user()->id() . '
-                                         WHERE l.to_phrase_id = ' . $type->id . ' 
-                                           AND l.verb_id = ' . $verbs->id(verb::IS) . ' ) AS a 
-                                         WHERE ' . $sql_where_exclude . ' ';
-
-                // ... out of all those get the phrase ids that have also other types e.g. Zurich (Canton)
-                $sql_wrd_other = 'SELECT from_phrase_id FROM (
-                                        SELECT DISTINCT
-                                               l.from_phrase_id,    
-                                               ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
-                                          FROM triples l
-                                     LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                                AND u.user_id = ' . $this->user()->id() . '
-                                         WHERE l.to_phrase_id <> ' . $type->id . ' 
-                                           AND l.verb_id = ' . $verbs->id(verb::IS) . '
-                                           AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
-                                         WHERE ' . $sql_where_exclude . ' ';
-
-                // if a word has no other type, use the word
-                $sql_words = 'SELECT DISTINCT ' . $sql_field_names . ' FROM (
-                      SELECT DISTINCT
-                             w.' . word::FLD_ID . ' AS id, 
-                             ' . $db_con->get_usr_field("word_name", "w", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
-                             ' . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . '
-                        FROM ( ' . $sql_wrd_all . ' ) a, words w
-                   LEFT JOIN user_words u ON u.' . word::FLD_ID . ' = w.' . word::FLD_ID . ' 
-                                         AND u.user_id = ' . $this->user()->id() . '
-                       WHERE w.' . word::FLD_ID . ' NOT IN ( ' . $sql_wrd_other . ' )                                        
-                         AND w.' . word::FLD_ID . ' = a.id ) AS w 
-                       WHERE ' . $sql_where_exclude . ' ';
-
-                // if a word has another type, use the triple
-                $sql_triples = 'SELECT DISTINCT ' . $sql_field_names . ' FROM (
-                        SELECT DISTINCT
-                               l.triple_id * -1 AS id, 
-                               ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
-                               ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
-                          FROM triples l
-                     LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                AND u.user_id = ' . $this->user()->id() . '
-                         WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
-                           AND l.verb_id = ' . $verbs->id(verb::IS) . '
-                           AND l.to_phrase_id = ' . $type->id . ' ) AS t 
-                         WHERE ' . $sql_where_exclude . ' ';
-                /*
-                $sql_type_from = ', triples t LEFT JOIN user_triples ut ON ut.triple_id = t.triple_id
-                                                                             AND ut.user_id = '.$this->user()->id.'';
-                $sql_type_where_words   = 'WHERE w.' . word::FLD_ID . ' = t.from_phrase_id
-                                             AND t.verb_id = '.cl(SQL_LINK_TYPE_IS).'
-                                             AND t.to_phrase_id = '.$type->id.' ';
-                $sql_type_where_triples = 'WHERE l.to_phrase_id = t.from_phrase_id
-                                             AND t.verb_id = '.cl(SQL_LINK_TYPE_IS).'
-                                             AND t.to_phrase_id = '.$type->id.' ';
-                $sql_words   = 'SELECT w.' . word::FLD_ID . ' AS id,
-                                      IF(u.word_name IS NULL, w.word_name, u.word_name) AS name,
-                                      IF(u.excluded IS NULL, COALESCE(w.excluded, 0), COALESCE(u.excluded, 0)) AS excluded
-                                  FROM words w
-                            LEFT JOIN user_words u ON u.' . word::FLD_ID . ' = w.' . word::FLD_ID . '
-                                                  AND u.user_id = '.$this->user()->id.'
-                                      '.$sql_type_from.'
-                                      '.$sql_type_where_words.'
-                              GROUP BY name';
-                $sql_triples = 'SELECT l.triple_id * -1 AS id,
-                                      IF(u.name IS NULL, l.name, u.name) AS name,
-                                      IF(u.excluded IS NULL, COALESCE(l.excluded, 0), COALESCE(u.excluded, 0)) AS excluded
-                                  FROM triples l
-                            LEFT JOIN user_triples u ON u.triple_id = l.triple_id
-                                                        AND u.user_id = '.$this->user()->id.'
-                                      '.$sql_type_from.'
-                                      '.$sql_type_where_triples.'
-                              GROUP BY name';
-                              */
-            }
-        }
-        $sql_avoid_code_check_prefix = "SELECT";
-        $sql = $sql_avoid_code_check_prefix . ' DISTINCT id, name
-              FROM ( ' . $sql_words . ' UNION ' . $sql_triples . ' ) AS p
-             WHERE excluded = 0
-          ORDER BY p.name;';
-        log_debug($sql);
-
-        $qp->sql = $sql;
-        /*
-        // select the related words
-        $db_con->set_type(sql_db::TBL_WORD);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(triple::FLD_NAMES);
-        $db_con->set_usr_fields(triple::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(triple::FLD_NAMES_NUM_USR);
-        $db_con->set_where_id_in(triple::FLD_ID, $ids);
-        $qp->sql = $db_con->select_by_id();
-        $qp->par = $db_con->get_par();
-
-
-        // select the related triple
-        $db_con->set_type(sql_db::TBL_TRIPLE);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_link_fields(triple::FLD_FROM, triple::FLD_TO, verb::FLD_ID);
-        $db_con->set_fields(triple::FLD_NAMES);
-        $db_con->set_usr_fields(triple::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(triple::FLD_NAMES_NUM_USR);
-        $db_con->set_where_id_in(triple::FLD_ID, $ids);
-        $qp->sql = $db_con->select_by_id();
-        $qp->par = $db_con->get_par();
-
-        // union
-        */
-
-        return $qp;
-    }
-
-    /**
      * load all phrases similar to the given phrase
      * e.g. if the phrase is Zurich (Canton) a list of all Cantons of Switzerland is returned
      * this is used to selecting related phrases
@@ -879,7 +828,7 @@ class phrase_list extends sandbox_list_named
      */
     function load_sql_linked_phrases(sql_db $db_con, ?verb $vrb, foaf_direction $direction): sql_par
     {
-        $qp = $this->load_names_sql($db_con, '');
+        $qp = $this->load_names_sql_db($db_con, '');
         $sql_where = '';
         $join_field = '';
         if (count($this->lst) <= 0) {
@@ -1089,8 +1038,8 @@ class phrase_list extends sandbox_list_named
 
       Overview for words, triples and phrases and it's lists
 
-                 children and            parents return the direct parents and children   without the original phrase(s)
-            foaf_children and       foaf_parents return the    all parents and children   without the original phrase(s)
+               children and            parents return the direct parents and children   without the original phrase(s)
+          foaf_children and       foaf_parents return the    all parents and children   without the original phrase(s)
                     are and                 is return the    all parents and children including the original phrase(s) for the specific verb "is a"
                contains                        return the    all             children including the original phrase(s) for the specific verb "contains"
                                     is part of return the    all parents              without the original phrase(s) for the specific verb "contains"
@@ -1162,12 +1111,28 @@ class phrase_list extends sandbox_list_named
                     $added_phr_lst->merge($additional_added_triples);
                 }
 
-                // load all linked phrases
-                $additional_added_phrases = $accumulated_list->load_linked_phrases($vrb, $direction);
-                // get the phrases not added before
-                $additional_added_phrases->diff($added_phr_lst);
-                // remember the added phrases
-                $added_phr_lst->merge($additional_added_phrases);
+                if ($direction == foaf_direction::BOTH) {
+                    // load all linked up phrases
+                    $additional_added_phrases = $accumulated_list->load_linked_phrases($vrb, foaf_direction::UP);
+                    // get the phrases not added before
+                    $additional_added_phrases->diff($added_phr_lst);
+                    // remember the added phrases
+                    $added_phr_lst->merge($additional_added_phrases);
+
+                    // load all linked down phrases
+                    $additional_added_phrases = $accumulated_list->load_linked_phrases($vrb, foaf_direction::DOWN);
+                    // get the phrases not added before
+                    $additional_added_phrases->diff($added_phr_lst);
+                    // remember the added phrases
+                    $added_phr_lst->merge($additional_added_phrases);
+                } else {
+                    // load all linked phrases
+                    $additional_added_phrases = $accumulated_list->load_linked_phrases($vrb, $direction);
+                    // get the phrases not added before
+                    $additional_added_phrases->diff($added_phr_lst);
+                    // remember the added phrases
+                    $added_phr_lst->merge($additional_added_phrases);
+                }
             }
 
             // accumulate the list used as a base for the search
@@ -1275,9 +1240,50 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * get the words and triples "below" the given phrases
+     * e.g. for "Switzerland" it will return "Canton of Zurich"
+     *
+     * @param verb|null $vrb if set to filter the children by the relation type
+     *                       if not set the children are not filtered by the verb
+     * @param int $max_level to limit the search depth
+     * @return phrase_list with all phrases "below" the original list
+     */
+    function foaf_children(?verb $vrb = null, int $max_level = 0): phrase_list
+    {
+        return $this->foaf(foaf_direction::DOWN, $vrb, $max_level);
+    }
+
+    /**
+     * get the words and triples "below" the given phrases
+     * e.g. for "Zurich" it will return "Canton of Zurich"
+     *
+     * @param verb|null $vrb if not null the verbs to filter the parents
+     * @param int $max_level to limit the search depth
+     * @returns array a list of phrases, that characterises the given phrase
+     */
+    function foaf_parents(?verb $vrb = null, int $max_level = 0): phrase_list
+    {
+        return $this->foaf(foaf_direction::UP, $vrb, $max_level);
+    }
+
+    /**
+     * get the words and triples related the given phrases
+     * e.g. for "Canton of Zurich" it will return "Zurich" and "Switzerland"
+     *
+     * @param verb|null $vrb if not null the verbs to filter the parents
+     * @param int $max_level to limit the search depth
+     * @returns array a list of phrases, that characterises the given phrase
+     */
+    function foaf_related(?verb $vrb = null, int $max_level = 0): phrase_list
+    {
+        return $this->foaf(foaf_direction::BOTH, $vrb, $max_level);
+    }
+
+    /**
      * get the related words and triples
      * if requested filtered by the verb and number of levels
      * e.g. for "Switzerland" and "DOWN" it will return "Canton of Zurich"
+     * e.g. for "Zurich" and "UP" it will return "Canton of Zurich"
      *
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
      * @param verb|null $vrb if set to filter the children by the relation type
@@ -1298,33 +1304,6 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * similar to foaf_all_children, but using the triple
-     * not the phrases of the triple to select the phrases of the next level
-     * e.g. for "Companies" it will return "ABB Ltd."
-     * and others if the link type is "are"
-     * ex foaf_child
-     * @param verb|null $vrb if set to filter the children by the relation type
-     *                       if not set the children are not filtered by the verb
-     * @param int $max_level to limit the search depth
-     * @return phrase_list with all phrases "below" the original list
-     */
-    function foaf_children(?verb $vrb = null, int $max_level = 0): phrase_list
-    {
-        return $this->foaf(foaf_direction::DOWN, $vrb, $max_level);
-    }
-
-    /**
-     * @param verb|null $vrb if not null the verbs to filter the parents
-     * @returns array a list of phrases, that characterises the given phrase
-     * e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is a"
-     * ex foaf_parent
-     */
-    function foaf_parents(?verb $vrb = null, int $max_level = 0): phrase_list
-    {
-        return $this->foaf(foaf_direction::UP, $vrb, $max_level);
-    }
-
-    /**
      * get the direct children
      * e.g. for country it will return Switzerland, but not Zurich
      * similar to foaf_children, but for only one level so ex the foaf_child_step
@@ -1341,7 +1320,10 @@ class phrase_list extends sandbox_list_named
         return $added_phr_lst;
     }
 
-    // returns a list of phrases that are related to this phrase list e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
+    /**
+     * @return phrase_list list of phrases that are related to this phrase list
+     * e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
+     */
     function is(): phrase_list
     {
         global $verbs;

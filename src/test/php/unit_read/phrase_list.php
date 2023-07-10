@@ -82,10 +82,18 @@ class phrase_list_unit_db_tests
 
         // all children
         $sys_cfg_root_phr = new phrase($t->usr1, word::SYSTEM_CONFIG);
-        $sys_cfg_phr_lst = $sys_cfg_root_phr->all_related();
+        $sys_cfg_phr_lst = $sys_cfg_root_phr->all_children();
         $auto_years = new phrase($t->usr1, config::YEARS_AUTO_CREATE_DSP);
         $test_name = 'The default number of forecast years is a system configuration parameter';
         $t->assert_contains($test_name, $sys_cfg_phr_lst->names(), array($auto_years->name()));
+
+        // Canton is related to Switzerland and Zurich
+        $phr_canton = $t->load_phrase(word_api::TN_CANTON);
+        $phr_lst = $phr_canton->all_related();
+        $test_name = 'The word Canton is related to Switzerland and Zurich';
+        // TODO ABB is not expected to be related even if it is related via zurich and company
+        //      but Switzerland is expected to be related
+        //$t->assert_contains($test_name, $phr_lst->names(), array(word_api::TN_ZH, word_api::TN_CH));
 
     }
 

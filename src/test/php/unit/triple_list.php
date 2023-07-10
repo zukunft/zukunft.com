@@ -89,10 +89,13 @@ class triple_list_unit_tests
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($phr);
         $phr_lst->add($phr2);
+        $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, null,  foaf_direction::UP);
         $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst);
         $vrb = new verb(1);
         $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb, foaf_direction::UP);
         $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb, foaf_direction::DOWN);
+        // TODO activate
+        // $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb);
 
 
         /*
@@ -105,7 +108,7 @@ class triple_list_unit_tests
         // sql to load by word link list by ids
         $trp_lst = new triple_list($usr);
         $trp_lst->ids = [1, 2, 3];
-        $created_sql = $trp_lst->load_sql($db_con);
+        $created_sql = $trp_lst->load_sql_old($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_ids_old.sql'); // order adjusted based on the number of usage
         $t->display('triple_list->load_sql by IDs', $lib->trim($expected_sql), $lib->trim($created_sql));
 
@@ -118,7 +121,7 @@ class triple_list_unit_tests
         $trp_lst = new triple_list($usr);
         $trp_lst->wrd = $wrd;
         $trp_lst->direction = foaf_direction::UP;
-        $created_sql = $trp_lst->load_sql($db_con);
+        $created_sql = $trp_lst->load_sql_old($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_up.sql');
         $t->display('triple_list->load_sql by word and up', $lib->trim($expected_sql), $lib->trim($created_sql));
 
@@ -131,7 +134,7 @@ class triple_list_unit_tests
         $trp_lst = new triple_list($usr);
         $trp_lst->wrd = $wrd;
         $trp_lst->direction = foaf_direction::DOWN;
-        $created_sql = $trp_lst->load_sql($db_con);
+        $created_sql = $trp_lst->load_sql_old($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_down.sql');
         $t->display('triple_list->load_sql by word and down', $lib->trim($expected_sql), $lib->trim($created_sql));
 
@@ -149,7 +152,7 @@ class triple_list_unit_tests
         $trp_lst = new triple_list($usr);
         $trp_lst->wrd_lst = $wrd_lst;
         $trp_lst->direction = foaf_direction::UP;
-        $created_sql = $trp_lst->load_sql($db_con);
+        $created_sql = $trp_lst->load_sql_old($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_up.sql');
         $t->display('triple_list->load_sql by word list and up', $lib->trim($expected_sql), $lib->trim($created_sql));
 
@@ -167,7 +170,7 @@ class triple_list_unit_tests
         $trp_lst = new triple_list($usr);
         $trp_lst->wrd_lst = $wrd_lst;
         $trp_lst->direction = foaf_direction::DOWN;
-        $created_sql = $trp_lst->load_sql($db_con);
+        $created_sql = $trp_lst->load_sql_old($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_down.sql');
         $t->display('triple_list->load_sql by word list and down', $lib->trim($expected_sql), $lib->trim($created_sql));
 
@@ -188,7 +191,7 @@ class triple_list_unit_tests
         $trp_lst->wrd_lst = $wrd_lst;
         $trp_lst->vrb = $vrb;
         $trp_lst->direction = foaf_direction::DOWN;
-        $created_sql = $trp_lst->load_sql($db_con);
+        $created_sql = $trp_lst->load_sql_old($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_up_verb.sql');
         $t->display('triple_list->load_sql by word list and down filtered by a verb', $lib->trim($expected_sql), $lib->trim($created_sql));
 
@@ -209,7 +212,7 @@ class triple_list_unit_tests
         $trp_lst->wrd_lst = $wrd_lst;
         $trp_lst->vrb_lst = $vrb_lst;
         $trp_lst->direction = foaf_direction::DOWN;
-        $created_sql = $trp_lst->load_sql($db_con);
+        $created_sql = $trp_lst->load_sql_old($db_con);
         $expected_sql = $t->file('db/triple/triple_list_by_list_down_verb.sql');
         $t->display('triple_list->load_sql by word list and down filtered by a verb list', $lib->trim($expected_sql), $lib->trim($created_sql));
 

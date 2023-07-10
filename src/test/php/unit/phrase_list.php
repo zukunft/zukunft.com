@@ -90,6 +90,8 @@ class phrase_list_unit_tests
         $phr_lst = new phrase_list($usr);
         $phr_ids = new phr_ids(array(3, -2, 4, -7));
         //$this->assert_by_ids_sql($phr_ids->lst);
+        // TODO deprecate the _db_ query tests
+        $this->assert_sql_db_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
 
         $this->test = $t;
@@ -105,9 +107,9 @@ class phrase_list_unit_tests
         $wrd->set(1, word_api::TN_CH);
         $phr_lst->add($wrd->phrase());
         $vrb = $verbs->get(verb::IS_PART_OF);
-        $this->assert_sql_linked_phrases(
-            $db_con, $t, $phr_lst, $vrb, foaf_direction::UP
-        );
+        $this->assert_sql_linked_phrases($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);
+        // TODO activate
+        //$this->assert_sql_by_phr_lst($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);
 
 
         $t->subheader('Selection tests');
@@ -259,13 +261,41 @@ class phrase_list_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_names_sql_by_ids($db_con, $ids);
+        $qp = $lst->load_names_sql_by_ids($db_con->sql_creator(), $ids);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $lst->load_names_sql_by_ids($db_con, $ids);
+            $qp = $lst->load_names_sql_by_ids($db_con->sql_creator(), $ids);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * test the SQL statement creation for a phrase list in all SQL dialect
+     * and check if the statement name is unique
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param phrase_list $lst the empty phrase list object
+     * @param phr_ids $ids filled with a list of word ids to be used for the query creation
+     */
+    private function assert_sql_db_names_by_ids(
+        test_cleanup $t,
+        sql_db $db_con,
+        phrase_list $lst,
+        phr_ids $ids): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_names_sql_db_by_ids($db_con, $ids);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $lst->load_names_sql_db_by_ids($db_con, $ids);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }
@@ -296,6 +326,36 @@ class phrase_list_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_linked_phrases($db_con, $vrb, $direction);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * similar to assert_sql_linked_phrases from test_base but to test the SQL statement creation
+     * to get the linked phrases and using the separate sql creator
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param test_cleanup $t the testing object with the error counting of this test run
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param verb|null $vrb to select only words linked with this verb
+     * @param foaf_direction $direction to define the link direction
+     */
+    private function assert_sql_by_phr_lst(
+        sql_db         $db_con,
+        test_cleanup   $t,
+        object         $usr_obj,
+        ?verb          $vrb,
+        foaf_direction $direction): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_phr_lst($db_con->sql_creator(), $vrb, $direction);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_phr_lst($db_con->sql_creator(), $vrb, $direction);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

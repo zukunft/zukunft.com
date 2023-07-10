@@ -377,6 +377,13 @@ class string_unit_tests
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '64//+{"id":65,"code_id":"18excluded","name":"18excluded","comment":""}//, 65//+{"id":66,"code_id":"14excluded","name":"14excluded","comment":""}// ... and 1 more';
         $t->assert("diff_msg, json in long string", $result, $target);
+        // ... sql files
+        $test_result = $t->file('/web/system/result.sql');
+        $test_target = $t->file('/web/system/target.sql');
+        // TODO activate
+        //$result = $lib->diff_msg($test_result, $test_target);
+        //$target = '64//+{"id":65,"code_id":"18excluded","name":"18excluded","comment":""}//, 65//+{"id":66,"code_id":"14excluded","name":"14excluded","comment":""}// ... and 1 more';
+        //$t->assert("diff_msg, sql in long string", $result, $target);
         // html array size
         $test_result = '<a href="/http/result_edit.php?id=12&back=1" title="1.55">1.55</a>';
         $test_target = '<a href="/http/value_edit.php?id=12&back=1" title="1.55">1.55</a>';

@@ -1,4 +1,4 @@
-PREPARE triple_list_by_phr_lst_and_vrb_up (int, int[], int) AS
+PREPARE triple_list_by_phr_lst_up_and_vrb (int, int[], int) AS
     SELECT s.triple_id,
            u.triple_id AS user_triple_id,
            s.user_id,

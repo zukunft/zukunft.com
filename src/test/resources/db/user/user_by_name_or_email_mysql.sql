@@ -10,5 +10,5 @@ PREPARE user_by_name_or_email FROM
            source_id,
            user_profile_id
       FROM users
-     WHERE user_name = ?
-        OR email = ?';
+     WHERE (user_name = ?
+        OR email = ?)';

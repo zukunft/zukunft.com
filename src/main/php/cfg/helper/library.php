@@ -162,6 +162,8 @@ class library
         $result = $this->trim_lines($sql_string);
         $result = preg_replace('/\( /', '(', $result);
         $result = preg_replace('/ \)/', ')', $result);
+        $result = preg_replace('/\) ;/', ');', $result);
+        $result = preg_replace("/\) ';/", ")';", $result);
         return preg_replace('/, /', ',', $result);
     }
 

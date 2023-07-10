@@ -408,7 +408,7 @@ class user extends db_object
     function load_sql_by_name_or_email(sql_db $db_con, string $name, string $email, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($db_con, 'name_or_email', $class);
-        $db_con->add_par_txt($name);
+        $db_con->add_par_txt_or($name);
         $db_con->add_par_txt_or($email);
         $qp->sql = $db_con->select_by_name_or(self::FLD_EMAIL);
         $qp->par = $db_con->get_par();

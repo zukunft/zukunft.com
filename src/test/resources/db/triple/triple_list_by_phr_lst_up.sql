@@ -1,4 +1,4 @@
-PREPARE triple_list_by_phr_lst (int, int[], int[]) AS
+PREPARE triple_list_by_phr_lst_up (int, int[]) AS
     SELECT s.triple_id,
            u.triple_id AS user_triple_id,
            s.user_id,
@@ -36,5 +36,5 @@ PREPARE triple_list_by_phr_lst (int, int[], int[]) AS
  LEFT JOIN user_phrases ul   ON  l.phrase_id      =  ul.phrase_id    AND  ul.user_id = $1
  LEFT JOIN phrases l2        ON  s.to_phrase_id   =  l2.phrase_id
  LEFT JOIN user_phrases ul2  ON l2.phrase_id      = ul2.phrase_id    AND ul2.user_id = $1
-     WHERE (s.from_phrase_id = ANY ($2) OR s.to_phrase_id = ANY ($3))
+     WHERE s.from_phrase_id = ANY ($2)
   ORDER BY s.verb_id, name_given;

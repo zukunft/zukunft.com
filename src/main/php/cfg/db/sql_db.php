@@ -37,6 +37,8 @@ namespace cfg;
 
 include_once MODEL_SYSTEM_PATH . 'log.php';
 
+use cfg\db\sql_creator;
+use cfg\db\sql_par_type;
 use Exception;
 use mysqli;
 use mysqli_result;
@@ -49,6 +51,7 @@ class sql_db
     const MYSQL = "MySQL";
 
     // data retrieval settings
+    const SQL_QUERY_NAME_MAX_LEN = 62; // the query name cannot be longer than 62 chars at least for some databases
     const PAGE_SIZE = 20; // default number of rows per page/query if not defined
     const PAGE_SIZE_MAX = 2000; // the max number of rows per query to avoid long response times
 
@@ -129,6 +132,7 @@ class sql_db
     const PAR_INT_OR = 'int_or';
     const PAR_INT_NOT = 'int_not';
     const PAR_INT_LIST = 'int_list';
+    const PAR_INT_LIST_OR = 'int_list_or';
     const PAR_TEXT = 'text';
     const PAR_TEXT_LIST = 'text_list';
     const PAR_TEXT_OR = 'text_or';
@@ -230,8 +234,9 @@ class sql_db
     private ?string $id_link_field = '';            // only for link objects the id field of the link type object
     private ?string $name_field = '';               // unique text key field of the table used
     private ?string $query_name = '';               // unique name of the query to precompile and use the query
-    private ?array $par_types = [];                 // list of the parameter types, which also defines a precompiled query
+    private ?array $par_fields = [];                // list of field names to create the sql where statement
     private ?array $par_values = [];                // list of the parameter value to make sure they are in the same order as the parameter
+    private ?array $par_types = [];                 // list of the parameter types, which also defines a precompiled query
     private ?array $par_use_link = [];              // array of bool, true if the parameter should be used on the linked table
     private array $par_named = [];                  // array of bool, true if the parameter placeholder is already used in the SQL statement
     private ?array $field_lst = [];                 // list of fields that should be returned to the next select query
@@ -317,8 +322,9 @@ class sql_db
         $this->id_link_field = '';
         $this->name_field = '';
         $this->query_name = '';
-        $this->par_types = [];
+        $this->par_fields = [];
         $this->par_values = [];
+        $this->par_types = [];
         $this->par_use_link = [];
         $this->par_named = [];
         $this->field_lst = [];
@@ -524,6 +530,76 @@ class sql_db
     }
 
     /*
+     * sql creator functions
+     */
+
+    /*
+     * where
+     */
+
+    /**
+     * add a where condition a list of id are one field or another
+     * e.g. used to select both sides of a phrase tree
+     * @param string $fld the field name used in the sql where statement
+     * @param int|string|array $fld_val with the database id that should be selected
+     * @param sql_par_type|null $spt to force using a non-standard parameter type e.g. OR instead of AND
+     * @return void
+     */
+    function add_where(string $fld, int|string|array $fld_val, sql_par_type|null $spt = null): void
+    {
+        $this->add_field($fld);
+
+        // set the default parameter type
+        $sql_par_typ = sql_db::PAR_INT;
+        if ($spt == null) {
+            $sql_par_typ = match (gettype($fld_val)) {
+                'integer' => sql_db::PAR_INT,
+                'string' => sql_db::PAR_TEXT,
+                'array' => sql_db::PAR_INT_LIST,
+            };
+        } else {
+            // map the par type until all sql statement creations are changed
+            $sql_par_typ = match ($spt->name) {
+                'INT' => sql_db::PAR_INT,
+                'INT_LIST' => sql_db::PAR_INT_LIST,
+                'INT_LIST_OR' => sql_db::PAR_INT_LIST_OR,
+                default => log_err('Unexpected sqp parameter type '. $spt->name),
+            };
+        }
+
+        if ($sql_par_typ == sql_db::PAR_INT_LIST or $sql_par_typ == sql_db::PAR_INT_LIST_OR) {
+            $this->add_par($sql_par_typ, $this->int_array_to_sql_string($fld_val));
+        } elseif ($sql_par_typ == sql_db::PAR_INT) {
+            $this->add_par($sql_par_typ, $fld_val);
+        }
+    }
+
+    /*
+     * statement
+     */
+
+    /**
+     * create a SQL select statement for the connected database and force to use the ids of the linked objects instead of the id
+     * and select by a list of given fields
+     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
+     * @return string the created SQL statement in the previous set dialect
+     */
+    function sql(bool $has_id = true): string
+    {
+        return $this->select_by($this->par_fields, $has_id);
+    }
+
+    /*
+     * internal where
+     */
+
+    private function add_field(string $fld): void
+    {
+        $this->par_fields[] = $fld;
+    }
+
+
+    /*
      * basic interface function for the private class parameter
      */
 
@@ -647,6 +723,17 @@ class sql_db
     function add_par_in_int(array $ids, bool $named = false, bool $use_link = false): void
     {
         $this->add_par(sql_db::PAR_INT_LIST, $this->int_array_to_sql_string($ids), $named, $use_link);
+    }
+
+    /**
+     * interface function to add a "IN" parameter for a prepared query
+     * @param array $ids with the int id values for the WHERE IN SQL statement part
+     * @param bool $named true if the parameter name is already used
+     * @param bool $use_link true if the parameter should be applied on the linked table
+     */
+    function add_par_in_int_or(array $ids, bool $named = false, bool $use_link = false): void
+    {
+        $this->add_par(sql_db::PAR_INT_LIST_OR, $this->int_array_to_sql_string($ids), $named, $use_link);
     }
 
     /**
@@ -1000,49 +1087,81 @@ class sql_db
 
     /**
      * interface function for sql_usr_field
+     * @param string $field the field name of the user specific field
+     * @param string $field_format the enum of the sql field type e.g. INT
+     * @param string $stb_tbl the table prefix for the table with the default values for all users
+     * @param string $usr_tbl the table prefix for the table with the user specific values
+     * @param string $as to overwrite the field name than contains the user specific value or the default value
      */
-    function get_usr_field($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL, $field_format = sql_db::FLD_FORMAT_TEXT, $as = ''): string
+    function get_usr_field(
+        string $field, string $stb_tbl = sql_db::STD_TBL, string $usr_tbl = sql_db::USR_TBL,
+        string $field_format = sql_db::FLD_FORMAT_TEXT, string $as = ''): string
     {
         return $this->sql_usr_field($field, $field_format, $stb_tbl, $usr_tbl, $as);
     }
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and text fields
+     * @param string $field the field name of the user specific field
+     * @param string $stb_tbl the table prefix for the table with the default values for all users
+     * @param string $usr_tbl the table prefix for the table with the user specific values
+     * @param string $as to overwrite the field name than contains the user specific value or the default value
      */
-    private function set_field_usr_text($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL, $as = ''): void
+    private function set_field_usr_text(
+        string $field, string $stb_tbl = sql_db::STD_TBL, string $usr_tbl = sql_db::USR_TBL, string $as = ''): void
     {
         $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_TEXT, $stb_tbl, $usr_tbl, $as);
     }
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and number fields
+     * @param string $field the field name of the user specific field
+     * @param string $stb_tbl the table prefix for the table with the default values for all users
+     * @param string $usr_tbl the table prefix for the table with the user specific values
+     * @param string $as to overwrite the field name than contains the user specific value or the default value
      */
-    private function set_field_usr_num($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL, $as = ''): void
+    private function set_field_usr_num(
+        string $field, string $stb_tbl = sql_db::STD_TBL, string $usr_tbl = sql_db::USR_TBL, string $as = ''): void
     {
         $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_VAL, $stb_tbl, $usr_tbl, $as);
     }
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and number fields
+     * @param string $field the field name of the user specific field
+     * @param string $stb_tbl the table prefix for the table with the default values for all users
+     * @param string $as to overwrite the field name than contains the user specific value or the default value
      */
-    private function set_field_usr_count($field, $stb_tbl = sql_db::LNK_TBL, $as = ''): void
+    private function set_field_usr_count(
+        string $field, string $stb_tbl = sql_db::LNK_TBL, string $as = ''): void
     {
         $this->from = ' FROM ( SELECT ' . $this->fields . ', count(' . $stb_tbl . '.' . $field . ') AS ' . $as;
     }
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and boolean / tinyint fields
+     * @param string $field the field name of the user specific field
+     * @param string $as to overwrite the field name than contains the user specific value or the default value
      */
-    private function set_field_usr_bool($field, string $as = ''): void
+    private function set_field_usr_bool(
+        string $field, string $as = ''): void
     {
-        $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_BOOL, sql_db::STD_TBL, sql_db::USR_TBL, $as);
+        $this->fields .= $this->sql_usr_field(
+            $field, sql_db::FLD_FORMAT_BOOL, sql_db::STD_TBL, sql_db::USR_TBL, $as);
     }
 
     /**
-     * return the SQL statement for a field taken from the user sandbox table or from the table with the common values
-     * $db_type is the SQL database type which is in this case independent of the class setting to be able to use it anywhere
+     * create the sql statement to get the user specific value if it is set or the value for all users
+     * uses $db_type is the SQL database type which is in this case independent of the class setting to be able to use it anywhere
+     * @param string $field the field name of the user specific field
+     * @param string $field_format the enum of the sql field type e.g. INT
+     * @param string $stb_tbl the table prefix for the table with the default values for all users
+     * @param string $usr_tbl the table prefix for the table with the user specific values
+     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
      */
-    private function sql_usr_field($field, $field_format, $stb_tbl, $usr_tbl, $as = ''): string
+    private function sql_usr_field(
+        string $field, string $field_format, string $stb_tbl, string $usr_tbl, string $as = ''): string
     {
         $result = '';
         if ($as == '') {
@@ -1050,19 +1169,24 @@ class sql_db
         }
         if ($this->db_type == sql_db::POSTGRES) {
             if ($field_format == sql_db::FLD_FORMAT_TEXT) {
-                $result = " CASE WHEN (" . $usr_tbl . "." . $field . " <> '' IS NOT TRUE) THEN " . $stb_tbl . "." . $field . " ELSE " . $usr_tbl . "." . $field . " END AS " . $as;
+                $result = " CASE WHEN (" . $usr_tbl . "." . $field . " <> '' IS NOT TRUE) THEN "
+                    . $stb_tbl . "." . $field . " ELSE " . $usr_tbl . "." . $field . " END AS " . $as;
             } elseif ($field_format == sql_db::FLD_FORMAT_VAL) {
-                $result = " CASE WHEN (" . $usr_tbl . "." . $field . " IS NULL) THEN " . $stb_tbl . "." . $field . " ELSE " . $usr_tbl . "." . $field . " END AS " . $as;
+                $result = " CASE WHEN (" . $usr_tbl . "." . $field . " IS NULL) THEN "
+                    . $stb_tbl . "." . $field . " ELSE " . $usr_tbl . "." . $field . " END AS " . $as;
             } elseif ($field_format == sql_db::FLD_FORMAT_BOOL) {
-                $result = " CASE WHEN (" . $usr_tbl . "." . $field . " IS NULL) THEN COALESCE(" . $stb_tbl . "." . $field . ",0) ELSE COALESCE(" . $usr_tbl . "." . $field . ",0) END AS " . $as;
+                $result = " CASE WHEN (" . $usr_tbl . "." . $field . " IS NULL) THEN COALESCE("
+                    . $stb_tbl . "." . $field . ",0) ELSE COALESCE(" . $usr_tbl . "." . $field . ",0) END AS " . $as;
             } else {
                 log_err('Unexpected field format ' . $field_format);
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
             if ($field_format == sql_db::FLD_FORMAT_TEXT or $field_format == sql_db::FLD_FORMAT_VAL) {
-                $result = '         IF(' . $usr_tbl . '.' . $field . ' IS NULL, ' . $stb_tbl . '.' . $field . ', ' . $usr_tbl . '.' . $field . ')    AS ' . $as;
+                $result = '         IF(' . $usr_tbl . '.' . $field . ' IS NULL, '
+                    . $stb_tbl . '.' . $field . ', ' . $usr_tbl . '.' . $field . ')    AS ' . $as;
             } elseif ($field_format == sql_db::FLD_FORMAT_BOOL) {
-                $result = '         IF(' . $usr_tbl . '.' . $field . ' IS NULL, COALESCE(' . $stb_tbl . '.' . $field . ',0), COALESCE(' . $usr_tbl . '.' . $field . ',0))    AS ' . $as;
+                $result = '         IF(' . $usr_tbl . '.' . $field . ' IS NULL, COALESCE('
+                    . $stb_tbl . '.' . $field . ',0), COALESCE(' . $usr_tbl . '.' . $field . ',0))    AS ' . $as;
             } else {
                 log_err('Unexpected field format ' . $field_format);
             }
@@ -2509,6 +2633,7 @@ class sql_db
      */
     private function set_where(array $id_fields): void
     {
+        $open_or_flf_lst = false;
         // if nothing is defined assume to load the row by the main if
         if ($this->where == '') {
             if (count($this->par_types) > 0) {
@@ -2521,16 +2646,35 @@ class sql_db
                 $i = 0; // the position in the SQL parameter array
                 $used_fields = 0; // the position of the fields used in the where statement
                 foreach ($this->par_types as $par_type) {
+                    // set the closing bracket around a or field list if needed
+                    if ($open_or_flf_lst) {
+                        if (!($par_type == self::PAR_TEXT_OR
+                            or $par_type == self::PAR_INT_LIST_OR)) {
+                            $this->where .= ' ) ';
+                            $open_or_flf_lst = false;
+                        }
+                    }
                     if ($this->par_named[$i] == false) {
+                        // start with the where statement
                         if ($this->where == '') {
                             $this->where = ' WHERE ';
                         } else {
-                            if ($par_type == self::PAR_TEXT_OR) {
+                            if ($par_type == self::PAR_TEXT_OR
+                                or $par_type == self::PAR_INT_LIST_OR) {
                                 $this->where .= ' OR ';
                             } else {
                                 $this->where .= ' AND ';
                             }
                         }
+                        // set the opening bracket around a or field list if needed
+                        if ($par_type == self::PAR_TEXT_OR
+                            or $par_type == self::PAR_INT_LIST_OR) {
+                            if (!$open_or_flf_lst) {
+                                $this->where .= ' ( ';
+                                $open_or_flf_lst = true;
+                            }
+                        }
+                        // add the table
                         if ($this->usr_query
                             or $this->join <> ''
                             or $this->join_type <> ''
@@ -2541,7 +2685,10 @@ class sql_db
                                 $this->where .= sql_db::STD_TBL . '.';
                             }
                         }
-                        if ($par_type == self::PAR_INT_LIST or $par_type == self::PAR_TEXT_LIST) {
+                        // add the field name
+                        if ($par_type == self::PAR_INT_LIST
+                            or $par_type == self::PAR_INT_LIST_OR
+                            or $par_type == self::PAR_TEXT_LIST) {
                             if ($this->db_type == sql_db::POSTGRES) {
                                 $this->where .= $id_fields[$used_fields] . ' = ANY (' . $this->par_name($i + 1) . ')';
                             } else {
@@ -2579,6 +2726,11 @@ class sql_db
                     }
                     $i++;
                 }
+                // close any open brackets
+                if ($open_or_flf_lst) {
+                    $this->where .= ' ) ';
+                }
+
             }
         }
     }
@@ -3201,14 +3353,14 @@ class sql_db
      * convert the parameter type list to make valid for postgres
      * @return void
      */
-    private
-    function par_types_to_postgres(): void
+    private function par_types_to_postgres(): void
     {
         $in_types = $this->par_types;
         $this->par_types = array();
         foreach ($in_types as $type) {
             switch ($type) {
                 case self::PAR_INT_LIST:
+                case self::PAR_INT_LIST_OR:
                     $this->par_types[] = 'int[]';
                     break;
                 case self::PAR_INT_NOT:
@@ -3321,8 +3473,8 @@ class sql_db
         } else {
             $this->add_par(sql_db::PAR_INT, $id);
             $sql_mid = " " . user::FLD_ID .
-              " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) .
-             " WHERE " . $this->id_field . " = " . $this->par_name() . "
+                " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) .
+                " WHERE " . $this->id_field . " = " . $this->par_name() . "
                  AND (excluded <> 1 OR excluded is NULL)";
             if ($owner_id > 0) {
                 $this->add_par(sql_db::PAR_INT, $owner_id);
@@ -4337,6 +4489,16 @@ class sql_db
             $result = false;
         }
         return $result;
+    }
+
+    /**
+     * @return sql_creator with the same db_type
+     */
+    function sql_creator(): sql_creator
+    {
+        $sc = new sql_creator();
+        $sc->set_db_type($this->db_type);
+        return $sc;
     }
 
 }

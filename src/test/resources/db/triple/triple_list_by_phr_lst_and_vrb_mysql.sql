@@ -1,4 +1,4 @@
-PREPARE triple_list_by_phr_lst_and_vrb_down FROM
+PREPARE triple_list_by_phr_lst_and_vrb_up FROM
     'SELECT s.triple_id,
             u.triple_id AS user_triple_id,
             s.user_id,
@@ -36,6 +36,6 @@ PREPARE triple_list_by_phr_lst_and_vrb_down FROM
   LEFT JOIN user_phrases ul  ON  l.phrase_id      =  ul.phrase_id AND  ul.user_id = ?
   LEFT JOIN phrases l2       ON  s.to_phrase_id   =  l2.phrase_id
   LEFT JOIN user_phrases ul2 ON l2.phrase_id      = ul2.phrase_id AND ul2.user_id = ?
-      WHERE s.to_phrase_id IN (?)
+      WHERE (s.from_phrase_id IN (?) or s.to_phrase_id IN (?))
         AND s.verb_id = ?
    ORDER BY s.verb_id, name_given';

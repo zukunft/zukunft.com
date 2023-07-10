@@ -42,8 +42,10 @@
 namespace cfg;
 
 include_once API_WORD_PATH . 'triple_list.php';
+include_once DB_PATH . 'sql_par_type.php';
 
 use api\triple_list_api;
+use cfg\db\sql_par_type;
 use html\html_base;
 use html\word\triple_list as triple_list_dsp;
 
@@ -108,7 +110,7 @@ class triple_list extends sandbox_list
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_new(sql_db $db_con): sql_par
+    function load_sql(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $qp = new sql_par(self::class);
@@ -169,7 +171,7 @@ class triple_list extends sandbox_list
      */
     function load_sql_by_ids(sql_db $db_con, array $trp_ids): sql_par
     {
-        $qp = $this->load_sql_new($db_con);
+        $qp = $this->load_sql($db_con);
         if (count($trp_ids) > 0) {
             $qp->name .= 'ids';
             $db_con->set_name($qp->name);
@@ -193,7 +195,7 @@ class triple_list extends sandbox_list
     function load_sql_by_phr(
         sql_db $db_con, phrase $phr, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): sql_par
     {
-        $qp = $this->load_sql_new($db_con);
+        $qp = $this->load_sql($db_con);
         if ($phr->id() <> 0) {
             $fields = array();
             $qp->name .= 'phr';
@@ -239,33 +241,27 @@ class triple_list extends sandbox_list
     function load_sql_by_phr_lst(
         sql_db $db_con, phrase_list $phr_lst, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): sql_par
     {
-        $qp = $this->load_sql_new($db_con);
+        $qp = $this->load_sql($db_con);
         if (!$phr_lst->empty()) {
-            $fields = array();
             $qp->name .= 'phr_lst';
-            $db_con->add_par_in_int($phr_lst->ids());
             if ($direction == foaf_direction::UP) {
-                $fields[] = triple::FLD_FROM;
+                $db_con->add_where(triple::FLD_FROM, $phr_lst->ids());
+                $qp->name .= '_' . $direction->value;
             } elseif ($direction == foaf_direction::DOWN) {
-                $fields[] = triple::FLD_TO;
+                $db_con->add_where(triple::FLD_TO, $phr_lst->ids());
+                $qp->name .= '_' . $direction->value;;
             } elseif ($direction == foaf_direction::BOTH) {
-                $fields[] = triple::FLD_FROM;
-                $fields[] = triple::FLD_TO;
+                $db_con->add_where(triple::FLD_FROM, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
+                $db_con->add_where(triple::FLD_TO, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
-                    $db_con->add_par(sql_db::PAR_INT, $vrb->id());
-                    $fields[] = verb::FLD_ID;
+                    $db_con->add_where(verb::FLD_ID, $vrb->id());
                     $qp->name .= '_and_vrb';
                 }
             }
-            if ($direction == foaf_direction::UP) {
-                $qp->name .= '_up';
-            } elseif ($direction == foaf_direction::DOWN) {
-                $qp->name .= '_down';
-            }
             $db_con->set_name($qp->name);
-            $qp->sql = $db_con->select_by_field_list($fields);
+            $qp->sql = $db_con->sql();
         } else {
             $qp->name = '';
             log_err('At least the phrase must be set to load a triple list by phrase');
@@ -439,7 +435,7 @@ class triple_list extends sandbox_list
 
     // create the sql statement to fill a word link list
     // TODO add query name
-    function load_sql(sql_db $db_con): string
+    function load_sql_old(sql_db $db_con): string
     {
         $lib = new library();
         $sql = '';
@@ -594,7 +590,7 @@ class triple_list extends sandbox_list
             log_err("The user id must be set to load a graph.", "triple_list->load");
         } else {
             $db_con->set_usr($this->user()->id());
-            $sql = $this->load_sql($db_con);
+            $sql = $this->load_sql_old($db_con);
             $db_lst = $db_con->get_old($sql);
             log_debug('triple_list->load ... sql "' . $sql . '"');
             $this->lst = array();
