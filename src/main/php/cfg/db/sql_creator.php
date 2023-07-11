@@ -534,12 +534,12 @@ class sql_creator
             }
 
             // add the given fields at the end
-            foreach ($this->par_fields as $field) {
+            foreach ($this->field_lst as $field) {
                 if (!in_array($field, $field_lst)) {
                     $field_lst[] = $field;
                 }
             }
-            $this->par_fields = $field_lst;
+            $this->field_lst = $field_lst;
 
             // add the given user fields at the end
             foreach ($this->usr_field_lst as $field) {
@@ -549,7 +549,7 @@ class sql_creator
         }
 
         // add normal fields
-        foreach ($this->par_fields as $field) {
+        foreach ($this->field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $result = $this->sep($result);
             if ($this->usr_query or $this->join_type != '') {
