@@ -33,6 +33,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 
 use api\triple_api;
 use api\word_api;
+use cfg\db\sql_creator;
 use cfg\foaf_direction;
 use cfg\phrase_type;
 use html\phrase\phrase_list as phrase_list_dsp;
@@ -105,7 +106,7 @@ class phrase_list_unit_tests
         $wrd->set(1, word_api::TN_CH);
         $phr_lst->add($wrd->phrase());
         $vrb = $verbs->get(verb::IS_PART_OF);
-        $this->assert_sql_linked_phrases($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);
+        $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);
         // TODO activate
         //$this->assert_sql_by_phr_lst($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);
 
@@ -281,22 +282,22 @@ class phrase_list_unit_tests
      * @param foaf_direction $direction to define the link direction
      */
     private function assert_sql_linked_phrases(
-        sql_db         $db_con,
+        sql_creator    $sc,
         test_cleanup   $t,
         object         $usr_obj,
         ?verb          $vrb,
         foaf_direction $direction): void
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_linked_phrases($db_con, $vrb, $direction);
-        $result = $t->assert_qp($qp, $db_con->db_type);
+        $sc->set_db_type(sql_db::POSTGRES);
+        $qp = $usr_obj->load_sql_linked_phrases($sc, $vrb, $direction);
+        $result = $t->assert_qp($qp, $sc->db_type());
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_linked_phrases($db_con, $vrb, $direction);
-            $t->assert_qp($qp, $db_con->db_type);
+            $sc->set_db_type(sql_db::MYSQL);
+            $qp = $usr_obj->load_sql_linked_phrases($sc, $vrb, $direction);
+            $t->assert_qp($qp, $sc->db_type());
         }
     }
 

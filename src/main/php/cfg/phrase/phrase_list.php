@@ -245,28 +245,6 @@ class phrase_list extends sandbox_list_named
      */
 
     /**
-     * set the SQL query parameters to load a list of phrase names
-     * without the related phrase to save time and memory
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_names_sql_db(sql_db $db_con, string $query_name): sql_par
-    {
-        $db_con->set_type(sql_db::TBL_PHRASE);
-        $qp = new sql_par(self::class);
-        $qp->name .= $query_name;
-
-        $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(phrase::FLD_NAMES);
-        $db_con->set_usr_fields(phrase::FLD_NAMES_USR_NO_NAME);
-        $db_con->set_usr_num_fields(phrase::FLD_NAMES_NUM_USR);
-        $db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(phrase::FLD_VALUES) . ' DESC, ' . phrase::FLD_NAME);
-        return $qp;
-    }
-
-    /**
      * set the SQL query parameters to load a list of phrase objects
      * with all parameters and the related phrase
      * TODO deprecate because still based on the sql_db object instead of the separate sql_creator
@@ -299,7 +277,7 @@ class phrase_list extends sandbox_list_named
      */
     function load_names_sql_db_by_ids(sql_db $db_con, phr_ids $ids): sql_par
     {
-        $qp = $this->load_names_sql_db($db_con, 'db_' . $ids->count() . 'ids');
+        $qp = $this->load_names_sql($db_con->sql_creator(), 'db_' . $ids->count() . 'ids');
         $db_con->set_where_id_in(phrase::FLD_ID, $ids->lst);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -493,7 +471,7 @@ class phrase_list extends sandbox_list_named
         } else {
             $ids_to_load = $ids;
         }
-        $qp = $this->load_names_sql_db_by_ids($db_con, $ids_to_load);
+        $qp = $this->load_names_sql_by_ids($db_con->sql_creator(), $ids_to_load);
         $result = $this->load($qp);
         if ($phr_lst != null) {
             $phr_lst_to_add = $phr_lst->filter_by_ids($ids);
@@ -821,59 +799,44 @@ class phrase_list extends sandbox_list_named
      * create the sql statement to select the related phrases
      * the relation can be narrowed with a verb id
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc the db connection object as a function parameter for unit testing
      * @param verb|null $vrb if set to select only phrases linked with this verb
      * @param foaf_direction $direction to define the link direction
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_linked_phrases(sql_db $db_con, ?verb $vrb, foaf_direction $direction): sql_par
+    function load_sql_linked_phrases(sql_creator $sc, ?verb $vrb, foaf_direction $direction): sql_par
     {
-        $qp = $this->load_names_sql_db($db_con, '');
-        $sql_where = '';
+        $qp = $this->load_names_sql($sc, '');
         $join_field = '';
         if (count($this->lst) <= 0) {
             log_warning('The phrase list is empty, so nothing could be found', self::class . "->load_sql_by_linked_type");
             $qp->name = '';
         } else {
-            if ($db_con->db_type == sql_db::POSTGRES) {
-                $sql_in = ' = ANY (';
-            } else {
-                $sql_in = ' IN (';
-            }
             if ($direction == foaf_direction::UP) {
                 $qp->name .= 'parents';
-                $db_con->add_par_in_int($this->ids());
-                $sql_where = sql_db::LNK_TBL . '.' . triple::FLD_FROM . $sql_in . $db_con->par_name() . ')';
+                $sc->add_where(sql_db::LNK_TBL . '.' . triple::FLD_FROM, $this->ids(), sql_par_type::INT_LIST);
                 $join_field = triple::FLD_TO;
             } elseif ($direction == foaf_direction::DOWN) {
                 $qp->name .= 'children';
-                $db_con->add_par_in_int($this->ids());
-                $sql_where = sql_db::LNK_TBL . '.' . triple::FLD_TO . $sql_in . $db_con->par_name() . ')';
+                $sc->add_where(sql_db::LNK_TBL . '.' . triple::FLD_TO, $this->ids(), sql_par_type::INT_LIST);
+                //$sql_where = sql_db::LNK_TBL . '.' . triple::FLD_TO . $sql_in . $db_con->par_name() . ')';
                 $join_field = triple::FLD_FROM;
             } else {
                 log_err('Unknown direction ' . $direction->value);
             }
             // verbs can have a negative id for the reverse selection
             if ($vrb != null) {
-                $db_con->set_join_fields(
-                    array(verb::FLD_ID),
-                    sql_db::TBL_TRIPLE,
-                    phrase::FLD_ID,
-                    $join_field,
-                    verb::FLD_ID,
-                    $vrb->id());
+                $sc->add_where(sql_db::LNK_TBL . '.' . verb::FLD_ID, $vrb->id());
                 $qp->name .= '_verb_select';
-            } else {
-                $db_con->set_join_fields(
-                    array(verb::FLD_ID),
-                    sql_db::TBL_TRIPLE,
-                    phrase::FLD_ID,
-                    $join_field);
             }
-            $db_con->set_name($qp->name);
-            $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
+            $sc->set_join_fields(
+                array(verb::FLD_ID),
+                sql_db::TBL_TRIPLE,
+                phrase::FLD_ID,
+                $join_field);
+            $sc->set_name($qp->name);
+            $qp->sql = $sc->sql();
+            $qp->par = $sc->get_par();
         }
 
         return $qp;
@@ -1164,7 +1127,7 @@ class phrase_list extends sandbox_list_named
         $lib = new library();
         $additional_added = new phrase_list($this->user()); // list of the added phrases with this call
 
-        $qp = $this->load_sql_linked_phrases($db_con, $vrb, $direction);
+        $qp = $this->load_sql_linked_phrases($db_con->sql_creator(), $vrb, $direction);
         if ($qp->name == '') {
             log_warning('The phrase list is empty, so nothing could be found', self::class . '->load_linked_phrases');
         } else {

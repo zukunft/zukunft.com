@@ -232,6 +232,14 @@ class sql_creator
     }
 
     /**
+     * @return string $db_type the database type as string
+     */
+    function db_type(): string
+    {
+        return $this->db_type;
+    }
+
+    /**
      * set the id field based on the table name of not overwritten
      * @param string $given_name to overwrite the id field name
      * @return void
@@ -351,6 +359,67 @@ class sql_creator
         $this->order = ' ORDER BY ' . $order_text;
     }
 
+    /**
+     * add a list of fields to the result that are taken from another table
+     * must be set AFTER the set_usr_fields, set_usr_num_fields, set_usr_bool_fields, set_usr_bool_fields or set_usr_only_fields for correct handling of $this->usr_join_query
+     * @param array $join_field_lst are the field names that should be included in the result
+     * @param string $join_type is the table from where the fields should be taken; use the type name, not the table name
+     * @param string $join_field is the index field that should be used for the join that must exist in both tables, default is the id of the joined table
+     *                           if empty the field will be guessed
+     */
+    function set_join_fields(array  $join_field_lst,
+                             string $join_type,
+                             string $join_field = '',
+                             string $join_to_field = '',
+                             string $join_select_field = '',
+                             int    $join_select_id = 0): void
+    {
+        // fill up the join field places or add settings to a matching join link
+        if ($this->join_type == '' and !$this->join_force_rename
+            or (($this->join_field == $join_field and $join_field != '')
+                and ($this->join_to_field == $join_to_field and $join_to_field != ''))) {
+            $this->join_type = $join_type;
+            $this->join_field_lst = $join_field_lst;
+            $this->join_field = $join_field;
+            $this->join_to_field = $join_to_field;
+            $this->join_select_field = $join_select_field;
+            $this->join_select_id = $join_select_id;
+            $this->join_usr_query = false;
+        } elseif ($this->join2_type == '' and !$this->join2_force_rename
+            or (($this->join2_field == $join_field and $join_field != '')
+                and ($this->join2_to_field == $join_to_field and $join_to_field != ''))) {
+            $this->join2_type = $join_type;
+            $this->join2_field_lst = $join_field_lst;
+            $this->join2_field = $join_field;
+            $this->join2_to_field = $join_to_field;
+            $this->join2_select_field = $join_select_field;
+            $this->join2_select_id = $join_select_id;
+            $this->join2_usr_query = false;
+        } elseif ($this->join3_type == '' and !$this->join3_force_rename
+            or (($this->join3_field == $join_field and $join_field != '')
+                and ($this->join3_to_field == $join_to_field and $join_to_field != ''))) {
+            $this->join3_type = $join_type;
+            $this->join3_field_lst = $join_field_lst;
+            $this->join3_field = $join_field;
+            $this->join3_to_field = $join_to_field;
+            $this->join3_select_field = $join_select_field;
+            $this->join3_select_id = $join_select_id;
+            $this->join3_usr_query = false;
+        } elseif ($this->join4_type == '' and !$this->join4_force_rename
+            or (($this->join4_field == $join_field and $join_field != '')
+                and ($this->join4_to_field == $join_to_field and $join_to_field != ''))) {
+            $this->join4_type = $join_type;
+            $this->join4_field_lst = $join_field_lst;
+            $this->join4_field = $join_field;
+            $this->join4_to_field = $join_to_field;
+            $this->join4_select_field = $join_select_field;
+            $this->join4_select_id = $join_select_id;
+            $this->join4_usr_query = false;
+        } else {
+            log_err('Max four table joins expected on version ' . PRG_VERSION);
+        }
+    }
+
 
     /*
      * where
@@ -452,6 +521,7 @@ class sql_creator
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
+                        $this->add_field(sql_db::USR_TBL . '.' . user::FLD_ID);
                         $this->add_par(sql_db::PAR_INT, $this->usr_id);
                         $this->join_usr_par_name = $this->par_name();
                         $this->join .= $this->join_usr_par_name;
@@ -1002,10 +1072,12 @@ class sql_creator
                             or $this->join <> ''
                             or $this->join_type <> ''
                             or $this->join2_type <> '') {
-                            if ($this->par_use_link[$i]) {
-                                $result .= sql_db::LNK_TBL . '.';
-                            } else {
-                                $result .= sql_db::STD_TBL . '.';
+                            if (!str_contains($this->par_fields[$i], '.')) {
+                                if ($this->par_use_link[$i]) {
+                                    $result .= sql_db::LNK_TBL . '.';
+                                } else {
+                                    $result .= sql_db::STD_TBL . '.';
+                                }
                             }
                         }
                         // add the field name
@@ -1013,28 +1085,28 @@ class sql_creator
                             or $par_type == sql_db::PAR_INT_LIST_OR
                             or $par_type == sql_db::PAR_TEXT_LIST) {
                             if ($this->db_type == sql_db::POSTGRES) {
-                                $result .= $id_fields[$used_fields] . ' = ANY (' . $this->par_name($i + 1) . ')';
+                                $result .= $this->par_fields[$i] . ' = ANY (' . $this->par_name($i + 1) . ')';
                             } else {
-                                $result .= $id_fields[$used_fields] . ' IN (' . $this->par_name($i + 1) . ')';
+                                $result .= $this->par_fields[$i] . ' IN (' . $this->par_name($i + 1) . ')';
                             }
                         } else {
                             if ($par_type == sql_db::PAR_LIKE) {
-                                $result .= $id_fields[$used_fields] . ' like ' . $this->par_name($i + 1);
+                                $result .= $this->par_fields[$i] . ' like ' . $this->par_name($i + 1);
                             } else {
                                 if ($par_type == sql_db::PAR_CONST) {
                                     $result .= $this->par_value($i + 1);
                                 } else {
                                     if ($par_type == sql_db::PAR_INT_NOT) {
-                                        $result .= $id_fields[$used_fields] . ' <> ' . $this->par_name($i + 1);
+                                        $result .= $this->par_fields[$i] . ' <> ' . $this->par_name($i + 1);
                                     } else {
-                                        $result .= $id_fields[$used_fields] . ' = ' . $this->par_name($i + 1);
+                                        $result .= $this->par_fields[$i] . ' = ' . $this->par_name($i + 1);
                                     }
                                 }
                             }
                         }
 
                         if ($par_type == sql_db::PAR_TEXT) {
-                            if ($id_fields[$used_fields] == sql_db::FLD_CODE_ID) {
+                            if ($this->par_fields[$i] == sql_db::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $result .= ' AND ';
                                     if ($this->usr_query or $this->join <> '') {
