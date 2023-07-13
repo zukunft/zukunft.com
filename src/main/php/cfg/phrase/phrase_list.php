@@ -172,7 +172,7 @@ class phrase_list extends sandbox_list_named
      */
     function load_names_sql_by_ids(sql_creator $sc, phr_ids $ids): sql_par
     {
-        $qp = $this->load_names_sql($sc, $ids->count() . 'ids');
+        $qp = $this->load_names_sql($sc, $ids->count() . 'ids_fast');
         $sc->add_where(phrase::FLD_ID, $ids->lst, sql_par_type::INT_LIST);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -199,6 +199,23 @@ class phrase_list extends sandbox_list_named
         $sc->set_usr_fields(phrase::FLD_NAMES_USR_NO_NAME);
         $sc->set_usr_num_fields(phrase::FLD_NAMES_NUM_USR);
         $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(phrase::FLD_VALUES) . ' DESC, ' . phrase::FLD_NAME);
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of phrase objects by the id from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param phr_ids $ids phrase ids that should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_ids(sql_creator $sc, phr_ids $ids): sql_par
+    {
+        $qp = $this->load_sql($sc, $ids->count() . 'ids');
+        $sc->add_where(phrase::FLD_ID, $ids->lst, sql_par_type::INT_LIST);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
         return $qp;
     }
 
@@ -240,32 +257,36 @@ class phrase_list extends sandbox_list_named
         return $qp;
     }
 
+    /**
+     * load the phrases including the related word or triple object by the given id list from the database
+     *
+     * @param phr_ids $ids phrase ids that should be loaded
+     * @return bool true if at least one phrase has been loaded
+     */
+    function load_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
+    {
+        global $db_con;
+        if ($phr_lst != null) {
+            $ids_lst_to_load = array_diff($ids->lst, $phr_lst->ids());
+            $ids_to_load = new phr_ids($ids_lst_to_load);
+        } else {
+            $ids_to_load = $ids;
+        }
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids_to_load);
+        $result = $this->load($qp);
+        if ($phr_lst != null) {
+            $phr_lst_to_add = $phr_lst->filter_by_ids($ids);
+            if (!$phr_lst_to_add->is_empty()) {
+                $this->merge($phr_lst_to_add);
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
     /*
      * to be moved to the sql creator
      */
-
-    /**
-     * set the SQL query parameters to load a list of phrase objects
-     * with all parameters and the related phrase
-     * TODO deprecate because still based on the sql_db object instead of the separate sql_creator
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_db(sql_db $db_con, string $query_name): sql_par
-    {
-        $db_con->set_type(sql_db::TBL_PHRASE);
-        $qp = new sql_par(self::class);
-        $qp->name .= $query_name;
-
-        $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(phrase::FLD_NAMES);
-        $db_con->set_usr_fields(phrase::FLD_NAMES_USR_NO_NAME);
-        $db_con->set_usr_num_fields(phrase::FLD_NAMES_NUM_USR);
-        $db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(phrase::FLD_VALUES) . ' DESC, ' . phrase::FLD_NAME);
-        return $qp;
-    }
 
     /**
      * create an SQL statement to retrieve a list of phrase names by the id from the database
@@ -277,24 +298,7 @@ class phrase_list extends sandbox_list_named
      */
     function load_names_sql_db_by_ids(sql_db $db_con, phr_ids $ids): sql_par
     {
-        $qp = $this->load_names_sql($db_con->sql_creator(), 'db_' . $ids->count() . 'ids');
-        $db_con->set_where_id_in(phrase::FLD_ID, $ids->lst);
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a list of phrase objects by the id from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param phr_ids $ids phrase ids that should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_ids(sql_db $db_con, phr_ids $ids): sql_par
-    {
-        $qp = $this->load_sql_db($db_con, $ids->count() . 'ids');
+        $qp = $this->load_names_sql($db_con->sql_creator(), 'db_' . $ids->count() . 'ids_fast');
         $db_con->set_where_id_in(phrase::FLD_ID, $ids->lst);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -472,33 +476,6 @@ class phrase_list extends sandbox_list_named
             $ids_to_load = $ids;
         }
         $qp = $this->load_names_sql_by_ids($db_con->sql_creator(), $ids_to_load);
-        $result = $this->load($qp);
-        if ($phr_lst != null) {
-            $phr_lst_to_add = $phr_lst->filter_by_ids($ids);
-            if (!$phr_lst_to_add->is_empty()) {
-                $this->merge($phr_lst_to_add);
-                $result = true;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * load the phrases including the related word or triple object by the given id list from the database
-     *
-     * @param phr_ids $ids phrase ids that should be loaded
-     * @return bool true if at least one phrase has been loaded
-     */
-    function load_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
-    {
-        global $db_con;
-        if ($phr_lst != null) {
-            $ids_lst_to_load = array_diff($ids->lst, $phr_lst->ids());
-            $ids_to_load = new phr_ids($ids_lst_to_load);
-        } else {
-            $ids_to_load = $ids;
-        }
-        $qp = $this->load_sql_by_ids($db_con, $ids_to_load);
         $result = $this->load($qp);
         if ($phr_lst != null) {
             $phr_lst_to_add = $phr_lst->filter_by_ids($ids);

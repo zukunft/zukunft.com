@@ -90,17 +90,12 @@ class phrase_list_unit_tests
         // load by phrase ids
         $phr_lst = new phrase_list($usr);
         $phr_ids = new phr_ids(array(3, -2, 4, -7));
-        //$this->assert_by_ids_sql($phr_ids->lst);
+        $this->assert_sql_by_ids($t, $db_con, $phr_lst, $phr_ids);
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
 
         $this->test = $t;
 
-        // sql to load a list of value by the phrase id
-        $ids = array(1, 2, 3);
-        $qp = $this->assert_by_ids_sql($ids, sql_db::POSTGRES);
-        $this->assert_by_ids_sql($ids, sql_db::MYSQL);
-        $this->test->assert_sql_name_unique($qp->name);
-
+        // sql to load a list of phrases by a phrase list
         $phr_lst = new phrase_list($usr);
         $wrd = new word($usr);
         $wrd->set(1, word_api::TN_CH);
@@ -213,34 +208,23 @@ class phrase_list_unit_tests
      * @param string $dialect if not Postgres the name of the SQL dialect
      * @return void
      */
-    private function assert_by_ids_sql(array $ids, string $dialect = ''): sql_par
+    private function assert_sql_by_ids(
+        test_cleanup $t,
+        sql_db $db_con,
+        phrase_list $lst,
+        phr_ids $ids): void
     {
-        global $usr;
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_ids($db_con->sql_creator(), $ids);
+        $result = $t->assert_qp($qp, $db_con->db_type);
 
-        $lib = new library();
-
-        $lst = new phrase_list($usr);
-        $db_con = new sql_db();
-        $db_con->db_type = $dialect;
-        $dialect_ext = '';
-        if ($dialect == sql_db::MYSQL) {
-            $dialect_ext = self::FILE_MYSQL;
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $lst->load_sql_by_ids($db_con->sql_creator(), $ids);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        $qp = $lst->load_by_wrd_ids_sql($db_con, $ids);
-        $expected_sql = $this->test->file(self::PATH . $qp->name . $dialect_ext . self::FILE_EXT);
-        $this->test->assert(
-            self::TEST_NAME . $qp->name . $dialect,
-            $lib->trim($qp->sql),
-            $lib->trim($expected_sql)
-        );
-        $qp = $lst->load_by_trp_ids_sql($db_con, $ids);
-        $expected_sql = $this->test->file(self::PATH . $qp->name . $dialect_ext . self::FILE_EXT);
-        $this->test->assert(
-            self::TEST_NAME . $qp->name . $dialect,
-            $lib->trim($qp->sql),
-            $lib->trim($expected_sql)
-        );
-        return $qp;
     }
 
     /**
@@ -329,6 +313,43 @@ class phrase_list_unit_tests
             $qp = $usr_obj->load_sql_by_phr_lst($db_con->sql_creator(), $vrb, $direction);
             $t->assert_qp($qp, $db_con->db_type);
         }
+    }
+
+    /**
+     * test the SQL statement creation for a phrase list
+     *
+     * @param array $ids all word or triple id that should be loaded
+     * @param string $dialect if not Postgres the name of the SQL dialect
+     * @return void
+     */
+    private function assert_by_ids_sql_old(array $ids, string $dialect = ''): sql_par
+    {
+        global $usr;
+
+        $lib = new library();
+
+        $lst = new phrase_list($usr);
+        $db_con = new sql_db();
+        $db_con->db_type = $dialect;
+        $dialect_ext = '';
+        if ($dialect == sql_db::MYSQL) {
+            $dialect_ext = self::FILE_MYSQL;
+        }
+        $qp = $lst->load_by_wrd_ids_sql($db_con, $ids);
+        $expected_sql = $this->test->file(self::PATH . $qp->name . $dialect_ext . self::FILE_EXT);
+        $this->test->assert(
+            self::TEST_NAME . $qp->name . $dialect,
+            $lib->trim($qp->sql),
+            $lib->trim($expected_sql)
+        );
+        $qp = $lst->load_by_trp_ids_sql($db_con, $ids);
+        $expected_sql = $this->test->file(self::PATH . $qp->name . $dialect_ext . self::FILE_EXT);
+        $this->test->assert(
+            self::TEST_NAME . $qp->name . $dialect,
+            $lib->trim($qp->sql),
+            $lib->trim($expected_sql)
+        );
+        return $qp;
     }
 
 }
