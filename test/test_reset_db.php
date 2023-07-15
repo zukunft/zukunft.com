@@ -38,6 +38,7 @@ include_once PHP_PATH . 'zu_lib.php';
 include_once SERVICE_IMPORT_PATH . 'import_file.php';
 
 use cfg\batch_job_type_list;
+use cfg\config;
 use cfg\db_check;
 use cfg\formula_type_list;
 use cfg\job_type_list;
@@ -85,6 +86,7 @@ if ($usr->id() > 0) {
         // run reset the main database tables
         run_db_truncate();
         run_db_seq_reset();
+        run_db_config_reset();
 
         // recreate the code link database rows
         $db_chk = new db_check();
@@ -326,6 +328,19 @@ function run_db_seq_reset(): void
     foreach ($seq_names as $seq_name) {
         run_seq_reset($seq_name);
     }
+
+}
+
+/**
+ * fill th config with the default value for this program version
+ * @return void
+ */
+function run_db_config_reset(): void
+{
+    global $db_con;
+
+    $cfg = new config();
+    $cfg->set(config::VERSION_DB, PRG_VERSION, $db_con);
 
 }
 

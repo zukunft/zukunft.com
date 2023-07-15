@@ -2189,13 +2189,14 @@ class phrase_list extends sandbox_list_named
     /**
      * get the most useful time for the given words
      * TODO: review
-     * @return phrase with the most useful time phrase
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return phrase|null with the most useful time phrase
      */
-    function assume_time(): ?phrase
+    function assume_time(?term_list $trm_lst = null): ?phrase
     {
         $time_phr = null;
         $wrd_lst = $this->wrd_lst_all();
-        $time_wrd = $wrd_lst->assume_time();
+        $time_wrd = $wrd_lst->assume_time($trm_lst);
         if (isset($time_wrd)) {
             $time_phr = $time_wrd;
         }

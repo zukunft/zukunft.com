@@ -479,7 +479,9 @@ class change_log extends db_object
         if ($table_id > 0) {
             $this->table_id = $table_id;
         } else {
-            log_fatal("Insert to change log failed due to table id failure.", "user_log->add");
+            log_fatal_db(
+                "Insert to change log failed due to table id failure.",
+                "user_log->add");
         }
         // restore the type before saving the log
         $db_con->set_type($db_type);

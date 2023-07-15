@@ -66,6 +66,7 @@ class verb extends db_object
     const CAN_CONTAIN_NAME_REVERSE = "of";
     const CAN_BE = "can_be";
     const CAN_USE = "can_use";
+    const SELECTOR = "selector"; // the from_phrase of a selector can be used more than once so the description of the to_phrase should be shown to the user
 
     // directional forms of verbs (maybe move to verb_api or test if only used for testing)
     const FOLLOWED_BY = "is followed by";

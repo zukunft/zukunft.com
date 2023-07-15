@@ -32,6 +32,7 @@
 
 use cfg\triple;
 use cfg\user;
+use controller\controller;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
@@ -42,7 +43,7 @@ $result = ''; // reset the html code var
 // open database
 $db_con = prg_start("triple");
 
-if ($db_con == null) {
+if (!$db_con->connected()) {
     $result = log_fatal("Cannot connect to " . SQL_DB_TYPE . " database with user " . SQL_DB_USER_MYSQL, "find.php");
 } else {
     $back = $_GET[controller::API_BACK];

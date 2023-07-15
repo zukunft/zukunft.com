@@ -239,9 +239,10 @@ class formula_element_group
      *      the result for <"Share price" "Nestlé" "2016" "CHF"> should be returned
      *      if the last share price is from 2016 and CHF is the most important (used) currency
      *
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return figure_list
      */
-    function figures(): figure_list
+    function figures(?term_list $trm_lst = null): figure_list
     {
         log_debug('figures ' . $this->dsp_id());
         $lib = new library();
@@ -261,7 +262,7 @@ class formula_element_group
             // e.g. 1: $val_phr_lst is Swiss inhabitants
             // e.g. if "percent" is requested and a measure word is part of the request, the measure words are ignored
             $val_phr_lst = clone $this->phr_lst;
-            $val_time_phr = $val_phr_lst->assume_time();
+            $val_time_phr = $val_phr_lst->assume_time($trm_lst);
             if (isset($val_time_phr)) {
                 log_debug('for time ' . $val_time_phr->dsp_id());
             }

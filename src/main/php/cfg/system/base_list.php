@@ -207,7 +207,7 @@ class base_list
             $pos = $key_lst[$id];
             return $this->lst[$pos];
         } else {
-            log_err($id . ' not found in ' . $lib->dsp_array($key_lst));
+            log_err($id . ' not found in ' . $lib->dsp_array_keys($key_lst));
             return null;
         }
     }

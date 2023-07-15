@@ -39,6 +39,7 @@ include_once MODEL_SYSTEM_PATH . 'log.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
+use DateTime;
 use Exception;
 use mysqli;
 use mysqli_result;
@@ -223,6 +224,9 @@ class sql_db
     // TODO change type to PgSql\Connection with php 8.1
     public $postgres_link;                          // the link object to the database
     public mysqli $mysql;                           // the MySQL object to the database
+
+    private int $reconnect_delay = 0;               // number of seconds of the last reconnect retry delay
+
     public ?int $usr_id = null;                     // the user id of the person who request the database changes
     private ?int $usr_view_id = null;               // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
 
@@ -314,6 +318,7 @@ class sql_db
      */
     private function reset(): void
     {
+        $this->reconnect_delay = 0;
         $this->usr_view_id = null;
         $this->table = '';
         $this->id_field = '';
@@ -391,29 +396,81 @@ class sql_db
     }
 
     /*
+     * set and get
+     */
+
+
+    function retry_delay(): int
+    {
+        $cfg = new config();
+        if ($this->reconnect_delay = 0) {
+            $this->reconnect_delay = $cfg->get(config::DB_RETRY_MIN);
+        } else {
+            $max_delay = $cfg->get(config::DB_RETRY_MAX);
+            if ($this->reconnect_delay * 2 < $max_delay) {
+                $this->reconnect_delay = $this->reconnect_delay * 2;
+            }
+        }
+        return $this->reconnect_delay;
+    }
+
+    /*
      * open/close the connection to MySQL
      */
 
     /**
      * open the database link
+     * @return bool true if the database has successfully been connected
      */
-    function open()
+    function open(): bool
     {
         log_debug();
 
+        $result = false;
         if ($this->db_type == sql_db::POSTGRES) {
             try {
                 $this->postgres_link = pg_connect('host=localhost dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
+                $result = true;
             } catch (Exception $e) {
                 log_fatal('Cannot connect to database due to ' . $e->getMessage(), 'sql_db open');
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
             $this->mysql = mysqli_connect('localhost', SQL_DB_USER_MYSQL, SQL_DB_PASSWD_MYSQL, 'zukunft') or die('Could not connect: ' . mysqli_error($this->mysql));
+            $result = true;
         } else {
-            log_err('Database type ' . $this->db_type . ' not yet implemented');
+            log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
         }
 
-        return true;
+        return $result;
+    }
+
+    /**
+     * retry to open the database many times to write a log message
+     * @param string $msg_text
+     * @param string $msg_description
+     * @param string $function_name
+     * @param string $function_trace
+     * @param user|null $usr
+     * @return bool
+     */
+    function open_with_retry(
+        string $msg_text,
+        string $msg_description = '',
+        string $function_name = '',
+        string $function_trace = '',
+        ?user  $usr = null): bool
+    {
+        $result = $this->open();
+        while (!$result) {
+            log_fatal('No database connection to write' . $msg_text,
+                $function_name,
+                $msg_description,
+                $function_trace,
+                $usr);
+            sleep($this->retry_delay());
+            $result = $this->open();
+        }
+        return $result;
     }
 
     /**
@@ -563,7 +620,7 @@ class sql_db
                 'INT' => sql_db::PAR_INT,
                 'INT_LIST' => sql_db::PAR_INT_LIST,
                 'INT_LIST_OR' => sql_db::PAR_INT_LIST_OR,
-                default => log_err('Unexpected sqp parameter type '. $spt->name),
+                default => log_err('Unexpected sqp parameter type ' . $spt->name),
             };
         }
 
@@ -1722,7 +1779,7 @@ class sql_db
         // check database connection
         if ($this->postgres_link == null) {
             $msg = 'database connection lost';
-            log_fatal($msg, 'sql_db->exe: ' . $sql_name);
+            log_fatal_db($msg, 'sql_db->exe: ' . $sql_name);
             // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
             throw new Exception($msg);
         } else {
@@ -1787,13 +1844,18 @@ class sql_db
      * TODO includes the user to be able to ask the user for details how the error has been created
      * TODO with php 8 switch to the union return type resource|false
      */
-    private function exe_mysql(string $sql, string $sql_name = '', array $sql_array = array(), int $log_level = sys_log_level::ERROR): mysqli_result
+    private function exe_mysql(
+        string $sql,
+        string $sql_name = '',
+        array  $sql_array = array(),
+        int    $log_level = sys_log_level::ERROR): mysqli_result
     {
         $result = null;
 
         // check database connection
         if ($this->mysql == null) {
             $msg = 'database connection lost';
+            $this->open_with_retry($msg);
             log_fatal($msg, 'sql_db->exe->' . $sql_name);
             // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
             throw new Exception($msg);
@@ -1838,7 +1900,9 @@ class sql_db
                 // check and improve the given parameters
                 $function_trace = (new Exception)->getTraceAsString();
                 // set the global db connection to be able to report error also on db restart
-                $msg = log_msg($msg_text, $msg_text . ' from ' . $sql_name, $log_level, $sql_name, $function_trace, $this->usr_id);
+                $usr = new user();
+                $usr->set_id($this->usr_id);
+                $msg = log_msg($msg_text, $msg_text . ' from ' . $sql_name, $log_level, $sql_name, $function_trace, $usr);
                 throw new Exception("sql_db->exe -> error (" . $msg . ")");
             }
         }
@@ -3580,7 +3644,10 @@ class sql_db
             if (count($fields) <> count($values)) {
                 if ($log_err) {
                     $lib = new library();
-                    log_fatal('MySQL insert call with different number of fields (' . $lib->dsp_count($fields) . ': ' . $lib->dsp_array($fields) . ') and values (' . $lib->dsp_count($values) . ': ' . $lib->dsp_array($values) . ').', "user_log->add");
+                    log_fatal_db(
+                        'MySQL insert call with different number of fields (' . $lib->dsp_count($fields)
+                        . ': ' . $lib->dsp_array($fields) . ') and values (' . $lib->dsp_count($values)
+                        . ': ' . $lib->dsp_array($values) . ').', "user_log->add");
                 }
             } else {
                 foreach (array_keys($fields) as $i) {

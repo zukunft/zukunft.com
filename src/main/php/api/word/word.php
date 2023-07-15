@@ -58,6 +58,7 @@ class word_api extends sandbox_typed_api
     const TN_ONE = 'one';
     const TN_MIO = 'million';
     const TN_MIO_SHORT = 'mio';
+    const TN_MINUTE = 'minute';
     const TN_SECOND = 'second';
     const TN_COUNTRY = 'Country';
     const TN_CH = 'Switzerland';
@@ -75,6 +76,9 @@ class word_api extends sandbox_typed_api
     const TN_2019 = '2019';
     const TN_2020 = '2020';
     const TN_PCT = 'percent';
+    // _PRE are the predefined words
+    const TN_THIS_PRE = 'this';
+    const TN_PRIOR_PRE = 'prior';
     const TN_COMPANY = 'Company';
 
     // persevered word names for unit and integration tests based on the database

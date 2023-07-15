@@ -19,7 +19,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO for some verbs such as "is part of" the triple itself should by de fault not be included in the foaf list
     TODO use phrase get_or_add in test
     TODO add a unit and db test
-    TODO add a simple value format where the json key is used as the phrase name e.g "useful number of selection entries": 7
+    TODO add a simple value format where the json key is used as the phrase name e.g "system config target number of selection entries": 7
     TODO add system and user config parameter that are e.g. 100 views a view is automatically frozen for the user
     TODO add a trigger to the message header to force the frontend update of types, verbs und user configuration if needed
     TODO use words and values also for the system and user config
@@ -765,14 +765,17 @@ function log_debug(string $msg_text = '', int $debug_overwrite = null): string
 }
 
 /**
- * for system messages no debug calls to avoid loops
+ * write a log message to the database and return the message that should be shown to the user
+ * with the link for more details and to trace the resolution process
+ * used also for system messages so no debug calls from here to avoid loops
+ *
  * @param string $msg_text is a short description that is used to group and limit the number of error messages
  * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
- * @param string $msg_type_id is the criticality level e.g. debug, info, warning, error or fatal error
+ * @param string $msg_log_level is the criticality level e.g. debug, info, warning, error or fatal error
  * @param string $function_name is the function name which has most likely caused the error
  * @param string $function_trace is the complete system trace to get more details
- * @param int $user_id is the user id who has probably seen the error message
- * return           the text that can be shown to the user in the navigation bar
+ * @param user|null $usr is the user who has probably seen the error message
+ * @return string the text that can be shown to the user in the navigation bar
  * TODO return the link to the log message so that the user can trace the bug fixing
  */
 function log_msg(string $msg_text,
@@ -780,7 +783,7 @@ function log_msg(string $msg_text,
                  string $msg_log_level,
                  string $function_name,
                  string $function_trace,
-                 int    $user_id,
+                 ?user  $usr = null,
                  bool   $force_log = false,
                  ?sql_db $given_db_con = null): string
 {
@@ -788,18 +791,29 @@ function log_msg(string $msg_text,
     global $sys_log_msg_lst;
     global $db_con;
 
+    $result = '';
+
+    // use an alternative database connection if requested
     $used_db_con = $db_con;
     if ($given_db_con != null) {
         $used_db_con = $given_db_con;
     }
 
-
-    $result = '';
-
+    // create a database object if needed
     if ($used_db_con == null) {
-        echo 'FATAL ERROR! ' . $msg_text;
-    } else {
+        $used_db_con = new sql_db();
+    }
+    // try to reconnect to the database
+    // TODO activate
+    /*
+    if (!$used_db_con->connected()) {
+        if (!$used_db_con->open_with_retry($msg_text, $msg_description, $function_name, $function_trace, $usr)) {
+            log_fatal('Stopped database connection retry', 'log_msg');
+        }
+    }
+    */
 
+    if ($used_db_con->connected()) {
 
         $lib = new library();
 
@@ -814,6 +828,10 @@ function log_msg(string $msg_text,
         }
         if ($function_trace == '') {
             $function_trace = (new Exception)->getTraceAsString();
+        }
+        $user_id = 0;
+        if ($usr != null) {
+            $user_id = $usr->id();
         }
         if ($user_id <= 0) {
             $user_id = $_SESSION['usr_id'] ?? SYSTEM_USER_ID;
@@ -904,7 +922,7 @@ function log_info(string $msg_text,
         $msg_description,
         sys_log_level::INFO,
         $function_name, $function_trace,
-        get_user_id($calling_usr),
+        $calling_usr,
         $force_log);
 }
 
@@ -920,7 +938,7 @@ function log_warning(string $msg_text,
         sys_log_level::WARNING,
         $function_name,
         $function_trace,
-        get_user_id($calling_usr),
+        $calling_usr,
         false,
         $given_db_con
     );
@@ -937,9 +955,44 @@ function log_err(string $msg_text,
         sys_log_level::ERROR,
         $function_name,
         $function_trace,
-        get_user_id($calling_usr));
+        $calling_usr);
 }
 
+/**
+ * if still possible write the fatal error message to the database and stop the execution
+ * @param string $msg_text is a short description that is used to group and limit the number of error messages
+ * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
+ * @param string $function_name is the function name which has most likely caused the error
+ * @param string $function_trace is the complete system trace to get more details
+ * @param user|null $calling_usr the user who has trigger the error
+ * @return string
+ */
+function log_fatal_db(
+    string $msg_text,
+    string $function_name,
+    string $msg_description = '',
+    string $function_trace = '',
+    ?user  $calling_usr = null): string
+{
+    echo 'FATAL ERROR! ' . $msg_text;
+    return log_msg(
+        'FATAL ERROR! ' . $msg_text,
+        $msg_description,
+        sys_log_level::FATAL,
+        $function_name,
+        $function_trace,
+        $calling_usr);
+}
+
+/**
+ * try to write the error message to any possible out device if database connection is lost
+ * @param string $msg_text is a short description that is used to group and limit the number of error messages
+ * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
+ * @param string $function_name is the function name which has most likely caused the error
+ * @param string $function_trace is the complete system trace to get more details
+ * @param user|null $calling_usr the user who has trigger the error
+ * @return string the message that should be shown to the user if possible
+ */
 function log_fatal(string $msg_text,
                    string $function_name,
                    string $msg_description = '',
@@ -947,8 +1000,18 @@ function log_fatal(string $msg_text,
                    ?user  $calling_usr = null): string
 {
     echo 'FATAL ERROR! ' . $msg_text;
-    // TODO write first to the most secure system log because if the database connection is lost no writing to the database is possible
-    return log_msg('FATAL ERROR! ' . $msg_text, $msg_description, sys_log_level::FATAL, $function_name, $function_trace, get_user_id($calling_usr));
+    $STDERR = fopen('error.log', 'wb');
+    $usr_txt = '';
+    if ($calling_usr != null) {
+        $usr_txt = $calling_usr->dsp_id();
+    }
+    fwrite($STDERR, 'FATAL ERROR! ' . $msg_text
+        . ' (' . $msg_description
+        . ', function "' . $function_name
+        . '", trace "' . $function_trace
+        . '", by user "' . $usr_txt
+        . '") ' . "\n");
+    return $msg_text;
 }
 
 /**

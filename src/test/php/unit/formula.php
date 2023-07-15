@@ -105,12 +105,11 @@ class formula_unit_tests
         // get the id of the phrases that should be added to the result based on the formula reference text
         $target = new phrase_list($usr);
         $trm_lst = new term_list($usr);
-        $wrd = new word($usr);
-        $wrd->set_id(205);
+        $wrd = $t->dummy_word_one();
         $target->add($wrd->phrase());
         $trm_lst->add($wrd->term());
         $exp = new expression($usr);
-        $exp->set_ref_text('{w205}={w203}*1000000');
+        $exp->set_ref_text('{w160}={w162}*1000000', $t->dummy_term_list_scale());
         $result = $exp->res_phr_lst($trm_lst);
         $t->assert('Expression->res_phr_lst for ' . formula_api::TF_READ_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
 
@@ -133,20 +132,11 @@ class formula_unit_tests
             formula_api::TN_READ_THIS,
             formula_api::TN_READ_PRIOR
         ));
-        $phr_lst = $t->phrase_list_for_tests(array(
-            word_api::TN_PCT,
-            formula_api::TN_READ_THIS,
-            formula_api::TN_READ_PRIOR,
-            word_api::TN_CH,
-            word_api::TN_INHABITANTS,
-            word_api::TN_2020,
-            word_api::TN_MIO
-        ));
+        $phr_lst = $t->dummy_phrase_list_increase();
 
-        $frm = $t->new_formula(formula_api::TN_ADD, 1);
-        $frm->set_user_text(formula_api::TF_INCREASE, $trm_lst);
-        $res_lst = $frm->to_num($phr_lst);
+        $frm = $t->dummy_formula_increase();
         // TODO activate
+        // $res_lst = $frm->to_num($phr_lst);
         //$res = $res_lst->lst[0];
         //$result = $res->num_text;
         $target = '=(' . value_api::TV_CH_INHABITANTS_2020_IN_MIO . '-' .

@@ -916,18 +916,20 @@ class formula extends sandbox_typed
 
     /**
      * fill the formula in the reference format with numbers
-     * @param phrase_list $phr_lst
+     * @param phrase_list $phr_lst list of phrase used to select the value for the calculation
+     * @param phrase_list|null $pre_phr_lst
      * TODO verbs
      */
-    function to_num(phrase_list $phr_lst): result_list
+    function to_num(phrase_list $phr_lst, ?phrase_list $pre_phr_lst = null): result_list
     {
         log_debug('get numbers for ' . $this->dsp_id() . ' and ' . $phr_lst->dsp_id());
         $lib = new library();
 
         // check
+        $pre_trm_lst = $pre_phr_lst?->term_list();
         if ($this->ref_text_r == '' and $this->ref_text <> '') {
             $exp = new expression($this->user());
-            $exp->set_ref_text($this->ref_text);
+            $exp->set_ref_text($this->ref_text, $pre_trm_lst);
             $this->ref_text_r = expression::CHAR_CALC . $exp->r_part();
         }
 
@@ -941,8 +943,8 @@ class formula extends sandbox_typed
         // e.g. for "Sales differentiator Sector / Total Sales" the element groups are
         //      "Sales differentiator Sector" and "Total Sales" where
         //      the element group "Sales differentiator Sector" has the elements: "Sales" (of type word), "differentiator" (verb), "Sector" (word)
-        $exp = $this->expression();
-        $elm_grp_lst = $exp->element_grp_lst();
+        $exp = $this->expression($pre_trm_lst);
+        $elm_grp_lst = $exp->element_grp_lst($pre_trm_lst);
         log_debug('in ' . $exp->ref_text() . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');
 
         // to check if all needed value are given
@@ -955,7 +957,7 @@ class formula extends sandbox_typed
             // a figure is either the user edited value or a calculated formula result
             $elm_grp->phr_lst = clone $phr_lst;
             $elm_grp->build_symbol();
-            $fig_lst = $elm_grp->figures();
+            $fig_lst = $elm_grp->figures($pre_trm_lst);
             log_debug('figures ');
             log_debug('figures ' . $fig_lst->dsp_id() . ' (' . $lib->dsp_count($fig_lst->lst()) . ') for ' . $elm_grp->dsp_id());
 
@@ -1306,13 +1308,14 @@ class formula extends sandbox_typed
     }
 
     /**
-     * return the formula expression as an expression element
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return expression the formula expression as an expression element
      */
-    function expression(): expression
+    function expression(?term_list $trm_lst = null): expression
     {
         $exp = new expression($this->user());
-        $exp->set_ref_text($this->ref_text);
-        $exp->set_user_text($this->usr_text);
+        $exp->set_ref_text($this->ref_text, $trm_lst);
+        $exp->set_user_text($this->usr_text, $trm_lst);
         log_debug('->expression ' . $exp->ref_text() . ' for user ' . $exp->usr->name);
         return $exp;
     }
@@ -1795,7 +1798,7 @@ class formula extends sandbox_typed
     {
         $result = '';
         $exp = new expression($this->user());
-        $exp->set_user_text($this->usr_text);
+        $exp->set_user_text($this->usr_text, $trm_lst);
         $this->ref_text = $exp->ref_text($trm_lst);
         $this->ref_text_dirty = false;
         $result .= $exp->err_text;

@@ -161,7 +161,6 @@ class formula_test
         $phr_lst = new phrase_list($t->usr1);
         // TODO check why is this word MIO is needed??
         $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020, word_api::TN_MIO));
-
         $frm = $t->load_formula(formula_api::TN_ADD);
         $res_lst = $frm->to_num($phr_lst);
         if ($res_lst->lst() != null) {

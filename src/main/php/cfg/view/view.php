@@ -912,6 +912,28 @@ class view extends sandbox_typed
     }
 
     /**
+     * check if a view name is a reserved system view and if return a message to the user
+     *
+     * @return string
+     */
+    protected function check_preserved(): string
+    {
+        global $usr;
+
+        $result = '';
+        // system user are always allowed to add system views
+        if (!$usr->is_system()) {
+            if (in_array($this->name, view_api::RESERVED_VIEWS)) {
+                // the admin user needs to add the read test word during initial load
+                if (!$usr->is_admin()) {
+                    $result = '"' . $this->name() . '" is a reserved view name for system testing. Please use another name';
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * delete the view component links of linked to this view
      * @return user_message of the link removal and if needed the error messages that should be shown to the user
      */

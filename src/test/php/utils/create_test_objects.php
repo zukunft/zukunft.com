@@ -295,10 +295,59 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
+    function dummy_word_2020(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(198, word_api::TN_2020);
+        return $wrd;
+    }
+
+    function dummy_word_pct(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(164, word_api::TN_PCT);
+        return $wrd;
+    }
+
+    function dummy_word_this(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(183, word_api::TN_THIS_PRE);
+        return $wrd;
+    }
+
+    function dummy_word_prior(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(185, word_api::TN_PRIOR_PRE);
+        return $wrd;
+    }
+
+    function dummy_word_one(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(160, word_api::TN_ONE);
+        return $wrd;
+    }
+
     function dummy_word_mio(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(162, word_api::TN_MIO_SHORT);
+        return $wrd;
+    }
+
+    function dummy_word_minute(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(98, word_api::TN_MINUTE);
+        return $wrd;
+    }
+
+    function dummy_word_second(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(17, word_api::TN_SECOND);
         return $wrd;
     }
 
@@ -424,6 +473,22 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    /**
+     * @return phrase_list the phrases relevant for testing the increase formula
+     */
+    public function dummy_phrase_list_increase(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_word_pct()->phrase());
+        $lst->add($this->dummy_word_this()->phrase());
+        $lst->add($this->dummy_word_prior()->phrase());
+        $lst->add($this->dummy_word_ch()->phrase());
+        $lst->add($this->dummy_word_inhabitant()->phrase());
+        $lst->add($this->dummy_word_2020()->phrase());
+        $lst->add($this->dummy_word_mio()->phrase());
+        return $lst;
+    }
+
     function dummy_phrase_list_dsp(): phrase_list_dsp
     {
         return new phrase_list_dsp($this->dummy_phrase_list()->api_json());
@@ -467,6 +532,28 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    /**
+     * @return term_list a term list with the time terms e.g. minute and second
+     */
+    function dummy_term_list_time(): term_list
+    {
+        $lst = new term_list($this->usr1);
+        $lst->add($this->dummy_word_second()->term());
+        $lst->add($this->dummy_word_minute()->term());
+        return $lst;
+    }
+
+    /**
+     * @return term_list a term list with the scaling terms e.g. one and million
+     */
+    function dummy_term_list_scale(): term_list
+    {
+        $lst = new term_list($this->usr1);
+        $lst->add($this->dummy_word_one()->term());
+        $lst->add($this->dummy_word_mio()->term());
+        return $lst;
+    }
+
     function dummy_value(): value
     {
         $grp = new phrase_group($this->usr1, 1, array(phrase_group_api::TN_READ));
@@ -484,7 +571,16 @@ class create_test_objects extends test_base
     {
         $frm = new formula($this->usr1);
         $frm->set(1, formula_api::TN_READ);
-        $frm->set_user_text(formula_api::TF_READ);
+        $frm->set_user_text(formula_api::TF_READ, $this->dummy_term_list_time());
+        $frm->set_type(formula_type::CALC);
+        return $frm;
+    }
+
+    function dummy_formula_increase(): formula
+    {
+        $frm = new formula($this->usr1);
+        $frm->set(21, formula_api::TN_INCREASE);
+        $frm->set_user_text(formula_api::TF_INCREASE, $this->dummy_phrase_list_increase()->term_list());
         $frm->set_type(formula_type::CALC);
         return $frm;
     }

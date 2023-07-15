@@ -51,9 +51,9 @@ class db_check
         $cfg->check(config::SITE_NAME, POD_NAME, $db_con);
 
         // get the db version and start the upgrade process if needed
-        $db_version = $cfg->get(config::VERSION_DB, $db_con);
+        $db_version = $cfg->get_db(config::VERSION_DB, $db_con);
         if ($db_version == '') {
-            $cfg->set(config::VERSION_DB, PRG_VERSION, $db_con);
+            $cfg->set(config::VERSION_DB, FIRST_VERSION, $db_con);
         } elseif ($db_version != PRG_VERSION) {
             $do_consistency_check = true;
             if (prg_version_is_newer($db_version)) {
@@ -65,13 +65,17 @@ class db_check
                 };
             }
         } else {
-            $last_consistency_check = $cfg->get(config::LAST_CONSISTENCY_CHECK, $db_con);
+            $last_consistency_check = $cfg->get_db(config::LAST_CONSISTENCY_CHECK, $db_con);
             // run a database consistency check once every 24h if the database is the least busy
             $last_check = strtotime($last_consistency_check);
             $check_limit = strtotime("now -1 day");
             if ($last_check < $check_limit) {
+                // TODO open a simple db connection just to write the log entry
+                /*
                 log_info('Last database consistency check has been at ' . date('Y-m-d H:i:s', $last_check)
-                    . ' which is more than one day ago at ' . date('Y-m-d H:i:s', $check_limit) . ' so start the database consistency check');
+                    . ' which is more than one day ago at ' . date('Y-m-d H:i:s', $check_limit)
+                    . ' so start the database consistency check');
+                */
                 $do_consistency_check = true;
             } else {
                 log_debug('Last database consistency check has been at ' . date('Y-m-d H:i:s', $last_check)
@@ -350,7 +354,7 @@ class db_check
 
         // TODO create table user_value_time_series
         // check if the config save has been successful
-        $db_version = $cfg->get(config::VERSION_DB, $db_con);
+        $db_version = $cfg->get_db(config::VERSION_DB, $db_con);
         if ($db_version != PRG_VERSION) {
             $result = 'Database upgrade to 0.0.3 has failed';
         }
@@ -378,7 +382,7 @@ class db_check
     {
         $cfg = new config();
         $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
-        $db_version = $cfg->get(config::VERSION_DB, $db_con);
+        $db_version = $cfg->get_db(config::VERSION_DB, $db_con);
         if ($db_version != PRG_VERSION) {
             $result = 'Database upgrade to 0.0.4 has failed';
         }

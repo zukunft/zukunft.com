@@ -249,23 +249,23 @@ class term extends combine_named
             if ($class == word::class) {
                 if ($this->obj == null) {
                     $this->obj = new word($this->user());
+                    $this->obj->set_id($id);
                 }
-                $this->id = ($id * 2) - 1;
             } elseif ($class == triple::class) {
                 if ($this->obj == null) {
                     $this->obj = new triple($this->user());
+                    $this->obj->set_id($id);
                 }
-                $this->id = ($id * -2) + 1;
             } elseif ($class == formula::class) {
                 if ($this->obj == null) {
                     $this->obj = new formula($this->user());
+                    $this->obj->set_id($id);
                 }
-                $this->id = ($id * 2);
             } elseif ($class == verb::class) {
                 if ($this->obj == null) {
                     $this->obj = new verb();
+                    $this->obj->set_id($id);
                 }
-                $this->id = ($id * -2);
             }
             $this->obj->set_id($id);
         }
@@ -857,7 +857,6 @@ class term extends combine_named
      * conversion
      */
 
-    public
     function get_word(): word
     {
         $wrd = new word($this->user());
@@ -867,7 +866,6 @@ class term extends combine_named
         return $wrd;
     }
 
-    public
     function get_triple(): triple
     {
         $lnk = new triple($this->user());
@@ -877,7 +875,6 @@ class term extends combine_named
         return $lnk;
     }
 
-    public
     function get_formula(): formula
     {
         $frm = new formula($this->user());
@@ -887,7 +884,6 @@ class term extends combine_named
         return $frm;
     }
 
-    public
     function get_verb(): verb
     {
         $vrb = new verb();
@@ -897,9 +893,21 @@ class term extends combine_named
         return $vrb;
     }
 
+    function get_phrase(): ?phrase
+    {
+        $phr = null;
+        if (get_class($this->obj) == word::class) {
+            $phr = $this->obj->phrase();
+        } elseif (get_class($this->obj) == triple::class) {
+            $phr = $this->obj->phrase();
+        }
+        return $phr;
+    }
+
+
     /*
-    * user interface language specific functions
-    */
+     * user interface language specific functions
+     */
 
     /**
      * create a message text that the name is already used
@@ -941,6 +949,18 @@ class term extends combine_named
         }
         if ($this->user()->id() > 0) {
             $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+        }
+        return $result;
+    }
+
+    function is_time(): bool
+    {
+        $result = false;
+        $phr = $this->get_phrase();
+        if ($phr != null) {
+            if ($phr->is_time()) {
+                $result = true;
+            }
         }
         return $result;
     }

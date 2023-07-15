@@ -52,7 +52,7 @@ $html = new html_base();
 // TODO review the http API code based on this example
 // TODO but first reduce the API files
 // TODO but first resolve all testing error
-if ($db_con == null) {
+if (!$db_con->connected()) {
     $result = log_fatal("Cannot connect to " . SQL_DB_TYPE . " database with user " . SQL_DB_USER_MYSQL, "find.php");
 } else {
     $back = $_GET[controller::API_BACK];

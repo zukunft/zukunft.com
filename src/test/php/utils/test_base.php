@@ -1857,7 +1857,7 @@ function zu_test_time_setup(test_cleanup $t): string
     $result = '';
     $this_year = intval(date('Y'));
     $prev_year = '';
-    $test_years = intval($cfg->get(config::TEST_YEARS, $db_con));
+    $test_years = intval($cfg->get_db(config::TEST_YEARS, $db_con));
     if ($test_years == '') {
         log_warning('Configuration of test years is missing', 'test_base->zu_test_time_setup');
     } else {

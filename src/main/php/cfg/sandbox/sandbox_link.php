@@ -437,7 +437,7 @@ class sandbox_link extends sandbox
                     $result = $db_chk;
                 }
             }
-            // check with the user linkspace
+            // check with the user link space
             $db_chk->set_user($this->user());
             if ($db_chk->load_obj_vars()) {
                 if ($db_chk->id() > 0) {

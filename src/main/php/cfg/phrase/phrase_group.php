@@ -592,8 +592,8 @@ class phrase_group extends db_object
                 }
                 $wrd_id++;
             }
+            $this->set_name();
         }
-        $this->set_name();
         return $result;
     }
 

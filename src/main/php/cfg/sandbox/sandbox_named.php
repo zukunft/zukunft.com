@@ -410,6 +410,7 @@ class sandbox_named extends sandbox
 
     /**
      * check if this object uses any preserved names and if return a message to the user
+     * TODO move to the single objects
      *
      * @return string
      */

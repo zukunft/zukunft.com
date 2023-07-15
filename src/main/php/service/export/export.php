@@ -99,7 +99,7 @@ class export
 
                 // 1. create the header
                 $export_obj->version = PRG_VERSION;
-                $export_obj->pod = $cfg->get(config::SITE_NAME, $db_con);
+                $export_obj->pod = $cfg->get_db(config::SITE_NAME, $db_con);
                 $export_obj->time = date("Y-m-d H:i:s");
                 $export_obj->user = $usr->name;
                 $phr_lst_dsp = $phr_lst->dsp_obj();

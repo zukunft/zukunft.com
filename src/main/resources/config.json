@@ -13,16 +13,20 @@
       "protection": "admin_protection"
     },
     {
-      "name": "time",
-      "description": "Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future",
-      "type": "time",
+      "name": "database",
+      "description": "An organized collection of data stored and accessed electronically",
       "protection": "admin_protection"
     },
     {
-      "name": "automatic created years",
-      "description": "the number of years around the current year created automatically",
-      "type": "hidden_system",
-      "protection": "admin_protection"
+      "name": "initial retry delay in sec",
+      "description": "the number of seconds first retry"
+    },
+    {
+      "name": "max retry delay in sec",
+      "description": "the number of seconds first retry"
+    },
+    {
+      "name": "block size for updates"
     },
     {
       "name": "select",
@@ -31,16 +35,19 @@
       "protection": "admin_protection"
     },
     {
-      "name": "useful number of selection entries",
-      "description": "the max number of selection entries shown to the user at once; if there a more, the less important are shown if the user has pressed on 'more'",
-      "type": "hidden_system",
+      "name": "target entries"
+    },
+    {
+      "name": "percentage to suggest"
+    },
+    {
+      "name": "time",
+      "description": "Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future",
+      "type": "time",
       "protection": "admin_protection"
     },
     {
-      "name": "min. % of words in list to suggest the word for the next",
-      "description": "minimal percentage of the same word in a list to assume the word for the next",
-      "type": "hidden_system",
-      "protection": "admin_protection"
+      "name": "years to create"
     },
     {
       "name": "view",
@@ -48,81 +55,54 @@
       "protection": "admin_protection"
     },
     {
-      "name": "number of user views to force freezing a zukunft.com view",
-      "description": "system setting that defines the number of view by one user to automatically freeze the view for the user",
+      "name": "views to freeze"
+    },
+    {
+      "name": "system config database retry start delay in sec",
+      "description": "the number of seconds that the program should wait for the first database connection retry",
       "type": "hidden_system",
       "protection": "admin_protection"
     },
     {
-      "name": "database",
-      "description": "An organized collection of data stored and accessed electronically",
+      "name": "system config database retry max delay in sec",
+      "description": "the number of seconds that the program should maximal wait for the next database connection retry",
+      "type": "hidden_system",
       "protection": "admin_protection"
     },
     {
-      "name": "database update block size",
+      "name": "system config database update block size",
       "description": "the number of formulas that should be updated with one commit if no dependency calculations are expected",
+      "type": "hidden_system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "system config target number of selection entries",
+      "description": "the max number of selection entries shown to the user at once; if there a more, the less important are shown if the user has pressed on 'more'",
+      "type": "hidden_system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "system config automatic created years",
+      "description": "the number of years around the current year created automatically",
+      "type": "hidden_system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "system config min percent to suggest",
+      "description": "minimal percentage of the same word in a list to assume the word for the next",
+      "type": "hidden_system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "system config views to freeze",
+      "description": "system setting that defines the number of view by one user to automatically freeze the view for the user",
       "type": "hidden_system",
       "protection": "admin_protection"
     }
   ],
   "triples": [
     {
-      "name": "system time settings",
-      "from": "time",
-      "verb": "is selector for",
-      "to": "system configuration",
-      "description": "to group the time related settings for this zukunft.com pod",
-      "type": "hidden_triple",
-      "protection": "admin_protection"
-    },
-    {
-      "from": "automatic created years",
-      "verb": "is a",
-      "to": "system time settings",
-      "type": "hidden_triple",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "system selection settings",
-      "from": "select",
-      "verb": "is selector for",
-      "to": "system configuration",
-      "description": "the word select is used to group the selection related settings for this zukunft.com pod",
-      "type": "hidden_triple",
-      "protection": "admin_protection"
-    },
-    {
-      "from": "useful number of selection entries",
-      "verb": "is a",
-      "to": "system selection settings",
-      "type": "hidden_triple",
-      "protection": "admin_protection"
-    },
-    {
-      "from": "min. % of words in list to suggest the word for the next",
-      "verb": "is a",
-      "to": "system selection settings",
-      "type": "hidden_triple",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "system display settings",
-      "from": "view",
-      "verb": "is selector for",
-      "to": "system configuration",
-      "description": "to group the view related settings for this zukunft.com pod",
-      "type": "hidden_triple",
-      "protection": "admin_protection"
-    },
-    {
-      "from": "number of user views to force freezing a zukunft.com view",
-      "verb": "is a",
-      "to": "system display settings",
-      "type": "hidden_triple",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "system database settings",
+      "name": "system config database",
       "from": "database",
       "verb": "is selector for",
       "to": "system configuration",
@@ -131,19 +111,132 @@
       "protection": "admin_protection"
     },
     {
-      "from": "database update block size",
-      "verb": "is a",
-      "to": "system database setting",
+      "name": "system config select",
+      "from": "select",
+      "verb": "is selector for",
+      "to": "system configuration",
+      "description": "the word select is used to group the selection related settings for this zukunft.com pod",
       "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "system config time",
+      "from": "time",
+      "verb": "is selector for",
+      "to": "system configuration",
+      "description": "the time related settings for this zukunft.com pod",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "system config display",
+      "from": "view",
+      "verb": "is selector for",
+      "to": "system configuration",
+      "description": "to group the view related settings for this zukunft.com pod",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "system config database retry start delay in sec",
+      "verb": "is a",
+      "to": "system config database",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "system config database retry max delay in sec",
+      "verb": "is a",
+      "to": "system config database",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "system config database update block size",
+      "verb": "is a",
+      "to": "system config database",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "system config target number of selection entries",
+      "verb": "is a",
+      "to": "system config select",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "system config automatic created years",
+      "verb": "is a",
+      "to": "system config time",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "system config min percent to suggest",
+      "verb": "is a",
+      "to": "system config select",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "system config views to freeze",
+      "verb": "is a",
+      "to": "system config display",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "initial retry delay in sec",
+      "verb": "is selector for",
+      "to": "system config database retry start delay in sec",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "max retry delay in sec",
+      "verb": "is selector for",
+      "to": "system config database retry max delay in sec",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "block size for updates",
+      "verb": "is selector for",
+      "to": "system config database update block size",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "target entries",
+      "verb": "is selector for",
+      "to": "system config target number of selection entries",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "years to create",
+      "verb": "is selector for",
+      "to": "system config automatic created years",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "percentage to suggest",
+      "verb": "is selector for",
+      "to": "system config min percent to suggest",
+      "protection": "admin_protection"
+    },
+    {
+      "from": "views to freeze",
+      "verb": "is selector for",
+      "to": "system config views to freeze",
       "protection": "admin_protection"
     }
   ],
   "phrase-values": {
-    "automatic created years": 10,
-    "useful number of selection entries": 7,
-    "min. % of words in list to suggest the word for the next": 0.3,
-    "number of user views to force freezing a zukunft.com view": 20,
-    "database update block size": 100
+    "system config database retry start delay in sec": 1,
+    "system config database retry max delay in sec": 3600,
+    "system config database update block size": 100,
+    "system config target number of selection entries": 7,
+    "system config automatic created years": 10,
+    "system config min percent to suggest": 0.3,
+    "system config views to freeze": 20
   }
 }
 

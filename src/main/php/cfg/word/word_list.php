@@ -1489,7 +1489,7 @@ class word_list extends sandbox_list
         $max_wrd = new word($this->user());
         if (count($this->lst) > 0) {
             foreach ($this->lst as $wrd) {
-                // to be replaced by "is following"
+                // TODO replaced by "is following"
                 if ($wrd->name() > $max_wrd->name()) {
                     log_debug('select (' . $wrd->name() . ' instead of ' . $max_wrd->name() . ')');
                     $max_wrd = clone $wrd;
@@ -1501,37 +1501,48 @@ class word_list extends sandbox_list
 
     /**
      * get the time of the last value related to a word and assigned to a word list
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return word|null a time word (or phrase?)
      */
-    function max_val_time(): ?word
+    function max_val_time(?term_list $trm_lst = null): ?word
     {
         log_debug($this->dsp_id() . ' and user ' . $this->user()->name);
         $lib = new library();
         $wrd = null;
 
-        // load the list of all value related to the word list
-        $val_lst = new value_list($this->user());
-        $val_lst->phr_lst = $this->phrase_lst();
-        $val_lst->load_by_phr_lst_old();
-        log_debug($lib->dsp_count($val_lst->lst()) . ' values for ' . $this->dsp_id());
+        if ($trm_lst == null) {
+            // load the list of all value related to the word list
+            $val_lst = new value_list($this->user());
+            $val_lst->phr_lst = $this->phrase_lst();
+            $val_lst->load_by_phr_lst_old();
+            log_debug($lib->dsp_count($val_lst->lst()) . ' values for ' . $this->dsp_id());
 
-        $time_ids = array();
-        foreach ($val_lst->lst() as $val) {
-            $val->load_phrases();
-            if (isset($val->time_phr)) {
-                log_debug('value (' . $val->number() . ' @ ' . $val->time_phr->name() . ')');
-                if ($val->time_phr->id() > 0) {
-                    if (!in_array($val->time_phr->id(), $time_ids)) {
-                        $time_ids[] = $val->time_phr->id();
-                        log_debug('add word id (' . $val->time_phr->id() . ')');
+            $time_ids = array();
+            foreach ($val_lst->lst() as $val) {
+                $val->load_phrases();
+                if (isset($val->time_phr)) {
+                    log_debug('value (' . $val->number() . ' @ ' . $val->time_phr->name() . ')');
+                    if ($val->time_phr->id() > 0) {
+                        if (!in_array($val->time_phr->id(), $time_ids)) {
+                            $time_ids[] = $val->time_phr->id();
+                            log_debug('add word id (' . $val->time_phr->id() . ')');
+                        }
                     }
                 }
             }
-        }
 
-        $time_lst = new word_list($this->user());
-        if (count($time_ids) > 0) {
-            $time_lst->load_by_ids($time_ids);
+            $time_lst = new word_list($this->user());
+            if (count($time_ids) > 0) {
+                $time_lst->load_by_ids($time_ids);
+                $wrd = $time_lst->max_time();
+            }
+        } else {
+            $time_lst = new word_list($this->user());
+            foreach ($trm_lst->lst() as $trm) {
+                if ($trm->is_time()) {
+                    $time_lst->add($trm->word());
+                }
+            }
             $wrd = $time_lst->max_time();
         }
 
@@ -1577,9 +1588,10 @@ class word_list extends sandbox_list
      * or the time of the last "real" (reported) value for the word list
      *
      * always returns a phrase to avoid converting in the calling function
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return phrase|null a time phrase
      */
-    function assume_time(): ?phrase
+    function assume_time(?term_list $trm_lst = null): ?phrase
     {
         log_debug('for ' . $this->dsp_id());
         $result = null;
@@ -1600,7 +1612,7 @@ class word_list extends sandbox_list
             log_debug('time ' . $phr->name() . ' assumed for ' . $this->name());
         } else {
             // get the time of the last "real" (reported) value for the word list
-            $wrd_max_time = $this->max_val_time();
+            $wrd_max_time = $this->max_val_time($trm_lst);
             if ($wrd_max_time != null) {
                 $phr = $wrd_max_time->phrase();
             }

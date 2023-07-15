@@ -40,7 +40,9 @@ include_once WEB_PHRASE_PATH . 'term_list.php';
 include_once API_PHRASE_PATH . 'term_list.php';
 
 use api\term_list_api;
-use html\phrase\term_list as term_list_dsp;;
+use html\phrase\term_list as term_list_dsp;
+
+;
 
 class term_list extends sandbox_list_named
 {
@@ -315,7 +317,9 @@ class term_list extends sandbox_list_named
         $trm_id = $trm->id();
         if ($trm_id != 0) {
             $trm = $this->get_by_id($trm_id);
-            $wrd = $trm->get_word();
+            if ($trm != null) {
+                $wrd = $trm->get_word();
+            }
         }
         return $wrd;
     }
@@ -334,7 +338,9 @@ class term_list extends sandbox_list_named
         $trm_id = $trm->id();
         if ($trm_id != 0) {
             $trm = $this->get_by_id($trm_id);
-            $trp = $trm->get_triple();
+            if ($trm != null) {
+                $trp = $trm->get_triple();
+            }
         }
         return $trp;
     }
@@ -353,7 +359,9 @@ class term_list extends sandbox_list_named
         $trm_id = $trm->id();
         if ($trm_id != 0) {
             $trm = $this->get_by_id($trm_id);
-            $frm = $trm->get_formula();
+            if ($trm != null) {
+                $frm = $trm->get_formula();
+            }
         }
         return $frm;
     }
@@ -372,7 +380,9 @@ class term_list extends sandbox_list_named
         $trm_id = $trm->id();
         if ($trm_id != 0) {
             $trm = $this->get_by_id($trm_id);
-            $vrb = $trm->get_verb();
+            if ($trm != null) {
+                $vrb = $trm->get_verb();
+            }
         }
         return $vrb;
     }

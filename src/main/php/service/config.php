@@ -43,10 +43,12 @@ class config
 {
 
     // reserved word and triple names used for the system configuration
-    // *_DSP id the name to be shown to the user if the context makes it unique
+    // *_DSP is the name to be shown to the user if the context makes it unique
     const SYSTEM_CONFIG = 'system configuration';
     const YEARS_AUTO_CREATE = 'system config automatic created years';
-    const YEARS_AUTO_CREATE_DSP = 'automatic created years';
+    const YEARS_AUTO_CREATE_DSP = 'years to create';
+    const DB_RETRY_MIN = 'system config database retry start delay in sec';
+    const DB_RETRY_MAX = 'system config database retry max delay in sec';
 
     // program configuration names
     const SITE_NAME = 'site_name';                           // the name of the pod
@@ -75,13 +77,31 @@ class config
     }
 
     /**
+     * get a config value from the preloaded values
+     * @param string $code_id the identification of the config item that is used in the code that should never be changed
+     * @return string|null the configuration value that is valid at the moment
+     */
+    function get(string $code_id): ?string
+    {
+        global $debug;
+
+        // init
+        $db_value = '';
+
+        // the config table is existing since 0.0.2, so it does not need to be checked, if the config table itself exists
+
+        log_debug('"' . $code_id . '": ' . $db_value, $debug - 1);
+        return $db_value;
+    }
+
+    /**
      * get a config value from the database table
      * including $db_con because this is call also from the start, where the global $db_con is not yet set
      * @param string $code_id the identification of the config item that is used in the code that should never be changed
      * @param sql_db $db_con the open database connection that should be used
      * @return string|null the configuration value that is valid at the moment
      */
-    function get(string $code_id, sql_db $db_con): ?string
+    function get_db(string $code_id, sql_db $db_con): ?string
     {
         global $debug;
 
@@ -149,7 +169,7 @@ class config
     {
         $result = false;
 
-        $cfg_value = $this->get($code_id, $db_con);
+        $cfg_value = $this->get_db($code_id, $db_con);
         if ($cfg_value != $target_value) {
             $result = $this->set(config::SITE_NAME, POD_NAME, $db_con, $description);
         }
