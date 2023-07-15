@@ -44,7 +44,6 @@ use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
-use cfg\phrase_list_dsp_old;
 use cfg\term_list;
 use cfg\user;
 use cfg\verb;

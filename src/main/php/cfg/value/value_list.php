@@ -35,6 +35,7 @@ include_once API_VALUE_PATH . 'value_list.php';
 include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 
 use api\value_list_api;
+use html\phrase\phrase_list as phrase_list_dsp;
 use model\export\exp_obj;
 use model\export\source_exp;
 use model\export\value_list_exp;
@@ -1365,7 +1366,7 @@ class value_list extends sandbox_list
         if ($common_phr_lst->is_valid()) {
             if (!empty($common_phr_lst->lst)) {
                 $common_phr_lst->add($this->phr);
-                $phr_lst_dsp = $common_phr_lst->dsp_obj();
+                $phr_lst_dsp = new phrase_list_dsp($common_phr_lst->api_json());
                 $result .= $phr_lst_dsp->btn_add_value($back);
             }
         }

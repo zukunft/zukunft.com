@@ -36,7 +36,6 @@ namespace html;
 
 use cfg\library;
 use cfg\phrase_list;
-use cfg\phrase_list_dsp_old;
 
 class button
 {
@@ -228,7 +227,7 @@ class button
 
         $url_phr = '';
         if (isset($phr_lst)) {
-            if (get_class($phr_lst) <> phrase_list::class and get_class($phr_lst) <> phrase_list_dsp_old::class) {
+            if (get_class($phr_lst) <> phrase_list::class) {
                 log_err("Object to add must be of type phrase_list, but it is " . get_class($phr_lst) . ".", "button->add_value");
             } else {
                 if (!empty($phr_lst->id_lst())) {

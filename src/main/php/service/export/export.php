@@ -49,6 +49,7 @@ use cfg\config;
 use cfg\library;
 use cfg\phrase_list;
 use cfg\user;
+use html\phrase\phrase_list as phrase_list_dsp;
 
 class export
 {
@@ -102,7 +103,7 @@ class export
                 $export_obj->pod = $cfg->get_db(config::SITE_NAME, $db_con);
                 $export_obj->time = date("Y-m-d H:i:s");
                 $export_obj->user = $usr->name;
-                $phr_lst_dsp = $phr_lst->dsp_obj();
+                $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
                 $export_obj->selection = $phr_lst_dsp->names(); // must be set by before the call TODO not nice better use the $phr_lst->object_exp_lst()
 
                 // 1.1. collect all personal values - value that cannot be seen by other user

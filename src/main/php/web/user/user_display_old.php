@@ -31,6 +31,7 @@
 
 use html\html_base;
 use html\log\user_log_display;
+use html\phrase\phrase_list as phrase_list_dsp;
 use html\view\view_dsp_old;
 use cfg\component;
 use cfg\component_dsp_old;
@@ -606,7 +607,8 @@ class user_dsp_old extends user
                     // prepare the row values
                     $sandbox_item_name = '';
                     if (!$val_usr->grp->phr_lst->is_empty()) {
-                        $sandbox_item_name = $val_usr->grp->phr_lst->dsp_obj()->name_linked();
+                        $phr_lst_dsp = new phrase_list_dsp($val_usr->grp->phr_lst->api_json());
+                        $sandbox_item_name = $phr_lst_dsp->display_linked();
                     }
 
                     // format the user value

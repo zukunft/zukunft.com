@@ -50,6 +50,7 @@ include_once SERVICE_EXPORT_PATH . 'word_exp.php';
 
 use api\api;
 use api\word_api;
+use html\phrase\phrase_list as phrase_list_dsp;
 use model\export\exp_obj;
 use model\export\sandbox_exp_named;
 use model\export\word_exp;
@@ -1080,8 +1081,8 @@ class word extends sandbox_typed
         $html = new html_base();
         $phr_lst_up = $this->parents();
         $phr_lst_down = $this->children();
-        $phr_lst_up_dsp = $phr_lst_up->dsp_obj();
-        $phr_lst_down_dsp = $phr_lst_down->dsp_obj();
+        $phr_lst_up_dsp = new phrase_list_dsp($phr_lst_up->api_json());
+        $phr_lst_down_dsp = new phrase_list_dsp($phr_lst_down->api_json());
         $dsp_graph = $phr_lst_up_dsp->dsp_graph($this->phrase(), $back);
         $dsp_graph .= $phr_lst_down_dsp->dsp_graph($this->phrase(), $back);
         $wrd_dsp = new word_dsp($this->api_json());

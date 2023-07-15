@@ -89,17 +89,6 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * TODO base the display object on the api object as already done in value
-     * @return phrase_list_dsp_old the word object with the display interface functions
-     */
-    function dsp_obj(): object
-    {
-        $dsp_obj = new phrase_list_dsp_old($this->user());
-        $dsp_obj->lst = $this->lst;
-        return $dsp_obj;
-    }
-
-    /**
      * @return term_list filled with all phrases from this phrase list
      */
     function term_list(): term_list

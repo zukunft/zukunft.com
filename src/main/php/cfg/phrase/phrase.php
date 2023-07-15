@@ -66,6 +66,7 @@ use controller\controller;
 use formula\formula_dsp_old;
 use html\html_selector;
 use html\phrase\phrase as phrase_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use user_dsp_old;
@@ -919,7 +920,7 @@ class phrase extends combine_named
     function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string
     {
         $phr_lst = $this->phrases($direction, $link_types);
-        $phr_lst_dsp = $phr_lst->dsp_obj();
+        $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
         return $phr_lst_dsp->dsp_graph($this, $back);
     }
 

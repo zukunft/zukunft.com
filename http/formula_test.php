@@ -114,12 +114,12 @@ if ($session_usr->id() > 0) {
         }
 
         // if only one result is selected, display the selected result words
+        $phr_lst = new phrase_list($usr);
         $dsp_lst = "";
         if ($phr_ids_txt <> "") {
             $phr_ids = explode(",", $phr_ids_txt);
             $phr_ids = $lib->ids_not_empty($phr_ids);
             if (!empty($phr_ids)) {
-                $phr_lst = new phrase_list($usr);
                 $phr_lst->load_names_by_ids(new phr_ids($phr_ids));
                 $dsp_lst = "for " . $phr_lst->name_linked() . " ";
             }

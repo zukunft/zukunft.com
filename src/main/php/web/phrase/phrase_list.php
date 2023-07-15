@@ -39,6 +39,9 @@ include_once WEB_PHRASE_PATH . 'phrase_list.php';
 use api\combine_object_api;
 use api\term_api;
 use cfg\config;
+use cfg\phrase;
+use cfg\phrase_list AS phrase_list_db;
+use cfg\user;
 use html\html_base;
 use html\html_selector;
 use html\list_dsp;
@@ -57,7 +60,7 @@ class phrase_list extends list_dsp
      */
 
     /**
-     * set the vars of a phrase object based on the given json
+     * set the vars of a phrase list based on the given json
      * @param array $json_array an api single object json message
      * @return object a term_dsp with the word or triple set based on the given json
      */
@@ -317,6 +320,10 @@ class phrase_list extends list_dsp
     }
 
     /**
+     * return one string with all names of the list without high quotes for the user, but not necessary as a unique text
+     * e.g. >Company Zurich< can be either >"Company Zurich"< or >"Company" "Zurich"<, means either a triple or two words
+     *      but this "short" form probably confuses the user less and
+     *      if the user cannot change the tags anyway the saving of a related value is possible
      * @return string one string with all names of the list
      */
     function name(): string
@@ -362,6 +369,61 @@ class phrase_list extends list_dsp
             $this->id_lst();
         }
         log_debug($lib->dsp_count($this->lst));
+        return $result;
+    }
+
+    /**
+     * TODO review
+     * offer the user to add a new value for these phrases
+     * similar to value.php/btn_add
+     */
+    function btn_add_value($back)
+    {
+        $result = \html\btn_add_value($this, Null, $back);
+        /*
+        zu_debug('phrase_list->btn_add_value');
+        $val_btn_title = '';
+        $url_phr = '';
+        if (!empty($this->lst)) {
+          $val_btn_title = "add new value similar to ".htmlentities($this->name());
+        } else {
+          $val_btn_title = "add new value";
+        }
+        $url_phr = $this->id_url_long();
+
+        $val_btn_call  = '/http/value_add.php?back='.$back.$url_phr;
+        $result .= \html\btn_add ($val_btn_title, $val_btn_call);
+        zu_debug('phrase_list->btn_add_value -> done');
+        */
+        return $result;
+    }
+
+    /**
+     * TODO review
+     * shows all phrases that are part of a list
+     * e.g. used to display all phrases linked to a word
+     * @returns string the html code to edit a linked word
+     */
+    function dsp_graph(phrase $root_phr, string $back = ''): string
+    {
+        log_debug();
+        $result = '';
+
+        // loop over the link types
+        if ($this->lst == null) {
+            $result .= 'Nothing linked to ' . $root_phr->dsp_name() . ' until now. Click here to link it.';
+        } else {
+            $phr_lst = new phrase_list_db(new user());
+            $phr_lst->set_by_api_json($this->api_array());
+            $wrd_lst = $phr_lst->wrd_lst_all();
+            $wrd_lst_dsp = $wrd_lst->dsp_obj();
+            $result .= $wrd_lst_dsp->tbl($back);
+            foreach ($this->lst as $phr) {
+                // show the RDF graph for this verb
+                $phr->name();
+            }
+        }
+
         return $result;
     }
 

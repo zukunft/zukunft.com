@@ -39,6 +39,7 @@ use html\api;
 use html\button;
 use html\html_base;
 use html\msg;
+use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\word as word_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\sandbox_typed_dsp;
@@ -209,7 +210,8 @@ class triple extends sandbox_typed_dsp
         global $usr;
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_phr($phr);
-        return $phr_lst->dsp_obj()->selector($label, $form_name, $label);
+        $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
+        return $phr_lst_dsp->selector($label, $form_name, $label);
     }
 
 

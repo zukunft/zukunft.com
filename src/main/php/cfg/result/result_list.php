@@ -38,6 +38,7 @@ use api\result_list_api;
 use Exception;
 use formula\formula_dsp_old;
 use html\html_base;
+use html\phrase\phrase_list as phrase_list_dsp;
 use html\system\back_trace;
 use html\word\word as word_dsp;
 
@@ -417,9 +418,9 @@ class result_list extends sandbox_list
                     log_debug("add time " . $res->time_phr->name() . ".");
                     $phr_lst->add($res->time_phr);
                 }
-                $phr_lst_dsp = $phr_lst->dsp_obj();
+                $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
                 $result .= '</tr><tr>';
-                $result .= '<td>' . $phr_lst_dsp->name_linked() . '</td>';
+                $result .= '<td>' . $phr_lst_dsp->display_linked() . '</td>';
                 $result .= '<td>' . $res->display_linked($back) . '</td>';
                 $result .= '</tr>';
             }

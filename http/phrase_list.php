@@ -35,7 +35,6 @@
 use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
-use cfg\phrase_list_dsp_old;
 use cfg\term;
 use cfg\triple;
 use cfg\user;
@@ -55,7 +54,6 @@ $msg = ''; // to collect all messages that should be shown to the user immediate
 
 // load the session user parameters
 $usr = new user;
-$phr_lst = new phrase_list_dsp_old($usr);
 $result .= $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
