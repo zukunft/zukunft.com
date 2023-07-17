@@ -43,9 +43,11 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 
 use api\result_api;
+use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use model\export\result_exp;
 use DateTime;
@@ -327,7 +329,7 @@ class result extends sandbox_value
         $qp = $this->load_sql($db_con, 'grp');
         $db_con->set_name($qp->name);
         // select the result based on the phrase group e.g. a more complex word list
-        $db_con->add_par(sql_db::PAR_INT, $grp->id());
+        $db_con->add_par(sql_par_type::INT, $grp->id());
 
         return $qp;
     }
@@ -603,8 +605,8 @@ class result extends sandbox_value
             // include the source words in the search if requested
             if ($this->src_phr_grp_id > 0 and $this->user()->id() > 0) {
                 $qp->name .= '_usr_src_phr_grp';
-                $db_con->add_par(sql_db::PAR_INT, $this->src_phr_grp_id);
-                $db_con->add_par(sql_db::PAR_INT, $this->user()->id);
+                $db_con->add_par(sql_par_type::INT, $this->src_phr_grp_id);
+                $db_con->add_par(sql_par_type::INT, $this->user()->id);
                 if ($sql_where != '') {
                     $sql_where .= ' AND ';
                 }
@@ -614,7 +616,7 @@ class result extends sandbox_value
             } else {
                 $qp->name .= '_src_phr_grp';
                 if ($this->src_phr_grp_id > 0) {
-                    $db_con->add_par(sql_db::PAR_INT, $this->src_phr_grp_id);
+                    $db_con->add_par(sql_par_type::INT, $this->src_phr_grp_id);
                     if ($sql_where != '') {
                         $sql_where .= ' AND ';
                     }
@@ -628,8 +630,8 @@ class result extends sandbox_value
             $sql_wrd = "";
             if ($this->grp->id() > 0 and $this->user()->id() > 0) {
                 $qp->name .= '_usr_phr_grp';
-                $db_con->add_par(sql_db::PAR_INT, $this->grp->id());
-                $db_con->add_par(sql_db::PAR_INT, $this->user()->id);
+                $db_con->add_par(sql_par_type::INT, $this->grp->id());
+                $db_con->add_par(sql_par_type::INT, $this->user()->id);
                 if ($sql_where != '') {
                     $sql_where .= ' AND ';
                 }
@@ -639,7 +641,7 @@ class result extends sandbox_value
             } else {
                 if ($this->grp->id() > 0) {
                     $qp->name .= '_phr_grp';
-                    $db_con->add_par(sql_db::PAR_INT, $this->grp->id());
+                    $db_con->add_par(sql_par_type::INT, $this->grp->id());
                     if ($sql_where != '') {
                         $sql_where .= ' AND ';
                     }
@@ -650,7 +652,7 @@ class result extends sandbox_value
             // include the formula in the search
             if ($this->frm->id() > 0) {
                 $qp->name .= '_frm_id';
-                $db_con->add_par(sql_db::PAR_INT, $this->frm->id());
+                $db_con->add_par(sql_par_type::INT, $this->frm->id());
                 if ($sql_where != '') {
                     $sql_where .= ' AND ';
                 }
@@ -716,7 +718,7 @@ class result extends sandbox_value
                                     $sql_grp_where .= ' AND l' . $pos_prior . '.phrase_group_id = l' . $pos . '.phrase_group_id AND ';
                                 }
                                 $qp->name .= '_word_id';
-                                $db_con->add_par(sql_db::PAR_INT, $phr->id());
+                                $db_con->add_par(sql_par_type::INT, $phr->id());
                                 $sql_grp_where .= ' l' . $pos . '.word_id = ' . $db_con->par_name();
                                 $pos++;
                             }
@@ -740,7 +742,7 @@ class result extends sandbox_value
                                     $this->set_id($val_id_row[self::FLD_ID]);
                                     if ($this->id() > 0) {
                                         $qp->name .= '_guess_res_id';
-                                        $db_con->add_par(sql_db::PAR_INT, $this->id());
+                                        $db_con->add_par(sql_par_type::INT, $this->id());
                                         $sql_where = "result_id = " . $db_con->par_name();
                                         $this->load_rec($qp, $sql_where);
                                         log_debug('best guess id (' . $this->id() . ')');

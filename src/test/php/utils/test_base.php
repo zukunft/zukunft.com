@@ -1112,7 +1112,7 @@ class test_base
      * @param array $names with the names of the objects that should be loaded
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_names(sql_db $db_con, object $usr_obj, array $names): bool
+    function assert_sql_by_names_non_sc(sql_db $db_con, object $usr_obj, array $names): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -1123,6 +1123,31 @@ class test_base
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_names($db_con, $names);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statements to load a list by name for all allowed SQL database dialects
+     * similar to assert_sql_by_ids but for a name list
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param array $names with the names of the objects that should be loaded
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_by_names(sql_db $db_con, object $usr_obj, array $names): bool
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_names($db_con->sql_creator(), $names);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_names($db_con->sql_creator(), $names);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;

@@ -65,7 +65,7 @@ class formula_list_unit_tests
         // sql to load a list of formulas by the id
         $frm_lst = new formula_list($usr);
         $t->assert_sql_by_ids($db_con, $frm_lst);
-        $t->assert_sql_by_names($db_con, $frm_lst, array(formula_api::TN_INCREASE, formula_api::TN_ADD));
+        $t->assert_sql_by_names_non_sc($db_con, $frm_lst, array(formula_api::TN_INCREASE, formula_api::TN_ADD));
         $t->assert_sql_all_paged($db_con, $frm_lst);
         $this->assert_sql_by_word_ref($t, $db_con, $frm_lst);
         $this->assert_sql_by_triple_ref($t, $db_con, $frm_lst);

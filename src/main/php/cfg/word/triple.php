@@ -34,10 +34,12 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_typed.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 
 use api\api;
+use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use model\export\triple_exp;
 use controller\controller;
@@ -1016,22 +1018,22 @@ class triple extends sandbox_link_typed implements JsonSerializable
     private function load_sql_select_qp(sql_db $db_con, sql_par $qp): sql_par
     {
         if ($this->id() != 0) {
-            $db_con->add_par(sql_db::PAR_INT, $this->id());
+            $db_con->add_par(sql_par_type::INT, $this->id());
             $qp->sql = $db_con->select_by_set_id();
         } elseif ($this->name != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, $this->name);
+            $db_con->add_par(sql_par_type::TEXT, $this->name);
             //$qp->sql = $db_con->select_by_name();
             $qp->sql = $db_con->select_by_field(self::FLD_NAME);
         } elseif ($this->has_objects()) {
-            $db_con->add_par(sql_db::PAR_INT, $this->fob->id());
-            $db_con->add_par(sql_db::PAR_INT, $this->tob->id());
-            $db_con->add_par(sql_db::PAR_INT, $this->verb->id());
+            $db_con->add_par(sql_par_type::INT, $this->fob->id());
+            $db_con->add_par(sql_par_type::INT, $this->tob->id());
+            $db_con->add_par(sql_par_type::INT, $this->verb->id());
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_FROM, self::FLD_TO, verb::FLD_ID));
         } elseif ($this->name_generated() != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, $this->name_generated());
+            $db_con->add_par(sql_par_type::TEXT, $this->name_generated());
             $qp->sql = $db_con->select_by_field(self::FLD_NAME_AUTO);
         } elseif ($this->name_given() != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, $this->name_given());
+            $db_con->add_par(sql_par_type::TEXT, $this->name_given());
             $qp->sql = $db_con->select_by_field(self::FLD_NAME_GIVEN);
         }
         $qp->par = $db_con->get_par();

@@ -33,12 +33,14 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 include_once API_LOG_PATH . 'change_log_list.php';
 include_once WEB_LOG_PATH . 'change_log_list.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
 use api\change_log_list_api;
+use cfg\db\sql_par_type;
 use html\log\change_log_list as change_log_list_dsp;
 
 class change_log_list extends base_list
@@ -323,8 +325,8 @@ class change_log_list extends base_list
         $query_ext = $this->table_field_to_query_name($table_name, $field_name);
         $qp = $log_named->load_sql($db_con, $query_ext, self::class);
         $db_con->set_page($this->limit, $this->offset());
-        $db_con->add_par(sql_db::PAR_INT, $field_id);
-        $db_con->add_par(sql_db::PAR_INT, $id);
+        $db_con->add_par(sql_par_type::INT, $field_id);
+        $db_con->add_par(sql_par_type::INT, $id);
         $qp->sql = $db_con->select_by_field_list(array(
             change_log_named::FLD_FIELD_ID,
             change_log_named::FLD_ROW_ID));

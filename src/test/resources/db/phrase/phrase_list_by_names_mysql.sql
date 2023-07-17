@@ -1,4 +1,4 @@
-PREPARE phrase_list_by_4ids FROM
+PREPARE phrase_list_by_names FROM
     'SELECT
          s.phrase_id,
          u.phrase_id AS user_phrase_id,
@@ -12,5 +12,5 @@ PREPARE phrase_list_by_4ids FROM
          IF(u.protect_id    IS NULL, s.protect_id,    u.protect_id)    AS protect_id
      FROM phrases s
 LEFT JOIN user_phrases u ON s.phrase_id = u.phrase_id AND u.user_id = ?
-    WHERE s.phrase_id IN (?)
+    WHERE s.phrase_name IN (?)
  ORDER BY s.`values` DESC, phrase_name';

@@ -93,7 +93,7 @@ class word extends sandbox_typed
     const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
         self::FLD_VIEW,
-        self::FLD_EXCLUDED,
+        sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -105,7 +105,7 @@ class word extends sandbox_typed
         self::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_VIEW,
-        self::FLD_EXCLUDED,
+        sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );

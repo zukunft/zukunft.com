@@ -33,6 +33,7 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'library.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
@@ -41,6 +42,7 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 
+use cfg\db\sql_par_type;
 use html\html_base;
 
 global $verbs;
@@ -128,7 +130,7 @@ class verb_list extends type_list
             $db_con->set_fields(array(verb::FLD_ID));
             // set the where clause depending on the values given
             // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
-            $db_con->add_par(sql_db::PAR_INT, $phr->id());
+            $db_con->add_par(sql_par_type::INT, $phr->id());
             if ($direction == foaf_direction::UP) {
                 $qp->sql = $db_con->select_by_field(triple::FLD_FROM);
             } else {

@@ -33,6 +33,7 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
@@ -44,6 +45,7 @@ include_once API_LOG_PATH . 'system_log_list.php';
 include_once WEB_LOG_PATH . 'system_log_list.php';
 include_once WEB_LOG_PATH . 'system_log_list_old.php';
 
+use cfg\db\sql_par_type;
 use controller\log\system_log_list_api;
 use html\log\system_log_list_dsp_old;
 
@@ -149,13 +151,13 @@ class system_log_list extends base_list
             $sql_where = $sql_status;
             $qp->name .= self::DSP_ALL;
         } elseif ($this->dsp_type == self::DSP_OTHER) {
-            $db_con->add_par(sql_db::PAR_INT, $this->user()->id());
+            $db_con->add_par(sql_par_type::INT, $this->user()->id());
             $sql_where = $sql_status .
                 ' AND (' . sql_db::STD_TBL . '.' . user::FLD_ID . ' <> ' . $db_con->par_name() .
                 ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
             $qp->name .= self::DSP_OTHER;
         } elseif ($this->dsp_type == self::DSP_MY) {
-            $db_con->add_par(sql_db::PAR_INT, $this->user()->id());
+            $db_con->add_par(sql_par_type::INT, $this->user()->id());
             $sql_where = $sql_status .
                 ' AND (' . sql_db::STD_TBL . '.' . user::FLD_ID . ' = ' . $db_con->par_name() .
                 ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';

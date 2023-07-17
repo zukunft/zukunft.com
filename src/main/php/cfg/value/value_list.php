@@ -31,10 +31,12 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once API_VALUE_PATH . 'value_list.php';
 include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 
 use api\value_list_api;
+use cfg\db\sql_par_type;
 use html\phrase\phrase_list as phrase_list_dsp;
 use model\export\exp_obj;
 use model\export\source_exp;
@@ -75,24 +77,12 @@ class value_list extends sandbox_list
     /**
      * fill the value list based on a database records
      * @param array $db_rows is an array of an array with the database values
+     * @param bool $load_all force to include also the excluded values e.g. for admins
      * @return bool true if at least one value has been loaded
      */
-    protected function rows_mapper(array $db_rows): bool
+    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        $result = false;
-        if ($db_rows != null) {
-            foreach ($db_rows as $db_row) {
-                if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0) {
-                    if ($db_row[value::FLD_ID] > 0) {
-                        $val = new value($this->user());
-                        $val->row_mapper_sandbox($db_row);
-                        $this->lst[] = $val;
-                        $result = true;
-                    }
-                }
-            }
-        }
-        return $result;
+        return parent::rows_mapper_obj(new value($this->user()), $db_rows, $load_all);
     }
 
     /*
@@ -247,10 +237,10 @@ class value_list extends sandbox_list
             if ($this->phr != null) {
                 if ($this->phr->id() <> 0) {
                     if ($this->phr->is_word()) {
-                        $db_con->add_par(sql_db::PAR_INT, $this->phr->id());
+                        $db_con->add_par(sql_par_type::INT, $this->phr->id());
                         $sql_where = 'l2.' . word::FLD_ID . ' = ' . $db_con->par_name();
                     } else {
-                        $db_con->add_par(sql_db::PAR_INT, $this->phr->id() * -1);
+                        $db_con->add_par(sql_par_type::INT, $this->phr->id() * -1);
                         $sql_where = 'l2.' . triple::FLD_ID . ' = ' . $db_con->par_name();
                     }
                 }

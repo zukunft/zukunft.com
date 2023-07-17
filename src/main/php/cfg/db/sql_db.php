@@ -35,6 +35,7 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 
 use cfg\db\sql_creator;
@@ -128,18 +129,6 @@ class sql_db
     // difference between the object name and the table name
     const TABLE_EXTENSION = 's';
 
-    // the parameter types for prepared queries independent of the SQL dialect
-    const PAR_INT = 'int';
-    const PAR_INT_OR = 'int_or';
-    const PAR_INT_NOT = 'int_not';
-    const PAR_INT_LIST = 'int_list';
-    const PAR_INT_LIST_OR = 'int_list_or';
-    const PAR_TEXT = 'text';
-    const PAR_TEXT_LIST = 'text_list';
-    const PAR_TEXT_OR = 'text_or';
-    const PAR_LIKE = 'like';
-    const PAR_CONST = 'const';
-
     // reserved words that are automatically escaped
 
     // based on https://www.Postgres.org/docs/current/sql-keywords-appendix.html from 2021-06-13
@@ -207,7 +196,6 @@ class sql_db
     const FLD_VALUE = 'value';                    // field name e.g. for the configuration value
     const FLD_DESCRIPTION = 'description';        // field name for any description
     const FLD_TYPE_NAME = 'type_name';            // field name for the user specific name of a type; types are used to assign code to a db row
-    const FLD_EXCLUDED = 'excluded';              // field name used to delete the object only for one user
 
     // formats to force the formatting of a value for an SQL statement e.g. convert true to 1 when using tinyint to save boolean values
     const FLD_FORMAT_TEXT = 'text';               // to force the text formatting of a value for the SQL statement formatting
@@ -607,26 +595,26 @@ class sql_db
         $this->add_field($fld);
 
         // set the default parameter type
-        $sql_par_typ = sql_db::PAR_INT;
+        $sql_par_typ = sql_par_type::INT;
         if ($spt == null) {
             $sql_par_typ = match (gettype($fld_val)) {
-                'integer' => sql_db::PAR_INT,
-                'string' => sql_db::PAR_TEXT,
-                'array' => sql_db::PAR_INT_LIST,
+                'integer' => sql_par_type::INT,
+                'string' => sql_par_type::TEXT,
+                'array' => sql_par_type::INT_LIST,
             };
         } else {
             // map the par type until all sql statement creations are changed
             $sql_par_typ = match ($spt->name) {
-                'INT' => sql_db::PAR_INT,
-                'INT_LIST' => sql_db::PAR_INT_LIST,
-                'INT_LIST_OR' => sql_db::PAR_INT_LIST_OR,
+                'INT' => sql_par_type::INT,
+                'INT_LIST' => sql_par_type::INT_LIST,
+                'INT_LIST_OR' => sql_par_type::INT_LIST_OR,
                 default => log_err('Unexpected sqp parameter type ' . $spt->name),
             };
         }
 
-        if ($sql_par_typ == sql_db::PAR_INT_LIST or $sql_par_typ == sql_db::PAR_INT_LIST_OR) {
+        if ($sql_par_typ == sql_par_type::INT_LIST or $sql_par_typ == sql_par_type::INT_LIST_OR) {
             $this->add_par($sql_par_typ, $this->int_array_to_sql_string($fld_val));
-        } elseif ($sql_par_typ == sql_db::PAR_INT) {
+        } elseif ($sql_par_typ == sql_par_type::INT) {
             $this->add_par($sql_par_typ, $fld_val);
         }
     }
@@ -715,13 +703,13 @@ class sql_db
 
     /**
      * add a parameter for a prepared query
-     * @param string $par_type the SQL parameter type used e.g. for Postgres as int or text
+     * @param sql_par_type $par_type the SQL parameter type used e.g. for Postgres as int or text
      * @param string $value the int, float value or text value that is used for the concrete execution of the query
      * @param bool $named true if the parameter name is already used
      * @param bool $use_link true if the parameter should be applied on the linked table
      */
     function add_par(
-        string $par_type,
+        sql_par_type $par_type,
         string $value,
         bool   $named = false,
         bool   $use_link = false): void
@@ -759,7 +747,7 @@ class sql_db
      */
     function add_par_int(int $id): void
     {
-        $this->add_par(sql_db::PAR_INT, $id);
+        $this->add_par(sql_par_type::INT, $id);
     }
 
     /**
@@ -768,7 +756,7 @@ class sql_db
      */
     function add_par_join_int(int $id): void
     {
-        $this->add_par(sql_db::PAR_INT, $id, false, true);
+        $this->add_par(sql_par_type::INT, $id, false, true);
     }
 
     /**
@@ -779,7 +767,7 @@ class sql_db
      */
     function add_par_in_int(array $ids, bool $named = false, bool $use_link = false): void
     {
-        $this->add_par(sql_db::PAR_INT_LIST, $this->int_array_to_sql_string($ids), $named, $use_link);
+        $this->add_par(sql_par_type::INT_LIST, $this->int_array_to_sql_string($ids), $named, $use_link);
     }
 
     /**
@@ -790,7 +778,7 @@ class sql_db
      */
     function add_par_in_int_or(array $ids, bool $named = false, bool $use_link = false): void
     {
-        $this->add_par(sql_db::PAR_INT_LIST_OR, $this->int_array_to_sql_string($ids), $named, $use_link);
+        $this->add_par(sql_par_type::INT_LIST_OR, $this->int_array_to_sql_string($ids), $named, $use_link);
     }
 
     /**
@@ -799,7 +787,7 @@ class sql_db
      */
     function add_par_txt(string $name): void
     {
-        $this->add_par(sql_db::PAR_TEXT, $name);
+        $this->add_par(sql_par_type::TEXT, $name);
     }
 
     /**
@@ -808,7 +796,7 @@ class sql_db
      */
     function add_par_txt_or(string $name): void
     {
-        $this->add_par(sql_db::PAR_TEXT_OR, $name);
+        $this->add_par(sql_par_type::TEXT_OR, $name);
     }
 
     /**
@@ -818,8 +806,8 @@ class sql_db
     function add_par_in_txt(array $names): void
     {
         // TODO check how to escape ","
-        //$this->add_par(sql_db::PAR_TEXT_LIST, "{'" . implode("','", $names) . "'}");
-        $this->add_par(sql_db::PAR_TEXT_LIST, $this->str_array_to_sql_string($names));
+        //$this->add_par(sql_par_type::TEXT_LIST, "{'" . implode("','", $names) . "'}");
+        $this->add_par(sql_par_type::TEXT_LIST, $this->str_array_to_sql_string($names));
     }
 
     /**
@@ -828,7 +816,7 @@ class sql_db
      */
     function add_name_pattern(string $name_pattern): void
     {
-        $this->add_par(sql_db::PAR_LIKE, $name_pattern . '%');
+        $this->add_par(sql_par_type::LIKE, $name_pattern . '%');
     }
 
     /**
@@ -2374,7 +2362,7 @@ class sql_db
         $result .= $field . ' IN (';
         $i = 1;
         foreach ($values as $value) {
-            $this->add_par(sql_db::PAR_INT, $value);
+            $this->add_par(sql_par_type::INT, $value);
             if ($i > 1) {
                 $result .= ',';
             }
@@ -2420,12 +2408,12 @@ class sql_db
             foreach ($fields as $field) {
                 // assume an int value as parameter if not stated
                 if (count($values) < $pos + 1) {
-                    $this->add_par(sql_db::PAR_INT, $values[$pos]);
+                    $this->add_par(sql_par_type::INT, $values[$pos]);
                 } else {
                     if (gettype($values[$pos]) == 'integer') {
-                        $this->add_par(sql_db::PAR_INT, $values[$pos]);
+                        $this->add_par(sql_par_type::INT, $values[$pos]);
                     } elseif (gettype($values[$pos]) == 'string') {
-                        $this->add_par(sql_db::PAR_TEXT, $values[$pos]);
+                        $this->add_par(sql_par_type::TEXT, $values[$pos]);
                     } else {
                         log_err('Unknown value type of ' . $values[$pos] . ' when creating SQL WHERE statement');
                     }
@@ -2499,13 +2487,13 @@ class sql_db
              * don't use the standard name for the selection e.g. s.view_name
              * use instead the user specific name e.g. view_name
              */
-            $this->add_par(sql_db::PAR_TEXT, $name);
+            $this->add_par(sql_par_type::TEXT, $name);
             if ($this->usr_query or $this->join <> '') {
                 $result .= '(' . sql_db::USR_TBL . '.';
                 $result .= $name_field . " = " . $this->par_name();
                 $result .= ' OR (' . sql_db::STD_TBL . '.';
                 if (SQL_DB_TYPE != sql_db::POSTGRES) {
-                    $this->add_par(sql_db::PAR_TEXT, $name);
+                    $this->add_par(sql_par_type::TEXT, $name);
                 }
                 $result .= $name_field . " = " . $this->par_name();
                 $result .= ' AND ' . sql_db::USR_TBL . '.';
@@ -2516,7 +2504,7 @@ class sql_db
         }
         if ($this->usr_only_query) {
             if (!$this->all_query) {
-                $this->add_par(sql_db::PAR_INT, $this->usr_view_id);
+                $this->add_par(sql_par_type::INT, $this->usr_view_id);
                 $result .= ' AND ' . user::FLD_ID . ' = ' . $this->par_name();
             }
         }
@@ -2575,7 +2563,7 @@ class sql_db
             if ($this->usr_query or $this->join <> '') {
                 $result .= sql_db::STD_TBL . '.';
             }
-            $this->add_par(sql_db::PAR_INT, $id);
+            $this->add_par(sql_par_type::INT, $id);
             $result .= $this->id_field . " = " . $this->par_name();
             // select one link by the from and to id
         } elseif ($id_from <> 0 and $id_to <> 0) {
@@ -2585,12 +2573,12 @@ class sql_db
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
                 }
-                $this->add_par(sql_db::PAR_INT, $id_from);
+                $this->add_par(sql_par_type::INT, $id_from);
                 $result .= $this->id_from_field . " = " . $this->par_name() . " AND ";
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
                 }
-                $this->add_par(sql_db::PAR_INT, $id_to);
+                $this->add_par(sql_par_type::INT, $id_to);
                 $result .= $this->id_to_field . " = " . $this->par_name();
                 if ($id_type <> 0) {
                     if ($this->id_link_field == '') {
@@ -2600,7 +2588,7 @@ class sql_db
                         if ($this->usr_query or $this->join <> '') {
                             $result .= sql_db::STD_TBL . '.';
                         }
-                        $this->add_par(sql_db::PAR_INT, $id_type);
+                        $this->add_par(sql_par_type::INT, $id_type);
                         $result .= $this->id_link_field . " = " . $this->par_name();
                     }
 
@@ -2613,7 +2601,7 @@ class sql_db
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
                 }
-                $this->add_par(sql_db::PAR_INT, $id_from);
+                $this->add_par(sql_par_type::INT, $id_from);
                 $result .= $this->id_from_field . ' = ' . $this->par_name();
             }
         } elseif ($id_to <> 0) {
@@ -2623,7 +2611,7 @@ class sql_db
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
                 }
-                $this->add_par(sql_db::PAR_INT, $id_to);
+                $this->add_par(sql_par_type::INT, $id_to);
                 $result .= $this->id_to_field . ' = ' . $this->par_name();
             }
         } else {
@@ -2656,13 +2644,13 @@ class sql_db
                 or $this->join2_type <> '') {
                 $result .= sql_db::STD_TBL . '.';
             }
-            $this->add_par(sql_db::PAR_INT, $id);
+            $this->add_par(sql_par_type::INT, $id);
             $result .= $this->id_field . " = " . $this->par_name();
         } elseif ($code_id <> '' and !is_null($this->usr_id)) {
             if ($this->usr_query or $this->join <> '') {
                 $result .= sql_db::STD_TBL . '.';
             }
-            $this->add_par(sql_db::PAR_TEXT, $code_id);
+            $this->add_par(sql_par_type::TEXT, $code_id);
             $result .= sql_db::FLD_CODE_ID . " = " . $this->par_name();
             if ($this->db_type == sql_db::POSTGRES) {
                 $result .= ' AND ';
@@ -2676,7 +2664,7 @@ class sql_db
         }
         if ($this->usr_only_query) {
             if (!$this->all_query) {
-                $this->add_par(sql_db::PAR_INT, $this->usr_view_id);
+                $this->add_par(sql_par_type::INT, $this->usr_view_id);
                 $result .= ' AND ' . user::FLD_ID . ' = ' . $this->par_name();
             }
         }
@@ -2712,8 +2700,8 @@ class sql_db
                 foreach ($this->par_types as $par_type) {
                     // set the closing bracket around a or field list if needed
                     if ($open_or_flf_lst) {
-                        if (!($par_type == self::PAR_TEXT_OR
-                            or $par_type == self::PAR_INT_LIST_OR)) {
+                        if (!($par_type == sql_par_type::TEXT_OR
+                            or $par_type == sql_par_type::INT_LIST_OR)) {
                             $this->where .= ' ) ';
                             $open_or_flf_lst = false;
                         }
@@ -2723,16 +2711,16 @@ class sql_db
                         if ($this->where == '') {
                             $this->where = ' WHERE ';
                         } else {
-                            if ($par_type == self::PAR_TEXT_OR
-                                or $par_type == self::PAR_INT_LIST_OR) {
+                            if ($par_type == sql_par_type::TEXT_OR
+                                or $par_type == sql_par_type::INT_LIST_OR) {
                                 $this->where .= ' OR ';
                             } else {
                                 $this->where .= ' AND ';
                             }
                         }
                         // set the opening bracket around a or field list if needed
-                        if ($par_type == self::PAR_TEXT_OR
-                            or $par_type == self::PAR_INT_LIST_OR) {
+                        if ($par_type == sql_par_type::TEXT_OR
+                            or $par_type == sql_par_type::INT_LIST_OR) {
                             if (!$open_or_flf_lst) {
                                 $this->where .= ' ( ';
                                 $open_or_flf_lst = true;
@@ -2750,22 +2738,22 @@ class sql_db
                             }
                         }
                         // add the field name
-                        if ($par_type == self::PAR_INT_LIST
-                            or $par_type == self::PAR_INT_LIST_OR
-                            or $par_type == self::PAR_TEXT_LIST) {
+                        if ($par_type == sql_par_type::INT_LIST
+                            or $par_type == sql_par_type::INT_LIST_OR
+                            or $par_type == sql_par_type::TEXT_LIST) {
                             if ($this->db_type == sql_db::POSTGRES) {
                                 $this->where .= $id_fields[$used_fields] . ' = ANY (' . $this->par_name($i + 1) . ')';
                             } else {
                                 $this->where .= $id_fields[$used_fields] . ' IN (' . $this->par_name($i + 1) . ')';
                             }
                         } else {
-                            if ($par_type == self::PAR_LIKE) {
+                            if ($par_type == sql_par_type::LIKE) {
                                 $this->where .= $id_fields[$used_fields] . ' like ' . $this->par_name($i + 1);
                             } else {
-                                if ($par_type == self::PAR_CONST) {
+                                if ($par_type == sql_par_type::CONST) {
                                     $this->where .= $this->par_value($i + 1);
                                 } else {
-                                    if ($par_type == self::PAR_INT_NOT) {
+                                    if ($par_type == sql_par_type::INT_NOT) {
                                         $this->where .= $id_fields[$used_fields] . ' <> ' . $this->par_name($i + 1);
                                     } else {
                                         $this->where .= $id_fields[$used_fields] . ' = ' . $this->par_name($i + 1);
@@ -2774,7 +2762,7 @@ class sql_db
                             }
                         }
 
-                        if ($par_type == self::PAR_TEXT) {
+                        if ($par_type == sql_par_type::TEXT) {
                             if ($id_fields[$used_fields] == sql_db::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $this->where .= ' AND ';
@@ -2905,10 +2893,10 @@ class sql_db
             }
         }
 
-        $this->add_par(sql_db::PAR_INT, $limit);
+        $this->add_par(sql_par_type::INT, $limit);
         $this->page = ' LIMIT ' . $this->par_name();
         if ($page > 0) {
-            $this->add_par(sql_db::PAR_INT, $page * $limit);
+            $this->add_par(sql_par_type::INT, $page * $limit);
             $this->page .= ' OFFSET ' . $this->par_name();
         }
     }
@@ -2935,7 +2923,7 @@ class sql_db
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
-                        $this->add_par(self::PAR_INT, $this->usr_id);
+                        $this->add_par(sql_par_type::INT, $this->usr_id);
                         $this->join_usr_par_name = $this->par_name();
                         $this->join .= $this->join_usr_par_name;
                     }
@@ -2986,7 +2974,7 @@ class sql_db
                     $this->from .= ' FROM ' . $this->name_sql_esc($this->table) . ' ' . sql_db::STD_TBL;
                     $this->from .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join_table_name . ' ' . sql_db::LNK_TBL;
                     $this->from .= ' ON ' . sql_db::LNK_TBL . '.' . $join_from_id_field . ' = ' . sql_db::STD_TBL . '.' . $join_id_field;
-                    $this->add_par(self::PAR_INT, $this->usr_id);
+                    $this->add_par(sql_par_type::INT, $this->usr_id);
                     $this->from .= ' WHERE ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . $this->par_name() . ' ';
                     $this->from .= ' GROUP BY ' . $this->fields . ' ';
                     $this->from .= ' ) AS ' . sql_db::STD_TBL;
@@ -2995,7 +2983,7 @@ class sql_db
                     $this->from = ' FROM ( SELECT ' . $this->name_sql_esc($this->table);
                     $this->from .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::LNK_TBL;
                     $this->from .= ' ON ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . sql_db::LNK_TBL . '.' . $join_id_field;
-                    $this->add_par(self::PAR_INT, $this->usr_id);
+                    $this->add_par(sql_par_type::INT, $this->usr_id);
                     $this->from .= ' WHERE ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . $this->par_name() . ' ';
                     $this->from .= ' GROUP BY ' . $field_sql . ' ';
                     $this->from .= ' ) AS c1';
@@ -3014,7 +3002,7 @@ class sql_db
                         } else {
                             // for MySQL the parameter needs to be repeated
                             if ($this->db_type == self::MYSQL) {
-                                $this->add_par(self::PAR_INT, $this->usr_id, true);
+                                $this->add_par(sql_par_type::INT, $this->usr_id, true);
                             }
                             $this->join .= $this->join_usr_par_name;
                         }
@@ -3026,7 +3014,7 @@ class sql_db
                     } else {
                         $this->where .= ' AND ';
                     }
-                    $this->add_par(self::PAR_INT, $this->join_select_id);
+                    $this->add_par(sql_par_type::INT, $this->join_select_id);
                     $this->where .= sql_db::LNK_TBL . '.' . $this->join_select_field . ' = ' . $this->par_name();
                 }
             }
@@ -3054,7 +3042,7 @@ class sql_db
                     } else {
                         // for MySQL the parameter needs to be repeated
                         if ($this->db_type == self::MYSQL) {
-                            $this->add_par(self::PAR_INT, $this->usr_id, true);
+                            $this->add_par(sql_par_type::INT, $this->usr_id, true);
                         }
                         $this->join .= $this->join_usr_par_name;
                     }
@@ -3066,7 +3054,7 @@ class sql_db
                 } else {
                     $this->where .= ' AND ';
                 }
-                $this->add_par(self::PAR_INT, $this->join2_select_id);
+                $this->add_par(sql_par_type::INT, $this->join2_select_id);
                 $this->where .= sql_db::LNK2_TBL . '.' . $this->join2_select_field . ' = ' . $this->par_name();
             }
         }
@@ -3093,7 +3081,7 @@ class sql_db
                     } else {
                         // for MySQL the parameter needs to be repeated
                         if ($this->db_type == self::MYSQL) {
-                            $this->add_par(self::PAR_INT, $this->usr_id, true);
+                            $this->add_par(sql_par_type::INT, $this->usr_id, true);
                         }
                         $this->join .= $this->join_usr_par_name;
                     }
@@ -3105,7 +3093,7 @@ class sql_db
                 } else {
                     $this->where .= ' AND ';
                 }
-                $this->add_par(self::PAR_INT, $this->join3_select_id);
+                $this->add_par(sql_par_type::INT, $this->join3_select_id);
                 $this->where .= sql_db::LNK3_TBL . '.' . $this->join3_select_field . ' = ' . $this->par_name();
             }
         }
@@ -3132,7 +3120,7 @@ class sql_db
                     } else {
                         // for MySQL the parameter needs to be repeated
                         if ($this->db_type == self::MYSQL) {
-                            $this->add_par(self::PAR_INT, $this->usr_id, true);
+                            $this->add_par(sql_par_type::INT, $this->usr_id, true);
                         }
                         $this->join .= $this->join_usr_par_name;
                     }
@@ -3144,7 +3132,7 @@ class sql_db
                 } else {
                     $this->where .= ' AND ';
                 }
-                $this->add_par(self::PAR_INT, $this->join4_select_id);
+                $this->add_par(sql_par_type::INT, $this->join4_select_id);
                 $this->where .= sql_db::LNK4_TBL . '.' . $this->join4_select_field . ' = ' . $this->par_name();
             }
         }
@@ -3172,7 +3160,7 @@ class sql_db
         $used_par_values = [];
         $i = 0; // the position in the SQL parameter array
         foreach ($this->par_types as $par_type) {
-            if ($par_type != self::PAR_CONST) {
+            if ($par_type != sql_par_type::CONST) {
                 $used_par_values[] = $this->par_value($i + 1);;
             }
             $i++;
@@ -3305,8 +3293,8 @@ class sql_db
      */
     function select_by_id_and_user(int $id, int $usr_id): string
     {
-        $this->add_par(self::PAR_INT, $id);
-        $this->add_par(self::PAR_INT, $usr_id);
+        $this->add_par(sql_par_type::INT, $id);
+        $this->add_par(sql_par_type::INT, $usr_id);
 
         $this->set_field_statement(true);
         $this->set_from_user();
@@ -3325,11 +3313,11 @@ class sql_db
      */
     function select_by_id_not_owner(int $id, ?int $owner_id = 0): string
     {
-        $this->add_par(self::PAR_INT, $id);
+        $this->add_par(sql_par_type::INT, $id);
         if ($owner_id > 0) {
-            $this->add_par(self::PAR_INT_NOT, $owner_id);
+            $this->add_par(sql_par_type::INT_NOT, $owner_id);
         }
-        $this->add_par(self::PAR_CONST, '(excluded <> 1 OR excluded is NULL)');
+        $this->add_par(sql_par_type::CONST, '(excluded <> 1 OR excluded is NULL)');
 
         $this->set_field_statement(true);
         $this->set_from();
@@ -3415,47 +3403,47 @@ class sql_db
 
     /**
      * convert the parameter type list to make valid for postgres
-     * @return void
+     * @return array with the postgres parameter types
      */
-    private function par_types_to_postgres(): void
+    private function par_types_to_postgres(): array
     {
         $in_types = $this->par_types;
-        $this->par_types = array();
+        $result = array();
         foreach ($in_types as $type) {
             switch ($type) {
-                case self::PAR_INT_LIST:
-                case self::PAR_INT_LIST_OR:
-                    $this->par_types[] = 'int[]';
+                case sql_par_type::INT_LIST:
+                case sql_par_type::INT_LIST_OR:
+                $result[] = 'int[]';
                     break;
-                case self::PAR_INT_NOT:
-                    $this->par_types[] = 'int';
+                case sql_par_type::INT_NOT:
+                    $result[] = 'int';
                     break;
-                case self::PAR_TEXT_LIST:
-                    $this->par_types[] = 'text[]';
+                case sql_par_type::TEXT_LIST:
+                    $result[] = 'text[]';
                     break;
-                case self::PAR_LIKE:
-                case self::PAR_TEXT_OR:
-                    $this->par_types[] = 'text';
+                case sql_par_type::LIKE:
+                case sql_par_type::TEXT_OR:
+                    $result[] = 'text';
                     break;
-                case self::PAR_CONST:
+                case sql_par_type::CONST:
                     break;
                 default:
-                    $this->par_types[] = $type;
+                    $result[] = $type->value;
             }
         }
+        return $result;
     }
 
     /**
      * @return string with the SQL prepare statement for the current query
      */
-    private
-    function prepare_sql(): string
+    private function prepare_sql(): string
     {
         $sql = '';
         if (count($this->par_types) > 0) {
             if ($this->db_type == sql_db::POSTGRES) {
-                $this->par_types_to_postgres();
-                $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $this->par_types) . ') AS SELECT';
+                $par_types = $this->par_types_to_postgres();
+                $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS SELECT';
             } elseif ($this->db_type == sql_db::MYSQL) {
                 $sql = "PREPARE " . $this->query_name . " FROM 'SELECT";
                 $this->end = "';";
@@ -3516,11 +3504,11 @@ class sql_db
      * create a SQL select statement for the connected database
      * to detect if someone else has used the object
      * @param int $id the unique database id if the object to check
-     * @param int $owner_id the user id of the owner of the object
+     * @param int|null $owner_id the user id of the owner of the object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 in the previous set dialect
      */
-    function load_sql_not_changed(int $id, int $owner_id = 0): sql_par
+    function load_sql_not_changed(int $id, ?int $owner_id = 0): sql_par
     {
         $qp = new sql_par($this->type);
         $qp->name .= 'not_changed';
@@ -3535,13 +3523,13 @@ class sql_db
         if ($id == 0) {
             log_err('The id must be set to detect if the link has been changed');
         } else {
-            $this->add_par(sql_db::PAR_INT, $id);
+            $this->add_par(sql_par_type::INT, $id);
             $sql_mid = " " . user::FLD_ID .
                 " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) .
                 " WHERE " . $this->id_field . " = " . $this->par_name() . "
                  AND (excluded <> 1 OR excluded is NULL)";
             if ($owner_id > 0) {
-                $this->add_par(sql_db::PAR_INT, $owner_id);
+                $this->add_par(sql_par_type::INT, $owner_id);
                 $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name();
             }
             $qp->sql = $this->prepare_sql() . $sql_mid;

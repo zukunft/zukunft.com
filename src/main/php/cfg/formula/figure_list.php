@@ -141,9 +141,10 @@ class figure_list extends sandbox_list
     /**
      * load this list of figures
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param bool $load_all force to include also the excluded figures e.g. for admins
      * @return bool true if at least one phrase has been loaded
      */
-    function load(sql_par $qp): bool
+    function load(sql_par $qp, bool $load_all = false): bool
     {
         global $db_con;
         $result = false;

@@ -33,9 +33,11 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once WEB_VIEW_PATH . 'view_cmp_old.php';
 
 use api\component_api;
+use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use model\export\view_cmp_exp;
 use html\component_dsp_old;
@@ -76,7 +78,7 @@ class component extends sandbox_typed
         formula::FLD_ID,
         self::FLD_COL_PHRASE,
         self::FLD_COL2_PHRASE,
-        self::FLD_EXCLUDED,
+        sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -90,7 +92,7 @@ class component extends sandbox_typed
         formula::FLD_ID,
         self::FLD_COL_PHRASE,
         self::FLD_COL2_PHRASE,
-        self::FLD_EXCLUDED,
+        sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -381,10 +383,10 @@ class component extends sandbox_typed
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id != 0) {
-            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $db_con->add_par(sql_par_type::INT, $this->id);
             $qp->sql = $db_con->select_by_set_id();
         } elseif ($this->name != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, $this->name);
+            $db_con->add_par(sql_par_type::TEXT, $this->name);
             $qp->sql = $db_con->select_by_set_name();
         } else {
             log_err('Either the id or name must be set to get a named user sandbox object');

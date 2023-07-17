@@ -18,6 +18,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add a useful and self speaking verb unit test for all verbs
     TODO for some verbs such as "is part of" the triple itself should by de fault not be included in the foaf list
     TODO use phrase get_or_add in test
+    TODO add the word type "one level parent" e.g. to suggest that for City the direct children is the default selection
+    TODO add properties to verbs so that the same behavior con be used for several verbs
     TODO use the $load_all parameter for all load functions to include excluded rows for admins
     TODO add a unit and db test
     TODO add a simple value format where the json key is used as the phrase name e.g "system config target number of selection entries": 7

@@ -199,7 +199,7 @@ class triple_list extends sandbox_list
         if ($phr->id() <> 0) {
             $fields = array();
             $qp->name .= 'phr';
-            $db_con->add_par(sql_db::PAR_INT, $phr->id());
+            $db_con->add_par(sql_par_type::INT, $phr->id());
             if ($direction == foaf_direction::UP) {
                 $fields[] = triple::FLD_FROM;
             } elseif ($direction == foaf_direction::DOWN) {
@@ -210,7 +210,7 @@ class triple_list extends sandbox_list
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
-                    $db_con->add_par(sql_db::PAR_INT, $vrb->id());
+                    $db_con->add_par(sql_par_type::INT, $vrb->id());
                     $fields[] = verb::FLD_ID;
                     $qp->name .= '_and_vrb';
                 }
@@ -273,9 +273,10 @@ class triple_list extends sandbox_list
     /**
      * load this list of triples
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param bool $load_all force to include also the excluded triples e.g. for admins
      * @return bool true if at least one word found
      */
-    protected function load(sql_par $qp): bool
+    protected function load(sql_par $qp, bool $load_all = false): bool
     {
         global $db_con;
         global $verbs;
@@ -292,17 +293,17 @@ class triple_list extends sandbox_list
                     $trp->row_mapper_sandbox($db_row);
                     // the simple object row mapper allows mapping excluded objects to remove the exclusion
                     // but an object list should not have excluded objects
-                    if (!$trp->is_excluded()) {
+                    if (!$trp->is_excluded() or $load_all) {
                         $this->lst[] = $trp;
                         $result = true;
                         // fill verb
                         $trp->verb = $verbs->get_verb_by_id($db_row[verb::FLD_ID]);
                         // fill from
                         $trp->fob = new phrase($this->user());
-                        $trp->fob->row_mapper($db_row, triple::FLD_FROM, '1');
+                        $trp->fob->row_mapper_sandbox($db_row, triple::FLD_FROM, '1');
                         // fill to
                         $trp->tob = new phrase($this->user());
-                        $trp->tob->row_mapper($db_row, triple::FLD_TO, '2');
+                        $trp->tob->row_mapper_sandbox($db_row, triple::FLD_TO, '2');
                     }
                 }
             }

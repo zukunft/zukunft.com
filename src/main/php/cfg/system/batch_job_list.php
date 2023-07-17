@@ -36,10 +36,12 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once API_SYSTEM_PATH . 'batch_job_list.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
 use api\batch_job_list_api;
+use cfg\db\sql_par_type;
 use DateTime;
 
 class batch_job_list extends base_list
@@ -130,7 +132,7 @@ class batch_job_list extends base_list
         $job = new batch_job($this->usr);
         $qp = $job->load_sql($db_con, 'job_type', self::class);
         $db_con->set_page($this->limit, $this->offset());
-        $db_con->add_par(sql_db::PAR_INT, $type_id);
+        $db_con->add_par(sql_par_type::INT, $type_id);
         $qp->sql = $db_con->select_by_field(batch_job::FLD_TYPE);
         $qp->par = $db_con->get_par();
         return $qp;

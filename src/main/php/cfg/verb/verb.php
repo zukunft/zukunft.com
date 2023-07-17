@@ -33,6 +33,7 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_LOG_PATH . 'change_log_named.php';
 include_once API_VERB_PATH . 'verb.php';
@@ -40,6 +41,7 @@ include_once SERVICE_EXPORT_PATH . 'verb_exp.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
 
 use api\verb_api;
+use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use model\export\sandbox_exp_named;
 use html\html_base;
@@ -388,9 +390,9 @@ class verb extends db_object
     function load_sql_by_name(sql_db $db_con, string $name): sql_par
     {
         $qp = $this->load_sql($db_con, sql_db::FLD_NAME, self::class);
-        $db_con->add_par(sql_db::PAR_TEXT, $name);
+        $db_con->add_par(sql_par_type::TEXT, $name);
         $sql_where = '( ' . self::FLD_NAME . ' = ' . $db_con->par_name();
-        $db_con->add_par(sql_db::PAR_TEXT, $name);
+        $db_con->add_par(sql_par_type::TEXT, $name);
         $sql_where .= ' OR ' . self::FLD_FORMULA . ' = ' . $db_con->par_name() . ')';
         $db_con->set_where_text($sql_where);
         $qp->sql = $db_con->select_by_set_id();
@@ -409,7 +411,7 @@ class verb extends db_object
     function load_sql_by_code_id(sql_db $db_con, string $code_id): sql_par
     {
         $qp = $this->load_sql($db_con, 'code_id', self::class);
-        $db_con->add_par(sql_db::PAR_TEXT, $code_id);
+        $db_con->add_par(sql_par_type::TEXT, $code_id);
         $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();
 

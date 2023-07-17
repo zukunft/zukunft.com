@@ -35,7 +35,10 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
+
 use api\component_api;
+use cfg\db\sql_par_type;
 use html\view\view_dsp_old;
 
 class component_link extends sandbox_link_with_type
@@ -59,7 +62,7 @@ class component_link extends sandbox_link_with_type
     const FLD_NAMES_NUM_USR = array(
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
-        self::FLD_EXCLUDED,
+        sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -67,7 +70,7 @@ class component_link extends sandbox_link_with_type
     const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
-        self::FLD_EXCLUDED,
+        sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -264,11 +267,11 @@ class component_link extends sandbox_link_with_type
         $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id > 0) {
-            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $db_con->add_par(sql_par_type::INT, $this->id);
             $qp->sql = $db_con->select_by_field_list(array(component_link::FLD_ID));
         } elseif ($this->fob->id() > 0 and $this->tob->id() > 0) {
-            $db_con->add_par(sql_db::PAR_INT, $this->fob->id());
-            $db_con->add_par(sql_db::PAR_INT, $this->tob->id());
+            $db_con->add_par(sql_par_type::INT, $this->fob->id());
+            $db_con->add_par(sql_par_type::INT, $this->tob->id());
             $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID, component::FLD_ID));
         }
         $qp->par = $db_con->get_par();
@@ -327,7 +330,7 @@ class component_link extends sandbox_link_with_type
                 $db_dsl = $db_con->get1($qp);
                 $this->row_mapper_sandbox($db_dsl);
                 if ($this->id > 0) {
-                    //if (is_null($db_item[self::FLD_EXCLUDED]) OR $db_item[self::FLD_EXCLUDED] == 0) {
+                    //if (is_null($db_item[sandbox::FLD_EXCLUDED]) OR $db_item[sandbox::FLD_EXCLUDED] == 0) {
                     //}
                     log_debug('component_link->load of ' . $this->id . ' done');
                     $result = true;

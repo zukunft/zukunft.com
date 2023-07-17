@@ -75,21 +75,22 @@ class phrase_group_unit_tests
         // sql to load the phrase group by word ids
         $phr_grp = new phrase_group($usr);
         $phr_lst = new phrase_list($usr);
-        $phr_lst->add_by_ids('2,4,3','');
+        $phr_lst->merge($t->dummy_word_list()->phrase_lst());
         $phr_grp->phr_lst = $phr_lst;
         $t->assert_load_sql_obj_vars($db_con, $phr_grp);
 
         // sql to load the phrase group by triple ids
         $phr_grp = new phrase_group($usr);
         $phr_lst = new phrase_list($usr);
-        $phr_lst->add_by_ids(null,'2,4,3');
+        $phr_lst->merge($t->dummy_triple_list()->phrase_lst());
         $phr_grp->phr_lst = $phr_lst;
         $t->assert_load_sql_obj_vars($db_con, $phr_grp);
 
         // sql to load the phrase group by word and triple ids
         $phr_grp = new phrase_group($usr);
         $phr_lst = new phrase_list($usr);
-        $phr_lst->add_by_ids('4,1,3','2');
+        $phr_lst->merge($t->dummy_word_list()->phrase_lst());
+        $phr_lst->merge($t->dummy_triple_list()->phrase_lst());
         $phr_grp->phr_lst = $phr_lst;
         $t->assert_load_sql_obj_vars($db_con, $phr_grp);
 

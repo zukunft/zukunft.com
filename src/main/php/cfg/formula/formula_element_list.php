@@ -31,6 +31,9 @@
 
 namespace cfg;
 
+use cfg\db\sql_par_type;
+
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_FORMULA_PATH . 'formula_element.php';
 include_once MODEL_FORMULA_PATH . 'parameter_type.php';
 
@@ -70,8 +73,8 @@ class formula_element_list extends sandbox_list
         if ($frm_id > 0) {
             $qp->name .= 'frm_id';
             $db_con->set_name($qp->name);
-            $db_con->add_par(sql_db::PAR_INT, $frm_id);
-            $db_con->add_par(sql_db::PAR_INT, $this->user()->id());
+            $db_con->add_par(sql_par_type::INT, $frm_id);
+            $db_con->add_par(sql_par_type::INT, $this->user()->id());
             $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID, user::FLD_ID));
         } else {
             $qp->name = '';
@@ -93,9 +96,9 @@ class formula_element_list extends sandbox_list
         if ($frm_id > 0) {
             $qp->name .= 'frm_and_type_id';
             $db_con->set_name($qp->name);
-            $db_con->add_par(sql_db::PAR_INT, $frm_id);
-            $db_con->add_par(sql_db::PAR_INT, $elm_type_id);
-            $db_con->add_par(sql_db::PAR_INT, $this->user()->id());
+            $db_con->add_par(sql_par_type::INT, $frm_id);
+            $db_con->add_par(sql_par_type::INT, $elm_type_id);
+            $db_con->add_par(sql_par_type::INT, $this->user()->id());
             $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID, formula_element::FLD_TYPE, user::FLD_ID));
         } else {
             $qp->name = '';

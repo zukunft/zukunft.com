@@ -33,28 +33,33 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
+
+use cfg\db\sql_par_type;
+
 class component_link_list extends sandbox_list
 {
+
+    /*
+     * construct and map
+     */
 
     /**
      * map only the valid view component links
      *
-     * @param array $db_rows with the data directly from the database
+     * @param array|null $db_rows with the data directly from the database
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if the view component link is loaded and valid
      */
-    protected function rows_mapper(array $db_rows): bool
+    protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
     {
-        $result = false;
-        foreach ($db_rows as $db_row) {
-            if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0) {
-                $dsp_cmp_lnk = new component_link($this->user());
-                $dsp_cmp_lnk->row_mapper_sandbox($db_row);
-                $this->lst[] = $dsp_cmp_lnk;
-                $result = true;
-            }
-        }
-        return $result;
+        return parent::rows_mapper_obj(new component_link($this->user()), $db_rows, $load_all);
     }
+
+
+    /*
+     * load
+     */
 
     /**
      * create an SQL statement to retrieve a list of view component links from the database
@@ -96,12 +101,12 @@ class component_link_list extends sandbox_list
             }
             if ($dsp != null) {
                 if ($dsp->id() > 0) {
-                    $db_con->add_par(sql_db::PAR_INT, $dsp->id());
+                    $db_con->add_par(sql_par_type::INT, $dsp->id());
                     $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID));
                 }
             } elseif ($cmp != null) {
                 if ($cmp->id() > 0) {
-                    $db_con->add_par(sql_db::PAR_INT, $cmp->id());
+                    $db_con->add_par(sql_par_type::INT, $cmp->id());
                     $qp->sql = $db_con->select_by_field_list(array(component::FLD_ID));
                 }
             }

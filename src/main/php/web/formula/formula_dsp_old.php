@@ -118,8 +118,8 @@ class formula_dsp_old extends formula
     {
         log_debug($phr_id);
         $result = '    <td>' . "\n";
-        $url = api::PATH_FIXED . self::class . api::UPDATE . api::EXT .'?id=' . $this->id . '&unlink_phrase=' . $phr_id . '&back=' . $back;
-        $result .=  (new button($url, $back))->del(msg::FORMULA_UNLINK);
+        $url = api::PATH_FIXED . self::class . api::UPDATE . api::EXT . '?id=' . $this->id . '&unlink_phrase=' . $phr_id . '&back=' . $back;
+        $result .= (new button($url, $back))->del(msg::FORMULA_UNLINK);
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -193,11 +193,13 @@ class formula_dsp_old extends formula
 
         // list all linked words
         $result .= $html->dsp_tbl_start_half();
-        foreach ($phr_lst->lst() as $phr_linked) {
-            $result .= '  <tr>' . "\n";
-            $result .= $phr_linked->dsp_tbl(0);
-            $result .= $this->dsp_unlink_phr($phr_linked->id(), $back);
-            $result .= '  </tr>' . "\n";
+        if ($phr_lst != null) {
+            foreach ($phr_lst->lst() as $phr_linked) {
+                $result .= '  <tr>' . "\n";
+                $result .= $phr_linked->dsp_tbl(0);
+                $result .= $this->dsp_unlink_phr($phr_linked->id(), $back);
+                $result .= '  </tr>' . "\n";
+            }
         }
 
         // give the user the possibility to add a similar word

@@ -113,19 +113,20 @@ class sandbox_list_named extends sandbox_list
     /**
      * add a named object to the list
      * @param object $obj_to_add the named user sandbox object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns bool true if the object has been added
      */
-    function add_obj(object $obj_to_add): bool
+    function add_obj(object $obj_to_add, bool $allow_duplicates = false): bool
     {
         $result = false;
-        if (!in_array($obj_to_add->name(), $this->name_pos_lst())) {
+        if (!in_array($obj_to_add->name(), $this->name_pos_lst()) or $allow_duplicates) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             if ($obj_to_add->id() == null) {
                 $this->lst[] = $obj_to_add;
                 $this->set_lst_dirty();
                 $result = true;
             } else {
-                $result = parent::add_obj($obj_to_add);
+                $result = parent::add_obj($obj_to_add, $allow_duplicates);
             }
         }
         return $result;

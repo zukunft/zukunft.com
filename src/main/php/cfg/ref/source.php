@@ -41,6 +41,7 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 include_once API_REF_PATH . 'source.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
@@ -48,6 +49,7 @@ include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once WEB_REF_PATH . 'source.php';
 
 use api\source_api;
+use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use model\export\source_exp;
 use html\source_dsp_old;
@@ -78,14 +80,14 @@ class source extends sandbox_typed
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
-        self::FLD_EXCLUDED
+        sandbox::FLD_EXCLUDED
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_NAME,
         sandbox_named::FLD_DESCRIPTION,
         self::FLD_TYPE,
-        self::FLD_EXCLUDED,
+        sandbox::FLD_EXCLUDED,
         self::FLD_URL
     );
 
@@ -292,7 +294,7 @@ class source extends sandbox_typed
     function load_sql_by_code_id(sql_db $db_con, string $code_id, string $class): sql_par
     {
         $qp = $this->load_sql($db_con, 'code_id', $class);
-        $db_con->add_par(sql_db::PAR_TEXT, $code_id);
+        $db_con->add_par(sql_par_type::TEXT, $code_id);
         $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();
 

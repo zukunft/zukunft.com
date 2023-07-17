@@ -61,12 +61,37 @@ class sandbox_list extends base_list
     /**
      * dummy function to be overwritten by the child class
      * @param array $db_rows is an array of an array with the database values
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one object has been loaded
      */
-    protected function rows_mapper(array $db_rows): bool
+    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
         log_err('Unexpected call of the parent rows_mapper function');
         return false;
+    }
+
+    /**
+     * add the user sandbox object to the list
+     *
+     * @param object $sdb_obj the user sandbox object that should be added to the list
+     * @param array|null $db_rows is an array of an array with the database values
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
+     * @return bool true if at least one object has been loaded
+     */
+    protected function rows_mapper_obj(object $sdb_obj, ?array $db_rows, bool $load_all = false): bool
+    {
+        $result = false;
+        if ($db_rows != null) {
+            foreach ($db_rows as $db_row) {
+                if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0 or $load_all) {
+                    $obj_to_add = clone $sdb_obj;
+                    $obj_to_add->row_mapper_sandbox($db_row);
+                    $this->lst[] = $obj_to_add;
+                    $result = true;
+                }
+            }
+        }
+        return $result;
     }
 
 
@@ -101,9 +126,10 @@ class sandbox_list extends base_list
     /**
      * load a list of sandbox objects (e.g. phrases or values) based on the given query parameters
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one object has been loaded
      */
-    protected function load(sql_par $qp): bool
+    protected function load(sql_par $qp, bool $load_all = false): bool
     {
 
         global $db_con;
@@ -116,7 +142,7 @@ class sandbox_list extends base_list
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
             $db_lst = $db_con->get($qp);
-            $result = $this->rows_mapper($db_lst);
+            $result = $this->rows_mapper($db_lst, $load_all);
         }
         return $result;
     }
@@ -129,9 +155,10 @@ class sandbox_list extends base_list
     /**
      * add one object to the list of user sandbox objects, but only if it is not yet part of the list
      * @param object $obj_to_add the formula backend object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns bool true the formula has been added
      */
-    function add_obj(object $obj_to_add): bool
+    function add_obj(object $obj_to_add, bool $allow_duplicates = false): bool
     {
         $result = false;
 
@@ -139,8 +166,25 @@ class sandbox_list extends base_list
         if ($obj_to_add->user() == null) {
             $obj_to_add->set_user($this->user());
         }
+        if ($obj_to_add->user() != $this->user()) {
+            if (!$this->user()->is_admin() and !$this->user()->is_system()) {
+                log_warning('Trying to add ' . $obj_to_add->dsp_id()
+                    . ' of user ' . $obj_to_add->user()->name()
+                    . ' to list of ' . $this->user()->name()
+                );
+            }
+        }
         if ($obj_to_add->id() <> 0 or $obj_to_add->name() != '') {
-            $result = parent::add_obj($obj_to_add);
+            if (!$allow_duplicates) {
+                if (!in_array($obj_to_add->id(), $this->ids())) {
+                    $result = parent::add_obj($obj_to_add);
+                } else {
+                    log_warning('Trying to add ' . $obj_to_add->dsp_id()
+                        . ' which is already part of the ' . $obj_to_add::class . 'list');
+                }
+            } else {
+                $result = parent::add_obj($obj_to_add);
+            }
         }
         return $result;
     }

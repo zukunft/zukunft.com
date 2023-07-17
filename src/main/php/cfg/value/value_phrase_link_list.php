@@ -34,6 +34,10 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
+
+use cfg\db\sql_par_type;
+
 class value_phrase_link_list extends sandbox_list
 {
 
@@ -76,12 +80,12 @@ class value_phrase_link_list extends sandbox_list
             }
             if ($val != null) {
                 if ($val->id() > 0) {
-                    $db_con->add_par(sql_db::PAR_INT, $val->id());
+                    $db_con->add_par(sql_par_type::INT, $val->id());
                     $qp->sql = $db_con->select_by_field_list(array(value::FLD_ID));
                 }
             } elseif ($phr != null) {
                 if ($phr->id() <> 0) {
-                    $db_con->add_par(sql_db::PAR_INT, $phr->id());
+                    $db_con->add_par(sql_par_type::INT, $phr->id());
                     $qp->sql = $db_con->select_by_field_list(array(phrase::FLD_ID));
                 }
             }
@@ -95,9 +99,10 @@ class value_phrase_link_list extends sandbox_list
      * load all phrases linked to a given value
      *
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param bool $load_all force to include also the excluded value phrase links e.g. for admins
      * @return bool true if value or phrases are found
      */
-    protected function load(sql_par $qp): bool
+    protected function load(sql_par $qp, bool $load_all = false): bool
     {
         global $db_con;
         $result = false;

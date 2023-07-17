@@ -41,9 +41,11 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once API_SANDBOX_PATH . 'type_object.php';
 
 use api\type_object_api;
+use cfg\db\sql_par_type;
 use model\db_cl;
 
 class type_object
@@ -226,7 +228,7 @@ class type_object
     {
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($db_con, $db_type, sql_db::FLD_NAME);
-        $db_con->add_par(sql_db::PAR_TEXT, $name);
+        $db_con->add_par(sql_par_type::TEXT, $name);
         $qp->sql = $db_con->select_by_field($this->name_field($db_type));
         $qp->par = $db_con->get_par();
 
@@ -245,7 +247,7 @@ class type_object
     {
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($db_con, $db_type, 'code_id');
-        $db_con->add_par(sql_db::PAR_TEXT, $code_id);
+        $db_con->add_par(sql_par_type::TEXT, $code_id);
         $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();
 

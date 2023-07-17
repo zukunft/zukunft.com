@@ -142,7 +142,7 @@ class phrase extends combine_named
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the triple is loaded and valid
      */
-    function row_mapper(?array $db_row, string $id_fld = self::FLD_ID, string $fld_ext = ''): bool
+    function row_mapper_sandbox(?array $db_row, string $id_fld = self::FLD_ID, string $fld_ext = ''): bool
     {
         $result = false;
         $this->set_obj_id(0);
@@ -514,7 +514,7 @@ class phrase extends combine_named
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper($db_row);
+        $this->row_mapper_sandbox($db_row);
         return $this->id();
     }
 

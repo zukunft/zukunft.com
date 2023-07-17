@@ -40,10 +40,12 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'foaf_direction.php';
 include_once API_WORD_PATH . 'word_list.php';
 
 use api\word_list_api;
+use cfg\db\sql_par_type;
 use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
 use im_export\export;
@@ -170,7 +172,7 @@ class word_list extends sandbox_list
         if ($grp_id > 0) {
             $qp->name .= 'group';
             $db_con->set_name($qp->name);
-            $db_con->add_par(sql_db::PAR_INT, $grp_id);
+            $db_con->add_par(sql_par_type::INT, $grp_id);
             $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
             $sql_where = sql_db::STD_TBL . '.' . word::FLD_ID . ' IN ( SELECT ' . word::FLD_ID . ' 
                                     FROM ' . $table_name . '
@@ -196,7 +198,7 @@ class word_list extends sandbox_list
         if ($type_id > 0) {
             $qp->name .= 'type';
             $db_con->set_name($qp->name);
-            $db_con->add_par(sql_db::PAR_INT, $type_id);
+            $db_con->add_par(sql_par_type::INT, $type_id);
             $qp->sql = $db_con->select_by_field(word::FLD_TYPE);
         } else {
             $qp->name = '';
@@ -313,9 +315,10 @@ class word_list extends sandbox_list
     /**
      * load this list of words
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param bool $load_all force to include also the excluded words e.g. for admins
      * @return bool true if at least one word found
      */
-    function load(sql_par $qp): bool
+    function load(sql_par $qp, bool $load_all = false): bool
     {
         global $db_con;
         $result = false;

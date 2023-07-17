@@ -34,8 +34,11 @@
 
 namespace cfg;
 
+use cfg\db\sql_par_type;
+
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 
@@ -70,7 +73,7 @@ class config
         $qp->name .= 'get';
         $db_con->set_name($qp->name);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID, sql_db::FLD_VALUE, sql_db::FLD_DESCRIPTION));
-        $db_con->add_par(sql_db::PAR_TEXT, $code_id);
+        $db_con->add_par(sql_par_type::TEXT, $code_id);
         $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();
         return $qp;

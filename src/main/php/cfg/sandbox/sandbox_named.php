@@ -34,6 +34,7 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once API_FORMULA_PATH . 'formula.php';
 include_once API_PHRASE_PATH . 'phrase.php';
@@ -48,6 +49,7 @@ use api\source_api;
 use api\view_api;
 use api\component_api;
 use api\word_api;
+use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use Exception;
 
@@ -233,10 +235,10 @@ class sandbox_named extends sandbox
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
         if ($this->id != 0) {
-            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $db_con->add_par(sql_par_type::INT, $this->id);
             $qp->sql = $db_con->select_by_set_id();
         } else {
-            $db_con->add_par(sql_db::PAR_TEXT, $this->name);
+            $db_con->add_par(sql_par_type::TEXT, $this->name);
             $qp->sql = $db_con->select_by_set_name();
         }
         $qp->par = $db_con->get_par();

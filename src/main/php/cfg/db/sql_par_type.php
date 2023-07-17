@@ -33,7 +33,17 @@ namespace cfg\db;
 
 enum sql_par_type: string
 {
+
+    // the parameter types for prepared queries independent of the SQL dialect
     case INT = 'int';
+    case INT_OR = 'int_or';
+    case INT_NOT = 'int_not';
     case INT_LIST = 'int_list';
     case INT_LIST_OR = 'int_list_or';
+    case TEXT = 'text';
+    case TEXT_LIST = 'text_list';
+    case TEXT_OR = 'text_or';
+    case LIKE = 'like';
+    case CONST = 'const';
+
 }

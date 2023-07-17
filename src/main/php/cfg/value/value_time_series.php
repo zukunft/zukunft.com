@@ -57,7 +57,7 @@ class value_time_series extends sandbox_value
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         source::FLD_ID,
-        self::FLD_EXCLUDED,
+        sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
 

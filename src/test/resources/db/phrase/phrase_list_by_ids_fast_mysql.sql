@@ -1,4 +1,4 @@
-PREPARE phrase_list_by_4ids_fast FROM
+PREPARE phrase_list_by_ids_fast FROM
     'SELECT
          s.phrase_id,
          u.phrase_id AS user_phrase_id,

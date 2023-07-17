@@ -1,4 +1,4 @@
-PREPARE phrase_list_by_4ids (int, int[]) AS
+PREPARE phrase_list_by_ids_fast (int, int[]) AS
     SELECT s.phrase_id,
            u.phrase_id AS user_phrase_id,
            s.user_id,

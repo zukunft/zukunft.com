@@ -31,12 +31,14 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_LOG_PATH . 'change_log.php';
 include_once API_LOG_PATH . 'change_log_named.php';
 include_once WEB_LOG_PATH . 'change_log_named.php';
 
 use api\change_log_named_api;
 use api\user_config;
+use cfg\db\sql_par_type;
 use html\log\change_log_named as change_log_named_dsp;
 use Exception;
 
@@ -219,11 +221,11 @@ class change_log_named extends change_log
         $db_con->set_page();
         $fields = [];
         if ($field_id != null) {
-            $db_con->add_par(sql_db::PAR_INT, $field_id);
+            $db_con->add_par(sql_par_type::INT, $field_id);
             $fields[] = change_log_named::FLD_FIELD_ID;
         }
         if ($field_id != null) {
-        $db_con->add_par(sql_db::PAR_INT, $row_id);
+        $db_con->add_par(sql_par_type::INT, $row_id);
             $fields[] = change_log_named::FLD_ROW_ID;
         }
         $fields[] = user::FLD_ID;
@@ -285,8 +287,8 @@ class change_log_named extends change_log
             $sql_user = 's.user_id = u.user_id
                 AND s.user_id = ' . $this->usr->id . ' ';
         } elseif ($type == word::class) {
-            //$db_con->add_par(sql_db::PAR_INT, $change_log_tables->id(change_log_table::WORD));
-            //$db_con->add_par(sql_db::PAR_INT, $change_log_tables->id(change_log_table::WORD_USR));
+            //$db_con->add_par(sql_par_type::INT, $change_log_tables->id(change_log_table::WORD));
+            //$db_con->add_par(sql_par_type::INT, $change_log_tables->id(change_log_table::WORD_USR));
             $sql_where = " s.change_field_id = $1 ";
         } elseif ($type == value::class) {
             $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VALUE) . " 

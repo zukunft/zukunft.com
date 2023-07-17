@@ -31,9 +31,11 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once API_FORMULA_PATH . 'formula_list.php';
 
 use api\formula_list_api;
+use cfg\db\sql_par_type;
 use html\formula\formula as formula_dsp;
 use html\formula\formula_list as formula_list_dsp;
 
@@ -56,14 +58,15 @@ class formula_list extends sandbox_list
     /**
      * fill the formula list based on a database records
      * @param array $db_rows is an array of an array with the database values
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one formula has been loaded
      */
-    protected function rows_mapper(array $db_rows): bool
+    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
         $result = false;
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
-                if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0) {
+                if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0 or $load_all) {
                     $frm_id = $db_row[formula::FLD_ID];
                     if ($frm_id > 0 and !in_array($frm_id, $this->ids())) {
                         $frm = new formula($this->user());
@@ -80,6 +83,19 @@ class formula_list extends sandbox_list
                 }
             }
         }
+        /*
+        $result = parent::rows_mapper_obj(new formula_link($this->user()), $db_rows, $load_all);
+        // TODO check if this is really needed
+        if ($db_rows != null) {
+            foreach ($this->lst as $frm) {
+                if ($frm->name() <> '') {
+                    $name_wrd = new word($this->user());
+                    $name_wrd->load_by_name($frm->name(), word::class);
+                    $frm->name_wrd = $name_wrd;
+                }
+            }
+        }
+        */
         return $result;
     }
 
@@ -201,7 +217,7 @@ class formula_list extends sandbox_list
                 formula::FLD_ID,
                 formula::FLD_ID
             );
-            $db_con->add_par(sql_db::PAR_INT, $phr->id(), false, true);
+            $db_con->add_par(sql_par_type::INT, $phr->id(), false, true);
             $qp->sql = $db_con->select_by_field(phrase::FLD_ID);
         } else {
             $qp->name = '';
@@ -248,8 +264,8 @@ class formula_list extends sandbox_list
      */
     function load_sql_by_ref(
         sql_db $db_con,
-        int $ref_id,
-        int $par_type_id,
+        int    $ref_id,
+        int    $par_type_id,
         string $type_query_name): sql_par
     {
         $qp = $this->load_sql($db_con);
@@ -265,7 +281,7 @@ class formula_list extends sandbox_list
             $db_con->add_par_join_int($ref_id);
             $db_con->add_par_join_int($par_type_id);
             $qp->sql = $db_con->select_by_field_list(
-                array(formula_element::FLD_REF_ID,formula_element::FLD_TYPE));
+                array(formula_element::FLD_REF_ID, formula_element::FLD_TYPE));
         } else {
             $qp->name = '';
         }

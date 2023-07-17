@@ -41,11 +41,13 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
+use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use Exception;
 
@@ -67,11 +69,12 @@ class sandbox extends db_object
      */
 
     // database and JSON object field names used in many user sandbox objects
-    // the id field is not included here because it is used for the database relations and should be object specific e.g. always "word_id" instead of simply "id"
-    const FLD_EXCLUDED = 'excluded';
+    // the id field is not included here because it is used for the database relations and should be object specific
+    // e.g. always "word_id" instead of simply "id"
+    const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
     const FLD_USER_NAME = 'user_name';
-    const FLD_SHARE = "share_type_id";    // field name for the share permission
-    const FLD_PROTECT = "protect_id";     // field name for the protection level
+    const FLD_SHARE = "share_type_id";  // field name for the share permission
+    const FLD_PROTECT = "protect_id";   // field name for the protection level
 
     // numeric and user specific database field names that are user for most user sandbox objects
     const FLD_NAMES_NUM_USR_SBX = array(
@@ -309,6 +312,8 @@ class sandbox extends db_object
     /**
      * map the database fields to the object fields
      * to be extended by the child functions
+     * the parent row_mapper function should be used for all db_objects
+     * this row_mapper_sandbox function should be used for all user sandbox objects
      *
      * @param array|null $db_row with the data directly from the database
      * @param bool $load_std true if only the standard user sandbox object ist loaded
@@ -385,7 +390,7 @@ class sandbox extends db_object
 
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
-        $db_con->add_par(sql_db::PAR_INT, strval($this->id));
+        $db_con->add_par(sql_par_type::INT, strval($this->id));
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 

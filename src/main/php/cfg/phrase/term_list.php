@@ -166,9 +166,10 @@ class term_list extends sandbox_list_named
     /**
      * load the terms that based on the given query parameters
      * @param sql_par $qp the query parameters created by the calling function
+     * @param bool $load_all force to include also the excluded terms e.g. for admins
      * @return bool true if at least one term has been loaded
      */
-    protected function load(sql_par $qp): bool
+    protected function load(sql_par $qp, bool $load_all = false): bool
     {
         global $db_con;
         $result = false;

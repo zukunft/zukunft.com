@@ -31,31 +31,30 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
+
+use cfg\db\sql_par_type;
+
 class formula_link_list extends sandbox_list
 {
 
     public array $lst; // the list of formula word link objects
     public user $usr;  // the user who wants to see or modify the list
 
+
+    /*
+     * construct and map
+     */
+
     /**
      * fill the formula link list based on a database records
      * @param array $db_rows is an array of an array with the database values
-     * @return bool true if at least one word found
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
+     * @return bool true if at least one formula link has been added
      */
-    protected function rows_mapper(array $db_rows): bool
+    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        $result = false;
-        if ($db_rows != null) {
-            foreach ($db_rows as $db_row) {
-                if ($db_row[formula_link::FLD_ID] > 0) {
-                    $frm_lnk = new formula_link($this->user());
-                    $frm_lnk->row_mapper_sandbox($db_row);
-                    $this->lst[] = $frm_lnk;
-                    $result = true;
-                }
-            }
-        }
-        return $result;
+        return parent::rows_mapper_obj(new formula_link($this->user()), $db_rows, $load_all);
     }
 
     /*
@@ -110,7 +109,7 @@ class formula_link_list extends sandbox_list
         if ($frm_id > 0) {
             $qp->name .= 'frm_id';
             $db_con->set_name($qp->name);
-            $db_con->add_par(sql_db::PAR_INT, $frm_id);
+            $db_con->add_par(sql_par_type::INT, $frm_id);
             $qp->sql = $db_con->select_by_field(formula::FLD_ID);
         } else {
             $qp->name = '';

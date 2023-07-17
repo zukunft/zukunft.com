@@ -91,7 +91,7 @@ class ref extends sandbox_link_with_type
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
-        self::FLD_EXCLUDED
+        sandbox::FLD_EXCLUDED
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_SANDBOX_FLD_NAMES = array(
@@ -100,7 +100,7 @@ class ref extends sandbox_link_with_type
         self::FLD_TYPE,
         self::FLD_URL,
         sandbox_named::FLD_DESCRIPTION,
-        self::FLD_EXCLUDED
+        sandbox::FLD_EXCLUDED
     );
 
     // persevered reference names for unit and integration tests

@@ -31,6 +31,10 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
+
+use cfg\db\sql_par_type;
+
 class phrase_group_list
 {
 
@@ -108,11 +112,11 @@ class phrase_group_list
             if ($this->phr->id() <> 0) {
                 if ($this->phr->is_word()) {
                     $qp->name .= word::FLD_ID;
-                    $db_con->add_par(sql_db::PAR_INT, $this->phr->id());
+                    $db_con->add_par(sql_par_type::INT, $this->phr->id());
                     $sql_where = 'l.' . word::FLD_ID . ' = ' . $db_con->par_name();
                 } else {
                     $qp->name .= triple::FLD_ID;
-                    $db_con->add_par(sql_db::PAR_INT, $this->phr->id() * -1);
+                    $db_con->add_par(sql_par_type::INT, $this->phr->id() * -1);
                     $sql_where = 'l.' . triple::FLD_ID . ' = ' . $db_con->par_name();
                 }
             }

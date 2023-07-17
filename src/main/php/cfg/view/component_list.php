@@ -46,25 +46,12 @@ class component_list extends sandbox_list
     /**
      * fill the component list based on a database records
      * @param array $db_rows is an array of an array with the database values
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one component has been loaded
      */
-    protected function rows_mapper(array $db_rows): bool
+    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        $result = false;
-        if ($db_rows != null) {
-            foreach ($db_rows as $db_row) {
-                if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0) {
-                    $cmp_id = $db_row[component::FLD_ID];
-                    if ($cmp_id > 0 and !in_array($cmp_id, $this->ids())) {
-                        $cmp = new component($this->user());
-                        $cmp->row_mapper_sandbox($db_row);
-                        $this->lst[] = $cmp;
-                        $result = true;
-                    }
-                }
-            }
-        }
-        return $result;
+        return parent::rows_mapper_obj(new component($this->user()), $db_rows, $load_all);
     }
 
 

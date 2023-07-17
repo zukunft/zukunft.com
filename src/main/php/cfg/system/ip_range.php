@@ -32,6 +32,10 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
+
+use cfg\db\sql_par_type;
+
 class ip_range extends db_object
 {
 
@@ -177,13 +181,13 @@ class ip_range extends db_object
         $sql_where = '';
         if ($this->id != 0) {
             $qp->name .= sql_db::FLD_ID;
-            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $db_con->add_par(sql_par_type::INT, $this->id);
             $sql_where .= self::FLD_ID . ' = ' . $db_con->par_name();
         } elseif ($this->from != '' and $this->to != '') {
             $qp->name .= 'range';
-            $db_con->add_par(sql_db::PAR_TEXT, $this->from);
+            $db_con->add_par(sql_par_type::TEXT, $this->from);
             $sql_where .= self::FLD_FROM . " = " . $db_con->par_name();
-            $db_con->add_par(sql_db::PAR_TEXT, $this->to);
+            $db_con->add_par(sql_par_type::TEXT, $this->to);
             $sql_where .= " and " . self::FLD_TO . " = " . $db_con->par_name();
         } else {
             $qp->name = '';

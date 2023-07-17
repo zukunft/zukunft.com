@@ -1,4 +1,4 @@
-PREPARE phrase_list_by_4ids_fast (int, int[]) AS
+PREPARE phrase_list_by_names (int, text[]) AS
     SELECT s.phrase_id,
            u.phrase_id AS user_phrase_id,
            s.user_id,
@@ -11,5 +11,5 @@ PREPARE phrase_list_by_4ids_fast (int, int[]) AS
            CASE WHEN (u.protect_id           IS     NULL) THEN s.protect_id     ELSE u.protect_id     END AS protect_id
       FROM phrases s
  LEFT JOIN user_phrases u ON s.phrase_id = u.phrase_id AND u.user_id = $1
-     WHERE s.phrase_id = ANY ($2)
+     WHERE s.phrase_name = ANY ($2)
   ORDER BY s.values DESC, phrase_name;

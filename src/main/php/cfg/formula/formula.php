@@ -36,6 +36,7 @@ include_once MODEL_RESULT_PATH . 'result_list.php';
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
@@ -49,6 +50,7 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
 
 use api\formula_api;
+use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use model\export\formula_exp;
 use DateTime;
@@ -104,7 +106,7 @@ class formula extends sandbox_typed
         self::FLD_FORMULA_TYPE,
         self::FLD_ALL_NEEDED,
         self::FLD_LAST_UPDATE,
-        self::FLD_EXCLUDED,
+        sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -117,7 +119,7 @@ class formula extends sandbox_typed
         self::FLD_FORMULA_TYPE,
         self::FLD_ALL_NEEDED,
         self::FLD_LAST_UPDATE,
-        self::FLD_EXCLUDED,
+        sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -476,10 +478,10 @@ class formula extends sandbox_typed
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id() != 0) {
-            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $db_con->add_par(sql_par_type::INT, $this->id);
             $qp->sql = $db_con->select_by_set_id();
         } elseif ($this->name() != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, $this->name());
+            $db_con->add_par(sql_par_type::TEXT, $this->name());
             $qp->sql = $db_con->select_by_set_name();
         } else {
             log_err('Either the database ID (' . $this->id() . ') or the ' .
@@ -1963,7 +1965,7 @@ class formula extends sandbox_typed
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
         $db_con->set_fields(array_merge(array(user::FLD_ID), self::FLD_NAMES_USR, self::FLD_NAMES_NUM_USR));
-        $db_con->add_par(sql_db::PAR_INT, strval($this->id));
+        $db_con->add_par(sql_par_type::INT, strval($this->id));
         $qp->sql = $db_con->select_by_field(self::FLD_ID);
         $qp->par = $db_con->get_par();
 

@@ -93,7 +93,7 @@ class value extends sandbox_value
         self::FLD_VALUE,
         source::FLD_ID,
         self::FLD_LAST_UPDATE,
-        self::FLD_EXCLUDED,
+        sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
@@ -101,7 +101,7 @@ class value extends sandbox_value
         self::FLD_VALUE,
         source::FLD_ID,
         self::FLD_LAST_UPDATE,
-        self::FLD_EXCLUDED,
+        sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // list of field names that are only on the user sandbox row
@@ -499,7 +499,7 @@ class value extends sandbox_value
                 if ($sql_grp_where <> '') {
                     $sql_grp_where .= ' AND l' . $pos_prior . '.' . phrase_group::FLD_ID . ' = l' . $pos . '.' . phrase_group::FLD_ID . ' AND ';
                 }
-                $db_con->add_par(sql_db::PAR_INT, $phr->id());
+                $db_con->add_par(sql_par_type::INT, $phr->id());
                 $sql_grp_where .= ' l' . $pos . '.word_id = ' . $db_con->par_name();
                 $pos++;
             }

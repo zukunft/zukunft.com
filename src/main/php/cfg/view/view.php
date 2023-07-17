@@ -31,6 +31,7 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'component.php';
 include_once MODEL_VIEW_PATH . 'component_list.php';
@@ -40,6 +41,7 @@ include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'view_cmp_exp.php';
 
 use api\view_api;
+use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use model\export\view_exp;
 
@@ -69,7 +71,7 @@ class view extends sandbox_typed
     // list of the user specific database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
-        self::FLD_EXCLUDED,
+        sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -77,7 +79,7 @@ class view extends sandbox_typed
     const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_DESCRIPTION,
         self::FLD_TYPE,
-        self::FLD_EXCLUDED,
+        sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -363,7 +365,7 @@ class view extends sandbox_typed
     function load_sql_by_code_id(sql_db $db_con, string $code_id, string $class): sql_par
     {
         $qp = $this->load_sql($db_con, 'code_id', $class);
-        $db_con->add_par(sql_db::PAR_TEXT, $code_id);
+        $db_con->add_par(sql_par_type::TEXT, $code_id);
         $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();
 
@@ -460,7 +462,7 @@ class view extends sandbox_typed
         $db_con->set_join_usr_num_fields(
             component::FLD_NAMES_NUM_USR,
             sql_db::TBL_COMPONENT);
-        $db_con->add_par(sql_db::PAR_INT, $this->id);
+        $db_con->add_par(sql_par_type::INT, $this->id);
         $db_con->set_order(component_link::FLD_ORDER_NBR);
         $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID));
         $qp->par = $db_con->get_par();
@@ -486,8 +488,8 @@ class view extends sandbox_typed
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
                 // this is only for the view of the active user, so a direct exclude can be done
-                if ((is_null($db_entry[self::FLD_EXCLUDED]) or $db_entry[self::FLD_EXCLUDED] == 0)
-                    and (is_null($db_entry[self::FLD_EXCLUDED . '2']) or $db_entry[self::FLD_EXCLUDED . '2'] == 0)) {
+                if ((is_null($db_entry[sandbox::FLD_EXCLUDED]) or $db_entry[sandbox::FLD_EXCLUDED] == 0)
+                    and (is_null($db_entry[sandbox::FLD_EXCLUDED . '2']) or $db_entry[sandbox::FLD_EXCLUDED . '2'] == 0)) {
                     $new_entry = new component_dsp_old($this->user());
                     $new_entry->id = $db_entry[component::FLD_ID];
                     $new_entry->owner_id = $db_entry[user::FLD_ID];

@@ -42,6 +42,7 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
@@ -50,6 +51,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_group_triple_link.php';
 include_once API_PHRASE_PATH . 'phrase_group.php';
 
 use api\phrase_group_api;
+use cfg\db\sql_par_type;
 use model\export\exp_obj;
 
 class phrase_group extends db_object
@@ -367,20 +369,20 @@ class phrase_group extends db_object
         $wrd_txt = implode(',', $this->phr_lst->wrd_ids());
         $trp_txt = implode(',', $this->phr_lst->trp_ids());
         if ($this->id != 0) {
-            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $db_con->add_par(sql_par_type::INT, $this->id);
             $qp->sql = $db_con->select_by_set_id();
         } elseif ($wrd_txt != '' and $trp_txt != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, $wrd_txt);
-            $db_con->add_par(sql_db::PAR_TEXT, $trp_txt);
+            $db_con->add_par(sql_par_type::TEXT, $wrd_txt);
+            $db_con->add_par(sql_par_type::TEXT, $trp_txt);
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_WORD_IDS, self::FLD_TRIPLE_IDS));
         } elseif ($trp_txt != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, $trp_txt);
+            $db_con->add_par(sql_par_type::TEXT, $trp_txt);
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_TRIPLE_IDS));
         } elseif ($wrd_txt != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, $wrd_txt);
+            $db_con->add_par(sql_par_type::TEXT, $wrd_txt);
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_WORD_IDS));
         } elseif ($this->grp_name != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, $this->grp_name);
+            $db_con->add_par(sql_par_type::TEXT, $this->grp_name);
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_NAME));
         }
         $qp->par = $db_con->get_par();
@@ -1031,7 +1033,7 @@ class phrase_group extends db_object
         $qp->name .= 'test_link_ids';
         $db_con->set_name($qp->name);
         $db_con->set_fields(array(phrase::FLD_ID));
-        $db_con->add_par(sql_db::PAR_INT, $this->id);
+        $db_con->add_par(sql_par_type::INT, $this->id);
         $qp->sql = $db_con->select_by_field(phrase_group::FLD_ID);
         $qp->par = $db_con->get_par();
         $lnk_id_lst = $db_con->get($qp);

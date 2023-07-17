@@ -438,27 +438,32 @@ class sql_creator
         $this->add_field($fld);
 
         // set the default parameter type
-        $sql_par_typ = sql_db::PAR_INT;
+        $sql_par_typ = sql_par_type::INT;
         if ($spt == null) {
             $sql_par_typ = match (gettype($fld_val)) {
-                'integer' => sql_db::PAR_INT,
-                'string' => sql_db::PAR_TEXT,
-                'array' => sql_db::PAR_INT_LIST,
+                'integer' => sql_par_type::INT,
+                'string' => sql_par_type::TEXT,
+                'array' => sql_par_type::INT_LIST,
             };
         } else {
             // map the par type until all sql statement creations are changed
             $sql_par_typ = match ($spt->name) {
-                'INT' => sql_db::PAR_INT,
-                'INT_LIST' => sql_db::PAR_INT_LIST,
-                'INT_LIST_OR' => sql_db::PAR_INT_LIST_OR,
+                'INT' => sql_par_type::INT,
+                'INT_LIST' => sql_par_type::INT_LIST,
+                'TEXT_LIST' => sql_par_type::TEXT_LIST,
+                'INT_LIST_OR' => sql_par_type::INT_LIST_OR,
                 default => log_err('Unexpected sqp parameter type ' . $spt->name),
             };
         }
 
-        if ($sql_par_typ == sql_db::PAR_INT_LIST or $sql_par_typ == sql_db::PAR_INT_LIST_OR) {
+        if ($sql_par_typ == sql_par_type::INT_LIST or $sql_par_typ == sql_par_type::INT_LIST_OR) {
             $this->add_par($sql_par_typ, $this->int_array_to_sql_string($fld_val));
-        } elseif ($sql_par_typ == sql_db::PAR_INT) {
+        } elseif ($sql_par_typ == sql_par_type::TEXT_LIST) {
+            $this->add_par($sql_par_typ, $this->str_array_to_sql_string($fld_val));
+        } elseif ($sql_par_typ == sql_par_type::INT) {
             $this->add_par($sql_par_typ, $fld_val);
+        } else {
+            log_err('SQL parameter type ' . $sql_par_typ . ' not expected');
         }
     }
 
@@ -522,7 +527,7 @@ class sql_creator
                         $this->join .= $this->usr_view_id;
                     } else {
                         $this->add_field(sql_db::USR_TBL . '.' . user::FLD_ID);
-                        $this->add_par(sql_db::PAR_INT, $this->usr_id);
+                        $this->add_par(sql_par_type::INT, $this->usr_id);
                         $this->join_usr_par_name = $this->par_name();
                         $this->join .= $this->join_usr_par_name;
                     }
@@ -534,13 +539,13 @@ class sql_creator
 
     /**
      * add a parameter for a prepared query
-     * @param string $par_type the SQL parameter type used e.g. for Postgres as int or text
+     * @param sql_par_type $par_type the SQL parameter type used e.g. for Postgres as int or text
      * @param string $value the int, float value or text value that is used for the concrete execution of the query
      * @param bool $named true if the parameter name is already used
      * @param bool $use_link true if the parameter should be applied on the linked table
      */
     private function add_par(
-        string $par_type,
+        sql_par_type $par_type,
         string $value,
         bool   $named = false,
         bool   $use_link = false): void
@@ -559,6 +564,17 @@ class sql_creator
     private function int_array_to_sql_string(array $int_array): string
     {
         return "{" . implode(",", $int_array) . "}";
+    }
+
+    /**
+     * convert an array of int values to a sql string that can be used for an IN condition
+     * @param array $str_array
+     * @return string
+     */
+    private function str_array_to_sql_string(array $str_array): string
+    {
+        // TODO check how to escape ","
+        return "{" . implode(",", $str_array) . "}";
     }
 
     /**
@@ -845,7 +861,7 @@ class sql_creator
                     $result .= ' FROM ' . $this->name_sql_esc($this->table) . ' ' . sql_db::STD_TBL;
                     $result .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join_table_name . ' ' . sql_db::LNK_TBL;
                     $result .= ' ON ' . sql_db::LNK_TBL . '.' . $join_from_id_field . ' = ' . sql_db::STD_TBL . '.' . $join_id_field;
-                    $this->add_par(sql_db::PAR_INT, $this->usr_id);
+                    $this->add_par(sql_par_type::INT, $this->usr_id);
                     $result .= ' WHERE ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . $this->par_name() . ' ';
                     $result .= ' GROUP BY ' . $fields . ' ';
                     $result .= ' ) AS ' . sql_db::STD_TBL;
@@ -854,7 +870,7 @@ class sql_creator
                     $result = ' FROM ( SELECT ' . $this->name_sql_esc($this->table);
                     $result .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::LNK_TBL;
                     $result .= ' ON ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . sql_db::LNK_TBL . '.' . $join_id_field;
-                    $this->add_par(sql_db::PAR_INT, $this->usr_id);
+                    $this->add_par(sql_par_type::INT, $this->usr_id);
                     $result .= ' WHERE ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . $this->par_name() . ' ';
                     $result .= ' GROUP BY ' . $field_sql . ' ';
                     $result .= ' ) AS c1';
@@ -873,7 +889,7 @@ class sql_creator
                         } else {
                             // for MySQL the parameter needs to be repeated
                             if ($this->db_type == sql_db::MYSQL) {
-                                $this->add_par(sql_db::PAR_INT, $this->usr_id, true);
+                                $this->add_par(sql_par_type::INT, $this->usr_id, true);
                             }
                             $this->join .= $this->join_usr_par_name;
                         }
@@ -885,7 +901,7 @@ class sql_creator
                     } else {
                         $this->where .= ' AND ';
                     }
-                    $this->add_par(sql_db::PAR_INT, $this->join_select_id);
+                    $this->add_par(sql_par_type::INT, $this->join_select_id);
                     $this->where .= sql_db::LNK_TBL . '.' . $this->join_select_field . ' = ' . $this->par_name();
                 }
             }
@@ -913,7 +929,7 @@ class sql_creator
                     } else {
                         // for MySQL the parameter needs to be repeated
                         if ($this->db_type == sql_db::MYSQL) {
-                            $this->add_par(sql_db::PAR_INT, $this->usr_id, true);
+                            $this->add_par(sql_par_type::INT, $this->usr_id, true);
                         }
                         $this->join .= $this->join_usr_par_name;
                     }
@@ -925,7 +941,7 @@ class sql_creator
                 } else {
                     $this->where .= ' AND ';
                 }
-                $this->add_par(sql_db::PAR_INT, $this->join2_select_id);
+                $this->add_par(sql_par_type::INT, $this->join2_select_id);
                 $this->where .= sql_db::LNK2_TBL . '.' . $this->join2_select_field . ' = ' . $this->par_name();
             }
         }
@@ -952,7 +968,7 @@ class sql_creator
                     } else {
                         // for MySQL the parameter needs to be repeated
                         if ($this->db_type == sql_db::MYSQL) {
-                            $this->add_par(sql_db::PAR_INT, $this->usr_id, true);
+                            $this->add_par(sql_par_type::INT, $this->usr_id, true);
                         }
                         $this->join .= $this->join_usr_par_name;
                     }
@@ -964,7 +980,7 @@ class sql_creator
                 } else {
                     $this->where .= ' AND ';
                 }
-                $this->add_par(sql_db::PAR_INT, $this->join3_select_id);
+                $this->add_par(sql_par_type::INT, $this->join3_select_id);
                 $this->where .= sql_db::LNK3_TBL . '.' . $this->join3_select_field . ' = ' . $this->par_name();
             }
         }
@@ -991,7 +1007,7 @@ class sql_creator
                     } else {
                         // for MySQL the parameter needs to be repeated
                         if ($this->db_type == sql_db::MYSQL) {
-                            $this->add_par(sql_db::PAR_INT, $this->usr_id, true);
+                            $this->add_par(sql_par_type::INT, $this->usr_id, true);
                         }
                         $this->join .= $this->join_usr_par_name;
                     }
@@ -1003,7 +1019,7 @@ class sql_creator
                 } else {
                     $this->where .= ' AND ';
                 }
-                $this->add_par(sql_db::PAR_INT, $this->join4_select_id);
+                $this->add_par(sql_par_type::INT, $this->join4_select_id);
                 $this->where .= sql_db::LNK4_TBL . '.' . $this->join4_select_field . ' = ' . $this->par_name();
             }
         }
@@ -1041,8 +1057,8 @@ class sql_creator
                 foreach ($this->par_types as $par_type) {
                     // set the closing bracket around a or field list if needed
                     if ($open_or_flf_lst) {
-                        if (!($par_type == sql_db::PAR_TEXT_OR
-                            or $par_type == sql_db::PAR_INT_LIST_OR)) {
+                        if (!($par_type == sql_par_type::TEXT_OR
+                            or $par_type == sql_par_type::INT_LIST_OR)) {
                             $result .= ' ) ';
                             $open_or_flf_lst = false;
                         }
@@ -1052,16 +1068,16 @@ class sql_creator
                         if ($result == '') {
                             $result = ' WHERE ';
                         } else {
-                            if ($par_type == sql_db::PAR_TEXT_OR
-                                or $par_type == sql_db::PAR_INT_LIST_OR) {
+                            if ($par_type == sql_par_type::TEXT_OR
+                                or $par_type == sql_par_type::INT_LIST_OR) {
                                 $result .= ' OR ';
                             } else {
                                 $result .= ' AND ';
                             }
                         }
                         // set the opening bracket around a or field list if needed
-                        if ($par_type == sql_db::PAR_TEXT_OR
-                            or $par_type == sql_db::PAR_INT_LIST_OR) {
+                        if ($par_type == sql_par_type::TEXT_OR
+                            or $par_type == sql_par_type::INT_LIST_OR) {
                             if (!$open_or_flf_lst) {
                                 $result .= ' ( ';
                                 $open_or_flf_lst = true;
@@ -1081,22 +1097,22 @@ class sql_creator
                             }
                         }
                         // add the field name
-                        if ($par_type == sql_db::PAR_INT_LIST
-                            or $par_type == sql_db::PAR_INT_LIST_OR
-                            or $par_type == sql_db::PAR_TEXT_LIST) {
+                        if ($par_type == sql_par_type::INT_LIST
+                            or $par_type == sql_par_type::INT_LIST_OR
+                            or $par_type == sql_par_type::TEXT_LIST) {
                             if ($this->db_type == sql_db::POSTGRES) {
                                 $result .= $this->par_fields[$i] . ' = ANY (' . $this->par_name($i + 1) . ')';
                             } else {
                                 $result .= $this->par_fields[$i] . ' IN (' . $this->par_name($i + 1) . ')';
                             }
                         } else {
-                            if ($par_type == sql_db::PAR_LIKE) {
+                            if ($par_type == sql_par_type::LIKE) {
                                 $result .= $this->par_fields[$i] . ' like ' . $this->par_name($i + 1);
                             } else {
-                                if ($par_type == sql_db::PAR_CONST) {
+                                if ($par_type == sql_par_type::CONST) {
                                     $result .= $this->par_value($i + 1);
                                 } else {
-                                    if ($par_type == sql_db::PAR_INT_NOT) {
+                                    if ($par_type == sql_par_type::INT_NOT) {
                                         $result .= $this->par_fields[$i] . ' <> ' . $this->par_name($i + 1);
                                     } else {
                                         $result .= $this->par_fields[$i] . ' = ' . $this->par_name($i + 1);
@@ -1105,7 +1121,7 @@ class sql_creator
                             }
                         }
 
-                        if ($par_type == sql_db::PAR_TEXT) {
+                        if ($par_type == sql_par_type::TEXT) {
                             if ($this->par_fields[$i] == sql_db::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $result .= ' AND ';
@@ -1139,8 +1155,8 @@ class sql_creator
         $sql = '';
         if (count($this->par_types) > 0) {
             if ($this->db_type == sql_db::POSTGRES) {
-                $this->par_types_to_postgres();
-                $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $this->par_types) . ') AS SELECT';
+                $par_types = $this->par_types_to_postgres();
+                $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS SELECT';
             } elseif ($this->db_type == sql_db::MYSQL) {
                 $sql = "PREPARE " . $this->query_name . " FROM 'SELECT";
                 $this->end = "';";
@@ -1175,7 +1191,7 @@ class sql_creator
         $used_par_values = [];
         $i = 0; // the position in the SQL parameter array
         foreach ($this->par_types as $par_type) {
-            if ($par_type != sql_db::PAR_CONST) {
+            if ($par_type != sql_par_type::CONST) {
                 $used_par_values[] = $this->par_value($i + 1);;
             }
             $i++;
@@ -1446,34 +1462,35 @@ class sql_creator
 
     /**
      * convert the parameter type list to make valid for postgres
-     * @return void
+     * @return array with the postgres parameter types
      */
-    private function par_types_to_postgres(): void
+    private function par_types_to_postgres(): array
     {
         $in_types = $this->par_types;
-        $this->par_types = array();
+        $result = array();
         foreach ($in_types as $type) {
             switch ($type) {
-                case sql_db::PAR_INT_LIST:
-                case sql_db::PAR_INT_LIST_OR:
-                    $this->par_types[] = 'int[]';
+                case sql_par_type::INT_LIST:
+                case sql_par_type::INT_LIST_OR:
+                    $result[] = 'int[]';
                     break;
-                case sql_db::PAR_INT_NOT:
-                    $this->par_types[] = 'int';
+                case sql_par_type::INT_NOT:
+                    $result[] = 'int';
                     break;
-                case sql_db::PAR_TEXT_LIST:
-                    $this->par_types[] = 'text[]';
+                case sql_par_type::TEXT_LIST:
+                    $result[] = 'text[]';
                     break;
-                case sql_db::PAR_LIKE:
-                case sql_db::PAR_TEXT_OR:
-                    $this->par_types[] = 'text';
+                case sql_par_type::LIKE:
+                case sql_par_type::TEXT_OR:
+                    $result[] = 'text';
                     break;
-                case sql_db::PAR_CONST:
+                case sql_par_type::CONST:
                     break;
                 default:
-                    $this->par_types[] = $type;
+                    $result[] = $type->value;
             }
         }
+        return $result;
     }
 
 

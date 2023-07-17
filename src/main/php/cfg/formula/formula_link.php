@@ -90,7 +90,7 @@ class formula_link extends sandbox_link_with_type
     /**
      * reset the in memory fields used e.g. if some ids are updated
      */
-    private function reset_objects(user $usr)
+    private function reset_objects(user $usr): void
     {
         $this->fob = new formula($usr);
         $this->tob = new phrase($usr);
@@ -266,7 +266,7 @@ class formula_link extends sandbox_link_with_type
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_fields(array(user::FLD_ID, formula_link::FLD_TYPE, self::FLD_EXCLUDED));
+        $db_con->set_fields(array(user::FLD_ID, formula_link::FLD_TYPE, sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld($this->id, $this->formula_id(), $this->phrase_id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();

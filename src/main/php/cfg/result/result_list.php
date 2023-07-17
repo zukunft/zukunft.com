@@ -31,10 +31,12 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once API_RESULT_PATH . 'result_list.php';
 
 use api\result_list_api;
+use cfg\db\sql_par_type;
 use Exception;
 use formula\formula_dsp_old;
 use html\html_base;
@@ -133,10 +135,10 @@ class result_list extends sandbox_list
             $db_con->set_usr($this->user()->id());
             if ($obj->id() > 0) {
                 if (get_class($obj) == formula::class or get_class($obj) == formula_dsp_old::class) {
-                    $db_con->add_par(sql_db::PAR_INT, $obj->id());
+                    $db_con->add_par(sql_par_type::INT, $obj->id());
                     $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID));
                 } elseif (get_class($obj) == phrase_group::class) {
-                    $db_con->add_par(sql_db::PAR_INT, $obj->id());
+                    $db_con->add_par(sql_par_type::INT, $obj->id());
                     $link_fields = array();
                     if ($by_source) {
                         $link_fields[] = result::FLD_SOURCE_GRP;
@@ -146,7 +148,7 @@ class result_list extends sandbox_list
                     $qp->sql = $db_con->select_by_field_list($link_fields);
                 } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
                     // TODO check if the results are still correct if the user has excluded the word
-                    $db_con->add_par(sql_db::PAR_INT, $obj->id(), false, true);
+                    $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
                     $db_con->set_join_fields(
                         array(result::FLD_GRP),
                         sql_db::TBL_PHRASE_GROUP_WORD_LINK,
@@ -155,7 +157,7 @@ class result_list extends sandbox_list
                     $qp->sql = $db_con->select_by_field_list(array(word::FLD_ID));
                 } elseif (get_class($obj) == triple::class) {
                     // TODO check if the results are still correct if the user has excluded the triple
-                    $db_con->add_par(sql_db::PAR_INT, $obj->id(), false, true);
+                    $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
                     $db_con->set_join_fields(
                         array(result::FLD_GRP),
                         sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,

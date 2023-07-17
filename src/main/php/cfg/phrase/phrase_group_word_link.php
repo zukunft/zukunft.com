@@ -33,6 +33,9 @@
 
 namespace cfg;
 
+use cfg\db\sql_par_type;
+
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_PHRASE_PATH . 'phrase_group_link.php';
 
 class phrase_group_word_link extends phrase_group_link
@@ -105,7 +108,7 @@ class phrase_group_word_link extends phrase_group_link
 
         if ($grp->id > 0) {
             $qp->name .= 'grp_id';
-            $db_con->add_par(sql_db::PAR_INT, $grp->id);
+            $db_con->add_par(sql_par_type::INT, $grp->id);
         } else {
             log_err('The phrase group id must be set ' .
                 'to load a ' . self::class, self::class . '->load_by_group_id_sql');
@@ -132,7 +135,7 @@ class phrase_group_word_link extends phrase_group_link
 
         if ($this->id > 0) {
             $qp->name .= sql_db::FLD_ID;
-            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $db_con->add_par(sql_par_type::INT, $this->id);
         } else {
             log_err('The phrase group word id must be set ' .
                 'to load a ' . self::class, self::class . '->load_sql');

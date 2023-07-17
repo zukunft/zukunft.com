@@ -31,6 +31,7 @@ namespace test;
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 
+use api\phrase_api;
 use api\triple_api;
 use api\word_api;
 use cfg\db\sql_creator;
@@ -45,7 +46,6 @@ use cfg\sql_db;
 use cfg\sql_par;
 use cfg\verb;
 use cfg\word;
-use cfg\word_select_direction;
 
 class phrase_list_unit_tests
 {
@@ -92,6 +92,8 @@ class phrase_list_unit_tests
         $phr_ids = new phr_ids(array(3, -2, 4, -7));
         $this->assert_sql_by_ids($t, $db_con, $phr_lst, $phr_ids);
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
+        $phr_names = array(word_api::TN_READ, triple_api::TN_READ);
+        $t->assert_sql_by_names($db_con, $phr_lst, $phr_names);
 
         $this->test = $t;
 
@@ -204,8 +206,10 @@ class phrase_list_unit_tests
     /**
      * test the SQL statement creation for a phrase list
      *
-     * @param array $ids all word or triple id that should be loaded
-     * @param string $dialect if not Postgres the name of the SQL dialect
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param phrase_list $lst the empty phrase list object
+     * @param phr_ids $ids filled with a list of word ids to be used for the query creation
      * @return void
      */
     private function assert_sql_by_ids(
@@ -313,43 +317,6 @@ class phrase_list_unit_tests
             $qp = $usr_obj->load_sql_by_phr_lst($db_con->sql_creator(), $vrb, $direction);
             $t->assert_qp($qp, $db_con->db_type);
         }
-    }
-
-    /**
-     * test the SQL statement creation for a phrase list
-     *
-     * @param array $ids all word or triple id that should be loaded
-     * @param string $dialect if not Postgres the name of the SQL dialect
-     * @return void
-     */
-    private function assert_by_ids_sql_old(array $ids, string $dialect = ''): sql_par
-    {
-        global $usr;
-
-        $lib = new library();
-
-        $lst = new phrase_list($usr);
-        $db_con = new sql_db();
-        $db_con->db_type = $dialect;
-        $dialect_ext = '';
-        if ($dialect == sql_db::MYSQL) {
-            $dialect_ext = self::FILE_MYSQL;
-        }
-        $qp = $lst->load_by_wrd_ids_sql($db_con, $ids);
-        $expected_sql = $this->test->file(self::PATH . $qp->name . $dialect_ext . self::FILE_EXT);
-        $this->test->assert(
-            self::TEST_NAME . $qp->name . $dialect,
-            $lib->trim($qp->sql),
-            $lib->trim($expected_sql)
-        );
-        $qp = $lst->load_by_trp_ids_sql($db_con, $ids);
-        $expected_sql = $this->test->file(self::PATH . $qp->name . $dialect_ext . self::FILE_EXT);
-        $this->test->assert(
-            self::TEST_NAME . $qp->name . $dialect,
-            $lib->trim($qp->sql),
-            $lib->trim($expected_sql)
-        );
-        return $qp;
     }
 
 }
