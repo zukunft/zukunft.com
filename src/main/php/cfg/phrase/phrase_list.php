@@ -247,9 +247,12 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * load the phrases including the related word or triple object by the given id list from the database
+     * load the phrases including the related word or triple object
+     * by the given id list from the database
+     * TODO make it optional to include excluded phrases
      *
      * @param phr_ids $ids phrase ids that should be loaded
+     * @param phrase_list|null $phr_lst a list of preloaded phrase that should not be loaded again
      * @return bool true if at least one phrase has been loaded
      */
     function load_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
@@ -276,24 +279,6 @@ class phrase_list extends sandbox_list_named
     /*
      * to be moved to the sql creator
      */
-
-    /**
-     * create an SQL statement to retrieve a list of phrase names by the id from the database
-     * compared to load_sql_by_ids this reads only the phrase names and not the related phrase to save time and memory
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param phr_ids $ids phrase ids that should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_names_sql_db_by_ids(sql_db $db_con, phr_ids $ids): sql_par
-    {
-        $qp = $this->load_names_sql($db_con->sql_creator(), 'db_' . $ids->count() . 'ids_fast');
-        $db_con->set_where_id_in(phrase::FLD_ID, $ids->lst);
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
 
     /**
      * create an SQL statement to retrieve a list of words from the database
@@ -347,87 +332,12 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * load the phrases selected by the id of the list entries
-     * TODO use load_by_ids instead
-     *
-     * @return bool true if at least one phrase has been loaded
-     */
-    function load_by_ids_already_set(): bool
-    {
-        global $db_con;
-        $result = false;
-
-        // split the ids by type
-        $wrd_ids = [];
-        $lnk_ids = [];
-        foreach ($this->phrase_ids()->lst as $id) {
-            if ($id > 0) {
-                $wrd_ids[] = $id;
-            } elseif ($id < 0) {
-                $lnk_ids[] = $id;
-            }
-        }
-
-        // clear list before loading
-        $this->lst = array();
-
-        if (count($wrd_ids) > 0) {
-            if (!$db_con->connected()) {
-                // add the words just with the id for unit testing
-                foreach ($wrd_ids as $id) {
-                    $wrd = new word($this->user());
-                    $wrd->set_id($id);
-                    $this->lst[] = $wrd->phrase();
-                    $result = true;
-                }
-            } else {
-                $qp = $this->load_by_wrd_ids_sql($db_con, $wrd_ids);
-                $db_con->usr_id = $this->user()->id();
-                $db_wrd_lst = $db_con->get($qp);
-                foreach ($db_wrd_lst as $db_wrd) {
-                    $wrd = new word($this->user());
-                    $wrd->row_mapper_sandbox($db_wrd);
-                    if (!$wrd->is_excluded()) {
-                        $this->lst[] = $wrd->phrase();
-                        $result = true;
-                    }
-                }
-            }
-        }
-
-        if (count($lnk_ids) > 0) {
-            if (!$db_con->connected()) {
-                // add the triple just with the id for unit testing
-                foreach ($lnk_ids as $id) {
-                    $trp = new triple($this->user());
-                    $trp->set_id($id);
-                    $this->lst[] = $trp->phrase();
-                    $result = true;
-                }
-            } else {
-                $qp = $this->load_by_trp_ids_sql($db_con, $lnk_ids);
-                $db_con->usr_id = $this->user()->id();
-                $db_trp_lst = $db_con->get($qp);
-                foreach ($db_trp_lst as $db_trp) {
-                    if (is_null($db_trp[sandbox::FLD_EXCLUDED]) or $db_trp[sandbox::FLD_EXCLUDED] == 0) {
-                        $trp = new triple($this->user());
-                        $trp->row_mapper_sandbox($db_trp);
-                        $this->lst[] = $trp->phrase();
-                        $result = true;
-                    }
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * load this list of phrases
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one phrase has been loaded
      */
-    function load(sql_par $qp): bool
+    function load(sql_par $qp, bool $load_all = false): bool
     {
         global $db_con;
         $result = false;
@@ -438,10 +348,12 @@ class phrase_list extends sandbox_list_named
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $phr = new phrase($this->user());
-                    $phr->row_mapper($db_row);
-                    $this->lst[] = $phr;
-                    $result = true;
+                    if (!$db_row[sql_db::FLD_EXCLUDED] or $load_all) {
+                        $phr = new phrase($this->user());
+                        $phr->row_mapper($db_row);
+                        $this->lst[] = $phr;
+                        $result = true;
+                    }
                 }
             }
         }
@@ -1306,9 +1218,18 @@ class phrase_list extends sandbox_list_named
     /**
      * @returns bool true if all phrases of the list have a name and an id
      */
-    function loaded(): bool
+    function loaded(?phr_ids $ids = null): bool
     {
         $result = true;
+        if ($ids != null) {
+            $ids_to_load = $ids->lst;
+            $ids_loaded = $this->id_lst();
+            $ids_to_load = array_diff($ids_to_load, $ids_loaded);
+            if (count($ids_to_load) > 0) {
+                $result = false;
+
+            }
+        }
         foreach ($this->lst as $phr) {
             if ($phr->id() == 0 or $phr->name() == '') {
                 $result = false;
@@ -1493,6 +1414,7 @@ class phrase_list extends sandbox_list_named
     /**
      * get the phrase ids as an array
      * switch to ids() if possible
+     * @return array with the ids of theis phrase list
      */
     function id_lst(): array
     {
@@ -2350,7 +2272,7 @@ class phrase_list extends sandbox_list_named
             log_err('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
         } else {
             $grp = new phrase_group($this->user());
-            $grp->phr_lst = $this;
+            $grp->phr_lst = clone $this;
             $grp->get($do_save);
         }
 

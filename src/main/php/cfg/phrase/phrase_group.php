@@ -138,11 +138,16 @@ class phrase_group extends db_object
         if ($result) {
             $this->grp_name = $db_row[self::FLD_NAME];
             $this->auto_name = $db_row[self::FLD_DESCRIPTION];
-            $this->phr_lst->add_by_ids(
-                $db_row[self::FLD_WORD_IDS],
-                $db_row[self::FLD_TRIPLE_IDS]
-            );
-            $this->load_lst();
+            $wrd_ids = null;
+            if ($db_row[self::FLD_WORD_IDS] != null) {
+                $wrd_ids = array_map('intval', explode(',', $db_row[self::FLD_WORD_IDS]));
+            }
+            $trp_ids = null;
+            if ($db_row[self::FLD_TRIPLE_IDS] != null) {
+                $trp_ids = array_map('intval', explode(',', $db_row[self::FLD_TRIPLE_IDS]));
+            }
+            $phr_ids = new phr_ids($wrd_ids, $trp_ids);
+            $this->load_lst($phr_ids);
         }
         return $result;
     }
@@ -317,11 +322,13 @@ class phrase_group extends db_object
     /**
      * load the word and triple objects based on the ids load from the database if needed
      */
-    private function load_lst(): void
+    private function load_lst(?phr_ids $ids = null): void
     {
-        if (!$this->phr_lst->loaded()) {
-            $ids = $this->phr_lst->phrase_ids();
-            $this->phr_lst->load_by_ids_old($ids);
+        if (!$this->phr_lst->loaded($ids)) {
+            if ($ids == null) {
+                $ids = $this->phr_lst->phrase_ids();
+            }
+            $this->phr_lst->load_by_ids($ids);
         }
     }
 

@@ -783,7 +783,11 @@ class result extends sandbox_value
                 }
             }
         }
-        if ($this->src_phr_lst->empty()) {
+        if ($this->src_phr_lst != null) {
+            if ($this->src_phr_lst->empty()) {
+                log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_phr_grp_id . ').', "result->load_phr_lst_src");
+            }
+        } else {
             log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_phr_grp_id . ').', "result->load_phr_lst_src");
         }
     }
@@ -807,7 +811,11 @@ class result extends sandbox_value
                 }
             }
         }
-        if ($this->phr_lst->empty()) {
+        if ($this->phr_lst != null) {
+            if ($this->phr_lst->empty()) {
+                log_warning("Missing result phrases for the calculated value " . $this->id(), "result->load_phr_lst");
+            }
+        } else {
             log_warning("Missing result phrases for the calculated value " . $this->id(), "result->load_phr_lst");
         }
     }

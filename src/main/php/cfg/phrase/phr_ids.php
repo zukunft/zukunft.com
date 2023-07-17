@@ -42,9 +42,29 @@ class phr_ids
 {
     public ?array $lst = null;
 
-    function __construct(array $ids)
+    /**
+     * @param array|null $ids list of phrase or word ids
+     */
+    function __construct(?array $ids = null, ?array $trp_ids = null)
     {
-        $this->lst = $ids;
+        if ($ids != null) {
+            $this->lst = $ids;
+        } else {
+            $this->lst = array();
+        }
+        if ($trp_ids != null) {
+            $this->add_trp_ids($trp_ids);
+        }
+    }
+
+    /**
+     * @param array|null $trp_ids list of wrd ids
+     */
+    private function add_trp_ids(?array $trp_ids = null): void
+    {
+        foreach ($trp_ids as $trp_id) {
+            $this->lst[] = $trp_id * -1;
+        }
     }
 
     function count(): int

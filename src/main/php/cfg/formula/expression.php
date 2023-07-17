@@ -317,7 +317,7 @@ class expression
         if ($trm_lst == null) {
             $phr_lst->load_names_by_ids($phr_ids);
         } else {
-            $phr_lst->load_by_ids_old($phr_ids, $trm_lst->phrase_list());
+            $phr_lst->load_by_ids($phr_ids, $trm_lst->phrase_list());
         }
 
         return $phr_lst;

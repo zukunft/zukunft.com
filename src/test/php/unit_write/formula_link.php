@@ -111,8 +111,9 @@ class formula_link_test
         $t->display('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr1->name . '"', $target, $result);
 
         // ... check if the link is shown correctly also for the second user
-        // ... the second user has excluded the word at this point, so even if the word is linked the word link is nevertheless false
-        // TODO check what that the word is linked if the second user activates the word
+        // ... the second user has excluded the word at this point,
+        //     so even if the word is linked the word link is nevertheless false
+        // TODO add a check that the word is linked if the second user activates the word
         $frm = new formula($t->usr2);
         $frm->load_by_name(formula_api::TN_RENAMED, formula::class);
         $phr_lst = $frm->assign_phr_ulst();
