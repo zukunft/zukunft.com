@@ -38,6 +38,7 @@ namespace cfg;
 include_once DB_PATH . 'sql_par_type.php';
 
 use api\component_api;
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use html\view\view_dsp_old;
 
@@ -165,34 +166,41 @@ class component_link extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve the parameters of the standard view component link from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
         // try to get the search values from the objects
         if ($this->id <= 0) {
             $this->id = 0;
         }
 
-        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
+        $sc->set_type(sql_db::TBL_COMPONENT_LINK);
         $qp = new sql_par(self::class);
         if ($this->id != 0) {
             $qp->name .= 'std_id';
         } else {
             $qp->name .= 'std_link_ids';
         }
-        $db_con->set_name($qp->name);
+        $sc->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id()); is needed
-        $db_con->set_fields(array(user::FLD_ID));
-        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
-        $db_con->set_fields(array_merge(
+        $sc->set_fields(array(user::FLD_ID));
+        $sc->set_fields(array_merge(
+            self::FLD_NAMES,
             self::FLD_NAMES_NUM_USR,
             array(user::FLD_ID)));
-        $db_con->set_where_link_no_fld($this->id, $this->fob->id(), $this->tob->id());
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
+        if ($this->id() > 0) {
+            $sc->add_where($this->id_field(), $this->id());
+        } elseif ($this->fob->id() > 0 and $this->tob->id() > 0) {
+            $sc->add_where(view::FLD_ID, $this->fob->id());
+            $sc->add_where(component::FLD_ID, $this->tob->id());
+        } else {
+            log_err('Cannot load default component link because id is missing');
+        }
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -209,7 +217,7 @@ class component_link extends sandbox_link_with_type
         global $db_con;
         $result = false;
 
-        $qp = $this->load_standard_sql($db_con, $class);
+        $qp = $this->load_standard_sql($db_con->sql_creator(), $class);
 
         if ($qp->has_par()) {
             $db_dsl = $db_con->get1($qp);
@@ -266,8 +274,8 @@ class component_link extends sandbox_link_with_type
         $db_con->set_usr($this->user()->id());
         $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        if ($this->id > 0) {
-            $db_con->add_par(sql_par_type::INT, $this->id);
+        if ($this->id() > 0) {
+            $db_con->add_par(sql_par_type::INT, $this->id());
             $qp->sql = $db_con->select_by_field_list(array(component_link::FLD_ID));
         } elseif ($this->fob->id() > 0 and $this->tob->id() > 0) {
             $db_con->add_par(sql_par_type::INT, $this->fob->id());
@@ -304,7 +312,7 @@ class component_link extends sandbox_link_with_type
     function load_by_link_and_type(int $from_id, int $type_id, int $to_id): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_link_and_type($db_con,$from_id, $type_id, $to_id, self::class );
+        $qp = $this->load_sql_by_link_and_type($db_con, $from_id, $type_id, $to_id, self::class);
         return $this->load($qp);
     }
 

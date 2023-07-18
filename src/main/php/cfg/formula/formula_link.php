@@ -31,6 +31,8 @@
 
 namespace cfg;
 
+use cfg\db\sql_creator;
+
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
 
 class formula_link extends sandbox_link_with_type
@@ -44,6 +46,16 @@ class formula_link extends sandbox_link_with_type
     const FLD_ID = 'formula_link_id';
     const FLD_TYPE = 'link_type_id';
 
+    // all database field names excluding the id
+    const FLD_NAMES = array(
+        formula::FLD_ID,
+        phrase::FLD_ID,
+        user::FLD_ID,
+        self::FLD_TYPE,
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
+    );
     // all database field names excluding the id
     const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
@@ -254,22 +266,28 @@ class formula_link extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve the parameters of the standard formula link from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
+        $sc->set_type(sql_db::TBL_FORMULA_LINK);
         $qp = new sql_par($class, true);
         $qp->name .= $this->load_sql_name_extension();
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_fields(array(user::FLD_ID, formula_link::FLD_TYPE, sandbox::FLD_EXCLUDED));
-        $db_con->set_where_link_no_fld($this->id, $this->formula_id(), $this->phrase_id());
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(self::FLD_NAMES);
+        if ($this->id() != 0) {
+            $sc->add_where($this->id_field(), $this->id());
+        } elseif ($this->formula_id() != 0 and $this->phrase_id() != 0) {
+            $sc->add_where(formula::FLD_ID, $this->formula_id());
+            $sc->add_where(phrase::FLD_ID, $this->phrase_id());
+        } else {
+            log_err('Cannot load default formula link because no unique field is set');
+        }
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -288,7 +306,7 @@ class formula_link extends sandbox_link_with_type
         $result = false;
 
         if ($this->is_unique()) {
-            $qp = $this->load_standard_sql($db_con);
+            $qp = $this->load_standard_sql($db_con->sql_creator());
 
             if ($db_con->get_where() <> '') {
                 $db_frm = $db_con->get1($qp);

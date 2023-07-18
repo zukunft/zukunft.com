@@ -36,6 +36,7 @@
 
 namespace cfg;
 
+use cfg\db\sql_creator;
 use DateTime;
 
 class value_time_series extends sandbox_value
@@ -138,14 +139,16 @@ class value_time_series extends sandbox_value
 
     /**
      * create the SQL to load the default time series always by the id
+     * @param sql_creator $sc with the target db_type set
+     * @param string $class the name of this class
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
-        $db_con->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(user::FLD_ID)));
+        $sc->set_type(sql_db::TBL_VALUE_TIME_SERIES);
+        $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(user::FLD_ID)));
 
-        return parent::load_standard_sql($db_con, $class);
+        return parent::load_standard_sql($sc, $class);
     }
 
     /**
@@ -157,7 +160,7 @@ class value_time_series extends sandbox_value
     function load_standard(?sql_par $qp = null, string $class = self::class): bool
     {
         global $db_con;
-        $qp = $this->load_standard_sql($db_con);
+        $qp = $this->load_standard_sql($db_con->sql_creator());
         return parent::load_standard($qp, $class);
     }
 

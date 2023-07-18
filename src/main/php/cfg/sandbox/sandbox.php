@@ -47,6 +47,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use Exception;
@@ -379,20 +380,20 @@ class sandbox extends db_object
 
     /**
      * create the SQL to load the single default value always by the id
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
         $qp = new sql_par($class, true);
         $qp->name .= sql_db::FLD_ID;
 
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
-        $db_con->add_par(sql_par_type::INT, strval($this->id));
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id);
+        $sc->add_where($this->id_field(), $this->id());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }

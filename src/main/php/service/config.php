@@ -47,7 +47,6 @@ class config
 
     // reserved word and triple names used for the system configuration
     // *_DSP is the name to be shown to the user if the context makes it unique
-    const SYSTEM_CONFIG = 'system configuration';
     const YEARS_AUTO_CREATE = 'system config automatic created years';
     const YEARS_AUTO_CREATE_DSP = 'years to create';
     const DB_RETRY_MIN = 'system config database retry start delay in sec';

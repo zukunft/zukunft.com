@@ -840,13 +840,13 @@ class test_base
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_standard_sql($db_con, get_class($usr_obj));
+        $qp = $usr_obj->load_standard_sql($db_con->sql_creator(), get_class($usr_obj));
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_standard_sql($db_con, get_class($usr_obj));
+            $qp = $usr_obj->load_standard_sql($db_con->sql_creator(), get_class($usr_obj));
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;

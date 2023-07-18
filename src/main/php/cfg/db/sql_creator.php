@@ -446,6 +446,7 @@ class sql_creator
                 'array' => sql_par_type::INT_LIST,
             };
         } else {
+            // TODO deprecate
             // map the par type until all sql statement creations are changed
             $sql_par_typ = match ($spt->name) {
                 'INT' => sql_par_type::INT,
@@ -456,14 +457,21 @@ class sql_creator
             };
         }
 
-        if ($sql_par_typ == sql_par_type::INT_LIST or $sql_par_typ == sql_par_type::INT_LIST_OR) {
+        if ($sql_par_typ == sql_par_type::INT_LIST
+            or $sql_par_typ == sql_par_type::INT_LIST_OR) {
             $this->add_par($sql_par_typ, $this->int_array_to_sql_string($fld_val));
         } elseif ($sql_par_typ == sql_par_type::TEXT_LIST) {
             $this->add_par($sql_par_typ, $this->str_array_to_sql_string($fld_val));
-        } elseif ($sql_par_typ == sql_par_type::INT) {
+        } elseif ($sql_par_typ == sql_par_type::INT
+            or $sql_par_typ == sql_par_type::INT_OR
+            or $sql_par_typ == sql_par_type::INT_NOT) {
+            $this->add_par($sql_par_typ, $fld_val);
+        } elseif ($sql_par_typ == sql_par_type::TEXT
+            or $sql_par_typ == sql_par_type::TEXT_OR
+            or $sql_par_typ == sql_par_type::LIKE) {
             $this->add_par($sql_par_typ, $fld_val);
         } else {
-            log_err('SQL parameter type ' . $sql_par_typ . ' not expected');
+            log_err('SQL parameter type ' . $sql_par_typ->value . ' not expected');
         }
     }
 

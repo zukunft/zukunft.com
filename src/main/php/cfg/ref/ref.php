@@ -58,6 +58,7 @@ include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 
+use cfg\db\sql_creator;
 use model\export\exp_obj;
 use model\export\ref_exp;
 use api\ref_api;
@@ -303,21 +304,21 @@ class ref extends sandbox_link_with_type
     /**
      * create the SQL to load the default ref always by the id
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $db_con->set_type(sql_db::TBL_REF);
-        $db_con->set_fields(array_merge(
+        $sc->set_type(sql_db::TBL_REF);
+        $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR,
             array(user::FLD_ID)
         ));
 
-        return parent::load_standard_sql($db_con, $class);
+        return parent::load_standard_sql($sc, $class);
     }
 
     /**
@@ -329,7 +330,7 @@ class ref extends sandbox_link_with_type
     function load_standard(?sql_par $qp = null, string $class = self::class): bool
     {
         global $db_con;
-        $qp = $this->load_standard_sql($db_con);
+        $qp = $this->load_standard_sql($db_con->sql_creator());
         $result = parent::load_standard($qp, $class);
 
         if ($result) {

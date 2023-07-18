@@ -39,6 +39,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_link_typed.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 
 use api\api;
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use model\export\triple_exp;
@@ -599,18 +600,18 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * create the SQL to load the default triple always by the id
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $db_con->set_type(sql_db::TBL_TRIPLE);
+        $sc->set_type(sql_db::TBL_TRIPLE);
         $qp = new sql_par($class, true);
         $qp->name .= $this->load_sql_name_ext();
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(array_merge(
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(array_merge(
             self::FLD_NAMES_LINK,
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -618,7 +619,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             array(user::FLD_ID)
         ));
 
-        return $this->load_sql_select_qp($db_con, $qp);
+        return $this->load_sql_select_qp($sc, $qp);
     }
 
     /**
@@ -635,7 +636,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         // after every load call from outside the class the order should be checked and reversed if needed
         $this->check_order();
 
-        $qp = $this->load_standard_sql($db_con);
+        $qp = $this->load_standard_sql($db_con->sql_creator());
 
         $db_lnk = $db_con->get1($qp);
         $result = $this->row_mapper_sandbox($db_lnk, true);
@@ -1011,32 +1012,29 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * add the select parameters to the query parameters
      *
-     * @param sql_db $db_con the db connection object with the SQL name and others parameter already set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp the query parameters with the name already set
      * @return sql_par the query parameters with the select parameters added
      */
-    private function load_sql_select_qp(sql_db $db_con, sql_par $qp): sql_par
+    private function load_sql_select_qp(sql_creator $sc, sql_par $qp): sql_par
     {
         if ($this->id() != 0) {
-            $db_con->add_par(sql_par_type::INT, $this->id());
-            $qp->sql = $db_con->select_by_set_id();
+            $sc->add_where($this->id_field(), $this->id());
         } elseif ($this->name != '') {
-            $db_con->add_par(sql_par_type::TEXT, $this->name);
-            //$qp->sql = $db_con->select_by_name();
-            $qp->sql = $db_con->select_by_field(self::FLD_NAME);
+            $sc->add_where($this->name_field(), $this->name());
         } elseif ($this->has_objects()) {
-            $db_con->add_par(sql_par_type::INT, $this->fob->id());
-            $db_con->add_par(sql_par_type::INT, $this->tob->id());
-            $db_con->add_par(sql_par_type::INT, $this->verb->id());
-            $qp->sql = $db_con->select_by_field_list(array(self::FLD_FROM, self::FLD_TO, verb::FLD_ID));
+            $sc->add_where(self::FLD_FROM, $this->fob->id());
+            $sc->add_where(self::FLD_TO, $this->tob->id());
+            $sc->add_where(verb::FLD_ID, $this->verb->id());
         } elseif ($this->name_generated() != '') {
-            $db_con->add_par(sql_par_type::TEXT, $this->name_generated());
-            $qp->sql = $db_con->select_by_field(self::FLD_NAME_AUTO);
+            $sc->add_where(self::FLD_NAME_AUTO, $this->name_generated());
         } elseif ($this->name_given() != '') {
-            $db_con->add_par(sql_par_type::TEXT, $this->name_given());
-            $qp->sql = $db_con->select_by_field(self::FLD_NAME_GIVEN);
+            $sc->add_where(self::FLD_NAME_GIVEN, $this->name_given());
+        } else {
+            log_err('Cannot load default triple because no unique field is set');
         }
-        $qp->par = $db_con->get_par();
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 

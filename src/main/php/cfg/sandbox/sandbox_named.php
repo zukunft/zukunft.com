@@ -49,6 +49,7 @@ use api\source_api;
 use api\view_api;
 use api\component_api;
 use api\word_api;
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use Exception;
@@ -217,14 +218,14 @@ class sandbox_named extends sandbox
 
     /**
      * create the SQL to load the single default value always by the id or name
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
         $qp = new sql_par($class, true);
-        if ($this->id != 0) {
+        if ($this->id() != 0) {
             $qp->name .= sql_db::FLD_ID;
         } elseif ($this->name() != '') {
             $qp->name .= sql_db::FLD_NAME;
@@ -232,16 +233,15 @@ class sandbox_named extends sandbox
             log_err('Either the id or name must be set to get a named user sandbox object');
         }
 
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id);
         if ($this->id != 0) {
-            $db_con->add_par(sql_par_type::INT, $this->id);
-            $qp->sql = $db_con->select_by_set_id();
+            $sc->add_where($this->id_field(), $this->id());
         } else {
-            $db_con->add_par(sql_par_type::TEXT, $this->name);
-            $qp->sql = $db_con->select_by_set_name();
+            $sc->add_where($this->name_field(), $this->name());
         }
-        $qp->par = $db_con->get_par();
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
