@@ -71,7 +71,7 @@ class config
         $qp = new sql_par(self::class);
         $qp->name .= 'get';
         $db_con->set_name($qp->name);
-        $db_con->set_fields(array(sql_db::FLD_CODE_ID, sql_db::FLD_VALUE, sql_db::FLD_DESCRIPTION));
+        $db_con->set_fields(array(sql_db::FLD_CODE_ID, sql_db::FLD_VALUE, sandbox_named::FLD_DESCRIPTION));
         $db_con->add_par(sql_par_type::TEXT, $code_id);
         $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();
@@ -153,7 +153,7 @@ class config
             // automatically add the config entry
             $result = $this->add($code_id, $value, $description, $db_con);
         } else {
-            if ($value != $db_row[sql_db::FLD_VALUE] or $description != $db_row[sql_db::FLD_DESCRIPTION]) {
+            if ($value != $db_row[sql_db::FLD_VALUE] or $description != $db_row[sandbox_named::FLD_DESCRIPTION]) {
                 $result = $this->update($code_id, $value, $description, $db_con);
             }
         }
@@ -195,7 +195,7 @@ class config
             array(
                 sql_db::FLD_CODE_ID,
                 sql_db::FLD_VALUE,
-                sql_db::FLD_DESCRIPTION),
+                sandbox_named::FLD_DESCRIPTION),
             array(
                 $code_id,
                 $db_value,
@@ -221,7 +221,7 @@ class config
             array(
                 sql_db::FLD_CODE_ID,
                 sql_db::FLD_VALUE,
-                sql_db::FLD_DESCRIPTION),
+                sandbox_named::FLD_DESCRIPTION),
             array(
                 $code_id,
                 $value,
@@ -247,7 +247,7 @@ class config
             $code_id,
             array(
                 sql_db::FLD_VALUE,
-                sql_db::FLD_DESCRIPTION),
+                sandbox_named::FLD_DESCRIPTION),
             array(
                 $value,
                 $description),

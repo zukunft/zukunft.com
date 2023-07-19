@@ -312,7 +312,7 @@ class sandbox extends db_object
 
     /**
      * map the database fields to the object fields
-     * to be extended by the child functions
+     * to be extended by the child object
      * the parent row_mapper function should be used for all db_objects
      * this row_mapper_sandbox function should be used for all user sandbox objects
      *

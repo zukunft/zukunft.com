@@ -364,7 +364,7 @@ class triple_list extends sandbox_list
                 t' . $pos . '.user_id AS user_id' . $pos . ',
                 ' . $db_con->get_usr_field(word::FLD_NAME, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, word::FLD_NAME . $pos) . ',
                 ' . $db_con->get_usr_field(word::FLD_PLURAL, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, word::FLD_PLURAL . $pos) . ',
-                ' . $db_con->get_usr_field(sql_db::FLD_DESCRIPTION, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, sql_db::FLD_DESCRIPTION . $pos) . ',
+                ' . $db_con->get_usr_field(sandbox_named::FLD_DESCRIPTION, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, sandbox_named::FLD_DESCRIPTION . $pos) . ',
                 ' . $db_con->get_usr_field(phrase::FLD_TYPE, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, phrase::FLD_TYPE . $pos) . ',
                 ' . $db_con->get_usr_field(view::FLD_ID, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, view::FLD_ID . $pos) . ',
                 ' . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, sandbox::FLD_EXCLUDED . $pos) . ',
@@ -624,7 +624,7 @@ class triple_list extends sandbox_list
                                     $new_word->owner_id = $db_lnk[user::FLD_ID . '1'];
                                     $new_word->set_name($db_lnk[word::FLD_NAME . '1']);
                                     $new_word->plural = $db_lnk[word::FLD_PLURAL . '1'];
-                                    $new_word->description = $db_lnk[sql_db::FLD_DESCRIPTION . '1'];
+                                    $new_word->description = $db_lnk[sandbox_named::FLD_DESCRIPTION . '1'];
                                     $new_word->type_id = $db_lnk[phrase::FLD_TYPE . '1'];
                                     //$new_word->row_mapper($db_lnk);
                                     $new_word->link_type_id = $db_lnk[verb::FLD_ID];
@@ -646,7 +646,7 @@ class triple_list extends sandbox_list
                                 $new_word->owner_id = $db_lnk[user::FLD_ID . '2'];
                                 $new_word->set_name($db_lnk[word::FLD_NAME . '2']);
                                 $new_word->plural = $db_lnk[word::FLD_PLURAL . '2'];
-                                $new_word->description = $db_lnk[sql_db::FLD_DESCRIPTION . '2'];
+                                $new_word->description = $db_lnk[sandbox_named::FLD_DESCRIPTION . '2'];
                                 $new_word->type_id = $db_lnk[phrase::FLD_TYPE . '2'];
                                 $new_word->link_type_id = $db_lnk[verb::FLD_ID];
                                 //$added_wrd2_lst->add($new_word);

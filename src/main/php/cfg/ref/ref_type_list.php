@@ -68,7 +68,7 @@ class ref_type_list extends type_list
         $qp->name = $db_type;
         $db_con->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id()); is needed
-        $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, self::FLD_URL));
+        $db_con->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, self::FLD_URL));
         if ($order_field == '') {
             $order_field = $db_con->get_id_field_name($db_type);
         }
@@ -109,7 +109,7 @@ class ref_type_list extends type_list
             foreach ($db_lst as $db_entry) {
                 $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
                 $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
-                $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
+                $type_comment = strval($db_entry[sandbox_named::FLD_DESCRIPTION]);
                 $type_obj = new ref_type($type_code_id, $type_name, $type_comment);
                 $type_obj->id = $db_entry[self::FLD_ID];
                 $type_obj->url = $db_entry[self::FLD_URL];

@@ -110,7 +110,7 @@ class type_object
                 $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
             }
             $this->name = $type_name;
-            $this->comment = strval($db_row[sql_db::FLD_DESCRIPTION]);
+            $this->comment = strval($db_row[sandbox_named::FLD_DESCRIPTION]);
             $result = true;
         }
         return $result;

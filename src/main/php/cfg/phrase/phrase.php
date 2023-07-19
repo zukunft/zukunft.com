@@ -90,16 +90,16 @@ class phrase extends combine_named
     );
     // list of the common user specific database field names of phrases excluding the standard name field
     const FLD_NAMES_USR_EX = array(
-        sql_db::FLD_DESCRIPTION
+        sandbox_named::FLD_DESCRIPTION
     );
     // list of the common user specific database field names of phrases
     const FLD_NAMES_USR = array(
         phrase::FLD_NAME,
-        sql_db::FLD_DESCRIPTION
+        sandbox_named::FLD_DESCRIPTION
     );
     // list of the common user specific database field names of phrases
     const FLD_NAMES_USR_NO_NAME = array(
-        sql_db::FLD_DESCRIPTION
+        sandbox_named::FLD_DESCRIPTION
     );
     // list of the common user specific numeric database field names of phrases
     const FLD_NAMES_NUM_USR = array(
@@ -153,7 +153,7 @@ class phrase extends combine_named
                 $wrd = new word($this->user());
                 $wrd->set_id($db_row[$id_fld]);
                 $wrd->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
-                $wrd->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
+                $wrd->description = $db_row[sandbox_named::FLD_DESCRIPTION . $fld_ext];
                 $wrd->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
                 $wrd->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
                 $wrd->share_id = $db_row[sandbox::FLD_SHARE . $fld_ext];
@@ -166,7 +166,7 @@ class phrase extends combine_named
                 $trp = new triple($this->user());
                 $trp->set_id($db_row[$id_fld] * -1);
                 $trp->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
-                $trp->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
+                $trp->description = $db_row[sandbox_named::FLD_DESCRIPTION . $fld_ext];
                 $trp->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
                 $trp->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
                 $trp->share_id = $db_row[sandbox::FLD_SHARE . $fld_ext];

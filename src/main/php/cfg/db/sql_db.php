@@ -194,7 +194,6 @@ class sql_db
 
     const FLD_CODE_ID = 'code_id';                // field name for the code link
     const FLD_VALUE = 'value';                    // field name e.g. for the configuration value
-    const FLD_DESCRIPTION = 'description';        // field name for any description
     const FLD_TYPE_NAME = 'type_name';            // field name for the user specific name of a type; types are used to assign code to a db row
 
     // formats to force the formatting of a value for an SQL statement e.g. convert true to 1 when using tinyint to save boolean values

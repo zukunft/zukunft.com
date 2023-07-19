@@ -75,8 +75,8 @@ if ($usr->id() > 0) {
     if (isset($_GET['formula_text'])) {
         $frm->set_user_text($_GET['formula_text']);
     } // the new formula text in the user format
-    if (isset($_GET['description'])) {
-        $frm->description = $_GET['description'];
+    if (isset($_GET[controller::URL_VAR_DESCRIPTION])) {
+        $frm->description = $_GET[controller::URL_VAR_DESCRIPTION];
     }
     if (isset($_GET['type'])) {
         $frm->type_id = $_GET['type'];

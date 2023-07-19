@@ -1059,7 +1059,7 @@ class user extends db_object
             // log the changes???
             if ($this->id > 0) {
                 // add the description of the user
-                if (!$db_con->update($this->id, sql_db::FLD_DESCRIPTION, $this->description)) {
+                if (!$db_con->update($this->id, sandbox_named::FLD_DESCRIPTION, $this->description)) {
                     $result = 'Saving of user description ' . $this->id . ' failed.';
                 }
                 // add the email of the user

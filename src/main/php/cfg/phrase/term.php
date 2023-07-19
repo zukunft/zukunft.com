@@ -89,7 +89,7 @@ class term extends combine_named
     // this is done because the total number of terms is expected to be less than 10 million
     // which database should be able to handle and only a few hundred are expected to be sent to via api at once
     const FLD_NAMES_USR = array(
-        sql_db::FLD_DESCRIPTION,
+        sandbox_named::FLD_DESCRIPTION,
         formula::FLD_FORMULA_TEXT,
         formula::FLD_FORMULA_USER_TEXT
     );

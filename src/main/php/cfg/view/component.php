@@ -69,7 +69,7 @@ class component extends sandbox_typed
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
-        self::FLD_DESCRIPTION
+        sandbox_named::FLD_DESCRIPTION
     );
     // list of the user specific database field names
     const FLD_NAMES_NUM_USR = array(
@@ -86,7 +86,7 @@ class component extends sandbox_typed
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_NAME,
-        self::FLD_DESCRIPTION,
+        sandbox_named::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_ROW_PHRASE,
         self::FLD_LINK_TYPE,
@@ -220,18 +220,19 @@ class component extends sandbox_typed
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @param string $name_fld the name of the name field as defined in this child class
      * @return bool true if the view component is loaded and valid
      */
     function row_mapper_sandbox(
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = self::FLD_ID): bool
+        string $id_fld = self::FLD_ID,
+        string $name_fld = self::FLD_NAME
+    ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
-            $this->name = $db_row[self::FLD_NAME];
-            $this->description = $db_row[self::FLD_DESCRIPTION];
             $this->code_id = $db_row[sql_db::FLD_CODE_ID];
             $this->ui_msg_code_id = $db_row[self::FLD_UI_MSG_ID];
             $this->type_id = $db_row[self::FLD_TYPE];

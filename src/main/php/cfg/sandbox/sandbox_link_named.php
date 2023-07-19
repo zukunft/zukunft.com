@@ -51,6 +51,38 @@ class sandbox_link_named extends sandbox_link
         $this->description = null;
     }
 
+    /**
+     * map the database fields to the object fields
+     * to be extended by the child object
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
+     * @param string $id_fld the name of the id field as set in the child class
+     * @param string $name_fld the name of the name field as set in the child class
+     * @return bool true if the word is loaded and valid
+     */
+    function row_mapper_sandbox(
+        ?array $db_row,
+        bool   $load_std = false,
+        bool   $allow_usr_protect = true,
+        string $id_fld = '',
+        string $name_fld = ''
+    ): bool
+    {
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
+        if ($result) {
+            if (array_key_exists($name_fld, $db_row)) {
+                if ($db_row[$name_fld] != null) {
+                    $this->set_name($db_row[$name_fld]);
+                }
+            }
+            $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
+        }
+        return $result;
+    }
+
+
     /*
      * set and get
      */
@@ -129,7 +161,7 @@ class sandbox_link_named extends sandbox_link
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id;
-                $log->set_field(sql_db::FLD_DESCRIPTION);
+                $log->set_field(sandbox_named::FLD_DESCRIPTION);
                 $result = $this->save_field_user($db_con, $log);
             }
         }

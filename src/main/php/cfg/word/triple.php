@@ -62,7 +62,6 @@ class triple extends sandbox_link_typed implements JsonSerializable
     const FLD_ID = 'triple_id';
     const FLD_FROM = 'from_phrase_id';
     const FLD_TO = 'to_phrase_id';
-    const FLD_TYPE = 'phrase_type_id';
     const FLD_NAME = 'triple_name';  // the name used which must be unique within the terms of the user
     const FLD_NAME_GIVEN = 'name_given'; // the name set by the user, which can be null if the generated name should be used
     const FLD_NAME_AUTO = 'name_generated'; // the generated name is saved in the database for database base unique check
@@ -73,7 +72,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
-        self::FLD_TYPE,
+        phrase::FLD_TYPE,
         self::FLD_COND_ID,
         self::FLD_COND_TYPE
     );
@@ -88,7 +87,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         self::FLD_NAME,
         self::FLD_NAME_GIVEN,
         self::FLD_NAME_AUTO,
-        sql_db::FLD_DESCRIPTION
+        sandbox_named::FLD_DESCRIPTION
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
@@ -102,7 +101,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         self::FLD_NAME,
         self::FLD_NAME_GIVEN,
         self::FLD_NAME_AUTO,
-        sql_db::FLD_DESCRIPTION,
+        sandbox_named::FLD_DESCRIPTION,
         phrase::FLD_TYPE,
         self::FLD_VALUES,
         sandbox::FLD_EXCLUDED,
@@ -208,9 +207,9 @@ class triple extends sandbox_link_typed implements JsonSerializable
         bool   $allow_usr_protect = true,
         string $id_fld = self::FLD_ID,
         string $name_fld = self::FLD_NAME,
-        string $type_fld = self::FLD_TYPE): bool
+        string $type_fld = phrase::FLD_TYPE): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
             if (array_key_exists(self::FLD_FROM, $db_row)) {
                 $phr_id = $db_row[self::FLD_FROM];
@@ -229,18 +228,12 @@ class triple extends sandbox_link_typed implements JsonSerializable
                     $this->verb->set_id($db_row[verb::FLD_ID]);
                 }
             }
-            if (array_key_exists($name_fld, $db_row)) {
-                if ($db_row[$name_fld] != null) {
-                    $this->set_name($db_row[$name_fld]);
-                }
-            }
             if (array_key_exists(self::FLD_NAME_GIVEN, $db_row)) {
                 $this->set_name_given($db_row[self::FLD_NAME_GIVEN]);
             }
             if (array_key_exists(self::FLD_NAME_AUTO, $db_row)) {
                 $this->set_name_generated($db_row[self::FLD_NAME_AUTO]);
             }
-            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->type_id = $db_row[$type_fld];
             if (array_key_exists(self::FLD_VALUES, $db_row)) {
                 $this->values = $db_row[self::FLD_VALUES];
@@ -1875,7 +1868,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             $log->new_value = $this->description;
             $log->std_value = $std_rec->description;
             $log->row_id = $this->id;
-            $log->set_field(sql_db::FLD_DESCRIPTION);
+            $log->set_field(sandbox_named::FLD_DESCRIPTION);
             $result .= $this->save_field_user($db_con, $log);
         }
         return $result;

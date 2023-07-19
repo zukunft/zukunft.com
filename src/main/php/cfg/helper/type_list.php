@@ -149,7 +149,7 @@ class type_list
         $qp->name = $db_type . '_' . $query_name;
         $db_con->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id()); is needed
-        $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
+        $db_con->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
         if ($order_field == '') {
             $order_field = $db_con->get_id_field_name($db_type);
         }
@@ -212,7 +212,7 @@ class type_list
                 } else {
                     $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
                 }
-                $type_comment = strval($db_row[sql_db::FLD_DESCRIPTION]);
+                $type_comment = strval($db_row[sandbox_named::FLD_DESCRIPTION]);
                 $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);
                 $this->add($type_obj);
             }

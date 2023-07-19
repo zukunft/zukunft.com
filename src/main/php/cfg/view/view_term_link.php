@@ -56,7 +56,7 @@ class view_term_link extends sandbox_link_typed
     );
     //
     const FLD_NAMES_USR = array(
-        sql_db::FLD_DESCRIPTION
+        sandbox_named::FLD_DESCRIPTION
     );
 
 

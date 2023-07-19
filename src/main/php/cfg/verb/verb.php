@@ -95,7 +95,7 @@ class verb extends db_object
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
         sql_db::FLD_CODE_ID,
-        sql_db::FLD_DESCRIPTION,
+        sandbox_named::FLD_DESCRIPTION,
         self::FLD_PLURAL,
         self::FLD_REVERSE,
         self::FLD_PLURAL_REVERSE,
@@ -191,7 +191,7 @@ class verb extends db_object
             if (array_key_exists(self::FLD_FORMULA, $db_row)) {
                 $this->frm_name = $db_row[self::FLD_FORMULA];
             }
-            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
             if (array_key_exists(self::FLD_WORDS, $db_row)) {
                 if ($db_row[self::FLD_WORDS] == null) {
                     $this->usage = 0;
@@ -973,7 +973,7 @@ class verb extends db_object
             $log->new_value = $this->description;
             $log->std_value = $db_rec->description;
             $log->row_id = $this->id;
-            $log->set_field(sql_db::FLD_DESCRIPTION);
+            $log->set_field(sandbox_named::FLD_DESCRIPTION);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;

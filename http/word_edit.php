@@ -77,8 +77,8 @@ if ($usr->id() > 0) {
         if (isset($_GET['plural'])) {
             $wrd->plural = $_GET['plural'];
         } //
-        if (isset($_GET['description'])) {
-            $wrd->description = $_GET['description'];
+        if (isset($_GET[controller::URL_VAR_DESCRIPTION])) {
+            $wrd->description = $_GET[controller::URL_VAR_DESCRIPTION];
         } //
         if (isset($_GET['type'])) {
             $wrd->type_id = $_GET['type'];

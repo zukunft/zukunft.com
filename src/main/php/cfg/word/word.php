@@ -75,8 +75,7 @@ class word extends sandbox_typed
     // means: database fields only used for words
     const FLD_ID = 'word_id';
     const FLD_NAME = 'word_name';
-    const FLD_PLURAL = 'plural';
-    const FLD_TYPE = 'phrase_type_id';
+    const FLD_PLURAL = 'plural'; // TODO move to language types
     const FLD_VIEW = 'view_id';
     const FLD_VALUES = 'values';
     // the field names used for the im- and export in the json or yaml format
@@ -89,11 +88,11 @@ class word extends sandbox_typed
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
         self::FLD_PLURAL,
-        self::FLD_DESCRIPTION
+        sandbox_named::FLD_DESCRIPTION
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
-        self::FLD_TYPE,
+        phrase::FLD_TYPE,
         self::FLD_VIEW,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
@@ -104,8 +103,8 @@ class word extends sandbox_typed
         self::FLD_NAME,
         self::FLD_VALUES,
         self::FLD_PLURAL,
-        self::FLD_DESCRIPTION,
-        self::FLD_TYPE,
+        sandbox_named::FLD_DESCRIPTION,
+        phrase::FLD_TYPE,
         self::FLD_VIEW,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
@@ -185,6 +184,8 @@ class word extends sandbox_typed
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @param string $name_fld the name of the name field as defined in this child class
+     * @param string $type_fld the name of the type field as defined in this child class
      * @return bool true if the word is loaded and valid
      */
     function row_mapper_sandbox(
@@ -193,15 +194,13 @@ class word extends sandbox_typed
         bool   $allow_usr_protect = true,
         string $id_fld = self::FLD_ID,
         string $name_fld = self::FLD_NAME,
-        string $type_fld = self::FLD_TYPE): bool
+        string $type_fld = phrase::FLD_TYPE): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
-            $this->name = $db_row[$name_fld];
             if (array_key_exists(self::FLD_PLURAL, $db_row)) {
                 $this->plural = $db_row[self::FLD_PLURAL];
             }
-            $this->description = $db_row[self::FLD_DESCRIPTION];
             $this->type_id = $db_row[$type_fld];
             if (array_key_exists(self::FLD_PLURAL, $db_row)) {
                 if ($db_row[self::FLD_VIEW] != null) {

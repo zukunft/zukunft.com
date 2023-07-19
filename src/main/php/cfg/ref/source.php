@@ -136,14 +136,13 @@ class source extends sandbox_typed
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = false,
-        string $id_fld = ''
+        string $id_fld = self::FLD_ID,
+        string $name_fld = self::FLD_NAME
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
-            $this->set_name($db_row[self::FLD_NAME]);
             $this->url = $db_row[self::FLD_URL];
-            $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_TYPE];
             $this->code_id = $db_row[sql_db::FLD_CODE_ID];
         }

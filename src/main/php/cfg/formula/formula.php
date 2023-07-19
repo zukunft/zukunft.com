@@ -100,7 +100,7 @@ class formula extends sandbox_typed
     const FLD_NAMES_USR = array(
         self::FLD_FORMULA_TEXT,
         self::FLD_FORMULA_USER_TEXT,
-        self::FLD_DESCRIPTION
+        sandbox_named::FLD_DESCRIPTION
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
@@ -116,7 +116,7 @@ class formula extends sandbox_typed
         self::FLD_NAME,
         self::FLD_FORMULA_TEXT,
         self::FLD_FORMULA_USER_TEXT,
-        self::FLD_DESCRIPTION,
+        sandbox_named::FLD_DESCRIPTION,
         self::FLD_FORMULA_TYPE,
         self::FLD_ALL_NEEDED,
         self::FLD_LAST_UPDATE,
@@ -196,6 +196,8 @@ class formula extends sandbox_typed
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @param string $name_fld the name of the name field as defined in this child class
+     * @param string $type_fld the name of the type field as defined in this child class
      * @return bool true if the formula is loaded and valid
      */
     function row_mapper_sandbox(
@@ -208,16 +210,14 @@ class formula extends sandbox_typed
     {
         global $formula_types;
         $lib = new library();
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
-            $this->set_name($db_row[$name_fld]);
             if (array_key_exists(self::FLD_FORMULA_TEXT, $db_row)) {
                 $this->ref_text = $db_row[self::FLD_FORMULA_TEXT];
             }
             if (array_key_exists(self::FLD_FORMULA_USER_TEXT, $db_row)) {
                 $this->usr_text = $db_row[self::FLD_FORMULA_USER_TEXT];
             }
-            $this->description = $db_row[self::FLD_DESCRIPTION];
             $this->type_id = $db_row[$type_fld];
             if (array_key_exists(self::FLD_LAST_UPDATE, $db_row)) {
                 $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
