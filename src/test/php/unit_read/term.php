@@ -57,7 +57,7 @@ class term_unit_db_tests
 
         // test load by term by a word db row
         $wrd = new word($t->usr1);
-        $qp = $wrd->load_sql_by_id($db_con,1, word::class);
+        $qp = $wrd->load_sql_by_id($db_con->sql_creator(),1, word::class);
         $db_row = $db_con->get1($qp);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(word::class);
@@ -69,7 +69,7 @@ class term_unit_db_tests
 
         // test load by term by a triple db row
         $trp = new triple($t->usr1);
-        $qp = $trp->load_sql_by_id($db_con,1, triple::class);
+        $qp = $trp->load_sql_by_id($db_con->sql_creator(),1, triple::class);
         $db_row = $db_con->get1($qp);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(triple::class);
@@ -81,7 +81,7 @@ class term_unit_db_tests
 
         // test load by term by a formula db row
         $frm = new formula($t->usr1);
-        $qp = $frm->load_sql_by_id($db_con,1, formula::class);
+        $qp = $frm->load_sql_by_id($db_con->sql_creator(),1, formula::class);
         $db_row = $db_con->get1($qp);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(formula::class);
@@ -93,7 +93,7 @@ class term_unit_db_tests
 
         // test load by term by a verb db row
         $vrb = new verb();
-        $qp = $vrb->load_sql_by_id($db_con,1);
+        $qp = $vrb->load_sql_by_id($db_con->sql_creator(),1);
         $db_row = $db_con->get1($qp);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(verb::class);

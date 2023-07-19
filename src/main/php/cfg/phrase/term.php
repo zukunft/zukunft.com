@@ -61,6 +61,7 @@ include_once WEB_PHRASE_PATH . 'term.php';
 
 use api\term_api;
 use api\word_api;
+use cfg\db\sql_creator;
 use html\html_base;
 use html\phrase\term as term_dsp;
 use html\word\word as word_dsp;
@@ -476,21 +477,20 @@ class term extends combine_named
      * create the common part of an SQL statement to retrieve a term from the database
      * uses the term view which includes only the most relevant fields of words, triples, formulas and verbs
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private
-    function load_sql(sql_db $db_con, string $query_name): sql_par
+    private function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $db_con->set_type(sql_db::VT_TERM);
-        $db_con->set_name($qp->name);
+        $sc->set_type(sql_db::VT_TERM);
+        $sc->set_name($qp->name);
 
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $sc->set_usr_fields(self::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
     }
@@ -498,16 +498,16 @@ class term extends combine_named
     /**
      * create an SQL statement to retrieve a term by term id (not the object id) from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the term as defined in the database term view
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
-        $qp = $this->load_sql($db_con, sql_db::FLD_ID);
-        $db_con->add_par_int($id);
-        $qp->sql = $db_con->select_by_field(term::FLD_ID);
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, sql_db::FLD_ID);
+        $sc->add_where(term::FLD_ID, $id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -515,16 +515,16 @@ class term extends combine_named
     /**
      * create an SQL statement to retrieve a term by name from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the term and the related word, triple, formula or verb
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_db $db_con, string $name): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
-        $qp = $this->load_sql($db_con, sql_db::FLD_NAME);
-        $db_con->add_par_txt($name);
-        $qp->sql = $db_con->select_by_field(term::FLD_NAME);
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME);
+        $sc->add_where(term::FLD_NAME, $name);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -554,7 +554,7 @@ class term extends combine_named
         global $db_con;
 
         log_debug($id);
-        $qp = $this->load_sql_by_id($db_con, $id);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
         return $this->load($qp);
     }
 
@@ -569,7 +569,7 @@ class term extends combine_named
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name($db_con, $name);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
         return $this->load($qp);
     }
 

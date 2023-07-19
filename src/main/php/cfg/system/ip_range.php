@@ -34,6 +34,7 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
 
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 
 class ip_range extends db_object
@@ -149,18 +150,18 @@ class ip_range extends db_object
     /**
      * create the common part of an SQL statement to retrieve an ip range from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($db_con, $query_name, $class);
-        $db_con->set_type(sql_db::TBL_IP);
+        $qp = parent::load_sql($sc, $query_name, $class);
+        $sc->set_type(sql_db::TBL_IP);
 
-        $db_con->set_name($qp->name);
-        $db_con->set_fields(self::FLD_NAMES);
+        $sc->set_name($qp->name);
+        $sc->set_fields(self::FLD_NAMES);
 
         return $qp;
     }

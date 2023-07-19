@@ -116,13 +116,13 @@ class result_unit_tests
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $res->load_sql_by_grp($db_con, $grp);
+        $qp = $res->load_sql_by_grp($db_con->sql_creator(), $grp);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $res->load_sql_by_grp($db_con, $grp);
+            $qp = $res->load_sql_by_grp($db_con->sql_creator(), $grp);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }
@@ -144,13 +144,13 @@ class result_unit_tests
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $res->load_sql_by_grp_time($db_con, $grp);
+        $qp = $res->load_sql_by_grp_time($db_con->sql_creator(), $grp);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $res->load_sql_by_grp_time($db_con, $grp);
+            $qp = $res->load_sql_by_grp_time($db_con->sql_creator(), $grp);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

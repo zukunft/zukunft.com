@@ -81,7 +81,7 @@ class triple_test
 
         // ... now test the Canton Zurich
         $lnk_canton = new triple($t->usr1);
-        $lnk_canton->load_by_link($wrd_zh->id(), $is_id, $wrd_canton->id());
+        $lnk_canton->load_by_link_id($wrd_zh->id(), $is_id, $wrd_canton->id());
         $target = word_api::TN_ZH . ' (' . word_api::TN_CANTON . ')';
         $result = $lnk_canton->name();
         $t->display('triple->load for Canton Zurich', $target, $result, TIMEOUT_LIMIT_DB);
@@ -93,7 +93,7 @@ class triple_test
 
         // ... now test the Insurance Zurich
         $lnk_company = new triple($t->usr1);
-        $lnk_company->load_by_link($wrd_zh->id(), $is_id, $wrd_company->id());
+        $lnk_company->load_by_link_id($wrd_zh->id(), $is_id, $wrd_company->id());
         $target = triple_api::TN_ZH_COMPANY;
         $result = $lnk_company->name();
         $t->display('triple->load for ' . triple_api::TN_ZH_COMPANY, $target, $result);
@@ -133,13 +133,13 @@ class triple_test
         // ... check if the link is shown correctly
 
         $trp = new triple($t->usr1);
-        $trp->load_by_link($wrd_from->id(), $is_id, $wrd->id());
+        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
         $result = $trp->name();
         $target = word_api::TN_RENAMED . ' (' . word_api::TN_PARENT . ')';
         $t->display('triple->load', $target, $result);
         // ... check if the link is shown correctly also for the second user
         $lnk2 = new triple($t->usr2);
-        $lnk2->load_by_link($wrd_from->id(), $is_id, $wrd->id());
+        $lnk2->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
         $result = $lnk2->name();
         $target = word_api::TN_RENAMED . ' (' . word_api::TN_PARENT . ')';
         $t->display('triple->load for user "' . $t->usr2->name . '"', $target, $result);
@@ -148,7 +148,7 @@ class triple_test
 
         // if second user removes the new link
         $trp = new triple($t->usr2);
-        $trp->load_by_link($wrd_from->id(), $is_id, $wrd->id());
+        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
         $msg = $trp->del();
         $result = $msg->get_last_message();
         $target = '';
@@ -167,7 +167,7 @@ class triple_test
 
         // ... check if the link is really not used any more for the second user
         $lnk2 = new triple($t->usr2);
-        $lnk2->load_by_link($wrd_from->id(), $is_id, $wrd->id());
+        $lnk2->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
         $result = $lnk2->name();
         $target = '';
         $t->display('triple->load "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" for user "' . $t->usr2->name . '" not any more', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
@@ -178,7 +178,7 @@ class triple_test
 
         // ... check if the link is still used for the first user
         $trp = new triple($t->usr1);
-        $trp->load_by_link($wrd_from->id(), $is_id, $wrd->id());
+        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
         $result = $trp->name();
         $target = '' . word_api::TN_RENAMED . ' (' . word_api::TN_PARENT . ')';
         $t->display('triple->load of "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" is still used for user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
@@ -187,7 +187,7 @@ class triple_test
 
         // if the first user also removes the link, both records should be deleted
         $trp = new triple($t->usr1);
-        $trp->load_by_link($wrd_from->id(), $is_id, $wrd->id());
+        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
         $msg = $trp->del();
         $result = $msg->get_last_message();
         $target = '';
@@ -205,7 +205,7 @@ class triple_test
 
         // check if the formula is not used any more for both users
         $trp = new triple($t->usr1);
-        $trp->load_by_link($wrd_from->id(), $is_id, $wrd->id());
+        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
         $result = $trp->name();
         $target = '';
         $t->display('triple->load of "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" for user "' . $t->usr1->name . '" not used any more', $target, $result);

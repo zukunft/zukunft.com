@@ -1,4 +1,4 @@
-PREPARE formula_link_by_link_obj_ids FROM
+PREPARE formula_link_by_link_ids FROM
     'SELECT
                s.formula_link_id,
                u.formula_link_id AS user_formula_link_id,

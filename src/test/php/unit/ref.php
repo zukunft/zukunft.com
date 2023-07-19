@@ -60,6 +60,7 @@ class ref_unit_tests
         $t->subheader('SQL statement tests');
         $ref = new ref($usr);
         $t->assert_sql_by_id($db_con, $ref);
+        $this->assert_sql_link_ids($t, $db_con, $ref);
 
         // sql to load the ref types
         $ref_type_list = new ref_type_list();
@@ -112,6 +113,31 @@ class ref_unit_tests
         $t->assert_api_msg($db_con, $src);
         $t->assert_api_to_dsp($src, new source_dsp());
 
+    }
+
+    /**
+     * test the SQL statement creation for a value phrase link list in all SQL dialect
+     * and check if the statement name is unique
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param ref $ref the reference object for which the load by link ids sql statement creation should be tested
+     * @return void
+     */
+    private function assert_sql_link_ids(
+        test_cleanup $t,
+        sql_db $db_con,
+        ref $ref): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $ref->load_sql_by_link_ids($db_con->sql_creator(), 1, 2);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $ref->load_sql_by_link_ids($db_con->sql_creator(), 1, 2);
+        $t->assert_qp($qp, $db_con->db_type);
     }
 
 }

@@ -74,6 +74,7 @@ namespace cfg;
 include_once API_SYSTEM_PATH . 'batch_job.php';
 
 use api\batch_job_api;
+use cfg\db\sql_creator;
 use DateTime;
 use DateTimeInterface;
 
@@ -255,19 +256,19 @@ class batch_job extends db_object
     /**
      * create the common part of an SQL statement to retrieve the parameters of a batch job from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($db_con, $query_name, $class);
-        $db_con->set_type(sql_db::TBL_TASK);
+        $qp = parent::load_sql($sc, $query_name, $class);
+        $sc->set_type(sql_db::TBL_TASK);
 
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(self::FLD_NAMES);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->usr->id);
+        $sc->set_fields(self::FLD_NAMES);
 
         return $qp;
     }
@@ -275,19 +276,14 @@ class batch_job extends db_object
     /**
      * create an SQL statement to retrieve a batch job by id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, sql_db::FLD_ID, $class);
-        $db_con->add_par_int($id);
-        $qp->sql = $db_con->select_by_field($this->id_field());
-        $qp->par = $db_con->get_par();
-
-        return $qp;
+        return parent::load_sql_by_id($sc, $id, $class);
     }
 
     /**

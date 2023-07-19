@@ -460,21 +460,21 @@ class word extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a word from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
-        $db_con->set_type(sql_db::TBL_WORD);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $sc->set_type(sql_db::TBL_WORD);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_usr_fields(self::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
     }
@@ -483,14 +483,14 @@ class word extends sandbox_typed
      * create an SQL statement to retrieve a word by id from the database
      * added to word just to assign the class for the user sandbox object
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
-        return parent::load_sql_by_id($db_con, $id, $class);
+        return parent::load_sql_by_id($sc, $id, $class);
     }
 
     /**

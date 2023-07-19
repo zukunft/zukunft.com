@@ -340,91 +340,23 @@ class component extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view component from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
-        $db_con->set_type(sql_db::TBL_COMPONENT);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $sc->set_type(sql_db::TBL_COMPONENT);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_usr_fields(self::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve the parameters of a view component from the database
-     * TODO deprecate
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
-    {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
-        if ($this->id != 0) {
-            $qp->name .= sql_db::FLD_ID;
-        } elseif ($this->name != '') {
-            $qp->name .= sql_db::FLD_NAME;
-        } else {
-            log_err('Either the id, code_id or name must be set to get a view');
-        }
-
-        $db_con->set_type(sql_db::TBL_COMPONENT);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        if ($this->id != 0) {
-            $db_con->add_par(sql_par_type::INT, $this->id);
-            $qp->sql = $db_con->select_by_set_id();
-        } elseif ($this->name != '') {
-            $db_con->add_par(sql_par_type::TEXT, $this->name);
-            $qp->sql = $db_con->select_by_set_name();
-        } else {
-            log_err('Either the id or name must be set to get a named user sandbox object');
-        }
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
-    // load the missing view component parameters from the database
-    function load_obj_vars(): bool
-    {
-        log_debug('component->load');
-
-        global $db_con;
-        $result = false;
-
-        // check the minimal input parameters
-        if ($this->user() == null) {
-            log_err("The user id must be set to load a view component.", "component->load");
-        } elseif ($this->id <= 0 and $this->name == '') {
-            log_err("Either the database ID (" . $this->id . ") or the display item name (" . $this->name . ") and the user (" . $this->user()->id() . ") must be set to find a display item.", "component->load");
-        } else {
-
-            $qp = $this->load_sql_obj_vars($db_con);
-            $db_cmp = $db_con->get1($qp);
-
-            $this->row_mapper_sandbox($db_cmp);
-            if ($this->id > 0) {
-                $this->load_phrases();
-                log_debug('component->load of ' . $this->dsp_id() . ' done');
-                $result = true;
-            }
-        }
-        log_debug('component->load of ' . $this->dsp_id() . ' quit');
-        return $result;
     }
 
     /**
@@ -508,7 +440,11 @@ class component extends sandbox_typed
      */
     function load_by_id(int $id, string $class = self::class): int
     {
-        return parent::load_by_id($id, $class);
+        $id = parent::load_by_id($id, $class);
+        if ($this->id > 0) {
+            $this->load_phrases();
+        }
+        return $id;
     }
 
     /**
@@ -520,7 +456,11 @@ class component extends sandbox_typed
      */
     function load_by_name(string $name, string $class = self::class): int
     {
-        return parent::load_by_name($name, $class);
+        $id = parent::load_by_name($name, $class);
+        if ($this->id > 0) {
+            $this->load_phrases();
+        }
+        return $id;
     }
 
     function name_field(): string
@@ -784,9 +724,7 @@ class component extends sandbox_typed
         if (isset($dsp) and $this->user() != null) {
             log_debug($this->dsp_id() . ' from "' . $dsp->name . '" (' . $dsp->id . ')');
             $dsp_lnk = new component_link($this->user());
-            $dsp_lnk->fob = $dsp;
-            $dsp_lnk->tob = $this;
-            $dsp_lnk->load_obj_vars();
+            $dsp_lnk->load_by_link($dsp, $this);
             $msg = $dsp_lnk->del();
             $result .= $msg->get_last_message();
         } else {

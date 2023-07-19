@@ -40,6 +40,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 include_once API_LOG_PATH . 'system_log.php';
 
+use cfg\db\sql_creator;
 use controller\log\system_log_api;
 use DateTime;
 
@@ -185,22 +186,23 @@ class system_log extends db_object
 
     /**
      * create the SQL statement to load one system log entry
-     * @param sql_db $db_con the database link as parameter to be able to simulate the different SQL database in the unit tests
+     *
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the database depending on sql statement to load a system error from the log table
      *                 and the unique name for the query
      */
-    function load_sql(sql_db $db_con, string $query_name = sql_db::FLD_ID, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name = sql_db::FLD_ID, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($db_con, $query_name, $class);
-        $db_con->set_type(sql_db::TBL_SYS_LOG);
+        $qp = parent::load_sql($sc, $query_name, $class);
+        $sc->set_type(sql_db::TBL_SYS_LOG);
 
-        $db_con->set_name($qp->name);
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_join_fields(array(self::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
-        $db_con->set_join_fields(array(type_object::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
-        $db_con->set_join_fields(array(sandbox::FLD_USER_NAME), sql_db::TBL_USER);
-        $db_con->set_join_fields(array(sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), sql_db::TBL_USER, self::FLD_SOLVER);
+        $sc->set_name($qp->name);
+        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_join_fields(array(self::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
+        $sc->set_join_fields(array(type_object::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
+        $sc->set_join_fields(array(sandbox::FLD_USER_NAME), sql_db::TBL_USER);
+        $sc->set_join_fields(array(sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), sql_db::TBL_USER, self::FLD_SOLVER);
 
         return $qp;
     }
@@ -208,18 +210,18 @@ class system_log extends db_object
     /**
      * create an SQL statement to retrieve a system log entry by id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
 
-        $qp = $this->load_sql($db_con, sql_db::FLD_ID, $class);
-        $db_con->add_par_int($id);
-        $qp->sql = $db_con->select_by_field($this->id_field());
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, sql_db::FLD_ID, $class);
+        $sc->add_where($this->id_field(), $id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -236,7 +238,7 @@ class system_log extends db_object
         global $db_con;
 
         // at the moment it is only possible to select the error by the id
-        $qp = $this->load_sql_by_id($db_con, $id, $class);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
         return $this->row_mapper($db_con->get1($qp));
     }
 

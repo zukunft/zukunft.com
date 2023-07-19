@@ -342,21 +342,21 @@ class ref extends sandbox_link_with_type
     /**
      * create the common part of an SQL statement to retrieve the parameters of a ref from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($db_con, $query_name, $class);
+        $qp = parent::load_sql($sc, $query_name, $class);
 
-        $db_con->set_type(sql_db::TBL_REF);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_link_fields(phrase::FLD_ID, self::FLD_TYPE);
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $sc->set_type(sql_db::TBL_REF);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        //$sc->set_link_fields(phrase::FLD_ID, self::FLD_TYPE);
+        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_usr_fields(self::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
     }
@@ -364,56 +364,20 @@ class ref extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve a ref by id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param int $id the id of the user sandbox object
+     * @param sql_creator $sc with the target db_type set
+     * @param int $phr_id the id of the phrase that is referenced
+     * @param int $type_id the id of the reference type
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link_ids(sql_db $db_con, int $id): sql_par
+    function load_sql_by_link_ids(sql_creator $sc, int $phr_id, int $type_id): sql_par
     {
-        $qp = $this->load_sql($db_con, 'link_ids');
-        $db_con->set_where_link_no_fld($this->id, $this->phr->id(), $this->ref_type->id);
-        $qp->sql = $db_con->select_by_id($id);
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'link_ids');
+        $sc->add_where(phrase::FLD_ID, $phr_id);
+        $sc->add_where(self::FLD_TYPE, $type_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
-    }
-
-    /**
-     * test if the name is used already
-     */
-    function load_obj_vars(): bool
-    {
-        global $db_con;
-        $result = false;
-
-        // check if the minimal input parameters are set
-        if ($this->id <= 0 and ($this->phr->id() == 0 or $this->ref_type->id <= 0)) {
-            log_err('Either the database ID (' . $this->id . ') or the phrase id (' . $this->phr->id() . ') AND the reference type id (' . $this->ref_type->id . ') must be set to load a reference.', 'ref->load');
-        } else {
-
-            $db_con->set_type(sql_db::TBL_REF);
-            $qp = new sql_par(self::class);
-            if ($this->id != 0) {
-                $qp->name = 'ref_by_id';
-            } else {
-                $qp->name = 'ref_by_link_ids';
-            }
-            $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id());
-            $db_con->set_link_fields(phrase::FLD_ID, self::FLD_TYPE);
-            $db_con->set_fields(self::FLD_NAMES);
-            $db_con->set_usr_fields(self::FLD_NAMES_USR);
-            $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-            $db_con->set_where_link_no_fld($this->id, $this->phr->id(), $this->ref_type->id);
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
-
-            if ($db_con->get_where() <> '') {
-                $db_ref = $db_con->get1($qp);
-                $result = $this->row_mapper_sandbox($db_ref);
-            }
-        }
-        return $result;
     }
 
     /**
@@ -440,6 +404,23 @@ class ref extends sandbox_link_with_type
     function load_by_id(int $id, string $class = self::class): int
     {
         return parent::load_by_id($id, $class);
+    }
+
+    /**
+     * just set the class name for the user sandbox function
+     * load a reference object by database id
+     * @param int $phr_id the id of the phrase that is referenced
+     * @param int $type_id the id of the reference type
+     * @param string $class the reference class name
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_link_ids(int $phr_id, int $type_id, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug();
+        $qp = $this->load_sql_by_link_ids($db_con->sql_creator(), $phr_id, $type_id);
+        return $this->load($qp);
     }
 
     /**
@@ -889,9 +870,7 @@ class ref extends sandbox_link_with_type
 
         $db_chk = clone $this;
         $db_chk->reset();
-        $db_chk->phr = $this->phr;
-        $db_chk->ref_type = $this->ref_type;
-        $db_chk->load_obj_vars();
+        $db_chk->load_by_link_ids($this->phr->id(), $this->ref_type->id());
         if ($db_chk->id > 0) {
             log_debug('ref->get_similar an external reference for ' . $this->dsp_id() . ' already exists');
             $result = $db_chk;

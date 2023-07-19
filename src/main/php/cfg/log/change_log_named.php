@@ -38,6 +38,7 @@ include_once WEB_LOG_PATH . 'change_log_named.php';
 
 use api\change_log_named_api;
 use api\user_config;
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use html\log\change_log_named as change_log_named_dsp;
 use Exception;
@@ -168,20 +169,20 @@ class change_log_named extends change_log
     /**
      * create the common part of an SQL statement to retrieve the parameters of the change log
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $query_name, string $class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class): sql_par
     {
         $qp = new sql_par(self::class);
-        $db_con->set_type(sql_db::TBL_CHANGE);
+        $sc->set_type(sql_db::TBL_CHANGE);
         $qp->name .= $query_name;
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
-        $db_con->set_join_fields(array(change_log_field::FLD_TABLE), sql_db::TBL_CHANGE_FIELD);
-        $db_con->set_order(self::FLD_CHANGE_TIME, sql_db::ORDER_DESC);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->usr->id);
+        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
+        $sc->set_join_fields(array(change_log_field::FLD_TABLE), sql_db::TBL_CHANGE_FIELD);
+        $sc->set_order(self::FLD_CHANGE_TIME, sql_db::ORDER_DESC);
 
         return $qp;
     }
@@ -189,48 +190,45 @@ class change_log_named extends change_log
     /**
      * create an SQL statement to retrieve a change long entry by the changing user
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param user|null $usr the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_user(sql_db $db_con, ?user $usr = null): sql_par
+    function load_sql_by_user(sql_creator $sc, ?user $usr = null): sql_par
     {
-        $qp = $this->load_sql($db_con, 'user_last', self::class);
+        $qp = $this->load_sql($sc, 'user_last', self::class);
 
         if ($usr == null) {
             $usr = $this->user();
         }
 
-        $db_con->add_par_int($usr->id);
-        $qp->sql = $db_con->select_by_field(user::FLD_ID);
-        $qp->par = $db_con->get_par();
+        $sc->add_where(user::FLD_ID, $usr->id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 
     /**
      * create the SQL statement to retrieve the parameters of the change log by field and row id
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int|null $field_id the database id of the database field (and table) of the changes that the user wants to see
      * @param int|null $row_id the database id of the database row of the changes that the user wants to see
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_field_row(sql_db $db_con, ?int $field_id = null, ?int $row_id = null): sql_par
+    function load_sql_by_field_row(sql_creator $sc, ?int $field_id = null, ?int $row_id = null): sql_par
     {
-        $qp = $this->load_sql($db_con, 'field_row', self::class);
-        $db_con->set_page();
-        $fields = [];
+        $qp = $this->load_sql($sc, 'field_row', self::class);
+        $sc->set_page();
         if ($field_id != null) {
-            $db_con->add_par(sql_par_type::INT, $field_id);
-            $fields[] = change_log_named::FLD_FIELD_ID;
+            $sc->add_where(change_log_named::FLD_FIELD_ID, $field_id);
         }
         if ($field_id != null) {
-        $db_con->add_par(sql_par_type::INT, $row_id);
-            $fields[] = change_log_named::FLD_ROW_ID;
+            $sc->add_where(change_log_named::FLD_ROW_ID, $row_id);
         }
-        $fields[] = user::FLD_ID;
-        $qp->sql = $db_con->select_by_field_list($fields);
-        $qp->par = $db_con->get_par();
+        //$fields[] = user::FLD_ID;
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -342,7 +340,7 @@ class change_log_named extends change_log
         global $db_con;
 
         $db_type = $db_con->get_type();
-        $qp = $this->load_sql_by_user($db_con, $usr);
+        $qp = $this->load_sql_by_user($db_con->sql_creator(), $usr);
         $db_row = $db_con->get1($qp);
 
         $this->row_mapper($db_row);
@@ -364,7 +362,7 @@ class change_log_named extends change_log
         global $db_con;
 
         $db_type = $db_con->get_type();
-        $qp = $this->load_sql_by_field_row($db_con, $this->field_id, $this->row_id);
+        $qp = $this->load_sql_by_field_row($db_con->sql_creator(), $this->field_id, $this->row_id);
         $db_row = $db_con->get1($qp);
 
         $this->row_mapper($db_row);

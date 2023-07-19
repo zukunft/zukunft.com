@@ -208,10 +208,8 @@ class component_link_test
 
         // ... if the second user changes the link e.g. the order
         $cmp_lnk = new component_link($t->usr2);
-        $cmp_lnk->fob = $dsp2;
-        $cmp_lnk->tob = $cmp2;
-        $cmp_lnk->load_obj_vars();
-        if (isset($cmp_lnk)) {
+        $cmp_lnk->load_by_link($dsp2, $cmp2);
+        if ($cmp_lnk->id() > 0) {
             $result = $cmp_lnk->move_up(); // TODO force to reload the entry list
             //$result = $cmp_lnk->move_up(); // TODO force to reload the entry list
             $target = true;

@@ -38,6 +38,7 @@
 
 namespace cfg;
 
+use cfg\db\sql_creator;
 use Exception;
 
 include_once MODEL_LOG_PATH . 'change_log_link.php';
@@ -68,24 +69,26 @@ class sandbox_link extends sandbox
     /**
      * create an SQL statement to retrieve a user sandbox link by the ids of the linked objects from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $from the subject object id
      * @param int $type the predicate object id
      * @param int $to the object (grammar) object id
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link(sql_db $db_con, int $from, int $type, int $to, string $class): sql_par
+    function load_sql_by_link(sql_creator $sc, int $from, int $type, int $to, string $class): sql_par
     {
         if ($type > 0) {
-            $qp = $this->load_sql($db_con, 'link_type_obj_ids', $class);
-            $db_con->set_where_link($from, $type, $to, $this->from_field(), $this->type_field(), $this->to_field());
+            $qp = $this->load_sql($sc, 'link_type_ids', $class);
+            $sc->add_where($this->from_field(), $from);
+            $sc->add_where($this->type_field(), $type);
         } else {
-            $qp = $this->load_sql($db_con, 'link_obj_ids', $class);
-            $db_con->set_where_link($from, 0, $to, $this->from_field(), '', $this->to_field());
+            $qp = $this->load_sql($sc, 'link_ids', $class);
+            $sc->add_where($this->from_field(), $from);
         }
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
+        $sc->add_where($this->to_field(), $to);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -98,13 +101,13 @@ class sandbox_link extends sandbox
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link(int $from, int $type, int $to, string $class): int
+    function load_by_link_id(int $from, int $type, int $to, string $class): int
     {
         global $db_con;
 
         $lib = new library();
         log_debug($lib->dsp_array(array($from, $type, $to)));
-        $qp = $this->load_sql_by_link($db_con, $from, $type, $to, $class);
+        $qp = $this->load_sql_by_link($db_con->sql_creator(), $from, $type, $to, $class);
         return parent::load($qp);
     }
 

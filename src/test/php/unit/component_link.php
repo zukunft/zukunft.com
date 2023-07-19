@@ -72,12 +72,6 @@ class component_link_unit_tests
         //$t->assert_sql_all($db_con, $lnk);
         $t->assert_sql_user_changes($db_con, $lnk);
 
-        // sql to load a list of value by the phrase ids
-        $lnk = new component_link($usr);
-        $lnk->fob->set_id(1);
-        $lnk->tob->set_id(2);
-        $t->assert_load_sql_obj_vars($db_con, $lnk);
-
 
         $t->subheader('Database list query creation tests');
 

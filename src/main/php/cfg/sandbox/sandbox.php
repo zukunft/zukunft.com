@@ -430,12 +430,12 @@ class sandbox extends db_object
     /**
      * prepare the SQL parameter to load a single user specific value
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_fields(
-        sql_db $db_con,
+        sql_creator $sc,
         string $query_name,
         string $class,
         array  $fields,
@@ -446,11 +446,11 @@ class sandbox extends db_object
         $qp = new sql_par($class);
         $qp->name .= $query_name;
 
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
-        $db_con->set_fields($fields);
-        $db_con->set_usr_fields($usr_fields);
-        $db_con->set_usr_num_fields($usr_num_fields);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id);
+        $sc->set_fields($fields);
+        $sc->set_usr_fields($usr_fields);
+        $sc->set_usr_num_fields($usr_num_fields);
 
         return $qp;
     }
@@ -459,11 +459,11 @@ class sandbox extends db_object
      * create the SQL to load a single user specific value
      * TODO replace by load_sql or do it in the child objects
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_obj_vars(sql_db $db_con, string $class): sql_par
+    function load_sql_obj_vars(sql_creator $sc, string $class): sql_par
     {
         return new sql_par($class);
     }
@@ -2146,6 +2146,7 @@ class sandbox extends db_object
         if ($this->obj_name == sql_db::TBL_WORD
             or $this->obj_name == sql_db::TBL_TRIPLE
             or $this->obj_name == sql_db::TBL_SOURCE
+            or $this->obj_name == sql_db::TBL_VALUE
             or $this->obj_name == sql_db::TBL_VIEW) {
             $reloaded_id = $this->load_by_id($this->id());
             if ($reloaded_id != 0) {

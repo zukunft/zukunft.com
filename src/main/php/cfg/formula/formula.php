@@ -229,6 +229,22 @@ class formula extends sandbox_typed
             if ($this->type_id > 0) {
                 $this->type_cl = $formula_types->code_id($this->type_id);
             }
+            /*
+            if ($this->id() > 0) {
+                // TODO check the exclusion handling
+                log_debug('->load ' . $this->dsp_id() . ' not excluded');
+
+                // load the formula name word object
+                // a word (TODO triple)
+                // with the same name as the formula is needed,
+                // because values can only be assigned to a word
+                if (is_null($this->name_wrd)) {
+                    $result = $this->load_wrd();
+                } else {
+                    $result = true;
+                }
+            }
+            */
         }
         return $result;
     }
@@ -431,107 +447,24 @@ class formula extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a formula from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
         // maybe the formula name should be excluded from the user sandbox to avoid confusion
-        $db_con->set_type(sql_db::TBL_FORMULA);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $sc->set_type(sql_db::TBL_FORMULA);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id);
+        $sc->set_usr_fields(self::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
-    }
-
-    /**
-     * TODO easy deprecate
-     * create an SQL statement to retrieve the parameters of a formula from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
-    {
-
-        $qp = parent::load_sql_obj_vars($db_con, $class);
-        if ($this->id() != 0) {
-            $qp->name .= sql_db::FLD_ID;
-        } elseif ($this->name != '') {
-            $qp->name .= sql_db::FLD_NAME;
-        } else {
-            log_err('Either the database ID (' . $this->id() . ') or the ' .
-                $class . ' name (' . $this->name() . ') and the user (' . $this->user()->id() . ') must be set to load a ' .
-                $class, $class . '->load');
-        }
-        // the formula name should be excluded from the user sandbox to avoid confusion
-        $db_con->set_type(sql_db::TBL_FORMULA);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        if ($this->id() != 0) {
-            $db_con->add_par(sql_par_type::INT, $this->id);
-            $qp->sql = $db_con->select_by_set_id();
-        } elseif ($this->name() != '') {
-            $db_con->add_par(sql_par_type::TEXT, $this->name());
-            $qp->sql = $db_con->select_by_set_name();
-        } else {
-            log_err('Either the database ID (' . $this->id() . ') or the ' .
-                $class . ' name (' . $this->name() . ') and the user (' . $this->user()->id() . ') must be set to load a ' .
-                $class, $class . '->load');
-        }
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * load the missing formula parameters from the database
-     */
-    function load_obj_vars(bool $with_automatic_error_fixing = true): bool
-    {
-        global $db_con;
-        $result = false;
-
-        // check the all minimal input parameters
-        if ($this->user() == null) {
-            log_err("The user id must be set to load a formula.", "formula->load");
-        } elseif ($this->id() <= 0 and $this->name() == '') {
-            log_err("Either the database ID (" . $this->id() . ") or the formula name (" . $this->name() . ") and the user (" . $this->user()->id() . ") must be set to load a formula.", "formula->load");
-        } else {
-
-            $qp = $this->load_sql_obj_vars($db_con);
-
-            if ($db_con->get_where() <> '') {
-                $db_frm = $db_con->get1($qp);
-                $this->row_mapper_sandbox($db_frm);
-                if ($this->id() > 0) {
-                    // TODO check the exclusion handling
-                    log_debug('->load ' . $this->dsp_id() . ' not excluded');
-
-                    // load the formula name word object
-                    // a word (TODO triple)
-                    // with the same name as the formula is needed,
-                    // because values can only be assigned to a word
-                    if (is_null($this->name_wrd)) {
-                        $result = $this->load_wrd($with_automatic_error_fixing);
-                    } else {
-                        $result = true;
-                    }
-                }
-            }
-        }
-        log_debug('done ' . $this->dsp_id());
-        return $result;
     }
 
     /**
@@ -1775,9 +1708,7 @@ class formula extends sandbox_typed
         if (isset($phr) and $this->user() != null) {
             log_debug($this->dsp_id() . ' from "' . $phr->name() . '" for user "' . $this->user()->name . '"');
             $frm_lnk = new formula_link($this->user());
-            $frm_lnk->fob = $this;
-            $frm_lnk->tob = $phr;
-            $frm_lnk->load_obj_vars();
+            $frm_lnk->load_by_link($this, $phr);
             $msg = $frm_lnk->del();
             $result = $msg->get_message();
         } else {

@@ -52,6 +52,7 @@ class value_time_series extends sandbox_value
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
+        user::FLD_ID,
         phrase_group::FLD_ID
     );
 
@@ -146,9 +147,31 @@ class value_time_series extends sandbox_value
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
         $sc->set_type(sql_db::TBL_VALUE_TIME_SERIES);
-        $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(user::FLD_ID)));
+        $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR));
 
         return parent::load_standard_sql($sc, $class);
+    }
+
+    /**
+     * create the common part of an SQL statement to retrieve the parameters of a time series from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = parent::load_sql_obj_vars($sc, $class);
+        $qp->name .= $query_name;
+
+        $sc->set_type(sql_db::TBL_VALUE_TIME_SERIES);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        //$sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
+
+        return $qp;
     }
 
     /**
@@ -165,65 +188,48 @@ class value_time_series extends sandbox_value
     }
 
     /**
-     * create the SQL to load user specific time series values
+     * create an SQL statement to retrieve a time series by the phrase group from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
+     * @param phrase_group $grp the phrase group to which the time series should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_by_grp(sql_creator $sc, phrase_group $grp): sql_par
     {
-        $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
-        $qp = new sql_par(self::class);
-        $sql_where = '';
-
-
-        if ($this->id > 0) {
-            $qp->name .= sql_db::FLD_ID;
-            $sql_where = $db_con->where_id(self::FLD_ID, $this->id, true);
-        } elseif ($this->grp->id > 0) {
-            $qp->name .= 'phrase_group_id';
-            $sql_where = $db_con->where_par(array(phrase_group::FLD_ID), array($this->grp->id), true);
-        } else {
-            log_err('At least the id or phrase group must be set to load a time series values', self::class . '->load_sql');
-        }
-
-        if ($sql_where != '') {
-            $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id());
-            $db_con->set_fields(self::FLD_NAMES);
-            $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-            $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
-            $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
-        }
+        $qp = $this->load_sql($sc, phrase_group::FLD_ID);
+        $sc->add_where(phrase_group::FLD_ID, $grp->id());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
 
     /**
-     * load the record from the database
-     * in a separate function, because this can be called twice from the load function
-     *
+     * just set the class name for the user sandbox function
+     * load a reference object by database id
      * TODO load the related time series data
+     * @param int $id the id of the reference
+     * @param string $class the reference class name
+     * @return int the id of the object found and zero if nothing is found
      */
-    function load_obj_vars(): bool
+    function load_by_id(int $id, string $class = self::class): int
+    {
+        return parent::load_by_id($id, $class);
+    }
+
+    /**
+     * load a row from the database selected by id
+     * TODO load the related time series data
+     * @param phrase_group $grp the phrase group to which the time series should be loaded
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_grp(phrase_group $grp): int
     {
         global $db_con;
-        $result = true;
 
-        // check the all minimal input parameters
-        if ($this->user() == null) {
-            log_err('The user must be set to load a time series for a user', self::class . '->load');
-        } else {
-            log_debug();
-
-            $qp = $this->load_sql_obj_vars($db_con);
-            $db_val = $db_con->get1($qp);
-            $result = $this->row_mapper_sandbox($db_val);
-        }
-
-        return $result;
+        log_debug($grp->dsp_id());
+        $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp);
+        return $this->load($qp);
     }
 
     /**
@@ -290,10 +296,9 @@ class value_time_series extends sandbox_value
         if ($this->id <= 0) {
             // check if a time series for the phrase group is already in the database
             $db_chk = new value_time_series($this->user());
-            $db_chk->grp = $this->grp;
-            $db_chk->load_obj_vars();
-            if ($db_chk->id > 0) {
-                $this->id = $db_chk->id;
+            $db_chk->load_by_grp($this->grp);
+            if ($db_chk->id() > 0) {
+                $this->set_id($db_chk->id());
             }
         }
 
@@ -306,8 +311,7 @@ class value_time_series extends sandbox_value
             // read the database value to be able to check if something has been changed
             // done first, because it needs to be done for user and general values
             $db_rec = new value_time_series($this->user());
-            $db_rec->id = $this->id;
-            $db_rec->load_obj_vars();
+            $db_rec->load_by_id($this->id);
             $std_rec = new value_time_series($this->user()); // user must also be set to allow to take the ownership
             $std_rec->id = $this->id;
             $std_rec->load_standard();

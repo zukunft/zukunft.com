@@ -72,7 +72,7 @@ class phrase_list_test
         // prepare test by loading Insurance Zurich
         $wrd_zh = $t->load_word(word_api::TN_ZH);
         $lnk_company = new triple($usr);
-        $lnk_company->load_by_link($wrd_zh->id(), $is_id, $wrd_company->id());
+        $lnk_company->load_by_link_id($wrd_zh->id(), $is_id, $wrd_company->id());
         $triple_sample_id = $lnk_company->id();
 
         // test the phrase loading via id

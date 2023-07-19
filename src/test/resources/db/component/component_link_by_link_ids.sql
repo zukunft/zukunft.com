@@ -1,4 +1,4 @@
-PREPARE component_link_by_link_obj_ids (int, int, int) AS
+PREPARE component_link_by_link_ids (int, int, int) AS
     SELECT     s.component_link_id,
                u.component_link_id                                                          AS user_component_link_id,
                s.user_id,

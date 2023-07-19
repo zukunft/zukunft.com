@@ -115,8 +115,7 @@ class value_unit_tests
 
         // sql to load a user specific time series by id
         $vts = new value_time_series($usr);
-        $vts->set_id(1);
-        $t->assert_load_sql_obj_vars($db_con, $vts);
+        $t->assert_sql_by_id($db_con, $vts);
 
         // ... and the related default time series
         $t->assert_sql_standard($db_con, $vts);
@@ -124,7 +123,7 @@ class value_unit_tests
         // sql to load a user specific time series by phrase group id
         $vts->reset($usr);
         $vts->grp->set_id(2);
-        $t->assert_load_sql_obj_vars($db_con, $vts);
+        $this->assert_sql_by_grp($t, $db_con, $vts);
 
     }
 
@@ -144,13 +143,13 @@ class value_unit_tests
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_grp($db_con, $phr_grp, $usr_obj::class);
+        $qp = $usr_obj->load_sql_by_grp($db_con->sql_creator(), $phr_grp, $usr_obj::class);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_grp($db_con, $phr_grp, $usr_obj::class);
+            $qp = $usr_obj->load_sql_by_grp($db_con->sql_creator(), $phr_grp, $usr_obj::class);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

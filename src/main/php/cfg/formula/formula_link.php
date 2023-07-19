@@ -56,6 +56,11 @@ class formula_link extends sandbox_link_with_type
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
+    // list of the link database field names
+    const FLD_NAMES_LINK = array(
+        formula::FLD_ID,
+        phrase::FLD_ID
+    );
     // all database field names excluding the id
     const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
@@ -229,20 +234,20 @@ class formula_link extends sandbox_link_with_type
     /**
      * create the common part of an SQL statement to retrieve the parameters of a formula link from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
-        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $sc->set_type(sql_db::TBL_FORMULA_LINK);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(self::FLD_NAMES_LINK);
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
     }
@@ -318,60 +323,21 @@ class formula_link extends sandbox_link_with_type
     }
 
     /**
-     * create an SQL statement to retrieve the parameters of a formula link from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * load a named user sandbox object by name
+     * @param formula $frm the formula that is supposed to be linked
+     * @param phrase $phr the phrase that is linked to the formula
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return int the id of the object found and zero if nothing is found
      */
-    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
+    function load_by_link(formula $frm, phrase $phr, string $class = self::class): int
     {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
-        $qp->name .= $this->load_sql_name_extension();
-        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        $db_con->set_where_link_no_fld($this->id, $this->formula_id(), $this->phrase_id());
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * load the missing formula link parameters from the database
-     * the formula link can be either identified by the id
-     * or by the IDs of the formula and the assigned phrase
-     * @return bool true if the loading of the formula link been successful
-     */
-    function load_obj_vars(): bool
-    {
-        global $db_con;
-        $result = false;
-
-        // check the all minimal input parameters are set
-        if (!$this->is_usr_set()) {
-            log_err("The user id must be set to load a formula link.", "formula_link->load");
+        if (!$this->is_unique()) {
+            log_warning("The formula link " . $this->dsp_id()
+                . " is not unique", "formula_link->load");
+            return 0;
         } else {
-
-            if (!$this->is_unique()) {
-                log_warning("The formula link " . $this->dsp_id() . " is not unique", "formula_link->load");
-            } else {
-                $qp = $this->load_sql_obj_vars($db_con);
-
-                if ($qp->has_par()) {
-                    $db_row = $db_con->get1($qp);
-                    $this->row_mapper_sandbox($db_row);
-                    if ($this->id > 0) {
-                        log_debug('formula_link->load (' . $this->id . ')');
-                        $result = true;
-                    }
-                }
-            }
+            return parent::load_by_link_id($frm->id(), 0, $phr->id(), $class);
         }
-        return $result;
     }
 
     /**
@@ -664,8 +630,7 @@ class formula_link extends sandbox_link_with_type
             // read the database values to be able to check if something has been changed; done first,
             // because it needs to be done for user and general formulas
             $db_rec = new formula_link($this->user());
-            $db_rec->id = $this->id;
-            $db_rec->load_obj_vars();
+            $db_rec->load_by_id($this->id());
             $db_rec->load_objects();
             $db_con->set_type(sql_db::TBL_FORMULA_LINK);
             log_debug("database formula loaded (" . $db_rec->id . ")");

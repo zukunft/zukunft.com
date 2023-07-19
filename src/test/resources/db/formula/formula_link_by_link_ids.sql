@@ -1,4 +1,4 @@
-PREPARE formula_link_by_link_obj_ids (int, int, int) AS
+PREPARE formula_link_by_link_ids (int, int, int) AS
     SELECT
                s.formula_link_id,
                u.formula_link_id AS user_formula_link_id,

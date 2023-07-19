@@ -62,6 +62,7 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 
 use api\api;
 use api\phrase_api;
+use cfg\db\sql_creator;
 use controller\controller;
 use formula\formula_dsp_old;
 use html\html_selector;
@@ -425,22 +426,22 @@ class phrase extends combine_named
      * create the common part of an SQL statement to retrieve a phrase from the database view
      * uses the phrase view which includes only the most relevant fields of words or triples
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     private
-    function load_sql(sql_db $db_con, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $db_con->set_type(sql_db::VT_PHRASE);
-        $db_con->set_name($qp->name);
+        $sc->set_type(sql_db::VT_PHRASE);
+        $sc->set_name($qp->name);
 
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR_EX);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_usr_fields(self::FLD_NAMES_USR_EX);
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
     }
@@ -448,17 +449,17 @@ class phrase extends combine_named
     /**
      * create an SQL statement to retrieve a phrase by phrase id (not the object id) from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the phrase as defined in the database phrase view
      * @param string $class the name of this class
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, sql_db::FLD_ID);
-        $db_con->add_par_int($id);
-        $qp->sql = $db_con->select_by_field(phrase::FLD_ID);
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, sql_db::FLD_ID);
+        $sc->add_where(phrase::FLD_ID, $id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -466,17 +467,17 @@ class phrase extends combine_named
     /**
      * create an SQL statement to retrieve a phrase by name from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the phrase and the related word, triple, formula or verb
      * @param string $class the name of this class
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_db $db_con, string $name, string $class = self::class): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, sql_db::FLD_NAME);
-        $db_con->add_par_txt($name);
-        $qp->sql = $db_con->select_by_field(phrase::FLD_NAME);
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME);
+        $sc->add_where(phrase::FLD_NAME, $name);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -530,7 +531,7 @@ class phrase extends combine_named
         global $db_con;
 
         log_debug($id);
-        $qp = $this->load_sql_by_id($db_con, $id, $class);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
         return $this->load($qp);
     }
 
@@ -544,7 +545,7 @@ class phrase extends combine_named
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name($db_con, $name, self::class);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, self::class);
         return $this->load($qp);
     }
 

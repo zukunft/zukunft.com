@@ -41,6 +41,7 @@ include_once API_SYSTEM_PATH . 'batch_job_list.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
 use api\batch_job_list_api;
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use DateTime;
 
@@ -109,7 +110,7 @@ class batch_job_list extends base_list
     function load_by_type(string $type_code_id = ''): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_type($db_con, $type_code_id);
+        $qp = $this->load_sql_by_type($db_con->sql_creator(), $type_code_id);
         return $this->load($qp);
     }
 
@@ -121,20 +122,20 @@ class batch_job_list extends base_list
     /**
      * prepare sql to get all open job of one type
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $type_code_id the code id of the job type that should be loaded
      * @return sql_par
      */
-    function load_sql_by_type(sql_db $db_con, string $type_code_id = ''): sql_par
+    function load_sql_by_type(sql_creator $sc, string $type_code_id = ''): sql_par
     {
         global $job_types;
         $type_id = $job_types->id($type_code_id);
         $job = new batch_job($this->usr);
-        $qp = $job->load_sql($db_con, 'job_type', self::class);
-        $db_con->set_page($this->limit, $this->offset());
-        $db_con->add_par(sql_par_type::INT, $type_id);
-        $qp->sql = $db_con->select_by_field(batch_job::FLD_TYPE);
-        $qp->par = $db_con->get_par();
+        $qp = $job->load_sql($sc, 'job_type', self::class);
+        $sc->set_page($this->limit, $this->offset());
+        $sc->add_where(batch_job::FLD_TYPE, $type_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 

@@ -47,6 +47,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 
 use api\result_api;
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use model\export\result_exp;
@@ -282,19 +283,19 @@ class result extends sandbox_value
     /**
      * create the SQL to load a results
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the unique name of the query e.g. id or name
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($db_con, $query_name, $class);
+        $qp = parent::load_sql($sc, $query_name, $class);
 
-        $db_con->set_type(sql_db::TBL_RESULT);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
-        $db_con->set_fields(self::FLD_NAMES);
+        $sc->set_type(sql_db::TBL_RESULT);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id);
+        $sc->set_fields(self::FLD_NAMES);
 
         return $qp;
     }
@@ -302,86 +303,63 @@ class result extends sandbox_value
     /**
      * create the SQL to load a results by the id
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the result
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, sql_db::FLD_ID, $class);
-        $db_con->add_par_int($id);
-        $qp->sql = $db_con->select_by_field($this->id_field());
-        $qp->par = $db_con->get_par();
-
-        return $qp;
+        return parent::load_sql_by_id($sc, $id, $class);
     }
 
     /**
      * prepare the query parameter to load a results by phrase group id
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param phrase_group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql_by_grp_prepare(sql_db $db_con, phrase_group $grp): sql_par
+    private function load_sql_by_grp_prepare(sql_creator $sc, phrase_group $grp): sql_par
     {
-        $qp = $this->load_sql($db_con, 'grp');
-        $db_con->set_name($qp->name);
-        // select the result based on the phrase group e.g. a more complex word list
-        $db_con->add_par(sql_par_type::INT, $grp->id());
-
-        return $qp;
-    }
-
-    /**
-     * create the query parameter to load a results
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param sql_par $qp the query parameters as previous defined
-     * @param array $fld_lst the list of selection fields as previous defined
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    private function load_sql_by_grp_select(sql_db $db_con, sql_par $qp, array $fld_lst): sql_par
-    {
-        // and include the result words in the search, because one source word list can result to two result word
-        // e.g. one time specific and one general
-        $qp->sql = $db_con->select_by_field_list($fld_lst);
-        $qp->par = $db_con->get_par();
-
+        $qp = $this->load_sql($sc, 'grp');
+        $sc->set_name($qp->name);
+        $sc->add_where(self::FLD_GRP, $grp->id());
         return $qp;
     }
 
     /**
      * create the SQL to load a results by phrase group id and time phrase
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param phrase_group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp_time(sql_db $db_con, phrase_group $grp): sql_par
+    function load_sql_by_grp_time(sql_creator $sc, phrase_group $grp, int $time_phr_id = null): sql_par
     {
-        $qp = $this->load_sql_by_grp_prepare($db_con, $grp);
-        $fld_lst = [];
-        $fld_lst[] = self::FLD_GRP;
+        $qp = $this->load_sql_by_grp_prepare($sc, $grp);
         $qp->name .= '_time';
-        $db_con->set_name($qp->name);
-        return $this->load_sql_by_grp_select($db_con, $qp, $fld_lst);
+        $sc->set_name($qp->name);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
     }
 
     /**
      * create the SQL to load a results by phrase group id
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param phrase_group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql_db $db_con, phrase_group $grp): sql_par
+    function load_sql_by_grp(sql_creator $sc, phrase_group $grp): sql_par
     {
-        $qp = $this->load_sql_by_grp_prepare($db_con, $grp);
-        $fld_lst = [];
-        $fld_lst[] = self::FLD_GRP;
-        return $this->load_sql_by_grp_select($db_con, $qp, $fld_lst);
+        $qp = $this->load_sql($sc, 'grp');
+        $sc->set_name($qp->name);
+        $sc->add_where(self::FLD_GRP, $grp->id());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
     }
 
     /**
@@ -413,7 +391,7 @@ class result extends sandbox_value
                     'to load a ' . self::class, self::class . '->load_by_id');
             }
         }
-        $qp = $this->load_sql_by_id($db_con, $id);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
         if ($qp->name != '') {
             $db_row = $db_con->get1($qp);
             $this->row_mapper($db_row);
@@ -443,9 +421,9 @@ class result extends sandbox_value
             $this->set_user($res_usr);
             if ($time_phr_id != null) {
                 $this->time_id = $time_phr_id;
-                $qp = $this->load_sql_by_grp_time($db_con, $grp);
+                $qp = $this->load_sql_by_grp_time($db_con->sql_creator(), $grp, $time_phr_id);
             } else {
-                $qp = $this->load_sql_by_grp($db_con, $grp);
+                $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp);
             }
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);

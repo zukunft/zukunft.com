@@ -40,6 +40,7 @@ include_once WEB_LOG_PATH . 'change_log_list.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
 use api\change_log_list_api;
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use html\log\change_log_list as change_log_list_dsp;
 
@@ -108,7 +109,7 @@ class change_log_list extends base_list
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
-            $db_con,
+            $db_con->sql_creator(),
             change_log_table::WORD,
             $field_name,
             $wrd->id(),
@@ -127,7 +128,7 @@ class change_log_list extends base_list
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
-            $db_con,
+            $db_con->sql_creator(),
             change_log_table::VERB,
             $field_name,
             $trp->id(),
@@ -146,7 +147,7 @@ class change_log_list extends base_list
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
-            $db_con,
+            $db_con->sql_creator(),
             change_log_table::TRIPLE,
             $field_name,
             $trp->id(),
@@ -165,7 +166,7 @@ class change_log_list extends base_list
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
-            $db_con,
+            $db_con->sql_creator(),
             change_log_table::VALUE,
             $field_name,
             $val->id(),
@@ -184,7 +185,7 @@ class change_log_list extends base_list
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
-            $db_con,
+            $db_con->sql_creator(),
             change_log_table::FORMULA,
             $field_name,
             $trp->id(),
@@ -203,7 +204,7 @@ class change_log_list extends base_list
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
-            $db_con,
+            $db_con->sql_creator(),
             change_log_table::SOURCE,
             $field_name,
             $src->id(),
@@ -222,7 +223,7 @@ class change_log_list extends base_list
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
-            $db_con,
+            $db_con->sql_creator(),
             change_log_table::VIEW,
             $field_name,
             $dsp->id(),
@@ -241,7 +242,7 @@ class change_log_list extends base_list
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
-            $db_con,
+            $db_con->sql_creator(),
             change_log_table::VIEW_COMPONENT,
             $field_name,
             $cmp->id(),
@@ -300,7 +301,7 @@ class change_log_list extends base_list
      * e.g. the when and how a user has changed the way a word should be shown in the user interface
      * only public for SQL unit testing
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $table_name the table name of the user sandbox object e.g. 'word'
      * @param string $field_name the field that has been change e.g. 'view'
      * @param int $id the database id of the user sandbox object that has been changed
@@ -308,7 +309,7 @@ class change_log_list extends base_list
      * @return sql_par
      */
     function load_sql_obj_fld(
-        sql_db $db_con,
+        sql_creator $sc,
         string $table_name,
         string $field_name,
         int    $id,
@@ -323,14 +324,12 @@ class change_log_list extends base_list
         $field_id = $change_log_fields->id($table_field_name);
         $log_named = new change_log_named($usr);
         $query_ext = $this->table_field_to_query_name($table_name, $field_name);
-        $qp = $log_named->load_sql($db_con, $query_ext, self::class);
-        $db_con->set_page($this->limit, $this->offset());
-        $db_con->add_par(sql_par_type::INT, $field_id);
-        $db_con->add_par(sql_par_type::INT, $id);
-        $qp->sql = $db_con->select_by_field_list(array(
-            change_log_named::FLD_FIELD_ID,
-            change_log_named::FLD_ROW_ID));
-        $qp->par = $db_con->get_par();
+        $qp = $log_named->load_sql($sc, $query_ext, self::class);
+        $sc->set_page($this->limit, $this->offset());
+        $sc->add_where(change_log_named::FLD_FIELD_ID, $field_id);
+        $sc->add_where(change_log_named::FLD_ROW_ID, $id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 

@@ -350,6 +350,14 @@ class sql_creator
         $this->set_user_join();
     }
 
+    function set_usr_only_fields($field_lst): void
+    {
+        $this->usr_query = true;
+        $this->join_usr_query = true;
+        $this->usr_only_field_lst = $field_lst;
+        $this->set_user_join();
+    }
+
     /**
      * set the order SQL statement
      * @param string $order_text the sql order statement
@@ -438,42 +446,34 @@ class sql_creator
         $this->add_field($fld);
 
         // set the default parameter type
-        $sql_par_typ = sql_par_type::INT;
         if ($spt == null) {
-            $sql_par_typ = match (gettype($fld_val)) {
-                'integer' => sql_par_type::INT,
+            $spt = match (gettype($fld_val)) {
                 'string' => sql_par_type::TEXT,
                 'array' => sql_par_type::INT_LIST,
-            };
-        } else {
-            // TODO deprecate
-            // map the par type until all sql statement creations are changed
-            $sql_par_typ = match ($spt->name) {
-                'INT' => sql_par_type::INT,
-                'INT_LIST' => sql_par_type::INT_LIST,
-                'TEXT_LIST' => sql_par_type::TEXT_LIST,
-                'INT_LIST_OR' => sql_par_type::INT_LIST_OR,
-                default => log_err('Unexpected sqp parameter type ' . $spt->name),
+                default => sql_par_type::INT,
             };
         }
 
-        if ($sql_par_typ == sql_par_type::INT_LIST
-            or $sql_par_typ == sql_par_type::INT_LIST_OR) {
-            $this->add_par($sql_par_typ, $this->int_array_to_sql_string($fld_val));
-        } elseif ($sql_par_typ == sql_par_type::TEXT_LIST) {
-            $this->add_par($sql_par_typ, $this->str_array_to_sql_string($fld_val));
-        } elseif ($sql_par_typ == sql_par_type::INT
-            or $sql_par_typ == sql_par_type::INT_OR
-            or $sql_par_typ == sql_par_type::INT_NOT) {
-            $this->add_par($sql_par_typ, $fld_val);
-        } elseif ($sql_par_typ == sql_par_type::TEXT
-            or $sql_par_typ == sql_par_type::TEXT_OR
-            or $sql_par_typ == sql_par_type::LIKE) {
-            $this->add_par($sql_par_typ, $fld_val);
+        // format the values if needed
+        if ($spt == sql_par_type::INT_LIST
+            or $spt == sql_par_type::INT_LIST_OR) {
+            $this->add_par($spt, $this->int_array_to_sql_string($fld_val));
+        } elseif ($spt == sql_par_type::TEXT_LIST) {
+            $this->add_par($spt, $this->str_array_to_sql_string($fld_val));
+        } elseif ($spt == sql_par_type::INT
+            or $spt == sql_par_type::INT_OR
+            or $spt == sql_par_type::INT_NOT) {
+            $this->add_par($spt, $fld_val);
+        } elseif ($spt == sql_par_type::TEXT
+            or $spt == sql_par_type::TEXT_USR
+            or $spt == sql_par_type::TEXT_OR
+            or $spt == sql_par_type::LIKE) {
+            $this->add_par($spt, $fld_val);
         } else {
-            log_err('SQL parameter type ' . $sql_par_typ->value . ' not expected');
+            log_err('SQL parameter type ' . $spt->value . ' not expected');
         }
     }
+
 
     /*
      * statement
@@ -522,7 +522,7 @@ class sql_creator
     /**
      * create the "JOIN" SQL statement based on the joined user fields
      */
-    private function set_user_join()
+    private function set_user_join(): void
     {
         if ($this->usr_query) {
             if (!$this->join_usr_added) {
@@ -554,9 +554,9 @@ class sql_creator
      */
     private function add_par(
         sql_par_type $par_type,
-        string $value,
-        bool   $named = false,
-        bool   $use_link = false): void
+        string       $value,
+        bool         $named = false,
+        bool         $use_link = false): void
     {
         $this->par_types[] = $par_type;
         $this->par_values[] = $value;
@@ -1091,52 +1091,71 @@ class sql_creator
                                 $open_or_flf_lst = true;
                             }
                         }
-                        // add the table
-                        if ($this->usr_query
-                            or $this->join <> ''
-                            or $this->join_type <> ''
-                            or $this->join2_type <> '') {
-                            if (!str_contains($this->par_fields[$i], '.')) {
-                                if ($this->par_use_link[$i]) {
-                                    $result .= sql_db::LNK_TBL . '.';
-                                } else {
-                                    $result .= sql_db::STD_TBL . '.';
-                                }
-                            }
-                        }
-                        // add the field name
-                        if ($par_type == sql_par_type::INT_LIST
-                            or $par_type == sql_par_type::INT_LIST_OR
-                            or $par_type == sql_par_type::TEXT_LIST) {
-                            if ($this->db_type == sql_db::POSTGRES) {
-                                $result .= $this->par_fields[$i] . ' = ANY (' . $this->par_name($i + 1) . ')';
-                            } else {
-                                $result .= $this->par_fields[$i] . ' IN (' . $this->par_name($i + 1) . ')';
-                            }
-                        } else {
-                            if ($par_type == sql_par_type::LIKE) {
-                                $result .= $this->par_fields[$i] . ' like ' . $this->par_name($i + 1);
-                            } else {
-                                if ($par_type == sql_par_type::CONST) {
-                                    $result .= $this->par_value($i + 1);
-                                } else {
-                                    if ($par_type == sql_par_type::INT_NOT) {
-                                        $result .= $this->par_fields[$i] . ' <> ' . $this->par_name($i + 1);
-                                    } else {
-                                        $result .= $this->par_fields[$i] . ' = ' . $this->par_name($i + 1);
-                                    }
-                                }
-                            }
-                        }
 
-                        if ($par_type == sql_par_type::TEXT) {
-                            if ($this->par_fields[$i] == sql_db::FLD_CODE_ID) {
-                                if ($this->db_type == sql_db::POSTGRES) {
-                                    $result .= ' AND ';
-                                    if ($this->usr_query or $this->join <> '') {
+                        // select by the user specific name
+                        if ($par_type == sql_par_type::TEXT_USR) {
+                            $result .= '(' . sql_db::USR_TBL . '.';
+                            $result .= $this->par_fields[$i] . " = " . $this->par_name();
+                            $result .= ' OR (' . sql_db::STD_TBL . '.';
+                            /*
+                            if (SQL_DB_TYPE != sql_db::POSTGRES) {
+                                $this->add_par(sql_par_type::TEXT, $name);
+                            }
+                            */
+                            $result .= $this->par_fields[$i] . " = " . $this->par_name();
+                            $result .= ' AND ' . sql_db::USR_TBL . '.';
+                            $result .= $this->par_fields[$i] . " IS NULL))";
+                        } else {
+
+                            // add the table
+                            if ($this->usr_query
+                                or $this->join <> ''
+                                or $this->join_type <> ''
+                                or $this->join2_type <> '') {
+                                if (!str_contains($this->par_fields[$i], '.')) {
+                                    if ($this->par_use_link[$i]) {
+                                        $result .= sql_db::LNK_TBL . '.';
+                                    } else {
                                         $result .= sql_db::STD_TBL . '.';
                                     }
-                                    $result .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
+                                }
+                            }
+
+                            // add the other fields
+                            if ($par_type == sql_par_type::INT_LIST
+                                or $par_type == sql_par_type::INT_LIST_OR
+                                or $par_type == sql_par_type::TEXT_LIST) {
+                                if ($this->db_type == sql_db::POSTGRES) {
+                                    $result .= $this->par_fields[$i] . ' = ANY (' . $this->par_name($i + 1) . ')';
+                                } else {
+                                    $result .= $this->par_fields[$i] . ' IN (' . $this->par_name($i + 1) . ')';
+                                }
+                            } else {
+                                if ($par_type == sql_par_type::LIKE) {
+                                    $result .= $this->par_fields[$i] . ' like ' . $this->par_name($i + 1);
+                                } else {
+                                    if ($par_type == sql_par_type::CONST) {
+                                        $result .= $this->par_value($i + 1);
+                                    } else {
+                                        if ($par_type == sql_par_type::INT_NOT) {
+                                            $result .= $this->par_fields[$i] . ' <> ' . $this->par_name($i + 1);
+                                        } else {
+                                            $result .= $this->par_fields[$i] . ' = ' . $this->par_name($i + 1);
+                                        }
+                                    }
+                                }
+                            }
+
+                            // include rows where code_id is null
+                            if ($par_type == sql_par_type::TEXT) {
+                                if ($this->par_fields[$i] == sql_db::FLD_CODE_ID) {
+                                    if ($this->db_type == sql_db::POSTGRES) {
+                                        $result .= ' AND ';
+                                        if ($this->usr_query or $this->join <> '') {
+                                            $result .= sql_db::STD_TBL . '.';
+                                        }
+                                        $result .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
+                                    }
                                 }
                             }
                         }
@@ -1153,6 +1172,67 @@ class sql_creator
             }
         }
         return $result;
+    }
+
+    /**
+     * get the order SQL statement
+     */
+    function get_order(): string
+    {
+        return $this->order;
+    }
+
+    /**
+     * set the order SQL statement based on the given field name
+     * @param string $order_field the name of the order field
+     * @param string $direction the SQL direction name (ASC or DESC)
+     * @param string $table_prefix
+     */
+    function set_order(string $order_field, string $direction = '', string $table_prefix = ''): void
+    {
+        if ($direction <> sql_db::ORDER_DESC) {
+            $direction = '';
+        }
+        if ($table_prefix == '') {
+            if ($this->usr_query
+                or $this->join <> ''
+                or $this->join_type <> ''
+                or $this->join2_type <> '') {
+                $table_prefix .= sql_db::STD_TBL . '.';
+            }
+        } else {
+            $table_prefix .= '.';
+        }
+
+        $this->set_order_text(trim($table_prefix . $order_field . ' ' . $direction));
+        if ($this->all_query) {
+            $this->order .= ', ' . $table_prefix . user::FLD_ID;
+        }
+    }
+
+    /**
+     * set the limit and offset SQL statement for pagination
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     */
+    function set_page(int $limit = 0, int $offset = 0): void
+    {
+        // set default values
+        if ($offset <= 0) {
+            $offset = 0;
+        }
+        if ($limit == 0) {
+            $limit = SQL_ROW_LIMIT;
+        } else {
+            if ($limit <= 0) {
+                $limit = SQL_ROW_LIMIT;
+            }
+        }
+        $this->page = '';
+        if ($offset > 0) {
+            $this->page .= ' OFFSET ' . $offset;
+        }
+        $this->page .= ' LIMIT ' . $limit;
     }
 
     /**
@@ -1490,6 +1570,7 @@ class sql_creator
                     break;
                 case sql_par_type::LIKE:
                 case sql_par_type::TEXT_OR:
+                case sql_par_type::TEXT_USR:
                     $result[] = 'text';
                     break;
                 case sql_par_type::CONST:

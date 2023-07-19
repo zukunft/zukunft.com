@@ -140,14 +140,14 @@ if ($usr->id() > 0) {
         } elseif ($wrd_id > 0) {
             // check link of the existing word already exists
             $lnk_test = new triple($usr);
-            $lnk_test->load_by_link($wrd_id, $vrb_id, $wrd_to);
+            $lnk_test->load_by_link_id($wrd_id, $vrb_id, $wrd_to);
             if ($lnk_test->id() > 0) {
                 $lnk_test->load_objects();
                 log_debug('check forward link ' . $wrd_id . ' ' . $vrb_id . ' ' . $wrd_to . '');
                 $msg .= '"' . $lnk_test->from_name . ' ' . $lnk_test->verb->name() . ' ' . $lnk_test->to_name . '" already exists. ';
             }
             $lnk_rev = new triple($usr);
-            $lnk_rev->load_by_link($wrd_to, $vrb_id, $wrd_id);
+            $lnk_rev->load_by_link_id($wrd_to, $vrb_id, $wrd_id);
             if ($lnk_rev->id() > 0) {
                 $lnk_rev->load_objects();
                 $msg .= 'The reverse of "' . $lnk_rev->from_name . ' ' . $lnk_rev->verb->name() . ' ' . $lnk_rev->to_name . '" already exists. Do you really want to add both sides? ';

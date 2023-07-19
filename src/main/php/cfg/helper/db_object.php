@@ -33,6 +33,7 @@
 namespace cfg;
 
 use api\system\db_object as db_object_api;
+use cfg\db\sql_creator;
 
 class db_object
 {
@@ -134,12 +135,12 @@ class db_object
      * parent function to create the common part of an SQL statement
      * child object sets the table and fields in the db sql builder
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name, string $class): sql_par
     {
         $qp = new sql_par($class);
         $qp->name .= $query_name;
@@ -149,17 +150,17 @@ class db_object
     /**
      * create an SQL statement to retrieve a user sandbox object by id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, sql_db::FLD_ID, $class);
-        $db_con->add_par_int($id);
-        $qp->sql = $db_con->select_by_field($this->id_field());
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, sql_db::FLD_ID, $class);
+        $sc->add_where($this->id_field(), $id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -257,7 +258,7 @@ class db_object
         global $db_con;
 
         log_debug($id);
-        $qp = $this->load_sql_by_id($db_con, $id, $class);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
         return $this->load($qp);
     }
 

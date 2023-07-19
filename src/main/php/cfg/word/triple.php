@@ -77,6 +77,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         self::FLD_COND_TYPE
     );
     // list of the link database field names
+    // TODO use this name for all links
     const FLD_NAMES_LINK = array(
         self::FLD_FROM,
         verb::FLD_ID,
@@ -656,22 +657,21 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * create the common part of an SQL statement to retrieve the parameters of a triple from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
-        $db_con->set_type(sql_db::TBL_TRIPLE);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_link_fields(self::FLD_FROM, self::FLD_TO, verb::FLD_ID);
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $sc->set_type(sql_db::TBL_TRIPLE);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(array_merge(self::FLD_NAMES_LINK, self::FLD_NAMES));
+        $sc->set_usr_fields(self::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
     }
@@ -679,35 +679,30 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * create an SQL statement to retrieve a formula by id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, sql_db::FLD_ID, $class);
-        $db_con->add_par_int($id);
-        $qp->sql = $db_con->select_by_field($this->id_field());
-        $qp->par = $db_con->get_par();
-
-        return $qp;
+        return parent::load_sql_by_id($sc, $id, $class);
     }
 
     /**
      * create an SQL statement to retrieve a triple by name from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the triple and the related word, triple, formula or verb
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_db $db_con, string $name, string $class): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name, string $class): sql_par
     {
-        $qp = $this->load_sql($db_con, sql_db::FLD_NAME, $class);
-        $db_con->set_where_name($name, $this->name_field());
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
+        $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -715,17 +710,17 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * create an SQL statement to retrieve a triple by the generated name from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the generated name of the triple and the related word, triple, formula or verb
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name_generated(sql_db $db_con, string $name, string $class): sql_par
+    function load_sql_by_name_generated(sql_creator $sc, string $name, string $class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'name_generated', $class);
-        $db_con->set_where_name($name, self::FLD_NAME_AUTO);
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'name_generated', $class);
+        $sc->add_where(self::FLD_NAME_AUTO, $name, sql_par_type::TEXT_USR);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -733,21 +728,21 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * create an SQL statement to retrieve a triple by name from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $from the id of the phrase that is linked
      * @param int $type the type id of the link
      * @param int $to the id of the phrase to which is the link directed
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link(sql_db $db_con, int $from, int $type, int $to, string $class): sql_par
+    function load_sql_by_link(sql_creator $sc, int $from, int $type, int $to, string $class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'link_ids', $class);
-        $db_con->add_par_int($from);
-        $db_con->add_par_int($to);
-        $db_con->add_par_int($type);
-        $qp->sql = $db_con->select_by_field_list(array(self::FLD_FROM, self::FLD_TO, verb::FLD_ID));
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'link_ids', $class);
+        $sc->add_where(self::FLD_FROM, $from);
+        $sc->add_where(self::FLD_TO, $to);
+        $sc->add_where(verb::FLD_ID, $type);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -798,7 +793,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         global $db_con;
 
         log_debug($id);
-        $qp = $this->load_sql_by_id($db_con, $id, $class);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
         return $this->load($qp);
     }
 
@@ -813,7 +808,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name($db_con, $name, $class);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $class);
         return $this->load($qp);
     }
 
@@ -828,7 +823,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name_generated($db_con, $name, $class);
+        $qp = $this->load_sql_by_name_generated($db_con->sql_creator(), $name, $class);
         return $this->load($qp);
     }
 
@@ -840,12 +835,12 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link(int $from, int $type, int $to, string $class = self::class): int
+    function load_by_link_id(int $from, int $type, int $to, string $class = self::class): int
     {
         global $db_con;
 
         log_debug($from . ' ' . $type . ' ' . $to);
-        $qp = $this->load_sql_by_link($db_con, $from, $type, $to, $class);
+        $qp = $this->load_sql_by_link($db_con->sql_creator(), $from, $type, $to, $class);
         return $this->load($qp);
     }
 

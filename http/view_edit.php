@@ -116,10 +116,11 @@ if ($usr->id() > 0) {
         if (isset($_GET['entry_name']) and isset($_GET['new_entry_type'])) {
             if ($_GET['entry_name'] <> '' and $_GET['new_entry_type'] > 0) {
                 $cmp = new component($usr);
-                $cmp->set_name($_GET['entry_name']);
+                $cmp_name = $_GET['entry_name'];
+                $cmp->set_name($cmp_name);
                 $add_result = $cmp->save();
                 if ($add_result == '') {
-                    $cmp->load_obj_vars();
+                    $cmp->load_by_name($cmp_name);
                     if ($cmp->id() > 0) {
                         $cmp->type_id = $_GET['new_entry_type'];
                         $cmp->save();

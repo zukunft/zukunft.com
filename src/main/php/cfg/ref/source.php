@@ -267,16 +267,16 @@ class source extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a source from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $db_con->set_type(sql_db::TBL_SOURCE);
+        $sc->set_type(sql_db::TBL_SOURCE);
         return parent::load_sql_fields(
-            $db_con, $query_name, $class,
+            $sc, $query_name, $class,
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
@@ -286,17 +286,17 @@ class source extends sandbox_typed
     /**
      * create an SQL statement to retrieve a source by code id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $code_id the code id of the source
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql_db $db_con, string $code_id, string $class): sql_par
+    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'code_id', $class);
-        $db_con->add_par(sql_par_type::TEXT, $code_id);
-        $qp->sql = $db_con->select_by_code_id();
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'code_id', $class);
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -312,7 +312,7 @@ class source extends sandbox_typed
         global $db_con;
 
         log_debug($code_id);
-        $qp = $this->load_sql_by_code_id($db_con, $code_id, $class);
+        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id, $class);
         return parent::load($qp);
     }
 

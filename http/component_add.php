@@ -32,7 +32,7 @@
 // standard zukunft header for callable php files to allow debugging and lib loading
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
 use cfg\component_dsp_old;
@@ -62,17 +62,18 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // init the display object to show the standard elements such as the header
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_id($system_views->id(controller::DSP_COMPONENT_ADD));
+    $dsp_db = new view($usr);
+    $dsp_db->load_by_id($system_views->id(controller::DSP_COMPONENT_ADD));
+    $dsp = new view_dsp($dsp_db->api_json());
     // the calling stack to move back to page where the user has come from after adding the view component is done
     $back = $_GET[controller::API_BACK];
 
     // create the view component object to apply the user changes to it
     $cmp = new component_dsp_old($usr);
-    $cmp->set_id($_GET[controller::URL_VAR_ID]);
-    $result .= $cmp->load_obj_vars();
+    $cmp_id = $_GET[controller::URL_VAR_ID];
+    $result .= $cmp->load_by_id($cmp_id);
 
-    // get the word used as a sample the illustrate the changes
+    // get the word used as a sample to illustrate the changes
     $wrd = new word($usr);
     if (isset($_GET['word'])) {
         $result .= $wrd->load_by_id($_GET['word']);
@@ -84,7 +85,7 @@ if ($usr->id() > 0) {
     // link or unlink a view
     $dsp_link_id = $_GET['link_view'];    // to link the view component to another view
     if ($dsp_link_id > 0) {
-        $dsp_link = new view_dsp_old($usr);
+        $dsp_link = new view($usr);
         $result .= $dsp_link->load_by_id($dsp_link_id);
         $order_nbr = $cmp->next_nbr($dsp_link_id);
         $upd_result = $cmp->link($dsp_link, $order_nbr);
@@ -92,7 +93,7 @@ if ($usr->id() > 0) {
 
     $dsp_unlink_id = $_GET['unlink_view'];  // to unlink a view component from the view 
     if ($dsp_unlink_id > 0) {
-        $dsp_unlink = new view_dsp_old($usr);
+        $dsp_unlink = new view($usr);
         $result .= $dsp_unlink->load_by_id($dsp_unlink_id);
         $upd_result .= $cmp->unlink($dsp_unlink);
     }

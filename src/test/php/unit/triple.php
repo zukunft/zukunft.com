@@ -86,13 +86,13 @@ class triple_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $trp->load_sql_by_name_generated($db_con, 'System test', $trp::class);
+        $qp = $trp->load_sql_by_name_generated($db_con->sql_creator(), 'System test', $trp::class);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $trp->load_sql_by_name_generated($db_con, 'System test', $trp::class);
+            $qp = $trp->load_sql_by_name_generated($db_con->sql_creator(), 'System test', $trp::class);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

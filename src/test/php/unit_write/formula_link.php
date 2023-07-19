@@ -75,9 +75,7 @@ class formula_link_test
 
         // ... check if the link can be loaded by formula and phrase id and base on the id the correct formula and phrase objects are loaded
         $frm_lnk = new formula_link($t->usr1);
-        $frm_lnk->fob = $frm;
-        $frm_lnk->tob = $phr;
-        $frm_lnk->load_obj_vars();
+        $frm_lnk->load_by_link($frm, $phr);
 
         $frm_lnk2 = new formula_link($t->usr1);
         $frm_lnk2->load_by_id($frm_lnk->id(), formula_link::class);

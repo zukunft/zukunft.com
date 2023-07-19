@@ -391,20 +391,20 @@ class value extends sandbox_value
     /**
      * create the common part of an SQL statement to retrieve the parameters of a value from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($db_con, $query_name, $class);
+        $qp = parent::load_sql($sc, $query_name, $class);
 
-        $db_con->set_type(sql_db::TBL_VALUE);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
+        $sc->set_type(sql_db::TBL_VALUE);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
 
         return $qp;
     }
@@ -413,36 +413,35 @@ class value extends sandbox_value
      * create an SQL statement to retrieve a value by id from the database
      * added to value just to assign the class for the user sandbox object
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the value
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
-        return parent::load_sql_by_id($db_con, $id, $class);
+        return parent::load_sql_by_id($sc, $id, $class);
     }
 
     /**
      * create an SQL statement to retrieve a value by phrase group from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param phrase_group $grp the id of the phrase group
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql_db $db_con, phrase_group $grp, string $class = self::class): sql_par
+    function load_sql_by_grp(sql_creator $sc, phrase_group $grp, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'phrase_group_id', $class);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
-        $db_con->add_par_int($grp->id());
-        $qp->sql = $db_con->select_by_field(phrase_group::FLD_ID);
-
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'phrase_group_id', $class);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
+        $sc->add_where(phrase_group::FLD_ID, $grp->id());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -450,16 +449,16 @@ class value extends sandbox_value
     /**
      * create the SQL to load a single user specific value
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql_creator $sc, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp = parent::load_sql_obj_vars($sc, $class);
         $sql_where = '';
         $sql_grp = '';
 
-        $db_con->set_type(sql_db::TBL_VALUE);
+        $sc->set_type(sql_db::TBL_VALUE);
         if ($this->id() > 0) {
             $qp->name .= sql_db::FLD_ID;
         } elseif ($this->grp->id() > 0) {
@@ -475,16 +474,16 @@ class value extends sandbox_value
             }
             $qp->name .= phrase::FLD_ID;
         }
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
 
         if ($this->id() > 0) {
-            $sql_where = $db_con->where_id(self::FLD_ID, $this->id, true);
+            $sql_where = $sc->where_id(self::FLD_ID, $this->id, true);
         } elseif ($this->grp->id() > 0) {
-            $sql_where = $db_con->where_par(array(phrase_group::FLD_ID), array($this->grp->id()), true);
+            $sql_where = $sc->where_par(array(phrase_group::FLD_ID), array($this->grp->id()), true);
         } elseif ($this->grp->phr_lst != null) {
             // create the SQL to select a phrase group which needs to inside load_sql for correct parameter counting
             $phr_lst = clone $this->grp->phr_lst;
@@ -502,8 +501,8 @@ class value extends sandbox_value
                 if ($sql_grp_where <> '') {
                     $sql_grp_where .= ' AND l' . $pos_prior . '.' . phrase_group::FLD_ID . ' = l' . $pos . '.' . phrase_group::FLD_ID . ' AND ';
                 }
-                $db_con->add_par(sql_par_type::INT, $phr->id());
-                $sql_grp_where .= ' l' . $pos . '.word_id = ' . $db_con->par_name();
+                $sc->add_where(self::FLD_ID, $phr->id());
+                $sql_grp_where .= ' l' . $pos . '.word_id = ' . $sc->par_name();
                 $pos++;
             }
             $sql_avoid_code_check_prefix = "SELECT";
@@ -518,9 +517,9 @@ class value extends sandbox_value
 
         if ($sql_where != '') {
 
-            $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
+            $sc->set_where_text($sql_where);
+            $qp->sql = $sc->select_by_set_id();
+            $qp->par = $sc->get_par();
 
         }
 
@@ -538,7 +537,7 @@ class value extends sandbox_value
         global $db_con;
 
         log_debug($grp->dsp_id());
-        $qp = $this->load_sql_by_grp($db_con, $grp, $class);
+        $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp, $class);
         $id = $this->load($qp);
 
         // use the given phrase list
@@ -584,7 +583,7 @@ class value extends sandbox_value
         } else {
             log_debug($this->dsp_id(), $debug - 9);
 
-            $qp = $this->load_sql_obj_vars($db_con);
+            $qp = $this->load_sql_obj_vars($db_con->sql_creator());
             $db_val = $db_con->get1($qp);
             $result = $this->row_mapper_sandbox($db_val);
 

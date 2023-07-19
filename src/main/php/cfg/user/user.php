@@ -54,6 +54,8 @@ include_once MODEL_USER_PATH . 'user_profile.php';
 include_once SERVICE_EXPORT_PATH . 'user_exp.php';
 
 use api\user_api;
+use cfg\db\sql_creator;
+use cfg\db\sql_par_type;
 use model\export\user_exp;
 use model\export\exp_obj;
 use Exception;
@@ -317,45 +319,45 @@ class user extends db_object
     /**
      * create the common part of an SQL statement to retrieve the parameters of a user from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($db_con, $query_name, $class);
+        $qp = parent::load_sql($sc, $query_name, $class);
 
-        $db_con->set_type(sql_db::TBL_USER);
-        $db_con->set_name($qp->name);
+        $sc->set_type(sql_db::TBL_USER);
+        $sc->set_name($qp->name);
 
         if ($this->viewer == null) {
             if ($this->id == null) {
-                $db_con->set_usr(0);
+                $sc->set_usr(0);
             } else {
-                $db_con->set_usr($this->id);
+                $sc->set_usr($this->id);
             }
         } else {
-            $db_con->set_usr($this->viewer->id);
+            $sc->set_usr($this->viewer->id);
         }
-        $db_con->set_fields(self::FLD_NAMES);
+        $sc->set_fields(self::FLD_NAMES);
         return $qp;
     }
 
     /**
      * create an SQL statement to retrieve a user by id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, sql_db::FLD_ID, $class);
-        $db_con->add_par_int($id);
-        $qp->sql = $db_con->select_by_field(self::FLD_ID);
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, sql_db::FLD_ID, $class);
+        $sc->add_where(self::FLD_ID, $id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -363,17 +365,17 @@ class user extends db_object
     /**
      * create an SQL statement to retrieve a user by name from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_db $db_con, string $name, string $class = self::class): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, sql_db::FLD_NAME, $class);
-        $db_con->add_par_txt($name);
-        $qp->sql = $db_con->select_by_field(self::FLD_NAME);
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
+        $sc->add_where(self::FLD_NAME, $name);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -381,17 +383,17 @@ class user extends db_object
     /**
      * create an SQL statement to retrieve a user by email from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $email the email of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_email(sql_db $db_con, string $email, string $class = self::class): sql_par
+    function load_sql_by_email(sql_creator $sc, string $email, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'email', $class);
-        $db_con->add_par_txt($email);
-        $qp->sql = $db_con->select_by_field(self::FLD_EMAIL);
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'email', $class);
+        $sc->add_where(self::FLD_EMAIL, $email);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -399,19 +401,19 @@ class user extends db_object
     /**
      * create an SQL statement to retrieve a user by name or email from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the user
      * @param string $email the email of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name_or_email(sql_db $db_con, string $name, string $email, string $class = self::class): sql_par
+    function load_sql_by_name_or_email(sql_creator $sc, string $name, string $email, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'name_or_email', $class);
-        $db_con->add_par_txt_or($name);
-        $db_con->add_par_txt_or($email);
-        $qp->sql = $db_con->select_by_name_or(self::FLD_EMAIL);
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'name_or_email', $class);
+        $sc->add_where(self::FLD_NAME, $name, sql_par_type::TEXT_OR);
+        $sc->add_where(self::FLD_EMAIL, $email, sql_par_type::TEXT_OR);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -419,17 +421,17 @@ class user extends db_object
     /**
      * create an SQL statement to retrieve a user with the ip from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $ip_addr the ip address with which the user has logged in
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ip(sql_db $db_con, string $ip_addr, string $class = self::class): sql_par
+    function load_sql_by_ip(sql_creator $sc, string $ip_addr, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'ip', $class);
-        $db_con->add_par_txt($ip_addr);
-        $qp->sql = $db_con->select_by_field(self::FLD_IP_ADDRESS);
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'ip', $class);
+        $sc->add_where(self::FLD_IP_ADDRESS, $ip_addr);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -437,17 +439,17 @@ class user extends db_object
     /**
      * create an SQL statement to retrieve a user with the profile from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $profile_id the id of the profile of which the first matching user should be loaded
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_profile(sql_db $db_con, int $profile_id, string $class = self::class): sql_par
+    function load_sql_by_profile(sql_creator $sc, int $profile_id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'profile', $class);
-        $db_con->add_par_int($profile_id);
-        $qp->sql = $db_con->select_by_field(self::FLD_USER_PROFILE);
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'profile', $class);
+        $sc->add_where(self::FLD_USER_PROFILE, $profile_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -482,7 +484,7 @@ class user extends db_object
 
         log_debug($id);
         $this->reset();
-        $qp = $this->load_sql_by_id($db_con, $id);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
         return $this->load($qp);
     }
 
@@ -498,7 +500,7 @@ class user extends db_object
 
         log_debug($name);
         $this->reset();
-        $qp = $this->load_sql_by_name($db_con, $name);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
         return $this->load($qp);
     }
 
@@ -513,7 +515,7 @@ class user extends db_object
 
         log_debug($email);
         $this->reset();
-        $qp = $this->load_sql_by_email($db_con, $email);
+        $qp = $this->load_sql_by_email($db_con->sql_creator(), $email);
         return $this->load($qp);
     }
 
@@ -544,7 +546,7 @@ class user extends db_object
 
         log_debug($ip);
         $this->reset();
-        $qp = $this->load_sql_by_ip($db_con, $ip);
+        $qp = $this->load_sql_by_ip($db_con->sql_creator(), $ip);
         return $this->load($qp);
     }
 
@@ -559,7 +561,7 @@ class user extends db_object
 
         log_debug($profile_id);
         $this->reset();
-        $qp = $this->load_sql_by_profile($db_con, $profile_id);
+        $qp = $this->load_sql_by_profile($db_con->sql_creator(), $profile_id);
         return $this->load($qp);
     }
 

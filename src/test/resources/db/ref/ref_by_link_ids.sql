@@ -1,4 +1,4 @@
-PREPARE ref_by_id (int,int) AS
+PREPARE ref_by_link_ids (int,int,int) AS
     SELECT s.ref_id,
            u.ref_id AS user_ref_id,
            s.user_id,
@@ -11,4 +11,5 @@ PREPARE ref_by_id (int,int) AS
            CASE WHEN (u.excluded          IS     NULL) THEN s.excluded    ELSE u.excluded    END AS excluded
       FROM refs s
  LEFT JOIN user_refs u ON s.ref_id = u.ref_id AND u.user_id = $1
-     WHERE s.ref_id = $2;
+     WHERE s.phrase_id = $2
+       AND s.ref_type_id = $3;

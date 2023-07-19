@@ -59,7 +59,7 @@ class ref_test
         $ref = new ref($usr);
         $ref->phr = $wrd->phrase();
         $ref->ref_type = $ref_type;
-        $ref->load_obj_vars();
+        $ref->load_by_link_ids($wrd->phrase()->id(), $ref_type->id());
         $result = $ref->external_key;
         $target = ref::TEST_REF_NAME;
         $t->display('ref->load "' . word_api::TN_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, TIMEOUT_LIMIT_PAGE_LONG);

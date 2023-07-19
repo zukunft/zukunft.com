@@ -296,17 +296,17 @@ class sandbox_named extends sandbox
     /**
      * create an SQL statement to retrieve a term by name from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the term and the related word, triple, formula or verb
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_db $db_con, string $name, string $class): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name, string $class): sql_par
     {
-        $qp = $this->load_sql($db_con, sql_db::FLD_NAME, $class);
-        $db_con->set_where_name($name, $this->name_field());
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
+        $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -322,7 +322,7 @@ class sandbox_named extends sandbox
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name($db_con, $name, $class);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $class);
         return parent::load($qp);
     }
 
@@ -746,9 +746,15 @@ class sandbox_named extends sandbox
             }
             // check with the user namespace
             $db_chk->set_user($this->user());
-            if ($this->obj_name == sql_db::TBL_WORD
-                or $this->obj_name == sql_db::TBL_SOURCE
-                or $this->obj_name == sql_db::TBL_VIEW) {
+            if ($this->obj_name == sql_db::TBL_CHANGE) {
+                // for some objects still use the deprecated load_obj_vars method
+                if ($db_chk->load_obj_vars()) {
+                    if ($db_chk->id() > 0) {
+                        log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                        $result = $db_chk;
+                    }
+                }
+            } else {
                 if ($this->name() != '') {
                     if ($db_chk->load_by_name($this->name())) {
                         if ($db_chk->id() > 0) {
@@ -758,14 +764,6 @@ class sandbox_named extends sandbox
                     }
                 } else {
                     log_err('The name must be set to check if a similar object exists');
-                }
-            } else {
-                // for all other objects still use the deprecated load_obj_vars method
-                if ($db_chk->load_obj_vars()) {
-                    if ($db_chk->id() > 0) {
-                        log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
-                        $result = $db_chk;
-                    }
                 }
             }
         }

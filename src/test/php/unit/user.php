@@ -94,13 +94,13 @@ class user_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_email($db_con, 'System test', $usr_obj::class);
+        $qp = $usr_obj->load_sql_by_email($db_con->sql_creator(), 'System test', $usr_obj::class);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_email($db_con, 'System test', $usr_obj::class);
+            $qp = $usr_obj->load_sql_by_email($db_con->sql_creator(), 'System test', $usr_obj::class);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }
@@ -117,13 +117,13 @@ class user_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_name_or_email($db_con, 'System test name', 'System test email', $usr_obj::class);
+        $qp = $usr_obj->load_sql_by_name_or_email($db_con->sql_creator(), 'System test name', 'System test email', $usr_obj::class);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_name_or_email($db_con, 'System test name', 'System test email', $usr_obj::class);
+            $qp = $usr_obj->load_sql_by_name_or_email($db_con->sql_creator(), 'System test name', 'System test email', $usr_obj::class);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }
@@ -140,13 +140,13 @@ class user_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_ip($db_con, 'System test', $usr_obj::class);
+        $qp = $usr_obj->load_sql_by_ip($db_con->sql_creator(), 'System test', $usr_obj::class);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_ip($db_con, 'System test', $usr_obj::class);
+            $qp = $usr_obj->load_sql_by_ip($db_con->sql_creator(), 'System test', $usr_obj::class);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }
@@ -163,13 +163,13 @@ class user_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_profile($db_con, 1, $usr_obj::class);
+        $qp = $usr_obj->load_sql_by_profile($db_con->sql_creator(), 1, $usr_obj::class);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_profile($db_con, 1, $usr_obj::class);
+            $qp = $usr_obj->load_sql_by_profile($db_con->sql_creator(), 1, $usr_obj::class);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

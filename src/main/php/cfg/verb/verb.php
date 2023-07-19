@@ -41,6 +41,7 @@ include_once SERVICE_EXPORT_PATH . 'verb_exp.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
 
 use api\verb_api;
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use model\export\sandbox_exp_named;
@@ -347,18 +348,18 @@ class verb extends db_object
     /**
      * create the common part of an SQL statement to retrieve the parameters of a verb from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($db_con, $query_name, $class);
+        $qp = parent::load_sql($sc, $query_name, $class);
 
-        $db_con->set_type(sql_db::TBL_VERB);
-        $db_con->set_name($qp->name);
-        $db_con->set_fields(self::FLD_NAMES);
+        $sc->set_type(sql_db::TBL_VERB);
+        $sc->set_name($qp->name);
+        $sc->set_fields(self::FLD_NAMES);
 
         return $qp;
     }
@@ -366,37 +367,30 @@ class verb extends db_object
     /**
      * create an SQL statement to retrieve a verb by id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($db_con, sql_db::FLD_ID, $class);
-        $qp->sql = $db_con->select_by_id($id);
-        $qp->par = $db_con->get_par();
-
-        return $qp;
+        return parent::load_sql_by_id($sc, $id, $class);
     }
 
     /**
      * create an SQL statement to retrieve a verb by name from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the verb
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_db $db_con, string $name): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
-        $qp = $this->load_sql($db_con, sql_db::FLD_NAME, self::class);
-        $db_con->add_par(sql_par_type::TEXT, $name);
-        $sql_where = '( ' . self::FLD_NAME . ' = ' . $db_con->par_name();
-        $db_con->add_par(sql_par_type::TEXT, $name);
-        $sql_where .= ' OR ' . self::FLD_FORMULA . ' = ' . $db_con->par_name() . ')';
-        $db_con->set_where_text($sql_where);
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME, self::class);
+        $sc->add_where(self::FLD_NAME, $name, sql_par_type::TEXT_OR);
+        $sc->add_where(self::FLD_FORMULA, $name, sql_par_type::TEXT_OR);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -404,16 +398,16 @@ class verb extends db_object
     /**
      * create an SQL statement to retrieve a verb by code id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $code_id the code id of the verb
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql_db $db_con, string $code_id): sql_par
+    function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
-        $qp = $this->load_sql($db_con, 'code_id', self::class);
-        $db_con->add_par(sql_par_type::TEXT, $code_id);
-        $qp->sql = $db_con->select_by_code_id();
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'code_id', self::class);
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -442,7 +436,7 @@ class verb extends db_object
         global $db_con;
 
         log_debug($id);
-        $qp = $this->load_sql_by_id($db_con, $id);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
         return $this->load($qp);
     }
 
@@ -456,7 +450,7 @@ class verb extends db_object
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name($db_con, $name);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
         return $this->load($qp);
     }
 
@@ -470,7 +464,7 @@ class verb extends db_object
         global $db_con;
 
         log_debug($code_id);
-        $qp = $this->load_sql_by_code_id($db_con, $code_id);
+        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id);
         return $this->load($qp);
     }
 

@@ -341,15 +341,15 @@ class view extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $db_con->set_type(sql_db::TBL_VIEW);
+        $sc->set_type(sql_db::TBL_VIEW);
         return parent::load_sql_fields(
-            $db_con, $query_name, $class,
+            $sc, $query_name, $class,
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
@@ -359,17 +359,17 @@ class view extends sandbox_typed
     /**
      * create an SQL statement to retrieve a view by code id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $code_id the code id of the view
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql_db $db_con, string $code_id, string $class): sql_par
+    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class): sql_par
     {
-        $qp = $this->load_sql($db_con, 'code_id', $class);
-        $db_con->add_par(sql_par_type::TEXT, $code_id);
-        $qp->sql = $db_con->select_by_code_id();
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'code_id', $class);
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -385,7 +385,7 @@ class view extends sandbox_typed
         global $db_con;
 
         log_debug($code_id);
-        $qp = $this->load_sql_by_code_id($db_con, $code_id, $class);
+        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id, $class);
         return parent::load($qp);
     }
 
@@ -444,7 +444,7 @@ class view extends sandbox_typed
      */
     function load_components_sql(sql_db $db_con): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con, component::class);
+        $qp = parent::load_sql_obj_vars($db_con->sql_creator(), component::class);
         if ($this->id != 0) {
             $qp->name .= 'view_id';
         } elseif ($this->name != '') {
@@ -647,12 +647,9 @@ class view extends sandbox_typed
             log_err("The view component id must be given to move it.", "view->entry_up");
         } else {
             $cmp = new component_dsp_old($this->user());
-            $cmp->id = $component_id;
-            $cmp->load_obj_vars();
+            $cmp->load_by_id($component_id);
             $cmp_lnk = new component_link($this->user());
-            $cmp_lnk->fob = $this;
-            $cmp_lnk->tob = $cmp;
-            $cmp_lnk->load_obj_vars();
+            $cmp_lnk->load_by_link($this, $cmp);
             $result .= $cmp_lnk->move_up();
         }
         return $result;
@@ -668,13 +665,10 @@ class view extends sandbox_typed
         if ($component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_down");
         } else {
-            $cmp = new component_dsp_old($this->user());
-            $cmp->id = $component_id;
-            $cmp->load_obj_vars();
+            $cmp = new component($this->user());
+            $cmp->load_by_id($component_id);
             $cmp_lnk = new component_link($this->user());
-            $cmp_lnk->fob = $this;
-            $cmp_lnk->tob = $cmp;
-            $cmp_lnk->load_obj_vars();
+            $cmp_lnk->load_by_link($this, $cmp);
             $result .= $cmp_lnk->move_down();
         }
         return $result;

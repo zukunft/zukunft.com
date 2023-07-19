@@ -67,7 +67,7 @@ class phrase_test
         $is_id = $verbs->id(verb::IS);
         // load a triple that is parts of a group e.g. Zurich Insurance
         $trp = new triple($usr);
-        $trp->load_by_link($zh_id, $is_id, $company_id);
+        $trp->load_by_link_id($zh_id, $is_id, $company_id);
         $zh_company_id = $trp->phrase()->id();
 
 

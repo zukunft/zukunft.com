@@ -3,7 +3,7 @@
 /*
 
     model/view/component_link.php - link a single display component/element to a view
-    ----------------------------------
+    -----------------------------
 
     TODO  if a link is owned by someone, who has deleted it, it can be changed by anyone else
           or another way to formulate this: if the owner deletes a link, the ownership should be move to the remaining users
@@ -54,8 +54,13 @@ class component_link extends sandbox_link_with_type
     const FLD_ORDER_NBR = 'order_nbr';
     const FLD_POS_TYPE = 'position_type';
 
-    // all database field names excluding the id
+    // all database field names excluding the user specific fields and the id
     const FLD_NAMES = array(
+        view::FLD_ID,
+        component::FLD_ID
+    );
+    // list of the link database field names
+    const FLD_NAMES_LINK = array(
         view::FLD_ID,
         component::FLD_ID
     );
@@ -232,57 +237,20 @@ class component_link extends sandbox_link_with_type
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view component link from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_db $db_con, string $query_name, string $class = self::class): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
+        $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
-        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve the parameters of a view component link from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_obj_vars(sql_db $db_con, string $class = self::class): sql_par
-    {
-        $qp = parent::load_sql_obj_vars($db_con, $class);
-        if ($this->id > 0) {
-            $qp->name .= sql_db::FLD_ID;
-        } elseif ($this->fob->id() > 0 and $this->tob->id() > 0) {
-            $qp->name .= 'view_and_cmp_id';
-        } else {
-            log_err('Either the view component link id or view id and a component id (and the user= must be set ' .
-                'to load a ' . self::class, self::class . '->load_sql');
-        }
-
-        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        if ($this->id() > 0) {
-            $db_con->add_par(sql_par_type::INT, $this->id());
-            $qp->sql = $db_con->select_by_field_list(array(component_link::FLD_ID));
-        } elseif ($this->fob->id() > 0 and $this->tob->id() > 0) {
-            $db_con->add_par(sql_par_type::INT, $this->fob->id());
-            $db_con->add_par(sql_par_type::INT, $this->tob->id());
-            $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID, component::FLD_ID));
-        }
-        $qp->par = $db_con->get_par();
+        $sc->set_type(sql_db::TBL_COMPONENT_LINK);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(self::FLD_NAMES_LINK);
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
     }
@@ -290,15 +258,15 @@ class component_link extends sandbox_link_with_type
     /**
      * create an SQL statement to load the component_link by the link id
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $dsp_id the view id
      * @param int $type_id the link type id
      * @param int $cmp_id the component id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link_and_type(sql_db $db_con, int $dsp_id, int $type_id, int $cmp_id, string $class): sql_par
+    function load_sql_by_link_and_type(sql_creator $sc, int $dsp_id, int $type_id, int $cmp_id, string $class): sql_par
     {
-        return parent::load_sql_by_link($db_con, $dsp_id, $type_id, $cmp_id, self::class);
+        return parent::load_sql_by_link($sc, $dsp_id, $type_id, $cmp_id, self::class);
     }
 
     /**
@@ -312,41 +280,21 @@ class component_link extends sandbox_link_with_type
     function load_by_link_and_type(int $from_id, int $type_id, int $to_id): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_link_and_type($db_con, $from_id, $type_id, $to_id, self::class);
+        $qp = $this->load_sql_by_link_and_type($db_con->sql_creator(), $from_id, $type_id, $to_id, self::class);
         return $this->load($qp);
     }
 
 
     /**
-     * load the missing view component parameters from the database for the requesting user
-     * @returns bool true if a link has been loaded
+     * load a named user sandbox object by name
+     * @param view $dsp the view to which the component should be added
+     * @param component $cmp the phrase that is linked to the formula
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
      */
-    function load_obj_vars(): bool
+    function load_by_link(view $dsp, component $cmp, string $class = self::class): int
     {
-        global $db_con;
-        $result = false;
-
-        // check the all minimal input parameters are set
-        if ($this->user() == null) {
-            log_err("The user id must be set to load a view component link.", "component_link->load");
-        } else {
-
-            // try to get the search values from the objects
-            $qp = $this->load_sql_obj_vars($db_con);
-
-            if ($db_con->get_where() <> '') {
-                $db_dsl = $db_con->get1($qp);
-                $this->row_mapper_sandbox($db_dsl);
-                if ($this->id > 0) {
-                    //if (is_null($db_item[sandbox::FLD_EXCLUDED]) OR $db_item[sandbox::FLD_EXCLUDED] == 0) {
-                    //}
-                    log_debug('component_link->load of ' . $this->id . ' done');
-                    $result = true;
-                }
-            }
-        }
-        log_debug('component_link->load of ' . $this->id . ' done and quit');
-        return $result;
+        return parent::load_by_link_id($dsp->id(), 0, $cmp->id(), $class);
     }
 
     /**
@@ -357,7 +305,7 @@ class component_link extends sandbox_link_with_type
     {
         $result = true;
         if (!isset($this->fob) and $this->fob->id() > 0) {
-            $dsp = new view_dsp_old($this->user());
+            $dsp = new view($this->user());
             if ($dsp->load_by_id($this->fob->id())) {
                 $this->fob = $dsp;
             } else {
@@ -365,7 +313,7 @@ class component_link extends sandbox_link_with_type
             }
         }
         if (!isset($this->tob) and $this->tob->id() > 0) {
-            $cmp = new view_dsp_old($this->user());
+            $cmp = new component($this->user());
             if ($cmp->load_by_id($this->tob->id())) {
                 $this->tob = $cmp;
             } else {
@@ -459,8 +407,10 @@ class component_link extends sandbox_link_with_type
         $result = false;
 
         // load any missing parameters
-        if (!isset($this->id) or $this->fob->id() == 0) {
-            $this->load_obj_vars();
+        if ($this->id > 0) {
+            $this->load_by_id($this->id);
+        } elseif ($this->fob->id() != 0 and $this->tob->id() != 0) {
+            $this->load_by_link_id($this->fob->id(), 0,  $this->tob->id(), self::class);
         }
         $this->load_objects();
 
@@ -487,9 +437,9 @@ class component_link extends sandbox_link_with_type
                     foreach ($this->fob->cmp_lst->lst() as $entry) {
                         // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
                         $cmp_lnk = new component_link($this->user());
-                        $cmp_lnk->fob = $this->fob;
-                        $cmp_lnk->tob = $entry;
-                        $cmp_lnk->load_obj_vars();
+                        $dsp = new view($this->user());
+                        $dsp->load_by_id($this->fob->id());
+                        $cmp_lnk->load_by_link($dsp, $entry);
                         // fix any wrong order numbers
                         if ($cmp_lnk->order_nbr != $order_nbr) {
                             log_debug('component_link->move check order number of the view component ' . $entry->dsp_id() . ' corrected from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
@@ -510,9 +460,9 @@ class component_link extends sandbox_link_with_type
                     if ($this->cmp_lst != null) {
                         foreach ($this->fob->cmp_lst->lst() as $entry) {
                             $cmp_lnk = new component_link($this->user());
-                            $cmp_lnk->fob = $this->fob;
-                            $cmp_lnk->tob = $entry;
-                            $cmp_lnk->load_obj_vars();
+                            $dsp = new view($this->user());
+                            $dsp->load_by_id($this->fob->id());
+                            $cmp_lnk->load_by_link($dsp, $entry);
                             if ($cmp_lnk->order_nbr != $order_nbr) {
                                 log_err('Component link ' . $cmp_lnk->dsp_id() . ' should have position ' . $order_nbr . ', but is ' . $cmp_lnk->order_nbr, "component_link->move");
                             }
@@ -530,9 +480,9 @@ class component_link extends sandbox_link_with_type
                     foreach ($this->fob->cmp_lst->lst() as $entry) {
                         // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
                         $cmp_lnk = new component_link($this->user());
-                        $cmp_lnk->fob = $this->fob;
-                        $cmp_lnk->tob = $entry;
-                        $cmp_lnk->load_obj_vars();
+                        $dsp = new view($this->user());
+                        $dsp->load_by_id($this->fob->id());
+                        $cmp_lnk->load_by_link($dsp, $entry);
                         if ($prev_entry_down) {
                             if (isset($prev_entry)) {
                                 log_debug('component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());

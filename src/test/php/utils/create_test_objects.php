@@ -1126,7 +1126,7 @@ class create_test_objects extends test_base
         $lnk_test = new triple($this->usr1);
         if ($from->id() > 0 and $to->id() > 0) {
             // check if the forward link exists
-            $lnk_test->load_by_link($from->id(), $vrb->id(), $to->id());
+            $lnk_test->load_by_link_id($from->id(), $vrb->id(), $to->id());
         }
         return $lnk_test;
     }
@@ -1202,7 +1202,7 @@ class create_test_objects extends test_base
             log_err("Phrases " . $from_name . " and " . $to_name . " cannot be created");
         } else {
             // check if the forward link exists
-            $trp->load_by_link($from->id(), $vrb->id(), $to->id());
+            $trp->load_by_link_id($from->id(), $vrb->id(), $to->id());
             if ($trp->id() > 0) {
                 // refresh the given name if needed
                 if ($name_given <> '' and $trp->name(true) <> $name_given) {
@@ -1218,7 +1218,7 @@ class create_test_objects extends test_base
                 $trp->verb = $vrb;
                 $trp->tob = $from;
                 $trp->set_user($this->usr1);
-                $trp->load_by_link($to->id(), $vrb->id(), $from->id());
+                $trp->load_by_link_id($to->id(), $vrb->id(), $from->id());
                 $result = $trp;
                 // create the link if requested
                 if ($trp->id() <= 0 and $auto_create) {
@@ -1350,10 +1350,8 @@ class create_test_objects extends test_base
 
         $lst = new ref_type_list();
         $ref = new ref($this->usr1);
-        $ref->phr = $phr;
-        $ref->ref_type = $lst->get_ref_type($type_name);
         if ($phr->id() != 0) {
-            $ref->load_obj_vars();
+            $ref->load_by_link_ids($phr->id(), $lst->get_ref_type($type_name)->id());
         }
         return $ref;
     }
@@ -1823,13 +1821,11 @@ class create_test_objects extends test_base
 
         $frm = new formula($this->usr1);
         $frm->load_by_name($formula_name, formula::class);
-        $phr = new word($this->usr1);
-        $phr->load_by_name($word_name, word::class);
-        if ($frm->id() > 0 and $phr->id() <> 0) {
+        $wrd = new word($this->usr1);
+        $wrd->load_by_name($word_name, word::class);
+        if ($frm->id() > 0 and $wrd->id() <> 0) {
             $frm_lnk = new formula_link($this->usr1);
-            $frm_lnk->fob = $frm;
-            $frm_lnk->tob = $phr;
-            $frm_lnk->load_obj_vars();
+            $frm_lnk->load_by_link($frm, $wrd->phrase());
             if ($frm_lnk->id() > 0) {
                 $result = $frm_lnk->fob->name() . ' is linked to ' . $frm_lnk->tob->name();
                 $target = $formula_name . ' is linked to ' . $word_name;

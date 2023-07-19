@@ -87,9 +87,11 @@ class formula extends sandbox_typed_dsp
         }
     }
 
-    function set_usr_text(string $usr_text): void
+    function set_usr_text(?string $usr_text): void
     {
-        $this->usr_text = $usr_text;
+        if ($usr_text != null) {
+            $this->usr_text = $usr_text;
+        }
     }
 
     function usr_text(): string
