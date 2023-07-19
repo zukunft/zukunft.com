@@ -290,7 +290,7 @@ class word extends sandbox_typed_dsp
         $sel->name = 'type';
         $sel->label = "Word type:";
         $sel->bs_class = $bs_class;
-        $sel->sql = sql_lst("word_type");
+        $sel->sql = sql_lst("phrase_type");
         $sel->selected = $this->type_id();
         $sel->dummy_text = '';
         $result .= $sel->display_old();

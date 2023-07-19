@@ -53,7 +53,7 @@ class change_log_field extends type_list
     const FLD_WORD_NAME_DSP = 'name';
     const FLD_WORD_VIEW = 'view_id';
     const FLD_WORD_PLURAL = 'plural';
-    const FLD_WORD_TYPE = 'word_type_id';
+    const FLD_PHRASE_TYPE = 'phrase_type_id';
     const FLD_VERB_NAME = 'verb_name';
     const FLD_TRIPLE_NAME = 'triple_name';
     const FLD_GIVEN_NAME = 'name_given';

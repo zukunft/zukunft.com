@@ -270,7 +270,7 @@ class db_check
         $result .= $db_con->remove_prefix(sql_db::TBL_VERB, 'code_id', 'vrb_');
         $result .= $db_con->change_code_id(sql_db::TBL_VERB, 'vrb_contains', 'is_part_of');
         $result .= $db_con->column_allow_null(sql_db::TBL_WORD, 'plural');
-        $result .= $db_con->column_allow_null(sql_db::TBL_WORD_TYPE, 'word_symbol');
+        $result .= $db_con->column_allow_null(sql_db::TBL_PHRASE_TYPE, 'word_symbol');
         $result .= $db_con->column_allow_null(sql_db::TBL_CHANGE_TABLE, 'description');
         $result .= $db_con->column_allow_null(sql_db::TBL_CHANGE_FIELD, 'code_id');
         $result .= $db_con->column_allow_null(sql_db::TBL_VIEW, sandbox_named::FLD_DESCRIPTION);
@@ -289,6 +289,13 @@ class db_check
         $result .= $db_con->column_force_not_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, user::FLD_ID);
         $result .= $db_con->change_column_name(sql_db::TBL_VALUE, 'word_value', value::FLD_VALUE);
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'word_value', value::FLD_VALUE);
+        $result .= $db_con->change_table_name('word_types', sql_db::TBL_PHRASE_TYPE);
+        $result .= $db_con->change_column_name(sql_db::TBL_PHRASE_TYPE, 'word_type_id', phrase::FLD_TYPE);
+        $result .= $db_con->change_column_name(sql_db::TBL_WORD, 'word_type_id', phrase::FLD_TYPE);
+        $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'word_type_id', phrase::FLD_TYPE);
+        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'word_type_id', phrase::FLD_TYPE);
+        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'word_type_id', phrase::FLD_TYPE);
+        $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_LINK_TYPE, 'word_type_id', phrase::FLD_TYPE);
         // TODO set default profile_id in users to 1
         if ($db_con->db_type == sql_db::MYSQL) {
             $sql = 'UPDATE' . ' `users` SET `user_profile_id` = 1 WHERE `user_profile_id`= NULL';

@@ -2293,8 +2293,10 @@ class sandbox extends db_object
             // special case just to shorten the field name
             if ($this->obj_name == sql_db::TBL_FORMULA_LINK) {
                 $log->set_field(formula_link::FLD_TYPE);
+            } elseif ($this->obj_name == sql_db::TBL_WORD) {
+                $log->set_field(phrase::FLD_TYPE);
             } elseif ($this->obj_name == sql_db::TBL_TRIPLE) {
-                $log->set_field(word::FLD_TYPE);
+                $log->set_field(phrase::FLD_TYPE);
             } else {
                 $log->set_field($this->obj_name . sql_db::FLD_EXT_TYPE_ID);
             }

@@ -41,7 +41,7 @@ include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
 include_once MODEL_SYSTEM_PATH . 'batch_job_type_list.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_WORD_PATH . 'word_type_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase_type_list.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
@@ -75,6 +75,7 @@ use cfg\formula_link_type_list;
 use cfg\formula_type_list;
 use cfg\language_form_list;
 use cfg\language_list;
+use cfg\phrase_type_list;
 use cfg\protection_type_list;
 use cfg\ref_type_list;
 use cfg\share_type_list;
@@ -90,37 +91,36 @@ use cfg\view_cmp_pos_type_list;
 use cfg\view_cmp_type_list;
 use cfg\view_sys_list;
 use cfg\view_type_list;
-use cfg\word_type_list;
-use test\html\type_list as type_list_html_tests;
-use test\html\system_views as system_views_html_tests;
-use test\html\user as user_html_tests;
-use test\html\word as word_html_tests;
-use test\html\word_list as word_list_html_tests;
-use test\html\verb as verb_html_tests;
-use test\html\triple as triple_html_tests;
-use test\html\phrase as phrase_html_tests;
-use test\html\phrase_list as phrase_list_html_tests;
-use test\html\phrase_group as phrase_group_html_tests;
-use test\html\term as term_html_tests;
-use test\html\term_list as term_list_html_tests;
-use test\html\value as value_html_tests;
-use test\html\value_list as value_list_html_tests;
-use test\html\formula as formula_html_tests;
-use test\html\formula_list as formula_list_html_tests;
-use test\html\result as result_html_tests;
-use test\html\result_list as result_list_html_tests;
-use test\html\figure as figure_html_tests;
-use test\html\figure_list as figure_list_html_tests;
-use test\html\view as view_html_tests;
-use test\html\view_list as view_list_html_tests;
+use test\html\batch_job as batch_job_html_tests;
+use test\html\change_log as change_log_html_tests;
 use test\html\component as component_html_tests;
 use test\html\component_list as component_list_html_tests;
-use test\html\source as source_html_tests;
-use test\html\reference as reference_html_tests;
+use test\html\figure as figure_html_tests;
+use test\html\figure_list as figure_list_html_tests;
+use test\html\formula as formula_html_tests;
+use test\html\formula_list as formula_list_html_tests;
 use test\html\language as language_html_tests;
-use test\html\change_log as change_log_html_tests;
+use test\html\phrase as phrase_html_tests;
+use test\html\phrase_group as phrase_group_html_tests;
+use test\html\phrase_list as phrase_list_html_tests;
+use test\html\reference as reference_html_tests;
+use test\html\result as result_html_tests;
+use test\html\result_list as result_list_html_tests;
+use test\html\source as source_html_tests;
 use test\html\system_log as system_log_html_tests;
-use test\html\batch_job as batch_job_html_tests;
+use test\html\system_views as system_views_html_tests;
+use test\html\term as term_html_tests;
+use test\html\term_list as term_list_html_tests;
+use test\html\triple as triple_html_tests;
+use test\html\type_list as type_list_html_tests;
+use test\html\user as user_html_tests;
+use test\html\value as value_html_tests;
+use test\html\value_list as value_list_html_tests;
+use test\html\verb as verb_html_tests;
+use test\html\view as view_html_tests;
+use test\html\view_list as view_list_html_tests;
+use test\html\word as word_html_tests;
+use test\html\word_list as word_list_html_tests;
 use unit\component_list_unit_tests;
 
 class test_unit extends test_cleanup
@@ -173,7 +173,7 @@ class test_unit extends test_cleanup
         $usr_sys->profile_id = $user_profiles->id(user_profile::SYSTEM);
 
         // continue with preparing unit tests
-        $this->init_word_types();
+        $this->init_phrase_types();
         $this->init_verbs();
         $this->init_formula_types();
         $this->init_formula_link_types();
@@ -314,11 +314,11 @@ class test_unit extends test_cleanup
     /**
      * create word type array for the unit tests without database connection
      */
-    function init_word_types(): void
+    function init_phrase_types(): void
     {
         global $phrase_types;
 
-        $phrase_types = new word_type_list();
+        $phrase_types = new phrase_type_list();
         $phrase_types->load_dummy();
 
     }

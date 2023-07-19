@@ -1373,7 +1373,7 @@ class sql_creator
         if ($result == 'link_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
-        if ($result == 'word_type_name') {
+        if ($result == 'phrase_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {

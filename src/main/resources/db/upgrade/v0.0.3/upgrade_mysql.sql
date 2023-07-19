@@ -66,7 +66,7 @@ select `words`.`word_id`            AS `phrase_id`,
        `words`.`word_name`          AS `phrase_name`,
        `words`.`description`        AS `description`,
        `words`.`values`             AS `values`,
-       `words`.`word_type_id`       AS `word_type_id`,
+       `words`.`phrase_type_id`     AS `phrase_type_id`,
        `words`.`excluded`           AS `excluded`,
        `words`.`share_type_id`      AS `share_type_id`,
        `words`.`protect_id` AS `protect_id`
@@ -81,7 +81,7 @@ select (`triples`.`triple_id` * -(1)) AS `phrase_id`,
           `triples`.`triple_name` AS `phrase_name`,
        `triples`.`description`           AS `description`,
        `triples`.`values`                AS `values`,
-       `triples`.`word_type_id`          AS `word_type_id`,
+       `triples`.`phrase_type_id`        AS `phrase_type_id`,
        `triples`.`excluded`              AS `excluded`,
        `triples`.`share_type_id`         AS `share_type_id`,
        `triples`.`protect_id`    AS `protect_id`
@@ -129,14 +129,14 @@ select ((`words`.`word_id` * 2) - 1) AS `term_id`,
        `words`.`word_name`         AS `term_name`,
        `words`.`description`       AS `description`,
        `words`.`values`            AS `usage`,
-       `words`.`word_type_id`      AS `term_type_id`,
+       `words`.`phrase_type_id`    AS `term_type_id`,
        `words`.`excluded`          AS `excluded`,
        `words`.`share_type_id`     AS `share_type_id`,
        `words`.`protect_id`        AS `protect_id`,
        ''                          AS `formula_text`,
        ''                          AS `resolved_text`
 from `words`
-where `words`.`word_type_id` <> 10 OR `words`.`word_type_id` is null
+where `words`.`phrase_type_id` <> 10 OR `words`.`phrase_type_id` is null
 union
 select ((`triples`.`triple_id` * -2) + 1) AS `term_id`,
        `triples`.`user_id`                 AS `user_id`,
@@ -147,7 +147,7 @@ select ((`triples`.`triple_id` * -2) + 1) AS `term_id`,
           `triples`.`triple_name` AS `phrase_name`,
        `triples`.`description`             AS `description`,
        `triples`.`values`                  AS `usage`,
-       `triples`.`word_type_id`            AS `term_type_id`,
+       `triples`.`phrase_type_id`          AS `term_type_id`,
        `triples`.`excluded`                AS `excluded`,
        `triples`.`share_type_id`           AS `share_type_id`,
        `triples`.`protect_id`              AS `protect_id`,
@@ -200,7 +200,7 @@ select ((`user_words`.`word_id` * 2) - 1) AS `term_id`,
        ''                                 AS `formula_text`,
        ''                                 AS `resolved_text`
 from `user_words`
-where `user_words`.`word_type_id` <> 10
+where `user_words`.`phrase_type_id` <> 10
 union
 select ((`user_triples`.`triple_id` * -2) + 1) AS `term_id`,
        `user_triples`.`user_id`                   AS `user_id`,

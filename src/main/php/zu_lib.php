@@ -324,7 +324,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
                 phrase_list - a list of phrases
                 term_list - a list of terms
     type_object - to assign program code to a single object
-        word_type - to assign predefined behaviour to a single word (and its children) (TODO combine with phrase type?)
+        phrase_type - to assign predefined behaviour to a single word (and its children) (TODO combine with phrase type?)
         phrase_type - to assign predefined behaviour to a single word (and its children)
         formula_type - to assign predefined behaviour to formulas
         ref_type - to assign predefined behaviour to reference
@@ -333,7 +333,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
         language_form - to differentiate the word and triple name forms e.g. plural
     type_list - list of type_objects that is only load once a startup in the frontend
         view_sys_list - list of all view used by the system itself
-        word_type_list - list of all word types
+        phrase_type_list - list of all word types
         verb_list - list of all verbs
         formula_type_list - a list of all formula types
         formula_element_type_list - list of all formula element types
@@ -530,7 +530,7 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
-include_once MODEL_WORD_PATH . 'word_type_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_element_type_list.php';
@@ -668,7 +668,7 @@ define("BASE_CODE_LINK_FILES", serialize(array(
     'component_types',
     'view_link_types',
     'view_types',
-    'word_types'
+    'phrase_types'
 )));
 const BASE_CODE_LINK_FILE_TYPE = '.csv';
 const SYSTEM_USER_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'users.json';

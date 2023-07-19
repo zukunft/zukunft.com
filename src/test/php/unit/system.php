@@ -139,8 +139,8 @@ class system_unit_tests
         $t->assert_sql_all($db_con, $system_users);
         $user_profiles = new user_profile_list();
         $t->assert_sql_all($db_con, $user_profiles);
-        $word_types = new word_type_list();
-        $t->assert_sql_all($db_con, $word_types);
+        $phrase_types = new phrase_type_list();
+        $t->assert_sql_all($db_con, $phrase_types);
         $formula_types = new formula_type_list();
         $t->assert_sql_all($db_con, $formula_types);
         $formula_link_types = new formula_link_type_list();

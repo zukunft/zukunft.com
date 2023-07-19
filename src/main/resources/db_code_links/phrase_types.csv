@@ -1,4 +1,4 @@
-word_type_id, type_name, description, code_id, scaling_factor, word_symbol
+phrase_type_id, type_name, description, code_id, scaling_factor, word_symbol
 1, 'standard', 'for words that have need no special behaviour', 'default', NULL, ''
 2, 'time', 'A time word defines the time period for which a value is valid and values with a time can be used to display time series.', 'time', NULL, ''
 3, 'measure type', 'a measure word such as meter, kilogram, ...', 'measure', NULL, ''

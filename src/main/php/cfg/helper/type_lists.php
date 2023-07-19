@@ -38,10 +38,9 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
-include_once MODEL_WORD_PATH . 'word_type_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase_type_list.php';
 include_once MODEL_SYSTEM_PATH . 'batch_job_type_list.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_WORD_PATH . 'word_type_list.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_type.php';
 include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
@@ -172,7 +171,7 @@ class type_lists
         // these tables are expected to be so small that it is more efficient to load all database records once at start
         $user_profiles = new user_profile_list();
         $user_profiles->load($db_con);
-        $phrase_types = new word_type_list();
+        $phrase_types = new phrase_type_list();
         $phrase_types->load($db_con);
         $formula_types = new formula_type_list();
         $formula_types->load($db_con);

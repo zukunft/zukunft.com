@@ -62,7 +62,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     const FLD_ID = 'triple_id';
     const FLD_FROM = 'from_phrase_id';
     const FLD_TO = 'to_phrase_id';
-    const FLD_TYPE = 'word_type_id';
+    const FLD_TYPE = 'phrase_type_id';
     const FLD_NAME = 'triple_name';  // the name used which must be unique within the terms of the user
     const FLD_NAME_GIVEN = 'name_given'; // the name set by the user, which can be null if the generated name should be used
     const FLD_NAME_AUTO = 'name_generated'; // the generated name is saved in the database for database base unique check
@@ -103,7 +103,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         self::FLD_NAME_GIVEN,
         self::FLD_NAME_AUTO,
         sql_db::FLD_DESCRIPTION,
-        word::FLD_TYPE,
+        phrase::FLD_TYPE,
         self::FLD_VALUES,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,

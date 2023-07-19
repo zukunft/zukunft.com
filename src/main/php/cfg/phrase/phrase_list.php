@@ -403,7 +403,7 @@ class phrase_list extends sandbox_list_named
     function load_by_phr_vrb_and_type(
         phrase         $phr,
         ?verb          $vrb = null,
-        word_type_list $wrd_types,
+        phrase_type_list $wrd_types,
         foaf_direction $direction = foaf_direction::BOTH): phrase_list
     {
         $result = new phrase_list($this->user());
@@ -433,7 +433,7 @@ class phrase_list extends sandbox_list_named
                        FROM " . $sql_from . "
                   LEFT JOIN user_words u ON u.word_id = w.word_id
                                         AND u.user_id = " . $this->user()->id() . "
-                      WHERE w.word_type_id = " . cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME) . "
+                      WHERE w.phrase_type_id = " . cl(db_cl::WORD_TYPE, phrase_type_list::DBL_TIME) . "
                         " . $sql_where_and . "
                    GROUP BY name) AS s
             WHERE (excluded <> 1 OR excluded is NULL)

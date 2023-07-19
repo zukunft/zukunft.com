@@ -66,6 +66,7 @@ use html\formula\formula as formula_dsp;
 
 class word extends sandbox_typed
 {
+
     /*
      * database link
      */
@@ -75,7 +76,7 @@ class word extends sandbox_typed
     const FLD_ID = 'word_id';
     const FLD_NAME = 'word_name';
     const FLD_PLURAL = 'plural';
-    const FLD_TYPE = 'word_type_id';
+    const FLD_TYPE = 'phrase_type_id';
     const FLD_VIEW = 'view_id';
     const FLD_VALUES = 'values';
     // the field names used for the im- and export in the json or yaml format
@@ -1000,7 +1001,7 @@ class word extends sandbox_typed
         $sel->name = 'type';
         $sel->label = "Word type:";
         $sel->bs_class = $bs_class;
-        $sel->sql = sql_lst("word_type");
+        $sel->sql = sql_lst("phrase_type");
         $sel->selected = $this->type_id;
         $sel->dummy_text = '';
         $result .= $sel->display_old();

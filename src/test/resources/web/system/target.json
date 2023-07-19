@@ -878,8 +878,8 @@
       },
       {
         "id": 11,
-        "code_id": "5word_type_id",
-        "name": "5word_type_id",
+        "code_id": "5phrase_type_id",
+        "name": "5phrase_type_id",
         "comment": ""
       },
       {
@@ -896,8 +896,8 @@
       },
       {
         "id": 14,
-        "code_id": "6word_type_id",
-        "name": "6word_type_id",
+        "code_id": "6phrase_type_id",
+        "name": "6phrase_type_id",
         "comment": ""
       },
       {
@@ -1196,8 +1196,8 @@
       },
       {
         "id": 64,
-        "code_id": "7word_type_id",
-        "name": "7word_type_id",
+        "code_id": "7phrase_type_id",
+        "name": "7phrase_type_id",
         "comment": ""
       }
     ],

@@ -39,7 +39,7 @@ class db_cl
 {
     // list of all user types that are used
     const SYS_USER = "system_user";
-    const PHRASE_TYPE = "word_type";
+    const PHRASE_TYPE = "phrase_type";
     const VERB = "verb";
     const FORMULA_TYPE = "formula_type";
     const FORMULA_LINK_TYPE = "formula_link_type";

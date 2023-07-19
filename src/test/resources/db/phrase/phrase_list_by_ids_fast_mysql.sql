@@ -3,7 +3,7 @@ PREPARE phrase_list_by_ids_fast FROM
          s.phrase_id,
          u.phrase_id AS user_phrase_id,
          s.user_id,
-         s.word_type_id,
+         s.phrase_type_id,
          IF(u.phrase_name   IS NULL, s.phrase_name,   u.phrase_name)   AS phrase_name,
          IF(u.description   IS NULL, s.description,   u.description)   AS description,
          IF(u.`values`      IS NULL, s.`values`,      u.`values`)      AS `values`,

@@ -270,14 +270,14 @@ class sandbox_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(sql_db::TBL_WORD, true);
         $db_con->set_usr(1);
-        $db_con->set_fields(array('plural', sql_db::FLD_DESCRIPTION, 'word_type_id', 'view_id'));
+        $db_con->set_fields(array(word::FLD_PLURAL, sql_db::FLD_DESCRIPTION, phrase::FLD_TYPE, word::FLD_VIEW));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = 'SELECT word_id,
                      word_name,
                      plural,
                      description,
-                     word_type_id,
+                     phrase_type_id,
                      view_id
                 FROM user_words
                WHERE word_id = $1 
@@ -288,14 +288,14 @@ class sandbox_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $db_con->set_type(sql_db::TBL_WORD, true);
         $db_con->set_usr(1);
-        $db_con->set_fields(array('plural', sql_db::FLD_DESCRIPTION, 'word_type_id', 'view_id'));
+        $db_con->set_fields(array('plural', sql_db::FLD_DESCRIPTION, 'phrase_type_id', 'view_id'));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = 'SELECT word_id,
                      word_name,
                      plural,
                      description,
-                     word_type_id,
+                     phrase_type_id,
                      view_id
                 FROM user_words
                WHERE word_id = ? 
@@ -552,7 +552,7 @@ class sandbox_unit_tests
 
         // ... same for a link table
         $db_con->set_type(sql_db::TBL_TRIPLE);
-        $db_con->set_fields(array('from_phrase_id', 'to_phrase_id', verb::FLD_ID, 'word_type_id'));
+        $db_con->set_fields(array('from_phrase_id', 'to_phrase_id', verb::FLD_ID, 'phrase_type_id'));
         $db_con->set_usr_fields(array(triple::FLD_NAME_GIVEN, sql_db::FLD_DESCRIPTION, sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('s.triple_id = 1');
         $created_sql = $db_con->select_by_set_id();
@@ -562,7 +562,7 @@ class sandbox_unit_tests
                      s.from_phrase_id,
                      s.to_phrase_id,
                      s.verb_id,
-                     s.word_type_id,
+                     s.phrase_type_id,
                      CASE WHEN (u.name_given  <> '' IS NOT TRUE) THEN s.name_given  ELSE u.name_given  END AS name_given,
                      CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description ELSE u.description END AS description,
                      CASE WHEN (u.excluded    <> '' IS NOT TRUE) THEN s.excluded    ELSE u.excluded    END AS excluded
@@ -758,7 +758,7 @@ class sandbox_unit_tests
         // test the triple load SQL creation
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', verb::FLD_ID);
-        $db_con->set_fields(array('word_type_id'));
+        $db_con->set_fields(array('phrase_type_id'));
         $db_con->set_usr_fields(array(triple::FLD_NAME_GIVEN, sql_db::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array(sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('s.triple_id = 1');
@@ -770,7 +770,7 @@ class sandbox_unit_tests
                         s.from_phrase_id,
                         s.to_phrase_id,
                         s.verb_id, 
-                        s.word_type_id, 
+                        s.phrase_type_id, 
                         CASE WHEN (u.name_given  <> '' IS NOT TRUE) THEN s.name_given  ELSE u.name_given  END AS name_given, 
                         CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description ELSE u.description END AS description, 
                         CASE WHEN (u.excluded          IS     NULL) THEN s.excluded    ELSE u.excluded    END AS excluded 
@@ -997,7 +997,7 @@ class sandbox_unit_tests
 
         // ... same for a link table
         $db_con->set_type(sql_db::TBL_TRIPLE);
-        $db_con->set_fields(array('from_phrase_id', 'to_phrase_id', verb::FLD_ID, 'word_type_id'));
+        $db_con->set_fields(array('from_phrase_id', 'to_phrase_id', verb::FLD_ID, 'phrase_type_id'));
         $db_con->set_usr_fields(array(triple::FLD_NAME_GIVEN, sql_db::FLD_DESCRIPTION, sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('s.triple_id = 1');
         $created_sql = $db_con->select_by_set_id();
@@ -1008,7 +1008,7 @@ class sandbox_unit_tests
                      s.from_phrase_id,
                      s.to_phrase_id,
                      s.verb_id,
-                     s.word_type_id,
+                     s.phrase_type_id,
                      IF(u.name_given  IS NULL, s.name_given,  u.name_given)  AS name_given,
                      IF(u.description IS NULL, s.description, u.description) AS description,
                      IF(u.excluded    IS NULL, s.excluded,    u.excluded)    AS excluded
@@ -1138,7 +1138,7 @@ class sandbox_unit_tests
         // test the triple load_standard SQL creation
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', verb::FLD_ID);
-        $db_con->set_fields(array(triple::FLD_NAME_GIVEN, sql_db::FLD_DESCRIPTION, 'word_type_id', sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array(triple::FLD_NAME_GIVEN, sql_db::FLD_DESCRIPTION, 'phrase_type_id', sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('triple_id = 1');
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT 
@@ -1148,7 +1148,7 @@ class sandbox_unit_tests
                         verb_id,
                         name_given,
                         description,
-                        word_type_id,
+                        phrase_type_id,
                         excluded
                    FROM triples 
                   WHERE triple_id = 1;";
@@ -1158,7 +1158,7 @@ class sandbox_unit_tests
         $db_con->set_type(sql_db::TBL_TRIPLE);
         $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', verb::FLD_ID);
         $db_con->set_usr_fields(array(triple::FLD_NAME_GIVEN, sql_db::FLD_DESCRIPTION));
-        $db_con->set_fields(array('word_type_id'));
+        $db_con->set_fields(array('phrase_type_id'));
         $db_con->set_usr_num_fields(array(sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('triple_id = 1');
         $created_sql = $db_con->select_by_set_id();
@@ -1170,7 +1170,7 @@ class sandbox_unit_tests
                         s.from_phrase_id,
                         s.to_phrase_id, 
                         s.verb_id, 
-                        s.word_type_id, 
+                        s.phrase_type_id, 
                         IF(u.name_given  IS NULL, s.name_given,  u.name_given)  AS name_given, 
                         IF(u.description IS NULL, s.description, u.description) AS description,
                         IF(u.excluded    IS NULL, s.excluded,    u.excluded)    AS excluded 
@@ -1466,7 +1466,7 @@ class sandbox_unit_tests
                        FROM " . $sql_from . "   
                   LEFT JOIN user_words u ON u.word_id = w.word_id 
                                         AND u.user_id = 1 
-                      WHERE w.word_type_id = 2
+                      WHERE w.phrase_type_id = 2
                         " . $sql_where_and . "            
                    GROUP BY name) AS s
             WHERE (excluded <> 1 OR excluded is NULL)                                    
@@ -1478,7 +1478,7 @@ class sandbox_unit_tests
                        FROM triples l, words w   
                   LEFT JOIN user_words u ON u.word_id = w.word_id 
                                         AND u.user_id = 1 
-                      WHERE w.word_type_id = 2
+                      WHERE w.phrase_type_id = 2
                         AND w.word_id = l.from_phrase_id 
                         AND l.verb_id = 2              
                         AND l.to_phrase_id = 14            
@@ -1529,7 +1529,7 @@ class sandbox_unit_tests
                  CASE WHEN (u2.word_name <> '' IS NOT TRUE) THEN t2.word_name ELSE u2.word_name END AS word_name,
                  CASE WHEN (u2.plural <> '' IS NOT TRUE) THEN t2.plural ELSE u2.plural END AS plural,
                  CASE WHEN (u2.description <> '' IS NOT TRUE) THEN t2.description ELSE u2.description END AS description,
-                 CASE WHEN (u2.word_type_id IS NULL) THEN t2.word_type_id ELSE u2.word_type_id END AS word_type_id,
+                 CASE WHEN (u2.phrase_type_id IS NULL) THEN t2.phrase_type_id ELSE u2.phrase_type_id END AS phrase_type_id,
                  CASE WHEN (u2.excluded IS NULL) THEN t2.excluded ELSE u2.excluded END AS excluded,
                   t2.values AS values2";
         $sql_wrd2_from = ' words t2 LEFT JOIN user_words u2 ON u2.word_id = t2.word_id 
@@ -1585,7 +1585,7 @@ class sandbox_unit_tests
                        CASE WHEN (u2.word_name   <> '' IS NOT TRUE) THEN t2.word_name    ELSE u2.word_name    END AS word_name,
                        CASE WHEN (u2.plural      <> '' IS NOT TRUE) THEN t2.plural       ELSE u2.plural       END AS plural,
                        CASE WHEN (u2.description <> '' IS NOT TRUE) THEN t2.description  ELSE u2.description  END AS description,
-                       CASE WHEN (u2.word_type_id      IS     NULL) THEN t2.word_type_id ELSE u2.word_type_id END AS word_type_id,
+                       CASE WHEN (u2.phrase_type_id      IS     NULL) THEN t2.phrase_type_id ELSE u2.phrase_type_id END AS phrase_type_id,
                        CASE WHEN (u2.excluded          IS     NULL) THEN t2.excluded     ELSE u2.excluded     END AS excluded,
                        t2.values AS values2
                   FROM triples l
@@ -1615,7 +1615,7 @@ class sandbox_unit_tests
                  CASE WHEN (u2.word_name <> '' IS NOT TRUE) THEN t2.word_name ELSE u2.word_name END AS word_name,
                  CASE WHEN (u2.plural <> '' IS NOT TRUE) THEN t2.plural ELSE u2.plural END AS plural,
                  CASE WHEN (u2.description <> '' IS NOT TRUE) THEN t2.description ELSE u2.description END AS description,
-                 CASE WHEN (u2.word_type_id IS NULL) THEN t2.word_type_id ELSE u2.word_type_id END AS word_type_id,
+                 CASE WHEN (u2.phrase_type_id IS NULL) THEN t2.phrase_type_id ELSE u2.phrase_type_id END AS phrase_type_id,
                  CASE WHEN (u2.excluded IS NULL) THEN t2.excluded ELSE u2.excluded END AS excluded,
                   t2.values AS values2";
         $sql_wrd2_from = ' words t2 LEFT JOIN user_words u2 ON u2.word_id = t2.word_id 
@@ -1670,7 +1670,7 @@ class sandbox_unit_tests
                             CASE WHEN (u2.word_name   <> '' IS NOT TRUE) THEN t2.word_name    ELSE u2.word_name    END AS word_name,
                             CASE WHEN (u2.plural      <> '' IS NOT TRUE) THEN t2.plural       ELSE u2.plural       END AS plural,
                             CASE WHEN (u2.description <> '' IS NOT TRUE) THEN t2.description  ELSE u2.description  END AS description,
-                            CASE WHEN (u2.word_type_id      IS     NULL) THEN t2.word_type_id ELSE u2.word_type_id END AS word_type_id,
+                            CASE WHEN (u2.phrase_type_id      IS     NULL) THEN t2.phrase_type_id ELSE u2.phrase_type_id END AS phrase_type_id,
                             CASE WHEN (u2.excluded          IS     NULL) THEN t2.excluded     ELSE u2.excluded     END AS excluded,
                             t2.values AS values2                  
                        FROM triples l LEFT JOIN user_triples ul ON ul.triple_id = l.triple_id

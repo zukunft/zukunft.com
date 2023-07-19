@@ -3,7 +3,7 @@ PREPARE triple_std_by_id FROM
            from_phrase_id,
            verb_id,
            to_phrase_id,
-           word_type_id,
+           phrase_type_id,
            triple_condition_id,
            triple_condition_type_id,
            triple_name,

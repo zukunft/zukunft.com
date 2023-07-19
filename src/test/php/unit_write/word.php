@@ -391,7 +391,7 @@ class word_test
         $target = 'zukunft.com system test added ' . word_api::TN_RENAMED . ' description';
         $t->display('word->load description for "' . word_api::TN_RENAMED . '" logged', $target, $result);
         $t->display('word->load ref_2 for "' . word_api::TN_RENAMED . '" logged', $target, $result);
-        $log->set_field(change_log_field::FLD_WORD_TYPE);
+        $log->set_field(change_log_field::FLD_PHRASE_TYPE);
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test added differentiator filler';
         $t->display('word->load type_id for "' . word_api::TN_RENAMED . '" logged', $target, $result);

@@ -4,7 +4,7 @@ PREPARE formula_link_list_by_frm_id (int, int) AS
            s.user_id,
            s.formula_id,
            s.phrase_id,
-           l.word_type_id AS word_type_id1,
+           l.phrase_type_id AS phrase_type_id1,
            CASE WHEN (u.link_type_id       IS     NULL) THEN s.link_type_id  ELSE u.link_type_id   END AS link_type_id,
            CASE WHEN (u.excluded           IS     NULL) THEN s.excluded      ELSE u.excluded       END AS excluded,
            CASE WHEN (u.share_type_id      IS     NULL) THEN s.share_type_id ELSE u.share_type_id  END AS share_type_id,

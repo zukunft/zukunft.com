@@ -69,7 +69,7 @@ function sql_code_link($code_id, $description, $db_con)
 {
     log_debug("sql_code_link (" . $code_id . "," . $description . ")");
 
-    global $word_types_hash;
+    global $phrase_types_hash;
 
     $row_id = 0;
 
@@ -96,7 +96,7 @@ function sql_code_link($code_id, $description, $db_con)
     } else {
         // get the preloaded types directly from the hash
         if ($db_type == sql_db::TBL_WORD_TYPE) {
-            $row_id = $word_types_hash[$code_id];
+            $row_id = $phrase_types_hash[$code_id];
         } else {
             //$db_con = new mysql;
             // remember the db_type

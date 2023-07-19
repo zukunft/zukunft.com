@@ -4,7 +4,7 @@ PREPARE word_std_by_id FROM
             `values`,
             plural,
             description,
-            word_type_id,
+            phrase_type_id,
             view_id,
             excluded,
             share_type_id,

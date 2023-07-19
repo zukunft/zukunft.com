@@ -2,7 +2,7 @@
 
 /*
 
-    model/word/word_type_list.php - to link coded functionality to a word or a triple, which means to every phrase
+    model/word/phrase_type_list.php - to link coded functionality to a word or a triple, which means to every phrase
     -----------------------------
 
     TODO rename to phrase type
@@ -37,7 +37,7 @@ include_once DB_PATH . 'sql_db.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 
-class word_type_list extends type_list
+class phrase_type_list extends type_list
 {
 
     // the phrase types used for unit testing
@@ -73,7 +73,7 @@ class word_type_list extends type_list
      * @param string $db_type used only in the parent function to define the which type list should be loaded
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_WORD_TYPE): bool
+    function load(sql_db $db_con, string $db_type = sql_db::TBL_PHRASE_TYPE): bool
     {
         return parent::load($db_con, $db_type);
     }

@@ -199,7 +199,7 @@ class word_list extends sandbox_list
             $qp->name .= 'type';
             $db_con->set_name($qp->name);
             $db_con->add_par(sql_par_type::INT, $type_id);
-            $qp->sql = $db_con->select_by_field(word::FLD_TYPE);
+            $qp->sql = $db_con->select_by_field(phrase::FLD_TYPE);
         } else {
             $qp->name = '';
         }

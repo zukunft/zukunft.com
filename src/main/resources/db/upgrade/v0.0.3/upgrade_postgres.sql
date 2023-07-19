@@ -62,7 +62,7 @@ SELECT w.word_id   AS phrase_id,
        w.word_name AS phrase_name,
        w.description,
        w.values,
-       w.word_type_id,
+       w.phrase_type_id,
        w.excluded,
        w.share_type_id,
        w.protect_id
@@ -77,7 +77,7 @@ SELECT (l.triple_id * -(1))                                                    A
            ELSE l.triple_name END AS phrase_name,
        l.description,
        l.values,
-       l.word_type_id,
+       l.phrase_type_id,
        l.excluded,
        l.share_type_id,
        l.protect_id
@@ -122,14 +122,14 @@ SELECT ((w.word_id * 2) - 1) AS term_id,
        w.word_name           AS term_name,
        w.description,
        w.values              AS usage,
-       w.word_type_id        AS term_type_id,
+       w.phrase_type_id      AS term_type_id,
        w.excluded,
        w.share_type_id,
        w.protect_id,
        ''                    AS formula_text,
        ''                    AS resolved_text
 FROM words AS w
-WHERE w.word_type_id <> 10 OR w.word_type_id IS NULL
+WHERE w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL
 UNION
 SELECT ((l.triple_id * -2) + 1)                                                  AS term_id,
        l.user_id,
@@ -140,7 +140,7 @@ SELECT ((l.triple_id * -2) + 1)                                                 
             ELSE l.triple_name END AS phrase_name,
        l.description,
        l.values                                                                     AS usage,
-       l.word_type_id,
+       l.phrase_type_id,
        l.excluded,
        l.share_type_id,
        l.protect_id,
@@ -191,7 +191,7 @@ SELECT ((w.word_id * 2) - 1) AS term_id,
        ''                    AS formula_text,
        ''                    AS resolved_text
 FROM user_words AS w
-WHERE w.word_type_id <> 10
+WHERE w.phrase_type_id <> 10
 UNION
 SELECT ((l.triple_id * -2) + 1)  AS term_id,
        l.user_id,

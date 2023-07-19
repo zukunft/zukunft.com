@@ -18,7 +18,7 @@
     formula "increase": (next[] - last[]) / last[]
     formula "next": needs time jump value[is time jump for
     so                       -> next["time jump"->,         "follower of"->"Now"]
-    1. find_missing_word_types: next["time jump"->"Company","follower of"->"Now"]
+    1. find_missing_phrase_types: next["time jump"->"Company","follower of"->"Now"]
     2. calc word:               next["YoY",                 "follower of"->"Now"]
     3. calc word:               next["YoY",                 "follower of"->"This Year"]
     4. calc word:               next["YoY",                 "follower of"->"2013"]
@@ -47,7 +47,7 @@
 
     formula types: calc:
 
-    syntax: function_name["link_type->word_type:word_name"]
+    syntax: function_name["link_type->phrase_type:word_name"]
     or: word_from>triple:word_to e.g. “>is a:Company” lists all companies
     or: word[condition_formula] e.g. “GAAP[>is:US]” use GAAP only for US based companies
     or: word1 || word2 e.g. “GAAP[>is:US]” use word1 or word2 (maybe replace “||” with “or” for users)
@@ -64,9 +64,9 @@
 
 
     zu_calc("increase("Nestlé", "turnover")")
-      -> find_missing_word_types("Nestlé", "turnover") with formula "increase" (zu_word_find_missing_types ($word_array, $formula_id))
-        -> increase needs time_jump word_type
-      -> assume_missing words("Nestlé", "turnover") with word_type "time_jump"
+      -> find_missing_phrase_types("Nestlé", "turnover") with formula "increase" (zu_word_find_missing_types ($word_array, $formula_id))
+        -> increase needs time_jump phrase_type
+      -> assume_missing words("Nestlé", "turnover") with phrase_type "time_jump"
           -> get time_jump for "Nestlé", "turnover"
             -> add_word "YoY" linked to "Company" linked to "Nestlé"
             -> result increase("Nestlé", "turnover", "YoY")

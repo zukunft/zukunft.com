@@ -259,7 +259,7 @@ CREATE TABLE IF NOT EXISTS `formula_link_types`
     `type_name`            varchar(200) NOT NULL,
     `code_id`              varchar(100)          DEFAULT NULL,
     `formula_id`           int(11)      NOT NULL,
-    `word_type_id`         int(11)      NOT NULL DEFAULT 1,
+    `phrase_type_id`       int(11)      NOT NULL DEFAULT 1,
     `link_type_id`         int(11)      NOT NULL,
     `description`          text CHARACTER SET ucs2
 ) ENGINE = InnoDB
@@ -1016,18 +1016,18 @@ CREATE TABLE IF NOT EXISTS `user_component_links`
 
 CREATE TABLE IF NOT EXISTS `user_words`
 (
-    `word_id`       int(11) NOT NULL,
-    `user_id`       int(11) NOT NULL,
-    `language_id`   int(11)      DEFAULT NULL,
-    `word_name`     varchar(200) DEFAULT NULL,
-    `plural`        varchar(200) DEFAULT NULL,
-    `description`   text,
-    `word_type_id`  int(11)      DEFAULT NULL,
-    `view_id`       int(11)      DEFAULT NULL,
-    `values`        int(11)      DEFAULT NULL,
-    `excluded`      tinyint(4)   DEFAULT NULL,
-    `share_type_id` smallint     DEFAULT NULL,
-    `protect_id`    smallint     DEFAULT NULL
+    `word_id`        int(11) NOT NULL,
+    `user_id`        int(11) NOT NULL,
+    `language_id`    int(11)      DEFAULT NULL,
+    `word_name`      varchar(200) DEFAULT NULL,
+    `plural`         varchar(200) DEFAULT NULL,
+    `description`    text,
+    `phrase_type_id` int(11)      DEFAULT NULL,
+    `view_id`        int(11)      DEFAULT NULL,
+    `values`         int(11)      DEFAULT NULL,
+    `excluded`       tinyint(4)   DEFAULT NULL,
+    `share_type_id`  smallint     DEFAULT NULL,
+    `protect_id`     smallint     DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -1045,7 +1045,7 @@ CREATE TABLE IF NOT EXISTS `user_triples`
     `name_given`     varchar(200) DEFAULT NULL COMMENT 'the unique name manually set by the user, which can be empty',
     `name_generated` varchar(200) DEFAULT NULL COMMENT 'the generic unique name based on the phrases and verb, which can be overwritten by the given name',
     `description`    text,
-    `word_type_id`   int(11)      DEFAULT NULL,
+    `phrase_type_id` int(11)      DEFAULT NULL,
     `values`         int(11)      DEFAULT NULL,
     `excluded`       tinyint(4)   DEFAULT NULL,
     `share_type_id`  smallint     DEFAULT NULL,
@@ -1392,17 +1392,17 @@ CREATE TABLE IF NOT EXISTS `user_view_term_links`
 
 CREATE TABLE IF NOT EXISTS `words`
 (
-    `word_id`       int(11)      NOT NULL,
-    `user_id`       int(11)      DEFAULT NULL COMMENT 'user_id of the user that has created the term',
-    `word_name`     varchar(200) NOT NULL,
-    `plural`        varchar(200) DEFAULT NULL COMMENT 'to be replaced by a language form entry',
-    `description`   text         DEFAULT NULL COMMENT 'to be replaced by a language form entry',
-    `word_type_id`  int(11)      DEFAULT NULL,
-    `view_id`       int(11)      DEFAULT NULL COMMENT 'the default mask for this term',
-    `values`        int(11)      DEFAULT NULL COMMENT 'number of values linked to the term, which gives an indication of the importance',
-    `excluded`      tinyint(4)   DEFAULT NULL,
-    `share_type_id` smallint     DEFAULT NULL,
-    `protect_id`    smallint     DEFAULT NULL
+    `word_id`        int(11)      NOT NULL,
+    `user_id`        int(11)      DEFAULT NULL COMMENT 'user_id of the user that has created the term',
+    `word_name`      varchar(200) NOT NULL,
+    `plural`         varchar(200) DEFAULT NULL COMMENT 'to be replaced by a language form entry',
+    `description`    text         DEFAULT NULL COMMENT 'to be replaced by a language form entry',
+    `phrase_type_id` int(11)      DEFAULT NULL,
+    `view_id`        int(11)      DEFAULT NULL COMMENT 'the default mask for this term',
+    `values`         int(11)      DEFAULT NULL COMMENT 'number of values linked to the term, which gives an indication of the importance',
+    `excluded`       tinyint(4)   DEFAULT NULL,
+    `share_type_id`  smallint     DEFAULT NULL,
+    `protect_id`     smallint     DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='probably all text of th db';
@@ -1460,7 +1460,7 @@ CREATE TABLE IF NOT EXISTS `triples`
     `description`                 text,
     `triple_condition_id`      int(11)      DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true',
     `triple_condition_type_id` int(11)      DEFAULT NULL COMMENT 'maybe not needed',
-    `word_type_id`                int(11)      DEFAULT NULL,
+    `phrase_type_id`              int(11)      DEFAULT NULL,
     `values`                      int(11)      DEFAULT NULL,
     `excluded`                    tinyint(4)   DEFAULT NULL,
     `share_type_id`               smallint     DEFAULT NULL,
@@ -1486,12 +1486,12 @@ CREATE TABLE IF NOT EXISTS `word_periods`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`word_types`
+-- Table structure for table`phrase_types`
 --
 
-CREATE TABLE IF NOT EXISTS `word_types`
+CREATE TABLE IF NOT EXISTS `phrase_types`
 (
-    `word_type_id`   int(11)      NOT NULL,
+    `phrase_type_id` int(11)      NOT NULL,
     `type_name`      varchar(200) NOT NULL,
     `description`    text,
     `code_id`        varchar(100) DEFAULT NULL,
@@ -1514,7 +1514,7 @@ select `words`.`word_id`            AS `phrase_id`,
        `words`.`word_name`          AS `phrase_name`,
        `words`.`description`        AS `description`,
        `words`.`values`             AS `values`,
-       `words`.`word_type_id`       AS `word_type_id`,
+       `words`.`phrase_type_id`     AS `phrase_type_id`,
        `words`.`excluded`           AS `excluded`,
        `words`.`share_type_id`      AS `share_type_id`,
        `words`.`protect_id` AS `protect_id`
@@ -1529,7 +1529,7 @@ select (`triples`.`triple_id` * -(1)) AS `phrase_id`,
           `triples`.`triple_name` AS `phrase_name`,
        `triples`.`description`           AS `description`,
        `triples`.`values`                AS `values`,
-       `triples`.`word_type_id`          AS `word_type_id`,
+       `triples`.`phrase_type_id`        AS `phrase_type_id`,
        `triples`.`excluded`              AS `excluded`,
        `triples`.`share_type_id`         AS `share_type_id`,
        `triples`.`protect_id`    AS `protect_id`
@@ -1578,14 +1578,14 @@ select ((`words`.`word_id` * 2) - 1) AS `term_id`,
        `words`.`word_name`         AS `term_name`,
        `words`.`description`       AS `description`,
        `words`.`values`            AS `usage`,
-       `words`.`word_type_id`      AS `term_type_id`,
+       `words`.`phrase_type_id`    AS `term_type_id`,
        `words`.`excluded`          AS `excluded`,
        `words`.`share_type_id`     AS `share_type_id`,
        `words`.`protect_id`        AS `protect_id`,
        ''                          AS `formula_text`,
        ''                          AS `resolved_text`
 from `words`
-where `words`.`word_type_id` <> 10 OR `words`.`word_type_id` is null
+where `words`.`phrase_type_id` <> 10 OR `words`.`phrase_type_id` is null
 union
 select ((`triples`.`triple_id` * -2) + 1) AS `term_id`,
        `triples`.`user_id`                 AS `user_id`,
@@ -1596,7 +1596,7 @@ select ((`triples`.`triple_id` * -2) + 1) AS `term_id`,
           `triples`.`triple_name` AS `phrase_name`,
        `triples`.`description`             AS `description`,
        `triples`.`values`                  AS `usage`,
-       `triples`.`word_type_id`            AS `term_type_id`,
+       `triples`.`phrase_type_id`          AS `term_type_id`,
        `triples`.`excluded`                AS `excluded`,
        `triples`.`share_type_id`           AS `share_type_id`,
        `triples`.`protect_id`              AS `protect_id`,
@@ -1649,7 +1649,7 @@ select ((`user_words`.`word_id` * 2) - 1) AS `term_id`,
        ''                                 AS `formula_text`,
        ''                                 AS `resolved_text`
 from `user_words`
-where `user_words`.`word_type_id` <> 10
+where `user_words`.`phrase_type_id` <> 10
 union
 select ((`user_triples`.`triple_id` * -2) + 1) AS `term_id`,
        `user_triples`.`user_id`                   AS `user_id`,
@@ -2159,7 +2159,7 @@ ALTER TABLE `user_words`
     ADD KEY `word_id` (`word_id`),
     ADD KEY `user_id` (`user_id`),
     ADD KEY `language_id` (`language_id`),
-    ADD KEY `word_type_id` (`word_type_id`),
+    ADD KEY `phrase_type_id` (`phrase_type_id`),
     ADD KEY `view_id` (`view_id`);
 
 --
@@ -2290,7 +2290,7 @@ ALTER TABLE `view_term_links`
 ALTER TABLE `words`
     ADD PRIMARY KEY (`word_id`),
     ADD UNIQUE KEY `word_name` (`word_name`),
-    ADD KEY `word_type_id` (`word_type_id`),
+    ADD KEY `phrase_type_id` (`phrase_type_id`),
     ADD KEY `view_id` (`view_id`);
 
 --
@@ -2312,10 +2312,10 @@ ALTER TABLE `word_periods`
     ADD PRIMARY KEY (`word_id`);
 
 --
--- Indexes for table`word_types`
+-- Indexes for table`phrase_types`
 --
-ALTER TABLE `word_types`
-    ADD PRIMARY KEY (`word_type_id`);
+ALTER TABLE `phrase_types`
+    ADD PRIMARY KEY (`phrase_type_id`);
 
 --
 -- Constraints for dumped tables
@@ -2616,10 +2616,10 @@ ALTER TABLE `word_del_requests`
 ALTER TABLE `triples`
     MODIFY `triple_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`word_types`
+-- AUTO_INCREMENT for table`phrase_types`
 --
-ALTER TABLE `word_types`
-    MODIFY `word_type_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `phrase_types`
+    MODIFY `phrase_type_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for table`changes`
@@ -2818,7 +2818,7 @@ ALTER TABLE `user_component_links`
 --
 ALTER TABLE `user_words`
     ADD CONSTRAINT `user_words_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `user_words_fk_2` FOREIGN KEY (`word_type_id`) REFERENCES `word_types` (`word_type_id`),
+    ADD CONSTRAINT `user_words_fk_2` FOREIGN KEY (`phrase_type_id`) REFERENCES `phrase_types` (`phrase_type_id`),
     ADD CONSTRAINT `user_words_fk_3` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`),
     ADD CONSTRAINT `user_words_fk_4` FOREIGN KEY (`word_id`) REFERENCES `words` (`word_id`);
 
@@ -2857,7 +2857,7 @@ ALTER TABLE `component_links`
 --
 ALTER TABLE `words`
     ADD CONSTRAINT `words_fk_1` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`),
-    ADD CONSTRAINT `words_fk_2` FOREIGN KEY (`word_type_id`) REFERENCES `word_types` (`word_type_id`);
+    ADD CONSTRAINT `words_fk_2` FOREIGN KEY (`phrase_type_id`) REFERENCES `phrase_types` (`phrase_type_id`);
 
 --
 -- Constraints for table`word_periods`

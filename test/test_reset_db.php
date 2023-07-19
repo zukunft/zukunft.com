@@ -37,30 +37,30 @@ const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTO
 include_once PHP_PATH . 'zu_lib.php';
 include_once SERVICE_IMPORT_PATH . 'import_file.php';
 
+use cfg\batch_job;
 use cfg\batch_job_type_list;
+use cfg\change_log_action;
+use cfg\change_log_field;
+use cfg\change_log_table;
 use cfg\config;
 use cfg\db_check;
+use cfg\formula_element_type_list;
+use cfg\formula_link_type_list;
 use cfg\formula_type_list;
 use cfg\job_type_list;
 use cfg\language_form_list;
 use cfg\language_list;
+use cfg\phrase_type_list;
 use cfg\protection_type_list;
 use cfg\ref_type_list;
 use cfg\share_type_list;
 use cfg\source_type_list;
+use cfg\sql_db;
+use cfg\user;
 use cfg\view_cmp_pos_type_list;
 use cfg\view_cmp_type_list;
 use cfg\view_type_list;
-use cfg\word_type_list;
 use html\html_base;
-use cfg\batch_job;
-use cfg\change_log_action;
-use cfg\change_log_field;
-use cfg\change_log_table;
-use cfg\formula_element_type_list;
-use cfg\formula_link_type_list;
-use cfg\sql_db;
-use cfg\user;
 use test\test_unit_read_db;
 
 // open database and display header
@@ -178,7 +178,7 @@ function run_db_truncate(): void
         sql_db::TBL_TRIPLE,
         sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD,
         sql_db::TBL_WORD,
-        sql_db::TBL_WORD_TYPE,
+        sql_db::TBL_PHRASE_TYPE,
         sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE,
         sql_db::TBL_SOURCE,
         sql_db::TBL_SOURCE_TYPE,
@@ -243,7 +243,7 @@ function run_preloaded_truncate(): void
 
     //$system_users =[];
     //$user_profiles =[];
-    $phrase_types = new word_type_list();
+    $phrase_types = new phrase_type_list();
     $formula_types = new formula_type_list();
     $formula_link_types = new formula_link_type_list();
     $formula_element_types = new formula_element_type_list();
@@ -300,7 +300,7 @@ function run_db_seq_reset(): void
         'verbs_verb_id_seq',
         'triples_triple_id_seq',
         'words_word_id_seq',
-        'word_types_word_type_id_seq',
+        'phrase_types_phrase_type_id_seq',
         'sources_source_id_seq',
         'source_types_source_type_id_seq',
         'refs_ref_id_seq',

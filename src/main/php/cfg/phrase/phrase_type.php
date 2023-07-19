@@ -62,6 +62,26 @@ class phrase_type extends type_object
     const NEXT = "next";
     const PRIOR = "previous";
 
+    const DEFAULT = self::NORMAL;
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(string $code_id, int $id = 0, string $name = '')
+    {
+        parent::__construct($code_id, $name, $id);
+        $this->code_id = $code_id;
+        $this->id = $id;
+        $this->name = $name;
+    }
+
+    function code_id(): string
+    {
+        return $this->code_id;
+    }
+
 
     /*
      * load
@@ -82,9 +102,9 @@ class phrase_type extends type_object
         $lib = new library();
         log_debug($id);
         $dp_type = $lib->class_to_name($class);
-        // TODO rename table word_type to phrase_type
+        // TODO rename table phrase_type to phrase_type
         if ($dp_type == 'phrase_type') {
-            $dp_type = 'word_type';
+            $dp_type = 'phrase_type';
         }
         $qp = $this->load_sql_by_id($db_con, $id, $dp_type);
         return $this->load($qp, $dp_type);

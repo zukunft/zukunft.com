@@ -66,7 +66,7 @@ class sql_db
     const TBL_USER_PROFILE = 'user_profile';
     const TBL_USER_OFFICIAL_TYPE = 'user_official_type';
     const TBL_WORD = 'word';
-    const TBL_WORD_TYPE = 'word_type';
+    const TBL_PHRASE_TYPE = 'phrase_type';
     const TBL_TRIPLE = 'triple';
     const TBL_VERB = 'verb';
     const TBL_PHRASE = 'phrase';
@@ -1616,7 +1616,7 @@ class sql_db
         if ($result == 'link_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
-        if ($result == 'word_type_name') {
+        if ($result == 'phrase_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
@@ -4376,7 +4376,7 @@ class sql_db
                 $db_row = $this->get1_old($pre_sql);
                 $db_format = $db_row['COL_TYPE'];
                 $sql = "ALTER TABLE `" . $table_name . "` CHANGE `" . $column_name . "` `" . $column_name . "` " . $db_format . ";";
-                //$sql_a = 'ALTER TABLE `word_types` CHANGE `word_symbol` `word_symbol` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'e.g. for percent the symbol is %'; '
+                //$sql_a = 'ALTER TABLE `phrase_types` CHANGE `word_symbol` `word_symbol` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'e.g. for percent the symbol is %'; '
             } else {
                 $msg = 'Unknown database type "' . $this->db_type . '"';
                 log_err($msg, 'sql_db->change_column_name');

@@ -37,6 +37,7 @@ use api\triple_api;
 use api\verb_api;
 use api\word_api;
 use cfg\formula;
+use cfg\phrase;
 use cfg\term;
 use cfg\triple;
 use cfg\verb;
@@ -60,7 +61,7 @@ class term_unit_db_tests
         $db_row = $db_con->get1($qp);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(word::class);
-        $trm->row_mapper_obj($db_row, word::class, word::FLD_ID, word::FLD_NAME, word::FLD_TYPE);
+        $trm->row_mapper_obj($db_row, word::class, word::FLD_ID, word::FLD_NAME, phrase::FLD_TYPE);
         $t->assert($t->name . ' word row mapper', $trm->name(), word_api::TN_READ);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), word::class);
@@ -72,7 +73,7 @@ class term_unit_db_tests
         $db_row = $db_con->get1($qp);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(triple::class);
-        $trm->row_mapper_obj($db_row, triple::class, triple::FLD_ID, triple::FLD_NAME, triple::FLD_TYPE);
+        $trm->row_mapper_obj($db_row, triple::class, triple::FLD_ID, triple::FLD_NAME, phrase::FLD_TYPE);
         $t->assert($t->name . ' triple row mapper', $trm->name(), triple_api::TN_READ);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), triple::class);

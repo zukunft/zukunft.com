@@ -270,7 +270,7 @@ CREATE TABLE IF NOT EXISTS formula_link_types
     type_name            varchar(200) NOT NULL,
     code_id              varchar(100)          DEFAULT NULL,
     formula_id           bigint       NOT NULL DEFAULT 1,
-    word_type_id         bigint       NOT NULL,
+    phrase_type_id         bigint       NOT NULL,
     link_type_id         bigint       NOT NULL,
     description          text
 );
@@ -1029,7 +1029,7 @@ CREATE TABLE IF NOT EXISTS user_words
     word_name     varchar(200)      DEFAULT NULL,
     plural        varchar(200)      DEFAULT NULL,
     description   text,
-    word_type_id  bigint            DEFAULT NULL,
+    phrase_type_id  bigint            DEFAULT NULL,
     view_id       bigint            DEFAULT NULL,
     values        bigint            DEFAULT NULL,
     excluded      smallint          DEFAULT NULL,
@@ -1051,7 +1051,7 @@ CREATE TABLE IF NOT EXISTS user_triples
     name_given     varchar(200)      DEFAULT NULL,
     name_generated varchar(200)      DEFAULT NULL,
     description    text,
-    word_type_id   bigint            DEFAULT NULL,
+    phrase_type_id   bigint            DEFAULT NULL,
     values         bigint            DEFAULT NULL,
     excluded       smallint          DEFAULT NULL,
     share_type_id  smallint          DEFAULT NULL,
@@ -1428,7 +1428,7 @@ CREATE TABLE IF NOT EXISTS words
     word_name     varchar(200) NOT NULL,
     plural        varchar(200)          DEFAULT NULL,
     description   text                  DEFAULT NULL,
-    word_type_id  bigint                DEFAULT NULL,
+    phrase_type_id  bigint                DEFAULT NULL,
     view_id       bigint                DEFAULT NULL,
     values        bigint                DEFAULT NULL,
     excluded      smallint              DEFAULT NULL,
@@ -1496,7 +1496,7 @@ CREATE TABLE IF NOT EXISTS triples
     description              text,
     triple_condition_id      bigint            DEFAULT NULL,
     triple_condition_type_id bigint            DEFAULT NULL,
-    word_type_id             bigint            DEFAULT NULL,
+    phrase_type_id             bigint            DEFAULT NULL,
     values                   bigint            DEFAULT NULL,
     excluded                 smallint          DEFAULT NULL,
     share_type_id            smallint          DEFAULT NULL,
@@ -1527,12 +1527,12 @@ COMMENT ON TABLE word_periods is 'to define the time period for time terms';
 -- --------------------------------------------------------
 
 --
--- Table structure for table word_types
+-- Table structure for table phrase_types
 --
 
-CREATE TABLE IF NOT EXISTS word_types
+CREATE TABLE IF NOT EXISTS phrase_types
 (
-    word_type_id   BIGSERIAL PRIMARY KEY,
+    phrase_type_id   BIGSERIAL PRIMARY KEY,
     type_name      varchar(200) NOT NULL,
     description    text,
     code_id        varchar(100) DEFAULT NULL,
@@ -1540,8 +1540,8 @@ CREATE TABLE IF NOT EXISTS word_types
     word_symbol    varchar(5)   DEFAULT NULL
 );
 
-COMMENT ON COLUMN word_types.scaling_factor is 'e.g. for percent the scaling factor is 100';
-COMMENT ON COLUMN word_types.word_symbol is 'e.g. for percent the symbol is %';
+COMMENT ON COLUMN phrase_types.scaling_factor is 'e.g. for percent the scaling factor is 100';
+COMMENT ON COLUMN phrase_types.word_symbol is 'e.g. for percent the symbol is %';
 
 -- --------------------------------------------------------
 
@@ -1555,7 +1555,7 @@ SELECT w.word_id   AS phrase_id,
        w.word_name AS phrase_name,
        w.description,
        w.values,
-       w.word_type_id,
+       w.phrase_type_id,
        w.excluded,
        w.share_type_id,
        w.protect_id
@@ -1570,7 +1570,7 @@ SELECT (l.triple_id * -(1))                                                    A
             ELSE l.triple_name END AS phrase_name,
        l.description,
        l.values,
-       l.word_type_id,
+       l.phrase_type_id,
        l.excluded,
        l.share_type_id,
        l.protect_id
@@ -1615,14 +1615,14 @@ SELECT ((w.word_id * 2) - 1) AS term_id,
        w.word_name           AS term_name,
        w.description,
        w.values              AS usage,
-       w.word_type_id        AS term_type_id,
+       w.phrase_type_id        AS term_type_id,
        w.excluded,
        w.share_type_id,
        w.protect_id,
        ''                    AS formula_text,
        ''                    AS resolved_text
 FROM words AS w
-WHERE w.word_type_id <> 10 OR w.word_type_id IS NULL
+WHERE w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL
 UNION
 SELECT ((l.triple_id * -2) + 1)                                                  AS term_id,
        l.user_id,
@@ -1633,7 +1633,7 @@ SELECT ((l.triple_id * -2) + 1)                                                 
             ELSE l.triple_name END AS phrase_name,
        l.description,
        l.values                                                                     AS usage,
-       l.word_type_id,
+       l.phrase_type_id,
        l.excluded,
        l.share_type_id,
        l.protect_id,
@@ -1684,7 +1684,7 @@ SELECT ((w.word_id * 2) - 1) AS term_id,
        ''                    AS formula_text,
        ''                    AS resolved_text
 FROM user_words AS w
-WHERE w.word_type_id <> 10
+WHERE w.phrase_type_id <> 10
 UNION
 SELECT ((l.triple_id * -2) + 1)  AS term_id,
        l.user_id,
@@ -1998,7 +1998,7 @@ ALTER TABLE user_words
     ADD CONSTRAINT user_words_pkey PRIMARY KEY (word_id, user_id, language_id);
 CREATE INDEX user_word_user_idx ON user_words (user_id);
 CREATE INDEX user_word_language_idx ON user_words (language_id);
-CREATE INDEX user_word_type_idx ON user_words (word_type_id);
+CREATE INDEX user_phrase_type_idx ON user_words (phrase_type_id);
 CREATE INDEX user_word_view_idx ON user_words (view_id);
 
 --
@@ -2051,7 +2051,7 @@ CREATE INDEX component_link_position__idx ON component_links (position_type);
 -- Indexes for table words
 --
 CREATE UNIQUE INDEX word_name_idx ON words (word_name);
-CREATE INDEX word_type_idx ON words (word_type_id);
+CREATE INDEX phrase_type_idx ON words (phrase_type_id);
 CREATE INDEX word_view_idx ON words (view_id);
 
 
@@ -2261,7 +2261,7 @@ ALTER TABLE user_component_links
 --
 ALTER TABLE user_words
     ADD CONSTRAINT user_words_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_words_fk_2 FOREIGN KEY (word_type_id) REFERENCES word_types (word_type_id),
+    ADD CONSTRAINT user_words_fk_2 FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
     ADD CONSTRAINT user_words_fk_3 FOREIGN KEY (view_id) REFERENCES views (view_id),
     ADD CONSTRAINT user_words_fk_4 FOREIGN KEY (word_id) REFERENCES words (word_id);
 
@@ -2302,7 +2302,7 @@ ALTER TABLE words
     ADD CONSTRAINT word_name UNIQUE (word_name);
 ALTER TABLE words
     ADD CONSTRAINT words_fk_1 FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT words_fk_2 FOREIGN KEY (word_type_id) REFERENCES word_types (word_type_id);
+    ADD CONSTRAINT words_fk_2 FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id);
 
 --
 -- Constraints for table word_periods

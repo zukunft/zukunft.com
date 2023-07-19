@@ -4,7 +4,7 @@ PREPARE formula_link_list_by_frm_id FROM
             s.user_id,
             s.formula_id,
             s.phrase_id,
-            l.word_type_id AS word_type_id1,
+            l.phrase_type_id AS phrase_type_id1,
             IF(u.link_type_id   IS NULL, s.link_type_id,   u.link_type_id)  AS link_type_id,
             IF(u.excluded       IS NULL, s.excluded,       u.excluded)      AS excluded,
             IF(u.share_type_id  IS NULL, s.share_type_id,  u.share_type_id) AS share_type_id,
