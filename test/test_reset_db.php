@@ -47,7 +47,6 @@ use cfg\db_check;
 use cfg\formula_element_type_list;
 use cfg\formula_link_type_list;
 use cfg\formula_type_list;
-use cfg\job_type_list;
 use cfg\language_form_list;
 use cfg\language_list;
 use cfg\phrase_type_list;

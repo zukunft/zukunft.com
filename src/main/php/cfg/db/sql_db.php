@@ -4539,7 +4539,8 @@ class sql_db
         if (count($missing_columns) > 0) {
             // TODO add $this
             $lib = new library();
-            log_err('Database column ' . $lib->dsp_array($missing_columns) . ' missing in ' . $table_name);
+            log_fatal('Database column ' . $lib->dsp_array($missing_columns)
+                . ' missing in ' . $table_name, 'sql_db/check_column_names');
             $result = false;
         }
         return $result;
