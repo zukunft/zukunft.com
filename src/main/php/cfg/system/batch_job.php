@@ -311,7 +311,7 @@ class batch_job extends db_object
         global $db_con;
 
         log_debug($id);
-        $qp = $this->load_sql_by_id($db_con, $id, $class);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
         return $this->load($qp);
     }
 
