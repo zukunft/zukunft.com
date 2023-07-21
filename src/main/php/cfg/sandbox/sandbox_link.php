@@ -46,6 +46,10 @@ include_once MODEL_LOG_PATH . 'change_log_link.php';
 class sandbox_link extends sandbox
 {
 
+    /*
+     * object vars
+     */
+
     public ?object $fob = null;        // the object from which this linked object is creating the connection
     public ?object $tob = null;        // the object to   which this linked object is creating the connection
 
@@ -53,6 +57,11 @@ class sandbox_link extends sandbox
     // TODO create a more specific object that covers all the objects that could be linked e.g. linkable_object
     public ?string $from_name = null;  // the name of the from object type e.g. view for component_links
     public ?string $to_name = '';      // the name of the  to  object type e.g. view for component_links
+
+
+    /*
+     * construct and map
+     */
 
     /**
      * reset the search values of this object
@@ -65,6 +74,11 @@ class sandbox_link extends sandbox
         $this->fob = null;
         $this->tob = null;
     }
+
+
+    /*
+     * loading / database access object (DAO) functions
+     */
 
     /**
      * create an SQL statement to retrieve a user sandbox link by the ids of the linked objects from the database
@@ -111,6 +125,11 @@ class sandbox_link extends sandbox
         return parent::load($qp);
     }
 
+
+    /*
+     * dummy load related function that are overwritten by the child objects
+     */
+
     /**
      * dummy function for the subject object that should always be overwritten by the child object
      * @return string
@@ -156,13 +175,18 @@ class sandbox_link extends sandbox
         }
     }
 
+
+    /*
+     * info
+     */
+
     /**
      * @return bool true if the object value are valid for identifying a unique link
      */
     function is_unique(): bool
     {
         $result = false;
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $result = true;
         } else {
             if ($this->fob != null and $this->tob != null) {
@@ -173,6 +197,29 @@ class sandbox_link extends sandbox
         }
         return $result;
     }
+
+    /**
+     * @return bool true if all mandatory vars of the object are set to save the object
+     */
+    function is_valid(): bool
+    {
+        $result = false;
+        if ($this->fob != null and $this->tob != null) {
+            if ($this->fob->id() > 0 and $this->tob->id() != 0) {
+                $result = true;
+            }
+        }
+        if (!$result) {
+            log_warning("The formula link " . $this->dsp_id()
+                . " is not unique", "formula_link->load");
+        }
+        return $result;
+    }
+
+
+    /*
+     * debug
+     */
 
     /**
      * return best possible identification for this object mainly used for debugging
@@ -189,7 +236,7 @@ class sandbox_link extends sandbox
             }
             $result .= ' of type ';
         } else {
-            $result .= $this->name . ' (' . $this->id . ') of type ';
+            $result .= $this->name() . ' (' . $this->id . ') of type ';
         }
         $result .= $this->obj_name . ' ' . $this->obj_type;
         if ($this->user() != null) {
@@ -197,6 +244,11 @@ class sandbox_link extends sandbox
         }
         return $result;
     }
+
+
+    /*
+     * log
+     */
 
     /**
      * set the log entry parameter for a new link object
@@ -240,6 +292,11 @@ class sandbox_link extends sandbox
 
         return $log;
     }
+
+
+    /*
+     * save
+     */
 
     /**
      * create a new link object

@@ -317,11 +317,14 @@ class sandbox_named extends sandbox
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name, string $class = ''): int
     {
         global $db_con;
 
         log_debug($name);
+        if ($class == '') {
+            $class = $this::class;
+        }
         $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $class);
         return parent::load($qp);
     }

@@ -545,7 +545,7 @@ class phrase extends combine_named
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, self::class);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $class);
         return $this->load($qp);
     }
 

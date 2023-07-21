@@ -1832,6 +1832,8 @@ class create_test_objects extends test_base
                 $this->display('formula_link', $target, $result);
             } else {
                 if ($autocreate) {
+                    $frm_lnk->fob = $frm;
+                    $frm_lnk->tob = $wrd->phrase();
                     $frm_lnk->save();
                 }
             }

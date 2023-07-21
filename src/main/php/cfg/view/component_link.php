@@ -294,7 +294,13 @@ class component_link extends sandbox_link_with_type
      */
     function load_by_link(view $dsp, component $cmp, string $class = self::class): int
     {
-        return parent::load_by_link_id($dsp->id(), 0, $cmp->id(), $class);
+        $id = parent::load_by_link_id($dsp->id(), 0, $cmp->id(), $class);
+        // no need to reload the linked objects, just assign it
+        if ($id != 0) {
+            $this->fob = $dsp;
+            $this->tob = $cmp;
+        }
+        return $id;
     }
 
     /**

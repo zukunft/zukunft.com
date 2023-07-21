@@ -2143,19 +2143,11 @@ class sandbox extends db_object
         // refresh the object with the database to include all updates utils now (TODO start of lock for commit here)
         // TODO it seems that the owner is not updated
         $reloaded = false;
-        if ($this->obj_name == sql_db::TBL_WORD
-            or $this->obj_name == sql_db::TBL_TRIPLE
-            or $this->obj_name == sql_db::TBL_SOURCE
-            or $this->obj_name == sql_db::TBL_VALUE
-            or $this->obj_name == sql_db::TBL_VIEW) {
-            $reloaded_id = $this->load_by_id($this->id());
-            if ($reloaded_id != 0) {
-                $reloaded = true;
-            }
-        } else {
-            // at the moment for links
-            $reloaded = $this->load_obj_vars();
+        $reloaded_id = $this->load_by_id($this->id(), $this::class);
+        if ($reloaded_id != 0) {
+            $reloaded = true;
         }
+
         if (!$reloaded) {
             log_warning('Reload of for deletion has lead to unexpected', $this->obj_name . '->del', 'Reload of ' . $this->obj_name . ' ' . $this->dsp_id() . ' for deletion or exclude has unexpectedly lead to ' . $msg . '.', (new Exception)->getTraceAsString(), $this->usr);
         } else {

@@ -331,13 +331,13 @@ class formula_link extends sandbox_link_with_type
      */
     function load_by_link(formula $frm, phrase $phr, string $class = self::class): int
     {
-        if (!$this->is_unique()) {
-            log_warning("The formula link " . $this->dsp_id()
-                . " is not unique", "formula_link->load");
-            return 0;
-        } else {
-            return parent::load_by_link_id($frm->id(), 0, $phr->id(), $class);
+        $id = parent::load_by_link_id($frm->id(), 0, $phr->id(), $class);
+        // no need to reload the linked objects, just assign it
+        if ($id != 0) {
+            $this->fob = $frm;
+            $this->tob = $phr;
         }
+        return $id;
     }
 
     /**
@@ -623,8 +623,10 @@ class formula_link extends sandbox_link_with_type
         }
 
         if ($this->id <= 0) {
-            log_debug('new formula link from "' . $this->fob->name() . '" to "' . $this->tob->name() . '"');
-            $result .= $this->add()->get_last_message();
+            if ($this->is_valid()) {
+                log_debug('new formula link from "' . $this->fob->name() . '" to "' . $this->tob->name() . '"');
+                $result .= $this->add()->get_last_message();
+            }
         } else {
             log_debug('update "' . $this->id . '"');
             // read the database values to be able to check if something has been changed; done first,
