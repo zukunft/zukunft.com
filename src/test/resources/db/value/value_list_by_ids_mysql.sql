@@ -1,4 +1,4 @@
-PREPARE value_list_by_2ids FROM
+PREPARE value_list_by_ids FROM
    'SELECT s.value_id,
            u.value_id AS user_value_id,
            s.user_id,
@@ -11,5 +11,5 @@ PREPARE value_list_by_2ids FROM
            u.share_type_id
       FROM `values` s
  LEFT JOIN user_values u         ON s.value_id = u.value_id AND u.user_id = ?
-     WHERE s.value_id IN (?,?)
+     WHERE s.value_id IN (?)
   ORDER BY s.value_id';

@@ -13,4 +13,4 @@ PREPARE value_list_by_phr_lst FROM
       FROM `values` s
  LEFT JOIN user_values u         ON s.value_id = u.value_id AND u.user_id = ?
  LEFT JOIN value_phrase_links l  ON s.value_id = l.value_id
-     WHERE l.phrase_id IN (?,?)';
+     WHERE l.phrase_id IN (?)';

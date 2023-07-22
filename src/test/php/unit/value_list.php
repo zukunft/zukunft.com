@@ -149,13 +149,13 @@ class value_list_unit_tests
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_phr_lst($db_con, $phr_lst);
+        $qp = $usr_obj->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_phr_lst($db_con, $phr_lst);
+            $qp = $usr_obj->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

@@ -1,4 +1,4 @@
-PREPARE value_list_by_phr_lst (int, int, int) AS
+PREPARE value_list_by_phr_lst (int, int[]) AS
     SELECT s.value_id,
            u.value_id AS user_value_id,
            s.user_id,
@@ -13,4 +13,4 @@ PREPARE value_list_by_phr_lst (int, int, int) AS
       FROM values s
  LEFT JOIN user_values u         ON s.value_id = u.value_id AND u.user_id = $1
  LEFT JOIN value_phrase_links l  ON s.value_id = l.value_id
-     WHERE l.phrase_id IN ($2,$3);
+     WHERE l.phrase_id = ANY ($2);

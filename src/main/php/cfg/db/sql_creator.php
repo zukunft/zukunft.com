@@ -36,10 +36,16 @@ include_once MODEL_SYSTEM_PATH . 'log.php';
 
 use cfg\library;
 use cfg\sql_db;
+use cfg\sys_log_level;
 use cfg\user;
+use Exception;
 
 class sql_creator
 {
+
+    // sql const used for this sql statement creator
+    const NULL_VALUE = 'NULL';
+
 
     // parameters for the sql creation that are set step by step with the functions of the sql creator
     private ?int $usr_id;           // the user id of the person who request the database changes
@@ -1395,6 +1401,159 @@ class sql_creator
         return $used_par_values;
     }
 
+    /*
+      technical function to finally update data in the MySQL database
+    */
+
+    /**
+     * insert a new record in the database
+     * similar to exe, but returning the row id added to be able to update
+     * e.g. the log entry with the row id of the real row added
+     * writing the changes to the log table for history rollback is done
+     * at the calling function also because zu_log also uses this function
+     * TODO include the data retrieval part for creating this insert statement into the transaction statement
+     *      add the return type (allowed since php version 7.0, but array|string is allowed with 8.0 or higher
+     *      if $log_err is false, no further errors will reported to prevent endless looping from the error logging itself
+     */
+    function insert(array|string $fields, array|string $values, string $name, bool $log_err = true): int
+    {
+        global $db_con;
+
+        $result = 0;
+        $is_valid = false;
+        $lib = new library();
+
+        // escape the fields and values and build the SQL statement
+        $this->set_table();
+        $sql = 'INSERT INTO ' . $this->name_sql_esc($this->table);
+
+        if (is_array($fields)) {
+            if (count($fields) <> count($values)) {
+                if ($log_err) {
+                    $lib = new library();
+                    log_fatal_db(
+                        'MySQL insert call with different number of fields (' . $lib->dsp_count($fields)
+                        . ': ' . $lib->dsp_array($fields) . ') and values (' . $lib->dsp_count($values)
+                        . ': ' . $lib->dsp_array($values) . ').', "user_log->add");
+                }
+            } else {
+                foreach (array_keys($fields) as $i) {
+                    $fields[$i] = $this->name_sql_esc($fields[$i]);
+                    $values[$i] = $this->sf($values[$i]);
+                }
+                $sql_fld = $lib->sql_array($fields, ' (', ') ');
+                $sql .= $lib->sql_array($values,
+                    $sql_fld . ' VALUES (', ') ');
+                $is_valid = true;
+            }
+        } else {
+            if ($fields != '') {
+                $sql .= ' (' . $this->name_sql_esc($fields) . ')
+             VALUES (' . $this->sf($values) . ')';
+                $is_valid = true;
+            }
+        }
+
+        if ($is_valid) {
+            if ($this->db_type == sql_db::POSTGRES) {
+                if ($db_con->postgres_link == null) {
+                    if ($log_err) {
+                        log_err('Database connection lost', 'insert');
+                    }
+                } else {
+                    // return the database row id if the value is not a time series number
+                    if ($this->type != sql_db::TBL_VALUE_TIME_SERIES_DATA
+                        and $this->type != sql_db::TBL_LANGUAGE_FORM
+                        and $this->type != sql_db::TBL_USER_OFFICIAL_TYPE
+                        and $this->type != sql_db::TBL_USER_TYPE) {
+                        $sql = $sql . ' RETURNING ' . $this->id_field . ';';
+                    }
+
+                    /*
+                    try {
+                        $stmt = $this->link->prepare($sql);
+                        $this->link->beginTransaction();
+                        $stmt->execute();
+                        $this->link->commit();
+                        $result = $this->link->lastInsertId();
+                        log_debug('done "' . $result . '"');
+                    } catch (PDOException $e) {
+                        $this->link->rollback();
+                        log_debug('failed (' . $sql . ')');
+                    }
+                    */
+                    //$sql_result = $this->exe($sql);
+
+                    // TODO catch SQL errors and report them
+                    $sql_result = pg_query($db_con->postgres_link, $sql);
+                    if ($sql_result) {
+                        $sql_error = pg_result_error($sql_result);
+                        if ($sql_error != '') {
+                            if ($log_err) {
+                                log_err('Execution of ' . $sql . ' failed due to ' . $sql_error);
+                            }
+                        } else {
+                            if ($this->type != sql_db::TBL_VALUE_TIME_SERIES_DATA) {
+                                if (is_resource($sql_result) or $sql_result::class == 'PgSql\Result') {
+                                    $result = pg_fetch_array($sql_result)[0];
+                                } else {
+                                    // TODO get the correct db number
+                                    $result = 0;
+                                }
+                            } else {
+                                $result = 1;
+                            }
+                        }
+                    } else {
+                        $sql_error = pg_last_error($db_con->postgres_link);
+                        if ($log_err) {
+                            log_err('Execution of ' . $sql . ' failed completely due to ' . $sql_error);
+                        }
+                    }
+
+                    //if ($result == false) {                        die(pg_last_error());                    }
+                }
+            } elseif ($this->db_type == sql_db::MYSQL) {
+                $sql = $sql . ';';
+                //$sql_result = $this->exe($sql, 'insert_' . $this->name_sql_esc($this->table), array(), sys_log_level::FATAL);
+                try {
+                    $sql_result = $this->exe($sql, '', array(), sys_log_level::FATAL);
+                    if ($sql_result) {
+                        $result = mysqli_insert_id($db_con->mysql);
+                        // user database row have a double unique index, but relevant
+                        if ($result == 0) {
+                            if (is_array($values)) {
+                                $result = $values[0];
+                            } else {
+                                $result = $values;
+                            }
+                        }
+                        log_debug('done "' . $result . '"');
+                    } else {
+                        $result = -1;
+                        log_debug('failed (' . $sql . ')');
+                    }
+                } catch (Exception $e) {
+                    $trace_link = log_err('Cannot insert with "' . $sql . '" because: ' . $e->getMessage());
+                    $result = -1;
+                }
+
+            } else {
+                log_err('Unknown database type "' . $this->db_type . '"', 'sql_db->fetch');
+            }
+        } else {
+            $result = -1;
+            log_debug('failed (' . $sql . ')');
+        }
+
+        if ($result == null) {
+            log_err('Unexpected result for "' . $this->db_type . '"', 'sql_db->fetch');
+            $result = 0;
+        }
+
+        return $result;
+    }
+
 
     /*
      * public sql helpers
@@ -1431,6 +1590,104 @@ class sql_creator
     /*
      * private sql helpers
      */
+
+    /**
+     * Sql Format: format a value for a SQL statement
+     * TODO deprecate to prevent sql code injections
+     *
+     * $field_value is the value that should be formatted
+     * $force_type can be set to force the formatting e.g. for the time word 2021 to use '2021'
+     * outside this module it should only be used to format queries that are not yet using the abstract form for all databases (MySQL, MariaSQL, Casandra, Droid)
+     */
+    private function sf($field_value, $forced_format = '')
+    {
+        $result = $field_value;
+        if ($this->db_type == sql_db::POSTGRES) {
+            $result = $this->postgres_format($result, $forced_format);
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $result = $this->mysqli_format($result, $forced_format);
+        } else {
+            log_err('Unknown database type ' . $this->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * formats one value for the Postgres statement
+     */
+    private function postgres_format($field_value, $forced_format)
+    {
+        global $debug;
+
+        $result = $field_value;
+
+        // add the formatting for the sql statement
+        if (trim($result) == "" or trim($result) == self::NULL_VALUE) {
+            $result = self::NULL_VALUE;
+        } else {
+            if ($forced_format == sql_db::FLD_FORMAT_VAL) {
+                if (str_starts_with($result, "'") and str_ends_with($result, "'")) {
+                    $result = substr($result, 1, -1);
+                }
+            } elseif ($forced_format == sql_db::FLD_FORMAT_TEXT or !is_numeric($result)) {
+
+                // escape the text value for Postgres
+                $result = pg_escape_string($result);
+                //$result = pg_real_escape_string($result);
+
+                // undo the double high quote escape char, because this is not needed if the string is capsuled by single high quote
+                $result = str_replace('\"', '"', $result);
+                $result = "'" . $result . "'";
+            } else {
+                $result = strval($result);
+            }
+        }
+        log_debug("done (" . $result . ")", $debug - 25);
+
+        return $result;
+    }
+
+    /**
+     * formats one value for the MySQL statement
+     */
+    private function mysqli_format($field_value, $forced_format): string
+    {
+        $result = $field_value;
+
+        // add the formatting for the sql statement
+        if (trim($result) == "" or trim($result) == self::NULL_VALUE) {
+            $result = self::NULL_VALUE;
+        } else {
+            if ($forced_format == sql_db::FLD_FORMAT_VAL) {
+                if (str_starts_with($result, "'") and str_ends_with($result, "'")) {
+                    $result = substr($result, 1, -1);
+                }
+            } elseif ($forced_format == sql_db::FLD_FORMAT_TEXT or !is_numeric($result)) {
+
+                // escape the text value for MySQL
+                if (!isset($this->mysql)) {
+                    $result = $this->sql_escape($result);
+                } else {
+                    $result = mysqli_real_escape_string($this->mysql, $result);
+                }
+
+                // undo the double high quote escape char, because this is not needed if the string is capsuled by single high quote
+                $result = str_replace('\"', '"', $result);
+                $result = "'" . $result . "'";
+            } else {
+                $result = strval($result);
+            }
+        }
+
+        // exceptions
+        if ($result == "'Now()'") {
+            $result = "Now()";
+        }
+
+        log_debug("done (" . $result . ")");
+
+        return $result;
+    }
 
     /**
      * set the table name and init some related parameters

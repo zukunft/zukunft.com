@@ -36,6 +36,7 @@ include_once API_VALUE_PATH . 'value_list.php';
 include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 
 use api\value_list_api;
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use html\phrase\phrase_list as phrase_list_dsp;
 use model\export\exp_obj;
@@ -114,22 +115,22 @@ class value_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of values
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $db_con->set_type(sql_db::TBL_VALUE);
-        $db_con->set_name($qp->name);
+        $sc->set_type(sql_db::TBL_VALUE);
+        $sc->set_name($qp->name);
 
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(value::FLD_NAMES);
-        $db_con->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
-        $db_con->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(value::FLD_NAMES);
+        $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+        $sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
         //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word::FLD_VALUES) . ' DESC, ' . word::FLD_NAME);
         return $qp;
     }
@@ -137,17 +138,17 @@ class value_list extends sandbox_list
     /**
      * create an SQL statement to retrieve a list of value by the id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param array $ids value ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_db $db_con, array $ids): sql_par
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
     {
-        $qp = $this->load_sql($db_con, count($ids) . 'ids');
-        $db_con->set_where_id_in(value::FLD_ID, $ids);
-        $db_con->set_order(value::FLD_ID);
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'ids');
+        $sc->add_where(value::FLD_ID, $ids, sql_par_type::INT_LIST);
+        $sc->set_order(value::FLD_ID);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -155,19 +156,19 @@ class value_list extends sandbox_list
     /**
      * create an SQL statement to retrieve a list of value by the id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr_lst(sql_db $db_con, phrase_list $phr_lst): sql_par
+    function load_sql_by_phr_lst(sql_creator $sc, phrase_list $phr_lst): sql_par
     {
-        $qp = $this->load_sql($db_con, 'phr_lst');
-        $db_con->set_where_id_in_join(phrase::FLD_ID, $phr_lst->ids());
-        $db_con->set_join_fields(
+        $qp = $this->load_sql($sc, 'phr_lst');
+        $sc->set_join_fields(
             array(value::FLD_ID), sql_db::TBL_VALUE_PHRASE_LINK,
             value::FLD_ID, value::FLD_ID);
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
+        $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr_lst->ids());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -180,7 +181,7 @@ class value_list extends sandbox_list
     function load_by_ids(array $val_ids): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_ids($db_con, $val_ids);
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $val_ids);
         return $this->load($qp);
     }
 
@@ -192,7 +193,7 @@ class value_list extends sandbox_list
     function load_by_phr_lst(phrase_list $phr_lst): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_phr_lst($db_con, $phr_lst);
+        $qp = $this->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst);
         return $this->load($qp);
     }
 

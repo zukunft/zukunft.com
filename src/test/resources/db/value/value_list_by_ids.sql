@@ -1,4 +1,4 @@
-PREPARE value_list_by_2ids (int, int, int) AS
+PREPARE value_list_by_ids (int, int[]) AS
     SELECT s.value_id,
            u.value_id AS user_value_id,
            s.user_id,
@@ -11,5 +11,5 @@ PREPARE value_list_by_2ids (int, int, int) AS
            u.share_type_id
       FROM values s
  LEFT JOIN user_values u         ON s.value_id = u.value_id AND u.user_id = $1
-     WHERE s.value_id IN ($2,$3)
+     WHERE s.value_id = ANY ($2)
   ORDER BY s.value_id;

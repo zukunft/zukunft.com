@@ -578,72 +578,6 @@ class sql_db
      */
 
     /*
-     * where
-     */
-
-    /**
-     * add a where condition a list of id are one field or another
-     * e.g. used to select both sides of a phrase tree
-     * @param string $fld the field name used in the sql where statement
-     * @param int|string|array $fld_val with the database id that should be selected
-     * @param sql_par_type|null $spt to force using a non-standard parameter type e.g. OR instead of AND
-     * @return void
-     */
-    function add_where(string $fld, int|string|array $fld_val, sql_par_type|null $spt = null): void
-    {
-        $this->add_field($fld);
-
-        // set the default parameter type
-        $sql_par_typ = sql_par_type::INT;
-        if ($spt == null) {
-            $sql_par_typ = match (gettype($fld_val)) {
-                'integer' => sql_par_type::INT,
-                'string' => sql_par_type::TEXT,
-                'array' => sql_par_type::INT_LIST,
-            };
-        } else {
-            // map the par type until all sql statement creations are changed
-            $sql_par_typ = match ($spt->name) {
-                'INT' => sql_par_type::INT,
-                'INT_LIST' => sql_par_type::INT_LIST,
-                'INT_LIST_OR' => sql_par_type::INT_LIST_OR,
-                default => log_err('Unexpected sqp parameter type ' . $spt->name),
-            };
-        }
-
-        if ($sql_par_typ == sql_par_type::INT_LIST or $sql_par_typ == sql_par_type::INT_LIST_OR) {
-            $this->add_par($sql_par_typ, $this->int_array_to_sql_string($fld_val));
-        } elseif ($sql_par_typ == sql_par_type::INT) {
-            $this->add_par($sql_par_typ, $fld_val);
-        }
-    }
-
-    /*
-     * statement
-     */
-
-    /**
-     * create a SQL select statement for the connected database and force to use the ids of the linked objects instead of the id
-     * and select by a list of given fields
-     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
-     * @return string the created SQL statement in the previous set dialect
-     */
-    function sql(bool $has_id = true): string
-    {
-        return $this->select_by($this->par_fields, $has_id);
-    }
-
-    /*
-     * internal where
-     */
-
-    private function add_field(string $fld): void
-    {
-        $this->par_fields[] = $fld;
-    }
-
-
-    /*
      * basic interface function for the private class parameter
      */
 
@@ -750,15 +684,6 @@ class sql_db
     }
 
     /**
-     * interface function to add a integer parameter on the joined table for a prepared query
-     * @param int $id the integer value for the WHERE IN SQL statement part
-     */
-    function add_par_join_int(int $id): void
-    {
-        $this->add_par(sql_par_type::INT, $id, false, true);
-    }
-
-    /**
      * interface function to add a "IN" parameter for a prepared query
      * @param array $ids with the int id values for the WHERE IN SQL statement part
      * @param bool $named true if the parameter name is already used
@@ -767,35 +692,6 @@ class sql_db
     function add_par_in_int(array $ids, bool $named = false, bool $use_link = false): void
     {
         $this->add_par(sql_par_type::INT_LIST, $this->int_array_to_sql_string($ids), $named, $use_link);
-    }
-
-    /**
-     * interface function to add a "IN" parameter for a prepared query
-     * @param array $ids with the int id values for the WHERE IN SQL statement part
-     * @param bool $named true if the parameter name is already used
-     * @param bool $use_link true if the parameter should be applied on the linked table
-     */
-    function add_par_in_int_or(array $ids, bool $named = false, bool $use_link = false): void
-    {
-        $this->add_par(sql_par_type::INT_LIST_OR, $this->int_array_to_sql_string($ids), $named, $use_link);
-    }
-
-    /**
-     * interface function to add a text parameter for a prepared query
-     * @param string $name the search text for the WHERE IN SQL statement part
-     */
-    function add_par_txt(string $name): void
-    {
-        $this->add_par(sql_par_type::TEXT, $name);
-    }
-
-    /**
-     * interface function to add a text parameter that is connected to the previous added parameter with an or condition
-     * @param string $name the search text for the WHERE IN SQL statement part
-     */
-    function add_par_txt_or(string $name): void
-    {
-        $this->add_par(sql_par_type::TEXT_OR, $name);
     }
 
     /**
@@ -2434,31 +2330,6 @@ class sql_db
     }
 
     /**
-     * set the where statement for a list of ids of a joined field
-     * @param string $id_field_name the field name without the table prefix
-     * @param array $ids the list of ids that should be used for the selection
-     * @return string the where statement that should be used for the final query
-     */
-    function set_where_id_in_join(string $id_field_name, array $ids): string
-    {
-        $this->where = ' WHERE ' . $this->where_in_par($id_field_name, $ids, true, true);
-        return $this->where;
-    }
-
-    /**
-     * simple interface function for where_par to select by id
-     *
-     * @param string $id_field_name name of the id field which is usually self::FLD_ID
-     * @param int $id the unique object id
-     * @param bool $is_join_query to force using the table name prefix
-     * @return string the SQL WHERE statement
-     */
-    function where_id(string $id_field_name, int $id, bool $is_join_query = false): string
-    {
-        return $this->where_par(array($id_field_name), array($id), $is_join_query);
-    }
-
-    /**
      * set the where statement to select based on a none standard id field
      *
      * @param string $id_field_name name of the id field which is usually self::FLD_ID
@@ -2515,34 +2386,6 @@ class sql_db
         }
 
         return $result;
-    }
-
-    /**
-     * set the where statement to select based on a id fields of the linked objects
-     *
-     * @param int $from the subject object id
-     * @param int $type the predicate object id
-     * @param int $to the object (grammar) object id
-     * @param string $from_field_name name of the "from" id field which is usually self::FLD_FROM
-     * @param string $type_field_name name of the type/predicate id field which is usually self::FLD_TYPE
-     * @param string $to_field_name name of the "to" id field which is usually self::FLD_TO
-     * @return string the SQL WHERE statement
-     */
-    function set_where_link(
-        int    $from,
-        int    $type,
-        int    $to,
-        string $from_field_name,
-        string $type_field_name,
-        string $to_field_name
-    ): string
-    {
-        $this->id_from_field = $from_field_name;
-        $this->id_to_field = $to_field_name;
-        if ($type > 0) {
-            $this->id_link_field = $type_field_name;
-        }
-        return $this->set_where_link_no_fld(0, $from, $to, $type);
     }
 
     /**
@@ -2805,14 +2648,6 @@ class sql_db
         if ($where_text != '') {
             $this->where = ' WHERE ' . $where_text;
         }
-    }
-
-    /**
-     * get the order SQL statement
-     */
-    function get_order(): string
-    {
-        return $this->order;
     }
 
     /**
@@ -3169,36 +3004,6 @@ class sql_db
 
     /**
      * create a SQL select statement for the connected database
-     * and select by the default id field
-     * @param int $id the database id of the object
-     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
-     * @return string the created SQL statement in the previous set dialect
-     */
-    function select_by_id(int $id, bool $has_id = true): string
-    {
-        $this->add_par_int($id);
-        return $this->select_by(array($this->id_field), $has_id);
-    }
-
-    /**
-     * create a SQL select statement for the connected database
-     * and select by the default id field
-     * @param string $name the unique name of the object
-     * @param string $name_field the field name for the object name if it differs from the standard field name
-     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
-     * @return string the created SQL statement in the previous set dialect
-     */
-    function select_by_name(string $name, string $name_field = '', bool $has_id = true): string
-    {
-        $this->add_par_txt($name);
-        if ($name_field != '') {
-            $this->name_field = $name_field;
-        }
-        return $this->select_by(array($this->name_field), $has_id);
-    }
-
-    /**
-     * create a SQL select statement for the connected database
      * and select the standard and the user sandbox rows
      * @return string the created SQL statement in the previous set dialect
      */
@@ -3285,26 +3090,6 @@ class sql_db
     function select_by_field_list(array $id_fields, bool $has_id = true): string
     {
         return $this->select_by($id_fields, $has_id);
-    }
-
-    /**
-     * @return string the SQL statement to for the user specific data
-     */
-    function select_by_id_and_user(int $id, int $usr_id): string
-    {
-        $this->add_par(sql_par_type::INT, $id);
-        $this->add_par(sql_par_type::INT, $usr_id);
-
-        $this->set_field_statement(true);
-        $this->set_from_user();
-        $this->set_where(array($this->id_field, user::FLD_ID));
-
-        // create a prepare SQL statement if possible
-        $sql = $this->prepare_sql();
-
-        $sql .= $this->fields . $this->from . $this->where . $this->order . $this->page;
-
-        return $this->end_sql($sql);
     }
 
     /**
