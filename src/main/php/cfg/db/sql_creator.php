@@ -149,6 +149,7 @@ class sql_creator
         $this->table = '';
         $this->query_name = '';
         $this->usr_query = false;
+        $this->from_user = false;
         $this->all_query = false;
         $this->id_field = '';
         $this->id_from_field = '';

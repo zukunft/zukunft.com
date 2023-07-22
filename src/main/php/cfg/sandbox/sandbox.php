@@ -1096,19 +1096,21 @@ class sandbox extends db_object
     /**
      * create an SQL statement to retrieve the user changes of the current object
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
         $qp->name .= 'usr_cfg';
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
-        $db_con->set_fields($this->all_sandbox_fields());
-        $qp->sql = $db_con->select_by_id_and_user($this->id, $this->user()->id);
-        $qp->par = $db_con->get_par();
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id);
+        $sc->set_fields($this->all_sandbox_fields());
+        $sc->add_where($this->id_field(), $this->id());
+        $sc->add_where(user::FLD_ID, $this->user()->id());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 
@@ -1127,7 +1129,7 @@ class sandbox extends db_object
         //if ($this->has_usr_cfg) {
 
         // check again if there ist not yet a record
-        $qp = $this->load_sql_user_changes($db_con);
+        $qp = $this->load_sql_user_changes($db_con->sql_creator());
         $db_con->usr_id = $this->user()->id();
         $usr_cfg_row = $db_con->get1($qp);
         if ($usr_cfg_row) {

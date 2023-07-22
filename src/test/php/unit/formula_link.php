@@ -76,8 +76,8 @@ class formula_link_unit_tests
 
         // sql to load the user formula link by id
         $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $lnk->load_sql_user_changes($db_con)->sql;
-        $expected_sql = $t->file('db/formula/formula_link_by_id_e_user.sql');
+        $created_sql = $lnk->load_sql_user_changes($db_con->sql_creator())->sql;
+        $expected_sql = $t->file('db/formula/formula_link_by_usr_cfg.sql');
         $t->assert('formula_link->load_user_sql by formula link id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         /*

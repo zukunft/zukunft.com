@@ -595,14 +595,14 @@ class component_link extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve the user changes of the current view component link
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
-        return parent::load_sql_user_changes($db_con, $class);
+        $sc->set_type(sql_db::TBL_COMPONENT_LINK, true);
+        return parent::load_sql_user_changes($sc, $class);
     }
 
     /**

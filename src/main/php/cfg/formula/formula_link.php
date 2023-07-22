@@ -145,24 +145,21 @@ class formula_link extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve the user specific formula link from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
+     * @param sql_creator $sc with the target db_type set
+     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement base on the parameters set in $this
      */
-    function load_sql_user_changes(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $db_con->set_type(sql_db::TBL_FORMULA_LINK, true);
-        $qp = new sql_par($class);
-        $sql_name = self::class . '_add_usr_cfg';
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(formula_link::FLD_NAMES_NUM_USR);
-        $db_con->set_where_std($this->id);
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
-
-        return $qp;
+        $sc->set_type(sql_db::TBL_FORMULA_LINK, true);
+        return parent::load_sql_user_changes($sc, $class);
     }
+
+    protected function all_sandbox_fields(): array
+    {
+        return self::ALL_SANDBOX_FLD_NAMES;
+    }
+
 
     /*
      * internal check function
@@ -520,7 +517,7 @@ class formula_link extends sandbox_link_with_type
 
         if (!$this->has_usr_cfg()) {
             // check again if there ist not yet a record
-            $qp = $this->load_sql_user_changes($db_con);
+            $qp = $this->load_sql_user_changes($db_con->sql_creator());
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[formula_link::FLD_ID];
