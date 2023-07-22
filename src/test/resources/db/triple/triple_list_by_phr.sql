@@ -1,10 +1,10 @@
-PREPARE triple_list_by_phr (int, int) AS
+PREPARE triple_list_by_phr (int, int, int) AS
     SELECT s.triple_id,
            u.triple_id AS user_triple_id,
            s.user_id,
            s.from_phrase_id,
-           s.to_phrase_id,
            s.verb_id,
+           s.to_phrase_id,
            s.phrase_type_id,
            s.triple_condition_id,
            s.triple_condition_type_id,
@@ -36,5 +36,5 @@ PREPARE triple_list_by_phr (int, int) AS
  LEFT JOIN user_phrases ul   ON  l.phrase_id      =  ul.phrase_id    AND  ul.user_id = $1
  LEFT JOIN phrases l2        ON  s.to_phrase_id   =  l2.phrase_id
  LEFT JOIN user_phrases ul2  ON l2.phrase_id      = ul2.phrase_id    AND ul2.user_id = $1
-     WHERE s.from_phrase_id = $2
+     WHERE (s.from_phrase_id = $2 OR s.to_phrase_id = $3)
   ORDER BY s.verb_id, name_given;

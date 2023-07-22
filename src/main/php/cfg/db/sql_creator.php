@@ -375,6 +375,9 @@ class sql_creator
      * @param string $join_type is the table from where the fields should be taken; use the type name, not the table name
      * @param string $join_field is the index field that should be used for the join that must exist in both tables, default is the id of the joined table
      *                           if empty the field will be guessed
+     * @param string $join_to_field if set the field name in the joined table that should be used for the join; only needed, if the joined field name differ from the type id field
+     * @param string $join_select_field if set the field name in the joined table that should be used for a where selection
+     * @param int $join_select_id if $join_select_field is set the id (int) used for the selection
      */
     function set_join_fields(array  $join_field_lst,
                              string $join_type,
@@ -426,6 +429,107 @@ class sql_creator
             $this->join4_usr_query = false;
         } else {
             log_err('Max four table joins expected on version ' . PRG_VERSION);
+        }
+    }
+
+    /**
+     * similar to set_join_fields but for usr specific fields
+     */
+    function set_join_usr_fields(array  $join_field_lst,
+                                 string $join_type,
+                                 string $join_field = '',
+                                 string $join_to_field = '',
+                                 bool   $force_rename = false): void
+    {
+        // fill up the join field places or add settings to a matching join link
+        // e.g. add the user fields to an existing not user specific join
+        if ($this->join_type == ''
+            or (($this->join_field == $join_field or $join_field == '')
+                and ($this->join_to_field == $join_to_field or $join_to_field == ''))) {
+            $this->join_type = $join_type;
+            $this->join_usr_field_lst = $join_field_lst;
+            $this->join_field = $join_field;
+            $this->join_to_field = $join_to_field;
+            $this->join_force_rename = $force_rename;
+            $this->join_usr_query = true;
+        } elseif ($this->join2_type == ''
+            or (($this->join2_field == $join_field or $join_field == '')
+                and ($this->join2_to_field == $join_to_field or $join_to_field == ''))) {
+            $this->join2_type = $join_type;
+            $this->join2_usr_field_lst = $join_field_lst;
+            $this->join2_field = $join_field;
+            $this->join2_to_field = $join_to_field;
+            $this->join2_force_rename = $force_rename;
+            $this->join2_usr_query = true;
+        } elseif ($this->join3_type == ''
+            or (($this->join3_field == $join_field or $join_field == '')
+                and ($this->join3_to_field == $join_to_field or $join_to_field == ''))) {
+            $this->join3_type = $join_type;
+            $this->join3_usr_field_lst = $join_field_lst;
+            $this->join3_field = $join_field;
+            $this->join3_to_field = $join_to_field;
+            $this->join3_force_rename = $force_rename;
+            $this->join3_usr_query = true;
+        } elseif ($this->join4_type == ''
+            or (($this->join4_field == $join_field or $join_field == '')
+                and ($this->join4_to_field == $join_to_field or $join_to_field == ''))) {
+            $this->join4_type = $join_type;
+            $this->join4_usr_field_lst = $join_field_lst;
+            $this->join4_field = $join_field;
+            $this->join4_to_field = $join_to_field;
+            $this->join4_force_rename = $force_rename;
+            $this->join4_usr_query = true;
+        } else {
+            log_err('Max four table joins expected in version ' . PRG_VERSION);
+        }
+    }
+
+    function set_join_usr_num_fields(array  $join_field_lst,
+                                     string $join_type,
+                                     string $join_field = '',
+                                     string $join_to_field = '',
+                                     bool   $force_rename = false): void
+    {
+        // fill up the join field places or add settings to a matching join link
+        // e.g. add the user fields to an existing not user specific join
+        if ($this->join_type == ''
+            or (($this->join_field == $join_field and $join_field != '')
+                and ($this->join_to_field == $join_to_field and $join_to_field != ''))) {
+            $this->join_type = $join_type;
+            $this->join_usr_num_field_lst = $join_field_lst;
+            $this->join_field = $join_field;
+            $this->join_to_field = $join_to_field;
+            $this->join_force_rename = $force_rename;
+            $this->join_usr_query = true;
+        } elseif ($this->join2_type == ''
+            or (($this->join2_field == $join_field and $join_field != '')
+                and ($this->join2_to_field == $join_to_field and $join_to_field != ''))) {
+            $this->join2_type = $join_type;
+            $this->join2_usr_num_field_lst = $join_field_lst;
+            $this->join2_field = $join_field;
+            $this->join2_to_field = $join_to_field;
+            $this->join2_force_rename = $force_rename;
+            $this->join2_usr_query = true;
+        } elseif ($this->join3_type == ''
+            or (($this->join3_field == $join_field and $join_field != '')
+                and ($this->join3_to_field == $join_to_field and $join_to_field != ''))) {
+            $this->join3_type = $join_type;
+            $this->join3_usr_num_field_lst = $join_field_lst;
+            $this->join3_field = $join_field;
+            $this->join3_to_field = $join_to_field;
+            $this->join3_force_rename = $force_rename;
+            $this->join3_usr_query = true;
+        } elseif ($this->join4_type == ''
+            or (($this->join4_field == $join_field and $join_field != '')
+                and ($this->join4_to_field == $join_to_field and $join_to_field != ''))) {
+            $this->join4_type = $join_type;
+            $this->join4_usr_num_field_lst = $join_field_lst;
+            $this->join4_field = $join_field;
+            $this->join4_to_field = $join_to_field;
+            $this->join4_force_rename = $force_rename;
+            $this->join4_usr_query = true;
+        } else {
+            log_err('Max four table joins expected in version ' . PRG_VERSION);
         }
     }
 
@@ -780,7 +884,7 @@ class sql_creator
         foreach ($this->join2_usr_num_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $result = $this->sep($result);
-            $this->set_field_usr_num($field_esc, sql_db::LNK2_TBL, sql_db::ULK2_TBL, $this->name_sql_esc($field . '2'));
+            $result .= $this->set_field_usr_num($field_esc, sql_db::LNK2_TBL, sql_db::ULK2_TBL, $this->name_sql_esc($field . '2'));
         }
 
         // add user specific third join fields
@@ -1067,6 +1171,7 @@ class sql_creator
                     // set the closing bracket around a or field list if needed
                     if ($open_or_flf_lst) {
                         if (!($par_type == sql_par_type::TEXT_OR
+                            or $par_type == sql_par_type::INT_OR
                             or $par_type == sql_par_type::INT_LIST_OR)) {
                             $result .= ' ) ';
                             $open_or_flf_lst = false;
@@ -1078,6 +1183,7 @@ class sql_creator
                             $result = ' WHERE ';
                         } else {
                             if ($par_type == sql_par_type::TEXT_OR
+                                or $par_type == sql_par_type::INT_OR
                                 or $par_type == sql_par_type::INT_LIST_OR) {
                                 $result .= ' OR ';
                             } else {
@@ -1086,6 +1192,7 @@ class sql_creator
                         }
                         // set the opening bracket around a or field list if needed
                         if ($par_type == sql_par_type::TEXT_OR
+                            or $par_type == sql_par_type::INT_OR
                             or $par_type == sql_par_type::INT_LIST_OR) {
                             if (!$open_or_flf_lst) {
                                 $result .= ' ( ';
@@ -1563,6 +1670,7 @@ class sql_creator
                 case sql_par_type::INT_LIST_OR:
                     $result[] = 'int[]';
                     break;
+                case sql_par_type::INT_OR:
                 case sql_par_type::INT_NOT:
                     $result[] = 'int';
                     break;

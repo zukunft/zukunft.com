@@ -45,6 +45,7 @@ include_once API_WORD_PATH . 'triple_list.php';
 include_once DB_PATH . 'sql_par_type.php';
 
 use api\triple_list_api;
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use html\html_base;
 use html\word\triple_list as triple_list_dsp;
@@ -107,111 +108,110 @@ class triple_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of triples
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con): sql_par
+    function load_sql(sql_creator $sc): sql_par
     {
-        $db_con->set_type(sql_db::TBL_TRIPLE);
+        $sc->set_type(sql_db::TBL_TRIPLE);
         $qp = new sql_par(self::class);
-        $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_link_fields(triple::FLD_FROM, triple::FLD_TO, verb::FLD_ID);
-        $db_con->set_fields(triple::FLD_NAMES);
-        $db_con->set_usr_fields(triple::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(triple::FLD_NAMES_NUM_USR);
+        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(array_merge(triple::FLD_NAMES_LINK, triple::FLD_NAMES));
+        $sc->set_usr_fields(triple::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(triple::FLD_NAMES_NUM_USR);
         // also load the linked user specific phrase with the same SQL statement (word until now)
-        $db_con->set_join_fields(
+        $sc->set_join_fields(
             phrase::FLD_NAMES,
             sql_db::TBL_PHRASE,
             triple::FLD_FROM,
             phrase::FLD_ID
         );
-        $db_con->set_join_usr_fields(
+        $sc->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
             sql_db::TBL_PHRASE,
             triple::FLD_FROM,
             phrase::FLD_ID
         );
-        $db_con->set_join_usr_num_fields(
+        $sc->set_join_usr_num_fields(
             phrase::FLD_NAMES_NUM_USR,
             sql_db::TBL_PHRASE,
             triple::FLD_FROM,
             phrase::FLD_ID,
             true
         );
-        $db_con->set_join_fields(
+        $sc->set_join_fields(
             phrase::FLD_NAMES,
             sql_db::TBL_PHRASE,
             triple::FLD_TO,
             phrase::FLD_ID
         );
-        $db_con->set_join_usr_fields(
+        $sc->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
             sql_db::TBL_PHRASE,
             triple::FLD_TO,
             phrase::FLD_ID
         );
-        $db_con->set_join_usr_num_fields(
+        $sc->set_join_usr_num_fields(
             phrase::FLD_NAMES_NUM_USR,
             sql_db::TBL_PHRASE,
             triple::FLD_TO,
             phrase::FLD_ID,
             true
         );
-        $db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(verb::FLD_ID) . ', ' . triple::FLD_NAME_GIVEN);
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(verb::FLD_ID) . ', ' . triple::FLD_NAME_GIVEN);
         return $qp;
     }
 
     /**
      * set the SQL query parameters to load a list of triples by the ids
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param array $trp_ids a list of int values with the triple ids
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_db $db_con, array $trp_ids): sql_par
+    function load_sql_by_ids(sql_creator $sc, array $trp_ids): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql($sc);
         if (count($trp_ids) > 0) {
             $qp->name .= 'ids';
-            $db_con->set_name($qp->name);
-            $db_con->add_par_in_int($trp_ids);
-            $qp->sql = $db_con->select_by_field(triple::FLD_ID);
+            $sc->set_name($qp->name);
+            $sc->add_where(triple::FLD_ID, $trp_ids, sql_par_type::INT_LIST);
+            $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
         }
-        $qp->par = $db_con->get_par();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 
     /**
      * set the SQL query parameters to load a list of triples by a phrase, verb and direction
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param phrase $phr the phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr(
-        sql_db $db_con, phrase $phr, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): sql_par
+        sql_creator $sc,
+        phrase $phr,
+        ?verb $vrb = null,
+        foaf_direction $direction = foaf_direction::BOTH): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql($sc);
         if ($phr->id() <> 0) {
-            $fields = array();
             $qp->name .= 'phr';
-            $db_con->add_par(sql_par_type::INT, $phr->id());
             if ($direction == foaf_direction::UP) {
-                $fields[] = triple::FLD_FROM;
+                $sc->add_where(triple::FLD_FROM, $phr->id());
             } elseif ($direction == foaf_direction::DOWN) {
-                $fields[] = triple::FLD_TO;
+                $sc->add_where(triple::FLD_TO, $phr->id());
             } elseif ($direction == foaf_direction::BOTH) {
-                $fields[] = triple::FLD_FROM;
-                $fields[] = triple::FLD_TO;
+                $sc->add_where(triple::FLD_FROM, $phr->id(), sql_par_type::INT_OR);
+                $sc->add_where(triple::FLD_TO, $phr->id(), sql_par_type::INT_OR);
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
-                    $db_con->add_par(sql_par_type::INT, $vrb->id());
-                    $fields[] = verb::FLD_ID;
+                    $sc->add_where(verb::FLD_ID, $vrb->id());
                     $qp->name .= '_and_vrb';
                 }
             }
@@ -220,53 +220,56 @@ class triple_list extends sandbox_list
             } elseif ($direction == foaf_direction::DOWN) {
                 $qp->name .= '_down';
             }
-            $db_con->set_name($qp->name);
-            $qp->sql = $db_con->select_by_field_list($fields);
+            $sc->set_name($qp->name);
+            $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
             log_err('At least the phrase must be set to load a triple list by phrase');
         }
-        $qp->par = $db_con->get_par();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 
     /**
      * set the SQL query parameters to load a list of triples by a phrase, verb and direction
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst a list of phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_lst(
-        sql_db $db_con, phrase_list $phr_lst, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): sql_par
+        sql_creator $sc,
+        phrase_list $phr_lst,
+        ?verb $vrb = null,
+        foaf_direction $direction = foaf_direction::BOTH): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql($sc);
         if (!$phr_lst->empty()) {
             $qp->name .= 'phr_lst';
             if ($direction == foaf_direction::UP) {
-                $db_con->add_where(triple::FLD_FROM, $phr_lst->ids());
+                $sc->add_where(triple::FLD_FROM, $phr_lst->ids());
                 $qp->name .= '_' . $direction->value;
             } elseif ($direction == foaf_direction::DOWN) {
-                $db_con->add_where(triple::FLD_TO, $phr_lst->ids());
+                $sc->add_where(triple::FLD_TO, $phr_lst->ids());
                 $qp->name .= '_' . $direction->value;;
             } elseif ($direction == foaf_direction::BOTH) {
-                $db_con->add_where(triple::FLD_FROM, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
-                $db_con->add_where(triple::FLD_TO, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
+                $sc->add_where(triple::FLD_FROM, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
+                $sc->add_where(triple::FLD_TO, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
-                    $db_con->add_where(verb::FLD_ID, $vrb->id());
+                    $sc->add_where(verb::FLD_ID, $vrb->id());
                     $qp->name .= '_and_vrb';
                 }
             }
-            $db_con->set_name($qp->name);
-            $qp->sql = $db_con->sql();
+            $sc->set_name($qp->name);
+            $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
             log_err('At least the phrase must be set to load a triple list by phrase');
         }
-        $qp->par = $db_con->get_par();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 
@@ -335,7 +338,7 @@ class triple_list extends sandbox_list
         phrase $phr, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_phr($db_con, $phr, $vrb, $direction);
+        $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr, $vrb, $direction);
         return $this->load($qp);
     }
 
@@ -350,7 +353,7 @@ class triple_list extends sandbox_list
         phrase_list $phr_lst, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_phr_lst($db_con, $phr_lst, $vrb, $direction);
+        $qp = $this->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst, $vrb, $direction);
         return $this->load($qp);
     }
 

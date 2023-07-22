@@ -246,12 +246,12 @@ class triple_list_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_ids($db_con, $ids);
+        $qp = $lst->load_sql_by_ids($db_con->sql_creator(), $ids);
         $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_by_ids($db_con, $ids);
+        $qp = $lst->load_sql_by_ids($db_con->sql_creator(), $ids);
         $t->assert_qp($qp, $db_con->db_type);
     }
 
@@ -277,12 +277,12 @@ class triple_list_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_phr($db_con, $phr, $vrb, $direction);
+        $qp = $lst->load_sql_by_phr($db_con->sql_creator(), $phr, $vrb, $direction);
         $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_by_phr($db_con, $phr, $vrb, $direction);
+        $qp = $lst->load_sql_by_phr($db_con->sql_creator(), $phr, $vrb, $direction);
         $t->assert_qp($qp, $db_con->db_type);
     }
 
@@ -308,12 +308,12 @@ class triple_list_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_phr_lst($db_con, $phr_lst, $vrb, $direction);
+        $qp = $lst->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst, $vrb, $direction);
         $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_by_phr_lst($db_con, $phr_lst, $vrb, $direction);
+        $qp = $lst->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst, $vrb, $direction);
         $t->assert_qp($qp, $db_con->db_type);
     }
 

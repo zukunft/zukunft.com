@@ -3414,6 +3414,7 @@ class sql_db
                 case sql_par_type::INT_LIST_OR:
                 $result[] = 'int[]';
                     break;
+                case sql_par_type::INT_OR:
                 case sql_par_type::INT_NOT:
                     $result[] = 'int';
                     break;
