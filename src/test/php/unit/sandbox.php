@@ -38,6 +38,8 @@ include_once MODEL_VALUE_PATH . 'value.php';
 
 use cfg\component;
 use cfg\config;
+use cfg\db\sql_creator;
+use cfg\db\sql_par_type;
 use cfg\formula;
 use cfg\formula_link;
 use cfg\library;
@@ -225,21 +227,27 @@ class sandbox_unit_tests
         $t->display('MySQL select max', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test a simple SQL select creation for Postgres without the standard id and name identification
-        $db_con->db_type = sql_db::POSTGRES;
-        $db_con->set_type(sql_db::TBL_CONFIG);
-        $db_con->set_fields(array('value'));
-        $db_con->where(array(sql_db::FLD_CODE_ID), array(config::VERSION_DB));
-        $created_sql = $db_con->select_by_set_id(false);
-        $expected_sql = "SELECT value FROM config WHERE code_id = 'version_database';";
-        $t->display('non id Postgres select', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $sc = new sql_creator();
+        $sc->set_db_type(sql_db::POSTGRES);
+        $sc->set_type(sql_db::TBL_CONFIG);
+        $sc->set_name('query_test');
+        $sc->set_fields(array('value'));
+        $sc->add_where(sql_db::FLD_CODE_ID, config::VERSION_DB);
+        $created_sql = $sc->sql();
+        $expected_sql = "PREPARE query_test (text) AS SELECT config_id,  config_name,  value FROM config WHERE code_id = $1 AND code_id IS NOT NULL;";
+        $t->assert('non id Postgres select', $lib->trim($created_sql), $lib->trim($expected_sql));
+        $created_par = implode(',', $sc->get_par());
+        $expected_par = "version_database";
+        $t->assert('non id Postgres parameter', $lib->trim($created_par), $lib->trim($expected_par));
 
         // ... same for MySQL
-        $db_con->db_type = sql_db::MYSQL;
-        $db_con->set_type(sql_db::TBL_CONFIG);
-        $db_con->set_fields(array('value'));
-        $db_con->where(array(sql_db::FLD_CODE_ID), array(config::VERSION_DB));
-        $created_sql = $db_con->select_by_set_id(false);
-        $expected_sql = "SELECT `value` FROM config WHERE code_id = 'version_database';";
+        $sc->set_db_type(sql_db::MYSQL);
+        $created_sql = $sc->sql();
+        $expected_sql = "PREPARE query_test FROM 'SELECT config_id,  config_name,  `value` FROM config';";
+        $t->assert('non id MySQL select', $lib->trim($created_sql), $lib->trim($expected_sql));
+        $created_par = implode(',', $sc->get_par());
+        $expected_par = "version_database";
+        $t->assert('non id MySQL parameter', $lib->trim($created_par), $lib->trim($expected_par));
         $t->display('non id MySQL select', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test a simple SQL select creation for Postgres with the standard id and name identification

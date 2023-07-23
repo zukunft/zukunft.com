@@ -2023,22 +2023,6 @@ class sql_db
     }
 
     /**
-     *
-     */
-    function get_id_from_code($code_id): string
-    {
-        $result = '';
-        log_debug('for "' . $code_id . '" of the db object "' . $this->type . '"');
-
-        $this->set_table();
-        $this->set_id_field();
-        $result .= $this->get_value($this->id_field, self::FLD_CODE_ID, $code_id);
-
-        log_debug('is "' . $result . '"');
-        return $result;
-    }
-
-    /**
      * similar to get_id, but the other way round
      */
     function get_name($id)
@@ -2137,70 +2121,6 @@ class sql_db
           ORDER BY " . $this->name_sql_esc($this->name_field) . ";";
 
         return $sql;
-    }
-
-    /**
-     * set the where statement for a later call of the select function
-     */
-    function where($fields, $values): string
-    {
-        $result = '';
-        if (count($fields) != count($values)) {
-            log_err('Number of fields does not match with the number of values', 'sql_db->where');
-        } else {
-            foreach (array_keys($fields) as $i) {
-                $field = $this->name_sql_esc($fields[$i]);
-                if ($result == '') {
-                    $result .= ' WHERE ' . $field . ' = ' . $this->sf($values[$i]);
-                } else {
-                    $result .= ' AND ' . $field . ' = ' . $this->sf($values[$i]);
-                }
-            }
-            $this->where = $result;
-        }
-        return $result;
-    }
-
-    /**
-     * create the SQL where statement for one IN parameter
-     *
-     * @param string $field of the field name to use for the IN statement
-     * @param array $values of the values just to detect the type
-     * @param bool $is_join_query to force using the table name prefix
-     * @param bool $is_join_field to force using the link table prefix for the field name
-     * @return string the SQL WHERE statement
-     */
-    function where_in_par(
-        string $field,
-        array  $values,
-        bool   $is_join_query = false,
-        bool   $is_join_field = false
-    ): string
-    {
-        $result = '';
-        if ($this->usr_query
-            or $this->join <> ''
-            or $this->join_type <> ''
-            or $this->join2_type <> ''
-            or $is_join_query) {
-            if ($is_join_field) {
-                $result .= sql_db::LNK_TBL . '.';
-            } else {
-                $result .= sql_db::STD_TBL . '.';
-            }
-        }
-        $result .= $field . ' IN (';
-        $i = 1;
-        foreach ($values as $value) {
-            $this->add_par(sql_par_type::INT, $value);
-            if ($i > 1) {
-                $result .= ',';
-            }
-            $result .= $this->par_name();
-            $i++;
-        }
-        $result .= ')';
-        return $result;
     }
 
     /**
@@ -2616,29 +2536,6 @@ class sql_db
     }
 
     /**
-     * set the limit and offset SQL statement for pagination
-     */
-    function set_page(int $limit = 0, int $offset = 0): void
-    {
-        // set default values
-        if ($offset <= 0) {
-            $offset = 0;
-        }
-        if ($limit == 0) {
-            $limit = SQL_ROW_LIMIT;
-        } else {
-            if ($limit <= 0) {
-                $limit = SQL_ROW_LIMIT;
-            }
-        }
-        $this->page = '';
-        if ($offset > 0) {
-            $this->page .= ' OFFSET ' . $offset;
-        }
-        $this->page .= ' LIMIT ' . $limit;
-    }
-
-    /**
      * set the parameter for paged results
      * @param int $limit
      * @param int $page
@@ -2664,13 +2561,6 @@ class sql_db
             $this->add_par(sql_par_type::INT, $page * $limit);
             $this->page .= ' OFFSET ' . $this->par_name();
         }
-    }
-
-    /**
-     * create the SQL part for the selected fields
-     */
-    private function sql_usr_fields($usr_field_lst)
-    {
     }
 
     /**
@@ -2910,14 +2800,6 @@ class sql_db
     }
 
     /**
-     * create the "FROM" SQL statement based on the type for the user sandbox values
-     */
-    private function set_from_user(): void
-    {
-        $this->from = ' FROM ' . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table);
-    }
-
-    /**
      * @return array with the parameter values in the same order as the given SQL parameter placeholders
      */
     function get_par(): array
@@ -2952,28 +2834,6 @@ class sql_db
     function select_by_set_id(bool $has_id = true): string
     {
         return $this->select_by(array($this->id_field), $has_id);
-    }
-
-    /**
-     * create a SQL select statement for the connected database and force to use the name instead of the id
-     * and select by the default name field
-     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
-     * @return string the created SQL statement in the previous set dialect
-     */
-    function select_by_set_name(bool $has_id = true): string
-    {
-        return $this->select_by(array($this->name_field), $has_id);
-    }
-
-    /**
-     * create a SQL select statement for the connected database and force to use the name
-     * and another field for an or selection
-     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
-     * @return string the created SQL statement in the previous set dialect
-     */
-    function select_by_name_or(string $or_field_name, bool $has_id = true): string
-    {
-        return $this->select_by(array($this->name_field, $or_field_name), $has_id);
     }
 
     /**
